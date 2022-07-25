@@ -36,25 +36,25 @@ namespace Unigram.ViewModels.Drawers
         public StickerDrawerViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
-            _premiumSet = new StickerSetViewModel(ProtoService, Aggregator, new StickerSetInfo
+            _premiumSet = new StickerSetViewModel(ProtoService, new StickerSetInfo
             {
                 Title = Strings.Resources.PremiumStickers,
                 Name = "tg/premiumStickers"
             });
 
-            _favoriteSet = new StickerSetViewModel(ProtoService, Aggregator, new StickerSetInfo
+            _favoriteSet = new StickerSetViewModel(ProtoService, new StickerSetInfo
             {
                 Title = Strings.Resources.FavoriteStickers,
                 Name = "tg/favedStickers"
             });
 
-            _recentSet = new StickerSetViewModel(ProtoService, Aggregator, new StickerSetInfo
+            _recentSet = new StickerSetViewModel(ProtoService, new StickerSetInfo
             {
                 Title = Strings.Resources.RecentStickers,
                 Name = "tg/recentlyUsed"
             });
 
-            _groupSet = new SupergroupStickerSetViewModel(ProtoService, Aggregator, new StickerSetInfo
+            _groupSet = new SupergroupStickerSetViewModel(ProtoService, new StickerSetInfo
             {
                 Title = Strings.Resources.GroupStickers,
                 Name = "tg/groupStickers"
@@ -178,18 +178,18 @@ namespace Unigram.ViewModels.Drawers
                     if (index > -1 && index != i)
                     {
                         destination.RemoveAt(index);
-                        destination.Insert(Math.Min(i, destination.Count), new StickerViewModel(ProtoService, Aggregator, sticker));
+                        destination.Insert(Math.Min(i, destination.Count), new StickerViewModel(ProtoService, sticker));
                     }
                     else if (index == -1)
                     {
-                        destination.Insert(Math.Min(i, destination.Count), new StickerViewModel(ProtoService, Aggregator, sticker));
+                        destination.Insert(Math.Min(i, destination.Count), new StickerViewModel(ProtoService, sticker));
                     }
                 }
             }
             else
             {
                 destination.Clear();
-                destination.AddRange(origin.Select(x => new StickerViewModel(ProtoService, Aggregator, x)));
+                destination.AddRange(origin.Select(x => new StickerViewModel(ProtoService, x)));
             }
         }
 
@@ -368,18 +368,18 @@ namespace Unigram.ViewModels.Drawers
 
                     if (result4 is StickerSet set)
                     {
-                        stickers.Add(new StickerSetViewModel(ProtoService, Aggregator, sets.Sets[0], set));
-                        SavedStickers.ReplaceWith(stickers.Union(sets.Sets.Skip(1).Select(x => new StickerSetViewModel(ProtoService, Aggregator, x))));
+                        stickers.Add(new StickerSetViewModel(ProtoService, sets.Sets[0], set));
+                        SavedStickers.ReplaceWith(stickers.Union(sets.Sets.Skip(1).Select(x => new StickerSetViewModel(ProtoService, x))));
                     }
                     else
                     {
-                        SavedStickers.ReplaceWith(stickers.Union(sets.Sets.Select(x => new StickerSetViewModel(ProtoService, Aggregator, x))));
+                        SavedStickers.ReplaceWith(stickers.Union(sets.Sets.Select(x => new StickerSetViewModel(ProtoService, x))));
                     }
                 }
                 else
                 {
                     _updating = false;
-                    SavedStickers.ReplaceWith(stickers.Union(sets.Sets.Select(x => new StickerSetViewModel(ProtoService, Aggregator, x))));
+                    SavedStickers.ReplaceWith(stickers.Union(sets.Sets.Select(x => new StickerSetViewModel(ProtoService, x))));
                 }
             }
         }
@@ -394,8 +394,8 @@ namespace Unigram.ViewModels.Drawers
 
     public class SupergroupStickerSetViewModel : StickerSetViewModel
     {
-        public SupergroupStickerSetViewModel(IProtoService protoService, IEventAggregator aggregator, StickerSetInfo info)
-            : base(protoService, aggregator, info)
+        public SupergroupStickerSetViewModel(IProtoService protoService, StickerSetInfo info)
+            : base(protoService, info)
         {
         }
 
@@ -406,11 +406,11 @@ namespace Unigram.ViewModels.Drawers
 
             if (reset)
             {
-                Stickers = new MvxObservableCollection<StickerViewModel>(set.Stickers.Select(x => new StickerViewModel(_protoService, _aggregator, x)));
+                Stickers = new MvxObservableCollection<StickerViewModel>(set.Stickers.Select(x => new StickerViewModel(_protoService, x)));
             }
             else
             {
-                Stickers.ReplaceWith(set.Stickers.Select(x => new StickerViewModel(_protoService, _aggregator, x)));
+                Stickers.ReplaceWith(set.Stickers.Select(x => new StickerViewModel(_protoService, x)));
             }
         }
 
@@ -424,44 +424,41 @@ namespace Unigram.ViewModels.Drawers
     public class StickerSetViewModel
     {
         protected readonly IProtoService _protoService;
-        protected readonly IEventAggregator _aggregator;
 
         protected readonly StickerSetInfo _info;
         protected StickerSet _set;
 
-        public StickerSetViewModel(IProtoService protoService, IEventAggregator aggregator, StickerSetInfo info)
+        public StickerSetViewModel(IProtoService protoService, StickerSetInfo info)
         {
             _protoService = protoService;
-            _aggregator = aggregator;
 
             _info = info;
 
             var placeholders = new List<StickerViewModel>();
             for (int i = 0; i < (info.IsInstalled ? info.Size : info.Covers?.Count ?? 0); i++)
             {
-                placeholders.Add(new StickerViewModel(_protoService, _aggregator, info.Id, info.StickerFormat));
+                placeholders.Add(new StickerViewModel(_protoService, info.Id, info.StickerFormat));
             }
 
             Stickers = new MvxObservableCollection<StickerViewModel>(placeholders);
             Covers = info.Covers;
         }
 
-        public StickerSetViewModel(IProtoService protoService, IEventAggregator aggregator, StickerSetInfo info, StickerSet set)
-            : this(protoService, aggregator, info)
+        public StickerSetViewModel(IProtoService protoService, StickerSetInfo info, StickerSet set)
+            : this(protoService, info)
         {
             IsLoaded = true;
             Update(set);
         }
 
-        public StickerSetViewModel(IProtoService protoService, IEventAggregator aggregator, StickerSetInfo info, IList<Sticker> stickers)
+        public StickerSetViewModel(IProtoService protoService, StickerSetInfo info, IList<Sticker> stickers)
         {
             _protoService = protoService;
-            _aggregator = aggregator;
 
             _info = info;
 
             IsLoaded = true;
-            Stickers = new MvxObservableCollection<StickerViewModel>(stickers.Select(x => new StickerViewModel(protoService, aggregator, x)));
+            Stickers = new MvxObservableCollection<StickerViewModel>(stickers.Select(x => new StickerViewModel(protoService, x)));
             Covers = info.Covers;
         }
 
@@ -484,11 +481,11 @@ namespace Unigram.ViewModels.Drawers
         {
             if (raise)
             {
-                Stickers.ReplaceWith(stickers.Select(x => new StickerViewModel(_protoService, _aggregator, x)));
+                Stickers.ReplaceWith(stickers.Select(x => new StickerViewModel(_protoService, x)));
             }
             else
             {
-                Stickers = new MvxObservableCollection<StickerViewModel>(stickers.Select(x => new StickerViewModel(_protoService, _aggregator, x)));
+                Stickers = new MvxObservableCollection<StickerViewModel>(stickers.Select(x => new StickerViewModel(_protoService, x)));
             }
         }
 
@@ -510,6 +507,11 @@ namespace Unigram.ViewModels.Drawers
 
         public IList<Sticker> Covers { get; private set; }
 
+        public Sticker GetThumbnail()
+        {
+            return _info?.GetThumbnail();
+        }
+
         public override string ToString()
         {
             return Title ?? base.ToString();
@@ -523,21 +525,18 @@ namespace Unigram.ViewModels.Drawers
         private readonly StickerFormat _format;
 
         private readonly IProtoService _protoService;
-        private readonly IEventAggregator _aggregator;
 
-        public StickerViewModel(IProtoService protoService, IEventAggregator aggregator, long setId, StickerFormat format)
+        public StickerViewModel(IProtoService protoService, long setId, StickerFormat format)
         {
             _protoService = protoService;
-            _aggregator = aggregator;
 
             _setId = setId;
             _format = format;
         }
 
-        public StickerViewModel(IProtoService protoService, IEventAggregator aggregator, Sticker sticker)
+        public StickerViewModel(IProtoService protoService, Sticker sticker)
         {
             _protoService = protoService;
-            _aggregator = aggregator;
 
             _sticker = sticker;
             _format = sticker.Format;
@@ -549,7 +548,6 @@ namespace Unigram.ViewModels.Drawers
         }
 
         public IProtoService ProtoService => _protoService;
-        public IEventAggregator Aggregator => _aggregator;
 
         public static implicit operator Sticker(StickerViewModel viewModel)
         {
@@ -565,6 +563,8 @@ namespace Unigram.ViewModels.Drawers
         public int Height => _sticker?.Height ?? 0;
         public int Width => _sticker?.Width ?? 0;
         public long SetId => _sticker?.SetId ?? _setId;
+
+        public long CustomEmojiId => _sticker?.CustomEmojiId ?? 0;
     }
 
     public class StickerSetCollection : MvxObservableCollection<StickerSetViewModel>
@@ -649,7 +649,7 @@ namespace Unigram.ViewModels.Drawers
                     var response = await _protoService.SendAsync(new SearchInstalledStickerSets(_type, _query, 100));
                     if (response is StickerSets sets)
                     {
-                        foreach (var item in sets.Sets.Select(x => new StickerSetViewModel(_protoService, _aggregator, x)))
+                        foreach (var item in sets.Sets.Select(x => new StickerSetViewModel(_protoService, x)))
                         {
                             Add(item);
                         }
@@ -661,10 +661,10 @@ namespace Unigram.ViewModels.Drawers
                 {
                     if (Emoji.ContainsSingleEmoji(_query))
                     {
-                        var response = await _protoService.SendAsync(new GetStickers(_query, 100));
+                        var response = await _protoService.SendAsync(new GetStickers(_type, _query, 100));
                         if (response is Stickers stickers && stickers.StickersValue.Count > 0)
                         {
-                            Add(new StickerSetViewModel(_protoService, _aggregator,
+                            Add(new StickerSetViewModel(_protoService,
                                 new StickerSetInfo(0, _query, "emoji", null, new ClosedVectorPath[0], false, false, false, new StickerFormatWebp(), _type, false, stickers.StickersValue.Count, stickers.StickersValue),
                                 new StickerSet(0, _query, "emoji", null, new ClosedVectorPath[0], false, false, false, new StickerFormatWebp(), _type, false, stickers.StickersValue, new Emojis[0])));
                         }
@@ -676,10 +676,10 @@ namespace Unigram.ViewModels.Drawers
                         {
                             for (int i = 0; i < Math.Min(10, emojis.EmojisValue.Count); i++)
                             {
-                                var response = await _protoService.SendAsync(new GetStickers(emojis.EmojisValue[i], 100));
+                                var response = await _protoService.SendAsync(new GetStickers(_type, emojis.EmojisValue[i], 100));
                                 if (response is Stickers stickers && stickers.StickersValue.Count > 0)
                                 {
-                                    Add(new StickerSetViewModel(_protoService, _aggregator,
+                                    Add(new StickerSetViewModel(_protoService,
                                         new StickerSetInfo(0, emojis.EmojisValue[i], "emoji", null, new ClosedVectorPath[0], false, false, false, new StickerFormatWebp(), _type, false, stickers.StickersValue.Count, stickers.StickersValue),
                                         new StickerSet(0, emojis.EmojisValue[i], "emoji", null, new ClosedVectorPath[0], false, false, false, new StickerFormatWebp(), _type, false, stickers.StickersValue, new Emojis[0])));
                                 }
@@ -692,7 +692,7 @@ namespace Unigram.ViewModels.Drawers
                     var response = await _protoService.SendAsync(new SearchStickerSets(_query));
                     if (response is StickerSets sets)
                     {
-                        foreach (var item in sets.Sets.Select(x => new StickerSetViewModel(_protoService, _aggregator, x, x.Covers)))
+                        foreach (var item in sets.Sets.Select(x => new StickerSetViewModel(_protoService, x, x.Covers)))
                         {
                             Add(item);
                         }

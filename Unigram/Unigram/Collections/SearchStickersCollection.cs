@@ -14,6 +14,7 @@ namespace Unigram.Collections
     {
         private readonly IProtoService _protoService;
         private readonly ISettingsService _settings;
+        private readonly StickerType _type;
         private readonly string _query;
 
         private bool _first = true;
@@ -25,6 +26,7 @@ namespace Unigram.Collections
         {
             _protoService = protoService;
             _settings = settings;
+            _type = new StickerTypeRegular();
             _query = query;
 
             _ids = new HashSet<int>();
@@ -40,7 +42,7 @@ namespace Unigram.Collections
                 {
                     _first = false;
 
-                    var response = await _protoService.SendAsync(new GetStickers(_query, 1000));
+                    var response = await _protoService.SendAsync(new GetStickers(_type, _query, 1000));
                     if (response is Stickers stickers)
                     {
                         foreach (var sticker in stickers.StickersValue)

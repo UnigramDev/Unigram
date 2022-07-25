@@ -139,17 +139,17 @@ namespace Unigram.Controls.Drawers
                 return;
             }
 
-            var cover = item.Thumbnail ?? item.Covers.FirstOrDefault()?.Thumbnail;
+            var cover = item.GetThumbnail();
             if (cover == null)
             {
                 return;
             }
 
-            if (cover.Format is ThumbnailFormatTgs)
+            if (cover.Format is StickerFormatTgs)
             {
                 photo.Source = PlaceholderHelper.GetLottieFrame(file.Local.Path, 0, 36, 36);
             }
-            else if (cover.Format is ThumbnailFormatWebp)
+            else if (cover.Format is StickerFormatWebp)
             {
                 photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path, 36);
             }
@@ -443,21 +443,21 @@ namespace Unigram.Controls.Drawers
                     return;
                 }
 
-                var cover = sticker.Thumbnail ?? sticker.Covers.FirstOrDefault()?.Thumbnail;
+                var cover = sticker.GetThumbnail();
                 if (cover == null)
                 {
                     photo.Source = null;
                     return;
                 }
 
-                var file = cover.File;
+                var file = cover.StickerValue;
                 if (file.Local.IsFileExisting())
                 {
-                    if (cover.Format is ThumbnailFormatTgs)
+                    if (cover.Format is StickerFormatTgs)
                     {
                         photo.Source = PlaceholderHelper.GetLottieFrame(file.Local.Path, 0, 36, 36);
                     }
-                    else if (cover.Format is ThumbnailFormatWebp)
+                    else if (cover.Format is StickerFormatWebp)
                     {
                         photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path, 36);
                     }

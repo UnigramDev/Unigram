@@ -1,22 +1,28 @@
 ﻿using LinqToVisualTree;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
+using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Converters;
 using Unigram.Services;
 using Unigram.Services.Settings;
 using Unigram.ViewModels;
+using Unigram.ViewModels.Drawers;
+using Windows.UI.Composition;
 using Windows.UI.Text.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
+using StickerSetViewModel = Unigram.ViewModels.Drawers.StickerSetViewModel;
 
 namespace Unigram.Controls.Drawers
 {
     public sealed partial class EmojiDrawer : UserControl, IDrawer
     {
-        public TLViewModelBase ViewModel => DataContext as TLViewModelBase;
+        public EmojiDrawerViewModel ViewModel => DataContext as EmojiDrawerViewModel;
 
         public event ItemClickEventHandler ItemClick;
 
@@ -24,6 +30,10 @@ namespace Unigram.Controls.Drawers
 
         private EmojiSkinTone _selected;
         private bool _expanded;
+
+        private bool _isActive;
+
+        private readonly AnimatedListHandler<StickerViewModel> _handler;
 
         public EmojiDrawer()
         {
@@ -34,21 +44,43 @@ namespace Unigram.Controls.Drawers
             var header = DropShadowEx.Attach(Separator);
             header.Clip = header.Compositor.CreateInsetClip(0, 48, 0, -48);
 
+            _handler = new AnimatedListHandler<StickerViewModel>(List);
+
             _typeToItemHashSetMapping["EmojiSkinTemplate"] = new HashSet<SelectorItem>();
             _typeToItemHashSetMapping["EmojiTemplate"] = new HashSet<SelectorItem>();
+            _typeToItemHashSetMapping.Add("AnimatedItemTemplate", new HashSet<SelectorItem>());
+            _typeToItemHashSetMapping.Add("VideoItemTemplate", new HashSet<SelectorItem>());
+            _typeToItemHashSetMapping.Add("ItemTemplate", new HashSet<SelectorItem>());
 
             UpdateView();
         }
 
         public StickersTab Tab => StickersTab.Emoji;
 
-        public void Activate() { }
+        public void Activate()
+        {
+            _isActive = true;
+            _handler.ThrottleVisibleItems();
+        }
 
-        public void Deactivate() { }
+        public void Deactivate()
+        {
+            _isActive = false;
+            _handler.UnloadItems();
+        }
 
-        public void LoadVisibleItems() { }
+        public void LoadVisibleItems()
+        {
+            if (_isActive)
+            {
+                _handler.LoadVisibleItems(false);
+            }
+        }
 
-        public void UnloadVisibleItems() { }
+        public void UnloadVisibleItems()
+        {
+            _handler.UnloadVisibleItems();
+        }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
@@ -84,9 +116,9 @@ namespace Unigram.Controls.Drawers
 
             if (_needUpdate)
             {
-                var items = Emoji.Get(tone, !microsoft);
-                EmojiCollection.Source = items;
-                Toolbar.ItemsSource = items;
+                //var items = Emoji.Get(tone, !microsoft);
+                //EmojiCollection.Source = items;
+                //Toolbar.ItemsSource = items;
             }
 
             _needUpdate = false;
@@ -104,8 +136,20 @@ namespace Unigram.Controls.Drawers
                     var header = List.GroupHeaderContainerFromItemContainer(first) as GridViewHeaderItem;
                     if (header != null && header != Toolbar.SelectedItem)
                     {
-                        Toolbar.SelectedItem = header.Content;
-                        Toolbar.ScrollIntoView(header.Content);
+                        if (header.Content is EmojiGroup)
+                        {
+                            Toolbar2.SelectedItem = null;
+                            Toolbar.SelectedItem = header.Content;
+                            Toolbar.ScrollIntoView(header.Content);
+                        }
+                        else
+                        {
+                            Toolbar.SelectedItem = null;
+                            Toolbar2.SelectedItem = header.Content;
+                            Toolbar2.ScrollIntoView(header.Content);
+                        }
+
+                        UpdateToolbar();
                     }
                 }
             }
@@ -118,10 +162,7 @@ namespace Unigram.Controls.Drawers
 
         private void Toolbar_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (e.ClickedItem is EmojiGroup)
-            {
-                List.ScrollIntoView(e.ClickedItem, ScrollIntoViewAlignment.Leading);
-            }
+            List.ScrollIntoView(e.ClickedItem, ScrollIntoViewAlignment.Leading);
         }
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
@@ -133,6 +174,12 @@ namespace Unigram.Controls.Drawers
                 _needUpdate = true;
 
                 SettingsService.Current.Emoji.AddRecentEmoji(data.Value);
+                SettingsService.Current.Emoji.SortRecentEmoji();
+                SettingsService.Current.Emoji.SaveRecentEmoji();
+            }
+            else if (e.ClickedItem is StickerViewModel sticker)
+            {
+                SettingsService.Current.Emoji.AddRecentEmoji($"{sticker.Emoji};{sticker.CustomEmojiId}");
                 SettingsService.Current.Emoji.SortRecentEmoji();
                 SettingsService.Current.Emoji.SaveRecentEmoji();
             }
@@ -159,29 +206,87 @@ namespace Unigram.Controls.Drawers
             }
 
             var radio = sender as RadioButton;
-            if (radio.Content is int value && EmojiCollection.Source is List<EmojiGroup> groups)
+            if (radio.Content is int value)
             {
-                foreach (var group in groups)
+                if (ViewModel.Items[0] is RecentEmoji recent)
                 {
-                    foreach (var item in group.Items.OfType<EmojiSkinData>())
+                    foreach (var item in recent.Stickers.OfType<EmojiSkinData>())
                     {
                         item.SetValue((EmojiSkinTone)value);
                     }
                 }
 
-                if (EmojiCollection.Source != Toolbar.ItemsSource && Toolbar.ItemsSource is List<EmojiGroup> toolbar)
+                foreach (var group in ViewModel.StandardSets)
                 {
-                    foreach (var group in toolbar)
+                    foreach (var item in group.Stickers.OfType<EmojiSkinData>())
                     {
-                        foreach (var item in group.Items.OfType<EmojiSkinData>())
-                        {
-                            item.SetValue((EmojiSkinTone)value);
-                        }
+                        item.SetValue((EmojiSkinTone)value);
                     }
                 }
 
                 SettingsService.Current.Stickers.SkinTone = (EmojiSkinTone)value;
                 UpdateSkinTone((EmojiSkinTone)value, false, true);
+            }
+        }
+
+        private bool _emojiCollapsed = false;
+
+        private void UpdateToolbar()
+        {
+            if (Toolbar.SelectedItem == null != _emojiCollapsed)
+            {
+                _emojiCollapsed = Toolbar.SelectedItem == null;
+
+                var show = !_emojiCollapsed;
+
+                var toolbar = ElementCompositionPreview.GetElementVisual(Toolbar);
+                var pill = ElementCompositionPreview.GetElementVisual(ToolbarPill);
+                var panel = ElementCompositionPreview.GetElementVisual(Toolbar2.ItemsPanelRoot);
+
+                ElementCompositionPreview.SetIsTranslationEnabled(Toolbar2.ItemsPanelRoot, true);
+
+                var clip = toolbar.Compositor.CreateInsetClip();
+                var offset = 144 - 32;
+
+                var ellipse = toolbar.Compositor.CreateRoundedRectangleGeometry();
+                ellipse.CornerRadius = new Vector2(4);
+
+                pill.Clip = toolbar.Compositor.CreateGeometricClip(ellipse);
+                toolbar.Clip = clip;
+                Toolbar.Width = 144;
+
+                var animClip = toolbar.Compositor.CreateScalarKeyFrameAnimation();
+                animClip.InsertKeyFrame(show ? 1 : 0, 0);
+                animClip.InsertKeyFrame(show ? 0 : 1, offset);
+
+                var animOffset = toolbar.Compositor.CreateScalarKeyFrameAnimation();
+                animOffset.InsertKeyFrame(show ? 0 : 1, -offset);
+                animOffset.InsertKeyFrame(show ? 1 : 0, 0);
+
+                var animSize = toolbar.Compositor.CreateVector2KeyFrameAnimation();
+                animSize.InsertKeyFrame(show ? 0 : 1, new Vector2(32, 32));
+                animSize.InsertKeyFrame(show ? 1 : 0, new Vector2(32 + offset, 32));
+
+                var animOpacity = toolbar.Compositor.CreateScalarKeyFrameAnimation();
+                animOpacity.InsertKeyFrame(show ? 0 : 1, 0);
+                animOpacity.InsertKeyFrame(show ? 1 : 0, 1);
+
+                var batch = toolbar.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+                batch.Completed += (s, args) =>
+                {
+                    panel.Properties.InsertVector3("Translation", Vector3.Zero);
+
+                    toolbar.Clip = null;
+                    Toolbar.Width = show ? 144 : 32;
+                    Toolbar.ScrollIntoView(Toolbar2.SelectedItem == null ? Toolbar.Items[0] : Toolbar.Items.Last());
+                };
+
+                clip.StartAnimation("RightInset", animClip);
+                panel.StartAnimation("Translation.X", animOffset);
+                ellipse.StartAnimation("Size", animSize);
+                pill.StartAnimation("Opacity", animOpacity);
+
+                batch.End();
             }
         }
 
@@ -201,6 +306,7 @@ namespace Unigram.Controls.Drawers
             Grid.SetColumn(SkinFitz5, expand ? (int)selected < 4 ? 4 : (int)selected > 4 ? 5 : 0 : 0);
             Grid.SetColumn(SkinFitz6, expand ? (int)selected < 5 ? 5 : (int)selected > 5 ? 5 : 0 : 0);
             Grid.SetColumn(Toolbar, expand ? 6 : 1);
+            Grid.SetColumn(ToolbarPill, expand ? 6 : 1);
 
             SkinDefault.IsEnabled = expand || selected == EmojiSkinTone.Default;
             SkinFitz12.IsEnabled = expand || selected == EmojiSkinTone.Fitz12;
@@ -256,7 +362,12 @@ namespace Unigram.Controls.Drawers
 
         private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
         {
-            var typeName = args.Item is EmojiSkinData ? "EmojiSkinTemplate" : "EmojiTemplate";
+            var typeName = args.Item is StickerViewModel sticker ? sticker.Format switch
+            {
+                StickerFormatTgs => "AnimatedItemTemplate",
+                StickerFormatWebm => "VideoItemTemplate",
+                _ => "ItemTemplate"
+            } : args.Item is EmojiSkinData ? "EmojiSkinTemplate" : "EmojiTemplate";
             var relevantHashSet = _typeToItemHashSetMapping[typeName];
 
             // args.ItemContainer is used to indicate whether the ListView is proposing an
@@ -305,6 +416,42 @@ namespace Unigram.Controls.Drawers
             args.IsContainerPrepared = true;
         }
 
+        private async void OnChoosingGroupHeaderContainer(ListViewBase sender, ChoosingGroupHeaderContainerEventArgs args)
+        {
+            if (args.GroupHeaderContainer == null)
+            {
+                args.GroupHeaderContainer = new GridViewHeaderItem();
+                args.GroupHeaderContainer.Style = List.GroupStyle[0].HeaderContainerStyle;
+                args.GroupHeaderContainer.ContentTemplate = List.GroupStyle[0].HeaderTemplate;
+            }
+
+            if (args.Group is StickerSetViewModel group && !group.IsLoaded)
+            {
+                group.IsLoaded = true;
+
+                //Debug.WriteLine("Loading sticker set " + group.Id);
+
+                var response = await ViewModel.ProtoService.SendAsync(new GetStickerSet(group.Id));
+                if (response is StickerSet full)
+                {
+                    group.Update(full, false);
+
+                    //return;
+
+                    foreach (var sticker in group.Stickers)
+                    {
+                        var container = List?.ContainerFromItem(sticker) as SelectorItem;
+                        if (container == null)
+                        {
+                            continue;
+                        }
+
+                        UpdateContainerContent(sticker, container.ContentTemplateRoot as Grid);
+                    }
+                }
+            }
+        }
+
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             if (args.InRecycleQueue == true)
@@ -313,8 +460,194 @@ namespace Unigram.Controls.Drawers
                 var tag = args.ItemContainer.Tag as string;
                 var added = _typeToItemHashSetMapping[tag].Add(args.ItemContainer);
             }
+
+            if (args.Item is StickerViewModel sticker)
+            {
+                var content = args.ItemContainer.ContentTemplateRoot as Grid;
+
+                if (args.InRecycleQueue)
+                {
+                    if (content.Children[0] is Border border && border.Child is Image photo)
+                    {
+                        photo.Source = null;
+                    }
+                    else if (content.Children[0] is LottieView lottie)
+                    {
+                        lottie.Source = null;
+                    }
+                    else if (content.Children[0] is AnimationView video)
+                    {
+                        video.Source = null;
+                    }
+
+                    return;
+                }
+
+                UpdateContainerContent(sticker, content);
+                args.Handled = true;
+            }
+        }
+
+        private async void UpdateContainerContent(StickerViewModel sticker, Grid content)
+        {
+            var file = sticker.StickerValue;
+            if (file == null)
+            {
+                return;
+            }
+
+            if (file.Local.IsFileExisting())
+            {
+                if (content.Children[0] is Border border && border.Child is Image photo)
+                {
+                    photo.Source = await PlaceholderHelper.GetWebPFrameAsync(file.Local.Path, 68);
+                    ElementCompositionPreview.SetElementChildVisual(content.Children[0], null);
+                }
+                else if (content.Children[0] is LottieView lottie)
+                {
+                    lottie.Source = UriEx.ToLocal(file.Local.Path);
+                }
+                else if (content.Children[0] is AnimationView video)
+                {
+                    video.Source = new LocalVideoSource(file);
+                }
+
+                UpdateManager.Unsubscribe(content);
+            }
+            else
+            {
+                if (content.Children[0] is Border border && border.Child is Image photo)
+                {
+                    photo.Source = null;
+                }
+                else if (content.Children[0] is LottieView lottie)
+                {
+                    lottie.Source = null;
+                }
+                else if (content.Children[0] is AnimationView video)
+                {
+                    video.Source = null;
+                }
+
+                content.Tag = sticker;
+
+                CompositionPathParser.ParseThumbnail(sticker, out ShapeVisual visual, false);
+                ElementCompositionPreview.SetElementChildVisual(content.Children[0], visual);
+
+                UpdateManager.Subscribe(content, ViewModel.ProtoService, file, UpdateSticker, true);
+
+                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive /*&& args.Phase == 0*/)
+                {
+                    ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                }
+            }
+        }
+
+        private async void UpdateSticker(object target, File file)
+        {
+            var content = target as Grid;
+            if (content == null)
+            {
+                return;
+            }
+
+            if (content.Children[0] is Border border && border.Child is Image photo)
+            {
+                photo.Source = await PlaceholderHelper.GetWebPFrameAsync(file.Local.Path, 68);
+                ElementCompositionPreview.SetElementChildVisual(content.Children[0], null);
+            }
+            else if (content.Children[0] is LottieView lottie)
+            {
+                lottie.Source = UriEx.ToLocal(file.Local.Path);
+                _handler.ThrottleVisibleItems();
+            }
+            else if (content.Children[0] is AnimationView video)
+            {
+                video.Source = new LocalVideoSource(file);
+                _handler.ThrottleVisibleItems();
+            }
         }
 
         #endregion
+
+        private void Toolbar_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (args.InRecycleQueue)
+            {
+                return;
+            }
+
+            if (args.Item is StickerSetViewModel sticker)
+            {
+                Automation.SetToolTip(args.ItemContainer, sticker.Title);
+
+                var content = args.ItemContainer.ContentTemplateRoot as Grid;
+                var photo = content?.Children[0] as Image;
+
+                if (content == null || sticker == null || (sticker.Thumbnail == null && sticker.Covers == null))
+                {
+                    return;
+                }
+
+                var cover = sticker.GetThumbnail();
+                if (cover == null)
+                {
+                    photo.Source = null;
+                    return;
+                }
+
+                var file = cover.StickerValue;
+                if (file.Local.IsFileExisting())
+                {
+                    if (cover.Format is StickerFormatTgs)
+                    {
+                        photo.Source = PlaceholderHelper.GetLottieFrame(file.Local.Path, 0, 24, 24);
+                    }
+                    else if (cover.Format is StickerFormatWebp)
+                    {
+                        photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path, 24);
+                    }
+                }
+                else
+                {
+                    photo.Source = null;
+                    content.Tag = sticker;
+
+                    UpdateManager.Subscribe(content, ViewModel.ProtoService, file, UpdateStickerSet, true);
+
+                    if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                    {
+                        ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                    }
+                }
+            }
+        }
+
+        private void UpdateStickerSet(object target, File file)
+        {
+            var content = target as Grid;
+            var item = content?.Tag as StickerSetViewModel;
+
+            var photo = content?.Children[0] as Image;
+            if (photo == null)
+            {
+                return;
+            }
+
+            var cover = item.GetThumbnail();
+            if (cover == null)
+            {
+                return;
+            }
+
+            if (cover.Format is StickerFormatTgs)
+            {
+                photo.Source = PlaceholderHelper.GetLottieFrame(file.Local.Path, 0, 24, 24);
+            }
+            else if (cover.Format is StickerFormatWebp)
+            {
+                photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path, 24);
+            }
+        }
     }
 }

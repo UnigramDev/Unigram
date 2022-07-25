@@ -241,7 +241,7 @@
                         <selectors:StickerSetTemplateSelector.FavedTemplate>
                             <DataTemplate x:DataType="viewModels:StickerSetViewModel">
                                 <Border Background="Transparent">
-                                    <FontIcon Glyph="&#xE734;"
+                                    <FontIcon Glyph="&#xE907;"
                                               Style="{StaticResource DefaultFontIconStyle}" />
                                 </Border>
                             </DataTemplate>

@@ -5,6 +5,7 @@
              xmlns:common="using:Unigram.Common"
              xmlns:controls="using:Unigram.Controls"
              xmlns:selectors="using:Unigram.Selectors"
+             xmlns:viewModels="using:Unigram.ViewModels.Drawers"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
@@ -14,13 +15,16 @@
 
     <UserControl.Resources>
         <CollectionViewSource x:Name="EmojiCollection"
+                              Source="{x:Bind ViewModel.Items}"
                               IsSourceGrouped="True"
-                              ItemsPath="Items" />
+                              ItemsPath="Stickers" />
 
         <DataTemplate x:Key="EmojiTemplate"
                       x:DataType="common:EmojiData">
             <TextBlock x:Phase="0"
                        Text="{x:Bind Value, Mode=OneTime}"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
                        FontSize="22"
                        FontFamily="{ThemeResource EmojiThemeFontFamily}" />
         </DataTemplate>
@@ -29,8 +33,33 @@
                       x:DataType="common:EmojiSkinData">
             <TextBlock x:Phase="0"
                        Text="{x:Bind Value, Mode=OneWay}"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
                        FontSize="22"
                        FontFamily="{ThemeResource EmojiThemeFontFamily}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="AnimatedItemTemplate">
+            <Grid Margin="8">
+                <controls:LottieView30Fps x:Name="Player"
+                                          AutoPlay="False" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="VideoItemTemplate">
+            <Grid Margin="8">
+                <controls:AnimationView30Fps x:Name="Player"
+                                             AutoPlay="False"
+                                             IsCachingEnabled="True" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ItemTemplate">
+            <Grid Margin="8">
+                <Border>
+                    <Image />
+                </Border>
+            </Grid>
         </DataTemplate>
 
         <Style x:Key="SkinToneRadioButtonStyle"
@@ -43,6 +72,8 @@
                     Value="0" />
             <Setter Property="Padding"
                     Value="0" />
+            <Setter Property="Margin"
+                    Value="0,0,-4,0" />
             <Setter Property="HorizontalAlignment"
                     Value="Stretch" />
             <Setter Property="VerticalAlignment"
@@ -56,13 +87,13 @@
             <Setter Property="VerticalContentAlignment"
                     Value="Stretch" />
             <Setter Property="Height"
-                    Value="{StaticResource AppBarThemeCompactHeight}" />
+                    Value="40" />
             <Setter Property="Width"
-                    Value="{StaticResource AppBarThemeCompactHeight}" />
+                    Value="40" />
             <Setter Property="MinHeight"
-                    Value="{StaticResource AppBarThemeCompactHeight}" />
+                    Value="40" />
             <Setter Property="MinWidth"
-                    Value="{StaticResource AppBarThemeCompactHeight}" />
+                    Value="40" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ButtonBase">
@@ -138,6 +169,7 @@
                   ItemsSource="{x:Bind EmojiCollection.View, Mode=OneWay}"
                   common:FluidGridView.OrientationOnly="False"
                   ChoosingItemContainer="OnChoosingItemContainer"
+                  ChoosingGroupHeaderContainer="OnChoosingGroupHeaderContainer"
                   ContainerContentChanging="OnContainerContentChanging"
                   ItemClick="ListView_ItemClick"
                   IsItemClickEnabled="True"
@@ -151,8 +183,8 @@
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="GridViewItem">
-                                <ContentPresenter HorizontalContentAlignment="Center"
-                                                  VerticalContentAlignment="Center" />
+                                <ContentPresenter HorizontalContentAlignment="Stretch"
+                                                  VerticalContentAlignment="Stretch" />
                             </ControlTemplate>
                         </Setter.Value>
                     </Setter>
@@ -161,8 +193,13 @@
             <GridView.GroupStyle>
                 <GroupStyle>
                     <GroupStyle.HeaderTemplate>
-                        <DataTemplate x:DataType="common:EmojiGroup">
+                        <!--<DataTemplate x:DataType="common:EmojiGroup">
                             <TextBlock Text="{x:Bind Title}"
+                                       Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                       Style="{StaticResource CaptionTextBlockStyle}" />
+                        </DataTemplate>-->
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Title}"
                                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                                        Style="{StaticResource CaptionTextBlockStyle}" />
                         </DataTemplate>
@@ -170,7 +207,7 @@
                     <GroupStyle.HeaderContainerStyle>
                         <Style TargetType="GridViewHeaderItem">
                             <Setter Property="Background"
-                                    Value="Trasparent" />
+                                    Value="Transparent" />
                             <Setter Property="FontFamily"
                                     Value="{ThemeResource ContentControlThemeFontFamily}" />
                             <Setter Property="FontSize"
@@ -223,97 +260,113 @@
 
         <Grid x:Name="ToolbarContainer">
             <Border x:Name="Separator" />
-            <ScrollViewer VerticalScrollBarVisibility="Disabled"
-                          VerticalScrollMode="Disabled"
-                          HorizontalScrollBarVisibility="Hidden"
-                          HorizontalScrollMode="Auto"
-                          IsHorizontalScrollChainingEnabled="False">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <RadioButton x:Name="SkinDefault"
-                                 Click="SkinTone_Click"
-                                 GroupName="SkinTone"
-                                 Background="#ffc83d"
-                                 Style="{StaticResource SkinToneRadioButtonStyle}">
-                        <common:EmojiSkinTone>Default</common:EmojiSkinTone>
-                    </RadioButton>
-                    <RadioButton x:Name="SkinFitz12"
-                                 Click="SkinTone_Click"
-                                 GroupName="SkinTone"
-                                 Background="#f7d7c4"
-                                 Style="{StaticResource SkinToneRadioButtonStyle}">
-                        <common:EmojiSkinTone>Fitz12</common:EmojiSkinTone>
-                    </RadioButton>
-                    <RadioButton x:Name="SkinFitz3"
-                                 Click="SkinTone_Click"
-                                 GroupName="SkinTone"
-                                 Background="#d8b094"
-                                 Style="{StaticResource SkinToneRadioButtonStyle}">
-                        <common:EmojiSkinTone>Fitz3</common:EmojiSkinTone>
-                    </RadioButton>
-                    <RadioButton x:Name="SkinFitz4"
-                                 Click="SkinTone_Click"
-                                 GroupName="SkinTone"
-                                 Background="#bb9167"
-                                 Style="{StaticResource SkinToneRadioButtonStyle}">
-                        <common:EmojiSkinTone>Fitz4</common:EmojiSkinTone>
-                    </RadioButton>
-                    <RadioButton x:Name="SkinFitz5"
-                                 Click="SkinTone_Click"
-                                 GroupName="SkinTone"
-                                 Background="#8e562e"
-                                 Style="{StaticResource SkinToneRadioButtonStyle}">
-                        <common:EmojiSkinTone>Fitz5</common:EmojiSkinTone>
-                    </RadioButton>
-                    <RadioButton x:Name="SkinFitz6"
-                                 Click="SkinTone_Click"
-                                 GroupName="SkinTone"
-                                 Background="#613d30"
-                                 Style="{StaticResource SkinToneRadioButtonStyle}">
-                        <common:EmojiSkinTone>Fitz6</common:EmojiSkinTone>
-                    </RadioButton>
-                    <GridView x:Name="Toolbar"
-                              Style="{StaticResource StaticGridViewStyle}"
-                              Height="{ThemeResource AppBarThemeCompactHeight}"
-                              IsItemClickEnabled="True"
-                              ItemClick="Toolbar_ItemClick"
-                              SelectionChanged="Toolbar_SelectionChanged"
-                              ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                              ScrollViewer.HorizontalScrollMode="Auto"
-                              ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                              ScrollViewer.VerticalScrollMode="Disabled"
-                              Padding="0"
-                              Grid.Row="1">
-                        <GridView.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <ItemsStackPanel Orientation="Horizontal"
-                                                 HorizontalAlignment="Center" />
-                            </ItemsPanelTemplate>
-                        </GridView.ItemsPanel>
-                        <GridView.ItemContainerStyle>
-                            <Style TargetType="GridViewItem"
-                                   BasedOn="{StaticResource DefaultGridViewItemStyle}">
-                                <Setter Property="Margin"
-                                        Value="0,4,4,4" />
-                                <Setter Property="MinHeight"
-                                        Value="0" />
-                                <Setter Property="MinWidth"
-                                        Value="0" />
-                                <Setter Property="Height"
-                                        Value="40" />
-                                <Setter Property="Width"
-                                        Value="40" />
-                            </Style>
-                        </GridView.ItemContainerStyle>
-                        <!--<GridView.ItemContainerStyle>
+
+            <GridView x:Name="Toolbar2"
+                      ItemsSource="{x:Bind ViewModel.InstalledSets}"
+                      Height="{ThemeResource AppBarThemeCompactHeight}"
+                      IsItemClickEnabled="True"
+                      ItemClick="Toolbar_ItemClick"
+                      ContainerContentChanging="Toolbar_ContainerContentChanging"
+                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                      ScrollViewer.HorizontalScrollMode="Auto"
+                      ScrollViewer.IsHorizontalScrollChainingEnabled="False"
+                      ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                      ScrollViewer.VerticalScrollMode="Disabled"
+                      Padding="4,0,0,0"
+                      Grid.Row="0">
+                <GridView.Header>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <RadioButton x:Name="SkinDefault"
+                                     Click="SkinTone_Click"
+                                     GroupName="SkinTone"
+                                     Background="#ffc83d"
+                                     Style="{StaticResource SkinToneRadioButtonStyle}">
+                            <common:EmojiSkinTone>Default</common:EmojiSkinTone>
+                        </RadioButton>
+                        <RadioButton x:Name="SkinFitz12"
+                                     Click="SkinTone_Click"
+                                     GroupName="SkinTone"
+                                     Background="#f7d7c4"
+                                     Style="{StaticResource SkinToneRadioButtonStyle}">
+                            <common:EmojiSkinTone>Fitz12</common:EmojiSkinTone>
+                        </RadioButton>
+                        <RadioButton x:Name="SkinFitz3"
+                                     Click="SkinTone_Click"
+                                     GroupName="SkinTone"
+                                     Background="#d8b094"
+                                     Style="{StaticResource SkinToneRadioButtonStyle}">
+                            <common:EmojiSkinTone>Fitz3</common:EmojiSkinTone>
+                        </RadioButton>
+                        <RadioButton x:Name="SkinFitz4"
+                                     Click="SkinTone_Click"
+                                     GroupName="SkinTone"
+                                     Background="#bb9167"
+                                     Style="{StaticResource SkinToneRadioButtonStyle}">
+                            <common:EmojiSkinTone>Fitz4</common:EmojiSkinTone>
+                        </RadioButton>
+                        <RadioButton x:Name="SkinFitz5"
+                                     Click="SkinTone_Click"
+                                     GroupName="SkinTone"
+                                     Background="#8e562e"
+                                     Style="{StaticResource SkinToneRadioButtonStyle}">
+                            <common:EmojiSkinTone>Fitz5</common:EmojiSkinTone>
+                        </RadioButton>
+                        <RadioButton x:Name="SkinFitz6"
+                                     Click="SkinTone_Click"
+                                     GroupName="SkinTone"
+                                     Background="#613d30"
+                                     Style="{StaticResource SkinToneRadioButtonStyle}">
+                            <common:EmojiSkinTone>Fitz6</common:EmojiSkinTone>
+                        </RadioButton>
+                        <Border x:Name="ToolbarPill"
+                                Background="{ThemeResource ControlFillColorDefaultBrush}"
+                                CornerRadius="4"
+                                Height="32"
+                                Grid.Column="1" />
+                        <GridView x:Name="Toolbar"
+                                  ItemsSource="{x:Bind ViewModel.StandardSets}"
+                                  Height="{ThemeResource AppBarThemeCompactHeight}"
+                                  IsItemClickEnabled="True"
+                                  ItemClick="Toolbar_ItemClick"
+                                  SelectionChanged="Toolbar_SelectionChanged"
+                                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                  ScrollViewer.HorizontalScrollMode="Auto"
+                                  ScrollViewer.IsHorizontalScrollChainingEnabled="True"
+                                  ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                  ScrollViewer.VerticalScrollMode="Disabled"
+                                  Padding="0"
+                                  Grid.Row="1">
+                            <GridView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <ItemsStackPanel Orientation="Horizontal"
+                                                     HorizontalAlignment="Center" />
+                                </ItemsPanelTemplate>
+                            </GridView.ItemsPanel>
+                            <GridView.ItemContainerStyle>
+                                <Style TargetType="GridViewItem"
+                                       BasedOn="{StaticResource DefaultGridViewItemStyle}">
+                                    <Setter Property="Margin"
+                                            Value="0,4,0,4" />
+                                    <Setter Property="MinHeight"
+                                            Value="0" />
+                                    <Setter Property="MinWidth"
+                                            Value="0" />
+                                    <Setter Property="Height"
+                                            Value="32" />
+                                    <Setter Property="Width"
+                                            Value="32" />
+                                </Style>
+                            </GridView.ItemContainerStyle>
+                            <!--<GridView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
                                 <Setter Property="FontFamily"
                                         Value="{ThemeResource ContentControlThemeFontFamily}" />
@@ -396,27 +449,101 @@
                                 </Setter>
                             </Style>
                         </GridView.ItemContainerStyle>-->
-                        <GridView.ItemTemplate>
-                            <DataTemplate x:DataType="common:EmojiGroup">
-                                <Border AutomationProperties.Name="{x:Bind Title}"
-                                        ToolTipService.ToolTip="{x:Bind Title}"
-                                        Background="Transparent">
-                                    <TextBlock Text="{x:Bind Glyph}"
-                                               FontFamily="{StaticResource TelegramThemeFontFamily}"
-                                               FontSize="20"
-                                               HorizontalAlignment="Center"
-                                               VerticalAlignment="Center"
-                                               IsColorFontEnabled="False"
-                                               Margin="10"/>
+                            <GridView.ItemTemplate>
+                                <DataTemplate x:DataType="common:EmojiGroup">
+                                    <Border AutomationProperties.Name="{x:Bind Title}"
+                                            ToolTipService.ToolTip="{x:Bind Title}"
+                                            Background="Transparent">
+                                        <TextBlock Text="{x:Bind Glyph}"
+                                                   FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                                   FontSize="20"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"
+                                                   IsColorFontEnabled="False"
+                                                   Margin="0" />
+                                    </Border>
+                                </DataTemplate>
+                            </GridView.ItemTemplate>
+                            <GridView.ItemContainerTransitions>
+                                <TransitionCollection />
+                            </GridView.ItemContainerTransitions>
+                        </GridView>
+                    </Grid>
+                </GridView.Header>
+                <GridView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <ItemsStackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </GridView.ItemsPanel>
+                <GridView.ItemContainerStyle>
+                    <Style TargetType="GridViewItem"
+                           BasedOn="{StaticResource DefaultGridViewItemStyle}">
+                        <Setter Property="Margin"
+                                Value="0,4,4,4" />
+                        <Setter Property="MinHeight"
+                                Value="0" />
+                        <Setter Property="MinWidth"
+                                Value="0" />
+                        <Setter Property="Height"
+                                Value="32" />
+                        <Setter Property="Width"
+                                Value="32" />
+                    </Style>
+                </GridView.ItemContainerStyle>
+                <GridView.ItemTemplateSelector>
+                    <selectors:StickerSetTemplateSelector>
+                        <selectors:StickerSetTemplateSelector.ItemTemplate>
+                            <DataTemplate x:DataType="viewModels:StickerSetViewModel">
+                                <Grid Padding="4">
+                                    <Image />
+                                </Grid>
+                            </DataTemplate>
+                        </selectors:StickerSetTemplateSelector.ItemTemplate>
+                        <selectors:StickerSetTemplateSelector.GroupTemplate>
+                            <DataTemplate x:DataType="viewModels:StickerSetViewModel">
+                                <controls:ProfilePicture Margin="6"
+                                                         IsEnabled="False" />
+                            </DataTemplate>
+                        </selectors:StickerSetTemplateSelector.GroupTemplate>
+                        <selectors:StickerSetTemplateSelector.RecentsTemplate>
+                            <DataTemplate x:DataType="viewModels:StickerSetViewModel">
+                                <Border Background="Transparent">
+                                    <FontIcon Glyph="&#xE911;"
+                                              FontFamily="{StaticResource TelegramThemeFontFamily}" />
                                 </Border>
                             </DataTemplate>
-                        </GridView.ItemTemplate>
-                        <GridView.ItemContainerTransitions>
-                            <TransitionCollection />
-                        </GridView.ItemContainerTransitions>
-                    </GridView>
-                </Grid>
-            </ScrollViewer>
+                        </selectors:StickerSetTemplateSelector.RecentsTemplate>
+                        <selectors:StickerSetTemplateSelector.FavedTemplate>
+                            <DataTemplate x:DataType="viewModels:StickerSetViewModel">
+                                <Border Background="Transparent">
+                                    <FontIcon Glyph="&#xE734;"
+                                              Style="{StaticResource DefaultFontIconStyle}" />
+                                </Border>
+                            </DataTemplate>
+                        </selectors:StickerSetTemplateSelector.FavedTemplate>
+                        <selectors:StickerSetTemplateSelector.PremiumTemplate>
+                            <DataTemplate x:DataType="viewModels:StickerSetViewModel">
+                                <Border Background="Transparent">
+                                    <Path x:Name="Premium"
+                                          Style="{StaticResource PremiumStar}"
+                                          Data="M7.09231585,13.4264476 C7.42230464,13.2258737 7.58729952,13.1255862 7.76349534,13.0864088 C7.91934214,13.0517569 8.0807894,13.0517569 8.23663718,13.0864088 C8.412833,13.1255862 8.5778269,13.2258737 8.90781568,13.4264476 L9.8960595,14.0271218 C11.0192144,14.7097971 11.5807924,15.0511353 11.9788751,14.9858831 C12.3243855,14.9292478 12.6225906,14.7099575 12.7820265,14.3952726 C12.9657208,14.0327048 12.8164191,13.3881932 12.5178156,12.0991701 L12.2589784,10.9818082 C12.1708252,10.6012698 12.1267492,10.4109995 12.1442279,10.2288932 C12.1596874,10.0678233 12.2098027,9.91210933 12.2910696,9.77263849 C12.3829498,9.61495204 12.5293754,9.48720774 12.8222286,9.23171915 L13.6824623,8.48123659 C14.6771801,7.6134299 15.1745381,7.17952705 15.2368176,6.77670943 C15.290871,6.42710583 15.1767871,6.07240915 14.9296261,5.82160539 C14.6448424,5.53262592 13.9899299,5.4766707 12.6801039,5.36476027 L11.5427555,5.26758742 C11.1586059,5.23476565 10.9665306,5.21835527 10.8009096,5.14570987 C10.6544179,5.08145438 10.5235356,4.98575917 10.4173565,4.86527463 C10.2973132,4.7290568 10.221915,4.54990472 10.0711185,4.19160055 L9.62010141,3.11994704 C9.11015129,1.9082631 8.85517721,1.30242114 8.49593289,1.11924836 C8.18410224,0.960250548 7.81603028,0.960250548 7.50419963,1.11924836 C7.1449563,1.30242114 6.88998123,1.9082641 6.38003012,3.11995003 L5.92901406,4.19160155 C5.77821853,4.54990472 5.70282126,4.7290568 5.58277801,4.86527463 C5.47659888,4.98575917 5.34571655,5.08145338 5.19922392,5.14570987 C5.03360292,5.21835527 4.84152761,5.23476565 4.45737699,5.26758742 L2.77835797,5.41104012 C1.92688683,5.48378907 1.50115077,5.52016354 1.28095481,5.65465381 C0.813658939,5.94006664 0.624418371,6.52844276 0.836452248,7.03667775 C0.936364382,7.2761642 1.25967993,7.55823043 1.90631202,8.12236188 L1.90631202,8.12236188 C2.17435254,8.35620462 2.30837329,8.47312649 2.45374485,8.56131202 C2.75543057,8.74432249 3.10011762,8.84246816 3.45203795,8.84556184 C3.62161476,8.84705343 3.79637793,8.81805322 4.14590228,8.7600538 L7.07396348,8.2741766 C7.97944363,8.12392317 8.43218419,8.04879645 8.53990149,8.13872348 C8.63227074,8.21583764 8.6718191,8.34014573 8.64121176,8.4571602 C8.60551865,8.593618 8.19417125,8.79884487 7.37147448,9.20930062 L4.97255882,10.4061554 C4.57406785,10.6049688 4.37482236,10.7043751 4.20850919,10.8385069 C3.97532468,11.0265716 3.78744775,11.2656269 3.65903338,11.5376623 C3.56744602,11.7316854 3.51682391,11.9502111 3.41558068,12.3872624 L3.41558068,12.3872624 C3.17367305,13.4315397 3.05271874,13.9536778 3.1607762,14.2609854 C3.31266816,14.6929596 3.71168073,14.98638 4.16541321,14.9997624 C4.48819928,15.0092814 4.94315045,14.7327534 5.8530528,14.1796962 L7.09231585,13.4264476 Z" />
+                                </Border>
+                            </DataTemplate>
+                        </selectors:StickerSetTemplateSelector.PremiumTemplate>
+                    </selectors:StickerSetTemplateSelector>
+                </GridView.ItemTemplateSelector>
+                <!--<GridView.Footer>
+                    <StackPanel Orientation="Horizontal">
+                        <controls:GlyphButton Click="Settings_Click"
+                                              Width="{ThemeResource AppBarThemeCompactHeight}"
+                                              Height="{ThemeResource AppBarThemeCompactHeight}"
+                                              Glyph="&#xE713;" />
+                    </StackPanel>
+                </GridView.Footer>-->
+                <GridView.ItemContainerTransitions>
+                    <TransitionCollection />
+                </GridView.ItemContainerTransitions>
+            </GridView>
         </Grid>
     </Grid>
 </UserControl>

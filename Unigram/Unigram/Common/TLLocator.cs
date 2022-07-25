@@ -359,6 +359,14 @@
                     _settingsService,
                     _eventAggregator);
             }
+            else if (type == typeof(Unigram.ViewModels.Drawers.EmojiDrawerViewModel))
+            {
+                return (T)(object)new Unigram.ViewModels.Drawers.EmojiDrawerViewModel(
+                    _protoService,
+                    _cacheService,
+                    _settingsService,
+                    _eventAggregator);
+            }
             else if (type == typeof(Unigram.ViewModels.Drawers.StickerDrawerViewModel))
             {
                 return (T)(object)new Unigram.ViewModels.Drawers.StickerDrawerViewModel(
