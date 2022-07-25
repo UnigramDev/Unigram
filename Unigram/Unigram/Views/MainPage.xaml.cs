@@ -769,9 +769,9 @@ namespace Unigram.Views
                     scrollViewer.ChangeView(null, 0, null);
                     args.Handled = true;
                 }
-                else if (ViewModel.Chats.Items.ChatList is ChatListFilter or ChatListArchive)
+                else if (ViewModel.Filters.Count > 0 && !ViewModel.Chats.Items.ChatList.ListEquals(ViewModel.Filters[0].ChatList))
                 {
-                    UpdateFilter(ChatFilterViewModel.Main);
+                    UpdateFilter(ViewModel.Filters[0]);
                     args.Handled = true;
                 }
             }
@@ -2059,7 +2059,7 @@ namespace Unigram.Views
 
         private void OnUpdate(object sender, EventArgs e)
         {
-            Bindings.Update();
+            //Bindings.Update();
         }
 
         private void DialogsSearchListView_ChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)

@@ -73,7 +73,11 @@ namespace Unigram.ViewModels
                 }
             };
 
-            Chats = new ChatListViewModel(protoService, cacheService, settingsService, aggregator, pushService, new ChatListMain());
+            ChatList chatList = CacheService.MainChatListPosition > 0 && CacheService.ChatFilters.Count > 0
+                ? new ChatListFilter(CacheService.ChatFilters[0].Id)
+                : new ChatListMain();
+
+            Chats = new ChatListViewModel(protoService, cacheService, settingsService, aggregator, pushService, chatList);
             Contacts = new ContactsViewModel(protoService, cacheService, settingsService, aggregator, contactsService);
             Calls = new CallsViewModel(protoService, cacheService, settingsService, aggregator);
             Settings = new SettingsViewModel(protoService, cacheService, settingsService, storageService, aggregator, settingsSearchService);
