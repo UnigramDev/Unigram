@@ -7,6 +7,7 @@
                   xmlns:chats="using:Unigram.Controls.Chats"
                   xmlns:messages="using:Unigram.Controls.Messages"
                   xmlns:selectors="using:Unigram.Selectors"
+                  xmlns:icons="using:Unigram.Assets.Icons"
                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                   xmlns:contract7Present="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 7)"
@@ -1023,7 +1024,7 @@
 
         <controls:StickerPanel x:Name="StickersPanel"
                                Visibility="Collapsed"
-                               Margin="0,56,0,48"
+                               Margin="0,56,0,56"
                                MaxWidth="664"
                                Canvas.ZIndex="3"
                                Grid.Row="2"
@@ -1142,7 +1143,7 @@
                         Grid.Row="1">
                     <controls:GlyphButton x:Name="ButtonAttach"
                                           Click="Attach_Click"
-                                          Glyph="&#xE917;"
+                                          Glyph="&#xE9D8;"
                                           AllowFocusOnInteraction="False"
                                           VerticalAlignment="Bottom"
                                           FontFamily="{StaticResource TelegramThemeFontFamily}"
@@ -1233,7 +1234,7 @@
                         <!-- Button to access scheduled messages -->
                         <Border x:Name="btnScheduled">
                             <controls:GlyphButton x:Name="ButtonScheduled"
-                                                  Glyph="&#xE81C;"
+                                                  Glyph="&#xE9DA;"
                                                   Command="{x:Bind ViewModel.ScheduledCommand}"
                                                   FontSize="{StaticResource GlyphLargeFontSize}"
                                                   AutomationProperties.Name="{CustomResource ScheduledMessages}"
@@ -1242,17 +1243,19 @@
                         </Border>
 
                         <!-- Button to toggle silent mode, channels only -->
-                        <controls:AnimatedGlyphToggleButton x:Name="ButtonSilent"
-                                                            Glyph="&#xEA8F;"
-                                                            CheckedGlyph="&#xE7ED;"
-                                                            Command="{x:Bind ViewModel.ToggleSilentCommand}"
-                                                            FontSize="{StaticResource GlyphLargeFontSize}"
-                                                            VerticalAlignment="Bottom"
-                                                            Grid.Column="1" />
+                        <controls:AnimatedIconToggleButton x:Name="ButtonSilent"
+                                                           Command="{x:Bind ViewModel.ToggleSilentCommand}"
+                                                           FontSize="{StaticResource GlyphLargeFontSize}"
+                                                           VerticalAlignment="Bottom"
+                                                           Grid.Column="1">
+                            <controls:AnimatedIconToggleButton.Source>
+                                <icons:MuteUnmute />
+                            </controls:AnimatedIconToggleButton.Source>
+                        </controls:AnimatedIconToggleButton>
 
                         <!-- Button to change self-destructing timer, secret chats only -->
                         <controls:GlyphButton x:Name="ButtonTimer"
-                                              Glyph="&#xE916;"
+                                              Glyph="&#xE9DB;"
                                               Command="{x:Bind ViewModel.SetTimerCommand}"
                                               FontSize="{StaticResource GlyphLargeFontSize}"
                                               VerticalAlignment="Bottom"
@@ -1264,7 +1267,7 @@
                             <controls:GlyphButton x:Name="ButtonCommands"
                                                   Click="Commands_Click"
                                                   AllowFocusOnInteraction="False"
-                                                  Glyph="&#xE613;"
+                                                  Glyph="&#xE9DC;"
                                                   Visibility="{x:Bind ViewModel.HasBotCommands, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                                   FontFamily="{StaticResource TelegramThemeFontFamily}"
                                                   FontSize="{StaticResource GlyphLargeFontSize}"
@@ -1280,7 +1283,7 @@
                             <controls:AnimatedGlyphButton x:Name="ButtonMarkup"
                                                           Click="Markup_Click"
                                                           AllowFocusOnInteraction="False"
-                                                          Glyph="&#xF122;"
+                                                          Glyph="&#xE9D5;"
                                                           Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                                           FontFamily="{StaticResource TelegramThemeFontFamily}"
                                                           FontSize="{StaticResource GlyphLargeFontSize}"
@@ -1295,7 +1298,6 @@
                     <chats:ChatStickerButton x:Name="ButtonStickers"
                                              Click="Stickers_Click"
                                              AllowFocusOnInteraction="False"
-                                             Glyph="&#xF4AA;"
                                              VerticalAlignment="Bottom"
                                              AutomationProperties.Name="{CustomResource AccDescrEmojiButton}"
                                              Grid.Column="1" />
@@ -1312,7 +1314,11 @@
                                                 RecordingLocked="VoiceButton_RecordingLocked"
                                                 QuantumProcessed="VoiceButton_QuantumProcessed"
                                                 ManipulationDelta="VoiceButton_ManipulationDelta"
-                                                ManipulationMode="TranslateX,TranslateY" />
+                                                ManipulationMode="TranslateX,TranslateY">
+                            <controls:AnimatedIconToggleButton.Source>
+                                <icons:VoiceVideo />
+                            </controls:AnimatedIconToggleButton.Source>
+                        </chats:ChatRecordButton>
                     </Grid>
 
                     <chats:ChatSendButton x:Name="btnSendMessage"

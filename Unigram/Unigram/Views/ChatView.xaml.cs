@@ -251,18 +251,7 @@ namespace Unigram.Views
             ActionBar.InitializeParent(ClipperActionBar);
             PinnedMessage.InitializeParent(Clipper);
 
-            switch (ViewModel.Settings.Stickers.SelectedTab)
-            {
-                case Services.Settings.StickersTab.Emoji:
-                    ButtonStickers.Glyph = Icons.Emoji;
-                    break;
-                case Services.Settings.StickersTab.Animations:
-                    ButtonStickers.Glyph = Icons.Gif;
-                    break;
-                case Services.Settings.StickersTab.Stickers:
-                    ButtonStickers.Glyph = Icons.Sticker;
-                    break;
-            }
+            ButtonStickers.Source = ViewModel.Settings.Stickers.SelectedTab;
         }
 
         private void InitializeAutomation()
@@ -1580,7 +1569,7 @@ namespace Unigram.Views
         {
             ReplyMarkupPanel.Visibility = Visibility.Collapsed;
 
-            ButtonMarkup.Glyph = Icons.AppFolder;
+            ButtonMarkup.Glyph = Icons.BotMarkup24;
             Automation.SetToolTip(ButtonMarkup, Strings.Resources.AccDescrBotCommands);
 
             if (keyboard)
@@ -2642,8 +2631,8 @@ namespace Unigram.Views
 
             ChatRecordPopup.IsOpen = true;
             ChatRecordGlyph.Text = btnVoiceMessage.Mode == ChatRecordMode.Video
-                ? Icons.VideoFilled
-                : Icons.MicOnFilled;
+                ? Icons.VideoNoteFilled24
+                : Icons.MicOnFilled24;
 
             var slideWidth = SlidePanel.ActualSize.X;
             var elapsedWidth = ElapsedPanel.ActualSize.X;
@@ -3107,19 +3096,7 @@ namespace Unigram.Views
             batch.End();
 
             ButtonStickers.IsChecked = false;
-
-            switch (ViewModel.Settings.Stickers.SelectedTab)
-            {
-                case Services.Settings.StickersTab.Emoji:
-                    ButtonStickers.Glyph = Icons.Emoji;
-                    break;
-                case Services.Settings.StickersTab.Animations:
-                    ButtonStickers.Glyph = Icons.Gif;
-                    break;
-                case Services.Settings.StickersTab.Stickers:
-                    ButtonStickers.Glyph = Icons.Sticker;
-                    break;
-            }
+            ButtonStickers.Source = ViewModel.Settings.Stickers.SelectedTab;
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
@@ -3717,7 +3694,7 @@ namespace Unigram.Views
                 AttachContact.Visibility = Visibility.Visible;
                 AttachCurrent.Visibility = Visibility.Collapsed;
 
-                ButtonAttach.Glyph = Icons.Attach;
+                ButtonAttach.Glyph = Icons.Attach24;
                 ButtonAttach.IsEnabled = true;
 
                 SecondaryButtonsPanel.Visibility = Visibility.Visible;
@@ -3741,19 +3718,19 @@ namespace Unigram.Views
                         case MessageAnimation animation:
                         case MessageAudio audio:
                         case MessageDocument document:
-                            ButtonAttach.Glyph = Icons.AttachArrowRight;
+                            ButtonAttach.Glyph = Icons.AttachArrowRight24;
                             ButtonAttach.IsEnabled = true;
                             break;
                         case MessagePhoto photo:
-                            ButtonAttach.Glyph = !photo.IsSecret ? Icons.AttachArrowRight : Icons.Attach;
+                            ButtonAttach.Glyph = !photo.IsSecret ? Icons.AttachArrowRight24 : Icons.Attach24;
                             ButtonAttach.IsEnabled = !photo.IsSecret;
                             break;
                         case MessageVideo video:
-                            ButtonAttach.Glyph = !video.IsSecret ? Icons.AttachArrowRight : Icons.Attach;
+                            ButtonAttach.Glyph = !video.IsSecret ? Icons.AttachArrowRight24 : Icons.Attach24;
                             ButtonAttach.IsEnabled = !video.IsSecret;
                             break;
                         default:
-                            ButtonAttach.Glyph = Icons.Attach;
+                            ButtonAttach.Glyph = Icons.Attach24;
                             ButtonAttach.IsEnabled = false;
                             break;
                     }
@@ -3795,7 +3772,7 @@ namespace Unigram.Views
                     AttachContact.Visibility = Visibility.Visible;
                     AttachCurrent.Visibility = Visibility.Collapsed;
 
-                    ButtonAttach.Glyph = Icons.Attach;
+                    ButtonAttach.Glyph = Icons.Attach24;
                     ButtonAttach.IsEnabled = true;
 
                     if (header.WebPagePreview != null)
@@ -4057,7 +4034,7 @@ namespace Unigram.Views
             ButtonManage.CornerRadius = new CornerRadius(min, 4, 4, min);
 
             ComposerHeaderCancel.CornerRadius = new CornerRadius(4, min, 4, 4);
-            TextRoot.CornerRadius = ChatFooter.CornerRadius = ChatRecord.CornerRadius = ManagePanel.CornerRadius = new CornerRadius(radius, radius, 0, 0);
+            TextRoot.CornerRadius = ChatFooter.CornerRadius = ChatRecord.CornerRadius = ManagePanel.CornerRadius = new CornerRadius(radius);
 
             // It would be cool to have shadow to respect text field corner radius
             //Separator.CornerRadius = new CornerRadius(radius);
@@ -4069,7 +4046,7 @@ namespace Unigram.Views
             {
                 TextArea.MaxWidth = ChatRecord.MaxWidth = ChatFooter.MaxWidth = ManagePanel.MaxWidth = InlinePanel.MaxWidth = Separator.MaxWidth =
                     SettingsService.Current.IsAdaptiveWideEnabled ? 640 : double.PositiveInfinity;
-                TextArea.Margin = ChatRecord.Margin = ChatFooter.Margin = ManagePanel.Margin = Separator.Margin = new Thickness(12, 0, 12, 0);
+                TextArea.Margin = ChatRecord.Margin = ChatFooter.Margin = ManagePanel.Margin = Separator.Margin = new Thickness(12, 0, 12, 8);
                 InlinePanel.Margin = new Thickness(12, 0, 12, -radius);
             }
             else

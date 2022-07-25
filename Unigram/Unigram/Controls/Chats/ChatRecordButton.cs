@@ -30,7 +30,7 @@ namespace Unigram.Controls.Chats
         Video
     }
 
-    public class ChatRecordButton : AnimatedGlyphToggleButton
+    public class ChatRecordButton : AnimatedIconToggleButton
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
@@ -62,8 +62,6 @@ namespace Unigram.Controls.Chats
 
         public ChatRecordButton()
         {
-            DefaultStyleKey = typeof(ChatRecordButton);
-
             Mode = ChatRecordMode.Voice;
 
             ClickMode = ClickMode.Press;

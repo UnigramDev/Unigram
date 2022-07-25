@@ -14,7 +14,9 @@ namespace Unigram.Converters
         public const string Loading = "\uE1CD";
 
         public const string Attach = "\uE917";
+        public const string Attach24 = "\uE9D8";
         public const string AttachArrowRight = "\uE918";
+        public const string AttachArrowRight24 = "\uE9DD";
 
         public const string Expand = "\uF164";
         public const string Collapse = "\uF166";
@@ -57,6 +59,9 @@ namespace Unigram.Converters
         public const string Megaphone = "\uE789";
         public const string LockClosed = "\uE72E";
         public const string Bot = "\uE99A";
+
+        public const string Gift = "\uE9D3";
+        public const string GiftPremium = "\uE9D4";
 
         public const string PeopleFilled16 = "\uE983";
         public const string MegaphoneFilled16 = "\uE982";
@@ -150,6 +155,8 @@ namespace Unigram.Converters
         public const string Video = "\uE714";
         public const string SmallVideoFilled = "\uE915";
         public const string VideoFilled = "\uE964";
+        public const string VideoNoteFilled24 = "\uE9D6";
+        public const string MicOnFilled24 = "\uE9D7";
         public const string VideoOffFilled = "\uE963";
         public const string SmallScreencastFilled = "\uE910";
         public const string ShareScreenFilled = "\uE956";
@@ -199,6 +206,8 @@ namespace Unigram.Converters
         public const string EmojiHand = "\uE901";
 
         public const string AppFolder = "\uF122";
+
+        public const string BotMarkup24 = "\uE9D5";
 
         public const string ChatBubblesQuestion = "\uE783";
         public const string ChatMultiple = "\uE992";

@@ -1,119 +1,163 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml.Controls;
 using System.Numerics;
+using Unigram.Assets.Icons;
+using Unigram.Services.Settings;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
+using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Chats
 {
     public class ChatStickerButton : ToggleButton
     {
-        private TextBlock _label1;
-        private TextBlock _label2;
+        private Border Icon;
 
-        private Visual _visual1;
-        private Visual _visual2;
+        // This should be held in memory, or animation will stop
+        private CompositionPropertySet _props;
 
-        private TextBlock _label;
-        private Visual _visual;
+        private IAnimatedVisual _previous;
+        private IAnimatedVisualSource2 _source;
 
         public ChatStickerButton()
         {
             DefaultStyleKey = typeof(ChatStickerButton);
+            RegisterPropertyChangedCallback(ForegroundProperty, OnForegroundChanged);
+        }
+
+        private void OnForegroundChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            if (_source != null && Foreground is SolidColorBrush foreground)
+            {
+                _source.SetColorProperty("Color_000000", foreground.Color);
+            }
         }
 
         protected override void OnApplyTemplate()
         {
-            _label1 = _label = GetTemplateChild("ContentPresenter1") as TextBlock;
-            _label2 = GetTemplateChild("ContentPresenter2") as TextBlock;
+            Icon = GetTemplateChild(nameof(Icon)) as Border;
 
-            _visual1 = _visual = ElementCompositionPreview.GetElementVisual(_label1);
-            _visual2 = ElementCompositionPreview.GetElementVisual(_label2);
-
-            _label2.Text = string.Empty;
-
-            _visual2.Opacity = 0;
-            _visual2.Scale = new Vector3();
-            _visual2.CenterPoint = new Vector3(10);
-
-            _label1.Text = Glyph ?? string.Empty;
-
-            _visual1.Opacity = 1;
-            _visual1.Scale = new Vector3(1);
-            _visual1.CenterPoint = new Vector3(10);
-
+            OnSourceChanged(Source, StickersTab.None);
             base.OnApplyTemplate();
         }
 
-        #region Glyph
+        #region Source
 
-        public string Glyph
+        public StickersTab Source
         {
-            get => (string)GetValue(GlyphProperty);
-            set => SetValue(GlyphProperty, value);
+            get { return (StickersTab)GetValue(SourceProperty); }
+            set { SetValue(SourceProperty, value); }
         }
 
-        public static readonly DependencyProperty GlyphProperty =
-            DependencyProperty.Register("Glyph", typeof(string), typeof(ChatStickerButton), new PropertyMetadata(null, OnGlyphChanged));
+        public static readonly DependencyProperty SourceProperty =
+            DependencyProperty.Register("Source", typeof(StickersTab), typeof(ChatStickerButton), new PropertyMetadata(StickersTab.None, OnSourceChanged));
 
-        private static void OnGlyphChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((ChatStickerButton)d).OnGlyphChanged((string)e.NewValue, (string)e.OldValue);
+            ((ChatStickerButton)d).OnSourceChanged((StickersTab)e.NewValue, (StickersTab)e.OldValue);
         }
 
         #endregion
 
-        private void OnGlyphChanged(string newValue, string oldValue)
+        private void OnSourceChanged(StickersTab newValue, StickersTab oldValue)
         {
-            if (string.IsNullOrEmpty(oldValue) || string.IsNullOrEmpty(newValue))
+            if (newValue == oldValue || Icon == null)
             {
                 return;
             }
 
-            if (string.Equals(newValue, oldValue, StringComparison.OrdinalIgnoreCase))
+            if (_previous != null)
             {
-                return;
+                _previous.Dispose();
+                _previous = null;
             }
 
-            if (_visual == null || _label == null)
+            if (_props != null)
             {
-                return;
+                _props.Dispose();
+                _props = null;
             }
 
-            var visualShow = _visual == _visual1 ? _visual2 : _visual1;
-            var visualHide = _visual == _visual1 ? _visual1 : _visual2;
+            var animate = oldValue != StickersTab.None;
+            var visual = GetVisual(newValue, oldValue, animate, Window.Current.Compositor, out var source, out _props);
 
-            var labelShow = _visual == _visual1 ? _label2 : _label1;
-            var labelHide = _visual == _visual1 ? _label1 : _label2;
+            _source = source;
+            _previous = visual;
 
-            var hide1 = _visual.Compositor.CreateVector3KeyFrameAnimation();
-            hide1.InsertKeyFrame(0, new Vector3(1));
-            hide1.InsertKeyFrame(1, new Vector3(0));
+            if (Foreground is SolidColorBrush brush)
+            {
+                source.SetColorProperty("Color_000000", brush.Color);
+            }
 
-            var hide2 = _visual.Compositor.CreateScalarKeyFrameAnimation();
-            hide2.InsertKeyFrame(0, 1);
-            hide2.InsertKeyFrame(1, 0);
+            ElementCompositionPreview.SetElementChildVisual(Icon, visual?.RootVisual);
+        }
 
-            visualHide.StartAnimation("Scale", hide1);
-            visualHide.StartAnimation("Opacity", hide2);
+        private IAnimatedVisual GetVisual(StickersTab newValue, StickersTab oldValue, bool animate, Compositor compositor, out IAnimatedVisualSource2 source, out CompositionPropertySet properties)
+        {
+            source = GetVisual(newValue, oldValue);
 
-            labelShow.Text = newValue;
+            if (source == null)
+            {
+                properties = null;
+                return null;
+            }
 
-            var show1 = _visual.Compositor.CreateVector3KeyFrameAnimation();
-            show1.InsertKeyFrame(1, new Vector3(1));
-            show1.InsertKeyFrame(0, new Vector3(0));
+            var visual = source.TryCreateAnimatedVisual(compositor, out _);
+            if (visual == null)
+            {
+                properties = null;
+                return null;
+            }
 
-            var show2 = _visual.Compositor.CreateScalarKeyFrameAnimation();
-            show2.InsertKeyFrame(1, 1);
-            show2.InsertKeyFrame(0, 0);
+            properties = compositor.CreatePropertySet();
+            properties.InsertScalar("Progress", animate ? 0.0F : 1.0F);
 
-            visualShow.StartAnimation("Scale", show1);
-            visualShow.StartAnimation("Opacity", show2);
+            var progressAnimation = compositor.CreateExpressionAnimation("_.Progress");
+            progressAnimation.SetReferenceParameter("_", properties);
+            visual.RootVisual.Properties.InsertScalar("Progress", animate ? 0.0F : 1.0F);
+            visual.RootVisual.Properties.StartAnimation("Progress", progressAnimation);
 
-            _visual = visualShow;
-            _label = labelShow;
+            visual.RootVisual.Scale = new Vector3(0.1f, 0.1f, 0);
+
+            if (animate)
+            {
+                var linearEasing = compositor.CreateLinearEasingFunction();
+                var animation = compositor.CreateScalarKeyFrameAnimation();
+                animation.Duration = visual.Duration;
+                animation.InsertKeyFrame(1, 1, linearEasing);
+
+                properties.StartAnimation("Progress", animation);
+            }
+
+            return visual;
+        }
+
+        private IAnimatedVisualSource2 GetVisual(StickersTab newValue, StickersTab oldValue)
+        {
+            return newValue switch
+            {
+                StickersTab.Emoji => oldValue switch
+                {
+                    StickersTab.Stickers => new StickerToEmoji(),
+                    StickersTab.Animations => new GifToEmoji(),
+                    _ => new GifToEmoji()
+                },
+                StickersTab.Stickers => oldValue switch
+                {
+                    StickersTab.Emoji => new EmojiToSticker(),
+                    StickersTab.Animations => new GifToSticker(),
+                    _ => new GifToSticker()
+                },
+                StickersTab.Animations => oldValue switch
+                {
+                    StickersTab.Emoji => new EmojiToGif(),
+                    StickersTab.Stickers => new StickerToGif(),
+                    _ => new StickerToGif()
+                },
+                _ => null
+            };
         }
 
         protected override void OnToggle()

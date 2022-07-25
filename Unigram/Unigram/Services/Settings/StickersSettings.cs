@@ -14,7 +14,8 @@ namespace Unigram.Services.Settings
     {
         Emoji,
         Animations,
-        Stickers
+        Stickers,
+        None
     }
 
     public class StickersSettings : SettingsServiceBase
