@@ -1,4 +1,5 @@
-﻿using Microsoft.Graphics.Canvas.Geometry;
+﻿using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,18 +32,23 @@ namespace Unigram.Common
 
         public static CompositionPath Parse(IList<ClosedVectorPath> contours)
         {
-            var builder = new CanvasPathBuilder(null);
+            return new CompositionPath(Parse(null, contours));
+        }
+
+        public static CanvasGeometry Parse(ICanvasResourceCreator sender, IList<ClosedVectorPath> contours, float scale = 1.0f)
+        {
+            var builder = new CanvasPathBuilder(sender);
 
             foreach (var path in contours)
             {
                 var last = path.Commands.Last();
                 if (last is VectorPathCommandLine lastLine)
                 {
-                    builder.BeginFigure(lastLine.EndPoint.ToVector2());
+                    builder.BeginFigure(lastLine.EndPoint.ToVector2(scale));
                 }
                 else if (last is VectorPathCommandCubicBezierCurve lastCubicBezierCurve)
                 {
-                    builder.BeginFigure(lastCubicBezierCurve.EndPoint.ToVector2());
+                    builder.BeginFigure(lastCubicBezierCurve.EndPoint.ToVector2(scale));
                 }
 
                 for (int i = 0; i < path.Commands.Count; i++)
@@ -50,20 +56,20 @@ namespace Unigram.Common
                     var command = path.Commands[i];
                     if (command is VectorPathCommandLine line)
                     {
-                        builder.AddLine(line.EndPoint.ToVector2());
+                        builder.AddLine(line.EndPoint.ToVector2(scale));
                     }
                     else if (command is VectorPathCommandCubicBezierCurve cubicBezierCurve)
                     {
-                        builder.AddCubicBezier(cubicBezierCurve.StartControlPoint.ToVector2(),
-                            cubicBezierCurve.EndControlPoint.ToVector2(),
-                            cubicBezierCurve.EndPoint.ToVector2());
+                        builder.AddCubicBezier(cubicBezierCurve.StartControlPoint.ToVector2(scale),
+                            cubicBezierCurve.EndControlPoint.ToVector2(scale),
+                            cubicBezierCurve.EndPoint.ToVector2(scale));
                     }
                 }
 
                 builder.EndFigure(CanvasFigureLoop.Closed);
             }
 
-            return new CompositionPath(CanvasGeometry.CreatePath(builder));
+            return CanvasGeometry.CreatePath(builder);
         }
 
         public static CompositionAnimation ParseThumbnail(Sticker sticker, out ShapeVisual visual, bool animated = true)
