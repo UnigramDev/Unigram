@@ -161,6 +161,7 @@
                                 BorderThickness="{TemplateBinding BorderThickness}">
                             <ScrollViewer x:Name="ScrollViewer"
                                           ViewChanged="OnViewChanged"
+                                          VerticalAnchorRatio="1"
                                           TabNavigation="{TemplateBinding TabNavigation}"
                                           HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}"
                                           HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
@@ -584,7 +585,7 @@
                                 SelectionChanged="List_SelectionChanged"
                                 ChoosingItemContainer="OnChoosingItemContainer"
                                 ContainerContentChanging="OnContainerContentChanging"
-                                Padding="0,0,0,6"
+                                Margin="0,0,0,8"
                                 Grid.ColumnSpan="2">
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -975,8 +976,9 @@
                   Margin="12,0,12,-12"
                   CornerRadius="8,8,0,0">
                 <controls:InlineBotResultsView x:Name="ListInline"
+                                               x:Load="{x:Bind ViewModel.IsInlineBotResultsVisible, Mode=OneWay}"
                                                Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                               Visibility="{x:Bind ViewModel.InlineBotResultsVisibility, Mode=OneWay}"
+                                               Loaded="InlineBotResults_Loaded"
                                                ItemClick="InlineBotResults_ItemClick"
                                                VerticalAlignment="Bottom" />
                 <controls:OrientableListView x:Name="ListAutocomplete"

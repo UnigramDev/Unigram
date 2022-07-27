@@ -857,7 +857,6 @@ namespace Unigram.Views
             Window.Current.CoreWindow.CharacterReceived += OnCharacterReceived;
             WindowContext.GetForCurrentView().AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
 
-            UnloadVisibleMessages();
             ViewVisibleMessages(false);
 
 
@@ -2548,9 +2547,16 @@ namespace Unigram.Views
 
         #endregion
 
-        private async void Emojis_ItemClick(string emoji)
+        private async void Emojis_ItemClick(object emoji)
         {
-            TextField.InsertText(emoji);
+            if (emoji is string text)
+            {
+                TextField.InsertText(text);
+            }
+            else if (emoji is Sticker sticker)
+            {
+                TextField.InsertEmoji(sticker);
+            }
 
             await Task.Delay(100);
             TextField.Focus(FocusState.Programmatic);
@@ -3113,7 +3119,11 @@ namespace Unigram.Views
 
         private void ContentPanel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            ListInline.MaxHeight = Math.Min(320, Math.Max(e.NewSize.Height - 48, 0));
+            if (ListInline != null)
+            {
+                ListInline.MaxHeight = Math.Min(320, Math.Max(e.NewSize.Height - 48, 0));
+            }
+
             ListAutocomplete.MaxHeight = Math.Min(320, Math.Max(e.NewSize.Height - 48, 0));
         }
 
@@ -3417,8 +3427,12 @@ namespace Unigram.Views
 
         public void UpdateChatPermissions(Chat chat)
         {
+            if (ListInline != null)
+            {
+                ListInline.UpdateChatPermissions(chat);
+            }
+
             StickersPanel.UpdateChatPermissions(ViewModel.CacheService, chat);
-            ListInline.UpdateChatPermissions(chat);
         }
 
         public void UpdateChatPendingJoinRequests(Chat chat)
@@ -4038,9 +4052,10 @@ namespace Unigram.Views
 
             // It would be cool to have shadow to respect text field corner radius
             //Separator.CornerRadius = new CornerRadius(radius);
-            ListAutocomplete.CornerRadius = ListInline.CornerRadius = InlinePanel.CornerRadius = new CornerRadius(radius, radius, 0, 0);
+            ListAutocomplete.CornerRadius = InlinePanel.CornerRadius = new CornerRadius(radius, radius, 0, 0);
             ListAutocomplete.Padding = new Thickness(0, 0, 0, radius);
-            ListInline.UpdateCornerRadius(radius);
+
+            ListInline?.UpdateCornerRadius(radius);
 
             if (radius > 0)
             {
@@ -4061,11 +4076,11 @@ namespace Unigram.Views
             if (messages.Clip is InsetClip messagesClip)
             {
                 messagesClip.TopInset = -48;
-                messagesClip.BottomInset = -48;
+                messagesClip.BottomInset = -radius;
             }
             else
             {
-                messages.Clip = Window.Current.Compositor.CreateInsetClip(0, -48, 0, -48);
+                messages.Clip = Window.Current.Compositor.CreateInsetClip(0, -48, 0, -radius);
             }
         }
 
@@ -4161,6 +4176,9 @@ namespace Unigram.Views
 
             Automation.SetToolTip(Call, Strings.Resources.Call);
 
+            btnVoiceMessage.IsRestricted = fullInfo.HasRestrictedVoiceAndVideoNoteMessages
+                && user.Id != ViewModel.ProtoService.Options.MyId;
+
             Call.Glyph = Icons.Phone;
             Call.Visibility = /*!secret &&*/ fullInfo.CanBeCalled ? Visibility.Visible : Visibility.Collapsed;
             VideoCall.Visibility = /*!secret &&*/ fullInfo.CanBeCalled && fullInfo.SupportsVideoCalls ? Visibility.Visible : Visibility.Collapsed;
@@ -4247,6 +4265,8 @@ namespace Unigram.Views
         public void UpdateBasicGroupFullInfo(Chat chat, BasicGroup group, BasicGroupFullInfo fullInfo)
         {
             ViewModel.LastSeen = Locale.Declension("Members", fullInfo.Members.Count);
+
+            btnVoiceMessage.IsRestricted = false;
 
             btnSendMessage.SlowModeDelay = 0;
             btnSendMessage.SlowModeDelayExpiresIn = 0;
@@ -4417,6 +4437,8 @@ namespace Unigram.Views
                 ViewModel.LastSeen = null;
             }
 
+            btnVoiceMessage.IsRestricted = false;
+
             btnSendMessage.SlowModeDelay = fullInfo.SlowModeDelay;
             btnSendMessage.SlowModeDelayExpiresIn = fullInfo.SlowModeDelayExpiresIn;
 
@@ -4580,6 +4602,16 @@ namespace Unigram.Views
             }
 
             flyout.ShowAt(ButtonMore, new FlyoutShowOptions { Placement = FlyoutPlacementMode.TopEdgeAlignedLeft });
+        }
+
+        private void InlineBotResults_Loaded(object sender, RoutedEventArgs e)
+        {
+            ListInline.MaxHeight = Math.Min(320, Math.Max(ContentPanel.ActualHeight - 48, 0));
+
+            if (ViewModel?.Chat is Chat chat)
+            {
+                ListInline.UpdateChatPermissions(chat);
+            }
         }
     }
 
