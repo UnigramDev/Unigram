@@ -16,6 +16,7 @@ using Unigram.ViewModels.Users;
 using Unigram.Views;
 using Unigram.Views.Chats;
 using Unigram.Views.Popups;
+using Unigram.Views.Premium.Popups;
 using Unigram.Views.Supergroups;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml.Controls;
@@ -71,6 +72,7 @@ namespace Unigram.ViewModels
             CopyDescriptionCommand = new RelayCommand(CopyDescriptionExecute);
             CopyUsernameCommand = new RelayCommand(CopyUsernameExecute);
             CopyUsernameLinkCommand = new RelayCommand(CopyUsernameLinkExecute);
+            GiftPremiumCommand = new RelayCommand(GiftPremiumExecute);
             AddCommand = new RelayCommand(AddExecute);
             DiscussCommand = new RelayCommand(DiscussExecute);
             EditCommand = new RelayCommand(EditExecute);
@@ -657,6 +659,22 @@ namespace Unigram.ViewModels
                 var dataPackage = new DataPackage();
                 dataPackage.SetText(MeUrlPrefixConverter.Convert(CacheService, user.Username));
                 ClipboardEx.TrySetContent(dataPackage);
+            }
+        }
+
+        public RelayCommand GiftPremiumCommand { get; }
+        private async void GiftPremiumExecute()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            if (CacheService.TryGetUser(chat, out User user)
+                && CacheService.TryGetUserFull(chat, out UserFullInfo userFull))
+            {
+                await new GiftPopup(ProtoService, NavigationService, user, userFull.PremiumGiftOptions).ShowQueuedAsync();
             }
         }
 

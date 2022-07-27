@@ -192,9 +192,9 @@ namespace Unigram.Controls
         {
             Subtitle.Text = LastSeenConverter.GetLabel(user, true);
 
-            if (user.IsVerified || (user.IsPremium && ViewModel.ProtoService.IsPremiumAvailable))
+            if (user.IsVerified || (user.Id != ViewModel.ProtoService.Options.MyId && user.IsPremium && ViewModel.ProtoService.IsPremiumAvailable))
             {
-                Verified.Glyph = user.IsPremium ? Icons.Premium16 : Icons.Verified16;
+                Verified.Glyph = user.Id != ViewModel.ProtoService.Options.MyId && user.IsPremium && ViewModel.ProtoService.IsPremiumAvailable ? Icons.Premium16 : Icons.Verified16;
                 Verified.Visibility = Visibility.Visible;
             }
             else
@@ -596,11 +596,16 @@ namespace Unigram.Controls
                         }
                     }
 
-                    if (user.Type is not UserTypeBot and not UserTypeDeleted
+                    if (ViewModel.IsPremium && fullInfo.PremiumGiftOptions.Count > 0)
+                    {
+                        flyout.CreateFlyoutItem(ViewModel.GiftPremiumCommand, Strings.Resources.GiftPremium, new FontIcon { Glyph = Icons.GiftPremium });
+                    }
+
+                    if (user.Type is UserTypeRegular
                         && !LastSeenConverter.IsServiceUser(user)
                         && !LastSeenConverter.IsSupportUser(user))
                     {
-                        flyout.CreateFlyoutItem(ViewModel.SecretChatCommand, Strings.Resources.StartEncryptedChat, new FontIcon { Glyph = Icons.Timer });
+                        flyout.CreateFlyoutItem(ViewModel.SecretChatCommand, Strings.Resources.StartEncryptedChat, new FontIcon { Glyph = Icons.LockClosed });
                     }
                 }
                 else
