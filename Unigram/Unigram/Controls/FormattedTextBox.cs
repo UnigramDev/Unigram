@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
+using System.Threading.Tasks;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls.Chats;
+using Unigram.Controls.Messages;
 using Unigram.Converters;
 using Unigram.Navigation;
 using Unigram.Services;
@@ -29,6 +33,8 @@ namespace Unigram.Controls
     {
         private readonly FormattedTextFlyout _selectionFlyout;
         private readonly MenuFlyoutSubItem _proofingFlyout;
+
+        private bool _updateLocked;
 
         public FormattedTextBox()
         {
@@ -73,6 +79,13 @@ namespace Unigram.Controls
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
             SizeChanged += OnSizeChanged;
+
+            TextChanged += OnTextChanged;
+        }
+
+        private void OnTextChanged(object sender, RoutedEventArgs e)
+        {
+            UpdateCustomEmoji();
         }
 
         private bool _resetSize;
@@ -658,6 +671,8 @@ namespace Unigram.Controls
                 return new FormattedText(string.Empty, new TextEntity[0]);
             }
 
+            _updateLocked = true;
+
             Document.BatchDisplayUpdates();
             Document.GetText(TextGetOptions.None, out string value);
 
@@ -676,7 +691,29 @@ namespace Unigram.Controls
                 var range = Document.GetRange(i, i + 1);
                 var flags = default(TextStyle);
 
-                if (string.Equals(range.CharacterFormat.Name, "Consolas", StringComparison.OrdinalIgnoreCase))
+                if (range.Text == "￼")
+                {
+                    range.GetText(TextGetOptions.UseObjectText, out string obj);
+
+                    var split = obj.Split(';');
+                    if (split.Length == 2 && long.TryParse(split[1], out long customEmojiId))
+                    {
+                        if (last != null)
+                        {
+                            runs.Add(last);
+                            last = null;
+                        }
+
+                        runs.Add(new TextStyleRun { Start = i - hidden, End = i - hidden + split[0].Length, Flags = TextStyle.Emoji, Type = new TextEntityTypeCustomEmoji(customEmojiId) });
+                        type = null;
+
+                        builder.Remove(i - hidden, 1);
+                        builder.Insert(i - hidden, split[0]);
+
+                        hidden -= split[0].Length - "￼".Length;
+                    }
+                }
+                else if (string.Equals(range.CharacterFormat.Name, "Consolas", StringComparison.OrdinalIgnoreCase))
                 {
                     flags = TextStyle.Monospace;
                 }
@@ -747,8 +784,6 @@ namespace Unigram.Controls
                 runs.Add(last);
             }
 
-            Document.GetText(TextGetOptions.NoHidden, out string text);
-
             if (clear)
             {
                 // This is needed to prevent resize animation, doh
@@ -764,6 +799,9 @@ namespace Unigram.Controls
 
             Document.ApplyDisplayUpdates();
 
+            _updateLocked = false;
+
+            var text = builder.ToString();
             var entities = TextStyleRun.GetEntities(text, runs);
 
             text = text.Replace('\v', '\n').Replace('\r', '\n');
@@ -820,9 +858,11 @@ namespace Unigram.Controls
             }
         }
 
-        public void SetText(string text, IList<TextEntity> entities)
+        public async void SetText(string text, IList<TextEntity> entities)
         {
             OnSettingText();
+
+            _updateLocked = true;
 
             Document.BeginUndoGroup();
             Document.BatchDisplayUpdates();
@@ -834,11 +874,13 @@ namespace Unigram.Controls
 
                 if (entities != null && entities.Count > 0)
                 {
+                    var hidden = 0;
+
                     // We want to enumerate entities from last to first to not
                     // fuck up ranges due to hidden texts when formatting a link
                     foreach (var entity in entities.Reverse())
                     {
-                        var range = Document.GetRange(entity.Offset, entity.Offset + entity.Length);
+                        var range = Document.GetRange(entity.Offset - hidden, entity.Offset - hidden + entity.Length);
 
                         if (entity.Type is TextEntityTypeBold)
                         {
@@ -872,6 +914,15 @@ namespace Unigram.Controls
                         {
                             range.Link = $"\"tg-user://{mentionName.UserId}\"";
                         }
+                        else if (entity.Type is TextEntityTypeCustomEmoji customEmoji)
+                        {
+                            var emoji = text.Substring(entity.Offset, entity.Length);
+
+                            range.SetText(TextSetOptions.None, string.Empty);
+                            await InsertEmojiAsync(range, emoji, customEmoji.CustomEmojiId);
+
+                            hidden += emoji.Length - 1;
+                        }
                     }
                 }
 
@@ -882,10 +933,14 @@ namespace Unigram.Controls
 
             Document.ApplyDisplayUpdates();
             Document.EndUndoGroup();
+
+            _updateLocked = false;
         }
 
         public void InsertText(string text, IList<TextEntity> entities)
         {
+            _updateLocked = true;
+
             Document.BeginUndoGroup();
             Document.BatchDisplayUpdates();
 
@@ -931,6 +986,8 @@ namespace Unigram.Controls
 
             Document.ApplyDisplayUpdates();
             Document.EndUndoGroup();
+
+            _updateLocked = false;
         }
 
         public void InsertText(string text, bool allowPreceding = false, bool allowTrailing = false)
@@ -948,6 +1005,76 @@ namespace Unigram.Controls
 
             Document.Selection.SetText(TextSetOptions.None, block);
             Document.Selection.StartPosition = Document.Selection.EndPosition;
+        }
+
+        public async void InsertEmoji(Sticker sticker)
+        {
+            await InsertEmojiAsync(Document.Selection, sticker.Emoji, sticker.CustomEmojiId);
+            Document.Selection.StartPosition = Document.Selection.EndPosition + 1;
+        }
+
+        private async Task InsertEmojiAsync(ITextRange range, string emoji, long customEmojiId)
+        {
+            var data = new byte[]
+            {
+                0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52,
+                0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x08, 0x06, 0x00, 0x00, 0x00, 0x1F, 0x15, 0xC4,
+                0x89, 0x00, 0x00, 0x00, 0x0A, 0x49, 0x44, 0x41, 0x54, 0x78, 0x9C, 0x63, 0x00, 0x01, 0x00, 0x00,
+                0x05, 0x00, 0x01, 0x0D, 0x0A, 0x2D, 0xB4, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, 0xAE,
+                0x42, 0x60, 0x82
+            };
+
+            using var stream = new InMemoryRandomAccessStream();
+            await stream.WriteAsync(data.AsBuffer());
+            await stream.FlushAsync();
+
+            range.InsertImage(18, 18, 0, VerticalCharacterAlignment.Top, $"{emoji};{customEmojiId}", stream);
+        }
+
+        private void UpdateCustomEmoji()
+        {
+            if (_updateLocked)
+            {
+                return;
+            }
+
+            Document.GetText(TextGetOptions.None, out string value);
+
+            var emoji = new HashSet<long>();
+            var positions = new List<EmojiPosition>();
+
+            var index = value.IndexOf('￼');
+
+            while (index >= 0)
+            {
+                var range = Document.GetRange(index, index + 1);
+
+                range.GetRect(PointOptions.ClientCoordinates, out Rect rect, out int hit);
+                range.GetText(TextGetOptions.UseObjectText, out string obj);
+
+                var split = obj.Split(';');
+                if (split.Length == 2 && long.TryParse(split[1], out long customEmojiId))
+                {
+                    emoji.Add(customEmojiId);
+                    positions.Add(new EmojiPosition
+                    {
+                        CustomEmojiId = customEmojiId,
+                        X = (int)rect.X,
+                        Y = (int)rect.Y
+                    });
+                }
+
+                index = value.IndexOf('￼', index + 1);
+            }
+
+            // TODO: This must be improved
+            if (this is ChatTextBox chatte)
+            {
+                var customEmoji = GetTemplateChild("CustomEmoji") as CustomEmojiCanvas;
+                customEmoji.UpdatePositions(positions);
+                customEmoji.UpdateEntities(chatte.ViewModel.ProtoService, emoji);
+                customEmoji.Play();
+            }
         }
     }
 }

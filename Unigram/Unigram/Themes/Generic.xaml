@@ -646,6 +646,24 @@
         </Setter>
     </Style>
 
+    <Style TargetType="messages:CustomEmojiCanvas">
+        <Setter Property="IsTabStop"
+                Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="messages:CustomEmojiCanvas">
+                    <Canvas x:Name="LayoutRoot">
+                        <Image x:Name="Canvas"
+                               Stretch="Fill"
+                               AutomationProperties.AccessibilityView="Raw"
+                               HorizontalAlignment="Stretch"
+                               VerticalAlignment="Stretch" />
+                    </Canvas>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="local:DiceView">
         <Setter Property="IsTabStop"
                 Value="False" />
@@ -3318,6 +3336,10 @@
                                       ZoomMode="Disabled"
                                       AutomationProperties.AccessibilityView="Raw"
                                       VerticalAlignment="Stretch" />
+                        <messages:CustomEmojiCanvas x:Name="CustomEmoji"
+                                                    IsHitTestVisible="False"
+                                                    Margin="48,13,0,0"
+                                                    Grid.Row="1" />
                         <ContentControl x:Name="PlaceholderTextContentPresenter"
                                         Grid.Row="1"
                                         Foreground="{ThemeResource TextControlPlaceholderForeground}"
