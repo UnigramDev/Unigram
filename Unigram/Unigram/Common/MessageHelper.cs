@@ -198,11 +198,12 @@ namespace Unigram.Common
             }
             else if (internalLink is InternalLinkTypeBotStart botStart)
             {
-                NavigateToUsername(protoService, navigation, botStart.BotUsername, botStart.StartParameter, null, null, null, null);
+                NavigateToBotStart(protoService, navigation, botStart.BotUsername, botStart.StartParameter, botStart.Autostart, false);
             }
             else if (internalLink is InternalLinkTypeBotStartInGroup botStartInGroup)
             {
-                NavigateToUsername(protoService, navigation, botStartInGroup.BotUsername, botStartInGroup.StartParameter, null, null, null, null, PageKind.Search);
+                // Not yet supported: AdministratorRights
+                NavigateToBotStart(protoService, navigation, botStartInGroup.BotUsername, botStartInGroup.StartParameter, false, true);
             }
             else if (internalLink is InternalLinkTypeChangePhoneNumber)
             {
@@ -218,7 +219,7 @@ namespace Unigram.Common
             }
             else if (internalLink is InternalLinkTypeGame game)
             {
-                NavigateToUsername(protoService, navigation, game.BotUsername, null, null, null, null, game.GameShortName);
+                NavigateToUsername(protoService, navigation, game.BotUsername, null, game.GameShortName);
             }
             else if (internalLink is InternalLinkTypeInvoice invoice)
             {
@@ -258,7 +259,7 @@ namespace Unigram.Common
             }
             else if (internalLink is InternalLinkTypePublicChat publicChat)
             {
-                NavigateToUsername(protoService, navigation, publicChat.ChatUsername, null, null, null, null, null);
+                NavigateToUsername(protoService, navigation, publicChat.ChatUsername, null, null);
             }
             else if (internalLink is InternalLinkTypeQrCodeAuthentication)
             {
@@ -290,7 +291,7 @@ namespace Unigram.Common
             }
             else if (internalLink is InternalLinkTypeVideoChat videoChat)
             {
-                NavigateToUsername(protoService, navigation, videoChat.ChatUsername, null, videoChat.InviteHash, null, null, null);
+                NavigateToUsername(protoService, navigation, videoChat.ChatUsername, videoChat.InviteHash, null);
             }
         }
 
@@ -559,7 +560,7 @@ namespace Unigram.Common
         {
             await StickerSetPopup.GetForCurrentView().ShowAsync(text);
         }
-        
+
         public static async void NavigateToPhoneNumber(IProtoService protoService, INavigationService navigation, string phoneNumber)
         {
             var response = await protoService.SendAsync(new SearchUserByPhoneNumber(phoneNumber));
@@ -581,13 +582,33 @@ namespace Unigram.Common
             }
         }
 
-        public static async void NavigateToUsername(IProtoService protoService, INavigationService navigation, string username, string accessToken, string videoChat, string post, string comment, string game, PageKind kind = PageKind.Dialog)
+        public static async void NavigateToBotStart(IProtoService protoService, INavigationService navigation, string username, string startParameter, bool autoStart, bool group)
         {
-            if (username.StartsWith("@"))
+            var response = await protoService.SendAsync(new SearchPublicChat(username));
+            if (response is Chat chat && protoService.TryGetUser(chat, out User user))
             {
-                username = username.Substring(1);
+                if (group)
+                {
+                    await SharePopup.GetForCurrentView().ShowAsync(user, startParameter);
+                }
+                else if (autoStart)
+                {
+                    protoService.Send(new SendBotStartMessage(user.Id, chat.Id, startParameter));
+                    navigation.NavigateToChat(chat);
+                }
+                else
+                {
+                    navigation.NavigateToChat(chat, accessToken: startParameter);
+                }
             }
+            else
+            {
+                await MessagePopup.ShowAsync(Strings.Resources.NoUsernameFound, Strings.Resources.AppName, Strings.Resources.OK);
+            }
+        }
 
+        public static async void NavigateToUsername(IProtoService protoService, INavigationService navigation, string username, string videoChat, string game)
+        {
             var response = await protoService.SendAsync(new SearchPublicChat(username));
             if (response is Chat chat)
             {
@@ -595,54 +616,24 @@ namespace Unigram.Common
                 {
 
                 }
-                else if (chat.Type is ChatTypePrivate privata)
+                else if (protoService.TryGetUser(chat, out User user))
                 {
-                    var user = protoService.GetUser(privata.UserId);
-                    if (user != null && user.Type is UserTypeBot)
+                    if (user.Type is UserTypeBot)
                     {
-                        if (kind == PageKind.Search)
-                        {
-                            await SharePopup.GetForCurrentView().ShowAsync(user, accessToken);
-                        }
-                        else
-                        {
-                            navigation.NavigateToChat(chat, accessToken: accessToken);
-                        }
+                        navigation.NavigateToChat(chat);
                     }
                     else
                     {
                         navigation.Navigate(typeof(ProfilePage), chat.Id);
                     }
                 }
+                else if (videoChat != null)
+                {
+                    navigation.NavigateToChat(chat, state: new NavigationState { { "videoChat", videoChat } });
+                }
                 else
                 {
-                    if (long.TryParse(post, out long message))
-                    {
-                        if (long.TryParse(comment, out long threaded))
-                        {
-                            var info = await protoService.SendAsync(new GetMessageThread(chat.Id, message << 20)) as MessageThreadInfo;
-                            if (info != null)
-                            {
-                                navigation.NavigateToThread(info.ChatId, info.MessageThreadId, message: threaded << 20);
-                            }
-                            else
-                            {
-                                navigation.NavigateToChat(chat, message: message << 20);
-                            }
-                        }
-                        else
-                        {
-                            navigation.NavigateToChat(chat, message: message << 20);
-                        }
-                    }
-                    else if (videoChat != null)
-                    {
-                        navigation.NavigateToChat(chat, state: new NavigationState { { "videoChat", videoChat } });
-                    }
-                    else
-                    {
-                        navigation.NavigateToChat(chat);
-                    }
+                    navigation.NavigateToChat(chat);
                 }
             }
             else
@@ -703,31 +694,6 @@ namespace Unigram.Common
                     await MessagePopup.ShowAsync(Strings.Resources.JoinToGroupErrorNotExist, Strings.Resources.AppName, Strings.Resources.OK);
                 }
             }
-        }
-
-        public static string GetAccessToken(Dictionary<string, string> uriParams, out PageKind pageKind)
-        {
-            pageKind = PageKind.Dialog;
-
-            var result = string.Empty;
-            if (uriParams.ContainsKey("start"))
-            {
-                result = uriParams["start"];
-            }
-            else if (uriParams.ContainsKey("startgroup"))
-            {
-                pageKind = PageKind.Search;
-                result = uriParams["startgroup"];
-            }
-
-            return result;
-        }
-
-        public enum PageKind
-        {
-            Dialog,
-            Profile,
-            Search
         }
 
         public static bool IsValidUsername(string username)
