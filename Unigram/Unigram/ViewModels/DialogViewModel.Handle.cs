@@ -809,6 +809,12 @@ namespace Unigram.ViewModels
                                 update?.Invoke(child);
                                 found = true;
 
+                                if (messageId != child.Id)
+                                {
+                                    album.Messages.Remove(messageId);
+                                    album.Messages.Add(child);
+                                }
+
                                 message.UpdateWith(album.Messages[0]);
                                 album.Invalidate();
 
