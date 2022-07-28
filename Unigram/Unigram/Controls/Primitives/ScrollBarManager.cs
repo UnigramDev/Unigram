@@ -14,10 +14,13 @@ namespace Unigram.Controls.Primitives
                 var parent2 = parent1?.Parent as Grid;
                 var parent3 = parent2?.Parent as Border;
 
-                var scrollViewer = VisualTreeHelper.GetParent(parent3) as ScrollViewer;
-                if (scrollViewer != null)
+                if (parent3 != null)
                 {
-                    GoToState(scrollViewer, "NoIndicator", true);
+                    var scrollViewer = VisualTreeHelper.GetParent(parent3) as ScrollViewer;
+                    if (scrollViewer != null)
+                    {
+                        GoToState(scrollViewer, "NoIndicator", true);
+                    }
                 }
             }
 
