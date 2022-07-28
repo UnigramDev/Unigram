@@ -26,19 +26,13 @@ namespace Unigram.ViewModels
             set
             {
                 Set(ref _inlineBotResults, value);
-                RaisePropertyChanged(nameof(InlineBotResultsVisibility));
+                RaisePropertyChanged(nameof(IsInlineBotResultsVisible));
 
                 _inlineBotResults?.Reset();
             }
         }
 
-        public Visibility InlineBotResultsVisibility
-        {
-            get
-            {
-                return _inlineBotResults != null && (!string.IsNullOrEmpty(_inlineBotResults.SwitchPmText) || _inlineBotResults.Count > 0) ? Visibility.Visible : Visibility.Collapsed;
-            }
-        }
+        public bool IsInlineBotResultsVisible => _inlineBotResults != null && (!string.IsNullOrEmpty(_inlineBotResults.SwitchPmText) || _inlineBotResults.Count > 0);
 
         public async Task<bool> ResolveInlineBotAsync(string text, CancellationToken token)
         {

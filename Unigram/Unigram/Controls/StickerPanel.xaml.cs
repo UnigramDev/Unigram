@@ -19,7 +19,7 @@ namespace Unigram.Controls
         public new FrameworkElement Shadow => ShadowElement;
         public FrameworkElement Presenter => BackgroundElement;
 
-        public Action<string> EmojiClick { get; set; }
+        public Action<object> EmojiClick { get; set; }
 
         public Action<Sticker> StickerClick { get; set; }
         public event TypedEventHandler<UIElement, ItemContextRequestedEventArgs<Sticker>> StickerContextRequested;
@@ -58,6 +58,10 @@ namespace Unigram.Controls
             {
                 EmojiClick?.Invoke(emoji.Value);
             }
+            else if (e.ClickedItem is StickerViewModel sticker)
+            {
+                EmojiClick?.Invoke((Sticker)sticker);
+            }
         }
 
         private void Stickers_ItemClick(Sticker obj)
@@ -95,7 +99,7 @@ namespace Unigram.Controls
                 if (EmojisRoot == null)
                 {
                     FindName(nameof(EmojisRoot));
-                    EmojisRoot.DataContext = AnimationDrawerViewModel.GetForCurrentView(TLContainer.Current.Resolve<IProtoService>().SessionId);
+                    EmojisRoot.DataContext = EmojiDrawerViewModel.GetForCurrentView(TLContainer.Current.Resolve<IProtoService>().SessionId);
                 }
 
                 EmojisRoot.Activate();

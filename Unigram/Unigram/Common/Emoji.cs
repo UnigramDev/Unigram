@@ -151,7 +151,9 @@ namespace Unigram.Common
         public string Title { get; set; }
         public string Glyph { get; set; }
 
-        public EmojiData[] Items { get; set; }
+        public EmojiData[] Stickers { get; set; }
+
+        public EmojiSkinTone SkinTone { get; set; }
 
         public override string ToString()
         {
@@ -174,7 +176,8 @@ namespace Unigram.Common
                 {
                     Title = Title,
                     Glyph = Glyph,
-                    Items = Items.Select(x =>
+                    SkinTone = tone,
+                    Stickers = Items.Select(x =>
                     {
                         if (_skinEmojis.Contains(x))
                         {
@@ -188,6 +191,20 @@ namespace Unigram.Common
             }
         }
 
+        public static IList<EmojiData> GetRecents(EmojiSkinTone skin)
+        {
+            return SettingsService.Current.Emoji.RecentEmoji.Select(x =>
+            {
+                if (EmojiGroupInternal._skinEmojis.Contains(x))
+                {
+                    return new EmojiSkinData(x, skin);
+                }
+
+                return new EmojiData(x);
+
+            }).ToArray();
+        }
+
         public static List<EmojiGroup> Get(EmojiSkinTone skin, bool flags)
         {
             var results = new List<EmojiGroup>();
@@ -195,7 +212,8 @@ namespace Unigram.Common
             {
                 Title = Strings.Resources.RecentStickers,
                 Glyph = Icons.EmojiRecents,
-                Items = SettingsService.Current.Emoji.RecentEmoji.Select(x =>
+                SkinTone = skin,
+                Stickers = SettingsService.Current.Emoji.RecentEmoji.Select(x =>
                 {
                     if (EmojiGroupInternal._skinEmojis.Contains(x))
                     {
@@ -207,7 +225,7 @@ namespace Unigram.Common
                 }).ToArray()
             };
 
-            results.Add(recent);
+            //results.Add(recent);
 
             if (flags)
             {
@@ -247,7 +265,7 @@ namespace Unigram.Common
                 new EmojiGroup
                 {
                     Title = result.Count > 0 ? Strings.Resources.SearchEmojiHint : Strings.Resources.NoEmojiFound,
-                    Items = result.ToArray()
+                    Stickers = result.ToArray()
                 }
             };
         }

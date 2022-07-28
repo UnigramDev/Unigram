@@ -212,6 +212,11 @@ namespace Unigram.ViewModels
             return base.GetHashCode();
         }
 
+        public int EmojiHash()
+        {
+            return Content.GetHashCode();
+        }
+
         public void UpdateWith(MessageViewModel message)
         {
             UpdateWith(message.Get());

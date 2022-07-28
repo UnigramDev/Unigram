@@ -38,21 +38,18 @@ namespace Unigram.Common
         private void Merge(TextStyleRun run)
         {
             Flags |= run.Flags;
-            if (Type == null && run.Type != null)
-            {
-                Type = run.Type;
-            }
+            Type ??= run.Type;
         }
 
-        public static IList<TextStyleRun> GetRuns(FormattedText formatted, bool includeSpoilers = true)
+        public static IList<TextStyleRun> GetRuns(FormattedText formatted)
         {
-            return GetRuns(formatted.Text, formatted.Entities, includeSpoilers);
+            return GetRuns(formatted.Text, formatted.Entities);
         }
 
-        public static IList<TextStyleRun> GetRuns(string text, IList<TextEntity> entities, bool includeSpoilers = true)
+        public static IList<TextStyleRun> GetRuns(string text, IList<TextEntity> entities)
         {
             var runs = new List<TextStyleRun>();
-            var entitiesCopy = new List<TextEntity>(includeSpoilers ? entities : entities.Where(x => x.Type is not TextEntityTypeSpoiler));
+            var entitiesCopy = new List<TextEntity>(entities);
 
             entitiesCopy.Sort((x, y) =>
             {
@@ -113,6 +110,11 @@ namespace Unigram.Common
                 else if (entity.Type is TextEntityTypeMentionName)
                 {
                     newRun.Flags = TextStyle.Mention;
+                    newRun.Type = entity.Type;
+                }
+                else if (entity.Type is TextEntityTypeCustomEmoji)
+                {
+                    newRun.Flags = TextStyle.Emoji;
                     newRun.Type = entity.Type;
                 }
                 else
@@ -224,7 +226,11 @@ namespace Unigram.Common
 
             foreach (var run in runs)
             {
-                if (run.HasFlag(TextStyle.Monospace))
+                if (run.HasFlag(TextStyle.Emoji))
+                {
+                    Create(run.Offset, run.Length, results, run.Type);
+                }
+                else if (run.HasFlag(TextStyle.Monospace))
                 {
                     var part = text.Substring(run.Offset, run.Length);
                     if (part.Contains('\v') || part.Contains('\r'))
@@ -269,6 +275,11 @@ namespace Unigram.Common
             return results;
         }
 
+        private static void Create(int offset, int length, IList<TextEntity> entities, TextEntityType type)
+        {
+            entities.Add(new TextEntity(offset, length, type));
+        }
+
         private static void CreateOrMerge(int offset, int length, IList<TextEntity> entities, TextEntityType type)
         {
             var last = entities.LastOrDefault(x => x.Length + x.Offset == offset && AreEquals(x.Type, type));
@@ -307,6 +318,7 @@ namespace Unigram.Common
         Underline = 16,
         Spoiler = 32,
         Mention = 64,
-        Url = 128
+        Url = 128,
+        Emoji = 256
     }
 }

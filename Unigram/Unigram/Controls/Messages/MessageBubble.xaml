@@ -223,6 +223,10 @@
                                                Margin="10,0,10,6"
                                                Grid.Column="1"
                                                Grid.Row="2" />
+                                <local:CustomEmojiCanvas x:Name="CustomEmoji"
+                                                         x:Load="False"
+                                                         IsHitTestVisible="False"
+                                                         Margin="10,0,10,6" />
 
                                 <Border x:Name="Media"
                                         Grid.Column="1"

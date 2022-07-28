@@ -6,6 +6,8 @@ using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
 using Unigram.Common;
+using Windows.Foundation;
+using Windows.Graphics;
 using Windows.Graphics.DirectX;
 using Windows.Graphics.Display;
 using Windows.System.Threading;
@@ -261,6 +263,11 @@ namespace Unigram.Controls
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
+            if (IsLoaded)
+            {
+                return;
+            }
+            
             Unload();
             UnregisterEventHandlers();
         }
@@ -393,13 +400,27 @@ namespace Unigram.Controls
 
         protected abstract CanvasBitmap CreateBitmap(ICanvasResourceCreator sender);
 
-        protected CanvasBitmap CreateBitmap(ICanvasResourceCreator sender, int width, int height, DirectXPixelFormat pixelFormat = DirectXPixelFormat.B8G8R8A8UIntNormalized)
+        protected CanvasBitmap CreateBitmap(ICanvasResourceCreator sender, int width, int height, DirectXPixelFormat pixelFormat = DirectXPixelFormat.B8G8R8A8UIntNormalized, float dpi = 96)
         {
             var buffer = ArrayPool<byte>.Shared.Rent(width * height * 4);
-            var bitmap = CanvasBitmap.CreateFromBytes(sender, buffer, width, height, pixelFormat);
+            var bitmap = CanvasBitmap.CreateFromBytes(sender, buffer, width, height, pixelFormat, dpi);
             ArrayPool<byte>.Shared.Return(buffer);
 
             return bitmap;
+        }
+
+        protected SizeInt32 GetDpiAwareSize(Size size)
+        {
+            return new SizeInt32
+            {
+                Width = (int)(size.Width * (_currentDpi / 96)),
+                Height = (int)(size.Height * (_currentDpi / 96))
+            };
+        }
+
+        protected int GetDpiAwareSize(double size)
+        {
+            return (int)(size * (_currentDpi / 96));
         }
 
         protected abstract void DrawFrame(CanvasImageSource sender, CanvasDrawingSession args);
@@ -419,13 +440,11 @@ namespace Unigram.Controls
 
         protected async void OnSourceChanged()
         {
-            if (AutoPlay || _playing)
+            if (_active && (AutoPlay || _playing))
             {
                 _playing = true;
 
                 CreateBitmap();
-
-                OnPlay();
                 Subscribe(true);
             }
             else
@@ -457,24 +476,10 @@ namespace Unigram.Controls
 
             if (_canvas.IsLoaded || _layoutRoot.IsLoaded)
             {
-                OnPlay();
                 Subscribe(true);
             }
 
             return true;
-        }
-
-        protected void TryPlay()
-        {
-            if (_playing && _active && !_subscribed)
-            {
-                Play();
-            }
-        }
-
-        protected virtual void OnPlay()
-        {
-
         }
 
         public void Pause()

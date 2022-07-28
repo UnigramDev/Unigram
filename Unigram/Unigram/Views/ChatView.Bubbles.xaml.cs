@@ -53,18 +53,14 @@ namespace Unigram.Views
                 //VisualUtilities.SetIsVisible(Arrow, true);
             }
 
-            ViewVisibleMessages(e.IsIntermediate);
+            ViewVisibleMessages(false);
         }
 
         private void UnloadVisibleMessages()
         {
             foreach (var item in _prev.Values)
             {
-                try
-                {
-                    item.Pause();
-                }
-                catch { }
+                item.Unload();
             }
 
             _prev.Clear();
@@ -444,12 +440,6 @@ namespace Unigram.Views
                 var message = pair.Message;
                 var container = pair.Container;
 
-                var animation = message.IsAnimatedContentDownloadCompleted();
-                if (animation == false)
-                {
-                    continue;
-                }
-
                 if (message.Content is MessageDice dice)
                 {
                     if (message.GeneratedContentUnread)
@@ -482,12 +472,17 @@ namespace Unigram.Views
                     continue;
                 }
 
-                var player = bubble.GetPlaybackElement();
-                if (player != null)
+                if (message.IsAnimatedContentDownloadCompleted())
                 {
-                    player.Tag = message;
-                    next[message.AnimationHash()] = player;
+                    var player = bubble.GetPlaybackElement();
+                    if (player != null)
+                    {
+                        player.Tag = message;
+                        next[message.AnimationHash()] = player;
+                    }
                 }
+
+                next[message.EmojiHash()] = bubble;
             }
 
             foreach (var item in _prev.Keys.Except(next.Keys.Union(prev)).ToList())

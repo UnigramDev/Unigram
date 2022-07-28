@@ -24,6 +24,11 @@ namespace Unigram.Common
             return new Vector2((float)point.X, (float)point.Y);
         }
 
+        public static Vector2 ToVector2(this Telegram.Td.Api.Point point, float scale)
+        {
+            return new Vector2((float)point.X * scale, (float)point.Y * scale);
+        }
+
         public static bool IsValidState(this Call call)
         {
             if (call == null || call.State is CallStateDiscarded || call.State is CallStateError)
@@ -1003,6 +1008,7 @@ namespace Unigram.Common
                 case MessageContactRegistered:
                 case MessageCustomServiceAction:
                 case MessageGameScore:
+                case MessageGiftedPremium:
                 case MessageInviteVideoChatParticipants:
                 case MessageProximityAlertTriggered:
                 case MessagePassportDataSent:

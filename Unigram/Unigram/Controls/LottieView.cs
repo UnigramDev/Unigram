@@ -308,14 +308,8 @@ namespace Unigram.Controls
 
         public bool Play(bool backward = false)
         {
-            Load();
-
             _playing = true;
-
-            if (_canvas == null)
-            {
-                return false;
-            }
+            Load();
 
             var animation = _animation;
             if (animation == null)
@@ -325,7 +319,7 @@ namespace Unigram.Controls
 
             _backward = backward;
 
-            if (_subscribed || !_active)
+            if (_canvas == null || _subscribed || !_active)
             {
                 return false;
             }
@@ -335,9 +329,8 @@ namespace Unigram.Controls
                 _index = 0;
             }
 
-            if (_layoutRoot.IsLoaded)
+            if (_canvas.IsLoaded || _layoutRoot.IsLoaded)
             {
-                OnPlay();
                 Subscribe(true);
             }
 

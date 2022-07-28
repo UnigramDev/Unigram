@@ -1,4 +1,5 @@
 ﻿using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Core.Direct;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,6 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Core.Direct;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Markup;
@@ -27,42 +27,29 @@ using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Messages
 {
-    public sealed class MessageBubble : Control
+    public sealed class MessageBubble : Control, IPlayerView
     {
         private MessageViewModel _message;
+
+        private readonly List<EmojiPosition> _positions = new();
 
         private string _query;
         private long? _photoId;
 
         private bool _ignoreSizeChanged = true;
-
         private bool _ignoreSpoilers = false;
+        private bool _ignoreLayoutUpdated = true;
 
         private DirectRectangleClip _cornerRadius;
 
         public MessageBubble()
         {
             DefaultStyleKey = typeof(MessageBubble);
-            Unloaded += OnUnloaded;
         }
 
-        private void OnUnloaded(object sender, RoutedEventArgs e)
+        ~MessageBubble()
         {
-            if (IsLoaded || !_templateApplied)
-            {
-                return;
-            }
-
-            foreach (Paragraph block in Message.Blocks)
-            {
-                foreach (var element in block.Inlines)
-                {
-                    if (element is Hyperlink)
-                    {
-                        ToolTipService.SetToolTip(element, null);
-                    }
-                }
-            }
+            System.Diagnostics.Debug.WriteLine("Dio cane");
         }
 
         public void UpdateQuery(string text)
@@ -85,6 +72,8 @@ namespace Unigram.Controls.Messages
         private ReactionsPanel Reactions;
 
         // Lazy loaded
+        private CustomEmojiCanvas CustomEmoji;
+
         private ProfilePicture Photo;
 
         private Border BackgroundPanel;
@@ -650,6 +639,11 @@ namespace Unigram.Controls.Messages
             if (Reply != null)
             {
                 Reply.UpdateMessageReply(message);
+
+                if (_playing)
+                {
+                    Reply.Play();
+                }
             }
         }
 
@@ -1444,28 +1438,20 @@ namespace Unigram.Controls.Messages
             return null;
         }
 
+        public IPlayerView GetCustomEmoji() => CustomEmoji;
+
         private void UpdateMessageText(MessageViewModel message)
         {
-            foreach (Paragraph block in Message.Blocks)
-            {
-                foreach (var element in block.Inlines)
-                {
-                    if (element is Hyperlink)
-                    {
-                        ToolTipService.SetToolTip(element, null);
-                    }
-                }
-            }
-
             Message.Blocks.Clear();
 
             var result = false;
             var adjust = false;
+            var cleanup = false;
 
             var content = message.GeneratedContent ?? message.Content;
             if (content is MessageText text)
             {
-                result = ReplaceEntities(message, Message, text.Text, out adjust, true);
+                result = ReplaceEntities(message, Message, text.Text, out adjust);
             }
             else if (content is MessageAlbum album)
             {
@@ -1498,6 +1484,7 @@ namespace Unigram.Controls.Messages
             else if (content is MessageUnsupported)
             {
                 result = GetEntities(message, Message, Strings.Resources.UnsupportedMedia, out adjust);
+                cleanup = true;
             }
             else if (content is MessageVenue venue)
             {
@@ -1508,14 +1495,18 @@ namespace Unigram.Controls.Messages
 
                 Message.Blocks.Add(paragraph);
                 result = true;
+                cleanup = true;
             }
             else if (content is MessageBigEmoji bigEmoji)
             {
                 var paragraph = new Paragraph();
                 paragraph.Inlines.Add(new Run { Text = bigEmoji.Text.Text, FontSize = 32 });
 
+                Message.Blocks.Clear();
                 Message.Blocks.Add(paragraph);
+                //result = ReplaceEntities(message, Message, bigEmoji.Text, out adjust, 32);
                 result = true;
+                cleanup = true;
             }
 
             Message.Visibility = result ? Visibility.Visible : Visibility.Collapsed;
@@ -1524,6 +1515,17 @@ namespace Unigram.Controls.Messages
             if (adjust && Message.Blocks.Count > 0 && Message.Blocks[0] is Paragraph existing)
             {
                 existing.Inlines.Add(new LineBreak());
+            }
+
+            if (cleanup && CustomEmoji != null)
+            {
+                _positions.Clear();
+
+                _ignoreLayoutUpdated = false;
+                Message.LayoutUpdated -= OnLayoutUpdated;
+
+                XamlMarkupHelper.UnloadObject(CustomEmoji);
+                CustomEmoji = null;
             }
         }
 
@@ -1555,7 +1557,7 @@ namespace Unigram.Controls.Messages
             }
         }
 
-        private bool ReplaceEntities(MessageViewModel message, RichTextBlock textBlock, FormattedText text, out bool adjust, bool fontSize = false)
+        private bool ReplaceEntities(MessageViewModel message, RichTextBlock textBlock, FormattedText text, out bool adjust, double fontSize = 0)
         {
             if (text == null)
             {
@@ -1566,7 +1568,7 @@ namespace Unigram.Controls.Messages
             return ReplaceEntities(message, textBlock, text.Text, text.Entities, out adjust, fontSize);
         }
 
-        private bool ReplaceEntities(MessageViewModel message, RichTextBlock textBlock, string text, IList<TextEntity> entities, out bool adjust, bool fontSize = false)
+        private bool ReplaceEntities(MessageViewModel message, RichTextBlock textBlock, string text, IList<TextEntity> entities, out bool adjust, double fontSize = 0)
         {
             if (string.IsNullOrEmpty(text))
             {
@@ -1574,23 +1576,40 @@ namespace Unigram.Controls.Messages
                 return false;
             }
 
+            _positions.Clear();
             textBlock.TextHighlighters.Clear();
             TextHighlighter spoiler = null;
 
             var preformatted = false;
 
-            var runs = TextStyleRun.GetRuns(text, entities, !_ignoreSpoilers);
+            var runs = TextStyleRun.GetRuns(text, entities);
             var previous = 0;
 
-            var direct = XamlDirect.GetDefault();
+            var shift = 1;
+            var close = false;
+
+            var direct = XamlDirect.GetCompat();
             var paragraph = direct.CreateInstance(XamlTypeIndex.Paragraph);
             var inlines = direct.GetXamlDirectObjectProperty(paragraph, XamlPropertyIndex.Paragraph_Inlines);
+
+            if (fontSize > 0)
+            {
+                direct.SetDoubleProperty(paragraph, XamlPropertyIndex.TextElement_FontSize, fontSize);
+            }
+
+            var emojis = new HashSet<long>();
 
             foreach (var entity in runs)
             {
                 if (entity.Offset > previous)
                 {
                     direct.AddToCollection(inlines, CreateDirectRun(text.Substring(previous, entity.Offset - previous)));
+
+                    // Run
+                    shift++;
+                    shift += entity.Offset - previous;
+
+                    shift++;
                 }
 
                 if (entity.Length + entity.Offset > text.Length)
@@ -1612,18 +1631,30 @@ namespace Unigram.Controls.Messages
 
                         hyperlink.Inlines.Add(CreateRun(data, fontFamily: new FontFamily("Consolas")));
                         direct.AddToCollection(inlines, direct.GetXamlDirectObject(hyperlink));
+
+                        // Hyperlink
+                        shift++;
+                        close = true;
+
+                        // Run
+                        shift++;
+                        shift += entity.Length;
                     }
                     else
                     {
                         direct.AddToCollection(inlines, CreateDirectRun(data, fontFamily: new FontFamily("Consolas")));
                         preformatted = entity.Type is TextEntityTypePre or TextEntityTypePreCode;
+
+                        // Run
+                        shift++;
+                        shift += entity.Length;
                     }
                 }
                 else
                 {
                     var local = inlines;
 
-                    if (entity.HasFlag(TextStyle.Spoiler))
+                    if (_ignoreSpoilers is false && entity.HasFlag(TextStyle.Spoiler))
                     {
                         var hyperlink = new Hyperlink();
                         hyperlink.Click += (s, args) => Entity_Click(message, new TextEntityTypeSpoiler(), null);
@@ -1639,6 +1670,10 @@ namespace Unigram.Controls.Messages
 
                         direct.AddToCollection(inlines, temp);
                         local = direct.GetXamlDirectObjectProperty(temp, XamlPropertyIndex.Span_Inlines);
+
+                        // Hyperlink
+                        shift++;
+                        close = true;
                     }
                     else if (entity.HasFlag(TextStyle.Mention) || entity.HasFlag(TextStyle.Url))
                     {
@@ -1695,74 +1730,68 @@ namespace Unigram.Controls.Messages
                             direct.AddToCollection(inlines, temp);
                             local = direct.GetXamlDirectObjectProperty(temp, XamlPropertyIndex.Span_Inlines);
                         }
+
+                        // Hyperlink
+                        shift++;
+                        close = true;
                     }
 
-                    var run = CreateDirectRun(text.Substring(entity.Offset, entity.Length));
-                    var decorations = TextDecorations.None;
-
-                    if (entity.HasFlag(TextStyle.Underline))
+                    if (entity.Type is TextEntityTypeCustomEmoji customEmoji)
                     {
-                        decorations |= TextDecorations.Underline;
+                        // Run
+                        shift++;
+
+                        _positions.Add(new EmojiPosition { X = shift, CustomEmojiId = customEmoji.CustomEmojiId });
+
+                        direct.AddToCollection(inlines, CreateDirectRun(text.Substring(entity.Offset, entity.Length), fontFamily: App.Current.Resources["SpoilerFontFamily"] as FontFamily));
+                        emojis.Add(customEmoji.CustomEmojiId);
+
+                        shift += entity.Length;
                     }
-                    if (entity.HasFlag(TextStyle.Strikethrough))
+                    else
                     {
-                        decorations |= TextDecorations.Strikethrough;
+                        var run = CreateDirectRun(text.Substring(entity.Offset, entity.Length));
+                        var decorations = TextDecorations.None;
+
+                        if (entity.HasFlag(TextStyle.Underline))
+                        {
+                            decorations |= TextDecorations.Underline;
+                        }
+                        if (entity.HasFlag(TextStyle.Strikethrough))
+                        {
+                            decorations |= TextDecorations.Strikethrough;
+                        }
+
+                        if (decorations != TextDecorations.None)
+                        {
+                            direct.SetEnumProperty(run, XamlPropertyIndex.TextElement_TextDecorations, (uint)decorations);
+                        }
+
+                        if (entity.HasFlag(TextStyle.Bold))
+                        {
+                            direct.SetObjectProperty(run, XamlPropertyIndex.TextElement_FontWeight, FontWeights.SemiBold);
+                        }
+                        if (entity.HasFlag(TextStyle.Italic))
+                        {
+                            direct.SetEnumProperty(run, XamlPropertyIndex.TextElement_FontStyle, (uint)FontStyle.Italic);
+                        }
+
+                        direct.AddToCollection(local, run);
+
+                        // Run
+                        shift++;
+                        shift += entity.Length;
                     }
-
-                    if (decorations != TextDecorations.None)
-                    {
-                        direct.SetEnumProperty(run, XamlPropertyIndex.TextElement_TextDecorations, (uint)decorations);
-                    }
-
-                    if (entity.HasFlag(TextStyle.Bold))
-                    {
-                        direct.SetObjectProperty(run, XamlPropertyIndex.TextElement_FontWeight, FontWeights.SemiBold);
-                    }
-                    if (entity.HasFlag(TextStyle.Italic))
-                    {
-                        direct.SetEnumProperty(run, XamlPropertyIndex.TextElement_FontStyle, (uint)FontStyle.Italic);
-                    }
-
-                    direct.AddToCollection(local, run);
-
-                    //if (entity.Type is TextEntityTypeHashtag)
-                    //{
-                    //    var data = text.Substring(entity.Offset, entity.Length);
-                    //    var hex = data.TrimStart('#');
-
-                    //    if ((hex.Length == 6 || hex.Length == 8) && int.TryParse(hex, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int rgba))
-                    //    {
-                    //        byte r, g, b, a;
-                    //        if (hex.Length == 8)
-                    //        {
-                    //            r = (byte)((rgba & 0xff000000) >> 24);
-                    //            g = (byte)((rgba & 0x00ff0000) >> 16);
-                    //            b = (byte)((rgba & 0x0000ff00) >> 8);
-                    //            a = (byte)(rgba & 0x000000ff);
-                    //        }
-                    //        else
-                    //        {
-                    //            r = (byte)((rgba & 0xff0000) >> 16);
-                    //            g = (byte)((rgba & 0x00ff00) >> 8);
-                    //            b = (byte)(rgba & 0x0000ff);
-                    //            a = 0xFF;
-                    //        }
-
-                    //        var color = Color.FromArgb(a, r, g, b);
-                    //        var border = new Border
-                    //        {
-                    //            Width = 12,
-                    //            Height = 12,
-                    //            Margin = new Thickness(4, 4, 0, -2),
-                    //            Background = new SolidColorBrush(color)
-                    //        };
-
-                    //        span.Inlines.Add(new InlineUIContainer { Child = border });
-                    //    }
-                    //}
                 }
 
                 previous = entity.Offset + entity.Length;
+                shift++;
+
+                if (close)
+                {
+                    shift++;
+                    close = false;
+                }
             }
 
             ContentPanel.MaxWidth = preformatted ? double.PositiveInfinity : 432;
@@ -1823,12 +1852,102 @@ namespace Unigram.Controls.Messages
                 adjust = false;
             }
 
+            Message.LayoutUpdated -= OnLayoutUpdated;
+
+            if (emojis.Count > 0)
+            {
+                CustomEmoji ??= GetTemplateChild(nameof(CustomEmoji)) as CustomEmojiCanvas;
+                CustomEmoji.UpdateEntities(message.ProtoService, emojis);
+
+                if (_playing)
+                {
+                    CustomEmoji.Play();
+                }
+
+                _ignoreLayoutUpdated = false;
+                Message.LayoutUpdated += OnLayoutUpdated;
+            }
+            else if (CustomEmoji != null)
+            {
+                XamlMarkupHelper.UnloadObject(CustomEmoji);
+                CustomEmoji = null;
+            }
+
             return true;
         }
-        
+
+        private void OnLayoutUpdated(object sender, object e)
+        {
+            var message = _message;
+            if (message == null || _ignoreLayoutUpdated)
+            {
+                return;
+            }
+
+            if (_positions.Count > 0)
+            {
+                _ignoreLayoutUpdated = true;
+                LoadCustomEmojis();
+            }
+            else
+            {
+                Message.LayoutUpdated -= OnLayoutUpdated;
+
+                if (CustomEmoji != null)
+                {
+                    XamlMarkupHelper.UnloadObject(CustomEmoji);
+                    CustomEmoji = null;
+                }
+            }
+        }
+
+        private void LoadCustomEmojis()
+        {
+            var positions = new List<EmojiPosition>();
+
+            foreach (var item in _positions)
+            {
+                var pointer = Message.ContentStart.GetPositionAtOffset(item.X, LogicalDirection.Forward);
+                if (pointer == null)
+                {
+                    continue;
+                }
+
+                var rect = pointer.GetCharacterRect(LogicalDirection.Forward);
+
+                positions.Add(new EmojiPosition
+                {
+                    CustomEmojiId = item.CustomEmojiId,
+                    X = (int)rect.X,
+                    Y = (int)rect.Y
+                });
+            }
+
+            if (positions.Count < 1)
+            {
+                Message.LayoutUpdated -= OnLayoutUpdated;
+
+                if (CustomEmoji != null)
+                {
+                    XamlMarkupHelper.UnloadObject(CustomEmoji);
+                    CustomEmoji = null;
+                }
+            }
+            else
+            {
+                CustomEmoji ??= GetTemplateChild(nameof(CustomEmoji)) as CustomEmojiCanvas;
+                CustomEmoji.UpdatePositions(positions);
+
+                if (_playing)
+                {
+                    CustomEmoji.Play();
+                }
+            }
+        }
+
         private Run CreateRun(string text, FontWeight? fontWeight = null, FontFamily fontFamily = null)
         {
-            var direct = XamlDirect.GetDefault();
+            var direct = XamlDirect.GetCompat();
             var run = direct.CreateInstance(XamlTypeIndex.Run);
             direct.SetStringProperty(run, XamlPropertyIndex.Run_Text, text);
 
@@ -1845,9 +1964,9 @@ namespace Unigram.Controls.Messages
             return direct.GetObject(run) as Run;
         }
 
-        private IXamlDirectObject CreateDirectRun(string text, FontWeight? fontWeight = null, FontFamily fontFamily = null)
+        private object CreateDirectRun(string text, FontWeight? fontWeight = null, FontFamily fontFamily = null)
         {
-            var direct = XamlDirect.GetDefault();
+            var direct = XamlDirect.GetCompat();
             var run = direct.CreateInstance(XamlTypeIndex.Run);
             direct.SetStringProperty(run, XamlPropertyIndex.Run_Text, text);
 
@@ -1895,6 +2014,17 @@ namespace Unigram.Controls.Messages
 
         private void Entity_Click(MessageViewModel message, TextEntityType type, object data)
         {
+            foreach (Paragraph block in Message.Blocks)
+            {
+                foreach (var element in block.Inlines)
+                {
+                    if (element is Hyperlink)
+                    {
+                        ToolTipService.SetToolTip(element, null);
+                    }
+                }
+            }
+
             if (type is TextEntityTypeBotCommand && data is string command)
             {
                 message.Delegate.SendBotCommand(command);
@@ -2184,6 +2314,7 @@ namespace Unigram.Controls.Messages
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
+            _ignoreLayoutUpdated = false;
             UpdateClip();
 
             var message = _message;
@@ -2946,5 +3077,40 @@ namespace Unigram.Controls.Messages
                     return false;
             }
         }
+
+        #region IPlayerView
+
+        public bool IsAnimatable => CustomEmoji != null || (Reply?.IsAnimatable ?? false);
+
+        public bool IsLoopingEnabled => true;
+
+        private bool _playing;
+
+        public bool Play()
+        {
+            CustomEmoji?.Play();
+            Reply?.Play();
+
+            _playing = true;
+            return true;
+        }
+
+        public void Pause()
+        {
+            CustomEmoji?.Pause();
+            Reply?.Pause();
+
+            _playing = false;
+        }
+
+        public void Unload()
+        {
+            CustomEmoji?.Unload();
+            Reply?.Unload();
+
+            _playing = false;
+        }
+
+        #endregion
     }
 }
