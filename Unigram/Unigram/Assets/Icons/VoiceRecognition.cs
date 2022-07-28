@@ -60,7 +60,7 @@ namespace Unigram.Assets.Icons
     // _________________________________________________________
     // | Theme property |   Accessor   | Type  | Default value |
     // |________________|______________|_______|_______________|
-    // | #979797        | Color_979797 | Color |   #FF979797   |
+    // | #979797        | Color_000000 | Color |   #FF979797   |
     // ---------------------------------------------------------
     public sealed class VoiceRecognition
         : Microsoft.UI.Xaml.Controls.IAnimatedVisualSource
@@ -69,22 +69,22 @@ namespace Unigram.Assets.Icons
         // Animation duration: 0.667 seconds.
         internal const long c_durationTicks = 6666666;
 
-        // Theme property: Color_979797.
-        internal static readonly Color c_themeColor_979797 = Color.FromArgb(0xFF, 0x97, 0x97, 0x97);
+        // Theme property: Color_000000.
+        internal static readonly Color c_themeColor_000000 = Color.FromArgb(0xFF, 0x97, 0x97, 0x97);
 
         CompositionPropertySet _themeProperties;
-        Color _themeColor_979797 = c_themeColor_979797;
+        Color _themeColor_000000 = c_themeColor_000000;
 
         // Theme properties.
-        public Color Color_979797
+        public Color Color_000000
         {
-            get => _themeColor_979797;
+            get => _themeColor_000000;
             set
             {
-                _themeColor_979797 = value;
+                _themeColor_000000 = value;
                 if (_themeProperties != null)
                 {
-                    _themeProperties.InsertVector4("Color_979797", ColorAsVector4((Color)_themeColor_979797));
+                    _themeProperties.InsertVector4("Color_000000", ColorAsVector4((Color)_themeColor_000000));
                 }
             }
         }
@@ -96,7 +96,7 @@ namespace Unigram.Assets.Icons
             if (_themeProperties == null)
             {
                 _themeProperties = compositor.CreatePropertySet();
-                _themeProperties.InsertVector4("Color_979797", ColorAsVector4((Color)Color_979797));
+                _themeProperties.InsertVector4("Color_000000", ColorAsVector4((Color)Color_000000));
             }
             return _themeProperties;
         }
@@ -179,9 +179,9 @@ namespace Unigram.Assets.Icons
         /// </summary>
         public void SetColorProperty(string propertyName, Color value)
         {
-            if (propertyName == "Color_979797")
+            if (propertyName == "Color_000000")
             {
-                _themeColor_979797 = value;
+                _themeColor_000000 = value;
             }
             else
             {
@@ -208,14 +208,14 @@ namespace Unigram.Assets.Icons
             readonly Compositor _c;
             readonly ExpressionAnimation _reusableExpressionAnimation;
             readonly CompositionPropertySet _themeProperties;
-            CompositionColorBrush _themeColor_Color_979797_0;
-            CompositionColorBrush _themeColor_Color_979797_1;
-            CompositionColorBrush _themeColor_Color_979797_2;
-            CompositionColorBrush _themeColor_Color_979797_3;
-            CompositionColorBrush _themeColor_Color_979797_4;
-            CompositionColorBrush _themeColor_Color_979797_5;
-            CompositionColorBrush _themeColor_Color_979797_6;
-            CompositionColorBrush _themeColor_Color_979797_7;
+            CompositionColorBrush _themeColor_Color_000000_0;
+            CompositionColorBrush _themeColor_Color_000000_1;
+            CompositionColorBrush _themeColor_Color_000000_2;
+            CompositionColorBrush _themeColor_Color_000000_3;
+            CompositionColorBrush _themeColor_Color_000000_4;
+            CompositionColorBrush _themeColor_Color_000000_5;
+            CompositionColorBrush _themeColor_Color_000000_6;
+            CompositionColorBrush _themeColor_Color_000000_7;
             CompositionContainerShape _containerShape_00;
             CompositionContainerShape _containerShape_10;
             CompositionContainerShape _containerShape_15;
@@ -490,48 +490,48 @@ namespace Unigram.Assets.Icons
             // - - - - - Shape tree root for layer: icon
             // - - ShapeGroup: Group 4
             // Path 1
-            // Color bound to theme property value: Color_979797
-            CompositionColorBrush ThemeColor_Color_979797_0()
+            // Color bound to theme property value: Color_000000
+            CompositionColorBrush ThemeColor_Color_000000_0()
             {
-                if (_themeColor_Color_979797_0 != null) { return _themeColor_Color_979797_0; }
-                var result = _themeColor_Color_979797_0 = _c.CreateColorBrush();
-                BindProperty(_themeColor_Color_979797_0, "Color", "ColorRGB(_theme.Color_979797.W,_theme.Color_979797.X,_theme.Color_979797.Y,_theme.Color_979797.Z)", "_theme", _themeProperties);
+                if (_themeColor_Color_000000_0 != null) { return _themeColor_Color_000000_0; }
+                var result = _themeColor_Color_000000_0 = _c.CreateColorBrush();
+                BindProperty(_themeColor_Color_000000_0, "Color", "ColorRGB(_theme.Color_000000.W,_theme.Color_000000.X,_theme.Color_000000.Y,_theme.Color_000000.Z)", "_theme", _themeProperties);
                 return result;
             }
 
             // - - - - - Shape tree root for layer: icon
             // - - ShapeGroup: Group 3
             // Path 1
-            // Color bound to theme property value: Color_979797
-            CompositionColorBrush ThemeColor_Color_979797_1()
+            // Color bound to theme property value: Color_000000
+            CompositionColorBrush ThemeColor_Color_000000_1()
             {
-                if (_themeColor_Color_979797_1 != null) { return _themeColor_Color_979797_1; }
-                var result = _themeColor_Color_979797_1 = _c.CreateColorBrush();
-                BindProperty(_themeColor_Color_979797_1, "Color", "ColorRGB(_theme.Color_979797.W,_theme.Color_979797.X,_theme.Color_979797.Y,_theme.Color_979797.Z)", "_theme", _themeProperties);
+                if (_themeColor_Color_000000_1 != null) { return _themeColor_Color_000000_1; }
+                var result = _themeColor_Color_000000_1 = _c.CreateColorBrush();
+                BindProperty(_themeColor_Color_000000_1, "Color", "ColorRGB(_theme.Color_000000.W,_theme.Color_000000.X,_theme.Color_000000.Y,_theme.Color_000000.Z)", "_theme", _themeProperties);
                 return result;
             }
 
             // - - - - - Shape tree root for layer: icon
             // - - ShapeGroup: Group 2
             // Path 1
-            // Color bound to theme property value: Color_979797
-            CompositionColorBrush ThemeColor_Color_979797_2()
+            // Color bound to theme property value: Color_000000
+            CompositionColorBrush ThemeColor_Color_000000_2()
             {
-                if (_themeColor_Color_979797_2 != null) { return _themeColor_Color_979797_2; }
-                var result = _themeColor_Color_979797_2 = _c.CreateColorBrush();
-                BindProperty(_themeColor_Color_979797_2, "Color", "ColorRGB(_theme.Color_979797.W,_theme.Color_979797.X,_theme.Color_979797.Y,_theme.Color_979797.Z)", "_theme", _themeProperties);
+                if (_themeColor_Color_000000_2 != null) { return _themeColor_Color_000000_2; }
+                var result = _themeColor_Color_000000_2 = _c.CreateColorBrush();
+                BindProperty(_themeColor_Color_000000_2, "Color", "ColorRGB(_theme.Color_000000.W,_theme.Color_000000.X,_theme.Color_000000.Y,_theme.Color_000000.Z)", "_theme", _themeProperties);
                 return result;
             }
 
             // - - - - - Shape tree root for layer: icon
             // - - ShapeGroup: Group 1
             // Path 1
-            // Color bound to theme property value: Color_979797
-            CompositionColorBrush ThemeColor_Color_979797_3()
+            // Color bound to theme property value: Color_000000
+            CompositionColorBrush ThemeColor_Color_000000_3()
             {
-                if (_themeColor_Color_979797_3 != null) { return _themeColor_Color_979797_3; }
-                var result = _themeColor_Color_979797_3 = _c.CreateColorBrush();
-                BindProperty(_themeColor_Color_979797_3, "Color", "ColorRGB(_theme.Color_979797.W,_theme.Color_979797.X,_theme.Color_979797.Y,_theme.Color_979797.Z)", "_theme", _themeProperties);
+                if (_themeColor_Color_000000_3 != null) { return _themeColor_Color_000000_3; }
+                var result = _themeColor_Color_000000_3 = _c.CreateColorBrush();
+                BindProperty(_themeColor_Color_000000_3, "Color", "ColorRGB(_theme.Color_000000.W,_theme.Color_000000.X,_theme.Color_000000.Y,_theme.Color_000000.Z)", "_theme", _themeProperties);
                 return result;
             }
 
@@ -541,12 +541,12 @@ namespace Unigram.Assets.Icons
             // - - - - - Layer: Artboard Copy Outlines
             // - - ShapeGroup: Group 1
             // Path 1
-            // Color bound to theme property value: Color_979797
-            CompositionColorBrush ThemeColor_Color_979797_4()
+            // Color bound to theme property value: Color_000000
+            CompositionColorBrush ThemeColor_Color_000000_4()
             {
-                if (_themeColor_Color_979797_4 != null) { return _themeColor_Color_979797_4; }
-                var result = _themeColor_Color_979797_4 = _c.CreateColorBrush();
-                BindProperty(_themeColor_Color_979797_4, "Color", "ColorRGB(_theme.Color_979797.W,_theme.Color_979797.X,_theme.Color_979797.Y,_theme.Color_979797.Z)", "_theme", _themeProperties);
+                if (_themeColor_Color_000000_4 != null) { return _themeColor_Color_000000_4; }
+                var result = _themeColor_Color_000000_4 = _c.CreateColorBrush();
+                BindProperty(_themeColor_Color_000000_4, "Color", "ColorRGB(_theme.Color_000000.W,_theme.Color_000000.X,_theme.Color_000000.Y,_theme.Color_000000.Z)", "_theme", _themeProperties);
                 return result;
             }
 
@@ -556,12 +556,12 @@ namespace Unigram.Assets.Icons
             // - - - - - Layer: Artboard Copy 2 Outlines
             // - - ShapeGroup: Group 5
             // Path 1
-            // Color bound to theme property value: Color_979797
-            CompositionColorBrush ThemeColor_Color_979797_5()
+            // Color bound to theme property value: Color_000000
+            CompositionColorBrush ThemeColor_Color_000000_5()
             {
-                if (_themeColor_Color_979797_5 != null) { return _themeColor_Color_979797_5; }
-                var result = _themeColor_Color_979797_5 = _c.CreateColorBrush();
-                BindProperty(_themeColor_Color_979797_5, "Color", "ColorRGB(_theme.Color_979797.W,_theme.Color_979797.X,_theme.Color_979797.Y,_theme.Color_979797.Z)", "_theme", _themeProperties);
+                if (_themeColor_Color_000000_5 != null) { return _themeColor_Color_000000_5; }
+                var result = _themeColor_Color_000000_5 = _c.CreateColorBrush();
+                BindProperty(_themeColor_Color_000000_5, "Color", "ColorRGB(_theme.Color_000000.W,_theme.Color_000000.X,_theme.Color_000000.Y,_theme.Color_000000.Z)", "_theme", _themeProperties);
                 return result;
             }
 
@@ -571,12 +571,12 @@ namespace Unigram.Assets.Icons
             // - - - - - Layer: Artboard Copy 2 Outlines
             // - - ShapeGroup: Group 4
             // Path 1
-            // Color bound to theme property value: Color_979797
-            CompositionColorBrush ThemeColor_Color_979797_6()
+            // Color bound to theme property value: Color_000000
+            CompositionColorBrush ThemeColor_Color_000000_6()
             {
-                if (_themeColor_Color_979797_6 != null) { return _themeColor_Color_979797_6; }
-                var result = _themeColor_Color_979797_6 = _c.CreateColorBrush();
-                BindProperty(_themeColor_Color_979797_6, "Color", "ColorRGB(_theme.Color_979797.W,_theme.Color_979797.X,_theme.Color_979797.Y,_theme.Color_979797.Z)", "_theme", _themeProperties);
+                if (_themeColor_Color_000000_6 != null) { return _themeColor_Color_000000_6; }
+                var result = _themeColor_Color_000000_6 = _c.CreateColorBrush();
+                BindProperty(_themeColor_Color_000000_6, "Color", "ColorRGB(_theme.Color_000000.W,_theme.Color_000000.X,_theme.Color_000000.Y,_theme.Color_000000.Z)", "_theme", _themeProperties);
                 return result;
             }
 
@@ -586,12 +586,12 @@ namespace Unigram.Assets.Icons
             // - - - - - Layer: Artboard Copy 2 Outlines
             // - - ShapeGroup: Group 1
             // Path 1
-            // Color bound to theme property value: Color_979797
-            CompositionColorBrush ThemeColor_Color_979797_7()
+            // Color bound to theme property value: Color_000000
+            CompositionColorBrush ThemeColor_Color_000000_7()
             {
-                if (_themeColor_Color_979797_7 != null) { return _themeColor_Color_979797_7; }
-                var result = _themeColor_Color_979797_7 = _c.CreateColorBrush();
-                BindProperty(_themeColor_Color_979797_7, "Color", "ColorRGB(_theme.Color_979797.W,_theme.Color_979797.X,_theme.Color_979797.Y,_theme.Color_979797.Z)", "_theme", _themeProperties);
+                if (_themeColor_Color_000000_7 != null) { return _themeColor_Color_000000_7; }
+                var result = _themeColor_Color_000000_7 = _c.CreateColorBrush();
+                BindProperty(_themeColor_Color_000000_7, "Color", "ColorRGB(_theme.Color_000000.W,_theme.Color_000000.X,_theme.Color_000000.Y,_theme.Color_000000.Z)", "_theme", _themeProperties);
                 return result;
             }
 
@@ -1031,7 +1031,7 @@ namespace Unigram.Assets.Icons
             {
                 if (_spriteShape_0 != null) { return _spriteShape_0; }
                 var result = _spriteShape_0 = _c.CreateSpriteShape(PathGeometry_0());
-                result.StrokeBrush = ThemeColor_Color_979797_0();
+                result.StrokeBrush = ThemeColor_Color_000000_0();
                 result.StrokeDashCap = CompositionStrokeCap.Round;
                 result.StrokeDashOffset = 0F;
                 result.StrokeStartCap = CompositionStrokeCap.Round;
@@ -1048,7 +1048,7 @@ namespace Unigram.Assets.Icons
             {
                 if (_spriteShape_1 != null) { return _spriteShape_1; }
                 var result = _spriteShape_1 = _c.CreateSpriteShape(PathGeometry_1());
-                result.StrokeBrush = ThemeColor_Color_979797_1();
+                result.StrokeBrush = ThemeColor_Color_000000_1();
                 result.StrokeDashCap = CompositionStrokeCap.Round;
                 result.StrokeDashOffset = 0F;
                 result.StrokeStartCap = CompositionStrokeCap.Round;
@@ -1064,7 +1064,7 @@ namespace Unigram.Assets.Icons
             CompositionSpriteShape SpriteShape_2()
             {
                 var result = _c.CreateSpriteShape(PathGeometry_2());
-                result.StrokeBrush = ThemeColor_Color_979797_2();
+                result.StrokeBrush = ThemeColor_Color_000000_2();
                 result.StrokeDashCap = CompositionStrokeCap.Round;
                 result.StrokeDashOffset = 0F;
                 result.StrokeStartCap = CompositionStrokeCap.Round;
@@ -1081,7 +1081,7 @@ namespace Unigram.Assets.Icons
             CompositionSpriteShape SpriteShape_3()
             {
                 var result = _c.CreateSpriteShape(PathGeometry_3());
-                result.StrokeBrush = ThemeColor_Color_979797_3();
+                result.StrokeBrush = ThemeColor_Color_000000_3();
                 result.StrokeDashCap = CompositionStrokeCap.Round;
                 result.StrokeDashOffset = 0F;
                 result.StrokeStartCap = CompositionStrokeCap.Round;
@@ -1101,7 +1101,7 @@ namespace Unigram.Assets.Icons
             {
                 if (_spriteShape_4 != null) { return _spriteShape_4; }
                 var result = _spriteShape_4 = _c.CreateSpriteShape(PathGeometry_4());
-                result.StrokeBrush = ThemeColor_Color_979797_4();
+                result.StrokeBrush = ThemeColor_Color_000000_4();
                 result.StrokeDashCap = CompositionStrokeCap.Round;
                 result.StrokeDashOffset = 0F;
                 result.StrokeStartCap = CompositionStrokeCap.Round;
@@ -1121,7 +1121,7 @@ namespace Unigram.Assets.Icons
             {
                 if (_spriteShape_5 != null) { return _spriteShape_5; }
                 var result = _spriteShape_5 = _c.CreateSpriteShape(PathGeometry_5());
-                result.StrokeBrush = ThemeColor_Color_979797_5();
+                result.StrokeBrush = ThemeColor_Color_000000_5();
                 result.StrokeDashCap = CompositionStrokeCap.Round;
                 result.StrokeDashOffset = 0F;
                 result.StrokeStartCap = CompositionStrokeCap.Round;
@@ -1140,7 +1140,7 @@ namespace Unigram.Assets.Icons
             {
                 if (_spriteShape_6 != null) { return _spriteShape_6; }
                 var result = _spriteShape_6 = _c.CreateSpriteShape(PathGeometry_6());
-                result.StrokeBrush = ThemeColor_Color_979797_6();
+                result.StrokeBrush = ThemeColor_Color_000000_6();
                 result.StrokeDashCap = CompositionStrokeCap.Round;
                 result.StrokeDashOffset = 0F;
                 result.StrokeStartCap = CompositionStrokeCap.Round;
@@ -1159,7 +1159,7 @@ namespace Unigram.Assets.Icons
             CompositionSpriteShape SpriteShape_7()
             {
                 var result = _c.CreateSpriteShape(PathGeometry_7());
-                result.StrokeBrush = ThemeColor_Color_979797_7();
+                result.StrokeBrush = ThemeColor_Color_000000_7();
                 result.StrokeDashCap = CompositionStrokeCap.Round;
                 result.StrokeDashOffset = 0F;
                 result.StrokeStartCap = CompositionStrokeCap.Round;
@@ -1770,14 +1770,14 @@ namespace Unigram.Assets.Icons
             readonly Compositor _c;
             readonly ExpressionAnimation _reusableExpressionAnimation;
             readonly CompositionPropertySet _themeProperties;
-            CompositionColorBrush _themeColor_Color_979797_0;
-            CompositionColorBrush _themeColor_Color_979797_1;
-            CompositionColorBrush _themeColor_Color_979797_2;
-            CompositionColorBrush _themeColor_Color_979797_3;
-            CompositionColorBrush _themeColor_Color_979797_4;
-            CompositionColorBrush _themeColor_Color_979797_5;
-            CompositionColorBrush _themeColor_Color_979797_6;
-            CompositionColorBrush _themeColor_Color_979797_7;
+            CompositionColorBrush _themeColor_Color_000000_0;
+            CompositionColorBrush _themeColor_Color_000000_1;
+            CompositionColorBrush _themeColor_Color_000000_2;
+            CompositionColorBrush _themeColor_Color_000000_3;
+            CompositionColorBrush _themeColor_Color_000000_4;
+            CompositionColorBrush _themeColor_Color_000000_5;
+            CompositionColorBrush _themeColor_Color_000000_6;
+            CompositionColorBrush _themeColor_Color_000000_7;
             CompositionContainerShape _containerShape_00;
             CompositionContainerShape _containerShape_10;
             CompositionContainerShape _containerShape_15;
@@ -2006,48 +2006,48 @@ namespace Unigram.Assets.Icons
             // - - - - - Shape tree root for layer: icon
             // - - ShapeGroup: Group 4
             // Path 1
-            // Color bound to theme property value: Color_979797
-            CompositionColorBrush ThemeColor_Color_979797_0()
+            // Color bound to theme property value: Color_000000
+            CompositionColorBrush ThemeColor_Color_000000_0()
             {
-                if (_themeColor_Color_979797_0 != null) { return _themeColor_Color_979797_0; }
-                var result = _themeColor_Color_979797_0 = _c.CreateColorBrush();
-                BindProperty(_themeColor_Color_979797_0, "Color", "ColorRGB(_theme.Color_979797.W,_theme.Color_979797.X,_theme.Color_979797.Y,_theme.Color_979797.Z)", "_theme", _themeProperties);
+                if (_themeColor_Color_000000_0 != null) { return _themeColor_Color_000000_0; }
+                var result = _themeColor_Color_000000_0 = _c.CreateColorBrush();
+                BindProperty(_themeColor_Color_000000_0, "Color", "ColorRGB(_theme.Color_000000.W,_theme.Color_000000.X,_theme.Color_000000.Y,_theme.Color_000000.Z)", "_theme", _themeProperties);
                 return result;
             }
 
             // - - - - - Shape tree root for layer: icon
             // - - ShapeGroup: Group 3
             // Path 1
-            // Color bound to theme property value: Color_979797
-            CompositionColorBrush ThemeColor_Color_979797_1()
+            // Color bound to theme property value: Color_000000
+            CompositionColorBrush ThemeColor_Color_000000_1()
             {
-                if (_themeColor_Color_979797_1 != null) { return _themeColor_Color_979797_1; }
-                var result = _themeColor_Color_979797_1 = _c.CreateColorBrush();
-                BindProperty(_themeColor_Color_979797_1, "Color", "ColorRGB(_theme.Color_979797.W,_theme.Color_979797.X,_theme.Color_979797.Y,_theme.Color_979797.Z)", "_theme", _themeProperties);
+                if (_themeColor_Color_000000_1 != null) { return _themeColor_Color_000000_1; }
+                var result = _themeColor_Color_000000_1 = _c.CreateColorBrush();
+                BindProperty(_themeColor_Color_000000_1, "Color", "ColorRGB(_theme.Color_000000.W,_theme.Color_000000.X,_theme.Color_000000.Y,_theme.Color_000000.Z)", "_theme", _themeProperties);
                 return result;
             }
 
             // - - - - - Shape tree root for layer: icon
             // - - ShapeGroup: Group 2
             // Path 1
-            // Color bound to theme property value: Color_979797
-            CompositionColorBrush ThemeColor_Color_979797_2()
+            // Color bound to theme property value: Color_000000
+            CompositionColorBrush ThemeColor_Color_000000_2()
             {
-                if (_themeColor_Color_979797_2 != null) { return _themeColor_Color_979797_2; }
-                var result = _themeColor_Color_979797_2 = _c.CreateColorBrush();
-                BindProperty(_themeColor_Color_979797_2, "Color", "ColorRGB(_theme.Color_979797.W,_theme.Color_979797.X,_theme.Color_979797.Y,_theme.Color_979797.Z)", "_theme", _themeProperties);
+                if (_themeColor_Color_000000_2 != null) { return _themeColor_Color_000000_2; }
+                var result = _themeColor_Color_000000_2 = _c.CreateColorBrush();
+                BindProperty(_themeColor_Color_000000_2, "Color", "ColorRGB(_theme.Color_000000.W,_theme.Color_000000.X,_theme.Color_000000.Y,_theme.Color_000000.Z)", "_theme", _themeProperties);
                 return result;
             }
 
             // - - - - - Shape tree root for layer: icon
             // - - ShapeGroup: Group 1
             // Path 1
-            // Color bound to theme property value: Color_979797
-            CompositionColorBrush ThemeColor_Color_979797_3()
+            // Color bound to theme property value: Color_000000
+            CompositionColorBrush ThemeColor_Color_000000_3()
             {
-                if (_themeColor_Color_979797_3 != null) { return _themeColor_Color_979797_3; }
-                var result = _themeColor_Color_979797_3 = _c.CreateColorBrush();
-                BindProperty(_themeColor_Color_979797_3, "Color", "ColorRGB(_theme.Color_979797.W,_theme.Color_979797.X,_theme.Color_979797.Y,_theme.Color_979797.Z)", "_theme", _themeProperties);
+                if (_themeColor_Color_000000_3 != null) { return _themeColor_Color_000000_3; }
+                var result = _themeColor_Color_000000_3 = _c.CreateColorBrush();
+                BindProperty(_themeColor_Color_000000_3, "Color", "ColorRGB(_theme.Color_000000.W,_theme.Color_000000.X,_theme.Color_000000.Y,_theme.Color_000000.Z)", "_theme", _themeProperties);
                 return result;
             }
 
@@ -2057,12 +2057,12 @@ namespace Unigram.Assets.Icons
             // - - - - - Layer: Artboard Copy Outlines
             // - - ShapeGroup: Group 1
             // Path 1
-            // Color bound to theme property value: Color_979797
-            CompositionColorBrush ThemeColor_Color_979797_4()
+            // Color bound to theme property value: Color_000000
+            CompositionColorBrush ThemeColor_Color_000000_4()
             {
-                if (_themeColor_Color_979797_4 != null) { return _themeColor_Color_979797_4; }
-                var result = _themeColor_Color_979797_4 = _c.CreateColorBrush();
-                BindProperty(_themeColor_Color_979797_4, "Color", "ColorRGB(_theme.Color_979797.W,_theme.Color_979797.X,_theme.Color_979797.Y,_theme.Color_979797.Z)", "_theme", _themeProperties);
+                if (_themeColor_Color_000000_4 != null) { return _themeColor_Color_000000_4; }
+                var result = _themeColor_Color_000000_4 = _c.CreateColorBrush();
+                BindProperty(_themeColor_Color_000000_4, "Color", "ColorRGB(_theme.Color_000000.W,_theme.Color_000000.X,_theme.Color_000000.Y,_theme.Color_000000.Z)", "_theme", _themeProperties);
                 return result;
             }
 
@@ -2072,12 +2072,12 @@ namespace Unigram.Assets.Icons
             // - - - - - Layer: Artboard Copy 2 Outlines
             // - - ShapeGroup: Group 5
             // Path 1
-            // Color bound to theme property value: Color_979797
-            CompositionColorBrush ThemeColor_Color_979797_5()
+            // Color bound to theme property value: Color_000000
+            CompositionColorBrush ThemeColor_Color_000000_5()
             {
-                if (_themeColor_Color_979797_5 != null) { return _themeColor_Color_979797_5; }
-                var result = _themeColor_Color_979797_5 = _c.CreateColorBrush();
-                BindProperty(_themeColor_Color_979797_5, "Color", "ColorRGB(_theme.Color_979797.W,_theme.Color_979797.X,_theme.Color_979797.Y,_theme.Color_979797.Z)", "_theme", _themeProperties);
+                if (_themeColor_Color_000000_5 != null) { return _themeColor_Color_000000_5; }
+                var result = _themeColor_Color_000000_5 = _c.CreateColorBrush();
+                BindProperty(_themeColor_Color_000000_5, "Color", "ColorRGB(_theme.Color_000000.W,_theme.Color_000000.X,_theme.Color_000000.Y,_theme.Color_000000.Z)", "_theme", _themeProperties);
                 return result;
             }
 
@@ -2087,12 +2087,12 @@ namespace Unigram.Assets.Icons
             // - - - - - Layer: Artboard Copy 2 Outlines
             // - - ShapeGroup: Group 4
             // Path 1
-            // Color bound to theme property value: Color_979797
-            CompositionColorBrush ThemeColor_Color_979797_6()
+            // Color bound to theme property value: Color_000000
+            CompositionColorBrush ThemeColor_Color_000000_6()
             {
-                if (_themeColor_Color_979797_6 != null) { return _themeColor_Color_979797_6; }
-                var result = _themeColor_Color_979797_6 = _c.CreateColorBrush();
-                BindProperty(_themeColor_Color_979797_6, "Color", "ColorRGB(_theme.Color_979797.W,_theme.Color_979797.X,_theme.Color_979797.Y,_theme.Color_979797.Z)", "_theme", _themeProperties);
+                if (_themeColor_Color_000000_6 != null) { return _themeColor_Color_000000_6; }
+                var result = _themeColor_Color_000000_6 = _c.CreateColorBrush();
+                BindProperty(_themeColor_Color_000000_6, "Color", "ColorRGB(_theme.Color_000000.W,_theme.Color_000000.X,_theme.Color_000000.Y,_theme.Color_000000.Z)", "_theme", _themeProperties);
                 return result;
             }
 
@@ -2102,12 +2102,12 @@ namespace Unigram.Assets.Icons
             // - - - - - Layer: Artboard Copy 2 Outlines
             // - - ShapeGroup: Group 1
             // Path 1
-            // Color bound to theme property value: Color_979797
-            CompositionColorBrush ThemeColor_Color_979797_7()
+            // Color bound to theme property value: Color_000000
+            CompositionColorBrush ThemeColor_Color_000000_7()
             {
-                if (_themeColor_Color_979797_7 != null) { return _themeColor_Color_979797_7; }
-                var result = _themeColor_Color_979797_7 = _c.CreateColorBrush();
-                BindProperty(_themeColor_Color_979797_7, "Color", "ColorRGB(_theme.Color_979797.W,_theme.Color_979797.X,_theme.Color_979797.Y,_theme.Color_979797.Z)", "_theme", _themeProperties);
+                if (_themeColor_Color_000000_7 != null) { return _themeColor_Color_000000_7; }
+                var result = _themeColor_Color_000000_7 = _c.CreateColorBrush();
+                BindProperty(_themeColor_Color_000000_7, "Color", "ColorRGB(_theme.Color_000000.W,_theme.Color_000000.X,_theme.Color_000000.Y,_theme.Color_000000.Z)", "_theme", _themeProperties);
                 return result;
             }
 
@@ -2536,7 +2536,7 @@ namespace Unigram.Assets.Icons
             {
                 if (_spriteShape_0 != null) { return _spriteShape_0; }
                 var result = _spriteShape_0 = _c.CreateSpriteShape(PathGeometry_0());
-                result.StrokeBrush = ThemeColor_Color_979797_0();
+                result.StrokeBrush = ThemeColor_Color_000000_0();
                 result.StrokeDashCap = CompositionStrokeCap.Round;
                 result.StrokeDashOffset = 0F;
                 result.StrokeStartCap = CompositionStrokeCap.Round;
@@ -2553,7 +2553,7 @@ namespace Unigram.Assets.Icons
             {
                 if (_spriteShape_1 != null) { return _spriteShape_1; }
                 var result = _spriteShape_1 = _c.CreateSpriteShape(PathGeometry_1());
-                result.StrokeBrush = ThemeColor_Color_979797_1();
+                result.StrokeBrush = ThemeColor_Color_000000_1();
                 result.StrokeDashCap = CompositionStrokeCap.Round;
                 result.StrokeDashOffset = 0F;
                 result.StrokeStartCap = CompositionStrokeCap.Round;
@@ -2569,7 +2569,7 @@ namespace Unigram.Assets.Icons
             CompositionSpriteShape SpriteShape_2()
             {
                 var result = _c.CreateSpriteShape(PathGeometry_2());
-                result.StrokeBrush = ThemeColor_Color_979797_2();
+                result.StrokeBrush = ThemeColor_Color_000000_2();
                 result.StrokeDashCap = CompositionStrokeCap.Round;
                 result.StrokeDashOffset = 0F;
                 result.StrokeStartCap = CompositionStrokeCap.Round;
@@ -2586,7 +2586,7 @@ namespace Unigram.Assets.Icons
             CompositionSpriteShape SpriteShape_3()
             {
                 var result = _c.CreateSpriteShape(PathGeometry_3());
-                result.StrokeBrush = ThemeColor_Color_979797_3();
+                result.StrokeBrush = ThemeColor_Color_000000_3();
                 result.StrokeDashCap = CompositionStrokeCap.Round;
                 result.StrokeDashOffset = 0F;
                 result.StrokeStartCap = CompositionStrokeCap.Round;
@@ -2606,7 +2606,7 @@ namespace Unigram.Assets.Icons
             {
                 if (_spriteShape_4 != null) { return _spriteShape_4; }
                 var result = _spriteShape_4 = _c.CreateSpriteShape(PathGeometry_4());
-                result.StrokeBrush = ThemeColor_Color_979797_4();
+                result.StrokeBrush = ThemeColor_Color_000000_4();
                 result.StrokeDashCap = CompositionStrokeCap.Round;
                 result.StrokeDashOffset = 0F;
                 result.StrokeStartCap = CompositionStrokeCap.Round;
@@ -2626,7 +2626,7 @@ namespace Unigram.Assets.Icons
             {
                 if (_spriteShape_5 != null) { return _spriteShape_5; }
                 var result = _spriteShape_5 = _c.CreateSpriteShape(PathGeometry_5());
-                result.StrokeBrush = ThemeColor_Color_979797_5();
+                result.StrokeBrush = ThemeColor_Color_000000_5();
                 result.StrokeDashCap = CompositionStrokeCap.Round;
                 result.StrokeDashOffset = 0F;
                 result.StrokeStartCap = CompositionStrokeCap.Round;
@@ -2645,7 +2645,7 @@ namespace Unigram.Assets.Icons
             {
                 if (_spriteShape_6 != null) { return _spriteShape_6; }
                 var result = _spriteShape_6 = _c.CreateSpriteShape(PathGeometry_6());
-                result.StrokeBrush = ThemeColor_Color_979797_6();
+                result.StrokeBrush = ThemeColor_Color_000000_6();
                 result.StrokeDashCap = CompositionStrokeCap.Round;
                 result.StrokeDashOffset = 0F;
                 result.StrokeStartCap = CompositionStrokeCap.Round;
@@ -2664,7 +2664,7 @@ namespace Unigram.Assets.Icons
             CompositionSpriteShape SpriteShape_7()
             {
                 var result = _c.CreateSpriteShape(PathGeometry_7());
-                result.StrokeBrush = ThemeColor_Color_979797_7();
+                result.StrokeBrush = ThemeColor_Color_000000_7();
                 result.StrokeDashCap = CompositionStrokeCap.Round;
                 result.StrokeDashOffset = 0F;
                 result.StrokeStartCap = CompositionStrokeCap.Round;

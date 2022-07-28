@@ -102,22 +102,36 @@ namespace Unigram.Controls.Messages.Content
                 Recognize.Visibility = Visibility.Collapsed;
             }
 
-            if (voiceNote.IsRecognized)
+            UpdateRecognitionResult(voiceNote.SpeechRecognitionResult);
+
+            UpdateManager.Subscribe(this, message, voiceNote.Voice, ref _fileToken, UpdateFile);
+            UpdateFile(message, voiceNote.Voice);
+        }
+
+        private void UpdateRecognitionResult(SpeechRecognitionResult result)
+        {
+            if (result != null)
             {
                 if (RecognizedText == null)
                 {
                     RecognizedText = GetTemplateChild(nameof(RecognizedText)) as TextBlock;
                 }
 
-                if (string.IsNullOrEmpty(voiceNote.RecognizedText))
+                if (result is SpeechRecognitionResultError)
                 {
                     RecognizedText.Style = App.Current.Resources["InfoCaptionTextBlockStyle"] as Style;
-                    RecognizedText.Text = "No ciccio cicciato";
+                    RecognizedText.Text = Strings.Resources.NoWordsRecognized;
                 }
-                else
+                else if (result is SpeechRecognitionResultPending pending)
+                {
+                    // Add the loading thingy
+                    RecognizedText.Style = App.Current.Resources["BodyTextBlockStyle"] as Style;
+                    RecognizedText.Text = pending.PartialText;
+                }
+                else if (result is SpeechRecognitionResultText text)
                 {
                     RecognizedText.Style = App.Current.Resources["BodyTextBlockStyle"] as Style;
-                    RecognizedText.Text = voiceNote.RecognizedText;
+                    RecognizedText.Text = text.Text;
                 }
 
                 RecognizedText.Visibility = Visibility.Visible;
@@ -126,9 +140,6 @@ namespace Unigram.Controls.Messages.Content
             {
                 RecognizedText.Visibility = Visibility.Collapsed;
             }
-
-            UpdateManager.Subscribe(this, message, voiceNote.Voice, ref _fileToken, UpdateFile);
-            UpdateFile(message, voiceNote.Voice);
         }
 
         public void Mockup(MessageVoiceNote voiceNote)
@@ -394,11 +405,13 @@ namespace Unigram.Controls.Messages.Content
                     return;
                 }
 
-                _message.ProtoService.Send(new RecognizeSpeech(_message.ChatId, _message.Id));
-
-                if (RecognizedText != null)
+                if (voiceNote.SpeechRecognitionResult == null)
                 {
-                    RecognizedText.Visibility = Visibility.Visible;
+                    _message.ProtoService.Send(new RecognizeSpeech(_message.ChatId, _message.Id));
+                }
+                else
+                {
+                    UpdateRecognitionResult(voiceNote.SpeechRecognitionResult);
                 }
             }
             else if (RecognizedText != null)
