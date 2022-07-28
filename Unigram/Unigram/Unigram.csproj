@@ -32,6 +32,7 @@
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
     <LangVersion>10.0</LangVersion>
     <AppxPackageSigningEnabled>False</AppxPackageSigningEnabled>
+    <ProjectPriIndexName>Unigram</ProjectPriIndexName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -129,12 +130,17 @@
     <Compile Include="Assets\Icons\Devices.cs" />
     <Compile Include="Assets\Icons\Double.cs" />
     <Compile Include="Assets\Icons\Downloading.cs" />
+    <Compile Include="Assets\Icons\EmojiToGif.cs" />
+    <Compile Include="Assets\Icons\EmojiToSticker.cs" />
     <Compile Include="Assets\Icons\FAQ.cs" />
     <Compile Include="Assets\Icons\Folders.cs" />
+    <Compile Include="Assets\Icons\GifToEmoji.cs" />
+    <Compile Include="Assets\Icons\GifToSticker.cs" />
     <Compile Include="Assets\Icons\Info.cs" />
     <Compile Include="Assets\Icons\Language.cs" />
     <Compile Include="Assets\Icons\Location.cs" />
     <Compile Include="Assets\Icons\More.cs" />
+    <Compile Include="Assets\Icons\MuteUnmute.cs" />
     <Compile Include="Assets\Icons\Notifications.cs" />
     <Compile Include="Assets\Icons\PersonAdd.cs" />
     <Compile Include="Assets\Icons\Phone.cs" />
@@ -144,10 +150,13 @@
     <Compile Include="Assets\Icons\ReactionsMore.cs" />
     <Compile Include="Assets\Icons\Select.cs" />
     <Compile Include="Assets\Icons\Stickers.cs" />
+    <Compile Include="Assets\Icons\StickerToEmoji.cs" />
+    <Compile Include="Assets\Icons\StickerToGif.cs" />
     <Compile Include="Assets\Icons\Unlock.cs" />
     <Compile Include="Assets\Icons\Username.cs" />
     <Compile Include="Assets\Icons\Profile.cs" />
     <Compile Include="Assets\Icons\VoiceRecognition.cs" />
+    <Compile Include="Assets\Icons\VoiceVideo.cs" />
     <Compile Include="Charts\Animator.cs" />
     <Compile Include="Charts\BarChartView.cs" />
     <Compile Include="Charts\BaseChartView.cs" />
@@ -254,6 +263,7 @@
     <Compile Include="Controls\AnimatedControl.cs" />
     <Compile Include="Controls\AnimatedGlyphButton.cs" />
     <Compile Include="Controls\AnimatedGlyphToggleButton.cs" />
+    <Compile Include="Controls\AnimatedIconToggleButton.cs" />
     <Compile Include="Controls\AnimationView.cs" />
     <Compile Include="Controls\BackButton.cs" />
     <Compile Include="Controls\CallHangupButton.cs" />
@@ -420,6 +430,7 @@
     <Compile Include="Controls\Messages\Content\VoiceNoteContent.xaml.cs">
       <DependentUpon>VoiceNoteContent.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Messages\CustomEmojiCanvas.cs" />
     <Compile Include="Controls\Messages\MenuFlyoutReactions.xaml.cs">
       <DependentUpon>MenuFlyoutReactions.xaml</DependentUpon>
     </Compile>
@@ -589,6 +600,7 @@
     <Compile Include="ViewModels\DialogThreadViewModel.cs" />
     <Compile Include="ViewModels\Chats\MessageStatisticsViewModel.cs" />
     <Compile Include="ViewModels\DownloadsViewModel.cs" />
+    <Compile Include="ViewModels\Drawers\EmojiDrawerViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentAddressViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentCredentialsViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentFormViewModel.cs" />
@@ -1027,6 +1039,9 @@
     </Compile>
     <Compile Include="Views\Premium\Popups\FeaturesPopup.xaml.cs">
       <DependentUpon>FeaturesPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Premium\Popups\GiftPopup.xaml.cs">
+      <DependentUpon>GiftPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Premium\Popups\LimitReachedPopup.xaml.cs">
       <DependentUpon>LimitReachedPopup.xaml</DependentUpon>
@@ -2187,6 +2202,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Premium\Popups\GiftPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Premium\Popups\LimitReachedPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2500,6 +2519,9 @@
     </PackageReference>
     <PackageReference Include="Microsoft.UI.Xaml">
       <Version>2.7.1</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.UI.Xaml.Core.Direct">
+      <Version>2.0.190315001-prerelease</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.1</Version>
