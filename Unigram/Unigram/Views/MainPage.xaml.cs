@@ -769,7 +769,8 @@ namespace Unigram.Views
                     scrollViewer.ChangeView(null, 0, null);
                     args.Handled = true;
                 }
-                else if (ViewModel.Filters.Count > 0 && !ViewModel.Chats.Items.ChatList.ListEquals(ViewModel.Filters[0].ChatList))
+                else if (ViewModel.Chats.Items.ChatList is ChatListArchive
+                    || ViewModel.Filters.Count > 0 && !ViewModel.Chats.Items.ChatList.ListEquals(ViewModel.Filters[0].ChatList))
                 {
                     UpdateFilter(ViewModel.Filters[0]);
                     args.Handled = true;
