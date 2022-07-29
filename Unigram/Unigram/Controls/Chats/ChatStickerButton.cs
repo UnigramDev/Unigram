@@ -1,17 +1,17 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using System.Numerics;
 using Unigram.Assets.Icons;
+using Unigram.Converters;
 using Unigram.Services.Settings;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Chats
 {
-    public class ChatStickerButton : ToggleButton
+    public class ChatStickerButton : AnimatedGlyphToggleButton
     {
         private Border Icon;
 
@@ -25,6 +25,8 @@ namespace Unigram.Controls.Chats
         {
             DefaultStyleKey = typeof(ChatStickerButton);
             RegisterPropertyChangedCallback(ForegroundProperty, OnForegroundChanged);
+
+            _animateOnToggle = false;
         }
 
         private void OnForegroundChanged(DependencyObject sender, DependencyProperty dp)
@@ -37,10 +39,22 @@ namespace Unigram.Controls.Chats
 
         protected override void OnApplyTemplate()
         {
+            base.OnApplyTemplate();
+
             Icon = GetTemplateChild(nameof(Icon)) as Border;
 
             OnSourceChanged(Source, StickersTab.None);
-            base.OnApplyTemplate();
+            OnGlyphChanged(Source switch
+            {
+                StickersTab.Emoji => Icons.Emoji24,
+                StickersTab.Stickers => Icons.Sticker24,
+                StickersTab.Animations => Icons.Gif24,
+            });
+        }
+
+        protected override bool IsRuntimeCompatible()
+        {
+            return Windows.Foundation.Metadata.ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 11);
         }
 
         #region Source
@@ -68,30 +82,43 @@ namespace Unigram.Controls.Chats
                 return;
             }
 
-            if (_previous != null)
+            if (IsRuntimeCompatible())
             {
-                _previous.Dispose();
-                _previous = null;
-            }
+                if (_previous != null)
+                {
+                    _previous.Dispose();
+                    _previous = null;
+                }
 
-            if (_props != null)
+                if (_props != null)
+                {
+                    _props.Dispose();
+                    _props = null;
+                }
+
+                var animate = oldValue != StickersTab.None;
+                var visual = GetVisual(newValue, oldValue, animate, Window.Current.Compositor, out var source, out _props);
+
+                _source = source;
+                _previous = visual;
+
+                if (Foreground is SolidColorBrush brush)
+                {
+                    source.SetColorProperty("Color_000000", brush.Color);
+                }
+
+                ElementCompositionPreview.SetElementChildVisual(Icon, visual?.RootVisual);
+            }
+            else
             {
-                _props.Dispose();
-                _props = null;
+                OnGlyphChanged(newValue switch
+                {
+                    StickersTab.Emoji => Icons.Emoji24,
+                    StickersTab.Stickers => Icons.Sticker24,
+                    StickersTab.Animations => Icons.Gif24,
+                    _ => null
+                });
             }
-
-            var animate = oldValue != StickersTab.None;
-            var visual = GetVisual(newValue, oldValue, animate, Window.Current.Compositor, out var source, out _props);
-
-            _source = source;
-            _previous = visual;
-
-            if (Foreground is SolidColorBrush brush)
-            {
-                source.SetColorProperty("Color_000000", brush.Color);
-            }
-
-            ElementCompositionPreview.SetElementChildVisual(Icon, visual?.RootVisual);
         }
 
         private IAnimatedVisual GetVisual(StickersTab newValue, StickersTab oldValue, bool animate, Compositor compositor, out IAnimatedVisualSource2 source, out CompositionPropertySet properties)

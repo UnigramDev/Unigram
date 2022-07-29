@@ -3905,7 +3905,7 @@
         <Setter Property="FontFamily"
                 Value="{StaticResource SymbolThemeFontFamily}" />
         <Setter Property="FontSize"
-                Value="{StaticResource GlyphMediumFontSize}" />
+                Value="{StaticResource GlyphLargeFontSize}" />
         <Setter Property="FontWeight"
                 Value="Normal" />
         <Setter Property="Height"
@@ -4007,6 +4007,17 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Grid x:Name="RootGrid">
+                            <TextBlock x:Name="ContentPresenter1"
+                                       Margin="{TemplateBinding Padding}"
+                                       HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                       VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                       AutomationProperties.AccessibilityView="Raw" />
+                            <TextBlock x:Name="ContentPresenter2"
+                                       Margin="{TemplateBinding Padding}"
+                                       HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                       VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                       AutomationProperties.AccessibilityView="Raw" />
+
                             <muxc:AnimatedIcon x:Name="Icon"
                                                Source="{TemplateBinding Source}"
                                                muxc:AnimatedIcon.State="Normal"
@@ -4507,6 +4518,17 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Grid x:Name="RootGrid">
+                            <TextBlock x:Name="ContentPresenter1"
+                                       Margin="{TemplateBinding Padding}"
+                                       HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                       VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                       AutomationProperties.AccessibilityView="Raw" />
+                            <TextBlock x:Name="ContentPresenter2"
+                                       Margin="{TemplateBinding Padding}"
+                                       HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                       VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                       AutomationProperties.AccessibilityView="Raw" />
+
                             <Border x:Name="Icon"
                                     Width="24"
                                     Height="24"

@@ -21,6 +21,8 @@ namespace Unigram.Controls
         private FrameworkElement _label;
         private Visual _visual;
 
+        protected bool _animateOnToggle = true;
+
         public AnimatedGlyphToggleButton()
         {
             DefaultStyleKey = typeof(AnimatedGlyphToggleButton);
@@ -29,62 +31,93 @@ namespace Unigram.Controls
             Unchecked += OnToggle;
         }
 
+        protected virtual bool IsRuntimeCompatible()
+        {
+            return false;
+        }
+
         protected override void OnApplyTemplate()
         {
+            if (IsRuntimeCompatible())
+            {
+                return;
+            }
+
             _label1 = _label = GetTemplateChild("ContentPresenter1") as FrameworkElement;
             _label2 = GetTemplateChild("ContentPresenter2") as FrameworkElement;
 
-            _visual1 = _visual = ElementCompositionPreview.GetElementVisual(_label1);
-            _visual2 = ElementCompositionPreview.GetElementVisual(_label2);
-
-            if (_label2 is TextBlock text2)
+            if (_label1 != null && _label2 != null)
             {
-                text2.Text = string.Empty;
-            }
-            else if (_label2 is ContentPresenter presenter2)
-            {
-                presenter2.Content = new object();
-            }
+                _visual1 = _visual = ElementCompositionPreview.GetElementVisual(_label1);
+                _visual2 = ElementCompositionPreview.GetElementVisual(_label2);
 
-            _visual2.Opacity = 0;
-            _visual2.Scale = new Vector3();
-            _visual2.CenterPoint = new Vector3(10);
+                if (_label2 is TextBlock text2)
+                {
+                    text2.Text = string.Empty;
+                }
+                else if (_label2 is ContentPresenter presenter2)
+                {
+                    presenter2.Content = new object();
+                }
 
-            if (_label1 is TextBlock text1)
-            {
-                text1.Text = IsChecked == true ? CheckedGlyph : Glyph ?? string.Empty;
-            }
-            else if (_label1 is ContentPresenter presenter1)
-            {
-                presenter1.Content = IsChecked == true ? CheckedContent : Content ?? new object();
-            }
+                _visual2.Opacity = 0;
+                _visual2.Scale = new Vector3();
+                _visual2.CenterPoint = new Vector3(10);
 
-            _visual1.Opacity = 1;
-            _visual1.Scale = new Vector3(1);
-            _visual1.CenterPoint = new Vector3(10);
+                if (_label1 is TextBlock text1)
+                {
+                    text1.Text = (IsChecked == true ? CheckedGlyph : Glyph) ?? string.Empty;
+                }
+                else if (_label1 is ContentPresenter presenter1)
+                {
+                    presenter1.Content = (IsChecked == true ? CheckedContent : Content) ?? new object();
+                }
+
+                _visual1.Opacity = 1;
+                _visual1.Scale = new Vector3(1);
+                _visual1.CenterPoint = new Vector3(10);
+            }
 
             base.OnApplyTemplate();
         }
 
-        private async void OnToggle(object sender, RoutedEventArgs e)
+        private void OnToggle(object sender, RoutedEventArgs e)
+        {
+            if (_animateOnToggle is false)
+            {
+                return;
+            }
+
+            if (_label is TextBlock)
+            {
+                OnGlyphChanged(IsChecked == true ? CheckedGlyph : Glyph);
+            }
+            else
+            {
+                OnGlyphChanged(IsChecked == true ? CheckedContent : Content);
+            }
+        }
+
+        protected async void OnGlyphChanged(object newValue)
         {
             if (_visual == null || _label == null)
             {
                 return;
             }
+
             var visualShow = _visual == _visual1 ? _visual2 : _visual1;
             var visualHide = _visual == _visual1 ? _visual1 : _visual2;
 
             var labelShow = _visual == _visual1 ? _label2 : _label1;
             var labelHide = _visual == _visual1 ? _label1 : _label2;
 
-            if (labelShow is TextBlock textShow)
+            if (labelShow is TextBlock textShow && newValue is string glyph)
             {
-                textShow.Text = IsChecked == true ? CheckedGlyph : Glyph;
+                textShow.Text = glyph;
             }
             else if (labelShow is ContentPresenter presenterShow)
             {
-                presenterShow.Content = IsChecked == true ? CheckedContent : Content;
+                presenterShow.Content = newValue;
             }
 
             await this.UpdateLayoutAsync();

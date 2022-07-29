@@ -1,18 +1,19 @@
 ﻿using Microsoft.UI.Xaml.Controls;
-using System;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls
 {
-    public class AnimatedIconToggleButton : ToggleButton
+    public class AnimatedIconToggleButton : AnimatedGlyphToggleButton
     {
         public AnimatedIconToggleButton()
         {
             DefaultStyleKey = typeof(AnimatedIconToggleButton);
             RegisterPropertyChangedCallback(ForegroundProperty, OnForegroundChanged);
+        }
+        protected override bool IsRuntimeCompatible()
+        {
+            return Windows.Foundation.Metadata.ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 11);
         }
 
         private void OnForegroundChanged(DependencyObject sender, DependencyProperty dp)
@@ -46,34 +47,5 @@ namespace Unigram.Controls
         }
 
         #endregion
-
-        #region IsOneWay
-
-        public bool IsOneWay
-        {
-            get => (bool)GetValue(IsOneWayProperty);
-            set => SetValue(IsOneWayProperty, value);
-        }
-
-        public static readonly DependencyProperty IsOneWayProperty =
-            DependencyProperty.Register("IsOneWay", typeof(bool), typeof(AnimatedIconToggleButton), new PropertyMetadata(true));
-
-        #endregion
-
-        protected override void OnToggle()
-        {
-            if (IsOneWay)
-            {
-                var binding = GetBindingExpression(IsCheckedProperty);
-                if (binding != null && binding.ParentBinding.Mode == BindingMode.TwoWay)
-                {
-                    base.OnToggle();
-                }
-            }
-            else
-            {
-                base.OnToggle();
-            }
-        }
     }
 }

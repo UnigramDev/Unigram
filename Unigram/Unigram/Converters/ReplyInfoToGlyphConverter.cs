@@ -104,7 +104,9 @@ namespace Unigram.Converters
         public const string Image = "\uEB9F";
 
         public const string Sticker = "\uF4AA";
+        public const string Sticker24 = "\uE9E2";
         public const string Gif = "\uF4A9";
+        public const string Gif24 = "\uE9E1";
 
         public const string Reactions = "\uE980";
         public const string Mention16 = "\uE986";
@@ -187,6 +189,7 @@ namespace Unigram.Converters
         public const string FolderMove = "\uE92B";
         public const string FolderAdd = "\uE929";
         public const string Emoji = "\uE76E";
+        public const string Emoji24 = "\uE9E3";
         public const string ChevronUp = "\uE0E4";
         public const string ChevronDown = "\uE0E5";
         public const string ChevronRight = "\uE0E3";

@@ -1249,6 +1249,8 @@
                                                            Command="{x:Bind ViewModel.ToggleSilentCommand}"
                                                            FontSize="{StaticResource GlyphLargeFontSize}"
                                                            VerticalAlignment="Bottom"
+                                                           Glyph="&#xE9DF;"
+                                                           CheckedGlyph="&#xE9DE;"
                                                            Grid.Column="1">
                             <controls:AnimatedIconToggleButton.Source>
                                 <icons:MuteUnmute />
@@ -1311,6 +1313,8 @@
                           Canvas.ZIndex="1000">
                         <chats:ChatRecordButton x:Name="btnVoiceMessage"
                                                 AllowFocusOnInteraction="False"
+                                                Glyph="&#xE9E4;"
+                                                CheckedGlyph="&#xE9E0;"
                                                 RecordingStarted="VoiceButton_RecordingStarted"
                                                 RecordingStopped="VoiceButton_RecordingStopped"
                                                 RecordingLocked="VoiceButton_RecordingLocked"
