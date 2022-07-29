@@ -46,7 +46,6 @@ namespace Unigram.Controls.Chats
 
             //Clipboard.ContentChanged += Clipboard_ContentChanged;
 
-            SelectionChanged += OnSelectionChanged;
             TextChanged += OnTextChanged;
         }
 
@@ -161,22 +160,22 @@ namespace Unigram.Controls.Chats
 
                 if (e.Key == VirtualKey.Up && !alt && !ctrl && !shift && IsEmpty && ViewModel.Autocomplete == null)
                 {
-                    ViewModel.MessageEditLastCommand.Execute();
+                    ViewModel.MessageEditLast();
                     e.Handled = true;
                 }
                 else if (e.Key == VirtualKey.Up && ctrl)
                 {
-                    ViewModel.MessageReplyPreviousCommand.Execute();
+                    ViewModel.MessageReplyPrevious();
                     e.Handled = true;
                 }
                 else if (e.Key == VirtualKey.Down && ctrl)
                 {
-                    ViewModel.MessageReplyNextCommand.Execute();
+                    ViewModel.MessageReplyNext();
                     e.Handled = true;
                 }
                 else if (e.Key is VirtualKey.Up or VirtualKey.Down)
                 {
-                    if (Autocomplete != null && ViewModel.Autocomplete != null)
+                    if (Autocomplete != null && ViewModel.Autocomplete?.Orientation == Orientation.Vertical)
                     {
                         Autocomplete.SelectionMode = ListViewSelectionMode.Single;
 
@@ -189,6 +188,36 @@ namespace Unigram.Controls.Chats
                         }
 
                         e.Handled = true;
+                    }
+                }
+            }
+            else if (e.Key is VirtualKey.Left or VirtualKey.Right)
+            {
+                if (Autocomplete != null && ViewModel.Autocomplete?.Orientation == Orientation.Horizontal)
+                {
+                    if (Autocomplete.SelectedIndex == 0 && e.Key == VirtualKey.Left)
+                    {
+                        Autocomplete.SelectedIndex = -1;
+                        e.Handled = true;
+                    }
+                    else if (Autocomplete.SelectedIndex == Autocomplete.Items.Count - 1 && e.Key == VirtualKey.Right)
+                    {
+                        Autocomplete.SelectedIndex = 0;
+                        e.Handled = true;
+                    }
+                    else
+                    {
+                        Autocomplete.SelectionMode = ListViewSelectionMode.Single;
+
+                        var index = e.Key == VirtualKey.Left ? -1 : 1;
+                        var next = Autocomplete.SelectedIndex + index;
+                        if (next >= 0 && next < ViewModel.Autocomplete.Count)
+                        {
+                            Autocomplete.SelectedIndex = next;
+                            Autocomplete.ScrollIntoView(Autocomplete.SelectedItem);
+
+                            e.Handled = true;
+                        }
                     }
                 }
             }
@@ -292,7 +321,7 @@ namespace Unigram.Controls.Chats
             UpdateInlinePlaceholder(null, null);
         }
 
-        private async void OnSelectionChanged(object sender, RoutedEventArgs e)
+        protected override async void OnSelectionChanged(RichEditBox sender, bool fromTextChanging)
         {
             if (_isMenuExpanded)
             {
@@ -325,7 +354,7 @@ namespace Unigram.Controls.Chats
 
             var query = text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length));
 
-            if (TryGetAutocomplete(text, query, ViewModel.Autocomplete, out var autocomplete))
+            if (TryGetAutocomplete(text, query, ViewModel.Autocomplete, fromTextChanging, out var autocomplete))
             {
                 ClearInlineBotResults();
                 ViewModel.Autocomplete = autocomplete;
@@ -357,7 +386,7 @@ namespace Unigram.Controls.Chats
             }
         }
 
-        private bool TryGetAutocomplete(string text, string query, IAutocompleteCollection prev, out IAutocompleteCollection autocomplete)
+        private bool TryGetAutocomplete(string text, string query, IAutocompleteCollection prev, bool fromTextChanging, out IAutocompleteCollection autocomplete)
         {
             if (Emoji.ContainsSingleEmoji(text) && ViewModel.ComposerHeader?.EditingMessage == null)
             {
@@ -421,7 +450,7 @@ namespace Unigram.Controls.Chats
                 autocomplete = new SearchHashtagsCollection(ViewModel.ProtoService, hashtag);
                 return true;
             }
-            else if (SearchByEmoji(query, out string replacement, out bool column) && replacement.Length > 0)
+            else if (SearchByEmoji(query, out string replacement, out bool column) && replacement.Length > 0 && fromTextChanging)
             {
                 if (prev is EmojiCollection && prev.Query.Equals(replacement))
                 {
@@ -699,7 +728,7 @@ namespace Unigram.Controls.Chats
                 }
 
                 _isMenuExpanded = value ?? false;
-                OnSelectionChanged(null, null);
+                OnSelectionChanged(this, false);
             }
         }
 

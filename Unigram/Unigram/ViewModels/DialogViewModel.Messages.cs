@@ -25,8 +25,7 @@ namespace Unigram.ViewModels
     {
         #region Reply
 
-        public RelayCommand MessageReplyPreviousCommand { get; }
-        private async void MessageReplyPreviousExecute()
+        public async void MessageReplyPrevious()
         {
             MessageViewModel last = null;
 
@@ -47,8 +46,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand MessageReplyNextCommand { get; }
-        private async void MessageReplyNextExecute()
+        public async void MessageReplyNext()
         {
             MessageViewModel last = null;
 
@@ -654,8 +652,7 @@ namespace Unigram.ViewModels
 
         #region Edit
 
-        public RelayCommand MessageEditLastCommand { get; }
-        private async void MessageEditLastExecute()
+        public async void MessageEditLast()
         {
             var last = Items.LastOrDefault(x => x.CanBeEdited);
             if (last != null)

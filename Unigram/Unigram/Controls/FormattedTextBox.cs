@@ -35,6 +35,7 @@ namespace Unigram.Controls
         private readonly MenuFlyoutSubItem _proofingFlyout;
 
         private bool _updateLocked;
+        private bool _fromTextChanging;
 
         public FormattedTextBox()
         {
@@ -80,12 +81,31 @@ namespace Unigram.Controls
             Unloaded += OnUnloaded;
             SizeChanged += OnSizeChanged;
 
+            TextChanging += OnTextChanging;
             TextChanged += OnTextChanged;
+
+            SelectionChanged += OnSelectionChanged;
+        }
+
+        private void OnTextChanging(RichEditBox sender, RichEditBoxTextChangingEventArgs args)
+        {
+            _fromTextChanging = true;
         }
 
         private void OnTextChanged(object sender, RoutedEventArgs e)
         {
             UpdateCustomEmoji();
+        }
+
+        private void OnSelectionChanged(object sender, RoutedEventArgs e)
+        {
+            OnSelectionChanged(this, _fromTextChanging);
+            _fromTextChanging = false;
+        }
+
+        protected virtual void OnSelectionChanged(RichEditBox sender, bool fromTextChanging)
+        {
+
         }
 
         private bool _resetSize;

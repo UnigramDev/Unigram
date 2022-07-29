@@ -166,8 +166,6 @@ namespace Unigram.ViewModels
             MessagesReportCommand = new RelayCommand(MessagesReportExecute, MessagesReportCanExecute);
             MessagesUnselectCommand = new RelayCommand(MessagesUnselectExecute);
 
-            MessageReplyPreviousCommand = new RelayCommand(MessageReplyPreviousExecute);
-            MessageReplyNextCommand = new RelayCommand(MessageReplyNextExecute);
             MessageReplyCommand = new RelayCommand<MessageViewModel>(MessageReplyExecute);
             MessageRetryCommand = new RelayCommand<MessageViewModel>(MessageRetryExecute);
             MessageDeleteCommand = new RelayCommand<MessageViewModel>(MessageDeleteExecute);
@@ -177,7 +175,6 @@ namespace Unigram.ViewModels
             MessageCopyCommand = new RelayCommand<MessageViewModel>(MessageCopyExecute);
             MessageCopyMediaCommand = new RelayCommand<MessageViewModel>(MessageCopyMediaExecute);
             MessageCopyLinkCommand = new RelayCommand<MessageViewModel>(MessageCopyLinkExecute);
-            MessageEditLastCommand = new RelayCommand(MessageEditLastExecute);
             MessageEditCommand = new RelayCommand<MessageViewModel>(MessageEditExecute);
             MessageThreadCommand = new RelayCommand<MessageViewModel>(MessageThreadExecute);
             MessagePinCommand = new RelayCommand<MessageViewModel>(MessagePinExecute);
