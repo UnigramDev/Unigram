@@ -71,10 +71,10 @@ namespace Unigram.Controls
 
         #endregion
 
-        private void AnimateSelectionChanged(object nextItem)
+        private void AnimateSelectionChanged(object nextItem, bool retry = true)
         {
             var prevIndicator = _activeIndicator;
-            var nextIndicator = FindSelectionIndicator(nextItem);
+            var nextIndicator = FindSelectionIndicator(nextItem, retry);
 
             bool haveValidAnimation = false;
             // It's possible that AnimateSelectionChanged is called multiple times before the first animation is complete.
@@ -164,7 +164,7 @@ namespace Unigram.Controls
             }
         }
 
-        private UIElement FindSelectionIndicator(object item)
+        private UIElement FindSelectionIndicator(object item, bool retry)
         {
             var container = ContainerFromItem(item) as TopNavViewItem;
             if (container == null)
@@ -172,7 +172,20 @@ namespace Unigram.Controls
                 return null;
             }
 
-            return container.GetSelectionIndicator();
+            var indicator = container.GetSelectionIndicator();
+            if (indicator == null && retry)
+            {
+                void handler(object sender, RoutedEventArgs e)
+                {
+                    container.Loaded -= handler;
+                    AnimateSelectionChanged(SelectedItem, false);
+                }
+
+                container.Loaded += handler;
+                return null;
+            }
+
+            return indicator;
         }
 
         private void PlayIndicatorAnimations(UIElement indicator, float from, float to, Vector2 beginSize, Vector2 endSize, bool isOutgoing)

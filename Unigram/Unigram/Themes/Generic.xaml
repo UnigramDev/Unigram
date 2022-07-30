@@ -995,7 +995,104 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:TopNavViewItem">
-                    <Grid Background="Transparent">
+                    <Grid x:Name="ContentBorder"
+                          Background="Transparent"
+                          RenderTransformOrigin="0.5,0.5">
+                        <Grid.RenderTransform>
+                            <ScaleTransform x:Name="ContentBorderScale" />
+                        </Grid.RenderTransform>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="ReorderHintStates">
+                                <VisualState x:Name="NoReorderHint" />
+                                <VisualState x:Name="BottomReorderHint">
+                                    <Storyboard>
+                                        <DragOverThemeAnimation TargetName="ContentBorder"
+                                                                ToOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                                                Direction="Bottom" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="TopReorderHint">
+                                    <Storyboard>
+                                        <DragOverThemeAnimation TargetName="ContentBorder"
+                                                                ToOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                                                Direction="Top" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="RightReorderHint">
+                                    <Storyboard>
+                                        <DragOverThemeAnimation TargetName="ContentBorder"
+                                                                ToOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                                                Direction="Right" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="LeftReorderHint">
+                                    <Storyboard>
+                                        <DragOverThemeAnimation TargetName="ContentBorder"
+                                                                ToOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                                                Direction="Left" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualStateGroup.Transitions>
+                                    <VisualTransition To="NoReorderHint"
+                                                      GeneratedDuration="0:0:0.2" />
+                                </VisualStateGroup.Transitions>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="DragStates">
+                                <VisualState x:Name="NotDragging" />
+                                <VisualState x:Name="Dragging">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="ContentBorder"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         Duration="0"
+                                                         To="{ThemeResource ListViewItemDragThemeOpacity}" />
+                                        <DragItemThemeAnimation TargetName="ContentBorder" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="DraggingTarget" />
+                                <VisualState x:Name="MultipleDraggingPrimary" />
+                                <VisualState x:Name="MultipleDraggingSecondary" />
+                                <VisualState x:Name="DraggedPlaceholder" />
+                                <VisualState x:Name="Reordering">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="ContentBorder"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         Duration="0:0:0.240"
+                                                         To="{ThemeResource ListViewItemReorderThemeOpacity}" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="ReorderingTarget">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="ContentBorder"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         Duration="0:0:0.240"
+                                                         To="{ThemeResource ListViewItemReorderTargetThemeOpacity}" />
+                                        <DoubleAnimation Storyboard.TargetName="ContentBorderScale"
+                                                         Storyboard.TargetProperty="ScaleX"
+                                                         Duration="0:0:0.240"
+                                                         To="{ThemeResource ListViewItemReorderTargetThemeScale}" />
+                                        <DoubleAnimation Storyboard.TargetName="ContentBorderScale"
+                                                         Storyboard.TargetProperty="ScaleY"
+                                                         Duration="0:0:0.240"
+                                                         To="{ThemeResource ListViewItemReorderTargetThemeScale}" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="MultipleReorderingPrimary" />
+                                <VisualState x:Name="ReorderedPlaceholder">
+                                    <Storyboard>
+                                        <FadeOutThemeAnimation TargetName="ContentBorder" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="DragOver">
+                                    <Storyboard>
+                                        <DropTargetItemThemeAnimation TargetName="ContentBorder" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualStateGroup.Transitions>
+                                    <VisualTransition To="NotDragging"
+                                                      GeneratedDuration="0:0:0.2" />
+                                </VisualStateGroup.Transitions>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                         <ContentPresenter x:Name="ContentPresenter"
                                           Grid.Column="1"
                                           Margin="12,0"

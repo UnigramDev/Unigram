@@ -928,6 +928,14 @@
                                                         </StackPanel>
                                                     </DataTemplate>
                                                 </controls:TopNavView.ItemTemplate>
+                                                <controls:TopNavView.ItemContainerTransitions>
+                                                    <TransitionCollection>
+                                                        <AddDeleteThemeTransition />
+                                                        <ContentThemeTransition />
+                                                        <ReorderThemeTransition />
+                                                        <RepositionThemeTransition />
+                                                    </TransitionCollection>
+                                                </controls:TopNavView.ItemContainerTransitions>
                                             </controls:TopNavView>
                                         </Grid>
                                     </Border>
