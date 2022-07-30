@@ -566,7 +566,7 @@ namespace Unigram.Controls.Chats
             public Orientation Orientation => Orientation.Vertical;
         }
 
-        public class EmojiCollection : MvxObservableCollection<EmojiData>, IAutocompleteCollection, ISupportIncrementalLoading
+        public class EmojiCollection : MvxObservableCollection<object>, IAutocompleteCollection, ISupportIncrementalLoading
         {
             private readonly IProtoService _protoService;
             private readonly string _query;
@@ -574,6 +574,9 @@ namespace Unigram.Controls.Chats
             private readonly string _inputLanguage;
 
             private bool _hasMore = true;
+
+            private string[] _emoji;
+            private int _emojiIndex;
 
             public EmojiCollection(IProtoService protoService, string query, bool column, string inputLanguage)
             {
@@ -588,7 +591,6 @@ namespace Unigram.Controls.Chats
                 return AsyncInfo.Run(async token =>
                 {
                     count = 0;
-                    _hasMore = false;
 
                     if (string.IsNullOrWhiteSpace(_query))
                     {
@@ -600,22 +602,44 @@ namespace Unigram.Controls.Chats
                     }
                     else
                     {
-                        var response = await _protoService.SendAsync(new SearchEmojis(_query, false, new[] { _inputLanguage }));
-                        if (response is Emojis emojis)
+                        if (_emoji == null)
                         {
-                            var results = emojis.EmojisValue.Reverse();
-                            results = results.OrderBy(x =>
+                            var response = await _protoService.SendAsync(new SearchEmojis(_query, false, new[] { _inputLanguage }));
+                            if (response is Emojis emojis)
                             {
-                                var index = SettingsService.Current.Emoji.RecentEmoji.IndexOf(x);
-                                if (index < 0)
+                                var results = emojis.EmojisValue.Reverse();
+                                results = results.OrderBy(x =>
                                 {
-                                    return int.MaxValue;
+                                    var index = SettingsService.Current.Emoji.RecentEmoji.IndexOf(x);
+                                    if (index < 0)
+                                    {
+                                        return int.MaxValue;
+                                    }
+
+                                    return index;
+                                });
+
+                                _emoji = results.ToArray();
+                            }
+                        }
+
+                        if (_emojiIndex < _emoji.Length)
+                        {
+                            var response = await _protoService.SendAsync(new GetStickers(new StickerTypeCustomEmoji(), _emoji[_emojiIndex++], 1000));
+                            if (response is Stickers stickers)
+                            {
+                                foreach (var sticker in stickers.StickersValue)
+                                {
+                                    Add(sticker);
+                                    count++;
                                 }
+                            }
+                        }
+                        else
+                        {
+                            _emojiIndex++;
 
-                                return index;
-                            });
-
-                            foreach (var emoji in results)
+                            foreach (var emoji in _emoji)
                             {
                                 Add(new EmojiData(emoji));
                                 count++;
@@ -623,6 +647,7 @@ namespace Unigram.Controls.Chats
                         }
                     }
 
+                    _hasMore = _emojiIndex <= _emoji.Length;
                     return new LoadMoreItemsResult { Count = count };
                 });
             }

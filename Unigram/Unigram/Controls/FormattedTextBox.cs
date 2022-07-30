@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls.Chats;
 using Unigram.Controls.Messages;
 using Unigram.Converters;
 using Unigram.Navigation;
 using Unigram.Services;
+using Unigram.ViewModels;
 using Unigram.Views.Popups;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
@@ -36,6 +36,8 @@ namespace Unigram.Controls
 
         private bool _updateLocked;
         private bool _fromTextChanging;
+
+        private CustomEmojiCanvas CustomEmoji;
 
         public FormattedTextBox()
         {
@@ -116,6 +118,12 @@ namespace Unigram.Controls
             {
                 Height = double.NaN;
             }
+        }
+
+        protected override void OnApplyTemplate()
+        {
+            CustomEmoji = GetTemplateChild(nameof(CustomEmoji)) as CustomEmojiCanvas;
+            base.OnApplyTemplate();
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -1033,7 +1041,7 @@ namespace Unigram.Controls
             Document.Selection.StartPosition = Document.Selection.EndPosition + 1;
         }
 
-        private async Task InsertEmojiAsync(ITextRange range, string emoji, long customEmojiId)
+        public async Task InsertEmojiAsync(ITextRange range, string emoji, long customEmojiId)
         {
             var data = new byte[]
             {
@@ -1048,7 +1056,7 @@ namespace Unigram.Controls
             await stream.WriteAsync(data.AsBuffer());
             await stream.FlushAsync();
 
-            range.InsertImage(18, 18, 0, VerticalCharacterAlignment.Top, $"{emoji};{customEmojiId}", stream);
+            range.InsertImage(20, 18, 0, VerticalCharacterAlignment.Top, $"{emoji};{customEmojiId}", stream);
         }
 
         private void UpdateCustomEmoji()
@@ -1079,7 +1087,7 @@ namespace Unigram.Controls
                     positions.Add(new EmojiPosition
                     {
                         CustomEmojiId = customEmojiId,
-                        X = (int)rect.X,
+                        X = (int)rect.X + 1,
                         Y = (int)rect.Y
                     });
                 }
@@ -1087,13 +1095,11 @@ namespace Unigram.Controls
                 index = value.IndexOf('￼', index + 1);
             }
 
-            // TODO: This must be improved
-            if (this is ChatTextBox chatte)
+            if (CustomEmoji != null && DataContext is TLViewModelBase viewModel)
             {
-                var customEmoji = GetTemplateChild("CustomEmoji") as CustomEmojiCanvas;
-                customEmoji.UpdatePositions(positions);
-                customEmoji.UpdateEntities(chatte.ViewModel.ProtoService, emoji);
-                customEmoji.Play();
+                CustomEmoji.UpdatePositions(positions);
+                CustomEmoji.UpdateEntities(viewModel.ProtoService, emoji);
+                CustomEmoji.Play();
             }
         }
     }

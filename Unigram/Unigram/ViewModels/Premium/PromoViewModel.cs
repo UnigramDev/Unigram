@@ -136,22 +136,12 @@ namespace Unigram.ViewModels.Premium
             }
         }
 
-        public async void Purchase()
+        public void Purchase()
         {
             if (PaymentLink != null && !ProtoService.IsPremium)
             {
                 ProtoService.Send(new ClickPremiumSubscriptionButton());
-
                 MessageHelper.OpenTelegramUrl(ProtoService, NavigationService, PaymentLink);
-
-                if (PaymentLink is InternalLinkTypeBotStart botStart)
-                {
-                    var chat = await ProtoService.SendAsync(new SearchPublicChat(botStart.BotUsername)) as Chat;
-                    if (chat != null && chat.Type is ChatTypePrivate privata)
-                    {
-                        ProtoService.Send(new SendBotStartMessage(privata.UserId, chat.Id, botStart.StartParameter));
-                    }
-                }
             }
         }
     }
