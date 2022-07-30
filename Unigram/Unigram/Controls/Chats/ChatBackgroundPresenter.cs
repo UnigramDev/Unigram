@@ -1,12 +1,9 @@
-﻿using Microsoft.Graphics.Canvas.Effects;
-using System;
+﻿using System;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls.Media;
 using Unigram.Services;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -22,51 +19,24 @@ namespace Unigram.Controls.Chats
 {
     public class ChatBackgroundPresenter : Grid, IHandle<UpdateSelectedBackground>
     {
-        private int _session;
         private IProtoService _protoService;
         private IEventAggregator _aggregator;
 
         private Background _oldBackground = new Background();
         private bool? _oldDark;
 
-        private string _fileToken;
-
-        private readonly Rectangle _imageBackground;
-        private readonly Rectangle _colorBackground;
-
-        private readonly ChatBackgroundFreeform _defaultBackground;
+        private readonly ChatBackgroundRenderer _renderer;
 
         private readonly Compositor _compositor;
 
-        private SpriteVisual _blurVisual;
-        private CompositionEffectBrush _blurBrush;
-
         public ChatBackgroundPresenter()
         {
-            _imageBackground = new Rectangle();
-            _colorBackground = new Rectangle();
-
-            _defaultBackground = new ChatBackgroundFreeform();
-
-            Children.Add(_colorBackground);
-            Children.Add(_imageBackground);
-
+            _renderer = new ChatBackgroundRenderer();
             _compositor = Window.Current.Compositor;
+
             ElementCompositionPreview.GetElementVisual(this).Clip = _compositor.CreateInsetClip();
 
-            SizeChanged += OnSizeChanged;
-        }
-
-        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            if (_oldBackground?.Type is BackgroundTypeFill typeFill && typeFill.Fill is BackgroundFillFreeformGradient freeform1)
-            {
-                _defaultBackground.UpdateLayout(_colorBackground, freeform1);
-            }
-            else if (_oldBackground?.Type is BackgroundTypePattern typePattern && typePattern.Fill is BackgroundFillFreeformGradient freeform2)
-            {
-                _defaultBackground.UpdateLayout(_colorBackground, freeform2);
-            }
+            Children.Add(_renderer);
         }
 
         private void UpdateFile(object target, File file)
@@ -102,7 +72,6 @@ namespace Unigram.Controls.Chats
 
         public void Update(int session, IProtoService protoService, IEventAggregator aggregator)
         {
-            _session = session;
             _protoService = protoService;
             _aggregator = aggregator;
 
@@ -128,24 +97,18 @@ namespace Unigram.Controls.Chats
 
         public void UpdateBackground()
         {
-            if (_oldBackground?.Type is BackgroundTypeFill updateFill && updateFill.Fill is BackgroundFillFreeformGradient freeform1)
+            if (_oldBackground?.Type is BackgroundTypeFill updateFill && updateFill.Fill is BackgroundFillFreeformGradient)
             {
-                _defaultBackground.UpdateLayout(_colorBackground, freeform1, true);
+                _renderer.Next();
             }
-            else if (_oldBackground?.Type is BackgroundTypePattern updatePattern && updatePattern.Fill is BackgroundFillFreeformGradient freeform2)
+            else if (_oldBackground?.Type is BackgroundTypePattern updatePattern && updatePattern.Fill is BackgroundFillFreeformGradient)
             {
-                _defaultBackground.UpdateLayout(_colorBackground, freeform2, true);
+                _renderer.Next();
             }
         }
 
-        private async void UpdateBackground(Background background, bool dark)
+        private void UpdateBackground(Background background, bool dark)
         {
-            if (_fileToken is string fileToken)
-            {
-                _fileToken = null;
-                UpdateManager.Unsubscribe(this);
-            }
-
             if (background == null)
             {
                 var freeform = dark ? new[] { 0x0D0E17, 0x090A0C, 0x181C28, 0x0E0F12} : new[] { 0xDBDDBB, 0x6BA587, 0xD5D88D, 0x88B884 };
@@ -162,120 +125,7 @@ namespace Unigram.Controls.Chats
             _oldBackground = background;
             _oldDark = dark;
 
-            if (background.Type is BackgroundTypeFill typeFill)
-            {
-                UpdateBlurred(false);
-
-                _imageBackground.Fill = null;
-                _imageBackground.Opacity = 1;
-
-                if (typeFill.Fill is BackgroundFillFreeformGradient freeform)
-                {
-                    _colorBackground.Fill = new ImageBrush { AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
-                    _defaultBackground.UpdateLayout(_colorBackground, freeform);
-                }
-                else
-                {
-                    _colorBackground.Fill = typeFill.ToBrush();
-                }
-
-                Background = null;
-            }
-            else if (background.Type is BackgroundTypePattern typePattern)
-            {
-                UpdateBlurred(false);
-
-                if (typePattern.Fill is BackgroundFillFreeformGradient freeform)
-                {
-                    _colorBackground.Fill = new ImageBrush { AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
-                    _defaultBackground.UpdateLayout(_colorBackground, freeform);
-                }
-                else
-                {
-                    _colorBackground.Fill = typePattern.Fill.ToBrush();
-                }
-
-                if (typePattern.IsInverted)
-                {
-                    _imageBackground.Opacity = 1;
-                    _colorBackground.Opacity = typePattern.Intensity / 100d;
-
-                    Background = new SolidColorBrush(Colors.Black);
-                }
-                else
-                {
-                    _imageBackground.Opacity = 1;
-                    _colorBackground.Opacity = 1;
-
-                    Background = null;
-                }
-
-                var file = background.Document.DocumentValue;
-                if (file.Local.IsFileExisting())
-                {
-                    if (string.Equals(background.Document.MimeType, "application/x-tgwallpattern", StringComparison.OrdinalIgnoreCase))
-                    {
-                        await SetPatternAsync(typePattern, file);
-                    }
-                    else
-                    {
-                        _imageBackground.Fill = new ImageBrush { ImageSource = new BitmapImage(UriEx.ToLocal(file.Local.Path)), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
-                    }
-                }
-                else
-                {
-                    if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-                    {
-                        _protoService.DownloadFile(file.Id, 16);
-                    }
-
-                    UpdateManager.Subscribe(this, _protoService, file, ref _fileToken, UpdateFile, true);
-                }
-            }
-            else if (background.Type is BackgroundTypeWallpaper typeWallpaper)
-            {
-                UpdateBlurred(typeWallpaper.IsBlurred);
-
-                _colorBackground.Fill = null;
-                _imageBackground.Opacity = 1;
-
-                var file = background.Document.DocumentValue;
-                if (file.Local.IsFileExisting())
-                {
-                    _imageBackground.Fill = new ImageBrush { ImageSource = new BitmapImage(UriEx.ToLocal(file.Local.Path)), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
-                }
-                else
-                {
-                    if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-                    {
-                        _protoService.DownloadFile(file.Id, 16);
-                    }
-
-                    UpdateManager.Subscribe(this, _protoService, file, ref _fileToken, UpdateFile, true);
-                }
-
-                Background = null;
-            }
-        }
-
-        private async Task SetPatternAsync(BackgroundTypePattern typePattern, File file)
-        {
-            if (_imageBackground.Fill is TiledBrush brush)
-            {
-                brush.Surface = await PlaceholderHelper.GetPatternSurfaceAsync(null, file);
-                brush.IsInverted = typePattern.IsInverted;
-                brush.Intensity = typePattern.Intensity / 100d;
-                brush.Update();
-            }
-            else
-            {
-                _imageBackground.Fill = new TiledBrush
-                {
-                    Surface = await PlaceholderHelper.GetPatternSurfaceAsync(null, file),
-                    IsInverted = typePattern.IsInverted,
-                    Intensity = typePattern.Intensity / 100d
-                };
-            }
+            _renderer.UpdateSource(_protoService, background, UpdateFile);
         }
 
         private bool BackgroundEquals(Background prev, Background next)
@@ -325,42 +175,6 @@ namespace Unigram.Controls.Chats
             }
 
             return false;
-        }
-
-        private void UpdateBlurred(bool enabled, float amount = 12)
-        {
-            if (enabled)
-            {
-                var graphicsEffect = new GaussianBlurEffect
-                {
-                    Name = "Blur",
-                    BlurAmount = amount,
-                    BorderMode = EffectBorderMode.Hard,
-                    Source = new CompositionEffectSourceParameter("backdrop")
-                };
-
-                var effectFactory = _compositor.CreateEffectFactory(graphicsEffect, new[] { "Blur.BlurAmount" });
-                var effectBrush = effectFactory.CreateBrush();
-                var backdrop = _compositor.CreateBackdropBrush();
-                effectBrush.SetSourceParameter("backdrop", backdrop);
-
-                _blurBrush = effectBrush;
-                _blurVisual = _compositor.CreateSpriteVisual();
-                _blurVisual.RelativeSizeAdjustment = Vector2.One;
-                _blurVisual.Brush = _blurBrush;
-
-                ElementCompositionPreview.SetElementChildVisual(_imageBackground, _blurVisual);
-            }
-            else
-            {
-                ElementCompositionPreview.SetElementChildVisual(_imageBackground, null);
-
-                _blurBrush?.Dispose();
-                _blurBrush = null;
-
-                _blurVisual?.Dispose();
-                _blurVisual = null;
-            }
         }
     }
 

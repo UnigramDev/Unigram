@@ -646,6 +646,24 @@
         </Setter>
     </Style>
 
+    <Style TargetType="chats:ChatBackgroundRenderer">
+        <Setter Property="IsTabStop"
+                Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="chats:ChatBackgroundRenderer">
+                    <Grid x:Name="LayoutRoot">
+                        <Image x:Name="Canvas"
+                               Stretch="Fill"
+                               AutomationProperties.AccessibilityView="Raw"
+                               HorizontalAlignment="Stretch"
+                               VerticalAlignment="Stretch" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="messages:CustomEmojiCanvas">
         <Setter Property="IsTabStop"
                 Value="False" />

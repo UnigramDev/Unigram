@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Brushes;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -191,6 +193,30 @@ namespace Unigram.Common
             else if (fill is BackgroundFillGradient gradient)
             {
                 return TdBackground.GetGradient(gradient.TopColor, gradient.BottomColor, gradient.RotationAngle);
+            }
+
+            return null;
+        }
+
+        public static ICanvasBrush ToCanvasBrush(this BackgroundTypeFill fill, ICanvasResourceCreator sender, uint width, uint height)
+        {
+            return fill.Fill.ToCanvasBrush(sender, width, height);
+        }
+
+        public static ICanvasBrush ToCanvasBrush(this BackgroundTypePattern pattern, ICanvasResourceCreator sender, uint width, uint height)
+        {
+            return pattern.Fill.ToCanvasBrush(sender, width, height);
+        }
+
+        public static ICanvasBrush ToCanvasBrush(this BackgroundFill fill, ICanvasResourceCreator sender, uint width, uint height)
+        {
+            if (fill is BackgroundFillSolid solid)
+            {
+                return new CanvasSolidColorBrush(sender, solid.Color.ToColor());
+            }
+            else if (fill is BackgroundFillGradient gradient)
+            {
+                return TdBackground.GetGradient(sender, gradient.TopColor, gradient.BottomColor, gradient.RotationAngle, width, height);
             }
 
             return null;
@@ -1137,14 +1163,10 @@ namespace Unigram.Common
             var performer = string.IsNullOrEmpty(audio.Performer) ? null : audio.Performer;
             var title = string.IsNullOrEmpty(audio.Title) ? null : audio.Title;
 
-            if (performer == null)
+            if (string.IsNullOrEmpty(audio.Performer)
+                || string.IsNullOrEmpty(audio.Title))
             {
-                if (title == null)
-                {
-                    return audio.FileName;
-                }
-
-                return title;
+                return audio.FileName;
             }
             else
             {
@@ -1905,6 +1927,61 @@ namespace Unigram.Common
             var brush = new LinearGradientBrush();
             brush.GradientStops.Add(new GradientStop { Color = topColor, Offset = 0 });
             brush.GradientStops.Add(new GradientStop { Color = bottomColor, Offset = 1 });
+            brush.StartPoint = topPoint;
+            brush.EndPoint = bottomPoint;
+
+            return brush;
+        }
+
+        public static CanvasLinearGradientBrush GetGradient(ICanvasResourceCreator sender, int topColor, int bottomColor, int angle, uint width, uint height)
+        {
+            return GetGradient(sender, topColor.ToColor(), bottomColor.ToColor(), angle, width, height);
+        }
+
+        public static CanvasLinearGradientBrush GetGradient(ICanvasResourceCreator sender, Color topColor, Color bottomColor, int angle, uint width, uint height)
+        {
+            Vector2 topPoint;
+            Vector2 bottomPoint;
+
+            switch (angle)
+            {
+                case 0:
+                case 360:
+                    topPoint = new Vector2(width / 2f, 0);
+                    bottomPoint = new Vector2(width / 2f, height);
+                    break;
+                case 45:
+                default:
+                    topPoint = new Vector2(width, 0);
+                    bottomPoint = new Vector2(0, height);
+                    break;
+                case 90:
+                    topPoint = new Vector2(width, height / 2f);
+                    bottomPoint = new Vector2(0, height / 2f);
+                    break;
+                case 135:
+                    topPoint = new Vector2(width, height);
+                    bottomPoint = new Vector2(0, 0);
+                    break;
+                case 180:
+                    topPoint = new Vector2(width / 2f, height);
+                    bottomPoint = new Vector2(width / 2f, 0);
+                    break;
+                case 225:
+                    topPoint = new Vector2(0, height);
+                    bottomPoint = new Vector2(width, 0);
+                    break;
+                case 270:
+                    topPoint = new Vector2(0, height / 2f);
+                    bottomPoint = new Vector2(width, height / 2f);
+                    break;
+                case 315:
+                    topPoint = new Vector2(0, 0);
+                    bottomPoint = new Vector2(width, height);
+                    break;
+            }
+
+            var brush = new CanvasLinearGradientBrush(sender, topColor, bottomColor);
             brush.StartPoint = topPoint;
             brush.EndPoint = bottomPoint;
 
