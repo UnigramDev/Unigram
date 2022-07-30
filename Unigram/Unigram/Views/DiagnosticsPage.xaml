@@ -31,6 +31,10 @@
                     <CheckBox IsChecked="{x:Bind ViewModel.AllowRightToLeft, Mode=TwoWay}"
                               Content="Allow right to left"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                    <CheckBox IsChecked="{x:Bind ViewModel.LowLatencyGC, Mode=TwoWay}"
+                              Content="Low latency Garbage Collection"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="Calls Logs">

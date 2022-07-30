@@ -37,6 +37,13 @@ namespace Unigram.Services.Settings
             set => AddOrUpdateValue(ref _allowRightToLeft, "AllowRightToLeft", value);
         }
 
+        private bool? _lowLatencyGC;
+        public bool LowLatencyGC
+        {
+            get => _lowLatencyGC ??= GetValueOrDefault("LowLatencyGC", ApiInfo.IsPackagedRelease);
+            set => AddOrUpdateValue(ref _lowLatencyGC, "LowLatencyGC", value);
+        }
+
         private string _lastErrorMessage;
         public string LastErrorMessage
         {
