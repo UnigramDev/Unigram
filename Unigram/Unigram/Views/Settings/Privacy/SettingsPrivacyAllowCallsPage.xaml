@@ -50,18 +50,24 @@
                     <controls:BadgeButton Content="{CustomResource AlwaysAllow}"
                                           Command="{x:Bind ViewModel.AlwaysCommand}"
                                           Visibility="{x:Bind ConvertAlways(ViewModel.SelectedItem), Mode=OneWay}"
-                                          Badge="{x:Bind ViewModel.AllowedBadge, Mode=OneWay}" />
+                                          Badge="{x:Bind ViewModel.AllowedBadge, Mode=OneWay}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xE9E5;"/>
 
                     <controls:BadgeButton Content="{CustomResource NeverAllow}"
                                           Command="{x:Bind ViewModel.NeverCommand}"
                                           Visibility="{x:Bind ConvertNever(ViewModel.SelectedItem), Mode=OneWay}"
-                                          Badge="{x:Bind ViewModel.RestrictedBadge, Mode=OneWay}" />
+                                          Badge="{x:Bind ViewModel.RestrictedBadge, Mode=OneWay}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xE9D3;" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="{CustomResource PrivacyP2PHeader}">
                     <controls:BadgeButton Content="{CustomResource PrivacyP2P2}"
                                           Badge="{x:Bind ViewModel.AllowP2PCallsRules.Badge, Mode=OneWay}"
-                                          Click="P2PCall_Click" />
+                                          Click="P2PCall_Click"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xE9E6;"/>
                 </controls:HeaderedControl>
             </StackPanel>
         </ScrollViewer>

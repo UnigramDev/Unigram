@@ -79,12 +79,16 @@
                     <controls:BadgeButton Content="{CustomResource AlwaysAllow}"
                                           Command="{x:Bind ViewModel.ShowPhone.AlwaysCommand}"
                                           Visibility="{x:Bind ConvertAlways(ViewModel.ShowPhone.SelectedItem), Mode=OneWay}"
-                                          Badge="{x:Bind ViewModel.ShowPhone.AllowedBadge, Mode=OneWay}" />
+                                          Badge="{x:Bind ViewModel.ShowPhone.AllowedBadge, Mode=OneWay}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xE9E5;" />
 
                     <controls:BadgeButton Content="{CustomResource NeverAllow}"
                                           Command="{x:Bind ViewModel.ShowPhone.NeverCommand}"
                                           Visibility="{x:Bind ConvertNever(ViewModel.ShowPhone.SelectedItem), Mode=OneWay}"
-                                          Badge="{x:Bind ViewModel.ShowPhone.RestrictedBadge, Mode=OneWay}" />
+                                          Badge="{x:Bind ViewModel.ShowPhone.RestrictedBadge, Mode=OneWay}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xE9D3;" />
                 </controls:HeaderedControl>
             </StackPanel>
         </ScrollViewer>
