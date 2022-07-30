@@ -2839,7 +2839,7 @@ namespace Unigram.Views
             _ellipseVisual.StopAnimation("Scale");
         }
 
-        private void Autocomplete_ItemClick(object sender, ItemClickEventArgs e)
+        private async void Autocomplete_ItemClick(object sender, ItemClickEventArgs e)
         {
             var chat = ViewModel.Chat;
             if (chat == null)
@@ -2929,23 +2929,38 @@ namespace Unigram.Views
 
                 TextField.Document.Selection.StartPosition = start;
             }
-            else if (e.ClickedItem is EmojiData emoji && ChatTextBox.SearchByEmoji(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string replacement, out _))
+            else if (e.ClickedItem is EmojiData or Sticker && ChatTextBox.SearchByEmoji(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string replacement, out _))
             {
-                var insert = $"{emoji.Value} ";
-                var start = TextField.Document.Selection.StartPosition - 1 - replacement.Length + insert.Length;
-                var range = TextField.Document.GetRange(TextField.Document.Selection.StartPosition - 1 - replacement.Length, TextField.Document.Selection.StartPosition);
-                range.SetText(TextSetOptions.None, insert);
-
-                TextField.Document.Selection.StartPosition = start;
-            }
-            else if (e.ClickedItem is Sticker sticker)
-            {
-                TextField.SetText(null, null);
-                ViewModel.StickerSendExecute(sticker, null, null, text);
-
-                if (_stickersMode == StickersPanelMode.Overlay)
+                if (e.ClickedItem is EmojiData emoji)
                 {
-                    Collapse_Click(null, null);
+                    var insert = $"{emoji.Value} ";
+                    var start = TextField.Document.Selection.StartPosition - 1 - replacement.Length + insert.Length;
+                    var range = TextField.Document.GetRange(TextField.Document.Selection.StartPosition - 1 - replacement.Length, TextField.Document.Selection.StartPosition);
+                    range.SetText(TextSetOptions.None, insert);
+
+                    TextField.Document.Selection.StartPosition = start;
+                }
+                else if (e.ClickedItem is Sticker sticker)
+                {
+                    if (sticker.CustomEmojiId != 0)
+                    {
+                        var start = TextField.Document.Selection.StartPosition - 1 - replacement.Length + 1;
+                        var range = TextField.Document.GetRange(TextField.Document.Selection.StartPosition - 1 - replacement.Length, TextField.Document.Selection.StartPosition);
+                        range.SetText(TextSetOptions.None, string.Empty);
+
+                        await TextField.InsertEmojiAsync(range, sticker.Emoji, sticker.CustomEmojiId);
+                        TextField.Document.Selection.StartPosition = start;
+                    }
+                    else
+                    {
+                        TextField.SetText(null, null);
+                        ViewModel.StickerSendExecute(sticker, null, null, text);
+
+                        if (_stickersMode == StickersPanelMode.Overlay)
+                        {
+                            Collapse_Click(null, null);
+                        }
+                    }
                 }
             }
         }
@@ -3272,6 +3287,17 @@ namespace Unigram.Views
                     }
 
                     return;
+                }
+
+                if (sticker.CustomEmojiId != 0)
+                {
+                    content.Width = 40;
+                    content.Height = 40;
+                }
+                else
+                {
+                    content.Width = 72;
+                    content.Height = 72;
                 }
 
                 if (file.Local.IsFileExisting())

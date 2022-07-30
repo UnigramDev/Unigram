@@ -115,9 +115,9 @@
         </selectors:AutocompleteTemplateSelector.ItemTemplate>
         <selectors:AutocompleteTemplateSelector.StickerTemplate>
             <DataTemplate>
-                <Grid Padding="4,8"
-                      Width="68"
-                      Height="76">
+                <Grid Padding="4"
+                      Width="72"
+                      Height="72">
                     <Border>
                         <Image />
                     </Border>
