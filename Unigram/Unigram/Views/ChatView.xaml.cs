@@ -3320,7 +3320,18 @@ namespace Unigram.Views
 
         private void ShowAction(string content, bool enabled)
         {
-            LabelAction.Text = content;
+            if (ButtonAction.Content is not TextBlock || (ButtonAction.Content is TextBlock block && !string.Equals(block.Text, content)))
+            {
+                ButtonAction.Content = new TextBlock
+                {
+                    Text = content,
+                    TextWrapping = TextWrapping.Wrap,
+                    TextAlignment = TextAlignment.Center,
+                    FontWeight = FontWeights.SemiBold
+                };
+            }
+
+            //LabelAction.Text = content;
             ButtonAction.IsEnabled = enabled;
             ButtonAction.Visibility = Visibility.Visible;
             ChatFooter.Visibility = Visibility.Visible;

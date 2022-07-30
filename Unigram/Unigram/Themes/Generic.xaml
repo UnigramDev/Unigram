@@ -3240,7 +3240,12 @@
                                 <VisualState x:Name="Disabled">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
-                                                                       Storyboard.TargetName="ContentPresenter">
+                                                                       Storyboard.TargetName="ContentPresenter1">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource ButtonForegroundDisabled}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
+                                                                       Storyboard.TargetName="ContentPresenter2">
                                             <DiscreteObjectKeyFrame KeyTime="0"
                                                                     Value="{ThemeResource ButtonForegroundDisabled}" />
                                         </ObjectAnimationUsingKeyFrames>
@@ -3260,19 +3265,28 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <Border x:Name="RootGrid">
-                            <ContentPresenter x:Name="ContentPresenter"
+                        <Grid x:Name="RootGrid">
+                            <ContentPresenter x:Name="ContentPresenter1"
                                               AutomationProperties.AccessibilityView="Raw"
                                               BorderBrush="{TemplateBinding BorderBrush}"
                                               BorderThickness="{TemplateBinding BorderThickness}"
                                               ContentTemplate="{TemplateBinding ContentTemplate}"
                                               ContentTransitions="{TemplateBinding ContentTransitions}"
-                                              Content="{TemplateBinding Content}"
                                               HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                               Padding="{TemplateBinding Padding}"
                                               VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                                               Grid.Column="1" />
-                        </Border>
+                            <ContentPresenter x:Name="ContentPresenter2"
+                                              AutomationProperties.AccessibilityView="Raw"
+                                              BorderBrush="{TemplateBinding BorderBrush}"
+                                              BorderThickness="{TemplateBinding BorderThickness}"
+                                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                                              ContentTransitions="{TemplateBinding ContentTransitions}"
+                                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              Padding="{TemplateBinding Padding}"
+                                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              Grid.Column="1" />
+                        </Grid>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
