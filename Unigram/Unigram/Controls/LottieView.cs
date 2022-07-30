@@ -98,6 +98,12 @@ namespace Unigram.Controls
 
             if (needsCreate)
             {
+                if (_bitmap != null)
+                {
+                    _bitmap.Dispose();
+                    _bitmap = null;
+                }
+
                 return CreateBitmap(sender, _frameSize.Width, _frameSize.Height);
             }
 

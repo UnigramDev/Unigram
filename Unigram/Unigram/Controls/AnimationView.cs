@@ -83,12 +83,23 @@ namespace Unigram.Controls
             bool needsCreate = _bitmap == null;
             needsCreate |= _bitmap?.Size.Width != _animation?.PixelWidth || _bitmap?.Size.Height != _animation?.PixelHeight;
 
-            if (needsCreate && _animation != null)
+            if (needsCreate)
             {
-                return CreateBitmap(sender, _animation.PixelWidth, _animation.PixelHeight, DirectXPixelFormat.R8G8B8A8UIntNormalized);
+                if (_bitmap != null)
+                {
+                    _bitmap.Dispose();
+                    _bitmap = null;
+                }
+
+                if (_animation != null)
+                {
+                    return CreateBitmap(sender, _animation.PixelWidth, _animation.PixelHeight, DirectXPixelFormat.R8G8B8A8UIntNormalized);
+                }
+
+                return null;
             }
 
-            return needsCreate ? null : _bitmap;
+            return _bitmap;
         }
 
         protected override void DrawFrame(CanvasImageSource sender, CanvasDrawingSession args)

@@ -5,7 +5,6 @@ using System.Buffers;
 using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
-using Unigram.Common;
 using Windows.Foundation;
 using Windows.Graphics;
 using Windows.Graphics.DirectX;
@@ -28,6 +27,8 @@ namespace Unigram.Controls
         protected float _currentDpi;
         protected bool _active = true;
         protected bool _visible = true;
+
+        private bool _autoPause;
 
         protected CanvasImageSource _surface;
         protected CanvasBitmap _bitmap;
@@ -57,11 +58,14 @@ namespace Unigram.Controls
         // Better hardware detection?
         protected readonly bool _limitFps = true;
 
-        protected AnimatedControl(bool? limitFps)
+        protected AnimatedControl(bool? limitFps, bool autoPause = true)
         {
+            _interval = TimeSpan.FromMilliseconds(Math.Floor(1000d / 30));
+            _autoPause = autoPause;
+
             _limitFps = limitFps ?? !Windows.UI.Composition.CompositionCapabilities.GetForCurrentView().AreEffectsFast();
             _currentDpi = DisplayInformation.GetForCurrentView().LogicalDpi;
-            _active = Window.Current.CoreWindow.ActivationMode == CoreWindowActivationMode.ActivatedInForeground;
+            _active = autoPause ? Window.Current.CoreWindow.ActivationMode == CoreWindowActivationMode.ActivatedInForeground : true;
             _visible = Window.Current.CoreWindow.Visible;
 
             SizeChanged += OnSizeChanged;
@@ -95,17 +99,25 @@ namespace Unigram.Controls
         private void RegisterEventHandlers()
         {
             DisplayInformation.GetForCurrentView().DpiChanged += OnDpiChanged;
-            Window.Current.Activated += OnActivated;
             Window.Current.VisibilityChanged += OnVisibilityChanged;
             CompositionTarget.SurfaceContentsLost += OnSurfaceContentsLost;
+
+            if (_autoPause)
+            {
+                Window.Current.Activated += OnActivated;
+            }
         }
 
         private void UnregisterEventHandlers()
         {
             DisplayInformation.GetForCurrentView().DpiChanged -= OnDpiChanged;
-            Window.Current.Activated -= OnActivated;
             Window.Current.VisibilityChanged -= OnVisibilityChanged;
             CompositionTarget.SurfaceContentsLost -= OnSurfaceContentsLost;
+
+            if (_autoPause)
+            {
+                Window.Current.Activated -= OnActivated;
+            }
         }
 
         private void OnDpiChanged(DisplayInformation sender, object args)
@@ -175,7 +187,11 @@ namespace Unigram.Controls
 
                 _visible = e.Visible;
 
-                if (e.Visible == false)
+                if (e.Visible)
+                {
+                    Changed();
+                }
+                else
                 {
                     Subscribe(false);
                 }
@@ -196,16 +212,18 @@ namespace Unigram.Controls
                 var newDpi = _currentDpi;
                 var newSize = _currentSize;
 
-                bool needsCreate = (_surface == null);
-                needsCreate |= (_surface?.Dpi != newDpi);
-                needsCreate |= (_surface?.Size.Width != newSize.X || _surface?.Size.Height != newSize.Y);
+                bool needsCreate = _surface == null;
+                needsCreate |= _surface?.Dpi != newDpi;
+                needsCreate |= _surface?.Size.Width != newSize.X || _surface?.Size.Height != newSize.Y;
                 needsCreate |= force;
 
                 if (needsCreate && newSize.X > 0 && newSize.Y > 0 && _visible)
                 {
                     try
                     {
-                        _surface = new CanvasImageSource(CanvasDevice.GetSharedDevice(), newSize.X, newSize.Y, newDpi, CanvasAlphaMode.Premultiplied);
+                        var device = _surface?.Device ?? CanvasDevice.GetSharedDevice();
+
+                        _surface = new CanvasImageSource(device, newSize.X, newSize.Y, newDpi, CanvasAlphaMode.Premultiplied);
                         _canvas.Source = _surface;
 
                         _bitmap = CreateBitmap(_surface);
@@ -267,7 +285,7 @@ namespace Unigram.Controls
             {
                 return;
             }
-            
+
             Unload();
             UnregisterEventHandlers();
         }
@@ -334,7 +352,7 @@ namespace Unigram.Controls
             }
         }
 
-        public void DrawFrame()
+        protected void DrawFrame()
         {
             if (_surface == null || !_visible)
             {
@@ -411,10 +429,15 @@ namespace Unigram.Controls
 
         protected SizeInt32 GetDpiAwareSize(Size size)
         {
+            return GetDpiAwareSize(size.Width, size.Height);
+        }
+
+        protected SizeInt32 GetDpiAwareSize(double width, double height)
+        {
             return new SizeInt32
             {
-                Width = (int)(size.Width * (_currentDpi / 96)),
-                Height = (int)(size.Height * (_currentDpi / 96))
+                Width = (int)(width * (_currentDpi / 96)),
+                Height = (int)(height * (_currentDpi / 96))
             };
         }
 
@@ -425,7 +448,7 @@ namespace Unigram.Controls
 
         protected abstract void DrawFrame(CanvasImageSource sender, CanvasDrawingSession args);
 
-        private void PrepareNextFrame()
+        protected void PrepareNextFrame()
         {
             if (_nextFrameLock.Wait(0))
             {
@@ -589,8 +612,8 @@ namespace Unigram.Controls
     {
         private ThreadPoolTimer _timer;
 
-        protected IndividualAnimatedControl(bool? limitFps)
-            : base(limitFps)
+        protected IndividualAnimatedControl(bool? limitFps, bool autoPause = true)
+            : base(limitFps, autoPause)
         {
         }
 

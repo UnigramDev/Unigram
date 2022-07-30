@@ -7,7 +7,6 @@ using System;
 using System.Buffers;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
@@ -36,19 +35,26 @@ namespace Unigram.Controls.Messages
             AutoPlay = false;
 
             _interval = TimeSpan.FromMilliseconds(Math.Floor(1000d / 30));
-            _emojiSize = GetDpiAwareSize(18);
+            _emojiSize = GetDpiAwareSize(20);
         }
 
         protected override CanvasBitmap CreateBitmap(ICanvasResourceCreator sender)
         {
-            var awareSize = GetDpiAwareSize(_currentSize.ToSize());
+            var awareSize = GetDpiAwareSize(_currentSize.X, _currentSize.Y);
 
             bool needsCreate = _bitmap == null;
             needsCreate |= _bitmap?.Size.Width != awareSize.Width || _bitmap?.Size.Height != awareSize.Height;
+            needsCreate &= _currentSize.X > 0 && _currentSize.Y > 0;
 
             if (needsCreate && _animation != null)
             {
-                _emojiSize = GetDpiAwareSize(18);
+                if (_bitmap != null)
+                {
+                    _bitmap.Dispose();
+                    _bitmap = null;
+                }
+
+                _emojiSize = GetDpiAwareSize(20);
                 return CreateBitmap(sender, awareSize.Width, awareSize.Height);
             }
 
@@ -86,8 +92,8 @@ namespace Unigram.Controls.Messages
             {
                 if (EmojiRendererCache.TryGet(item.CustomEmojiId, out EmojiRenderer animation))
                 {
-                    var x = (int)(item.X * (_currentDpi / 96));
-                    var y = (int)(item.Y * (_currentDpi / 96));
+                    var x = (int)((2 + item.X - 1) * (_currentDpi / 96));
+                    var y = (int)((2 + item.Y - 1) * (_currentDpi / 96));
 
                     var matches = _emojiSize * _emojiSize * 4 == animation.Buffer?.Length;
                     if (matches && animation.HasRenderedFirstFrame && x + _emojiSize < _bitmap.Size.Width && y + _emojiSize < _bitmap.Size.Height)
@@ -158,8 +164,8 @@ namespace Unigram.Controls.Messages
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            _layoutRoot?.Measure(availableSize);
-            _canvas?.Measure(availableSize);
+            _layoutRoot?.Measure(new Size(availableSize.Width, availableSize.Height));
+            _canvas?.Measure(new Size(availableSize.Width, availableSize.Height));
 
             return new Size(0, 0);
         }
@@ -219,6 +225,7 @@ namespace Unigram.Controls.Messages
 
             if (request.Count < 1)
             {
+                OnSourceChanged();
                 return;
             }
 
@@ -495,7 +502,7 @@ namespace Unigram.Controls.Messages
             {
                 if (_outline == null || _outline.Device != sender.Device)
                 {
-                    var scale = 18f / _sticker.Width;
+                    var scale = 20f / _sticker.Width;
                     var outline = CompositionPathParser.Parse(sender, _sticker.Outline, scale);
 
                     _outline = outline;

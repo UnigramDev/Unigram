@@ -167,7 +167,7 @@ namespace Unigram.Controls.Chats
                             M41 = 0, M42 = 0, M43 = 0, M44 =-1,
                             M51 = 0, M52 = 0, M53 = 0, M54 = 1
 #pragma warning restore format
-                        }
+                            }
                         };
 
                         args.DrawImage(_bitmap, new Rect(0, 0, sender.Size.Width, sender.Size.Height), new Rect(0, 0, sender.Size.Width, sender.Size.Height));
@@ -179,7 +179,7 @@ namespace Unigram.Controls.Chats
                         using var scale2 = new ScaleEffect { Source = _pattern, BorderMode = EffectBorderMode.Hard, Scale = new Vector2(0.5f, 0.5f) };
                         using var tint = new TintEffect { Source = scale2, Color = Color.FromArgb(_intensity, 00, 00, 00) };
                         using var border = new BorderEffect { Source = tint, ExtendX = CanvasEdgeBehavior.Wrap, ExtendY = CanvasEdgeBehavior.Wrap };
-                        using var effect = new BlendEffect { Foreground = border, Background = scale, Mode = BlendEffectMode.Overlay };
+                        using var effect = new BlendEffect { Foreground = border, Background = scale, Mode = BlendEffectMode.SoftLight };
 
                         args.DrawImage(effect, new Rect(0, 0, sender.Size.Width, sender.Size.Height), new Rect(0, 0, sender.Size.Width, sender.Size.Height));
                     }
