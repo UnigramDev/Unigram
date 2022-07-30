@@ -226,7 +226,7 @@
                                 <local:CustomEmojiCanvas x:Name="CustomEmoji"
                                                          x:Load="False"
                                                          IsHitTestVisible="False"
-                                                         Margin="10,0,10,6" />
+                                                         Margin="8,-2,8,4" />
 
                                 <Border x:Name="Media"
                                         Grid.Column="1"

@@ -3467,7 +3467,7 @@
                                       VerticalAlignment="Stretch" />
                         <messages:CustomEmojiCanvas x:Name="CustomEmoji"
                                                     IsHitTestVisible="False"
-                                                    Margin="48,13,0,0"
+                                                    Margin="46,11,-2,-2"
                                                     Grid.Row="1" />
                         <ContentControl x:Name="PlaceholderTextContentPresenter"
                                         Grid.Row="1"
