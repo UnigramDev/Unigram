@@ -12,6 +12,7 @@ using Unigram.Converters;
 using Unigram.Navigation;
 using Unigram.Services;
 using Unigram.ViewModels;
+using Unigram.ViewModels.Drawers;
 using Unigram.ViewModels.Folders;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI;
@@ -40,6 +41,9 @@ namespace Unigram.Views.Popups
             //Title = Strings.Resources.ShareSendTo;
             PrimaryButtonText = Strings.Resources.Send;
             SecondaryButtonText = Strings.Resources.Close;
+
+            EmojiPanel.DataContext = EmojiDrawerViewModel.GetForCurrentView(ViewModel.SessionId);
+            CaptionInput.CustomEmoji = CustomEmoji;
 
             ViewModel.PropertyChanged += OnPropertyChanged;
 
@@ -943,6 +947,7 @@ namespace Unigram.Views.Popups
         private void Emoji_Click(object sender, RoutedEventArgs e)
         {
             // We don't want to unfocus the text are when the context menu gets opened
+            EmojiPanel.ViewModel.Update();
             EmojiFlyout.ShowAt(CaptionInput, new FlyoutShowOptions { ShowMode = FlyoutShowMode.Transient });
         }
 
@@ -953,6 +958,13 @@ namespace Unigram.Views.Popups
                 EmojiFlyout.Hide();
 
                 CaptionInput.InsertText(emoji.Value);
+                CaptionInput.Focus(FocusState.Programmatic);
+            }
+            else if (e.ClickedItem is StickerViewModel sticker)
+            {
+                EmojiFlyout.Hide();
+
+                CaptionInput.InsertEmoji(sticker);
                 CaptionInput.Focus(FocusState.Programmatic);
             }
         }

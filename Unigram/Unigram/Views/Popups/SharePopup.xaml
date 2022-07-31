@@ -6,6 +6,7 @@
                        xmlns:controls="using:Unigram.Controls"
                        xmlns:common="using:Unigram.Common"
                        xmlns:drawers="using:Unigram.Controls.Drawers"
+                       xmlns:messages="using:Unigram.Controls.Messages"
                        xmlns:selectors="using:Unigram.Selectors"
                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -214,7 +215,7 @@
                                 <DataTemplate>
                                     <TextBlock Text="{Binding Key}"
                                                Style="{StaticResource BaseTextBlockStyle}"
-                                               Margin="0,16,0,8"/>
+                                               Margin="0,16,0,8" />
                                 </DataTemplate>
                             </GroupStyle.HeaderTemplate>
                             <GroupStyle.HeaderContainerStyle>
@@ -288,13 +289,17 @@
                                         Value="0" />
                             </Style>
                         </Flyout.FlyoutPresenterStyle>
-                        <drawers:EmojiDrawer ItemClick="Emoji_ItemClick"
-                                             x:Name="EmojiPanel"
+                        <drawers:EmojiDrawer x:Name="EmojiPanel"
+                                             ItemClick="Emoji_ItemClick"
                                              Width="300"
                                              Height="360" />
                     </Flyout>
                 </FlyoutBase.AttachedFlyout>
             </controls:FormattedTextBox>
+
+            <messages:CustomEmojiCanvas x:Name="CustomEmoji"
+                                        IsHitTestVisible="False"
+                                        Margin="10,4,-2,-2" />
 
             <controls:GlyphButton Click="Emoji_Click"
                                   Glyph="&#xE76E;"

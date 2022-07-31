@@ -13,6 +13,7 @@ using Unigram.Controls.Chats;
 using Unigram.Converters;
 using Unigram.Entities;
 using Unigram.ViewModels;
+using Unigram.ViewModels.Drawers;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
@@ -136,7 +137,7 @@ namespace Unigram.Views.Popups
         public bool? Schedule { get; private set; }
         public bool? Silent { get; private set; }
 
-        public SendFilesPopup(IEnumerable<StorageMedia> items, bool media, bool ttl, bool schedule, bool savedMessages)
+        public SendFilesPopup(int sessionId, IEnumerable<StorageMedia> items, bool media, bool ttl, bool schedule, bool savedMessages)
         {
             InitializeComponent();
 
@@ -151,6 +152,9 @@ namespace Unigram.Views.Popups
             Items.CollectionChanged += OnCollectionChanged;
             IsMediaSelected = media && IsMediaOnly;
             IsFilesSelected = !IsMediaSelected;
+
+            EmojiPanel.DataContext = EmojiDrawerViewModel.GetForCurrentView(sessionId);
+            CaptionInput.CustomEmoji = CustomEmoji;
 
             UpdateView();
             UpdatePanel();
@@ -669,6 +673,7 @@ namespace Unigram.Views.Popups
         private void Emoji_Click(object sender, RoutedEventArgs e)
         {
             // We don't want to unfocus the text are when the context menu gets opened
+            EmojiPanel.ViewModel.Update();
             EmojiFlyout.ShowAt(CaptionInput, new FlyoutShowOptions { ShowMode = FlyoutShowMode.Transient });
         }
 
@@ -679,6 +684,13 @@ namespace Unigram.Views.Popups
                 EmojiFlyout.Hide();
 
                 CaptionInput.InsertText(emoji.Value);
+                CaptionInput.Focus(FocusState.Programmatic);
+            }
+            else if (e.ClickedItem is StickerViewModel sticker)
+            {
+                EmojiFlyout.Hide();
+
+                CaptionInput.InsertEmoji(sticker);
                 CaptionInput.Focus(FocusState.Programmatic);
             }
         }
