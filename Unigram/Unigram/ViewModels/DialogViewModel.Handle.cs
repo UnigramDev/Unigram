@@ -569,7 +569,7 @@ namespace Unigram.ViewModels
                     {
                         if (_composerHeader != null && _composerHeader.Matches(id))
                         {
-                            ClearReplyCommand.Execute();
+                            ClearReply();
                             break;
                         }
                     }

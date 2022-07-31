@@ -451,10 +451,21 @@ namespace Unigram.Views
             return null;
         }
 
-#pragma warning disable CA1063 // Implement IDisposable Correctly
-        public void Dispose()
-#pragma warning restore CA1063 // Implement IDisposable Correctly
+        private MessageCollection _cleanup;
+
+        private void Cleanup(ref MessageCollection cache)
         {
+            if (cache != null)
+            {
+                cache.Clear();
+                cache = null;
+            }
+        }
+
+        public void Deactivate(bool navigation)
+        {
+            Cleanup(ref _cleanup);
+
             if (ViewModel != null)
             {
                 ViewModel.Dispose();
@@ -471,6 +482,20 @@ namespace Unigram.Views
                 ViewModel.TextField = null;
                 ViewModel.ListField = null;
                 ViewModel.Sticker_Click = null;
+
+                _cleanup = ViewModel.Items;
+
+                if (navigation)
+                {
+                    return;
+                }
+
+                _cleanup = ViewModel.Items;
+
+                Cleanup(ref _cleanup);
+
+                _viewModel = null;
+                DataContext = new object();
             }
         }
 
@@ -483,6 +508,8 @@ namespace Unigram.Views
 
             _updateThemeTask?.TrySetResult(true);
             Bindings.Update();
+
+            Cleanup(ref _cleanup);
         }
 
         public void Activate(int sessionId)
@@ -985,7 +1012,7 @@ namespace Unigram.Views
             {
                 if (ViewModel.ComposerHeader != null && ViewModel.ComposerHeader.ReplyToMessage != null)
                 {
-                    ViewModel.ClearReplyCommand.Execute(null);
+                    ViewModel.ClearReply();
                     args.Handled = true;
                 }
             }
@@ -1098,7 +1125,7 @@ namespace Unigram.Views
 
             if (ViewModel.ComposerHeader != null && ViewModel.ComposerHeader.EditingMessage != null)
             {
-                ViewModel.ClearReplyCommand.Execute(null);
+                ViewModel.ClearReply();
                 args.Handled = true;
             }
 
@@ -3165,7 +3192,7 @@ namespace Unigram.Views
         private void Arrow_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
             ViewModel.RepliesStack.Clear();
-            ViewModel.PreviousSliceCommand.Execute();
+            ViewModel.PreviousSliceExecute();
         }
 
         private void ItemsStackPanel_Loading(FrameworkElement sender, object args)
@@ -3850,7 +3877,6 @@ namespace Unigram.Views
         }
 
         private bool _composerHeaderCollapsed = false;
-        private bool _textFormattingCollapsed = false;
         private bool _botCommandsCollapsed = true;
         private bool _autocompleteCollapsed = true;
 

@@ -9,6 +9,7 @@ namespace Unigram.Views
     public sealed partial class ChatThreadPage : HostedPage, INavigablePage, ISearchablePage, IActivablePage
     {
         public DialogThreadViewModel ViewModel => DataContext as DialogThreadViewModel;
+
         public ChatView View => Content as ChatView;
 
         public ChatThreadPage()
@@ -48,9 +49,16 @@ namespace Unigram.Views
             View.Search();
         }
 
-        public void Dispose()
+        public void Deactivate(bool navigation)
         {
-            View.Dispose();
+            View.Deactivate(navigation);
+
+            if (navigation)
+            {
+                return;
+            }
+
+            DataContext = new object();
         }
 
         public void Activate(int sessionId)

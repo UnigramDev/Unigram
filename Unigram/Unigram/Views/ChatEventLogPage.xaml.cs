@@ -9,6 +9,7 @@ namespace Unigram.Views
     public sealed partial class ChatEventLogPage : HostedPage, INavigablePage, ISearchablePage, IActivablePage
     {
         public DialogEventLogViewModel ViewModel => DataContext as DialogEventLogViewModel;
+
         public ChatView View => Content as ChatView;
 
         public ChatEventLogPage()
@@ -48,9 +49,16 @@ namespace Unigram.Views
             View.Search();
         }
 
-        public void Dispose()
+        public void Deactivate(bool navigation)
         {
-            View.Dispose();
+            View.Deactivate(navigation);
+
+            if (navigation)
+            {
+                return;
+            }
+
+            DataContext = new Object();
         }
 
         public void Activate(int sessionId)

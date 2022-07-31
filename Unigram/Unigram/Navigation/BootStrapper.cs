@@ -860,8 +860,9 @@ namespace Unigram.Navigation
         void Search();
     }
 
-    public interface IActivablePage : IDisposable
+    public interface IActivablePage
     {
         void Activate(int sessionId);
+        void Deactivate(bool navigating);
     }
 }

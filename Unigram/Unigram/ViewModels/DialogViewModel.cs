@@ -121,14 +121,9 @@ namespace Unigram.ViewModels
             _mentions = new DialogUnreadMessagesViewModel<SearchMessagesFilterUnreadMention>(this);
             _reactions = new DialogUnreadMessagesViewModel<SearchMessagesFilterUnreadReaction>(this);
 
-            PreviousSliceCommand = new RelayCommand(PreviousSliceExecute);
-            ClearReplyCommand = new RelayCommand(ClearReplyExecute);
-            JoinChannelCommand = new RelayCommand(JoinChannelExecute);
             ToggleMuteCommand = new RelayCommand<bool>(ToggleMuteExecute);
             MuteCommand = new RelayCommand(() => ToggleMuteExecute(false));
             UnmuteCommand = new RelayCommand(() => ToggleMuteExecute(true));
-            ToggleSilentCommand = new RelayCommand(ToggleSilentExecute);
-            RemoveActionBarCommand = new RelayCommand(RemoveActionBarExecute);
             ReportSpamCommand = new RelayCommand<ChatReportReason>(ReportSpamExecute);
             ReportCommand = new RelayCommand(ReportExecute);
             OpenStickersCommand = new RelayCommand(OpenStickersExecute);
@@ -222,11 +217,17 @@ namespace Unigram.ViewModels
             //Items.CollectionChanged += (s, args) => IsEmpty = Items.Count == 0;
 
             Aggregator.Subscribe(this);
+            _count++;
+
+            System.Diagnostics.Debug.WriteLine("Creating DialogViewModel {0}", _count);
         }
+
+        private static volatile int _count;
 
         ~DialogViewModel()
         {
-            System.Diagnostics.Debug.WriteLine("Finalizing DialogViewModel");
+            System.Diagnostics.Debug.WriteLine("Finalizing DialogViewModel {0}", _count);
+            _count--;
         }
 
         public void Dispose()
@@ -972,8 +973,7 @@ namespace Unigram.ViewModels
             return null;
         }
 
-        public RelayCommand PreviousSliceCommand { get; }
-        private async void PreviousSliceExecute()
+        public async void PreviousSliceExecute()
         {
             if (_type is DialogType.ScheduledMessages or DialogType.EventLog)
             {
@@ -2296,8 +2296,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand ClearReplyCommand { get; }
-        private void ClearReplyExecute()
+        public void ClearReply()
         {
             var container = _composerHeader;
             if (container == null)
@@ -2587,8 +2586,7 @@ namespace Unigram.ViewModels
 
         #region Join channel
 
-        public RelayCommand JoinChannelCommand { get; }
-        private async void JoinChannelExecute()
+        public async void JoinChannel()
         {
             var chat = _chat;
             if (chat == null)
@@ -2626,8 +2624,7 @@ namespace Unigram.ViewModels
 
         #region Toggle silent
 
-        public RelayCommand ToggleSilentCommand { get; }
-        private void ToggleSilentExecute()
+        public void ToggleSilent()
         {
             var chat = _chat;
             if (chat == null)
@@ -2642,8 +2639,7 @@ namespace Unigram.ViewModels
 
         #region Report Spam
 
-        public RelayCommand RemoveActionBarCommand { get; }
-        private void RemoveActionBarExecute()
+        public void RemoveActionBar()
         {
             var chat = _chat;
             if (chat == null)
@@ -3462,7 +3458,7 @@ namespace Unigram.ViewModels
                 }
                 else if (group.Status is ChatMemberStatusCreator creator && !creator.IsMember)
                 {
-                    JoinChannelExecute();
+                    JoinChannel();
                 }
             }
             else if (chat.Type is ChatTypeSupergroup super)
@@ -3477,7 +3473,7 @@ namespace Unigram.ViewModels
                 {
                     if (group.Status is ChatMemberStatusLeft || (group.Status is ChatMemberStatusCreator creator && !creator.IsMember))
                     {
-                        JoinChannelExecute();
+                        JoinChannel();
                     }
                     else
                     {
@@ -3488,7 +3484,7 @@ namespace Unigram.ViewModels
                 {
                     if (group.Status is ChatMemberStatusLeft || (group.Status is ChatMemberStatusRestricted restricted && !restricted.IsMember) || (group.Status is ChatMemberStatusCreator creator && !creator.IsMember))
                     {
-                        JoinChannelExecute();
+                        JoinChannel();
                     }
                     else if (group.Status is ChatMemberStatusBanned)
                     {

@@ -60,7 +60,10 @@ namespace Unigram.Views
         {
             foreach (var item in _prev.Values)
             {
-                item.Unload();
+                if (item.Target is IPlayerView view)
+                {
+                    view.Unload();
+                }
             }
 
             _prev.Clear();
@@ -338,7 +341,7 @@ namespace Unigram.Views
             batch.End();
         }
 
-        private readonly Dictionary<long, IPlayerView> _prev = new Dictionary<long, IPlayerView>();
+        private readonly Dictionary<long, WeakReference> _prev = new Dictionary<long, WeakReference>();
 
         public async void PlayMessage(MessageViewModel message, FrameworkElement target)
         {
@@ -392,7 +395,7 @@ namespace Unigram.Views
             }
             else if (ViewModel.Settings.IsAutoPlayAnimationsEnabled && (message.Content is MessageAnimation || (text?.WebPage != null && text.WebPage.Animation != null) || (message.Content is MessageGame game && game.Game.Animation != null)))
             {
-                if (_prev.TryGetValue(message.AnimationHash(), out IPlayerView item))
+                if (_prev.TryGetValue(message.AnimationHash(), out WeakReference reference) && reference.Target is IPlayerView item)
                 {
                     GalleryViewModelBase viewModel;
                     if (message.Content is MessageAnimation)
@@ -487,7 +490,7 @@ namespace Unigram.Views
 
             foreach (var item in _prev.Keys.Except(next.Keys.Union(prev)).ToList())
             {
-                var presenter = _prev[item];
+                var presenter = _prev[item].Target as IPlayerView;
                 if (presenter != null && presenter.IsLoopingEnabled)
                 {
                     presenter.Pause();
@@ -508,7 +511,7 @@ namespace Unigram.Views
                     item.Value.Play();
                 }
 
-                _prev[item.Key] = item.Value;
+                _prev[item.Key] = new WeakReference(item.Value);
             }
         }
 
@@ -582,6 +585,10 @@ namespace Unigram.Views
         {
             if (args.InRecycleQueue == true)
             {
+                // XAML has indicated that the item is no longer being shown, so add it to the recycle queue
+                var tag = args.ItemContainer.Tag as string;
+                var added = _typeToItemHashSetMapping[tag].Add(args.ItemContainer);
+
                 var test = args.ItemContainer.ContentTemplateRoot as FrameworkElement;
                 if (test is not MessageBubble)
                 {
@@ -597,10 +604,6 @@ namespace Unigram.Views
                 {
                     args.ItemContainer.SizeChanged -= _sizeChangedHandler;
                 }
-
-                // XAML has indicated that the item is no longer being shown, so add it to the recycle queue
-                var tag = args.ItemContainer.Tag as string;
-                var added = _typeToItemHashSetMapping[tag].Add(args.ItemContainer);
 
                 return;
             }

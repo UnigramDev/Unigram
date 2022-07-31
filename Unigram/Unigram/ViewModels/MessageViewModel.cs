@@ -10,7 +10,7 @@ namespace Unigram.ViewModels
     public class MessageViewModel : MessageWithOwner
     {
         private readonly IPlaybackService _playbackService;
-        private readonly IMessageDelegate _delegate;
+        private readonly WeakReference _delegate;
 
         private WeakAction _updateSelection;
 
@@ -18,7 +18,7 @@ namespace Unigram.ViewModels
             : base(protoService, message)
         {
             _playbackService = playbackService;
-            _delegate = delegato;
+            _delegate = new WeakReference(delegato);
         }
 
         public void SelectionChanged()
@@ -42,7 +42,7 @@ namespace Unigram.ViewModels
         }
 
         public IPlaybackService PlaybackService => _playbackService;
-        public IMessageDelegate Delegate => _delegate;
+        public IMessageDelegate Delegate => _delegate.Target as IMessageDelegate;
 
         public bool IsInitial { get; set; } = true;
 

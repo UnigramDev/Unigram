@@ -63,7 +63,7 @@ namespace Unigram.ViewModels
             }
             else
             {
-                ClearReplyCommand.Execute();
+                ClearReply();
             }
         }
 

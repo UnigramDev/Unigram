@@ -277,7 +277,7 @@ namespace Unigram.Common
                     {
                         chatPage.ViewModel.OnNavigatingFrom(null);
 
-                        chatPage.Dispose();
+                        chatPage.Deactivate(true);
                         chatPage.Activate(SessionId);
                         chatPage.ViewModel.NavigationService = this;
                         chatPage.ViewModel.Dispatcher = Dispatcher;
