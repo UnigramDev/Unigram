@@ -211,6 +211,106 @@ namespace winrt::Unigram::Native::implementation
 		free(buffer);
 	}
 
+	IBuffer PlaceholderImageHelper::DrawWebP(hstring fileName, int32_t maxWidth)
+	{
+		FILE* file = _wfopen(fileName.data(), L"rb");
+		if (file == NULL) {
+			return nullptr;
+		}
+
+		fseek(file, 0, SEEK_END);
+		size_t length = ftell(file);
+		fseek(file, 0, SEEK_SET);
+		char* buffer = (char*)malloc(length);
+		fread(buffer, 1, length, file);
+		fclose(file);
+
+		WebPData webPData;
+		webPData.bytes = (uint8_t*)buffer;
+		webPData.size = length;
+
+		auto spDemuxer = std::unique_ptr<WebPDemuxer, decltype(&WebPDemuxDelete)>
+		{
+			WebPDemux(&webPData),
+			WebPDemuxDelete
+		};
+		if (!spDemuxer)
+		{
+			//throw ref new InvalidArgumentException(ref new String(L"Failed to create demuxer"));
+			free(buffer);
+			return nullptr;
+		}
+
+		IBuffer surface;
+		WebPIterator iter;
+		if (WebPDemuxGetFrame(spDemuxer.get(), 1, &iter))
+		{
+			WebPDecoderConfig config;
+			int ret = WebPInitDecoderConfig(&config);
+			if (!ret)
+			{
+				//throw ref new FailureException(ref new String(L"WebPInitDecoderConfig failed"));
+				free(buffer);
+				return nullptr;
+			}
+
+			ret = (WebPGetFeatures(iter.fragment.bytes, iter.fragment.size, &config.input) == VP8_STATUS_OK);
+			if (!ret)
+			{
+				//throw ref new FailureException(ref new String(L"WebPGetFeatures failed"));
+				free(buffer);
+				return nullptr;
+			}
+
+			int width = iter.width;
+			int height = iter.height;
+
+			if (iter.width > maxWidth || iter.height > maxWidth)
+			{
+				auto ratioX = (double)maxWidth / iter.width;
+				auto ratioY = (double)maxWidth / iter.height;
+				auto ratio = std::min(ratioX, ratioY);
+
+				width = (int)(iter.width * ratio);
+				height = (int)(iter.height * ratio);
+			}
+
+			surface = RLottie::BufferSurface::Create(width * 4 * height);
+			auto pixels = surface.data();
+			//uint8_t* pixels = new uint8_t[(width * 4) * height];
+
+			if (width != iter.width || height != iter.height) {
+				config.options.scaled_width = width;
+				config.options.scaled_height = height;
+				config.options.use_scaling = 1;
+				config.options.no_fancy_upsampling = 1;
+			}
+
+			config.output.colorspace = MODE_BGRA;
+			config.output.is_external_memory = 1;
+			config.output.u.RGBA.rgba = pixels;
+			config.output.u.RGBA.stride = width * 4;
+			config.output.u.RGBA.size = (width * 4) * height;
+
+			ret = WebPDecode(iter.fragment.bytes, iter.fragment.size, &config);
+
+			if (ret != VP8_STATUS_OK)
+			{
+				//throw ref new FailureException(ref new String(L"Failed to decode frame"));
+				//delete[] pixels;
+
+				free(buffer);
+				return nullptr;
+			}
+
+			//delete[] pixels;
+
+		}
+
+		free(buffer);
+		return surface;
+	}
+
 	winrt::Windows::Foundation::IAsyncAction PlaceholderImageHelper::DrawSvgAsync(hstring path, Color foreground, IRandomAccessStream randomAccessStream)
 	{
 		winrt::apartment_context ui_thread;

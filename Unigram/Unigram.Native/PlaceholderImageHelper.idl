@@ -9,6 +9,8 @@ namespace Unigram.Native
 
 		void DrawWebP(String fileName, Int32 maxWidth, Windows.Storage.Streams.IRandomAccessStream randomAccessStream, out Windows.Foundation.Size size);
 
+		Windows.Storage.Streams.IBuffer DrawWebP(String fileName, Int32 maxWidth);
+
 		Windows.Foundation.IAsyncAction DrawSvgAsync(String path, Windows.UI.Color foreground, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
 		void DrawSvg(String path, Windows.UI.Color foreground, Windows.Storage.Streams.IRandomAccessStream randomAccessStream, out Windows.Foundation.Size size);
 

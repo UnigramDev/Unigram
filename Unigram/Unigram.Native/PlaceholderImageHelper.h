@@ -11,6 +11,7 @@
 #include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.UI.h>
 #include <winrt/Windows.Storage.Streams.h>
+#include <winrt/RLottie.h>
 //#include <winrt/Telegram.Td.Api.h>
 
 using namespace concurrency;
@@ -52,6 +53,7 @@ namespace winrt::Unigram::Native::implementation
 		void WriteBytes(IVector<byte> hash, IRandomAccessStream randomAccessStream);
 
 		void DrawWebP(hstring fileName, int32_t maxWidth, IRandomAccessStream randomAccessStream, Windows::Foundation::Size& size);
+		IBuffer DrawWebP(hstring fileName, int32_t maxWidth);
 
 		winrt::Windows::Foundation::IAsyncAction DrawSvgAsync(hstring path, _In_ Color foreground, IRandomAccessStream randomAccessStream);
 		void DrawSvg(hstring path, _In_ Color foreground, IRandomAccessStream randomAccessStream, Windows::Foundation::Size& size);

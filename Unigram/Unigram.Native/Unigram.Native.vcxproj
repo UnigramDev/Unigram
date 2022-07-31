@@ -807,6 +807,12 @@
     </Midl>
     <Midl Include="VideoAnimation.idl" />
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="RLottie">
+      <HintPath>..\Libraries\rlottie\x64\RLottie.winmd</HintPath>
+      <IsWinMDFile>true</IsWinMDFile>
+    </Reference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\packages\Win2D.uwp.1.26.0\build\native\Win2D.uwp.targets" Condition="Exists('..\packages\Win2D.uwp.1.26.0\build\native\Win2D.uwp.targets')" />

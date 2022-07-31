@@ -11,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Native;
 using Unigram.Services;
 using Windows.Foundation;
 using Windows.Storage.Streams;
@@ -545,12 +546,37 @@ namespace Unigram.Controls.Messages
                             _animation = animation;
                         }
                     }
+                    //else if (_sticker.Format is StickerFormatWebm)
+                    //{
+                    //    var animation = CachedVideoAnimation.LoadFromFile(new LocalVideoSource(file), true);
+                    //    if (animation != null)
+                    //    {
+                    //        _buffer = BufferSurface.Create((uint)(100 * 100 * 4));
+                    //        _animation = animation;
+                    //    }
+                    //}
+                    else if (_sticker.Format is StickerFormatWebp)
+                    {
+                        _buffer = PlaceholderImageHelper.Current.DrawWebP(file.Local.Path, _size);
+                        _hasRenderedFirstFrame = true;
+                    }
                 }
             }
 
             public void NextFrame()
             {
-                var animation = _animation as LottieAnimation;
+                if (_animation is LottieAnimation lottie)
+                {
+                    NextFrame(lottie);
+                }
+                else if (_animation is CachedVideoAnimation cached)
+                {
+                    NextFrame(cached);
+                }
+            }
+
+            private void NextFrame(LottieAnimation animation)
+            {
                 if (animation == null || animation.IsCaching || _buffer == null /*|| _unloaded*/)
                 {
                     return;
@@ -569,6 +595,18 @@ namespace Unigram.Controls.Messages
                 {
                     _index = 0;
                 }
+
+                _hasRenderedFirstFrame = true;
+            }
+
+            private void NextFrame(CachedVideoAnimation animation)
+            {
+                if (animation == null || animation.IsCaching || _buffer == null /*|| _unloaded*/)
+                {
+                    return;
+                }
+
+                animation.RenderSync(_buffer, _size, _size, out _);
 
                 _hasRenderedFirstFrame = true;
             }
