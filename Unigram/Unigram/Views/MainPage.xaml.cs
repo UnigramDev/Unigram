@@ -772,7 +772,7 @@ namespace Unigram.Views
                 else if (ViewModel.Chats.Items.ChatList is ChatListArchive
                     || ViewModel.Filters.Count > 0 && !ViewModel.Chats.Items.ChatList.ListEquals(ViewModel.Filters[0].ChatList))
                 {
-                    UpdateFilter(ViewModel.Filters[0]);
+                    UpdateFilter(ViewModel.Filters.Count > 0 ? ViewModel.Filters[0] : ChatFilterViewModel.Main);
                     args.Handled = true;
                 }
             }
