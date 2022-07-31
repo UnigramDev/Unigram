@@ -9,6 +9,7 @@ using Windows.Foundation;
 using Windows.Graphics;
 using Windows.Graphics.DirectX;
 using Windows.Graphics.Display;
+using Windows.System;
 using Windows.System.Threading;
 using Windows.UI;
 using Windows.UI.Core;
@@ -58,6 +59,8 @@ namespace Unigram.Controls
         // Better hardware detection?
         protected readonly bool _limitFps = true;
 
+        protected readonly DispatcherQueue _dispatcher;
+
         protected AnimatedControl(bool? limitFps, bool autoPause = true)
         {
             _interval = TimeSpan.FromMilliseconds(Math.Floor(1000d / 30));
@@ -67,6 +70,8 @@ namespace Unigram.Controls
             _currentDpi = DisplayInformation.GetForCurrentView().LogicalDpi;
             _active = autoPause ? Window.Current.CoreWindow.ActivationMode == CoreWindowActivationMode.ActivatedInForeground : true;
             _visible = Window.Current.CoreWindow.Visible;
+
+            _dispatcher = DispatcherQueue.GetForCurrentThread();
 
             SizeChanged += OnSizeChanged;
         }
@@ -352,6 +357,14 @@ namespace Unigram.Controls
             }
         }
 
+        public void Invalidate()
+        {
+            lock (_drawFrameLock)
+            {
+                DrawFrame();
+            }
+        }
+
         protected void DrawFrame()
         {
             if (_surface == null || !_visible)
@@ -427,6 +440,11 @@ namespace Unigram.Controls
             return bitmap;
         }
 
+        protected CanvasRenderTarget CreateTarget(ICanvasResourceCreator sender, int width, int height, DirectXPixelFormat pixelFormat = DirectXPixelFormat.B8G8R8A8UIntNormalized, float dpi = 96)
+        {
+            return new CanvasRenderTarget(sender, width, height, dpi, pixelFormat, CanvasAlphaMode.Premultiplied);
+        }
+
         protected SizeInt32 GetDpiAwareSize(Size size)
         {
             return GetDpiAwareSize(size.Width, size.Height);
@@ -482,7 +500,7 @@ namespace Unigram.Controls
                     // Would be nice to move this to IndividualAnimatedControl
                     // but this isn't currently possible
                     await Task.Run(PrepareNextFrame);
-                    DrawFrame();
+                    Invalidate();
                 }
             }
         }

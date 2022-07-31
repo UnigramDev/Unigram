@@ -8,7 +8,6 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services;
 using Windows.Foundation;
-using Windows.Graphics.DirectX;
 using Windows.UI;
 
 namespace Unigram.Controls.Chats
@@ -79,11 +78,6 @@ namespace Unigram.Controls.Chats
             return _bitmap;
         }
 
-        protected CanvasRenderTarget CreateTarget(ICanvasResourceCreator sender, int width, int height, DirectXPixelFormat pixelFormat = DirectXPixelFormat.B8G8R8A8UIntNormalized, float dpi = 96)
-        {
-            return new CanvasRenderTarget(sender, width, height, dpi, pixelFormat, CanvasAlphaMode.Premultiplied);
-        }
-
         private async void CreateAdditionalResources(ICanvasResourceCreator sender)
         {
             await _additionalResourcesLock.WaitAsync();
@@ -118,10 +112,10 @@ namespace Unigram.Controls.Chats
 
             _additionalResourcesLock.Release();
 
-            lock (_drawFrameLock)
-            {
-                DrawFrame();
-            }
+            // Must happen asynchronously because the method
+            // might be called from within a drawing session
+            // causing an exception to be thrown by DirectX
+            _dispatcher.TryEnqueue(Invalidate);
         }
 
         protected override void Dispose()
