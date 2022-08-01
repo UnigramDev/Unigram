@@ -266,11 +266,12 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <Border BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
                 BorderThickness="1"
                 CornerRadius="8"
-                Grid.ColumnSpan="8"/>
+                Grid.ColumnSpan="9"/>
 
         <Button x:Name="ViewButton"
                 Click="View_Click"
@@ -432,7 +433,7 @@
                                     IndeterminateGlyph="&#xE8ED;"
                                     Width="40"
                                     Height="40"
-                                    Grid.Column="5"
+                                    Grid.Column="6"
                                     IsOneWay="False"
                                     IsThreeState="True"
                                     Style="{StaticResource ThreeStateToggleStyle}" />
@@ -444,7 +445,7 @@
                                     CheckedGlyph="&#xE8CB;"
                                     Width="40"
                                     Height="40"
-                                    Grid.Column="6"
+                                    Grid.Column="7"
                                     IsOneWay="False"
                                     AutomationProperties.Name="{CustomResource Shuffle}"
                                     ToolTipService.ToolTip="{CustomResource Shuffle}" />
@@ -465,13 +466,13 @@
                               Glyph="&#xE711;"
                               Width="40"
                               Height="40"
-                              Grid.Column="7"
+                              Grid.Column="8"
                               AutomationProperties.Name="{CustomResource AccDescrClosePlayer}"
                               ToolTipService.ToolTip="{CustomResource AccDescrClosePlayer}" />
 
         <controls:PlaybackSlider x:Name="Slider"
                                  Height="6"
                                  VerticalAlignment="Bottom"
-                                 Grid.ColumnSpan="8" />
+                                 Grid.ColumnSpan="9" />
     </Grid>
 </UserControl>

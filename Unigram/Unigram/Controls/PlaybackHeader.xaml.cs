@@ -81,7 +81,6 @@ namespace Unigram.Controls
 
             Items.ItemsSource = _playbackService.Items;
 
-            UpdateRate();
             UpdateGlyph();
         }
 
@@ -194,7 +193,7 @@ namespace Unigram.Controls
                 RepeatButton.Visibility = Visibility.Collapsed;
                 //ShuffleButton.Visibility = Visibility.Collapsed;
 
-                UpdateRate();
+                UpdateRate(int.MaxValue);
 
                 ViewButton.Padding = new Thickness(48 + 6, 0, 40 * 2 + 48 + 12, 0);
             }
@@ -221,8 +220,7 @@ namespace Unigram.Controls
                 RepeatButton.Visibility = Visibility.Visible;
                 //ShuffleButton.Visibility = Visibility.Visible;
 
-                RateButton.Visibility = Visibility.Collapsed;
-
+                UpdateRate(audio.Duration);
                 UpdateRepeat();
 
                 ViewButton.Padding = new Thickness(40 * 3 + 12, 0, 40 * 2 + 48 + 12, 0);
@@ -285,10 +283,12 @@ namespace Unigram.Controls
                 : Strings.Resources.AccDescrRepeatOff);
         }
 
-        private void UpdateRate()
+        private void UpdateRate(int duration)
         {
-            RateButton.Visibility = Visibility.Visible; //_playbackService.IsSupportedPlaybackRateRange(2.0, 2.0) ? Visibility.Visible : Visibility.Collapsed;
             RateButton.IsChecked = _playbackService.PlaybackRate != 1.0;
+            RateButton.Visibility = duration >= 10 * 60
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
 
         private void Toggle_Click(object sender, RoutedEventArgs e)

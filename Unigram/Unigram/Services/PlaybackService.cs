@@ -102,6 +102,7 @@ namespace Unigram.Services
             _isRepeatEnabled = _settingsService.Playback.RepeatMode == MediaPlaybackAutoRepeatMode.Track
                 ? null
                 : _settingsService.Playback.RepeatMode == MediaPlaybackAutoRepeatMode.List;
+            _playbackRate = _settingsService.Playback.PlaybackRate;
 
             _mapping = new Dictionary<string, PlaybackItem>();
         }
@@ -155,13 +156,15 @@ namespace Unigram.Services
         {
             if (sender.Source is MediaSource source && source.CustomProperties.TryGet("token", out string token) && _mapping.TryGetValue(token, out PlaybackItem item))
             {
-                CurrentPlayback = item;
-
                 var message = item.Message;
+                var webPage = message.Content is MessageText text ? text.WebPage : null;
+
                 if ((message.Content is MessageVideoNote videoNote && !videoNote.IsViewed && !message.IsOutgoing) || (message.Content is MessageVoiceNote voiceNote && !voiceNote.IsListened && !message.IsOutgoing))
                 {
                     message.ProtoService.Send(new OpenMessageContent(message.ChatId, message.Id));
                 }
+
+                CurrentPlayback = item;
             }
         }
 
