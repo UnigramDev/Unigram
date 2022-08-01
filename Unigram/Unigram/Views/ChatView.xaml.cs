@@ -2975,27 +2975,24 @@ namespace Unigram.Views
 
                     TextField.Document.Selection.StartPosition = start;
                 }
-                else if (e.ClickedItem is Sticker sticker)
+                else if (e.ClickedItem is Sticker sticker && sticker.CustomEmojiId != 0)
                 {
-                    if (sticker.CustomEmojiId != 0)
-                    {
-                        var start = TextField.Document.Selection.StartPosition - 1 - replacement.Length + 1;
-                        var range = TextField.Document.GetRange(TextField.Document.Selection.StartPosition - 1 - replacement.Length, TextField.Document.Selection.StartPosition);
-                        range.SetText(TextSetOptions.None, string.Empty);
+                    var start = TextField.Document.Selection.StartPosition - 1 - replacement.Length + 1;
+                    var range = TextField.Document.GetRange(TextField.Document.Selection.StartPosition - 1 - replacement.Length, TextField.Document.Selection.StartPosition);
+                    range.SetText(TextSetOptions.None, string.Empty);
 
-                        await TextField.InsertEmojiAsync(range, sticker.Emoji, sticker.CustomEmojiId);
-                        TextField.Document.Selection.StartPosition = start;
-                    }
-                    else
-                    {
-                        TextField.SetText(null, null);
-                        ViewModel.StickerSendExecute(sticker, null, null, text);
+                    await TextField.InsertEmojiAsync(range, sticker.Emoji, sticker.CustomEmojiId);
+                    TextField.Document.Selection.StartPosition = start;
+                }
+            }
+            else if (e.ClickedItem is Sticker sticker)
+            {
+                TextField.SetText(null, null);
+                ViewModel.StickerSendExecute(sticker, null, null, text);
 
-                        if (_stickersMode == StickersPanelMode.Overlay)
-                        {
-                            Collapse_Click(null, null);
-                        }
-                    }
+                if (_stickersMode == StickersPanelMode.Overlay)
+                {
+                    Collapse_Click(null, null);
                 }
             }
         }
