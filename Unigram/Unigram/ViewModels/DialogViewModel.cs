@@ -126,32 +126,22 @@ namespace Unigram.ViewModels
             UnmuteCommand = new RelayCommand(() => ToggleMuteExecute(true));
             ReportSpamCommand = new RelayCommand<ChatReportReason>(ReportSpamExecute);
             ReportCommand = new RelayCommand(ReportExecute);
-            OpenStickersCommand = new RelayCommand(OpenStickersExecute);
             ChatDeleteCommand = new RelayCommand(ChatDeleteExecute);
             ChatClearCommand = new RelayCommand(ChatClearExecute);
             CallCommand = new RelayCommand<bool>(CallExecute);
             PinnedHideCommand = new RelayCommand(PinnedHideExecute);
             PinnedShowCommand = new RelayCommand(PinnedShowExecute);
             PinnedListCommand = new RelayCommand(PinnedListExecute);
-            UnblockCommand = new RelayCommand(UnblockExecute);
             UnarchiveCommand = new RelayCommand(UnarchiveExecute);
             InviteCommand = new RelayCommand(InviteExecute);
             ShareContactCommand = new RelayCommand(ShareContactExecute);
             AddContactCommand = new RelayCommand(AddContactExecute);
-            StartCommand = new RelayCommand(StartExecute);
             SearchCommand = new RelayCommand(SearchExecute);
-            JumpDateCommand = new RelayCommand(JumpDateExecute);
             GroupStickersCommand = new RelayCommand(GroupStickersExecute);
-            ReadMentionsCommand = new RelayCommand(ReadMentionsExecute);
-            SendCommand = new RelayCommand<string>(SendMessage);
             SwitchCommand = new RelayCommand<string>(SwitchExecute);
             MuteForCommand = new RelayCommand<int?>(MuteForExecute);
             SetTimerCommand = new RelayCommand<int?>(SetTimerExecute);
             SetThemeCommand = new RelayCommand(SetThemeExecute);
-            ActionCommand = new RelayCommand(ActionExecute);
-            JoinRequestsCommand = new RelayCommand(JoinRequestsExecute);
-            OpenMessageCommand = new RelayCommand<Message>(OpenMessageExecute);
-            ScheduledCommand = new RelayCommand(ScheduledExecute);
             OpenUserCommand = new RelayCommand<long>(OpenUser);
             SetSenderCommand = new RelayCommand<MessageSender>(SetSenderExecute);
 
@@ -571,13 +561,7 @@ namespace Unigram.ViewModels
         }
 
         public bool? IsFirstSliceLoaded { get; set; }
-
-        private bool? _isLastSliceLoaded;
-        public bool? IsLastSliceLoaded
-        {
-            get => _isLastSliceLoaded;
-            set => Set(ref _isLastSliceLoaded, value);
-        }
+        public bool? IsLastSliceLoaded { get; set; }
 
         private bool _isEmpty = true;
         public bool IsEmpty
@@ -973,7 +957,7 @@ namespace Unigram.ViewModels
             return null;
         }
 
-        public async void PreviousSliceExecute()
+        public async void PreviousSlice()
         {
             if (_type is DialogType.ScheduledMessages or DialogType.EventLog)
             {
@@ -2369,8 +2353,7 @@ namespace Unigram.ViewModels
 
         #endregion
 
-        public RelayCommand<string> SendCommand { get; }
-        private async void SendMessage(string args)
+        public async void SendMessage(string args)
         {
             await SendMessageAsync(args);
         }
@@ -2716,8 +2699,7 @@ namespace Unigram.ViewModels
 
         #region Stickers
 
-        public RelayCommand OpenStickersCommand { get; }
-        private void OpenStickersExecute()
+        public void OpenStickers()
         {
             _emoji.Update();
             _stickers.Update(_chat);
@@ -2889,8 +2871,7 @@ namespace Unigram.ViewModels
 
         #region Unblock
 
-        public RelayCommand UnblockCommand { get; }
-        private async void UnblockExecute()
+        public async void Unblock()
         {
             var chat = _chat;
             if (chat == null)
@@ -2908,7 +2889,7 @@ namespace Unigram.ViewModels
             if (user.Type is UserTypeBot)
             {
                 await ProtoService.SendAsync(new ToggleMessageSenderIsBlocked(new MessageSenderUser(user.Id), false));
-                StartExecute();
+                Start();
             }
             else
             {
@@ -3068,8 +3049,7 @@ namespace Unigram.ViewModels
 
         #region Start
 
-        public RelayCommand StartCommand { get; }
-        private void StartExecute()
+        public void Start()
         {
             var chat = _chat;
             if (chat == null)
@@ -3139,8 +3119,7 @@ namespace Unigram.ViewModels
 
         #region Jump to date
 
-        public RelayCommand JumpDateCommand { get; }
-        private async void JumpDateExecute()
+        public async void JumpDate()
         {
             var dialog = new CalendarPopup();
             dialog.MaxDate = DateTimeOffset.Now.Date;
@@ -3189,8 +3168,7 @@ namespace Unigram.ViewModels
 
         #region Read mentions
 
-        public RelayCommand ReadMentionsCommand { get; }
-        private void ReadMentionsExecute()
+        public void ReadMentions()
         {
             var chat = _chat;
             if (chat == null)
@@ -3363,8 +3341,7 @@ namespace Unigram.ViewModels
 
         #region Scheduled messages
 
-        public RelayCommand ScheduledCommand { get; }
-        private void ScheduledExecute()
+        public void ShowScheduled()
         {
             var chat = _chat;
             if (chat == null)
@@ -3384,8 +3361,7 @@ namespace Unigram.ViewModels
 
         }
 
-        public RelayCommand ActionCommand { get; }
-        private async void ActionExecute()
+        public async void Action()
         {
             var chat = _chat;
             if (chat == null)
@@ -3436,11 +3412,11 @@ namespace Unigram.ViewModels
                 }
                 else if (chat.IsBlocked)
                 {
-                    UnblockExecute();
+                    Unblock();
                 }
                 else if (user.Type is UserTypeBot)
                 {
-                    StartExecute();
+                    Start();
                 }
             }
             else if (chat.Type is ChatTypeBasicGroup basic)
@@ -3498,26 +3474,10 @@ namespace Unigram.ViewModels
 
         #region Join requests
 
-        public RelayCommand JoinRequestsCommand { get; }
-        private async void JoinRequestsExecute()
+        public async void ShowJoinRequests()
         {
             var popup = new ChatJoinRequestsPopup(ProtoService, CacheService, Settings, Aggregator, _chat, string.Empty);
             var confirm = await popup.ShowQueuedAsync();
-        }
-
-        #endregion
-
-        #region Open message
-
-        public RelayCommand<Message> OpenMessageCommand { get; }
-        private void OpenMessageExecute(Message message)
-        {
-            var webPage = message.Content is MessageText text ? text.WebPage : null;
-
-            if (message.Content is MessageVoiceNote || webPage?.VoiceNote != null)
-            {
-                NavigationService.NavigateToChat(message.ChatId, message: message.Id);
-            }
         }
 
         #endregion
@@ -3833,8 +3793,6 @@ namespace Unigram.ViewModels
         {
             _viewModel = viewModel;
             _filter = Activator.CreateInstance<T>();
-
-            NextMessageCommand = new RelayCommand(NextMessageExecute);
         }
 
         public void SetLastViewedMessage(long messageId)
@@ -3847,8 +3805,7 @@ namespace Unigram.ViewModels
             _messages?.Remove(messageId);
         }
 
-        public RelayCommand NextMessageCommand { get; }
-        private async void NextMessageExecute()
+        public async void NextMessage()
         {
             var chat = _viewModel.Chat;
             if (chat == null)
@@ -3892,7 +3849,7 @@ namespace Unigram.ViewModels
                     if (stack.Count > 0)
                     {
                         _messages = stack;
-                        NextMessageExecute();
+                        NextMessage();
                     }
                 }
             }

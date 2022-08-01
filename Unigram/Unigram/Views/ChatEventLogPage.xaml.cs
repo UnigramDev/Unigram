@@ -58,7 +58,7 @@ namespace Unigram.Views
                 return;
             }
 
-            DataContext = new Object();
+            DataContext = new object();
         }
 
         public void Activate(int sessionId)

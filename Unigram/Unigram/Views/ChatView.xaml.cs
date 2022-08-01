@@ -395,7 +395,7 @@ namespace Unigram.Views
             StickersPanel.Visibility = Visibility.Visible;
             StickersPanel.Activate();
 
-            ViewModel.OpenStickersCommand.Execute(null);
+            ViewModel.OpenStickers();
 
             var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
             opacity.InsertKeyFrame(0, 0);
@@ -491,11 +491,10 @@ namespace Unigram.Views
                 }
 
                 _cleanup = ViewModel.Items;
-
                 Cleanup(ref _cleanup);
 
-                _viewModel = null;
-                DataContext = new object();
+                //_viewModel = null;
+                //DataContext = new object();
             }
         }
 
@@ -2949,7 +2948,7 @@ namespace Unigram.Views
                     else
                     {
                         TextField.SetText(null, null);
-                        ViewModel.SendCommand.Execute(insert);
+                        ViewModel.SendMessage(insert);
                     }
                 }
 
@@ -3186,18 +3185,18 @@ namespace Unigram.Views
 
         private void Mentions_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
-            ViewModel.ReadMentionsCommand.Execute();
+            ViewModel.ReadMentions();
         }
 
         private void Reactions_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
-            ViewModel.ReadMentionsCommand.Execute();
+            ViewModel.ReadMentions();
         }
 
         private void Arrow_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
             ViewModel.RepliesStack.Clear();
-            ViewModel.PreviousSliceExecute();
+            ViewModel.PreviousSlice();
         }
 
         private void ItemsStackPanel_Loading(FrameworkElement sender, object args)

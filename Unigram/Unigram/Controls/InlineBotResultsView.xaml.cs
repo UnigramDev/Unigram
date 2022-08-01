@@ -38,6 +38,8 @@ namespace Unigram.Controls
 
             Root.Padding = new Thickness(0, 0, 0, radius);
             SwitchPm.CornerRadius = new CornerRadius(min, min, 4, 4);
+
+            CornerRadius = new CornerRadius(radius, radius, 0, 0);
         }
 
         private void OnDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)

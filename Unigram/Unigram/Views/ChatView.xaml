@@ -510,7 +510,7 @@
 
             <StackPanel x:Name="ClipperJoinRequests">
                 <controls:ChatJoinRequestsHeader x:Name="JoinRequests"
-                                                 Command="{x:Bind ViewModel.JoinRequestsCommand}"
+                                                 Click="{x:Bind ViewModel.ShowJoinRequests}"
                                                  Visibility="Collapsed"
                                                  Canvas.ZIndex="1" />
                 <StackPanel x:Name="ClipperActionBar">
@@ -877,7 +877,7 @@
                                 CornerRadius="18"
                                 Height="36"
                                 Width="36">
-                            <controls:GlyphButton Command="{x:Bind ViewModel.Reactions.NextMessageCommand}"
+                            <controls:GlyphButton Click="{x:Bind ViewModel.Reactions.NextMessage}"
                                                   Width="36"
                                                   Height="36"
                                                   Glyph="&#xE987;"
@@ -915,7 +915,7 @@
                                 CornerRadius="18"
                                 Height="36"
                                 Width="36">
-                            <controls:GlyphButton Command="{x:Bind ViewModel.Mentions.NextMessageCommand}"
+                            <controls:GlyphButton Click="{x:Bind ViewModel.Mentions.NextMessage}"
                                                   Width="36"
                                                   Height="36"
                                                   Glyph="&#xE168;"
@@ -955,7 +955,7 @@
                                 CornerRadius="18"
                                 Height="36"
                                 Width="36">
-                            <controls:GlyphButton Click="{x:Bind ViewModel.PreviousSliceExecute}"
+                            <controls:GlyphButton Click="{x:Bind ViewModel.PreviousSlice}"
                                                   RightTapped="Arrow_RightTapped"
                                                   Width="36"
                                                   Height="36"
@@ -1237,7 +1237,7 @@
                         <Border x:Name="btnScheduled">
                             <controls:GlyphButton x:Name="ButtonScheduled"
                                                   Glyph="&#xE9DA;"
-                                                  Command="{x:Bind ViewModel.ScheduledCommand}"
+                                                  Click="{x:Bind ViewModel.ShowScheduled}"
                                                   FontSize="{StaticResource GlyphLargeFontSize}"
                                                   AutomationProperties.Name="{CustomResource ScheduledMessages}"
                                                   ToolTipService.ToolTip="{CustomResource ScheduledMessages}"
@@ -1502,7 +1502,7 @@
               CornerRadius="15"
               Grid.Row="3">
             <chats:ChatBottomButton x:Name="ButtonAction"
-                                    Command="{x:Bind ViewModel.ActionCommand}"
+                                    Click="{x:Bind ViewModel.Action}"
                                     Height="{StaticResource TelegramToolBarHeight}">
                 <Button.Content>
                     <TextBlock x:Name="LabelAction"
@@ -1526,6 +1526,17 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
+            <controls:GlyphButton x:Name="ButtonManage"
+                                  Glyph="&#xE711;"
+                                  Command="{x:Bind ViewModel.MessagesUnselectCommand}" />
+            
+            <controls:NumericTextBlock x:Name="ManageCount"
+                                       Text="{x:Bind ConvertSelection(ViewModel.SelectedCount), Mode=OneWay}"
+                                       TextStyle="{StaticResource BaseTextBlockStyle}"
+                                       VerticalAlignment="Center"
+                                       Margin="0,-2,0,0"
+                                       Grid.Column="1" />
+
             <controls:GlyphButton x:Name="ButtonForward"
                                   Glyph="&#xE72D;"
                                   Content="{CustomResource Forward}"
@@ -1540,17 +1551,6 @@
                                   Command="{x:Bind ViewModel.MessagesDeleteCommand}"
                                   Style="{StaticResource GlyphButtonWithLabelStyle}"
                                   Grid.Column="4" />
-
-            <controls:NumericTextBlock x:Name="ManageCount"
-                                       Text="{x:Bind ConvertSelection(ViewModel.SelectedCount), Mode=OneWay}"
-                                       TextStyle="{StaticResource BaseTextBlockStyle}"
-                                       VerticalAlignment="Center"
-                                       Margin="0,-2,0,0"
-                                       Grid.Column="1" />
-
-            <controls:GlyphButton x:Name="ButtonManage"
-                                  Glyph="&#xE711;"
-                                  Command="{x:Bind ViewModel.MessagesUnselectCommand}" />
         </Grid>
 
         <chats:ChatSearchBar x:Name="SearchMask"
