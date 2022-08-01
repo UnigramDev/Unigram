@@ -101,10 +101,16 @@ namespace Unigram.Controls.Chats
             _recorder.QuantumProcessed = null;
         }
 
-        private void RecordAudioVideoRunnable()
+        private async void RecordAudioVideoRunnable()
         {
             _calledRecordRunnable = true;
             _recordAudioVideoRunnableStarted = false;
+
+            var permissions = await CheckAccessAsync(Mode);
+            if (permissions == false)
+            {
+                return;
+            }
 
             Logger.Debug(LogTarget.Recording, "Permissions granted, mode: " + Mode);
 
@@ -250,12 +256,6 @@ namespace Unigram.Controls.Chats
                         : Strings.Resources.VoiceMessagesRestrictedByPrivacy;
 
                     await MessagePopup.ShowAsync(string.Format(message, ViewModel.Chat.Title), Strings.Resources.AppName, Strings.Resources.OK);
-                    return;
-                }
-
-                var permissions = await CheckAccessAsync(Mode);
-                if (permissions == false)
-                {
                     return;
                 }
 
