@@ -84,8 +84,6 @@ namespace Unigram.Controls.Messages
 
             ToolTip.Opened += ToolTip_Opened;
 
-            InitializeTicks();
-
             _templateApplied = true;
 
             if (_message != null)
@@ -522,27 +520,33 @@ namespace Unigram.Controls.Messages
 
         private void UpdateTicks(bool? read, bool animate = false)
         {
-            if (_container == null)
-            {
-                return;
-            }
-
             if (read == null)
             {
-                _container.IsVisible = false;
-            }
-            else if (animate)
-            {
-                AnimateTicks(read == true);
+                if (_container != null)
+                {
+                    _container.IsVisible = false;
+                }
             }
             else
             {
-                _line11.TrimEnd = read == true ? 1 : 0;
-                _line12.TrimEnd = read == true ? 1 : 0;
+                if (_container == null)
+                {
+                    InitializeTicks();
+                }
 
-                _line21.TrimStart = read == true ? 1 : 0;
+                if (animate)
+                {
+                    AnimateTicks(read == true);
+                }
+                else
+                {
+                    _line11.TrimEnd = read == true ? 1 : 0;
+                    _line12.TrimEnd = read == true ? 1 : 0;
 
-                _container.IsVisible = true;
+                    _line21.TrimStart = read == true ? 1 : 0;
+
+                    _container.IsVisible = true;
+                }
             }
         }
 

@@ -3,6 +3,7 @@
                     xmlns:local="using:Unigram.Controls.Cells"
                     xmlns:controls="using:Unigram.Controls"
                     xmlns:chats="using:Unigram.Controls.Chats"
+                    xmlns:messages="using:Unigram.Controls.Messages"
                     xmlns:media="using:Microsoft.UI.Xaml.Media"
                     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -165,6 +166,7 @@
                                                                                         Foreground="{ThemeResource ChatDraftLabelBrush}" /><Run x:Name="BriefLabel"
                                                                                                                                                 Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
                         </TextBlock>
+                        <!--<messages:CustomEmojiCanvas x:Name="CustomEmoji" />-->
 
                         <chats:ChatActionIndicator x:Name="ChatActionIndicator"
                                                    Visibility="Collapsed"
@@ -253,6 +255,8 @@
                                    x:Load="False"
                                    Stroke="{ThemeResource SystemControlForegroundBaseHighBrush}"
                                    StrokeThickness="2"
+                                   RadiusX="4"
+                                   RadiusY="4"
                                    Visibility="Collapsed" />
                     </local:ChatCellPanel>
                 </ControlTemplate>

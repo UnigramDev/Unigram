@@ -39,6 +39,8 @@ namespace Unigram.Controls.Cells
 
     public sealed class ChatCell : Control, IMultipleElement
     {
+        private bool _selected;
+
         private Chat _chat;
         private ChatList _chatList;
 
@@ -156,9 +158,6 @@ namespace Unigram.Controls.Cells
 
             ToolTipService.SetToolTip(BriefInfo, tooltip);
 
-            InitializeSelection();
-            InitializeTicks();
-
             _templateApplied = true;
 
             if (_chat != null)
@@ -211,7 +210,7 @@ namespace Unigram.Controls.Cells
 
             DraftLabel.Text = string.Empty;
             FromLabel.Text = UpdateFromLabel(chat, message);
-            BriefLabel.Text = UpdateBriefLabel(chat, message, true, false);
+            BriefLabel.Text = UpdateBriefLabel(chat, message, true, false).ReplaceSpoilers();
             TimeLabel.Text = UpdateTimeLabel(message);
             StateIcon.Glyph = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, null, message, message.SendingState);
 
@@ -425,7 +424,7 @@ namespace Unigram.Controls.Cells
 
             DraftLabel.Text = UpdateDraftLabel(chat);
             FromLabel.Text = UpdateFromLabel(chat, position);
-            BriefLabel.Text = UpdateBriefLabel(chat, position);
+            BriefLabel.Text = UpdateBriefLabel(chat, position).ReplaceSpoilers();
             TimeLabel.Text = UpdateTimeLabel(chat, position);
             StateIcon.Glyph = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, chat.DraftMessage, chat.LastMessage, chat.LastMessage?.SendingState);
             FailedBadge.Visibility = chat.LastMessage?.SendingState is MessageSendingStateFailed ? Visibility.Visible : Visibility.Collapsed;
@@ -867,11 +866,11 @@ namespace Unigram.Controls.Cells
             }
         }
 
-        private string UpdateBriefLabel(Chat chat, ChatPosition position)
+        private FormattedText UpdateBriefLabel(Chat chat, ChatPosition position)
         {
             if (position?.Source is ChatSourcePublicServiceAnnouncement psa && !string.IsNullOrEmpty(psa.Text))
             {
-                return psa.Text.Replace('\n', ' ');
+                return new FormattedText(psa.Text.Replace('\n', ' '), new TextEntity[0]);
             }
 
             var topMessage = chat.LastMessage;
@@ -879,7 +878,7 @@ namespace Unigram.Controls.Cells
             {
                 if (chat.Type is ChatTypePrivate && topMessage.IsOutgoing && topMessage.UnreadReactions.Count > 0)
                 {
-                    return String.Format("Reacted {0} to your message", topMessage.UnreadReactions[0].Reaction);
+                    return new FormattedText(string.Format("Reacted {0} to your message", topMessage.UnreadReactions[0].Reaction), new TextEntity[0]);
                 }
 
                 return UpdateBriefLabel(chat, topMessage, true, true);
@@ -891,23 +890,23 @@ namespace Unigram.Controls.Cells
                 {
                     if (secret.State is SecretChatStateReady)
                     {
-                        return secret.IsOutbound ? string.Format(Strings.Resources.EncryptedChatStartedOutgoing, _protoService.GetTitle(chat)) : Strings.Resources.EncryptedChatStartedIncoming;
+                        return new FormattedText(secret.IsOutbound ? string.Format(Strings.Resources.EncryptedChatStartedOutgoing, _protoService.GetTitle(chat)) : Strings.Resources.EncryptedChatStartedIncoming, new TextEntity[0]);
                     }
                     else if (secret.State is SecretChatStatePending)
                     {
-                        return string.Format(Strings.Resources.AwaitingEncryption, _protoService.GetTitle(chat));
+                        return new FormattedText(string.Format(Strings.Resources.AwaitingEncryption, _protoService.GetTitle(chat)), new TextEntity[0]);
                     }
                     else if (secret.State is SecretChatStateClosed)
                     {
-                        return Strings.Resources.EncryptionRejected;
+                        return new FormattedText(Strings.Resources.EncryptionRejected, new TextEntity[0]);
                     }
                 }
             }
 
-            return string.Empty;
+            return new FormattedText(string.Empty, new TextEntity[0]);
         }
 
-        private string UpdateBriefLabel(Chat chat, Message value, bool showContent, bool draft)
+        private FormattedText UpdateBriefLabel(Chat chat, Message value, bool showContent, bool draft)
         {
             //if (ViewModel.DraftMessage is DraftMessage draft && !string.IsNullOrWhiteSpace(draft.InputMessageText.ToString()))
             //{
@@ -919,7 +918,7 @@ namespace Unigram.Controls.Cells
                 switch (chat.DraftMessage.InputMessageText)
                 {
                     case InputMessageText text:
-                        return text.Text.Text.Replace('\n', ' ');
+                        return text.Text;
                 }
             }
 
@@ -935,21 +934,21 @@ namespace Unigram.Controls.Cells
 
             if (!showContent)
             {
-                return Strings.Resources.Message;
+                return new FormattedText(Strings.Resources.Message, new TextEntity[0]);
             }
 
             return value.Content switch
             {
-                MessageAnimation animation => animation.Caption.ReplaceSpoilers(),
-                MessageAudio audio => audio.Caption.ReplaceSpoilers(),
-                MessageDocument document => document.Caption.ReplaceSpoilers(),
-                MessagePhoto photo => photo.Caption.ReplaceSpoilers(),
-                MessageVideo video => video.Caption.ReplaceSpoilers(),
-                MessageVoiceNote voiceNote => voiceNote.Caption.ReplaceSpoilers(),
-                MessageText text => text.Text.ReplaceSpoilers(),
-                MessageAnimatedEmoji animatedEmoji => animatedEmoji.Emoji,
-                MessageDice dice => dice.Emoji,
-                _ => string.Empty,
+                MessageAnimation animation => animation.Caption,
+                MessageAudio audio => audio.Caption,
+                MessageDocument document => document.Caption,
+                MessagePhoto photo => photo.Caption,
+                MessageVideo video => video.Caption,
+                MessageVoiceNote voiceNote => voiceNote.Caption,
+                MessageText text => text.Text,
+                MessageAnimatedEmoji animatedEmoji => new FormattedText(animatedEmoji.Emoji, new TextEntity[0]),
+                MessageDice dice => new FormattedText(dice.Emoji, new TextEntity[0]),
+                _ => new FormattedText(string.Empty, new TextEntity[0]),
             };
         }
 
@@ -1578,6 +1577,16 @@ namespace Unigram.Controls.Cells
 
         public void UpdateState(bool selected, bool animate)
         {
+            if (_selected == selected)
+            {
+                return;
+            }
+
+            if (_visual == null)
+            {
+                InitializeSelection();
+            }
+
             if (animate)
             {
                 var compositor = Window.Current.Compositor;
@@ -1586,23 +1595,19 @@ namespace Unigram.Controls.Cells
                 anim3.InsertKeyFrame(selected ? 0 : 1, 0);
                 anim3.InsertKeyFrame(selected ? 1 : 0, 1);
 
-                if (_visual != null)
-                {
-                    var anim1 = compositor.CreateScalarKeyFrameAnimation();
-                    anim1.InsertKeyFrame(selected ? 0 : 1, 0);
-                    anim1.InsertKeyFrame(selected ? 1 : 0, 1);
-                    anim1.DelayTime = TimeSpan.FromMilliseconds(anim1.Duration.TotalMilliseconds / 2);
-                    anim1.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
+                var anim1 = compositor.CreateScalarKeyFrameAnimation();
+                anim1.InsertKeyFrame(selected ? 0 : 1, 0);
+                anim1.InsertKeyFrame(selected ? 1 : 0, 1);
+                anim1.DelayTime = TimeSpan.FromMilliseconds(anim1.Duration.TotalMilliseconds / 2);
+                anim1.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
 
-                    var anim2 = compositor.CreateVector3KeyFrameAnimation();
-                    anim2.InsertKeyFrame(selected ? 0 : 1, new Vector3(0));
-                    anim2.InsertKeyFrame(selected ? 1 : 0, new Vector3(1));
+                var anim2 = compositor.CreateVector3KeyFrameAnimation();
+                anim2.InsertKeyFrame(selected ? 0 : 1, new Vector3(0));
+                anim2.InsertKeyFrame(selected ? 1 : 0, new Vector3(1));
 
-                    _polygon.StartAnimation("TrimEnd", anim1);
-                    _visual.StartAnimation("Scale", anim2);
-                    _visual.StartAnimation("Opacity", anim3);
-                }
-
+                _polygon.StartAnimation("TrimEnd", anim1);
+                _visual.StartAnimation("Scale", anim2);
+                _visual.StartAnimation("Opacity", anim3);
 
                 var anim4 = compositor.CreateVector3KeyFrameAnimation();
                 anim4.InsertKeyFrame(selected ? 0 : 1, new Vector3(1));
@@ -1618,17 +1623,16 @@ namespace Unigram.Controls.Cells
             }
             else
             {
-                if (_visual != null)
-                {
-                    _polygon.TrimEnd = selected ? 1 : 0;
-                    _visual.Scale = new Vector3(selected ? 1 : 0);
-                    _visual.Opacity = selected ? 1 : 0;
-                }
+                _polygon.TrimEnd = selected ? 1 : 0;
+                _visual.Scale = new Vector3(selected ? 1 : 0);
+                _visual.Opacity = selected ? 1 : 0;
 
                 _selectionPhoto.Scale = new Vector3(selected ? 40f / 48f : 1);
                 _selectionOutline.Scale = new Vector3(selected ? 1 : 40f / 48f);
                 _selectionOutline.Opacity = selected ? 1 : 0;
             }
+
+            _selected = selected;
         }
 
         #endregion
@@ -1808,27 +1812,33 @@ namespace Unigram.Controls.Cells
 
         private void UpdateTicks(bool? read, bool animate = false)
         {
-            if (_container == null)
-            {
-                return;
-            }
-
             if (read == null)
             {
-                _container.IsVisible = false;
-            }
-            else if (animate)
-            {
-                AnimateTicks(read == true);
+                if (_container != null)
+                {
+                    _container.IsVisible = false;
+                }
             }
             else
             {
-                _line11.TrimEnd = read == true ? 1 : 0;
-                _line12.TrimEnd = read == true ? 1 : 0;
+                if (_container == null)
+                {
+                    InitializeTicks();
+                }
 
-                _line21.TrimStart = read == true ? 1 : 0;
+                if (animate)
+                {
+                    AnimateTicks(read == true);
+                }
+                else
+                {
+                    _line11.TrimEnd = read == true ? 1 : 0;
+                    _line12.TrimEnd = read == true ? 1 : 0;
 
-                _container.IsVisible = true;
+                    _line21.TrimStart = read == true ? 1 : 0;
+
+                    _container.IsVisible = true;
+                }
             }
         }
 
@@ -1919,6 +1929,14 @@ namespace Unigram.Controls.Cells
             var UnreadBadge = Children[13];
             var FailedBadge = Children[14];
 
+            //var CustomEmoji = Children[9];
+            //var ChatActionIndicator = Children[10];
+            //var TypingLabel = Children[11];
+            //var PinnedIcon = Children[12];
+            //var UnreadMentionsBadge = Children[13];
+            //var UnreadBadge = Children[14];
+            //var FailedBadge = Children[15];
+
             PhotoPanel.Measure(availableSize);
 
             TimeLabel.Measure(availableSize);
@@ -1951,11 +1969,12 @@ namespace Unigram.Controls.Cells
             var briefWidth = Math.Max(0, line2Right - line2Left);
 
             BriefInfo.Measure(new Size(briefWidth, availableSize.Height));
+            //CustomEmoji.Measure(new Size(briefWidth, availableSize.Height));
             TypingLabel.Measure(new Size(briefWidth + MinithumbnailPanel.DesiredSize.Width, availableSize.Height));
 
-            if (Children.Count > 14)
+            if (Children.Count > 15)
             {
-                Children[14].Measure(availableSize);
+                Children[15].Measure(availableSize);
             }
 
             return base.MeasureOverride(availableSize);
@@ -1982,6 +2001,13 @@ namespace Unigram.Controls.Cells
             var UnreadMentionsBadge = Children[12];
             var UnreadBadge = Children[13];
             var FailedBadge = Children[14];
+            //var CustomEmoji = Children[9];
+            //var ChatActionIndicator = Children[10];
+            //var TypingLabel = Children[11];
+            //var PinnedIcon = Children[12];
+            //var UnreadMentionsBadge = Children[13];
+            //var UnreadBadge = Children[14];
+            //var FailedBadge = Children[15];
 
             var rect = new Rect();
             var min = 8 + PhotoPanel.DesiredSize.Width + 12;
@@ -2085,6 +2111,7 @@ namespace Unigram.Controls.Cells
             rect.Width = briefWidth;
             rect.Height = BriefInfo.DesiredSize.Height;
             BriefInfo.Arrange(rect);
+            //CustomEmoji.Arrange(rect);
 
             rect.X = min;
             rect.Y = 34;
@@ -2103,9 +2130,9 @@ namespace Unigram.Controls.Cells
             rect.Height = TypingLabel.DesiredSize.Height;
             TypingLabel.Arrange(rect);
 
-            if (Children.Count > 14)
+            if (Children.Count > 15)
             {
-                Children[14].Arrange(new Rect(0, 0, finalSize.Width, finalSize.Height));
+                Children[15].Arrange(new Rect(0, 0, finalSize.Width, finalSize.Height));
             }
 
             return finalSize;
