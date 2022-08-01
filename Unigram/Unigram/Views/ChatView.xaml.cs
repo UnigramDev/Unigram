@@ -1570,7 +1570,14 @@ namespace Unigram.Views
 
         private void Stickers_Click(object sender, RoutedEventArgs e)
         {
-            Stickers_PointerEntered(sender, null);
+            if (StickersPanel.Visibility == Visibility.Collapsed || _stickersMode == StickersPanelMode.Collapsed)
+            {
+                Stickers_PointerEntered(sender, null);
+            }
+            else
+            {
+                Collapse_Click(null, null);
+            }
         }
 
         private void Commands_Click(object sender, RoutedEventArgs e)
@@ -1622,6 +1629,7 @@ namespace Unigram.Views
 
         private void TextField_Tapped(object sender, TappedRoutedEventArgs e)
         {
+            Collapse_Click(null, null);
             CoreInputView.GetForCurrentView().TryShow();
         }
 
