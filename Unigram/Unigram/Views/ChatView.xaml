@@ -339,6 +339,7 @@
 
         <chats:ChatBackgroundPresenter x:Name="BackgroundPresenter"
                                        x:Load="False"
+                                       Canvas.ZIndex="-1"
                                        Grid.RowSpan="5" />
 
         <Grid Padding="0,0,0,8"
