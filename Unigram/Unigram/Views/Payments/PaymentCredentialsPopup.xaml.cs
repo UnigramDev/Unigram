@@ -20,7 +20,6 @@ namespace Unigram.Views.Payments
             DataContext = TLContainer.Current.Resolve<PaymentCredentialsViewModel>();
 
             Title = Strings.Resources.PaymentCardInfo;
-            SecondaryButtonText = Strings.Resources.Cancel;
 
             var url = ViewModel.Initialize(paymentForm);
             if (url != null)
@@ -31,6 +30,26 @@ namespace Unigram.Views.Payments
             else
             {
                 PrimaryButtonText = Strings.Resources.OK;
+                SecondaryButtonText = Strings.Resources.Cancel;
+            }
+        }
+
+        public PaymentCredentialsPopup(PaymentForm paymentForm, PaymentOption paymentOption)
+        {
+            InitializeComponent();
+            DataContext = TLContainer.Current.Resolve<PaymentCredentialsViewModel>();
+
+            Title = Strings.Resources.PaymentCardInfo;
+
+            var url = ViewModel.Initialize(paymentForm, paymentOption);
+            if (url != null)
+            {
+                FindName(nameof(WebPanel));
+                View.Navigate(new Uri(url));
+            }
+            else
+            {
+                SecondaryButtonText = Strings.Resources.Cancel;
             }
         }
 
@@ -80,13 +99,16 @@ namespace Unigram.Views.Payments
 
         private async void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            var deferral = args.GetDeferral();
-            var validated = await ViewModel.ValidateAsync();
+            if (Credentials == null)
+            {
+                var deferral = args.GetDeferral();
+                var validated = await ViewModel.ValidateAsync();
 
-            Credentials = validated;
+                Credentials = validated;
 
-            args.Cancel = validated == null;
-            deferral.Complete();
+                args.Cancel = validated == null;
+                deferral.Complete();
+            }
         }
     }
 }

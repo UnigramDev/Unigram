@@ -75,7 +75,7 @@ namespace Unigram.ViewModels.Payments
             Invoice = paymentForm.Invoice;
             Bot = CacheService.GetUser(paymentForm.SellerBotUserId);
 
-            Credentials = paymentForm.SavedCredentials;
+            Credentials = paymentForm.SavedCredentials.FirstOrDefault();
             Info = paymentForm.SavedOrderInfo;
 
             RaisePropertyChanged(nameof(HasSuggestedTipAmounts));
@@ -270,9 +270,47 @@ namespace Unigram.ViewModels.Payments
 
         public async void ChooseCredentials()
         {
-            if (_paymentForm == null)
+            if (_paymentForm is not PaymentForm form)
             {
                 return;
+            }
+
+            if (form.SavedCredentials.Count > 0
+                || form.AdditionalPaymentOptions.Count > 0)
+            {
+                var credentials = form.SavedCredentials.Select(x => new ChooseOptionItem(x, x.Title, false));
+                var additional = form.AdditionalPaymentOptions.Select(x => new ChooseOptionItem(x, x.Title, false));
+
+                var items = new[] { new ChooseOptionItem(null, Strings.Resources.PaymentCheckoutMethodNewCard, false) };
+
+                var choose = new ChooseOptionPopup(items.Union(credentials).Union(additional));
+                choose.Title = Strings.Resources.PaymentCheckoutMethod;
+                choose.PrimaryButtonText = Strings.Resources.OK;
+                choose.SecondaryButtonText = Strings.Resources.Cancel;
+
+                var confirm1 = await choose.ShowQueuedAsync();
+                if (confirm1 == ContentDialogResult.Primary)
+                {
+                    if (choose.SelectedIndex is SavedCredentials savedCredentials)
+                    {
+                        _inputCredentials = new InputCredentialsSaved(savedCredentials.Id);
+                        Credentials = savedCredentials;
+                        return;
+                    }
+                    else if (choose.SelectedIndex is PaymentOption paymentOption)
+                    {
+                        var option = new PaymentCredentialsPopup(form, paymentOption);
+
+                        var confirm2 = await option.ShowQueuedAsync();
+                        if (confirm2 == ContentDialogResult.Primary && option.Credentials != null)
+                        {
+                            _inputCredentials = new InputCredentialsNew(option.Credentials.Id, true);
+                            Credentials = option.Credentials;
+                        }
+
+                        return;
+                    }
+                }
             }
 
             var popup = new PaymentCredentialsPopup(_paymentForm);
@@ -395,12 +433,12 @@ namespace Unigram.ViewModels.Payments
             var credentials = _inputCredentials;
             if (credentials == null)
             {
-                if (_paymentForm.SavedCredentials != null)
+                if (_paymentForm.SavedCredentials.Count > 0)
                 {
                     var password = await GetTemporaryPasswordStateAsync();
                     if (password.HasPassword && password.ValidFor > 0)
                     {
-                        credentials = new InputCredentialsSaved(_paymentForm.SavedCredentials.Id);
+                        credentials = new InputCredentialsSaved(_paymentForm.SavedCredentials[0].Id);
                     }
                 }
             }
@@ -444,7 +482,7 @@ namespace Unigram.ViewModels.Payments
         private async Task<TemporaryPasswordState> CreateTemporaryPasswordAsync()
         {
             var popup = new InputPopup(InputPopupType.Password);
-            popup.Header = string.Format(Strings.Resources.PaymentConfirmationMessage, _paymentForm.SavedCredentials.Title);
+            popup.Header = string.Format(Strings.Resources.PaymentConfirmationMessage, _paymentForm.SavedCredentials[0].Title);
             popup.PrimaryButtonText = Strings.Resources.Continue;
             popup.SecondaryButtonText = Strings.Resources.Cancel;
 

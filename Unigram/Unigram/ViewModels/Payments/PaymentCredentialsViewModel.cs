@@ -18,7 +18,6 @@ namespace Unigram.ViewModels.Payments
         public string Initialize(PaymentForm paymentForm)
         {
             _paymentForm = paymentForm;
-
             CanSaveCredentials = _paymentForm.CanSaveCredentials;
 
             if (paymentForm.PaymentProvider is PaymentProviderOther other)
@@ -46,6 +45,15 @@ namespace Unigram.ViewModels.Payments
             }
 
             return null;
+        }
+
+        public string Initialize(PaymentForm paymentForm, PaymentOption paymentOption)
+        {
+            _paymentForm = paymentForm;
+            CanSaveCredentials = _paymentForm.CanSaveCredentials;
+
+            IsWebUsed = true;
+            return paymentOption.Url;
         }
 
         public bool IsNativeUsed { get; private set; }
@@ -123,13 +131,13 @@ namespace Unigram.ViewModels.Payments
         public async Task<SavedCredentials> ValidateAsync()
         {
             var save = _isSave ?? false;
-            if (_paymentForm.SavedCredentials != null && !save && _paymentForm.CanSaveCredentials)
-            {
-                //_paymentForm.HasSavedCredentials = false;
-                _paymentForm.SavedCredentials = null;
+            //if (_paymentForm.SavedCredentials != null && !save && _paymentForm.CanSaveCredentials)
+            //{
+            //    //_paymentForm.HasSavedCredentials = false;
+            //    _paymentForm.SavedCredentials = null;
 
-                ProtoService.Send(new DeleteSavedCredentials());
-            }
+            //    ProtoService.Send(new DeleteSavedCredentials());
+            //}
 
             var month = 0;
             var year = 0;
@@ -189,6 +197,7 @@ namespace Unigram.ViewModels.Payments
             IsLoading = true;
 
             var title = card.GetBrand() + " *" + card.GetLast4();
+
             var credentials = await GetCredentialsJson(card);
             if (credentials != null)
             {
