@@ -59,6 +59,16 @@ namespace Unigram.Common
             };
         }
 
+        public void Release()
+        {
+            // These are strong references and prevent
+            // owner classes from being disposed
+            Opening = null;
+            Closing = null;
+            DownloadFile = null;
+            SessionId = null;
+        }
+
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             _listView.PointerMoved += OnPointerMoved;

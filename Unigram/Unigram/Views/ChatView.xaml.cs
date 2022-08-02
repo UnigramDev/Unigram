@@ -395,8 +395,6 @@ namespace Unigram.Views
             StickersPanel.Visibility = Visibility.Visible;
             StickersPanel.Activate();
 
-            ViewModel.OpenStickers();
-
             var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
             opacity.InsertKeyFrame(0, 0);
             opacity.InsertKeyFrame(1, 1);

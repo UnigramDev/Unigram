@@ -2697,17 +2697,6 @@ namespace Unigram.ViewModels
 
         #endregion
 
-        #region Stickers
-
-        public void OpenStickers()
-        {
-            _emoji.Update();
-            _stickers.Update(_chat);
-            _animations.Update();
-        }
-
-        #endregion
-
         #region Delete and Exit
 
         public RelayCommand ChatDeleteCommand { get; }

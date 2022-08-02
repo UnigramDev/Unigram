@@ -4,10 +4,8 @@ using System.Linq;
 using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Converters;
 using Unigram.Services;
 using Unigram.Services.Settings;
-using Unigram.ViewModels;
 using Unigram.ViewModels.Drawers;
 using Windows.UI.Composition;
 using Windows.UI.Text.Core;
@@ -57,16 +55,25 @@ namespace Unigram.Controls.Drawers
 
         public StickersTab Tab => StickersTab.Emoji;
 
-        public void Activate()
+        public void Activate(Chat chat)
         {
             _isActive = true;
             _handler.ThrottleVisibleItems();
+
+            if (chat != null)
+            {
+                ViewModel.Update();
+            }
         }
 
         public void Deactivate()
         {
             _isActive = false;
             _handler.UnloadItems();
+
+            // This is called only right before XamlMarkupHelper.UnloadObject
+            // so we can safely clean up any kind of anything from here.
+            Bindings.StopTracking();
         }
 
         public void LoadVisibleItems()

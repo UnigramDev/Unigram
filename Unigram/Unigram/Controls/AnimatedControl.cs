@@ -76,11 +76,6 @@ namespace Unigram.Controls
             SizeChanged += OnSizeChanged;
         }
 
-        ~AnimatedControl()
-        {
-            System.Diagnostics.Debug.WriteLine("~AnimatedControl");
-        }
-
         protected override void OnApplyTemplate()
         {
             var canvas = GetTemplateChild("Canvas") as Image;

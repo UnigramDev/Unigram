@@ -11,7 +11,7 @@ namespace Unigram.Views.Popups
 {
     public sealed partial class ZoomableMediaPopup : Grid
     {
-        private readonly ApplicationView _applicationView;
+        private ApplicationView _applicationView;
 
         private string _fileToken;
         private string _thumbnailToken;
@@ -22,10 +22,26 @@ namespace Unigram.Views.Popups
         {
             InitializeComponent();
 
+            Loaded += OnLoaded;
+            Unloaded += OnUnloaded;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
             _applicationView = ApplicationView.GetForCurrentView();
             _applicationView.VisibleBoundsChanged += OnVisibleBoundsChanged;
 
             OnVisibleBoundsChanged(_applicationView, null);
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            _lastItem = null;
+
+            if (_applicationView != null)
+            {
+                _applicationView.VisibleBoundsChanged -= OnVisibleBoundsChanged;
+            }
         }
 
         public Action<int> DownloadFile { get; set; }

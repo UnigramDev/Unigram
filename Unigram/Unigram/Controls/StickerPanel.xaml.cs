@@ -28,10 +28,13 @@ namespace Unigram.Controls
         public Action<Animation> AnimationClick { get; set; }
         public event TypedEventHandler<UIElement, ItemContextRequestedEventArgs<Animation>> AnimationContextRequested;
 
+        public DialogViewModel ViewModel => DataContext as DialogViewModel;
+
+        private bool _initialized;
+
         public StickerPanel()
         {
             InitializeComponent();
-            DataContext = new object();
 
             var header = DropShadowEx.Attach(HeaderSeparator);
             var shadow = DropShadowEx.Attach(ShadowElement);
@@ -81,12 +84,12 @@ namespace Unigram.Controls
             yield return StickersRoot;
         }
 
-        private void Pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            LoadAtIndex(Pivot.SelectedIndex, /* unsure here */ false);
+            LoadAtIndex(ViewModel.Chat, Pivot.SelectedIndex, /* unsure here */ false);
         }
 
-        private void LoadAtIndex(int index, bool unload)
+        private void LoadAtIndex(Chat chat, int index, bool unload)
         {
             if (index == 0)
             {
@@ -99,10 +102,10 @@ namespace Unigram.Controls
                 if (EmojisRoot == null)
                 {
                     FindName(nameof(EmojisRoot));
-                    EmojisRoot.DataContext = EmojiDrawerViewModel.GetForCurrentView(TLContainer.Current.Resolve<IProtoService>().SessionId);
+                    EmojisRoot.DataContext = EmojiDrawerViewModel.GetForCurrentView(ViewModel.SessionId);
                 }
 
-                EmojisRoot.Activate();
+                EmojisRoot.Activate(chat);
                 SettingsService.Current.Stickers.SelectedTab = StickersTab.Emoji;
             }
             else if (index == 1)
@@ -116,12 +119,12 @@ namespace Unigram.Controls
                 if (AnimationsRoot == null)
                 {
                     FindName(nameof(AnimationsRoot));
-                    AnimationsRoot.DataContext = AnimationDrawerViewModel.GetForCurrentView(TLContainer.Current.Resolve<IProtoService>().SessionId);
+                    AnimationsRoot.DataContext = AnimationDrawerViewModel.GetForCurrentView(ViewModel.SessionId);
                     AnimationsRoot.ItemClick = Animations_ItemClick;
                     AnimationsRoot.ItemContextRequested += (s, args) => AnimationContextRequested?.Invoke(s, args);
                 }
 
-                AnimationsRoot.Activate();
+                AnimationsRoot.Activate(chat);
                 SettingsService.Current.Stickers.SelectedTab = StickersTab.Animations;
             }
             else if (index == 2)
@@ -135,13 +138,13 @@ namespace Unigram.Controls
                 if (StickersRoot == null)
                 {
                     FindName(nameof(StickersRoot));
-                    StickersRoot.DataContext = StickerDrawerViewModel.GetForCurrentView(TLContainer.Current.Resolve<IProtoService>().SessionId);
+                    StickersRoot.DataContext = StickerDrawerViewModel.GetForCurrentView(ViewModel.SessionId);
                     StickersRoot.ItemClick = Stickers_ItemClick;
                     StickersRoot.ItemContextRequested += (s, args) => StickerContextRequested?.Invoke(s, args);
                     StickersRoot.ChoosingItem += (s, args) => ChoosingSticker?.Invoke(s, args);
                 }
 
-                StickersRoot.Activate();
+                StickersRoot.Activate(chat);
                 SettingsService.Current.Stickers.SelectedTab = StickersTab.Stickers;
             }
         }
@@ -200,7 +203,13 @@ namespace Unigram.Controls
 
         public void Activate()
         {
-            Pivot_SelectionChanged(null, null);
+            if (!_initialized)
+            {
+                _initialized = true;
+                Pivot.SelectionChanged += OnSelectionChanged;
+            }
+
+            LoadAtIndex(ViewModel.Chat, Pivot.SelectedIndex, /* unsure here */ false);
         }
 
         public void Deactivate()
@@ -230,7 +239,7 @@ namespace Unigram.Controls
 
     public interface IDrawer
     {
-        void Activate();
+        void Activate(Chat chat);
         void Deactivate();
 
         void LoadVisibleItems();

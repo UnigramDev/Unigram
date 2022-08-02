@@ -186,7 +186,6 @@
 
                 <Pivot x:Name="Pivot"
                        Style="{StaticResource HeaderlessPivotStyle}"
-                       SelectionChanged="Pivot_SelectionChanged"
                        Background="Transparent"
                        Grid.Row="1">
                     <PivotItem>

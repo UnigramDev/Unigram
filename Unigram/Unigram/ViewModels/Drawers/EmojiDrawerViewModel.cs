@@ -15,6 +15,8 @@ namespace Unigram.ViewModels.Drawers
 {
     public class EmojiDrawerViewModel : TLViewModelBase, IHandle<UpdateInstalledStickerSets>
     {
+        private bool _updated;
+
         public EmojiDrawerViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
@@ -154,6 +156,13 @@ namespace Unigram.ViewModels.Drawers
 
         public async void Update()
         {
+            if (_updated)
+            {
+                return;
+            }
+
+            _updated = true;
+
             var result2 = await ProtoService.SendAsync(new GetTrendingStickerSets(new StickerTypeCustomEmoji(), 0, 100));
             var result3 = await ProtoService.SendAsync(new GetInstalledStickerSets(new StickerTypeCustomEmoji()));
             if (result3 is StickerSets sets)
@@ -220,6 +229,15 @@ namespace Unigram.ViewModels.Drawers
                                 }
                             }
                         }
+                    }
+                }
+
+                for (int i = 0; i < source.Count; i++)
+                {
+                    if (source[i] is long)
+                    {
+                        source.RemoveAt(i);
+                        i--;
                     }
                 }
 
