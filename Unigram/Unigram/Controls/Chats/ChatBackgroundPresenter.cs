@@ -58,13 +58,7 @@ namespace Unigram.Controls.Chats
                 {
                     var background = update.Background;
 
-                    // I'm not a big fan of this, but this is the easiest way to keep background in sync
-                    var chat = update.ForDarkTheme ? Theme.Current.ChatTheme?.DarkSettings.Background : Theme.Current.ChatTheme?.LightSettings.Background;
-                    if (chat != null)
-                    {
-                        background = chat;
-                    }
-
+                    SyncBackgroundWithChatTheme(ref background, update.ForDarkTheme);
                     UpdateBackground(background, update.ForDarkTheme);
                 }
             });
@@ -84,14 +78,18 @@ namespace Unigram.Controls.Chats
         {
             if (forDarkTheme == (ActualTheme == ElementTheme.Dark))
             {
-                // I'm not a big fan of this, but this is the easiest way to keep background in sync
-                var chat = forDarkTheme ? Theme.Current.ChatTheme?.DarkSettings.Background : Theme.Current.ChatTheme?.LightSettings.Background;
-                if (chat != null)
-                {
-                    background = chat;
-                }
-
+                SyncBackgroundWithChatTheme(ref background, forDarkTheme);
                 UpdateBackground(background, forDarkTheme);
+            }
+        }
+
+        private void SyncBackgroundWithChatTheme(ref Background background, bool forDarkTheme)
+        {
+            // I'm not a big fan of this, but this is the easiest way to keep background in sync
+            var chat = forDarkTheme ? Theme.Current.ChatTheme?.DarkSettings.Background : Theme.Current.ChatTheme?.LightSettings.Background;
+            if (chat != null)
+            {
+                background = chat;
             }
         }
 

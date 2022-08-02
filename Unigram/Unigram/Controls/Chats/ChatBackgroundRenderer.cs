@@ -137,9 +137,6 @@ namespace Unigram.Controls.Chats
 
         protected override void DrawFrame(CanvasImageSource sender, CanvasDrawingSession args)
         {
-            var parentSize = sender.Size.ToVector2();
-            var bitmapSize = _bitmap.Size.ToVector2();
-
             if (_pattern != null && _additionalResourcesLock.Wait(0))
             {
                 if (_backgroundFill != null)
@@ -169,6 +166,9 @@ namespace Unigram.Controls.Chats
                     }
                     else
                     {
+                        var parentSize = new Vector2(sender.SizeInPixels.Width, sender.SizeInPixels.Height);
+                        var bitmapSize = _bitmap.Size.ToVector2();
+
                         using var scale = new ScaleEffect { Source = _bitmap, BorderMode = EffectBorderMode.Hard, Scale = new Vector2(parentSize.X / bitmapSize.X, parentSize.Y / bitmapSize.Y) };
                         using var scale2 = new ScaleEffect { Source = _pattern, BorderMode = EffectBorderMode.Hard, Scale = new Vector2(0.5f, 0.5f) };
                         using var tint = new TintEffect { Source = scale2, Color = Color.FromArgb(_intensity, 00, 00, 00) };
@@ -376,7 +376,7 @@ namespace Unigram.Controls.Chats
             OnSourceChanged();
         }
 
-        private static readonly Color[] _colors = new Color[]
+        private readonly Color[] _colors = new Color[]
         {
             Color.FromArgb(0xFF, 0xDB, 0xDD, 0xBB),
             Color.FromArgb(0xFF, 0x6B, 0xA5, 0x87),
