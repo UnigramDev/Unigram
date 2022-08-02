@@ -37,7 +37,9 @@ namespace Unigram.Controls
         private bool _updateLocked;
         private bool _fromTextChanging;
 
-        private CustomEmojiCanvas CustomEmoji;
+        private int _selectionIndex;
+
+        public CustomEmojiCanvas CustomEmoji { get; set; }
 
         public FormattedTextBox()
         {
@@ -101,8 +103,12 @@ namespace Unigram.Controls
 
         private void OnSelectionChanged(object sender, RoutedEventArgs e)
         {
-            OnSelectionChanged(this, _fromTextChanging);
+            var index = Document.Selection.EndPosition;
+
+            OnSelectionChanged(this, _fromTextChanging || _selectionIndex == index);
+
             _fromTextChanging = false;
+            _selectionIndex = index;
         }
 
         protected virtual void OnSelectionChanged(RichEditBox sender, bool fromTextChanging)
@@ -122,7 +128,7 @@ namespace Unigram.Controls
 
         protected override void OnApplyTemplate()
         {
-            CustomEmoji = GetTemplateChild(nameof(CustomEmoji)) as CustomEmojiCanvas;
+            CustomEmoji ??= GetTemplateChild(nameof(CustomEmoji)) as CustomEmojiCanvas;
             base.OnApplyTemplate();
         }
 

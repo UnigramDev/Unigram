@@ -2,6 +2,7 @@
 using System.Collections;
 using Telegram.Td.Api;
 using Unigram.Collections;
+using Unigram.Common;
 using Unigram.Controls.Chats;
 using Unigram.ViewModels;
 using Windows.System;
@@ -98,31 +99,36 @@ namespace Unigram.Controls
 
             Document.GetText(TextGetOptions.NoHidden, out string text);
 
-            if (ChatTextBox.SearchByUsername(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string username, out _))
+            var query = text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length));
+
+            if (AutocompleteEntityFinder.TrySearch(query, out AutocompleteEntity entity, out string result, out int index))
             {
-                var chat = viewModel.Chat;
-                if (chat == null)
+                if (entity == AutocompleteEntity.Username)
                 {
+                    var chat = viewModel.Chat;
+                    if (chat == null)
+                    {
+                        View.Autocomplete = null;
+                        return;
+                    }
+
+                    var members = true;
+                    if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret || chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
+                    {
+                        members = false;
+                    }
+
+                    View.Autocomplete = new ChatTextBox.UsernameCollection(viewModel.ProtoService, viewModel.Chat.Id, viewModel.ThreadId, result, index == 0, members);
                     return;
                 }
+                else if (entity == AutocompleteEntity.Emoji)
+                {
+                    View.Autocomplete = new ChatTextBox.EmojiCollection(viewModel.ProtoService, result, CoreTextServicesManager.GetForCurrentView().InputLanguage.LanguageTag);
+                    return;
+                }
+            }
 
-                if (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup supergroup && !supergroup.IsChannel)
-                {
-                    View.Autocomplete = new ChatTextBox.UsernameCollection(viewModel.ProtoService, viewModel.Chat.Id, viewModel.ThreadId, username, false, true);
-                }
-                else
-                {
-                    View.Autocomplete = null;
-                }
-            }
-            else if (ChatTextBox.SearchByEmoji(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string replacement, out bool column) && replacement.Length > 0)
-            {
-                View.Autocomplete = new ChatTextBox.EmojiCollection(viewModel.ProtoService, replacement.Length < 2 ? replacement : replacement.ToLower(), column, CoreTextServicesManager.GetForCurrentView().InputLanguage.LanguageTag);
-            }
-            else
-            {
-                View.Autocomplete = null;
-            }
+            View.Autocomplete = null;
         }
     }
 

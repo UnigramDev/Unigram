@@ -185,7 +185,7 @@ namespace Unigram.Views.Popups
             SetResult(ContentDialogResult.Secondary);
         }
 
-        private void Autocomplete_ItemClick(object sender, ItemClickEventArgs e)
+        private async void Autocomplete_ItemClick(object sender, ItemClickEventArgs e)
         {
             var chat = ViewModel.Chat;
             if (chat == null)
@@ -193,9 +193,21 @@ namespace Unigram.Views.Popups
                 return;
             }
 
-            CaptionInput.Document.GetText(TextGetOptions.NoHidden, out string text);
+            CaptionInput.Document.GetText(TextGetOptions.None, out string text);
 
-            if (e.ClickedItem is User user && ChatTextBox.SearchByUsername(text.Substring(0, Math.Min(CaptionInput.Document.Selection.EndPosition, text.Length)), out string username, out _))
+            var query = text.Substring(0, Math.Min(CaptionInput.Document.Selection.EndPosition, text.Length));
+            var entity = AutocompleteEntityFinder.Search(query, out string result, out int index);
+
+            void InsertText(string insert, string result)
+            {
+                var start = CaptionInput.Document.Selection.StartPosition - 1 - result.Length + insert.Length;
+                var range = CaptionInput.Document.GetRange(CaptionInput.Document.Selection.StartPosition - 1 - result.Length, CaptionInput.Document.Selection.StartPosition);
+                range.SetText(TextSetOptions.None, insert);
+
+                CaptionInput.Document.Selection.StartPosition = start;
+            }
+
+            if (e.ClickedItem is User user && entity == AutocompleteEntity.Username)
             {
                 var adjust = 0;
 
@@ -210,7 +222,7 @@ namespace Unigram.Views.Popups
                     insert = user.Username;
                 }
 
-                var range = CaptionInput.Document.GetRange(CaptionInput.Document.Selection.StartPosition - username.Length - adjust, CaptionInput.Document.Selection.StartPosition);
+                var range = CaptionInput.Document.GetRange(CaptionInput.Document.Selection.StartPosition - result.Length - adjust, CaptionInput.Document.Selection.StartPosition);
                 range.SetText(TextSetOptions.None, insert);
 
                 if (string.IsNullOrEmpty(user.Username))
@@ -221,16 +233,26 @@ namespace Unigram.Views.Popups
                 CaptionInput.Document.GetRange(range.EndPosition, range.EndPosition).SetText(TextSetOptions.None, " ");
                 CaptionInput.Document.Selection.StartPosition = range.EndPosition + 1;
             }
-            else if (e.ClickedItem is EmojiData emoji && ChatTextBox.SearchByEmoji(text.Substring(0, Math.Min(CaptionInput.Document.Selection.EndPosition, text.Length)), out string replacement, out _))
+            else if (e.ClickedItem is EmojiData or Sticker && entity == AutocompleteEntity.Emoji)
             {
-                var insert = $"{emoji.Value} ";
-                var start = CaptionInput.Document.Selection.StartPosition - 1 - replacement.Length + insert.Length;
-                var range = CaptionInput.Document.GetRange(CaptionInput.Document.Selection.StartPosition - 1 - replacement.Length, CaptionInput.Document.Selection.StartPosition);
-                range.SetText(TextSetOptions.None, insert);
+                if (e.ClickedItem is EmojiData emoji)
+                {
+                    var insert = $"{emoji.Value} ";
+                    var start = CaptionInput.Document.Selection.StartPosition - 1 - result.Length + insert.Length;
+                    var range = CaptionInput.Document.GetRange(CaptionInput.Document.Selection.StartPosition - 1 - result.Length, CaptionInput.Document.Selection.StartPosition);
+                    range.SetText(TextSetOptions.None, insert);
 
-                //TextField.Document.GetRange(start, start).SetText(TextSetOptions.None, " ");
-                //TextField.Document.Selection.StartPosition = start + 1;
-                CaptionInput.Document.Selection.StartPosition = start;
+                    CaptionInput.Document.Selection.StartPosition = start;
+                }
+                else if (e.ClickedItem is Sticker sticker && sticker.CustomEmojiId != 0)
+                {
+                    var start = CaptionInput.Document.Selection.StartPosition - 1 - result.Length + 1;
+                    var range = CaptionInput.Document.GetRange(CaptionInput.Document.Selection.StartPosition - 1 - result.Length, CaptionInput.Document.Selection.StartPosition);
+                    range.SetText(TextSetOptions.None, string.Empty);
+
+                    await CaptionInput.InsertEmojiAsync(range, sticker.Emoji, sticker.CustomEmojiId);
+                    CaptionInput.Document.Selection.StartPosition = start;
+                }
             }
 
             Autocomplete = null;

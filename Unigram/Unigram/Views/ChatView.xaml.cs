@@ -2881,7 +2881,19 @@ namespace Unigram.Views
 
             TextField.Document.GetText(TextGetOptions.None, out string text);
 
-            if (e.ClickedItem is User user && ChatTextBox.SearchByUsername(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string username, out int index))
+            var query = text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length));
+            var entity = AutocompleteEntityFinder.Search(query, out string result, out int index);
+
+            void InsertText(string insert, string result)
+            {
+                var start = TextField.Document.Selection.StartPosition - 1 - result.Length + insert.Length;
+                var range = TextField.Document.GetRange(TextField.Document.Selection.StartPosition - 1 - result.Length, TextField.Document.Selection.StartPosition);
+                range.SetText(TextSetOptions.None, insert);
+
+                TextField.Document.Selection.StartPosition = start;
+            }
+
+            if (e.ClickedItem is User user && entity == AutocompleteEntity.Username)
             {
                 var adjust = 0;
 
@@ -2896,7 +2908,7 @@ namespace Unigram.Views
                     insert = user.Username;
                 }
 
-                var range = TextField.Document.GetRange(TextField.Document.Selection.StartPosition - username.Length - adjust, TextField.Document.Selection.StartPosition);
+                var range = TextField.Document.GetRange(TextField.Document.Selection.StartPosition - result.Length - adjust, TextField.Document.Selection.StartPosition);
                 range.SetText(TextSetOptions.None, insert);
 
                 if (string.IsNullOrEmpty(user.Username))
@@ -2912,70 +2924,45 @@ namespace Unigram.Views
                     ViewModel.ResolveInlineBot(user.Username);
                 }
             }
-            else if (e.ClickedItem is UserCommand command)
+            else if (e.ClickedItem is UserCommand command && entity == AutocompleteEntity.Command)
             {
-                var input = text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length));
-                if (string.IsNullOrEmpty(input))
+                var insert = $"/{command.Item.Command}";
+                if (chat.Type is ChatTypeSupergroup or ChatTypeBasicGroup)
                 {
-                    input = "/";
+                    var bot = ViewModel.ProtoService.GetUser(command.UserId);
+                    if (bot != null && bot.Username.Length > 0)
+                    {
+                        insert += $"@{bot.Username}";
+                    }
                 }
 
-                if (ChatTextBox.SearchByCommand(input, out string initialCommand))
+                var complete = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Tab).HasFlag(CoreVirtualKeyStates.Down);
+                if (complete)
                 {
-                    var insert = $"/{command.Item.Command}";
-                    if (chat.Type is ChatTypeSupergroup or ChatTypeBasicGroup)
-                    {
-                        var bot = ViewModel.ProtoService.GetUser(command.UserId);
-                        if (bot != null && bot.Username.Length > 0)
-                        {
-                            insert += $"@{bot.Username}";
-                        }
-                    }
-
-                    var complete = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Tab).HasFlag(CoreVirtualKeyStates.Down);
-                    if (complete)
-                    {
-                        insert += " ";
-
-                        var start = TextField.Document.Selection.StartPosition - 1 - initialCommand.Length + insert.Length;
-                        var range = TextField.Document.GetRange(TextField.Document.Selection.StartPosition - 1 - initialCommand.Length, TextField.Document.Selection.StartPosition);
-                        range.SetText(TextSetOptions.None, insert);
-
-                        TextField.Document.Selection.StartPosition = start;
-                    }
-                    else
-                    {
-                        TextField.SetText(null, null);
-                        ViewModel.SendMessage(insert);
-                    }
+                    InsertText($"{insert} ", result);
+                }
+                else
+                {
+                    TextField.SetText(null, null);
+                    ViewModel.SendMessage(insert);
                 }
 
                 ButtonMore.IsChecked = false;
             }
-            else if (e.ClickedItem is string hashtag && ChatTextBox.SearchByHashtag(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string initial, out _))
+            else if (e.ClickedItem is string hashtag && entity == AutocompleteEntity.Hashtag)
             {
-                var insert = $"{hashtag} ";
-                var start = TextField.Document.Selection.StartPosition - 1 - initial.Length + insert.Length;
-                var range = TextField.Document.GetRange(TextField.Document.Selection.StartPosition - 1 - initial.Length, TextField.Document.Selection.StartPosition);
-                range.SetText(TextSetOptions.None, insert);
-
-                TextField.Document.Selection.StartPosition = start;
+                InsertText($"{hashtag} ", result);
             }
-            else if (e.ClickedItem is EmojiData or Sticker && ChatTextBox.SearchByEmoji(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string replacement, out _))
+            else if (e.ClickedItem is EmojiData or Sticker && entity == AutocompleteEntity.Emoji)
             {
                 if (e.ClickedItem is EmojiData emoji)
                 {
-                    var insert = $"{emoji.Value} ";
-                    var start = TextField.Document.Selection.StartPosition - 1 - replacement.Length + insert.Length;
-                    var range = TextField.Document.GetRange(TextField.Document.Selection.StartPosition - 1 - replacement.Length, TextField.Document.Selection.StartPosition);
-                    range.SetText(TextSetOptions.None, insert);
-
-                    TextField.Document.Selection.StartPosition = start;
+                    InsertText($"{emoji.Value} ", result);
                 }
                 else if (e.ClickedItem is Sticker sticker && sticker.CustomEmojiId != 0)
                 {
-                    var start = TextField.Document.Selection.StartPosition - 1 - replacement.Length + 1;
-                    var range = TextField.Document.GetRange(TextField.Document.Selection.StartPosition - 1 - replacement.Length, TextField.Document.Selection.StartPosition);
+                    var start = TextField.Document.Selection.StartPosition - 1 - result.Length + 1;
+                    var range = TextField.Document.GetRange(TextField.Document.Selection.StartPosition - 1 - result.Length, TextField.Document.Selection.StartPosition);
                     range.SetText(TextSetOptions.None, string.Empty);
 
                     await TextField.InsertEmojiAsync(range, sticker.Emoji, sticker.CustomEmojiId);

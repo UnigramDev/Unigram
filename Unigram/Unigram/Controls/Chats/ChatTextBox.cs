@@ -222,7 +222,7 @@ namespace Unigram.Controls.Chats
                 }
             }
             else if ((e.Key == VirtualKey.Tab || e.Key == VirtualKey.Enter) && Autocomplete != null && Autocomplete.Items.Count > 0 && ViewModel.Autocomplete != null
-                && ((ViewModel.Autocomplete is EmojiCollection emojiCollection && (emojiCollection.HasColumn || Autocomplete.SelectedItem != null))
+                && ((ViewModel.Autocomplete is EmojiCollection emojiCollection && Autocomplete.SelectedItem != null)
                 || (ViewModel.Autocomplete is SearchStickersCollection && Autocomplete.SelectedItem != null) || ViewModel.Autocomplete is not SearchStickersCollection and not EmojiCollection))
             {
                 var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
@@ -406,70 +406,84 @@ namespace Unigram.Controls.Chats
                     }
                 }
 
-                if (prev is SearchStickersCollection && prev.Query.Equals(text.Trim()))
+                if (prev is SearchStickersCollection collection && !collection.IsCustomEmoji && prev.Query.Equals(text.Trim()))
                 {
                     autocomplete = prev;
                     return true;
                 }
 
-                autocomplete = new SearchStickersCollection(ViewModel.ProtoService, ViewModel.Settings, text.Trim());
+                autocomplete = new SearchStickersCollection(ViewModel.ProtoService, ViewModel.Settings, false, text.Trim());
                 return true;
             }
-            else if (SearchByUsername(query, out string username, out int index))
+            else if (AutocompleteEntityFinder.TrySearch(query, out AutocompleteEntity entity, out string result, out int index))
             {
-                var chat = ViewModel.Chat;
-                if (chat == null)
+                if (entity == AutocompleteEntity.Username)
                 {
-                    autocomplete = null;
-                    return false;
-                }
+                    var chat = ViewModel.Chat;
+                    if (chat == null)
+                    {
+                        autocomplete = null;
+                        return false;
+                    }
 
-                var members = true;
-                if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret || chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
-                {
-                    members = false;
-                }
+                    var members = true;
+                    if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret || chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
+                    {
+                        members = false;
+                    }
 
-                if (prev is UsernameCollection && prev.Query.Equals(username))
-                {
-                    autocomplete = prev;
+                    if (prev is UsernameCollection && prev.Query.Equals(result))
+                    {
+                        autocomplete = prev;
+                        return true;
+                    }
+
+                    autocomplete = new UsernameCollection(ViewModel.ProtoService, ViewModel.Chat.Id, ViewModel.ThreadId, result, index == 0, members);
                     return true;
                 }
+                else if (entity == AutocompleteEntity.Hashtag)
+                {
+                    if (prev is SearchHashtagsCollection && prev.Query.Equals(result))
+                    {
+                        autocomplete = prev;
+                        return true;
+                    }
 
-                autocomplete = new UsernameCollection(ViewModel.ProtoService, ViewModel.Chat.Id, ViewModel.ThreadId, username, index == 0, members);
-                return true;
+                    autocomplete = new SearchHashtagsCollection(ViewModel.ProtoService, result);
+                    return true;
+                }
+                else if (entity == AutocompleteEntity.Emoji && fromTextChanging)
+                {
+                    if (prev is EmojiCollection && prev.Query.Equals(result))
+                    {
+                        autocomplete = prev;
+                        return true;
+                    }
+
+                    autocomplete = new EmojiCollection(ViewModel.ProtoService, result, CoreTextServicesManager.GetForCurrentView().InputLanguage.LanguageTag);
+                    return true;
+                }
+                else if (entity == AutocompleteEntity.Command && index == 0)
+                {
+                    if (prev is AutocompleteList<UserCommand> && prev.Query.Equals(result))
+                    {
+                        autocomplete = prev;
+                        return true;
+                    }
+
+                    autocomplete = GetCommands(result.ToLower());
+                    return true;
+                }
             }
-            else if (SearchByHashtag(query, out string hashtag, out _))
+            else if (SearchByCustomEmoji(query, out string customEmoji, out int _))
             {
-                if (prev is SearchHashtagsCollection && prev.Query.Equals(hashtag))
-                {
-                    autocomplete = prev;
-                    return true;
-                }
-                
-                autocomplete = new SearchHashtagsCollection(ViewModel.ProtoService, hashtag);
-                return true;
-            }
-            else if (SearchByEmoji(query, out string replacement, out bool column) && replacement.Length > 0 && fromTextChanging)
-            {
-                if (prev is EmojiCollection && prev.Query.Equals(replacement))
+                if (prev is SearchStickersCollection collection && collection.IsCustomEmoji && prev.Query.Equals(text.Trim()))
                 {
                     autocomplete = prev;
                     return true;
                 }
 
-                autocomplete = new EmojiCollection(ViewModel.ProtoService, replacement, column, CoreTextServicesManager.GetForCurrentView().InputLanguage.LanguageTag);
-                return true;
-            }
-            else if (SearchByCommand(query, out string command))
-            {
-                if (prev is AutocompleteList<UserCommand> && prev.Query.Equals(command))
-                {
-                    autocomplete = prev;
-                    return true;
-                }
-
-                autocomplete = GetCommands(command.ToLower());
+                autocomplete = new SearchStickersCollection(ViewModel.ProtoService, ViewModel.Settings, true, customEmoji);
                 return true;
             }
 
@@ -570,7 +584,6 @@ namespace Unigram.Controls.Chats
         {
             private readonly IProtoService _protoService;
             private readonly string _query;
-            private readonly bool _column;
             private readonly string _inputLanguage;
 
             private bool _hasMore = true;
@@ -578,11 +591,10 @@ namespace Unigram.Controls.Chats
             private string[] _emoji;
             private int _emojiIndex;
 
-            public EmojiCollection(IProtoService protoService, string query, bool column, string inputLanguage)
+            public EmojiCollection(IProtoService protoService, string query, string inputLanguage)
             {
                 _protoService = protoService;
                 _query = query;
-                _column = column;
                 _inputLanguage = inputLanguage;
             }
 
@@ -655,8 +667,6 @@ namespace Unigram.Controls.Chats
             public bool HasMoreItems => _hasMore;
 
             public string Query => _query;
-
-            public bool HasColumn => _column;
 
             public Orientation Orientation => Orientation.Horizontal;
         }
@@ -759,51 +769,30 @@ namespace Unigram.Controls.Chats
 
         #region Username
 
-        public static bool SearchByUsername(string text, out string searchText, out int index)
+        public static bool SearchByCustomEmoji(string text, out string searchText, out int index)
         {
             index = -1;
             searchText = string.Empty;
 
-            var found = true;
-            var i = text.Length - 1;
-
-            while (i >= 0)
+            var shorter = text;
+            if (shorter.Length > 11)
             {
-                if (text[i] == '@')
-                {
-                    if (i == 0 || text[i - 1] == ' ' || text[i - 1] == '\n' || text[i - 1] == '\r' || text[i - 1] == '\v')
-                    {
-                        index = i;
-                        break;
-                    }
-
-                    found = false;
-                    break;
-                }
-                else
-                {
-                    if (!MessageHelper.IsValidUsernameSymbol(text[i]) && !char.IsLetter(text[i]))
-                    {
-                        found = false;
-                        break;
-                    }
-
-                    i--;
-                }
+                shorter = shorter.Substring(shorter.Length - 11);
             }
 
-            if (found)
-            {
-                if (index == -1)
-                {
-                    return false;
-                }
+            var emoji = Emoji.EnumerateByComposedCharacterSequence(shorter);
+            var last = emoji.Last();
 
-                searchText = text.Substring(index).TrimStart('@');
+            if (Emoji.ContainsSingleEmoji(last))
+            {
+                searchText = last;
+                index = text.Length - last.Length;
+                return true;
             }
 
-            return found;
+            return false;
         }
+
 
         public static bool SearchByInlineBot(string text, out string searchText, out int index)
         {
@@ -849,153 +838,6 @@ namespace Unigram.Controls.Chats
                 }
 
                 searchText = text.Substring(0, index).TrimStart('@');
-            }
-
-            return found;
-        }
-
-        public static bool SearchByCommand(string text, out string searchText)
-        {
-            searchText = string.Empty;
-
-            if (text.Length < 1 || text[0] != '/')
-            {
-                return false;
-            }
-
-            var c = '/';
-            var flag = true;
-            var index = -1;
-            var i = text.Length - 1;
-
-            while (i >= 0)
-            {
-                if (text[i] == c)
-                {
-                    if (i == 0 || text[i - 1] == ' ' || text[i - 1] == '\n' || text[i - 1] == '\r' || text[i - 1] == '\v')
-                    {
-                        index = i;
-                        break;
-                    }
-                    flag = false;
-                    break;
-                }
-                else
-                {
-                    if (!MessageHelper.IsValidCommandSymbol(text[i]))
-                    {
-                        flag = false;
-                        break;
-                    }
-                    i--;
-                }
-            }
-            if (flag)
-            {
-                if (index == -1)
-                {
-                    return false;
-                }
-
-                searchText = text.Substring(index).TrimStart(c);
-            }
-
-            return flag;
-        }
-
-        public static bool SearchByEmoji(string text, out string searchText, out bool command)
-        {
-            command = true;
-            searchText = string.Empty;
-
-            var c = ':';
-            var flag = true;
-            var index = -1;
-            var i = text.Length - 1;
-
-            while (i >= 0)
-            {
-                if (text[i] == c /*|| (i == 0 && (char.IsLetter(text[i]) || char.IsNumber(text[i])))*/)
-                {
-                    if (i == 0 || text[i - 1] == ' ' || text[i - 1] == '\n' || text[i - 1] == '\r' || text[i - 1] == '\v' || !char.IsLetterOrDigit(text[i - 1]))
-                    {
-                        index = i;
-                        break;
-                    }
-                    flag = false;
-                    break;
-                }
-                else
-                {
-                    if (!char.IsLetter(text[i]) && !char.IsNumber(text[i]))
-                    {
-                        flag = false;
-                        break;
-                    }
-                    i--;
-                }
-            }
-            if (flag)
-            {
-                if (index == -1)
-                {
-                    return false;
-                }
-
-                command = text[i] == c;
-                searchText = text.Substring(index).TrimStart(c);
-            }
-
-            if (searchText.Length == 1 && searchText == searchText.ToUpper())
-            {
-                searchText = string.Empty;
-                flag = false;
-            }
-
-            return flag;
-        }
-
-        public static bool SearchByHashtag(string text, out string searchText, out int index)
-        {
-            index = -1;
-            searchText = string.Empty;
-
-            var found = true;
-            var i = text.Length - 1;
-
-            while (i >= 0)
-            {
-                if (text[i] == '#')
-                {
-                    if (i == 0 || text[i - 1] == ' ' || text[i - 1] == '\n' || text[i - 1] == '\r' || text[i - 1] == '\v')
-                    {
-                        index = i;
-                        break;
-                    }
-
-                    found = false;
-                    break;
-                }
-                else
-                {
-                    if (!MessageHelper.IsValidUsernameSymbol(text[i]))
-                    {
-                        found = false;
-                        break;
-                    }
-
-                    i--;
-                }
-            }
-
-            if (found)
-            {
-                if (index == -1)
-                {
-                    return false;
-                }
-
-                searchText = text.Substring(index).TrimStart('#');
             }
 
             return found;

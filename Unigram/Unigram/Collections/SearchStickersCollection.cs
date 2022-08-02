@@ -22,11 +22,13 @@ namespace Unigram.Collections
 
         private readonly HashSet<int> _ids;
 
-        public SearchStickersCollection(IProtoService protoService, ISettingsService settings, string query)
+        public bool IsCustomEmoji => _type is StickerTypeCustomEmoji;
+
+        public SearchStickersCollection(IProtoService protoService, ISettingsService settings, bool customEmoji, string query)
         {
             _protoService = protoService;
             _settings = settings;
-            _type = new StickerTypeRegular();
+            _type = customEmoji ? new StickerTypeCustomEmoji() : new StickerTypeRegular();
             _query = query;
 
             _ids = new HashSet<int>();
@@ -54,7 +56,7 @@ namespace Unigram.Collections
                         }
                     }
                 }
-                else if (!_first && _settings.Stickers.SuggestionMode == StickersSuggestionMode.All)
+                else if (!_first && _settings.Stickers.SuggestionMode == StickersSuggestionMode.All && _type is not StickerTypeCustomEmoji)
                 {
                     _hasMore = false;
 
