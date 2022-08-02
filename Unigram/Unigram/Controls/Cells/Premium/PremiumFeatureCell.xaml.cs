@@ -60,6 +60,10 @@ namespace Unigram.Controls.Cells.Premium
                     titleValue = Strings.Resources.PremiumPreviewAppIcon;
                     subtitleValue = Strings.Resources.PremiumPreviewAppIconDescription;
                     break;
+                case PremiumFeatureCustomEmoji:
+                    titleValue = Strings.Resources.PremiumPreviewEmoji;
+                    subtitleValue = Strings.Resources.PremiumPreviewEmojiDescription;
+                    break;
                 case PremiumFeatureDisabledAds:
                     titleValue = Strings.Resources.PremiumPreviewNoAds;
                     subtitleValue = Strings.Resources.PremiumPreviewNoAdsDescription;
