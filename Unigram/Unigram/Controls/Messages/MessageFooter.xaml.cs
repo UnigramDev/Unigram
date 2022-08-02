@@ -33,7 +33,7 @@ namespace Unigram.Controls.Messages
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (Stroke is SolidColorBrush stroke && _strokeToken == 0)
+            if (Stroke is SolidColorBrush stroke && _strokeToken == 0 && _container != null)
             {
                 var brush = Window.Current.Compositor.CreateColorBrush(stroke.Color);
 
@@ -142,7 +142,7 @@ namespace Unigram.Controls.Messages
         {
             DateLabel.Text = Converter.ShortTime.Format(date);
             StateLabel.Text = outgoing ? "\u00A0\u00A0\uE603" : string.Empty;
-            UpdateTicks(outgoing ? true : null);
+            UpdateTicks(outgoing, outgoing ? true : null);
         }
 
         public void UpdateMessageInteractionInfo(MessageViewModel message)
@@ -249,7 +249,7 @@ namespace Unigram.Controls.Messages
 
                 if (message.SendingState is MessageSendingStateFailed)
                 {
-                    UpdateTicks(null);
+                    UpdateTicks(true, null);
 
                     _ticksState = MessageTicksState.Failed;
                     _ticksHash = messageHash;
@@ -259,7 +259,7 @@ namespace Unigram.Controls.Messages
                 }
                 else if (message.SendingState is MessageSendingStatePending)
                 {
-                    UpdateTicks(null);
+                    UpdateTicks(true, null);
 
                     _ticksState = MessageTicksState.Pending;
                     _ticksHash = messageHash;
@@ -268,7 +268,7 @@ namespace Unigram.Controls.Messages
                 }
                 else if (message.Id <= maxId)
                 {
-                    UpdateTicks(true, _ticksState == MessageTicksState.Sent && _ticksHash == messageHash);
+                    UpdateTicks(true, true, _ticksState == MessageTicksState.Sent && _ticksHash == messageHash);
 
                     _ticksState = MessageTicksState.Read;
                     _ticksHash = messageHash;
@@ -276,7 +276,7 @@ namespace Unigram.Controls.Messages
                     return _container != null ? "\u00A0\u00A0\uE603" : "\u00A0\u00A0\uE601"; // Read
                 }
 
-                UpdateTicks(false, _ticksState == MessageTicksState.Pending && _ticksHash == messageHash);
+                UpdateTicks(true, false, _ticksState == MessageTicksState.Pending && _ticksHash == messageHash);
 
                 _ticksState = MessageTicksState.Sent;
                 _ticksHash = messageHash;
@@ -284,7 +284,7 @@ namespace Unigram.Controls.Messages
                 return _container != null ? "\u00A0\u00A0\uE603" : "\u00A0\u00A0\uE602"; // Unread
             }
 
-            UpdateTicks(null);
+            UpdateTicks(false, null);
 
             _ticksState = MessageTicksState.None;
             _ticksHash = 0;
@@ -459,13 +459,13 @@ namespace Unigram.Controls.Messages
 
             var shape11 = Window.Current.Compositor.CreateSpriteShape(line11);
             shape11.StrokeThickness = stroke;
-            shape11.StrokeBrush = GetBrush(StrokeProperty);
+            shape11.StrokeBrush = GetBrush(StrokeProperty, ref _strokeToken, OnStrokeChanged);
             shape11.IsStrokeNonScaling = true;
             shape11.StrokeStartCap = CompositionStrokeCap.Round;
 
             var shape12 = Window.Current.Compositor.CreateSpriteShape(line12);
             shape12.StrokeThickness = stroke;
-            shape12.StrokeBrush = GetBrush(StrokeProperty);
+            shape12.StrokeBrush = GetBrush(StrokeProperty, ref _strokeToken, OnStrokeChanged);
             shape12.IsStrokeNonScaling = true;
             shape12.StrokeEndCap = CompositionStrokeCap.Round;
 
@@ -474,6 +474,8 @@ namespace Unigram.Controls.Messages
             visual1.Shapes.Add(shape11);
             visual1.Size = new Vector2(width, height);
             visual1.CenterPoint = new Vector3(width, height / 2f, 0);
+            //visual1.RelativeOffsetAdjustment = Vector3.One;
+            //visual1.AnchorPoint = Vector2.One;
 
 
             var line21 = Window.Current.Compositor.CreateLineGeometry();
@@ -487,24 +489,29 @@ namespace Unigram.Controls.Messages
 
             var shape21 = Window.Current.Compositor.CreateSpriteShape(line21);
             shape21.StrokeThickness = stroke;
-            shape21.StrokeBrush = GetBrush(StrokeProperty);
+            shape21.StrokeBrush = GetBrush(StrokeProperty, ref _strokeToken, OnStrokeChanged);
             shape21.StrokeStartCap = CompositionStrokeCap.Round;
 
             var shape22 = Window.Current.Compositor.CreateSpriteShape(line22);
             shape22.StrokeThickness = stroke;
-            shape22.StrokeBrush = GetBrush(StrokeProperty);
+            shape22.StrokeBrush = GetBrush(StrokeProperty, ref _strokeToken, OnStrokeChanged);
             shape22.StrokeEndCap = CompositionStrokeCap.Round;
 
             var visual2 = Window.Current.Compositor.CreateShapeVisual();
             visual2.Shapes.Add(shape22);
             visual2.Shapes.Add(shape21);
             visual2.Size = new Vector2(width, height);
+            //visual2.RelativeOffsetAdjustment = Vector3.One;
+            //visual2.AnchorPoint = Vector2.One;
 
 
             var container = Window.Current.Compositor.CreateSpriteVisual();
             container.Children.InsertAtTop(visual2);
             container.Children.InsertAtTop(visual1);
             container.Size = new Vector2(width, height);
+            //container.RelativeSizeAdjustment = Vector2.One;
+            //container.AnchorPoint = Vector2.One;
+            //container.CenterPoint = new Vector3(width, height, 0);
 
             ElementCompositionPreview.SetElementChildVisual(Label, container);
 
@@ -518,13 +525,17 @@ namespace Unigram.Controls.Messages
             _container = container;
         }
 
-        private void UpdateTicks(bool? read, bool animate = false)
+        private void UpdateTicks(bool outgoing, bool? read, bool animate = false)
         {
             if (read == null)
             {
                 if (_container != null)
                 {
                     _container.IsVisible = false;
+                }
+                else if (outgoing)
+                {
+                    InitializeTicks();
                 }
             }
             else
@@ -550,11 +561,16 @@ namespace Unigram.Controls.Messages
             }
         }
 
-        private CompositionBrush GetBrush(DependencyProperty dp)
+        private CompositionBrush GetBrush(DependencyProperty dp, ref long token, DependencyPropertyChangedCallback callback)
         {
             var value = GetValue(dp);
             if (value is SolidColorBrush solid)
             {
+                if (token == 0)
+                {
+                    token = solid.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, callback);
+                }
+
                 return Window.Current.Compositor.CreateColorBrush(solid.Color);
             }
 

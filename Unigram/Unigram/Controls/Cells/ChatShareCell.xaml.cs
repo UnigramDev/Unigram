@@ -24,9 +24,14 @@ namespace Unigram.Controls.Cells
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (Stroke is SolidColorBrush stroke && _strokeToken == 0)
+            if (Stroke is SolidColorBrush stroke && _strokeToken == 0 && _visual != null)
             {
                 _strokeToken = stroke.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, OnStrokeChanged);
+            }
+
+            if (SelectionStroke is SolidColorBrush selectionStroke && _selectionStrokeToken == 0 && _visual != null)
+            {
+                _selectionStrokeToken = selectionStroke.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, OnSelectionStrokeChanged);
             }
         }
 
@@ -36,6 +41,12 @@ namespace Unigram.Controls.Cells
             {
                 stroke.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, _strokeToken);
                 _strokeToken = 0;
+            }
+
+            if (SelectionStroke is SolidColorBrush selectionStroke && _selectionStrokeToken != 0)
+            {
+                selectionStroke.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, _selectionStrokeToken);
+                _selectionStrokeToken = 0;
             }
         }
 
@@ -91,6 +102,8 @@ namespace Unigram.Controls.Cells
 
         #region SelectionStroke
 
+        private long _selectionStrokeToken;
+
         public SolidColorBrush SelectionStroke
         {
             get => (SolidColorBrush)GetValue(SelectionStrokeProperty);
@@ -102,17 +115,35 @@ namespace Unigram.Controls.Cells
 
         private static void OnSelectionStrokeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var sender = d as ChatShareCell;
-            var solid = e.NewValue as SolidColorBrush;
+            ((ChatShareCell)d).OnSelectionStrokeChanged(e.NewValue as SolidColorBrush, e.OldValue as SolidColorBrush);
+        }
 
-            if (solid == null || sender._stroke == null)
+        private void OnSelectionStrokeChanged(SolidColorBrush newValue, SolidColorBrush oldValue)
+        {
+            if (oldValue != null && _selectionStrokeToken != 0)
+            {
+                oldValue.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, _selectionStrokeToken);
+                _selectionStrokeToken = 0;
+            }
+
+            if (newValue == null || _stroke == null)
             {
                 return;
             }
 
-            var brush = Window.Current.Compositor.CreateColorBrush(solid.Color);
+            _stroke.FillBrush = Window.Current.Compositor.CreateColorBrush(newValue.Color);
+            _selectionStrokeToken = newValue.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, OnSelectionStrokeChanged);
+        }
 
-            sender._stroke.FillBrush = brush;
+        private void OnSelectionStrokeChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            var solid = sender as SolidColorBrush;
+            if (solid == null || _stroke == null)
+            {
+                return;
+            }
+
+            _stroke.FillBrush = Window.Current.Compositor.CreateColorBrush(solid.Color);
         }
 
         #endregion
@@ -126,6 +157,22 @@ namespace Unigram.Controls.Cells
         private CompositionSpriteShape _ellipse;
         private CompositionSpriteShape _stroke;
         private ShapeVisual _visual;
+
+        private CompositionBrush GetBrush(DependencyProperty dp, ref long token, DependencyPropertyChangedCallback callback)
+        {
+            var value = GetValue(dp);
+            if (value is SolidColorBrush solid)
+            {
+                if (token == 0)
+                {
+                    token = solid.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, callback);
+                }
+
+                return Window.Current.Compositor.CreateColorBrush(solid.Color);
+            }
+
+            return Window.Current.Compositor.CreateColorBrush(Colors.Black);
+        }
 
         private void InitializeSelection()
         {
@@ -163,12 +210,7 @@ namespace Unigram.Controls.Cells
 
             var shape2 = compositor.CreateSpriteShape();
             shape2.Geometry = ellipse;
-            shape2.FillBrush = compositor.CreateColorBrush(Colors.Black);
-
-            if (Stroke is SolidColorBrush brush1)
-            {
-                shape2.FillBrush = compositor.CreateColorBrush(brush1.Color);
-            }
+            shape2.FillBrush = GetBrush(StrokeProperty, ref _strokeToken, OnStrokeChanged);
 
             var outer = compositor.CreateEllipseGeometry();
             outer.Radius = new Vector2(10);
@@ -176,11 +218,7 @@ namespace Unigram.Controls.Cells
 
             var shape3 = compositor.CreateSpriteShape();
             shape3.Geometry = outer;
-
-            if (SelectionStroke is SolidColorBrush brush2)
-            {
-                shape3.FillBrush = compositor.CreateColorBrush(brush2.Color);
-            }
+            shape3.FillBrush = GetBrush(SelectionStrokeProperty, ref _selectionStrokeToken, OnSelectionStrokeChanged);
 
             var visual = compositor.CreateShapeVisual();
             visual.Shapes.Add(shape3);

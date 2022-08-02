@@ -70,12 +70,12 @@ namespace Unigram.Controls.Cells
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (Stroke is SolidColorBrush stroke && _strokeToken == 0)
+            if (Stroke is SolidColorBrush stroke && _strokeToken == 0 && (_container != null || _visual != null))
             {
                 _strokeToken = stroke.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, OnStrokeChanged);
             }
 
-            if (SelectionStroke is SolidColorBrush selectionStroke && _selectionStrokeToken == 0)
+            if (SelectionStroke is SolidColorBrush selectionStroke && _selectionStrokeToken == 0 && _visual != null)
             {
                 _selectionStrokeToken = selectionStroke.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, OnSelectionStrokeChanged);
             }
@@ -529,6 +529,7 @@ namespace Unigram.Controls.Cells
             else
             {
                 ChatActionIndicator.Visibility = Visibility.Collapsed;
+                ChatActionIndicator.UpdateAction(null);
                 TypingLabel.Visibility = Visibility.Collapsed;
                 BriefInfo.Visibility = Visibility.Visible;
                 Minithumbnail.Visibility = Visibility.Visible;
@@ -1542,7 +1543,7 @@ namespace Unigram.Controls.Cells
 
             var shape2 = compositor.CreateSpriteShape();
             shape2.Geometry = ellipse;
-            shape2.FillBrush = GetBrush(StrokeProperty);
+            shape2.FillBrush = GetBrush(StrokeProperty, ref _strokeToken, OnStrokeChanged);
 
             var outer = compositor.CreateEllipseGeometry();
             outer.Radius = new Vector2(10);
@@ -1550,7 +1551,7 @@ namespace Unigram.Controls.Cells
 
             var shape3 = compositor.CreateSpriteShape();
             shape3.Geometry = outer;
-            shape3.FillBrush = GetBrush(SelectionStrokeProperty);
+            shape3.FillBrush = GetBrush(SelectionStrokeProperty, ref _selectionStrokeToken, OnSelectionStrokeChanged);
 
             var visual = compositor.CreateShapeVisual();
             visual.Shapes.Add(shape3);
@@ -1713,17 +1714,21 @@ namespace Unigram.Controls.Cells
 
         #endregion
 
-        private CompositionBrush GetBrush(DependencyProperty dp)
+        private CompositionBrush GetBrush(DependencyProperty dp, ref long token, DependencyPropertyChangedCallback callback)
         {
             var value = GetValue(dp);
             if (value is SolidColorBrush solid)
             {
+                if (token == 0)
+                {
+                    token = solid.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, callback);
+                }
+
                 return Window.Current.Compositor.CreateColorBrush(solid.Color);
             }
 
             return Window.Current.Compositor.CreateColorBrush(Colors.Black);
         }
-
 
         private void InitializeTicks()
         {
@@ -1751,13 +1756,13 @@ namespace Unigram.Controls.Cells
 
             var shape11 = Window.Current.Compositor.CreateSpriteShape(line11);
             shape11.StrokeThickness = stroke;
-            shape11.StrokeBrush = GetBrush(StrokeProperty);
+            shape11.StrokeBrush = GetBrush(StrokeProperty, ref _strokeToken, OnStrokeChanged);
             shape11.IsStrokeNonScaling = true;
             shape11.StrokeStartCap = CompositionStrokeCap.Round;
 
             var shape12 = Window.Current.Compositor.CreateSpriteShape(line12);
             shape12.StrokeThickness = stroke;
-            shape12.StrokeBrush = GetBrush(StrokeProperty);
+            shape12.StrokeBrush = GetBrush(StrokeProperty, ref _strokeToken, OnStrokeChanged);
             shape12.IsStrokeNonScaling = true;
             shape12.StrokeEndCap = CompositionStrokeCap.Round;
 
@@ -1779,12 +1784,12 @@ namespace Unigram.Controls.Cells
 
             var shape21 = Window.Current.Compositor.CreateSpriteShape(line21);
             shape21.StrokeThickness = stroke;
-            shape21.StrokeBrush = GetBrush(StrokeProperty);
+            shape21.StrokeBrush = GetBrush(StrokeProperty, ref _strokeToken, OnStrokeChanged);
             shape21.StrokeStartCap = CompositionStrokeCap.Round;
 
             var shape22 = Window.Current.Compositor.CreateSpriteShape(line22);
             shape22.StrokeThickness = stroke;
-            shape22.StrokeBrush = GetBrush(StrokeProperty);
+            shape22.StrokeBrush = GetBrush(StrokeProperty, ref _strokeToken, OnStrokeChanged);
             shape22.StrokeEndCap = CompositionStrokeCap.Round;
 
             var visual2 = Window.Current.Compositor.CreateShapeVisual();
