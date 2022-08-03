@@ -58,11 +58,8 @@ namespace Unigram.Controls.Chats
 
             if (needsCreate)
             {
-                if (_bitmap != null)
-                {
-                    _bitmap.Dispose();
-                    _bitmap = null;
-                }
+                _bitmap?.Dispose();
+                _bitmap = null;
 
                 var bitmap = CreateTarget(sender, width, height);
 

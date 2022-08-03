@@ -85,11 +85,8 @@ namespace Unigram.Controls
 
             if (needsCreate)
             {
-                if (_bitmap != null)
-                {
-                    _bitmap.Dispose();
-                    _bitmap = null;
-                }
+                _bitmap?.Dispose();
+                _bitmap = null;
 
                 if (_animation != null)
                 {

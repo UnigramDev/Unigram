@@ -145,6 +145,8 @@ namespace Unigram.Controls
             lock (_drawFrameLock)
             {
                 _surface = null;
+
+                _bitmap?.Dispose();
                 _bitmap = null;
 
                 Changed();
@@ -388,17 +390,7 @@ namespace Unigram.Controls
             }
             catch (Exception ex)
             {
-                if (_surface != null && _surface.Device.IsDeviceLost(ex.HResult))
-                {
-                    _surface = null;
-                    _bitmap = null;
-
-                    Changed();
-                }
-                else
-                {
-                    Unload();
-                }
+                HandleDeviceLost(ex);
             }
         }
 
@@ -410,17 +402,24 @@ namespace Unigram.Controls
             }
             catch (Exception ex)
             {
-                if (_surface != null && _surface.Device.IsDeviceLost(ex.HResult))
-                {
-                    _surface = null;
-                    _bitmap = null;
+                HandleDeviceLost(ex);
+            }
+        }
 
-                    Changed();
-                }
-                else
-                {
-                    Unload();
-                }
+        private void HandleDeviceLost(Exception ex)
+        {
+            if (_surface != null && _surface.Device.IsDeviceLost(ex.HResult))
+            {
+                _surface = null;
+
+                _bitmap?.Dispose();
+                _bitmap = null;
+
+                Changed();
+            }
+            else
+            {
+                Unload();
             }
         }
 
