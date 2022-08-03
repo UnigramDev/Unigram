@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Converters;
+using Unigram.Navigation;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Graphics.Display;
@@ -172,7 +173,7 @@ namespace Unigram.Controls.Messages
 
         private static async Task<ImageSource> GetLottieFrame(string path, int frame, int width, int height)
         {
-            var dpi = DisplayInformation.GetForCurrentView().LogicalDpi / 96.0f;
+            var dpi = WindowContext.Current.RasterizationScale;
 
             width = (int)(width * dpi);
             height = (int)(height * dpi);

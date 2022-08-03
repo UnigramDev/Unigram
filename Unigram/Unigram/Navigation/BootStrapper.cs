@@ -88,7 +88,7 @@ namespace Unigram.Navigation
 
         #region properties
 
-        public INavigationService NavigationService => WindowContext.GetForCurrentView().NavigationServices.FirstOrDefault();
+        public INavigationService NavigationService => WindowContext.Current.NavigationServices.FirstOrDefault();
 
         /// <summary>
         /// CacheMaxDuration indicates the maximum TimeSpan for which cache data
@@ -351,7 +351,7 @@ namespace Unigram.Navigation
                 }
             }
 
-            foreach (var frame in WindowContext.GetForCurrentView().NavigationServices.Select(x => x.FrameFacade).Reverse())
+            foreach (var frame in WindowContext.Current.NavigationServices.Select(x => x.FrameFacade).Reverse())
             {
                 frame.RaiseBackRequested(args);
 
@@ -381,7 +381,7 @@ namespace Unigram.Navigation
                 return;
             }
 
-            foreach (var frame in WindowContext.GetForCurrentView().NavigationServices.Select(x => x.FrameFacade))
+            foreach (var frame in WindowContext.Current.NavigationServices.Select(x => x.FrameFacade))
             {
                 frame.RaiseForwardRequested(args);
                 if (args.Handled)
@@ -532,7 +532,7 @@ namespace Unigram.Navigation
 
             var navigationService = CreateNavigationService(frame, session, id, root);
             navigationService.FrameFacade.BackButtonHandling = backButton;
-            WindowContext.GetForCurrentView().NavigationServices.Add(navigationService);
+            WindowContext.Current.NavigationServices.Add(navigationService);
 
             if (backButton == BackButton.Attach)
             {

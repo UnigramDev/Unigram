@@ -4,6 +4,7 @@ using System.Linq;
 using Unigram.Navigation.Services;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
+using Windows.Graphics.Display;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -46,16 +47,22 @@ namespace Unigram.Navigation
 
         public static readonly List<WindowContext> ActiveWrappers = new List<WindowContext>();
 
-        public static WindowContext GetForCurrentView() => ActiveWrappers.FirstOrDefault(x => x.Window == Window.Current) ?? Default();
+        [ThreadStatic]
+        public static WindowContext Current;
 
-        public static WindowContext Current(Window window) => ActiveWrappers.FirstOrDefault(x => x.Window == window);
+        /// <summary>
+        /// Mirror of DisplayInformation.LogicalDpi / 96d
+        /// Mimics XamlRoot.RasterizationScale
+        /// </summary>
+        public double RasterizationScale { get; private set; }
 
         public WindowContext(Window window)
         {
-            if (Current(window) != null)
+            if (Current != null)
             {
                 throw new Exception("Windows already has a wrapper; use Current(window) to fetch.");
             }
+            Current = this;
             Window = window;
             Dispatcher = new DispatcherContext(window.CoreWindow.DispatcherQueue);
             IsInMainView = CoreApplication.MainView == CoreApplication.GetCurrentView();
@@ -73,6 +80,16 @@ namespace Unigram.Navigation
 
             window.CoreWindow.ResizeStarted += OnResizeStarted;
             window.CoreWindow.ResizeCompleted += OnResizeCompleted;
+
+            var displayInformation = DisplayInformation.GetForCurrentView();
+            displayInformation.DpiChanged += OnDpiChanged;
+
+            RasterizationScale = displayInformation.LogicalDpi / 96d;
+        }
+
+        private void OnDpiChanged(DisplayInformation sender, object args)
+        {
+            RasterizationScale = sender.LogicalDpi / 96d;
         }
 
         private void OnResizeStarted(CoreWindow sender, object args)
@@ -125,20 +142,20 @@ namespace Unigram.Navigation
 
 
 
-        private int _screenCaptureDisabled;
+        private HashSet<int> _screenCaptureDisabled;
 
-        public void SetScreenCaptureEnabled(bool enabled)
+        public void SetScreenCaptureEnabled(bool enabled, int hash)
         {
             if (enabled)
             {
-                _screenCaptureDisabled = Math.Max(_screenCaptureDisabled - 1, 0);
+                _screenCaptureDisabled.Add(hash);
             }
             else
             {
-                _screenCaptureDisabled++;
+                _screenCaptureDisabled.Remove(hash);
             }
 
-            ApplicationView.GetForCurrentView().IsScreenCaptureEnabled = _screenCaptureDisabled == 0;
+            ApplicationView.GetForCurrentView().IsScreenCaptureEnabled = _screenCaptureDisabled.Count == 0;
         }
     }
 }

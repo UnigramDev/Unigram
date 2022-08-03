@@ -84,7 +84,7 @@ namespace Unigram.Services.ViewService
 
         private ViewLifetimeControl(CoreWindow newWindow)
         {
-            WindowWrapper = WindowContext.Current(Window.Current);
+            WindowWrapper = WindowContext.Current;
             Dispatcher = WindowWrapper.Dispatcher;
             Window = Window.Current;
             Id = ApplicationView.GetApplicationViewIdForWindow(newWindow);

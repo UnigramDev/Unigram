@@ -57,12 +57,12 @@ namespace Unigram.Views.Host
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            WindowContext.GetForCurrentView().AcceleratorKeyActivated += OnAcceleratorKeyActivated;
+            WindowContext.Current.AcceleratorKeyActivated += OnAcceleratorKeyActivated;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            WindowContext.GetForCurrentView().AcceleratorKeyActivated -= OnAcceleratorKeyActivated;
+            WindowContext.Current.AcceleratorKeyActivated -= OnAcceleratorKeyActivated;
         }
 
         private void OnNavigated(object sender, Windows.UI.Xaml.Navigation.NavigationEventArgs e)

@@ -14,7 +14,6 @@ using Windows.ApplicationModel.Contacts;
 using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
-using Windows.Media.SpeechRecognition;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -139,14 +138,8 @@ namespace Unigram.Common
 
 
 
-        private INavigationService _service;
-        private IActivatedEventArgs _args;
-
         public void SetActivatedArgs(IActivatedEventArgs args, INavigationService service)
         {
-            _args = args;
-            _service = service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId(_lifetime.ActiveItem.Id.ToString());
-
             UseActivatedArgs(args, service, _lifetime.ActiveItem.ProtoService.GetAuthorizationState());
         }
 
@@ -187,7 +180,7 @@ namespace Unigram.Common
         {
             if (service == null)
             {
-                service = WindowContext.GetForCurrentView().NavigationServices.FirstOrDefault();
+                service = WindowContext.Current.NavigationServices.FirstOrDefault();
             }
 
             if (service == null || args == null)
@@ -271,25 +264,6 @@ namespace Unigram.Common
                 catch
                 {
                     // It's too early?
-                }
-            }
-            else if (args is VoiceCommandActivatedEventArgs voice)
-            {
-                SpeechRecognitionResult speechResult = voice.Result;
-                string command = speechResult.RulePath[0];
-
-                if (command == "ShowAllDialogs")
-                {
-                    service.NavigateToMain(null);
-                }
-                if (command == "ShowSpecificDialog")
-                {
-                    //#TODO: Fix that this'll open a specific dialog
-                    service.NavigateToMain(null);
-                }
-                else
-                {
-                    service.NavigateToMain(null);
                 }
             }
             else if (args is ContactPanelActivatedEventArgs contact)
@@ -426,34 +400,8 @@ namespace Unigram.Common
                     root.Handle(update);
                 }
             });
-
-            //await _window.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            //{
-            //    _service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId($"{session.Id}");
-            //    UseActivatedArgs(_args, _service, update.AuthorizationState);
-            //});
         }
 
-
-
-        //private static Dictionary<int, WindowContext> _windowContext = new Dictionary<int, WindowContext>();
-        //public static WindowContext GetForCurrentView()
-        //{
-        //    var id = Windows.UI.ViewManagement.ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow);
-        //    if (_windowContext.TryGetValue(id, out WindowContext value))
-        //    {
-        //        return value;
-        //    }
-
-        //    var context = new WindowContext(null, id);
-        //    _windowContext[id] = context;
-
-        //    return context;
-        //}
-
-        public static new TLWindowContext GetForCurrentView()
-        {
-            return WindowContext.GetForCurrentView() as TLWindowContext;
-        }
+        public static new TLWindowContext Current => WindowContext.Current as TLWindowContext;
     }
 }

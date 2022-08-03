@@ -220,8 +220,7 @@ namespace Unigram.Views
         {
             try
             {
-                var windowContext = TLWindowContext.GetForCurrentView();
-                if (windowContext.ActivationMode == CoreWindowActivationMode.ActivatedInForeground)
+                if (TLWindowContext.Current.ActivationMode == CoreWindowActivationMode.ActivatedInForeground)
                 {
                     var result = await KeyCredentialManager.OpenAsync(Strings.Resources.AppName);
                     if (result.Credential != null)

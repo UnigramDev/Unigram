@@ -147,7 +147,7 @@ namespace Unigram.ViewModels.Settings
                 //ResourceContext.GetForCurrentView().Reset();
                 //ResourceContext.GetForViewIndependentUse().Reset();
 
-                //TLWindowContext.GetForCurrentView().NavigationServices.Remove(NavigationService);
+                //TLWindowContext.Current.NavigationServices.Remove(NavigationService);
                 //BootStrapper.Current.NavigationService.Reset();
 
                 foreach (var window in WindowContext.ActiveWrappers)

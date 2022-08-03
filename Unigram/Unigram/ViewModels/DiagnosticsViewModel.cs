@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td;
@@ -164,10 +163,6 @@ namespace Unigram.ViewModels
             {
                 SettingsService.Current.Diagnostics.LowLatencyGC = value;
                 RaisePropertyChanged();
-
-                GCSettings.LatencyMode = value
-                    ? GCLatencyMode.LowLatency
-                    : GCLatencyMode.Interactive;
             }
         }
 

@@ -481,7 +481,7 @@ namespace Unigram.ViewModels
 
                     if (!update.Message.IsOutgoing && Settings.Notifications.InAppSounds)
                     {
-                        if (TLWindowContext.GetForCurrentView().ActivationMode == CoreWindowActivationMode.ActivatedInForeground)
+                        if (TLWindowContext.Current.ActivationMode == CoreWindowActivationMode.ActivatedInForeground)
                         {
                             _pushService.PlaySound();
                         }

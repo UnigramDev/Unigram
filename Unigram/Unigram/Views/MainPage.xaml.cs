@@ -788,7 +788,7 @@ namespace Unigram.Views
 
             ViewModel.Aggregator.Subscribe(this);
             Window.Current.CoreWindow.CharacterReceived += OnCharacterReceived;
-            WindowContext.GetForCurrentView().AcceleratorKeyActivated += OnAcceleratorKeyActivated;
+            WindowContext.Current.AcceleratorKeyActivated += OnAcceleratorKeyActivated;
 
             OnStateChanged(null, null);
 
@@ -904,7 +904,7 @@ namespace Unigram.Views
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             Window.Current.CoreWindow.CharacterReceived -= OnCharacterReceived;
-            WindowContext.GetForCurrentView().AcceleratorKeyActivated -= OnAcceleratorKeyActivated;
+            WindowContext.Current.AcceleratorKeyActivated -= OnAcceleratorKeyActivated;
 
             var titleBar = CoreApplication.GetCurrentView().TitleBar;
             titleBar.IsVisibleChanged -= CoreTitleBar_LayoutMetricsChanged;

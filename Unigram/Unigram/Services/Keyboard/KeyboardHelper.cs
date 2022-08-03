@@ -14,7 +14,7 @@ namespace Unigram.Services.Keyboard
         private readonly WindowContext _context;
         public KeyboardHelper()
         {
-            _context = WindowContext.GetForCurrentView();
+            _context = WindowContext.Current;
             _context.AcceleratorKeyActivated += CoreDispatcher_AcceleratorKeyActivated;
 
             _window = Window.Current.CoreWindow;

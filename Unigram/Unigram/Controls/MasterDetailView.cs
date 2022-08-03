@@ -44,7 +44,7 @@ namespace Unigram.Controls
 
         public void Initialize(string key, Frame parent, int session)
         {
-            var service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId(key + session) as NavigationService;
+            var service = WindowContext.Current.NavigationServices.GetByFrameId(key + session) as NavigationService;
             if (service == null)
             {
                 service = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, BootStrapper.ExistingContent.Exclude, session, key + session, false) as NavigationService;

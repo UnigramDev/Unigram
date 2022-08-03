@@ -1400,7 +1400,7 @@ namespace Unigram.Controls.Cells
                     return;
                 }
 
-                var service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId($"Main{_protoService.SessionId}") as NavigationService;
+                var service = WindowContext.Current.NavigationServices.GetByFrameId($"Main{_protoService.SessionId}") as NavigationService;
                 if (service != null)
                 {
                     App.DataPackages[chat.Id] = e.DataView;

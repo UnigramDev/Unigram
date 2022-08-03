@@ -134,8 +134,8 @@ namespace Unigram.Services
             item.Aggregator.Unsubscribe(item);
             //WindowContext.Unsubscribe(item);
 
-            WindowContext.GetForCurrentView().NavigationServices.RemoveByFrameId($"{item.Id}");
-            WindowContext.GetForCurrentView().NavigationServices.RemoveByFrameId($"Main{item.Id}");
+            WindowContext.Current.NavigationServices.RemoveByFrameId($"{item.Id}");
+            WindowContext.Current.NavigationServices.RemoveByFrameId($"Main{item.Id}");
 
             return active;
         }

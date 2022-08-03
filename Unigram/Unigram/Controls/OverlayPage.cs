@@ -111,7 +111,7 @@ namespace Unigram.Controls
 
         protected void UnmaskTitleAndStatusBar()
         {
-            TLWindowContext.GetForCurrentView().UpdateTitleBar();
+            TLWindowContext.Current.UpdateTitleBar();
         }
 
         public bool IsOpen

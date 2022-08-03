@@ -9,10 +9,10 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using Unigram.Common;
+using Unigram.Navigation;
 using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.Graphics;
-using Windows.Graphics.Display;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
@@ -467,7 +467,7 @@ namespace Unigram.Controls
             if (decodeFrameType == DecodePixelType.Logical)
             {
                 // TODO: subscribe for DPI changed event
-                var dpi = DisplayInformation.GetForCurrentView().LogicalDpi / 96.0f;
+                var dpi = WindowContext.Current.RasterizationScale;
 
                 _decodeFrameType = decodeFrameType;
                 _logicalSize = new SizeInt32

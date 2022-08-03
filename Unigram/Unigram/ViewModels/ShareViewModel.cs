@@ -434,7 +434,7 @@ namespace Unigram.ViewModels
                 {
                     response = await ProtoService.SendAsync(new SendBotStartMessage(_inviteBot.Id, chat.Id, _inviteToken));
 
-                    var service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId("Main" + ProtoService.SessionId);
+                    var service = WindowContext.Current.NavigationServices.GetByFrameId("Main" + ProtoService.SessionId);
                     if (service != null)
                     {
                         service.NavigateToChat(chat, accessToken: _inviteToken);
@@ -449,7 +449,7 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                var service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId("Main" + ProtoService.SessionId);
+                var service = WindowContext.Current.NavigationServices.GetByFrameId("Main" + ProtoService.SessionId);
                 if (service != null)
                 {
                     service.NavigateToChat(chat, state: NavigationState.GetSwitchQuery(_switchInline.Query, _switchInlineBot.Id));
@@ -465,7 +465,7 @@ namespace Unigram.ViewModels
 
                 App.DataPackages[chat.Id] = _package;
 
-                var service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId("Main" + ProtoService.SessionId);
+                var service = WindowContext.Current.NavigationServices.GetByFrameId("Main" + ProtoService.SessionId);
                 if (service != null)
                 {
                     service.NavigateToChat(chat);

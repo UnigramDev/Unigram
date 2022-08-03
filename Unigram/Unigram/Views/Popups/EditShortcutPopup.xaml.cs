@@ -30,12 +30,12 @@ namespace Unigram.Views.Popups
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            WindowContext.GetForCurrentView().AcceleratorKeyActivated += OnAcceleratorKeyActivated;
+            WindowContext.Current.AcceleratorKeyActivated += OnAcceleratorKeyActivated;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            WindowContext.GetForCurrentView().AcceleratorKeyActivated -= OnAcceleratorKeyActivated;
+            WindowContext.Current.AcceleratorKeyActivated -= OnAcceleratorKeyActivated;
         }
 
         private void OnAcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)

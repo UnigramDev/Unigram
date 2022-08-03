@@ -326,7 +326,7 @@ namespace Unigram
                 }
             }
 
-            var navService = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId($"{TLContainer.Current.Lifetime.ActiveItem.Id}");
+            var navService = WindowContext.Current.NavigationServices.GetByFrameId($"{TLContainer.Current.Lifetime.ActiveItem.Id}");
             var service = TLContainer.Current.Resolve<IProtoService>();
             if (service == null)
             {
@@ -339,7 +339,7 @@ namespace Unigram
                 return;
             }
 
-            TLWindowContext.GetForCurrentView().SetActivatedArgs(args, navService);
+            TLWindowContext.Current.SetActivatedArgs(args, navService);
             ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(320, 500));
             //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 

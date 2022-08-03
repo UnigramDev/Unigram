@@ -1,5 +1,6 @@
 ﻿using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Navigation;
 using Unigram.ViewModels;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -60,7 +61,13 @@ namespace Unigram.Controls.Messages.Content
 
             if (file.Local.IsFileExisting())
             {
-                Source = await PlaceholderHelper.GetWebPFrameAsync(file.Local.Path);
+                var size = 180 * WindowContext.Current.RasterizationScale;
+                if (size > 512)
+                {
+                    size = 512;
+                }
+
+                Source = await PlaceholderHelper.GetWebPFrameAsync(file.Local.Path, size);
                 ElementCompositionPreview.SetElementChildVisual(this, null);
 
                 UpdateManager.Unsubscribe(this, ref _fileToken);

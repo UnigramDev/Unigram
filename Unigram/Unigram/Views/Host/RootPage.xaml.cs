@@ -112,7 +112,7 @@ namespace Unigram.Views.Host
 
         public void Create()
         {
-            var premium = false;
+            var premium = 0;
             var count = 0;
 
             foreach (var session in TLContainer.Current.Lifetime.Items)
@@ -124,18 +124,15 @@ namespace Unigram.Views.Host
 
                 if (session.ProtoService.Options.IsPremium)
                 {
-                    premium = true;
+                    premium++;
                 }
 
                 count++;
             }
 
-            if (count > 3 && premium)
-            {
-                // Should never happen
-                return;
-            }
-            else if (count > 2)
+            var limit = 3;
+
+            if (count >= limit + premium)
             {
                 _navigationService.ShowLimitReached(new PremiumLimitTypeConnectedAccounts());
                 return;
@@ -155,7 +152,7 @@ namespace Unigram.Views.Host
 
             Navigation.IsPaneOpen = false;
 
-            var service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId($"{session.Id}") as NavigationService;
+            var service = WindowContext.Current.NavigationServices.GetByFrameId($"{session.Id}") as NavigationService;
             if (service == null)
             {
                 service = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Attach, BootStrapper.ExistingContent.Exclude, new Frame(), session.Id, $"{session.Id}", true) as NavigationService;
@@ -209,14 +206,14 @@ namespace Unigram.Views.Host
                 content.Dispose();
             }
 
-            var detail = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId($"Main{master.FrameFacade.FrameId}");
+            var detail = WindowContext.Current.NavigationServices.GetByFrameId($"Main{master.FrameFacade.FrameId}");
             if (detail != null)
             {
                 detail.Navigate(typeof(BlankPage));
                 detail.ClearCache();
             }
 
-            var corpus = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId($"Profile{master.FrameFacade.FrameId}");
+            var corpus = WindowContext.Current.NavigationServices.GetByFrameId($"Profile{master.FrameFacade.FrameId}");
             if (corpus != null)
             {
                 corpus.Navigate(typeof(BlankPage));
@@ -227,9 +224,9 @@ namespace Unigram.Views.Host
             master.Frame.Navigated -= OnNavigated;
             master.Frame.Navigate(typeof(BlankPage));
 
-            WindowContext.GetForCurrentView().NavigationServices.Remove(master);
-            WindowContext.GetForCurrentView().NavigationServices.Remove(detail);
-            WindowContext.GetForCurrentView().NavigationServices.Remove(corpus);
+            WindowContext.Current.NavigationServices.Remove(master);
+            WindowContext.Current.NavigationServices.Remove(detail);
+            WindowContext.Current.NavigationServices.Remove(corpus);
         }
 
         private void OnNavigating(object sender, NavigatingCancelEventArgs e)
