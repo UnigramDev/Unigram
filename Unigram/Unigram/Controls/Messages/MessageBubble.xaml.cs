@@ -13,6 +13,7 @@ using Unigram.Native.Composition;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.Foundation;
+using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Text;
@@ -45,11 +46,6 @@ namespace Unigram.Controls.Messages
         public MessageBubble()
         {
             DefaultStyleKey = typeof(MessageBubble);
-        }
-
-        ~MessageBubble()
-        {
-            System.Diagnostics.Debug.WriteLine("Dio cane");
         }
 
         public void UpdateQuery(string text)
@@ -108,7 +104,6 @@ namespace Unigram.Controls.Messages
             Media = GetTemplateChild(nameof(Media)) as Border;
             Footer = GetTemplateChild(nameof(Footer)) as MessageFooter;
             Reactions = GetTemplateChild(nameof(Reactions)) as ReactionsPanel;
-            MediaReactions = GetTemplateChild(nameof(MediaReactions)) as ReactionsPanel;
 
             ContentPanel.SizeChanged += OnSizeChanged;
             Message.ContextMenuOpening += Message_ContextMenuOpening;
@@ -172,6 +167,19 @@ namespace Unigram.Controls.Messages
             {
                 Message.Blocks.Clear();
                 Media.Child = null;
+                Reactions.UpdateMessageReactions(null);
+
+                if (CustomEmoji != null)
+                {
+                    XamlMarkupHelper.UnloadObject(CustomEmoji);
+                    MediaReactions = null;
+                }
+
+                if (MediaReactions != null)
+                {
+                    XamlMarkupHelper.UnloadObject(MediaReactions);
+                    MediaReactions = null;
+                }
             }
 
             if (_highlight != null)
@@ -1154,12 +1162,19 @@ namespace Unigram.Controls.Messages
             if (content is MessageSticker or MessageDice or MessageVideoNote or MessageBigEmoji || (media == footer && IsFullMedia(content)))
             {
                 Reactions.UpdateMessageReactions(null);
+
+                MediaReactions ??= GetTemplateChild(nameof(MediaReactions)) as ReactionsPanel;
                 MediaReactions.UpdateMessageReactions(message, animate);
             }
             else
             {
                 Reactions.UpdateMessageReactions(message, animate);
-                MediaReactions.UpdateMessageReactions(null);
+
+                if (MediaReactions != null)
+                {
+                    XamlMarkupHelper.UnloadObject(MediaReactions);
+                    MediaReactions = null;
+                }
             }
         }
 

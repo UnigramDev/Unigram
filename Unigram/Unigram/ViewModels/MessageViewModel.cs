@@ -38,7 +38,10 @@ namespace Unigram.ViewModels
                 _updateSelection.MarkForDeletion();
             }
 
-            _updateSelection = new WeakAction(target, action);
+            if (target != null)
+            {
+                _updateSelection = new WeakAction(target, action);
+            }
         }
 
         public IPlaybackService PlaybackService => _playbackService;

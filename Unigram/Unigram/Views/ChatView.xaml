@@ -268,17 +268,6 @@
                 </messages:MessageBubble>
             </messages:MessageSelector>
         </DataTemplate>
-
-        <DataTemplate x:Key="ChatFriendMessageTemplate">
-            <messages:MessageSelector>
-                <messages:MessageBubble x:Name="Bubble"
-                                        HorizontalAlignment="Left">
-                    <FrameworkElement.Resources>
-                        <common:ThemeIncoming />
-                    </FrameworkElement.Resources>
-                </messages:MessageBubble>
-            </messages:MessageSelector>
-        </DataTemplate>
     </UserControl.Resources>
 
     <Grid x:Name="LayoutRoot"
@@ -1530,7 +1519,7 @@
             <controls:GlyphButton x:Name="ButtonManage"
                                   Glyph="&#xE711;"
                                   Command="{x:Bind ViewModel.MessagesUnselectCommand}" />
-            
+
             <controls:NumericTextBlock x:Name="ManageCount"
                                        Text="{x:Bind ConvertSelection(ViewModel.SelectedCount), Mode=OneWay}"
                                        TextStyle="{StaticResource BaseTextBlockStyle}"

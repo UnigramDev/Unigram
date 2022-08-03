@@ -110,14 +110,14 @@ namespace Unigram.Controls.Messages
                 }
             }
 
-            var around = value.AroundAnimation.StickerValue;
-            if (around.Local.CanBeDownloaded && !around.Local.IsDownloadingActive && !around.Local.IsFileExisting())
+            var around = value.AroundAnimation?.StickerValue;
+            if (around != null && around.Local.CanBeDownloaded && !around.Local.IsDownloadingActive && !around.Local.IsFileExisting())
             {
                 _message.ProtoService.DownloadFile(around.Id, 32);
             }
 
-            var center = value.CenterAnimation.StickerValue;
-            if (center.Id == _presenterId)
+            var center = value.CenterAnimation?.StickerValue;
+            if (center == null || center.Id == _presenterId)
             {
                 return;
             }
@@ -238,8 +238,13 @@ namespace Unigram.Controls.Messages
                 return;
             }
 
-            var center = reaction.CenterAnimation.StickerValue;
-            var around = reaction.AroundAnimation.StickerValue;
+            var center = reaction.CenterAnimation?.StickerValue;
+            var around = reaction.AroundAnimation?.StickerValue;
+
+            if (center == null || around == null)
+            {
+                return;
+            }
 
             if (center.Local.IsFileExisting() && around.Local.IsFileExisting())
             {

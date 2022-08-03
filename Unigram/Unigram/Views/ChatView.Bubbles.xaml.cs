@@ -590,14 +590,9 @@ namespace Unigram.Views
                 var added = _typeToItemHashSetMapping[tag].Add(args.ItemContainer);
 
                 var test = args.ItemContainer.ContentTemplateRoot as FrameworkElement;
-                if (test is not MessageBubble)
+                if (test is MessageSelector selettore)
                 {
-                    test = test.FindName("Bubble") as FrameworkElement;
-                }
-
-                if (test is MessageBubble bubbu)
-                {
-                    bubbu.UnregisterEvents();
+                    selettore.Unload();
                 }
 
                 if (_sizeChangedHandler != null)
@@ -789,32 +784,16 @@ namespace Unigram.Views
                 return "ServiceMessageTemplate";
             }
 
-            if (message.IsChannelPost)
+            if (message.IsChannelPost || message.IsSaved)
             {
                 return "FriendMessageTemplate";
-            }
-            else if (message.IsSaved)
-            {
-                return "ChatFriendMessageTemplate";
             }
             else if (message.IsOutgoing)
             {
                 return "UserMessageTemplate";
             }
 
-            var chat = message.GetChat();
-            if (chat != null && (chat.Type is ChatTypeSupergroup || chat.Type is ChatTypeBasicGroup))
-            {
-                return "ChatFriendMessageTemplate";
-            }
-
             return "FriendMessageTemplate";
         }
-    }
-
-    public interface IGifPlayback
-    {
-        void Play(MessageViewModel message);
-        void Play(IEnumerable<MessageViewModel> items, bool auto);
     }
 }

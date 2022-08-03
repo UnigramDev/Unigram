@@ -30,6 +30,25 @@ namespace Unigram.Controls.Messages
             DefaultStyleKey = typeof(MessageSelector);
         }
 
+        public void Unload()
+        {
+            if (Content is MessageBubble bubble && !bubble.IsLoaded)
+            {
+                bubble.UpdateMessage(null);
+                bubble.UnregisterEvents();
+            }
+
+            if (IsLoaded)
+            {
+                return;
+            }
+
+            _message?.UpdateSelectionCallback(null, null);
+            _message = null;
+
+            _parent = null;
+        }
+
         private void CreateIcon()
         {
             if (Icon != null || !_isSelectionEnabled)
