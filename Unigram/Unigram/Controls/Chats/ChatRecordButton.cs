@@ -905,7 +905,7 @@ namespace Unigram.Controls.Chats
                     var profile = MediaEncodingProfile.CreateMp4(VideoEncodingQuality.Vga);
                     profile.Video.Width = (uint)length;
                     profile.Video.Height = (uint)length;
-                    profile.Video.Bitrate = (uint)videoBitrate * 100;
+                    profile.Video.Bitrate = (uint)videoBitrate * 1000;
                     profile.Audio.Bitrate = (uint)audioBitrate * 1000;
 
                     try
