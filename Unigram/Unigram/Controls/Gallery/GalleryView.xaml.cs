@@ -14,7 +14,6 @@ using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Gallery;
 using Unigram.Views;
 using Windows.Foundation;
-using Windows.Graphics.Display;
 using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.System.Display;
@@ -328,6 +327,11 @@ namespace Unigram.Controls.Gallery
                 ApplicationView.GetForCurrentView().ExitFullScreenMode();
             }
 
+            if (ViewModel?.HasProtectedContent == true)
+            {
+                WindowContext.Current.SetScreenCaptureEnabled(true, ViewModel.GetHashCode());
+            }
+
             Unload();
             Dispose();
 
@@ -525,7 +529,7 @@ namespace Unigram.Controls.Gallery
         {
             if (item != null && item.IsVideo && !item.IsLoop)
             {
-                if (item is GalleryMessage message && message.IsHot)
+                if (item is GalleryMessage message && message.IsProtected)
                 {
                     return Visibility.Collapsed;
                 }
@@ -588,7 +592,7 @@ namespace Unigram.Controls.Gallery
                     _mediaPlayerElement.SetMediaPlayer(_mediaPlayer);
                 }
 
-                var dpi = DisplayInformation.GetForCurrentView().LogicalDpi / 96.0f;
+                var dpi = WindowContext.Current.RasterizationScale;
                 _mediaPlayer.SetSurfaceSize(new Size(parent.ActualWidth * dpi, parent.ActualHeight * dpi));
 
                 _surface = parent;
@@ -675,7 +679,7 @@ namespace Unigram.Controls.Gallery
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            WindowContext.GetForCurrentView().AcceleratorKeyActivated += OnAcceleratorKeyActivated;
+            WindowContext.Current.AcceleratorKeyActivated += OnAcceleratorKeyActivated;
         }
 
         private void Load(object parameter)
@@ -692,7 +696,7 @@ namespace Unigram.Controls.Gallery
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             Unload();
-            WindowContext.GetForCurrentView().AcceleratorKeyActivated -= OnAcceleratorKeyActivated;
+            WindowContext.Current.AcceleratorKeyActivated -= OnAcceleratorKeyActivated;
         }
 
         private void Unload()

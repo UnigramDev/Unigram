@@ -13,6 +13,8 @@ namespace Unigram.ViewModels.Gallery
     {
         private readonly IStorageService _storageService;
 
+        private bool _hasProtectedContent;
+
         public GalleryViewModelBase(IProtoService protoService, IStorageService storageService, IEventAggregator aggregator)
             : base(protoService, protoService, null, aggregator)
         {
@@ -40,6 +42,8 @@ namespace Unigram.ViewModels.Gallery
         //    // in some situations where base one might be null.
         //    Execute.BeginOnUIThread(action);
         //}
+
+        public bool HasProtectedContent => _hasProtectedContent;
 
         public virtual int Position
         {
@@ -125,6 +129,17 @@ namespace Unigram.ViewModels.Gallery
         protected virtual void OnSelectedItemChanged(GalleryContent item)
         {
             RaisePropertyChanged(nameof(Position));
+
+            if (item.IsProtected && !_hasProtectedContent)
+            {
+                _hasProtectedContent = true;
+                WindowContext.Current.SetScreenCaptureEnabled(false, GetHashCode());
+            }
+            else if (_hasProtectedContent && !item.IsProtected)
+            {
+                _hasProtectedContent = false;
+                WindowContext.Current.SetScreenCaptureEnabled(true, GetHashCode());
+            }
         }
 
         public virtual bool CanDelete
@@ -139,7 +154,7 @@ namespace Unigram.ViewModels.Gallery
         {
             get
             {
-                if (SelectedItem is GalleryMessage message && message.IsHot)
+                if (SelectedItem is GalleryMessage message && message.IsProtected)
                 {
                     return false;
                 }
@@ -186,7 +201,7 @@ namespace Unigram.ViewModels.Gallery
                 return;
             }
 
-            var service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId("Main" + ProtoService.SessionId);
+            var service = WindowContext.Current.NavigationServices.GetByFrameId("Main" + ProtoService.SessionId);
             if (service != null)
             {
                 service.NavigateToChat(message.ChatId, message: message.Id);

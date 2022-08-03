@@ -7,19 +7,24 @@ namespace Unigram.ViewModels.Gallery
     public class GalleryMessage : GalleryContent
     {
         protected readonly Message _message;
+        protected readonly bool _hasProtectedContent;
 
         public GalleryMessage(IProtoService protoService, Message message)
             : base(protoService)
         {
             _message = message;
+
+            var chat = protoService.GetChat(message.ChatId);
+            if (chat != null)
+            {
+                _hasProtectedContent = chat.Type is ChatTypeSecret || chat.HasProtectedContent;
+            }
         }
 
         public Message Message => _message;
 
         public long ChatId => _message.ChatId;
         public long Id => _message.Id;
-
-        public bool IsHot => _message.IsSecret();
 
         public override File GetFile()
         {
@@ -135,9 +140,11 @@ namespace Unigram.ViewModels.Gallery
 
 
         public override bool CanView => true;
-        public override bool CanCopy => !_message.IsSecret() && IsPhoto;
-        public override bool CanSave => !_message.IsSecret();
+        public override bool CanCopy => !_hasProtectedContent && !_message.IsSecret() && IsPhoto;
+        public override bool CanSave => !_hasProtectedContent && !_message.IsSecret();
         public override bool CanShare => CanSave;
+
+        public override bool IsProtected => _hasProtectedContent || _message.IsSecret();
 
         public override int Duration
         {

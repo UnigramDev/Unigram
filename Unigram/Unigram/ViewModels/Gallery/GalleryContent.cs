@@ -44,6 +44,8 @@ namespace Unigram.ViewModels.Gallery
         public virtual bool CanSave { get; private set; }
         public virtual bool CanCopy { get; private set; }
 
+        public virtual bool IsProtected { get; private set; } = false;
+
         public virtual InputMessageContent ToInput()
         {
             return null;
