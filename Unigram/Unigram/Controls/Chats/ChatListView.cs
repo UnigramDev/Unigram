@@ -147,7 +147,6 @@ namespace Unigram.Controls.Chats
                     else
                     {
                         SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
-                        Logs.Logger.Debug(Logs.LogTarget.Chat, "Setting scroll mode to KeepLastItemInView");
                     }
                 }
             }
@@ -220,7 +219,7 @@ namespace Unigram.Controls.Chats
             return new ChatListViewItem(this);
         }
 
-        public async Task ScrollToItem(object item, VerticalAlignment alignment, bool highlight, double? pixel = null, ScrollIntoViewAlignment direction = ScrollIntoViewAlignment.Leading, bool? disableAnimation = null)
+        public async Task ScrollToItem(MessageViewModel item, VerticalAlignment alignment, bool highlight, double? pixel = null, ScrollIntoViewAlignment direction = ScrollIntoViewAlignment.Leading, bool? disableAnimation = null)
         {
             var scrollViewer = ScrollingHost;
             if (scrollViewer == null)
@@ -232,19 +231,9 @@ namespace Unigram.Controls.Chats
             }
 
             _programmaticScrolling = true;
-
-            ScrollIntoView(item, direction);
-            await this.UpdateLayoutAsync();
+            await ScrollIntoViewAsync(item, direction);
 
             var selectorItem = ContainerFromItem(item) as SelectorItem;
-            if (selectorItem == null)
-            {
-                ScrollIntoView(item, direction);
-                await this.UpdateLayoutAsync();
-
-                selectorItem = ContainerFromItem(item) as SelectorItem;
-            }
-
             if (selectorItem == null)
             {
                 _programmaticScrolling = _programmaticExternal = false;
@@ -302,6 +291,45 @@ namespace Unigram.Controls.Chats
 
             _programmaticScrolling = _programmaticExternal = false;
             ViewVisibleMessages?.Invoke(true);
+        }
+
+        public async Task ScrollIntoViewAsync(MessageViewModel item, ScrollIntoViewAlignment alignment)
+        {
+            var index = ViewModel.Items.IndexOf(item);
+            var stack = ItemsStack;
+
+            if (stack == null || index >= ItemsStack.FirstCacheIndex && index <= ItemsStack.LastCacheIndex)
+            {
+                return;
+            }
+
+            var tcs = new TaskCompletionSource<object>();
+
+            void layoutUpdated(object s1, object e1)
+            {
+                tcs.TrySetResult(null);
+            }
+
+            void viewChanged(object s1, ScrollViewerViewChangedEventArgs e1)
+            {
+                if (e1.IsIntermediate is false)
+                {
+                    LayoutUpdated += layoutUpdated;
+                    ScrollingHost.ViewChanged -= viewChanged;
+                }
+            }
+
+            try
+            {
+                ScrollIntoView(item, alignment);
+                ScrollingHost.ViewChanged += viewChanged;
+
+                await tcs.Task;
+            }
+            finally
+            {
+                LayoutUpdated -= layoutUpdated;
+            }
         }
 
         #region Selection
