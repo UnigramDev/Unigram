@@ -62,7 +62,7 @@ namespace Unigram.ViewModels
 
         public override async Task NavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            await NavigatedToAsync(parameter, mode, state);
+            await OnNavigatedToAsync(parameter, mode, state);
             await Task.WhenAll(Children.Select(x => x.NavigatedToAsync(parameter, mode, state)));
         }
 
@@ -70,7 +70,7 @@ namespace Unigram.ViewModels
         {
             Unsubscribe();
 
-            await base.OnNavigatedFromAsync(suspensionState, suspending);
+            await OnNavigatedFromAsync(suspensionState, suspending);
             await Task.WhenAll(Children.Select(x => x.NavigatedFromAsync(suspensionState, suspending)));
         }
 

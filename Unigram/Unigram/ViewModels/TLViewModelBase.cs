@@ -14,8 +14,6 @@ namespace Unigram.ViewModels
         private readonly ISettingsService _settingsService;
         private readonly IEventAggregator _aggregator;
 
-        private bool _subscribed;
-
         public TLViewModelBase(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
         {
             _protoService = protoService;
@@ -46,13 +44,21 @@ namespace Unigram.ViewModels
 
         public virtual Task NavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            //Subscribe();
+            if (this is IHandle)
+            {
+                //Subscribe();
+            }
+
             return OnNavigatedToAsync(parameter, mode, state);
         }
 
         public virtual Task NavigatedFromAsync(NavigationState suspensionState, bool suspending)
         {
-            Unsubscribe();
+            //if (this is IHandle)
+            {
+                Unsubscribe();
+            }
+
             return OnNavigatedFromAsync(suspensionState, suspending);
         }
 
