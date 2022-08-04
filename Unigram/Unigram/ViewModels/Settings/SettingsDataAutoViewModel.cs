@@ -17,7 +17,7 @@ namespace Unigram.ViewModels.Settings
             SendCommand = new RelayCommand(SendExecute);
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode navigationMode, NavigationState state)
+        protected override Task OnNavigatedToAsync(object parameter, NavigationMode navigationMode, NavigationState state)
         {
             if (parameter is AutoDownloadType type)
             {

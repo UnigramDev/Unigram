@@ -24,12 +24,12 @@ using Windows.UI.Xaml.Navigation;
 namespace Unigram.ViewModels
 {
     public class MainViewModel : TLMultipleViewModelBase,
-        IHandle<UpdateServiceNotification>,
-        IHandle<UpdateUnreadMessageCount>,
-        IHandle<UpdateUnreadChatCount>,
-        IHandle<UpdateChatFilters>,
-        IHandle<UpdateAppVersion>,
-        IHandle<UpdateWindowActivated>,
+        //IHandle<UpdateServiceNotification>,
+        //IHandle<UpdateUnreadMessageCount>,
+        //IHandle<UpdateUnreadChatCount>,
+        //IHandle<UpdateChatFilters>,
+        //IHandle<UpdateAppVersion>,
+        //IHandle<UpdateWindowActivated>,
         IDisposable
     {
         private readonly INotificationsService _pushService;
@@ -91,7 +91,7 @@ namespace Unigram.ViewModels
             // Any additional child
             Children.Add(_voipService as TLViewModelBase);
 
-            aggregator.Subscribe(this);
+            Subscribe();
 
             ReturnToCallCommand = new RelayCommand(ReturnToCallExecute);
 
@@ -368,7 +368,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             //BeginOnUIThread(() => Calls.OnNavigatedToAsync(parameter, mode, state));
             //BeginOnUIThread(() => Settings.OnNavigatedToAsync(parameter, mode, state));
@@ -394,6 +394,16 @@ namespace Unigram.ViewModels
             }
 
             return base.OnNavigatedToAsync(parameter, mode, state);
+        }
+
+        public override void Subscribe()
+        {
+            Aggregator.Subscribe<UpdateServiceNotification>(this, Handle)
+                .Subscribe<UpdateUnreadMessageCount>(Handle)
+                .Subscribe<UpdateUnreadChatCount>(Handle)
+                .Subscribe<UpdateChatFilters>(Handle)
+                .Subscribe<UpdateAppVersion>(Handle)
+                .Subscribe<UpdateWindowActivated>(Handle);
         }
 
         public ChatListViewModel Chats { get; private set; }
@@ -463,7 +473,7 @@ namespace Unigram.ViewModels
         private async void FilterAddExecute(ChatFilterViewModel filter)
         {
             var viewModel = TLContainer.Current.Resolve<FolderViewModel>();
-            await viewModel.OnNavigatedToAsync(filter.ChatFilterId, NavigationMode.New, null);
+            await viewModel.NavigatedToAsync(filter.ChatFilterId, NavigationMode.New, null);
             await viewModel.AddIncludeAsync();
             await viewModel.SendAsync();
         }

@@ -14,11 +14,11 @@ using Windows.UI.Xaml.Navigation;
 namespace Unigram.ViewModels.Supergroups
 {
     public abstract class SupergroupEditViewModelBase : TLViewModelBase,
-        IDelegable<ISupergroupEditDelegate>,
-        IHandle<UpdateSupergroup>,
-        IHandle<UpdateSupergroupFullInfo>,
-        IHandle<UpdateBasicGroup>,
-        IHandle<UpdateBasicGroupFullInfo>
+        IDelegable<ISupergroupEditDelegate>
+        //IHandle<UpdateSupergroup>,
+        //IHandle<UpdateSupergroupFullInfo>,
+        //IHandle<UpdateBasicGroup>,
+        //IHandle<UpdateBasicGroupFullInfo>
     {
         public ISupergroupEditDelegate Delegate { get; set; }
 
@@ -68,7 +68,7 @@ namespace Unigram.ViewModels.Supergroups
 
         public MvxObservableCollection<Chat> AdminedPublicChannels { get; private set; }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var chatId = (long)parameter;
 
@@ -80,7 +80,7 @@ namespace Unigram.ViewModels.Supergroups
                 return Task.CompletedTask;
             }
 
-            Aggregator.Subscribe(this);
+            Subscribe();
             Delegate?.UpdateChat(chat);
 
             if (chat.Type is ChatTypeSupergroup super)
@@ -126,10 +126,12 @@ namespace Unigram.ViewModels.Supergroups
             return Task.CompletedTask;
         }
 
-        public override Task OnNavigatedFromAsync(NavigationState pageState, bool suspending)
+        public override void Subscribe()
         {
-            Aggregator.Unsubscribe(this);
-            return Task.CompletedTask;
+            Aggregator.Subscribe<UpdateSupergroup>(this, Handle)
+                .Subscribe<UpdateSupergroupFullInfo>(Handle)
+                .Subscribe<UpdateBasicGroup>(Handle)
+                .Subscribe<UpdateBasicGroupFullInfo>(Handle);
         }
 
         public void Handle(UpdateSupergroup update)

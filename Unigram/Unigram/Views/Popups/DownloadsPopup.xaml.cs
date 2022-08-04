@@ -29,12 +29,12 @@ namespace Unigram.Views.Popups
 
         private void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
         {
-            _ = ViewModel.OnNavigatedToAsync(null, default, null);
+            _ = ViewModel.NavigatedToAsync(null, default, null);
         }
 
         private void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
         {
-            _ = ViewModel.OnNavigatedFromAsync(null, false);
+            _ = ViewModel.NavigatedFromAsync(null, false);
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

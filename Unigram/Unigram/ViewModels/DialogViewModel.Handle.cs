@@ -15,55 +15,100 @@ using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Unigram.ViewModels
 {
-    public partial class DialogViewModel :
-        IHandle<UpdateWindowActivated>,
-        IHandle<UpdateChatPermissions>,
-        IHandle<UpdateChatReplyMarkup>,
-        IHandle<UpdateChatUnreadMentionCount>,
-        IHandle<UpdateChatUnreadReactionCount>,
-        IHandle<UpdateChatReadOutbox>,
-        IHandle<UpdateChatReadInbox>,
-        IHandle<UpdateChatDraftMessage>,
-        IHandle<UpdateChatDefaultDisableNotification>,
-        IHandle<UpdateChatMessageSender>,
-        IHandle<UpdateChatActionBar>,
-        IHandle<UpdateChatHasScheduledMessages>,
-        IHandle<UpdateChatVideoChat>,
-        IHandle<UpdateChatPendingJoinRequests>,
+    public partial class DialogViewModel
+        //IHandle<UpdateWindowActivated>,
+        //IHandle<UpdateChatPermissions>,
+        //IHandle<UpdateChatReplyMarkup>,
+        //IHandle<UpdateChatUnreadMentionCount>,
+        //IHandle<UpdateChatUnreadReactionCount>,
+        //IHandle<UpdateChatReadOutbox>,
+        //IHandle<UpdateChatReadInbox>,
+        //IHandle<UpdateChatDraftMessage>,
+        //IHandle<UpdateChatDefaultDisableNotification>,
+        //IHandle<UpdateChatMessageSender>,
+        //IHandle<UpdateChatActionBar>,
+        //IHandle<UpdateChatHasScheduledMessages>,
+        //IHandle<UpdateChatVideoChat>,
+        //IHandle<UpdateChatPendingJoinRequests>,
 
-        IHandle<UpdateChatAction>,
+        //IHandle<UpdateChatAction>,
 
-        IHandle<UpdateChatLastMessage>,
-        IHandle<UpdateNewMessage>,
-        IHandle<UpdateDeleteMessages>,
+        //IHandle<UpdateChatLastMessage>,
+        //IHandle<UpdateNewMessage>,
+        //IHandle<UpdateDeleteMessages>,
 
-        IHandle<UpdateMessageContent>,
-        IHandle<UpdateMessageContentOpened>,
-        IHandle<UpdateMessageMentionRead>,
-        IHandle<UpdateMessageUnreadReactions>,
-        IHandle<UpdateMessageEdited>,
-        IHandle<UpdateMessageInteractionInfo>,
-        IHandle<UpdateMessageIsPinned>,
-        IHandle<UpdateMessageSendFailed>,
-        IHandle<UpdateMessageSendSucceeded>,
-        IHandle<UpdateAnimatedEmojiMessageClicked>,
+        //IHandle<UpdateMessageContent>,
+        //IHandle<UpdateMessageContentOpened>,
+        //IHandle<UpdateMessageMentionRead>,
+        //IHandle<UpdateMessageUnreadReactions>,
+        //IHandle<UpdateMessageEdited>,
+        //IHandle<UpdateMessageInteractionInfo>,
+        //IHandle<UpdateMessageIsPinned>,
+        //IHandle<UpdateMessageSendFailed>,
+        //IHandle<UpdateMessageSendSucceeded>,
+        //IHandle<UpdateAnimatedEmojiMessageClicked>,
 
-        IHandle<UpdateUser>,
-        IHandle<UpdateUserFullInfo>,
-        IHandle<UpdateSecretChat>,
-        IHandle<UpdateBasicGroup>,
-        IHandle<UpdateBasicGroupFullInfo>,
-        IHandle<UpdateSupergroup>,
-        IHandle<UpdateSupergroupFullInfo>,
-        IHandle<UpdateUserStatus>,
-        IHandle<UpdateChatTitle>,
-        IHandle<UpdateChatPhoto>,
-        IHandle<UpdateChatTheme>,
-        IHandle<UpdateChatNotificationSettings>,
-        IHandle<UpdateChatOnlineMemberCount>,
+        //IHandle<UpdateUser>,
+        //IHandle<UpdateUserFullInfo>,
+        //IHandle<UpdateSecretChat>,
+        //IHandle<UpdateBasicGroup>,
+        //IHandle<UpdateBasicGroupFullInfo>,
+        //IHandle<UpdateSupergroup>,
+        //IHandle<UpdateSupergroupFullInfo>,
+        //IHandle<UpdateUserStatus>,
+        //IHandle<UpdateChatTitle>,
+        //IHandle<UpdateChatPhoto>,
+        //IHandle<UpdateChatTheme>,
+        //IHandle<UpdateChatNotificationSettings>,
+        //IHandle<UpdateChatOnlineMemberCount>,
 
-        IHandle<UpdateGroupCall>
+        //IHandle<UpdateGroupCall>
     {
+        public override void Subscribe()
+        {
+            Aggregator.Subscribe<UpdateWindowActivated>(this, Handle)
+                .Subscribe<UpdateChatPermissions>(Handle)
+                .Subscribe<UpdateChatReplyMarkup>(Handle)
+                .Subscribe<UpdateChatUnreadMentionCount>(Handle)
+                .Subscribe<UpdateChatUnreadReactionCount>(Handle)
+                .Subscribe<UpdateChatReadOutbox>(Handle)
+                .Subscribe<UpdateChatReadInbox>(Handle)
+                .Subscribe<UpdateChatDraftMessage>(Handle)
+                .Subscribe<UpdateChatDefaultDisableNotification>(Handle)
+                .Subscribe<UpdateChatMessageSender>(Handle)
+                .Subscribe<UpdateChatActionBar>(Handle)
+                .Subscribe<UpdateChatHasScheduledMessages>(Handle)
+                .Subscribe<UpdateChatVideoChat>(Handle)
+                .Subscribe<UpdateChatPendingJoinRequests>(Handle)
+                .Subscribe<UpdateChatAction>(Handle)
+                .Subscribe<UpdateChatLastMessage>(Handle)
+                .Subscribe<UpdateNewMessage>(Handle)
+                .Subscribe<UpdateDeleteMessages>(Handle)
+                .Subscribe<UpdateMessageContent>(Handle)
+                .Subscribe<UpdateMessageContentOpened>(Handle)
+                .Subscribe<UpdateMessageMentionRead>(Handle)
+                .Subscribe<UpdateMessageUnreadReactions>(Handle)
+                .Subscribe<UpdateMessageEdited>(Handle)
+                .Subscribe<UpdateMessageInteractionInfo>(Handle)
+                .Subscribe<UpdateMessageIsPinned>(Handle)
+                .Subscribe<UpdateMessageSendFailed>(Handle)
+                .Subscribe<UpdateMessageSendSucceeded>(Handle)
+                .Subscribe<UpdateAnimatedEmojiMessageClicked>(Handle)
+                .Subscribe<UpdateUser>(Handle)
+                .Subscribe<UpdateUserFullInfo>(Handle)
+                .Subscribe<UpdateSecretChat>(Handle)
+                .Subscribe<UpdateBasicGroup>(Handle)
+                .Subscribe<UpdateBasicGroupFullInfo>(Handle)
+                .Subscribe<UpdateSupergroup>(Handle)
+                .Subscribe<UpdateSupergroupFullInfo>(Handle)
+                .Subscribe<UpdateUserStatus>(Handle)
+                .Subscribe<UpdateChatTitle>(Handle)
+                .Subscribe<UpdateChatPhoto>(Handle)
+                .Subscribe<UpdateChatTheme>(Handle)
+                .Subscribe<UpdateChatNotificationSettings>(Handle)
+                .Subscribe<UpdateChatOnlineMemberCount>(Handle)
+                .Subscribe<UpdateGroupCall>(Handle);
+        }
 
         public void Handle(UpdateChatAction update)
         {

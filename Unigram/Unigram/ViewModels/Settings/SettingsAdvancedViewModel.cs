@@ -13,7 +13,8 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsAdvancedViewModel : TLViewModelBase, IHandle<UpdateAppVersion>
+    public class SettingsAdvancedViewModel : TLViewModelBase
+        //, IHandle<UpdateAppVersion>
     {
         private readonly ICloudUpdateService _cloudUpdateService;
         private CloudUpdate _update;
@@ -28,20 +29,18 @@ namespace Unigram.ViewModels.Settings
             UpdateCommand = new RelayCommand(UpdateExecute);
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             _update = _cloudUpdateService.NextUpdate;
             UpdateExecute();
 
-            Aggregator.Subscribe(this);
+            Subscribe();
             return base.OnNavigatedToAsync(parameter, mode, state);
         }
 
-        public override Task OnNavigatedFromAsync(NavigationState pageState, bool suspending)
+        public override void Subscribe()
         {
-            Aggregator.Unsubscribe(this);
-            UpdateManager.Unsubscribe(this);
-            return base.OnNavigatedFromAsync(pageState, suspending);
+            Aggregator.Subscribe<UpdateAppVersion>(this, Handle);
         }
 
         #region Updates

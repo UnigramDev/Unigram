@@ -14,9 +14,9 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Chats
 {
-    public class ChatInviteLinkViewModel : TLViewModelBase,
-        IHandle<UpdateBasicGroupFullInfo>,
-        IHandle<UpdateSupergroupFullInfo>
+    public class ChatInviteLinkViewModel : TLViewModelBase
+        //, IHandle<UpdateBasicGroupFullInfo>
+        //, IHandle<UpdateSupergroupFullInfo>
     {
         public ChatInviteLinkViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
@@ -47,7 +47,7 @@ namespace Unigram.ViewModels.Chats
 
         public ItemsCollection Items { get; private set; }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var chatId = (long)parameter;
 
@@ -75,7 +75,7 @@ namespace Unigram.ViewModels.Chats
                 return Task.CompletedTask;
             }
 
-            Aggregator.Subscribe(this);
+            Subscribe();
             //Delegate?.UpdateChat(chat);
 
             if (chat.Type is ChatTypeBasicGroup basic)
@@ -114,6 +114,12 @@ namespace Unigram.ViewModels.Chats
             }
 
             return Task.CompletedTask;
+        }
+
+        public override void Subscribe()
+        {
+            Aggregator.Subscribe<UpdateBasicGroupFullInfo>(this, Handle)
+                .Subscribe<UpdateSupergroupFullInfo>(Handle);
         }
 
         public void Handle(UpdateBasicGroupFullInfo update)

@@ -25,17 +25,17 @@ using Windows.UI.Xaml.Navigation;
 namespace Unigram.ViewModels
 {
     public class ProfileViewModel : ChatSharedMediaViewModel,
-        IDelegable<IProfileDelegate>,
-        IHandle<UpdateUser>,
-        IHandle<UpdateUserFullInfo>,
-        IHandle<UpdateBasicGroup>,
-        IHandle<UpdateBasicGroupFullInfo>,
-        IHandle<UpdateSupergroup>,
-        IHandle<UpdateSupergroupFullInfo>,
-        IHandle<UpdateUserStatus>,
-        IHandle<UpdateChatTitle>,
-        IHandle<UpdateChatPhoto>,
-        IHandle<UpdateChatNotificationSettings>
+        IDelegable<IProfileDelegate>
+        //IHandle<UpdateUser>,
+        //IHandle<UpdateUserFullInfo>,
+        //IHandle<UpdateBasicGroup>,
+        //IHandle<UpdateBasicGroupFullInfo>,
+        //IHandle<UpdateSupergroup>,
+        //IHandle<UpdateSupergroupFullInfo>,
+        //IHandle<UpdateUserStatus>,
+        //IHandle<UpdateChatTitle>,
+        //IHandle<UpdateChatPhoto>,
+        //IHandle<UpdateChatNotificationSettings>
     {
         public string LastSeen { get; internal set; }
 
@@ -113,7 +113,7 @@ namespace Unigram.ViewModels
             set => Set(ref _members, value);
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var chatId = (long)parameter;
 
@@ -125,7 +125,7 @@ namespace Unigram.ViewModels
                 return Task.CompletedTask;
             }
 
-            Aggregator.Subscribe(this);
+            Subscribe();
             Delegate?.UpdateChat(chat);
 
             if (chat.Type is ChatTypePrivate privata)
@@ -198,10 +198,18 @@ namespace Unigram.ViewModels
             return base.OnNavigatedToAsync(parameter, mode, state);
         }
 
-        public override Task OnNavigatedFromAsync(NavigationState pageState, bool suspending)
+        public override void Subscribe()
         {
-            Aggregator.Unsubscribe(this);
-            return Task.CompletedTask;
+            Aggregator.Subscribe<UpdateUser>(this, Handle)
+                .Subscribe<UpdateUserFullInfo>(Handle)
+                .Subscribe<UpdateBasicGroup>(Handle)
+                .Subscribe<UpdateBasicGroupFullInfo>(Handle)
+                .Subscribe<UpdateSupergroup>(Handle)
+                .Subscribe<UpdateSupergroupFullInfo>(Handle)
+                .Subscribe<UpdateUserStatus>(Handle)
+                .Subscribe<UpdateChatTitle>(Handle)
+                .Subscribe<UpdateChatPhoto>(Handle)
+                .Subscribe<UpdateChatNotificationSettings>(Handle);
         }
 
 

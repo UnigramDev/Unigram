@@ -18,12 +18,12 @@ using static Unigram.Services.GenerationService;
 namespace Unigram.ViewModels.Supergroups
 {
     public class SupergroupEditViewModel : TLViewModelBase,
-        IDelegable<ISupergroupEditDelegate>,
-        IHandle<UpdateChatPhoto>,
-        IHandle<UpdateSupergroup>,
-        IHandle<UpdateSupergroupFullInfo>,
-        IHandle<UpdateBasicGroup>,
-        IHandle<UpdateBasicGroupFullInfo>
+        IDelegable<ISupergroupEditDelegate>
+        //IHandle<UpdateChatPhoto>,
+        //IHandle<UpdateSupergroup>,
+        //IHandle<UpdateSupergroupFullInfo>,
+        //IHandle<UpdateBasicGroup>,
+        //IHandle<UpdateBasicGroupFullInfo>
     {
         public ISupergroupEditDelegate Delegate { get; set; }
 
@@ -85,7 +85,7 @@ namespace Unigram.ViewModels.Supergroups
 
         #region Initialize
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var chatId = (long)parameter;
 
@@ -97,7 +97,7 @@ namespace Unigram.ViewModels.Supergroups
                 return Task.CompletedTask;
             }
 
-            Aggregator.Subscribe(this);
+            Subscribe();
             Delegate?.UpdateChat(chat);
 
             if (chat.Type is ChatTypeSupergroup super)
@@ -136,10 +136,13 @@ namespace Unigram.ViewModels.Supergroups
             return Task.CompletedTask;
         }
 
-        public override Task OnNavigatedFromAsync(NavigationState pageState, bool suspending)
+        public override void Subscribe()
         {
-            Aggregator.Unsubscribe(this);
-            return Task.CompletedTask;
+            Aggregator.Subscribe<UpdateChatPhoto>(this, Handle)
+                .Subscribe<UpdateSupergroup>(Handle)
+                .Subscribe<UpdateSupergroupFullInfo>(Handle)
+                .Subscribe<UpdateBasicGroup>(Handle)
+                .Subscribe<UpdateBasicGroupFullInfo>(Handle);
         }
 
         public void Handle(UpdateChatPhoto update)

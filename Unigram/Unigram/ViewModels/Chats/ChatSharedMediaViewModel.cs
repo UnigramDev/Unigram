@@ -35,7 +35,9 @@ namespace Unigram.ViewModels.Chats
         }
     }
 
-    public class ChatSharedMediaViewModel : TLMultipleViewModelBase, IMessageDelegate, IHandle<UpdateDeleteMessages>
+    public class ChatSharedMediaViewModel : TLMultipleViewModelBase
+        , IMessageDelegate
+        //, IHandle<UpdateDeleteMessages>
     {
         private readonly IPlaybackService _playbackService;
         private readonly IStorageService _storageService;
@@ -71,7 +73,7 @@ namespace Unigram.ViewModels.Chats
 
         public IStorageService StorageService => _storageService;
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var chatId = (long)parameter;
 
@@ -89,7 +91,7 @@ namespace Unigram.ViewModels.Chats
             Voice.SetQuery(string.Empty);
             Animations.SetQuery(string.Empty);
 
-            Aggregator.Subscribe(this);
+            Aggregator.Subscribe<UpdateDeleteMessages>(this, Handle);
 
             Items.Clear();
 
@@ -188,12 +190,6 @@ namespace Unigram.ViewModels.Chats
 
             SelectedItem ??= Items.FirstOrDefault();
             RaisePropertyChanged(nameof(SharedCount));
-        }
-
-        public override Task OnNavigatedFromAsync(NavigationState suspensionState, bool suspending)
-        {
-            Aggregator.Unsubscribe(this);
-            return Task.CompletedTask;
         }
 
         public void Handle(UpdateDeleteMessages update)

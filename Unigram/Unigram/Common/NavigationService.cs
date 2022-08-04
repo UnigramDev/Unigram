@@ -28,7 +28,7 @@ namespace Unigram.Common
                 viewModel.NavigationService = service;
                 dialog.Opened += async (s, args) =>
                 {
-                    await viewModel.OnNavigatedToAsync(null, NavigationMode.New, null);
+                    await viewModel.NavigatedToAsync(null, NavigationMode.New, null);
                 };
             }
 

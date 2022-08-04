@@ -30,7 +30,7 @@ namespace Unigram.ViewModels
             DoneCommand = new RelayCommand(DoneExecute);
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             Background background = parameter as Background;
 

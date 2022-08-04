@@ -34,7 +34,7 @@ namespace Unigram.ViewModels.SignIn
             ProxyCommand = new RelayCommand(ProxyExecute);
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             ProtoService.Send(new GetCountryCode(), result =>
             {

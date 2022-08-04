@@ -9,7 +9,9 @@ using Unigram.Services;
 
 namespace Unigram.ViewModels
 {
-    public class ContactsViewModel : TLViewModelBase, IChildViewModel, IHandle<UpdateUserStatus>
+    public class ContactsViewModel : TLViewModelBase
+        , IChildViewModel
+        //, IHandle<UpdateUserStatus>
     {
         private readonly IContactsService _contactsService;
 
@@ -55,7 +57,7 @@ namespace Unigram.ViewModels
 
         public async void Activate()
         {
-            Aggregator.Subscribe(this);
+            Aggregator.Subscribe<UpdateUserStatus>(this, Handle);
 
             using (await _loadMoreLock.WaitAsync())
             {

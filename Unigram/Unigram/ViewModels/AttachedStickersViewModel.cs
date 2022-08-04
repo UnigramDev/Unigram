@@ -15,7 +15,7 @@ namespace Unigram.ViewModels
             Items = new MvxObservableCollection<StickerSetInfo>();
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             if (parameter is int fileId)
             {

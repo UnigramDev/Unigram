@@ -275,13 +275,13 @@ namespace Unigram.Common
                 {
                     if (Frame.Content is ChatPage chatPage && thread == null && !scheduled && !force)
                     {
-                        chatPage.ViewModel.OnNavigatingFrom(null);
+                        chatPage.ViewModel.NavigatingFrom(null);
 
                         chatPage.Deactivate(true);
                         chatPage.Activate(SessionId);
                         chatPage.ViewModel.NavigationService = this;
                         chatPage.ViewModel.Dispatcher = Dispatcher;
-                        await chatPage.ViewModel.OnNavigatedToAsync(chat.Id, Windows.UI.Xaml.Navigation.NavigationMode.New, state);
+                        await chatPage.ViewModel.NavigatedToAsync(chat.Id, Windows.UI.Xaml.Navigation.NavigationMode.New, state);
 
                         FrameFacade.RaiseNavigated(chat.Id);
                     }

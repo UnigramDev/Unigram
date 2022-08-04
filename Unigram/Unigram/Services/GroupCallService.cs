@@ -85,7 +85,10 @@ namespace Unigram.Services
         Task ConsolidateAsync();
     }
 
-    public class GroupCallService : TLViewModelBase, IGroupCallService, IHandle<UpdateGroupCall>, IHandle<UpdateGroupCallParticipant>
+    public class GroupCallService : TLViewModelBase
+        , IGroupCallService
+        //, IHandle<UpdateGroupCall>
+        //, IHandle<UpdateGroupCallParticipant>
     {
         private readonly IViewService _viewService;
 
@@ -142,7 +145,13 @@ namespace Unigram.Services
             _outputWatcher = new MediaDeviceWatcher(DeviceClass.AudioRender, id => _manager?.SetAudioOutputDevice(id));
 #endif
 
-            aggregator.Subscribe(this);
+            Subscribe();
+        }
+
+        public override void Subscribe()
+        {
+            Aggregator.Subscribe<UpdateGroupCall>(this, Handle)
+                .Subscribe<UpdateGroupCallParticipant>(Handle);
         }
 
         public event EventHandler AvailableStreamsChanged;

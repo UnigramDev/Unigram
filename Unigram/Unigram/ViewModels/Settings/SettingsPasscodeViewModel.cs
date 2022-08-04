@@ -13,7 +13,8 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsPasscodeViewModel : TLViewModelBase, IHandle<UpdatePasscodeLock>
+    public class SettingsPasscodeViewModel : TLViewModelBase
+        //, IHandle<UpdatePasscodeLock>
     {
         private readonly IPasscodeService _passcodeService;
 
@@ -26,16 +27,15 @@ namespace Unigram.ViewModels.Settings
             EditCommand = new RelayCommand(EditExecute);
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            Aggregator.Subscribe(this);
+            Subscribe();
             return base.OnNavigatedToAsync(parameter, mode, state);
         }
 
-        public override Task OnNavigatedFromAsync(NavigationState pageState, bool suspending)
+        public override void Subscribe()
         {
-            Aggregator.Unsubscribe(this);
-            return base.OnNavigatedFromAsync(pageState, suspending);
+            Aggregator.Subscribe<UpdatePasscodeLock>(this, Handle);
         }
 
         public void Handle(UpdatePasscodeLock update)

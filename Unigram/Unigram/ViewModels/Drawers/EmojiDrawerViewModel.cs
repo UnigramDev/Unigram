@@ -13,7 +13,8 @@ using Windows.UI.Xaml;
 
 namespace Unigram.ViewModels.Drawers
 {
-    public class EmojiDrawerViewModel : TLViewModelBase, IHandle<UpdateInstalledStickerSets>
+    public class EmojiDrawerViewModel : TLViewModelBase
+        //IHandle<UpdateInstalledStickerSets>
     {
         private bool _updated;
 
@@ -23,7 +24,12 @@ namespace Unigram.ViewModels.Drawers
             //Items = new DiffObservableCollection<object>(new EmojiSetDiffHandler());
             Items = new MvxObservableCollection<object>();
 
-            Aggregator.Subscribe(this);
+            Subscribe();
+        }
+
+        public override void Subscribe()
+        {
+            Aggregator.Subscribe<UpdateInstalledStickerSets>(this, Handle);
         }
 
         private static readonly Dictionary<int, Dictionary<int, EmojiDrawerViewModel>> _windowContext = new Dictionary<int, Dictionary<int, EmojiDrawerViewModel>>();

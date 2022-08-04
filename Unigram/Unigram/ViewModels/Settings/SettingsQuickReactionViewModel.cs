@@ -32,7 +32,7 @@ namespace Unigram.ViewModels.Settings
 
         public MvxObservableCollection<SettingsReactionOption> Items { get; private set; }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             if (ProtoService.IsPremium)
             {
@@ -47,9 +47,8 @@ namespace Unigram.ViewModels.Settings
         }
 
         public RelayCommand SendCommand { get; }
-        private async void SendExecute()
+        private void SendExecute()
         {
-
             NavigationService.GoBack();
         }
     }

@@ -49,7 +49,7 @@ namespace Unigram.ViewModels.Settings
         public MvxObservableCollection<ThemeInfoBase> Custom { get; private set; }
         public MvxObservableCollection<ThemeAccentInfo> Accents { get; private set; }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             await RefreshThemesAsync();
         }

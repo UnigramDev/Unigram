@@ -645,11 +645,12 @@ namespace Unigram.ViewModels
             //RaisePropertyChanged(nameof(Items));
         }
 
-        public class ItemsCollection : ObservableCollection<Chat>, ISupportIncrementalLoading,
-            IHandle<UpdateAuthorizationState>,
-            IHandle<UpdateChatDraftMessage>,
-            IHandle<UpdateChatLastMessage>,
-            IHandle<UpdateChatPosition>
+        public class ItemsCollection : ObservableCollection<Chat>
+            , ISupportIncrementalLoading
+            //, IHandle<UpdateAuthorizationState>
+            //, IHandle<UpdateChatDraftMessage>
+            //, IHandle<UpdateChatLastMessage>
+            //, IHandle<UpdateChatPosition>
         {
             private readonly IProtoService _protoService;
             private readonly IEventAggregator _aggregator;
@@ -743,7 +744,7 @@ namespace Unigram.ViewModels
                         IsEmpty = Count == 0;
 
                         _hasMoreItems = chats.ChatIds.Count > 0;
-                        _aggregator.Subscribe(this);
+                        Subscribe();
 
                         _viewModel.IsLoading = false;
                         _viewModel.Delegate?.SetSelectedItems(_viewModel._selectedItems);
@@ -758,6 +759,14 @@ namespace Unigram.ViewModels
 
                     return new LoadMoreItemsResult { Count = 0 };
                 }
+            }
+
+            private void Subscribe()
+            {
+                _aggregator.Subscribe<UpdateAuthorizationState>(this, Handle)
+                    .Subscribe<UpdateChatDraftMessage>(Handle)
+                    .Subscribe<UpdateChatLastMessage>(Handle)
+                    .Subscribe<UpdateChatPosition>(Handle);
             }
 
             public bool HasMoreItems => _hasMoreItems;

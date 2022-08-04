@@ -25,7 +25,11 @@ namespace Unigram.Services
         Task<BaseObject> SetAuthenticationPhoneNumberAsync(SetAuthenticationPhoneNumber function);
     }
 
-    public class SessionService : TLViewModelBase, ISessionService, IHandle<UpdateUnreadMessageCount>, IHandle<UpdateUnreadChatCount>, IHandle<UpdateAuthorizationState>
+    public class SessionService : TLViewModelBase
+        , ISessionService
+        //, IHandle<UpdateUnreadMessageCount>
+        //, IHandle<UpdateUnreadChatCount>
+        //, IHandle<UpdateAuthorizationState>
     {
         private readonly ILifetimeService _lifetimeService;
         private readonly int _id;
@@ -36,13 +40,20 @@ namespace Unigram.Services
             _lifetimeService = lifecycleService;
             _id = session;
 
-            aggregator.Subscribe(this);
+            Subscribe();
 
             IsActive = selected;
 
             var unreadCount = CacheService.GetUnreadCount(new ChatListMain());
             Handle(unreadCount.UnreadChatCount);
             Handle(unreadCount.UnreadMessageCount);
+        }
+
+        public override void Subscribe()
+        {
+            Aggregator.Subscribe<UpdateUnreadMessageCount>(this, Handle)
+                .Subscribe<UpdateUnreadChatCount>(Handle)
+                .Subscribe<UpdateAuthorizationState>(Handle);
         }
 
         public int Id => _id;

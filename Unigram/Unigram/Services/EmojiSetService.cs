@@ -15,7 +15,8 @@ namespace Unigram.Services
         Task<IList<EmojiSet>> GetCloudSetsAsync();
     }
 
-    public class EmojiSetService : IEmojiSetService, IHandle<UpdateFile>
+    public class EmojiSetService : IEmojiSetService
+        //, IHandle<UpdateFile>
     {
         private readonly FileContext<EmojiSet> _mapping = new FileContext<EmojiSet>();
 
@@ -31,7 +32,7 @@ namespace Unigram.Services
             _settings = settings;
             _aggregator = aggregator;
 
-            _aggregator.Subscribe(this);
+            _aggregator.Subscribe<UpdateFile>(this, Handle);
         }
 
         public async Task UpdateAsync()

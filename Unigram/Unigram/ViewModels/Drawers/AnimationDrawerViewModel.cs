@@ -14,7 +14,8 @@ using Windows.UI.Xaml.Data;
 
 namespace Unigram.ViewModels.Drawers
 {
-    public class AnimationDrawerViewModel : TLViewModelBase, IHandle<UpdateSavedAnimations>
+    public class AnimationDrawerViewModel : TLViewModelBase
+        //IHandle<UpdateSavedAnimations>
     {
         private bool _updated;
 
@@ -31,7 +32,12 @@ namespace Unigram.ViewModels.Drawers
 
             SelectedSet = Sets[0];
 
-            Aggregator.Subscribe(this);
+            Subscribe();
+        }
+
+        public override void Subscribe()
+        {
+            Aggregator.Subscribe<UpdateSavedAnimations>(this, Handle);
         }
 
         private static readonly Dictionary<int, Dictionary<int, AnimationDrawerViewModel>> _windowContext = new Dictionary<int, Dictionary<int, AnimationDrawerViewModel>>();

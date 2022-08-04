@@ -35,13 +35,13 @@ namespace Unigram.Views
         public BackgroundPopup(Background background)
             : this()
         {
-            _ = ViewModel.OnNavigatedToAsync(background, NavigationMode.New, null);
+            _ = ViewModel.NavigatedToAsync(background, NavigationMode.New, null);
         }
 
         public BackgroundPopup(string slug)
             : this()
         {
-            _ = ViewModel.OnNavigatedToAsync(slug, NavigationMode.New, null);
+            _ = ViewModel.NavigatedToAsync(slug, NavigationMode.New, null);
         }
 
         private BackgroundPopup()
@@ -92,12 +92,12 @@ namespace Unigram.Views
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            ViewModel.Aggregator.Subscribe(this);
+            //ViewModel.Aggregator.Subscribe(this);
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            ViewModel.Aggregator.Unsubscribe(this);
+            //ViewModel.Aggregator.Unsubscribe(this);
         }
 
         private void BlurPanel_SizeChanged(object sender, SizeChangedEventArgs e)

@@ -139,7 +139,7 @@ namespace Unigram.Views.Settings
                 var confirm = await new BackgroundPopup(wallpaper).ShowQueuedAsync();
                 if (confirm == ContentDialogResult.Primary)
                 {
-                    await ViewModel.OnNavigatedToAsync(null, NavigationMode.Refresh, null);
+                    await ViewModel.NavigatedToAsync(null, NavigationMode.Refresh, null);
                 }
             }
         }

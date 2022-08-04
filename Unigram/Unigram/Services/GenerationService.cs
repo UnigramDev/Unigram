@@ -29,7 +29,7 @@ using Windows.UI;
 
 namespace Unigram.Services
 {
-    public interface IGenerationService : IHandle<UpdateFileGenerationStart>, IHandle<UpdateFileGenerationStop>
+    public interface IGenerationService
     {
 
     }
@@ -47,6 +47,8 @@ namespace Unigram.Services
     }
 
     public class GenerationService : IGenerationService
+        //, IHandle<UpdateFileGenerationStart>
+        //, IHandle<UpdateFileGenerationStop>
     {
         private readonly IProtoService _protoService;
         private readonly IEventAggregator _aggregator;
@@ -56,7 +58,8 @@ namespace Unigram.Services
             _protoService = protoService;
             _aggregator = aggregator;
 
-            _aggregator.Subscribe(this);
+            _aggregator.Subscribe<UpdateFileGenerationStart>(this, Handle)
+                .Subscribe<UpdateFileGenerationStop>(Handle);
         }
 
         public async void Handle(UpdateFileGenerationStart update)

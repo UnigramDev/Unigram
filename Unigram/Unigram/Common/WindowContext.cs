@@ -394,7 +394,7 @@ namespace Unigram.Common
 
             Dispatcher.Dispatch(() =>
             {
-                var root = NavigationServices.FirstOrDefault(x => x.SessionId == session.Id && x.FrameFacade.FrameId == $"{session.Id}") as IHandle<UpdateAuthorizationState>;
+                var root = NavigationServices.FirstOrDefault(x => x.SessionId == session.Id && x.FrameFacade.FrameId == $"{session.Id}") as TLRootNavigationService;
                 if (root != null)
                 {
                     root.Handle(update);

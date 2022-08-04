@@ -19,7 +19,7 @@ namespace Unigram.ViewModels.Settings
             CopyCommand = new RelayCommand(CopyExecute);
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             IsValid = false;
             IsLoading = false;
@@ -30,7 +30,7 @@ namespace Unigram.ViewModels.Settings
                 Set(ref _username, user.Username, nameof(Username));
             }
 
-            return base.OnNavigatedToAsync(parameter, mode, state);
+            return Task.CompletedTask;
         }
 
         private string _username = string.Empty;

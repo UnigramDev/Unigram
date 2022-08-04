@@ -40,7 +40,7 @@ namespace Unigram.ViewModels.Settings.Password
             }
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             if (state.TryGet("email", out string email))
             {
@@ -56,7 +56,7 @@ namespace Unigram.ViewModels.Settings.Password
                 _length = length;
             }
 
-            return base.OnNavigatedToAsync(parameter, mode, state);
+            return Task.CompletedTask;
         }
 
         public RelayCommand ResendCommand { get; }

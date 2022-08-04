@@ -11,7 +11,8 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsPrivacyViewModelBase : TLMultipleViewModelBase, IHandle<UpdateUserPrivacySettingRules>
+    public class SettingsPrivacyViewModelBase : TLMultipleViewModelBase
+        //, IHandle<UpdateUserPrivacySettingRules>
     {
         private readonly UserPrivacySetting _inputKey;
 
@@ -25,27 +26,23 @@ namespace Unigram.ViewModels.Settings
             AlwaysCommand = new RelayCommand(AlwaysExecute);
             NeverCommand = new RelayCommand(NeverExecute);
             SendCommand = new RelayCommand(SendExecute);
-
-            Aggregator.Subscribe(this);
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             //if (mode != NavigationMode.Back)
             {
                 UpdatePrivacyAsync();
             }
 
-            return base.OnNavigatedToAsync(parameter, mode, state);
+            Subscribe();
+            return Task.CompletedTask;
         }
 
-        //public void Handle(TLUpdatePrivacy update)
-        //{
-        //    if (update.Key.TypeId == _key)
-        //    {
-        //        UpdatePrivacy(new TLAccountPrivacyRules { Rules = update.Rules });
-        //    }
-        //}
+        public override void Subscribe()
+        {
+            Aggregator.Subscribe<UpdateUserPrivacySettingRules>(this, Handle);
+        }
 
         public void Handle(UpdateUserPrivacySettingRules update)
         {

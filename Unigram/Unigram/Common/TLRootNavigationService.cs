@@ -10,7 +10,8 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Common
 {
-    public class TLRootNavigationService : NavigationService, IHandle<UpdateAuthorizationState>
+    public class TLRootNavigationService : NavigationService
+        //, IHandle<UpdateAuthorizationState>
     {
         private readonly ILifetimeService _lifetimeService;
         private readonly ISessionService _sessionService;
@@ -35,7 +36,7 @@ namespace Unigram.Common
                     {
                         if (Frame.Content is SignInPage page && page.DataContext is SignInViewModel viewModel)
                         {
-                            await viewModel.OnNavigatedToAsync(null, NavigationMode.Refresh, null);
+                            await viewModel.NavigatedToAsync(null, NavigationMode.Refresh, null);
                         }
                         else
                         {
@@ -49,7 +50,7 @@ namespace Unigram.Common
                     {
                         if (Frame.Content is SignInPage page && page.DataContext is SignInViewModel viewModel)
                         {
-                            await viewModel.OnNavigatedToAsync(null, NavigationMode.Refresh, null);
+                            await viewModel.NavigatedToAsync(null, NavigationMode.Refresh, null);
                         }
                         else
                         {

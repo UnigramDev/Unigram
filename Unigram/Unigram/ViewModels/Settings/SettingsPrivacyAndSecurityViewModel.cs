@@ -17,7 +17,8 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsPrivacyAndSecurityViewModel : TLMultipleViewModelBase, IHandle<UpdateOption>
+    public class SettingsPrivacyAndSecurityViewModel : TLMultipleViewModelBase
+        //, IHandle<UpdateOption>
     {
         private readonly IContactsService _contactsService;
         private readonly IPasscodeService _passcodeService;
@@ -57,11 +58,9 @@ namespace Unigram.ViewModels.Settings
             Children.Add(_allowCallsRules);
             Children.Add(_allowChatInvitesRules);
             Children.Add(_allowPrivateVoiceAndVideoNoteMessages);
-
-            aggregator.Subscribe(this);
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             ProtoService.Send(new GetAccountTtl(), result =>
             {
@@ -121,7 +120,13 @@ namespace Unigram.ViewModels.Settings
 
             IsPasscodeEnabled = _passcodeService.IsEnabled;
 
+            Subscribe();
             return base.OnNavigatedToAsync(parameter, mode, state);
+        }
+
+        public override void Subscribe()
+        {
+            Aggregator.Subscribe<UpdateOption>(this, Handle);
         }
 
         #region Properties

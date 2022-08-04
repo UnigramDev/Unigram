@@ -45,36 +45,36 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views
 {
-    public sealed partial class MainPage : Page,
-        IRootContentPage,
-        INavigatingPage,
-        IChatListDelegate,
-        IHandle<UpdateFileDownloads>,
-        IHandle<UpdateChatPosition>,
-        IHandle<UpdateChatIsMarkedAsUnread>,
-        IHandle<UpdateChatReadInbox>,
-        IHandle<UpdateChatReadOutbox>,
-        IHandle<UpdateChatUnreadMentionCount>,
-        IHandle<UpdateChatUnreadReactionCount>,
-        IHandle<UpdateChatTitle>,
-        IHandle<UpdateChatPhoto>,
-        IHandle<UpdateChatVideoChat>,
-        IHandle<UpdateUserStatus>,
-        IHandle<UpdateUser>,
-        IHandle<UpdateChatAction>,
-        IHandle<UpdateMessageMentionRead>,
-        IHandle<UpdateMessageUnreadReactions>,
-        IHandle<UpdateUnreadChatCount>,
-        //IHandle<UpdateMessageContent>,
-        IHandle<UpdateSecretChat>,
-        IHandle<UpdateChatFilters>,
-        IHandle<UpdateChatNotificationSettings>,
-        IHandle<UpdatePasscodeLock>,
-        IHandle<UpdateConnectionState>,
-        IHandle<UpdateOption>,
-        IHandle<UpdateCallDialog>,
-        IHandle<UpdateChatFiltersLayout>,
-        IHandle<UpdateConfetti>
+    public sealed partial class MainPage : Page
+        , IRootContentPage
+        , INavigatingPage
+        , IChatListDelegate
+        //IHandle<UpdateFileDownloads>,
+        //IHandle<UpdateChatPosition>,
+        //IHandle<UpdateChatIsMarkedAsUnread>,
+        //IHandle<UpdateChatReadInbox>,
+        //IHandle<UpdateChatReadOutbox>,
+        //IHandle<UpdateChatUnreadMentionCount>,
+        //IHandle<UpdateChatUnreadReactionCount>,
+        //IHandle<UpdateChatTitle>,
+        //IHandle<UpdateChatPhoto>,
+        //IHandle<UpdateChatVideoChat>,
+        //IHandle<UpdateUserStatus>,
+        //IHandle<UpdateUser>,
+        //IHandle<UpdateChatAction>,
+        //IHandle<UpdateMessageMentionRead>,
+        //IHandle<UpdateMessageUnreadReactions>,
+        //IHandle<UpdateUnreadChatCount>,
+        ////IHandle<UpdateMessageContent>,
+        //IHandle<UpdateSecretChat>,
+        //IHandle<UpdateChatFilters>,
+        //IHandle<UpdateChatNotificationSettings>,
+        //IHandle<UpdatePasscodeLock>,
+        //IHandle<UpdateConnectionState>,
+        //IHandle<UpdateOption>,
+        //IHandle<UpdateCallDialog>,
+        //IHandle<UpdateChatFiltersLayout>,
+        //IHandle<UpdateConfetti>
     {
         public MainViewModel ViewModel => DataContext as MainViewModel;
         public RootPage Root { get; set; }
@@ -786,7 +786,7 @@ namespace Unigram.Views
                 PhotoSide?.SetUser(_protoService, user, 28);
             }
 
-            ViewModel.Aggregator.Subscribe(this);
+            Subscribe();
             Window.Current.CoreWindow.CharacterReceived += OnCharacterReceived;
             WindowContext.Current.AcceleratorKeyActivated += OnAcceleratorKeyActivated;
 
@@ -820,6 +820,36 @@ namespace Unigram.Views
                     MasterDetail.NavigationService.Navigate(typeof(SettingsStoragePage));
                 }
             }
+        }
+
+        private void Subscribe()
+        {
+            ViewModel.Aggregator.Subscribe<UpdateFileDownloads>(this, Handle)
+                .Subscribe<UpdateChatPosition>(Handle)
+                .Subscribe<UpdateChatIsMarkedAsUnread>(Handle)
+                .Subscribe<UpdateChatReadInbox>(Handle)
+                .Subscribe<UpdateChatReadOutbox>(Handle)
+                .Subscribe<UpdateChatUnreadMentionCount>(Handle)
+                .Subscribe<UpdateChatUnreadReactionCount>(Handle)
+                .Subscribe<UpdateChatTitle>(Handle)
+                .Subscribe<UpdateChatPhoto>(Handle)
+                .Subscribe<UpdateChatVideoChat>(Handle)
+                .Subscribe<UpdateUserStatus>(Handle)
+                .Subscribe<UpdateUser>(Handle)
+                .Subscribe<UpdateChatAction>(Handle)
+                .Subscribe<UpdateMessageMentionRead>(Handle)
+                .Subscribe<UpdateMessageUnreadReactions>(Handle)
+                .Subscribe<UpdateUnreadChatCount>(Handle)
+                //.Subscribe<UpdateMessageContent>(Handle)
+                .Subscribe<UpdateSecretChat>(Handle)
+                .Subscribe<UpdateChatFilters>(Handle)
+                .Subscribe<UpdateChatNotificationSettings>(Handle)
+                .Subscribe<UpdatePasscodeLock>(Handle)
+                .Subscribe<UpdateConnectionState>(Handle)
+                .Subscribe<UpdateOption>(Handle)
+                .Subscribe<UpdateCallDialog>(Handle)
+                .Subscribe<UpdateChatFiltersLayout>(Handle)
+                .Subscribe<UpdateConfetti>(Handle);
         }
 
         private void OnCurrentItemChanged(object sender, PropertyChangedEventArgs e)

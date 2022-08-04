@@ -37,19 +37,19 @@ namespace Unigram.Services
         #endregion
     }
 
-    public class NotificationsService : INotificationsService,
-        IHandle<UpdateUnreadMessageCount>,
-        IHandle<UpdateUnreadChatCount>,
-        IHandle<UpdateChatReadInbox>,
-        IHandle<UpdateSuggestedActions>,
-        IHandle<UpdateServiceNotification>,
-        IHandle<UpdateTermsOfService>,
-        IHandle<UpdateAuthorizationState>,
-        IHandle<UpdateUser>,
-        IHandle<UpdateNotification>,
-        IHandle<UpdateNotificationGroup>,
-        IHandle<UpdateHavePendingNotifications>,
-        IHandle<UpdateActiveNotifications>
+    public class NotificationsService : INotificationsService
+        //IHandle<UpdateUnreadMessageCount>,
+        //IHandle<UpdateUnreadChatCount>,
+        //IHandle<UpdateChatReadInbox>,
+        //IHandle<UpdateSuggestedActions>,
+        //IHandle<UpdateServiceNotification>,
+        //IHandle<UpdateTermsOfService>,
+        //IHandle<UpdateAuthorizationState>,
+        //IHandle<UpdateUser>,
+        //IHandle<UpdateNotification>,
+        //IHandle<UpdateNotificationGroup>,
+        //IHandle<UpdateHavePendingNotifications>,
+        //IHandle<UpdateActiveNotifications>
     {
         private readonly IProtoService _protoService;
         private readonly ICacheService _cacheService;
@@ -72,11 +72,27 @@ namespace Unigram.Services
 
             _registrationLock = new DisposableMutex();
 
-            _aggregator.Subscribe(this);
+            Subscribe();
 
             var unreadCount = _cacheService.GetUnreadCount(new ChatListMain());
             Handle(unreadCount.UnreadChatCount);
             Handle(unreadCount.UnreadMessageCount);
+        }
+
+        private void Subscribe()
+        {
+            _aggregator.Subscribe<UpdateUnreadMessageCount>(this, Handle)
+                .Subscribe<UpdateUnreadChatCount>(Handle)
+                .Subscribe<UpdateChatReadInbox>(Handle)
+                .Subscribe<UpdateSuggestedActions>(Handle)
+                .Subscribe<UpdateServiceNotification>(Handle)
+                .Subscribe<UpdateTermsOfService>(Handle)
+                .Subscribe<UpdateAuthorizationState>(Handle)
+                .Subscribe<UpdateUser>(Handle)
+                .Subscribe<UpdateNotification>(Handle)
+                .Subscribe<UpdateNotificationGroup>(Handle)
+                .Subscribe<UpdateHavePendingNotifications>(Handle)
+                .Subscribe<UpdateActiveNotifications>(Handle);
         }
 
         private void UpdateBadge(int count)

@@ -34,7 +34,7 @@ namespace Unigram.ViewModels
 
         public ITranslateService TranslateService => _translateService;
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var response = await ProtoService.SendAsync(new GetWebPagePreview(new FormattedText((string)parameter, new TextEntity[0])));
             if (response is WebPage webPage)

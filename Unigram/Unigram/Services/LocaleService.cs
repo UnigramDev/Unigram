@@ -447,7 +447,7 @@ namespace Unigram.Services
             });
         }
 
-#region Handle
+        #region Handle
 
         public void Handle(UpdateLanguagePackStrings update)
         {
@@ -475,7 +475,7 @@ namespace Unigram.Services
             }
         }
 
-#endregion
+        #endregion
 
         private ConcurrentDictionary<string, string> GetLanguagePack(string key)
         {

@@ -42,7 +42,7 @@ namespace Unigram.ViewModels.Supergroups
             set => Set(ref _member, value);
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             state.TryGet("chatId", out long chatId);
             state.TryGet("senderUserId", out long userId);

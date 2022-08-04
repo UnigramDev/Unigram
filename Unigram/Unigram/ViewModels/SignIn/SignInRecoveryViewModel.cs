@@ -22,7 +22,7 @@ namespace Unigram.ViewModels.SignIn
             ResetCommand = new RelayCommand(ResetExecute);
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var authState = ProtoService.GetAuthorizationState();
             if (authState is AuthorizationStateWaitPassword waitPassword)

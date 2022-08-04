@@ -24,7 +24,7 @@ namespace Unigram.ViewModels.Settings
             EmojiSetCommand = new RelayCommand(EmojiSetExecute);
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var emojiSet = Settings.Appearance.EmojiSet;
             EmojiSet = emojiSet.Title;
@@ -40,7 +40,7 @@ namespace Unigram.ViewModels.Settings
                     break;
             }
 
-            await base.OnNavigatedToAsync(parameter, mode, state);
+            return base.OnNavigatedToAsync(parameter, mode, state);
         }
 
         private string _emojiSet;

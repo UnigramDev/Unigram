@@ -34,7 +34,7 @@ namespace Unigram.ViewModels.Supergroups
             set => Set(ref _hasProtectedContent, value);
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             await base.OnNavigatedToAsync(parameter, mode, state);
             HasProtectedContent = Chat?.HasProtectedContent ?? false;

@@ -20,7 +20,7 @@ namespace Unigram.ViewModels
             OnNavigatedToAsync(null, NavigationMode.New, null);
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var location = await _locationService.GetPositionAsync();
             if (location == null)

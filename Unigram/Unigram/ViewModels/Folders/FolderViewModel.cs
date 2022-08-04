@@ -38,7 +38,7 @@ namespace Unigram.ViewModels.Folders
             SendCommand.RaiseCanExecuteChanged();
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             ChatFilter filter = null;
 

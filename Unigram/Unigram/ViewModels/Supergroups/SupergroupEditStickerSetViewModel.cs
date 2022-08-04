@@ -9,7 +9,8 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Supergroups
 {
-    public class SupergroupEditStickerSetViewModel : TLViewModelBase, IHandle<UpdateSupergroupFullInfo>
+    public class SupergroupEditStickerSetViewModel : TLViewModelBase
+        //, IHandle<UpdateSupergroupFullInfo>
     {
         public SupergroupEditStickerSetViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
@@ -18,8 +19,6 @@ namespace Unigram.ViewModels.Supergroups
             CancelCommand = new RelayCommand(CancelExecute);
 
             Items = new MvxObservableCollection<StickerSetInfo>();
-
-            Aggregator.Subscribe(this);
         }
 
         protected Chat _chat;
@@ -88,7 +87,7 @@ namespace Unigram.ViewModels.Supergroups
             }
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             ProtoService.Send(new GetInstalledStickerSets(new StickerTypeRegular()), result =>
             {
@@ -108,7 +107,7 @@ namespace Unigram.ViewModels.Supergroups
                 return Task.CompletedTask;
             }
 
-            Aggregator.Subscribe(this);
+            Subscribe();
             //Delegate?.UpdateChat(chat);
 
             if (chat.Type is ChatTypeSupergroup super)
@@ -130,6 +129,11 @@ namespace Unigram.ViewModels.Supergroups
             }
 
             return Task.CompletedTask;
+        }
+
+        public override void Subscribe()
+        {
+            Aggregator.Subscribe<UpdateSupergroupFullInfo>(this, Handle);
         }
 
         public void Handle(UpdateSupergroupFullInfo update)

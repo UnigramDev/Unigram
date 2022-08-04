@@ -18,7 +18,7 @@ namespace Unigram.ViewModels
             SendCommand = new RelayCommand(SendExecute);
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             IsLoading = true;
 

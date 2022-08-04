@@ -33,7 +33,7 @@ namespace Unigram.ViewModels.Supergroups
             set => Set(ref _chat, value);
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var chatId = (long)parameter;
 

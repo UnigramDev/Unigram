@@ -27,11 +27,6 @@ namespace Unigram.ViewModels.Settings
             StoragePathCommand = new RelayCommand<bool>(StoragePathExecute);
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
-        {
-            return Task.CompletedTask;
-        }
-
         public int UseLessData
         {
             get => Array.IndexOf(_useLessDataIndexer, Settings.UseLessData);

@@ -19,7 +19,7 @@ namespace Unigram.ViewModels.Settings
             ClearCacheCommand = new RelayCommand(ClearCacheExecute);
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             IsLoading = true;
 

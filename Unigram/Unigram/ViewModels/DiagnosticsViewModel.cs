@@ -36,7 +36,7 @@ namespace Unigram.ViewModels
             DisableDatabaseCommand = new RelayCommand(DisableDatabaseExecute);
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var calls = await ApplicationData.Current.LocalFolder.TryGetItemAsync("tgcalls.txt") as StorageFile;
             if (calls != null)

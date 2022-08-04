@@ -17,7 +17,8 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Controls.Chats
 {
-    public class ChatBackgroundPresenter : Grid, IHandle<UpdateSelectedBackground>
+    public class ChatBackgroundPresenter : Grid
+        //, IHandle<UpdateSelectedBackground>
     {
         private IProtoService _protoService;
         private IEventAggregator _aggregator;
@@ -69,7 +70,7 @@ namespace Unigram.Controls.Chats
             _protoService = protoService;
             _aggregator = aggregator;
 
-            aggregator.Subscribe(this);
+            aggregator.Subscribe<UpdateSelectedBackground>(this, Handle);
             //Update(session, settings.Wallpaper);
             UpdateBackground(protoService.SelectedBackground, ActualTheme == ElementTheme.Dark);
         }

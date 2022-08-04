@@ -21,10 +21,10 @@ namespace Unigram.ViewModels
 {
     public class SettingsViewModel : TLViewModelBase,
         IChildViewModel,
-        IDelegable<ISettingsDelegate>,
-        IHandle<UpdateUser>,
-        IHandle<UpdateUserFullInfo>,
-        IHandle<UpdateOption>
+        IDelegable<ISettingsDelegate>
+        //IHandle<UpdateUser>,
+        //IHandle<UpdateUserFullInfo>,
+        //IHandle<UpdateOption>
     {
         private readonly ISettingsSearchService _searchService;
         private readonly IStorageService _storageService;
@@ -53,18 +53,16 @@ namespace Unigram.ViewModels
             set => Set(ref _chat, value);
         }
 
-        public bool IsPremiumAvailable => CacheService.IsPremiumAvailable;
-
         public MvxObservableCollection<SettingsSearchEntry> Results { get; private set; }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var response = await ProtoService.SendAsync(new CreatePrivateChat(CacheService.Options.MyId, false));
             if (response is Chat chat)
             {
                 Chat = chat;
 
-                Aggregator.Subscribe(this);
+                Subscribe();
 
                 if (chat.Type is ChatTypePrivate privata)
                 {
@@ -87,6 +85,13 @@ namespace Unigram.ViewModels
                     }
                 }
             }
+        }
+
+        public override void Subscribe()
+        {
+            Aggregator.Subscribe<UpdateUser>(this, Handle)
+                .Subscribe<UpdateUserFullInfo>(Handle)
+                .Subscribe<UpdateOption>(Handle);
         }
 
         public async void Activate()

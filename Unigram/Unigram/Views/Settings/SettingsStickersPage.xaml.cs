@@ -41,16 +41,6 @@ namespace Unigram.Views.Settings
             _typeToTemplateMapping.Add("ItemTemplate", Resources["ItemTemplate"] as DataTemplate);
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            ViewModel.Aggregator.Subscribe(this);
-        }
-
-        protected override void OnNavigatedFrom(NavigationEventArgs e)
-        {
-            ViewModel.Aggregator.Unsubscribe(this);
-        }
-
         private void FeaturedStickers_Click(object sender, RoutedEventArgs e)
         {
             Frame.Navigate(typeof(SettingsStickersPage), (int)StickersType.Trending, new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });

@@ -67,7 +67,7 @@ namespace Unigram.ViewModels.Chats
             NavigationService.NavigateToChat(message.ChatId, message.Id);
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var data = (string)parameter;
 

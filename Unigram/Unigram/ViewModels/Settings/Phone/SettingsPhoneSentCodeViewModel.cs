@@ -21,7 +21,7 @@ namespace Unigram.ViewModels.Settings
             ResendCommand = new RelayCommand(ResendExecute, () => !IsLoading);
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var authState = GetAuthorizationState();
             if (authState is AuthenticationCodeInfo codeInfo)

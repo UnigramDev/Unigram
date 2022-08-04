@@ -26,7 +26,7 @@ namespace Unigram.ViewModels.Payments
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             if (state.TryGet("chatId", out long chatId)
                 && state.TryGet("messageId", out long messageId))

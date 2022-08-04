@@ -37,7 +37,7 @@ namespace Unigram.ViewModels.Settings
             DisableCommand = new RelayCommand(DisableExecute);
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var response = await ProtoService.SendAsync(new GetPasswordState());
             if (response is PasswordState passwordState)

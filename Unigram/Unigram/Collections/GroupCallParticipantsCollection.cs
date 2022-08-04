@@ -15,7 +15,11 @@ using Windows.UI.Xaml.Data;
 
 namespace Unigram.Collections
 {
-    public class GroupCallParticipantsCollection : ObservableCollection<GroupCallParticipant>, IDelegable<IGroupCallDelegate>, IHandle<UpdateGroupCall>, IHandle<UpdateGroupCallParticipant>, ISupportIncrementalLoading
+    public class GroupCallParticipantsCollection : ObservableCollection<GroupCallParticipant>
+        , ISupportIncrementalLoading
+        , IDelegable<IGroupCallDelegate>
+        //, IHandle<UpdateGroupCall>
+        //, IHandle<UpdateGroupCallParticipant>
     {
         private readonly IProtoService _protoService;
         private readonly IEventAggregator _aggregator;
@@ -33,7 +37,8 @@ namespace Unigram.Collections
 
             _groupCall = groupCall;
 
-            _aggregator.Subscribe(this);
+            _aggregator.Subscribe<UpdateGroupCall>(this, Handle)
+                .Subscribe<UpdateGroupCallParticipant>(Handle);
         }
 
         public void Load()

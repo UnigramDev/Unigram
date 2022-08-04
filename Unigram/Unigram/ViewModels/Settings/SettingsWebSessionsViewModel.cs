@@ -24,7 +24,7 @@ namespace Unigram.ViewModels.Settings
             TerminateOthersCommand = new RelayCommand(TerminateOtherExecute);
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             await UpdateSessionsAsync();
         }

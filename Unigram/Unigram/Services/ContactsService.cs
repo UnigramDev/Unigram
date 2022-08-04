@@ -25,7 +25,8 @@ namespace Unigram.Services
         Task RemoveAsync();
     }
 
-    public class ContactsService : IContactsService, IHandle<Telegram.Td.Api.UpdateAuthorizationState>/*, IHandle<Telegram.Td.Api.UpdateUser>*/
+    public class ContactsService : IContactsService
+        //, IHandle<Telegram.Td.Api.UpdateAuthorizationState>/*, IHandle<Telegram.Td.Api.UpdateUser>*/
     {
         private readonly IProtoService _protoService;
         private readonly ICacheService _cacheService;
@@ -51,7 +52,7 @@ namespace Unigram.Services
 
             _contacts = new HashSet<long>();
 
-            _aggregator.Subscribe(this);
+            _aggregator.Subscribe<Telegram.Td.Api.UpdateAuthorizationState>(this, Handle);
         }
 
         public async void Handle(Telegram.Td.Api.UpdateAuthorizationState update)

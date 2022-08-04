@@ -18,7 +18,10 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {
-    public class DownloadsViewModel : TLViewModelBase, IHandle<UpdateFileDownload>, IHandle<UpdateFileAddedToDownloads>, IHandle<UpdateFileRemovedFromDownloads>
+    public class DownloadsViewModel : TLViewModelBase
+        //IHandle<UpdateFileDownload>,
+        //IHandle<UpdateFileAddedToDownloads>,
+        //IHandle<UpdateFileRemovedFromDownloads>
     {
         private readonly IStorageService _storageService;
 
@@ -135,16 +138,17 @@ namespace Unigram.ViewModels
             Dispatcher.Dispatch(() => Items.Source.RemoveById(update));
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            Aggregator.Subscribe(this);
+            Subscribe();
             return base.OnNavigatedToAsync(parameter, mode, state);
         }
 
-        public override Task OnNavigatedFromAsync(NavigationState suspensionState, bool suspending)
+        public override void Subscribe()
         {
-            Aggregator.Unsubscribe(this);
-            return base.OnNavigatedFromAsync(suspensionState, suspending);
+            Aggregator.Subscribe<UpdateFileDownload>(this, Handle)
+                .Subscribe<UpdateFileAddedToDownloads>(Handle)
+                .Subscribe<UpdateFileRemovedFromDownloads>(Handle);
         }
 
         public RelayCommand RemoveAllCommand { get; }

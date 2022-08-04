@@ -29,7 +29,7 @@ namespace Unigram.ViewModels.Settings.Password
             set => Set(ref _address, value);
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             if (state.TryGet("password", out string password))
             {
@@ -41,7 +41,7 @@ namespace Unigram.ViewModels.Settings.Password
                 _hint = hint;
             }
 
-            return base.OnNavigatedToAsync(parameter, mode, state);
+            return Task.CompletedTask;
         }
 
         public RelayCommand SendCommand { get; }

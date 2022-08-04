@@ -10,7 +10,7 @@ using Telegram.Td.Api;
 
 namespace Unigram.Services
 {
-    public interface IOptionsService : IHandle<UpdateOption>
+    public interface IOptionsService
     {
         IReadOnlyDictionary<string, OptionValue> Values { get; }
 
@@ -18,6 +18,8 @@ namespace Unigram.Services
         bool TryGetValue<T>(string key, out T value);
 
         void Clear();
+
+        void Update(string name, OptionValue value);
 
 
 
@@ -446,219 +448,219 @@ namespace Unigram.Services
             _protoService = protoService;
         }
 
-        public void Handle(UpdateOption update)
+        public void Update(string name, OptionValue value)
         {
-            switch (update.Name)
+            switch (name)
             {
                 case "storage_max_time_from_last_access":
-                    _storageMaxTimeFromLastAccess = GetValue<long>(update.Value);
+                    _storageMaxTimeFromLastAccess = GetValue<long>(value);
                     break;
                 case "notification_sound_count_max":
-                    _notificationSoundCountMax = GetValue<long>(update.Value);
+                    _notificationSoundCountMax = GetValue<long>(value);
                     break;
                 case "notification_sound_size_max":
-                    _notificationSoundSizeMax = GetValue<long>(update.Value);
+                    _notificationSoundSizeMax = GetValue<long>(value);
                     break;
                 case "notification_sound_duration_max":
-                    _notificationSoundDurationMax = GetValue<long>(update.Value);
+                    _notificationSoundDurationMax = GetValue<long>(value);
                     break;
                 case "default_reaction":
-                    _defaultReaction = GetValue<string>(update.Value);
+                    _defaultReaction = GetValue<string>(value);
                     break;
                 case "is_premium":
-                    _isPremium = GetValue<bool>(update.Value);
+                    _isPremium = GetValue<bool>(value);
                     break;
                 case "is_premium_available":
-                    _isPremiumAvailable = GetValue<bool>(update.Value);
+                    _isPremiumAvailable = GetValue<bool>(value);
                     break;
                 case "chat_filter_chosen_chat_count_max":
-                    _chatFilterChosenChatCountMax = GetValue<long>(update.Value);
+                    _chatFilterChosenChatCountMax = GetValue<long>(value);
                     break;
                 case "chat_filter_count_max":
-                    _chatFilterCountMax = GetValue<long>(update.Value);
+                    _chatFilterCountMax = GetValue<long>(value);
                     break;
                 case "bio_length_max":
-                    _bioLengthMax = GetValue<long>(update.Value);
+                    _bioLengthMax = GetValue<long>(value);
                     break;
                 case "x_system_proxy_id":
-                    _systemProxyId = GetValue<long>(update.Value);
+                    _systemProxyId = GetValue<long>(value);
                     break;
                 case "always_parse_markdown":
-                    _alwaysParseMarkdown = GetValue<bool>(update.Value);
+                    _alwaysParseMarkdown = GetValue<bool>(value);
                     break;
                 case "archive_and_mute_new_chats_from_unknown_users":
-                    _archiveAndMuteNewChatsFromUnknownUsers = GetValue<bool>(update.Value);
+                    _archiveAndMuteNewChatsFromUnknownUsers = GetValue<bool>(value);
                     break;
                 case "disable_animated_emoji":
-                    _disableAnimatedEmoji = GetValue<bool>(update.Value);
+                    _disableAnimatedEmoji = GetValue<bool>(value);
                     break;
                 case "disable_contact_registered_notifications":
-                    _disableContactRegisteredNotifications = GetValue<bool>(update.Value);
+                    _disableContactRegisteredNotifications = GetValue<bool>(value);
                     break;
                 case "disable_persistent_network_statistics":
-                    _disablePersistentNetworkStatistics = GetValue<bool>(update.Value);
+                    _disablePersistentNetworkStatistics = GetValue<bool>(value);
                     break;
                 case "disable_sent_scheduled_message_notifications":
-                    _disableSentScheduledMessageNotifications = GetValue<bool>(update.Value);
+                    _disableSentScheduledMessageNotifications = GetValue<bool>(value);
                     break;
                 case "disable_time_adjustment_protection":
-                    _disableTimeAdjustmentProtection = GetValue<bool>(update.Value);
+                    _disableTimeAdjustmentProtection = GetValue<bool>(value);
                     break;
                 case "disable_top_chats":
-                    _disableTopChats = GetValue<bool>(update.Value);
+                    _disableTopChats = GetValue<bool>(value);
                     break;
                 case "ignore_background_updates":
-                    _ignoreBackgroundUpdates = GetValue<bool>(update.Value);
+                    _ignoreBackgroundUpdates = GetValue<bool>(value);
                     break;
                 case "ignore_default_disable_notification":
-                    _ignoreDefaultDisableNotification = GetValue<bool>(update.Value);
+                    _ignoreDefaultDisableNotification = GetValue<bool>(value);
                     break;
                 case "ignore_inline_thumbnails":
-                    _ignoreInlineThumbnails = GetValue<bool>(update.Value);
+                    _ignoreInlineThumbnails = GetValue<bool>(value);
                     break;
                 case "ignore_platform_restrictions":
-                    _ignorePlatformRestrictions = GetValue<bool>(update.Value);
+                    _ignorePlatformRestrictions = GetValue<bool>(value);
                     break;
                 case "ignore_sensitive_content_restrictions":
-                    _ignoreSensitiveContentRestrictions = GetValue<bool>(update.Value);
+                    _ignoreSensitiveContentRestrictions = GetValue<bool>(value);
                     break;
                 case "is_location_visible":
-                    _isLocationVisible = GetValue<bool>(update.Value);
+                    _isLocationVisible = GetValue<bool>(value);
                     break;
                 case "language_pack_database_path":
-                    _languagePackDatabasePath = GetValue<string>(update.Value);
+                    _languagePackDatabasePath = GetValue<string>(value);
                     break;
                 case "language_pack_id":
-                    _languagePackId = GetValue<string>(update.Value);
+                    _languagePackId = GetValue<string>(value);
                     break;
                 case "localization_target":
-                    _localizationTarget = GetValue<string>(update.Value);
+                    _localizationTarget = GetValue<string>(value);
                     break;
                 case "message_unload_delay":
-                    _messageUnloadDelay = GetValue<long>(update.Value);
+                    _messageUnloadDelay = GetValue<long>(value);
                     break;
                 case "notification_group_count_max":
-                    _notificationGroupCountMax = GetValue<long>(update.Value);
+                    _notificationGroupCountMax = GetValue<long>(value);
                     break;
                 case "notification_group_size_max":
-                    _notificationGroupSizeMax = GetValue<long>(update.Value);
+                    _notificationGroupSizeMax = GetValue<long>(value);
                     break;
                 case "online":
-                    _online = GetValue<bool>(update.Value);
+                    _online = GetValue<bool>(value);
                     break;
                 case "prefer_ipv6":
-                    _preferIpv6 = GetValue<bool>(update.Value);
+                    _preferIpv6 = GetValue<bool>(value);
                     break;
                 case "use_pfs":
-                    _usePfs = GetValue<bool>(update.Value);
+                    _usePfs = GetValue<bool>(value);
                     break;
                 case "use_quick_ack":
-                    _useQuickAck = GetValue<bool>(update.Value);
+                    _useQuickAck = GetValue<bool>(value);
                     break;
                 case "use_storage_optimizer":
-                    _useStorageOptimizer = GetValue<bool>(update.Value);
+                    _useStorageOptimizer = GetValue<bool>(value);
                     break;
                 case "utc_time_offset":
-                    _utcTimeOffset = GetValue<long>(update.Value);
+                    _utcTimeOffset = GetValue<long>(value);
                     break;
                 case "animation_search_bot_username":
-                    _animationSearchBotUsername = GetValue<string>(update.Value);
+                    _animationSearchBotUsername = GetValue<string>(value);
                     break;
                 case "authentication_token":
-                    _authenticationToken = GetValue<string>(update.Value);
+                    _authenticationToken = GetValue<string>(value);
                     break;
                 case "authorization_date":
-                    _authorizationDate = GetValue<long>(update.Value);
+                    _authorizationDate = GetValue<long>(value);
                     break;
                 case "basic_group_size_max":
-                    _basicGroupSizeMax = GetValue<long>(update.Value);
+                    _basicGroupSizeMax = GetValue<long>(value);
                     break;
                 case "call_connect_timeout_ms":
-                    _callConnectTimeoutMs = GetValue<long>(update.Value);
+                    _callConnectTimeoutMs = GetValue<long>(value);
                     break;
                 case "call_packet_timeout_ms":
-                    _callPacketTimeoutMs = GetValue<long>(update.Value);
+                    _callPacketTimeoutMs = GetValue<long>(value);
                     break;
                 case "can_archive_and_mute_new_chats_from_unknown_users":
-                    _canArchiveAndMuteNewChatsFromUnknownUsers = GetValue<bool>(update.Value);
+                    _canArchiveAndMuteNewChatsFromUnknownUsers = GetValue<bool>(value);
                     break;
                 case "can_ignore_sensitive_content_restrictions":
-                    _canIgnoreSensitiveContentRestrictions = GetValue<bool>(update.Value);
+                    _canIgnoreSensitiveContentRestrictions = GetValue<bool>(value);
                     break;
                 case "channel_bot_user_id":
-                    _channelBotUserId = GetValue<long>(update.Value);
+                    _channelBotUserId = GetValue<long>(value);
                     break;
                 case "enabled_proxy_id":
-                    _enabledProxyId = GetValue<long>(update.Value);
+                    _enabledProxyId = GetValue<long>(value);
                     break;
                 case "expect_blocking":
-                    _expectBlocking = GetValue<bool>(update.Value);
+                    _expectBlocking = GetValue<bool>(value);
                     break;
                 case "favorite_stickers_limit":
-                    _favoriteStickersLimit = GetValue<long>(update.Value);
+                    _favoriteStickersLimit = GetValue<long>(value);
                     break;
                 case "forwarded_message_count_max":
-                    _forwardedMessageCountMax = GetValue<long>(update.Value);
+                    _forwardedMessageCountMax = GetValue<long>(value);
                     break;
                 case "group_anonymous_bot_user_id":
-                    _groupAnonymousBotUserId = GetValue<long>(update.Value);
+                    _groupAnonymousBotUserId = GetValue<long>(value);
                     break;
                 case "message_caption_length_max":
-                    _messageCaptionLengthMax = GetValue<long>(update.Value);
+                    _messageCaptionLengthMax = GetValue<long>(value);
                     break;
                 case "message_text_length_max":
-                    _messageTextLengthMax = GetValue<long>(update.Value);
+                    _messageTextLengthMax = GetValue<long>(value);
                     break;
                 case "my_id":
-                    _myId = GetValue<long>(update.Value);
+                    _myId = GetValue<long>(value);
                     break;
                 case "pinned_archived_chat_count_max":
-                    _pinnedArchivedChatCountMax = GetValue<long>(update.Value);
+                    _pinnedArchivedChatCountMax = GetValue<long>(value);
                     break;
                 case "pinned_chat_count_max":
-                    _pinnedChatCountMax = GetValue<long>(update.Value);
+                    _pinnedChatCountMax = GetValue<long>(value);
                     break;
                 case "photo_search_bot_username":
-                    _photoSearchBotUsername = GetValue<string>(update.Value);
+                    _photoSearchBotUsername = GetValue<string>(value);
                     break;
                 case "replies_bot_chat_id":
-                    _repliesBotChatId = GetValue<long>(update.Value);
+                    _repliesBotChatId = GetValue<long>(value);
                     break;
                 case "suggested_language_pack_id":
-                    _suggestedLanguagePackId = GetValue<string>(update.Value);
+                    _suggestedLanguagePackId = GetValue<string>(value);
                     break;
                 case "suggested_video_note_audio_bitrate":
-                    _suggestedVideoNoteAudioBitrate = GetValue<long>(update.Value);
+                    _suggestedVideoNoteAudioBitrate = GetValue<long>(value);
                     break;
                 case "suggested_video_note_length":
-                    _suggestedVideoNoteLength = GetValue<long>(update.Value);
+                    _suggestedVideoNoteLength = GetValue<long>(value);
                     break;
                 case "suggested_video_note_video_bitrate":
-                    _suggestedVideoNoteVideoBitrate = GetValue<long>(update.Value);
+                    _suggestedVideoNoteVideoBitrate = GetValue<long>(value);
                     break;
                 case "supergroup_size_max":
-                    _supergroupSizeMax = GetValue<long>(update.Value);
+                    _supergroupSizeMax = GetValue<long>(value);
                     break;
                 case "t_me_url":
-                    _tMeUrl = GetValue<string>(update.Value);
+                    _tMeUrl = GetValue<string>(value);
                     break;
                 case "telegram_service_notifications_chat_id":
-                    _telegramServiceNotificationsChatId = GetValue<long>(update.Value);
+                    _telegramServiceNotificationsChatId = GetValue<long>(value);
                     break;
                 case "test_mode":
-                    _testMode = GetValue<bool>(update.Value);
+                    _testMode = GetValue<bool>(value);
                     break;
                 case "unix_time":
-                    _unixTime = GetValue<long>(update.Value);
+                    _unixTime = GetValue<long>(value);
                     break;
                 case "venue_search_bot_username":
-                    _venueSearchBotUsername = GetValue<string>(update.Value);
+                    _venueSearchBotUsername = GetValue<string>(value);
                     break;
                 case "version":
-                    _version = GetValue<string>(update.Value);
+                    _version = GetValue<string>(value);
                     break;
                 default:
-                    _values[update.Name] = update.Value;
+                    _values[name] = value;
                     break;
             }
         }

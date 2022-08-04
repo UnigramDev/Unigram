@@ -24,7 +24,7 @@ namespace Unigram.ViewModels.Settings
             ResetCommand = new RelayCommand(ResetExecute);
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var response = await ProtoService.SendAsync(new GetNetworkStatistics(false));
             if (response is NetworkStatistics statistics)

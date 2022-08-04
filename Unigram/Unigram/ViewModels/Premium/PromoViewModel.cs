@@ -50,7 +50,7 @@ namespace Unigram.ViewModels.Premium
             set => Set(ref _canPurchase, value);
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState _)
+        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState _)
         {
             PremiumSource premiumSource = parameter is PremiumSource source ? source : new PremiumSourceSettings();
 

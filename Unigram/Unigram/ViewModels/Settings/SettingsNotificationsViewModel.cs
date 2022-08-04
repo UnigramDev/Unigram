@@ -15,7 +15,8 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsNotificationsViewModel : TLMultipleViewModelBase, IHandle<UpdateScopeNotificationSettings>
+    public class SettingsNotificationsViewModel : TLMultipleViewModelBase
+        //, IHandle<UpdateScopeNotificationSettings>
     {
         public SettingsNotificationsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
@@ -33,14 +34,18 @@ namespace Unigram.ViewModels.Settings
             }
 
             ResetCommand = new RelayCommand(ResetExecute);
-
-            Aggregator.Subscribe(this);
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
+            Subscribe();
             await base.OnNavigatedToAsync(parameter, mode, state);
             RaisePropertyChanged(nameof(IsPinnedEnabled));
+        }
+
+        public override void Subscribe()
+        {
+            Aggregator.Subscribe<UpdateScopeNotificationSettings>(this, Handle);
         }
 
         public MvxObservableCollection<SettingsNotificationsScope> Scopes { get; private set; }
@@ -255,7 +260,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var settings = await ProtoService.SendAsync(new GetScopeNotificationSettings(GetScope())) as ScopeNotificationSettings;
             if (settings != null)

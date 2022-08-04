@@ -17,7 +17,7 @@ namespace Unigram.ViewModels.SignIn
             ResendCommand = new RelayCommand(ResendExecute, () => !IsLoading);
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var authState = ProtoService.GetAuthorizationState();
             if (authState is AuthorizationStateWaitCode waitCode)

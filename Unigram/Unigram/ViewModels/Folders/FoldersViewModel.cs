@@ -12,7 +12,8 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Folders
 {
-    public class FoldersViewModel : TLViewModelBase, IHandle<UpdateChatFilters>
+    public class FoldersViewModel : TLViewModelBase
+        //, IHandle<UpdateChatFilters>
     {
         public FoldersViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
@@ -40,7 +41,7 @@ namespace Unigram.ViewModels.Folders
             set => Set(ref _canCreateNew, value);
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             Items.ReplaceWith(CacheService.ChatFilters);
 
@@ -67,13 +68,7 @@ namespace Unigram.ViewModels.Folders
                 Recommended.Clear();
             }
 
-            Aggregator.Subscribe(this);
-        }
-
-        public override Task OnNavigatedFromAsync(NavigationState pageState, bool suspending)
-        {
-            Aggregator.Unsubscribe(this);
-            return base.OnNavigatedFromAsync(pageState, suspending);
+            Aggregator.Subscribe<UpdateChatFilters>(this, Handle);
         }
 
         private bool _useLeftLayout;

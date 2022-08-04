@@ -322,7 +322,7 @@ namespace Unigram.Views.Popups
             handler = new RoutedEventHandler(async (s, args) =>
             {
                 Loaded -= handler;
-                await ViewModel.OnNavigatedToAsync(null, NavigationMode.New, null);
+                await ViewModel.NavigatedToAsync(null, NavigationMode.New, null);
             });
 
             Loaded += handler;

@@ -22,7 +22,7 @@ namespace Unigram.ViewModels.Settings
             ChooseSoundCommand = new RelayCommand(ChooseSound);
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             if (parameter is SettingsNotificationsExceptionsScope scope)
             {

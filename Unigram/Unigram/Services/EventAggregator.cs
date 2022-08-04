@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using Unigram.Navigation.Services;
 using Windows.System;
+using static Unigram.Services.EventAggregator;
 
 namespace Unigram.Services
 {
@@ -32,18 +33,10 @@ namespace Unigram.Services
     public interface IEventAggregator
     {
         /// <summary>
-        /// Searches the subscribed handlers to check if we have a handler for
-        /// the message type supplied.
-        /// </summary>
-        /// <param name="messageType">The message type to check with</param>
-        /// <returns>True if any handler is found, false if not.</returns>
-        bool HandlerExistsFor(Type messageType);
-
-        /// <summary>
         ///   Subscribes an instance to all events declared through implementations of <see cref = "IHandle{T}" />
         /// </summary>
         /// <param name = "subscriber">The instance to subscribe for event publication.</param>
-        void Subscribe(object subscriber);
+        SubscriptionBuilder Subscribe<T>(object subscriber, Action<T> action);
 
         /// <summary>
         ///   Unsubscribes the instance from all events.
@@ -219,38 +212,21 @@ namespace Unigram.Services
     /// </summary>
     public class EventAggregator : IEventAggregator
     {
-        readonly List<Handler> handlers = new List<Handler>();
-
-        /// <summary>
-        /// Searches the subscribed handlers to check if we have a handler for
-        /// the message type supplied.
-        /// </summary>
-        /// <param name="messageType">The message type to check with</param>
-        /// <returns>True if any handler is found, false if not.</returns>
-        public bool HandlerExistsFor(Type messageType)
-        {
-            return handlers.Any(handler => handler.Handles(messageType) & !handler.IsDead);
-        }
+        private readonly ConditionalWeakTable<object, Handler> _handlers = new();
 
         /// <summary>
         ///   Subscribes an instance to all events declared through implementations of <see cref = "IHandle{T}" />
         /// </summary>
         /// <param name = "subscriber">The instance to subscribe for event publication.</param>
-        public virtual void Subscribe(object subscriber)
+        public SubscriptionBuilder Subscribe<T>(object subscriber, Action<T> action)
         {
             if (subscriber == null)
             {
                 throw new ArgumentNullException("subscriber");
             }
-            lock (handlers)
-            {
-                if (handlers.Any(x => x.Matches(subscriber)))
-                {
-                    return;
-                }
 
-                handlers.Add(new Handler(subscriber));
-            }
+            var handler = _handlers.GetValue(subscriber, x => new Handler());
+            return new SubscriptionBuilder(handler, typeof(T), action);
         }
 
         /// <summary>
@@ -263,14 +239,19 @@ namespace Unigram.Services
             {
                 throw new ArgumentNullException("subscriber");
             }
-            lock (handlers)
-            {
-                var found = handlers.FirstOrDefault(x => x.Matches(subscriber));
 
-                if (found != null)
-                {
-                    handlers.Remove(found);
-                }
+            _handlers.Remove(subscriber);
+        }
+
+        /// <summary>
+        ///   Unsubscribes the instance from all events.
+        /// </summary>
+        /// <param name = "subscriber">The instance to unsubscribe.</param>
+        public virtual void Unsubscribe<T>(object subscriber)
+        {
+            if (_handlers.TryGetValue(subscriber, out var handler))
+            {
+                handler.Unsubscribe<T>();
             }
         }
 
@@ -280,81 +261,56 @@ namespace Unigram.Services
         /// <param name = "message">The message instance.</param>
         public virtual void Publish(object message)
         {
-            if (message == null)
-            {
-                throw new ArgumentNullException("message");
-            }
-
-            Handler[] toNotify;
-            lock (handlers)
-            {
-                toNotify = handlers.ToArray();
-            }
-
             var messageType = message.GetType();
 
-            var dead = toNotify
-                .Where(handler => !handler.Handle(messageType, message))
-                .ToImmutableHashSet();
-
-            if (dead.Any())
+            foreach (var handler in _handlers)
             {
-                lock (handlers)
-                {
-                    handlers.RemoveAll(x => dead.Contains(x));
-                }
+                handler.Value.Handle(messageType, message);
             }
         }
 
-        class Handler
+        public class Handler
         {
-            readonly WeakReference reference;
-            readonly Dictionary<Type, MethodInfo> supportedHandlers = new Dictionary<Type, MethodInfo>();
+            private readonly Dictionary<Type, Delegate> _delegates = new();
 
-            public bool IsDead
+            public void Handle(Type type, object message)
             {
-                get { return reference.Target == null; }
-            }
-
-            public Handler(object handler)
-            {
-                reference = new WeakReference(handler);
-
-                var interfaces = handler.GetType().GetInterfaces()
-                    .Where(x => typeof(IHandle).IsAssignableFrom(x) && x.IsConstructedGenericType);
-
-                foreach (var @interface in interfaces)
+                if (_delegates.TryGetValue(type, out Delegate value))
                 {
-                    var type = @interface.GenericTypeArguments[0];
-                    var method = @interface.GetMethod("Handle");
-                    supportedHandlers[type] = method;
+                    value.DynamicInvoke(message);
                 }
             }
 
-            public bool Matches(object instance)
+            public void Subscribe<T>(Delegate handler)
             {
-                return reference.Target == instance;
+                _delegates[typeof(T)] = handler;
             }
 
-            public bool Handle(Type messageType, object message)
+            public void Subscribe(Type type, Delegate handler)
             {
-                var target = reference.Target;
-                if (target == null)
-                {
-                    return false;
-                }
-
-                if (supportedHandlers.TryGetValue(messageType, out MethodInfo method))
-                {
-                    method.Invoke(target, new[] { message });
-                }
-
-                return true;
+                _delegates[type] = handler;
             }
 
-            public bool Handles(Type messageType)
+            public void Unsubscribe<T>()
             {
-                return supportedHandlers.ContainsKey(messageType);
+                _delegates.Remove(typeof(T));
+            }
+        }
+
+        public class SubscriptionBuilder
+        {
+            private readonly Handler _handler;
+
+            public SubscriptionBuilder(Handler handler, Type type, Delegate action)
+            {
+                _handler = handler;
+                _handler.Subscribe(type, action);
+            }
+
+            public SubscriptionBuilder Subscribe<T>(Action<T> action)
+            {
+                _handler.Subscribe<T>(action);
+                return this;
             }
         }
 
@@ -696,7 +652,7 @@ namespace Unigram.Services
                 // Correction Messaging BL0004.007
                 //var list = weakActionsAndTokens.ToList();
                 //var listClone = list.Take(list.Count()).ToList();
-                
+
                 // The list should be a clone already.
                 var listClone = weakActionsAndTokens;
 

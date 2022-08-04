@@ -39,7 +39,7 @@ namespace Unigram.ViewModels
             set => Set(ref _topChats, value);
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             //if (mode == NavigationMode.New)
             //{

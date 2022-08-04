@@ -32,7 +32,11 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Gallery
 {
-    public sealed partial class GalleryView : OverlayPage, INavigatingPage, IGalleryDelegate, IHandle<UpdateDeleteMessages>, IHandle<UpdateMessageContent>
+    public sealed partial class GalleryView : OverlayPage
+        , INavigatingPage
+        , IGalleryDelegate
+        //, IHandle<UpdateDeleteMessages>
+        //, IHandle<UpdateMessageContent>
     {
         public GalleryViewModelBase ViewModel => DataContext as GalleryViewModelBase;
 
@@ -297,7 +301,7 @@ namespace Unigram.Controls.Gallery
                     var viewModel = ViewModel;
                     if (viewModel != null)
                     {
-                        await viewModel.OnNavigatedToAsync(parameter, NavigationMode.New, null);
+                        await viewModel.NavigatedToAsync(parameter, NavigationMode.New, null);
                     }
                 });
 
@@ -689,7 +693,8 @@ namespace Unigram.Controls.Gallery
 
             if (ViewModel != null)
             {
-                ViewModel.Aggregator.Subscribe(this);
+                ViewModel.Aggregator.Subscribe<UpdateDeleteMessages>(this, Handle)
+                    .Subscribe<UpdateDeleteMessages>(Handle);
             }
         }
 

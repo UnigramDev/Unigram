@@ -37,7 +37,7 @@ namespace Unigram.ViewModels.Settings
             DeleteCommand = new RelayCommand<LanguagePackInfo>(DeleteExecute);
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var response = await ProtoService.SendAsync(new GetLocalizationTargetInfo(false));
             if (response is LocalizationTargetInfo pack)

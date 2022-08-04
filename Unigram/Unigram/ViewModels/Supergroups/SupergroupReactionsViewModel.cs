@@ -54,7 +54,7 @@ namespace Unigram.ViewModels.Supergroups
 
         public MvxObservableCollection<SupergroupReactionOption> Items { get; private set; }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var chatId = (long)parameter;
 

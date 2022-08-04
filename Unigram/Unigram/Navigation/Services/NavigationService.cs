@@ -272,7 +272,7 @@ namespace Unigram.Navigation.Services
                 TargetPageType = targetPageType,
                 TargetPageParameter = targetPageParameter
             };
-            dataContext.OnNavigatingFrom(args);
+            dataContext.NavigatingFrom(args);
             return !args.Cancel;
         }
 
@@ -286,7 +286,7 @@ namespace Unigram.Navigation.Services
             dataContext.SessionState = BootStrapper.Current.SessionState;
 
             var pageState = FrameFacade.PageStateSettingsService(page.GetType()).Values;
-            await dataContext.OnNavigatedFromAsync(pageState, suspending).ConfigureAwait(false);
+            await dataContext.NavigatedFromAsync(pageState, suspending).ConfigureAwait(false);
         }
 
         private async Task NavigateToAsync(NavigationMode mode, object parameter, object frameContent = null)
@@ -317,7 +317,7 @@ namespace Unigram.Navigation.Services
                     dataContext.Dispatcher = Dispatcher;
                     dataContext.SessionState = BootStrapper.Current.SessionState;
                     var pageState = FrameFacade.PageStateSettingsService(page.GetType(), parameter: parameter).Values;
-                    await dataContext.OnNavigatedToAsync(parameter, mode, pageState);
+                    await dataContext.NavigatedToAsync(parameter, mode, pageState);
                 }
             }
 
@@ -351,13 +351,13 @@ namespace Unigram.Navigation.Services
 
                     void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
                     {
-                        _ = viewModel.OnNavigatedFromAsync(null, false);
+                        _ = viewModel.NavigatedFromAsync(null, false);
                         popup.Closed -= OnClosed;
                     }
 
                     popup.DataContext = viewModel;
 
-                    _ = viewModel.OnNavigatedToAsync(parameter, NavigationMode.New, null);
+                    _ = viewModel.NavigatedToAsync(parameter, NavigationMode.New, null);
                     popup.Closed += OnClosed;
                 }
 
@@ -557,7 +557,7 @@ namespace Unigram.Navigation.Services
                     dataContext.Dispatcher = Dispatcher;
                     dataContext.SessionState = BootStrapper.Current.SessionState;
                     var pageState = FrameFacade.PageStateSettingsService(page.GetType(), parameter: FrameFacade.CurrentPageParam).Values;
-                    await dataContext.OnNavigatedToAsync(FrameFacade.CurrentPageParam, NavigationMode.Refresh, pageState);
+                    await dataContext.NavigatedToAsync(FrameFacade.CurrentPageParam, NavigationMode.Refresh, pageState);
                 }
             }
         }

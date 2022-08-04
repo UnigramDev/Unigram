@@ -1856,11 +1856,11 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             }
             else if (update is UpdateOption updateOption)
             {
-                _options.Handle(updateOption);
+                _options.Update(updateOption.Name, updateOption.Value);
 
                 if (updateOption.Name == "my_id" && updateOption.Value is OptionValueInteger myId)
                 {
-                    _settings.UserId = (int)myId.Value;
+                    _settings.UserId = myId.Value;
 
 #if !DEBUG
                     Microsoft.AppCenter.AppCenter.SetUserId($"uid={myId.Value}");

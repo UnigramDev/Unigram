@@ -16,7 +16,9 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsProxiesViewModel : TLViewModelBase, IHandle<UpdateConnectionState>, IHandle<UpdateOption>
+    public class SettingsProxiesViewModel : TLViewModelBase
+        //, IHandle<UpdateConnectionState>
+        //, IHandle<UpdateOption>
     {
         private readonly INetworkService _networkService;
 
@@ -32,12 +34,12 @@ namespace Unigram.ViewModels.Settings
             EditCommand = new RelayCommand<ConnectionViewModel>(EditExecute);
             RemoveCommand = new RelayCommand<ProxyViewModel>(RemoveExecute);
             ShareCommand = new RelayCommand<ProxyViewModel>(ShareExecute);
-
-            aggregator.Subscribe(this);
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
+            Subscribe();
+
             if (App.Connection != null)
             {
                 await App.Connection.SendMessageAsync(new ValueSet { { "LoopbackExempt", true } });
@@ -80,10 +82,16 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public override Task OnNavigatedFromAsync(NavigationState pageState, bool suspending)
+        protected override Task OnNavigatedFromAsync(NavigationState pageState, bool suspending)
         {
             _networkService.ProxyChanged -= OnSystemProxyChanged;
             return base.OnNavigatedFromAsync(pageState, suspending);
+        }
+
+        public override void Subscribe()
+        {
+            Aggregator.Subscribe<UpdateConnectionState>(this, Handle)
+                .Subscribe<UpdateOption>(Handle);
         }
 
         private async Task UpdateAsync(ConnectionViewModel proxy)

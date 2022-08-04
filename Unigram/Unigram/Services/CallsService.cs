@@ -24,7 +24,7 @@ namespace Unigram.Services
         Screencast
     }
 
-    public interface IVoipService : IHandle<UpdateCall>, IHandle<UpdateNewCallSignalingData>
+    public interface IVoipService
     {
         string CurrentAudioInput { get; set; }
         string CurrentAudioOutput { get; set; }
@@ -50,7 +50,10 @@ namespace Unigram.Services
 #endif
     }
 
-    public class VoipService : TLViewModelBase, IVoipService
+    public class VoipService : TLViewModelBase
+        , IVoipService
+        //, IHandle<UpdateCall>
+        //, IHandle<UpdateNewCallSignalingData>
     {
         private readonly IViewService _viewService;
 
@@ -84,7 +87,13 @@ namespace Unigram.Services
             _outputWatcher = new MediaDeviceWatcher(DeviceClass.AudioRender, id => _manager?.SetAudioOutputDevice(id));
 #endif
 
-            aggregator.Subscribe(this);
+            Subscribe();
+        }
+
+        public override void Subscribe()
+        {
+            Aggregator.Subscribe<UpdateCall>(this, Handle)
+                .Subscribe<UpdateNewCallSignalingData>(Handle);
         }
 
 #if ENABLE_CALLS

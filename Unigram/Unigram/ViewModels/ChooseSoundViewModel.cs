@@ -12,7 +12,8 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {
-    public class ChooseSoundViewModel : TLViewModelBase, IHandle<UpdateSavedNotificationSounds>
+    public class ChooseSoundViewModel : TLViewModelBase
+        //, IHandle<UpdateSavedNotificationSounds>
     {
         public ChooseSoundViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
@@ -39,7 +40,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var response = await ProtoService.SendAsync(new GetSavedNotificationSounds());
             if (response is NotificationSounds sounds && parameter is long selected)
@@ -48,13 +49,12 @@ namespace Unigram.ViewModels
                 RaisePropertyChanged(nameof(CanUploadMore));
             }
 
-            Aggregator.Subscribe(this);
+            Subscribe();
         }
 
-        public override Task OnNavigatedFromAsync(NavigationState suspensionState, bool suspending)
+        public override void Subscribe()
         {
-            Aggregator.Unsubscribe(this);
-            return Task.CompletedTask;
+            Aggregator.Subscribe<UpdateSavedNotificationSounds>(this, Handle);
         }
 
         public void UpdateFile(object sender, File file)

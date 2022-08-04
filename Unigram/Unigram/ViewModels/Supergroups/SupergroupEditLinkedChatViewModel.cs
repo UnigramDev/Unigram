@@ -13,9 +13,9 @@ using Windows.UI.Xaml.Navigation;
 namespace Unigram.ViewModels.Supergroups
 {
     public class SupergroupEditLinkedChatViewModel : TLViewModelBase,
-        IDelegable<ISupergroupDelegate>,
-        IHandle<UpdateSupergroup>,
-        IHandle<UpdateSupergroupFullInfo>
+        IDelegable<ISupergroupDelegate>
+        //IHandle<UpdateSupergroup>,
+        //IHandle<UpdateSupergroupFullInfo>
     {
         public ISupergroupDelegate Delegate { get; set; }
 
@@ -51,7 +51,7 @@ namespace Unigram.ViewModels.Supergroups
 
         public MvxObservableCollection<Chat> Items { get; private set; }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var chatId = (long)parameter;
 
@@ -63,7 +63,7 @@ namespace Unigram.ViewModels.Supergroups
                 return Task.CompletedTask;
             }
 
-            Aggregator.Subscribe(this);
+            Subscribe();
             Delegate?.UpdateChat(chat);
 
             if (chat.Type is ChatTypeSupergroup super)
@@ -86,10 +86,10 @@ namespace Unigram.ViewModels.Supergroups
             return Task.CompletedTask;
         }
 
-        public override Task OnNavigatedFromAsync(NavigationState pageState, bool suspending)
+        public override void Subscribe()
         {
-            Aggregator.Unsubscribe(this);
-            return Task.CompletedTask;
+            Aggregator.Subscribe<UpdateSupergroup>(this, Handle)
+                .Subscribe<UpdateSupergroupFullInfo>(Handle);
         }
 
         public void Handle(UpdateSupergroup update)

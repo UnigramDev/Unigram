@@ -15,7 +15,8 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {
-    public class ChatsNearbyViewModel : TLViewModelBase, IHandle<UpdateUsersNearby>
+    public class ChatsNearbyViewModel : TLViewModelBase
+        //, IHandle<UpdateUsersNearby>
     {
         private readonly ILocationService _locationService;
 
@@ -52,7 +53,7 @@ namespace Unigram.ViewModels
             set => Set(ref _isChatsEmpty, value);
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var location = await _locationService.GetPositionAsync();
             if (location == null)
@@ -88,13 +89,12 @@ namespace Unigram.ViewModels
                 RaisePropertyChanged(nameof(LoadMoreVisibility));
             }
 
-            Aggregator.Subscribe(this);
+            Subscribe();
         }
 
-        public override Task OnNavigatedFromAsync(NavigationState pageState, bool suspending)
+        public override void Subscribe()
         {
-            Aggregator.Unsubscribe(this);
-            return base.OnNavigatedFromAsync(pageState, suspending);
+            Aggregator.Subscribe<UpdateUsersNearby>(this, Handle);
         }
 
         public void Handle(UpdateUsersNearby update)

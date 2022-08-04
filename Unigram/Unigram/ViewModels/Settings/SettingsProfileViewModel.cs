@@ -13,7 +13,10 @@ using static Unigram.Services.GenerationService;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsProfileViewModel : TLViewModelBase, IDelegable<IUserDelegate>, IHandle<UpdateUser>, IHandle<UpdateUserFullInfo>
+    public class SettingsProfileViewModel : TLViewModelBase
+        , IDelegable<IUserDelegate>
+        //, IHandle<UpdateUser>
+        //, IHandle<UpdateUserFullInfo>
     {
         public IUserDelegate Delegate { get; set; }
 
@@ -64,9 +67,9 @@ namespace Unigram.ViewModels.Settings
 
         public int BioLengthMax => (int)CacheService.Options.BioLengthMax;
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            Aggregator.Subscribe(this);
+            Subscribe();
 
             if (CacheService.TryGetUser(CacheService.Options.MyId, out User user))
             {
@@ -90,10 +93,10 @@ namespace Unigram.ViewModels.Settings
             return base.OnNavigatedToAsync(parameter, mode, state);
         }
 
-        public override Task OnNavigatedFromAsync(NavigationState suspensionState, bool suspending)
+        public override void Subscribe()
         {
-            Aggregator.Unsubscribe(this);
-            return base.OnNavigatedFromAsync(suspensionState, suspending);
+            Aggregator.Subscribe<UpdateUser>(this, Handle)
+                .Subscribe<UpdateUserFullInfo>(Handle);
         }
 
         public void Handle(UpdateUser update)
