@@ -1888,8 +1888,6 @@ namespace Unigram.Views
             }
 
             Search_TextChanged(null, null);
-
-            UpdatePaneToggleButtonVisibility();
         }
 
         private void Search_LostFocus(object sender, RoutedEventArgs e)
@@ -1900,8 +1898,6 @@ namespace Unigram.Views
             SearchReset();
 
             UpdatePaneToggleButtonVisibility();
-
-            FocusTarget.Focus(FocusState.Programmatic);
         }
 
         private async void Search_TextChanged(object sender, TextChangedEventArgs e)
@@ -1974,12 +1970,18 @@ namespace Unigram.Views
                     ViewModel.Settings.Search(SearchField.Text);
                 }
             }
+
+            UpdatePaneToggleButtonVisibility();
         }
 
         private void SearchReset()
         {
             //DialogsPanel.Visibility = Visibility.Visible;
             ShowHideSearch(false);
+
+            FocusTarget.Focus(FocusState.Programmatic);
+            SearchField.Text = string.Empty;
+            ComposeButton.Visibility = Visibility.Visible;
 
             if (ContactsPanel != null)
             {
