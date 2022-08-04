@@ -781,9 +781,9 @@ namespace Unigram.Controls.Chats
             }
 
             var emoji = Emoji.EnumerateByComposedCharacterSequence(shorter);
-            var last = emoji.Last();
+            var last = emoji.LastOrDefault();
 
-            if (Emoji.ContainsSingleEmoji(last))
+            if (last != null && Emoji.ContainsSingleEmoji(last))
             {
                 searchText = last;
                 index = text.Length - last.Length;
