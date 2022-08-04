@@ -32,15 +32,10 @@ namespace Unigram.Controls.Messages
 
         public void Unload()
         {
-            if (Content is MessageBubble bubble && !bubble.IsLoaded)
+            if (Content is MessageBubble bubble)
             {
                 bubble.UpdateMessage(null);
                 bubble.UnregisterEvents();
-            }
-
-            if (IsLoaded)
-            {
-                return;
             }
 
             _message?.UpdateSelectionCallback(null, null);

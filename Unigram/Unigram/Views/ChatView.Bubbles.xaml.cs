@@ -583,14 +583,13 @@ namespace Unigram.Views
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
-            if (args.InRecycleQueue == true)
+            if (args.InRecycleQueue)
             {
                 // XAML has indicated that the item is no longer being shown, so add it to the recycle queue
                 var tag = args.ItemContainer.Tag as string;
                 var added = _typeToItemHashSetMapping[tag].Add(args.ItemContainer);
 
-                var test = args.ItemContainer.ContentTemplateRoot as FrameworkElement;
-                if (test is MessageSelector selettore)
+                if (args.ItemContainer.ContentTemplateRoot is MessageSelector selettore)
                 {
                     selettore.Unload();
                 }
@@ -625,11 +624,6 @@ namespace Unigram.Views
 
                 content = checkbox.Content as FrameworkElement;
             }
-
-            if (content is Grid grid)
-            {
-                content = grid.FindName("Bubble") as FrameworkElement;
-            }
             else if (content is StackPanel panel)
             {
                 content = panel.FindName("Service") as FrameworkElement;
@@ -660,13 +654,9 @@ namespace Unigram.Views
             {
                 bubble.UpdateQuery(ViewModel.Search?.Query);
                 bubble.UpdateMessage(args.Item as MessageViewModel);
-                args.Handled = true;
 
-                args.RegisterUpdateCallback(2, (s, args) =>
-                {
-                    args.ItemContainer.SizeChanged += _sizeChangedHandler ??= new SizeChangedEventHandler(Item_SizeChanged);
-                    bubble.RegisterEvents();
-                });
+                args.RegisterUpdateCallback(2, RegisterEvents);
+                args.Handled = true;
             }
             else if (content is MessageService service)
             {
@@ -680,7 +670,19 @@ namespace Unigram.Views
                 }
 
                 service.UpdateMessage(args.Item as MessageViewModel);
+
                 args.Handled = true;
+            }
+        }
+
+        private void RegisterEvents(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            args.ItemContainer.SizeChanged += _sizeChangedHandler ??= new SizeChangedEventHandler(Item_SizeChanged);
+
+            if (args.ItemContainer.ContentTemplateRoot is MessageSelector selector
+                && selector.Content is MessageBubble bubble)
+            {
+                bubble.RegisterEvents();
             }
         }
 
