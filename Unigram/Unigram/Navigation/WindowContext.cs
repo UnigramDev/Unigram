@@ -142,7 +142,7 @@ namespace Unigram.Navigation
 
 
 
-        private HashSet<int> _screenCaptureDisabled;
+        private readonly HashSet<int> _screenCaptureDisabled = new();
 
         public void SetScreenCaptureEnabled(bool enabled, int hash)
         {

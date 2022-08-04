@@ -63,8 +63,6 @@ namespace Unigram.ViewModels
             //SelectedItems = messages;
         }
 
-        protected bool _wasScreenCaptureEnabled;
-
         protected readonly ConcurrentDictionary<long, MessageViewModel> _groupedMessages = new ConcurrentDictionary<long, MessageViewModel>();
 
         protected static readonly ConcurrentDictionary<long, IList<ChatAdministrator>> _admins = new ConcurrentDictionary<long, IList<ChatAdministrator>>();
@@ -206,7 +204,7 @@ namespace Unigram.ViewModels
             //Items = new LegacyMessageCollection();
             //Items.CollectionChanged += (s, args) => IsEmpty = Items.Count == 0;
 
-            Aggregator.Subscribe(this);
+            Subscribe();
             _count++;
 
             System.Diagnostics.Debug.WriteLine("Creating DialogViewModel {0}", _count);
@@ -1662,7 +1660,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             if (parameter is string pair)
             {
@@ -1700,9 +1698,10 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var applicationView = Windows.UI.ViewManagement.ApplicationView.GetForCurrentView();
-            _wasScreenCaptureEnabled = applicationView.IsScreenCaptureEnabled;
-            applicationView.IsScreenCaptureEnabled = chat.Type is not ChatTypeSecret && !chat.HasProtectedContent;
+            if (chat.Type is ChatTypeSecret || chat.HasProtectedContent)
+            {
+                WindowContext.Current.SetScreenCaptureEnabled(false, GetHashCode());
+            }
 
             Chat = chat;
             SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
@@ -1936,7 +1935,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public override void OnNavigatingFrom(NavigatingEventArgs args)
+        public override void NavigatingFrom(NavigatingEventArgs args)
         {
             //Aggregator.Unsubscribe(this);
 
@@ -1964,7 +1963,10 @@ namespace Unigram.ViewModels
             IsLastSliceLoaded = null;
             IsFirstSliceLoaded = null;
 
-            Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().IsScreenCaptureEnabled = _wasScreenCaptureEnabled;
+            if (chat.Type is ChatTypeSecret || chat.HasProtectedContent)
+            {
+                WindowContext.Current.SetScreenCaptureEnabled(true, GetHashCode());
+            }
 
             ProtoService.Send(new CloseChat(chat.Id));
 
@@ -3750,6 +3752,8 @@ namespace Unigram.ViewModels
                 {
                     return hiddenUser1.SenderName == hiddenUser2.SenderName;
                 }
+
+                return false;
             }
             else if (saved1 || saved2)
             {
