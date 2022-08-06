@@ -59,6 +59,10 @@ namespace Unigram.Services
             }
             else if (target is AttachmentMenuBot attachmentMenuBot)
             {
+                if (attachmentMenuBot.WebAppPlaceholder != null)
+                {
+                    attachmentMenuBot.WebAppPlaceholder = ProcessFile(attachmentMenuBot.WebAppPlaceholder);
+                }
                 if (attachmentMenuBot.MacosIcon != null)
                 {
                     attachmentMenuBot.MacosIcon = ProcessFile(attachmentMenuBot.MacosIcon);
@@ -1367,6 +1371,13 @@ namespace Unigram.Services
                 if (tMeUrlTypeChatInvite.Info != null)
                 {
                     ProcessFiles(tMeUrlTypeChatInvite.Info);
+                }
+            }
+            else if (target is TrendingStickerSets trendingStickerSets)
+            {
+                foreach (var item in trendingStickerSets.Sets)
+                {
+                    ProcessFiles(item);
                 }
             }
             else if (target is UpdateActiveNotifications updateActiveNotifications)

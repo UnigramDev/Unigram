@@ -33,8 +33,10 @@ namespace Unigram.Services
         Task<StorageFile> GetFileAsync(File file, bool completed = true);
         Task<StorageFile> GetFileAsync(string path);
 
-        void AddFileToDownloads(int fileId, long chatId, long messageId, int priority = 30);
         void DownloadFile(int fileId, int priority, int offset = 0, int limit = 0, bool synchronous = false);
+        Task<File> DownloadFileAsync(File file, int priority, int offset = 0, int limit = 0);
+
+        void AddFileToDownloads(int fileId, long chatId, long messageId, int priority = 30);
         void CancelDownloadFile(int fileId, bool onlyIfPending = false);
         bool IsDownloadFileCanceled(int fileId);
 
@@ -787,6 +789,17 @@ Read more about how to update your device [here](https://support.microsoft.com/h
         {
             _client.Send(new DownloadFile(fileId, priority, offset, limit, synchronous));
         }
+
+        public async Task<File> DownloadFileAsync(File file, int priority, int offset = 0, int limit = 0)
+        {
+            var response = await SendAsync(new DownloadFile(file.Id, priority, offset, limit, true));
+            if (response is File updated)
+            {
+                return ProcessFile(updated);
+            }
+
+            return file;
+        } 
 
         public void CancelDownloadFile(int fileId, bool onlyIfPending = false)
         {

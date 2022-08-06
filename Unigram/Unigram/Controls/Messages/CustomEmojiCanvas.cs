@@ -524,12 +524,14 @@ namespace Unigram.Controls.Messages
             public async Task CreateAsync()
             {
                 var file = _sticker.StickerValue;
-                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
+                if (file.Local.CanBeDownloaded && !file.Local.IsFileExisting())
                 {
-                    await _protoService.SendAsync(new DownloadFile(file.Id, 32, 0, 0, true));
+                    file = await _protoService.DownloadFileAsync(file, 32);
                 }
 
-                if (file.Local.IsFileExisting())
+                // IsDownloadingCompleted was updated either
+                // by IsFileExisting or by DownloadFileAsync.
+                if (file.Local.IsDownloadingCompleted)
                 {
                     if (_sticker.Format is StickerFormatTgs)
                     {
