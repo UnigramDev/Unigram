@@ -23,14 +23,15 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {
-    public class MainViewModel : TLMultipleViewModelBase,
+    public class MainViewModel : TLMultipleViewModelBase
         //IHandle<UpdateServiceNotification>,
         //IHandle<UpdateUnreadMessageCount>,
         //IHandle<UpdateUnreadChatCount>,
         //IHandle<UpdateChatFilters>,
         //IHandle<UpdateAppVersion>,
         //IHandle<UpdateWindowActivated>,
-        IDisposable
+        //, IHandle
+        , IDisposable
     {
         private readonly INotificationsService _pushService;
         private readonly IContactsService _contactsService;

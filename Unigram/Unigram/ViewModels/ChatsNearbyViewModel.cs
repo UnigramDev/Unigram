@@ -16,6 +16,7 @@ using Windows.UI.Xaml.Navigation;
 namespace Unigram.ViewModels
 {
     public class ChatsNearbyViewModel : TLViewModelBase
+        , IHandle
         //, IHandle<UpdateUsersNearby>
     {
         private readonly ILocationService _locationService;
@@ -88,8 +89,6 @@ namespace Unigram.ViewModels
                 RaisePropertyChanged(nameof(LoadMoreLabel));
                 RaisePropertyChanged(nameof(LoadMoreVisibility));
             }
-
-            Subscribe();
         }
 
         public override void Subscribe()

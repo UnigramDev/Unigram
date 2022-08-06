@@ -17,13 +17,14 @@ using static Unigram.Services.GenerationService;
 
 namespace Unigram.ViewModels.Supergroups
 {
-    public class SupergroupEditViewModel : TLViewModelBase,
-        IDelegable<ISupergroupEditDelegate>
-        //IHandle<UpdateChatPhoto>,
-        //IHandle<UpdateSupergroup>,
-        //IHandle<UpdateSupergroupFullInfo>,
-        //IHandle<UpdateBasicGroup>,
-        //IHandle<UpdateBasicGroupFullInfo>
+    public class SupergroupEditViewModel : TLViewModelBase
+        , IDelegable<ISupergroupEditDelegate>
+        , IHandle
+        //, IHandle<UpdateChatPhoto>
+        //, IHandle<UpdateSupergroup>
+        //, IHandle<UpdateSupergroupFullInfo>
+        //, IHandle<UpdateBasicGroup>
+        //, IHandle<UpdateBasicGroupFullInfo>
     {
         public ISupergroupEditDelegate Delegate { get; set; }
 
@@ -97,7 +98,6 @@ namespace Unigram.ViewModels.Supergroups
                 return Task.CompletedTask;
             }
 
-            Subscribe();
             Delegate?.UpdateChat(chat);
 
             if (chat.Type is ChatTypeSupergroup super)

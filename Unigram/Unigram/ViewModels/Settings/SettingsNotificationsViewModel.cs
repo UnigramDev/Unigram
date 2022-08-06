@@ -16,6 +16,7 @@ using Windows.UI.Xaml.Navigation;
 namespace Unigram.ViewModels.Settings
 {
     public class SettingsNotificationsViewModel : TLMultipleViewModelBase
+        , IHandle
         //, IHandle<UpdateScopeNotificationSettings>
     {
         public SettingsNotificationsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
@@ -38,7 +39,6 @@ namespace Unigram.ViewModels.Settings
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            Subscribe();
             await base.OnNavigatedToAsync(parameter, mode, state);
             RaisePropertyChanged(nameof(IsPinnedEnabled));
         }

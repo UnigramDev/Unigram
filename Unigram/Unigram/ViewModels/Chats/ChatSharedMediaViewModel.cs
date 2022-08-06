@@ -37,6 +37,7 @@ namespace Unigram.ViewModels.Chats
 
     public class ChatSharedMediaViewModel : TLMultipleViewModelBase
         , IMessageDelegate
+        , IHandle
         //, IHandle<UpdateDeleteMessages>
     {
         private readonly IPlaybackService _playbackService;

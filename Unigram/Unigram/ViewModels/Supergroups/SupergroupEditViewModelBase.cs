@@ -13,8 +13,9 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Supergroups
 {
-    public abstract class SupergroupEditViewModelBase : TLViewModelBase,
-        IDelegable<ISupergroupEditDelegate>
+    public abstract class SupergroupEditViewModelBase : TLViewModelBase
+        , IDelegable<ISupergroupEditDelegate>
+        , IHandle
         //IHandle<UpdateSupergroup>,
         //IHandle<UpdateSupergroupFullInfo>,
         //IHandle<UpdateBasicGroup>,
@@ -80,7 +81,6 @@ namespace Unigram.ViewModels.Supergroups
                 return Task.CompletedTask;
             }
 
-            Subscribe();
             Delegate?.UpdateChat(chat);
 
             if (chat.Type is ChatTypeSupergroup super)

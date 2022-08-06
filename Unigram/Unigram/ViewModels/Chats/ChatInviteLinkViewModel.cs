@@ -15,6 +15,7 @@ using Windows.UI.Xaml.Navigation;
 namespace Unigram.ViewModels.Chats
 {
     public class ChatInviteLinkViewModel : TLViewModelBase
+        , IHandle
         //, IHandle<UpdateBasicGroupFullInfo>
         //, IHandle<UpdateSupergroupFullInfo>
     {
@@ -75,7 +76,6 @@ namespace Unigram.ViewModels.Chats
                 return Task.CompletedTask;
             }
 
-            Subscribe();
             //Delegate?.UpdateChat(chat);
 
             if (chat.Type is ChatTypeBasicGroup basic)

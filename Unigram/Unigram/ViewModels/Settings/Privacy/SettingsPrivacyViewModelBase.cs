@@ -12,6 +12,7 @@ using Windows.UI.Xaml.Navigation;
 namespace Unigram.ViewModels.Settings
 {
     public class SettingsPrivacyViewModelBase : TLMultipleViewModelBase
+        , IHandle
         //, IHandle<UpdateUserPrivacySettingRules>
     {
         private readonly UserPrivacySetting _inputKey;
@@ -30,12 +31,7 @@ namespace Unigram.ViewModels.Settings
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            //if (mode != NavigationMode.Back)
-            {
-                UpdatePrivacyAsync();
-            }
-
-            Subscribe();
+            UpdatePrivacyAsync();
             return Task.CompletedTask;
         }
 

@@ -3,17 +3,16 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Services.Updates;
 using Unigram.Views.Popups;
 using Unigram.Views.Settings.Popups;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
     public class SettingsPasscodeViewModel : TLViewModelBase
+        , IHandle
         //, IHandle<UpdatePasscodeLock>
     {
         private readonly IPasscodeService _passcodeService;
@@ -25,12 +24,6 @@ namespace Unigram.ViewModels.Settings
 
             ToggleCommand = new RelayCommand(ToggleExecute);
             EditCommand = new RelayCommand(EditExecute);
-        }
-
-        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
-        {
-            Subscribe();
-            return base.OnNavigatedToAsync(parameter, mode, state);
         }
 
         public override void Subscribe()

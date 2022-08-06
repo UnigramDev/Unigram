@@ -4,21 +4,18 @@ using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Navigation;
-using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views.Settings;
 using Windows.Foundation;
 using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {
-    public class DownloadsViewModel : TLViewModelBase
+    public class DownloadsViewModel : TLViewModelBase, IHandle
         //IHandle<UpdateFileDownload>,
         //IHandle<UpdateFileAddedToDownloads>,
         //IHandle<UpdateFileRemovedFromDownloads>
@@ -136,12 +133,6 @@ namespace Unigram.ViewModels
         public void Handle(UpdateFileRemovedFromDownloads update)
         {
             Dispatcher.Dispatch(() => Items.Source.RemoveById(update));
-        }
-
-        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
-        {
-            Subscribe();
-            return base.OnNavigatedToAsync(parameter, mode, state);
         }
 
         public override void Subscribe()

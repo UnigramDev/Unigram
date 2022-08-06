@@ -10,6 +10,7 @@ using Windows.UI.Xaml.Navigation;
 namespace Unigram.ViewModels.Supergroups
 {
     public class SupergroupEditStickerSetViewModel : TLViewModelBase
+        , IHandle
         //, IHandle<UpdateSupergroupFullInfo>
     {
         public SupergroupEditStickerSetViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
@@ -107,7 +108,6 @@ namespace Unigram.ViewModels.Supergroups
                 return Task.CompletedTask;
             }
 
-            Subscribe();
             //Delegate?.UpdateChat(chat);
 
             if (chat.Type is ChatTypeSupergroup super)

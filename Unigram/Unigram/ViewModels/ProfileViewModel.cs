@@ -24,8 +24,9 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {
-    public class ProfileViewModel : ChatSharedMediaViewModel,
-        IDelegable<IProfileDelegate>
+    public class ProfileViewModel : ChatSharedMediaViewModel
+        , IDelegable<IProfileDelegate>
+        , IHandle
         //IHandle<UpdateUser>,
         //IHandle<UpdateUserFullInfo>,
         //IHandle<UpdateBasicGroup>,
@@ -125,7 +126,7 @@ namespace Unigram.ViewModels
                 return Task.CompletedTask;
             }
 
-            Subscribe();
+            //Subscribe();
             Delegate?.UpdateChat(chat);
 
             if (chat.Type is ChatTypePrivate privata)

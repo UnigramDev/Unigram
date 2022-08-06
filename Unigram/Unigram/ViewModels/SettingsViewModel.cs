@@ -19,9 +19,10 @@ using static Unigram.Services.GenerationService;
 
 namespace Unigram.ViewModels
 {
-    public class SettingsViewModel : TLViewModelBase,
-        IChildViewModel,
-        IDelegable<ISettingsDelegate>
+    public class SettingsViewModel : TLViewModelBase
+        , IChildViewModel
+        , IDelegable<ISettingsDelegate>
+        , IHandle
         //IHandle<UpdateUser>,
         //IHandle<UpdateUserFullInfo>,
         //IHandle<UpdateOption>
@@ -61,8 +62,6 @@ namespace Unigram.ViewModels
             if (response is Chat chat)
             {
                 Chat = chat;
-
-                Subscribe();
 
                 if (chat.Type is ChatTypePrivate privata)
                 {

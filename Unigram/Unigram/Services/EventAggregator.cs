@@ -265,7 +265,14 @@ namespace Unigram.Services
 
             foreach (var handler in _handlers)
             {
-                handler.Value.Handle(messageType, message);
+                try
+                {
+                    handler.Value.Handle(messageType, message);
+                }
+                catch
+                {
+
+                }
             }
         }
 

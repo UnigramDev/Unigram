@@ -11,6 +11,7 @@ namespace Unigram.ViewModels
 {
     public class ContactsViewModel : TLViewModelBase
         , IChildViewModel
+        //, IHandle
         //, IHandle<UpdateUserStatus>
     {
         private readonly IContactsService _contactsService;

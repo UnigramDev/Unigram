@@ -35,14 +35,14 @@ namespace Unigram.ViewModels.Settings.Privacy
             set => Set(ref _phoneNumber, value);
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             if (CacheService.TryGetUser(CacheService.Options.MyId, out User user))
             {
                 PhoneNumber = MeUrlPrefixConverter.Convert(CacheService, $"+{user.PhoneNumber}");
             }
 
-            return base.OnNavigatedToAsync(parameter, mode, state);
+            return Task.CompletedTask;
         }
 
         public RelayCommand SendCommand { get; }

@@ -14,6 +14,7 @@ using Windows.UI.Xaml.Navigation;
 namespace Unigram.ViewModels.Settings
 {
     public class SettingsAdvancedViewModel : TLViewModelBase
+        , IHandle
         //, IHandle<UpdateAppVersion>
     {
         private readonly ICloudUpdateService _cloudUpdateService;
@@ -34,7 +35,6 @@ namespace Unigram.ViewModels.Settings
             _update = _cloudUpdateService.NextUpdate;
             UpdateExecute();
 
-            Subscribe();
             return base.OnNavigatedToAsync(parameter, mode, state);
         }
 

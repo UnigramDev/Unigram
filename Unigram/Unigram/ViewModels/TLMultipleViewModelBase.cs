@@ -62,13 +62,21 @@ namespace Unigram.ViewModels
 
         public override async Task NavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
+            if (this is IHandle)
+            {
+                Subscribe();
+            }
+
             await OnNavigatedToAsync(parameter, mode, state);
             await Task.WhenAll(Children.Select(x => x.NavigatedToAsync(parameter, mode, state)));
         }
 
         public override async Task NavigatedFromAsync(NavigationState suspensionState, bool suspending)
         {
-            Unsubscribe();
+            if (this is IHandle)
+            {
+                Unsubscribe();
+            }
 
             await OnNavigatedFromAsync(suspensionState, suspending);
             await Task.WhenAll(Children.Select(x => x.NavigatedFromAsync(suspensionState, suspending)));

@@ -18,6 +18,7 @@ using Windows.UI.Xaml.Navigation;
 namespace Unigram.ViewModels.Settings
 {
     public class SettingsPrivacyAndSecurityViewModel : TLMultipleViewModelBase
+        , IHandle
         //, IHandle<UpdateOption>
     {
         private readonly IContactsService _contactsService;
@@ -119,9 +120,7 @@ namespace Unigram.ViewModels.Settings
             }
 
             IsPasscodeEnabled = _passcodeService.IsEnabled;
-
-            Subscribe();
-            return base.OnNavigatedToAsync(parameter, mode, state);
+            return Task.CompletedTask;
         }
 
         public override void Subscribe()

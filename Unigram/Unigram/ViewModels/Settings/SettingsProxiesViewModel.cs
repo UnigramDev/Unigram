@@ -17,6 +17,7 @@ using Windows.UI.Xaml.Navigation;
 namespace Unigram.ViewModels.Settings
 {
     public class SettingsProxiesViewModel : TLViewModelBase
+        , IHandle
         //, IHandle<UpdateConnectionState>
         //, IHandle<UpdateOption>
     {
@@ -38,8 +39,6 @@ namespace Unigram.ViewModels.Settings
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            Subscribe();
-
             if (App.Connection != null)
             {
                 await App.Connection.SendMessageAsync(new ValueSet { { "LoopbackExempt", true } });

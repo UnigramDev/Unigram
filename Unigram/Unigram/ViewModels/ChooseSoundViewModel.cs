@@ -13,6 +13,7 @@ using Windows.UI.Xaml.Navigation;
 namespace Unigram.ViewModels
 {
     public class ChooseSoundViewModel : TLViewModelBase
+        , IHandle
         //, IHandle<UpdateSavedNotificationSounds>
     {
         public ChooseSoundViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
@@ -48,8 +49,6 @@ namespace Unigram.ViewModels
                 Items.ReplaceDiff(sounds.NotificationSoundsValue.Select(x => new NotificationSoundViewModel(this, x, x.Id == selected)));
                 RaisePropertyChanged(nameof(CanUploadMore));
             }
-
-            Subscribe();
         }
 
         public override void Subscribe()

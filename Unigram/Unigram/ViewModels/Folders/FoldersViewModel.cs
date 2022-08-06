@@ -13,6 +13,7 @@ using Windows.UI.Xaml.Navigation;
 namespace Unigram.ViewModels.Folders
 {
     public class FoldersViewModel : TLViewModelBase
+        , IHandle
         //, IHandle<UpdateChatFilters>
     {
         public FoldersViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)

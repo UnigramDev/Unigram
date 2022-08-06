@@ -15,6 +15,7 @@ namespace Unigram.ViewModels.Settings
 {
     public class SettingsProfileViewModel : TLViewModelBase
         , IDelegable<IUserDelegate>
+        , IHandle
         //, IHandle<UpdateUser>
         //, IHandle<UpdateUserFullInfo>
     {
@@ -69,8 +70,6 @@ namespace Unigram.ViewModels.Settings
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            Subscribe();
-
             if (CacheService.TryGetUser(CacheService.Options.MyId, out User user))
             {
                 FirstName = user.FirstName;

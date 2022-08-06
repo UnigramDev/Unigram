@@ -204,9 +204,7 @@ namespace Unigram.ViewModels
             //Items = new LegacyMessageCollection();
             //Items.CollectionChanged += (s, args) => IsEmpty = Items.Count == 0;
 
-            Subscribe();
             _count++;
-
             System.Diagnostics.Debug.WriteLine("Creating DialogViewModel {0}", _count);
         }
 
@@ -221,9 +219,6 @@ namespace Unigram.ViewModels
         public void Dispose()
         {
             System.Diagnostics.Debug.WriteLine("Disposing DialogViewModel");
-
-            Aggregator.Unsubscribe(this);
-
             _groupedMessages.Clear();
         }
 

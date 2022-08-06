@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Unigram.ViewModels
 {
-    public partial class DialogViewModel
+    public partial class DialogViewModel : IHandle
         //IHandle<UpdateWindowActivated>,
         //IHandle<UpdateChatPermissions>,
         //IHandle<UpdateChatReplyMarkup>,

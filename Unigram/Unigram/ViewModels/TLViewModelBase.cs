@@ -46,7 +46,7 @@ namespace Unigram.ViewModels
         {
             if (this is IHandle)
             {
-                //Subscribe();
+                Subscribe();
             }
 
             return OnNavigatedToAsync(parameter, mode, state);
@@ -54,7 +54,7 @@ namespace Unigram.ViewModels
 
         public virtual Task NavigatedFromAsync(NavigationState suspensionState, bool suspending)
         {
-            //if (this is IHandle)
+            if (this is IHandle)
             {
                 Unsubscribe();
             }
