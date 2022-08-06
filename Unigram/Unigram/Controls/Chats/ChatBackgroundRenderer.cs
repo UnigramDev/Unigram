@@ -63,7 +63,15 @@ namespace Unigram.Controls.Chats
 
                 var bitmap = CreateTarget(sender, width, height);
 
-                if (_easing != null)
+                if (_backgroundFill is BackgroundFillGradient or BackgroundFillSolid)
+                {
+                    using (var args = bitmap.CreateDrawingSession())
+                    using (var brush = _backgroundFill.ToCanvasBrush(bitmap, bitmap.SizeInPixels.Width, bitmap.SizeInPixels.Height))
+                    {
+                        args.FillRectangle(new Rect(0, 0, bitmap.Size.Width, bitmap.Size.Height), brush);
+                    }
+                }
+                else if (_backgroundFill is BackgroundFillFreeformGradient && _easing != null)
                 {
                     var index = Math.Max(0, _index - 1);
                     bitmap.SetPixelBytes(GenerateGradient(width, height, _colors, _easing[index]));
