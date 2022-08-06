@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Logs;
-using Unigram.Services;
 using Unigram.Services.ViewService;
 using Unigram.Views;
 using Windows.ApplicationModel.Core;
@@ -168,8 +167,6 @@ namespace Unigram.Navigation.Services
             BackStack.Clear();
         }
 
-        private bool _aquired;
-
         public NavigationService(Frame frame, int session, string id)
         {
             IsInMainView = CoreApplication.MainView == CoreApplication.GetCurrentView();
@@ -320,12 +317,6 @@ namespace Unigram.Navigation.Services
                     await dataContext.NavigatedToAsync(parameter, mode, pageState);
                 }
             }
-
-            if (_aquired)
-            {
-                _aquired = false;
-                GC.EndNoGCRegion();
-            }
         }
 
         public Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null, Size size = default)
@@ -397,11 +388,6 @@ namespace Unigram.Navigation.Services
                 {
                     pageState[item.Key] = item.Value;
                 }
-            }
-
-            if (SettingsService.Current.Diagnostics.LowLatencyGC)
-            {
-                _aquired = GC.TryStartNoGCRegion(10 * 1024 * 1024, true);
             }
 
             var handler = Navigating;
