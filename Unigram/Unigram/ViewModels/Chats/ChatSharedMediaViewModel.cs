@@ -685,7 +685,7 @@ namespace Unigram.ViewModels.Chats
             throw new NotImplementedException();
         }
 
-        public void Unselect(long messageId)
+        public void Unselect(MessageViewModel message)
         {
             throw new NotImplementedException();
         }

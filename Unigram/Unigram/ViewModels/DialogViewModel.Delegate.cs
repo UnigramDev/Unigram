@@ -24,7 +24,7 @@ namespace Unigram.ViewModels
     {
         public bool CanBeDownloaded(object content, File file)
         {
-           var chat = _chat;
+            var chat = _chat;
             if (chat == null || ProtoService.IsDownloadFileCanceled(file.Id))
             {
                 return false;
@@ -586,8 +586,30 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            _selectedItems[message.Id] = message;
-            message.SelectionChanged();
+            if (message.MediaAlbumId != 0)
+            {
+                if (message.Content is MessageAlbum album)
+                {
+                    foreach (var child in album.Messages)
+                    {
+                        _selectedItems[child.Id] = child;
+                        child.SelectionChanged();
+                    }
+
+                    message.SelectionChanged();
+                }
+                else if (_groupedMessages.TryGetValue(message.MediaAlbumId, out MessageViewModel group))
+                {
+                    _selectedItems[message.Id] = message;
+                    message.SelectionChanged();
+                    group.SelectionChanged();
+                }
+            }
+            else
+            {
+                _selectedItems[message.Id] = message;
+                message.SelectionChanged();
+            }
 
             MessagesForwardCommand.RaiseCanExecuteChanged();
             MessagesDeleteCommand.RaiseCanExecuteChanged();
@@ -597,10 +619,30 @@ namespace Unigram.ViewModels
             RaisePropertyChanged(nameof(SelectedCount));
         }
 
-        public void Unselect(long messageId)
+        public void Unselect(MessageViewModel message)
         {
-            if (_selectedItems.TryRemove(messageId, out MessageViewModel message))
+            if (message.MediaAlbumId != 0)
             {
+                if (message.Content is MessageAlbum album)
+                {
+                    foreach (var child in album.Messages)
+                    {
+                        _selectedItems.TryRemove(child.Id, out _);
+                        child.SelectionChanged();
+                    }
+
+                    message.SelectionChanged();
+                }
+                else if (_groupedMessages.TryGetValue(message.MediaAlbumId, out MessageViewModel group))
+                {
+                    _selectedItems.TryRemove(message.Id, out _);
+                    message.SelectionChanged();
+                    group.SelectionChanged();
+                }
+            }
+            else
+            {
+                _selectedItems.TryRemove(message.Id, out _);
                 message.SelectionChanged();
             }
 

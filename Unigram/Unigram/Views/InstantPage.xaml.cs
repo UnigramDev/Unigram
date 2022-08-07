@@ -1683,7 +1683,7 @@ namespace Unigram.Views
             throw new NotImplementedException();
         }
 
-        public void Unselect(long messageId)
+        public void Unselect(MessageViewModel message)
         {
             throw new NotImplementedException();
         }

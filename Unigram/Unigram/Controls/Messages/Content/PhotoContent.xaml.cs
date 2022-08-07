@@ -12,15 +12,18 @@ namespace Unigram.Controls.Messages.Content
 {
     public sealed class PhotoContent : Control, IContentWithFile
     {
+        private bool _album;
+
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
         private string _fileToken;
         private string _thumbnailToken;
 
-        public PhotoContent(MessageViewModel message)
+        public PhotoContent(MessageViewModel message, bool album = false)
         {
             _message = message;
+            _album = album;
 
             DefaultStyleKey = typeof(PhotoContent);
         }
@@ -74,6 +77,9 @@ namespace Unigram.Controls.Messages.Content
             LayoutRoot.Constraint = message;
             LayoutRoot.Background = null;
             Texture.Source = null;
+            Texture.Stretch = _album
+                ? Stretch.UniformToFill
+                : Stretch.Uniform;
 
             //UpdateMessageContentOpened(message);
 

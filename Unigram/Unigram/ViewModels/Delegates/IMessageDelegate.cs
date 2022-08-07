@@ -16,7 +16,7 @@ namespace Unigram.ViewModels.Delegates
         bool IsSelectionEnabled { get; }
 
         void Select(MessageViewModel message);
-        void Unselect(long messageId);
+        void Unselect(MessageViewModel message);
 
         bool CanBeDownloaded(object content, File file);
         void DownloadFile(MessageViewModel message, File file);

@@ -61,8 +61,6 @@ namespace Unigram.Views
 
         private readonly bool _myPeople;
 
-        private bool _selectionFromItemClick;
-
         private readonly DispatcherTimer _slowModeTimer;
 
         private DispatcherTimer _stickersTimer;
@@ -1628,22 +1626,6 @@ namespace Unigram.Views
             CoreInputView.GetForCurrentView().TryShow();
         }
 
-        private void List_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            _selectionFromItemClick = true;
-        }
-
-        private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (_selectionFromItemClick && Messages.SelectedItems.Count < 1)
-            {
-                ViewModel.IsSelectionEnabled = false;
-            }
-
-            _selectionFromItemClick = false;
-            ViewModel.ExpandSelection(Messages.SelectedItems.Cast<MessageViewModel>());
-        }
-
         #region Context menu
 
         private void Menu_ContextRequested(object sender, RoutedEventArgs e)
@@ -3045,11 +3027,6 @@ namespace Unigram.Views
 
         private string ConvertSelection(int count)
         {
-            if (Messages.SelectionMode == ListViewSelectionMode.None)
-            {
-                return ManageCount.Text;
-            }
-
             return Locale.Declension("messages", count);
         }
 

@@ -140,7 +140,7 @@ namespace Unigram.Controls.Messages.Content
                 FrameworkElement element;
                 if (pos.Content is MessagePhoto)
                 {
-                    element = new PhotoContent(pos);
+                    element = new PhotoContent(pos, true);
                 }
                 else if (pos.Content is MessageVideo)
                 {
@@ -159,7 +159,7 @@ namespace Unigram.Controls.Messages.Content
                     continue;
                 }
 
-                Children.Add(element);
+                Children.Add(new MessageSelector(pos, element));
 
                 if (album.IsMedia)
                 {
@@ -201,6 +201,17 @@ namespace Unigram.Controls.Messages.Content
 
         public void UpdateMessageContentOpened(MessageViewModel message)
         {
+        }
+
+        public void UpdateSelectionEnabled(bool value, bool animate)
+        {
+            foreach (var child in Children)
+            {
+                if (child is MessageSelector selector)
+                {
+                    selector.UpdateSelectionEnabled(value, animate);
+                }
+            }
         }
 
         #region Caption
