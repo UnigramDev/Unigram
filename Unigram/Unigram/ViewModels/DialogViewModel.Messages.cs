@@ -475,7 +475,7 @@ namespace Unigram.ViewModels
                 message = group;
             }
 
-            SelectedItems[message.Id] = message;
+            Select(message);
             IsSelectionEnabled = true;
             //ListField?.SelectedItems.Add(message);
 

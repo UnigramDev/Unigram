@@ -581,6 +581,11 @@ namespace Unigram.ViewModels
 
         public void Select(MessageViewModel message)
         {
+            if (message.IsService())
+            {
+                return;
+            }
+
             _selectedItems[message.Id] = message;
             message.SelectionChanged();
 
