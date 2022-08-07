@@ -71,7 +71,7 @@ namespace Unigram.Services.Settings
 
         private void OnColorValuesChanged(UISettings sender, object args)
         {
-            CheckNightModeConditions(null);
+            UpdateNightMode(null);
         }
 
         public void UpdateTimer()
@@ -134,13 +134,17 @@ namespace Unigram.Services.Settings
             }
         }
 
-        public void UpdateNightMode(bool force = false)
+        private void CheckNightModeConditions(object state)
         {
-            CheckNightModeConditions(force);
+            UpdateNightMode(false);
         }
 
-        private async void CheckNightModeConditions(object state)
+        public void UpdateNightMode(bool? force = false)
         {
+            // true:  never update dictionaries, switch to opposite theme first
+            // false: if same theme update dictionaries, if different theme just switch
+            // null:  if same theme do nothing, if different theme just switch
+
             UpdateTimer();
 
             var conditions = CheckNightModeConditions();
@@ -152,18 +156,23 @@ namespace Unigram.Services.Settings
 
             foreach (TLWindowContext window in WindowContext.ActiveWrappers.ToArray())
             {
-                await window.Dispatcher.DispatchAsync(() =>
+                window.Dispatcher.Dispatch(() =>
                 {
-                    Theme.Current.Initialize(theme);
-
-                    try
+                    if (window.Content is FrameworkElement element)
                     {
-                        window.UpdateTitleBar();
-
-                        if (window.Content is FrameworkElement element)
+                        if (theme == element.ActualTheme && force is false or null)
                         {
+                            if (force is false)
+                            {
+                                Theme.Current.Initialize(theme);
+                            }
+                        }
+                        else
+                        {
+                            window.UpdateTitleBar();
+
                             // This should be no longer needed
-                            if (state is true)
+                            if (force is true)
                             {
                                 element.RequestedTheme = theme == ElementTheme.Dark
                                     ? ElementTheme.Light
@@ -173,7 +182,6 @@ namespace Unigram.Services.Settings
                             element.RequestedTheme = theme;
                         }
                     }
-                    catch { }
                 });
             }
 

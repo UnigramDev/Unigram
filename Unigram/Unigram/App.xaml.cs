@@ -475,7 +475,7 @@ namespace Unigram
             }
 
             // #2034: Will this work? No one knows.
-            SettingsService.Current.Appearance.UpdateNightMode();
+            SettingsService.Current.Appearance.UpdateNightMode(null);
 
             await RequestExtendedExecutionSessionAsync();
         }
