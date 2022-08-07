@@ -3,11 +3,9 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Services;
 using Windows.ApplicationModel;
-using Windows.Foundation;
 using Windows.Security.Credentials;
 using Windows.Security.Cryptography;
 using Windows.UI.Core;
-using Windows.UI.ViewManagement;
 using Windows.UI.ViewManagement.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -40,10 +38,6 @@ namespace Unigram.Views
                 _retryTimer.Start();
             }
 
-            _applicationView = ApplicationView.GetForCurrentView();
-            _applicationView.VisibleBoundsChanged += OnVisibleBoundsChanged;
-            OnVisibleBoundsChanged(_applicationView, null);
-
             //var user = InMemoryCacheService.Current.GetUser(SettingsHelper.UserId);
             //if (user != null)
             //{
@@ -53,6 +47,7 @@ namespace Unigram.Views
 
             var confirmScope = new InputScope();
             confirmScope.Names.Add(new InputScopeName(_passcodeService.IsSimple ? InputScopeNameValue.NumericPin : InputScopeNameValue.Password));
+
             Field.InputScope = confirmScope;
             Field.MaxLength = _passcodeService.IsSimple ? 4 : int.MaxValue;
         }
@@ -70,43 +65,6 @@ namespace Unigram.Views
                 RetryIn.Visibility = Visibility.Collapsed;
             }
         }
-
-        #region Bounds
-
-        private readonly ApplicationView _applicationView;
-
-        private void OnVisibleBoundsChanged(ApplicationView sender, object args)
-        {
-            if (sender == null)
-            {
-                return;
-            }
-
-            if (/*BackgroundElement != null &&*/ Window.Current?.Bounds is Rect bounds && sender.VisibleBounds != bounds)
-            {
-                Margin = new Thickness(sender.VisibleBounds.X - bounds.Left, sender.VisibleBounds.Y - bounds.Top, bounds.Width - (sender.VisibleBounds.Right - bounds.Left), bounds.Height - (sender.VisibleBounds.Bottom - bounds.Top));
-                UpdateViewBase();
-            }
-            else
-            {
-                Margin = new Thickness();
-                UpdateViewBase();
-            }
-        }
-
-        private void UpdateViewBase()
-        {
-            var bounds = _applicationView.VisibleBounds;
-            MinWidth = bounds.Width;
-            MinHeight = bounds.Height;
-            MaxWidth = bounds.Width;
-            MaxHeight = bounds.Height;
-
-            LayoutRoot.Width = bounds.Width;
-            LayoutRoot.Height = bounds.Height;
-        }
-
-        #endregion
 
         private void Field_TextChanged(object sender, RoutedEventArgs e)
         {
@@ -165,6 +123,9 @@ namespace Unigram.Views
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
             Window.Current.Activated += Window_Activated;
+            Window.Current.SizeChanged += Window_SizeChanged;
+
+            UpdateView();
 
             if (_passcodeService.IsBiometricsEnabled && await KeyCredentialManager.IsSupportedAsync())
             {
@@ -185,7 +146,10 @@ namespace Unigram.Views
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             Window.Current.Activated -= Window_Activated;
+            Window.Current.SizeChanged -= Window_SizeChanged;
         }
+
+        #region Bounds
 
         private void Window_Activated(object sender, WindowActivatedEventArgs e)
         {
@@ -194,6 +158,27 @@ namespace Unigram.Views
                 Field.Focus(FocusState.Keyboard);
             }
         }
+
+        private void Window_SizeChanged(object sender, WindowSizeChangedEventArgs e)
+        {
+            UpdateView();
+        }
+
+        private void UpdateView()
+        {
+            var bounds = Window.Current.Bounds;
+
+            Margin = new Thickness();
+            MinWidth = bounds.Width;
+            MinHeight = bounds.Height;
+            MaxWidth = bounds.Width;
+            MaxHeight = bounds.Height;
+
+            LayoutRoot.Width = bounds.Width;
+            LayoutRoot.Height = bounds.Height;
+        }
+
+        #endregion
 
         private void Lock()
         {
@@ -220,32 +205,29 @@ namespace Unigram.Views
         {
             try
             {
-                if (TLWindowContext.Current.ActivationMode == CoreWindowActivationMode.ActivatedInForeground)
+                var result = await KeyCredentialManager.OpenAsync(Strings.Resources.AppName);
+                if (result.Credential != null)
                 {
-                    var result = await KeyCredentialManager.OpenAsync(Strings.Resources.AppName);
-                    if (result.Credential != null)
+                    var signResult = await result.Credential.RequestSignAsync(CryptographicBuffer.ConvertStringToBinary(Package.Current.Id.Name, BinaryStringEncoding.Utf8));
+                    if (signResult.Status == KeyCredentialStatus.Success)
                     {
-                        var signResult = await result.Credential.RequestSignAsync(CryptographicBuffer.ConvertStringToBinary(Package.Current.Id.Name, BinaryStringEncoding.Utf8));
-                        if (signResult.Status == KeyCredentialStatus.Success)
-                        {
-                            Unlock();
-                        }
-                        else
-                        {
-                            Field.Focus(FocusState.Keyboard);
-                        }
+                        Unlock();
                     }
                     else
                     {
-                        var creationResult = await KeyCredentialManager.RequestCreateAsync(Strings.Resources.AppName, KeyCredentialCreationOption.ReplaceExisting);
-                        if (creationResult.Status == KeyCredentialStatus.Success)
-                        {
-                            Unlock();
-                        }
-                        else
-                        {
-                            Field.Focus(FocusState.Keyboard);
-                        }
+                        Field.Focus(FocusState.Keyboard);
+                    }
+                }
+                else
+                {
+                    var creationResult = await KeyCredentialManager.RequestCreateAsync(Strings.Resources.AppName, KeyCredentialCreationOption.ReplaceExisting);
+                    if (creationResult.Status == KeyCredentialStatus.Success)
+                    {
+                        Unlock();
+                    }
+                    else
+                    {
+                        Field.Focus(FocusState.Keyboard);
                     }
                 }
             }
