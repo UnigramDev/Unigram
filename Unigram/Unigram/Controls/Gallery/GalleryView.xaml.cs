@@ -35,8 +35,8 @@ namespace Unigram.Controls.Gallery
     public sealed partial class GalleryView : OverlayPage
         , INavigatingPage
         , IGalleryDelegate
-        //, IHandle<UpdateDeleteMessages>
-        //, IHandle<UpdateMessageContent>
+    //, IHandle<UpdateDeleteMessages>
+    //, IHandle<UpdateMessageContent>
     {
         public GalleryViewModelBase ViewModel => DataContext as GalleryViewModelBase;
 
@@ -331,10 +331,7 @@ namespace Unigram.Controls.Gallery
                 ApplicationView.GetForCurrentView().ExitFullScreenMode();
             }
 
-            if (ViewModel?.HasProtectedContent == true)
-            {
-                WindowContext.Current.SetScreenCaptureEnabled(true, ViewModel.GetHashCode());
-            }
+            WindowContext.Current.EnableScreenCapture(ViewModel.GetHashCode());
 
             Unload();
             Dispose();

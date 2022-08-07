@@ -1695,7 +1695,7 @@ namespace Unigram.ViewModels
 
             if (chat.Type is ChatTypeSecret || chat.HasProtectedContent)
             {
-                WindowContext.Current.SetScreenCaptureEnabled(false, GetHashCode());
+                WindowContext.Current.DisableScreenCapture(GetHashCode());
             }
 
             Chat = chat;
@@ -1958,11 +1958,7 @@ namespace Unigram.ViewModels
             IsLastSliceLoaded = null;
             IsFirstSliceLoaded = null;
 
-            if (chat.Type is ChatTypeSecret || chat.HasProtectedContent)
-            {
-                WindowContext.Current.SetScreenCaptureEnabled(true, GetHashCode());
-            }
-
+            WindowContext.Current.EnableScreenCapture(GetHashCode());
             ProtoService.Send(new CloseChat(chat.Id));
 
             try

@@ -144,18 +144,24 @@ namespace Unigram.Navigation
 
         private readonly HashSet<int> _screenCaptureDisabled = new();
 
-        public void SetScreenCaptureEnabled(bool enabled, int hash)
+        public void DisableScreenCapture(int hash)
         {
-            if (enabled)
-            {
-                _screenCaptureDisabled.Add(hash);
-            }
-            else
-            {
-                _screenCaptureDisabled.Remove(hash);
-            }
+            _screenCaptureDisabled.Add(hash);
 
-            ApplicationView.GetForCurrentView().IsScreenCaptureEnabled = _screenCaptureDisabled.Count == 0;
+            if (_screenCaptureDisabled.Count == 1)
+            {
+                ApplicationView.GetForCurrentView().IsScreenCaptureEnabled = false;
+            }
+        }
+
+        public void EnableScreenCapture(int hash)
+        {
+            _screenCaptureDisabled.Remove(hash);
+
+            if (_screenCaptureDisabled.Count == 0)
+            {
+                ApplicationView.GetForCurrentView().IsScreenCaptureEnabled = true;
+            }
         }
     }
 }

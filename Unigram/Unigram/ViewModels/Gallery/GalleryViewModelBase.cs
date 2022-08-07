@@ -130,15 +130,20 @@ namespace Unigram.ViewModels.Gallery
         {
             RaisePropertyChanged(nameof(Position));
 
+            if (item == null)
+            {
+                return;
+            }
+
             if (item.IsProtected && !_hasProtectedContent)
             {
                 _hasProtectedContent = true;
-                WindowContext.Current.SetScreenCaptureEnabled(false, GetHashCode());
+                WindowContext.Current.DisableScreenCapture(GetHashCode());
             }
             else if (_hasProtectedContent && !item.IsProtected)
             {
                 _hasProtectedContent = false;
-                WindowContext.Current.SetScreenCaptureEnabled(true, GetHashCode());
+                WindowContext.Current.EnableScreenCapture(GetHashCode());
             }
         }
 
