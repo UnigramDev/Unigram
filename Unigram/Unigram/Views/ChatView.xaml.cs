@@ -123,7 +123,7 @@ namespace Unigram.Views
             _typeToTemplateMapping.Add("ServiceMessageUnreadTemplate", Resources["ServiceMessageUnreadTemplate"] as DataTemplate);
             _typeToTemplateMapping.Add("EmptyMessageTemplate", Resources["EmptyMessageTemplate"] as DataTemplate);
 
-            _windowContext = TLWindowContext.GetForCurrentView();
+            _windowContext = TLWindowContext.Current;
 
             if (_windowContext.ContactPanel != null)
             {
@@ -370,7 +370,7 @@ namespace Unigram.Views
                 _stickersTimer.Stop();
             }
 
-            if (StickersPanel.Visibility == Visibility.Visible)
+            if (StickersPanel.Visibility == Visibility.Visible || e?.Pointer.PointerDeviceType == PointerDeviceType.Touch)
             {
                 return;
             }
@@ -877,7 +877,7 @@ namespace Unigram.Views
             Window.Current.VisibilityChanged += Window_VisibilityChanged;
 
             Window.Current.CoreWindow.CharacterReceived += OnCharacterReceived;
-            WindowContext.GetForCurrentView().AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
+            WindowContext.Current.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
 
             ViewVisibleMessages(false);
 
@@ -896,7 +896,7 @@ namespace Unigram.Views
             Window.Current.VisibilityChanged -= Window_VisibilityChanged;
 
             Window.Current.CoreWindow.CharacterReceived -= OnCharacterReceived;
-            WindowContext.GetForCurrentView().AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
+            WindowContext.Current.AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
         }
 
         private void Window_Activated(object sender, WindowActivatedEventArgs e)
