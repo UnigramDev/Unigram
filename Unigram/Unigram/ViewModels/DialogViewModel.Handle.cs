@@ -637,6 +637,11 @@ namespace Unigram.ViewModels
                     {
                         message.Content = update.NewContent;
 
+                        if (!ProtoService.Options.DisableAnimatedEmoji)
+                        {
+                            ProcessEmoji(new[] { message });
+                        }
+
                         if (update.NewContent is MessageExpiredPhoto or MessageExpiredVideo)
                         {
                             // Probably not the best way

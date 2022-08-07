@@ -1498,7 +1498,7 @@ namespace Unigram.ViewModels
         {
             if (!ProtoService.Options.DisableAnimatedEmoji)
             {
-                ProcessEmoji(chat, messages);
+                ProcessEmoji(messages);
             }
 
             ProcessAlbums(chat, messages, out var albums);
@@ -1526,7 +1526,7 @@ namespace Unigram.ViewModels
             return Task.CompletedTask;
         }
 
-        private void ProcessEmoji(Chat chat, IList<MessageViewModel> messages)
+        private void ProcessEmoji(IList<MessageViewModel> messages)
         {
             foreach (var message in messages)
             {
@@ -1537,9 +1537,13 @@ namespace Unigram.ViewModels
                         message.GeneratedContent = new MessageBigEmoji(text.Text, count);
                     }
                 }
-                else if (message.Content is MessageAnimatedEmoji animatedEmoji)
+                else if (message.Content is MessageAnimatedEmoji animatedEmoji && animatedEmoji.AnimatedEmoji.Sticker != null)
                 {
                     message.GeneratedContent = new MessageSticker(animatedEmoji.AnimatedEmoji.Sticker, false);
+                }
+                else
+                {
+                    message.GeneratedContent = null;
                 }
             }
         }
@@ -2442,7 +2446,7 @@ namespace Unigram.ViewModels
                         if (file.Remote.IsUploadingCompleted)
                         {
                             ComposerHeader = null;
-                            ProtoService.Send(new EditMessageMedia(chat.Id, header.EditingMessage.Id, null, header.EditingMessageMedia.Delegate(new InputFileId(file.Id), header.EditingMessageCaption)));
+                            ProtoService.Send(new EditMessageMedia(chat.Id, header.EditingMessage.Id, null, factory.Delegate(new InputFileId(file.Id), header.EditingMessageCaption)));
                         }
                         else
                         {
@@ -2463,7 +2467,7 @@ namespace Unigram.ViewModels
                 else
                 {
                     Function function;
-                    if (editing.Content is MessageText)
+                    if (editing.Content is MessageText or MessageAnimatedEmoji or MessageBigEmoji)
                     {
                         function = new EditMessageText(chat.Id, editing.Id, null, new InputMessageText(formattedText, disablePreview, true));
                     }
