@@ -486,7 +486,7 @@ namespace Unigram.Controls.Chats
                     }
                     else if (!_operation)
                     {
-                        ViewModel.Unselect(current.Id);
+                        ViewModel.Unselect(current);
                     }
                 }
 
@@ -494,7 +494,7 @@ namespace Unigram.Controls.Chats
                 {
                     if (_operation)
                     {
-                        ViewModel.Unselect(_lastItem.Id);
+                        ViewModel.Unselect(_lastItem);
                     }
                     else if (!_operation)
                     {
@@ -552,7 +552,7 @@ namespace Unigram.Controls.Chats
                     }
                     else if (!_operation && contains)
                     {
-                        ViewModel.Unselect(message.Id);
+                        ViewModel.Unselect(message);
                     }
 
                     IsSelectionEnabled = true;
@@ -566,7 +566,7 @@ namespace Unigram.Controls.Chats
                 {
                     if (_operation && contains)
                     {
-                        ViewModel.Unselect(message.Id);
+                        ViewModel.Unselect(message);
                     }
                     else if (!_operation && !contains)
                     {

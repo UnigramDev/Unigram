@@ -85,9 +85,14 @@
                                  Foreground="{ThemeResource MessageHeaderForegroundBrush}" />
                             <LineBreak />
                             <Run x:Name="ServiceLabel"
-                                 Foreground="{ThemeResource MessageSubtleForegroundBrush}" /><Run x:Name="MessageLabel"
-                                                                                                  Foreground="{ThemeResource MessageForegroundBrush}" />
+                                 Foreground="{ThemeResource MessageSubtleForegroundBrush}" /><Span x:Name="MessageLabel"
+                                                                                                   Foreground="{ThemeResource MessageForegroundBrush}" />
                         </TextBlock>
+
+                        <local:CustomEmojiCanvas x:Name="CustomEmoji"
+                                                 x:Load="False"
+                                                 Margin="6,-2,-2,-2"
+                                                 Grid.Column="1" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

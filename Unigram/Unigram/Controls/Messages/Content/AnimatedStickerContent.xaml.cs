@@ -58,7 +58,7 @@ namespace Unigram.Controls.Messages.Content
         {
             _message = message;
 
-            var sticker = GetContent(message);
+            var sticker = GetContent(message, out bool premium);
             if (sticker == null || !_templateApplied)
             {
                 return;
@@ -69,6 +69,7 @@ namespace Unigram.Controls.Messages.Content
                 Width = Player.Width = 180 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
                 Height = Player.Height = 180 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
                 Player.FitzModifier = (FitzModifier)animatedEmoji.AnimatedEmoji.FitzpatrickType;
+                Player.IsFlipped = false;
 
                 var sound = animatedEmoji.AnimatedEmoji.Sound;
                 if (sound != null && sound.Local.CanBeDownloaded && !sound.Local.IsDownloadingActive)
@@ -76,12 +77,19 @@ namespace Unigram.Controls.Messages.Content
                     message.ProtoService.DownloadFile(sound.Id, 1);
                 }
             }
+            else if (message.Content is MessageText)
+            {
+                Width = Player.Width = 180 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
+                Height = Player.Height = 180 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
+                Player.ColorReplacements = null;
+                Player.IsFlipped = false;
+            }
             else
             {
                 Width = Player.Width = sticker.PremiumAnimation != null ? 180 : 180;
                 Height = Player.Height = 180;
                 Player.ColorReplacements = null;
-                Player.IsFlipped = sticker.PremiumAnimation != null && !message.IsOutgoing;
+                Player.IsFlipped = premium && sticker.PremiumAnimation != null && !message.IsOutgoing;
             }
 
             if (!sticker.StickerValue.Local.IsFileExisting())
@@ -100,7 +108,7 @@ namespace Unigram.Controls.Messages.Content
 
         private void UpdateFile(MessageViewModel message, File file)
         {
-            var sticker = GetContent(message);
+            var sticker = GetContent(message, out _);
             if (sticker == null || !_templateApplied)
             {
                 return;
@@ -146,7 +154,7 @@ namespace Unigram.Controls.Messages.Content
             ElementCompositionPreview.SetElementChildVisual(Player, null);
 
             var sticker = _message?.Content as MessageSticker;
-            if (sticker?.Sticker.PremiumAnimation != null && _message.GeneratedContentUnread && IsLoaded)
+            if (sticker?.Sticker.PremiumAnimation != null && sticker.IsPremium && _message.GeneratedContentUnread && IsLoaded)
             {
                 _message.GeneratedContentUnread = false;
                 PlayPremium(_message, sticker.Sticker);
@@ -167,24 +175,27 @@ namespace Unigram.Controls.Messages.Content
             return false;
         }
 
-        private Sticker GetContent(MessageViewModel message)
+        private Sticker GetContent(MessageViewModel message, out bool premium)
         {
             var content = message.GeneratedContent ?? message.Content;
             if (content is MessageSticker sticker)
             {
+                premium = sticker.IsPremium;
                 return sticker.Sticker;
             }
             else if (content is MessageText text && text.WebPage != null)
             {
+                premium = false;
                 return text.WebPage.Sticker;
             }
 
+            premium = false;
             return null;
         }
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            var sticker = GetContent(_message);
+            var sticker = GetContent(_message, out bool premium);
             if (sticker == null)
             {
                 return;
@@ -208,9 +219,13 @@ namespace Unigram.Controls.Messages.Content
                     PlayInteraction(_message, interaction);
                 }
             }
+            else if (_message.Content is MessageText)
+            {
+                Player.Play();
+            }
             else
             {
-                if (sticker.PremiumAnimation != null)
+                if (premium && sticker.PremiumAnimation != null)
                 {
                     if (Interactions?.Children.Count > 0)
                     {

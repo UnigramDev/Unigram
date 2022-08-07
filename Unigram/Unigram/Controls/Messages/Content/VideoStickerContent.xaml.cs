@@ -60,6 +60,17 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
+            if (message.Content is MessageAnimatedEmoji animatedEmoji)
+            {
+                LayoutRoot.MaxWidth = 180 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
+                LayoutRoot.MaxHeight = 180 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
+            }
+            else
+            {
+                LayoutRoot.MaxWidth = 180;
+                LayoutRoot.MaxHeight = 180;
+            }
+
             LayoutRoot.Constraint = message;
 
             if (!sticker.StickerValue.Local.IsFileExisting())

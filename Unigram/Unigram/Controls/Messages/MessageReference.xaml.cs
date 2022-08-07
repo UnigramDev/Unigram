@@ -1,15 +1,20 @@
-﻿using Telegram.Td.Api;
+﻿using System.Collections.Generic;
+using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
+using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Messages
 {
-    public sealed class MessageReference : MessageReferenceBase
+    public sealed class MessageReference : MessageReferenceBase, IPlayerView
     {
+        private bool _ignoreLayoutUpdated = true;
+
         public MessageReference()
         {
             DefaultStyleKey = typeof(MessageReference);
@@ -20,19 +25,23 @@ namespace Unigram.Controls.Messages
         private TextBlock Label;
         private Run TitleLabel;
         private Run ServiceLabel;
-        private Run MessageLabel;
+        private Span MessageLabel;
 
         // Lazy loaded
         private Border ThumbRoot;
         private Border ThumbEllipse;
         private ImageBrush ThumbImage;
 
+        private CustomEmojiCanvas CustomEmoji;
+
         protected override void OnApplyTemplate()
         {
             Label = GetTemplateChild(nameof(Label)) as TextBlock;
             TitleLabel = GetTemplateChild(nameof(TitleLabel)) as Run;
             ServiceLabel = GetTemplateChild(nameof(ServiceLabel)) as Run;
-            MessageLabel = GetTemplateChild(nameof(MessageLabel)) as Run;
+            MessageLabel = GetTemplateChild(nameof(MessageLabel)) as Span;
+
+            Label.LayoutUpdated += OnLayoutUpdated;
 
             _templateApplied = true;
 
@@ -56,6 +65,80 @@ namespace Unigram.Controls.Messages
         }
 
         #endregion
+
+        private readonly List<EmojiPosition> _positions = new();
+
+        private void OnLayoutUpdated(object sender, object e)
+        {
+            if (_ignoreLayoutUpdated)
+            {
+                return;
+            }
+
+            if (_positions.Count > 0)
+            {
+                _ignoreLayoutUpdated = true;
+                LoadCustomEmoji();
+            }
+            else
+            {
+                Label.LayoutUpdated -= OnLayoutUpdated;
+
+                if (CustomEmoji != null)
+                {
+                    XamlMarkupHelper.UnloadObject(CustomEmoji);
+                    CustomEmoji = null;
+                }
+            }
+        }
+
+        private void LoadCustomEmoji()
+        {
+            var positions = new List<EmojiPosition>();
+
+            foreach (var item in _positions)
+            {
+                var pointer = MessageLabel.ContentStart.GetPositionAtOffset(item.X, LogicalDirection.Forward);
+                if (pointer == null)
+                {
+                    continue;
+                }
+
+                var rect = pointer.GetCharacterRect(LogicalDirection.Forward);
+                if (rect.X + 18 > Label.ActualWidth && Label.IsTextTrimmed)
+                {
+                    break;
+                }
+
+                positions.Add(new EmojiPosition
+                {
+                    CustomEmojiId = item.CustomEmojiId,
+                    X = (int)rect.X,
+                    Y = (int)rect.Y
+                });
+            }
+
+            if (positions.Count < 1)
+            {
+                Label.LayoutUpdated -= OnLayoutUpdated;
+
+                if (CustomEmoji != null)
+                {
+                    XamlMarkupHelper.UnloadObject(CustomEmoji);
+                    CustomEmoji = null;
+                }
+            }
+            else
+            {
+                CustomEmoji ??= GetTemplateChild(nameof(CustomEmoji)) as CustomEmojiCanvas;
+                CustomEmoji.UpdatePositions(positions);
+
+                if (_playing)
+                {
+                    CustomEmoji.Play();
+                }
+            }
+        }
 
         private bool _light;
 
@@ -105,13 +188,12 @@ namespace Unigram.Controls.Messages
             }
         }
 
-        protected override void SetText(MessageSender sender, string title, string service, FormattedText message)
+        protected override void SetText(IProtoService protoService, MessageSender sender, string title, string service, FormattedText message)
         {
             if (TitleLabel != null)
             {
                 TitleLabel.Text = title ?? string.Empty;
                 ServiceLabel.Text = service ?? string.Empty;
-                MessageLabel.Text = message?.ReplaceSpoilers() ?? string.Empty;
 
                 if (!string.IsNullOrEmpty(message?.Text) && !string.IsNullOrEmpty(service))
                 {
@@ -133,6 +215,74 @@ namespace Unigram.Controls.Messages
                 //    ClearValue(BorderBrushProperty);
                 //    TitleLabel.ClearValue(TextElement.ForegroundProperty);
                 //}
+
+                _positions.Clear();
+                MessageLabel.Inlines.Clear();
+
+                if (message != null)
+                {
+                    var clean = message.ReplaceSpoilers();
+                    var previous = 0;
+
+                    var emoji = new HashSet<long>();
+                    var shift = 0;
+
+                    if (message.Entities != null)
+                    {
+                        foreach (var entity in message.Entities)
+                        {
+                            if (entity.Offset > previous)
+                            {
+                                MessageLabel.Inlines.Add(new Run { Text = clean.Substring(previous, entity.Offset - previous) });
+                            }
+
+                            if (entity.Type is TextEntityTypeCustomEmoji customEmoji)
+                            {
+                                _positions.Add(new EmojiPosition { X = shift + entity.Offset + 1, CustomEmojiId = customEmoji.CustomEmojiId });
+                                MessageLabel.Inlines.Add(new Run { Text = clean.Substring(entity.Offset, entity.Length), FontFamily = App.Current.Resources["SpoilerFontFamily"] as FontFamily });
+
+                                emoji.Add(customEmoji.CustomEmojiId);
+                                shift += 2;
+                            }
+
+                            previous = entity.Offset + entity.Length;
+                        }
+                    }
+
+                    if (clean.Length > previous)
+                    {
+                        MessageLabel.Inlines.Add(new Run { Text = clean.Substring(previous) });
+                    }
+
+                    Label.LayoutUpdated -= OnLayoutUpdated;
+
+                    if (emoji.Count > 0)
+                    {
+                        CustomEmoji ??= GetTemplateChild(nameof(CustomEmoji)) as CustomEmojiCanvas;
+                        CustomEmoji.UpdateEntities(protoService, emoji);
+
+                        if (_playing)
+                        {
+                            CustomEmoji.Play();
+                        }
+
+                        _ignoreLayoutUpdated = false;
+                        Label.LayoutUpdated += OnLayoutUpdated;
+                    }
+                    else if (CustomEmoji != null)
+                    {
+                        XamlMarkupHelper.UnloadObject(CustomEmoji);
+                        CustomEmoji = null;
+                    }
+
+                }
+                else if (CustomEmoji != null)
+                {
+                    Label.LayoutUpdated -= OnLayoutUpdated;
+
+                    XamlMarkupHelper.UnloadObject(CustomEmoji);
+                    CustomEmoji = null;
+                }
             }
         }
 
@@ -275,5 +425,37 @@ namespace Unigram.Controls.Messages
 
             return string.Empty;
         }
+
+        #region IPlayerView
+
+        public bool IsAnimatable => CustomEmoji != null;
+
+        public bool IsLoopingEnabled => true;
+
+        private bool _playing;
+
+        public bool Play()
+        {
+            CustomEmoji?.Play();
+
+            _playing = true;
+            return true;
+        }
+
+        public void Pause()
+        {
+            CustomEmoji?.Pause();
+
+            _playing = false;
+        }
+
+        public void Unload()
+        {
+            CustomEmoji?.Unload();
+
+            _playing = false;
+        }
+
+        #endregion
     }
 }

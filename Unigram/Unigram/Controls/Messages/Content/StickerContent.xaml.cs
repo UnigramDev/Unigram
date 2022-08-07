@@ -31,13 +31,24 @@ namespace Unigram.Controls.Messages.Content
         {
             _message = message;
 
-            var sticker = GetContent(message.Content);
+            var sticker = GetContent(message);
             if (sticker == null)
             {
                 return;
             }
 
-            Constraint = message;
+            if (message.Content is MessageAnimatedEmoji)
+            {
+                MaxWidth = 180 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
+                MaxHeight = 180 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
+            }
+            else
+            {
+                MaxWidth = 180;
+                MaxHeight = 180;
+            }
+
+            Constraint = sticker;
             UpdateFile(message, sticker.StickerValue);
         }
 
@@ -48,7 +59,7 @@ namespace Unigram.Controls.Messages.Content
 
         private async void UpdateFile(MessageViewModel message, File file)
         {
-            var sticker = GetContent(message.Content);
+            var sticker = GetContent(message);
             if (sticker == null)
             {
                 return;
@@ -106,8 +117,9 @@ namespace Unigram.Controls.Messages.Content
             return false;
         }
 
-        private Sticker GetContent(MessageContent content)
+        private Sticker GetContent(MessageViewModel message)
         {
+            var content = message.GeneratedContent ?? message.Content;
             if (content is MessageSticker sticker)
             {
                 return sticker.Sticker;
@@ -132,7 +144,7 @@ namespace Unigram.Controls.Messages.Content
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var sticker = GetContent(_message.Content);
+            var sticker = GetContent(_message);
             if (sticker == null)
             {
                 return;

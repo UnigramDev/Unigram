@@ -290,6 +290,7 @@
                                                    Grid.Row="1" />
 
                         <local:ReactionsPanel x:Name="MediaReactions"
+                                              x:Load="False"
                                               HorizontalAlignment="Stretch"
                                               Padding="0,2,0,0"
                                               Grid.Column="1"

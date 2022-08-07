@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Numerics;
 using System.Windows.Input;
 using Telegram.Td.Api;
+using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -303,7 +304,7 @@ namespace Unigram.Controls.Messages
             }
         }
 
-        protected override void SetText(MessageSender sender, string title, string service, FormattedText message)
+        protected override void SetText(IProtoService protoService, MessageSender sender, string title, string service, FormattedText message)
         {
             TitleLabel.Text = title;
 

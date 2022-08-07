@@ -172,7 +172,7 @@ namespace Unigram.Controls.Messages
                 if (CustomEmoji != null)
                 {
                     XamlMarkupHelper.UnloadObject(CustomEmoji);
-                    MediaReactions = null;
+                    CustomEmoji = null;
                 }
 
                 if (MediaReactions != null)
@@ -1432,6 +1432,14 @@ namespace Unigram.Controls.Messages
                 {
                     Media.Child = new VoiceNoteContent(message);
                 }
+                else if (content is MessageAnimatedEmoji)
+                {
+                    Media.Child = new Border
+                    {
+                        Width = 180 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f),
+                        Height = 180 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f)
+                    };
+                }
                 else
                 {
                     Media.Child = null;
@@ -1536,7 +1544,7 @@ namespace Unigram.Controls.Messages
             {
                 _positions.Clear();
 
-                _ignoreLayoutUpdated = false;
+                _ignoreLayoutUpdated = true;
                 Message.LayoutUpdated -= OnLayoutUpdated;
 
                 XamlMarkupHelper.UnloadObject(CustomEmoji);
@@ -1893,8 +1901,7 @@ namespace Unigram.Controls.Messages
 
         private void OnLayoutUpdated(object sender, object e)
         {
-            var message = _message;
-            if (message == null || _ignoreLayoutUpdated)
+            if (_ignoreLayoutUpdated)
             {
                 return;
             }
@@ -1902,7 +1909,7 @@ namespace Unigram.Controls.Messages
             if (_positions.Count > 0)
             {
                 _ignoreLayoutUpdated = true;
-                LoadCustomEmojis();
+                LoadCustomEmoji();
             }
             else
             {
@@ -1916,7 +1923,7 @@ namespace Unigram.Controls.Messages
             }
         }
 
-        private void LoadCustomEmojis()
+        private void LoadCustomEmoji()
         {
             var positions = new List<EmojiPosition>();
 

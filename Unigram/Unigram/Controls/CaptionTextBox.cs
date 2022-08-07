@@ -123,7 +123,7 @@ namespace Unigram.Controls
                 }
                 else if (entity == AutocompleteEntity.Emoji)
                 {
-                    View.Autocomplete = new ChatTextBox.EmojiCollection(viewModel.ProtoService, result, CoreTextServicesManager.GetForCurrentView().InputLanguage.LanguageTag);
+                    View.Autocomplete = new ChatTextBox.EmojiCollection(viewModel.ProtoService, result, viewModel.Chat.Id);
                     return;
                 }
             }

@@ -897,6 +897,7 @@ namespace Unigram.Common
                 MessageVoiceNote voiceNote => voiceNote.Caption,
                 MessageBigEmoji bigEmoji => bigEmoji.Text,
                 MessageText text => text.Text,
+                MessageAnimatedEmoji animatedEmoji => new FormattedText(animatedEmoji.Emoji, new TextEntity[0]),
                 _ => null,
             };
         }
