@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unigram.Common;
 using Unigram.Navigation.Services;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
@@ -45,7 +46,33 @@ namespace Unigram.Navigation
 
         public UIElement Content => Window.Content;
 
+        public ElementTheme ActualTheme => Window.Content is FrameworkElement element
+            ? element.ActualTheme
+            : ElementTheme.Default;
+
+        public ElementTheme RequestedTheme
+        {
+            get => Window.Content is FrameworkElement element
+                ? element.RequestedTheme
+                : ElementTheme.Default;
+            set
+            {
+                if (Window.Content is FrameworkElement element)
+                {
+                    element.RequestedTheme = value;
+                }
+            }
+        }
+
         public static readonly List<WindowContext> ActiveWrappers = new List<WindowContext>();
+
+        public static void ForEach(Action<TLWindowContext> action)
+        {
+            foreach (var window in ActiveWrappers.ToArray())
+            {
+                window.Dispatcher.Dispatch(() => action(window as TLWindowContext));
+            }
+        }
 
         [ThreadStatic]
         public static WindowContext Current;

@@ -141,9 +141,14 @@ namespace Unigram.Services.Settings
 
         public void UpdateNightMode(bool? force = false)
         {
-            // true:  never update dictionaries, switch to opposite theme first
-            // false: if same theme update dictionaries, if different theme just switch
-            // null:  if same theme do nothing, if different theme just switch
+            // Same theme:
+            // - false: update dictionaries
+            // - null:  do nothing
+            // - true:  as different theme
+            // Different theme:
+            // - false: update dictionaries, switch theme
+            // - null:  switch theme
+            // - true.  update dictionaries, double switch theme
 
             UpdateTimer();
 
@@ -154,36 +159,28 @@ namespace Unigram.Services.Settings
                 ? ElementTheme.Dark
                 : ElementTheme.Light;
 
-            foreach (TLWindowContext window in WindowContext.ActiveWrappers.ToArray())
+            WindowContext.ForEach(window =>
             {
-                window.Dispatcher.Dispatch(() =>
+                if (force is not null)
                 {
-                    if (window.Content is FrameworkElement element)
+                    Theme.Current.Initialize(theme);
+                }
+
+                if (window.ActualTheme != theme || force is true)
+                {
+                    window.UpdateTitleBar();
+
+                    // This should be no longer needed
+                    if (force is true)
                     {
-                        if (theme == element.ActualTheme && force is false or null)
-                        {
-                            if (force is false)
-                            {
-                                Theme.Current.Initialize(theme);
-                            }
-                        }
-                        else
-                        {
-                            window.UpdateTitleBar();
-
-                            // This should be no longer needed
-                            if (force is true)
-                            {
-                                element.RequestedTheme = theme == ElementTheme.Dark
-                                    ? ElementTheme.Light
-                                    : ElementTheme.Dark;
-                            }
-
-                            element.RequestedTheme = theme;
-                        }
+                        window.RequestedTheme = theme == ElementTheme.Dark
+                            ? ElementTheme.Light
+                            : ElementTheme.Dark;
                     }
-                });
-            }
+
+                    window.RequestedTheme = theme;
+                }
+            });
 
             var aggregator = TLContainer.Current.Resolve<IEventAggregator>();
             var protoService = TLContainer.Current.Resolve<IProtoService>();

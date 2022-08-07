@@ -248,15 +248,17 @@ namespace Unigram.Common
                         {
                             brush.Color = value;
                         }
-                        catch
+                        catch (UnauthorizedAccessException)
                         {
                             // Some times access denied is thrown,
-                            // not sure why, but I can't see other options.
-                            target[item.Key] = new SolidColorBrush(value);
+                            // this seems to happen after the application
+                            // is resumed, but unfortunately I can't see
+                            // any fix to this. The exception is going
+                            // to be thrown any time - even minutes after 
+                            // the resume - if the theme changes.
 
-                            // The best thing here would be to notify
-                            // AppearanceSettings about this and
-                            // refresh the whole theme by switching it.
+                            // The exception MIGHT be related to StaticResources
+                            // but I'm not able to confirm this.
                         }
                     }
                 }
