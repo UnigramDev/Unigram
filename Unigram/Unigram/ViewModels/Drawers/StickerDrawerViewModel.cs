@@ -17,7 +17,10 @@ using Windows.UI.Xaml.Data;
 
 namespace Unigram.ViewModels.Drawers
 {
-    public class StickerDrawerViewModel : TLViewModelBase, IHandle<UpdateRecentStickers>, IHandle<UpdateFavoriteStickers>, IHandle<UpdateInstalledStickerSets>
+    public class StickerDrawerViewModel : TLViewModelBase
+        //, IHandle<UpdateRecentStickers>
+        //, IHandle<UpdateFavoriteStickers>
+        //, IHandle<UpdateInstalledStickerSets>
     {
         private readonly DisposableMutex _supergroupLock = new();
 
@@ -62,7 +65,14 @@ namespace Unigram.ViewModels.Drawers
 
             SavedStickers = new StickerSetCollection();
 
-            Aggregator.Subscribe(this);
+            Subscribe();
+        }
+
+        public override void Subscribe()
+        {
+            Aggregator.Subscribe<UpdateRecentStickers>(this, Handle)
+                .Subscribe<UpdateFavoriteStickers>(Handle)
+                .Subscribe<UpdateInstalledStickerSets>(Handle);
         }
 
         private static readonly Dictionary<int, Dictionary<int, StickerDrawerViewModel>> _windowContext = new Dictionary<int, Dictionary<int, StickerDrawerViewModel>>();
@@ -238,7 +248,7 @@ namespace Unigram.ViewModels.Drawers
             }
             else
             {
-                var items = SearchStickers = new SearchStickerSetsCollection(ProtoService, Aggregator, new StickerTypeRegular(), query, CoreTextServicesManager.GetForCurrentView().InputLanguage.LanguageTag);
+                var items = SearchStickers = new SearchStickerSetsCollection(ProtoService, new StickerTypeRegular(), query, 0);
                 await items.LoadMoreItemsAsync(0);
             }
         }
@@ -311,9 +321,10 @@ namespace Unigram.ViewModels.Drawers
 
             var result1 = await ProtoService.SendAsync(new GetFavoriteStickers());
             var result2 = await ProtoService.SendAsync(new GetRecentStickers());
-            var result3 = await ProtoService.SendAsync(new GetInstalledStickerSets(new StickerTypeRegular()));
+            var result3 = await ProtoService.SendAsync(new GetPremiumStickers(60));
+            var result4 = await ProtoService.SendAsync(new GetInstalledStickerSets(new StickerTypeRegular()));
 
-            if (result1 is Stickers favorite && result2 is Stickers recent && result3 is StickerSets sets)
+            if (result1 is Stickers favorite && result2 is Stickers recent && result3 is Stickers premium && result4 is StickerSets sets)
             {
                 for (int i = 0; i < favorite.StickersValue.Count; i++)
                 {
@@ -337,6 +348,7 @@ namespace Unigram.ViewModels.Drawers
 
                 _favoriteSet.Update(favorite.StickersValue);
                 _recentSet.Update(recent.StickersValue);
+                _premiumSet.Update(premium.StickersValue);
 
                 var stickers = new List<StickerSetViewModel>();
                 if (_favoriteSet.Stickers.Count > 0)
@@ -346,6 +358,10 @@ namespace Unigram.ViewModels.Drawers
                 if (_recentSet.Stickers.Count > 0)
                 {
                     stickers.Add(_recentSet);
+                }
+                if (_premiumSet.Stickers.Count > 0)
+                {
+                    stickers.Add(_premiumSet);
                 }
                 if (_groupSet.Stickers.Count > 0 && _groupSet.ChatId == chat?.Id)
                 {
@@ -362,11 +378,11 @@ namespace Unigram.ViewModels.Drawers
 
                 if (sets.Sets.Count > 0)
                 {
-                    var result4 = await ProtoService.SendAsync(new GetStickerSet(sets.Sets[0].Id));
+                    var result5 = await ProtoService.SendAsync(new GetStickerSet(sets.Sets[0].Id));
 
                     _updating = false;
 
-                    if (result4 is StickerSet set)
+                    if (result5 is StickerSet set)
                     {
                         stickers.Add(new StickerSetViewModel(ProtoService, sets.Sets[0], set));
                         SavedStickers.ReplaceWith(stickers.Union(sets.Sets.Skip(1).Select(x => new StickerSetViewModel(ProtoService, x))));
@@ -624,18 +640,18 @@ namespace Unigram.ViewModels.Drawers
     public class SearchStickerSetsCollection : MvxObservableCollection<StickerSetViewModel>, ISupportIncrementalLoading
     {
         private readonly IProtoService _protoService;
-        private readonly IEventAggregator _aggregator;
         private readonly StickerType _type;
         private readonly string _query;
         private readonly string _inputLanguage;
+        private readonly long _chatId;
 
-        public SearchStickerSetsCollection(IProtoService protoService, IEventAggregator aggregator, StickerType type, string query, string inputLanguage)
+        public SearchStickerSetsCollection(IProtoService protoService, StickerType type, string query, long chatId)
         {
             _protoService = protoService;
-            _aggregator = aggregator;
             _type = type;
             _query = query;
-            _inputLanguage = inputLanguage;
+            _inputLanguage = CoreTextServicesManager.GetForCurrentView().InputLanguage.LanguageTag;
+            _chatId = chatId;
         }
 
         public string Query => _query;
@@ -661,7 +677,7 @@ namespace Unigram.ViewModels.Drawers
                 {
                     if (Emoji.ContainsSingleEmoji(_query))
                     {
-                        var response = await _protoService.SendAsync(new GetStickers(_type, _query, 100));
+                        var response = await _protoService.SendAsync(new GetStickers(_type, _query, 100, _chatId));
                         if (response is Stickers stickers && stickers.StickersValue.Count > 0)
                         {
                             Add(new StickerSetViewModel(_protoService,
@@ -676,7 +692,7 @@ namespace Unigram.ViewModels.Drawers
                         {
                             for (int i = 0; i < Math.Min(10, emojis.EmojisValue.Count); i++)
                             {
-                                var response = await _protoService.SendAsync(new GetStickers(_type, emojis.EmojisValue[i], 100));
+                                var response = await _protoService.SendAsync(new GetStickers(_type, emojis.EmojisValue[i], 100, _chatId));
                                 if (response is Stickers stickers && stickers.StickersValue.Count > 0)
                                 {
                                     Add(new StickerSetViewModel(_protoService,

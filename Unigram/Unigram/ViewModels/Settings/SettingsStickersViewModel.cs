@@ -25,10 +25,14 @@ namespace Unigram.ViewModels.Settings
         Trending,
         Masks,
         MasksArchived,
-        Emoji
+        Emoji,
+        EmojiArchived
     }
 
-    public class SettingsStickersViewModel : TLViewModelBase, IHandle<UpdateInstalledStickerSets>, IHandle<UpdateTrendingStickerSets>, IHandle<UpdateRecentStickers>
+    public class SettingsStickersViewModel : TLViewModelBase, IHandle
+        //, IHandle<UpdateInstalledStickerSets>
+        //, IHandle<UpdateTrendingStickerSets>
+        //, IHandle<UpdateRecentStickers>
     {
         private StickersType _type;
 
@@ -70,6 +74,8 @@ namespace Unigram.ViewModels.Settings
             StickersType.Trending => Strings.Resources.FeaturedStickers,
             StickersType.Masks => Strings.Resources.Masks,
             StickersType.MasksArchived => Strings.Resources.ArchivedMasks,
+            StickersType.Emoji => Strings.Resources.Emoji,
+            StickersType.EmojiArchived => Strings.Resources.ArchivedEmojiPacks,
             _ => Strings.Resources.StickersName
         };
 
@@ -78,17 +84,18 @@ namespace Unigram.ViewModels.Settings
             StickersType.Masks => new StickerTypeMask(),
             StickersType.MasksArchived => new StickerTypeMask(),
             StickersType.Emoji => new StickerTypeCustomEmoji(),
+            StickersType.EmojiArchived => new StickerTypeCustomEmoji(),
             _ => new StickerTypeRegular()
         };
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             if (parameter is int flags)
             {
                 _type = (StickersType)flags;
             }
 
-            if (_type is StickersType.Installed or StickersType.Masks)
+            if (_type is StickersType.Installed or StickersType.Masks or StickersType.Emoji)
             {
                 Items = new ItemsCollection(ProtoService, StickerType);
 
@@ -100,7 +107,7 @@ namespace Unigram.ViewModels.Settings
                     }
                 });
 
-                ProtoService.Send(new GetTrendingStickerSets(), result =>
+                ProtoService.Send(new GetTrendingStickerSets(StickerType, 0, 1), result =>
                 {
                     if (result is StickerSets stickerSets)
                     {
@@ -108,7 +115,7 @@ namespace Unigram.ViewModels.Settings
                     }
                 });
             }
-            else if (_type is StickersType.Archived or StickersType.MasksArchived)
+            else if (_type is StickersType.Archived or StickersType.MasksArchived or StickersType.EmojiArchived)
             {
                 Items = new ArchivedCollection(ProtoService, StickerType);
             }
@@ -117,13 +124,12 @@ namespace Unigram.ViewModels.Settings
                 Items = new TrendingCollection(ProtoService, StickerType);
             }
 
-            Aggregator.Subscribe(this);
             return Task.CompletedTask;
         }
 
-        public override Task OnNavigatedFromAsync(NavigationState pageState, bool suspending)
+        protected override Task OnNavigatedFromAsync(NavigationState pageState, bool suspending)
         {
-            if (_type is StickersType.Installed or StickersType.Masks)
+            if (_type is StickersType.Installed or StickersType.Masks or StickersType.Emoji)
             {
                 if (_needReorder && _newOrder.Count > 0)
                 {
@@ -132,13 +138,19 @@ namespace Unigram.ViewModels.Settings
                 }
             }
 
-            Aggregator.Unsubscribe(this);
             return Task.CompletedTask;
+        }
+
+        public override void Subscribe()
+        {
+            Aggregator.Subscribe<UpdateInstalledStickerSets>(this, Handle)
+                .Subscribe<UpdateTrendingStickerSets>(Handle)
+                .Subscribe<UpdateRecentStickers>(Handle);
         }
 
         public async void Handle(UpdateInstalledStickerSets update)
         {
-            if (_type is not StickersType.Installed and not StickersType.Masks)
+            if (_type is not StickersType.Installed and not StickersType.Masks and not StickersType.Emoji)
             {
                 return;
             }
@@ -151,10 +163,17 @@ namespace Unigram.ViewModels.Settings
             var response = await ProtoService.SendAsync(new GetInstalledStickerSets(StickerType));
             if (response is StickerSets stickerSets)
             {
-                var union = await ProtoService.SendAsync(new GetRecentStickers(_type == StickersType.Masks));
-                if (union is Stickers recents && recents.StickersValue.Count > 0)
+                if (_type is StickersType.Installed or StickersType.Masks)
                 {
-                    BeginOnUIThread(() => Items.ReplaceDiff(new[] { new StickerSetInfo(0, Strings.Resources.RecentStickers, "tg/recentlyUsed", null, new ClosedVectorPath[0], false, false, false, null, StickerType, false, recents.StickersValue.Count, recents.StickersValue) }.Union(stickerSets.Sets)));
+                    var union = await ProtoService.SendAsync(new GetRecentStickers(_type == StickersType.Masks));
+                    if (union is Stickers recents && recents.StickersValue.Count > 0)
+                    {
+                        BeginOnUIThread(() => Items.ReplaceDiff(new[] { new StickerSetInfo(0, Strings.Resources.RecentStickers, "tg/recentlyUsed", null, new ClosedVectorPath[0], false, false, false, null, StickerType, false, recents.StickersValue.Count, recents.StickersValue) }.Union(stickerSets.Sets)));
+                    }
+                    else
+                    {
+                        BeginOnUIThread(() => Items.ReplaceDiff(stickerSets.Sets));
+                    }
                 }
                 else
                 {
@@ -225,6 +244,16 @@ namespace Unigram.ViewModels.Settings
         {
             _needReorder = true;
             _newOrder = Items.Where(x => x.Id != 0).Select(x => x.Id).ToList();
+        }
+
+        public bool SuggestCustomEmoji
+        {
+            get => Settings.Stickers.SuggestCustomEmoji;
+            set
+            {
+                Settings.Stickers.SuggestCustomEmoji = value;
+                RaisePropertyChanged();
+            }
         }
 
         public int SuggestStickers
@@ -325,10 +354,13 @@ namespace Unigram.ViewModels.Settings
             {
                 return AsyncInfo.Run(async token =>
                 {
-                    var recentResponse = await _protoService.SendAsync(new GetRecentStickers(_type is StickerTypeMask));
-                    if (recentResponse is Stickers stickers && stickers.StickersValue.Count > 0)
+                    if (_type is StickerTypeRegular or StickerTypeMask)
                     {
-                        Add(new StickerSetInfo(0, Strings.Resources.RecentStickers, "tg/recentlyUsed", null, new ClosedVectorPath[0], false, false, false, null, _type, false, stickers.StickersValue.Count, stickers.StickersValue));
+                        var recentResponse = await _protoService.SendAsync(new GetRecentStickers(_type is StickerTypeMask));
+                        if (recentResponse is Stickers stickers && stickers.StickersValue.Count > 0)
+                        {
+                            Add(new StickerSetInfo(0, Strings.Resources.RecentStickers, "tg/recentlyUsed", null, new ClosedVectorPath[0], false, false, false, null, _type, false, stickers.StickersValue.Count, stickers.StickersValue));
+                        }
                     }
 
                     var response = await _protoService.SendAsync(new GetInstalledStickerSets(_type));

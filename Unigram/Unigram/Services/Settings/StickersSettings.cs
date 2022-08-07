@@ -33,6 +33,13 @@ namespace Unigram.Services.Settings
             set => AddOrUpdateValue(ref _suggestionMode, "SuggestionMode", (int)value);
         }
 
+        public bool? _suggestCustomEmoji;
+        public bool SuggestCustomEmoji
+        {
+            get => _suggestCustomEmoji ??= GetValueOrDefault("SuggestCustomEmoji", true);
+            set => AddOrUpdateValue(ref _suggestCustomEmoji, "SuggestCustomEmoji", value);
+        }
+
         private bool? _isLoopingEnabled;
         public bool IsLoopingEnabled
         {

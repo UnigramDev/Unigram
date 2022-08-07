@@ -200,7 +200,7 @@ namespace Unigram.Controls.Drawers
             }
             else
             {
-                EmojiCollection.Source = await Emoji.SearchAsync(ViewModel.ProtoService, FieldEmoji.Text, _selected, CoreTextServicesManager.GetForCurrentView().InputLanguage.LanguageTag);
+                EmojiCollection.Source = await Emoji.SearchAsync(ViewModel.ProtoService, FieldEmoji.Text, _selected);
             }
         }
 

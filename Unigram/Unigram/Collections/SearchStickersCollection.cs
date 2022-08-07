@@ -16,6 +16,7 @@ namespace Unigram.Collections
         private readonly ISettingsService _settings;
         private readonly StickerType _type;
         private readonly string _query;
+        private readonly long _chatId;
 
         private bool _first = true;
         private bool _hasMore = true;
@@ -24,12 +25,13 @@ namespace Unigram.Collections
 
         public bool IsCustomEmoji => _type is StickerTypeCustomEmoji;
 
-        public SearchStickersCollection(IProtoService protoService, ISettingsService settings, bool customEmoji, string query)
+        public SearchStickersCollection(IProtoService protoService, ISettingsService settings, bool customEmoji, string query, long chatId)
         {
             _protoService = protoService;
             _settings = settings;
             _type = customEmoji ? new StickerTypeCustomEmoji() : new StickerTypeRegular();
             _query = query;
+            _chatId = chatId;
 
             _ids = new HashSet<int>();
         }
@@ -44,7 +46,7 @@ namespace Unigram.Collections
                 {
                     _first = false;
 
-                    var response = await _protoService.SendAsync(new GetStickers(_type, _query, 1000));
+                    var response = await _protoService.SendAsync(new GetStickers(_type, _query, 1000, _chatId));
                     if (response is Stickers stickers)
                     {
                         foreach (var sticker in stickers.StickersValue)

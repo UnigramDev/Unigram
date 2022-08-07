@@ -8,6 +8,7 @@ using Telegram.Td.Api;
 using Unigram.Converters;
 using Unigram.Services;
 using Unigram.Services.Settings;
+using Windows.UI.Text.Core;
 
 namespace Unigram.Common
 {
@@ -239,9 +240,10 @@ namespace Unigram.Common
             return results;
         }
 
-        public static async Task<List<EmojiGroup>> SearchAsync(IProtoService protoService, string query, EmojiSkinTone skin, string inputLanguage)
+        public static async Task<List<EmojiGroup>> SearchAsync(IProtoService protoService, string query, EmojiSkinTone skin)
         {
             var result = new List<EmojiData>();
+            var inputLanguage = CoreTextServicesManager.GetForCurrentView().InputLanguage.LanguageTag;
 
             var response = await protoService.SendAsync(new SearchEmojis(query, false, new[] { inputLanguage }));
             if (response is Emojis suggestions)

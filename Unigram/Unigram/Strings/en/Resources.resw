@@ -5366,6 +5366,9 @@ If nobody is selected, your most frequent contacts will be shown in this widget.
   <data name="EmojiArchivedInfo" xml:space="preserve">
     <value>{0} has been moved to your archive.</value>
   </data>
+  <data name="EmojiBotInfo" xml:space="preserve">
+    <value>Artists are welcome to add their own emoji packs using our @stickers bot.</value>
+  </data>
   <data name="EmojiBigSize" xml:space="preserve">
     <value>Draw single big emoji</value>
   </data>
@@ -14705,6 +14708,12 @@ and enter your phone number.</value>
     <value>You need an official Telegram app to subscribe to **Telegram Premium**.
 
 Once subscribed, you will be able to use the benefits of Telegram Premium in any apps that support it, including unofficial ones.</value>
+  </data>
+  <data name="SuggestAnimatedEmoji" xml:space="preserve">
+    <value>Suggest Animated Emoji</value>
+  </data>
+  <data name="SuggestAnimatedEmojiInfo" xml:space="preserve">
+    <value>Each time you enter an emoji you can replace it with an alternative animated emoji.</value>
   </data>
   <data name="SuggestClearDatabaseMessage" xml:space="preserve">
     <value>Your local database size is {0}. It may affect the speed of the app.</value>

@@ -61,6 +61,16 @@ namespace Unigram.Views.Settings
             Frame.Navigate(typeof(SettingsStickersPage), (int)StickersType.Masks, new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
         }
 
+        private void Emoji_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(SettingsStickersPage), (int)StickersType.Emoji, new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
+        }
+
+        private void ArchivedEmoji_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(SettingsStickersPage), (int)StickersType.EmojiArchived, new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
+        }
+
         private void Reaction_Click(object sender, RoutedEventArgs e)
         {
             Frame.Navigate(typeof(SettingsQuickReactionPage), null, infoOverride: new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });

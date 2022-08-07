@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 07/21/2022 12:30:26
+// 	Generated: 08/06/2022 13:37:10
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -19252,6 +19252,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("EmojiArchivedInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Artists are welcome to add their own emoji packs using our @stickers bot."
+        /// </summary>
+        public static string EmojiBotInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("EmojiBotInfo");
             }
         }
         
@@ -53152,6 +53163,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("SubscribeToPremiumOfficialAppNeededDescription");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Suggest Animated Emoji"
+        /// </summary>
+        public static string SuggestAnimatedEmoji
+        {
+            get
+            {
+                return resourceLoader.GetString("SuggestAnimatedEmoji");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Each time you enter an emoji you can replace it with an alternative animated emoji."
+        /// </summary>
+        public static string SuggestAnimatedEmojiInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("SuggestAnimatedEmojiInfo");
             }
         }
         

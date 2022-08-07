@@ -412,7 +412,7 @@ namespace Unigram.Controls.Chats
                     return true;
                 }
 
-                autocomplete = new SearchStickersCollection(ViewModel.ProtoService, ViewModel.Settings, false, text.Trim());
+                autocomplete = new SearchStickersCollection(ViewModel.ProtoService, ViewModel.Settings, false, text.Trim(), ViewModel.Chat.Id);
                 return true;
             }
             else if (AutocompleteEntityFinder.TrySearch(query, out AutocompleteEntity entity, out string result, out int index))
@@ -460,7 +460,7 @@ namespace Unigram.Controls.Chats
                         return true;
                     }
 
-                    autocomplete = new EmojiCollection(ViewModel.ProtoService, result, CoreTextServicesManager.GetForCurrentView().InputLanguage.LanguageTag);
+                    autocomplete = new EmojiCollection(ViewModel.ProtoService, result, ViewModel.Chat.Id);
                     return true;
                 }
                 else if (entity == AutocompleteEntity.Command && index == 0)
@@ -483,7 +483,7 @@ namespace Unigram.Controls.Chats
                     return true;
                 }
 
-                autocomplete = new SearchStickersCollection(ViewModel.ProtoService, ViewModel.Settings, true, customEmoji);
+                autocomplete = new SearchStickersCollection(ViewModel.ProtoService, ViewModel.Settings, true, customEmoji, ViewModel.Chat.Id);
                 return true;
             }
 
@@ -585,17 +585,19 @@ namespace Unigram.Controls.Chats
             private readonly IProtoService _protoService;
             private readonly string _query;
             private readonly string _inputLanguage;
+            private readonly long _chatId;
 
             private bool _hasMore = true;
 
             private string[] _emoji;
             private int _emojiIndex;
 
-            public EmojiCollection(IProtoService protoService, string query, string inputLanguage)
+            public EmojiCollection(IProtoService protoService, string query, long chatId)
             {
                 _protoService = protoService;
                 _query = query;
-                _inputLanguage = inputLanguage;
+                _inputLanguage = CoreTextServicesManager.GetForCurrentView().InputLanguage.LanguageTag;
+                _chatId = chatId;
             }
 
             public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
@@ -637,7 +639,7 @@ namespace Unigram.Controls.Chats
 
                         if (_emojiIndex < _emoji.Length)
                         {
-                            var response = await _protoService.SendAsync(new GetStickers(new StickerTypeCustomEmoji(), _emoji[_emojiIndex++], 1000));
+                            var response = await _protoService.SendAsync(new GetStickers(new StickerTypeCustomEmoji(), _emoji[_emojiIndex++], 1000, _chatId));
                             if (response is Stickers stickers)
                             {
                                 foreach (var sticker in stickers.StickersValue)

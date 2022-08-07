@@ -7,7 +7,6 @@ using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Services;
 using Unigram.Views;
-using Windows.UI.Text.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 
@@ -155,7 +154,7 @@ namespace Unigram.ViewModels.Drawers
             }
             else
             {
-                var items = SearchStickers = new SearchStickerSetsCollection(ProtoService, Aggregator, new StickerTypeRegular(), query, CoreTextServicesManager.GetForCurrentView().InputLanguage.LanguageTag);
+                var items = SearchStickers = new SearchStickerSetsCollection(ProtoService, new StickerTypeRegular(), query, 0);
                 await items.LoadMoreItemsAsync(0);
             }
         }
