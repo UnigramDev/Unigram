@@ -234,6 +234,7 @@ namespace Unigram.Controls.Messages
                             if (entity.Offset > previous)
                             {
                                 MessageLabel.Inlines.Add(new Run { Text = clean.Substring(previous, entity.Offset - previous) });
+                                shift += 2;
                             }
 
                             if (entity.Type is TextEntityTypeCustomEmoji customEmoji)
@@ -242,6 +243,11 @@ namespace Unigram.Controls.Messages
                                 MessageLabel.Inlines.Add(new Run { Text = clean.Substring(entity.Offset, entity.Length), FontFamily = App.Current.Resources["SpoilerFontFamily"] as FontFamily });
 
                                 emoji.Add(customEmoji.CustomEmojiId);
+                                shift += 2;
+                            }
+                            else
+                            {
+                                MessageLabel.Inlines.Add(new Run { Text = clean.Substring(entity.Offset, entity.Length) });
                                 shift += 2;
                             }
 
