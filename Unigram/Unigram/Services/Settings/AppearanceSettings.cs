@@ -139,7 +139,7 @@ namespace Unigram.Services.Settings
             UpdateNightMode(false);
         }
 
-        public void UpdateNightMode(bool? force = false)
+        public void UpdateNightMode(bool? force = false, bool updateBackground = true)
         {
             // Same theme:
             // - false: update dictionaries
@@ -182,11 +182,14 @@ namespace Unigram.Services.Settings
                 }
             });
 
-            var aggregator = TLContainer.Current.Resolve<IEventAggregator>();
-            var protoService = TLContainer.Current.Resolve<IProtoService>();
+            if (updateBackground)
+            {
+                var aggregator = TLContainer.Current.Resolve<IEventAggregator>();
+                var protoService = TLContainer.Current.Resolve<IProtoService>();
 
-            var dark = theme == ElementTheme.Dark;
-            aggregator.Publish(new UpdateSelectedBackground(dark, protoService.GetSelectedBackground(dark)));
+                var dark = theme == ElementTheme.Dark;
+                aggregator.Publish(new UpdateSelectedBackground(dark, protoService.GetSelectedBackground(dark)));
+            }
         }
 
         private InstalledEmojiSet _emojiSet;
@@ -319,6 +322,13 @@ namespace Unigram.Services.Settings
             }
         }
 
+        private bool? _forceNightMode;
+        public bool ForceNightMode
+        {
+            get => _forceNightMode ??= GetValueOrDefault(_container, "ForceNightMode", false);
+            set => AddOrUpdateValue(ref _forceNightMode, _container, "ForceNightMode", value);
+        }
+
         private bool? _isLocationBased;
         public bool IsLocationBased
         {
@@ -442,7 +452,11 @@ namespace Unigram.Services.Settings
 
         public bool? CheckNightModeConditions()
         {
-            if (NightMode == NightMode.Scheduled && RequestedTheme == TelegramTheme.Light)
+            if (ForceNightMode)
+            {
+                return true;
+            }
+            else if (NightMode == NightMode.Scheduled && RequestedTheme == TelegramTheme.Light)
             {
                 TimeSpan start;
                 TimeSpan end;
@@ -562,6 +576,87 @@ namespace Unigram.Services.Settings
         {
             get => _isQuickReplySelected ??= GetValueOrDefault("IsQuickReplySelected", true);
             set => AddOrUpdateValue(ref _isQuickReplySelected, "IsQuickReplySelected", value);
+        }
+
+        private bool _chatThemeLoaded;
+
+        private ChatTheme _chatTheme;
+        public ChatTheme ChatTheme
+        {
+            get => _chatTheme ??= LoadChatTheme();
+            set => SaveChatTheme(value);
+        }
+
+
+        private void SaveChatTheme(ChatTheme theme)
+        {
+            if (theme?.Name == "\U0001F3E0")
+            {
+                theme = null;
+            }
+
+            if (theme != null)
+            {
+                var light = _container.CreateContainer("ChatThemeLight", ApplicationDataCreateDisposition.Always);
+                var dark = _container.CreateContainer("ChatThemeDark", ApplicationDataCreateDisposition.Always);
+
+                AddOrUpdateValue("ChatThemeName", theme.Name);
+                SaveChatThemeSettings(light, theme.LightSettings);
+                SaveChatThemeSettings(dark, theme.DarkSettings);
+            }
+            else
+            {
+                _container.Values.Remove("ChatThemeName");
+                _container.DeleteContainer("ChatThemeLight");
+                _container.DeleteContainer("ChatThemeDark");
+            }
+
+            _chatTheme = theme;
+        }
+
+        private void SaveChatThemeSettings(ApplicationDataContainer container, ThemeSettings settings)
+        {
+            AddOrUpdateValue(container, "OutgoingMessageAccentColor", settings.OutgoingMessageAccentColor);
+            AddOrUpdateValue(container, "OutgoingMessageFill", TdBackground.ToString(settings.OutgoingMessageFill));
+            AddOrUpdateValue(container, "AnimateOutgoingMessageFill", settings.AnimateOutgoingMessageFill);
+            AddOrUpdateValue(container, "AccentColor", settings.AccentColor);
+        }
+
+        private ChatTheme LoadChatTheme()
+        {
+            if (_chatThemeLoaded)
+            {
+                return _chatTheme;
+            }
+
+            _chatThemeLoaded = true;
+
+            var name = GetValueOrDefault<string>("ChatThemeName", null);
+            if (name != null)
+            {
+                var light = _container.CreateContainer("ChatThemeLight", ApplicationDataCreateDisposition.Always);
+                var dark = _container.CreateContainer("ChatThemeDark", ApplicationDataCreateDisposition.Always);
+
+                return new ChatTheme
+                {
+                    Name = name,
+                    LightSettings = LoadChatThemeSettings(light),
+                    DarkSettings = LoadChatThemeSettings(dark)
+                };
+            }
+
+            return null;
+        }
+
+        private ThemeSettings LoadChatThemeSettings(ApplicationDataContainer container)
+        {
+            return new ThemeSettings
+            {
+                OutgoingMessageAccentColor = GetValueOrDefault(container, "OutgoingMessageAccentColor", 0),
+                OutgoingMessageFill = TdBackground.FromString(GetValueOrDefault(container, "OutgoingMessageFill", string.Empty)),
+                AnimateOutgoingMessageFill = GetValueOrDefault(container, "AnimateOutgoingMessageFill", false),
+                AccentColor = GetValueOrDefault(container, "AccentColor", 0)
+            };
         }
     }
 

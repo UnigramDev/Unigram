@@ -76,7 +76,11 @@ namespace Unigram.Common
         public void Initialize(TelegramTheme requested)
         {
             var settings = SettingsService.Current.Appearance;
-            if (settings[requested].Type == TelegramThemeType.Custom && System.IO.File.Exists(settings[requested].Custom))
+            if (settings.ChatTheme != null)
+            {
+                Update(requested, settings.ChatTheme);
+            }
+            else if (settings[requested].Type == TelegramThemeType.Custom && System.IO.File.Exists(settings[requested].Custom))
             {
                 Update(ThemeCustomInfo.FromFile(settings[requested].Custom));
             }
@@ -88,6 +92,27 @@ namespace Unigram.Common
             {
                 Update(requested);
             }
+        }
+
+        // This is for global theme
+        private void Update(TelegramTheme requested, ChatTheme theme)
+        {
+            var settings = requested == TelegramTheme.Light ? theme?.LightSettings : theme?.DarkSettings;
+
+            var tint = SettingsService.Current.Appearance[requested].Type;
+            if (tint == TelegramThemeType.Classic || (tint == TelegramThemeType.Custom && requested == TelegramTheme.Light))
+            {
+                tint = TelegramThemeType.Day;
+            }
+            else if (tint == TelegramThemeType.Custom)
+            {
+                tint = TelegramThemeType.Tinted;
+            }
+
+            var accent = settings.AccentColor.ToColor();
+            var outgoing = settings.OutgoingMessageAccentColor.ToColor();
+
+            Update(ThemeAccentInfo.FromAccent(tint, accent, outgoing));
         }
 
         public void Initialize(string path)
@@ -102,6 +127,7 @@ namespace Unigram.Common
 
         private ChatTheme _lastTheme;
 
+        // This is for chat specific theme
         public bool Update(ElementTheme elementTheme, ChatTheme theme)
         {
             var updated = false;

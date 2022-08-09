@@ -209,6 +209,7 @@
     <Compile Include="Common\AnimatedListHandler.cs" />
     <Compile Include="Common\ApiInfo.cs" />
     <Compile Include="Common\AsyncHelper.cs" />
+    <Compile Include="Common\AutocompleteEntityFinder.cs" />
     <Compile Include="Common\Automation.cs" />
     <Compile Include="Common\Chats\InputChatActionManager.cs" />
     <Compile Include="Common\Chats\OutputChatActionManager.cs" />
@@ -336,6 +337,7 @@
     </Compile>
     <Compile Include="Controls\Chats\ChatActionIndicator.cs" />
     <Compile Include="Controls\Chats\ChatBackgroundPresenter.cs" />
+    <Compile Include="Controls\Chats\ChatBackgroundRenderer.cs" />
     <Compile Include="Controls\Chats\ChatBottomButton.cs" />
     <Compile Include="Controls\Chats\ChatListView.cs" />
     <Compile Include="Controls\Chats\ChatListViewItem.cs" />

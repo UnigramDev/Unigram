@@ -38,8 +38,9 @@ namespace Unigram.ViewModels.Settings
             var freeform = dark ? new[] { 0x1B2836, 0x121A22, 0x1B2836, 0x121A22 } : new[] { 0xDBDDBB, 0x6BA587, 0xD5D88D, 0x88B884 };
 
             var background = CacheService.SelectedBackground;
-            var predefined = new Background(Constants.WallpaperLocalId, true, dark, Constants.WallpaperDefaultFileName, null,
-                new BackgroundTypeFill(new BackgroundFillFreeformGradient(freeform)));
+            var predefined = new Background(Constants.WallpaperLocalId, true, dark, string.Empty,
+                new Document(string.Empty, "application/x-tgwallpattern", null, null, TdExtensions.GetLocalFile("Assets\\Background.tgv", "Background")),
+                new BackgroundTypePattern(new BackgroundFillFreeformGradient(freeform), dark ? 100 : 50, dark, false));
 
             var items = new List<Background>
             {

@@ -10,6 +10,7 @@
                   xmlns:services="using:Unigram.Services"
                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  xmlns:cells="using:Unigram.Controls.Cells"
                   mc:Ignorable="d"
                   IsNavigationRoot="True">
 
@@ -51,22 +52,11 @@
                       VerticalScrollMode="Auto">
             <StackPanel Spacing="16"
                         Margin="0,0,0,32">
-                <controls:HeaderedControl Header="{CustomResource TextSizeHeader}">
-                    <Border Background="{ThemeResource SettingsItemBackground}">
-                        <Slider Value="{x:Bind ViewModel.FontSize, Mode=TwoWay}"
-                                AutomationProperties.Name="{CustomResource TextSizeHeader}"
-                                Minimum="0"
-                                Maximum="6"
-                                SmallChange="1"
-                                LargeChange="1"
-                                TickFrequency="1"
-                                TickPlacement="Outside"
-                                IsThumbToolTipEnabled="False"
-                                Margin="12,6,12,6" />
-                    </Border>
-
-                    <Grid x:Name="Preview">
-                        <chats:ChatBackgroundPresenter x:Name="BackgroundPresenter" />
+                <controls:HeaderedControl>
+                    <Grid x:Name="Preview"
+                          CornerRadius="4,4,0,0">
+                        <chats:ChatBackgroundPresenter x:Name="BackgroundPresenter"
+                                                       CornerRadius="4,4,0,0" />
                         <StackPanel Padding="0,10">
                             <messages:MessageBubble x:Name="Message1"
                                                     HorizontalAlignment="Left" />
@@ -79,222 +69,126 @@
                         </StackPanel>
                     </Grid>
 
-                    <controls:BadgeButton Content="{CustomResource ChatBackground}"
-                                          Click="Wallpaper_Click"
-                                          IsChevronVisible="True" />
-
-                    <controls:BadgeButtonWithImage Content="Emoji Set"
-                                                   Badge="{x:Bind ViewModel.EmojiSet, Mode=OneWay}"
-                                                   Command="{x:Bind ViewModel.EmojiSetCommand}"
-                                                   Style="{StaticResource ImageSubbadgeBadgeButtonStyle}">
-                        <controls:BadgeButtonWithImage.ImageSource>
-                            <BitmapImage UriSource="{x:Bind ViewModel.EmojiSetId, Mode=OneWay}"
-                                         DecodePixelWidth="40"
-                                         DecodePixelHeight="40" />
-                        </controls:BadgeButtonWithImage.ImageSource>
-                    </controls:BadgeButtonWithImage>
-
-                    <controls:BadgeButton Content="{CustomResource AutoNightTheme}"
-                                          Badge="{x:Bind ConvertNightMode(ViewModel.NightMode), Mode=OneWay}"
-                                          Click="NightMode_Click"
-                                          IsChevronVisible="True" />
-                </controls:HeaderedControl>
-
-                <controls:HeaderedControl Header="{CustomResource ColorTheme}">
-                    <ListView x:Name="List"
+                    <GridView x:Name="List"
                               Background="{ThemeResource SettingsItemBackground}"
-                              BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                              ItemsSource="{x:Bind ViewModel.Items}"
-                              SelectionMode="None"
+                              ItemsSource="{x:Bind ViewModel.ChatThemes}"
+                              SelectedItem="{x:Bind ViewModel.SelectedChatTheme, Mode=TwoWay}"
+                              SelectionMode="Single"
                               ChoosingItemContainer="OnChoosingItemContainer"
                               ContainerContentChanging="OnContainerContentChanging"
-                              Style="{StaticResource HorizontalListViewStyle}"
-                              ItemContainerTransitions="{x:Null}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate x:DataType="services:ThemeInfoBase">
-                                <StackPanel Margin="12,12,0,12">
-                                    <RadioButton Tag="{x:Bind}"
-                                                 GroupName="Theme"
-                                                 Style="{StaticResource ThemeRadioButtonStyle}">
-                                        <RadioButton.Background>
-                                            <SolidColorBrush Color="{x:Bind ChatBackgroundColor}" />
-                                        </RadioButton.Background>
-                                        <RadioButton.BorderBrush>
-                                            <SolidColorBrush Color="{x:Bind SelectionColor}" />
-                                        </RadioButton.BorderBrush>
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition />
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition />
-                                                <RowDefinition />
-                                                <RowDefinition />
-                                            </Grid.RowDefinitions>
-                                            <Rectangle Height="16"
-                                                       RadiusX="8"
-                                                       RadiusY="8"
-                                                       Margin="0,0,12,0"
-                                                       Grid.Column="1">
-                                                <Rectangle.Fill>
-                                                    <SolidColorBrush Color="{x:Bind MessageBackgroundColor}" />
-                                                </Rectangle.Fill>
-                                            </Rectangle>
-                                            <Rectangle Height="16"
-                                                       RadiusX="8"
-                                                       RadiusY="8"
-                                                       Margin="12,6,0,0"
-                                                       Grid.Column="1"
-                                                       Grid.Row="1">
-                                                <Rectangle.Fill>
-                                                    <SolidColorBrush Color="{x:Bind MessageBackgroundOutColor}" />
-                                                </Rectangle.Fill>
-                                            </Rectangle>
-                                        </Grid>
-                                    </RadioButton>
-                                    <TextBlock Text="{x:Bind Name}"
-                                               Margin="0,4,0,0"
-                                               TextAlignment="Center"
-                                               Style="{StaticResource CaptionTextBlockStyle}" />
-                                </StackPanel>
+                              ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                              ScrollViewer.HorizontalScrollMode="Auto"
+                              ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                              ScrollViewer.VerticalScrollMode="Disabled"
+                              ItemContainerTransitions="{x:Null}"
+                              Padding="12,16,0,12">
+                        <GridView.ItemTemplate>
+                            <DataTemplate>
+                                <cells:ChatThemeCell Width="87" />
                             </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                        <ItemsControl.ItemContainerStyle>
-                            <Style TargetType="ListViewItem">
+                        </GridView.ItemTemplate>
+                        <GridView.ItemContainerStyle>
+                            <Style TargetType="GridViewItem"
+                                   BasedOn="{StaticResource DefaultGridViewItemStyle}">
                                 <Setter Property="HorizontalContentAlignment"
                                         Value="Stretch" />
-                                <Setter Property="Padding"
-                                        Value="0" />
                             </Style>
-                        </ItemsControl.ItemContainerStyle>
-                        <ListView.Footer>
-                            <Border Width="12" />
-                        </ListView.Footer>
-                    </ListView>
-
-                    <ListView ItemsSource="{x:Bind ViewModel.Accents, Mode=OneWay}"
-                              Visibility="{x:Bind ViewModel.Accents.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                              Background="{ThemeResource SettingsItemBackground}"
-                              BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                              SelectionMode="None"
-                              ContainerContentChanging="OnContainerContentChanging"
-                              Style="{StaticResource HorizontalListViewStyle}"
-                              ItemContainerTransitions="{x:Null}">
-                        <ListView.ItemTemplate>
-                            <DataTemplate x:DataType="services:ThemeAccentInfo">
-                                <RadioButton Tag="{x:Bind}"
-                                             GroupName="Accent"
-                                             Margin="12,12,0,12"
-                                             Style="{StaticResource AccentRadioButtonStyle}">
-                                    <RadioButton.Background>
-                                        <SolidColorBrush Color="{x:Bind SelectionColor}" />
-                                    </RadioButton.Background>
-                                </RadioButton>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                        <ListView.ItemContainerStyle>
-                            <Style TargetType="ListViewItem">
-                                <Setter Property="MinWidth"
-                                        Value="0" />
-                                <Setter Property="MinHeight"
-                                        Value="0" />
-                                <Setter Property="Padding"
-                                        Value="0" />
-                            </Style>
-                        </ListView.ItemContainerStyle>
-                        <ListView.ItemsPanel>
+                        </GridView.ItemContainerStyle>
+                        <GridView.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <ItemsStackPanel Orientation="Horizontal" />
                             </ItemsPanelTemplate>
-                        </ListView.ItemsPanel>
-                        <ListView.Footer>
-                            <HyperlinkButton Command="{x:Bind ViewModel.AccentThemeCommand}"
-                                             Width="24"
-                                             Height="24"
-                                             Margin="12,12,12,12"
-                                             Style="{StaticResource EmptyHyperlinkButtonStyle}">
-                                <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="9" />
-                                        <RowDefinition Height="6" />
-                                        <RowDefinition Height="9" />
-                                    </Grid.RowDefinitions>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="9" />
-                                        <ColumnDefinition Width="6" />
-                                        <ColumnDefinition Width="9" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <Ellipse Fill="{x:Bind ConvertAccent(ViewModel.Accents, 5), Mode=OneWay}"
-                                             Width="6"
-                                             Height="6"
-                                             Margin="0,0,-2,1"
-                                             VerticalAlignment="Bottom"
-                                             HorizontalAlignment="Right" />
-                                    <Ellipse Fill="{x:Bind ConvertAccent(ViewModel.Accents, 6), Mode=OneWay}"
-                                             Width="6"
-                                             Height="6"
-                                             Margin="-2,0,0,1"
-                                             VerticalAlignment="Bottom"
-                                             HorizontalAlignment="Left"
-                                             Grid.Column="2" />
-
-                                    <Ellipse Fill="{x:Bind ConvertAccent(ViewModel.Accents, 4), Mode=OneWay}"
-                                             Width="6"
-                                             Height="6"
-                                             Grid.Row="1"
-                                             HorizontalAlignment="Left" />
-                                    <Ellipse Fill="{x:Bind ConvertAccent(ViewModel.Accents, 0), Mode=OneWay}"
-                                             Width="6"
-                                             Height="6"
-                                             Grid.Row="1"
-                                             Grid.Column="1" />
-                                    <Ellipse Fill="{x:Bind ConvertAccent(ViewModel.Accents, 1), Mode=OneWay}"
-                                             Width="6"
-                                             Height="6"
-                                             Grid.Row="1"
-                                             HorizontalAlignment="Right"
-                                             Grid.Column="2" />
-
-                                    <Ellipse Fill="{x:Bind ConvertAccent(ViewModel.Accents, 3), Mode=OneWay}"
-                                             Width="6"
-                                             Height="6"
-                                             Margin="0,1,-2,0"
-                                             VerticalAlignment="Top"
-                                             HorizontalAlignment="Right"
-                                             Grid.Row="2" />
-                                    <Ellipse Fill="{x:Bind ConvertAccent(ViewModel.Accents, 2), Mode=OneWay}"
-                                             Width="6"
-                                             Height="6"
-                                             Margin="-2,1,0,0"
-                                             VerticalAlignment="Top"
-                                             HorizontalAlignment="Left"
-                                             Grid.Row="2"
-                                             Grid.Column="2" />
-                                </Grid>
-                            </HyperlinkButton>
-                        </ListView.Footer>
-                    </ListView>
+                        </GridView.ItemsPanel>
+                        <GridView.Footer>
+                            <Border Width="12" />
+                        </GridView.Footer>
+                    </GridView>
 
                     <controls:BadgeButton Content="{CustomResource ShowAllThemes}"
                                           Visibility="{x:Bind ViewModel.AreCustomThemesAvailable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Click="Themes_Click"
+                                          Glyph="&#xE90E;"
+                                          IsChevronVisible="True" />
+
+                    <controls:BadgeButton Content="{CustomResource ChatBackground}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Click="Wallpaper_Click"
+                                          Glyph="&#xE9E7;"
                                           IsChevronVisible="True" />
                 </controls:HeaderedControl>
 
-                <controls:HeaderedControl Header="{CustomResource BubbleRadius}"
-                                          Background="{ThemeResource SettingsItemBackground}">
-                    <Slider Value="{x:Bind ViewModel.BubbleRadius, Mode=TwoWay}"
-                            AutomationProperties.Name="{CustomResource BubbleRadius}"
-                            Minimum="0"
-                            Maximum="15"
-                            SmallChange="1"
-                            LargeChange="1"
-                            TickFrequency="1"
-                            TickPlacement="Outside"
-                            IsThumbToolTipEnabled="False"
-                            Margin="12,6,12,6" />
+                <controls:HeaderedControl>
+                    <CheckBox Content="{CustomResource SettingsSwitchToNightMode}"
+                              Style="{StaticResource SettingsCheckBoxStyle}"
+                              IsChecked="{x:Bind ViewModel.ForceNightMode, Mode=TwoWay}" />
+                    <controls:BadgeButton Content="{CustomResource AutoNightTheme}"
+                                          Badge="{x:Bind ConvertNightMode(ViewModel.NightMode), Mode=OneWay}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Click="NightMode_Click"
+                                          Glyph="&#xE9EA;"
+                                          IsChevronVisible="True" />
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl Background="{ThemeResource SettingsItemBackground}">
+                    <Grid BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="2*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock FontSize="{StaticResource GlyphMediumFontSize}"
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Center"
+                                   Margin="12,0,0,0"
+                                   AutomationProperties.AccessibilityView="Raw"
+                                   Text="&#xE9EB;"
+                                   FontFamily="{StaticResource SymbolThemeFontFamily}" />
+
+                        <TextBlock Text="{CustomResource TextSizeHeader}"
+                                   VerticalAlignment="Center"
+                                   Grid.Column="1" />
+                        <Slider Value="{x:Bind ViewModel.FontSize, Mode=TwoWay}"
+                                AutomationProperties.Name="{CustomResource TextSizeHeader}"
+                                Minimum="0"
+                                Maximum="6"
+                                SmallChange="1"
+                                LargeChange="1"
+                                TickFrequency="1"
+                                TickPlacement="Outside"
+                                IsThumbToolTipEnabled="False"
+                                Margin="12,6,12,6"
+                                Grid.Column="2" />
+                    </Grid>
+                    <Grid BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="2*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock FontSize="{StaticResource GlyphMediumFontSize}"
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Center"
+                                   Margin="12,0,0,0"
+                                   AutomationProperties.AccessibilityView="Raw"
+                                   Text="&#xE9E8;"
+                                   FontFamily="{StaticResource SymbolThemeFontFamily}" />
+
+                        <TextBlock Text="{CustomResource BubbleRadius}"
+                                   VerticalAlignment="Center"
+                                   Grid.Column="1" />
+                        <Slider Value="{x:Bind ViewModel.BubbleRadius, Mode=TwoWay}"
+                                AutomationProperties.Name="{CustomResource BubbleRadius}"
+                                Minimum="0"
+                                Maximum="15"
+                                SmallChange="1"
+                                LargeChange="1"
+                                TickFrequency="1"
+                                TickPlacement="Outside"
+                                IsThumbToolTipEnabled="False"
+                                Margin="12,6,12,6"
+                                Grid.Column="2" />
+                    </Grid>
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="{CustomResource Settings}">
@@ -317,6 +211,17 @@
                     <CheckBox IsChecked="{x:Bind ViewModel.IsReplaceEmojiEnabled, Mode=TwoWay}"
                               Content="{CustomResource lng_settings_replace_emojis}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                    <controls:BadgeButtonWithImage Content="Emoji Set"
+                                                   Badge="{x:Bind ViewModel.EmojiSet, Mode=OneWay}"
+                                                   Command="{x:Bind ViewModel.EmojiSetCommand}"
+                                                   Style="{StaticResource ImageSubbadgeBadgeButtonStyle}">
+                        <controls:BadgeButtonWithImage.ImageSource>
+                            <BitmapImage UriSource="{x:Bind ViewModel.EmojiSetId, Mode=OneWay}"
+                                         DecodePixelWidth="40"
+                                         DecodePixelHeight="40" />
+                        </controls:BadgeButtonWithImage.ImageSource>
+                    </controls:BadgeButtonWithImage>
 
                     <controls:BadgeButton Content="{CustomResource DistanceUnits}">
                         <controls:BadgeButton.Badge>

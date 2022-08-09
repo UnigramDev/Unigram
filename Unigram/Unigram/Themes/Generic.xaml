@@ -652,13 +652,13 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="chats:ChatBackgroundRenderer">
-                    <Grid x:Name="LayoutRoot">
+                    <Canvas x:Name="LayoutRoot">
                         <Image x:Name="Canvas"
                                Stretch="Fill"
                                AutomationProperties.AccessibilityView="Raw"
                                HorizontalAlignment="Stretch"
                                VerticalAlignment="Stretch" />
-                    </Grid>
+                    </Canvas>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

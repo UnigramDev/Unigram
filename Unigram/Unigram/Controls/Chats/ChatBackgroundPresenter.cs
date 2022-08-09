@@ -38,17 +38,19 @@ namespace Unigram.Controls.Chats
             ElementCompositionPreview.GetElementVisual(this).Clip = _compositor.CreateInsetClip();
 
             Children.Add(_renderer);
+
+            Loaded += OnLoaded;
+            Unloaded += OnUnloaded;
         }
 
-        private void UpdateFile(object target, File file)
+        private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (file.Id == _oldBackground?.Document?.DocumentValue.Id)
-            {
-                var background = _oldBackground;
-                _oldBackground = null;
+            _aggregator?.Subscribe<UpdateSelectedBackground>(this, Handle);
+        }
 
-                UpdateBackground(background, ActualTheme == ElementTheme.Dark);
-            }
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            _aggregator?.Unsubscribe(this);
         }
 
         public void Handle(UpdateSelectedBackground update)
@@ -70,8 +72,6 @@ namespace Unigram.Controls.Chats
             _protoService = protoService;
             _aggregator = aggregator;
 
-            aggregator.Subscribe<UpdateSelectedBackground>(this, Handle);
-            //Update(session, settings.Wallpaper);
             UpdateBackground(protoService.SelectedBackground, ActualTheme == ElementTheme.Dark);
         }
 
@@ -124,7 +124,7 @@ namespace Unigram.Controls.Chats
             _oldBackground = background;
             _oldDark = dark;
 
-            _renderer.UpdateSource(_protoService, background, UpdateFile);
+            _renderer.UpdateSource(_protoService, background, false);
         }
 
         private bool BackgroundEquals(Background prev, Background next)

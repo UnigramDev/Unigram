@@ -1789,6 +1789,49 @@ namespace Unigram.Common
 
     public static class TdBackground
     {
+        public static BackgroundFill FromString(string slug)
+        {
+            var split = slug.Split('?');
+            var query = slug.ParseQueryString();
+
+            if (TryGetColors(split[0], '-', 1, 2, out int[] linear))
+            {
+                if (linear.Length > 1)
+                {
+                    query.TryGetValue("rotation", out string rotationKey);
+                    int.TryParse(rotationKey ?? string.Empty, out int rotation);
+
+                    return new BackgroundFillGradient(linear[0], linear[1], rotation);
+                }
+
+                return new BackgroundFillSolid(linear[0]);
+            }
+            else if (TryGetColors(split[0], '~', 3, 4, out int[] freeform))
+            {
+                return new BackgroundFillFreeformGradient(freeform);
+            }
+
+            return null;
+        }
+
+        public static string ToString(BackgroundFill fill)
+        {
+            if (fill is BackgroundFillSolid solid)
+            {
+                return string.Format("{0:X6}", solid.Color);
+            }
+            else if (fill is BackgroundFillGradient gradient)
+            {
+                return string.Format("{0:X6}-{1:X6}?rotation={2}", gradient.TopColor, gradient.BottomColor, gradient.RotationAngle);
+            }
+            else if (fill is BackgroundFillFreeformGradient freeformGradient)
+            {
+                return string.Join('~', freeformGradient.Colors.Select(x => x.ToString("X6")));
+            }
+
+            return null;
+        }
+
         public static BackgroundType FromUri(Uri uri)
         {
             var slug = uri.Segments.Last();

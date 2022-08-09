@@ -20,6 +20,7 @@ namespace Unigram.Controls.Chats
         private string _patternPath;
 
         private File _background;
+        private bool _vector = false;
         private bool _blur = false;
         private bool _dark = false;
         private byte _intensity = 255;
@@ -102,7 +103,7 @@ namespace Unigram.Controls.Chats
 
                 if (_background != null)
                 {
-                    if (_backgroundFill != null)
+                    if (_vector)
                     {
                         _patternPath = _background.Local.Path;
                         _pattern = await PlaceholderHelper.GetPatternBitmapAsync(sender, null, _background);
@@ -282,12 +283,34 @@ namespace Unigram.Controls.Chats
             //throw new NotImplementedException();
         }
 
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            _layoutRoot?.Measure(new Size(availableSize.Width, availableSize.Height));
+            _canvas?.Measure(new Size(availableSize.Width, availableSize.Height));
+
+            return new Size(0, 0);
+        }
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            _layoutRoot?.Arrange(new Rect(0, 0, finalSize.Width, finalSize.Height));
+            _canvas?.Arrange(new Rect(0, 0, finalSize.Width, finalSize.Height));
+
+            if (_canvas != null)
+            {
+                _canvas.MaxWidth = finalSize.Width;
+                _canvas.MaxHeight = finalSize.Height;
+            }
+
+            return finalSize;
+        }
+
         private Vector2[][] _easing;
         private int _index;
 
         private int _phase;
 
-        public void UpdateSource(IProtoService protoService, Background background, UpdateHandler<File> handler)
+        public void UpdateSource(IProtoService protoService, Background background, bool thumbnail)
         {
             if (_fileToken is string fileToken)
             {
@@ -324,29 +347,31 @@ namespace Unigram.Controls.Chats
                 _backgroundFill = typePattern.Fill;
 
                 var file = background.Document.DocumentValue;
+                if (thumbnail && background.Document.Thumbnail != null)
+                {
+                    file = background.Document.Thumbnail.File;
+                }
+                else
+                {
+                    thumbnail = false;
+                }
+
                 if (file.Local.IsFileExisting())
                 {
                     _background = file;
-
-                    //if (string.Equals(background.Document.MimeType, "application/x-tgwallpattern", StringComparison.OrdinalIgnoreCase))
-                    //{
-                    //    await SetPatternAsync(typePattern, file);
-                    //}
-                    //else
-                    //{
-                    //    _imageBackground.Fill = new ImageBrush { ImageSource = new BitmapImage(UriEx.ToLocal(file.Local.Path)), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
-                    //}
+                    _vector = thumbnail is false && background.Document.MimeType == "application/x-tgwallpattern";
                 }
                 else
                 {
                     _background = null;
+                    _vector = thumbnail is false && background.Document.MimeType == "application/x-tgwallpattern";
 
                     if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                     {
                         protoService.DownloadFile(file.Id, 16);
                     }
 
-                    UpdateManager.Subscribe(this, protoService, file, ref _fileToken, handler, true);
+                    UpdateManager.Subscribe(background, protoService, file, ref _fileToken, UpdateFile, true);
                 }
             }
             else if (background.Type is BackgroundTypeWallpaper typeWallpaper)
@@ -356,20 +381,31 @@ namespace Unigram.Controls.Chats
                 _blur = typeWallpaper.IsBlurred;
 
                 var file = background.Document.DocumentValue;
+                if (thumbnail && background.Document.Thumbnail != null)
+                {
+                    file = background.Document.Thumbnail.File;
+                }
+                else
+                {
+                    thumbnail = false;
+                }
+
                 if (file.Local.IsFileExisting())
                 {
                     _background = file;
+                    _vector = thumbnail is false && background.Document.MimeType == "application/x-tgwallpattern";
                 }
                 else
                 {
                     _background = null;
+                    _vector = thumbnail is false && background.Document.MimeType == "application/x-tgwallpattern";
 
                     if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                     {
                         protoService.DownloadFile(file.Id, 16);
                     }
 
-                    UpdateManager.Subscribe(this, protoService, file, ref _fileToken, handler, true);
+                    UpdateManager.Subscribe(background, protoService, file, ref _fileToken, UpdateFile, true);
                 }
             }
 
@@ -379,6 +415,14 @@ namespace Unigram.Controls.Chats
             }
 
             OnSourceChanged();
+        }
+
+        private void UpdateFile(object target, File file)
+        {
+            if (file.Id == _background?.Id && target is Background background)
+            {
+                UpdateSource(null, background, !_vector);
+            }
         }
 
         private readonly Color[] _colors = new Color[]

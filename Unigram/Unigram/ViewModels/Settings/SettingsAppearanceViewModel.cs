@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Navigation.Services;
 using Unigram.Services;
@@ -21,11 +24,47 @@ namespace Unigram.ViewModels.Settings
         {
             _emojiSetService = emojiSetService;
 
+            ChatThemes = new ObservableCollection<ChatTheme>();
+
             EmojiSetCommand = new RelayCommand(EmojiSetExecute);
         }
 
+        public ObservableCollection<ChatTheme> ChatThemes { get; }
+
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
+            static Background GetDefaultBackground(bool dark)
+            {
+                var freeform = dark ? new[] { 0x0D0E17, 0x090A0C, 0x181C28, 0x0E0F12 } : new[] { 0xDBDDBB, 0x6BA587, 0xD5D88D, 0x88B884 };
+                return new Background(0, true, dark, string.Empty,
+                    new Document(string.Empty, "application/x-tgwallpattern", null, null, TdExtensions.GetLocalFile("Assets\\Background.tgv", "Background")),
+                    new BackgroundTypePattern(new BackgroundFillFreeformGradient(freeform), dark ? 100 : 50, dark, false));
+            }
+
+            var defaultLight = new ThemeSettings
+            {
+                AccentColor = 0x158DCD,
+                OutgoingMessageAccentColor = 0xF0FDDF,
+                OutgoingMessageFill = new BackgroundFillSolid(0xF0FDDF),
+                Background = GetDefaultBackground(false)
+            };
+
+            var defaultDark = new ThemeSettings
+            {
+                AccentColor = 0x71BAFA,
+                OutgoingMessageAccentColor = 0x2B5278,
+                OutgoingMessageFill = new BackgroundFillSolid(0x2B5278),
+                Background = GetDefaultBackground(true)
+            };
+
+            var defaultTheme = new ChatTheme("\U0001F3E0", defaultLight, defaultDark);
+            var themes = ProtoService.GetChatThemes();
+
+            ChatThemes.AddRange(new[] { defaultTheme }.Union(themes));
+
+            _selectedChatTheme = ChatThemes.FirstOrDefault(x => x.Name == Settings.Appearance.ChatTheme?.Name) ?? defaultTheme;
+            RaisePropertyChanged(nameof(SelectedChatTheme));
+
             var emojiSet = Settings.Appearance.EmojiSet;
             EmojiSet = emojiSet.Title;
 
@@ -41,6 +80,42 @@ namespace Unigram.ViewModels.Settings
             }
 
             return base.OnNavigatedToAsync(parameter, mode, state);
+        }
+
+        private ChatTheme _selectedChatTheme;
+        public ChatTheme SelectedChatTheme
+        {
+            get => _selectedChatTheme;
+            set => SetChatTheme(value);
+        }
+
+        private void SetChatTheme(ChatTheme chatTheme)
+        {
+            if (chatTheme == null || chatTheme.Name == _selectedChatTheme?.Name)
+            {
+                return;
+            }
+
+            void SetBackground(Background background, bool forDarkTheme)
+            {
+                if (background != null && chatTheme.Name != "\U0001F3E0")
+                {
+                    ProtoService.Send(new SetBackground(new InputBackgroundRemote(background.Id), background.Type, forDarkTheme));
+                }
+                else
+                {
+                    ProtoService.Send(new SetBackground(null, null, forDarkTheme));
+                }
+            }
+
+            SetBackground(chatTheme.LightSettings.Background, false);
+            SetBackground(chatTheme.DarkSettings.Background, true);
+
+            Settings.Appearance.ChatTheme = chatTheme;
+            Settings.Appearance.UpdateNightMode();
+
+            _selectedChatTheme = chatTheme;
+            RaisePropertyChanged(nameof(SelectedChatTheme));
         }
 
         private string _emojiSet;
@@ -91,19 +166,16 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        //public bool IsSystemTheme
-        //{
-        //    get
-        //    {
-        //        return !Settings.Appearance.RequestedTheme.HasFlag(TelegramTheme.Brand);
-        //    }
-        //    set
-        //    {
-        //        Settings.Appearance.RequestedTheme = value ? GetRawTheme() : (GetRawTheme() | TelegramTheme.Brand);
-        //        RaisePropertyChanged();
-        //        RaisePropertyChanged(() => RequestedTheme);
-        //    }
-        //}
+        public bool ForceNightMode
+        {
+            get => Settings.Appearance.ForceNightMode;
+            set
+            {
+                Settings.Appearance.ForceNightMode = value;
+                Settings.Appearance.UpdateNightMode();
+                RaisePropertyChanged();
+            }
+        }
 
 
 

@@ -56,7 +56,7 @@
       <Method Name="UpdateFile" Dynamic="Required"/>
     </Type>
 
-    <Type Name="Unigram.Controls.Chats.ChatBackgroundPresenter">
+    <Type Name="Unigram.Controls.Chats.ChatBackgroundRenderer">
       <Method Name="UpdateFile" Dynamic="Required"/>
     </Type>
 
@@ -190,10 +190,6 @@
     <Type Name="Unigram.Views.Popups.ZoomableMediaPopup">
       <Method Name="UpdateFile" Dynamic="Required"/>
       <Method Name="UpdateThumbnail" Dynamic="Required"/>
-    </Type>
-
-    <Type Name="Unigram.Views.Settings.SettingsBackgroundsPage">
-      <Method Name="UpdateFile" Dynamic="Required"/>
     </Type>
 
     <Type Name="Unigram.Views.Settings.SettingsQuickReactionPage">

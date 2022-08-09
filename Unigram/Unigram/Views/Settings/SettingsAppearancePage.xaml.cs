@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls.Cells;
 using Unigram.Converters;
 using Unigram.Services;
 using Unigram.Services.Settings;
@@ -21,7 +23,7 @@ namespace Unigram.Views.Settings
         public SettingsAppearancePage()
         {
             InitializeComponent();
-            Title = Strings.Resources.ChatSettings;
+            Title = Strings.Resources.Appearance;
 
             var preview = ElementCompositionPreview.GetElementVisual(Preview);
             preview.Clip = preview.Compositor.CreateInsetClip();
@@ -101,31 +103,23 @@ namespace Unigram.Views.Settings
             }
         }
 
-        private async void Switch_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is RadioButton radio && radio.Tag is ThemeInfoBase info)
-            {
-                await ViewModel.SetThemeAsync(info);
-            }
-        }
-
         #region Context menu
 
         private void Theme_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
             var element = sender as FrameworkElement;
-            var theme = List.ItemFromContainer(element) as ThemeInfoBase;
+            var theme = List.ItemFromContainer(element) as ChatTheme;
 
             var flyout = new MenuFlyout();
             flyout.CreateFlyoutItem(ViewModel.ThemeCreateCommand, theme, Strings.Resources.CreateNewThemeMenu, new FontIcon { Glyph = Icons.Color });
 
-            if (!theme.IsOfficial)
-            {
-                flyout.CreateFlyoutSeparator();
-                flyout.CreateFlyoutItem(ViewModel.ThemeShareCommand, theme, Strings.Resources.ShareFile, new FontIcon { Glyph = Icons.Share });
-                flyout.CreateFlyoutItem(ViewModel.ThemeEditCommand, theme, Strings.Resources.Edit, new FontIcon { Glyph = Icons.Edit });
-                flyout.CreateFlyoutItem(ViewModel.ThemeDeleteCommand, theme, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
-            }
+            //if (!theme.IsOfficial)
+            //{
+            //    flyout.CreateFlyoutSeparator();
+            //    flyout.CreateFlyoutItem(ViewModel.ThemeShareCommand, theme, Strings.Resources.ShareFile, new FontIcon { Glyph = Icons.Share });
+            //    flyout.CreateFlyoutItem(ViewModel.ThemeEditCommand, theme, Strings.Resources.Edit, new FontIcon { Glyph = Icons.Edit });
+            //    flyout.CreateFlyoutItem(ViewModel.ThemeDeleteCommand, theme, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
+            //}
 
             args.ShowAt(flyout, element);
         }
@@ -138,7 +132,7 @@ namespace Unigram.Views.Settings
         {
             if (args.ItemContainer == null)
             {
-                args.ItemContainer = new ListViewItem();
+                args.ItemContainer = new GridViewItem();
                 args.ItemContainer.Style = sender.ItemContainerStyle;
                 args.ItemContainer.ContentTemplate = sender.ItemTemplate;
                 args.ItemContainer.ContextRequested += Theme_ContextRequested;
@@ -154,31 +148,12 @@ namespace Unigram.Views.Settings
                 return;
             }
 
-            var theme = args.Item as ThemeInfoBase;
-            var radio = args.ItemContainer.ContentTemplateRoot as RadioButton;
+            var theme = args.Item as ChatTheme;
+            var cell = args.ItemContainer.ContentTemplateRoot as ChatThemeCell;
 
-            if (args.ItemContainer.ContentTemplateRoot is StackPanel root)
+            if (cell != null && theme != null)
             {
-                radio = root.Children[0] as RadioButton;
-            }
-
-            radio.Click -= Switch_Click;
-            radio.Click += Switch_Click;
-
-            if (theme is ThemeCustomInfo custom)
-            {
-                radio.RequestedTheme = custom.Parent == TelegramTheme.Dark ? ElementTheme.Dark : ElementTheme.Light;
-                radio.IsChecked = SettingsService.Current.Appearance[SettingsService.Current.Appearance.RequestedTheme].Type == TelegramThemeType.Custom && string.Equals(SettingsService.Current.Appearance[SettingsService.Current.Appearance.RequestedTheme].Custom, custom.Path, StringComparison.OrdinalIgnoreCase);
-            }
-            else if (theme is ThemeAccentInfo accent)
-            {
-                radio.RequestedTheme = accent.Parent == TelegramTheme.Dark ? ElementTheme.Dark : ElementTheme.Light;
-                radio.IsChecked = SettingsService.Current.Appearance[SettingsService.Current.Appearance.RequestedTheme].Type == accent.Type && SettingsService.Current.Appearance.Accents[accent.Type] == accent.AccentColor;
-            }
-            else
-            {
-                radio.RequestedTheme = theme.Parent == TelegramTheme.Dark ? ElementTheme.Dark : ElementTheme.Light;
-                radio.IsChecked = SettingsService.Current.Appearance[SettingsService.Current.Appearance.RequestedTheme].Type == TelegramThemeType.Classic && SettingsService.Current.Appearance.RequestedTheme == theme.Parent;
+                cell.Update(ViewModel.ProtoService, theme);
             }
         }
 
