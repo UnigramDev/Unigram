@@ -38,7 +38,6 @@ namespace Unigram.Common
             _viewService = viewService;
         }
 
-        public int SessionId => _protoService.SessionId;
         public IProtoService ProtoService => _protoService;
 
         public async void NavigateToInstant(string url)

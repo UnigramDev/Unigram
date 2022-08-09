@@ -288,11 +288,6 @@ namespace Unigram.Services
                 }
             }
 
-            public void Subscribe<T>(Delegate handler)
-            {
-                _delegates[typeof(T)] = handler;
-            }
-
             public void Subscribe(Type type, Delegate handler)
             {
                 _delegates[type] = handler;
@@ -316,7 +311,7 @@ namespace Unigram.Services
 
             public SubscriptionBuilder Subscribe<T>(Action<T> action)
             {
-                _handler.Subscribe<T>(action);
+                _handler.Subscribe(typeof(T), action);
                 return this;
             }
         }

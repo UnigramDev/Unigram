@@ -1936,7 +1936,9 @@ namespace Unigram.ViewModels
 
         public override void NavigatingFrom(NavigatingEventArgs args)
         {
-            //Aggregator.Unsubscribe(this);
+            // Explicit unsubscribe because NavigatedFrom
+            // is not invoked when switching between chats.
+            Aggregator.Unsubscribe(this);
 
             var chat = _chat;
             if (chat == null)

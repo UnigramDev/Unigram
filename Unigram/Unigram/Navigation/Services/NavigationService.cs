@@ -207,7 +207,7 @@ namespace Unigram.Navigation.Services
                         e.Cancel = !NavigatingFrom(page, e.SourcePageType, e.Parameter, dataContext, false, e.NavigationMode);
                         if (!e.Cancel)
                         {
-                            await NavigateFromAsync(page, dataContext, false).ConfigureAwait(false);
+                            await NavigateFromAsync(page, dataContext, false);
                         }
                     }
 
@@ -227,7 +227,7 @@ namespace Unigram.Navigation.Services
 
                 try
                 {
-                    await NavigateToAsync(e.NavigationMode, parameter, FrameFacade.Frame.Content).ConfigureAwait(false);
+                    await NavigateToAsync(e.NavigationMode, parameter, FrameFacade.Frame.Content);
                 }
                 catch (Exception ex)
                 {
@@ -283,7 +283,7 @@ namespace Unigram.Navigation.Services
             dataContext.SessionState = BootStrapper.Current.SessionState;
 
             var pageState = FrameFacade.PageStateSettingsService(page.GetType()).Values;
-            await dataContext.NavigatedFromAsync(pageState, suspending).ConfigureAwait(false);
+            await dataContext.NavigatedFromAsync(pageState, suspending);
         }
 
         private async Task NavigateToAsync(NavigationMode mode, object parameter, object frameContent = null)
@@ -560,7 +560,7 @@ namespace Unigram.Navigation.Services
                 var dataContext = ViewModelForPage(page);
                 if (dataContext != null)
                 {
-                    await NavigateFromAsync(page, dataContext, true).ConfigureAwait(false);
+                    await NavigateFromAsync(page, dataContext, true);
                 }
             }
         }
