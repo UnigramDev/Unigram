@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml.Controls;
+using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -18,9 +19,11 @@ using Windows.Storage;
 using Windows.System;
 using Windows.System.Display;
 using Windows.System.Profile;
+using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Hosting;
 
 namespace Unigram.Controls.Chats
 {
@@ -34,6 +37,8 @@ namespace Unigram.Controls.Chats
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
+        private Visual _icon;
+
         private readonly DispatcherTimer _timer;
         private readonly Recorder _recorder;
 
@@ -44,7 +49,27 @@ namespace Unigram.Controls.Chats
         public bool IsRecording => _recordingAudioVideo;
         public bool IsLocked => _recordingLocked;
 
-        public bool IsRestricted { get; set; }
+        private bool _isRestricted;
+        public bool IsRestricted
+        {
+            get => _isRestricted;
+            set
+            {
+                if (_isRestricted != value)
+                {
+                    _isRestricted = value;
+
+                    if (_icon != null)
+                    {
+                        var opacity = _icon.Compositor.CreateScalarKeyFrameAnimation();
+                        opacity.InsertKeyFrame(0, value ? 1 : 0.2f);
+                        opacity.InsertKeyFrame(1, value ? 0.2f : 1);
+
+                        _icon.StartAnimation("Opacity", opacity);
+                    }
+                }
+            }
+        }
 
         public ChatRecordMode Mode
         {
@@ -81,6 +106,16 @@ namespace Unigram.Controls.Chats
 
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
+        }
+
+        protected override void OnApplyTemplate()
+        {
+            var icon = GetTemplateChild("Icon") as AnimatedIcon;
+
+            _icon = ElementCompositionPreview.GetElementVisual(icon);
+            _icon.Opacity = IsRestricted ? 0.2f : 1;
+
+            base.OnApplyTemplate();
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -248,7 +283,7 @@ namespace Unigram.Controls.Chats
         private async void OnClick(object sender, RoutedEventArgs e)
         {
             if (ClickMode == ClickMode.Press)
-            {   
+            {
                 if (IsRestricted)
                 {
                     var message = Mode == ChatRecordMode.Video
