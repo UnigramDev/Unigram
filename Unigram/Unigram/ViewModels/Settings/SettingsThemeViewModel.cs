@@ -1,14 +1,17 @@
 ﻿using Rg.DiffUtils;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Navigation;
 using Unigram.Services;
+using Unigram.Services.Settings;
 using Unigram.Views.Popups;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 
 namespace Unigram.ViewModels.Settings
 {
@@ -18,6 +21,7 @@ namespace Unigram.ViewModels.Settings
 
         private ThemeCustomInfo _theme;
         private ThemeBrush[] _index;
+        private HashSet<string> _keys;
 
         private StorageFile _file;
 
@@ -61,24 +65,70 @@ namespace Unigram.ViewModels.Settings
             Title = theme.Name;
             Items.Clear();
 
+            var incoming = theme.Parent == TelegramTheme.Light ? ThemeIncoming.Light : ThemeIncoming.Dark;
+            var outgoing = theme.Parent == TelegramTheme.Light ? ThemeOutgoing.Light : ThemeOutgoing.Dark;
+
             var lookup = ThemeService.GetLookup(theme.Parent);
             var i = 0;
 
-            _index = new ThemeBrush[lookup.Count];
+            _index = new ThemeBrush[lookup.Count + incoming.Count + outgoing.Count];
+            _keys = new HashSet<string>(incoming.Count + outgoing.Count);
+
+            ProcessDictionary(theme, incoming, "Incoming", ref i);
+            ProcessDictionary(theme, outgoing, "Outgoing", ref i);
 
             foreach (var value in lookup)
             {
+                if (_keys.Contains(value.Key))
+                {
+                    continue;
+                }
+
                 if (theme.Values.TryGetValue(value.Key, out Color custom))
                 {
-                    _index[i] = new ThemeBrush(value.Key, custom);
+                    if (value.Value is Color reference)
+                    {
+                        _index[i] = new ThemeBrush(value.Key, custom, reference.A < 255);
+                    }
+                    else
+                    {
+                        _index[i] = new ThemeBrush(value.Key, custom, false);
+                    }
                 }
                 else if (value.Value is Color color)
                 {
-                    _index[i] = new ThemeBrush(value.Key, color);
+                    _index[i] = new ThemeBrush(value.Key, color, color.A < 255);
                 }
 
                 if (_index[i] != null)
                 {
+                    Items.Add(_index[i++]);
+                }
+            }
+        }
+
+        private void ProcessDictionary(ThemeCustomInfo theme, Dictionary<string, (Color Color, SolidColorBrush)> lookup, string suffix, ref int i)
+        {
+            foreach (var value in lookup)
+            {
+                var key = value.Key;
+                if (key.EndsWith("Brush"))
+                {
+                    key = value.Key.Substring(0, value.Key.Length - "Brush".Length) + suffix;
+                }
+                
+                if (theme.Values.TryGetValue(key, out Color custom))
+                {
+                    _index[i] = new ThemeBrush(key, custom, value.Value.Color.A < 255);
+                }
+                else if (value.Value.Color is Color color)
+                {
+                    _index[i] = new ThemeBrush(key, color, value.Value.Color.A < 255);
+                }
+
+                if (_index[i] != null)
+                {
+                    _keys.Add(key);
                     Items.Add(_index[i++]);
                 }
             }
@@ -108,9 +158,10 @@ namespace Unigram.ViewModels.Settings
         private async void EditBrushExecute(ThemeBrush brush)
         {
             var dialog = new ChooseColorPopup();
+            dialog.IsTransparencyEnabled = brush.HasTransparency;
+            dialog.IsAccentColorVisible = false;
             dialog.Title = brush.Key;
             dialog.Color = brush.Color;
-            dialog.IsAccentColorVisible = false;
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
@@ -133,17 +184,18 @@ namespace Unigram.ViewModels.Settings
 
     public class ThemeBrush : BindableBase
     {
-        public ThemeBrush(string key, Color color)
+        public ThemeBrush(string key, Color color, bool alpha)
         {
             if (key.EndsWith("Brush"))
             {
                 Name = key.Substring(0, key.Length - "Brush".Length);
             }
 
+            _color = color;
+
             Name ??= key;
             Key = key;
-
-            _color = color;
+            HasTransparency = alpha;
         }
 
         public string Key { get; set; }
@@ -161,7 +213,6 @@ namespace Unigram.ViewModels.Settings
         {
             Set(ref _color, value, nameof(Color));
             RaisePropertyChanged(nameof(HexValue));
-            RaisePropertyChanged(nameof(HasTransparency));
         }
 
         public string HexValue
@@ -177,7 +228,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public bool HasTransparency => _color.A < 255;
+        public bool HasTransparency { get; }
 
         public string Description { get; }
 

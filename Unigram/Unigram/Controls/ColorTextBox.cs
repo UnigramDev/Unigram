@@ -11,13 +11,15 @@ namespace Unigram.Controls
 {
     public class ColorTextBox : TextBox
     {
-        private string previousText = string.Empty;
-        private int selectionStart;
+        private string _previousText = string.Empty;
+        private int _selectionStart;
 
-        private int characterAction = -1;
-        private int actionPosition;
+        private int _characterAction = -1;
+        private int _actionPosition;
 
-        private bool ignoreOnPhoneChange;
+        private bool _ignoreOnPhoneChange;
+
+        private int _hexDigits = 6;
 
         public ColorTextBox()
         {
@@ -32,28 +34,28 @@ namespace Unigram.Controls
         private void Started()
         {
             var start = SelectionStart;
-            var after = Math.Max(0, Text.Length - previousText.Length);
-            var count = Math.Max(0, previousText.Length - Text.Length);
+            var after = Math.Max(0, Text.Length - _previousText.Length);
+            var count = Math.Max(0, _previousText.Length - Text.Length);
 
             if (count == 0 && after == 1)
             {
-                characterAction = 1;
+                _characterAction = 1;
             }
             else if (count == 1 && after == 0)
             {
-                if (previousText[start] == ' ' && start > 0)
+                if (_previousText[start] == ' ' && start > 0)
                 {
-                    characterAction = 3;
-                    actionPosition = start - 1;
+                    _characterAction = 3;
+                    _actionPosition = start - 1;
                 }
                 else
                 {
-                    characterAction = 2;
+                    _characterAction = 2;
                 }
             }
             else
             {
-                characterAction = -1;
+                _characterAction = -1;
             }
         }
 
@@ -61,7 +63,7 @@ namespace Unigram.Controls
         {
             Started();
 
-            if (ignoreOnPhoneChange)
+            if (_ignoreOnPhoneChange)
             {
                 return;
             }
@@ -69,9 +71,9 @@ namespace Unigram.Controls
             int start = SelectionStart;
             string phoneChars = "0123456789ABCDEF";
             string str = Text.ToUpper();
-            if (characterAction == 3)
+            if (_characterAction == 3)
             {
-                str = str.Substring(0, actionPosition) + str.Substring(actionPosition + 1);
+                str = str.Substring(0, _actionPosition) + str.Substring(_actionPosition + 1);
                 start--;
             }
             StringBuilder builder = new StringBuilder(str.Length);
@@ -87,21 +89,21 @@ namespace Unigram.Controls
             {
                 builder.Insert(0, '#');
             }
-            ignoreOnPhoneChange = true;
+            _ignoreOnPhoneChange = true;
             Text = builder.ToString();
             if (start >= 0)
             {
-                selectionStart = start <= Text.Length ? start : Text.Length;
-                SelectionStart = Math.Max(1, selectionStart);
+                _selectionStart = start <= Text.Length ? start : Text.Length;
+                SelectionStart = Math.Max(1, _selectionStart);
             }
-            ignoreOnPhoneChange = false;
+            _ignoreOnPhoneChange = false;
 
-            previousText = Text;
+            _previousText = Text;
         }
 
         private void OnTextChanged(object sender, TextChangedEventArgs e)
         {
-            SelectionStart = Math.Max(1, selectionStart);
+            SelectionStart = Math.Max(1, _selectionStart);
             ParseColor(Text);
         }
 
@@ -109,9 +111,9 @@ namespace Unigram.Controls
         {
             text = text.TrimStart('#');
 
-            if (text.Length == 6 && int.TryParse(text, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int color))
+            if (text.Length == _hexDigits && int.TryParse(text, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int color))
             {
-                Color = color.ToColor();
+                Color = color.ToColor(IsTransparencyEnabled);
             }
         }
 
@@ -145,11 +147,45 @@ namespace Unigram.Controls
                 return;
             }
 
-            var value = newValue.ToValue();
-            var hex = string.Format("#{0:X6}", value);
+            var value = newValue.ToValue(IsTransparencyEnabled);
+            var hex = IsTransparencyEnabled ? string.Format("#{0:X8}", value) : string.Format("#{0:X6}", value);
 
             Text = hex;
             ColorChanged?.Invoke(this, new ColorChangedEventArgs(newValue, oldValue));
+        }
+
+        #endregion
+
+        #region IsTransparencyEnabled
+
+        public bool IsTransparencyEnabled
+        {
+            get { return (bool)GetValue(IsTransparencyEnabledProperty); }
+            set { SetValue(IsTransparencyEnabledProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsTransparencyEnabledProperty =
+            DependencyProperty.Register("IsTransparencyEnabled", typeof(bool), typeof(ColorTextBox), new PropertyMetadata(false, OnTransparencyEnabledChanged));
+
+        private static void OnTransparencyEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((ColorTextBox)d).OnTransparencyEnabledChanged((bool)e.NewValue, (bool)e.OldValue);
+        }
+
+        protected virtual void OnTransparencyEnabledChanged(bool newValue, bool oldValue)
+        {
+            if (newValue == oldValue)
+            {
+                return;
+            }
+
+            _hexDigits = newValue ? 8 : 6;
+            MaxLength = newValue ? 9 : 7;
+
+            var value = Color.ToValue(newValue);
+            var hex = newValue ? string.Format("#{0:X8}", value) : string.Format("#{0:X6}", value);
+
+            Text = hex;
         }
 
         #endregion

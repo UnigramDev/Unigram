@@ -23,6 +23,12 @@ namespace Unigram.Views.Popups
             set => Picker.Color = _color = value;
         }
 
+        public bool IsTransparencyEnabled
+        {
+            get => TextField.IsTransparencyEnabled;
+            set => TextField.IsTransparencyEnabled = value;
+        }
+
         public bool IsAccentColorVisible
         {
             get => Accent.Visibility == Visibility.Visible;

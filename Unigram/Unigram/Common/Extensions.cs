@@ -95,13 +95,28 @@ namespace Unigram.Common
             tip.IsOpen = true;
         }
 
-        public static Color ToColor(this int color)
+        public static Color ToColor(this int color, bool alpha = false)
         {
+            if (alpha)
+            {
+                byte a = (byte)((color & 0xff000000) >> 24);
+                byte r = (byte)((color & 0x00ff0000) >> 16);
+                byte g = (byte)((color & 0x0000ff00) >> 8);
+                byte b = (byte)(color & 0x000000ff);
+
+                return Color.FromArgb(a, r, g, b);
+            }
+
             return Color.FromArgb(0xFF, (byte)((color >> 16) & 0xFF), (byte)((color >> 8) & 0xFF), (byte)(color & 0xFF));
         }
 
-        public static int ToValue(this Color color)
+        public static int ToValue(this Color color, bool alpha = false)
         {
+            if (alpha)
+            {
+                return (color.A << 24) + (color.R << 16) + (color.G << 8) + color.B;
+            }
+
             return (color.R << 16) + (color.G << 8) + color.B;
         }
 
@@ -687,7 +702,6 @@ namespace Unigram.Common
         public static async Task UpdateLayoutAsync(this FrameworkElement element, bool update = false)
         {
             var tcs = new TaskCompletionSource<object>();
-
             void layoutUpdated(object s1, object e1)
             {
                 tcs.TrySetResult(null);

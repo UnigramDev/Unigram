@@ -25,6 +25,7 @@ namespace Unigram.Controls
 
         private HSV _color = new HSV(0, 1, 1);
         private double _value = 1;
+        private byte _alpha = 255;
         private Color _current;
 
         public ColorPicker()
@@ -34,7 +35,7 @@ namespace Unigram.Controls
 
         protected override void OnApplyTemplate()
         {
-            _current = _color.ToRGB();
+            _current = _color.ToRGB(_alpha);
 
             Spectrum = GetTemplateChild("Spectrum") as Border;
             SpectrumThumb = GetTemplateChild("SpectrumThumb") as UIElement;
@@ -80,7 +81,7 @@ namespace Unigram.Controls
         private void OnValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
         {
             _value = e.NewValue / 100;
-            _current = new HSV(_color.H, _color.S, _value).ToRGB();
+            _current = new HSV(_color.H, _color.S, _value).ToRGB(_alpha);
 
             Color = _current;
         }
@@ -123,7 +124,7 @@ namespace Unigram.Controls
             if (values)
             {
                 _color = new HSV(h, s, 1);
-                _current = new HSV(h, s, _value).ToRGB();
+                _current = new HSV(h, s, _value).ToRGB(_alpha);
 
                 Color = _current;
             }
@@ -139,8 +140,8 @@ namespace Unigram.Controls
                 var gradient = new LinearGradientBrush();
                 gradient.StartPoint = new Point(0, 0);
                 gradient.EndPoint = new Point(1, 0);
-                gradient.GradientStops.Add(new GradientStop { Color = new HSV(h, s, 1).ToRGB() });
-                gradient.GradientStops.Add(new GradientStop { Color = new HSV(h, s, 0).ToRGB(), Offset = 1 });
+                gradient.GradientStops.Add(new GradientStop { Color = new HSV(h, s, 1).ToRGB(_alpha) });
+                gradient.GradientStops.Add(new GradientStop { Color = new HSV(h, s, 0).ToRGB(_alpha), Offset = 1 });
 
                 ValueSlider.Foreground = gradient;
             }
@@ -178,11 +179,11 @@ namespace Unigram.Controls
                 return;
             }
 
-            var rgb = (RGB)newValue;
+            var rgb = newValue;
             var hsv = rgb.ToHSV();
 
-
             _current = newValue;
+            _alpha = newValue.A;
             _color = new HSV(hsv.H, hsv.S, 1);
             _value = hsv.V;
 

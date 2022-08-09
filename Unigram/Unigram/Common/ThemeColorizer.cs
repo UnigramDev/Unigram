@@ -131,8 +131,6 @@ namespace Unigram.Common
 
         public static ThemeColorizer FromTheme(TelegramThemeType type, Color accent, Color color)
         {
-            var temp = (RGB)color;
-
             var result = new ThemeColorizer();
             //result.ignoreKeys = kColorizeIgnoredKeys;
             result._hueThreshold = 15;
@@ -177,14 +175,14 @@ namespace Unigram.Common
                     result._lightnessMin = 64d / 255d;
                     break;
             }
-            var nowLightness = temp.ToHSL().L;
+            var nowLightness = color.ToHSL().L;
             var limitedLightness = Math.Clamp(
                 nowLightness,
                 result._lightnessMin,
                 result._lightnessMax);
             if (limitedLightness != nowLightness)
             {
-                var temp1 = temp.ToHSL();
+                var temp1 = color.ToHSL();
                 var temp2 = new HSL(temp1.H, temp1.S, limitedLightness);
                 var temp3 = temp2.ToRGB();
 

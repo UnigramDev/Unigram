@@ -1239,7 +1239,8 @@
                             <RowDefinition />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <Border x:Name="Spectrum">
+                        <Border x:Name="Spectrum"
+                                CornerRadius="{TemplateBinding CornerRadius}">
                             <Canvas>
                                 <Canvas.Background>
                                     <LinearGradientBrush StartPoint="0,0"
@@ -1264,11 +1265,17 @@
                                 </Border>
                             </Canvas>
                         </Border>
+                        <Border x:Name="SpectrumBorder"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="{TemplateBinding CornerRadius}" />
 
                         <Slider x:Name="ValueSlider"
                                 IsDirectionReversed="True"
                                 IsThumbToolTipEnabled="False"
                                 Margin="{TemplateBinding Padding}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
                                 Grid.Row="1">
                             <Slider.Template>
                                 <ControlTemplate TargetType="Slider">
@@ -1427,8 +1434,17 @@
                                                     <RowDefinition Height="Auto" />
                                                     <RowDefinition Height="{ThemeResource SliderPostContentMargin}" />
                                                 </Grid.RowDefinitions>
+                                                <Border x:Name="SpectrumBorder"
+                                                        Background="{TemplateBinding Foreground}"
+                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                                        BackgroundSizing="OuterBorderEdge"
+                                                        CornerRadius="10"
+                                                        Grid.ColumnSpan="3"
+                                                        Grid.Row="1" />
+
                                                 <Rectangle x:Name="HorizontalTrackRect"
-                                                           Fill="{TemplateBinding Foreground}"
+                                                           Fill="Transparent"
                                                            Height="20"
                                                            Grid.Row="1"
                                                            Grid.ColumnSpan="3"
