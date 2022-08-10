@@ -20,6 +20,7 @@ namespace Unigram.Controls.Chats
         private string _patternPath;
 
         private File _background;
+        private int _backgroundId;
         private bool _vector = false;
         private bool _blur = false;
         private bool _dark = false;
@@ -330,6 +331,7 @@ namespace Unigram.Controls.Chats
 
                 _backgroundFill = typeFill.Fill;
                 _background = null;
+                _backgroundId = 0;
             }
             else if (background.Type is BackgroundTypePattern typePattern)
             {
@@ -359,11 +361,13 @@ namespace Unigram.Controls.Chats
                 if (file.Local.IsFileExisting())
                 {
                     _background = file;
+                    _backgroundId = 0;
                     _vector = thumbnail is false && background.Document.MimeType == "application/x-tgwallpattern";
                 }
                 else
                 {
                     _background = null;
+                    _backgroundId = file.Id;
                     _vector = thumbnail is false && background.Document.MimeType == "application/x-tgwallpattern";
 
                     if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
@@ -393,11 +397,13 @@ namespace Unigram.Controls.Chats
                 if (file.Local.IsFileExisting())
                 {
                     _background = file;
+                    _backgroundId = 0;
                     _vector = thumbnail is false && background.Document.MimeType == "application/x-tgwallpattern";
                 }
                 else
                 {
                     _background = null;
+                    _backgroundId = file.Id;
                     _vector = thumbnail is false && background.Document.MimeType == "application/x-tgwallpattern";
 
                     if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
@@ -419,7 +425,7 @@ namespace Unigram.Controls.Chats
 
         private void UpdateFile(object target, File file)
         {
-            if (file.Id == _background?.Id && target is Background background)
+            if (file.Id == _backgroundId && target is Background background)
             {
                 UpdateSource(null, background, !_vector);
             }
