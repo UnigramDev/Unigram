@@ -188,7 +188,7 @@
                     </controls:BadgeButton>
                     <controls:BadgeButton x:Name="Appearance"
                                           Click="Appearance_Click"
-                                          Content="{CustomResource ChatSettings}"
+                                          Content="{CustomResource Appearance}"
                                           Style="{StaticResource IconBadgeButtonStyle}">
                         <controls:BadgeButton.IconSource>
                             <icons:Appearance />

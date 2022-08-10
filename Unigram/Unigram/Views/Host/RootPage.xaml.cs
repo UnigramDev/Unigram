@@ -13,6 +13,7 @@ using Unigram.Native;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Services;
+using Unigram.Services.Settings;
 using Unigram.ViewModels;
 using Unigram.Views.SignIn;
 using Windows.ApplicationModel.DataTransfer;
@@ -675,6 +676,10 @@ namespace Unigram.Views.Host
             batch.End();
 
             SettingsService.Current.Appearance.ForceNightMode = ActualTheme != ElementTheme.Dark;
+            SettingsService.Current.Appearance.RequestedTheme = ActualTheme != ElementTheme.Dark
+                ? TelegramTheme.Dark
+                : TelegramTheme.Light;
+
             SettingsService.Current.Appearance.UpdateNightMode();
         }
 

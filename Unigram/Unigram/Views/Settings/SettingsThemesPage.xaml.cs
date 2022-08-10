@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Services;
@@ -7,6 +8,7 @@ using Unigram.ViewModels.Settings;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 
 namespace Unigram.Views.Settings
 {
@@ -28,12 +30,26 @@ namespace Unigram.Views.Settings
             }
         }
 
+        #region Binding
+
+        private SolidColorBrush ConvertAccent(IList<ThemeAccentInfo> accents, int index)
+        {
+            if (accents != null && accents.Count > index)
+            {
+                return new SolidColorBrush(accents[index].SelectionColor);
+            }
+
+            return null;
+        }
+
+        #endregion
+
         #region Context menu
 
         private void Theme_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
             var element = sender as FrameworkElement;
-            var theme = element.Tag as ThemeInfoBase;
+            var theme = List.ItemFromContainer(element) as ThemeInfoBase;
 
             var flyout = new MenuFlyout();
             flyout.CreateFlyoutItem(ViewModel.ThemeCreateCommand, theme, Strings.Resources.CreateNewThemeMenu, new FontIcon { Glyph = Icons.Color });
@@ -51,6 +67,21 @@ namespace Unigram.Views.Settings
 
         #endregion
 
+        #region Recycle
+
+        private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+        {
+            if (args.ItemContainer == null)
+            {
+                args.ItemContainer = new ListViewItem();
+                args.ItemContainer.Style = sender.ItemContainerStyle;
+                args.ItemContainer.ContentTemplate = sender.ItemTemplate;
+                args.ItemContainer.ContextRequested += Theme_ContextRequested;
+            }
+
+            args.IsContainerPrepared = true;
+        }
+
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             if (args.InRecycleQueue)
@@ -59,24 +90,51 @@ namespace Unigram.Views.Settings
             }
 
             var theme = args.Item as ThemeInfoBase;
-            var root = args.ItemContainer.ContentTemplateRoot as StackPanel;
+            var radio = args.ItemContainer.ContentTemplateRoot as RadioButton;
 
-            var radio = root.Children[0] as RadioButton;
+            if (args.ItemContainer.ContentTemplateRoot is StackPanel root)
+            {
+                radio = root.Children[0] as RadioButton;
+            }
 
             radio.Click -= Switch_Click;
             radio.Click += Switch_Click;
 
             if (theme is ThemeCustomInfo custom)
             {
+                radio.RequestedTheme = custom.Parent == TelegramTheme.Dark ? ElementTheme.Dark : ElementTheme.Light;
                 radio.IsChecked = SettingsService.Current.Appearance[SettingsService.Current.Appearance.RequestedTheme].Type == TelegramThemeType.Custom && string.Equals(SettingsService.Current.Appearance[SettingsService.Current.Appearance.RequestedTheme].Custom, custom.Path, StringComparison.OrdinalIgnoreCase);
             }
             else if (theme is ThemeAccentInfo accent)
             {
+                radio.RequestedTheme = accent.Parent == TelegramTheme.Dark ? ElementTheme.Dark : ElementTheme.Light;
                 radio.IsChecked = SettingsService.Current.Appearance[SettingsService.Current.Appearance.RequestedTheme].Type == accent.Type && SettingsService.Current.Appearance.Accents[accent.Type] == accent.AccentColor;
             }
             else
             {
+                radio.RequestedTheme = theme.Parent == TelegramTheme.Dark ? ElementTheme.Dark : ElementTheme.Light;
                 radio.IsChecked = SettingsService.Current.Appearance[SettingsService.Current.Appearance.RequestedTheme].Type == TelegramThemeType.Classic && SettingsService.Current.Appearance.RequestedTheme == theme.Parent;
+            }
+        }
+
+        #endregion
+
+        private void Theme_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+        {
+            if (sender is RadioButton radio && args.NewValue is ThemeInfoBase theme)
+            {
+                if (theme is ThemeCustomInfo custom)
+                {
+                    radio.IsChecked = SettingsService.Current.Appearance[SettingsService.Current.Appearance.RequestedTheme].Type == TelegramThemeType.Custom && string.Equals(SettingsService.Current.Appearance[SettingsService.Current.Appearance.RequestedTheme].Custom, custom.Path, StringComparison.OrdinalIgnoreCase);
+                }
+                else if (theme is ThemeAccentInfo accent)
+                {
+                    radio.IsChecked = SettingsService.Current.Appearance[SettingsService.Current.Appearance.RequestedTheme].Type == accent.Type && SettingsService.Current.Appearance.Accents[accent.Type] == accent.AccentColor;
+                }
+                else
+                {
+                    radio.IsChecked = SettingsService.Current.Appearance[SettingsService.Current.Appearance.RequestedTheme].Type == TelegramThemeType.Classic && SettingsService.Current.Appearance.RequestedTheme == theme.Parent;
+                }
             }
         }
     }

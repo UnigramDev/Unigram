@@ -11,7 +11,7 @@
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                   mc:Ignorable="d">
 
-    <local:HostedPage.Header>
+    <!--<local:HostedPage.Header>
         <controls:ContentPageHeader>
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -39,36 +39,70 @@
                 </controls:MoreButton>
             </Grid>
         </controls:ContentPageHeader>
-    </local:HostedPage.Header>
+    </local:HostedPage.Header>-->
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
-        <contract7Present:Grid.BackgroundTransition>
-            <contract7Present:BrushTransition />
-        </contract7Present:Grid.BackgroundTransition>
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
             <StackPanel Margin="0,0,0,48">
-                <StackPanel Padding="12,12,0,12"
-                            Margin="0,0,0,0">
-                    <TextBlock Text="{CustomResource BuiltInThemes}"
-                               Margin="0,0,0,8"
-                               Style="{StaticResource SettingsGroupTextBlockStyle}" />
-                    <ListView ItemsSource="{x:Bind ViewModel.Items}"
+                <controls:HeaderedControl Header="{CustomResource BuiltInThemes}"
+                                          Background="{ThemeResource SettingsItemBackground}">
+                    <ListView x:Name="List"
+                              BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                              ItemsSource="{x:Bind ViewModel.Items}"
                               SelectionMode="None"
+                              ChoosingItemContainer="OnChoosingItemContainer"
                               ContainerContentChanging="OnContainerContentChanging"
-                              Style="{StaticResource StaticListViewStyle}"
+                              Style="{StaticResource HorizontalListViewStyle}"
                               ItemContainerTransitions="{x:Null}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate x:DataType="services:ThemeInfoBase">
-                                <StackPanel>
-                                    <RadioButton Content="{x:Bind Name}"
-                                                 Tag="{x:Bind}"
+                                <StackPanel Margin="12,12,0,12">
+                                    <RadioButton Tag="{x:Bind}"
                                                  GroupName="Theme"
-                                                 ContextRequested="Theme_ContextRequested" />
-                                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}"
-                                               Height="1"
-                                               Margin="0,6,0,6" />
+                                                 Style="{StaticResource ThemeRadioButtonStyle}">
+                                        <RadioButton.Background>
+                                            <SolidColorBrush Color="{x:Bind ChatBackgroundColor}" />
+                                        </RadioButton.Background>
+                                        <RadioButton.BorderBrush>
+                                            <SolidColorBrush Color="{x:Bind SelectionColor}" />
+                                        </RadioButton.BorderBrush>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition />
+                                                <RowDefinition />
+                                                <RowDefinition />
+                                            </Grid.RowDefinitions>
+                                            <Rectangle Height="16"
+                                                       RadiusX="8"
+                                                       RadiusY="8"
+                                                       Margin="0,0,12,0"
+                                                       Grid.Column="1">
+                                                <Rectangle.Fill>
+                                                    <SolidColorBrush Color="{x:Bind MessageBackgroundColor}" />
+                                                </Rectangle.Fill>
+                                            </Rectangle>
+                                            <Rectangle Height="16"
+                                                       RadiusX="8"
+                                                       RadiusY="8"
+                                                       Margin="12,6,0,0"
+                                                       Grid.Column="1"
+                                                       Grid.Row="1">
+                                                <Rectangle.Fill>
+                                                    <SolidColorBrush Color="{x:Bind MessageBackgroundOutColor}" />
+                                                </Rectangle.Fill>
+                                            </Rectangle>
+                                        </Grid>
+                                    </RadioButton>
+                                    <TextBlock Text="{x:Bind Name}"
+                                               Margin="0,4,0,0"
+                                               TextAlignment="Center"
+                                               Style="{StaticResource CaptionTextBlockStyle}" />
                                 </StackPanel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
@@ -80,44 +114,137 @@
                                         Value="0" />
                             </Style>
                         </ItemsControl.ItemContainerStyle>
+                        <ListView.Footer>
+                            <Border Width="12" />
+                        </ListView.Footer>
                     </ListView>
-                </StackPanel>
 
-                <StackPanel Padding="12,0,0,12"
-                            Margin="0,18,0,0"
-                            Visibility="{x:Bind ViewModel.AreCustomThemesAvailable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <TextBlock Text="{CustomResource CustomThemes}"
-                               Margin="0,0,0,8"
-                               Style="{StaticResource SettingsGroupTextBlockStyle}" />
-                    <ListView ItemsSource="{x:Bind ViewModel.Custom}"
+                    <ListView ItemsSource="{x:Bind ViewModel.Accents, Mode=OneWay}"
+                              Visibility="{x:Bind ViewModel.Accents.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                              BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                               SelectionMode="None"
                               ContainerContentChanging="OnContainerContentChanging"
-                              Style="{StaticResource StaticListViewStyle}"
+                              Style="{StaticResource HorizontalListViewStyle}"
                               ItemContainerTransitions="{x:Null}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate x:DataType="services:ThemeInfoBase">
-                                <StackPanel>
-                                    <RadioButton Click="Switch_Click"
-                                                 Content="{x:Bind Name}"
-                                                 Tag="{x:Bind}"
-                                                 GroupName="Theme"
-                                                 ContextRequested="Theme_ContextRequested" />
-                                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}"
-                                               Height="1"
-                                               Margin="0,6,0,6" />
-                                </StackPanel>
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="services:ThemeAccentInfo">
+                                <RadioButton Tag="{x:Bind}"
+                                             GroupName="Accent"
+                                             Margin="12,12,0,12"
+                                             Style="{StaticResource AccentRadioButtonStyle}">
+                                    <RadioButton.Background>
+                                        <SolidColorBrush Color="{x:Bind SelectionColor}" />
+                                    </RadioButton.Background>
+                                </RadioButton>
                             </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                        <ItemsControl.ItemContainerStyle>
+                        </ListView.ItemTemplate>
+                        <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
-                                <Setter Property="HorizontalContentAlignment"
-                                        Value="Stretch" />
+                                <Setter Property="MinWidth"
+                                        Value="0" />
+                                <Setter Property="MinHeight"
+                                        Value="0" />
                                 <Setter Property="Padding"
                                         Value="0" />
                             </Style>
-                        </ItemsControl.ItemContainerStyle>
+                        </ListView.ItemContainerStyle>
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ItemsStackPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
+                        <ListView.Footer>
+                            <HyperlinkButton Command="{x:Bind ViewModel.AccentThemeCommand}"
+                                             Width="24"
+                                             Height="24"
+                                             Margin="12,12,12,12"
+                                             Style="{StaticResource EmptyHyperlinkButtonStyle}">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="9" />
+                                        <RowDefinition Height="6" />
+                                        <RowDefinition Height="9" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="9" />
+                                        <ColumnDefinition Width="6" />
+                                        <ColumnDefinition Width="9" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Ellipse Fill="{x:Bind ConvertAccent(ViewModel.Accents, 5), Mode=OneWay}"
+                                             Width="6"
+                                             Height="6"
+                                             Margin="0,0,-2,1"
+                                             VerticalAlignment="Bottom"
+                                             HorizontalAlignment="Right" />
+                                    <Ellipse Fill="{x:Bind ConvertAccent(ViewModel.Accents, 6), Mode=OneWay}"
+                                             Width="6"
+                                             Height="6"
+                                             Margin="-2,0,0,1"
+                                             VerticalAlignment="Bottom"
+                                             HorizontalAlignment="Left"
+                                             Grid.Column="2" />
+
+                                    <Ellipse Fill="{x:Bind ConvertAccent(ViewModel.Accents, 4), Mode=OneWay}"
+                                             Width="6"
+                                             Height="6"
+                                             Grid.Row="1"
+                                             HorizontalAlignment="Left" />
+                                    <Ellipse Fill="{x:Bind ConvertAccent(ViewModel.Accents, 0), Mode=OneWay}"
+                                             Width="6"
+                                             Height="6"
+                                             Grid.Row="1"
+                                             Grid.Column="1" />
+                                    <Ellipse Fill="{x:Bind ConvertAccent(ViewModel.Accents, 1), Mode=OneWay}"
+                                             Width="6"
+                                             Height="6"
+                                             Grid.Row="1"
+                                             HorizontalAlignment="Right"
+                                             Grid.Column="2" />
+
+                                    <Ellipse Fill="{x:Bind ConvertAccent(ViewModel.Accents, 3), Mode=OneWay}"
+                                             Width="6"
+                                             Height="6"
+                                             Margin="0,1,-2,0"
+                                             VerticalAlignment="Top"
+                                             HorizontalAlignment="Right"
+                                             Grid.Row="2" />
+                                    <Ellipse Fill="{x:Bind ConvertAccent(ViewModel.Accents, 2), Mode=OneWay}"
+                                             Width="6"
+                                             Height="6"
+                                             Margin="-2,1,0,0"
+                                             VerticalAlignment="Top"
+                                             HorizontalAlignment="Left"
+                                             Grid.Row="2"
+                                             Grid.Column="2" />
+                                </Grid>
+                            </HyperlinkButton>
+                        </ListView.Footer>
                     </ListView>
-                </StackPanel>
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl Header="{CustomResource CustomThemes}"
+                                          ItemsSource="{x:Bind ViewModel.Custom}"
+                                          Visibility="{x:Bind ViewModel.AreCustomThemesAvailable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="services:ThemeInfoBase">
+                            <RadioButton Style="{StaticResource SettingsRadioButtonStyle}"
+                                         Click="Switch_Click"
+                                         Content="{x:Bind Name}"
+                                         Tag="{x:Bind}"
+                                         GroupName="Theme"
+                                         ContextRequested="Theme_ContextRequested"
+                                         DataContextChanged="Theme_DataContextChanged" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl>
+                    <controls:BadgeButton Content="{CustomResource CreateNewTheme}"
+                                          Command="{x:Bind ViewModel.ThemeCreateCommand}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xE90E;" />
+                </controls:HeaderedControl>
             </StackPanel>
         </ScrollViewer>
     </Grid>

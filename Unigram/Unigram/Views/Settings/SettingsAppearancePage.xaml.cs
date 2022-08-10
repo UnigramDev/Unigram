@@ -61,16 +61,6 @@ namespace Unigram.Views.Settings
 
         #region Binding
 
-        private SolidColorBrush ConvertAccent(IList<ThemeAccentInfo> accents, int index)
-        {
-            if (accents != null && accents.Count > index)
-            {
-                return new SolidColorBrush(accents[index].SelectionColor);
-            }
-
-            return null;
-        }
-
         private string ConvertNightMode(NightMode mode)
         {
             return mode == NightMode.Scheduled
@@ -80,11 +70,6 @@ namespace Unigram.Views.Settings
                 : mode == NightMode.System
                 ? Strings.Resources.AutoNightSystemDefault
                 : Strings.Resources.AutoNightDisabled;
-        }
-
-        private Visibility ConvertNightModeVisibility(NightMode mode)
-        {
-            return mode == NightMode.Disabled ? Visibility.Collapsed : Visibility.Visible;
         }
 
         #endregion

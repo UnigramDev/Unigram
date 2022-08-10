@@ -7,26 +7,31 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Navigation.Services;
 using Unigram.Services;
+using Unigram.Services.Settings;
 using Unigram.Views.Popups;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsAppearanceViewModel : SettingsThemesViewModel
+    public class SettingsAppearanceViewModel : TLViewModelBase
     {
+        private readonly IThemeService _themeService;
         private readonly IEmojiSetService _emojiSetService;
 
         private readonly Dictionary<int, int> _indexToSize = new Dictionary<int, int> { { 0, 12 }, { 1, 13 }, { 2, 14 }, { 3, 15 }, { 4, 16 }, { 5, 17 }, { 6, 18 } };
         private readonly Dictionary<int, int> _sizeToIndex = new Dictionary<int, int> { { 12, 0 }, { 13, 1 }, { 14, 2 }, { 15, 3 }, { 16, 4 }, { 17, 5 }, { 18, 6 } };
 
         public SettingsAppearanceViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IThemeService themeService, IEmojiSetService emojiSetService)
-            : base(protoService, cacheService, settingsService, aggregator, themeService)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
+            _themeService = themeService;
             _emojiSetService = emojiSetService;
 
             ChatThemes = new ObservableCollection<ChatTheme>();
 
             EmojiSetCommand = new RelayCommand(EmojiSetExecute);
+
+            ThemeCreateCommand = new RelayCommand<ChatTheme>(ThemeCreateExecute);
         }
 
         public ObservableCollection<ChatTheme> ChatThemes { get; }
@@ -62,7 +67,8 @@ namespace Unigram.ViewModels.Settings
 
             ChatThemes.AddRange(new[] { defaultTheme }.Union(themes));
 
-            _selectedChatTheme = ChatThemes.FirstOrDefault(x => x.Name == Settings.Appearance.ChatTheme?.Name) ?? defaultTheme;
+            _selectedChatTheme = ChatThemes.FirstOrDefault(x => x.Name == Settings.Appearance.ChatTheme?
+            .Name) ?? defaultTheme;
             RaisePropertyChanged(nameof(SelectedChatTheme));
 
             var emojiSet = Settings.Appearance.EmojiSet;
@@ -118,6 +124,8 @@ namespace Unigram.ViewModels.Settings
             RaisePropertyChanged(nameof(SelectedChatTheme));
         }
 
+        public NightMode NightMode => Settings.Appearance.NightMode;
+
         private string _emojiSet;
         public string EmojiSet
         {
@@ -168,10 +176,14 @@ namespace Unigram.ViewModels.Settings
 
         public bool ForceNightMode
         {
-            get => Settings.Appearance.ForceNightMode;
+            get => Settings.Appearance.ForceNightMode || Settings.Appearance.IsDarkTheme();
             set
             {
                 Settings.Appearance.ForceNightMode = value;
+                Settings.Appearance.RequestedTheme = value
+                    ? TelegramTheme.Dark
+                    : TelegramTheme.Light;
+
                 Settings.Appearance.UpdateNightMode();
                 RaisePropertyChanged();
             }
@@ -284,6 +296,28 @@ namespace Unigram.ViewModels.Settings
                     EmojiSetId = $"ms-appdata:///local/emoji/{emojiSet.Id}.png";
                     break;
             }
+        }
+
+        public RelayCommand<ChatTheme> ThemeCreateCommand { get; }
+        private async void ThemeCreateExecute(ChatTheme theme)
+        {
+            var dark = Settings.Appearance.IsDarkTheme();
+            var settings = dark ? theme.DarkSettings : theme.LightSettings;
+
+            var tint = Settings.Appearance[dark ? TelegramTheme.Dark : TelegramTheme.Light].Type;
+            if (tint == TelegramThemeType.Classic || (tint == TelegramThemeType.Custom && !dark))
+            {
+                tint = TelegramThemeType.Day;
+            }
+            else if (tint == TelegramThemeType.Custom)
+            {
+                tint = TelegramThemeType.Tinted;
+            }
+
+            var accent = settings.AccentColor.ToColor();
+            var outgoing = settings.OutgoingMessageAccentColor.ToColor();
+
+            await _themeService.CreateThemeAsync(ThemeAccentInfo.FromAccent(tint, accent, outgoing));
         }
     }
 }

@@ -204,61 +204,8 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand<ThemeInfoBase> ThemeCreateCommand { get; }
         private async void ThemeCreateExecute(ThemeInfoBase theme)
         {
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.CreateNewThemeAlert, Strings.Resources.NewTheme, Strings.Resources.CreateTheme, Strings.Resources.Cancel);
-            if (confirm != ContentDialogResult.Primary)
-            {
-                return;
-            }
-
-            var input = new InputPopup();
-            input.Title = Strings.Resources.NewTheme;
-            input.Header = Strings.Resources.EnterThemeName;
-            input.Text = $"{theme.Name} #2";
-            input.IsPrimaryButtonEnabled = true;
-            input.IsSecondaryButtonEnabled = true;
-            input.PrimaryButtonText = Strings.Resources.OK;
-            input.SecondaryButtonText = Strings.Resources.Cancel;
-
-            confirm = await input.ShowQueuedAsync();
-            if (confirm != ContentDialogResult.Primary)
-            {
-                return;
-            }
-
-            var preparing = new ThemeCustomInfo(theme.Parent, theme.AccentColor, input.Text);
-            var fileName = Client.Execute(new CleanFileName(theme.Name)) as Text;
-
-            var lookup = ThemeService.GetLookup(theme.Parent);
-
-            foreach (var value in lookup)
-            {
-                if (value.Value is Color color)
-                {
-                    preparing.Values[value.Key] = color;
-                }
-            }
-
-            if (theme is ThemeCustomInfo custom)
-            {
-                foreach (var item in custom.Values)
-                {
-                    preparing.Values[item.Key] = item.Value;
-                }
-            }
-            else if (theme is ThemeAccentInfo accent)
-            {
-                foreach (var item in accent.Values)
-                {
-                    preparing.Values[item.Key] = item.Value;
-                }
-            }
-
-            var file = await ApplicationData.Current.LocalFolder.CreateFileAsync("themes\\" + fileName.TextValue + ".unigram-theme", CreationCollisionOption.GenerateUniqueName);
-            await _themeService.SerializeAsync(file, preparing);
-
-            preparing.Path = file.Path;
-
-            ThemeEditExecute(preparing);
+            await _themeService.CreateThemeAsync(theme);
+            await RefreshThemesAsync();
         }
 
         public RelayCommand<ThemeCustomInfo> ThemeShareCommand { get; }

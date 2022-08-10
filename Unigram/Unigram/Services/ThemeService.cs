@@ -3,10 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Td;
+using Telegram.Td.Api;
+using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Services.Settings;
+using Unigram.Views.Popups;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Services
 {
@@ -20,6 +26,8 @@ namespace Unigram.Services
 
         Task InstallThemeAsync(StorageFile file);
         void SetTheme(ThemeInfoBase info, bool apply);
+
+        Task CreateThemeAsync(ThemeInfoBase theme);
     }
 
     public partial class ThemeService : IThemeService
@@ -166,6 +174,70 @@ namespace Unigram.Services
             }
 
             _settingsService.Appearance.UpdateNightMode();
+        }
+
+        public async Task CreateThemeAsync(ThemeInfoBase theme)
+        {
+            var confirm = await MessagePopup.ShowAsync(Strings.Resources.CreateNewThemeAlert, Strings.Resources.NewTheme, Strings.Resources.CreateTheme, Strings.Resources.Cancel);
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            var input = new InputPopup();
+            input.Title = Strings.Resources.NewTheme;
+            input.Header = Strings.Resources.EnterThemeName;
+            input.Text = $"{theme.Name} #2";
+            input.IsPrimaryButtonEnabled = true;
+            input.IsSecondaryButtonEnabled = true;
+            input.PrimaryButtonText = Strings.Resources.OK;
+            input.SecondaryButtonText = Strings.Resources.Cancel;
+
+            confirm = await input.ShowQueuedAsync();
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            var preparing = new ThemeCustomInfo(theme.Parent, theme.AccentColor, input.Text);
+            var fileName = Client.Execute(new CleanFileName(theme.Name)) as Text;
+
+            var lookup = ThemeService.GetLookup(theme.Parent);
+
+            foreach (var value in lookup)
+            {
+                if (value.Value is Color color)
+                {
+                    preparing.Values[value.Key] = color;
+                }
+            }
+
+            if (theme is ThemeCustomInfo custom)
+            {
+                foreach (var item in custom.Values)
+                {
+                    preparing.Values[item.Key] = item.Value;
+                }
+            }
+            else if (theme is ThemeAccentInfo accent)
+            {
+                foreach (var item in accent.Values)
+                {
+                    preparing.Values[item.Key] = item.Value;
+                }
+            }
+
+            var file = await ApplicationData.Current.LocalFolder.CreateFileAsync("themes\\" + fileName.TextValue + ".unigram-theme", CreationCollisionOption.GenerateUniqueName);
+            await SerializeAsync(file, preparing);
+
+            preparing.Path = file.Path;
+
+            SetTheme(preparing, true);
+
+            if (Window.Current.Content is Views.Host.RootPage root)
+            {
+                root.ShowEditor(preparing);
+            }
         }
     }
 }

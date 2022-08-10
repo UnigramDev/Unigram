@@ -527,7 +527,7 @@ namespace Unigram.Services.Settings
 
         public bool IsDarkTheme()
         {
-            return !IsLightTheme();
+            return GetCalculatedApplicationTheme() == ApplicationTheme.Dark;
         }
 
         public ApplicationTheme GetCalculatedApplicationTheme()

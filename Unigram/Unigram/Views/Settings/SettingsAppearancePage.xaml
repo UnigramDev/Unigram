@@ -71,6 +71,7 @@
 
                     <GridView x:Name="List"
                               Background="{ThemeResource SettingsItemBackground}"
+                              BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                               ItemsSource="{x:Bind ViewModel.ChatThemes}"
                               SelectedItem="{x:Bind ViewModel.SelectedChatTheme, Mode=TwoWay}"
                               SelectionMode="Single"
@@ -105,7 +106,6 @@
                     </GridView>
 
                     <controls:BadgeButton Content="{CustomResource ShowAllThemes}"
-                                          Visibility="{x:Bind ViewModel.AreCustomThemesAvailable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Click="Themes_Click"
                                           Glyph="&#xE90E;"
