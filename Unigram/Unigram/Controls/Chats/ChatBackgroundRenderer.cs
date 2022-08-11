@@ -420,7 +420,7 @@ namespace Unigram.Controls.Chats
                 CreateAdditionalResources(_surface);
             }
 
-            OnSourceChanged();
+            this.BeginOnUIThread(OnSourceChanged);
         }
 
         private void UpdateFile(object target, File file)

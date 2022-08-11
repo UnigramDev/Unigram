@@ -460,7 +460,14 @@ namespace Unigram.Common
         {
             try
             {
-                await element.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, new Windows.UI.Core.DispatchedHandler(action));
+                if (element.Dispatcher.HasThreadAccess)
+                {
+                    action();
+                }
+                else
+                {
+                    await element.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, new Windows.UI.Core.DispatchedHandler(action));
+                }
             }
             catch
             {
