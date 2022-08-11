@@ -11,6 +11,7 @@ namespace Unigram.Controls
             DefaultStyleKey = typeof(AnimatedIconToggleButton);
             RegisterPropertyChangedCallback(ForegroundProperty, OnForegroundChanged);
         }
+
         protected override bool IsRuntimeCompatible()
         {
             return Windows.Foundation.Metadata.ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 11);
