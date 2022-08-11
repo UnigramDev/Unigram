@@ -156,6 +156,8 @@ namespace Unigram.Common
 
         public EmojiSkinTone SkinTone { get; set; }
 
+        public bool IsInstalled { get; } = true;
+
         public override string ToString()
         {
             return Title;

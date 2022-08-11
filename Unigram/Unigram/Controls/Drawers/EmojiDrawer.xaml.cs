@@ -8,7 +8,6 @@ using Unigram.Services;
 using Unigram.Services.Settings;
 using Unigram.ViewModels.Drawers;
 using Windows.UI.Composition;
-using Windows.UI.Text.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -49,6 +48,7 @@ namespace Unigram.Controls.Drawers
             _typeToItemHashSetMapping.Add("AnimatedItemTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("VideoItemTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("ItemTemplate", new HashSet<SelectorItem>());
+            _typeToItemHashSetMapping.Add("MoreTemplate", new HashSet<SelectorItem>());
 
             UpdateView();
         }
@@ -98,6 +98,8 @@ namespace Unigram.Controls.Drawers
                 scrollingHost.ViewChanged += ScrollingHost_ViewChanged;
                 ScrollingHost_ViewChanged(null, null);
             }
+
+            UpdateToolbar(true);
         }
 
         public void UpdateView()
@@ -172,7 +174,7 @@ namespace Unigram.Controls.Drawers
             List.ScrollIntoView(e.ClickedItem, ScrollIntoViewAlignment.Leading);
         }
 
-        private void ListView_ItemClick(object sender, ItemClickEventArgs e)
+        private async void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
             ItemClick?.Invoke(this, e);
 
@@ -186,9 +188,37 @@ namespace Unigram.Controls.Drawers
             }
             else if (e.ClickedItem is StickerViewModel sticker)
             {
-                SettingsService.Current.Emoji.AddRecentEmoji($"{sticker.Emoji};{sticker.CustomEmojiId}");
-                SettingsService.Current.Emoji.SortRecentEmoji();
-                SettingsService.Current.Emoji.SaveRecentEmoji();
+                if (sticker is MoreStickerViewModel)
+                {
+                    var groupContainer = List.GroupHeaderContainerFromItemContainer(List.ContainerFromItem(sticker)) as GridViewHeaderItem;
+                    if (groupContainer.Content is StickerSetViewModel group)
+                    {
+                        var response = await ViewModel.ProtoService.SendAsync(new GetStickerSet(group.Id));
+                        if (response is StickerSet full)
+                        {
+                            group.Update(full, false);
+
+                            //return;
+
+                            foreach (var item in group.Stickers)
+                            {
+                                var container = List?.ContainerFromItem(item) as SelectorItem;
+                                if (container == null)
+                                {
+                                    continue;
+                                }
+
+                                UpdateContainerContent(sticker, container.ContentTemplateRoot as Grid);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    SettingsService.Current.Emoji.AddRecentEmoji($"{sticker.Emoji};{sticker.CustomEmojiId}");
+                    SettingsService.Current.Emoji.SortRecentEmoji();
+                    SettingsService.Current.Emoji.SaveRecentEmoji();
+                }
             }
         }
 
@@ -238,9 +268,9 @@ namespace Unigram.Controls.Drawers
 
         private bool _emojiCollapsed = false;
 
-        private void UpdateToolbar()
+        private void UpdateToolbar(bool collapse = false)
         {
-            if (Toolbar.SelectedItem == null != _emojiCollapsed)
+            if (Toolbar.SelectedItem == null != _emojiCollapsed || collapse)
             {
                 _emojiCollapsed = Toolbar.SelectedItem == null;
 
@@ -369,12 +399,17 @@ namespace Unigram.Controls.Drawers
 
         private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
         {
-            var typeName = args.Item is StickerViewModel sticker ? sticker.Format switch
-            {
-                StickerFormatTgs => "AnimatedItemTemplate",
-                StickerFormatWebm => "VideoItemTemplate",
-                _ => "ItemTemplate"
-            } : args.Item is EmojiSkinData ? "EmojiSkinTemplate" : "EmojiTemplate";
+            var typeName = args.Item is MoreStickerViewModel
+                ? "MoreTemplate"
+                : args.Item is StickerViewModel sticker
+                    ? sticker.Format switch
+                    {
+                        StickerFormatTgs => "AnimatedItemTemplate",
+                        StickerFormatWebm => "VideoItemTemplate",
+                        _ => "ItemTemplate"
+                    }
+                    : args.Item is EmojiSkinData ? "EmojiSkinTemplate" : "EmojiTemplate";
+
             var relevantHashSet = _typeToItemHashSetMapping[typeName];
 
             // args.ItemContainer is used to indicate whether the ListView is proposing an
@@ -500,6 +535,11 @@ namespace Unigram.Controls.Drawers
             var file = sticker.StickerValue;
             if (file == null)
             {
+                if (content.Children[0] is TextBlock textBlock && sticker is MoreStickerViewModel more)
+                {
+                    textBlock.Text = $"+{more.TotalCount}";
+                }
+
                 return;
             }
 

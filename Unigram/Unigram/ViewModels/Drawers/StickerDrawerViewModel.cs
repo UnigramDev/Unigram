@@ -18,9 +18,9 @@ using Windows.UI.Xaml.Data;
 namespace Unigram.ViewModels.Drawers
 {
     public class StickerDrawerViewModel : TLViewModelBase
-        //, IHandle<UpdateRecentStickers>
-        //, IHandle<UpdateFavoriteStickers>
-        //, IHandle<UpdateInstalledStickerSets>
+    //, IHandle<UpdateRecentStickers>
+    //, IHandle<UpdateFavoriteStickers>
+    //, IHandle<UpdateInstalledStickerSets>
     {
         private readonly DisposableMutex _supergroupLock = new();
 
@@ -447,13 +447,33 @@ namespace Unigram.ViewModels.Drawers
         public StickerSetViewModel(IProtoService protoService, StickerSetInfo info)
         {
             _protoService = protoService;
-
             _info = info;
 
             var placeholders = new List<StickerViewModel>();
-            for (int i = 0; i < (info.IsInstalled ? info.Size : info.Covers?.Count ?? 0); i++)
+
+            if (info.Covers?.Count > 0 && !info.IsInstalled)
             {
-                placeholders.Add(new StickerViewModel(_protoService, info.Id, info.StickerFormat));
+                IsLoaded = true;
+
+                var limit = info.Size > info.Covers.Count;
+                var count = limit ? 15 : info.Size;
+
+                for (int i = 0; i < count; i++)
+                {
+                    placeholders.Add(new StickerViewModel(_protoService, info.Covers[i]));
+                }
+
+                if (limit)
+                {
+                    placeholders.Add(new MoreStickerViewModel(_protoService, info.Id, info.StickerFormat, info.Size - count));
+                }
+            }
+            else
+            {
+                for (int i = 0; i < info.Size; i++)
+                {
+                    placeholders.Add(new StickerViewModel(_protoService, info.Id, info.StickerFormat));
+                }
             }
 
             Stickers = new MvxObservableCollection<StickerViewModel>(placeholders);
@@ -482,9 +502,23 @@ namespace Unigram.ViewModels.Drawers
         {
             _set = set;
 
-            for (int i = 0; i < set.Stickers.Count && i < Stickers.Count; i++)
+            for (int i = 0; i < set.Stickers.Count; i++)
             {
-                Stickers[i].Update(set.Stickers[i]);
+                if (i < Stickers.Count)
+                {
+                    if (Stickers[i] is MoreStickerViewModel)
+                    {
+                        Stickers[i] = new StickerViewModel(_protoService, set.Stickers[i]);
+                    }
+                    else
+                    {
+                        Stickers[i].Update(set.Stickers[i]);
+                    }
+                }
+                else
+                {
+                    Stickers.Add(new StickerViewModel(_protoService, set.Stickers[i]));
+                }
             }
 
             if (reset)
@@ -581,6 +615,17 @@ namespace Unigram.ViewModels.Drawers
         public long SetId => _sticker?.SetId ?? _setId;
 
         public long CustomEmojiId => _sticker?.CustomEmojiId ?? 0;
+    }
+
+    public class MoreStickerViewModel : StickerViewModel
+    {
+        public MoreStickerViewModel(IProtoService protoService, long setId, StickerFormat format, int totalCount)
+            : base(protoService, setId, format)
+        {
+            TotalCount = totalCount;
+        }
+
+        public int TotalCount { get; set; }
     }
 
     public class StickerSetCollection : MvxObservableCollection<StickerSetViewModel>

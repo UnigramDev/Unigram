@@ -13,7 +13,7 @@ using Windows.UI.Xaml;
 namespace Unigram.ViewModels.Drawers
 {
     public class EmojiDrawerViewModel : TLViewModelBase
-        //IHandle<UpdateInstalledStickerSets>
+    //IHandle<UpdateInstalledStickerSets>
     {
         private bool _updated;
 
@@ -168,32 +168,11 @@ namespace Unigram.ViewModels.Drawers
 
             _updated = true;
 
+            var result1 = await ProtoService.SendAsync(new GetInstalledStickerSets(new StickerTypeCustomEmoji()));
             var result2 = await ProtoService.SendAsync(new GetTrendingStickerSets(new StickerTypeCustomEmoji(), 0, 100));
-            var result3 = await ProtoService.SendAsync(new GetInstalledStickerSets(new StickerTypeCustomEmoji()));
-            if (result3 is StickerSets sets)
+
+            if (result1 is StickerSets sets && result2 is TrendingStickerSets trending)
             {
-                //for (int i = 0; i < favorite.StickersValue.Count; i++)
-                //{
-                //    var favSticker = favorite.StickersValue[i];
-                //    for (int j = 0; j < recent.StickersValue.Count; j++)
-                //    {
-                //        var recSticker = recent.StickersValue[j];
-                //        if (recSticker.StickerValue.Id == favSticker.StickerValue.Id)
-                //        {
-                //            recent.StickersValue.Remove(recSticker);
-                //            break;
-                //        }
-                //    }
-                //}
-
-                //for (int i = 20; i < recent.StickersValue.Count; i++)
-                //{
-                //    recent.StickersValue.RemoveAt(20);
-                //    i--;
-                //}
-
-                //_recentSet.Update(recent.StickersValue);
-
                 var recents = Emoji.GetRecents(EmojiSkinTone.Default);
                 var emojiGroups = Emoji.Get(EmojiSkinTone.Default, true);
 
@@ -252,8 +231,8 @@ namespace Unigram.ViewModels.Drawers
 
                 if (sets.Sets.Count > 0)
                 {
-                    var result4 = await ProtoService.SendAsync(new GetStickerSet(sets.Sets[0].Id));
-                    if (result4 is StickerSet set)
+                    var result3 = await ProtoService.SendAsync(new GetStickerSet(sets.Sets[0].Id));
+                    if (result3 is StickerSet set)
                     {
                         installedSet.Add(new StickerSetViewModel(ProtoService, sets.Sets[0], set));
                         installedSet.AddRange(sets.Sets.Skip(1).Select(x => new StickerSetViewModel(ProtoService, x)));
@@ -262,10 +241,22 @@ namespace Unigram.ViewModels.Drawers
                     {
                         installedSet.AddRange(sets.Sets.Select(x => new StickerSetViewModel(ProtoService, x)));
                     }
+
+                    var existing = installedSet.Select(x => x.Id).ToArray();
+
+                    foreach (var item in trending.Sets)
+                    {
+                        if (existing.Contains(item.Id))
+                        {
+                            continue;
+                        }
+
+                        installedSet.Add(new StickerSetViewModel(ProtoService, item));
+                    }
                 }
-                else
+                else if (trending.Sets.Count > 0)
                 {
-                    installedSet.AddRange(sets.Sets.Select(x => new StickerSetViewModel(ProtoService, x)));
+                    installedSet.AddRange(trending.Sets.Select(x => new StickerSetViewModel(ProtoService, x)));
                 }
 
                 stickers.AddRange(installedSet);
