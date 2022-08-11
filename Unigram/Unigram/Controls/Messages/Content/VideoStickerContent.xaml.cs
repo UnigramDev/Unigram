@@ -168,21 +168,21 @@ namespace Unigram.Controls.Messages.Content
 
         #region IPlaybackView
 
-        public bool IsLoopingEnabled => Player.IsLoopingEnabled;
+        public bool IsLoopingEnabled => Player?.IsLoopingEnabled ?? false;
 
         public bool Play()
         {
-            return Player.Play();
+            return Player?.Play() ?? false;
         }
 
         public void Pause()
         {
-            Player.Pause();
+            Player?.Pause();
         }
 
         public void Unload()
         {
-            Player.Unload();
+            Player?.Unload();
         }
 
         #endregion

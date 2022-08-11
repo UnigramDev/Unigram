@@ -289,6 +289,7 @@ namespace Unigram.Controls.Messages.Content
                 if (_source?.Id != file.Id)
                 {
                     Player.Source = _source = new RemoteVideoSource(message.ProtoService, file, duration);
+                    message.Delegate.ViewVisibleMessages(false);
                 }
             }
         }
@@ -435,21 +436,21 @@ namespace Unigram.Controls.Messages.Content
 
         #region IPlaybackView
 
-        public bool IsLoopingEnabled => Player.IsLoopingEnabled;
+        public bool IsLoopingEnabled => Player?.IsLoopingEnabled ?? false;
 
         public bool Play()
         {
-            return Player.Play();
+            return Player?.Play() ?? false;
         }
 
         public void Pause()
         {
-            Player.Pause();
+            Player?.Pause();
         }
 
         public void Unload()
         {
-            Player.Unload();
+            Player?.Unload();
         }
 
         #endregion
