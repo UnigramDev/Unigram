@@ -286,7 +286,7 @@ namespace winrt::Unigram::Native::implementation
 				config.options.no_fancy_upsampling = 1;
 			}
 
-			config.output.colorspace = MODE_BGRA;
+			config.output.colorspace = MODE_bgrA;
 			config.output.is_external_memory = 1;
 			config.output.u.RGBA.rgba = pixels;
 			config.output.u.RGBA.stride = width * 4;
