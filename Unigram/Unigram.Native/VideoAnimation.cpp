@@ -302,7 +302,7 @@ namespace winrt::Unigram::Native::implementation
 
 		uint8_t* pixels = new uint8_t[w * h * 4];
 		bool completed;
-		auto result = RenderSync(pixels, preview, seconds, completed);
+		auto result = RenderSync(pixels, w, h, preview, seconds, completed);
 
 		bitmap.SetPixelBytes(winrt::array_view(pixels, w * h * 4));
 		delete[] pixels;
@@ -310,7 +310,7 @@ namespace winrt::Unigram::Native::implementation
 		return result;
 	}
 
-	int VideoAnimation::RenderSync(uint8_t* pixels, bool preview, int32_t& seconds, bool& completed)
+	int VideoAnimation::RenderSync(uint8_t* pixels, int32_t width, int32_t height, bool preview, int32_t& seconds, bool& completed)
 	{
 		//int64_t time = ConnectionsManager::getInstance(0).getCurrentTimeMonotonicMillis();
 		completed = false;
@@ -397,10 +397,10 @@ namespace winrt::Unigram::Native::implementation
 
 					if (this->sws_ctx == nullptr) {
 						if (this->frame->format > AV_PIX_FMT_NONE && this->frame->format < AV_PIX_FMT_NB) {
-							this->sws_ctx = sws_getContext(this->frame->width, this->frame->height, (AVPixelFormat)this->frame->format, this->frame->width, this->frame->height, AV_PIX_FMT_RGBA, SWS_BILINEAR, NULL, NULL, NULL);
+							this->sws_ctx = sws_getContext(this->frame->width, this->frame->height, (AVPixelFormat)this->frame->format, width, height, AV_PIX_FMT_BGRA, SWS_BILINEAR, NULL, NULL, NULL);
 						}
 						else if (this->video_dec_ctx->pix_fmt > AV_PIX_FMT_NONE && this->video_dec_ctx->pix_fmt < AV_PIX_FMT_NB) {
-							this->sws_ctx = sws_getContext(this->video_dec_ctx->width, this->video_dec_ctx->height, this->video_dec_ctx->pix_fmt, this->video_dec_ctx->width, this->video_dec_ctx->height, AV_PIX_FMT_RGBA, SWS_BILINEAR, NULL, NULL, NULL);
+							this->sws_ctx = sws_getContext(this->video_dec_ctx->width, this->video_dec_ctx->height, this->video_dec_ctx->pix_fmt, width, height, AV_PIX_FMT_BGRA, SWS_BILINEAR, NULL, NULL, NULL);
 						}
 					}
 					if (this->sws_ctx == nullptr || ((intptr_t)pixels) % 16 != 0) {
@@ -418,19 +418,19 @@ namespace winrt::Unigram::Native::implementation
 					}
 					else {
 						//if (this->frame->format == AV_PIX_FMT_YUVA420P) {
-						//	libyuv::I420AlphaToARGBMatrix(this->frame->data[0], this->frame->linesize[0], this->frame->data[2], this->frame->linesize[2], this->frame->data[1], this->frame->linesize[1], this->frame->data[3], this->frame->linesize[3], (uint8_t*)pixels, pixelWidth * 4, &libyuv::kYvuI601Constants, pixelWidth, pixelHeight, 50);
+						//	libyuv::I420AlphaToARGBMatrix(this->frame->data[0], this->frame->linesize[0], this->frame->data[2], this->frame->linesize[2], this->frame->data[1], this->frame->linesize[1], this->frame->data[3], this->frame->linesize[3], (uint8_t*)pixels, width * 4, &libyuv::kYvuI601Constants, width, height, 50);
 						//}
 						//else {
-						this->dst_data[0] = (uint8_t*)pixels;
-						this->dst_linesize[0] = pixelWidth * 4;
-						sws_scale(this->sws_ctx, this->frame->data, this->frame->linesize, 0, this->frame->height, this->dst_data, this->dst_linesize);
+							this->dst_data[0] = (uint8_t*)pixels;
+							this->dst_linesize[0] = width * 4;
+							sws_scale(this->sws_ctx, this->frame->data, this->frame->linesize, 0, this->frame->height, this->dst_data, this->dst_linesize);
 						//}
 					}
 
 					// This is fine enough to premultiply straight alpha pixels
 					// but we use I420AlphaToARGBMatrix to do everything in a single pass.
 					if (this->frame->format == AV_PIX_FMT_YUVA420P) {
-						for (int i = 0; i < pixelWidth * pixelHeight * 4; i += 4) {
+						for (int i = 0; i < width * height * 4; i += 4) {
 							auto alpha = pixels[i + 3];
 							pixels[i + 0] = FAST_DIV255(pixels[i + 0] * alpha);
 							pixels[i + 1] = FAST_DIV255(pixels[i + 1] * alpha);

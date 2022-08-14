@@ -101,7 +101,7 @@ namespace winrt::Unigram::Native::implementation
 		void SeekToMilliseconds(int64_t ms, bool precise);
 
 		int RenderSync(CanvasBitmap bitmap, bool preview, int32_t& seconds);
-		int RenderSync(uint8_t* pixels, bool preview, int32_t& seconds, bool& completed);
+		int RenderSync(uint8_t* pixels, int32_t width, int32_t height, bool preview, int32_t& seconds, bool& completed);
 
 		int PixelWidth()
 		{

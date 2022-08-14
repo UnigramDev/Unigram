@@ -351,7 +351,7 @@ namespace Unigram.Controls.Messages
                 {
                     renderer.HashCodes.Add(hash);
 
-                    if (renderer.IsVisible)
+                    if (renderer.IsAnimated && renderer.IsVisible)
                     {
                         _count.Add(renderer.CustomEmojiId);
                     }
@@ -377,7 +377,7 @@ namespace Unigram.Controls.Messages
                 {
                     renderer.HashCodes.Remove(hash);
 
-                    if (renderer.IsVisible is false)
+                    if (renderer.IsAnimated && !renderer.IsVisible)
                     {
                         _count.Remove(renderer.CustomEmojiId);
                     }
@@ -467,7 +467,9 @@ namespace Unigram.Controls.Messages
             private double _animationFrameRate;
 
             private bool _limitFps = true;
+
             private int _index;
+            private double _step;
 
             public EmojiRenderer(IProtoService protoService, Sticker sticker, int size)
             {
@@ -492,6 +494,8 @@ namespace Unigram.Controls.Messages
 
             public bool IsAlive => References.Count > 0;
             public bool IsVisible => HashCodes.Count > 0;
+
+            public bool IsAnimated => _sticker.Format is not StickerFormatWebp; 
 
             public bool IsLoading { get; set; }
 
@@ -545,15 +549,17 @@ namespace Unigram.Controls.Messages
                             _animation = animation;
                         }
                     }
-                    //else if (_sticker.Format is StickerFormatWebm)
-                    //{
-                    //    var animation = CachedVideoAnimation.LoadFromFile(new LocalVideoSource(file), true);
-                    //    if (animation != null)
-                    //    {
-                    //        _buffer = BufferSurface.Create((uint)(100 * 100 * 4));
-                    //        _animation = animation;
-                    //    }
-                    //}
+                    else if (_sticker.Format is StickerFormatWebm)
+                    {
+                        var animation = CachedVideoAnimation.LoadFromFile(new LocalVideoSource(file), _size, _size, true);
+                        if (animation != null)
+                        {
+                            _animationFrameRate = animation.FrameRate;
+
+                            _buffer = BufferSurface.Create((uint)(_size * _size * 4));
+                            _animation = animation;
+                        }
+                    }
                     else if (_sticker.Format is StickerFormatWebp)
                     {
                         _buffer = PlaceholderImageHelper.Current.DrawWebP(file.Local.Path, _size);
@@ -605,8 +611,13 @@ namespace Unigram.Controls.Messages
                     return;
                 }
 
-                animation.RenderSync(_buffer, _size, _size, out _);
+                //  This is just wrong
+                if (_step % 30d == 0)
+                {
+                    animation.RenderSync(_buffer, _size, _size, out _);
+                }
 
+                _step += _animationFrameRate;
                 _hasRenderedFirstFrame = true;
             }
 

@@ -18,7 +18,7 @@ namespace winrt::Unigram::Native::implementation
 	std::thread CachedVideoAnimation::s_compressWorker;
 	WorkQueue CachedVideoAnimation::s_compressQueue;
 
-	winrt::Unigram::Native::CachedVideoAnimation CachedVideoAnimation::LoadFromFile(IVideoAnimationSource file, bool createCache)
+	winrt::Unigram::Native::CachedVideoAnimation CachedVideoAnimation::LoadFromFile(IVideoAnimationSource file, int32_t width, int32_t height, bool createCache)
 	{
 		auto info = winrt::make_self<CachedVideoAnimation>();
 		file.SeekCallback(0);
@@ -26,8 +26,22 @@ namespace winrt::Unigram::Native::implementation
 		if (createCache) {
 			auto path = file.FilePath();
 			if (path.size()) {
-				info->m_cacheFile = path + L".cache";
+				info->m_cacheFile = path;
 				info->m_cacheKey = to_string(path);
+
+				if (width != 0 && height != 0) {
+					info->m_cacheFile += L".";
+					info->m_cacheFile += std::to_wstring(width);
+					info->m_cacheFile += L"x";
+					info->m_cacheFile += std::to_wstring(height);
+
+					info->m_cacheKey += ".";
+					info->m_cacheKey += std::to_string(width);
+					info->m_cacheKey += "x";
+					info->m_cacheKey += std::to_string(height);
+				}
+
+				info->m_cacheFile += L".cache";
 				info->m_precache = true;
 
 				slim_lock_guard const guard(s_locks[info->m_cacheKey]);
@@ -64,8 +78,17 @@ namespace winrt::Unigram::Native::implementation
 						return nullptr;
 					}
 
-					info->m_pixelWidth = info->m_animation->PixelWidth();
-					info->m_pixelHeight = info->m_animation->PixelHeight();
+					if (width == 0 && height == 0)
+					{
+						info->m_pixelWidth = info->m_animation->PixelWidth();
+						info->m_pixelHeight = info->m_animation->PixelHeight();
+					}
+					else
+					{
+						info->m_pixelWidth = width;
+						info->m_pixelHeight = height;
+					}
+
 					info->m_fps = info->m_animation->FrameRate();
 					info->m_precache = true;
 
@@ -89,8 +112,16 @@ namespace winrt::Unigram::Native::implementation
 				return nullptr;
 			}
 
-			info->m_pixelWidth = info->m_animation->PixelWidth();
-			info->m_pixelHeight = info->m_animation->PixelHeight();
+			if (width == 0 && height == 0)
+			{
+				info->m_pixelWidth = info->m_animation->PixelWidth();
+				info->m_pixelHeight = info->m_animation->PixelHeight();
+			}
+			else
+			{
+				info->m_pixelWidth = width;
+				info->m_pixelHeight = height;
+			}
 		}
 
 		return info.as<winrt::Unigram::Native::CachedVideoAnimation>();
@@ -119,6 +150,13 @@ namespace winrt::Unigram::Native::implementation
 		}
 
 		delete[] pixels;
+	}
+
+	void CachedVideoAnimation::RenderSync(IBuffer bitmap, int32_t width, int32_t height, int32_t& seconds)
+	{
+		uint8_t* pixels = bitmap.data();
+		bool rendered;
+		RenderSync(pixels, width, height, seconds, &rendered);
 	}
 
 	void CachedVideoAnimation::RenderSync(uint8_t* pixels, size_t w, size_t h, int32_t& seconds, bool* rendered)
@@ -170,7 +208,7 @@ namespace winrt::Unigram::Native::implementation
 			}
 
 			bool completed;
-			auto result = m_animation->RenderSync(pixels, false, seconds, completed);
+			auto result = m_animation->RenderSync(pixels, w, h, false, seconds, completed);
 
 			if (result && rendered) {
 				*rendered = true;
@@ -255,7 +293,7 @@ namespace winrt::Unigram::Native::implementation
 					{
 						offsets.push_back(totalSize);
 
-						item->m_animation->RenderSync(pixels, false, seconds, completed);
+						item->m_animation->RenderSync(pixels, item->m_pixelWidth, item->m_pixelHeight, false, seconds, completed);
 
 						qoi_desc desc;
 						desc.width = w;

@@ -10,6 +10,7 @@
 #include "VideoAnimation.h"
 
 using namespace winrt::Microsoft::Graphics::Canvas;
+using namespace winrt::Windows::Storage::Streams;
 
 #define CACHED_VERSION 1
 
@@ -39,10 +40,11 @@ namespace winrt::Unigram::Native::implementation
 			}
 		}
 
-		static winrt::Unigram::Native::CachedVideoAnimation LoadFromFile(IVideoAnimationSource file, bool precache);
+		static winrt::Unigram::Native::CachedVideoAnimation LoadFromFile(IVideoAnimationSource file, int32_t width, int32_t height, bool precache);
 
 
 		void RenderSync(CanvasBitmap bitmap, int32_t& seconds);
+		void RenderSync(IBuffer bitmap, int32_t width, int32_t height, int32_t& seconds);
 		void Stop();
 
 		double FrameRate();
