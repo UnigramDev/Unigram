@@ -88,7 +88,7 @@
                   ContainerContentChanging="OnContainerContentChanging"
                   common:FluidGridView.OrientationOnly="False">
             <common:FluidGridView.Triggers>
-                <common:FluidGridViewTrigger RowsOrColumns="5" />
+                <common:FluidGridViewTrigger RowsOrColumns="{x:Bind ConvertItemsPerRow(ViewModel.StickerSet.StickerType), Mode=OneWay}" />
             </common:FluidGridView.Triggers>
             <GridView.Footer>
                 <Border Height="24" />

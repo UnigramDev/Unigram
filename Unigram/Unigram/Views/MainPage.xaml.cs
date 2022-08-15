@@ -49,32 +49,32 @@ namespace Unigram.Views
         , IRootContentPage
         , INavigatingPage
         , IChatListDelegate
-        //IHandle<UpdateFileDownloads>,
-        //IHandle<UpdateChatPosition>,
-        //IHandle<UpdateChatIsMarkedAsUnread>,
-        //IHandle<UpdateChatReadInbox>,
-        //IHandle<UpdateChatReadOutbox>,
-        //IHandle<UpdateChatUnreadMentionCount>,
-        //IHandle<UpdateChatUnreadReactionCount>,
-        //IHandle<UpdateChatTitle>,
-        //IHandle<UpdateChatPhoto>,
-        //IHandle<UpdateChatVideoChat>,
-        //IHandle<UpdateUserStatus>,
-        //IHandle<UpdateUser>,
-        //IHandle<UpdateChatAction>,
-        //IHandle<UpdateMessageMentionRead>,
-        //IHandle<UpdateMessageUnreadReactions>,
-        //IHandle<UpdateUnreadChatCount>,
-        ////IHandle<UpdateMessageContent>,
-        //IHandle<UpdateSecretChat>,
-        //IHandle<UpdateChatFilters>,
-        //IHandle<UpdateChatNotificationSettings>,
-        //IHandle<UpdatePasscodeLock>,
-        //IHandle<UpdateConnectionState>,
-        //IHandle<UpdateOption>,
-        //IHandle<UpdateCallDialog>,
-        //IHandle<UpdateChatFiltersLayout>,
-        //IHandle<UpdateConfetti>
+        //, IHandle<UpdateFileDownloads>
+        //, IHandle<UpdateChatPosition>
+        //, IHandle<UpdateChatIsMarkedAsUnread>
+        //, IHandle<UpdateChatReadInbox>
+        //, IHandle<UpdateChatReadOutbox>
+        //, IHandle<UpdateChatUnreadMentionCount>
+        //, IHandle<UpdateChatUnreadReactionCount>
+        //, IHandle<UpdateChatTitle>
+        //, IHandle<UpdateChatPhoto>
+        //, IHandle<UpdateChatVideoChat>
+        //, IHandle<UpdateUserStatus>
+        //, IHandle<UpdateUser>
+        //, IHandle<UpdateChatAction>
+        //, IHandle<UpdateMessageMentionRead>
+        //, IHandle<UpdateMessageUnreadReactions>
+        //, IHandle<UpdateUnreadChatCount>
+        //, //, IHandle<UpdateMessageContent>
+        //, IHandle<UpdateSecretChat>
+        //, IHandle<UpdateChatFilters>
+        //, IHandle<UpdateChatNotificationSettings>
+        //, IHandle<UpdatePasscodeLock>
+        //, IHandle<UpdateConnectionState>
+        //, IHandle<UpdateOption>
+        //, IHandle<UpdateCallDialog>
+        //, IHandle<UpdateChatFiltersLayout>
+        //, IHandle<UpdateConfetti>
     {
         public MainViewModel ViewModel => DataContext as MainViewModel;
         public RootPage Root { get; set; }

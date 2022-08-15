@@ -6,7 +6,6 @@ using Unigram.Converters;
 using Unigram.Navigation;
 using Unigram.ViewModels;
 using Windows.Foundation;
-using Windows.Graphics.Display;
 using Windows.System;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;

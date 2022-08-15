@@ -279,6 +279,8 @@ namespace Unigram.ViewModels.Drawers
     {
         public string Title { get; }
 
+        public bool IsInstalled { get; } = true;
+
         public MvxObservableCollection<object> Stickers { get; }
 
         public RecentEmoji(List<object> items)

@@ -6,7 +6,6 @@ using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Native;
 using Windows.Foundation;
-using Windows.Graphics.DirectX;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
@@ -90,7 +89,7 @@ namespace Unigram.Controls
 
                 if (_animation != null)
                 {
-                    return CreateBitmap(sender, _animation.PixelWidth, _animation.PixelHeight, DirectXPixelFormat.R8G8B8A8UIntNormalized);
+                    return CreateBitmap(sender, _animation.PixelWidth, _animation.PixelHeight);
                 }
 
                 return null;
@@ -212,7 +211,7 @@ namespace Unigram.Controls
 
             _source = newValue;
 
-            var animation = await Task.Run(() => CachedVideoAnimation.LoadFromFile(newValue, _isCachingEnabled));
+            var animation = await Task.Run(() => CachedVideoAnimation.LoadFromFile(newValue, 0, 0, _isCachingEnabled));
             if (animation == null || newValue?.Id != _source?.Id)
             {
                 // The app can't access the file specified

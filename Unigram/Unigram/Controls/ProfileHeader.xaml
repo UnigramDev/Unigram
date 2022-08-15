@@ -129,7 +129,7 @@
                                       Glyph="&#xEA8F;"
                                       Grid.Column="3" />
 
-                <controls:BadgeButton Content="{CustomResource lng_group_call_more}"
+                <controls:BadgeButton Content="{CustomResource PremiumMore}"
                                       Click="Menu_ContextRequested"
                                       Style="{StaticResource GlyphGridBadgeButtonStyle}"
                                       Glyph="&#xE10C;"

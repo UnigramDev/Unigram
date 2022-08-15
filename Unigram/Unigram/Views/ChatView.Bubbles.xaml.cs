@@ -236,7 +236,6 @@ namespace Unigram.Views
             }
 
             _dateHeaderTimer.Stop();
-            _dateHeaderTimer.Start();
             ShowHideDateHeader(minDateValue > 0 && minDateIndex > 0, minDateValue > 0 && minDateIndex is > 0 and < int.MaxValue);
 
             // Read and play messages logic:
@@ -325,6 +324,7 @@ namespace Unigram.Views
                 if (show)
                 {
                     _dateHeaderCollapsed = false;
+                    _dateHeaderTimer.Start();
                 }
                 else
                 {
@@ -501,11 +501,6 @@ namespace Unigram.Views
 
             foreach (var item in next)
             {
-                //if (_oldStickers.ContainsKey(item))
-                //{
-                //    continue;
-                //}
-
                 if (item.Value != null)
                 {
                     item.Value.Play();

@@ -82,6 +82,8 @@ namespace Unigram.Controls.Messages
                     return UpdateCustomServiceAction(message, customServiceAction, active);
                 case MessageGameScore gameScore:
                     return UpdateGameScore(message, gameScore, active);
+                case MessageGiftedPremium giftedPremium:
+                    return UpdateGiftedPremium(message, giftedPremium, active);
                 case MessageInviteVideoChatParticipants inviteVideoChatParticipants:
                     return UpdateInviteVideoChatParticipants(message, inviteVideoChatParticipants, active);
                 case MessageProximityAlertTriggered proximityAlertTriggered:
@@ -1128,6 +1130,24 @@ namespace Unigram.Controls.Messages
             return (content, entities);
         }
 
+        private static (string, IList<TextEntity>) UpdateGiftedPremium(MessageViewModel message, MessageGiftedPremium giftedPremium, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            if (message.SenderId is MessageSenderUser user && user.UserId == message.ProtoService.Options.MyId)
+            {
+                content = ReplaceWithLink(Strings.Resources.ActionGiftOutbound, "un2", giftedPremium, ref entities);
+            }
+            else if (message.ProtoService.TryGetUser(message.SenderId, out User senderUser))
+            {
+                content = ReplaceWithLink(Strings.Resources.ActionGiftInbound, "un1", senderUser, ref entities);
+                content = ReplaceWithLink(content, "un2", giftedPremium, ref entities);
+            }
+
+            return (content, entities);
+        }
+
         private static (string, IList<TextEntity>) UpdateVideoChatEnded(MessageViewModel message, MessageVideoChatEnded videoChatEnded, bool active)
         {
             var content = string.Empty;
@@ -1555,6 +1575,11 @@ namespace Unigram.Controls.Messages
                 {
                     name = game.Title;
                     id = "tg-game://";
+                }
+                else if (obj is MessageGiftedPremium giftedPremium)
+                {
+                    name = Locale.FormatCurrency(giftedPremium.Amount, giftedPremium.Currency);
+                    id = "tg-premium://";
                 }
                 else
                 {

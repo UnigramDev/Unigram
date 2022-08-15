@@ -49,6 +49,7 @@ namespace Unigram.Controls.Chats
                 StickersTab.Emoji => Icons.Emoji24,
                 StickersTab.Stickers => Icons.Sticker24,
                 StickersTab.Animations => Icons.Gif24,
+                _ => Icons.Sticker24
             });
         }
 
@@ -116,7 +117,7 @@ namespace Unigram.Controls.Chats
                     StickersTab.Emoji => Icons.Emoji24,
                     StickersTab.Stickers => Icons.Sticker24,
                     StickersTab.Animations => Icons.Gif24,
-                    _ => null
+                    _ => Icons.Sticker24
                 });
             }
         }
@@ -183,7 +184,7 @@ namespace Unigram.Controls.Chats
                     StickersTab.Stickers => new StickerToGif(),
                     _ => new StickerToGif()
                 },
-                _ => null
+                _ => new EmojiToSticker()
             };
         }
 

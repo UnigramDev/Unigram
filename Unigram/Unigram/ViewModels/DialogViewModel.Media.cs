@@ -20,6 +20,7 @@ using Windows.Media.Effects;
 using Windows.Media.MediaProperties;
 using Windows.Storage;
 using Windows.Storage.Pickers;
+using Windows.Storage.Streams;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -287,7 +288,7 @@ namespace Unigram.ViewModels
 
             var self = CacheService.IsSavedMessages(_chat);
 
-            var dialog = new SendFilesPopup(items, media, _chat.Type is ChatTypePrivate && !self, _type == DialogType.History, self);
+            var dialog = new SendFilesPopup(SessionId, items, media, _chat.Type is ChatTypePrivate && !self, _type == DialogType.History, self);
             dialog.ViewModel = this;
             dialog.Caption = caption;
 
@@ -834,6 +835,21 @@ namespace Unigram.ViewModels
         {
             try
             {
+                if (package.AvailableFormats.Contains("application/x-tl-message"))
+                {
+                    var data = await package.GetDataAsync("application/x-tl-message") as IRandomAccessStream;
+                    var reader = new DataReader(data.GetInputStreamAt(0));
+                    var length = await reader.LoadAsync((uint)data.Size);
+
+                    var chatId = reader.ReadInt64();
+                    var messageId = reader.ReadInt64();
+
+                    if (chatId == _chat?.Id)
+                    {
+                        return;
+                    }
+                }
+
                 if (package.AvailableFormats.Contains(StandardDataFormats.Bitmap))
                 {
                     var bitmap = await package.GetBitmapAsync();
@@ -1027,7 +1043,7 @@ namespace Unigram.ViewModels
 
             var formattedText = GetFormattedText(true);
 
-            var dialog = new SendFilesPopup(new[] { storage }, true, false, false, false);
+            var dialog = new SendFilesPopup(SessionId, new[] { storage }, true, false, false, false);
             dialog.Caption = formattedText
                 .Substring(0, CacheService.Options.MessageCaptionLengthMax);
 

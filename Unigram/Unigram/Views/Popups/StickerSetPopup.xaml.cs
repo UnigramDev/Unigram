@@ -63,11 +63,7 @@ namespace Unigram.Views.Popups
         private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
         {
             _handler.UnloadItems();
-
-            _zoomer.Opening = null;
-            _zoomer.Closing = null;
-            _zoomer.DownloadFile = null;
-            _zoomer.SessionId = null;
+            _zoomer.Release();
         }
 
         #region Show
@@ -117,7 +113,7 @@ namespace Unigram.Views.Popups
             {
                 Loaded -= handler;
                 ItemClick = callback;
-                await ViewModel.OnNavigatedToAsync(parameter, NavigationMode.New, null);
+                await ViewModel.NavigatedToAsync(parameter, NavigationMode.New, null);
             });
 
             Loaded += handler;
@@ -140,7 +136,7 @@ namespace Unigram.Views.Popups
             {
                 Loaded -= handler;
                 ItemClick = callback;
-                await ViewModel.OnNavigatedToAsync(parameter, NavigationMode.New, null);
+                await ViewModel.NavigatedToAsync(parameter, NavigationMode.New, null);
             });
 
             Loaded += handler;
@@ -288,6 +284,11 @@ namespace Unigram.Views.Popups
         #endregion
 
         #region Binding
+
+        private int ConvertItemsPerRow(StickerType type)
+        {
+            return type is StickerTypeCustomEmoji ? 7 : 5;
+        }
 
         private string ConvertIsInstalled(bool installed, bool archived, bool official, StickerType type)
         {

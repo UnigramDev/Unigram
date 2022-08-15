@@ -66,7 +66,7 @@ namespace Unigram.Controls.Messages
             var count = Math.Min(_reactions.Count, 6);
 
             var actualWidth = presenter.ActualSize.X + 18 + 12 + 18;
-            var width = 8 + count * 34 - (_reactions.Count > 6 ? 6 : 2);
+            var width = 8 + count * 34 - 2;
 
             var padding = actualWidth - width;
 
@@ -442,27 +442,20 @@ namespace Unigram.Controls.Messages
                 geometry.StartAnimation("Size", resize);
 
                 var offset = visualPill.Compositor.CreateVector3KeyFrameAnimation();
-                offset.InsertKeyFrame(0, new Vector3((viewport - width) / 2f - 2, 30, 0));
+                offset.InsertKeyFrame(0, new Vector3(0, 30, 0));
                 offset.InsertKeyFrame(1, Vector3.Zero);
 
                 ElementCompositionPreview.SetIsTranslationEnabled(ScrollingHost, true);
                 var scrollingVisual = ElementCompositionPreview.GetElementVisual(ScrollingHost);
                 scrollingVisual.StartAnimation("Translation", offset);
 
-                var opacity = visualPill.Compositor.CreateScalarKeyFrameAnimation();
-                opacity.InsertKeyFrame(0, 0);
-                opacity.InsertKeyFrame(1, 1);
-
-                var presenterVisual = ElementCompositionPreview.GetElementVisual(_presenter);
-                presenterVisual.StartAnimation("Opacity", opacity);
+                // Animating this breaks the menu flyout when it comes back
+                _presenter.Visibility = Visibility.Collapsed;
 
                 if (InfoText != null)
                 {
                     var infoVisual = ElementCompositionPreview.GetElementVisual(InfoText);
-                    //var editVisual = ElementCompositionPreview.GetElementVisual(EditButton);
-
                     infoVisual.CenterPoint = new Vector3(InfoText.ActualSize / 2, 0);
-                    //editVisual.CenterPoint = new Vector3(EditButton.ActualSize / 2, 0);
 
                     var show = visualPill.Compositor.CreateScalarKeyFrameAnimation();
                     show.InsertKeyFrame(0, 1);
@@ -475,25 +468,16 @@ namespace Unigram.Controls.Messages
                     infoVisual.StartAnimation("Opacity", show);
                     infoVisual.StartAnimation("Scale", scale);
                 }
-
-                //show.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
-                //show.DelayTime = TimeSpan.FromMilliseconds(150);
-
-                //scale.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
-                //scale.DelayTime = TimeSpan.FromMilliseconds(150);
-
-                //editVisual.StartAnimation("Opacity", show);
-                //editVisual.StartAnimation("Scale", scale);
             }
             else
             {
                 _expanded = true;
 
-                var cols = 5;
+                var cols = 6;
                 var rows = (int)Math.Ceiling((double)_reactions.Count / cols);
 
-                var width = 8 + 5 * 34 - 2;
-                var viewport = 8 + 6 * 34 - 6;
+                var width = 8 + cols * 34 - 2;
+                var viewport = 8 + cols * 34 - 2;
                 var height = (rows + 1) * 34;
 
                 ScrollingHost.VerticalScrollMode = ScrollMode.Auto;
@@ -627,29 +611,21 @@ namespace Unigram.Controls.Messages
 
                 var offset = visualPill.Compositor.CreateVector3KeyFrameAnimation();
                 offset.InsertKeyFrame(0, Vector3.Zero);
-                offset.InsertKeyFrame(1, new Vector3((viewport - width) / 2f - 2, 30, 0));
+                offset.InsertKeyFrame(1, new Vector3(0, 30, 0));
 
                 ElementCompositionPreview.SetIsTranslationEnabled(ScrollingHost, true);
                 var scrollingVisual = ElementCompositionPreview.GetElementVisual(ScrollingHost);
                 scrollingVisual.StartAnimation("Translation", offset);
 
-                var opacity = visualPill.Compositor.CreateScalarKeyFrameAnimation();
-                opacity.InsertKeyFrame(0, 1);
-                opacity.InsertKeyFrame(1, 0);
-
-                var presenterVisual = ElementCompositionPreview.GetElementVisual(_presenter);
-                presenterVisual.StartAnimation("Opacity", opacity);
+                // Animating this breaks the menu flyout when it comes back
+                _presenter.Visibility = Visibility.Collapsed;
 
                 FindName(nameof(InfoText));
-                //FindName(nameof(EditButton));
 
                 await this.UpdateLayoutAsync();
 
                 var infoVisual = ElementCompositionPreview.GetElementVisual(InfoText);
-                //var editVisual = ElementCompositionPreview.GetElementVisual(EditButton);
-
                 infoVisual.CenterPoint = new Vector3(InfoText.ActualSize / 2, 0);
-                //editVisual.CenterPoint = new Vector3(EditButton.ActualSize / 2, 0);
 
                 var show = visualPill.Compositor.CreateScalarKeyFrameAnimation();
                 show.InsertKeyFrame(0, 0);
@@ -661,15 +637,6 @@ namespace Unigram.Controls.Messages
 
                 infoVisual.StartAnimation("Opacity", show);
                 infoVisual.StartAnimation("Scale", scale);
-
-                //show.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
-                //show.DelayTime = TimeSpan.FromMilliseconds(150);
-
-                //scale.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
-                //scale.DelayTime = TimeSpan.FromMilliseconds(150);
-
-                //editVisual.StartAnimation("Opacity", show);
-                //editVisual.StartAnimation("Scale", scale);
             }
         }
     }

@@ -604,9 +604,9 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Border Background="{ThemeResource PopupAcrylicBackground}"
-                Margin="0,-80,0,0" />
+                Margin="0,-64,0,0" />
         <Border Background="{ThemeResource PopupAcrylicBackground}"
-                Margin="0,0,0,-80"
+                Margin="0,0,0,-70"
                 Grid.Row="2" />
 
         <Grid x:Name="ContentPanel"
