@@ -229,65 +229,30 @@ namespace Unigram.Services
 
         public ApplicationDataContainer Container => _container;
 
-#region App version
+        #region App version
 
-        public const ulong CurrentVersion = (8UL << 48) | (8UL << 32) | (0UL << 16);
-        public const string CurrentChangelog = @"700 MILLION USERS AND TELEGRAM PREMIUM
+        public const ulong CurrentVersion = (8UL << 48) | (9UL << 32) | (0UL << 16);
+        public const string CurrentChangelog = @"ANIMATED EMOJI IN MESSAGES, NEW STICKER PANEL, PRIVACY SETTINGS FOR VOICE MESSAGES, AND GIFTING TELEGRAM PREMIUM
 
-Telegram now has over 700 million active users. To celebrate, we're launching Telegram Premium. This subscription helps support Telegram and gives you access to exclusive additional features. All existing Telegram features remain free for everyone.
+**New Sticker Panel**
+• Switch between sticker, emoji and GIF tabs to quickly find what you're looking for.
+• Enjoy a more vibrant design with semi-transparency and improved scrolling performance on older devices.
+• When typing a message, the sticker button turns into an emoji button that opens the emoji panel.
 
-**NEW PREMIUM FEATURES**
+**Premium: Custom Emoji Packs**
+• Add animated emoji from 10 new custom packs – with countless more coming.
+• Get animated emoji suggestions from your packs when you enter any static emoji.
+• Press and hold on a message containing emoji to see which packs were used. 
+• Create your own custom emoji packs for Premium subscribers.
+• All Telegram users can see emoji from any pack — and try them out for free in the Saved Messages chat.
 
-**Premium: 4 GB Uploads**
-• Send media and files each up to 4 GB in size.
+**Premium: Privacy Settings for Voice Messages**
+• Control who can send or forward you voice messages in Settings > Privacy and Security with Telegram Premium.
+• Create exceptions to add individual users or groups of users.
 
-**Premium: Faster Downloads**
-• Download media and files at the fastest possible speed, with no limits.
-
-**Premium: Doubled Limits**
-• Follow up to 1000 channels.
-• Connect 4 accounts in any app.
-• Organize your chats into 20 folders, holding 200 chats each.
-• Pin 10 chats in your main list.
-• Reserve up to 20 public t.me links.
-• Save 400 favorite GIFs and 10 favorite stickers.
-• Write a longer bio for your profile and include links.
-• Include longer captions for photos and videos.
-
-**Premium: Voice-to-Text**
-• Get a new button next to any voice message to generate a transcript of its audio.
-
-**Premium: Unique Reactions and Stickers**
-• React with even more emoji, including 🤡 and 😍
-• Send unique stickers with additional effects, updated monthly.
-
-**Premium: Chat Management**
-• Set a default chat folder or enable tools to auto-archive and hide new chats.
-
-**Premium: Badges and Animated Profile Pictures**
-• Subscribers have a badge next to their name, showing they help support Telegram.
-• Show off your profile video that will be animated for everyone in chats and the chat list.
-
-**Premium: No Ads**
-• Sponsored Messages that are sometimes shown in public channels will no longer appear.
-
-To subscribe and get access to these features, go to Settings > Telegram Premium.
-
-**NEW FREE FEATURES**
-
-This update also includes many changes for all users – just like every future update will.
-
-**Join Requests for Public Groups**
-• Enable join requests for your public groups – no invite links required.
-• Users who open the group will see an 'Apply to Join Group' button.
-• Once approved by an admin, users will be able to participate in the chat.
-
-**Verification Badges in Chats**
-• Verified groups and channels now also show their badge at the top of the chat.
-
-**Better Bots**
-• Include a photo or video in the ""What can this bot do?"" section of your bot.
-• Bots that are integrated into the attachment menu can be programmed to work in groups and channels.";
+**Gifting Telegram Premium**
+• Send a prepaid Premium subscription to any user from their profile page. 
+• Choose from a 3, 6 or 12 month duration – at a discounted price.";
 
         public int Session => _session;
 
@@ -315,7 +280,7 @@ This update also includes many changes for all users – just like every future 
             SystemVersion = build;
         }
 
-#endregion
+        #endregion
 
         private ChatSettingsBase _chats;
         public ChatSettingsBase Chats => _chats ??= new ChatSettingsBase(_own);
