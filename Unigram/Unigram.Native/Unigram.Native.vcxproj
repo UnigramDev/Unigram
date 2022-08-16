@@ -5,26 +5,32 @@
     <ProjectConfiguration Include="Debug|ARM64">
       <Configuration>Debug</Configuration>
       <Platform>ARM64</Platform>
+      <Architecture>ARM64</Architecture>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
+      <Architecture>x86</Architecture>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
       <Platform>x64</Platform>
+      <Architecture>x64</Architecture>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release|ARM64">
       <Configuration>Release</Configuration>
       <Platform>ARM64</Platform>
+      <Architecture>ARM64</Architecture>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
+      <Architecture>x86</Architecture>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release|x64">
       <Configuration>Release</Configuration>
       <Platform>x64</Platform>
+      <Architecture>x64</Architecture>
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -809,7 +815,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="RLottie">
-      <HintPath>..\Libraries\rlottie\x64\RLottie.winmd</HintPath>
+      <HintPath>..\Libraries\rlottie\$(Architecture)\RLottie.winmd</HintPath>
       <IsWinMDFile>true</IsWinMDFile>
     </Reference>
   </ItemGroup>
