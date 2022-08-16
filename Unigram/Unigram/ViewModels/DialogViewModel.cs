@@ -35,34 +35,6 @@ namespace Unigram.ViewModels
 
         public int SelectedCount => SelectedItems.Count;
 
-        public void ExpandSelection(IEnumerable<MessageViewModel> vector)
-        {
-            var messages = vector.ToList();
-
-            for (int i = 0; i < messages.Count; i++)
-            {
-                if (messages[i].Content is MessageAlbum album)
-                {
-                    messages.RemoveAt(i);
-
-                    for (int j = 0; j < album.Messages.Count; j++)
-                    {
-                        messages.Insert(i, album.Messages[j]);
-                        i++;
-                    }
-
-                    i--;
-                }
-                else if (messages[i].Id == 0)
-                {
-                    messages.RemoveAt(i);
-                    i--;
-                }
-            }
-
-            //SelectedItems = messages;
-        }
-
         protected readonly ConcurrentDictionary<long, MessageViewModel> _groupedMessages = new ConcurrentDictionary<long, MessageViewModel>();
 
         protected static readonly ConcurrentDictionary<long, IList<ChatAdministrator>> _admins = new ConcurrentDictionary<long, IList<ChatAdministrator>>();
@@ -3520,31 +3492,60 @@ namespace Unigram.ViewModels
         {
             _messages.Add(item.Id);
 
-            item.IsFirst = false;
-            item.IsLast = true;
-            base.InsertItem(index, item);
-
             var previous = index > 0 ? this[index - 1] : null;
-            var next = index < Count - 1 ? this[index + 1] : null;
+            var next = index < Count ? this[index] : null;
 
-            UpdateSeparatorOnInsert(item, next, index);
-            UpdateSeparatorOnInsert(previous, item, index - 1);
+            // Order must be:
+            // Separator between previous and item
+            // Item
+            // Separator between item and next
+            // UpdateSeparatorOnInsert must return the new messages
+            // This way only two AttachChanged will be needed at most
 
-            var hash1 = AttachHash(item);
+            var prevSeparator = UpdateSeparatorOnInsert(previous, item);
+            var nextSeparator = UpdateSeparatorOnInsert(item, next);
+
             var hash2 = AttachHash(next);
             var hash3 = AttachHash(previous);
 
-            UpdateAttach(next, item, index + 1);
-            UpdateAttach(item, previous, index);
+            if (prevSeparator != null)
+            {
+                UpdateAttach(null, previous);
+                UpdateAttach(prevSeparator, item);
+            }
+            else
+            {
+                UpdateAttach(previous, item);
+            }
 
-            var update1 = AttachHash(item);
+            if (nextSeparator != null)
+            {
+                UpdateAttach(next, null);
+                UpdateAttach(item, nextSeparator);
+            }
+            else
+            {
+                UpdateAttach(item, next);
+            }
+
+            if (prevSeparator != null)
+            {
+                base.InsertItem(index++, prevSeparator);
+            }
+
+            base.InsertItem(index, item);
+
+            if (nextSeparator != null)
+            {
+                base.InsertItem(++index, nextSeparator);
+            }
+
             var update2 = AttachHash(next);
             var update3 = AttachHash(previous);
 
             AttachChanged?.Invoke(new[]
             {
                 hash3 != update3 ? previous : null,
-                hash1 != update1 ? item : null,
                 hash2 != update2 ? next : null
             });
         }
@@ -3559,7 +3560,7 @@ namespace Unigram.ViewModels
             var hash2 = AttachHash(next);
             var hash3 = AttachHash(previous);
 
-            UpdateAttach(previous, next, index + 1);
+            UpdateAttach(previous, next);
 
             var update2 = AttachHash(next);
             var update3 = AttachHash(previous);
@@ -3575,41 +3576,22 @@ namespace Unigram.ViewModels
             UpdateSeparatorOnRemove(next, previous, index);
         }
 
-        private static MessageViewModel ShouldUpdateSeparatorOnInsert(MessageViewModel item, MessageViewModel previous, int index)
+        private static MessageViewModel UpdateSeparatorOnInsert(MessageViewModel item, MessageViewModel next)
         {
-            if (item != null && previous != null)
+            if (item != null && next != null)
             {
                 var itemDate = Utils.UnixTimestampToDateTime(GetMessageDate(item));
-                var previousDate = Utils.UnixTimestampToDateTime(GetMessageDate(previous));
+                var previousDate = Utils.UnixTimestampToDateTime(GetMessageDate(next));
                 if (previousDate.Date != itemDate.Date)
                 {
-                    var service = new MessageViewModel(previous.ProtoService, previous.PlaybackService, previous.Delegate, new Message(0, previous.SenderId, previous.ChatId, null, previous.SchedulingState, previous.IsOutgoing, false, false, false, false, true, false, false, false, false, false, false, false, previous.IsChannelPost, false, previous.Date, 0, null, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderDate(), null));
-                    return service;
+                    return new MessageViewModel(next.ProtoService, next.PlaybackService, next.Delegate, new Message(0, next.SenderId, next.ChatId, null, next.SchedulingState, next.IsOutgoing, false, false, false, false, true, false, false, false, false, false, false, false, next.IsChannelPost, false, next.Date, 0, null, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderDate(), null));
                 }
             }
 
             return null;
         }
 
-        private void UpdateSeparatorOnInsert(MessageViewModel item, MessageViewModel previous, int index)
-        {
-            var service = ShouldUpdateSeparatorOnInsert(item, previous, index);
-            if (service != null)
-            {
-                base.InsertItem(index + 1, service);
-            }
-        }
-
-        //private static void UpdateSeparatorOnInsert(IList<TLMessageBase> items, TLMessageBase item, TLMessageBase previous, int index)
-        //{
-        //    var service = ShouldUpdateSeparatorOnInsert(item, previous, index);
-        //    if (service != null)
-        //    {
-        //        items.Insert(index + 1, service);
-        //    }
-        //}
-
-        private static bool ShouldUpdateSeparatorOnRemove(MessageViewModel next, MessageViewModel previous, int index)
+        private void UpdateSeparatorOnRemove(MessageViewModel next, MessageViewModel previous, int index)
         {
             if (next != null && next.Content is MessageHeaderDate && previous != null)
             {
@@ -3617,34 +3599,14 @@ namespace Unigram.ViewModels
                 var previousDate = Utils.UnixTimestampToDateTime(GetMessageDate(previous));
                 if (previousDate.Date != itemDate.Date)
                 {
-                    //base.RemoveItem(index - 1);
-                    return true;
+                    base.RemoveItem(index - 1);
                 }
             }
             else if (next != null && next.Content is MessageHeaderDate && previous == null)
             {
-                //base.RemoveItem(index - 1);
-                return true;
-            }
-
-            return false;
-        }
-
-        private void UpdateSeparatorOnRemove(MessageViewModel next, MessageViewModel previous, int index)
-        {
-            if (ShouldUpdateSeparatorOnRemove(next, previous, index))
-            {
                 base.RemoveItem(index - 1);
             }
         }
-
-        //private static void UpdateSeparatorOnRemove(IList<TLMessageBase> items, TLMessageBase next, TLMessageBase previous, int index)
-        //{
-        //    if (ShouldUpdateSeparatorOnRemove(next, previous, index))
-        //    {
-        //        items.RemoveAt(index - 1);
-        //    }
-        //}
 
         private static int AttachHash(MessageViewModel item)
         {
@@ -3675,7 +3637,7 @@ namespace Unigram.ViewModels
             return item.Date;
         }
 
-        private static void UpdateAttach(MessageViewModel item, MessageViewModel previous, int index)
+        private static void UpdateAttach(MessageViewModel item, MessageViewModel previous)
         {
             if (item == null)
             {

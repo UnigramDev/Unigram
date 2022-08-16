@@ -607,7 +607,7 @@ namespace Unigram.Views
 
                 if (message.IsOutgoing && message.SendingState is MessageSendingStatePending && !Messages.IsBottomReached)
                 {
-                    Messages.ScrollingHost.ChangeView(null, Messages.ScrollingHost.ScrollableHeight, null);
+                    await Messages.ScrollIntoViewAsync(message, ScrollIntoViewAlignment.Leading);
                 }
 
                 var withinViewport = panel.FirstVisibleIndex <= args.NewStartingIndex && panel.LastVisibleIndex >= args.NewStartingIndex;
@@ -724,7 +724,7 @@ namespace Unigram.Views
                         var fontScale = content switch
                         {
                             MessageBigEmoji => 14 / 32f,
-                            MessageSticker => 20 / (200 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f)),
+                            MessageSticker => 20 / (180 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f)),
                             _ => 1
                         };
 
@@ -772,29 +772,15 @@ namespace Unigram.Views
                     continue;
                 }
 
-                if (content is not MessageBubble)
+                if (content is MessageSelector selector)
                 {
-                    var photo = content.FindName("Photo") as ProfilePicture;
-                    if (photo != null)
-                    {
-                        photo.Visibility = message.IsLast ? Visibility.Visible : Visibility.Collapsed;
+                    content = selector.Content as MessageBubble;
                     }
-
-                    content = content.FindName("Bubble") as FrameworkElement;
-                }
-                else if (content is StackPanel panel)
-                {
-                    content = panel.FindName("Service") as FrameworkElement;
-                }
 
                 if (content is MessageBubble bubble)
                 {
                     bubble.UpdateAttach(message);
                     bubble.UpdateMessageHeader(message);
-                }
-                else if (content is MessageService && container.ContentTemplateRoot is FrameworkElement)
-                {
-                    //root.Margin = new Thickness(0, message.IsFirst ? 8 : 4, 0, 0);
                 }
             }
         }
