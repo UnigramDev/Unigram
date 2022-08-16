@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Unigram.Common
 {
@@ -8,7 +9,8 @@ namespace Unigram.Common
         Emoji,
         Hashtag,
         Username,
-        Command
+        Command,
+        Sticker
     }
 
     public class AutocompleteEntityFinder
@@ -76,6 +78,25 @@ namespace Unigram.Common
                 {
                     entity = AutocompleteEntity.None;
                     result = string.Empty;
+                }
+            }
+
+            if (entity == AutocompleteEntity.None)
+            {
+                var shorter = text;
+                if (shorter.Length > 11)
+                {
+                    shorter = shorter.Substring(shorter.Length - 11);
+                }
+
+                var emoji = Emoji.EnumerateByComposedCharacterSequence(shorter);
+                var last = emoji.LastOrDefault();
+
+                if (last != null && Emoji.ContainsSingleEmoji(last))
+                {
+                    result = last;
+                    index = text.Length - last.Length;
+                    entity = AutocompleteEntity.Sticker;
                 }
             }
 

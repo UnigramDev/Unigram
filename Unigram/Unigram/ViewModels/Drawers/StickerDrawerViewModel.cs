@@ -487,6 +487,13 @@ namespace Unigram.ViewModels.Drawers
             Update(set);
         }
 
+        public StickerSetViewModel(IProtoService protoService, StickerSet set)
+            : this(protoService, set.ToInfo())
+        {
+            IsLoaded = true;
+            Update(set);
+        }
+
         public StickerSetViewModel(IProtoService protoService, StickerSetInfo info, IList<Sticker> stickers)
         {
             _protoService = protoService;
@@ -556,6 +563,8 @@ namespace Unigram.ViewModels.Drawers
         public Thumbnail Thumbnail => _set?.Thumbnail ?? _info.Thumbnail;
 
         public IList<Sticker> Covers { get; private set; }
+
+        public int Size => Covers.Count;
 
         public Sticker GetThumbnail()
         {

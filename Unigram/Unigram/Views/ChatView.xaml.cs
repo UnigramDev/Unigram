@@ -2859,7 +2859,7 @@ namespace Unigram.Views
                 TextField.Document.Selection.StartPosition = start;
             }
 
-            if (e.ClickedItem is User user && entity == AutocompleteEntity.Username)
+            if (e.ClickedItem is User user && entity is AutocompleteEntity.Username)
             {
                 var adjust = 0;
 
@@ -2890,7 +2890,7 @@ namespace Unigram.Views
                     ViewModel.ResolveInlineBot(user.Username);
                 }
             }
-            else if (e.ClickedItem is UserCommand command && entity == AutocompleteEntity.Command)
+            else if (e.ClickedItem is UserCommand command && entity is AutocompleteEntity.Command)
             {
                 var insert = $"/{command.Item.Command}";
                 if (chat.Type is ChatTypeSupergroup or ChatTypeBasicGroup)
@@ -2915,11 +2915,11 @@ namespace Unigram.Views
 
                 ButtonMore.IsChecked = false;
             }
-            else if (e.ClickedItem is string hashtag && entity == AutocompleteEntity.Hashtag)
+            else if (e.ClickedItem is string hashtag && entity is AutocompleteEntity.Hashtag)
             {
                 InsertText($"{hashtag} ", result);
             }
-            else if (e.ClickedItem is EmojiData or Sticker && entity == AutocompleteEntity.Emoji)
+            else if (e.ClickedItem is EmojiData or Sticker && entity is AutocompleteEntity.Emoji or AutocompleteEntity.Sticker)
             {
                 if (e.ClickedItem is EmojiData emoji)
                 {

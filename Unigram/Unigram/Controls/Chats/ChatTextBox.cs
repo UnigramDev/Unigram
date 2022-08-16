@@ -452,6 +452,17 @@ namespace Unigram.Controls.Chats
                     autocomplete = new SearchHashtagsCollection(ViewModel.ProtoService, result);
                     return true;
                 }
+                else if (entity == AutocompleteEntity.Sticker)
+                {
+                    if (prev is SearchStickersCollection collection && collection.IsCustomEmoji && prev.Query.Equals(text.Trim()))
+                    {
+                        autocomplete = prev;
+                        return true;
+                    }
+
+                    autocomplete = new SearchStickersCollection(ViewModel.ProtoService, ViewModel.Settings, true, result, ViewModel.Chat.Id);
+                    return true;
+                }
                 else if (entity == AutocompleteEntity.Emoji && fromTextChanging)
                 {
                     if (prev is EmojiCollection && prev.Query.Equals(result))
@@ -474,17 +485,6 @@ namespace Unigram.Controls.Chats
                     autocomplete = GetCommands(result.ToLower());
                     return true;
                 }
-            }
-            else if (SearchByCustomEmoji(query, out string customEmoji, out int _))
-            {
-                if (prev is SearchStickersCollection collection && collection.IsCustomEmoji && prev.Query.Equals(text.Trim()))
-                {
-                    autocomplete = prev;
-                    return true;
-                }
-
-                autocomplete = new SearchStickersCollection(ViewModel.ProtoService, ViewModel.Settings, true, customEmoji, ViewModel.Chat.Id);
-                return true;
             }
 
             autocomplete = null;
@@ -770,31 +770,6 @@ namespace Unigram.Controls.Chats
         }
 
         #region Username
-
-        public static bool SearchByCustomEmoji(string text, out string searchText, out int index)
-        {
-            index = -1;
-            searchText = string.Empty;
-
-            var shorter = text;
-            if (shorter.Length > 11)
-            {
-                shorter = shorter.Substring(shorter.Length - 11);
-            }
-
-            var emoji = Emoji.EnumerateByComposedCharacterSequence(shorter);
-            var last = emoji.LastOrDefault();
-
-            if (last != null && Emoji.ContainsSingleEmoji(last))
-            {
-                searchText = last;
-                index = text.Length - last.Length;
-                return true;
-            }
-
-            return false;
-        }
-
 
         public static bool SearchByInlineBot(string text, out string searchText, out int index)
         {
