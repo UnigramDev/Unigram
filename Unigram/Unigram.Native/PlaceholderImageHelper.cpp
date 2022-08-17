@@ -16,6 +16,8 @@
 #include <winrt/Windows.ApplicationModel.h>
 #include <winrt/Windows.Foundation.Collections.h>
 
+#include <BufferSurface.h>
+
 using namespace D2D1;
 using namespace winrt::Windows::ApplicationModel;
 
@@ -275,7 +277,7 @@ namespace winrt::Unigram::Native::implementation
 				height = (int)(iter.height * ratio);
 			}
 
-			surface = RLottie::BufferSurface::Create(width * 4 * height);
+			surface = Unigram::Native::BufferSurface::Create(width * 4 * height);
 			auto pixels = surface.data();
 			//uint8_t* pixels = new uint8_t[(width * 4) * height];
 

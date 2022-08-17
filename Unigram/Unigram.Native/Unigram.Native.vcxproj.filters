@@ -403,6 +403,7 @@
     <ClCompile Include="libyuv\source\scale_uv.cc">
       <Filter>libyuv\source</Filter>
     </ClCompile>
+    <ClCompile Include="BufferSurface.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -680,6 +681,7 @@
       <Filter>libyuv\include\libyuv</Filter>
     </ClInclude>
     <ClInclude Include="qoi.h" />
+    <ClInclude Include="BufferSurface.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -704,5 +706,6 @@
     <Midl Include="QrBuffer.idl" />
     <Midl Include="CachedVideoAnimation.idl" />
     <Midl Include="TelegramWebviewProxy.idl" />
+    <Midl Include="BufferSurface.idl" />
   </ItemGroup>
 </Project>

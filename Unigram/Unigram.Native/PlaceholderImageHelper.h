@@ -11,7 +11,6 @@
 #include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.UI.h>
 #include <winrt/Windows.Storage.Streams.h>
-#include <winrt/RLottie.h>
 //#include <winrt/Telegram.Td.Api.h>
 
 using namespace concurrency;
