@@ -11,7 +11,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Unigram.Common
 {
-    public class AnimatedListHandler<T>
+    public class AnimatedListHandler
     {
         private readonly ListViewBase _listView;
         private readonly DispatcherTimer _debouncer;

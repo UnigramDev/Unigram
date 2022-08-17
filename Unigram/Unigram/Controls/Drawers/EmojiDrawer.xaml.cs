@@ -30,7 +30,7 @@ namespace Unigram.Controls.Drawers
 
         private bool _isActive;
 
-        private readonly AnimatedListHandler<StickerViewModel> _handler;
+        private readonly AnimatedListHandler _handler;
 
         public EmojiDrawer()
         {
@@ -41,7 +41,7 @@ namespace Unigram.Controls.Drawers
             var header = DropShadowEx.Attach(Separator);
             header.Clip = header.Compositor.CreateInsetClip(0, 48, 0, -48);
 
-            _handler = new AnimatedListHandler<StickerViewModel>(List);
+            _handler = new AnimatedListHandler(List);
 
             _typeToItemHashSetMapping["EmojiSkinTemplate"] = new HashSet<SelectorItem>();
             _typeToItemHashSetMapping["EmojiTemplate"] = new HashSet<SelectorItem>();

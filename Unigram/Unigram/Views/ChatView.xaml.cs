@@ -81,7 +81,7 @@ namespace Unigram.Views
         private readonly Visual _dateHeader;
 
         private readonly ZoomableListHandler _autocompleteZoomer;
-        private readonly AnimatedListHandler<Sticker> _autocompleteHandler;
+        private readonly AnimatedListHandler _autocompleteHandler;
 
         private TaskCompletionSource<bool> _updateThemeTask;
         private TaskCompletionSource<bool> _loadedThemeTask;
@@ -95,7 +95,7 @@ namespace Unigram.Views
             _getViewModel = getViewModel;
             _setTitle = setTitle;
 
-            _autocompleteHandler = new AnimatedListHandler<Sticker>(ListAutocomplete);
+            _autocompleteHandler = new AnimatedListHandler(ListAutocomplete);
 
             _autocompleteZoomer = new ZoomableListHandler(ListAutocomplete);
             _autocompleteZoomer.Opening = _autocompleteHandler.UnloadVisibleItems;

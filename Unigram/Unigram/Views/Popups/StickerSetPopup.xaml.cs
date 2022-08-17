@@ -25,7 +25,7 @@ namespace Unigram.Views.Popups
         private readonly Dictionary<string, DataTemplate> _typeToTemplateMapping = new Dictionary<string, DataTemplate>();
         private readonly Dictionary<string, HashSet<SelectorItem>> _typeToItemHashSetMapping = new Dictionary<string, HashSet<SelectorItem>>();
 
-        private readonly AnimatedListHandler<Sticker> _handler;
+        private readonly AnimatedListHandler _handler;
         private readonly ZoomableListHandler _zoomer;
 
         private StickerSetPopup()
@@ -33,7 +33,7 @@ namespace Unigram.Views.Popups
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<StickerSetViewModel>();
 
-            _handler = new AnimatedListHandler<Sticker>(List);
+            _handler = new AnimatedListHandler(List);
 
             _zoomer = new ZoomableListHandler(List);
             _zoomer.Opening = _handler.UnloadVisibleItems;

@@ -27,10 +27,10 @@ namespace Unigram.Controls.Drawers
         public event TypedEventHandler<UIElement, ItemContextRequestedEventArgs<Sticker>> ItemContextRequested;
         public event EventHandler ChoosingItem;
 
-        private readonly AnimatedListHandler<StickerViewModel> _handler;
+        private readonly AnimatedListHandler _handler;
         private readonly ZoomableListHandler _zoomer;
 
-        private readonly AnimatedListHandler<StickerSetViewModel> _toolbarHandler;
+        private readonly AnimatedListHandler _toolbarHandler;
 
         private readonly Dictionary<string, DataTemplate> _typeToTemplateMapping = new Dictionary<string, DataTemplate>();
         private readonly Dictionary<string, HashSet<SelectorItem>> _typeToItemHashSetMapping = new Dictionary<string, HashSet<SelectorItem>>();
@@ -43,7 +43,7 @@ namespace Unigram.Controls.Drawers
 
             ElementCompositionPreview.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
 
-            _handler = new AnimatedListHandler<StickerViewModel>(List);
+            _handler = new AnimatedListHandler(List);
 
             _zoomer = new ZoomableListHandler(List);
             _zoomer.Opening = _handler.UnloadVisibleItems;

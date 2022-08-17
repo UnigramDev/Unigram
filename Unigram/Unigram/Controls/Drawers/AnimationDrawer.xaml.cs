@@ -44,7 +44,7 @@ namespace Unigram.Controls.Drawers
         public Action<Animation> ItemClick { get; set; }
         public event TypedEventHandler<UIElement, ItemContextRequestedEventArgs<Animation>> ItemContextRequested;
 
-        private readonly AnimatedListHandler<Animation> _handler;
+        private readonly AnimatedListHandler _handler;
         private readonly ZoomableListHandler _zoomer;
 
         private bool _isActive;
@@ -53,7 +53,7 @@ namespace Unigram.Controls.Drawers
         {
             InitializeComponent();
 
-            _handler = new AnimatedListHandler<Animation>(List);
+            _handler = new AnimatedListHandler(List);
 
             _zoomer = new ZoomableListHandler(List);
             _zoomer.Opening = _handler.UnloadVisibleItems;

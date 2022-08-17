@@ -24,13 +24,13 @@ namespace Unigram.Views.Settings
         private readonly Dictionary<string, DataTemplate> _typeToTemplateMapping = new Dictionary<string, DataTemplate>();
         private readonly Dictionary<string, HashSet<SelectorItem>> _typeToItemHashSetMapping = new Dictionary<string, HashSet<SelectorItem>>();
 
-        private readonly AnimatedListHandler<StickerSetInfo> _handler;
+        private readonly AnimatedListHandler _handler;
 
         public SettingsStickersPage()
         {
             InitializeComponent();
 
-            _handler = new AnimatedListHandler<StickerSetInfo>(List);
+            _handler = new AnimatedListHandler(List);
 
             _typeToItemHashSetMapping.Add("AnimatedItemTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("VideoItemTemplate", new HashSet<SelectorItem>());

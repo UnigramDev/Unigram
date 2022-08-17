@@ -16,14 +16,14 @@ namespace Unigram.Controls
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
-        private readonly AnimatedListHandler<InlineQueryResult> _handler;
+        private readonly AnimatedListHandler _handler;
         private readonly ZoomableListHandler _zoomer;
 
         public InlineBotResultsView()
         {
             InitializeComponent();
 
-            _handler = new AnimatedListHandler<InlineQueryResult>(ScrollingHost);
+            _handler = new AnimatedListHandler(ScrollingHost);
 
             _zoomer = new ZoomableListHandler(ScrollingHost);
             _zoomer.Opening = _handler.UnloadVisibleItems;
