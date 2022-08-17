@@ -22,6 +22,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
+using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Shapes;
@@ -37,7 +38,7 @@ namespace Unigram.Controls.Cells
         Read
     }
 
-    public sealed class ChatCell : Control, IMultipleElement
+    public sealed class ChatCell : Control, IMultipleElement, IPlayerView
     {
         private bool _selected;
 
@@ -118,12 +119,16 @@ namespace Unigram.Controls.Cells
         private TextBlock UnreadMentionsLabel;
         private Run FromLabel;
         private Run DraftLabel;
-        private Run BriefLabel;
+        private Span BriefLabel;
         private Image Minithumbnail;
         private Ellipse SelectionOutline;
         private ProfilePicture Photo;
         private Border OnlineBadge;
         private Border OnlineHeart;
+
+        // Lazy loaded
+        private CustomEmojiCanvas CustomEmoji;
+
         private bool _templateApplied;
 
         protected override void OnApplyTemplate()
@@ -148,7 +153,7 @@ namespace Unigram.Controls.Cells
             UnreadMentionsLabel = GetTemplateChild(nameof(UnreadMentionsLabel)) as TextBlock;
             FromLabel = GetTemplateChild(nameof(FromLabel)) as Run;
             DraftLabel = GetTemplateChild(nameof(DraftLabel)) as Run;
-            BriefLabel = GetTemplateChild(nameof(BriefLabel)) as Run;
+            BriefLabel = GetTemplateChild(nameof(BriefLabel)) as Span;
             Minithumbnail = GetTemplateChild(nameof(Minithumbnail)) as Image;
             SelectionOutline = GetTemplateChild(nameof(SelectionOutline)) as Ellipse;
             Photo = GetTemplateChild(nameof(Photo)) as ProfilePicture;
@@ -210,10 +215,10 @@ namespace Unigram.Controls.Cells
 
             DraftLabel.Text = string.Empty;
             FromLabel.Text = UpdateFromLabel(chat, message);
-            BriefLabel.Text = UpdateBriefLabel(chat, message, true, false).ReplaceSpoilers();
             TimeLabel.Text = UpdateTimeLabel(message);
             StateIcon.Glyph = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, null, message, message.SendingState);
 
+            UpdateBriefLabel(UpdateBriefLabel(chat, message, true, false));
             UpdateMinithumbnail(chat, chat.DraftMessage == null ? message : null);
         }
 
@@ -424,11 +429,11 @@ namespace Unigram.Controls.Cells
 
             DraftLabel.Text = UpdateDraftLabel(chat);
             FromLabel.Text = UpdateFromLabel(chat, position);
-            BriefLabel.Text = UpdateBriefLabel(chat, position).ReplaceSpoilers();
             TimeLabel.Text = UpdateTimeLabel(chat, position);
             StateIcon.Glyph = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, chat.DraftMessage, chat.LastMessage, chat.LastMessage?.SendingState);
             FailedBadge.Visibility = chat.LastMessage?.SendingState is MessageSendingStateFailed ? Visibility.Visible : Visibility.Collapsed;
 
+            UpdateBriefLabel(UpdateBriefLabel(chat, position));
             UpdateMinithumbnail(chat, chat.DraftMessage == null ? chat.LastMessage : null);
         }
 
@@ -866,6 +871,196 @@ namespace Unigram.Controls.Cells
                 Minithumbnail.Source = null;
             }
         }
+
+        #region Custom emoji
+
+        private readonly List<EmojiPosition> _positions = new();
+        private bool _ignoreLayoutUpdated = true;
+
+        private void OnLayoutUpdated(object sender, object e)
+        {
+            if (_ignoreLayoutUpdated)
+            {
+                return;
+            }
+
+            if (_positions.Count > 0)
+            {
+                _ignoreLayoutUpdated = true;
+                LoadCustomEmoji();
+            }
+            else
+            {
+                BriefInfo.LayoutUpdated -= OnLayoutUpdated;
+
+                if (CustomEmoji != null)
+                {
+                    XamlMarkupHelper.UnloadObject(CustomEmoji);
+                    CustomEmoji = null;
+                }
+            }
+        }
+
+        private void LoadCustomEmoji()
+        {
+            var positions = new List<EmojiPosition>();
+
+            foreach (var item in _positions)
+            {
+                var pointer = BriefLabel.ContentStart.GetPositionAtOffset(item.X, LogicalDirection.Forward);
+                if (pointer == null)
+                {
+                    continue;
+                }
+
+                var rect = pointer.GetCharacterRect(LogicalDirection.Forward);
+                if (rect.X + 18 > BriefInfo.ActualWidth && BriefInfo.IsTextTrimmed)
+                {
+                    break;
+                }
+
+                positions.Add(new EmojiPosition
+                {
+                    CustomEmojiId = item.CustomEmojiId,
+                    X = (int)rect.X,
+                    Y = (int)rect.Y
+                });
+            }
+
+            if (positions.Count < 1)
+            {
+                BriefInfo.LayoutUpdated -= OnLayoutUpdated;
+
+                if (CustomEmoji != null)
+                {
+                    XamlMarkupHelper.UnloadObject(CustomEmoji);
+                    CustomEmoji = null;
+                }
+            }
+            else
+            {
+                CustomEmoji ??= GetTemplateChild(nameof(CustomEmoji)) as CustomEmojiCanvas;
+                CustomEmoji.UpdatePositions(positions);
+
+                if (_playing)
+                {
+                    CustomEmoji.Play();
+                }
+            }
+        }
+
+        #endregion
+
+        #region IPlayerView
+
+        public bool IsAnimatable => CustomEmoji != null;
+
+        public bool IsLoopingEnabled => true;
+
+        private bool _playing;
+
+        public bool Play()
+        {
+            CustomEmoji?.Play();
+
+            _playing = true;
+            return true;
+        }
+
+        public void Pause()
+        {
+            CustomEmoji?.Pause();
+
+            _playing = false;
+        }
+
+        public void Unload()
+        {
+            CustomEmoji?.Unload();
+
+            _playing = false;
+        }
+
+        #endregion
+
+        private void UpdateBriefLabel(FormattedText message)
+        {
+
+            _positions.Clear();
+            BriefLabel.Inlines.Clear();
+
+            if (message != null)
+            {
+                var clean = message.ReplaceSpoilers();
+                var previous = 0;
+
+                var emoji = new HashSet<long>();
+                var shift = 0;
+
+                if (message.Entities != null)
+                {
+                    foreach (var entity in message.Entities)
+                    {
+                        if (entity.Offset > previous)
+                        {
+                            BriefLabel.Inlines.Add(new Run { Text = clean.Substring(previous, entity.Offset - previous) });
+                            shift += 2;
+                        }
+
+                        if (entity.Type is TextEntityTypeCustomEmoji customEmoji)
+                        {
+                            _positions.Add(new EmojiPosition { X = shift + entity.Offset + 1, CustomEmojiId = customEmoji.CustomEmojiId });
+                            BriefLabel.Inlines.Add(new Run { Text = clean.Substring(entity.Offset, entity.Length), FontFamily = App.Current.Resources["SpoilerFontFamily"] as FontFamily });
+
+                            emoji.Add(customEmoji.CustomEmojiId);
+                            shift += 2;
+                        }
+                        else
+                        {
+                            BriefLabel.Inlines.Add(new Run { Text = clean.Substring(entity.Offset, entity.Length) });
+                            shift += 2;
+                        }
+
+                        previous = entity.Offset + entity.Length;
+                    }
+                }
+
+                if (clean.Length > previous)
+                {
+                    BriefLabel.Inlines.Add(new Run { Text = clean.Substring(previous) });
+                }
+
+                BriefInfo.LayoutUpdated -= OnLayoutUpdated;
+
+                if (emoji.Count > 0)
+                {
+                    CustomEmoji ??= GetTemplateChild(nameof(CustomEmoji)) as CustomEmojiCanvas;
+                    CustomEmoji.UpdateEntities(_protoService, emoji);
+
+                    if (_playing)
+                    {
+                        CustomEmoji.Play();
+                    }
+
+                    _ignoreLayoutUpdated = false;
+                    BriefInfo.LayoutUpdated += OnLayoutUpdated;
+                }
+                else if (CustomEmoji != null)
+                {
+                    XamlMarkupHelper.UnloadObject(CustomEmoji);
+                    CustomEmoji = null;
+                }
+
+            }
+            else if (CustomEmoji != null)
+            {
+                BriefInfo.LayoutUpdated -= OnLayoutUpdated;
+
+                XamlMarkupHelper.UnloadObject(CustomEmoji);
+                CustomEmoji = null;
+            }
+        }
+
 
         private FormattedText UpdateBriefLabel(Chat chat, ChatPosition position)
         {
@@ -1433,7 +1628,7 @@ namespace Unigram.Controls.Cells
 
             DraftLabel.Text = string.Empty;
             FromLabel.Text = from;
-            BriefLabel.Text = message;
+            BriefLabel.Inlines.Add(new Run { Text = message });
             TimeLabel.Text = Converter.ShortTime.Format(date);
             StateIcon.Glyph = sent ? "\uE601" : string.Empty;
 
@@ -1927,20 +2122,22 @@ namespace Unigram.Controls.Cells
 
             var MinithumbnailPanel = Children[7];
             var BriefInfo = Children[8];
-            var ChatActionIndicator = Children[9];
-            var TypingLabel = Children[10];
-            var PinnedIcon = Children[11];
-            var UnreadMentionsBadge = Children[12];
-            var UnreadBadge = Children[13];
-            var FailedBadge = Children[14];
 
-            //var CustomEmoji = Children[9];
-            //var ChatActionIndicator = Children[10];
-            //var TypingLabel = Children[11];
-            //var PinnedIcon = Children[12];
-            //var UnreadMentionsBadge = Children[13];
-            //var UnreadBadge = Children[14];
-            //var FailedBadge = Children[15];
+            var shift = 0;
+            var CustomEmoji = default(CustomEmojiCanvas);
+
+            if (Children[9] is CustomEmojiCanvas)
+            {
+                shift++;
+                CustomEmoji = Children[9] as CustomEmojiCanvas;
+            }
+
+            var ChatActionIndicator = Children[9 + shift];
+            var TypingLabel = Children[10 + shift];
+            var PinnedIcon = Children[11 + shift];
+            var UnreadMentionsBadge = Children[12 + shift];
+            var UnreadBadge = Children[13 + shift];
+            var FailedBadge = Children[14 + shift];
 
             PhotoPanel.Measure(availableSize);
 
@@ -1974,7 +2171,7 @@ namespace Unigram.Controls.Cells
             var briefWidth = Math.Max(0, line2Right - line2Left);
 
             BriefInfo.Measure(new Size(briefWidth, availableSize.Height));
-            //CustomEmoji.Measure(new Size(briefWidth, availableSize.Height));
+            CustomEmoji?.Measure(new Size(briefWidth, availableSize.Height));
             TypingLabel.Measure(new Size(briefWidth + MinithumbnailPanel.DesiredSize.Width, availableSize.Height));
 
             if (Children.Count > 15)
@@ -2000,19 +2197,22 @@ namespace Unigram.Controls.Cells
 
             var MinithumbnailPanel = Children[7];
             var BriefInfo = Children[8];
-            var ChatActionIndicator = Children[9];
-            var TypingLabel = Children[10];
-            var PinnedIcon = Children[11];
-            var UnreadMentionsBadge = Children[12];
-            var UnreadBadge = Children[13];
-            var FailedBadge = Children[14];
-            //var CustomEmoji = Children[9];
-            //var ChatActionIndicator = Children[10];
-            //var TypingLabel = Children[11];
-            //var PinnedIcon = Children[12];
-            //var UnreadMentionsBadge = Children[13];
-            //var UnreadBadge = Children[14];
-            //var FailedBadge = Children[15];
+
+            var shift = 0;
+            var CustomEmoji = default(CustomEmojiCanvas);
+
+            if (Children[9] is CustomEmojiCanvas)
+            {
+                shift++;
+                CustomEmoji = Children[9] as CustomEmojiCanvas;
+            }
+
+            var ChatActionIndicator = Children[9 + shift];
+            var TypingLabel = Children[10 + shift];
+            var PinnedIcon = Children[11 + shift];
+            var UnreadMentionsBadge = Children[12 + shift];
+            var UnreadBadge = Children[13 + shift];
+            var FailedBadge = Children[14 + shift];
 
             var rect = new Rect();
             var min = 8 + PhotoPanel.DesiredSize.Width + 12;
@@ -2116,7 +2316,15 @@ namespace Unigram.Controls.Cells
             rect.Width = briefWidth;
             rect.Height = BriefInfo.DesiredSize.Height;
             BriefInfo.Arrange(rect);
-            //CustomEmoji.Arrange(rect);
+
+            if (CustomEmoji != null)
+            {
+                rect.X -= 2;
+                rect.Y -= 2;
+                rect.Width += 4;
+                rect.Height += 4;
+                CustomEmoji.Arrange(rect);
+            }
 
             rect.X = min;
             rect.Y = 34;

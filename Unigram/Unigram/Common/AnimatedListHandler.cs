@@ -184,7 +184,7 @@ namespace Unigram.Common
                     file = inlineQueryResultSticker.Sticker.StickerValue;
                 }
 
-                if (file == null || !file.Local.IsFileExisting())
+                if (item is not Chat && (file == null || !file.Local.IsFileExisting()))
                 {
                     continue;
                 }
@@ -192,7 +192,7 @@ namespace Unigram.Common
                 var panel = container.ContentTemplateRoot;
                 if (panel is FrameworkElement final)
                 {
-                    var lottie = final.FindName("Player") as IPlayerView;
+                    var lottie = final as IPlayerView ?? final.FindName("Player") as IPlayerView;
                     if (lottie != null)
                     {
                         lottie.Tag = item;

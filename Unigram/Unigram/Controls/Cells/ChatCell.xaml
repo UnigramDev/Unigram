@@ -163,10 +163,11 @@
                             </ToolTipService.ToolTip>-->
                             <Run x:Name="FromLabel"
                                  Foreground="{ThemeResource ChatFromLabelBrush}" /><Run x:Name="DraftLabel"
-                                                                                        Foreground="{ThemeResource ChatDraftLabelBrush}" /><Run x:Name="BriefLabel"
-                                                                                                                                                Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
+                                                                                        Foreground="{ThemeResource ChatDraftLabelBrush}" /><Span x:Name="BriefLabel"
+                                                                                                                                                 Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
                         </TextBlock>
-                        <!--<messages:CustomEmojiCanvas x:Name="CustomEmoji" />-->
+                        <messages:CustomEmojiCanvas x:Name="CustomEmoji"
+                                                    x:Load="False" />
 
                         <chats:ChatActionIndicator x:Name="ChatActionIndicator"
                                                    Visibility="Collapsed"

@@ -82,6 +82,8 @@ namespace Unigram.Views
         private readonly IProtoService _protoService;
         private readonly ICacheService _cacheService;
 
+        private readonly AnimatedListHandler<Chat> _handler;
+
         private bool _unloaded;
 
         public MainPage()
@@ -91,6 +93,8 @@ namespace Unigram.Views
 
             _protoService = ViewModel.ProtoService;
             _cacheService = ViewModel.CacheService;
+
+            _handler = new AnimatedListHandler<Chat>(ChatsList);
 
             ViewModel.Chats.Delegate = this;
             ViewModel.PlaybackService.PropertyChanged += OnCurrentItemChanged;
