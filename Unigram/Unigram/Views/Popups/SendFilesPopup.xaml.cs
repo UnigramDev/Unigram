@@ -9,7 +9,6 @@ using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Controls.Chats;
 using Unigram.Converters;
 using Unigram.Entities;
 using Unigram.ViewModels;

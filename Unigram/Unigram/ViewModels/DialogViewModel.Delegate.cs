@@ -7,6 +7,7 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Gallery;
+using Unigram.Controls.Messages;
 using Unigram.Services.Settings;
 using Unigram.Services.Updates;
 using Unigram.ViewModels.Chats;
@@ -224,7 +225,7 @@ namespace Unigram.ViewModels
         {
             if (sticker.SetId != 0)
             {
-                await StickerSetPopup.GetForCurrentView().ShowAsync(sticker.SetId, Sticker_Click);
+                await StickerSetPopup.ShowAsync(sticker.SetId, Sticker_Click);
             }
         }
 
@@ -284,9 +285,9 @@ namespace Unigram.ViewModels
                 else
                 {
                     var container = ListField?.ContainerFromItem(message) as SelectorItem;
-                    var root = container?.ContentTemplateRoot as FrameworkElement;
+                    var root = container?.ContentTemplateRoot as MessageSelector;
 
-                    var bubble = root?.FindName("Bubble") as FrameworkElement;
+                    var bubble = root?.Content as MessageBubble;
                     if (bubble == null)
                     {
                         return;

@@ -805,7 +805,6 @@
     <Compile Include="Services\ViewService\ViewLifetimeControl.cs" />
     <Compile Include="Services\ViewService\ViewService.cs" />
     <Compile Include="Triggers\EnumTrigger.cs" />
-    <Compile Include="ViewModels\AttachedStickersViewModel.cs" />
     <Compile Include="ViewModels\BackgroundViewModel.cs" />
     <Compile Include="ViewModels\BasicGroups\BasicGroupCreateStep1ViewModel.cs" />
     <Compile Include="ViewModels\CallsViewModel.cs" />
@@ -966,9 +965,6 @@
     </Compile>
     <Compile Include="Views\ChatsNearbyPage.xaml.cs">
       <DependentUpon>ChatsNearbyPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Popups\AttachedStickersPopup.xaml.cs">
-      <DependentUpon>AttachedStickersPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\CalendarPopup.xaml.cs">
       <DependentUpon>CalendarPopup.xaml</DependentUpon>
@@ -2103,10 +2099,6 @@
     <Page Include="Views\ChatsNearbyPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Popups\AttachedStickersPopup.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Popups\CalendarPopup.xaml">
       <Generator>MSBuild:Compile</Generator>

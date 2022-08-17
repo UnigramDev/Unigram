@@ -861,15 +861,6 @@ namespace Unigram.Views.Popups
             }
         }
 
-        private void List_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            if (SearchPanel != null)
-            {
-                SearchPanel.Width = e.NewSize.Width;
-                SearchPanel.Height = e.NewSize.Height;
-            }
-        }
-
         private void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
         {
             Window.Current.CoreWindow.CharacterReceived += OnCharacterReceived;

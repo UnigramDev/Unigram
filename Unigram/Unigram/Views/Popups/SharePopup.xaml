@@ -16,6 +16,8 @@
                        PrimaryButtonClick="OnPrimaryButtonClick"
                        IsPrimaryButtonEnabled="{x:Bind ConvertButtonEnabled(ViewModel.AllowEmptySelection, ViewModel.SelectedItems.Count), Mode=OneWay}"
                        SecondaryButtonText="Cancel"
+                       VerticalContentAlignment="Stretch"
+                       ContentMaxHeight="500"
                        Opened="OnOpened"
                        Closing="OnClosing">
 
@@ -51,7 +53,6 @@
                       IsItemClickEnabled="True"
                       ItemsSource="{x:Bind ViewModel.Items}"
                       SelectionMode="Multiple"
-                      SizeChanged="List_SizeChanged"
                       SelectionChanged="List_SelectionChanged"
                       ItemClick="List_ItemClick"
                       ChoosingItemContainer="OnChoosingItemContainer"

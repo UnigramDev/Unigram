@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -9,7 +10,6 @@ using Unigram.Converters;
 using Unigram.Navigation;
 using Unigram.ViewModels;
 using Windows.UI.Composition;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -68,79 +68,75 @@ namespace Unigram.Views.Popups
 
         #region Show
 
-        private static readonly Dictionary<int, WeakReference<StickerSetPopup>> _windowContext = new Dictionary<int, WeakReference<StickerSetPopup>>();
-        public static StickerSetPopup GetForCurrentView()
+        public Action<Sticker> ItemClick { get; set; }
+
+        public static Task<ContentDialogResult> ShowAsync(StickerSet parameter)
         {
-            return new StickerSetPopup();
-
-            var id = ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow);
-            if (_windowContext.TryGetValue(id, out WeakReference<StickerSetPopup> reference) && reference.TryGetTarget(out StickerSetPopup value))
-            {
-                return value;
-            }
-
-            var context = new StickerSetPopup();
-            _windowContext[id] = new WeakReference<StickerSetPopup>(context);
-
-            return context;
+            return ShowAsyncInternal(parameter, null);
         }
 
-        public ItemClickEventHandler ItemClick { get; set; }
-
-        public Task<ContentDialogResult> ShowAsync(StickerSet parameter)
+        public static Task<ContentDialogResult> ShowAsync(StickerSet parameter, Action<Sticker> callback)
         {
-            return ShowAsync(parameter, null);
+            return ShowAsyncInternal(parameter, callback);
         }
 
-        public Task<ContentDialogResult> ShowAsync(StickerSet parameter, ItemClickEventHandler callback)
+        public static Task<ContentDialogResult> ShowAsync(HashSet<long> parameter)
         {
-            return ShowAsync(parameter.Id, callback);
+            return ShowAsyncInternal(parameter, null);
         }
 
-        public Task<ContentDialogResult> ShowAsync(long parameter)
+        public static Task<ContentDialogResult> ShowAsync(HashSet<long> parameter, Action<Sticker> callback)
         {
-            return ShowAsync(parameter, null);
+            return ShowAsyncInternal(parameter, callback);
         }
 
-        public Task<ContentDialogResult> ShowAsync(long parameter, ItemClickEventHandler callback)
+        public static Task<ContentDialogResult> ShowAsync(long parameter)
         {
-            ViewModel.IsLoading = true;
-            ViewModel.StickerSet = new StickerSet();
-            ViewModel.Items.Clear();
+            return ShowAsyncInternal(parameter, null);
+        }
+
+        public static Task<ContentDialogResult> ShowAsync(long parameter, Action<Sticker> callback)
+        {
+            return ShowAsyncInternal(parameter, callback);
+        }
+
+        public static Task<ContentDialogResult> ShowAsync(InputFileId parameter)
+        {
+            return ShowAsyncInternal(parameter, null);
+        }
+
+        public static Task<ContentDialogResult> ShowAsync(InputFileId parameter, Action<Sticker> callback)
+        {
+            return ShowAsyncInternal(parameter, callback);
+        }
+
+        private static Task<ContentDialogResult> ShowAsyncInternal(object parameter, Action<Sticker> callback)
+        {
+            var popup = new StickerSetPopup();
+
+            popup.ViewModel.IsLoading = true;
+            popup.ViewModel.Items.Clear();
 
             RoutedEventHandler handler = null;
             handler = new RoutedEventHandler(async (s, args) =>
             {
-                Loaded -= handler;
-                ItemClick = callback;
-                await ViewModel.NavigatedToAsync(parameter, NavigationMode.New, null);
+                popup.Loaded -= handler;
+                popup.ItemClick = callback;
+                await popup.ViewModel.NavigatedToAsync(parameter, NavigationMode.New, null);
             });
 
-            Loaded += handler;
-            return this.ShowQueuedAsync();
+            popup.Loaded += handler;
+            return popup.ShowQueuedAsync();
         }
 
-        public Task<ContentDialogResult> ShowAsync(string parameter)
+        public static Task<ContentDialogResult> ShowAsync(string parameter)
         {
-            return ShowAsync(parameter, null);
+            return ShowAsyncInternal(parameter, null);
         }
 
-        public Task<ContentDialogResult> ShowAsync(string parameter, ItemClickEventHandler callback)
+        public static Task<ContentDialogResult> ShowAsync(string parameter, Action<Sticker> callback)
         {
-            ViewModel.IsLoading = true;
-            ViewModel.StickerSet = new StickerSet();
-            ViewModel.Items.Clear();
-
-            RoutedEventHandler handler = null;
-            handler = new RoutedEventHandler(async (s, args) =>
-            {
-                Loaded -= handler;
-                ItemClick = callback;
-                await ViewModel.NavigatedToAsync(parameter, NavigationMode.New, null);
-            });
-
-            Loaded += handler;
-            return this.ShowQueuedAsync();
+            return ShowAsyncInternal(parameter, callback);
         }
 
         #endregion
@@ -149,7 +145,7 @@ namespace Unigram.Views.Popups
 
         private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
         {
-            var typeName = args.Item is Sticker sticker ? sticker.Format switch
+            var typeName = args.Item is ViewModels.Drawers.StickerViewModel sticker ? sticker.Format switch
             {
                 StickerFormatTgs => "AnimatedItemTemplate",
                 StickerFormatWebm => "VideoItemTemplate",
@@ -217,7 +213,7 @@ namespace Unigram.Views.Popups
             }
 
             var content = args.ItemContainer.ContentTemplateRoot as Grid;
-            var sticker = args.Item as Sticker;
+            var sticker = args.Item as ViewModels.Drawers.StickerViewModel;
 
             if (content.Children.Count > 1 && content.Children[1] is Border panel && panel.Child is TextBlock premium)
             {
@@ -287,12 +283,12 @@ namespace Unigram.Views.Popups
 
         private int ConvertItemsPerRow(StickerType type)
         {
-            return type is StickerTypeCustomEmoji ? 7 : 5;
+            return type is StickerTypeCustomEmoji ? 8 : 5;
         }
 
         private string ConvertIsInstalled(bool installed, bool archived, bool official, StickerType type)
         {
-            if (ViewModel == null || ViewModel.StickerSet == null || ViewModel.StickerSet.Stickers == null)
+            if (ViewModel == null || ViewModel.IsLoading)
             {
                 return string.Empty;
             }
@@ -302,18 +298,18 @@ namespace Unigram.Views.Popups
             if (installed && !archived)
             {
                 return official
-                    ? string.Format(masks ? Strings.Resources.StickersRemove : Strings.Resources.StickersRemove, ViewModel.StickerSet.Stickers.Count)
-                    : string.Format(masks ? Strings.Resources.StickersRemove : Strings.Resources.StickersRemove, ViewModel.StickerSet.Stickers.Count);
+                    ? string.Format(masks ? Strings.Resources.StickersRemove : Strings.Resources.StickersRemove, ViewModel.Count)
+                    : string.Format(masks ? Strings.Resources.StickersRemove : Strings.Resources.StickersRemove, ViewModel.Count);
             }
 
             return official || archived
-                ? string.Format(masks ? Strings.Resources.AddMasks : Strings.Resources.AddStickers, ViewModel.StickerSet.Stickers.Count)
-                : string.Format(masks ? Strings.Resources.AddMasks : Strings.Resources.AddStickers, ViewModel.StickerSet.Stickers.Count);
+                ? string.Format(masks ? Strings.Resources.AddMasks : Strings.Resources.AddStickers, ViewModel.Count)
+                : string.Format(masks ? Strings.Resources.AddMasks : Strings.Resources.AddStickers, ViewModel.Count);
         }
 
-        private Style ConvertIsInstalledStyle(bool installed, bool archived, bool official)
+        private Style ConvertIsInstalledStyle(bool installed, bool archived)
         {
-            if (ViewModel == null || ViewModel.StickerSet == null || ViewModel.StickerSet.Stickers == null)
+            if (ViewModel == null || ViewModel.IsLoading)
             {
                 return BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
             }
@@ -359,24 +355,31 @@ namespace Unigram.Views.Popups
 
         private async void Share_Click(object sender, RoutedEventArgs e)
         {
-            var stickerSet = ViewModel.StickerSet;
-            if (stickerSet == null)
+            var builder = new StringBuilder();
+
+            foreach (var item in ViewModel.Items)
             {
-                return;
+                if (builder.Length > 0)
+                {
+                    builder.AppendLine();
+                }
+
+                builder.Append(MeUrlPrefixConverter.Convert(ViewModel.ProtoService, $"addstickers/{item.Name}"));
             }
 
-            var title = stickerSet.Title;
-            var link = new Uri(MeUrlPrefixConverter.Convert(ViewModel.ProtoService, $"addstickers/{stickerSet.Name}"));
-
             Hide();
-            await SharePopup.GetForCurrentView().ShowAsync(link, title);
+
+            var text = builder.ToString();
+            var formatted = new FormattedText(text, new TextEntity[0]);
+
+            await SharePopup.GetForCurrentView().ShowAsync(formatted);
         }
 
         private void List_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (ItemClick != null)
+            if (ItemClick != null && e.ClickedItem is ViewModels.Drawers.StickerViewModel sticker)
             {
-                ItemClick.Invoke(this, e);
+                ItemClick(sticker);
                 Hide();
             }
         }

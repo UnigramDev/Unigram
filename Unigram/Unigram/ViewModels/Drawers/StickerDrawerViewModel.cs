@@ -451,7 +451,7 @@ namespace Unigram.ViewModels.Drawers
 
             var placeholders = new List<StickerViewModel>();
 
-            if (info.Covers?.Count > 0 && !info.IsInstalled)
+            if (info.Covers?.Count > 0 && !info.IsInstalled && info.StickerType is StickerTypeCustomEmoji)
             {
                 IsLoaded = true;
 
