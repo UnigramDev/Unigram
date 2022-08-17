@@ -311,7 +311,7 @@ namespace Unigram.ViewModels.Settings
             }
             else
             {
-                await StickerSetPopup.ShowAsync(stickerSet.Id);
+                await StickersPopup.ShowAsync(stickerSet.Id);
             }
         }
 

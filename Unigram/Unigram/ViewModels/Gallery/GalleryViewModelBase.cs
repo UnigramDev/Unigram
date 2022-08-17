@@ -179,18 +179,7 @@ namespace Unigram.ViewModels.Gallery
                     return;
                 }
 
-                var response = await ProtoService.SendAsync(new GetAttachedStickerSets(file.Id));
-                if (response is StickerSets sets)
-                {
-                    if (sets.Sets.Count > 1)
-                    {
-                        await AttachedStickersPopup.GetForCurrentView().ShowAsync(sets.Sets);
-                    }
-                    else if (sets.Sets.Count > 0)
-                    {
-                        await StickerSetPopup.GetForCurrentView().ShowAsync(sets.Sets[0].Id);
-                    }
-                }
+                await StickersPopup.ShowAsync(new InputFileId(file.Id));
             }
         }
 

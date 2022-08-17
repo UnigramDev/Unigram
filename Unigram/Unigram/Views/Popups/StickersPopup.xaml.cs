@@ -18,9 +18,9 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Popups
 {
-    public sealed partial class StickerSetPopup : ContentPopup
+    public sealed partial class StickersPopup : ContentPopup
     {
-        public StickerSetViewModel ViewModel => DataContext as StickerSetViewModel;
+        public StickersViewModel ViewModel => DataContext as StickersViewModel;
 
         private readonly Dictionary<string, DataTemplate> _typeToTemplateMapping = new Dictionary<string, DataTemplate>();
         private readonly Dictionary<string, HashSet<SelectorItem>> _typeToItemHashSetMapping = new Dictionary<string, HashSet<SelectorItem>>();
@@ -28,10 +28,10 @@ namespace Unigram.Views.Popups
         private readonly AnimatedListHandler _handler;
         private readonly ZoomableListHandler _zoomer;
 
-        private StickerSetPopup()
+        private StickersPopup()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<StickerSetViewModel>();
+            DataContext = TLContainer.Current.Resolve<StickersViewModel>();
 
             _handler = new AnimatedListHandler(List);
 
@@ -112,7 +112,7 @@ namespace Unigram.Views.Popups
 
         private static Task<ContentDialogResult> ShowAsyncInternal(object parameter, Action<Sticker> callback)
         {
-            var popup = new StickerSetPopup();
+            var popup = new StickersPopup();
 
             popup.ViewModel.IsLoading = true;
             popup.ViewModel.Items.Clear();

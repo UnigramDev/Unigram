@@ -1342,7 +1342,7 @@ namespace Unigram.ViewModels
             {
                 if (chatEvent.Action is ChatEventStickerSetChanged stickerSetChanged && stickerSetChanged.NewStickerSetId != 0)
                 {
-                    await StickerSetPopup.ShowAsync(stickerSetChanged.NewStickerSetId);
+                    await StickersPopup.ShowAsync(stickerSetChanged.NewStickerSetId);
                 }
             }
             else if (message.Content is MessageVideoChatStarted or MessageVideoChatScheduled)

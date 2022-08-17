@@ -202,7 +202,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public ItemClickEventHandler Sticker_Click;
+        public Action<Sticker> Sticker_Click;
 
         public override IDispatcherContext Dispatcher
         {

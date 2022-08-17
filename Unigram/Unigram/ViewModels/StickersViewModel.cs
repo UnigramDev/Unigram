@@ -11,9 +11,9 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {
-    public class StickerSetViewModel : TLViewModelBase
+    public class StickersViewModel : TLViewModelBase
     {
-        public StickerSetViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+        public StickersViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             Items = new MvxObservableCollection<Drawers.StickerSetViewModel>();

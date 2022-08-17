@@ -225,7 +225,7 @@ namespace Unigram.ViewModels
         {
             if (sticker.SetId != 0)
             {
-                await StickerSetPopup.ShowAsync(sticker.SetId, Sticker_Click);
+                await StickersPopup.ShowAsync(sticker.SetId, Sticker_Click);
             }
         }
 

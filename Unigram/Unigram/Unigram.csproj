@@ -613,6 +613,7 @@
     <Compile Include="ViewModels\Settings\SettingsQuickReactionViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsStickersViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsThemeViewModel.cs" />
+    <Compile Include="ViewModels\StickersViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupReactionsViewModel.cs" />
     <Compile Include="Views\ChatEventLogPage.xaml.cs">
       <DependentUpon>ChatEventLogPage.xaml</DependentUpon>
@@ -701,6 +702,9 @@
     </Compile>
     <Compile Include="Views\Popups\ChatThemePopup.xaml.cs">
       <DependentUpon>ChatThemePopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Popups\StickersPopup.xaml.cs">
+      <DependentUpon>StickersPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\TranslatePopup.xaml.cs">
       <DependentUpon>TranslatePopup.xaml</DependentUpon>
@@ -892,7 +896,6 @@
     <Compile Include="ViewModels\SignIn\SignUpViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsNotificationsViewModel.cs" />
     <Compile Include="ViewModels\SingleGalleryViewModel.cs" />
-    <Compile Include="ViewModels\StickerSetViewModel.cs" />
     <Compile Include="ViewModels\Delegates\IMemberDelegate.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupAddAdministratorViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupAddRestrictedViewModel.cs" />
@@ -1022,9 +1025,6 @@
     </Compile>
     <Compile Include="Views\Popups\SharePopup.xaml.cs">
       <DependentUpon>SharePopup.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Popups\StickerSetPopup.xaml.cs">
-      <DependentUpon>StickerSetPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\SupergroupEditRestrictedUntilPopup.xaml.cs">
       <DependentUpon>SupergroupEditRestrictedUntilPopup.xaml</DependentUpon>
@@ -1988,6 +1988,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Popups\StickersPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Popups\TranslatePopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2173,10 +2177,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Popups\SharePopup.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Popups\StickerSetPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

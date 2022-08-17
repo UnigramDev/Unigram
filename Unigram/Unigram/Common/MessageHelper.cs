@@ -558,7 +558,7 @@ namespace Unigram.Common
 
         public static async void NavigateToStickerSet(string text)
         {
-            await StickerSetPopup.GetForCurrentView().ShowAsync(text);
+            await StickersPopup.ShowAsync(text);
         }
 
         public static async void NavigateToPhoneNumber(IProtoService protoService, INavigationService navigation, string phoneNumber)
