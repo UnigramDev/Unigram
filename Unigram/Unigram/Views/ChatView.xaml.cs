@@ -1767,14 +1767,14 @@ namespace Unigram.Views
 
             var element = sender as FrameworkElement;
             var message = element.Tag as MessageViewModel;
-            if (message == null && sender is SelectorItem selector && selector.ContentTemplateRoot is FrameworkElement content)
+            if (message == null && sender is SelectorItem container && container.ContentTemplateRoot is FrameworkElement content)
             {
                 element = content;
                 message = content.Tag as MessageViewModel;
 
-                if (content is not MessageBubble)
+                if (content is MessageSelector selector)
                 {
-                    element = content.FindName("Bubble") as FrameworkElement;
+                    element = selector.Content as MessageBubble;
                 }
                 else if (content is StackPanel panel)
                 {

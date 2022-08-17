@@ -200,17 +200,9 @@ namespace Unigram.Views
                     ViewModel.Reactions.SetLastViewedMessage(message.Id);
 
                     var root = container.ContentTemplateRoot as FrameworkElement;
-                    if (root != null)
+                    if (root is MessageSelector selector && selector.Content is MessageBubble bubble)
                     {
-                        if (root is MessageBubble == false)
-                        {
-                            root = root.FindName("Bubble") as FrameworkElement;
-                        }
-
-                        if (root is MessageBubble bubble)
-                        {
-                            bubble.UpdateMessageReactions(message, null);
-                        }
+                        bubble.UpdateMessageReactions(message, null);
                     }
                 }
 
@@ -459,18 +451,7 @@ namespace Unigram.Views
                 }
 
                 var root = container.ContentTemplateRoot as FrameworkElement;
-                if (root == null)
-                {
-                    continue;
-                }
-
-                if (root is MessageBubble == false)
-                {
-                    root = root.FindName("Bubble") as FrameworkElement;
-                }
-
-                var bubble = root as MessageBubble;
-                if (bubble == null)
+                if (root is not MessageSelector selector || selector.Content is not MessageBubble bubble)
                 {
                     continue;
                 }

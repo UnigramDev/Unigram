@@ -423,12 +423,7 @@ namespace Unigram.ViewModels
                         }
 
                         var content = container.ContentTemplateRoot as FrameworkElement;
-                        if (content is not MessageBubble)
-                        {
-                            content = content.FindName("Bubble") as FrameworkElement;
-                        }
-
-                        if (content is MessageBubble bubble)
+                        if (content is MessageSelector selector && selector.Content is MessageBubble bubble)
                         {
                             bubble.UpdateMessageState(message);
                         }
@@ -881,12 +876,7 @@ namespace Unigram.ViewModels
                                 }
 
                                 var content = container.ContentTemplateRoot as FrameworkElement;
-                                if (content is not MessageBubble)
-                                {
-                                    content = content.FindName("Bubble") as FrameworkElement;
-                                }
-
-                                if (content is MessageBubble bubble)
+                                if (content is MessageSelector selector && selector.Content is MessageBubble bubble)
                                 {
                                     action(bubble, message);
                                 }
@@ -914,12 +904,7 @@ namespace Unigram.ViewModels
                             }
 
                             var content = container.ContentTemplateRoot as FrameworkElement;
-                            if (content is not MessageBubble)
-                            {
-                                content = content.FindName("Bubble") as FrameworkElement;
-                            }
-
-                            if (content is MessageBubble bubble)
+                            if (content is MessageSelector selector && selector.Content is MessageBubble bubble)
                             {
                                 action(bubble, message);
                             }
@@ -965,12 +950,7 @@ namespace Unigram.ViewModels
                                     }
 
                                     var content = container.ContentTemplateRoot as FrameworkElement;
-                                    if (content is not MessageBubble)
-                                    {
-                                        content = content.FindName("Bubble") as FrameworkElement;
-                                    }
-
-                                    if (content is MessageBubble bubble)
+                                    if (content is MessageSelector selector && selector.Content is MessageBubble bubble)
                                     {
                                         action(bubble, message, false);
                                     }
@@ -1004,12 +984,7 @@ namespace Unigram.ViewModels
                             }
 
                             var content = container.ContentTemplateRoot as FrameworkElement;
-                            if (content is not MessageBubble)
-                            {
-                                content = content.FindName("Bubble") as FrameworkElement;
-                            }
-
-                            if (content is MessageBubble bubble)
+                            if (content is MessageSelector selector && selector.Content is MessageBubble bubble)
                             {
                                 action(bubble, message, message.ReplyToMessageId == messageId);
                             }
@@ -1034,12 +1009,7 @@ namespace Unigram.ViewModels
             }
 
             var content = container.ContentTemplateRoot as FrameworkElement;
-            if (content is not MessageBubble)
-            {
-                content = content.FindName("Bubble") as FrameworkElement;
-            }
-
-            if (content is MessageBubble bubble)
+            if (content is MessageSelector selector && selector.Content is MessageBubble bubble)
             {
                 action1(bubble);
             }

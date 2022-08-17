@@ -399,9 +399,9 @@ namespace Unigram.Controls.Chats
 
         protected override string GetNameCore()
         {
-            if (_owner.ContentTemplateRoot is FrameworkElement content && content is MessageBubble == false)
+            if (_owner.ContentTemplateRoot is MessageSelector selector)
             {
-                var bubble = content.FindName("Bubble") as MessageBubble;
+                var bubble = selector.Content as MessageBubble;
                 if (bubble != null)
                 {
                     return bubble.GetAutomationName() ?? base.GetNameCore();
@@ -460,9 +460,9 @@ namespace Unigram.Controls.Chats
 
         protected override string GetNameCore()
         {
-            if (_owner.ContentTemplateRoot is FrameworkElement content && content is MessageBubble == false)
+            if (_owner.ContentTemplateRoot is MessageSelector selector)
             {
-                var bubble = content.FindName("Bubble") as MessageBubble;
+                var bubble = selector.Content as MessageBubble;
                 if (bubble != null)
                 {
                     return bubble.GetAutomationName() ?? base.GetNameCore();
