@@ -1,4 +1,5 @@
 ﻿using System;
+using Telegram.Td.Api;
 using Unigram.ViewModels.Drawers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -13,6 +14,8 @@ namespace Unigram.Selectors
         public DataTemplate FavedTemplate { get; set; }
         public DataTemplate PremiumTemplate { get; set; }
         public DataTemplate ItemTemplate { get; set; }
+        public DataTemplate AnimatedTemplate { get; set; }
+        public DataTemplate VideoTemplate { get; set; }
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
@@ -34,6 +37,14 @@ namespace Unigram.Selectors
                 {
                     return PremiumTemplate ?? ItemTemplate;
                 }
+
+                return stickerSet.StickerFormat switch
+                {
+                    StickerFormatWebp => ItemTemplate,
+                    StickerFormatTgs => AnimatedTemplate ?? ItemTemplate,
+                    StickerFormatWebm => VideoTemplate ?? ItemTemplate,
+                    _ => ItemTemplate
+                };
             }
             else if (item is AnimationsCollection animations)
             {
@@ -48,46 +59,6 @@ namespace Unigram.Selectors
             }
 
             return ItemTemplate;
-        }
-    }
-
-    public class StickerSetStyleSelector : StyleSelector
-    {
-        public Style RecentStyle { get; set; }
-        public Style FavoriteStyle { get; set; }
-        public Style TrendingStyle { get; set; }
-        public Style ItemStyle { get; set; }
-
-        protected override Style SelectStyleCore(object item, DependencyObject container)
-        {
-            if (item is StickerSetViewModel stickerSet)
-            {
-                if (string.Equals(stickerSet.Name, "tg/recentlyUsed", StringComparison.OrdinalIgnoreCase))
-                {
-                    return RecentStyle ?? ItemStyle;
-                }
-                else if (string.Equals(stickerSet.Name, "tg/favedStickers", StringComparison.OrdinalIgnoreCase))
-                {
-                    return FavoriteStyle ?? ItemStyle;
-                }
-                //else if (string.Equals(stickerSet.Name, "tg/groupStickers", StringComparison.OrdinalIgnoreCase))
-                //{
-                //    return GroupTemplate ?? ItemTemplate;
-                //}
-            }
-            else if (item is AnimationsCollection animations)
-            {
-                if (string.Equals(animations.Name, "tg/recentlyUsed", StringComparison.OrdinalIgnoreCase))
-                {
-                    return RecentStyle ?? ItemStyle;
-                }
-                else if (string.Equals(animations.Name, "tg/trending", StringComparison.OrdinalIgnoreCase))
-                {
-                    return TrendingStyle ?? ItemStyle;
-                }
-            }
-
-            return ItemStyle;
         }
     }
 }

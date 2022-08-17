@@ -40,14 +40,14 @@
         </DataTemplate>
 
         <DataTemplate x:Key="AnimatedItemTemplate">
-            <Grid Margin="8">
+            <Grid>
                 <controls:LottieView30Fps x:Name="Player"
                                           AutoPlay="False" />
             </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="VideoItemTemplate">
-            <Grid Margin="8">
+            <Grid>
                 <controls:AnimationView30Fps x:Name="Player"
                                              AutoPlay="False"
                                              IsCachingEnabled="True" />
@@ -55,7 +55,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="ItemTemplate">
-            <Grid Margin="8">
+            <Grid>
                 <Border>
                     <Image />
                 </Border>
@@ -197,7 +197,8 @@
                         <Setter.Value>
                             <ControlTemplate TargetType="GridViewItem">
                                 <ContentPresenter HorizontalContentAlignment="Stretch"
-                                                  VerticalContentAlignment="Stretch" />
+                                                  VerticalContentAlignment="Stretch"
+                                                  Padding="8" />
                             </ControlTemplate>
                         </Setter.Value>
                     </Setter>
@@ -517,17 +518,18 @@
                                 Value="32" />
                         <Setter Property="Width"
                                 Value="32" />
+                        <Setter Property="Padding"
+                                Value="4" />
+                        <Setter Property="HorizontalContentAlignment"
+                                Value="Stretch" />
+                        <Setter Property="VerticalContentAlignment"
+                                Value="Stretch" />
                     </Style>
                 </GridView.ItemContainerStyle>
                 <GridView.ItemTemplateSelector>
-                    <selectors:StickerSetTemplateSelector>
-                        <selectors:StickerSetTemplateSelector.ItemTemplate>
-                            <DataTemplate x:DataType="viewModels:StickerSetViewModel">
-                                <Grid Padding="4">
-                                    <Image />
-                                </Grid>
-                            </DataTemplate>
-                        </selectors:StickerSetTemplateSelector.ItemTemplate>
+                    <selectors:StickerSetTemplateSelector ItemTemplate="{StaticResource ItemTemplate}"
+                                                          AnimatedTemplate="{StaticResource AnimatedItemTemplate}"
+                                                          VideoTemplate="{StaticResource VideoItemTemplate}">
                         <selectors:StickerSetTemplateSelector.GroupTemplate>
                             <DataTemplate x:DataType="viewModels:StickerSetViewModel">
                                 <controls:ProfilePicture Margin="6"

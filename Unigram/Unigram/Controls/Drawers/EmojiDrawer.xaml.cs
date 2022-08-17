@@ -31,6 +31,7 @@ namespace Unigram.Controls.Drawers
         private bool _isActive;
 
         private readonly AnimatedListHandler _handler;
+        private readonly AnimatedListHandler _toolbarHandler;
 
         public EmojiDrawer()
         {
@@ -42,6 +43,7 @@ namespace Unigram.Controls.Drawers
             header.Clip = header.Compositor.CreateInsetClip(0, 48, 0, -48);
 
             _handler = new AnimatedListHandler(List);
+            _toolbarHandler = new AnimatedListHandler(Toolbar2);
 
             _typeToItemHashSetMapping["EmojiSkinTemplate"] = new HashSet<SelectorItem>();
             _typeToItemHashSetMapping["EmojiTemplate"] = new HashSet<SelectorItem>();
@@ -59,6 +61,7 @@ namespace Unigram.Controls.Drawers
         {
             _isActive = true;
             _handler.ThrottleVisibleItems();
+            _toolbarHandler.ThrottleVisibleItems();
 
             if (chat != null)
             {
@@ -70,6 +73,7 @@ namespace Unigram.Controls.Drawers
         {
             _isActive = false;
             _handler.UnloadItems();
+            _toolbarHandler.UnloadItems();
 
             // This is called only right before XamlMarkupHelper.UnloadObject
             // so we can safely clean up any kind of anything from here.
@@ -81,12 +85,14 @@ namespace Unigram.Controls.Drawers
             if (_isActive)
             {
                 _handler.LoadVisibleItems(false);
+                _toolbarHandler.LoadVisibleItems(false);
             }
         }
 
         public void UnloadVisibleItems()
         {
             _handler.UnloadVisibleItems();
+            _toolbarHandler.UnloadVisibleItems();
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -525,21 +531,24 @@ namespace Unigram.Controls.Drawers
                     return;
                 }
 
-                UpdateContainerContent(sticker, content);
-                args.Handled = true;
-            }
-        }
-
-        private async void UpdateContainerContent(StickerViewModel sticker, Grid content)
-        {
-            var file = sticker.StickerValue;
-            if (file == null)
-            {
                 if (content.Children[0] is TextBlock textBlock && sticker is MoreStickerViewModel more)
                 {
                     textBlock.Text = $"+{more.TotalCount}";
                 }
+                else
+                {
+                    UpdateContainerContent(sticker, content);
+                }
 
+                args.Handled = true;
+            }
+        }
+
+        private async void UpdateContainerContent(Sticker sticker, Grid content)
+        {
+            var file = sticker.StickerValue;
+            if (file == null)
+            {
                 return;
             }
 
@@ -643,57 +652,32 @@ namespace Unigram.Controls.Drawers
                     return;
                 }
 
-                var file = cover.StickerValue;
-                if (file.Local.IsFileExisting())
-                {
-                    if (cover.Format is StickerFormatTgs)
-                    {
-                        photo.Source = PlaceholderHelper.GetLottieFrame(file.Local.Path, 0, 24, 24);
-                    }
-                    else if (cover.Format is StickerFormatWebp)
-                    {
-                        photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path, 24);
-                    }
-                }
-                else
-                {
-                    photo.Source = null;
-                    content.Tag = sticker;
-
-                    UpdateManager.Subscribe(content, ViewModel.ProtoService, file, UpdateStickerSet, true);
-
-                    if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-                    {
-                        ViewModel.ProtoService.DownloadFile(file.Id, 1);
-                    }
-                }
+                UpdateContainerContent(cover, content);
             }
         }
 
-        private void UpdateStickerSet(object target, File file)
+        private async void UpdateStickerSet(object target, File file)
         {
             var content = target as Grid;
-            var item = content?.Tag as StickerSetViewModel;
-
-            var photo = content?.Children[0] as Image;
-            if (photo == null)
+            if (content == null)
             {
                 return;
             }
 
-            var cover = item.GetThumbnail();
-            if (cover == null)
+            if (content.Children[0] is Border border && border.Child is Image photo)
             {
-                return;
+                photo.Source = await PlaceholderHelper.GetWebPFrameAsync(file.Local.Path, 68);
+                ElementCompositionPreview.SetElementChildVisual(content.Children[0], null);
             }
-
-            if (cover.Format is StickerFormatTgs)
+            else if (content.Children[0] is LottieView lottie)
             {
-                photo.Source = PlaceholderHelper.GetLottieFrame(file.Local.Path, 0, 24, 24);
+                lottie.Source = UriEx.ToLocal(file.Local.Path);
+                _toolbarHandler.ThrottleVisibleItems();
             }
-            else if (cover.Format is StickerFormatWebp)
+            else if (content.Children[0] is AnimationView video)
             {
-                photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path, 24);
+                video.Source = new LocalVideoSource(file);
+                _toolbarHandler.ThrottleVisibleItems();
             }
         }
     }

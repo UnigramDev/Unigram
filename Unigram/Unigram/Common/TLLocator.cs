@@ -1033,17 +1033,9 @@
                     _settingsService,
                     _eventAggregator);
             }
-            else if (type == typeof(Unigram.ViewModels.AttachedStickersViewModel))
+            else if (type == typeof(Unigram.ViewModels.StickersViewModel))
             {
-                return (T)(object)new Unigram.ViewModels.AttachedStickersViewModel(
-                    _protoService,
-                    _cacheService,
-                    _settingsService,
-                    _eventAggregator);
-            }
-            else if (type == typeof(Unigram.ViewModels.StickerSetViewModel))
-            {
-                return (T)(object)new Unigram.ViewModels.StickerSetViewModel(
+                return (T)(object)new Unigram.ViewModels.StickersViewModel(
                     _protoService,
                     _cacheService,
                     _settingsService,

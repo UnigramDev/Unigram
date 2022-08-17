@@ -1129,7 +1129,7 @@ namespace Unigram.Common
                 return new Sticker(stickerSet.Id, stickerSet.Thumbnail.Width, stickerSet.Thumbnail.Height, "\U0001F4A9", format, null, null, 0, stickerSet.ThumbnailOutline, stickerSet.Thumbnail, false, null, stickerSet.Thumbnail.File);
             }
 
-            var cover = stickerSet.Covers.FirstOrDefault();
+            var cover = stickerSet.Covers?.FirstOrDefault();
             if (cover != null)
             {
                 return cover;
@@ -1403,6 +1403,11 @@ namespace Unigram.Common
             //}
 
             return photo.Sizes.LastOrDefault(x => x.Photo.Local.IsFileExisting() || x.Photo.Local.CanBeDownloaded);
+        }
+
+        public static StickerSetInfo ToInfo(this StickerSet set)
+        {
+            return new StickerSetInfo(set.Id, set.Title, set.Name, set.Thumbnail, set.ThumbnailOutline, set.IsInstalled, set.IsArchived, set.IsOfficial, set.StickerFormat, set.StickerType, set.IsViewed, set.Stickers.Count, set.Stickers);
         }
 
         public static string GetStartsAt(this MessageVideoChatScheduled messageVideoChatScheduled)
