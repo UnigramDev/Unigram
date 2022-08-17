@@ -5,6 +5,7 @@ using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Converters;
+using Unigram.Services;
 using Unigram.ViewModels.Drawers;
 using Windows.Foundation;
 using Windows.UI.Composition;
@@ -250,7 +251,7 @@ namespace Unigram.Controls.Drawers
                             continue;
                         }
 
-                        UpdateContainerContent(sticker, container.ContentTemplateRoot as Grid);
+                        UpdateContainerContent(sticker, container.ContentTemplateRoot as Grid, UpdateSticker);
                     }
                 }
             }
@@ -343,11 +344,11 @@ namespace Unigram.Controls.Drawers
                 return;
             }
 
-            UpdateContainerContent(sticker, content);
+            UpdateContainerContent(sticker, content, UpdateSticker);
             args.Handled = true;
         }
 
-        private async void UpdateContainerContent(Sticker sticker, Grid content)
+        private async void UpdateContainerContent(Sticker sticker, Grid content, UpdateHandler<File> handler)
         {
             var file = sticker.StickerValue;
             if (file == null)
@@ -407,7 +408,7 @@ namespace Unigram.Controls.Drawers
                 CompositionPathParser.ParseThumbnail(sticker, out ShapeVisual visual, false);
                 ElementCompositionPreview.SetElementChildVisual(content.Children[0], visual);
 
-                UpdateManager.Subscribe(content, ViewModel.ProtoService, file, UpdateSticker, true);
+                UpdateManager.Subscribe(content, ViewModel.ProtoService, file, handler, true);
 
                 if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive /*&& args.Phase == 0*/)
                 {
@@ -460,7 +461,7 @@ namespace Unigram.Controls.Drawers
                     return;
                 }
 
-                UpdateContainerContent(cover, content);
+                UpdateContainerContent(cover, content, UpdateStickerSet);
             }
         }
 

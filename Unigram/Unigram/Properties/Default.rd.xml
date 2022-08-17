@@ -35,7 +35,7 @@
     </Type>
 
 
-    
+
     <Type Name="Unigram.Common.RemoteVideoSource">
       <Method Name="UpdateFile" Dynamic="Required"/>
     </Type>
@@ -170,8 +170,8 @@
     </Type>
 
     <Type Name="Unigram.Views.BackgroundPopup">
-      <Method Name="UpdatePattern" Dynamic="Required"/>
       <Method Name="UpdateFile" Dynamic="Required"/>
+      <Method Name="UpdatePattern" Dynamic="Required"/>
     </Type>
 
     <Type Name="Unigram.Views.ChatView">
@@ -183,7 +183,7 @@
       <Method Name="UpdateThumbnail" Dynamic="Required"/>
     </Type>
 
-    <Type Name="Unigram.Views.Popups.StickerSetPopup">
+    <Type Name="Unigram.Views.Popups.StickersPopup">
       <Method Name="UpdateFile" Dynamic="Required"/>
     </Type>
 
