@@ -321,7 +321,9 @@ namespace Unigram.Controls.Drawers
 
                     toolbar.Clip = null;
                     Toolbar.Width = show ? 144 : 32;
-                    Toolbar.ScrollIntoView(Toolbar2.SelectedItem == null ? Toolbar.Items[0] : Toolbar.Items.Last());
+                    Toolbar.ScrollIntoView(Toolbar2.SelectedItem == null && Toolbar.Items.Count > 0
+                        ? Toolbar.Items[0]
+                        : Toolbar.Items.LastOrDefault());
                 };
 
                 clip.StartAnimation("RightInset", animClip);

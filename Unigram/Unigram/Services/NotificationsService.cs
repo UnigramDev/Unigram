@@ -1439,22 +1439,24 @@ namespace Unigram.Services
 
         public void SetMuteFor(Chat chat, int muteFor)
         {
-            var settings = chat.NotificationSettings;
-            var scope = _settings.Notifications.GetScope(chat);
-
-            var useDefault = muteFor == scope.MuteFor || muteFor > 366 * 24 * 60 * 60 && scope.MuteFor > 366 * 24 * 60 * 60;
-            if (useDefault)
+            if (_settings.Notifications.TryGetScope(chat, out ScopeNotificationSettings scope))
             {
-                muteFor = scope.MuteFor;
-            }
+                var settings = chat.NotificationSettings;
 
-            _protoService.Send(new SetChatNotificationSettings(chat.Id,
-                new ChatNotificationSettings(
-                    useDefault, muteFor,
-                    settings.UseDefaultSound, settings.SoundId,
-                    settings.UseDefaultShowPreview, settings.ShowPreview,
-                    settings.UseDefaultDisablePinnedMessageNotifications, settings.DisablePinnedMessageNotifications,
-                    settings.UseDefaultDisableMentionNotifications, settings.DisableMentionNotifications)));
+                var useDefault = muteFor == scope.MuteFor || muteFor > 366 * 24 * 60 * 60 && scope.MuteFor > 366 * 24 * 60 * 60;
+                if (useDefault)
+                {
+                    muteFor = scope.MuteFor;
+                }
+
+                _protoService.Send(new SetChatNotificationSettings(chat.Id,
+                    new ChatNotificationSettings(
+                        useDefault, muteFor,
+                        settings.UseDefaultSound, settings.SoundId,
+                        settings.UseDefaultShowPreview, settings.ShowPreview,
+                        settings.UseDefaultDisablePinnedMessageNotifications, settings.DisablePinnedMessageNotifications,
+                        settings.UseDefaultDisableMentionNotifications, settings.DisableMentionNotifications)));
+            }
         }
     }
 }

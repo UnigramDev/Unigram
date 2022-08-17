@@ -1,17 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls.Cells;
 using Unigram.Converters;
-using Unigram.Services;
 using Unigram.Services.Settings;
 using Unigram.ViewModels.Settings;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Settings

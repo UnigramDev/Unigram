@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
@@ -204,8 +203,11 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand<ThemeInfoBase> ThemeCreateCommand { get; }
         private async void ThemeCreateExecute(ThemeInfoBase theme)
         {
-            await _themeService.CreateThemeAsync(theme);
-            await RefreshThemesAsync();
+            if (theme != null)
+            {
+                await _themeService.CreateThemeAsync(theme);
+                await RefreshThemesAsync();
+            }
         }
 
         public RelayCommand<ThemeCustomInfo> ThemeShareCommand { get; }

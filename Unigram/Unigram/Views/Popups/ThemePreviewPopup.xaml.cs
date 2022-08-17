@@ -57,7 +57,7 @@ namespace Unigram.Views.Popups
             Title.Text = Strings.Resources.ThemePreviewTitle;
             Subtitle.Text = string.Format("{0} {1} {2}", Strings.Resources.LastSeen, Strings.Resources.TodayAt, Converter.ShortTime.Format(DateTime.Now.AddHours(-1)));
 
-            Message1.Mockup(new MessagePhoto(new Photo(false, null, new[] { new PhotoSize("i", new File { Local = new LocalFile { Path = "ms-appx:///Assets/Mockup/theme_preview_image.jpg", IsDownloadingCompleted = true } }, 500, 302, new int[0]) }), new FormattedText(), false), Strings.Resources.ThemePreviewLine4, false, DateTime.Now.AddSeconds(-25), true, true);
+            Message1.Mockup(new MessagePhoto(new Photo(false, null, new[] { new PhotoSize("i", TdExtensions.GetLocalFile("Assets\\Mockup\\theme_preview_image.jpg"), 500, 302, new int[0]) }), new FormattedText(), false), Strings.Resources.ThemePreviewLine4, false, DateTime.Now.AddSeconds(-25), true, true);
             Message2.Mockup(Strings.Resources.ThemePreviewLine1, true, DateTime.Now, true, false);
             //Message3.Mockup(Strings.Resources.FontSizePreviewLine1, Strings.Resources.FontSizePreviewName, Strings.Resources.FontSizePreviewReply, false, DateTime.Now.AddSeconds(-25));
             Message3.Mockup(new MessageVoiceNote(new VoiceNote(3, new byte[]

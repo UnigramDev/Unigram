@@ -1609,6 +1609,18 @@ namespace Unigram.Controls.Cells
 
         public void Mockup(ChatType type, int color, string title, string from, string message, bool sent, int unread, bool muted, bool pinned, DateTime date, bool online = false)
         {
+            if (!_templateApplied)
+            {
+                void loaded(object o, RoutedEventArgs e)
+                {
+                    Loaded -= loaded;
+                    Mockup(type, color, title, from, message, sent, unread, muted, pinned, date, online);
+                }
+
+                Loaded += loaded;
+                return;
+            }
+
             TitleLabel.Text = title;
             Photo.Source = type is ChatTypeSupergroup ? PlaceholderHelper.GetNameForChat(title, 48, color) : PlaceholderHelper.GetNameForUser(title, 48, color);
             //UpdateChatType(chat);

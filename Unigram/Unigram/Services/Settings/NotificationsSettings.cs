@@ -43,7 +43,7 @@ namespace Unigram.Services.Settings
             return scope;
         }
 
-        private bool TryGetScope(Chat chat, out ScopeNotificationSettings value)
+        public bool TryGetScope(Chat chat, out ScopeNotificationSettings value)
         {
             Type scope = null;
             switch (chat.Type)
