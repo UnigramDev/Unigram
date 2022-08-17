@@ -3515,7 +3515,7 @@ namespace Unigram.ViewModels
             }
             else
             {
-                UpdateAttach(previous, item);
+                UpdateAttach(item, previous);
             }
 
             if (nextSeparator != null)
@@ -3525,7 +3525,7 @@ namespace Unigram.ViewModels
             }
             else
             {
-                UpdateAttach(item, next);
+                UpdateAttach(next, item);
             }
 
             if (prevSeparator != null)
