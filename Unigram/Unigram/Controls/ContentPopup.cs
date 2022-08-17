@@ -22,6 +22,8 @@ namespace Unigram.Controls
     {
         private ContentDialogResult _result;
 
+        private Border BackgroundElement;
+
         public ContentPopup()
         {
             DefaultStyleKey = typeof(ContentPopup);
@@ -97,7 +99,14 @@ namespace Unigram.Controls
         {
             if (Content is FrameworkElement element && !IsFullWindow)
             {
-                element.MaxHeight = sender.VisibleBounds.Height - 32 - 32 - 48 - 48 - 48;
+                if (VerticalContentAlignment == VerticalAlignment.Center)
+                {
+                    BackgroundElement.MaxHeight = sender.VisibleBounds.Height - 32 - 32 - 48 - 48 - 48;
+                }
+                else
+                {
+                    BackgroundElement.MaxHeight = Math.Min(sender.VisibleBounds.Height - 32 - 32 - 48 - 48 - 48, ContentMaxHeight);
+                }
             }
         }
 
@@ -109,6 +118,8 @@ namespace Unigram.Controls
         protected override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
+
+            BackgroundElement = GetTemplateChild(nameof(BackgroundElement)) as Border;
 
             VisualStateManager.GoToState(this, IsPrimaryButtonSplit ? "PrimaryAsSplitButton" : "NoSplitButton", false);
 
@@ -224,5 +235,17 @@ namespace Unigram.Controls
 
         #endregion
 
+        #region ContentMaxHeight
+
+        public double ContentMaxHeight
+        {
+            get { return (double)GetValue(ContentMaxHeightProperty); }
+            set { SetValue(ContentMaxHeightProperty, value); }
+        }
+
+        public static readonly DependencyProperty ContentMaxHeightProperty =
+            DependencyProperty.Register("ContentMaxHeight", typeof(double), typeof(ContentPopup), new PropertyMetadata(double.PositiveInfinity));
+
+        #endregion
     }
 }

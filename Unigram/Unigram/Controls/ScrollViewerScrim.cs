@@ -64,12 +64,14 @@ namespace Unigram.Controls
             _scrollViewer = scrollViewer;
             _propertySet = Window.Current.Compositor.CreatePropertySet();
             _propertySet.InsertScalar("ScrollableHeight", (float)scrollViewer.ScrollableHeight);
+            _propertySet.InsertScalar("TopInset", (float)Padding.Top);
+            _propertySet.InsertScalar("BottomInset", (float)Padding.Bottom);
 
             var top = ElementCompositionPreview.GetElementVisual(_topScrim);
             var bottom = ElementCompositionPreview.GetElementVisual(_bottomScrim);
             var props = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(scrollViewer);
 
-            var topAnimation = Window.Current.Compositor.CreateExpressionAnimation("Min(-(Scroll.Translation.Y / 32), 1)");
+            var topAnimation = Window.Current.Compositor.CreateExpressionAnimation("Min(-((Scroll.Translation.Y < -Props.TopInset ? Scroll.Translation.Y + Props.TopInset : 0) / 32), 1)");
             topAnimation.SetReferenceParameter("Scroll", props);
             topAnimation.SetReferenceParameter("Props", _propertySet);
 

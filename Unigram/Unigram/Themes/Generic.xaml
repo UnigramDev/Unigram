@@ -1560,6 +1560,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:ScrollViewerScrim">
                     <Grid Margin="0,-2"
+                          Padding="{TemplateBinding Padding}"
                           IsHitTestVisible="False">
                         <Rectangle x:Name="TopScrim"
                                    Height="32"
@@ -1670,6 +1671,10 @@
                 Value="Center" />
         <Setter Property="VerticalAlignment"
                 Value="Top" />
+        <Setter Property="HorizontalContentAlignment"
+                Value="Center" />
+        <Setter Property="VerticalContentAlignment"
+                Value="Center" />
         <Setter Property="IsTabStop"
                 Value="False" />
         <Setter Property="PrimaryButtonStyle"
@@ -1938,8 +1943,8 @@
                                     MaxHeight="{ThemeResource ContentDialogMaxHeight}"
                                     MinWidth="320"
                                     MinHeight="{ThemeResource ContentDialogMinHeight}"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                     RenderTransformOrigin="0.5,0.5">
                                 <Border.RenderTransform>
                                     <ScaleTransform x:Name="ScaleTransform" />
@@ -1984,8 +1989,8 @@
                                                                           ContentTemplate="{TemplateBinding ContentTemplate}"
                                                                           Margin="{TemplateBinding Padding}"
                                                                           ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                                                          HorizontalAlignment="Stretch"
+                                                                          VerticalAlignment="Stretch" />
                                                     </ControlTemplate>
                                                 </ContentControl.Template>
                                             </ContentControl>
