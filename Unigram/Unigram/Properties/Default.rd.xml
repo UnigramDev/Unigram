@@ -66,13 +66,13 @@
     </Type>
 
     <Type Name="Unigram.Controls.Drawers.EmojiDrawer">
-      <Method Name="UpdateStickerSet" Dynamic="Required"/>
       <Method Name="UpdateSticker" Dynamic="Required"/>
+      <Method Name="UpdateStickerSet" Dynamic="Required"/>
     </Type>
 
     <Type Name="Unigram.Controls.Drawers.StickerDrawer">
-      <Method Name="UpdateStickerSet" Dynamic="Required"/>
       <Method Name="UpdateSticker" Dynamic="Required"/>
+      <Method Name="UpdateStickerSet" Dynamic="Required"/>
     </Type>
 
     <Type Name="Unigram.Controls.Gallery.GalleryContentView">
@@ -155,7 +155,9 @@
       <Method Name="UpdateFile" Dynamic="Required"/>
     </Type>
 
-    <Type Name="Unigram.Controls.ProfilePicture" Dynamic="Required All"/>
+    <Type Name="Unigram.Controls.ProfilePicture">
+      <Method Name="UpdateFile" Dynamic="Required"/>
+    </Type>
 
     <Type Name="Unigram.Services.CloudUpdateService">
       <Method Name="UpdateFile" Dynamic="Required"/>

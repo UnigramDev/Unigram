@@ -14,6 +14,8 @@ namespace Unigram.Controls
         private int? _fileId;
         private long? _referenceId;
 
+        private object _parameters;
+
         public ProfilePicture()
         {
             DefaultStyleKey = typeof(ProfilePicture);
@@ -30,6 +32,8 @@ namespace Unigram.Controls
             _fileId = null;
             _referenceId = null;
 
+            _parameters = null;
+
             Source = null;
         }
 
@@ -45,6 +49,22 @@ namespace Unigram.Controls
             DependencyProperty.Register("Source", typeof(ImageSource), typeof(ProfilePicture), new PropertyMetadata(null));
 
         #endregion
+
+        private void UpdateFile(object target, File file)
+        {
+            if (_parameters is ChatParameters chat)
+            {
+                SetChat(chat.ProtoService, chat.Chat, chat.Side, false);
+            }
+            else if (_parameters is UserParameters user)
+            {
+                SetUser(user.ProtoService, user.User, user.Side, false);
+            }
+            else if (_parameters is ChatInviteParameters chatInvite)
+            {
+                SetChat(chatInvite.ProtoService, chatInvite.Chat, chatInvite.Side, false);
+            }
+        }
 
         #region MessageSender
 
@@ -63,6 +83,20 @@ namespace Unigram.Controls
         #endregion
 
         #region Chat
+
+        struct ChatParameters
+        {
+            public IProtoService ProtoService;
+            public Chat Chat;
+            public int Side;
+
+            public ChatParameters(IProtoService protoService, Chat chat, int side)
+            {
+                ProtoService = protoService;
+                Chat = chat;
+                Side = side;
+            }
+        }
 
         public void SetChat(IProtoService protoService, Chat chat, int side, bool download = true)
         {
@@ -110,7 +144,8 @@ namespace Unigram.Controls
                         protoService.DownloadFile(file.Id, 1);
                     }
 
-                    UpdateManager.Subscribe(this, protoService, file, ref _fileToken, (target, update) => SetChat(protoService, chat, update, side, false), true, true);
+                    _parameters = new ChatParameters(protoService, chat, side);
+                    UpdateManager.Subscribe(this, protoService, file, ref _fileToken, UpdateFile, true);
                 }
             }
             else if (protoService.TryGetUser(chat, out User user) && user.Type is UserTypeDeleted)
@@ -129,6 +164,20 @@ namespace Unigram.Controls
         #endregion
 
         #region User
+
+        struct UserParameters
+        {
+            public IProtoService ProtoService;
+            public User User;
+            public int Side;
+
+            public UserParameters(IProtoService protoService, User user, int side)
+            {
+                ProtoService = protoService;
+                User = user;
+                Side = side;
+            }
+        }
 
         public void SetUser(IProtoService protoService, User user, int side, bool download = true)
         {
@@ -167,7 +216,8 @@ namespace Unigram.Controls
                         protoService.DownloadFile(file.Id, 1);
                     }
 
-                    UpdateManager.Subscribe(this, protoService, file, ref _fileToken, (target, update) => SetUser(protoService, user, update, side, false), true, true);
+                    _parameters = new UserParameters(protoService, user, side);
+                    UpdateManager.Subscribe(this, protoService, file, ref _fileToken, UpdateFile, true);
                 }
             }
             else if (user.Type is UserTypeDeleted)
@@ -187,6 +237,20 @@ namespace Unigram.Controls
         #endregion
 
         #region Chat invite
+
+        struct ChatInviteParameters
+        {
+            public IProtoService ProtoService;
+            public ChatInviteLinkInfo Chat;
+            public int Side;
+
+            public ChatInviteParameters(IProtoService protoService, ChatInviteLinkInfo chat, int side)
+            {
+                ProtoService = protoService;
+                Chat = chat;
+                Side = side;
+            }
+        }
 
         public void SetChat(IProtoService protoService, ChatInviteLinkInfo chat, int side, bool download = true)
         {
@@ -219,7 +283,8 @@ namespace Unigram.Controls
                         protoService.DownloadFile(file.Id, 1);
                     }
 
-                    UpdateManager.Subscribe(this, protoService, file, ref _fileToken, (target, update) => SetChat(protoService, chat, update, side, false), true, true);
+                    _parameters = new ChatInviteParameters(protoService, chat, side);
+                    UpdateManager.Subscribe(this, protoService, file, ref _fileToken, UpdateFile, true);
                 }
             }
 
