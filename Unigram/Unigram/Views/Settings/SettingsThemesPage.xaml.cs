@@ -49,7 +49,7 @@ namespace Unigram.Views.Settings
         private void Theme_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
             var element = sender as FrameworkElement;
-            var theme = List.ItemFromContainer(element) as ThemeInfoBase;
+            var theme = element.Tag as ThemeInfoBase;
 
             var flyout = new MenuFlyout();
             flyout.CreateFlyoutItem(ViewModel.ThemeCreateCommand, theme, Strings.Resources.CreateNewThemeMenu, new FontIcon { Glyph = Icons.Color });
