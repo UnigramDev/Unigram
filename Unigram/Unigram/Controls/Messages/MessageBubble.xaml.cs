@@ -1,5 +1,4 @@
 ﻿using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Core.Direct;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +20,7 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Core.Direct;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Markup;
@@ -1611,7 +1611,7 @@ namespace Unigram.Controls.Messages
             var shift = 1;
             var close = false;
 
-            var direct = XamlDirect.GetCompat();
+            var direct = XamlDirect.GetDefault();
             var paragraph = direct.CreateInstance(XamlTypeIndex.Paragraph);
             var inlines = direct.GetXamlDirectObjectProperty(paragraph, XamlPropertyIndex.Paragraph_Inlines);
 
@@ -1969,7 +1969,7 @@ namespace Unigram.Controls.Messages
 
         private Run CreateRun(string text, FontWeight? fontWeight = null, FontFamily fontFamily = null)
         {
-            var direct = XamlDirect.GetCompat();
+            var direct = XamlDirect.GetDefault();
             var run = direct.CreateInstance(XamlTypeIndex.Run);
             direct.SetStringProperty(run, XamlPropertyIndex.Run_Text, text);
 
@@ -1986,9 +1986,9 @@ namespace Unigram.Controls.Messages
             return direct.GetObject(run) as Run;
         }
 
-        private object CreateDirectRun(string text, FontWeight? fontWeight = null, FontFamily fontFamily = null)
+        private IXamlDirectObject CreateDirectRun(string text, FontWeight? fontWeight = null, FontFamily fontFamily = null)
         {
-            var direct = XamlDirect.GetCompat();
+            var direct = XamlDirect.GetDefault();
             var run = direct.CreateInstance(XamlTypeIndex.Run);
             direct.SetStringProperty(run, XamlPropertyIndex.Run_Text, text);
 
