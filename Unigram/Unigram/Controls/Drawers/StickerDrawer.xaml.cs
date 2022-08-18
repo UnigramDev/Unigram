@@ -350,7 +350,7 @@ namespace Unigram.Controls.Drawers
 
         private async void UpdateContainerContent(Sticker sticker, Grid content, UpdateHandler<File> handler)
         {
-            var file = sticker.StickerValue;
+            var file = sticker?.StickerValue;
             if (file == null)
             {
                 return;
