@@ -607,7 +607,7 @@ namespace Unigram.Views
 
                 if (message.IsOutgoing && message.SendingState is MessageSendingStatePending && !Messages.IsBottomReached)
                 {
-                    await Messages.ScrollIntoViewAsync(message, ScrollIntoViewAlignment.Leading);
+                    await Messages.ScrollToItem(message, VerticalAlignment.Bottom, false);
                 }
 
                 var withinViewport = panel.FirstVisibleIndex <= args.NewStartingIndex && panel.LastVisibleIndex >= args.NewStartingIndex;
