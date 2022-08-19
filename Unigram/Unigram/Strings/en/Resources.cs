@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 08/06/2022 13:37:10
+// 	Generated: 08/19/2022 20:27:55
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -674,28 +674,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AccDescrMentionCount_few
-        {
-            get
-            {
-                return resourceLoader.GetString("AccDescrMentionCount_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AccDescrMentionCount_many
-        {
-            get
-            {
-                return resourceLoader.GetString("AccDescrMentionCount_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} mention"
         /// </summary>
         public static string AccDescrMentionCount_one
@@ -714,28 +692,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AccDescrMentionCount_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AccDescrMentionCount_two
-        {
-            get
-            {
-                return resourceLoader.GetString("AccDescrMentionCount_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AccDescrMentionCount_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("AccDescrMentionCount_zero");
             }
         }
         
@@ -883,28 +839,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AccDescrNumberOfPeopleReactions_few
-        {
-            get
-            {
-                return resourceLoader.GetString("AccDescrNumberOfPeopleReactions_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AccDescrNumberOfPeopleReactions_many
-        {
-            get
-            {
-                return resourceLoader.GetString("AccDescrNumberOfPeopleReactions_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} person reacted with {1}"
         /// </summary>
         public static string AccDescrNumberOfPeopleReactions_one
@@ -923,50 +857,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AccDescrNumberOfPeopleReactions_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AccDescrNumberOfPeopleReactions_two
-        {
-            get
-            {
-                return resourceLoader.GetString("AccDescrNumberOfPeopleReactions_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AccDescrNumberOfPeopleReactions_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("AccDescrNumberOfPeopleReactions_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AccDescrNumberOfReplies_few
-        {
-            get
-            {
-                return resourceLoader.GetString("AccDescrNumberOfReplies_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AccDescrNumberOfReplies_many
-        {
-            get
-            {
-                return resourceLoader.GetString("AccDescrNumberOfReplies_many");
             }
         }
         
@@ -993,50 +883,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AccDescrNumberOfReplies_two
-        {
-            get
-            {
-                return resourceLoader.GetString("AccDescrNumberOfReplies_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AccDescrNumberOfReplies_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("AccDescrNumberOfReplies_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AccDescrNumberOfViews_few
-        {
-            get
-            {
-                return resourceLoader.GetString("AccDescrNumberOfViews_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AccDescrNumberOfViews_many
-        {
-            get
-            {
-                return resourceLoader.GetString("AccDescrNumberOfViews_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Viewed {0} time"
         /// </summary>
         public static string AccDescrNumberOfViews_one
@@ -1055,28 +901,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AccDescrNumberOfViews_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AccDescrNumberOfViews_two
-        {
-            get
-            {
-                return resourceLoader.GetString("AccDescrNumberOfViews_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AccDescrNumberOfViews_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("AccDescrNumberOfViews_zero");
             }
         }
         
@@ -1477,28 +1301,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AccDescrSendAudio_few
-        {
-            get
-            {
-                return resourceLoader.GetString("AccDescrSendAudio_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AccDescrSendAudio_many
-        {
-            get
-            {
-                return resourceLoader.GetString("AccDescrSendAudio_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Send {0} audio file"
         /// </summary>
         public static string AccDescrSendAudio_one
@@ -1517,50 +1319,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AccDescrSendAudio_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AccDescrSendAudio_two
-        {
-            get
-            {
-                return resourceLoader.GetString("AccDescrSendAudio_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AccDescrSendAudio_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("AccDescrSendAudio_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AccDescrSendFiles_few
-        {
-            get
-            {
-                return resourceLoader.GetString("AccDescrSendFiles_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AccDescrSendFiles_many
-        {
-            get
-            {
-                return resourceLoader.GetString("AccDescrSendFiles_many");
             }
         }
         
@@ -1587,50 +1345,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AccDescrSendFiles_two
-        {
-            get
-            {
-                return resourceLoader.GetString("AccDescrSendFiles_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AccDescrSendFiles_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("AccDescrSendFiles_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AccDescrSendPhotos_few
-        {
-            get
-            {
-                return resourceLoader.GetString("AccDescrSendPhotos_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AccDescrSendPhotos_many
-        {
-            get
-            {
-                return resourceLoader.GetString("AccDescrSendPhotos_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Send {0} photo"
         /// </summary>
         public static string AccDescrSendPhotos_one
@@ -1653,28 +1367,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AccDescrSendPhotos_two
-        {
-            get
-            {
-                return resourceLoader.GetString("AccDescrSendPhotos_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AccDescrSendPhotos_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("AccDescrSendPhotos_zero");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Sent {0}"
         /// </summary>
         public static string AccDescrSentDate
@@ -1682,28 +1374,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AccDescrSentDate");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AccDescrShareInChats_few
-        {
-            get
-            {
-                return resourceLoader.GetString("AccDescrShareInChats_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AccDescrShareInChats_many
-        {
-            get
-            {
-                return resourceLoader.GetString("AccDescrShareInChats_many");
             }
         }
         
@@ -1726,28 +1396,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AccDescrShareInChats_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AccDescrShareInChats_two
-        {
-            get
-            {
-                return resourceLoader.GetString("AccDescrShareInChats_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AccDescrShareInChats_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("AccDescrShareInChats_zero");
             }
         }
         
@@ -1862,28 +1510,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AccDescrUnreadCount_few
-        {
-            get
-            {
-                return resourceLoader.GetString("AccDescrUnreadCount_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AccDescrUnreadCount_many
-        {
-            get
-            {
-                return resourceLoader.GetString("AccDescrUnreadCount_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} unread chat"
         /// </summary>
         public static string AccDescrUnreadCount_one
@@ -1902,28 +1528,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AccDescrUnreadCount_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AccDescrUnreadCount_two
-        {
-            get
-            {
-                return resourceLoader.GetString("AccDescrUnreadCount_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AccDescrUnreadCount_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("AccDescrUnreadCount_zero");
             }
         }
         
@@ -3855,17 +3459,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Added"
-        /// </summary>
-        public static string Added
-        {
-            get
-            {
-                return resourceLoader.GetString("Added");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "added by {0} {1}"
         /// </summary>
         public static string AddedBy
@@ -3906,6 +3499,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AddEmojiInstalledInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} pack has been added to your emoji."
+        /// </summary>
+        public static string AddEmojiMultipleInstalledInfo_one
+        {
+            get
+            {
+                return resourceLoader.GetString("AddEmojiMultipleInstalledInfo_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} packs have been added to your emoji."
+        /// </summary>
+        public static string AddEmojiMultipleInstalledInfo_other
+        {
+            get
+            {
+                return resourceLoader.GetString("AddEmojiMultipleInstalledInfo_other");
             }
         }
         
@@ -4141,7 +3756,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "ADD {0}"
+        /// Localized resource similar to "Add {0}"
         /// </summary>
         public static string AddStickersCount
         {
@@ -4429,66 +4044,11 @@ namespace Unigram.Strings
         /// <summary>
         /// Localized resource similar to "All {0} media"
         /// </summary>
-        public static string AllNMedia_few
-        {
-            get
-            {
-                return resourceLoader.GetString("AllNMedia_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "All {0} media"
-        /// </summary>
-        public static string AllNMedia_many
-        {
-            get
-            {
-                return resourceLoader.GetString("AllNMedia_many");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "All {0} media"
-        /// </summary>
         public static string AllNMedia_other
         {
             get
             {
                 return resourceLoader.GetString("AllNMedia_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AllNPhotos_few
-        {
-            get
-            {
-                return resourceLoader.GetString("AllNPhotos_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AllNPhotos_many
-        {
-            get
-            {
-                return resourceLoader.GetString("AllNPhotos_many");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AllNPhotos_one
-        {
-            get
-            {
-                return resourceLoader.GetString("AllNPhotos_one");
             }
         }
         
@@ -4500,28 +4060,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AllNPhotos_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AllNPhotos_two
-        {
-            get
-            {
-                return resourceLoader.GetString("AllNPhotos_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AllNPhotos_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("AllNPhotos_zero");
             }
         }
         
@@ -4801,28 +4339,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AndMoreTyping_few
-        {
-            get
-            {
-                return resourceLoader.GetString("AndMoreTyping_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AndMoreTyping_many
-        {
-            get
-            {
-                return resourceLoader.GetString("AndMoreTyping_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "and {0} more are typing"
         /// </summary>
         public static string AndMoreTyping_one
@@ -4841,50 +4357,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AndMoreTyping_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AndMoreTyping_two
-        {
-            get
-            {
-                return resourceLoader.GetString("AndMoreTyping_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AndMoreTyping_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("AndMoreTyping_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AndMoreTypingGroup_few
-        {
-            get
-            {
-                return resourceLoader.GetString("AndMoreTypingGroup_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AndMoreTypingGroup_many
-        {
-            get
-            {
-                return resourceLoader.GetString("AndMoreTypingGroup_many");
             }
         }
         
@@ -4911,50 +4383,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AndMoreTypingGroup_two
-        {
-            get
-            {
-                return resourceLoader.GetString("AndMoreTypingGroup_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AndMoreTypingGroup_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("AndMoreTypingGroup_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AndOther_few
-        {
-            get
-            {
-                return resourceLoader.GetString("AndOther_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AndOther_many
-        {
-            get
-            {
-                return resourceLoader.GetString("AndOther_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "and {0} other"
         /// </summary>
         public static string AndOther_one
@@ -4973,28 +4401,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AndOther_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AndOther_two
-        {
-            get
-            {
-                return resourceLoader.GetString("AndOther_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AndOther_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("AndOther_zero");
             }
         }
         
@@ -5032,28 +4438,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Answer_few
-        {
-            get
-            {
-                return resourceLoader.GetString("Answer_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Answer_many
-        {
-            get
-            {
-                return resourceLoader.GetString("Answer_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} answer"
         /// </summary>
         public static string Answer_one
@@ -5072,28 +4456,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Answer_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Answer_two
-        {
-            get
-            {
-                return resourceLoader.GetString("Answer_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Answer_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("Answer_zero");
             }
         }
         
@@ -6804,28 +6166,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AudiosSavedHint_few
-        {
-            get
-            {
-                return resourceLoader.GetString("AudiosSavedHint_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AudiosSavedHint_many
-        {
-            get
-            {
-                return resourceLoader.GetString("AudiosSavedHint_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "File saved to music."
         /// </summary>
         public static string AudiosSavedHint_one
@@ -6844,28 +6184,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AudiosSavedHint_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AudiosSavedHint_two
-        {
-            get
-            {
-                return resourceLoader.GetString("AudiosSavedHint_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string AudiosSavedHint_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("AudiosSavedHint_zero");
             }
         }
         
@@ -7348,22 +6666,22 @@ namespace Unigram.Strings
         /// <summary>
         /// Localized resource similar to "Channels"
         /// </summary>
-        public static string AutoDownloadChannels
+        public static string AutodownloadChannels
         {
             get
             {
-                return resourceLoader.GetString("AutoDownloadChannels");
+                return resourceLoader.GetString("AutodownloadChannels");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Contacts"
         /// </summary>
-        public static string AutoDownloadContacts
+        public static string AutodownloadContacts
         {
             get
             {
-                return resourceLoader.GetString("AutoDownloadContacts");
+                return resourceLoader.GetString("AutodownloadContacts");
             }
         }
         
@@ -8493,28 +7811,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Bans_few
-        {
-            get
-            {
-                return resourceLoader.GetString("Bans_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Bans_many
-        {
-            get
-            {
-                return resourceLoader.GetString("Bans_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} ban"
         /// </summary>
         public static string Bans_one
@@ -8533,28 +7829,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Bans_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Bans_two
-        {
-            get
-            {
-                return resourceLoader.GetString("Bans_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Bans_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("Bans_zero");
             }
         }
         
@@ -8658,28 +7932,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string BlockedUsersCount_few
-        {
-            get
-            {
-                return resourceLoader.GetString("BlockedUsersCount_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string BlockedUsersCount_many
-        {
-            get
-            {
-                return resourceLoader.GetString("BlockedUsersCount_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} blocked user"
         /// </summary>
         public static string BlockedUsersCount_one
@@ -8698,28 +7950,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("BlockedUsersCount_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string BlockedUsersCount_two
-        {
-            get
-            {
-                return resourceLoader.GetString("BlockedUsersCount_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string BlockedUsersCount_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("BlockedUsersCount_zero");
             }
         }
         
@@ -9910,7 +9140,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Cancelled Call"
+        /// Localized resource similar to "Canceled Call"
         /// </summary>
         public static string CallMessageOutgoingMissed
         {
@@ -9976,7 +9206,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Cancelled Video Call"
+        /// Localized resource similar to "Canceled Video Call"
         /// </summary>
         public static string CallMessageVideoOutgoingMissed
         {
@@ -10288,7 +9518,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "The deletion process was cancelled for your account {0}. You may close this window now."
+        /// Localized resource similar to "The deletion process was canceled for your account {0}. You may close this window now."
         /// </summary>
         public static string CancelLinkSuccess
         {
@@ -10409,28 +9639,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string CanJoin_few
-        {
-            get
-            {
-                return resourceLoader.GetString("CanJoin_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string CanJoin_many
-        {
-            get
-            {
-                return resourceLoader.GetString("CanJoin_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} can join"
         /// </summary>
         public static string CanJoin_one
@@ -10449,28 +9657,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("CanJoin_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string CanJoin_two
-        {
-            get
-            {
-                return resourceLoader.GetString("CanJoin_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string CanJoin_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("CanJoin_zero");
             }
         }
         
@@ -10581,6 +9767,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ChangeColorToColor");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Change Status"
+        /// </summary>
+        public static string ChangeEmojiStatus
+        {
+            get
+            {
+                return resourceLoader.GetString("ChangeEmojiStatus");
             }
         }
         
@@ -11799,28 +10996,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Channels_few
-        {
-            get
-            {
-                return resourceLoader.GetString("Channels_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Channels_many
-        {
-            get
-            {
-                return resourceLoader.GetString("Channels_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} channel"
         /// </summary>
         public static string Channels_one
@@ -11839,28 +11014,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Channels_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Channels_two
-        {
-            get
-            {
-                return resourceLoader.GetString("Channels_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Channels_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("Channels_zero");
             }
         }
         
@@ -12189,28 +11342,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Characters_few
-        {
-            get
-            {
-                return resourceLoader.GetString("Characters_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Characters_many
-        {
-            get
-            {
-                return resourceLoader.GetString("Characters_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} character"
         /// </summary>
         public static string Characters_one
@@ -12229,28 +11360,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Characters_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Characters_two
-        {
-            get
-            {
-                return resourceLoader.GetString("Characters_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Characters_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("Characters_zero");
             }
         }
         
@@ -12607,28 +11716,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Chats_few
-        {
-            get
-            {
-                return resourceLoader.GetString("Chats_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Chats_many
-        {
-            get
-            {
-                return resourceLoader.GetString("Chats_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} chat"
         /// </summary>
         public static string Chats_one
@@ -12647,28 +11734,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Chats_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Chats_two
-        {
-            get
-            {
-                return resourceLoader.GetString("Chats_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Chats_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("Chats_zero");
             }
         }
         
@@ -12761,28 +11826,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ChatsException_few
-        {
-            get
-            {
-                return resourceLoader.GetString("ChatsException_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ChatsException_many
-        {
-            get
-            {
-                return resourceLoader.GetString("ChatsException_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} chat"
         /// </summary>
         public static string ChatsException_one
@@ -12805,29 +11848,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ChatsException_two
-        {
-            get
-            {
-                return resourceLoader.GetString("ChatsException_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ChatsException_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("ChatsException_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "<![CDATA[>Are you sure you want to leave the selected chats?]]>"
+        /// Localized resource similar to "<![CDATA[Are you sure you want to leave the selected chats?]]>"
         /// </summary>
         public static string ChatsLeaveAlert
         {
@@ -12860,28 +11881,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ChatsSelected_few
-        {
-            get
-            {
-                return resourceLoader.GetString("ChatsSelected_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ChatsSelected_many
-        {
-            get
-            {
-                return resourceLoader.GetString("ChatsSelected_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} chat"
         /// </summary>
         public static string ChatsSelected_one
@@ -12900,50 +11899,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ChatsSelected_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ChatsSelected_two
-        {
-            get
-            {
-                return resourceLoader.GetString("ChatsSelected_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ChatsSelected_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("ChatsSelected_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ChatsSelectedClear_few
-        {
-            get
-            {
-                return resourceLoader.GetString("ChatsSelectedClear_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ChatsSelectedClear_many
-        {
-            get
-            {
-                return resourceLoader.GetString("ChatsSelectedClear_many");
             }
         }
         
@@ -12970,50 +11925,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ChatsSelectedClear_two
-        {
-            get
-            {
-                return resourceLoader.GetString("ChatsSelectedClear_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ChatsSelectedClear_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("ChatsSelectedClear_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ChatsSelectedClearCache_few
-        {
-            get
-            {
-                return resourceLoader.GetString("ChatsSelectedClearCache_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ChatsSelectedClearCache_many
-        {
-            get
-            {
-                return resourceLoader.GetString("ChatsSelectedClearCache_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} chat"
         /// </summary>
         public static string ChatsSelectedClearCache_one
@@ -13032,28 +11943,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ChatsSelectedClearCache_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ChatsSelectedClearCache_two
-        {
-            get
-            {
-                return resourceLoader.GetString("ChatsSelectedClearCache_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ChatsSelectedClearCache_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("ChatsSelectedClearCache_zero");
             }
         }
         
@@ -14059,28 +12948,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ClearSearchAlertPartial_few
-        {
-            get
-            {
-                return resourceLoader.GetString("ClearSearchAlertPartial_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ClearSearchAlertPartial_many
-        {
-            get
-            {
-                return resourceLoader.GetString("ClearSearchAlertPartial_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Do you want to remove this chat from your search history?"
         /// </summary>
         public static string ClearSearchAlertPartial_one
@@ -14099,28 +12966,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ClearSearchAlertPartial_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ClearSearchAlertPartial_two
-        {
-            get
-            {
-                return resourceLoader.GetString("ClearSearchAlertPartial_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ClearSearchAlertPartial_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("ClearSearchAlertPartial_zero");
             }
         }
         
@@ -14488,28 +13333,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Comments_few
-        {
-            get
-            {
-                return resourceLoader.GetString("Comments_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Comments_many
-        {
-            get
-            {
-                return resourceLoader.GetString("Comments_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} Comment"
         /// </summary>
         public static string Comments_one
@@ -14528,50 +13351,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Comments_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Comments_two
-        {
-            get
-            {
-                return resourceLoader.GetString("Comments_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Comments_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("Comments_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string CommentsCount_few
-        {
-            get
-            {
-                return resourceLoader.GetString("CommentsCount_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string CommentsCount_many
-        {
-            get
-            {
-                return resourceLoader.GetString("CommentsCount_many");
             }
         }
         
@@ -14598,50 +13377,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string CommentsCount_two
-        {
-            get
-            {
-                return resourceLoader.GetString("CommentsCount_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string CommentsCount_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("CommentsCount_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string CommentsNoNumber_few
-        {
-            get
-            {
-                return resourceLoader.GetString("CommentsNoNumber_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string CommentsNoNumber_many
-        {
-            get
-            {
-                return resourceLoader.GetString("CommentsNoNumber_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "comment"
         /// </summary>
         public static string CommentsNoNumber_one
@@ -14664,28 +13399,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string CommentsNoNumber_two
-        {
-            get
-            {
-                return resourceLoader.GetString("CommentsNoNumber_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string CommentsNoNumber_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("CommentsNoNumber_zero");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Comments"
         /// </summary>
         public static string CommentsTitle
@@ -14693,28 +13406,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("CommentsTitle");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string CommonGroups_few
-        {
-            get
-            {
-                return resourceLoader.GetString("CommonGroups_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string CommonGroups_many
-        {
-            get
-            {
-                return resourceLoader.GetString("CommonGroups_many");
             }
         }
         
@@ -14737,28 +13428,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("CommonGroups_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string CommonGroups_two
-        {
-            get
-            {
-                return resourceLoader.GetString("CommonGroups_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string CommonGroups_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("CommonGroups_zero");
             }
         }
         
@@ -15262,28 +13931,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string CountOfResults_few
-        {
-            get
-            {
-                return resourceLoader.GetString("CountOfResults_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string CountOfResults_many
-        {
-            get
-            {
-                return resourceLoader.GetString("CountOfResults_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} of {1} results"
         /// </summary>
         public static string CountOfResults_one
@@ -15302,28 +13949,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("CountOfResults_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string CountOfResults_two
-        {
-            get
-            {
-                return resourceLoader.GetString("CountOfResults_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string CountOfResults_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("CountOfResults_zero");
             }
         }
         
@@ -15836,28 +14461,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Days_few
-        {
-            get
-            {
-                return resourceLoader.GetString("Days_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Days_many
-        {
-            get
-            {
-                return resourceLoader.GetString("Days_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} day"
         /// </summary>
         public static string Days_one
@@ -15876,50 +14479,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Days_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Days_two
-        {
-            get
-            {
-                return resourceLoader.GetString("Days_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Days_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("Days_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string DaysBold_few
-        {
-            get
-            {
-                return resourceLoader.GetString("DaysBold_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string DaysBold_many
-        {
-            get
-            {
-                return resourceLoader.GetString("DaysBold_many");
             }
         }
         
@@ -15946,50 +14505,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string DaysBold_two
-        {
-            get
-            {
-                return resourceLoader.GetString("DaysBold_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string DaysBold_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("DaysBold_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string DaysLeft_few
-        {
-            get
-            {
-                return resourceLoader.GetString("DaysLeft_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string DaysLeft_many
-        {
-            get
-            {
-                return resourceLoader.GetString("DaysLeft_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} day left"
         /// </summary>
         public static string DaysLeft_one
@@ -16012,50 +14527,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string DaysLeft_two
-        {
-            get
-            {
-                return resourceLoader.GetString("DaysLeft_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string DaysLeft_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("DaysLeft_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string DaysSchedule_few
-        {
-            get
-            {
-                return resourceLoader.GetString("DaysSchedule_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string DaysSchedule_many
-        {
-            get
-            {
-                return resourceLoader.GetString("DaysSchedule_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} day"
         /// </summary>
         public static string DaysSchedule_one
@@ -16074,28 +14545,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("DaysSchedule_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string DaysSchedule_two
-        {
-            get
-            {
-                return resourceLoader.GetString("DaysSchedule_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string DaysSchedule_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("DaysSchedule_zero");
             }
         }
         
@@ -16683,28 +15132,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string DeleteBackground_few
-        {
-            get
-            {
-                return resourceLoader.GetString("DeleteBackground_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string DeleteBackground_many
-        {
-            get
-            {
-                return resourceLoader.GetString("DeleteBackground_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Delete background"
         /// </summary>
         public static string DeleteBackground_one
@@ -16723,28 +15150,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("DeleteBackground_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string DeleteBackground_two
-        {
-            get
-            {
-                return resourceLoader.GetString("DeleteBackground_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string DeleteBackground_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("DeleteBackground_zero");
             }
         }
         
@@ -16837,28 +15242,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string DeleteDays_few
-        {
-            get
-            {
-                return resourceLoader.GetString("DeleteDays_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string DeleteDays_many
-        {
-            get
-            {
-                return resourceLoader.GetString("DeleteDays_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Delete {0} day"
         /// </summary>
         public static string DeleteDays_one
@@ -16877,28 +15260,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("DeleteDays_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string DeleteDays_two
-        {
-            get
-            {
-                return resourceLoader.GetString("DeleteDays_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string DeleteDays_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("DeleteDays_zero");
             }
         }
         
@@ -17332,28 +15693,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string DeleteTones_few
-        {
-            get
-            {
-                return resourceLoader.GetString("DeleteTones_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string DeleteTones_many
-        {
-            get
-            {
-                return resourceLoader.GetString("DeleteTones_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Delete {0} tone"
         /// </summary>
         public static string DeleteTones_one
@@ -17372,50 +15711,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("DeleteTones_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string DeleteTones_two
-        {
-            get
-            {
-                return resourceLoader.GetString("DeleteTones_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string DeleteTones_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("DeleteTones_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string DeleteTonesMessage_few
-        {
-            get
-            {
-                return resourceLoader.GetString("DeleteTonesMessage_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string DeleteTonesMessage_many
-        {
-            get
-            {
-                return resourceLoader.GetString("DeleteTonesMessage_many");
             }
         }
         
@@ -17442,50 +15737,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string DeleteTonesMessage_two
-        {
-            get
-            {
-                return resourceLoader.GetString("DeleteTonesMessage_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string DeleteTonesMessage_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("DeleteTonesMessage_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Deletions_few
-        {
-            get
-            {
-                return resourceLoader.GetString("Deletions_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Deletions_many
-        {
-            get
-            {
-                return resourceLoader.GetString("Deletions_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} deletion"
         /// </summary>
         public static string Deletions_one
@@ -17504,28 +15755,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Deletions_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Deletions_two
-        {
-            get
-            {
-                return resourceLoader.GetString("Deletions_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Deletions_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("Deletions_zero");
             }
         }
         
@@ -19256,17 +17485,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Artists are welcome to add their own emoji packs using our @stickers bot."
-        /// </summary>
-        public static string EmojiBotInfo
-        {
-            get
-            {
-                return resourceLoader.GetString("EmojiBotInfo");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Draw single big emoji"
         /// </summary>
         public static string EmojiBigSize
@@ -19278,24 +17496,13 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} emoji"
+        /// Localized resource similar to "Artists are welcome to add their own emoji packs using our @stickers bot."
         /// </summary>
-        public static string EmojiCount_few
+        public static string EmojiBotInfo
         {
             get
             {
-                return resourceLoader.GetString("EmojiCount_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "{0} emoji"
-        /// </summary>
-        public static string EmojiCount_many
-        {
-            get
-            {
-                return resourceLoader.GetString("EmojiCount_many");
+                return resourceLoader.GetString("EmojiBotInfo");
             }
         }
         
@@ -19322,50 +17529,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} emoji"
-        /// </summary>
-        public static string EmojiCount_two
-        {
-            get
-            {
-                return resourceLoader.GetString("EmojiCount_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "{0} emoji"
-        /// </summary>
-        public static string EmojiCount_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("EmojiCount_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "{0} Emoji"
-        /// </summary>
-        public static string EmojiCountButton_few
-        {
-            get
-            {
-                return resourceLoader.GetString("EmojiCountButton_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "{0} Emoji"
-        /// </summary>
-        public static string EmojiCountButton_many
-        {
-            get
-            {
-                return resourceLoader.GetString("EmojiCountButton_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} Emoji"
         /// </summary>
         public static string EmojiCountButton_one
@@ -19388,28 +17551,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} Emoji"
-        /// </summary>
-        public static string EmojiCountButton_two
-        {
-            get
-            {
-                return resourceLoader.GetString("EmojiCountButton_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "{0} Emoji"
-        /// </summary>
-        public static string EmojiCountButton_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("EmojiCountButton_zero");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "If **{0}** had this chat open right now, they would also see the animation."
         /// </summary>
         public static string EmojiInteractionTapHint
@@ -19417,28 +17558,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("EmojiInteractionTapHint");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "{0} Emoji Packs"
-        /// </summary>
-        public static string EmojiPackCount_few
-        {
-            get
-            {
-                return resourceLoader.GetString("EmojiPackCount_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "{0} Emoji Packs"
-        /// </summary>
-        public static string EmojiPackCount_many
-        {
-            get
-            {
-                return resourceLoader.GetString("EmojiPackCount_many");
             }
         }
         
@@ -19465,28 +17584,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} Emoji Packs"
-        /// </summary>
-        public static string EmojiPackCount_two
-        {
-            get
-            {
-                return resourceLoader.GetString("EmojiPackCount_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "{0} Emoji Pack"
-        /// </summary>
-        public static string EmojiPackCount_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("EmojiPackCount_zero");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Emoji removed."
         /// </summary>
         public static string EmojiRemoved
@@ -19505,6 +17602,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("EmojiRemovedInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} pack is no longer in your emoji."
+        /// </summary>
+        public static string EmojiRemovedMultipleInfo_one
+        {
+            get
+            {
+                return resourceLoader.GetString("EmojiRemovedMultipleInfo_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} packs are no longer in your emoji."
+        /// </summary>
+        public static string EmojiRemovedMultipleInfo_other
+        {
+            get
+            {
+                return resourceLoader.GetString("EmojiRemovedMultipleInfo_other");
             }
         }
         
@@ -19866,7 +17985,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Secret chat cancelled"
+        /// Localized resource similar to "Secret chat canceled"
         /// </summary>
         public static string EncryptionRejected
         {
@@ -21650,28 +19769,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Exception_few
-        {
-            get
-            {
-                return resourceLoader.GetString("Exception_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Exception_many
-        {
-            get
-            {
-                return resourceLoader.GetString("Exception_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} exception"
         /// </summary>
         public static string Exception_one
@@ -21690,28 +19787,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Exception_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Exception_two
-        {
-            get
-            {
-                return resourceLoader.GetString("Exception_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Exception_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("Exception_zero");
             }
         }
         
@@ -21936,28 +20011,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Files_few
-        {
-            get
-            {
-                return resourceLoader.GetString("Files_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Files_many
-        {
-            get
-            {
-                return resourceLoader.GetString("Files_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} file"
         /// </summary>
         public static string Files_one
@@ -21976,28 +20029,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Files_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Files_two
-        {
-            get
-            {
-                return resourceLoader.GetString("Files_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Files_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("Files_zero");
             }
         }
         
@@ -22024,28 +20055,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string FilesSavedHint_few
-        {
-            get
-            {
-                return resourceLoader.GetString("FilesSavedHint_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string FilesSavedHint_many
-        {
-            get
-            {
-                return resourceLoader.GetString("FilesSavedHint_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "File saved to Downloads."
         /// </summary>
         public static string FilesSavedHint_one
@@ -22064,28 +20073,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("FilesSavedHint_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string FilesSavedHint_two
-        {
-            get
-            {
-                return resourceLoader.GetString("FilesSavedHint_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string FilesSavedHint_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("FilesSavedHint_zero");
             }
         }
         
@@ -22145,7 +20132,8 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Please wait a few moments while we fill this folder for you..."
+        /// Localized resource similar to "Please wait a few moments while
+        ///we fill this folder for you..."
         /// </summary>
         public static string FilterAddingChatsInfo
         {
@@ -22882,28 +20870,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string FilterShowMoreChats_few
-        {
-            get
-            {
-                return resourceLoader.GetString("FilterShowMoreChats_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string FilterShowMoreChats_many
-        {
-            get
-            {
-                return resourceLoader.GetString("FilterShowMoreChats_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Show {0} More Chat"
         /// </summary>
         public static string FilterShowMoreChats_one
@@ -22922,28 +20888,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("FilterShowMoreChats_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string FilterShowMoreChats_two
-        {
-            get
-            {
-                return resourceLoader.GetString("FilterShowMoreChats_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string FilterShowMoreChats_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("FilterShowMoreChats_zero");
             }
         }
         
@@ -23234,28 +21178,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForceSetPasswordAlertMessage_few
-        {
-            get
-            {
-                return resourceLoader.GetString("ForceSetPasswordAlertMessage_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForceSetPasswordAlertMessage_many
-        {
-            get
-            {
-                return resourceLoader.GetString("ForceSetPasswordAlertMessage_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Proceed without a password? If you do not set a password, you will only be able to log into your account via SMS once every {0} day."
         /// </summary>
         public static string ForceSetPasswordAlertMessage_one
@@ -23278,50 +21200,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForceSetPasswordAlertMessage_two
-        {
-            get
-            {
-                return resourceLoader.GetString("ForceSetPasswordAlertMessage_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForceSetPasswordAlertMessage_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("ForceSetPasswordAlertMessage_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForceSetPasswordAlertMessageShort_few
-        {
-            get
-            {
-                return resourceLoader.GetString("ForceSetPasswordAlertMessageShort_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForceSetPasswordAlertMessageShort_many
-        {
-            get
-            {
-                return resourceLoader.GetString("ForceSetPasswordAlertMessageShort_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "If you do not set a password, you will only be able to log into your account via SMS once every {0} day. Do you want to proceed without a password?"
         /// </summary>
         public static string ForceSetPasswordAlertMessageShort_one
@@ -23340,28 +21218,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ForceSetPasswordAlertMessageShort_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForceSetPasswordAlertMessageShort_two
-        {
-            get
-            {
-                return resourceLoader.GetString("ForceSetPasswordAlertMessageShort_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForceSetPasswordAlertMessageShort_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("ForceSetPasswordAlertMessageShort_zero");
             }
         }
         
@@ -23665,28 +21521,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForwardedAudio_few
-        {
-            get
-            {
-                return resourceLoader.GetString("ForwardedAudio_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForwardedAudio_many
-        {
-            get
-            {
-                return resourceLoader.GetString("ForwardedAudio_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Forwarded voice message"
         /// </summary>
         public static string ForwardedAudio_one
@@ -23705,50 +21539,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ForwardedAudio_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForwardedAudio_two
-        {
-            get
-            {
-                return resourceLoader.GetString("ForwardedAudio_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForwardedAudio_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("ForwardedAudio_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForwardedContact_few
-        {
-            get
-            {
-                return resourceLoader.GetString("ForwardedContact_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForwardedContact_many
-        {
-            get
-            {
-                return resourceLoader.GetString("ForwardedContact_many");
             }
         }
         
@@ -23775,50 +21565,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForwardedContact_two
-        {
-            get
-            {
-                return resourceLoader.GetString("ForwardedContact_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForwardedContact_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("ForwardedContact_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForwardedFile_few
-        {
-            get
-            {
-                return resourceLoader.GetString("ForwardedFile_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForwardedFile_many
-        {
-            get
-            {
-                return resourceLoader.GetString("ForwardedFile_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Forwarded file"
         /// </summary>
         public static string ForwardedFile_one
@@ -23837,50 +21583,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ForwardedFile_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForwardedFile_two
-        {
-            get
-            {
-                return resourceLoader.GetString("ForwardedFile_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForwardedFile_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("ForwardedFile_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForwardedLocation_few
-        {
-            get
-            {
-                return resourceLoader.GetString("ForwardedLocation_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForwardedLocation_many
-        {
-            get
-            {
-                return resourceLoader.GetString("ForwardedLocation_many");
             }
         }
         
@@ -23907,28 +21609,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForwardedLocation_two
-        {
-            get
-            {
-                return resourceLoader.GetString("ForwardedLocation_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForwardedLocation_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("ForwardedLocation_zero");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Forwarded message"
         /// </summary>
         public static string ForwardedMessage
@@ -23936,28 +21616,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ForwardedMessage");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForwardedMessageCount_few
-        {
-            get
-            {
-                return resourceLoader.GetString("ForwardedMessageCount_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForwardedMessageCount_many
-        {
-            get
-            {
-                return resourceLoader.GetString("ForwardedMessageCount_many");
             }
         }
         
@@ -23984,50 +21642,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForwardedMessageCount_two
-        {
-            get
-            {
-                return resourceLoader.GetString("ForwardedMessageCount_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForwardedMessageCount_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("ForwardedMessageCount_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForwardedMusic_few
-        {
-            get
-            {
-                return resourceLoader.GetString("ForwardedMusic_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForwardedMusic_many
-        {
-            get
-            {
-                return resourceLoader.GetString("ForwardedMusic_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Forwarded audio file"
         /// </summary>
         public static string ForwardedMusic_one
@@ -24046,50 +21660,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ForwardedMusic_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForwardedMusic_two
-        {
-            get
-            {
-                return resourceLoader.GetString("ForwardedMusic_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForwardedMusic_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("ForwardedMusic_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForwardedPhoto_few
-        {
-            get
-            {
-                return resourceLoader.GetString("ForwardedPhoto_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForwardedPhoto_many
-        {
-            get
-            {
-                return resourceLoader.GetString("ForwardedPhoto_many");
             }
         }
         
@@ -24116,50 +21686,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForwardedPhoto_two
-        {
-            get
-            {
-                return resourceLoader.GetString("ForwardedPhoto_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForwardedPhoto_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("ForwardedPhoto_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForwardedPoll_few
-        {
-            get
-            {
-                return resourceLoader.GetString("ForwardedPoll_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForwardedPoll_many
-        {
-            get
-            {
-                return resourceLoader.GetString("ForwardedPoll_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Forwarded poll"
         /// </summary>
         public static string ForwardedPoll_one
@@ -24178,50 +21704,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ForwardedPoll_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForwardedPoll_two
-        {
-            get
-            {
-                return resourceLoader.GetString("ForwardedPoll_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForwardedPoll_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("ForwardedPoll_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForwardedRound_few
-        {
-            get
-            {
-                return resourceLoader.GetString("ForwardedRound_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForwardedRound_many
-        {
-            get
-            {
-                return resourceLoader.GetString("ForwardedRound_many");
             }
         }
         
@@ -24248,50 +21730,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForwardedRound_two
-        {
-            get
-            {
-                return resourceLoader.GetString("ForwardedRound_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForwardedRound_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("ForwardedRound_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForwardedSticker_few
-        {
-            get
-            {
-                return resourceLoader.GetString("ForwardedSticker_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForwardedSticker_many
-        {
-            get
-            {
-                return resourceLoader.GetString("ForwardedSticker_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Forwarded sticker"
         /// </summary>
         public static string ForwardedSticker_one
@@ -24314,50 +21752,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForwardedSticker_two
-        {
-            get
-            {
-                return resourceLoader.GetString("ForwardedSticker_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForwardedSticker_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("ForwardedSticker_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForwardedVideo_few
-        {
-            get
-            {
-                return resourceLoader.GetString("ForwardedVideo_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForwardedVideo_many
-        {
-            get
-            {
-                return resourceLoader.GetString("ForwardedVideo_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Forwarded video"
         /// </summary>
         public static string ForwardedVideo_one
@@ -24376,28 +21770,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ForwardedVideo_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForwardedVideo_two
-        {
-            get
-            {
-                return resourceLoader.GetString("ForwardedVideo_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ForwardedVideo_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("ForwardedVideo_zero");
             }
         }
         
@@ -24578,7 +21950,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "For security reasons, you can't change phone number from a device that you've just connected. Please use an earlier connection or wait for a few hours."
+        /// Localized resource similar to "For security reasons, you can't change your phone number from a device that you've just connected. Please use an earlier connection or wait for a few hours."
         /// </summary>
         public static string FreshChangePhoneForbidden
         {
@@ -24611,28 +21983,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string FromChats_few
-        {
-            get
-            {
-                return resourceLoader.GetString("FromChats_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string FromChats_many
-        {
-            get
-            {
-                return resourceLoader.GetString("FromChats_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "from {0} chat"
         /// </summary>
         public static string FromChats_one
@@ -24651,28 +22001,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("FromChats_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string FromChats_two
-        {
-            get
-            {
-                return resourceLoader.GetString("FromChats_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string FromChats_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("FromChats_zero");
             }
         }
         
@@ -24886,28 +22214,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string GIFs_few
-        {
-            get
-            {
-                return resourceLoader.GetString("GIFs_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string GIFs_many
-        {
-            get
-            {
-                return resourceLoader.GetString("GIFs_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} GIF"
         /// </summary>
         public static string GIFs_one
@@ -24930,29 +22236,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string GIFs_two
-        {
-            get
-            {
-                return resourceLoader.GetString("GIFs_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string GIFs_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("GIFs_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Added to saved GIFs."
+        /// Localized resource similar to "Added to Favorite GIFs."
         /// </summary>
         public static string GifSavedHint
         {
@@ -25040,7 +22324,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Let **{0}** enjoy exclusive features of Telegram with **Telegram Premium**."
+        /// Localized resource similar to "Give **{0}** access to exclusive features with **Telegram Premium**."
         /// </summary>
         public static string GiftTelegramPremiumDescription
         {
@@ -25519,28 +22803,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Groups_few
-        {
-            get
-            {
-                return resourceLoader.GetString("Groups_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Groups_many
-        {
-            get
-            {
-                return resourceLoader.GetString("Groups_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} group"
         /// </summary>
         public static string Groups_one
@@ -25559,28 +22821,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Groups_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Groups_two
-        {
-            get
-            {
-                return resourceLoader.GetString("Groups_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Groups_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("Groups_zero");
             }
         }
         
@@ -26049,28 +23289,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Hours_few
-        {
-            get
-            {
-                return resourceLoader.GetString("Hours_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Hours_many
-        {
-            get
-            {
-                return resourceLoader.GetString("Hours_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} hour"
         /// </summary>
         public static string Hours_one
@@ -26089,50 +23307,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Hours_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Hours_two
-        {
-            get
-            {
-                return resourceLoader.GetString("Hours_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Hours_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("Hours_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string HoursBold_few
-        {
-            get
-            {
-                return resourceLoader.GetString("HoursBold_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string HoursBold_many
-        {
-            get
-            {
-                return resourceLoader.GetString("HoursBold_many");
             }
         }
         
@@ -26159,50 +23333,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string HoursBold_two
-        {
-            get
-            {
-                return resourceLoader.GetString("HoursBold_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string HoursBold_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("HoursBold_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string HoursSchedule_few
-        {
-            get
-            {
-                return resourceLoader.GetString("HoursSchedule_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string HoursSchedule_many
-        {
-            get
-            {
-                return resourceLoader.GetString("HoursSchedule_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} hour"
         /// </summary>
         public static string HoursSchedule_one
@@ -26221,28 +23351,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("HoursSchedule_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string HoursSchedule_two
-        {
-            get
-            {
-                return resourceLoader.GetString("HoursSchedule_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string HoursSchedule_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("HoursSchedule_zero");
             }
         }
         
@@ -27125,28 +24233,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Invitations_few
-        {
-            get
-            {
-                return resourceLoader.GetString("Invitations_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Invitations_many
-        {
-            get
-            {
-                return resourceLoader.GetString("Invitations_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} invitation"
         /// </summary>
         public static string Invitations_one
@@ -27165,28 +24251,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Invitations_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Invitations_two
-        {
-            get
-            {
-                return resourceLoader.GetString("Invitations_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Invitations_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("Invitations_zero");
             }
         }
         
@@ -27268,28 +24332,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string InviteLinkCount_few
-        {
-            get
-            {
-                return resourceLoader.GetString("InviteLinkCount_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string InviteLinkCount_many
-        {
-            get
-            {
-                return resourceLoader.GetString("InviteLinkCount_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} invite link"
         /// </summary>
         public static string InviteLinkCount_one
@@ -27308,28 +24350,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("InviteLinkCount_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string InviteLinkCount_two
-        {
-            get
-            {
-                return resourceLoader.GetString("InviteLinkCount_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string InviteLinkCount_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("InviteLinkCount_zero");
             }
         }
         
@@ -27367,28 +24387,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string InviteTextNum_few
-        {
-            get
-            {
-                return resourceLoader.GetString("InviteTextNum_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string InviteTextNum_many
-        {
-            get
-            {
-                return resourceLoader.GetString("InviteTextNum_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Hey, I'm using Telegram to chat – and so are {0} of our other contact. Join us! Download it here: {1}"
         /// </summary>
         public static string InviteTextNum_one
@@ -27407,28 +24405,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("InviteTextNum_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string InviteTextNum_two
-        {
-            get
-            {
-                return resourceLoader.GetString("InviteTextNum_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string InviteTextNum_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("InviteTextNum_zero");
             }
         }
         
@@ -27818,28 +24794,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string items_few
-        {
-            get
-            {
-                return resourceLoader.GetString("items_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string items_many
-        {
-            get
-            {
-                return resourceLoader.GetString("items_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} item"
         /// </summary>
         public static string items_one
@@ -27858,28 +24812,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("items_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string items_two
-        {
-            get
-            {
-                return resourceLoader.GetString("items_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string items_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("items_zero");
             }
         }
         
@@ -28005,28 +24937,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string JoinRequests_few
-        {
-            get
-            {
-                return resourceLoader.GetString("JoinRequests_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string JoinRequests_many
-        {
-            get
-            {
-                return resourceLoader.GetString("JoinRequests_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} join request"
         /// </summary>
         public static string JoinRequests_one
@@ -28045,28 +24955,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("JoinRequests_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string JoinRequests_two
-        {
-            get
-            {
-                return resourceLoader.GetString("JoinRequests_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string JoinRequests_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("JoinRequests_zero");
             }
         }
         
@@ -28093,28 +24981,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string JoinUsersRequests_few
-        {
-            get
-            {
-                return resourceLoader.GetString("JoinUsersRequests_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string JoinUsersRequests_many
-        {
-            get
-            {
-                return resourceLoader.GetString("JoinUsersRequests_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} join request"
         /// </summary>
         public static string JoinUsersRequests_one
@@ -28133,28 +24999,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("JoinUsersRequests_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string JoinUsersRequests_two
-        {
-            get
-            {
-                return resourceLoader.GetString("JoinUsersRequests_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string JoinUsersRequests_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("JoinUsersRequests_zero");
             }
         }
         
@@ -28400,28 +25244,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Languages_few
-        {
-            get
-            {
-                return resourceLoader.GetString("Languages_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Languages_many
-        {
-            get
-            {
-                return resourceLoader.GetString("Languages_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} Language"
         /// </summary>
         public static string Languages_one
@@ -28440,28 +25262,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Languages_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Languages_two
-        {
-            get
-            {
-                return resourceLoader.GetString("Languages_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Languages_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("Languages_zero");
             }
         }
         
@@ -28807,28 +25607,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string LeaveCommunities_few
-        {
-            get
-            {
-                return resourceLoader.GetString("LeaveCommunities_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string LeaveCommunities_many
-        {
-            get
-            {
-                return resourceLoader.GetString("LeaveCommunities_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Leave community"
         /// </summary>
         public static string LeaveCommunities_one
@@ -28847,28 +25625,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("LeaveCommunities_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string LeaveCommunities_two
-        {
-            get
-            {
-                return resourceLoader.GetString("LeaveCommunities_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string LeaveCommunities_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("LeaveCommunities_zero");
             }
         }
         
@@ -29060,7 +25816,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "An older GIF was replaced with this one. You can **increase the limit** to {0} GIFs"
+        /// Localized resource similar to "An older GIF was replaced with this one. You can **increase the limit** to {0} GIFs."
         /// </summary>
         public static string LimitReachedFavoriteGifsSubtitle
         {
@@ -29577,28 +26333,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Links_few
-        {
-            get
-            {
-                return resourceLoader.GetString("Links_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Links_many
-        {
-            get
-            {
-                return resourceLoader.GetString("Links_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} link"
         /// </summary>
         public static string Links_one
@@ -29617,28 +26351,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Links_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Links_two
-        {
-            get
-            {
-                return resourceLoader.GetString("Links_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Links_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("Links_zero");
             }
         }
         
@@ -29764,7 +26476,8 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Please wait a few moments while we generate your stats."
+        /// Localized resource similar to "Please wait a few moments while
+        ///we generate your stats."
         /// </summary>
         public static string LoadingStatsDescription
         {
@@ -30318,28 +27031,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Please allow **Telegram** to manage all files to open in-app file browser"
-        /// </summary>
-        public static string ManageAllFilesRational
-        {
-            get
-            {
-                return resourceLoader.GetString("ManageAllFilesRational");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Telegram needs permission to manage all files to migrate old cache files to Scoped Storage"
-        /// </summary>
-        public static string ManageAllFilesRational2
-        {
-            get
-            {
-                return resourceLoader.GetString("ManageAllFilesRational2");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Manage Channel"
         /// </summary>
         public static string ManageChannel
@@ -30571,28 +27262,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MasksCount_few
-        {
-            get
-            {
-                return resourceLoader.GetString("MasksCount_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MasksCount_many
-        {
-            get
-            {
-                return resourceLoader.GetString("MasksCount_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} mask"
         /// </summary>
         public static string MasksCount_one
@@ -30611,28 +27280,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("MasksCount_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MasksCount_two
-        {
-            get
-            {
-                return resourceLoader.GetString("MasksCount_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MasksCount_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("MasksCount_zero");
             }
         }
         
@@ -30681,28 +27328,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Media_few
-        {
-            get
-            {
-                return resourceLoader.GetString("Media_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Media_many
-        {
-            get
-            {
-                return resourceLoader.GetString("Media_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} media"
         /// </summary>
         public static string Media_one
@@ -30721,50 +27346,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Media_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Media_two
-        {
-            get
-            {
-                return resourceLoader.GetString("Media_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Media_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("Media_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MediaSavedHint_few
-        {
-            get
-            {
-                return resourceLoader.GetString("MediaSavedHint_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MediaSavedHint_many
-        {
-            get
-            {
-                return resourceLoader.GetString("MediaSavedHint_many");
             }
         }
         
@@ -30791,50 +27372,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MediaSavedHint_two
-        {
-            get
-            {
-                return resourceLoader.GetString("MediaSavedHint_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MediaSavedHint_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("MediaSavedHint_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MediaSelected_few
-        {
-            get
-            {
-                return resourceLoader.GetString("MediaSelected_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MediaSelected_many
-        {
-            get
-            {
-                return resourceLoader.GetString("MediaSelected_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} media selected"
         /// </summary>
         public static string MediaSelected_one
@@ -30853,28 +27390,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("MediaSelected_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MediaSelected_two
-        {
-            get
-            {
-                return resourceLoader.GetString("MediaSelected_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MediaSelected_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("MediaSelected_zero");
             }
         }
         
@@ -31080,28 +27595,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Members_few
-        {
-            get
-            {
-                return resourceLoader.GetString("Members_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Members_many
-        {
-            get
-            {
-                return resourceLoader.GetString("Members_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} member"
         /// </summary>
         public static string Members_one
@@ -31120,50 +27613,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Members_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Members_two
-        {
-            get
-            {
-                return resourceLoader.GetString("Members_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Members_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("Members_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MembersAreSpeakingToast_few
-        {
-            get
-            {
-                return resourceLoader.GetString("MembersAreSpeakingToast_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MembersAreSpeakingToast_many
-        {
-            get
-            {
-                return resourceLoader.GetString("MembersAreSpeakingToast_many");
             }
         }
         
@@ -31190,28 +27639,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MembersAreSpeakingToast_two
-        {
-            get
-            {
-                return resourceLoader.GetString("MembersAreSpeakingToast_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MembersAreSpeakingToast_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("MembersAreSpeakingToast_zero");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} of {1} selected"
         /// </summary>
         public static string MembersCount
@@ -31219,28 +27646,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("MembersCount");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MembersCountSelected_few
-        {
-            get
-            {
-                return resourceLoader.GetString("MembersCountSelected_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MembersCountSelected_many
-        {
-            get
-            {
-                return resourceLoader.GetString("MembersCountSelected_many");
             }
         }
         
@@ -31263,28 +27668,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("MembersCountSelected_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MembersCountSelected_two
-        {
-            get
-            {
-                return resourceLoader.GetString("MembersCountSelected_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MembersCountSelected_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("MembersCountSelected_zero");
             }
         }
         
@@ -31322,28 +27705,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MembersTalking_few
-        {
-            get
-            {
-                return resourceLoader.GetString("MembersTalking_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MembersTalking_many
-        {
-            get
-            {
-                return resourceLoader.GetString("MembersTalking_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} member speaking"
         /// </summary>
         public static string MembersTalking_one
@@ -31362,28 +27723,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("MembersTalking_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MembersTalking_two
-        {
-            get
-            {
-                return resourceLoader.GetString("MembersTalking_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MembersTalking_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("MembersTalking_zero");
             }
         }
         
@@ -31434,44 +27773,11 @@ namespace Unigram.Strings
         /// <summary>
         /// Localized resource similar to "This message contains emoji from **{0} Packs**."
         /// </summary>
-        public static string MessageContainsEmojiPacks_few
-        {
-            get
-            {
-                return resourceLoader.GetString("MessageContainsEmojiPacks_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "This message contains emoji from **{0} Packs**."
-        /// </summary>
-        public static string MessageContainsEmojiPacks_many
-        {
-            get
-            {
-                return resourceLoader.GetString("MessageContainsEmojiPacks_many");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "This message contains emoji from **{0} Packs**."
-        /// </summary>
         public static string MessageContainsEmojiPacks_other
         {
             get
             {
                 return resourceLoader.GetString("MessageContainsEmojiPacks_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "This message contains emoji from **{0} Packs**."
-        /// </summary>
-        public static string MessageContainsEmojiPacks_two
-        {
-            get
-            {
-                return resourceLoader.GetString("MessageContainsEmojiPacks_two");
             }
         }
         
@@ -31597,28 +27903,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MessagePlayed_few
-        {
-            get
-            {
-                return resourceLoader.GetString("MessagePlayed_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MessagePlayed_many
-        {
-            get
-            {
-                return resourceLoader.GetString("MessagePlayed_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Played"
         /// </summary>
         public static string MessagePlayed_one
@@ -31641,28 +27925,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MessagePlayed_two
-        {
-            get
-            {
-                return resourceLoader.GetString("MessagePlayed_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MessagePlayed_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("MessagePlayed_zero");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Show Message Previews"
         /// </summary>
         public static string MessagePreview
@@ -31670,28 +27932,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("MessagePreview");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string messages_few
-        {
-            get
-            {
-                return resourceLoader.GetString("messages_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string messages_many
-        {
-            get
-            {
-                return resourceLoader.GetString("messages_many");
             }
         }
         
@@ -31718,50 +27958,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string messages_two
-        {
-            get
-            {
-                return resourceLoader.GetString("messages_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string messages_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("messages_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MessagesBold_few
-        {
-            get
-            {
-                return resourceLoader.GetString("MessagesBold_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MessagesBold_many
-        {
-            get
-            {
-                return resourceLoader.GetString("MessagesBold_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "**{0}** message"
         /// </summary>
         public static string MessagesBold_one
@@ -31780,28 +27976,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("MessagesBold_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MessagesBold_two
-        {
-            get
-            {
-                return resourceLoader.GetString("MessagesBold_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MessagesBold_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("MessagesBold_zero");
             }
         }
         
@@ -31938,28 +28112,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MessagesDeletedHint_few
-        {
-            get
-            {
-                return resourceLoader.GetString("MessagesDeletedHint_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MessagesDeletedHint_many
-        {
-            get
-            {
-                return resourceLoader.GetString("MessagesDeletedHint_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Message deleted"
         /// </summary>
         public static string MessagesDeletedHint_one
@@ -31978,50 +28130,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("MessagesDeletedHint_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MessagesDeletedHint_two
-        {
-            get
-            {
-                return resourceLoader.GetString("MessagesDeletedHint_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MessagesDeletedHint_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("MessagesDeletedHint_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MessagesDeletedUndo_few
-        {
-            get
-            {
-                return resourceLoader.GetString("MessagesDeletedUndo_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MessagesDeletedUndo_many
-        {
-            get
-            {
-                return resourceLoader.GetString("MessagesDeletedUndo_many");
             }
         }
         
@@ -32048,50 +28156,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MessagesDeletedUndo_two
-        {
-            get
-            {
-                return resourceLoader.GetString("MessagesDeletedUndo_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MessagesDeletedUndo_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("MessagesDeletedUndo_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MessageSeen_few
-        {
-            get
-            {
-                return resourceLoader.GetString("MessageSeen_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MessageSeen_many
-        {
-            get
-            {
-                return resourceLoader.GetString("MessageSeen_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Seen"
         /// </summary>
         public static string MessageSeen_one
@@ -32110,28 +28174,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("MessageSeen_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MessageSeen_two
-        {
-            get
-            {
-                return resourceLoader.GetString("MessageSeen_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MessageSeen_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("MessageSeen_zero");
             }
         }
         
@@ -32169,28 +28211,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MessagesUnpinned_few
-        {
-            get
-            {
-                return resourceLoader.GetString("MessagesUnpinned_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MessagesUnpinned_many
-        {
-            get
-            {
-                return resourceLoader.GetString("MessagesUnpinned_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Message unpinned."
         /// </summary>
         public static string MessagesUnpinned_one
@@ -32213,28 +28233,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MessagesUnpinned_two
-        {
-            get
-            {
-                return resourceLoader.GetString("MessagesUnpinned_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MessagesUnpinned_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("MessagesUnpinned_zero");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Message unpinned."
         /// </summary>
         public static string MessageUnpinnedHint
@@ -32242,28 +28240,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("MessageUnpinnedHint");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Meters_few
-        {
-            get
-            {
-                return resourceLoader.GetString("Meters_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Meters_many
-        {
-            get
-            {
-                return resourceLoader.GetString("Meters_many");
             }
         }
         
@@ -32286,28 +28262,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Meters_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Meters_two
-        {
-            get
-            {
-                return resourceLoader.GetString("Meters_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Meters_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("Meters_zero");
             }
         }
         
@@ -32363,17 +28317,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Mi");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Migrate old folder to Scoped Storage"
-        /// </summary>
-        public static string MigrateOldFolder
-        {
-            get
-            {
-                return resourceLoader.GetString("MigrateOldFolder");
             }
         }
         
@@ -32468,28 +28411,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Minutes_few
-        {
-            get
-            {
-                return resourceLoader.GetString("Minutes_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Minutes_many
-        {
-            get
-            {
-                return resourceLoader.GetString("Minutes_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} minute"
         /// </summary>
         public static string Minutes_one
@@ -32508,50 +28429,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Minutes_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Minutes_two
-        {
-            get
-            {
-                return resourceLoader.GetString("Minutes_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Minutes_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("Minutes_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MinutesBold_few
-        {
-            get
-            {
-                return resourceLoader.GetString("MinutesBold_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MinutesBold_many
-        {
-            get
-            {
-                return resourceLoader.GetString("MinutesBold_many");
             }
         }
         
@@ -32578,50 +28455,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MinutesBold_two
-        {
-            get
-            {
-                return resourceLoader.GetString("MinutesBold_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MinutesBold_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("MinutesBold_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MinutesSchedule_few
-        {
-            get
-            {
-                return resourceLoader.GetString("MinutesSchedule_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MinutesSchedule_many
-        {
-            get
-            {
-                return resourceLoader.GetString("MinutesSchedule_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} minute"
         /// </summary>
         public static string MinutesSchedule_one
@@ -32640,28 +28473,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("MinutesSchedule_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MinutesSchedule_two
-        {
-            get
-            {
-                return resourceLoader.GetString("MinutesSchedule_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MinutesSchedule_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("MinutesSchedule_zero");
             }
         }
         
@@ -32754,28 +28565,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Months_few
-        {
-            get
-            {
-                return resourceLoader.GetString("Months_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Months_many
-        {
-            get
-            {
-                return resourceLoader.GetString("Months_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} month"
         /// </summary>
         public static string Months_one
@@ -32798,28 +28587,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Months_two
-        {
-            get
-            {
-                return resourceLoader.GetString("Months_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Months_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("Months_zero");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "More info"
         /// </summary>
         public static string MoreInfo
@@ -32827,28 +28594,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("MoreInfo");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MusicFiles_few
-        {
-            get
-            {
-                return resourceLoader.GetString("MusicFiles_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MusicFiles_many
-        {
-            get
-            {
-                return resourceLoader.GetString("MusicFiles_many");
             }
         }
         
@@ -32871,28 +28616,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("MusicFiles_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MusicFiles_two
-        {
-            get
-            {
-                return resourceLoader.GetString("MusicFiles_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string MusicFiles_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("MusicFiles_zero");
             }
         }
         
@@ -33392,28 +29115,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string NewMessages_few
-        {
-            get
-            {
-                return resourceLoader.GetString("NewMessages_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string NewMessages_many
-        {
-            get
-            {
-                return resourceLoader.GetString("NewMessages_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} new message"
         /// </summary>
         public static string NewMessages_one
@@ -33432,28 +29133,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("NewMessages_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string NewMessages_two
-        {
-            get
-            {
-                return resourceLoader.GetString("NewMessages_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string NewMessages_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("NewMessages_zero");
             }
         }
         
@@ -36873,28 +32552,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string OnlineCount_few
-        {
-            get
-            {
-                return resourceLoader.GetString("OnlineCount_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string OnlineCount_many
-        {
-            get
-            {
-                return resourceLoader.GetString("OnlineCount_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} online"
         /// </summary>
         public static string OnlineCount_one
@@ -36913,28 +32570,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("OnlineCount_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string OnlineCount_two
-        {
-            get
-            {
-                return resourceLoader.GetString("OnlineCount_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string OnlineCount_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("OnlineCount_zero");
             }
         }
         
@@ -37225,28 +32860,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Option_few
-        {
-            get
-            {
-                return resourceLoader.GetString("Option_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Option_many
-        {
-            get
-            {
-                return resourceLoader.GetString("Option_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} more option"
         /// </summary>
         public static string Option_one
@@ -37265,28 +32878,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Option_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Option_two
-        {
-            get
-            {
-                return resourceLoader.GetString("Option_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Option_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("Option_zero");
             }
         }
         
@@ -37717,28 +33308,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Participants_few
-        {
-            get
-            {
-                return resourceLoader.GetString("Participants_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Participants_many
-        {
-            get
-            {
-                return resourceLoader.GetString("Participants_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} participant"
         /// </summary>
         public static string Participants_one
@@ -37757,28 +33326,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Participants_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Participants_two
-        {
-            get
-            {
-                return resourceLoader.GetString("Participants_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Participants_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("Participants_zero");
             }
         }
         
@@ -40543,7 +36090,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Sorry, the payment was cancelled by the bot."
+        /// Localized resource similar to "Sorry, the payment was canceled by the bot."
         /// </summary>
         public static string PaymentPrecheckoutFailed
         {
@@ -40897,28 +36444,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PeopleCanJoinViaLinkCount_few
-        {
-            get
-            {
-                return resourceLoader.GetString("PeopleCanJoinViaLinkCount_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PeopleCanJoinViaLinkCount_many
-        {
-            get
-            {
-                return resourceLoader.GetString("PeopleCanJoinViaLinkCount_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} person can join via this link."
         /// </summary>
         public static string PeopleCanJoinViaLinkCount_one
@@ -40937,50 +36462,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("PeopleCanJoinViaLinkCount_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PeopleCanJoinViaLinkCount_two
-        {
-            get
-            {
-                return resourceLoader.GetString("PeopleCanJoinViaLinkCount_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PeopleCanJoinViaLinkCount_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("PeopleCanJoinViaLinkCount_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PeopleJoined_few
-        {
-            get
-            {
-                return resourceLoader.GetString("PeopleJoined_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PeopleJoined_many
-        {
-            get
-            {
-                return resourceLoader.GetString("PeopleJoined_many");
             }
         }
         
@@ -41007,50 +36488,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PeopleJoined_two
-        {
-            get
-            {
-                return resourceLoader.GetString("PeopleJoined_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PeopleJoined_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("PeopleJoined_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PeopleJoinedRemaining_few
-        {
-            get
-            {
-                return resourceLoader.GetString("PeopleJoinedRemaining_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PeopleJoinedRemaining_many
-        {
-            get
-            {
-                return resourceLoader.GetString("PeopleJoinedRemaining_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} remaining"
         /// </summary>
         public static string PeopleJoinedRemaining_one
@@ -41069,28 +36506,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("PeopleJoinedRemaining_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PeopleJoinedRemaining_two
-        {
-            get
-            {
-                return resourceLoader.GetString("PeopleJoinedRemaining_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PeopleJoinedRemaining_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("PeopleJoinedRemaining_zero");
             }
         }
         
@@ -41695,28 +37110,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Photos_few
-        {
-            get
-            {
-                return resourceLoader.GetString("Photos_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Photos_many
-        {
-            get
-            {
-                return resourceLoader.GetString("Photos_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} photo"
         /// </summary>
         public static string Photos_one
@@ -41735,28 +37128,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Photos_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Photos_two
-        {
-            get
-            {
-                return resourceLoader.GetString("Photos_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Photos_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("Photos_zero");
             }
         }
         
@@ -41783,28 +37154,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PhotosSavedHint_few
-        {
-            get
-            {
-                return resourceLoader.GetString("PhotosSavedHint_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PhotosSavedHint_many
-        {
-            get
-            {
-                return resourceLoader.GetString("PhotosSavedHint_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Photo saved to gallery."
         /// </summary>
         public static string PhotosSavedHint_one
@@ -41827,50 +37176,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PhotosSavedHint_two
-        {
-            get
-            {
-                return resourceLoader.GetString("PhotosSavedHint_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PhotosSavedHint_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("PhotosSavedHint_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PhotosSelected_few
-        {
-            get
-            {
-                return resourceLoader.GetString("PhotosSelected_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PhotosSelected_many
-        {
-            get
-            {
-                return resourceLoader.GetString("PhotosSelected_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} photo selected"
         /// </summary>
         public static string PhotosSelected_one
@@ -41889,28 +37194,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("PhotosSelected_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PhotosSelected_two
-        {
-            get
-            {
-                return resourceLoader.GetString("PhotosSelected_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PhotosSelected_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("PhotosSelected_zero");
             }
         }
         
@@ -42047,28 +37330,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PinnedDialogsCount_few
-        {
-            get
-            {
-                return resourceLoader.GetString("PinnedDialogsCount_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PinnedDialogsCount_many
-        {
-            get
-            {
-                return resourceLoader.GetString("PinnedDialogsCount_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Chat pinned"
         /// </summary>
         public static string PinnedDialogsCount_one
@@ -42087,28 +37348,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("PinnedDialogsCount_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PinnedDialogsCount_two
-        {
-            get
-            {
-                return resourceLoader.GetString("PinnedDialogsCount_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PinnedDialogsCount_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("PinnedDialogsCount_zero");
             }
         }
         
@@ -42135,28 +37374,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PinnedMessagesCount_few
-        {
-            get
-            {
-                return resourceLoader.GetString("PinnedMessagesCount_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PinnedMessagesCount_many
-        {
-            get
-            {
-                return resourceLoader.GetString("PinnedMessagesCount_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Pinned Message"
         /// </summary>
         public static string PinnedMessagesCount_one
@@ -42175,28 +37392,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("PinnedMessagesCount_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PinnedMessagesCount_two
-        {
-            get
-            {
-                return resourceLoader.GetString("PinnedMessagesCount_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PinnedMessagesCount_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("PinnedMessagesCount_zero");
             }
         }
         
@@ -42432,28 +37627,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Points_few
-        {
-            get
-            {
-                return resourceLoader.GetString("Points_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Points_many
-        {
-            get
-            {
-                return resourceLoader.GetString("Points_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0}"
         /// </summary>
         public static string Points_one
@@ -42472,28 +37645,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Points_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Points_two
-        {
-            get
-            {
-                return resourceLoader.GetString("Points_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Points_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("Points_zero");
             }
         }
         
@@ -42751,7 +37902,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Premium App Icon"
+        /// Localized resource similar to "Premium App Icons"
         /// </summary>
         public static string PremiumPreviewAppIcon
         {
@@ -42828,7 +37979,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Include animated emoji from different emoji sets in any message you send."
+        /// Localized resource similar to "Include animated emoji from different packs in any message you send."
         /// </summary>
         public static string PremiumPreviewEmojiDescription
         {
@@ -42839,7 +37990,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "This emoji pack is available only to subscribers of **Telegram Premium.**"
+        /// Localized resource similar to "This emoji pack is available only to subscribers of **Telegram Premium**."
         /// </summary>
         public static string PremiumPreviewEmojiPack
         {
@@ -43048,7 +38199,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "This pack contains premium stickers like this one."
+        /// Localized resource similar to "This set contains premium stickers like this one."
         /// </summary>
         public static string PremiumStickerTooltip
         {
@@ -43081,28 +38232,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PreviewForwardAudio_few
-        {
-            get
-            {
-                return resourceLoader.GetString("PreviewForwardAudio_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PreviewForwardAudio_many
-        {
-            get
-            {
-                return resourceLoader.GetString("PreviewForwardAudio_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Forward voice message"
         /// </summary>
         public static string PreviewForwardAudio_one
@@ -43121,50 +38250,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("PreviewForwardAudio_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PreviewForwardAudio_two
-        {
-            get
-            {
-                return resourceLoader.GetString("PreviewForwardAudio_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PreviewForwardAudio_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("PreviewForwardAudio_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PreviewForwardContact_few
-        {
-            get
-            {
-                return resourceLoader.GetString("PreviewForwardContact_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PreviewForwardContact_many
-        {
-            get
-            {
-                return resourceLoader.GetString("PreviewForwardContact_many");
             }
         }
         
@@ -43191,50 +38276,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PreviewForwardContact_two
-        {
-            get
-            {
-                return resourceLoader.GetString("PreviewForwardContact_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PreviewForwardContact_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("PreviewForwardContact_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PreviewForwardFile_few
-        {
-            get
-            {
-                return resourceLoader.GetString("PreviewForwardFile_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PreviewForwardFile_many
-        {
-            get
-            {
-                return resourceLoader.GetString("PreviewForwardFile_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Forward file"
         /// </summary>
         public static string PreviewForwardFile_one
@@ -43253,50 +38294,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("PreviewForwardFile_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PreviewForwardFile_two
-        {
-            get
-            {
-                return resourceLoader.GetString("PreviewForwardFile_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PreviewForwardFile_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("PreviewForwardFile_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PreviewForwardLocation_few
-        {
-            get
-            {
-                return resourceLoader.GetString("PreviewForwardLocation_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PreviewForwardLocation_many
-        {
-            get
-            {
-                return resourceLoader.GetString("PreviewForwardLocation_many");
             }
         }
         
@@ -43323,50 +38320,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PreviewForwardLocation_two
-        {
-            get
-            {
-                return resourceLoader.GetString("PreviewForwardLocation_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PreviewForwardLocation_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("PreviewForwardLocation_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PreviewForwardMessagesCount_few
-        {
-            get
-            {
-                return resourceLoader.GetString("PreviewForwardMessagesCount_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PreviewForwardMessagesCount_many
-        {
-            get
-            {
-                return resourceLoader.GetString("PreviewForwardMessagesCount_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Forward message"
         /// </summary>
         public static string PreviewForwardMessagesCount_one
@@ -43385,50 +38338,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("PreviewForwardMessagesCount_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PreviewForwardMessagesCount_two
-        {
-            get
-            {
-                return resourceLoader.GetString("PreviewForwardMessagesCount_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PreviewForwardMessagesCount_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("PreviewForwardMessagesCount_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PreviewForwardMusic_few
-        {
-            get
-            {
-                return resourceLoader.GetString("PreviewForwardMusic_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PreviewForwardMusic_many
-        {
-            get
-            {
-                return resourceLoader.GetString("PreviewForwardMusic_many");
             }
         }
         
@@ -43455,50 +38364,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PreviewForwardMusic_two
-        {
-            get
-            {
-                return resourceLoader.GetString("PreviewForwardMusic_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PreviewForwardMusic_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("PreviewForwardMusic_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PreviewForwardPhoto_few
-        {
-            get
-            {
-                return resourceLoader.GetString("PreviewForwardPhoto_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PreviewForwardPhoto_many
-        {
-            get
-            {
-                return resourceLoader.GetString("PreviewForwardPhoto_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Forward photo"
         /// </summary>
         public static string PreviewForwardPhoto_one
@@ -43517,50 +38382,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("PreviewForwardPhoto_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PreviewForwardPhoto_two
-        {
-            get
-            {
-                return resourceLoader.GetString("PreviewForwardPhoto_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PreviewForwardPhoto_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("PreviewForwardPhoto_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PreviewForwardPoll_few
-        {
-            get
-            {
-                return resourceLoader.GetString("PreviewForwardPoll_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PreviewForwardPoll_many
-        {
-            get
-            {
-                return resourceLoader.GetString("PreviewForwardPoll_many");
             }
         }
         
@@ -43587,50 +38408,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PreviewForwardPoll_two
-        {
-            get
-            {
-                return resourceLoader.GetString("PreviewForwardPoll_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PreviewForwardPoll_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("PreviewForwardPoll_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PreviewForwardRound_few
-        {
-            get
-            {
-                return resourceLoader.GetString("PreviewForwardRound_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PreviewForwardRound_many
-        {
-            get
-            {
-                return resourceLoader.GetString("PreviewForwardRound_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Forward video message"
         /// </summary>
         public static string PreviewForwardRound_one
@@ -43649,50 +38426,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("PreviewForwardRound_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PreviewForwardRound_two
-        {
-            get
-            {
-                return resourceLoader.GetString("PreviewForwardRound_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PreviewForwardRound_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("PreviewForwardRound_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PreviewForwardSticker_few
-        {
-            get
-            {
-                return resourceLoader.GetString("PreviewForwardSticker_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PreviewForwardSticker_many
-        {
-            get
-            {
-                return resourceLoader.GetString("PreviewForwardSticker_many");
             }
         }
         
@@ -43719,50 +38452,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PreviewForwardSticker_two
-        {
-            get
-            {
-                return resourceLoader.GetString("PreviewForwardSticker_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PreviewForwardSticker_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("PreviewForwardSticker_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PreviewForwardVideo_few
-        {
-            get
-            {
-                return resourceLoader.GetString("PreviewForwardVideo_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PreviewForwardVideo_many
-        {
-            get
-            {
-                return resourceLoader.GetString("PreviewForwardVideo_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Forward video"
         /// </summary>
         public static string PreviewForwardVideo_one
@@ -43781,28 +38470,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("PreviewForwardVideo_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PreviewForwardVideo_two
-        {
-            get
-            {
-                return resourceLoader.GetString("PreviewForwardVideo_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PreviewForwardVideo_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("PreviewForwardVideo_zero");
             }
         }
         
@@ -44412,7 +39079,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "You can restrict who can send you voice messages with granular precision."
+        /// Localized resource similar to "You can restrict who can send you voice or video messages with granular precision."
         /// </summary>
         public static string PrivacyVoiceMessagesInfo
         {
@@ -44445,7 +39112,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Who can send me voice messages?"
+        /// Localized resource similar to "Who can send me voice or video messages?"
         /// </summary>
         public static string PrivacyVoiceMessagesTitle
         {
@@ -44511,7 +39178,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Proximity alert cancelled"
+        /// Localized resource similar to "Proximity alert canceled"
         /// </summary>
         public static string ProximityAlertCancelled
         {
@@ -44863,28 +39530,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PublicSharesCount_few
-        {
-            get
-            {
-                return resourceLoader.GetString("PublicSharesCount_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PublicSharesCount_many
-        {
-            get
-            {
-                return resourceLoader.GetString("PublicSharesCount_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} public share"
         /// </summary>
         public static string PublicSharesCount_one
@@ -44903,28 +39548,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("PublicSharesCount_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PublicSharesCount_two
-        {
-            get
-            {
-                return resourceLoader.GetString("PublicSharesCount_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string PublicSharesCount_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("PublicSharesCount_zero");
             }
         }
         
@@ -45622,28 +40245,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Reacted_few
-        {
-            get
-            {
-                return resourceLoader.GetString("Reacted_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Reacted_many
-        {
-            get
-            {
-                return resourceLoader.GetString("Reacted_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} Reacted"
         /// </summary>
         public static string Reacted_one
@@ -45666,28 +40267,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Reacted_two
-        {
-            get
-            {
-                return resourceLoader.GetString("Reacted_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Reacted_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("Reacted_zero");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Reactions"
         /// </summary>
         public static string Reactions
@@ -45695,39 +40274,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Reactions");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "{0}/{1}"
-        /// </summary>
-        public static string ReactionsCount
-        {
-            get
-            {
-                return resourceLoader.GetString("ReactionsCount");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ReactionsCount_few
-        {
-            get
-            {
-                return resourceLoader.GetString("ReactionsCount_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ReactionsCount_many
-        {
-            get
-            {
-                return resourceLoader.GetString("ReactionsCount_many");
             }
         }
         
@@ -45750,28 +40296,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ReactionsCount_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ReactionsCount_two
-        {
-            get
-            {
-                return resourceLoader.GetString("ReactionsCount_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ReactionsCount_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("ReactionsCount_zero");
             }
         }
         
@@ -45908,28 +40432,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Recipient_few
-        {
-            get
-            {
-                return resourceLoader.GetString("Recipient_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Recipient_many
-        {
-            get
-            {
-                return resourceLoader.GetString("Recipient_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} recipient"
         /// </summary>
         public static string Recipient_one
@@ -45948,28 +40450,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Recipient_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Recipient_two
-        {
-            get
-            {
-                return resourceLoader.GetString("Recipient_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Recipient_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("Recipient_zero");
             }
         }
         
@@ -46216,28 +40696,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string RemoveDocumentsMessage_few
-        {
-            get
-            {
-                return resourceLoader.GetString("RemoveDocumentsMessage_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string RemoveDocumentsMessage_many
-        {
-            get
-            {
-                return resourceLoader.GetString("RemoveDocumentsMessage_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Do you want to remove **this item** from Downloads?"
         /// </summary>
         public static string RemoveDocumentsMessage_one
@@ -46256,50 +40714,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("RemoveDocumentsMessage_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string RemoveDocumentsMessage_two
-        {
-            get
-            {
-                return resourceLoader.GetString("RemoveDocumentsMessage_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string RemoveDocumentsMessage_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("RemoveDocumentsMessage_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string RemoveDocumentsTitle_few
-        {
-            get
-            {
-                return resourceLoader.GetString("RemoveDocumentsTitle_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string RemoveDocumentsTitle_many
-        {
-            get
-            {
-                return resourceLoader.GetString("RemoveDocumentsTitle_many");
             }
         }
         
@@ -46326,50 +40740,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string RemoveDocumentsTitle_two
-        {
-            get
-            {
-                return resourceLoader.GetString("RemoveDocumentsTitle_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string RemoveDocumentsTitle_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("RemoveDocumentsTitle_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string RemovedUser_few
-        {
-            get
-            {
-                return resourceLoader.GetString("RemovedUser_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string RemovedUser_many
-        {
-            get
-            {
-                return resourceLoader.GetString("RemovedUser_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} removed user"
         /// </summary>
         public static string RemovedUser_one
@@ -46388,28 +40758,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("RemovedUser_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string RemovedUser_two
-        {
-            get
-            {
-                return resourceLoader.GetString("RemovedUser_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string RemovedUser_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("RemovedUser_zero");
             }
         }
         
@@ -46436,7 +40784,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "REMOVE {0}"
+        /// Localized resource similar to "Remove {0}"
         /// </summary>
         public static string RemoveStickersCount
         {
@@ -46513,28 +40861,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Replies_few
-        {
-            get
-            {
-                return resourceLoader.GetString("Replies_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Replies_many
-        {
-            get
-            {
-                return resourceLoader.GetString("Replies_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} Reply"
         /// </summary>
         public static string Replies_one
@@ -46553,28 +40879,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Replies_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Replies_two
-        {
-            get
-            {
-                return resourceLoader.GetString("Replies_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Replies_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("Replies_zero");
             }
         }
         
@@ -47220,7 +41524,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Your recent attempts to reset this account have been cancelled by its active user. Please try again in 7 days."
+        /// Localized resource similar to "Your recent attempts to reset this account have been canceled by its active user. Please try again in 7 days."
         /// </summary>
         public static string ResetAccountCancelledAlert
         {
@@ -47708,28 +42012,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Restrictions_few
-        {
-            get
-            {
-                return resourceLoader.GetString("Restrictions_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Restrictions_many
-        {
-            get
-            {
-                return resourceLoader.GetString("Restrictions_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} restriction"
         /// </summary>
         public static string Restrictions_one
@@ -47748,28 +42030,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Restrictions_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Restrictions_two
-        {
-            get
-            {
-                return resourceLoader.GetString("Restrictions_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Restrictions_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("Restrictions_zero");
             }
         }
         
@@ -47965,28 +42225,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string RevokeLinks_few
-        {
-            get
-            {
-                return resourceLoader.GetString("RevokeLinks_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string RevokeLinks_many
-        {
-            get
-            {
-                return resourceLoader.GetString("RevokeLinks_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Revoke link"
         /// </summary>
         public static string RevokeLinks_one
@@ -48005,28 +42243,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("RevokeLinks_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string RevokeLinks_two
-        {
-            get
-            {
-                return resourceLoader.GetString("RevokeLinks_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string RevokeLinks_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("RevokeLinks_zero");
             }
         }
         
@@ -48840,28 +43056,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Seconds_few
-        {
-            get
-            {
-                return resourceLoader.GetString("Seconds_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Seconds_many
-        {
-            get
-            {
-                return resourceLoader.GetString("Seconds_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} second"
         /// </summary>
         public static string Seconds_one
@@ -48880,50 +43074,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Seconds_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Seconds_two
-        {
-            get
-            {
-                return resourceLoader.GetString("Seconds_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Seconds_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("Seconds_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string SecondsBold_few
-        {
-            get
-            {
-                return resourceLoader.GetString("SecondsBold_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string SecondsBold_many
-        {
-            get
-            {
-                return resourceLoader.GetString("SecondsBold_many");
             }
         }
         
@@ -48950,50 +43100,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string SecondsBold_two
-        {
-            get
-            {
-                return resourceLoader.GetString("SecondsBold_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string SecondsBold_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("SecondsBold_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string SecondsSchedule_few
-        {
-            get
-            {
-                return resourceLoader.GetString("SecondsSchedule_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string SecondsSchedule_many
-        {
-            get
-            {
-                return resourceLoader.GetString("SecondsSchedule_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} second"
         /// </summary>
         public static string SecondsSchedule_one
@@ -49012,28 +43118,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("SecondsSchedule_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string SecondsSchedule_two
-        {
-            get
-            {
-                return resourceLoader.GetString("SecondsSchedule_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string SecondsSchedule_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("SecondsSchedule_zero");
             }
         }
         
@@ -50239,6 +44323,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Set Emoji Status"
+        /// </summary>
+        public static string SetEmojiStatus
+        {
+            get
+            {
+                return resourceLoader.GetString("SetEmojiStatus");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Set a new password"
         /// </summary>
         public static string SetNewPassword
@@ -50580,28 +44675,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Shared_few
-        {
-            get
-            {
-                return resourceLoader.GetString("Shared_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Shared_many
-        {
-            get
-            {
-                return resourceLoader.GetString("Shared_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} shared"
         /// </summary>
         public static string Shared_one
@@ -50620,28 +44693,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Shared_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Shared_two
-        {
-            get
-            {
-                return resourceLoader.GetString("Shared_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Shared_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("Shared_zero");
             }
         }
         
@@ -51009,28 +45060,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Shares_few
-        {
-            get
-            {
-                return resourceLoader.GetString("Shares_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Shares_many
-        {
-            get
-            {
-                return resourceLoader.GetString("Shares_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} share"
         /// </summary>
         public static string Shares_one
@@ -51049,28 +45078,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Shares_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Shares_two
-        {
-            get
-            {
-                return resourceLoader.GetString("Shares_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Shares_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("Shares_zero");
             }
         }
         
@@ -51486,28 +45493,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ShowVotes_few
-        {
-            get
-            {
-                return resourceLoader.GetString("ShowVotes_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ShowVotes_many
-        {
-            get
-            {
-                return resourceLoader.GetString("ShowVotes_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Show More ({0})"
         /// </summary>
         public static string ShowVotes_one
@@ -51526,28 +45511,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ShowVotes_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ShowVotes_two
-        {
-            get
-            {
-                return resourceLoader.GetString("ShowVotes_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ShowVotes_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("ShowVotes_zero");
             }
         }
         
@@ -52494,28 +46457,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Stickers_few
-        {
-            get
-            {
-                return resourceLoader.GetString("Stickers_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Stickers_many
-        {
-            get
-            {
-                return resourceLoader.GetString("Stickers_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} sticker"
         /// </summary>
         public static string Stickers_one
@@ -52534,28 +46475,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Stickers_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Stickers_two
-        {
-            get
-            {
-                return resourceLoader.GetString("Stickers_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Stickers_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("Stickers_zero");
             }
         }
         
@@ -52615,28 +46534,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string StickerSets_few
-        {
-            get
-            {
-                return resourceLoader.GetString("StickerSets_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string StickerSets_many
-        {
-            get
-            {
-                return resourceLoader.GetString("StickerSets_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} sticker set"
         /// </summary>
         public static string StickerSets_one
@@ -52655,28 +46552,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("StickerSets_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string StickerSets_two
-        {
-            get
-            {
-                return resourceLoader.GetString("StickerSets_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string StickerSets_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("StickerSets_zero");
             }
         }
         
@@ -53044,28 +46919,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Subscribers_few
-        {
-            get
-            {
-                return resourceLoader.GetString("Subscribers_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Subscribers_many
-        {
-            get
-            {
-                return resourceLoader.GetString("Subscribers_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} subscriber"
         /// </summary>
         public static string Subscribers_one
@@ -53084,28 +46937,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Subscribers_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Subscribers_two
-        {
-            get
-            {
-                return resourceLoader.GetString("Subscribers_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Subscribers_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("Subscribers_zero");
             }
         }
         
@@ -53178,7 +47009,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Each time you enter an emoji you can replace it with an alternative animated emoji."
+        /// Localized resource similar to "Each time you enter an emoji you can replace it with an animated emoji."
         /// </summary>
         public static string SuggestAnimatedEmojiInfo
         {
@@ -53851,28 +47682,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string TelegramContacts_few
-        {
-            get
-            {
-                return resourceLoader.GetString("TelegramContacts_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string TelegramContacts_many
-        {
-            get
-            {
-                return resourceLoader.GetString("TelegramContacts_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} contact on Telegram"
         /// </summary>
         public static string TelegramContacts_one
@@ -53895,35 +47704,13 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string TelegramContacts_two
-        {
-            get
-            {
-                return resourceLoader.GetString("TelegramContacts_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string TelegramContacts_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("TelegramContacts_zero");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Telegram FAQ"
         /// </summary>
-        public static string TelegramFAQ
+        public static string TelegramFaq
         {
             get
             {
-                return resourceLoader.GetString("TelegramFAQ");
+                return resourceLoader.GetString("TelegramFaq");
             }
         }
         
@@ -54107,7 +47894,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "**{0}** has gifted you a {1}-month subscription for Telegram Premium."
+        /// Localized resource similar to "**{0}** has gifted you a {1}-month subscription to Telegram Premium."
         /// </summary>
         public static string TelegramPremiumUserGiftedPremiumDialogTitle
         {
@@ -54118,7 +47905,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "**{0}** now have access to additional features."
+        /// Localized resource similar to "**{0}** now has access to additional features."
         /// </summary>
         public static string TelegramPremiumUserGiftedPremiumOutboundDialogSubtitle
         {
@@ -54129,7 +47916,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "You gifted **{0}** a {1}-month subscription for Telegram Premium."
+        /// Localized resource similar to "You gifted **{0}** a {1}-month subscription to Telegram Premium."
         /// </summary>
         public static string TelegramPremiumUserGiftedPremiumOutboundDialogTitle
         {
@@ -54542,28 +48329,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ThemeInstallCount_few
-        {
-            get
-            {
-                return resourceLoader.GetString("ThemeInstallCount_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ThemeInstallCount_many
-        {
-            get
-            {
-                return resourceLoader.GetString("ThemeInstallCount_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} person is using this theme"
         /// </summary>
         public static string ThemeInstallCount_one
@@ -54582,28 +48347,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ThemeInstallCount_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ThemeInstallCount_two
-        {
-            get
-            {
-                return resourceLoader.GetString("ThemeInstallCount_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ThemeInstallCount_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("ThemeInstallCount_zero");
             }
         }
         
@@ -55060,28 +48803,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Times_few
-        {
-            get
-            {
-                return resourceLoader.GetString("Times_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Times_many
-        {
-            get
-            {
-                return resourceLoader.GetString("Times_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} time"
         /// </summary>
         public static string Times_one
@@ -55100,28 +48821,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Times_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Times_two
-        {
-            get
-            {
-                return resourceLoader.GetString("Times_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Times_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("Times_zero");
             }
         }
         
@@ -55949,6 +49648,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Try sending these emoji in **Saved Messages** for free to test."
+        /// </summary>
+        public static string UnlockPremiumEmojiHint2
+        {
+            get
+            {
+                return resourceLoader.GetString("UnlockPremiumEmojiHint2");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Unlock {0}"
         /// </summary>
         public static string UnlockPremiumEmojiPack
@@ -56103,28 +49813,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string UnpinnedDialogsCount_few
-        {
-            get
-            {
-                return resourceLoader.GetString("UnpinnedDialogsCount_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string UnpinnedDialogsCount_many
-        {
-            get
-            {
-                return resourceLoader.GetString("UnpinnedDialogsCount_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Chat unpinned"
         /// </summary>
         public static string UnpinnedDialogsCount_one
@@ -56143,28 +49831,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("UnpinnedDialogsCount_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string UnpinnedDialogsCount_two
-        {
-            get
-            {
-                return resourceLoader.GetString("UnpinnedDialogsCount_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string UnpinnedDialogsCount_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("UnpinnedDialogsCount_zero");
             }
         }
         
@@ -56268,28 +49934,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string UpdatedMinutes_few
-        {
-            get
-            {
-                return resourceLoader.GetString("UpdatedMinutes_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string UpdatedMinutes_many
-        {
-            get
-            {
-                return resourceLoader.GetString("UpdatedMinutes_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "updated {0} minute ago"
         /// </summary>
         public static string UpdatedMinutes_one
@@ -56308,28 +49952,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("UpdatedMinutes_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string UpdatedMinutes_two
-        {
-            get
-            {
-                return resourceLoader.GetString("UpdatedMinutes_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string UpdatedMinutes_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("UpdatedMinutes_zero");
             }
         }
         
@@ -57327,28 +50949,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Users_few
-        {
-            get
-            {
-                return resourceLoader.GetString("Users_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Users_many
-        {
-            get
-            {
-                return resourceLoader.GetString("Users_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} user"
         /// </summary>
         public static string Users_one
@@ -57367,50 +50967,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Users_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Users_two
-        {
-            get
-            {
-                return resourceLoader.GetString("Users_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Users_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("Users_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string UsersCount_few
-        {
-            get
-            {
-                return resourceLoader.GetString("UsersCount_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string UsersCount_many
-        {
-            get
-            {
-                return resourceLoader.GetString("UsersCount_many");
             }
         }
         
@@ -57437,50 +50993,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string UsersCount_two
-        {
-            get
-            {
-                return resourceLoader.GetString("UsersCount_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string UsersCount_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("UsersCount_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string UsersCountTitle_few
-        {
-            get
-            {
-                return resourceLoader.GetString("UsersCountTitle_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string UsersCountTitle_many
-        {
-            get
-            {
-                return resourceLoader.GetString("UsersCountTitle_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} user"
         /// </summary>
         public static string UsersCountTitle_one
@@ -57503,28 +51015,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string UsersCountTitle_two
-        {
-            get
-            {
-                return resourceLoader.GetString("UsersCountTitle_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string UsersCountTitle_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("UsersCountTitle_zero");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "**{0}** promoted to admin."
         /// </summary>
         public static string UserSetAsAdminHint
@@ -57532,28 +51022,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("UserSetAsAdminHint");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string UsersPluralized_few
-        {
-            get
-            {
-                return resourceLoader.GetString("UsersPluralized_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string UsersPluralized_many
-        {
-            get
-            {
-                return resourceLoader.GetString("UsersPluralized_many");
             }
         }
         
@@ -57576,28 +51044,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("UsersPluralized_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string UsersPluralized_two
-        {
-            get
-            {
-                return resourceLoader.GetString("UsersPluralized_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string UsersPluralized_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("UsersPluralized_zero");
             }
         }
         
@@ -57811,28 +51257,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Videos_few
-        {
-            get
-            {
-                return resourceLoader.GetString("Videos_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Videos_many
-        {
-            get
-            {
-                return resourceLoader.GetString("Videos_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} video"
         /// </summary>
         public static string Videos_one
@@ -57851,28 +51275,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Videos_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Videos_two
-        {
-            get
-            {
-                return resourceLoader.GetString("Videos_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Videos_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("Videos_zero");
             }
         }
         
@@ -57899,28 +51301,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string VideosSavedHint_few
-        {
-            get
-            {
-                return resourceLoader.GetString("VideosSavedHint_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string VideosSavedHint_many
-        {
-            get
-            {
-                return resourceLoader.GetString("VideosSavedHint_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Video saved to gallery."
         /// </summary>
         public static string VideosSavedHint_one
@@ -57943,50 +51323,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string VideosSavedHint_two
-        {
-            get
-            {
-                return resourceLoader.GetString("VideosSavedHint_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string VideosSavedHint_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("VideosSavedHint_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string VideosSelected_few
-        {
-            get
-            {
-                return resourceLoader.GetString("VideosSelected_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string VideosSelected_many
-        {
-            get
-            {
-                return resourceLoader.GetString("VideosSelected_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} video selected"
         /// </summary>
         public static string VideosSelected_one
@@ -58005,28 +51341,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("VideosSelected_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string VideosSelected_two
-        {
-            get
-            {
-                return resourceLoader.GetString("VideosSelected_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string VideosSelected_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("VideosSelected_zero");
             }
         }
         
@@ -58086,28 +51400,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ViewersWatching_few
-        {
-            get
-            {
-                return resourceLoader.GetString("ViewersWatching_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ViewersWatching_many
-        {
-            get
-            {
-                return resourceLoader.GetString("ViewersWatching_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} viewer"
         /// </summary>
         public static string ViewersWatching_one
@@ -58126,28 +51418,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ViewersWatching_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ViewersWatching_two
-        {
-            get
-            {
-                return resourceLoader.GetString("ViewersWatching_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ViewersWatching_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("ViewersWatching_zero");
             }
         }
         
@@ -58229,28 +51499,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ViewReplies_few
-        {
-            get
-            {
-                return resourceLoader.GetString("ViewReplies_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ViewReplies_many
-        {
-            get
-            {
-                return resourceLoader.GetString("ViewReplies_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "View {0} Reply"
         /// </summary>
         public static string ViewReplies_one
@@ -58273,50 +51521,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ViewReplies_two
-        {
-            get
-            {
-                return resourceLoader.GetString("ViewReplies_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string ViewReplies_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("ViewReplies_zero");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Views_few
-        {
-            get
-            {
-                return resourceLoader.GetString("Views_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Views_many
-        {
-            get
-            {
-                return resourceLoader.GetString("Views_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} view"
         /// </summary>
         public static string Views_one
@@ -58335,28 +51539,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Views_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Views_two
-        {
-            get
-            {
-                return resourceLoader.GetString("Views_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Views_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("Views_zero");
             }
         }
         
@@ -58416,28 +51598,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Voice_few
-        {
-            get
-            {
-                return resourceLoader.GetString("Voice_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Voice_many
-        {
-            get
-            {
-                return resourceLoader.GetString("Voice_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} voice message"
         /// </summary>
         public static string Voice_one
@@ -58456,28 +51616,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Voice_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Voice_two
-        {
-            get
-            {
-                return resourceLoader.GetString("Voice_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Voice_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("Voice_zero");
             }
         }
         
@@ -61425,28 +54563,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Vote_few
-        {
-            get
-            {
-                return resourceLoader.GetString("Vote_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Vote_many
-        {
-            get
-            {
-                return resourceLoader.GetString("Vote_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} vote"
         /// </summary>
         public static string Vote_one
@@ -61465,28 +54581,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Vote_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Vote_two
-        {
-            get
-            {
-                return resourceLoader.GetString("Vote_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Vote_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("Vote_zero");
             }
         }
         
@@ -61557,28 +54651,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Weeks_few
-        {
-            get
-            {
-                return resourceLoader.GetString("Weeks_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Weeks_many
-        {
-            get
-            {
-                return resourceLoader.GetString("Weeks_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} week"
         /// </summary>
         public static string Weeks_one
@@ -61597,28 +54669,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Weeks_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Weeks_two
-        {
-            get
-            {
-                return resourceLoader.GetString("Weeks_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Weeks_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("Weeks_zero");
             }
         }
         
@@ -61935,28 +54985,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Years_few
-        {
-            get
-            {
-                return resourceLoader.GetString("Years_few");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Years_many
-        {
-            get
-            {
-                return resourceLoader.GetString("Years_many");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} year"
         /// </summary>
         public static string Years_one
@@ -61975,28 +55003,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Years_other");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Years_two
-        {
-            get
-            {
-                return resourceLoader.GetString("Years_two");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string Years_zero
-        {
-            get
-            {
-                return resourceLoader.GetString("Years_zero");
             }
         }
         
@@ -62484,17 +55490,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("cloud_lng_forwarded_psa_covid");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Send a ?? emoji to any chat to get a random number from Telegram."
-        /// </summary>
-        public static string lng_about_dice
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_about_dice");
             }
         }
         
@@ -80540,6 +73535,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Your recent attempts to reset this account have been cancelled by its active user. Please try again in 7 days."
+        /// </summary>
+        public static string lng_signin_reset_cancelled
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_signin_reset_cancelled");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "{days_count} {hours_count} {minutes_count}"
         /// </summary>
         public static string lng_signin_reset_in_days
@@ -80737,19 +73743,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("lng_sponsored_info_description1");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Sponsored Messages are currently in test mode. Once they are fully launched and allow Telegram to cover its basic costs, we will start sharing ad revenue with the owners of public channels in which sponsored messages are displayed.
-        ///
-        ///Online ads should no longer be synonymous with abuse of user privacy. Let us redefine how a tech company should operate – together."
-        /// </summary>
-        public static string lng_sponsored_info_description2
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_sponsored_info_description2");
             }
         }
         

@@ -175,13 +175,7 @@ namespace Unigram.Services
                             continue;
                         }
 
-                        if (already.Contains(difference.Strings[a].Key.ToLower()))
-                        {
-                            continue;
-                        }
-
                         values[difference.Strings[a].Key] = GetValue(single.Value);
-                        already.Add(difference.Strings[a].Key.ToLower());
                     }
                     else if (difference.Strings[a].Value is LanguagePackStringValuePluralized pluralized)
                     {
@@ -268,6 +262,13 @@ namespace Unigram.Services
 
                 foreach (var entry in values.OrderBy(x => x.Key))
                 {
+                    if (string.IsNullOrEmpty(entry.Value) || already.Contains(entry.Key.ToLower()))
+                    {
+                        continue;
+                    }
+
+                    already.Add(entry.Key.ToLower());
+
                     //writer.Write($"<string name=\"{entry.Key}\">{entry.Value}</string>\n");
                     writer.Write($"  <data name=\"{entry.Key}\" xml:space=\"preserve\">\n");
                     if (string.IsNullOrEmpty(entry.Value))

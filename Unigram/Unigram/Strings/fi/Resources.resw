@@ -85,6 +85,12 @@
   <data name="AccActionCancelDownload" xml:space="preserve">
     <value>Peruuta lataus</value>
   </data>
+  <data name="AccActionChatPreview" xml:space="preserve">
+    <value>Keskustelun esikatselu</value>
+  </data>
+  <data name="AccActionCloseTranscription" xml:space="preserve">
+    <value>Sulje litterointi</value>
+  </data>
   <data name="AccActionDownload" xml:space="preserve">
     <value>Lataa</value>
   </data>
@@ -96,6 +102,12 @@
   </data>
   <data name="AccActionOpenFile" xml:space="preserve">
     <value>Avaa tiedosto</value>
+  </data>
+  <data name="AccActionOpenForwardedOrigin" xml:space="preserve">
+    <value>Välitetty lähteestä</value>
+  </data>
+  <data name="AccActionOpenTranscription" xml:space="preserve">
+    <value>Avaa litteroitu teksti</value>
   </data>
   <data name="AccActionPause" xml:space="preserve">
     <value>Tauko</value>
@@ -220,23 +232,11 @@
   <data name="AccDescrLocationNotify" xml:space="preserve">
     <value>Ilmoita, kun sijaintiaan jakava henkilö on alueella</value>
   </data>
-  <data name="AccDescrMentionCount_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="AccDescrMentionCount_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="AccDescrMentionCount_one" xml:space="preserve">
     <value>{0} maininta</value>
   </data>
   <data name="AccDescrMentionCount_other" xml:space="preserve">
     <value>{0} mainintaa</value>
-  </data>
-  <data name="AccDescrMentionCount_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="AccDescrMentionCount_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="AccDescrMentionDown" xml:space="preserve">
     <value>Seuraava maininta</value>
@@ -277,29 +277,11 @@
   <data name="AccDescrMyLocation" xml:space="preserve">
     <value>Sijaintini</value>
   </data>
-  <data name="AccDescrNumberOfPeopleReactions_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="AccDescrNumberOfPeopleReactions_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="AccDescrNumberOfPeopleReactions_one" xml:space="preserve">
     <value>{0} käyttäjä reagoi {1}</value>
   </data>
   <data name="AccDescrNumberOfPeopleReactions_other" xml:space="preserve">
     <value>{0} käyttäjää reagoi {1}</value>
-  </data>
-  <data name="AccDescrNumberOfPeopleReactions_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="AccDescrNumberOfPeopleReactions_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="AccDescrNumberOfReplies_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="AccDescrNumberOfReplies_many" xml:space="preserve">
-    <value/>
   </data>
   <data name="AccDescrNumberOfReplies_one" xml:space="preserve">
     <value>{0} vastaus</value>
@@ -307,29 +289,11 @@
   <data name="AccDescrNumberOfReplies_other" xml:space="preserve">
     <value>{0} vastausta</value>
   </data>
-  <data name="AccDescrNumberOfReplies_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="AccDescrNumberOfReplies_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="AccDescrNumberOfViews_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="AccDescrNumberOfViews_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="AccDescrNumberOfViews_one" xml:space="preserve">
     <value>Katsottu {0} kerran</value>
   </data>
   <data name="AccDescrNumberOfViews_other" xml:space="preserve">
     <value>Katsottu {0} kertaa</value>
-  </data>
-  <data name="AccDescrNumberOfViews_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="AccDescrNumberOfViews_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="AccDescrOpenChat" xml:space="preserve">
     <value>Avaa keskustelu</value>
@@ -439,29 +403,11 @@
   <data name="AccDescrSendAsPeer" xml:space="preserve">
     <value>Lähetä nimellä {0}</value>
   </data>
-  <data name="AccDescrSendAudio_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="AccDescrSendAudio_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="AccDescrSendAudio_one" xml:space="preserve">
     <value>Lähetä {0} äänitiedosto</value>
   </data>
   <data name="AccDescrSendAudio_other" xml:space="preserve">
     <value>Lähetä {0} äänitiedostoa</value>
-  </data>
-  <data name="AccDescrSendAudio_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="AccDescrSendAudio_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="AccDescrSendFiles_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="AccDescrSendFiles_many" xml:space="preserve">
-    <value/>
   </data>
   <data name="AccDescrSendFiles_one" xml:space="preserve">
     <value>Lähetä {0} tiedosto</value>
@@ -469,50 +415,20 @@
   <data name="AccDescrSendFiles_other" xml:space="preserve">
     <value>Lähetä {0} tiedostoa</value>
   </data>
-  <data name="AccDescrSendFiles_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="AccDescrSendFiles_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="AccDescrSendPhotos_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="AccDescrSendPhotos_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="AccDescrSendPhotos_one" xml:space="preserve">
     <value>Lähetä {0} kuva</value>
   </data>
   <data name="AccDescrSendPhotos_other" xml:space="preserve">
     <value>Lähetä {0} kuvaa</value>
   </data>
-  <data name="AccDescrSendPhotos_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="AccDescrSendPhotos_zero" xml:space="preserve">
-    <value/>
-  </data>
   <data name="AccDescrSentDate" xml:space="preserve">
     <value>Lähetetty {0}</value>
-  </data>
-  <data name="AccDescrShareInChats_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="AccDescrShareInChats_many" xml:space="preserve">
-    <value/>
   </data>
   <data name="AccDescrShareInChats_one" xml:space="preserve">
     <value>Jaa {0} keskusteluun</value>
   </data>
   <data name="AccDescrShareInChats_other" xml:space="preserve">
     <value>Jaa {0} keskusteluun</value>
-  </data>
-  <data name="AccDescrShareInChats_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="AccDescrShareInChats_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="AccDescrShowAccounts" xml:space="preserve">
     <value>Näytä tilit</value>
@@ -544,23 +460,11 @@
   <data name="AccDescrTakeMorePics" xml:space="preserve">
     <value>Ota vielä yksi kuva</value>
   </data>
-  <data name="AccDescrUnreadCount_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="AccDescrUnreadCount_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="AccDescrUnreadCount_one" xml:space="preserve">
     <value>{0} keskustelu lukematta</value>
   </data>
   <data name="AccDescrUnreadCount_other" xml:space="preserve">
     <value>{0} keskustelua lukematta</value>
-  </data>
-  <data name="AccDescrUnreadCount_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="AccDescrUnreadCount_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="AccDescrUploadProgress" xml:space="preserve">
     <value>Lähetetty {0} / {1}</value>
@@ -795,6 +699,21 @@
   </data>
   <data name="ActionForwardsRestrictedGroup" xml:space="preserve">
     <value>un1 esti viestien välittämisen tästä ryhmästä</value>
+  </data>
+  <data name="ActionGiftInbound" xml:space="preserve">
+    <value>un1 lähetti sinulle **un2** arvoisen lahjan</value>
+  </data>
+  <data name="ActionGiftOutbound" xml:space="preserve">
+    <value>Lähetit **un2** arvoisen lahjan</value>
+  </data>
+  <data name="ActionGiftPremiumSubtitle" xml:space="preserve">
+    <value>{0}</value>
+  </data>
+  <data name="ActionGiftPremiumTitle" xml:space="preserve">
+    <value>Telegram Premium</value>
+  </data>
+  <data name="ActionGiftPremiumView" xml:space="preserve">
+    <value>Näytä</value>
   </data>
   <data name="ActionGroupCallEnded" xml:space="preserve">
     <value>Videokeskustelu päättyi ({0})</value>
@@ -1080,6 +999,21 @@ nyt: {1}</value>
   <data name="AddedToFavorites" xml:space="preserve">
     <value>Tarra lisättiin suosikkeihin.</value>
   </data>
+  <data name="AddEmojiInstalled" xml:space="preserve">
+    <value>Emoji lisättiin.</value>
+  </data>
+  <data name="AddEmojiInstalledInfo" xml:space="preserve">
+    <value>{0} lisättiin emojikokoelmiisi.</value>
+  </data>
+  <data name="AddEmojiMultipleInstalledInfo_one" xml:space="preserve">
+    <value>{0} kokoelma lisättiin emojeihisi.</value>
+  </data>
+  <data name="AddEmojiMultipleInstalledInfo_other" xml:space="preserve">
+    <value>{0} kokoelmaa lisättiin emojeihisi.</value>
+  </data>
+  <data name="AddEmojiNotFound" xml:space="preserve">
+    <value>Emojikokoelmaa ei löytynyt.</value>
+  </data>
   <data name="AddExceptions" xml:space="preserve">
     <value>Lisää poikkeuksia</value>
   </data>
@@ -1141,7 +1075,7 @@ nyt: {1}</value>
     <value>Lisää tarrat</value>
   </data>
   <data name="AddStickersCount" xml:space="preserve">
-    <value>LISÄÄ {0}</value>
+    <value>Lisää {0}</value>
   </data>
   <data name="AddStickersInstalled" xml:space="preserve">
     <value>Uudet tarrat lisättiin</value>
@@ -1218,23 +1152,11 @@ nyt: {1}</value>
   <data name="AllMedia" xml:space="preserve">
     <value>Kaikki media</value>
   </data>
-  <data name="AllNPhotos_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="AllNPhotos_many" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="AllNPhotos_one" xml:space="preserve">
-    <value/>
+  <data name="AllNMedia_other" xml:space="preserve">
+    <value>Kaikki {0} mediaa</value>
   </data>
   <data name="AllNPhotos_other" xml:space="preserve">
     <value>Kaikki {0} kuvaa</value>
-  </data>
-  <data name="AllNPhotos_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="AllNPhotos_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="Allow" xml:space="preserve">
     <value>Salli</value>
@@ -1308,29 +1230,11 @@ nyt: {1}</value>
   <data name="AlwaysShowPopup" xml:space="preserve">
     <value>Näytä aina</value>
   </data>
-  <data name="AndMoreTyping_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="AndMoreTyping_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="AndMoreTyping_one" xml:space="preserve">
     <value>ja {0} muu kirjoittaa</value>
   </data>
   <data name="AndMoreTyping_other" xml:space="preserve">
     <value>ja {0} muuta kirjoittaa</value>
-  </data>
-  <data name="AndMoreTyping_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="AndMoreTyping_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="AndMoreTypingGroup_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="AndMoreTypingGroup_many" xml:space="preserve">
-    <value/>
   </data>
   <data name="AndMoreTypingGroup_one" xml:space="preserve">
     <value>{0} ja {1} muu kirjoittavat</value>
@@ -1338,29 +1242,11 @@ nyt: {1}</value>
   <data name="AndMoreTypingGroup_other" xml:space="preserve">
     <value>{0} ja {1} muuta kirjoittavat</value>
   </data>
-  <data name="AndMoreTypingGroup_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="AndMoreTypingGroup_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="AndOther_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="AndOther_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="AndOther_one" xml:space="preserve">
     <value>ja {0} muu</value>
   </data>
   <data name="AndOther_other" xml:space="preserve">
     <value>ja {0} muuta</value>
-  </data>
-  <data name="AndOther_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="AndOther_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="AnimatedStickers" xml:space="preserve">
     <value>Animoidut tarrat</value>
@@ -1371,23 +1257,11 @@ nyt: {1}</value>
   <data name="AnonymousQuizPoll" xml:space="preserve">
     <value>Visa, vastaukset nimettömiä</value>
   </data>
-  <data name="Answer_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Answer_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="Answer_one" xml:space="preserve">
     <value>{0} vastaus</value>
   </data>
   <data name="Answer_other" xml:space="preserve">
     <value>{0} vastausta</value>
-  </data>
-  <data name="Answer_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Answer_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="AnswerOptions" xml:space="preserve">
     <value>Vastausvaihtoehdot</value>
@@ -1486,6 +1360,12 @@ nyt: {1}</value>
   </data>
   <data name="ArchivedChats" xml:space="preserve">
     <value>Arkistoidut</value>
+  </data>
+  <data name="ArchivedEmojiPacks" xml:space="preserve">
+    <value>Arkistoidut emojikokoelmat</value>
+  </data>
+  <data name="ArchivedEmojiPacksEmpty" xml:space="preserve">
+    <value>Ei arkistoituja emojikokoelmia</value>
   </data>
   <data name="ArchivedMasks" xml:space="preserve">
     <value>Arkistoidut naamiot</value>
@@ -1857,23 +1737,11 @@ Tutustu &lt;![CDATA[&lt;a href=&quot;https://telegram.org/faq#general-questions&
   <data name="AudioSpeedNormal" xml:space="preserve">
     <value>Ääni toistetaan normaalinopeudella.</value>
   </data>
-  <data name="AudiosSavedHint_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="AudiosSavedHint_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="AudiosSavedHint_one" xml:space="preserve">
     <value>Tiedosto tallennettiin musiikkeihin.</value>
   </data>
   <data name="AudiosSavedHint_other" xml:space="preserve">
     <value>{0} tiedostoa tallennettiin musiikkeihin.</value>
-  </data>
-  <data name="AudiosSavedHint_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="AudiosSavedHint_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="AudioTitle" xml:space="preserve">
     <value>Jaettu musiikki</value>
@@ -2010,7 +1878,7 @@ automaattisesti, kun on kulunut {0}.</value>
   <data name="AutodownloadChannels" xml:space="preserve">
     <value>Kanavat</value>
   </data>
-  <data name="AutoDownloadContacts" xml:space="preserve">
+  <data name="AutodownloadContacts" xml:space="preserve">
     <value>Yhteystiedot</value>
   </data>
   <data name="AutoDownloadCustom" xml:space="preserve">
@@ -2322,23 +2190,11 @@ Aurinko nousee {1}</value>
   <data name="BannedPhoneNumber" xml:space="preserve">
     <value>Puhelinnumero on estetty.</value>
   </data>
-  <data name="Bans_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Bans_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="Bans_one" xml:space="preserve">
     <value>{0} esto</value>
   </data>
   <data name="Bans_other" xml:space="preserve">
     <value>{0} estoa</value>
-  </data>
-  <data name="Bans_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Bans_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="BioCopied" xml:space="preserve">
     <value>Kuvaus kopioitiin leikepöydälle.</value>
@@ -2367,23 +2223,11 @@ Aurinko nousee {1}</value>
   <data name="BlockedUsers" xml:space="preserve">
     <value>Estetyt käyttäjät</value>
   </data>
-  <data name="BlockedUsersCount_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="BlockedUsersCount_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="BlockedUsersCount_one" xml:space="preserve">
     <value>{0} estetty käyttäjä</value>
   </data>
   <data name="BlockedUsersCount_other" xml:space="preserve">
     <value>{0} estettyä käyttäjää</value>
-  </data>
-  <data name="BlockedUsersCount_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="BlockedUsersCount_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="BlockedUsersInfo" xml:space="preserve">
     <value>Estetyt käyttäjät eivät voi lähettää sinulle viestejä tai lisätä sinua ryhmiin. He eivät myöskään näe profiilimediaasi, paikallaolotilaasi tai viimeisintä paikallaoloaikaasi.</value>
@@ -2392,7 +2236,7 @@ Aurinko nousee {1}</value>
     <value>Estä käyttäjä</value>
   </data>
   <data name="BlockUserAlert" xml:space="preserve">
-    <value>Haluatko varmasti estää käyttäjän **{0}** lähettämästä sinulle viestejä ja soittamasta sinulle Telegramissa?</value>
+    <value>Haluatko estää käyttäjän **{0}** lähettämästä sinulle viestejä ja soittamasta sinulle Telegramissa?</value>
   </data>
   <data name="BlockUserChatsTitle" xml:space="preserve">
     <value>KESKUSTELUT</value>
@@ -2548,6 +2392,12 @@ Se saisi tietää **IP-osoitteesi** ja perustietoja laitteestasi.</value>
   </data>
   <data name="BotUnblock" xml:space="preserve">
     <value>KÄYNNISTÄ UUDELLEEN</value>
+  </data>
+  <data name="BotWebViewChangesMayNotBeSaved" xml:space="preserve">
+    <value>Tekemiäsi muutoksia ei välttämättä tallenneta.</value>
+  </data>
+  <data name="BotWebViewCloseAnyway" xml:space="preserve">
+    <value>Sulje silti</value>
   </data>
   <data name="BotWebViewDeleteBot" xml:space="preserve">
     <value>Poista valikosta</value>
@@ -2856,23 +2706,11 @@ Jos et tehnyt pyyntöä, syötä tähän koodi, jonka juuri lähetimme sinulle t
   <data name="CancelSending" xml:space="preserve">
     <value>Peruuta lähetys</value>
   </data>
-  <data name="CanJoin_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="CanJoin_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="CanJoin_one" xml:space="preserve">
     <value>{0} voi liittyä</value>
   </data>
   <data name="CanJoin_other" xml:space="preserve">
     <value>{0} voi liittyä</value>
-  </data>
-  <data name="CanJoin_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="CanJoin_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="CantAddBotAsAdmin" xml:space="preserve">
     <value>Botteja voi lisätä kanaville vain valvojina.</value>
@@ -2938,6 +2776,9 @@ Huomautus: jos unohdat pääsykoodin, sinun tulee kirjautua ulos tai asentaa sov
   </data>
   <data name="ChangePhoneNumberOccupied" xml:space="preserve">
     <value>Numero {0} on jo liitettynä toiseen Telegram-tiliin. Poista se tili ennen kuin voit käyttää tätä numeroa.</value>
+  </data>
+  <data name="ChangePhoneNumberSuccess" xml:space="preserve">
+    <value>Puhelinnumerosi vaihdettiin.</value>
   </data>
   <data name="ChangePublicLimitReached" xml:space="preserve">
     <value>Olet varannut liian monta julkista linkkiä. Voit mitätöidä linkkejä joistain vanhemmista ryhmistäsi tai kanavistasi, tai voit tehdä tästä yksityisen.</value>
@@ -3232,23 +3073,11 @@ Jos et halua näin tapahtuvan, suosittelemme luomaan yksityisen kanavan.</value>
   <data name="ChannelRestrictedUsers" xml:space="preserve">
     <value>Rajoitetut käyttäjät</value>
   </data>
-  <data name="Channels_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Channels_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="Channels_one" xml:space="preserve">
     <value>{0} kanava</value>
   </data>
   <data name="Channels_other" xml:space="preserve">
     <value>{0} kanavaa</value>
-  </data>
-  <data name="Channels_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Channels_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="ChannelSearchException" xml:space="preserve">
     <value>Hae poikkeuksia</value>
@@ -3308,7 +3137,7 @@ Jos et halua näin tapahtuvan, suosittelemme luomaan yksityisen kanavan.</value>
     <value>Kanavan tyyppi</value>
   </data>
   <data name="ChannelUnmute" xml:space="preserve">
-    <value>ILMOITA</value>
+    <value>ÄLÄ MYKISTÄ</value>
   </data>
   <data name="ChannelUserAddLimit" xml:space="preserve">
     <value>Valitettavasti voit lisätä vain kanavan ensimmäiset 200 tilaajaa. Huomaathan, että kanavan linkin kautta voi liittyä rajaton määrä uusia tilaajia.</value>
@@ -3342,23 +3171,11 @@ Linkin on oltava vähintään 5 merkkiä pitkä.</value>
   <data name="ChannelVideoEditNotification" xml:space="preserve">
     <value>Kanava {0} päivitti videotaan</value>
   </data>
-  <data name="Characters_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Characters_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="Characters_one" xml:space="preserve">
     <value>{0} merkki</value>
   </data>
   <data name="Characters_other" xml:space="preserve">
     <value>{0} merkkiä</value>
-  </data>
-  <data name="Characters_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Characters_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="CharactersPerMessage" xml:space="preserve">
     <value>{0} / viesti</value>
@@ -3456,23 +3273,11 @@ Linkin on oltava vähintään 5 merkkiä pitkä.</value>
   <data name="ChatResetTheme" xml:space="preserve">
     <value>Nollaa teema</value>
   </data>
-  <data name="Chats_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Chats_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="Chats_one" xml:space="preserve">
     <value>{0} keskustelu</value>
   </data>
   <data name="Chats_other" xml:space="preserve">
     <value>{0} keskustelua</value>
-  </data>
-  <data name="Chats_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Chats_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="ChatsArchived" xml:space="preserve">
     <value>Keskustelut arkistoitiin.</value>
@@ -3498,26 +3303,14 @@ Linkin on oltava vähintään 5 merkkiä pitkä.</value>
   <data name="ChatSettings" xml:space="preserve">
     <value>Keskusteluasetukset</value>
   </data>
-  <data name="ChatsException_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ChatsException_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="ChatsException_one" xml:space="preserve">
     <value>{0} keskustelu</value>
   </data>
   <data name="ChatsException_other" xml:space="preserve">
     <value>{0} keskustelua</value>
   </data>
-  <data name="ChatsException_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ChatsException_zero" xml:space="preserve">
-    <value/>
-  </data>
   <data name="ChatsLeaveAlert" xml:space="preserve">
-    <value>&lt;![CDATA[&gt;Haluatko varmasti poistua valituista keskusteluista?]]&gt;</value>
+    <value>&lt;![CDATA[Haluatko varmasti poistua valituista keskusteluista?]]&gt;</value>
   </data>
   <data name="ChatsMute" xml:space="preserve">
     <value>Mykistä</value>
@@ -3525,29 +3318,11 @@ Linkin on oltava vähintään 5 merkkiä pitkä.</value>
   <data name="ChatsNearbyHeader" xml:space="preserve">
     <value>Lähistön ryhmät</value>
   </data>
-  <data name="ChatsSelected_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ChatsSelected_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="ChatsSelected_one" xml:space="preserve">
     <value>{0} keskustelu</value>
   </data>
   <data name="ChatsSelected_other" xml:space="preserve">
     <value>{0} keskustelua</value>
-  </data>
-  <data name="ChatsSelected_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ChatsSelected_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ChatsSelectedClear_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ChatsSelectedClear_many" xml:space="preserve">
-    <value/>
   </data>
   <data name="ChatsSelectedClear_one" xml:space="preserve">
     <value>{0} keskustelu</value>
@@ -3555,29 +3330,11 @@ Linkin on oltava vähintään 5 merkkiä pitkä.</value>
   <data name="ChatsSelectedClear_other" xml:space="preserve">
     <value>{0} keskustelua</value>
   </data>
-  <data name="ChatsSelectedClear_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ChatsSelectedClear_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ChatsSelectedClearCache_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ChatsSelectedClearCache_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="ChatsSelectedClearCache_one" xml:space="preserve">
     <value>{0} keskustelu</value>
   </data>
   <data name="ChatsSelectedClearCache_other" xml:space="preserve">
     <value>{0} keskustelua</value>
-  </data>
-  <data name="ChatsSelectedClearCache_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ChatsSelectedClearCache_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="ChatsUnmute" xml:space="preserve">
     <value>Poista mykistys</value>
@@ -3720,6 +3477,9 @@ Linkin on oltava vähintään 5 merkkiä pitkä.</value>
   <data name="ChooseRecordVideo" xml:space="preserve">
     <value>Nauhoita video</value>
   </data>
+  <data name="ChooseStickerMyEmojiPacks" xml:space="preserve">
+    <value>Emojikokoelmani</value>
+  </data>
   <data name="ChooseStickerMyStickerSets" xml:space="preserve">
     <value>Tarrakokoelmani</value>
   </data>
@@ -3828,6 +3588,12 @@ Linkin on oltava vähintään 5 merkkiä pitkä.</value>
   <data name="ClearRecentEmoji" xml:space="preserve">
     <value>Tyhjennetäänkö viimeisimmät emojit?</value>
   </data>
+  <data name="ClearRecentEmojiText" xml:space="preserve">
+    <value>Haluatko tyhjentää äskettäin käyttämäsi emojit?</value>
+  </data>
+  <data name="ClearRecentEmojiTitle" xml:space="preserve">
+    <value>Tyhjennä äskettäin käytetyt emojit</value>
+  </data>
   <data name="ClearRecentHistory" xml:space="preserve">
     <value>Tyhjennä historia</value>
   </data>
@@ -3843,23 +3609,11 @@ Linkin on oltava vähintään 5 merkkiä pitkä.</value>
   <data name="ClearSearchAlert" xml:space="preserve">
     <value>Haluatko tyhjentää hakuhistorian?</value>
   </data>
-  <data name="ClearSearchAlertPartial_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ClearSearchAlertPartial_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="ClearSearchAlertPartial_one" xml:space="preserve">
     <value>Haluatko varmasti poistaa tämän keskustelun hakuhistoriasta?</value>
   </data>
   <data name="ClearSearchAlertPartial_other" xml:space="preserve">
     <value>Haluatko varmasti poistaa nämä {0} keskustelua hakuhistoriasta?</value>
-  </data>
-  <data name="ClearSearchAlertPartial_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ClearSearchAlertPartial_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="ClearSearchAlertPartialTitle" xml:space="preserve">
     <value>Poista hakuhistoriasta</value>
@@ -3960,29 +3714,11 @@ Linkin on oltava vähintään 5 merkkiä pitkä.</value>
   <data name="Comment" xml:space="preserve">
     <value>Kommentti</value>
   </data>
-  <data name="Comments_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Comments_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="Comments_one" xml:space="preserve">
     <value>{0} kommentti</value>
   </data>
   <data name="Comments_other" xml:space="preserve">
     <value>{0} kommenttia</value>
-  </data>
-  <data name="Comments_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Comments_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="CommentsCount_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="CommentsCount_many" xml:space="preserve">
-    <value/>
   </data>
   <data name="CommentsCount_one" xml:space="preserve">
     <value>{0} kommentti</value>
@@ -3990,50 +3726,20 @@ Linkin on oltava vähintään 5 merkkiä pitkä.</value>
   <data name="CommentsCount_other" xml:space="preserve">
     <value>{0} kommenttia</value>
   </data>
-  <data name="CommentsCount_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="CommentsCount_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="CommentsNoNumber_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="CommentsNoNumber_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="CommentsNoNumber_one" xml:space="preserve">
     <value>kommentti</value>
   </data>
   <data name="CommentsNoNumber_other" xml:space="preserve">
     <value>kommenttia</value>
   </data>
-  <data name="CommentsNoNumber_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="CommentsNoNumber_zero" xml:space="preserve">
-    <value/>
-  </data>
   <data name="CommentsTitle" xml:space="preserve">
     <value>Kommentit</value>
-  </data>
-  <data name="CommonGroups_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="CommonGroups_many" xml:space="preserve">
-    <value/>
   </data>
   <data name="CommonGroups_one" xml:space="preserve">
     <value>{0} yhteinen ryhmä</value>
   </data>
   <data name="CommonGroups_other" xml:space="preserve">
     <value>{0} yhteistä ryhmää</value>
-  </data>
-  <data name="CommonGroups_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="CommonGroups_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="CompatibilityChat" xml:space="preserve">
     <value>{0} käyttää Telegramin vanhempaa versiota, joten salaiset kuvat näytetään yhteensopivuustilassa.
@@ -4182,23 +3888,11 @@ Jos haluat lisätä enemmän jäseniä, päivitä ryhmä superryhmäksi:
   <data name="CopyLink" xml:space="preserve">
     <value>Kopioi linkki</value>
   </data>
-  <data name="CountOfResults_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="CountOfResults_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="CountOfResults_one" xml:space="preserve">
     <value>{0} / {1} tulosta</value>
   </data>
   <data name="CountOfResults_other" xml:space="preserve">
     <value>{0} / {1} tulosta</value>
-  </data>
-  <data name="CountOfResults_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="CountOfResults_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="CountReceived" xml:space="preserve">
     <value>Vastaanotettu</value>
@@ -4340,29 +4034,11 @@ Voit aina vaihtaa takaisin Telegramin oletusteemaan täältä.</value>
   <data name="DataUsage" xml:space="preserve">
     <value>Tilan ja verkon käyttö</value>
   </data>
-  <data name="Days_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Days_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="Days_one" xml:space="preserve">
     <value>{0} päivä</value>
   </data>
   <data name="Days_other" xml:space="preserve">
     <value>{0} päivää</value>
-  </data>
-  <data name="Days_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Days_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="DaysBold_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="DaysBold_many" xml:space="preserve">
-    <value/>
   </data>
   <data name="DaysBold_one" xml:space="preserve">
     <value>**{0}** päivä</value>
@@ -4370,47 +4046,17 @@ Voit aina vaihtaa takaisin Telegramin oletusteemaan täältä.</value>
   <data name="DaysBold_other" xml:space="preserve">
     <value>**{0}** päivää</value>
   </data>
-  <data name="DaysBold_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="DaysBold_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="DaysLeft_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="DaysLeft_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="DaysLeft_one" xml:space="preserve">
     <value>{0} päivä jäljellä</value>
   </data>
   <data name="DaysLeft_other" xml:space="preserve">
     <value>{0} päivää jäljellä</value>
   </data>
-  <data name="DaysLeft_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="DaysLeft_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="DaysSchedule_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="DaysSchedule_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="DaysSchedule_one" xml:space="preserve">
     <value>{0} päivän</value>
   </data>
   <data name="DaysSchedule_other" xml:space="preserve">
     <value>{0} päivän</value>
-  </data>
-  <data name="DaysSchedule_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="DaysSchedule_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="Deactivate" xml:space="preserve">
     <value>POISTA NYT</value>
@@ -4571,23 +4217,11 @@ Voit aina vaihtaa takaisin Telegramin oletusteemaan täältä.</value>
   <data name="DeleteAndStop" xml:space="preserve">
     <value>Poista ja pysäytä</value>
   </data>
-  <data name="DeleteBackground_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="DeleteBackground_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="DeleteBackground_one" xml:space="preserve">
     <value>Poista taustakuva</value>
   </data>
   <data name="DeleteBackground_other" xml:space="preserve">
     <value>Poista {0} taustakuvaa</value>
-  </data>
-  <data name="DeleteBackground_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="DeleteBackground_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="DeleteBanUser" xml:space="preserve">
     <value>Estä keskustelusta</value>
@@ -4613,23 +4247,11 @@ Voit aina vaihtaa takaisin Telegramin oletusteemaan täältä.</value>
   <data name="DeleteContact" xml:space="preserve">
     <value>Poista</value>
   </data>
-  <data name="DeleteDays_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="DeleteDays_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="DeleteDays_one" xml:space="preserve">
     <value>Poista {0} päivä</value>
   </data>
   <data name="DeleteDays_other" xml:space="preserve">
     <value>Poista {0} päivää</value>
-  </data>
-  <data name="DeleteDays_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="DeleteDays_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="DeletedFromYourContacts" xml:space="preserve">
     <value>{0} poistettiin yhteystiedoista</value>
@@ -4748,29 +4370,11 @@ Voit aina vaihtaa takaisin Telegramin oletusteemaan täältä.</value>
   <data name="DeleteThisGroup" xml:space="preserve">
     <value>Poista ryhmä</value>
   </data>
-  <data name="DeleteTones_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="DeleteTones_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="DeleteTones_one" xml:space="preserve">
     <value>Poista {0} ääni</value>
   </data>
   <data name="DeleteTones_other" xml:space="preserve">
     <value>Poista {0} ääntä</value>
-  </data>
-  <data name="DeleteTones_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="DeleteTones_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="DeleteTonesMessage_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="DeleteTonesMessage_many" xml:space="preserve">
-    <value/>
   </data>
   <data name="DeleteTonesMessage_one" xml:space="preserve">
     <value>Haluatko varmasti poistaa tämän ilmoitusäänen?</value>
@@ -4778,29 +4382,11 @@ Voit aina vaihtaa takaisin Telegramin oletusteemaan täältä.</value>
   <data name="DeleteTonesMessage_other" xml:space="preserve">
     <value>Haluatko varmasti poistaa nämä **{0} ilmoitusääntä**?</value>
   </data>
-  <data name="DeleteTonesMessage_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="DeleteTonesMessage_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Deletions_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Deletions_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="Deletions_one" xml:space="preserve">
     <value>{0} poisto</value>
   </data>
   <data name="Deletions_other" xml:space="preserve">
     <value>{0} poistoa</value>
-  </data>
-  <data name="Deletions_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Deletions_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="DescriptionInfo" xml:space="preserve">
     <value>Voit halutessasi kirjoittaa kanavallesi kuvauksen.</value>
@@ -5282,11 +4868,50 @@ Jos keskusteluja ei valita, pienoisohjelmassa näkyy ne yhteystiedot, joiden kan
   <data name="Emoji8" xml:space="preserve">
     <value>Liput</value>
   </data>
+  <data name="EmojiArchived" xml:space="preserve">
+    <value>Emoji arkistoitiin.</value>
+  </data>
+  <data name="EmojiArchivedInfo" xml:space="preserve">
+    <value>{0} siirrettiin arkistoon.</value>
+  </data>
   <data name="EmojiBigSize" xml:space="preserve">
     <value>Piirrä yksi suuri emoji</value>
   </data>
+  <data name="EmojiBotInfo" xml:space="preserve">
+    <value>Taiteilijat voivat lisätä omia emojeitaan @stickers -botin avulla.</value>
+  </data>
+  <data name="EmojiCount_one" xml:space="preserve">
+    <value>{0} emoji</value>
+  </data>
+  <data name="EmojiCount_other" xml:space="preserve">
+    <value>{0} emojia</value>
+  </data>
+  <data name="EmojiCountButton_one" xml:space="preserve">
+    <value>{0} emoji</value>
+  </data>
+  <data name="EmojiCountButton_other" xml:space="preserve">
+    <value>{0} emojia</value>
+  </data>
   <data name="EmojiInteractionTapHint" xml:space="preserve">
     <value>Jos **{0}** katselisi tätä keskustelua, hän näkisi myös tämän animaation.</value>
+  </data>
+  <data name="EmojiPackCount_one" xml:space="preserve">
+    <value>{0} emojikokoelma</value>
+  </data>
+  <data name="EmojiPackCount_other" xml:space="preserve">
+    <value>{0} emojikokoelmaa</value>
+  </data>
+  <data name="EmojiRemoved" xml:space="preserve">
+    <value>Emoji poistettiin.</value>
+  </data>
+  <data name="EmojiRemovedInfo" xml:space="preserve">
+    <value>{0} poistettiin emojikokoelmistasi.</value>
+  </data>
+  <data name="EmojiRemovedMultipleInfo_one" xml:space="preserve">
+    <value>{0} kokoelma poistettiin emojeistasi.</value>
+  </data>
+  <data name="EmojiRemovedMultipleInfo_other" xml:space="preserve">
+    <value>{0} kokoelmaa poistettiin emojeistasi.</value>
   </data>
   <data name="EmojiSuggestions" xml:space="preserve">
     <value>Emojiehdotukset</value>
@@ -5465,6 +5090,12 @@ Syötä teeman nimi:</value>
   </data>
   <data name="ErrorSendRestrictedPollsAll" xml:space="preserve">
     <value>Valitettavasti tähän ryhmään ei saa lähettää kyselyitä.</value>
+  </data>
+  <data name="ErrorSendRestrictedPrivacyVideoMessages" xml:space="preserve">
+    <value>Valitettavasti tämän käyttäjän yksityisyysasetukset estävät videoviestien lähettämisen.</value>
+  </data>
+  <data name="ErrorSendRestrictedPrivacyVoiceMessages" xml:space="preserve">
+    <value>Valitettavasti tämän käyttäjän yksityisyysasetukset estävät ääniviestien lähettämisen.</value>
   </data>
   <data name="ErrorSendRestrictedStickers" xml:space="preserve">
     <value>Tämän ryhmän valvojat ovat rajoittaneet sinua lähettämästä tarroja.</value>
@@ -5825,23 +5456,11 @@ Kesto: {1}</value>
   <data name="Events" xml:space="preserve">
     <value>Tapahtumat</value>
   </data>
-  <data name="Exception_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Exception_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="Exception_one" xml:space="preserve">
     <value>{0} poikkeus</value>
   </data>
   <data name="Exception_other" xml:space="preserve">
     <value>{0} poikkeusta</value>
-  </data>
-  <data name="Exception_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Exception_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="ExpireAfter" xml:space="preserve">
     <value>Erääntymisaika</value>
@@ -5882,6 +5501,9 @@ Kesto: {1}</value>
   <data name="FavoriteStickersShort" xml:space="preserve">
     <value>Suosikit</value>
   </data>
+  <data name="FeaturedEmojiPacks" xml:space="preserve">
+    <value>Suositut emojikokoelmat</value>
+  </data>
   <data name="FeaturedGifs" xml:space="preserve">
     <value>Suositut GIFit</value>
   </data>
@@ -5891,17 +5513,14 @@ Kesto: {1}</value>
   <data name="FeaturedStickersInfo" xml:space="preserve">
     <value>Nämä tarrat ovat tällä hetkellä suosittuja Telegramissa. Voit luoda omia tarroja botilla @stickers.</value>
   </data>
+  <data name="FeaturedStickersPremium" xml:space="preserve">
+    <value>Suositut Premium-tarrat</value>
+  </data>
   <data name="FeaturedStickersShort" xml:space="preserve">
     <value>Suositut</value>
   </data>
   <data name="February" xml:space="preserve">
     <value>helmikuu</value>
-  </data>
-  <data name="Files_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Files_many" xml:space="preserve">
-    <value/>
   </data>
   <data name="Files_one" xml:space="preserve">
     <value>{0} tiedostoa</value>
@@ -5909,35 +5528,17 @@ Kesto: {1}</value>
   <data name="Files_other" xml:space="preserve">
     <value>{0} tiedostoa</value>
   </data>
-  <data name="Files_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Files_zero" xml:space="preserve">
-    <value/>
-  </data>
   <data name="FileSavedHint" xml:space="preserve">
     <value>Tiedosto tallennettiin latauksiin.</value>
   </data>
   <data name="FilesDataUsage" xml:space="preserve">
     <value>Tiedostot</value>
   </data>
-  <data name="FilesSavedHint_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="FilesSavedHint_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="FilesSavedHint_one" xml:space="preserve">
     <value>Tiedosto tallennettiin latauksiin.</value>
   </data>
   <data name="FilesSavedHint_other" xml:space="preserve">
     <value>{0} tiedostoa tallennettiin latauksiin.</value>
-  </data>
-  <data name="FilesSavedHint_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="FilesSavedHint_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="FileTooLarge" xml:space="preserve">
     <value>Tiedosto on liian suuri</value>
@@ -6111,7 +5712,7 @@ Kesto: {1}</value>
     <value>Luetut</value>
   </data>
   <data name="FilterRecommended" xml:space="preserve">
-    <value>Suositellut kansiot</value>
+    <value>Kansioehdotukset</value>
   </data>
   <data name="FilterRemoveChats" xml:space="preserve">
     <value>Poista keskusteluja</value>
@@ -6155,23 +5756,11 @@ Kesto: {1}</value>
   <data name="FilterSecretChats" xml:space="preserve">
     <value>Salaiset keskustelut</value>
   </data>
-  <data name="FilterShowMoreChats_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="FilterShowMoreChats_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="FilterShowMoreChats_one" xml:space="preserve">
     <value>Näytä {0} keskustelu lisää</value>
   </data>
   <data name="FilterShowMoreChats_other" xml:space="preserve">
     <value>Näytä {0} keskustelua lisää</value>
-  </data>
-  <data name="FilterShowMoreChats_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="FilterShowMoreChats_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="FiltersSetup" xml:space="preserve">
     <value>Käyttöönotto</value>
@@ -6251,41 +5840,17 @@ Kesto: {1}</value>
   <data name="FootsShort" xml:space="preserve">
     <value>{0} ft</value>
   </data>
-  <data name="ForceSetPasswordAlertMessage_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ForceSetPasswordAlertMessage_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="ForceSetPasswordAlertMessage_one" xml:space="preserve">
     <value>Etkö halua asettaa salasanaa? Jos et aseta, voit kirjautua tilillesi tekstiviestitse vain kerran {0} päivässä.</value>
   </data>
   <data name="ForceSetPasswordAlertMessage_other" xml:space="preserve">
     <value>Etkö halua asettaa salasanaa? Jos et aseta, voit kirjautua tilillesi tekstiviestitse vain kerran {0} päivässä.</value>
   </data>
-  <data name="ForceSetPasswordAlertMessage_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ForceSetPasswordAlertMessage_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ForceSetPasswordAlertMessageShort_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ForceSetPasswordAlertMessageShort_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="ForceSetPasswordAlertMessageShort_one" xml:space="preserve">
     <value>Jos et aseta salasanaa, voit kirjautua tilillesi tekstiviestitse vain kerran {0} päivässä. Haluatko jatkaa ilman salasanaa?</value>
   </data>
   <data name="ForceSetPasswordAlertMessageShort_other" xml:space="preserve">
     <value>Jos et aseta salasanaa, voit kirjautua tilillesi tekstiviestitse vain kerran {0} päivässä. Haluatko jatkaa ilman salasanaa?</value>
-  </data>
-  <data name="ForceSetPasswordAlertMessageShort_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ForceSetPasswordAlertMessageShort_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="ForceSetPasswordCancel" xml:space="preserve">
     <value>En aseta, olen varma</value>
@@ -6370,29 +5935,11 @@ Menetät salaiset keskustelusi.</value>
   <data name="ForwardAnotherChat" xml:space="preserve">
     <value>Välitä toiseen keskusteluun</value>
   </data>
-  <data name="ForwardedAudio_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ForwardedAudio_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="ForwardedAudio_one" xml:space="preserve">
     <value>Välitetty ääniviesti</value>
   </data>
   <data name="ForwardedAudio_other" xml:space="preserve">
     <value>{0} välitettyä ääniviestiä</value>
-  </data>
-  <data name="ForwardedAudio_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ForwardedAudio_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ForwardedContact_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ForwardedContact_many" xml:space="preserve">
-    <value/>
   </data>
   <data name="ForwardedContact_one" xml:space="preserve">
     <value>Välitetty yhteystieto</value>
@@ -6400,35 +5947,11 @@ Menetät salaiset keskustelusi.</value>
   <data name="ForwardedContact_other" xml:space="preserve">
     <value>{0} välitettyä yhteystietoa</value>
   </data>
-  <data name="ForwardedContact_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ForwardedContact_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ForwardedFile_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ForwardedFile_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="ForwardedFile_one" xml:space="preserve">
     <value>Välitetty tiedosto</value>
   </data>
   <data name="ForwardedFile_other" xml:space="preserve">
     <value>{0} välitettyä tiedostoa</value>
-  </data>
-  <data name="ForwardedFile_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ForwardedFile_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ForwardedLocation_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ForwardedLocation_many" xml:space="preserve">
-    <value/>
   </data>
   <data name="ForwardedLocation_one" xml:space="preserve">
     <value>Välitetty sijainti</value>
@@ -6436,20 +5959,8 @@ Menetät salaiset keskustelusi.</value>
   <data name="ForwardedLocation_other" xml:space="preserve">
     <value>{0} välitettyä sijaintia</value>
   </data>
-  <data name="ForwardedLocation_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ForwardedLocation_zero" xml:space="preserve">
-    <value/>
-  </data>
   <data name="ForwardedMessage" xml:space="preserve">
     <value>Välitetty viesti</value>
-  </data>
-  <data name="ForwardedMessageCount_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ForwardedMessageCount_many" xml:space="preserve">
-    <value/>
   </data>
   <data name="ForwardedMessageCount_one" xml:space="preserve">
     <value>Välitetty viesti</value>
@@ -6457,35 +5968,11 @@ Menetät salaiset keskustelusi.</value>
   <data name="ForwardedMessageCount_other" xml:space="preserve">
     <value>{0} välitettyä viestiä</value>
   </data>
-  <data name="ForwardedMessageCount_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ForwardedMessageCount_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ForwardedMusic_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ForwardedMusic_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="ForwardedMusic_one" xml:space="preserve">
     <value>Välitetty äänitiedosto</value>
   </data>
   <data name="ForwardedMusic_other" xml:space="preserve">
     <value>{0} välitettyä äänitiedostoa</value>
-  </data>
-  <data name="ForwardedMusic_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ForwardedMusic_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ForwardedPhoto_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ForwardedPhoto_many" xml:space="preserve">
-    <value/>
   </data>
   <data name="ForwardedPhoto_one" xml:space="preserve">
     <value>Välitetty kuva</value>
@@ -6493,35 +5980,11 @@ Menetät salaiset keskustelusi.</value>
   <data name="ForwardedPhoto_other" xml:space="preserve">
     <value>{0} välitettyä kuvaa</value>
   </data>
-  <data name="ForwardedPhoto_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ForwardedPhoto_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ForwardedPoll_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ForwardedPoll_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="ForwardedPoll_one" xml:space="preserve">
     <value>Välitetty kysely</value>
   </data>
   <data name="ForwardedPoll_other" xml:space="preserve">
     <value>{0} välitettyä kyselyä</value>
-  </data>
-  <data name="ForwardedPoll_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ForwardedPoll_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ForwardedRound_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ForwardedRound_many" xml:space="preserve">
-    <value/>
   </data>
   <data name="ForwardedRound_one" xml:space="preserve">
     <value>Välitetty videoviesti</value>
@@ -6529,47 +5992,17 @@ Menetät salaiset keskustelusi.</value>
   <data name="ForwardedRound_other" xml:space="preserve">
     <value>{0} välitettyä videoviestiä</value>
   </data>
-  <data name="ForwardedRound_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ForwardedRound_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ForwardedSticker_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ForwardedSticker_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="ForwardedSticker_one" xml:space="preserve">
     <value>Välitetty tarra</value>
   </data>
   <data name="ForwardedSticker_other" xml:space="preserve">
     <value>{0} välitettyä tarraa</value>
   </data>
-  <data name="ForwardedSticker_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ForwardedSticker_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ForwardedVideo_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ForwardedVideo_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="ForwardedVideo_one" xml:space="preserve">
     <value>Välitetty video</value>
   </data>
   <data name="ForwardedVideo_other" xml:space="preserve">
     <value>{0} välitettyä videota</value>
-  </data>
-  <data name="ForwardedVideo_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ForwardedVideo_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="ForwardGroupMedia" xml:space="preserve">
     <value>Välitä media</value>
@@ -6619,29 +6052,20 @@ Menetät salaiset keskustelusi.</value>
   <data name="FreeOfTotal" xml:space="preserve">
     <value>Vapaana {0}/{1}.</value>
   </data>
+  <data name="FreshChangePhoneForbidden" xml:space="preserve">
+    <value>Et voi turvallisuussyistä vaihtaa puhelinnumeroasi kun olet vasta kirjautunut. Sinun täytyy joko käyttää laitetta, jolla olet kirjautunut aiemmin, tai odottaa muutama tunti.</value>
+  </data>
   <data name="From" xml:space="preserve">
     <value>Lähettäjä</value>
   </data>
   <data name="FromCamera" xml:space="preserve">
     <value>Kamerasta</value>
   </data>
-  <data name="FromChats_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="FromChats_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="FromChats_one" xml:space="preserve">
     <value>{0} keskustelusta</value>
   </data>
   <data name="FromChats_other" xml:space="preserve">
     <value>{0} keskustelusta</value>
-  </data>
-  <data name="FromChats_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="FromChats_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="FromFormatted" xml:space="preserve">
     <value>lähettänyt {0}</value>
@@ -6700,26 +6124,14 @@ Menetät salaiset keskustelusi.</value>
   <data name="GifCaption" xml:space="preserve">
     <value>GIF-kuvateksti</value>
   </data>
-  <data name="GIFs_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="GIFs_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="GIFs_one" xml:space="preserve">
     <value>{0} GIF</value>
   </data>
   <data name="GIFs_other" xml:space="preserve">
     <value>{0} GIFiä</value>
   </data>
-  <data name="GIFs_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="GIFs_zero" xml:space="preserve">
-    <value/>
-  </data>
   <data name="GifSavedHint" xml:space="preserve">
-    <value>Tallennettiin GIFeihin.</value>
+    <value>GIF lisättiin suosikkeihisi.</value>
   </data>
   <data name="GifSavedToDownloadsHint" xml:space="preserve">
     <value>GIF tallennettiin latauksiin.</value>
@@ -6729,6 +6141,24 @@ Menetät salaiset keskustelusi.</value>
   </data>
   <data name="GifsTab2" xml:space="preserve">
     <value>GIFit</value>
+  </data>
+  <data name="GiftPremium" xml:space="preserve">
+    <value>Lahjoita Premium</value>
+  </data>
+  <data name="GiftPremiumListFeaturesAndTerms" xml:space="preserve">
+    <value>Voit tarkistaa Telegram Premiumin edut ja käyttöehdot *täältä*.</value>
+  </data>
+  <data name="GiftPremiumOptionDiscount" xml:space="preserve">
+    <value>-{0}%</value>
+  </data>
+  <data name="GiftSubscriptionFor" xml:space="preserve">
+    <value>Lahjoita tilaus ({0})</value>
+  </data>
+  <data name="GiftTelegramPremiumDescription" xml:space="preserve">
+    <value>Voit antaa käyttäjän **{0}** nauttia Telegram Premiumin eduista.</value>
+  </data>
+  <data name="GiftTelegramPremiumTitle" xml:space="preserve">
+    <value>Lahjoita Telegram Premium</value>
   </data>
   <data name="GigagroupAlertLearnMore" xml:space="preserve">
     <value>LUE LISÄÄ</value>
@@ -6858,23 +6288,11 @@ Telegramista?</value>
   <data name="GroupPhotosHelp" xml:space="preserve">
     <value>Ryhmitä media yhdeksi viestiksi</value>
   </data>
-  <data name="Groups_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Groups_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="Groups_one" xml:space="preserve">
     <value>{0} ryhmä</value>
   </data>
   <data name="Groups_other" xml:space="preserve">
     <value>{0} ryhmää</value>
-  </data>
-  <data name="Groups_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Groups_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="GroupsAndChannels" xml:space="preserve">
     <value>Ryhmät ja kanavat</value>
@@ -6883,7 +6301,7 @@ Telegramista?</value>
     <value>Valitse, ketkä saavat lisätä sinut ryhmiin ja kanaville.</value>
   </data>
   <data name="GroupsAndChannelsLimitSubtitle" xml:space="preserve">
-    <value>Liity jopa {0} kanavalle tai ryhmään</value>
+    <value>Liity jopa {0} kanavalle ja suureen ryhmään</value>
   </data>
   <data name="GroupsAndChannelsLimitTitle" xml:space="preserve">
     <value>Ryhmät ja kanavat</value>
@@ -7004,29 +6422,11 @@ Hän voi kuitenkin liittyä takaisin linkillä, jos häntä ei ole estetty ryhm�
   <data name="HoldToVideo" xml:space="preserve">
     <value>Nauhoita video pitämällä pohjassa. Napautus vaihtaa tilaa.</value>
   </data>
-  <data name="Hours_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Hours_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="Hours_one" xml:space="preserve">
     <value>{0} tunti</value>
   </data>
   <data name="Hours_other" xml:space="preserve">
     <value>{0} tuntia</value>
-  </data>
-  <data name="Hours_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Hours_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="HoursBold_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="HoursBold_many" xml:space="preserve">
-    <value/>
   </data>
   <data name="HoursBold_one" xml:space="preserve">
     <value>**{0}** tunti</value>
@@ -7034,29 +6434,11 @@ Hän voi kuitenkin liittyä takaisin linkillä, jos häntä ei ole estetty ryhm�
   <data name="HoursBold_other" xml:space="preserve">
     <value>**{0}** tuntia</value>
   </data>
-  <data name="HoursBold_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="HoursBold_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="HoursSchedule_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="HoursSchedule_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="HoursSchedule_one" xml:space="preserve">
     <value>{0} tunnin</value>
   </data>
   <data name="HoursSchedule_other" xml:space="preserve">
     <value>{0} tunnin</value>
-  </data>
-  <data name="HoursSchedule_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="HoursSchedule_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="Hybrid" xml:space="preserve">
     <value>Hybridi</value>
@@ -7304,23 +6686,11 @@ Viestien päivämäärä asetetaan nykyhetkeksi, mutta ne sisältävät myös al
   <data name="Invisible" xml:space="preserve">
     <value>näkymätön</value>
   </data>
-  <data name="Invitations_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Invitations_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="Invitations_one" xml:space="preserve">
     <value>{0} kutsu</value>
   </data>
   <data name="Invitations_other" xml:space="preserve">
     <value>{0} kutsua</value>
-  </data>
-  <data name="Invitations_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Invitations_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="Invite" xml:space="preserve">
     <value>Kutsu</value>
@@ -7343,23 +6713,11 @@ Viestien päivämäärä asetetaan nykyhetkeksi, mutta ne sisältävät myös al
   <data name="InviteLink" xml:space="preserve">
     <value>Kutsulinkki</value>
   </data>
-  <data name="InviteLinkCount_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="InviteLinkCount_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="InviteLinkCount_one" xml:space="preserve">
     <value>{0} kutsulinkki</value>
   </data>
   <data name="InviteLinkCount_other" xml:space="preserve">
     <value>{0} kutsulinkkiä</value>
-  </data>
-  <data name="InviteLinkCount_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="InviteLinkCount_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="InviteLinks" xml:space="preserve">
     <value>Kutsulinkit</value>
@@ -7370,23 +6728,11 @@ Viestien päivämäärä asetetaan nykyhetkeksi, mutta ne sisältävät myös al
   <data name="InviteText2" xml:space="preserve">
     <value>Hei, käytän Telegramia keskusteluun. Tule mukaan! Lataa se täältä: {0}</value>
   </data>
-  <data name="InviteTextNum_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="InviteTextNum_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="InviteTextNum_one" xml:space="preserve">
     <value>Hei, käytän Telegramia keskusteluun – kuten {0} muu yhteystietomme. Liity seuraamme! Lataa se täältä: {1}</value>
   </data>
   <data name="InviteTextNum_other" xml:space="preserve">
     <value>Hei, käytän Telegramia keskusteluun – kuten {0} muuta yhteystietoamme. Liity seuraamme! Lataa se täältä: {1}</value>
-  </data>
-  <data name="InviteTextNum_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="InviteTextNum_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="InviteToChannelError" xml:space="preserve">
     <value>Valitettavasti tämän käyttäjän yksityisyysasetukset estävät lisäämisen kanaville.</value>
@@ -7493,23 +6839,11 @@ Viestien päivämäärä asetetaan nykyhetkeksi, mutta ne sisältävät myös al
   <data name="Italic" xml:space="preserve">
     <value>Kursivoi</value>
   </data>
-  <data name="items_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="items_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="items_one" xml:space="preserve">
     <value>{0} kohde</value>
   </data>
   <data name="items_other" xml:space="preserve">
     <value>{0} kohdetta</value>
-  </data>
-  <data name="items_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="items_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="IUnderstand" xml:space="preserve">
     <value>Ymmärrän</value>
@@ -7544,23 +6878,11 @@ Viestien päivämäärä asetetaan nykyhetkeksi, mutta ne sisältävät myös al
   <data name="JoinGroup" xml:space="preserve">
     <value>LIITY RYHMÄÄN</value>
   </data>
-  <data name="JoinRequests_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="JoinRequests_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="JoinRequests_one" xml:space="preserve">
     <value>{0} liittymispyyntö</value>
   </data>
   <data name="JoinRequests_other" xml:space="preserve">
     <value>{0} liittymispyyntöä</value>
-  </data>
-  <data name="JoinRequests_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="JoinRequests_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="JoinToGroupErrorFull" xml:space="preserve">
     <value>Pahoittelut, ryhmä on täynnä.</value>
@@ -7568,23 +6890,11 @@ Viestien päivämäärä asetetaan nykyhetkeksi, mutta ne sisältävät myös al
   <data name="JoinToGroupErrorNotExist" xml:space="preserve">
     <value>Valitettavasti tätä ryhmää ei enää löydy.</value>
   </data>
-  <data name="JoinUsersRequests_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="JoinUsersRequests_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="JoinUsersRequests_one" xml:space="preserve">
     <value>{0} liittymispyyntö</value>
   </data>
   <data name="JoinUsersRequests_other" xml:space="preserve">
     <value>{0} liittymispyyntöä</value>
-  </data>
-  <data name="JoinUsersRequests_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="JoinUsersRequests_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="July" xml:space="preserve">
     <value>heinäkuu</value>
@@ -7659,23 +6969,11 @@ Voit vaihtaa kielen takaisin koska vain asetuksista.</value>
   <data name="LanguageNameInEnglish" xml:space="preserve">
     <value>Finnish</value>
   </data>
-  <data name="Languages_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Languages_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="Languages_one" xml:space="preserve">
     <value>{0} kieli</value>
   </data>
   <data name="Languages_other" xml:space="preserve">
     <value>{0} kieltä</value>
-  </data>
-  <data name="Languages_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Languages_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="LanguageSame" xml:space="preserve">
     <value>Käytät jo tätä kielipakettia (**{0}**). Voit vaihtaa kielen milloin vain asetuksista.</value>
@@ -7747,7 +7045,7 @@ Voit vaihtaa kielen takaisin koska vain asetuksista.</value>
     <value>Ei kukaan (+{0})</value>
   </data>
   <data name="LastSeenTitle" xml:space="preserve">
-    <value>Ketkä voivat nähdä Nähty-tilasi?</value>
+    <value>Ketkä voivat nähdä nähty-tilani?</value>
   </data>
   <data name="Lately" xml:space="preserve">
     <value>nähty hiljattain</value>
@@ -7767,23 +7065,11 @@ Voit vaihtaa kielen takaisin koska vain asetuksista.</value>
   <data name="LeaveChats" xml:space="preserve">
     <value>Poistu ({0})</value>
   </data>
-  <data name="LeaveCommunities_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="LeaveCommunities_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="LeaveCommunities_one" xml:space="preserve">
     <value>Poistu yhteisöstä</value>
   </data>
   <data name="LeaveCommunities_other" xml:space="preserve">
     <value>Poistu {0} yhteisöstä</value>
-  </data>
-  <data name="LeaveCommunities_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="LeaveCommunities_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="LeaveMegaMenu" xml:space="preserve">
     <value>Poistu ryhmästä</value>
@@ -7837,7 +7123,7 @@ Voit vaihtaa kielen takaisin koska vain asetuksista.</value>
     <value>{0} GIFin raja kohdattu</value>
   </data>
   <data name="LimitReachedFavoriteGifsSubtitle" xml:space="preserve">
-    <value>Vanhempi GIF on korvattu uudella. Rajan voi **halutessasi nostaa** {0} GIFiin</value>
+    <value>Vanhempi GIF on korvattu uudella. Rajan voi **halutessasi nostaa** {0} GIFiin.</value>
   </data>
   <data name="LimitReachedFavoriteGifsSubtitlePremium" xml:space="preserve">
     <value>Vanhempi GIF on korvattu uudella.</value>
@@ -7977,23 +7263,11 @@ Voit vaihtaa kielen takaisin koska vain asetuksista.</value>
   <data name="LinkPreview" xml:space="preserve">
     <value>Linkin esikatselu</value>
   </data>
-  <data name="Links_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Links_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="Links_one" xml:space="preserve">
     <value>{0} linkki</value>
   </data>
   <data name="Links_other" xml:space="preserve">
     <value>{0} linkkiä</value>
-  </data>
-  <data name="Links_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Links_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="LinksCreatedByOtherAdmins" xml:space="preserve">
     <value>Muiden valvojien luomat linkit</value>
@@ -8119,7 +7393,7 @@ Pyydä häntä poistamaan yksi niistä tai siirtämään omistajuus toiselle.</v
     <value>Olet ottanut kaksivaiheisen todennuksen käyttöön, joten tilisi on suojattu myös salasanalla.</value>
   </data>
   <data name="LoginPasswordTextShort" xml:space="preserve">
-    <value>Kaksivaiheinen tunnistautuminen käytössä; tilisi on suojattu myös salasanalla.</value>
+    <value>Olet ottanut kaksivaiheisen todennuksen käyttöön, joten tilisi on suojattu myös salasanalla.</value>
   </data>
   <data name="LogOut" xml:space="preserve">
     <value>Kirjaudu ulos</value>
@@ -8246,23 +7520,11 @@ Puhelinnumeroasi ei julkaista.</value>
   <data name="MasksArchivedInfo" xml:space="preserve">
     <value>{0} siirrettiin arkistoon.</value>
   </data>
-  <data name="MasksCount_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="MasksCount_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="MasksCount_one" xml:space="preserve">
     <value>{0} naamio</value>
   </data>
   <data name="MasksCount_other" xml:space="preserve">
     <value>{0} naamiota</value>
-  </data>
-  <data name="MasksCount_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="MasksCount_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="MasksInfo" xml:space="preserve">
     <value>Voit lisätä naamioita kun muokkaat mediaa sitä lähettäessä.</value>
@@ -8276,29 +7538,11 @@ Puhelinnumeroasi ei julkaista.</value>
   <data name="May" xml:space="preserve">
     <value>toukokuu</value>
   </data>
-  <data name="Media_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Media_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="Media_one" xml:space="preserve">
     <value>{0} media</value>
   </data>
   <data name="Media_other" xml:space="preserve">
     <value>{0} mediaa</value>
-  </data>
-  <data name="Media_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Media_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="MediaSavedHint_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="MediaSavedHint_many" xml:space="preserve">
-    <value/>
   </data>
   <data name="MediaSavedHint_one" xml:space="preserve">
     <value>Media tallennettiin galleriaan.</value>
@@ -8306,29 +7550,11 @@ Puhelinnumeroasi ei julkaista.</value>
   <data name="MediaSavedHint_other" xml:space="preserve">
     <value>{0} mediaa tallennettiin galleriaan.</value>
   </data>
-  <data name="MediaSavedHint_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="MediaSavedHint_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="MediaSelected_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="MediaSelected_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="MediaSelected_one" xml:space="preserve">
     <value>{0} media valittu</value>
   </data>
   <data name="MediaSelected_other" xml:space="preserve">
     <value>{0} mediaa valittu</value>
-  </data>
-  <data name="MediaSelected_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="MediaSelected_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="MediaShowPhotos" xml:space="preserve">
     <value>Näytä kuvat</value>
@@ -8387,29 +7613,11 @@ Nimen on oltava vähintään 5 merkkiä pitkä.</value>
   <data name="MemberRequests" xml:space="preserve">
     <value>Liittymispyynnöt</value>
   </data>
-  <data name="Members_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Members_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="Members_one" xml:space="preserve">
     <value>{0} jäsen</value>
   </data>
   <data name="Members_other" xml:space="preserve">
     <value>{0} jäsentä</value>
-  </data>
-  <data name="Members_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Members_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="MembersAreSpeakingToast_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="MembersAreSpeakingToast_many" xml:space="preserve">
-    <value/>
   </data>
   <data name="MembersAreSpeakingToast_one" xml:space="preserve">
     <value>un1 puhuu</value>
@@ -8417,32 +7625,14 @@ Nimen on oltava vähintään 5 merkkiä pitkä.</value>
   <data name="MembersAreSpeakingToast_other" xml:space="preserve">
     <value>un1 puhuvat</value>
   </data>
-  <data name="MembersAreSpeakingToast_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="MembersAreSpeakingToast_zero" xml:space="preserve">
-    <value/>
-  </data>
   <data name="MembersCount" xml:space="preserve">
     <value>{0} / {1} valittuna</value>
-  </data>
-  <data name="MembersCountSelected_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="MembersCountSelected_many" xml:space="preserve">
-    <value/>
   </data>
   <data name="MembersCountSelected_one" xml:space="preserve">
     <value>{0} / {1} valittu</value>
   </data>
   <data name="MembersCountSelected_other" xml:space="preserve">
     <value>{0} / {1} valittu</value>
-  </data>
-  <data name="MembersCountSelected_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="MembersCountSelected_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="MembersCountZero" xml:space="preserve">
     <value>enintään {0}</value>
@@ -8453,23 +7643,11 @@ Nimen on oltava vähintään 5 merkkiä pitkä.</value>
   <data name="MembersOverviewTitle" xml:space="preserve">
     <value>Jäsenet</value>
   </data>
-  <data name="MembersTalking_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="MembersTalking_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="MembersTalking_one" xml:space="preserve">
     <value>{0} puhuu</value>
   </data>
   <data name="MembersTalking_other" xml:space="preserve">
     <value>{0} puhuu</value>
-  </data>
-  <data name="MembersTalking_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="MembersTalking_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="MembersTalkingNobody" xml:space="preserve">
     <value>Liity napauttamalla</value>
@@ -8479,6 +7657,12 @@ Nimen on oltava vähintään 5 merkkiä pitkä.</value>
   </data>
   <data name="Message" xml:space="preserve">
     <value>Viesti</value>
+  </data>
+  <data name="MessageContainsEmojiPack" xml:space="preserve">
+    <value>Tässä viestissä on emojeita kokoelmasta {0}.</value>
+  </data>
+  <data name="MessageContainsEmojiPacks_other" xml:space="preserve">
+    <value>Tässä viestissä on emojeita **{0} kokoelmasta**.</value>
   </data>
   <data name="MessageCopied" xml:space="preserve">
     <value>Viesti kopioitiin leikepöydälle.</value>
@@ -8513,32 +7697,14 @@ Nimen on oltava vähintään 5 merkkiä pitkä.</value>
   <data name="MessagePinnedHint" xml:space="preserve">
     <value>Viesti kiinnitettiin.</value>
   </data>
-  <data name="MessagePlayed_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="MessagePlayed_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="MessagePlayed_one" xml:space="preserve">
     <value>1 toisti</value>
   </data>
   <data name="MessagePlayed_other" xml:space="preserve">
     <value>{0} toisti</value>
   </data>
-  <data name="MessagePlayed_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="MessagePlayed_zero" xml:space="preserve">
-    <value/>
-  </data>
   <data name="MessagePreview" xml:space="preserve">
     <value>Viestin esikatselu</value>
-  </data>
-  <data name="messages_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="messages_many" xml:space="preserve">
-    <value/>
   </data>
   <data name="messages_one" xml:space="preserve">
     <value>{0} viesti</value>
@@ -8546,29 +7712,11 @@ Nimen on oltava vähintään 5 merkkiä pitkä.</value>
   <data name="messages_other" xml:space="preserve">
     <value>{0} viestiä</value>
   </data>
-  <data name="messages_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="messages_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="MessagesBold_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="MessagesBold_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="MessagesBold_one" xml:space="preserve">
     <value>**{0}** viesti</value>
   </data>
   <data name="MessagesBold_other" xml:space="preserve">
     <value>**{0}** viestiä</value>
-  </data>
-  <data name="MessagesBold_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="MessagesBold_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="MessagesChartTitle" xml:space="preserve">
     <value>Viestit</value>
@@ -8606,29 +7754,11 @@ Nimen on oltava vähintään 5 merkkiä pitkä.</value>
   <data name="MessagesDataUsage" xml:space="preserve">
     <value>Viestit ja muu data</value>
   </data>
-  <data name="MessagesDeletedHint_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="MessagesDeletedHint_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="MessagesDeletedHint_one" xml:space="preserve">
     <value>Viesti poistettu</value>
   </data>
   <data name="MessagesDeletedHint_other" xml:space="preserve">
     <value>{0} viestiä poistettu</value>
-  </data>
-  <data name="MessagesDeletedHint_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="MessagesDeletedHint_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="MessagesDeletedUndo_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="MessagesDeletedUndo_many" xml:space="preserve">
-    <value/>
   </data>
   <data name="MessagesDeletedUndo_one" xml:space="preserve">
     <value>{0} päivän viestit poistettiin</value>
@@ -8636,29 +7766,11 @@ Nimen on oltava vähintään 5 merkkiä pitkä.</value>
   <data name="MessagesDeletedUndo_other" xml:space="preserve">
     <value>{0} päivän viestit poistettiin</value>
   </data>
-  <data name="MessagesDeletedUndo_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="MessagesDeletedUndo_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="MessageSeen_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="MessageSeen_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="MessageSeen_one" xml:space="preserve">
     <value>nähty</value>
   </data>
   <data name="MessageSeen_other" xml:space="preserve">
     <value>{0} nähnyt</value>
-  </data>
-  <data name="MessageSeen_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="MessageSeen_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="MessageSeenTooltipMessage" xml:space="preserve">
     <value>Näyttökerrat tallennetaan vain **7 päivän ajaksi** yksityisyyssyistä.</value>
@@ -8669,44 +7781,20 @@ Nimen on oltava vähintään 5 merkkiä pitkä.</value>
   <data name="MessagesSettings" xml:space="preserve">
     <value>Viestit</value>
   </data>
-  <data name="MessagesUnpinned_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="MessagesUnpinned_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="MessagesUnpinned_one" xml:space="preserve">
     <value>Viesti irrotettiin.</value>
   </data>
   <data name="MessagesUnpinned_other" xml:space="preserve">
     <value>{0} viestiä irrotettiin.</value>
   </data>
-  <data name="MessagesUnpinned_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="MessagesUnpinned_zero" xml:space="preserve">
-    <value/>
-  </data>
   <data name="MessageUnpinnedHint" xml:space="preserve">
     <value>Viesti irrotettiin.</value>
-  </data>
-  <data name="Meters_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Meters_many" xml:space="preserve">
-    <value/>
   </data>
   <data name="Meters_one" xml:space="preserve">
     <value>{0} metri</value>
   </data>
   <data name="Meters_other" xml:space="preserve">
     <value>{0} metriä</value>
-  </data>
-  <data name="Meters_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Meters_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="MetersAway" xml:space="preserve">
     <value>m päässä</value>
@@ -8749,29 +7837,11 @@ Tässä voi kestää jonkin aikaa. Voit käyttää sovellusta tiedostojen siirro
   <data name="MilesShort" xml:space="preserve">
     <value>{0} mi</value>
   </data>
-  <data name="Minutes_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Minutes_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="Minutes_one" xml:space="preserve">
     <value>{0} minuutti</value>
   </data>
   <data name="Minutes_other" xml:space="preserve">
     <value>{0} minuuttia</value>
-  </data>
-  <data name="Minutes_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Minutes_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="MinutesBold_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="MinutesBold_many" xml:space="preserve">
-    <value/>
   </data>
   <data name="MinutesBold_one" xml:space="preserve">
     <value>**{0}** minuutti</value>
@@ -8779,29 +7849,11 @@ Tässä voi kestää jonkin aikaa. Voit käyttää sovellusta tiedostojen siirro
   <data name="MinutesBold_other" xml:space="preserve">
     <value>**{0}** minuuttia</value>
   </data>
-  <data name="MinutesBold_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="MinutesBold_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="MinutesSchedule_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="MinutesSchedule_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="MinutesSchedule_one" xml:space="preserve">
     <value>{0} minuutin</value>
   </data>
   <data name="MinutesSchedule_other" xml:space="preserve">
     <value>{0} minuutin</value>
-  </data>
-  <data name="MinutesSchedule_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="MinutesSchedule_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="MissedCallDescriptionSubtitle" xml:space="preserve">
     <value>Saat hetken kuluttua soiton numerosta:</value>
@@ -8827,44 +7879,20 @@ Tässä voi kestää jonkin aikaa. Voit käyttää sovellusta tiedostojen siirro
   <data name="Mono" xml:space="preserve">
     <value>Tasalevyinen</value>
   </data>
-  <data name="Months_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Months_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="Months_one" xml:space="preserve">
     <value>{0} kuukausi</value>
   </data>
   <data name="Months_other" xml:space="preserve">
     <value>{0} kuukautta</value>
   </data>
-  <data name="Months_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Months_zero" xml:space="preserve">
-    <value/>
-  </data>
   <data name="MoreInfo" xml:space="preserve">
     <value>Lisätietoja</value>
-  </data>
-  <data name="MusicFiles_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="MusicFiles_many" xml:space="preserve">
-    <value/>
   </data>
   <data name="MusicFiles_one" xml:space="preserve">
     <value>{0} musiikkitiedosto</value>
   </data>
   <data name="MusicFiles_other" xml:space="preserve">
     <value>{0} musiikkitiedostoa</value>
-  </data>
-  <data name="MusicFiles_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="MusicFiles_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="MusicInfo" xml:space="preserve">
     <value>Lähetä musiikkia</value>
@@ -9001,23 +8029,11 @@ Tässä voi kestää jonkin aikaa. Voit käyttää sovellusta tiedostojen siirro
   <data name="NewMembersBySourceChartTitle" xml:space="preserve">
     <value>Uusien jäsenten lähde</value>
   </data>
-  <data name="NewMessages_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="NewMessages_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="NewMessages_one" xml:space="preserve">
     <value>{0} uusi viesti</value>
   </data>
   <data name="NewMessages_other" xml:space="preserve">
     <value>{0} uutta viestiä</value>
-  </data>
-  <data name="NewMessages_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="NewMessages_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="NewMessageTitle" xml:space="preserve">
     <value>Uusi viesti</value>
@@ -9697,7 +8713,7 @@ Tarkista, että palvelimen osoite ja lähetysavain ovat oikein.</value>
     <value>{0} lähetti sinulle visan &quot;{1}&quot;</value>
   </data>
   <data name="NotificationMessageRecurringPay" xml:space="preserve">
-    <value>Käyttäjältä {0} veloitettiin {1}</value>
+    <value>Sinulta ({0}) veloitettiin {1}</value>
   </data>
   <data name="NotificationMessageRound" xml:space="preserve">
     <value>{0} lähetti sinulle videoviestin</value>
@@ -9962,23 +8978,11 @@ Telegram-tiimi</value>
   <data name="Online" xml:space="preserve">
     <value>paikalla</value>
   </data>
-  <data name="OnlineCount_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="OnlineCount_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="OnlineCount_one" xml:space="preserve">
     <value>{0} paikalla</value>
   </data>
   <data name="OnlineCount_other" xml:space="preserve">
     <value>{0} paikalla</value>
-  </data>
-  <data name="OnlineCount_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="OnlineCount_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="OnlyIfSilent" xml:space="preserve">
     <value>Vain äänettömällä</value>
@@ -10058,23 +9062,11 @@ Telegram-tiimi</value>
   <data name="OptimizingTelegramDescription2" xml:space="preserve">
     <value>Pahoittelemme häiriötä.</value>
   </data>
-  <data name="Option_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Option_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="Option_one" xml:space="preserve">
     <value>{0} vaihtoehdon lisää</value>
   </data>
   <data name="Option_other" xml:space="preserve">
     <value>{0} vaihtoehtoa lisää</value>
-  </data>
-  <data name="Option_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Option_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="OptionHint" xml:space="preserve">
     <value>Vaihtoehto</value>
@@ -10198,23 +9190,11 @@ viesteihisi usealta laitteelta.</value>
   <data name="PaintRegular" xml:space="preserve">
     <value>Normaali</value>
   </data>
-  <data name="Participants_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Participants_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="Participants_one" xml:space="preserve">
     <value>{0} puhelussa</value>
   </data>
   <data name="Participants_other" xml:space="preserve">
     <value>{0} puhelussa</value>
-  </data>
-  <data name="Participants_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Participants_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="Passcode" xml:space="preserve">
     <value>Pääsykoodilukko</value>
@@ -11074,29 +10054,11 @@ Maksut siirtyvät suoraan botin {0} kehittäjälle. Telegram ei tarjoa minkään
   <data name="PeopleCanJoinViaLink" xml:space="preserve">
     <value>{0} voi liittyä tämän linkin kautta</value>
   </data>
-  <data name="PeopleCanJoinViaLinkCount_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PeopleCanJoinViaLinkCount_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="PeopleCanJoinViaLinkCount_one" xml:space="preserve">
     <value>{0} voi liittyä tällä linkillä.</value>
   </data>
   <data name="PeopleCanJoinViaLinkCount_other" xml:space="preserve">
     <value>{0} voi liittyä tällä linkillä.</value>
-  </data>
-  <data name="PeopleCanJoinViaLinkCount_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PeopleCanJoinViaLinkCount_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PeopleJoined_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PeopleJoined_many" xml:space="preserve">
-    <value/>
   </data>
   <data name="PeopleJoined_one" xml:space="preserve">
     <value>{0} liittynyt</value>
@@ -11104,29 +10066,11 @@ Maksut siirtyvät suoraan botin {0} kehittäjälle. Telegram ei tarjoa minkään
   <data name="PeopleJoined_other" xml:space="preserve">
     <value>{0} liittynyt</value>
   </data>
-  <data name="PeopleJoined_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PeopleJoined_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PeopleJoinedRemaining_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PeopleJoinedRemaining_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="PeopleJoinedRemaining_one" xml:space="preserve">
     <value>{0} jäljellä</value>
   </data>
   <data name="PeopleJoinedRemaining_other" xml:space="preserve">
     <value>{0} jäljellä</value>
-  </data>
-  <data name="PeopleJoinedRemaining_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PeopleJoinedRemaining_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="PeopleNearby" xml:space="preserve">
     <value>Lähellä olevat</value>
@@ -11296,23 +10240,11 @@ Käsittelemme sijaintiasi vain valitsemasi pituuden ajan, ja voit myös lopettaa
   <data name="PhotoEditorDiscardAlert" xml:space="preserve">
     <value>Haluatko varmasti hylätä kaikki muutokset?</value>
   </data>
-  <data name="Photos_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Photos_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="Photos_one" xml:space="preserve">
     <value>{0} kuva</value>
   </data>
   <data name="Photos_other" xml:space="preserve">
     <value>{0} kuvaa</value>
-  </data>
-  <data name="Photos_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Photos_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="PhotoSavedHint" xml:space="preserve">
     <value>Kuva tallennettiin galleriaan.</value>
@@ -11320,41 +10252,17 @@ Käsittelemme sijaintiasi vain valitsemasi pituuden ajan, ja voit myös lopettaa
   <data name="PhotoSavedToDownloadsHint" xml:space="preserve">
     <value>Kuva tallennettiin latauksiin.</value>
   </data>
-  <data name="PhotosSavedHint_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PhotosSavedHint_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="PhotosSavedHint_one" xml:space="preserve">
     <value>Kuva tallennettiin galleriaan.</value>
   </data>
   <data name="PhotosSavedHint_other" xml:space="preserve">
     <value>{0} kuvaa tallennettiin galleriaan.</value>
   </data>
-  <data name="PhotosSavedHint_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PhotosSavedHint_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PhotosSelected_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PhotosSelected_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="PhotosSelected_one" xml:space="preserve">
     <value>{0} kuva valittu</value>
   </data>
   <data name="PhotosSelected_other" xml:space="preserve">
     <value>{0} kuvaa valittu</value>
-  </data>
-  <data name="PhotosSelected_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PhotosSelected_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="PinAlsoFor" xml:space="preserve">
     <value>Kiinnitä myös käyttäjälle {0}</value>
@@ -11392,23 +10300,11 @@ Käsittelemme sijaintiasi vain valitsemasi pituuden ajan, ja voit myös lopettaa
   <data name="PinMessageAlertTitle" xml:space="preserve">
     <value>Kiinnitys</value>
   </data>
-  <data name="PinnedDialogsCount_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PinnedDialogsCount_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="PinnedDialogsCount_one" xml:space="preserve">
     <value>Keskustelu kiinnitettiin</value>
   </data>
   <data name="PinnedDialogsCount_other" xml:space="preserve">
     <value>{0} keskustelua kiinnitettiin</value>
-  </data>
-  <data name="PinnedDialogsCount_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PinnedDialogsCount_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="PinnedMessage" xml:space="preserve">
     <value>Kiinnitetty viesti</value>
@@ -11416,23 +10312,11 @@ Käsittelemme sijaintiasi vain valitsemasi pituuden ajan, ja voit myös lopettaa
   <data name="PinnedMessages" xml:space="preserve">
     <value>Kiinnitetyt viestit</value>
   </data>
-  <data name="PinnedMessagesCount_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PinnedMessagesCount_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="PinnedMessagesCount_one" xml:space="preserve">
     <value>Kiinnitetty viesti</value>
   </data>
   <data name="PinnedMessagesCount_other" xml:space="preserve">
     <value>{0} kiinnitettyä viestiä</value>
-  </data>
-  <data name="PinnedMessagesCount_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PinnedMessagesCount_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="PinnedMessagesHidden" xml:space="preserve">
     <value>Kiinnitetyt viestit piilotettiin</value>
@@ -11497,23 +10381,11 @@ Käsittelemme sijaintiasi vain valitsemasi pituuden ajan, ja voit myös lopettaa
   <data name="PleaseStreamDownload" xml:space="preserve">
     <value>Ole hyvä ja odota, että video on täysin latautunut.</value>
   </data>
-  <data name="Points_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Points_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="Points_one" xml:space="preserve">
     <value>{0} piste</value>
   </data>
   <data name="Points_other" xml:space="preserve">
     <value>{0} pistettä</value>
-  </data>
-  <data name="Points_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Points_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="Poll" xml:space="preserve">
     <value>Kysely</value>
@@ -11569,6 +10441,9 @@ Käsittelemme sijaintiasi vain valitsemasi pituuden ajan, ja voit myös lopettaa
   <data name="PostingMembers" xml:space="preserve">
     <value>Keskustelevat jäsenet</value>
   </data>
+  <data name="PremiumMore" xml:space="preserve">
+    <value>Lisää</value>
+  </data>
   <data name="PremiumPreviewAdvancedChatManagement" xml:space="preserve">
     <value>Keskusteluiden järjestelytyökalut</value>
   </data>
@@ -11582,7 +10457,7 @@ Käsittelemme sijaintiasi vain valitsemasi pituuden ajan, ja voit myös lopettaa
     <value>Keskustelulistassa ja keskusteluissa toistuvat profiilivideot auttavat sinua ilmaisemaan itseäsi paremmin.</value>
   </data>
   <data name="PremiumPreviewAppIcon" xml:space="preserve">
-    <value>Premium-kuvake</value>
+    <value>Premium-sovelluskuvakkeet</value>
   </data>
   <data name="PremiumPreviewAppIcon2" xml:space="preserve">
     <value>Lisää sovelluskuvakkeita</value>
@@ -11598,6 +10473,15 @@ Käsittelemme sijaintiasi vain valitsemasi pituuden ajan, ja voit myös lopettaa
   </data>
   <data name="PremiumPreviewDownloadSpeedDescription" xml:space="preserve">
     <value>Median ja tiedostojen latausnopeuttasi ei enää rajoitettaisi.</value>
+  </data>
+  <data name="PremiumPreviewEmoji" xml:space="preserve">
+    <value>Animoidut emojit</value>
+  </data>
+  <data name="PremiumPreviewEmojiDescription" xml:space="preserve">
+    <value>Lisää viesteihisi animoituja emojeita emojikokoelmistasi.</value>
+  </data>
+  <data name="PremiumPreviewEmojiPack" xml:space="preserve">
+    <value>Tämä emojikokoelma on saatavilla vain **Telegram Premium** -tilaajille.</value>
   </data>
   <data name="PremiumPreviewLimits" xml:space="preserve">
     <value>Korkeammat rajat</value>
@@ -11662,29 +10546,11 @@ Käsittelemme sijaintiasi vain valitsemasi pituuden ajan, ja voit myös lopettaa
   <data name="PreviewFeedback2" xml:space="preserve">
     <value>Väärä asettelu?</value>
   </data>
-  <data name="PreviewForwardAudio_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PreviewForwardAudio_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="PreviewForwardAudio_one" xml:space="preserve">
     <value>Välitä ääniviesti</value>
   </data>
   <data name="PreviewForwardAudio_other" xml:space="preserve">
     <value>Välitä {0} ääniviestiä</value>
-  </data>
-  <data name="PreviewForwardAudio_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PreviewForwardAudio_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PreviewForwardContact_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PreviewForwardContact_many" xml:space="preserve">
-    <value/>
   </data>
   <data name="PreviewForwardContact_one" xml:space="preserve">
     <value>Välitä yhteystieto</value>
@@ -11692,35 +10558,11 @@ Käsittelemme sijaintiasi vain valitsemasi pituuden ajan, ja voit myös lopettaa
   <data name="PreviewForwardContact_other" xml:space="preserve">
     <value>Välitä {0} yhteystietoa</value>
   </data>
-  <data name="PreviewForwardContact_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PreviewForwardContact_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PreviewForwardFile_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PreviewForwardFile_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="PreviewForwardFile_one" xml:space="preserve">
     <value>Välitä tiedosto</value>
   </data>
   <data name="PreviewForwardFile_other" xml:space="preserve">
     <value>Välitä {0} tiedostoa</value>
-  </data>
-  <data name="PreviewForwardFile_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PreviewForwardFile_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PreviewForwardLocation_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PreviewForwardLocation_many" xml:space="preserve">
-    <value/>
   </data>
   <data name="PreviewForwardLocation_one" xml:space="preserve">
     <value>Välitä sijainti</value>
@@ -11728,35 +10570,11 @@ Käsittelemme sijaintiasi vain valitsemasi pituuden ajan, ja voit myös lopettaa
   <data name="PreviewForwardLocation_other" xml:space="preserve">
     <value>Välitä {0} sijaintia</value>
   </data>
-  <data name="PreviewForwardLocation_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PreviewForwardLocation_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PreviewForwardMessagesCount_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PreviewForwardMessagesCount_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="PreviewForwardMessagesCount_one" xml:space="preserve">
     <value>Välitä viesti</value>
   </data>
   <data name="PreviewForwardMessagesCount_other" xml:space="preserve">
     <value>Välitä {0} viestiä</value>
-  </data>
-  <data name="PreviewForwardMessagesCount_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PreviewForwardMessagesCount_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PreviewForwardMusic_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PreviewForwardMusic_many" xml:space="preserve">
-    <value/>
   </data>
   <data name="PreviewForwardMusic_one" xml:space="preserve">
     <value>Välitä äänitiedosto</value>
@@ -11764,35 +10582,11 @@ Käsittelemme sijaintiasi vain valitsemasi pituuden ajan, ja voit myös lopettaa
   <data name="PreviewForwardMusic_other" xml:space="preserve">
     <value>Välitä {0} äänitiedostoa</value>
   </data>
-  <data name="PreviewForwardMusic_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PreviewForwardMusic_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PreviewForwardPhoto_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PreviewForwardPhoto_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="PreviewForwardPhoto_one" xml:space="preserve">
     <value>Välitä kuva</value>
   </data>
   <data name="PreviewForwardPhoto_other" xml:space="preserve">
     <value>Välitä {0} kuvaa</value>
-  </data>
-  <data name="PreviewForwardPhoto_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PreviewForwardPhoto_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PreviewForwardPoll_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PreviewForwardPoll_many" xml:space="preserve">
-    <value/>
   </data>
   <data name="PreviewForwardPoll_one" xml:space="preserve">
     <value>Välitä kysely</value>
@@ -11800,35 +10594,11 @@ Käsittelemme sijaintiasi vain valitsemasi pituuden ajan, ja voit myös lopettaa
   <data name="PreviewForwardPoll_other" xml:space="preserve">
     <value>Välitä {0} kyselyä</value>
   </data>
-  <data name="PreviewForwardPoll_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PreviewForwardPoll_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PreviewForwardRound_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PreviewForwardRound_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="PreviewForwardRound_one" xml:space="preserve">
     <value>Välitä videoviesti</value>
   </data>
   <data name="PreviewForwardRound_other" xml:space="preserve">
     <value>Välitä {0} videoviestiä</value>
-  </data>
-  <data name="PreviewForwardRound_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PreviewForwardRound_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PreviewForwardSticker_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PreviewForwardSticker_many" xml:space="preserve">
-    <value/>
   </data>
   <data name="PreviewForwardSticker_one" xml:space="preserve">
     <value>Välitä tarra</value>
@@ -11836,32 +10606,17 @@ Käsittelemme sijaintiasi vain valitsemasi pituuden ajan, ja voit myös lopettaa
   <data name="PreviewForwardSticker_other" xml:space="preserve">
     <value>Välitä {0} tarraa</value>
   </data>
-  <data name="PreviewForwardSticker_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PreviewForwardSticker_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PreviewForwardVideo_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PreviewForwardVideo_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="PreviewForwardVideo_one" xml:space="preserve">
     <value>Välitä video</value>
   </data>
   <data name="PreviewForwardVideo_other" xml:space="preserve">
     <value>Välitä {0} videota</value>
   </data>
-  <data name="PreviewForwardVideo_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PreviewForwardVideo_zero" xml:space="preserve">
-    <value/>
-  </data>
   <data name="PreviousPinnedMessage" xml:space="preserve">
     <value>Edellinen viesti</value>
+  </data>
+  <data name="PricePerMonth" xml:space="preserve">
+    <value>{0} / kk</value>
   </data>
   <data name="PrimaryLinkHelp" xml:space="preserve">
     <value>Kuka tahansa Telegramin käyttäjä pystyy liittymään ryhmääsi avaamalla kutsulinkin.</value>
@@ -12019,6 +10774,21 @@ Käsittelemme sijaintiasi vain valitsemasi pituuden ajan, ja voit myös lopettaa
   <data name="PrivacyTitle" xml:space="preserve">
     <value>Yksityisyys</value>
   </data>
+  <data name="PrivacyVoiceMessages" xml:space="preserve">
+    <value>Ääniviestit</value>
+  </data>
+  <data name="PrivacyVoiceMessagesInfo" xml:space="preserve">
+    <value>Voit valita ketkä voivat lähettää sinulle ääni- tai videoviestejä.</value>
+  </data>
+  <data name="PrivacyVoiceMessagesInfo2" xml:space="preserve">
+    <value>Voit lisätä käyttäjiä tai kokonaisia ryhmiä poikkeuksiksi yllä oleville asetuksille.</value>
+  </data>
+  <data name="PrivacyVoiceMessagesPremiumOnly" xml:space="preserve">
+    <value>Vain *Telegram Premium* -tilaajat voivat rajoittaa ääniviestien lähettämistä tällä asetuksella.</value>
+  </data>
+  <data name="PrivacyVoiceMessagesTitle" xml:space="preserve">
+    <value>Ketkä voivat lähettää minulle ääni- tai videoviestejä?</value>
+  </data>
   <data name="PrivateShares" xml:space="preserve">
     <value>Yksityiset jaot</value>
   </data>
@@ -12132,23 +10902,11 @@ Lue lisää aloitteesta täältä: https://telegram.org/blog/coronavirus</value>
   <data name="PublicShares" xml:space="preserve">
     <value>Julkiset jaot</value>
   </data>
-  <data name="PublicSharesCount_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PublicSharesCount_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="PublicSharesCount_one" xml:space="preserve">
     <value>{0} julkinen jako</value>
   </data>
   <data name="PublicSharesCount_other" xml:space="preserve">
     <value>{0} julkista jakoa</value>
-  </data>
-  <data name="PublicSharesCount_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="PublicSharesCount_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="Purple" xml:space="preserve">
     <value>Liila</value>
@@ -12339,44 +11097,20 @@ Lue lisää aloitteesta täältä: https://telegram.org/blog/coronavirus</value>
   <data name="RateTranscription" xml:space="preserve">
     <value>Arvioi litterointi</value>
   </data>
-  <data name="Reacted_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Reacted_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="Reacted_one" xml:space="preserve">
     <value>{0} reagoi</value>
   </data>
   <data name="Reacted_other" xml:space="preserve">
     <value>{0} reagoi</value>
   </data>
-  <data name="Reacted_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Reacted_zero" xml:space="preserve">
-    <value/>
-  </data>
   <data name="Reactions" xml:space="preserve">
     <value>Reaktiot</value>
-  </data>
-  <data name="ReactionsCount_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ReactionsCount_many" xml:space="preserve">
-    <value/>
   </data>
   <data name="ReactionsCount_one" xml:space="preserve">
     <value>{0} reaktio</value>
   </data>
   <data name="ReactionsCount_other" xml:space="preserve">
     <value>{0} reaktiota</value>
-  </data>
-  <data name="ReactionsCount_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ReactionsCount_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="ReactionsOff" xml:space="preserve">
     <value>Pois</value>
@@ -12414,23 +11148,11 @@ Lue lisää aloitteesta täältä: https://telegram.org/blog/coronavirus</value>
   <data name="RecentStickersShort" xml:space="preserve">
     <value>Äskettäiset</value>
   </data>
-  <data name="Recipient_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Recipient_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="Recipient_one" xml:space="preserve">
     <value>{0} vastaanottaja</value>
   </data>
   <data name="Recipient_other" xml:space="preserve">
     <value>{0} vastaanottajaa</value>
-  </data>
-  <data name="Recipient_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Recipient_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="RecordingAudio" xml:space="preserve">
     <value>nauhoittaa ääniviestiä...</value>
@@ -12498,29 +11220,11 @@ Lue lisää aloitteesta täältä: https://telegram.org/blog/coronavirus</value>
   <data name="RemoveDocumentsAlertMessage" xml:space="preserve">
     <value>Tiedostot poistetaan laitteeltasi, mutta voidaan ladata taas pilvestä.</value>
   </data>
-  <data name="RemoveDocumentsMessage_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="RemoveDocumentsMessage_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="RemoveDocumentsMessage_one" xml:space="preserve">
     <value>Haluatko poistaa **tämän kohdan** latauksista?</value>
   </data>
   <data name="RemoveDocumentsMessage_other" xml:space="preserve">
     <value>Haluatko poistaa **nämä {0} kohtaa** latauksista?</value>
-  </data>
-  <data name="RemoveDocumentsMessage_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="RemoveDocumentsMessage_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="RemoveDocumentsTitle_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="RemoveDocumentsTitle_many" xml:space="preserve">
-    <value/>
   </data>
   <data name="RemoveDocumentsTitle_one" xml:space="preserve">
     <value>Poista {0} lataus</value>
@@ -12528,29 +11232,11 @@ Lue lisää aloitteesta täältä: https://telegram.org/blog/coronavirus</value>
   <data name="RemoveDocumentsTitle_other" xml:space="preserve">
     <value>Poista {0} latausta</value>
   </data>
-  <data name="RemoveDocumentsTitle_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="RemoveDocumentsTitle_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="RemovedUser_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="RemovedUser_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="RemovedUser_one" xml:space="preserve">
     <value>{0} estetty käyttäjä</value>
   </data>
   <data name="RemovedUser_other" xml:space="preserve">
     <value>{0} estettyä käyttäjää</value>
-  </data>
-  <data name="RemovedUser_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="RemovedUser_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="RemoveFromListText" xml:space="preserve">
     <value>Paina pitkään poistaaksesi käyttäjän.</value>
@@ -12559,7 +11245,7 @@ Lue lisää aloitteesta täältä: https://telegram.org/blog/coronavirus</value>
     <value>Poista ryhmän tarrakokoelma</value>
   </data>
   <data name="RemoveStickersCount" xml:space="preserve">
-    <value>POISTA {0}</value>
+    <value>Poista {0}</value>
   </data>
   <data name="RepeatDisabled" xml:space="preserve">
     <value>Ei käytössä</value>
@@ -12579,23 +11265,11 @@ Lue lisää aloitteesta täältä: https://telegram.org/blog/coronavirus</value>
   <data name="ReplacePhoto" xml:space="preserve">
     <value>Korvaa kuva</value>
   </data>
-  <data name="Replies_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Replies_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="Replies_one" xml:space="preserve">
     <value>{0} vastaus</value>
   </data>
   <data name="Replies_other" xml:space="preserve">
     <value>{0} vastausta</value>
-  </data>
-  <data name="Replies_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Replies_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="RepliesChatInfo" xml:space="preserve">
     <value>Täältä pystyt helpommin seuraamaan vastauksia kanavakommentteihisi.</value>
@@ -12857,6 +11531,9 @@ Tuona aikana tilin poistamisen voi vielä perua.</value>
   <data name="ResetStatisticsAlertTitle" xml:space="preserve">
     <value>Nollaa tilastot</value>
   </data>
+  <data name="Restore" xml:space="preserve">
+    <value>Palauta</value>
+  </data>
   <data name="RestoreEmailNoAccess" xml:space="preserve">
     <value>Etkö pääse sähköpostiisi {0}?</value>
   </data>
@@ -12907,23 +11584,11 @@ Tuona aikana tilin poistamisen voi vielä perua.</value>
   <data name="RestorePasswordResetPasswordText" xml:space="preserve">
     <value>Haluatko varmasti nollata kaksivaiheisen todennuksen salasanasi?</value>
   </data>
-  <data name="Restrictions_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Restrictions_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="Restrictions_one" xml:space="preserve">
     <value>{0} rajoitus</value>
   </data>
   <data name="Restrictions_other" xml:space="preserve">
     <value>{0} rajoitusta</value>
-  </data>
-  <data name="Restrictions_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Restrictions_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="RestrictSavingContent" xml:space="preserve">
     <value>Kiellä tallentaminen</value>
@@ -12980,23 +11645,11 @@ Ryhmästä &quot;**{1}**&quot; tulee yksityinen.</value>
 
 Kanavasta &quot;**{1}**&quot; tulee yksityinen.</value>
   </data>
-  <data name="RevokeLinks_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="RevokeLinks_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="RevokeLinks_one" xml:space="preserve">
     <value>Mitätöi linkki</value>
   </data>
   <data name="RevokeLinks_other" xml:space="preserve">
     <value>Mitätöi {0} linkkiä</value>
-  </data>
-  <data name="RevokeLinks_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="RevokeLinks_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="RevokeLinksAlert" xml:space="preserve">
     <value>Haluatko varmasti mitätöidä nämä linkit?
@@ -13223,29 +11876,11 @@ Telegram tulee mahdollisesti käynnistää uudelleen, jotta asetus tulee voimaan
   <data name="SearchTrendingStickersHint" xml:space="preserve">
     <value>Hae suosituista tarroista</value>
   </data>
-  <data name="Seconds_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Seconds_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="Seconds_one" xml:space="preserve">
     <value>{0} sekunti</value>
   </data>
   <data name="Seconds_other" xml:space="preserve">
     <value>{0} sekuntia</value>
-  </data>
-  <data name="Seconds_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Seconds_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="SecondsBold_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="SecondsBold_many" xml:space="preserve">
-    <value/>
   </data>
   <data name="SecondsBold_one" xml:space="preserve">
     <value>**{0}** sekunti</value>
@@ -13253,29 +11888,11 @@ Telegram tulee mahdollisesti käynnistää uudelleen, jotta asetus tulee voimaan
   <data name="SecondsBold_other" xml:space="preserve">
     <value>**{0}** sekuntia</value>
   </data>
-  <data name="SecondsBold_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="SecondsBold_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="SecondsSchedule_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="SecondsSchedule_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="SecondsSchedule_one" xml:space="preserve">
     <value>{0} sekunnin</value>
   </data>
   <data name="SecondsSchedule_other" xml:space="preserve">
     <value>{0} sekunnin</value>
-  </data>
-  <data name="SecondsSchedule_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="SecondsSchedule_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="SecretChat" xml:space="preserve">
     <value>Salaiset keskustelut</value>
@@ -13699,23 +12316,11 @@ Telegram tulee mahdollisesti käynnistää uudelleen, jotta asetus tulee voimaan
   <data name="ShareContactTitle" xml:space="preserve">
     <value>Jaa yhteystieto</value>
   </data>
-  <data name="Shared_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Shared_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="Shared_one" xml:space="preserve">
     <value>{0} jako</value>
   </data>
   <data name="Shared_other" xml:space="preserve">
     <value>{0} jakoa</value>
-  </data>
-  <data name="Shared_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Shared_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="SharedAudioFiles" xml:space="preserve">
     <value>Äänitiedostot</value>
@@ -13816,23 +12421,11 @@ Telegram tulee mahdollisesti käynnistää uudelleen, jotta asetus tulee voimaan
   <data name="ShareQrCode" xml:space="preserve">
     <value>Jaa QR-koodi</value>
   </data>
-  <data name="Shares_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Shares_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="Shares_one" xml:space="preserve">
     <value>{0} jakoi</value>
   </data>
   <data name="Shares_other" xml:space="preserve">
     <value>{0} jakoi</value>
-  </data>
-  <data name="Shares_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Shares_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="ShareSendTo" xml:space="preserve">
     <value>Lähetä...</value>
@@ -13922,6 +12515,9 @@ Syötä oikea numero, jossa on maakoodi.</value>
   <data name="ShowMore" xml:space="preserve">
     <value>Näytä lisää</value>
   </data>
+  <data name="ShowMoreEmojiPacks" xml:space="preserve">
+    <value>Näytä lisää emojeita</value>
+  </data>
   <data name="ShowMoreStickers" xml:space="preserve">
     <value>Näytä lisää tarroja</value>
   </data>
@@ -13946,23 +12542,11 @@ Syötä oikea numero, jossa on maakoodi.</value>
   <data name="ShowTranslateButton" xml:space="preserve">
     <value>Näytä käännösnappi</value>
   </data>
-  <data name="ShowVotes_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ShowVotes_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="ShowVotes_one" xml:space="preserve">
     <value>Näytä lisää ({0})</value>
   </data>
   <data name="ShowVotes_other" xml:space="preserve">
     <value>Näytä lisää ({0})</value>
-  </data>
-  <data name="ShowVotes_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ShowVotes_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="Shuffle" xml:space="preserve">
     <value>Sekoita</value>
@@ -14226,23 +12810,11 @@ ja syötä puhelinnumerosi.</value>
   <data name="StatisticViews" xml:space="preserve">
     <value>Katselukerrat</value>
   </data>
-  <data name="Stickers_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Stickers_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="Stickers_one" xml:space="preserve">
     <value>{0} tarra</value>
   </data>
   <data name="Stickers_other" xml:space="preserve">
     <value>{0} tarraa</value>
-  </data>
-  <data name="Stickers_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Stickers_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="StickersAndMasks" xml:space="preserve">
     <value>Tarrat ja naamiot</value>
@@ -14259,23 +12831,11 @@ ja syötä puhelinnumerosi.</value>
   <data name="StickersCopy" xml:space="preserve">
     <value>Kopioi linkki</value>
   </data>
-  <data name="StickerSets_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="StickerSets_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="StickerSets_one" xml:space="preserve">
     <value>{0} tarrakokoelma</value>
   </data>
   <data name="StickerSets_other" xml:space="preserve">
     <value>{0} tarrakokoelmaa</value>
-  </data>
-  <data name="StickerSets_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="StickerSets_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="StickersHide" xml:space="preserve">
     <value>Arkistoi</value>
@@ -14376,23 +12936,11 @@ ja syötä puhelinnumerosi.</value>
   <data name="SubscribeRequests" xml:space="preserve">
     <value>Liittymispyynnöt</value>
   </data>
-  <data name="Subscribers_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Subscribers_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="Subscribers_one" xml:space="preserve">
     <value>{0} tilaaja</value>
   </data>
   <data name="Subscribers_other" xml:space="preserve">
     <value>{0} tilaajaa</value>
-  </data>
-  <data name="Subscribers_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Subscribers_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="SubscribeToPremium" xml:space="preserve">
     <value>Tilaa ({0} / kk)</value>
@@ -14410,6 +12958,12 @@ ja syötä puhelinnumerosi.</value>
     <value>**Telegram Premiumin** voi tilata vain Telegramin virallisella sovelluksella.
 
 Kun olet tilannut Premiumin, voit nauttia sen eduista kaikilla tuetuilla sovelluksilla, epävirallisillakin.</value>
+  </data>
+  <data name="SuggestAnimatedEmoji" xml:space="preserve">
+    <value>Ehdota animoituja emojeita</value>
+  </data>
+  <data name="SuggestAnimatedEmojiInfo" xml:space="preserve">
+    <value>Kun lisäät emojin, voit korvata sen animoidulla emojilla.</value>
   </data>
   <data name="SuggestClearDatabaseMessage" xml:space="preserve">
     <value>Paikallisen tietokantasi koko on jo {0}. Suuri koko voi vaikuttaa sovelluksen suorituskykyyn.</value>
@@ -14593,25 +13147,13 @@ Jos &quot;**Synkronoi yhteystiedot**&quot; on päällä, ne haetaan uudelleen la
   <data name="TelegramCacheSize" xml:space="preserve">
     <value>{0} Telegramin välimuisti</value>
   </data>
-  <data name="TelegramContacts_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="TelegramContacts_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="TelegramContacts_one" xml:space="preserve">
     <value>{0} yhteystieto Telegramissa</value>
   </data>
   <data name="TelegramContacts_other" xml:space="preserve">
     <value>{0} yhteystietoa Telegramissa</value>
   </data>
-  <data name="TelegramContacts_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="TelegramContacts_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="TelegramFAQ" xml:space="preserve">
+  <data name="TelegramFaq" xml:space="preserve">
     <value>Usein kysyttyä</value>
   </data>
   <data name="TelegramFaqUrl" xml:space="preserve">
@@ -14661,6 +13203,18 @@ Tässä vielä katsaus Premiumin antimista.</value>
   </data>
   <data name="TelegramPremiumUserDialogTitle" xml:space="preserve">
     <value>**{0}** on tilannut Telegram Premiumin.</value>
+  </data>
+  <data name="TelegramPremiumUserGiftedPremiumDialogSubtitle" xml:space="preserve">
+    <value>Voit nyt käyttää Premiumin tarjoamia toiminnallisuuksia.</value>
+  </data>
+  <data name="TelegramPremiumUserGiftedPremiumDialogTitle" xml:space="preserve">
+    <value>**{0}** lahjoitti sinulle {1} kuukautta pitkän Telegram Premium -tilauksen.</value>
+  </data>
+  <data name="TelegramPremiumUserGiftedPremiumOutboundDialogSubtitle" xml:space="preserve">
+    <value>**{0}** voi nyt käyttää Premiumin tarjoamia toiminnallisuuksia.</value>
+  </data>
+  <data name="TelegramPremiumUserGiftedPremiumOutboundDialogTitle" xml:space="preserve">
+    <value>Lahjoitit käyttäjälle **{0}** {1} kuukautta pitkän Telegram Premium -tilauksen.</value>
   </data>
   <data name="TelegramTones" xml:space="preserve">
     <value>Telegramin äänet</value>
@@ -14776,23 +13330,11 @@ Teemalinkeissä voi käyttää merkkejä a-z, 0-9 ja alaviivoja. Vähimmäispitu
   <data name="ThemeInfo" xml:space="preserve">
     <value>Valitse mukautettuja väriteemoja</value>
   </data>
-  <data name="ThemeInstallCount_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ThemeInstallCount_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="ThemeInstallCount_one" xml:space="preserve">
     <value>{0} henkilö käyttää tätä teemaa</value>
   </data>
   <data name="ThemeInstallCount_other" xml:space="preserve">
     <value>{0} henkilöä käyttää tätä teemaa</value>
-  </data>
-  <data name="ThemeInstallCount_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ThemeInstallCount_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="ThemeNameInvalid" xml:space="preserve">
     <value>Valitettavasti teeman nimi ei kelpaa.</value>
@@ -14918,23 +13460,11 @@ Vähimmäispituus on 5 merkkiä.</value>
   <data name="TimeLimitHint" xml:space="preserve">
     <value>Aseta mukautettu kesto</value>
   </data>
-  <data name="Times_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Times_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="Times_one" xml:space="preserve">
     <value>{0} kerran</value>
   </data>
   <data name="Times_other" xml:space="preserve">
     <value>{0} kertaa</value>
-  </data>
-  <data name="Times_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Times_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="TimeToEdit" xml:space="preserve">
     <value>{0}</value>
@@ -15119,6 +13649,9 @@ Mikäli et ole tyytyväinen Telegramin vähäisiinkään edellytyksiin, emme voi
   <data name="Typing" xml:space="preserve">
     <value>kirjoittaa...</value>
   </data>
+  <data name="UnableForward" xml:space="preserve">
+    <value>Ei voida välittää</value>
+  </data>
   <data name="Unarchive" xml:space="preserve">
     <value>Palauta</value>
   </data>
@@ -15152,8 +13685,23 @@ Mikäli et ole tyytyväinen Telegramin vähäisiinkään edellytyksiin, emme voi
   <data name="UnknownError" xml:space="preserve">
     <value>Tuntematon virhe</value>
   </data>
+  <data name="Unlock" xml:space="preserve">
+    <value>Avaa</value>
+  </data>
   <data name="UnlockFingerprint" xml:space="preserve">
     <value>Avaa lukitus sormenjäljellä</value>
+  </data>
+  <data name="UnlockPremiumEmoji" xml:space="preserve">
+    <value>Käytä Premium-emojeita</value>
+  </data>
+  <data name="UnlockPremiumEmojiHint" xml:space="preserve">
+    <value>Voit käyttää tätä emojia tilaamalla **Telegram Premiumin**.</value>
+  </data>
+  <data name="UnlockPremiumEmojiHint2" xml:space="preserve">
+    <value>Voit kokeilla näitä emojeita ilmaiseksi **tallennetuissa viesteissäsi**.</value>
+  </data>
+  <data name="UnlockPremiumEmojiPack" xml:space="preserve">
+    <value>Avaa {0}</value>
   </data>
   <data name="UnlockPremiumIcons" xml:space="preserve">
     <value>Ota Premium-kuvakkeet käyttöön</value>
@@ -15194,23 +13742,11 @@ Mikäli et ole tyytyväinen Telegramin vähäisiinkään edellytyksiin, emme voi
   <data name="UnpinMessageAlertTitle" xml:space="preserve">
     <value>Poista kiinnitys</value>
   </data>
-  <data name="UnpinnedDialogsCount_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="UnpinnedDialogsCount_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="UnpinnedDialogsCount_one" xml:space="preserve">
     <value>Keskustelu irrotettiin</value>
   </data>
   <data name="UnpinnedDialogsCount_other" xml:space="preserve">
     <value>{0} keskustelua irrotettiin</value>
-  </data>
-  <data name="UnpinnedDialogsCount_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="UnpinnedDialogsCount_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="UnreadMessages" xml:space="preserve">
     <value>Uudet viestit</value>
@@ -15239,23 +13775,11 @@ Mikäli et ole tyytyväinen Telegramin vähäisiinkään edellytyksiin, emme voi
   <data name="UpdateContactsTitle" xml:space="preserve">
     <value>Päivitetäänkö yhteystiedot?</value>
   </data>
-  <data name="UpdatedMinutes_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="UpdatedMinutes_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="UpdatedMinutes_one" xml:space="preserve">
     <value>päivitetty minuutti sitten</value>
   </data>
   <data name="UpdatedMinutes_other" xml:space="preserve">
     <value>päivitetty {0} minuuttia sitten</value>
-  </data>
-  <data name="UpdatedMinutes_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="UpdatedMinutes_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="UpdateNow" xml:space="preserve">
     <value>PÄIVITÄ NYT</value>
@@ -15530,29 +14054,11 @@ Voit käyttää merkkejä **a–z**, **0–9** ja alaviivoja. Nimen tulee olla v
   <data name="UserRestrictionsUntilForever" xml:space="preserve">
     <value>Päättymätön</value>
   </data>
-  <data name="Users_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Users_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="Users_one" xml:space="preserve">
     <value>{0} käyttäjä</value>
   </data>
   <data name="Users_other" xml:space="preserve">
     <value>{0} käyttäjää</value>
-  </data>
-  <data name="Users_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Users_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="UsersCount_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="UsersCount_many" xml:space="preserve">
-    <value/>
   </data>
   <data name="UsersCount_one" xml:space="preserve">
     <value>{0} käyttäjä</value>
@@ -15560,29 +14066,11 @@ Voit käyttää merkkejä **a–z**, **0–9** ja alaviivoja. Nimen tulee olla v
   <data name="UsersCount_other" xml:space="preserve">
     <value>{0} käyttäjää</value>
   </data>
-  <data name="UsersCount_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="UsersCount_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="UsersCountTitle_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="UsersCountTitle_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="UsersCountTitle_one" xml:space="preserve">
     <value>{0} käyttäjä</value>
   </data>
   <data name="UsersCountTitle_other" xml:space="preserve">
     <value>{0} käyttäjää</value>
-  </data>
-  <data name="UsersCountTitle_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="UsersCountTitle_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="UserSetAsAdminHint" xml:space="preserve">
     <value>**{0}** ylennettiin valvojaksi.</value>
@@ -15632,6 +14120,9 @@ Voit käyttää merkkejä **a–z**, **0–9** ja alaviivoja. Nimen tulee olla v
   <data name="VideoMessagesAutodownload" xml:space="preserve">
     <value>Videoviestit</value>
   </data>
+  <data name="VideoMessagesRestrictedByPrivacy" xml:space="preserve">
+    <value>**{0}** ei vastaanota videoviestejä.</value>
+  </data>
   <data name="VideoPreview" xml:space="preserve">
     <value>Videon esikatselu</value>
   </data>
@@ -15641,23 +14132,11 @@ Voit käyttää merkkejä **a–z**, **0–9** ja alaviivoja. Nimen tulee olla v
   <data name="VideoQualityIsTooLow" xml:space="preserve">
     <value>Videon laatu on liian alhainen pakkausasetusten muuttamiseen.</value>
   </data>
-  <data name="Videos_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Videos_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="Videos_one" xml:space="preserve">
     <value>{0} video</value>
   </data>
   <data name="Videos_other" xml:space="preserve">
     <value>{0} videota</value>
-  </data>
-  <data name="Videos_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Videos_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="VideoSavedHint" xml:space="preserve">
     <value>Video tallennettiin galleriaan.</value>
@@ -15665,41 +14144,17 @@ Voit käyttää merkkejä **a–z**, **0–9** ja alaviivoja. Nimen tulee olla v
   <data name="VideoSavedToDownloadsHint" xml:space="preserve">
     <value>Video tallennettiin latauksiin.</value>
   </data>
-  <data name="VideosSavedHint_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="VideosSavedHint_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="VideosSavedHint_one" xml:space="preserve">
     <value>Video tallennettiin galleriaan.</value>
   </data>
   <data name="VideosSavedHint_other" xml:space="preserve">
     <value>{0} videota tallennettiin galleriaan.</value>
   </data>
-  <data name="VideosSavedHint_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="VideosSavedHint_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="VideosSelected_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="VideosSelected_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="VideosSelected_one" xml:space="preserve">
     <value>{0} video valittu</value>
   </data>
   <data name="VideosSelected_other" xml:space="preserve">
     <value>{0} videota valittu</value>
-  </data>
-  <data name="VideosSelected_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="VideosSelected_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="ViewAction" xml:space="preserve">
     <value>Näytä</value>
@@ -15716,23 +14171,11 @@ Voit käyttää merkkejä **a–z**, **0–9** ja alaviivoja. Nimen tulee olla v
   <data name="ViewDiscussion" xml:space="preserve">
     <value>Näytä keskustelu</value>
   </data>
-  <data name="ViewersWatching_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ViewersWatching_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="ViewersWatching_one" xml:space="preserve">
     <value>{0} katselija</value>
   </data>
   <data name="ViewersWatching_other" xml:space="preserve">
     <value>{0} katselijaa</value>
-  </data>
-  <data name="ViewersWatching_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ViewersWatching_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="ViewersWatchingNobody" xml:space="preserve">
     <value>Ei katselijoita</value>
@@ -15755,41 +14198,17 @@ Voit käyttää merkkejä **a–z**, **0–9** ja alaviivoja. Nimen tulee olla v
   <data name="ViewPackPreview" xml:space="preserve">
     <value>Näytä kokoelma</value>
   </data>
-  <data name="ViewReplies_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ViewReplies_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="ViewReplies_one" xml:space="preserve">
     <value>Näytä {0} vastaus</value>
   </data>
   <data name="ViewReplies_other" xml:space="preserve">
     <value>Näytä {0} vastausta</value>
   </data>
-  <data name="ViewReplies_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="ViewReplies_zero" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Views_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Views_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="Views_one" xml:space="preserve">
     <value>{0} nähnyt</value>
   </data>
   <data name="Views_other" xml:space="preserve">
     <value>{0} nähnyt</value>
-  </data>
-  <data name="Views_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Views_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="ViewsBySourceChartTitle" xml:space="preserve">
     <value>Katselukertojen lähde</value>
@@ -15806,23 +14225,14 @@ Voit käyttää merkkejä **a–z**, **0–9** ja alaviivoja. Nimen tulee olla v
   <data name="Vignette" xml:space="preserve">
     <value>Vinjetti</value>
   </data>
-  <data name="Voice_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Voice_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="Voice_one" xml:space="preserve">
     <value>{0} ääniviesti</value>
   </data>
   <data name="Voice_other" xml:space="preserve">
     <value>{0} ääniviestiä</value>
   </data>
-  <data name="Voice_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Voice_zero" xml:space="preserve">
-    <value/>
+  <data name="VoiceMessagesRestrictedByPrivacy" xml:space="preserve">
+    <value>**{0}** ei vastaanota ääniviestejä.</value>
   </data>
   <data name="VoipAddBio" xml:space="preserve">
     <value>Lisää kuvaus</value>
@@ -16634,23 +15044,11 @@ Uudet osallistujat eivät näe kuvaa vaan ainoastaan kuulevat äänen.</value>
   <data name="VoipWaiting" xml:space="preserve">
     <value>Odotetaan</value>
   </data>
-  <data name="Vote_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Vote_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="Vote_one" xml:space="preserve">
     <value>{0} ääni</value>
   </data>
   <data name="Vote_other" xml:space="preserve">
     <value>{0} ääntä</value>
-  </data>
-  <data name="Vote_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Vote_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="WaitingForNetwork" xml:space="preserve">
     <value>Odotetaan yhteyttä...</value>
@@ -16670,23 +15068,11 @@ Uudet osallistujat eivät näe kuvaa vaan ainoastaan kuulevat äänen.</value>
   <data name="WebSessionsTitle" xml:space="preserve">
     <value>Telegram-kirjautumiset</value>
   </data>
-  <data name="Weeks_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Weeks_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="Weeks_one" xml:space="preserve">
     <value>{0} viikko</value>
   </data>
   <data name="Weeks_other" xml:space="preserve">
     <value>{0} viikkoa</value>
-  </data>
-  <data name="Weeks_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Weeks_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="WhenConnectedOnWiFi" xml:space="preserve">
     <value>Wi-Fi-verkossa</value>
@@ -16776,23 +15162,11 @@ Pääsykoodisi **ei vaikuta** aloitusnäytölle lisättyihin pienoisohjelmiin.</
   <data name="WrongNumberFormat" xml:space="preserve">
     <value>Virheellinen muoto</value>
   </data>
-  <data name="Years_few" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Years_many" xml:space="preserve">
-    <value/>
-  </data>
   <data name="Years_one" xml:space="preserve">
     <value>{0} vuosi</value>
   </data>
   <data name="Years_other" xml:space="preserve">
     <value>{0} vuotta</value>
-  </data>
-  <data name="Years_two" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="Years_zero" xml:space="preserve">
-    <value/>
   </data>
   <data name="Yellow" xml:space="preserve">
     <value>Keltainen</value>

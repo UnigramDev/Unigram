@@ -85,7 +85,7 @@ namespace Unigram.Views.Settings
                     switch (a)
                     {
                         case 0:
-                            builder.Append(Strings.Resources.AutoDownloadContacts);
+                            builder.Append(Strings.Resources.AutodownloadContacts);
                             break;
                         case 1:
                             builder.Append(Strings.Resources.AutoDownloadPm);
@@ -94,7 +94,7 @@ namespace Unigram.Views.Settings
                             builder.Append(Strings.Resources.AutoDownloadGroups);
                             break;
                         case 3:
-                            builder.Append(Strings.Resources.AutoDownloadChannels);
+                            builder.Append(Strings.Resources.AutodownloadChannels);
                             break;
                     }
                     count++;
