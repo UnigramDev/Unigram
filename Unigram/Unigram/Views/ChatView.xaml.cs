@@ -2845,7 +2845,7 @@ namespace Unigram.Views
                 return;
             }
 
-            TextField.Document.GetText(TextGetOptions.None, out string text);
+            TextField.Document.GetText(TextGetOptions.NoHidden, out string text);
 
             var query = text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length));
             var entity = AutocompleteEntityFinder.Search(query, out string result, out int index);
@@ -2919,13 +2919,13 @@ namespace Unigram.Views
             {
                 InsertText($"{hashtag} ", result);
             }
-            else if (e.ClickedItem is EmojiData or Sticker && entity is AutocompleteEntity.Emoji or AutocompleteEntity.Sticker)
-            {
-                if (e.ClickedItem is EmojiData emoji)
+            else if (e.ClickedItem is EmojiData emoji)
                 {
                     InsertText($"{emoji.Value} ", result);
                 }
-                else if (e.ClickedItem is Sticker sticker && sticker.CustomEmojiId != 0)
+            else if (e.ClickedItem is Sticker sticker)
+            {
+                if (sticker.CustomEmojiId != 0)
                 {
                     var start = TextField.Document.Selection.StartPosition - 1 - result.Length + 1;
                     var range = TextField.Document.GetRange(TextField.Document.Selection.StartPosition - 1 - result.Length, TextField.Document.Selection.StartPosition);
@@ -2934,8 +2934,7 @@ namespace Unigram.Views
                     await TextField.InsertEmojiAsync(range, sticker.Emoji, sticker.CustomEmojiId);
                     TextField.Document.Selection.StartPosition = start;
                 }
-            }
-            else if (e.ClickedItem is Sticker sticker)
+                else
             {
                 TextField.SetText(null, null);
                 ViewModel.StickerSendExecute(sticker, null, null, text);
@@ -2945,6 +2944,7 @@ namespace Unigram.Views
                     Collapse_Click(null, null);
                 }
             }
+        }
         }
 
         private void List_SelectionModeChanged(DependencyObject sender, DependencyProperty dp)
