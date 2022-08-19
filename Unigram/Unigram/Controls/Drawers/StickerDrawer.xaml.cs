@@ -251,7 +251,7 @@ namespace Unigram.Controls.Drawers
                             continue;
                         }
 
-                        UpdateContainerContent(sticker, container.ContentTemplateRoot as Grid, UpdateSticker);
+                        UpdateContainerContent(sticker, container.ContentTemplateRoot as Grid, UpdateSticker, null);
                     }
                 }
             }
@@ -324,7 +324,9 @@ namespace Unigram.Controls.Drawers
             var content = args.ItemContainer.ContentTemplateRoot as Grid;
             var sticker = args.Item as StickerViewModel;
 
-            if (args.InRecycleQueue)
+            if (args.InRecycleQueue || sticker == null)
+            {
+                if (sticker != null)
             {
                 if (content.Children[0] is Border border && border.Child is Image photo)
                 {
@@ -341,14 +343,16 @@ namespace Unigram.Controls.Drawers
 
                 var tag = args.ItemContainer.Tag as string;
                 var added = _typeToItemHashSetMapping[tag].Add(args.ItemContainer);
+                }
+
                 return;
             }
 
-            UpdateContainerContent(sticker, content, UpdateSticker);
+            UpdateContainerContent(sticker, content, UpdateSticker, args);
             args.Handled = true;
         }
 
-        private async void UpdateContainerContent(Sticker sticker, Grid content, UpdateHandler<File> handler)
+        private async void UpdateContainerContent(Sticker sticker, Grid content, UpdateHandler<File> handler, ContainerContentChangingEventArgs args)
         {
             var file = sticker?.StickerValue;
             if (file == null)
@@ -370,7 +374,7 @@ namespace Unigram.Controls.Drawers
                 }
             }
 
-            if (file.Local.IsFileExisting())
+            if ((args == null || args.Phase == 2) && file.Local.IsFileExisting())
             {
                 if (content.Children[0] is Border border && border.Child is Image photo)
                 {
@@ -415,6 +419,8 @@ namespace Unigram.Controls.Drawers
                     ViewModel.ProtoService.DownloadFile(file.Id, 1);
                 }
             }
+
+            args?.RegisterUpdateCallback(2, OnContainerContentChanging);
         }
 
         private void Toolbar_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -461,7 +467,7 @@ namespace Unigram.Controls.Drawers
                     return;
                 }
 
-                UpdateContainerContent(cover, content, UpdateStickerSet);
+                UpdateContainerContent(cover, content, UpdateStickerSet, null);
             }
         }
 
