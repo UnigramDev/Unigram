@@ -562,7 +562,7 @@ namespace Unigram.Controls.Messages
                     }
                     else if (_sticker.Format is StickerFormatWebp)
                     {
-                        _buffer = PlaceholderImageHelper.Current.DrawWebP(file.Local.Path, _size);
+                        _buffer = PlaceholderImageHelper.Current.DrawWebP(file.Local.Path, _size, out _);
                         _hasRenderedFirstFrame = true;
                     }
                 }

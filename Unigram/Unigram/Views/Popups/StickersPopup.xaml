@@ -57,7 +57,7 @@
         </DataTemplate>
     </ContentDialog.Resources>
 
-    <Grid Margin="-24,-8,-24,-24">
+    <Grid Margin="-24,-14,-24,-24">
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition Height="Auto" />
