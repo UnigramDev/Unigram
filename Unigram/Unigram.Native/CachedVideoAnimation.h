@@ -12,7 +12,7 @@
 using namespace winrt::Microsoft::Graphics::Canvas;
 using namespace winrt::Windows::Storage::Streams;
 
-#define CACHED_VERSION 3
+#define CACHED_VERSION 5
 
 namespace winrt::Unigram::Native::implementation
 {

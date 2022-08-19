@@ -181,9 +181,9 @@ namespace winrt::Unigram::Native::implementation
 					fread(&frameSize, sizeof(uint32_t), 1, precacheFile);
 					if (frameSize <= m_maxFrameSize) {
 						fread(m_decompressBuffer, sizeof(uint8_t), frameSize, precacheFile);
-						//LZ4_decompress_safe((const char*)m_decompressBuffer, (char*)pixels, frameSize, w * h * 4);
-						qoi_desc desc;
-						qoi_decode_2((const void*)m_decompressBuffer, frameSize, &desc, 4, pixels);
+						LZ4_decompress_safe((const char*)m_decompressBuffer, (char*)pixels, frameSize, w * h * 4);
+						//qoi_desc desc;
+						//qoi_decode_2((const void*)m_decompressBuffer, frameSize, &desc, 4, pixels);
 						loadedFromCache = true;
 
 						if (rendered) {
@@ -279,8 +279,8 @@ namespace winrt::Unigram::Native::implementation
 					size_t totalSize = ftell(precacheFile);
 
 					if (w + h > oldW + oldH) {
-						bound = w * h * (4 + 1) + QOI_HEADER_SIZE + sizeof(qoi_padding);
-						//bound = LZ4_compressBound(w * h * 4);
+						//bound = w * h * (4 + 1) + QOI_HEADER_SIZE + sizeof(qoi_padding);
+						bound = LZ4_compressBound(w * h * 4);
 						compressBuffer = new uint8_t[bound];
 						pixels = new uint8_t[w * h * 4];
 					}
@@ -295,15 +295,15 @@ namespace winrt::Unigram::Native::implementation
 
 						item->m_animation->RenderSync(pixels, item->m_pixelWidth, item->m_pixelHeight, false, seconds, completed);
 
-						qoi_desc desc;
-						desc.width = w;
-						desc.height = h;
-						desc.channels = 4;
-						desc.colorspace = QOI_SRGB;
+						//qoi_desc desc;
+						//desc.width = w;
+						//desc.height = h;
+						//desc.channels = 4;
+						//desc.colorspace = QOI_SRGB;
 
-						uint32_t size;
-						qoi_encode_2((const void*)pixels, &desc, compressBuffer, &size);
-						//uint32_t size = (uint32_t)LZ4_compress_default((const char*)pixels, (char*)compressBuffer, w * h * 4, bound);
+						//uint32_t size;
+						//qoi_encode_2((const void*)pixels, &desc, compressBuffer, &size);
+						uint32_t size = (uint32_t)LZ4_compress_default((const char*)pixels, (char*)compressBuffer, w * h * 4, bound);
 
 						if (size > item->m_maxFrameSize && item->m_decompressBuffer != nullptr) {
 							delete[] item->m_decompressBuffer;
