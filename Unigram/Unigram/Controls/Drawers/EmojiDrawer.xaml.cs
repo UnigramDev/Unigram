@@ -25,6 +25,8 @@ namespace Unigram.Controls.Drawers
 
         private bool _needUpdate;
 
+        private EmojiDrawerMode _mode;
+
         private EmojiSkinTone _selected;
         private bool _expanded;
 
@@ -34,13 +36,19 @@ namespace Unigram.Controls.Drawers
         private readonly AnimatedListHandler _toolbarHandler;
 
         public EmojiDrawer()
+            : this(EmojiDrawerMode.Chat)
+        {
+
+        }
+
+        public EmojiDrawer(EmojiDrawerMode mode)
         {
             InitializeComponent();
 
             ElementCompositionPreview.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
 
             var header = DropShadowEx.Attach(Separator);
-            header.Clip = header.Compositor.CreateInsetClip(0, 48, 0, -48);
+            header.Clip = header.Compositor.CreateInsetClip(0, 36, 0, -36);
 
             _handler = new AnimatedListHandler(List);
             _toolbarHandler = new AnimatedListHandler(Toolbar2);
@@ -52,7 +60,25 @@ namespace Unigram.Controls.Drawers
             _typeToItemHashSetMapping.Add("ItemTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("MoreTemplate", new HashSet<SelectorItem>());
 
-            UpdateView();
+            _mode = mode;
+
+            if (mode == EmojiDrawerMode.Reactions)
+            {
+                FieldEmoji.Visibility = Visibility.Collapsed;
+                Toolbar3.Visibility = Visibility.Collapsed;
+                Toolbar2.Header = null;
+
+                List.Padding = new Thickness(8, 0, 0, 0);
+                List.ItemContainerStyle.Setters.Add(new Setter(MarginProperty, new Thickness(0, 0, 4, 4)));
+                List.GroupStyle[0].HeaderContainerStyle.Setters.Add(new Setter(PaddingProperty, new Thickness(0, 0, 0, 6)));
+
+                FluidGridView.GetTriggers(List).Clear();
+                FluidGridView.GetTriggers(List).Add(new FixedGridViewTrigger { ItemLength = 28 });
+            }
+            else
+            {
+                UpdateView();
+            }
         }
 
         public StickersTab Tab => StickersTab.Emoji;
@@ -110,6 +136,11 @@ namespace Unigram.Controls.Drawers
 
         public void UpdateView()
         {
+            if (_mode == EmojiDrawerMode.Reactions)
+            {
+                return;
+            }
+
             var microsoft = string.Equals(SettingsService.Current.Appearance.EmojiSet.Id, "microsoft");
             var tone = SettingsService.Current.Stickers.SkinTone;
 
@@ -214,7 +245,7 @@ namespace Unigram.Controls.Drawers
                                     continue;
                                 }
 
-                                UpdateContainerContent(sticker, container.ContentTemplateRoot as Grid, UpdateSticker);
+                                UpdateContainerContent(sticker, container.ContentTemplateRoot as Grid, false, UpdateSticker);
                             }
                         }
                     }
@@ -276,6 +307,11 @@ namespace Unigram.Controls.Drawers
 
         private void UpdateToolbar(bool collapse = false)
         {
+            if (_mode == EmojiDrawerMode.Reactions)
+            {
+                return;
+            }
+
             if (Toolbar.SelectedItem == null != _emojiCollapsed || collapse)
             {
                 _emojiCollapsed = Toolbar.SelectedItem == null;
@@ -496,7 +532,7 @@ namespace Unigram.Controls.Drawers
                             continue;
                         }
 
-                        UpdateContainerContent(sticker, container.ContentTemplateRoot as Grid, UpdateSticker);
+                        UpdateContainerContent(sticker, container.ContentTemplateRoot as Grid, false, UpdateSticker);
                     }
                 }
             }
@@ -539,19 +575,28 @@ namespace Unigram.Controls.Drawers
                 }
                 else
                 {
-                    UpdateContainerContent(sticker, content, UpdateSticker);
+                    UpdateContainerContent(sticker, content, false, UpdateSticker);
                 }
 
                 args.Handled = true;
             }
         }
 
-        private async void UpdateContainerContent(Sticker sticker, Grid content, UpdateHandler<File> handler)
+        private async void UpdateContainerContent(Sticker sticker, Grid content, bool toolbar, UpdateHandler<File> handler)
         {
             var file = sticker?.StickerValue;
             if (file == null)
             {
                 return;
+            }
+
+            if (toolbar)
+            {
+                content.Padding = new Thickness(4);
+            }
+            else
+            {
+                content.Padding = new Thickness(_mode == EmojiDrawerMode.Reactions ? 0 : 8);
             }
 
             if (file.Local.IsFileExisting())
@@ -654,7 +699,7 @@ namespace Unigram.Controls.Drawers
                     return;
                 }
 
-                UpdateContainerContent(cover, content, UpdateStickerSet);
+                UpdateContainerContent(cover, content, true, UpdateStickerSet);
             }
         }
 

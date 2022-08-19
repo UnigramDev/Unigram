@@ -327,22 +327,22 @@ namespace Unigram.Controls.Drawers
             if (args.InRecycleQueue || sticker == null)
             {
                 if (sticker != null)
-            {
-                if (content.Children[0] is Border border && border.Child is Image photo)
                 {
-                    photo.Source = null;
-                }
-                else if (content.Children[0] is LottieView lottie)
-                {
-                    lottie.Source = null;
-                }
-                else if (content.Children[0] is AnimationView video)
-                {
-                    video.Source = null;
-                }
+                    if (content.Children[0] is Border border && border.Child is Image photo)
+                    {
+                        photo.Source = null;
+                    }
+                    else if (content.Children[0] is LottieView lottie)
+                    {
+                        lottie.Source = null;
+                    }
+                    else if (content.Children[0] is AnimationView video)
+                    {
+                        video.Source = null;
+                    }
 
-                var tag = args.ItemContainer.Tag as string;
-                var added = _typeToItemHashSetMapping[tag].Add(args.ItemContainer);
+                    var tag = args.ItemContainer.Tag as string;
+                    var added = _typeToItemHashSetMapping[tag].Add(args.ItemContainer);
                 }
 
                 return;

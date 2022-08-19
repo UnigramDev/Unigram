@@ -359,7 +359,7 @@ namespace Unigram.ViewModels.Drawers
                 {
                     stickers.Add(_recentSet);
                 }
-                if (_premiumSet.Stickers.Count > 0)
+                if (_premiumSet.Stickers.Count > 0 && IsPremium)
                 {
                     stickers.Add(_premiumSet);
                 }
@@ -385,11 +385,25 @@ namespace Unigram.ViewModels.Drawers
                     if (result5 is StickerSet set)
                     {
                         stickers.Add(new StickerSetViewModel(ProtoService, sets.Sets[0], set));
-                        SavedStickers.ReplaceWith(stickers.Union(sets.Sets.Skip(1).Select(x => new StickerSetViewModel(ProtoService, x))));
+                        stickers.AddRange(sets.Sets.Skip(1).Select(x => new StickerSetViewModel(ProtoService, x)));
+
+                        if (_premiumSet.Stickers.Count > 0 && IsPremiumAvailable && !IsPremium)
+                        {
+                            stickers.Add(_premiumSet);
+                        }
+
+                        SavedStickers.ReplaceWith(stickers);
                     }
                     else
                     {
-                        SavedStickers.ReplaceWith(stickers.Union(sets.Sets.Select(x => new StickerSetViewModel(ProtoService, x))));
+                        stickers.AddRange(sets.Sets.Select(x => new StickerSetViewModel(ProtoService, x)));
+
+                        if (_premiumSet.Stickers.Count > 0 && IsPremiumAvailable && !IsPremium)
+                        {
+                            stickers.Add(_premiumSet);
+                        }
+
+                        SavedStickers.ReplaceWith(stickers);
                     }
                 }
                 else
