@@ -351,7 +351,7 @@ namespace Unigram.Views
 
         private void Stickers_PointerExited(object sender, PointerRoutedEventArgs e)
         {
-            if (e.Pointer.PointerDeviceType != PointerDeviceType.Touch)
+            if (e.Pointer.PointerDeviceType == PointerDeviceType.Mouse)
             {
                 _stickersTimer.Start();
             }
@@ -368,7 +368,7 @@ namespace Unigram.Views
                 _stickersTimer.Stop();
             }
 
-            if (StickersPanel.Visibility == Visibility.Visible || e?.Pointer.PointerDeviceType == PointerDeviceType.Touch)
+            if (StickersPanel.Visibility == Visibility.Visible || e?.Pointer.PointerDeviceType != PointerDeviceType.Mouse)
             {
                 return;
             }

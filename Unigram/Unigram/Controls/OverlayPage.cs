@@ -63,7 +63,7 @@ namespace Unigram.Controls
                 OnBackRequested(args);
                 e.Handled = args.Handled;
             }
-            else if (pointer.Properties.IsLeftButtonPressed && IsLightDismissEnabled && e.Pointer.PointerDeviceType != PointerDeviceType.Touch)
+            else if (pointer.Properties.IsLeftButtonPressed && IsLightDismissEnabled && e.Pointer.PointerDeviceType == PointerDeviceType.Mouse)
             {
                 OnBackRequestedOverride(this, new HandledEventArgs());
             }
