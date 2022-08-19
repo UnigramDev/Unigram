@@ -52,7 +52,7 @@ namespace winrt::Unigram::Native::implementation
 		void WriteBytes(IVector<byte> hash, IRandomAccessStream randomAccessStream);
 
 		void DrawWebP(hstring fileName, int32_t maxWidth, IRandomAccessStream randomAccessStream, Windows::Foundation::Size& size);
-		IBuffer DrawWebP(hstring fileName, int32_t maxWidth);
+		IBuffer DrawWebP(hstring fileName, int32_t maxWidth, Windows::Foundation::Size& size);
 
 		winrt::Windows::Foundation::IAsyncAction DrawSvgAsync(hstring path, _In_ Color foreground, IRandomAccessStream randomAccessStream);
 		void DrawSvg(hstring path, _In_ Color foreground, IRandomAccessStream randomAccessStream, Windows::Foundation::Size& size);

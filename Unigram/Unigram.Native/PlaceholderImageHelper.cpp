@@ -213,8 +213,10 @@ namespace winrt::Unigram::Native::implementation
 		free(buffer);
 	}
 
-	IBuffer PlaceholderImageHelper::DrawWebP(hstring fileName, int32_t maxWidth)
+	IBuffer PlaceholderImageHelper::DrawWebP(hstring fileName, int32_t maxWidth, Windows::Foundation::Size& size)
 	{
+		size = Windows::Foundation::Size{ 0,0 };
+
 		FILE* file = _wfopen(fileName.data(), L"rb");
 		if (file == NULL) {
 			return nullptr;
@@ -276,6 +278,9 @@ namespace winrt::Unigram::Native::implementation
 				width = (int)(iter.width * ratio);
 				height = (int)(iter.height * ratio);
 			}
+
+			size.Width = width;
+			size.Height = height;
 
 			surface = Unigram::Native::BufferSurface::Create(width * 4 * height);
 			auto pixels = surface.data();

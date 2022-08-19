@@ -3,6 +3,7 @@ using RLottie;
 using System;
 using System.Collections.Generic;
 using System.IO.Compression;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Telegram.Td.Api;
@@ -455,77 +456,50 @@ namespace Unigram.Common
 
         public static ImageSource GetWebPFrame(string path, double maxWidth = 512)
         {
-            //return null;
-            //return new BitmapImage(UriEx.GetLocal(path));
-            //return WebPImage.DecodeFromPath(path);
-
-            var bitmap = new BitmapImage();
-            using (var stream = new InMemoryRandomAccessStream())
+            try
             {
-                try
+                Size size;
+                var buffer = PlaceholderImageHelper.Current.DrawWebP(path, (int)maxWidth, out size);
+
+                if (size.Width > 0 && size.Height > 0)
                 {
-                    PlaceholderImageHelper.Current.DrawWebP(path, 512, stream, out Size size);
+                    var bitmap = new WriteableBitmap((int)size.Width, (int)size.Height);
+                    buffer.CopyTo(bitmap.PixelBuffer);
 
-                    if (size.Width > 0 && size.Height > 0 && maxWidth != 512)
-                    {
-                        double ratioX = maxWidth / size.Width;
-                        double ratioY = maxWidth / size.Height;
-                        double ratio = Math.Min(ratioX, ratioY);
-
-                        bitmap.DecodePixelWidth = (int)(size.Width * ratio);
-                        bitmap.DecodePixelHeight = (int)(size.Height * ratio);
-                        bitmap.DecodePixelType = DecodePixelType.Logical;
-                    }
-
-                    bitmap.SetSource(stream);
+                    return bitmap;
                 }
-                catch { }
+                else
+                {
+                    return new BitmapImage(UriEx.ToLocal(path));
+                }
             }
+            catch { }
 
-            if (bitmap.PixelWidth == 0 && bitmap.PixelHeight == 0)
-            {
-                bitmap.UriSource = UriEx.ToLocal(path);
-            }
-
-            return bitmap;
+            return null;
         }
 
         public static async Task<ImageSource> GetWebPFrameAsync(string path, double maxWidth = 512)
         {
-            //return null;
-            //return new BitmapImage(UriEx.GetLocal(path));
-            //return WebPImage.DecodeFromPath(path);
-
-            var bitmap = new BitmapImage();
-            using (var stream = new InMemoryRandomAccessStream())
+            try
             {
-                try
+                Size size;
+                var buffer = await Task.Run(() => PlaceholderImageHelper.Current.DrawWebP(path, (int)maxWidth, out size));
+
+                if (size.Width > 0 && size.Height > 0)
                 {
-                    Size size;
-                    await Task.Run(() => PlaceholderImageHelper.Current.DrawWebP(path, 512, stream, out size));
+                    var bitmap = new WriteableBitmap((int)size.Width, (int)size.Height);
+                    buffer.CopyTo(bitmap.PixelBuffer);
 
-                    if (size.Width > 0 && size.Height > 0 && maxWidth != 512)
-                    {
-                        double ratioX = maxWidth / size.Width;
-                        double ratioY = maxWidth / size.Height;
-                        double ratio = Math.Min(ratioX, ratioY);
-
-                        bitmap.DecodePixelWidth = (int)Math.Max(1, size.Width * ratio);
-                        bitmap.DecodePixelHeight = (int)Math.Max(1, size.Height * ratio);
-                        bitmap.DecodePixelType = DecodePixelType.Logical;
-                    }
-
-                    await bitmap.SetSourceAsync(stream);
+                    return bitmap;
                 }
-                catch { }
+                else
+                {
+                    return new BitmapImage(UriEx.ToLocal(path));
+                }
             }
+            catch { }
 
-            if (bitmap.PixelWidth == 0 && bitmap.PixelHeight == 0)
-            {
-                bitmap.UriSource = UriEx.ToLocal(path);
-            }
-
-            return bitmap;
+            return null;
         }
 
         public static ImageSource GetLottieFrame(string path, int frame, int width, int height, bool webp = true)
