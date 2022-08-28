@@ -368,7 +368,7 @@ namespace Unigram.Views
                 _stickersTimer.Stop();
             }
 
-            if (StickersPanel.Visibility == Visibility.Visible || e?.Pointer.PointerDeviceType != PointerDeviceType.Mouse)
+            if (StickersPanel.Visibility == Visibility.Visible || (e != null && e?.Pointer.PointerDeviceType != PointerDeviceType.Mouse))
             {
                 return;
             }
