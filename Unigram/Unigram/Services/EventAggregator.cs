@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -212,7 +213,7 @@ namespace Unigram.Services
     /// </summary>
     public class EventAggregator : IEventAggregator
     {
-        private readonly ConditionalWeakTable<object, Handler> _handlers = new();
+        private readonly ConcurrentDictionary<Type, Handler> _handlers = new();
 
         /// <summary>
         ///   Subscribes an instance to all events declared through implementations of <see cref = "IHandle{T}" />
@@ -225,8 +226,14 @@ namespace Unigram.Services
                 throw new ArgumentNullException("subscriber");
             }
 
-            var handler = _handlers.GetValue(subscriber, x => new Handler());
-            return new SubscriptionBuilder(handler, typeof(T), action);
+            Add(subscriber, typeof(T), action);
+            return new SubscriptionBuilder(this, subscriber);
+        }
+
+        public void Add(object subscriber, Type messageType, Delegate action)
+        {
+            var handler = _handlers.GetOrAdd(messageType, x => new Handler());
+            handler.Subscribe(subscriber, action);
         }
 
         /// <summary>
@@ -240,7 +247,10 @@ namespace Unigram.Services
                 throw new ArgumentNullException("subscriber");
             }
 
-            _handlers.Remove(subscriber);
+            foreach (var item in _handlers)
+            {
+                item.Value.Unsubscribe(subscriber);
+            }
         }
 
         /// <summary>
@@ -249,9 +259,9 @@ namespace Unigram.Services
         /// <param name = "subscriber">The instance to unsubscribe.</param>
         public virtual void Unsubscribe<T>(object subscriber)
         {
-            if (_handlers.TryGetValue(subscriber, out var handler))
+            if (_handlers.TryGetValue(typeof(T), out var handler))
             {
-                handler.Unsubscribe<T>();
+                handler.Unsubscribe(subscriber);
             }
         }
 
@@ -263,55 +273,57 @@ namespace Unigram.Services
         {
             var messageType = message.GetType();
 
-            foreach (var handler in _handlers)
+            if (_handlers.TryGetValue(messageType, out Handler handler))
             {
-                try
+                if (handler.Handle(message))
                 {
-                    handler.Value.Handle(messageType, message);
-                }
-                catch
-                {
-
+                    _handlers.TryRemove(messageType, out _);
                 }
             }
         }
 
         public class Handler
         {
-            private readonly Dictionary<Type, Delegate> _delegates = new();
+            private readonly ConditionalWeakTable<object, Delegate> _delegates = new();
 
-            public void Handle(Type type, object message)
+            public bool Handle(object message)
             {
-                if (_delegates.TryGetValue(type, out Delegate value))
+                var empty = true;
+
+                foreach (var value in _delegates)
                 {
-                    value.DynamicInvoke(message);
+                    value.Value.DynamicInvoke(message);
+                    empty = false;
                 }
+
+                return empty;
             }
 
-            public void Subscribe(Type type, Delegate handler)
+            public void Subscribe(object subscriber, Delegate handler)
             {
-                _delegates[type] = handler;
+                _delegates.Add(subscriber, handler);
             }
 
-            public void Unsubscribe<T>()
+            public void Unsubscribe(object subscriber)
             {
-                _delegates.Remove(typeof(T));
+                _delegates.Remove(subscriber);
             }
         }
 
         public class SubscriptionBuilder
         {
-            private readonly Handler _handler;
+            private readonly EventAggregator _aggregator;
+            private readonly object _subscriber;
 
-            public SubscriptionBuilder(Handler handler, Type type, Delegate action)
+            public SubscriptionBuilder(EventAggregator aggregator, object subscriber)
             {
-                _handler = handler;
-                _handler.Subscribe(type, action);
+                _aggregator = aggregator;
+                _subscriber = subscriber;
             }
 
             public SubscriptionBuilder Subscribe<T>(Action<T> action)
             {
-                _handler.Subscribe(typeof(T), action);
+                _aggregator.Add(_subscriber, typeof(T), action);
                 return this;
             }
         }
