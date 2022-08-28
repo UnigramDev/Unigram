@@ -114,7 +114,7 @@ namespace Unigram.Views
             }
 
             DropShadowEx.Attach(UpdateShadow);
-            Window.Current.SetTitleBar(TitleBarrr);
+            Window.Current.SetTitleBar(TitleBarHandle);
 
             ChatsList.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
 
@@ -256,6 +256,9 @@ namespace Unigram.Views
             {
                 this.BeginOnUIThread(() =>
                 {
+                    LogoBasic.Visibility = _protoService.IsPremium ? Visibility.Collapsed : Visibility.Visible;
+                    LogoPremium.Visibility = _protoService.IsPremium ? Visibility.Visible : Visibility.Collapsed;
+
                     Photo.SetUser(_protoService, update.User, 28);
                     PhotoSide?.SetUser(_protoService, update.User, 28);
                 });
@@ -786,6 +789,9 @@ namespace Unigram.Views
         {
             if (_protoService.TryGetUser(_protoService.Options.MyId, out User user))
             {
+                LogoBasic.Visibility = _protoService.IsPremium ? Visibility.Collapsed : Visibility.Visible;
+                LogoPremium.Visibility = _protoService.IsPremium ? Visibility.Visible : Visibility.Collapsed;
+
                 Photo.SetUser(_protoService, user, 28);
                 PhotoSide?.SetUser(_protoService, user, 28);
             }
@@ -3109,7 +3115,7 @@ namespace Unigram.Views
 
         public void PopupClosed()
         {
-            Window.Current.SetTitleBar(TitleBarrr);
+            Window.Current.SetTitleBar(TitleBarHandle);
         }
 
         #region Context menu
