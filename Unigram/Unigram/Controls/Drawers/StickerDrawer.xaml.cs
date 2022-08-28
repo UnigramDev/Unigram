@@ -331,7 +331,7 @@ namespace Unigram.Controls.Drawers
                     var tag = args.ItemContainer.Tag as string;
                     var added = _typeToItemHashSetMapping[tag].Add(args.ItemContainer);
 
-                    ClearContanerContent(content);
+                    ClearContainerContent(content);
                 }
 
                 return;
@@ -383,7 +383,7 @@ namespace Unigram.Controls.Drawers
             }
             else
             {
-                ClearContanerContent(content);
+                ClearContainerContent(content);
                 content.Tag = sticker;
 
                 CompositionPathParser.ParseThumbnail(sticker, out ShapeVisual visual, false);
@@ -433,14 +433,14 @@ namespace Unigram.Controls.Drawers
 
                 if (content == null || sticker == null || (sticker.Thumbnail == null && sticker.Covers == null))
                 {
-                    ClearContanerContent(content);
+                    ClearContainerContent(content);
                     return;
                 }
 
                 var cover = sticker.GetThumbnail();
                 if (cover == null)
                 {
-                    ClearContanerContent(content);
+                    ClearContainerContent(content);
                     return;
                 }
 
@@ -448,7 +448,7 @@ namespace Unigram.Controls.Drawers
             }
         }
 
-        private void ClearContanerContent(Grid content)
+        private void ClearContainerContent(Grid content)
         {
             if (content.Children[0] is Border border && border.Child is Image photo)
             {
