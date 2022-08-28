@@ -14,6 +14,7 @@ namespace winrt::Unigram::Native::implementation
 {
 	std::map<std::string, winrt::slim_mutex> CachedVideoAnimation::s_locks;
 
+	winrt::slim_mutex s_compressLock;
 	bool CachedVideoAnimation::s_compressStarted;
 	std::thread CachedVideoAnimation::s_compressWorker;
 	WorkQueue CachedVideoAnimation::s_compressQueue;
@@ -217,6 +218,8 @@ namespace winrt::Unigram::Native::implementation
 			if (m_precache) {
 				m_caching = true;
 				s_compressQueue.push_work(WorkItem(get_weak(), w, h));
+
+				slim_lock_guard const guard(s_compressLock);
 
 				if (!s_compressStarted) {
 					if (s_compressWorker.joinable()) {

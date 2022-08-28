@@ -80,6 +80,7 @@ namespace winrt::Unigram::Native::implementation
 
 		static void CompressThreadProc();
 
+		static winrt::slim_mutex s_compressLock;
 		static bool s_compressStarted;
 		static std::thread s_compressWorker;
 		static WorkQueue s_compressQueue;
