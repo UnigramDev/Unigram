@@ -17,75 +17,73 @@
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
-            <StackPanel Spacing="0"
+            <StackPanel Spacing="16"
                         Padding="0,0,0,32">
-                <Grid Margin="24,8">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition MaxWidth="1000" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <controls:ProfilePicture x:Name="Photo"
-                                             IsEnabled="False"
-                                             Height="140"
-                                             Width="140" />
-                    <Border Background="{ThemeResource MessageServiceBackgroundBrush}"
-                            CornerRadius="70"
-                            Height="140"
-                            Width="140" />
+                <controls:HeaderedControl Footer="{CustomResource RegisterText2}">
+                    <Grid Background="{ThemeResource SettingsItemBackground}"
+                          Padding="12,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Grid Height="96"
+                              Width="96"
+                              Margin="0,0,12,0"
+                              Grid.RowSpan="2">
+                            <controls:ProfilePicture x:Name="Photo"
+                                                     IsEnabled="False"
+                                                     Height="96"
+                                                     Width="96" />
+                            <Border Background="{ThemeResource MessageServiceBackgroundBrush}"
+                                    CornerRadius="48"
+                                    Height="96"
+                                    Width="96" />
 
-                    <controls:GlyphButton Click="EditPhoto_Click"
-                                          Glyph="&#xE722;"
-                                          AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"
-                                          Style="{StaticResource RoundGlyphButtonStyle}"
-                                          HorizontalAlignment="Center"
-                                          RequestedTheme="Dark"
-                                          CornerRadius="70"
-                                          Height="140"
-                                          Width="140"
-                                          FontSize="48" />
+                            <controls:GlyphButton Click="EditPhoto_Click"
+                                                  Glyph="&#xE722;"
+                                                  AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"
+                                                  Style="{StaticResource RoundGlyphButtonStyle}"
+                                                  HorizontalAlignment="Center"
+                                                  RequestedTheme="Dark"
+                                                  CornerRadius="48"
+                                                  Height="96"
+                                                  Width="96"
+                                                  FontSize="36" />
+                        </Grid>
 
-                </Grid>
+                        <TextBox Text="{x:Bind ViewModel.FirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 PlaceholderText="{CustomResource FirstNameSmall}"
+                                 FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                 MaxLength="{StaticResource ChannelTitleMaxLength}"
+                                 VerticalAlignment="Bottom"
+                                 Margin="0,0,0,2"
+                                 Grid.Column="1" />
+                        <TextBox Text="{x:Bind ViewModel.LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 PlaceholderText="{CustomResource FirstNameSmall}"
+                                 FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                 MaxLength="{StaticResource ChannelTitleMaxLength}"
+                                 VerticalAlignment="Top"
+                                 Margin="0,2,0,0"
+                                 Grid.Column="1"
+                                 Grid.Row="1" />
+                    </Grid>
+                </controls:HeaderedControl>
 
-                <TextBox Text="{x:Bind ViewModel.FirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                         PlaceholderText="{CustomResource FirstNameSmall}"
-                         HorizontalAlignment="Left"
-                         Width="280"
-                         Margin="24,16,24,0" />
+                <controls:HeaderedControl Footer="{CustomResource UserBioInfo}">
 
-                <TextBox Text="{x:Bind ViewModel.LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                         PlaceholderText="{CustomResource LastNameSmall}"
-                         HorizontalAlignment="Left"
-                         Width="280"
-                         Margin="24,8,24,0" />
-
-                <TextBlock Text="{CustomResource RegisterText2}"
-                           Style="{StaticResource InfoCaptionTextBlockStyle}"
-                           Margin="24,8,0,16" />
-
-                <!--<controls:HeaderedControl Footer="Enter your name and add a profile picture.">
-                    <controls:BadgeButton Content="First name">
-                        <controls:BadgeButton.Badge>
-                            <TextBox Width="200" />
-                        </controls:BadgeButton.Badge>
-                    </controls:BadgeButton>
-                    <controls:BadgeButton Content="Last name">
-                        <controls:BadgeButton.Badge>
-                            <TextBox Width="200" />
-                        </controls:BadgeButton.Badge>
-                    </controls:BadgeButton>
-                </controls:HeaderedControl>-->
-
-                <TextBox Text="{x:Bind ViewModel.Bio, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                         MaxLength="{x:Bind ViewModel.BioLengthMax}"
-                         PlaceholderText="{CustomResource UserBio}"
-                         AcceptsReturn="True"
-                         HorizontalAlignment="Left"
-                         Margin="24,24,0,0"
-                         Width="280" />
-
-                <TextBlock Text="{CustomResource UserBioInfo}"
-                           Style="{StaticResource InfoCaptionTextBlockStyle}"
-                           Margin="24,8,0,16" />
+                    <TextBox x:Name="About"
+                             Text="{x:Bind ViewModel.Bio, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                             MaxLength="{x:Bind ViewModel.BioLengthMax}"
+                             PlaceholderText="{CustomResource UserBio}"
+                             TextWrapping="Wrap"
+                             AcceptsReturn="True"
+                             Padding="12,11,6,12" />
+                </controls:HeaderedControl>
 
                 <controls:HeaderedControl>
                     <controls:BadgeButton x:Name="PhoneNumber"

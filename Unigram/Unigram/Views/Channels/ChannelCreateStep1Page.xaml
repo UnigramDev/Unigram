@@ -24,49 +24,56 @@
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <StackPanel>
-            <Grid Margin="24,8">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition MaxWidth="1000" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <controls:ProfilePicture x:Name="Photo"
-                                         Source="{x:Bind ConvertPhoto(ViewModel.Title, ViewModel.Preview), Mode=OneWay}"
-                                         Click="EditPhoto_Click"
-                                         Height="140"
-                                         Width="140" />
-                <Border Background="{ThemeResource MessageServiceBackgroundBrush}"
-                        CornerRadius="70"
-                        Height="140"
-                        Width="140" />
+            <controls:HeaderedControl>
+                <Grid Background="{ThemeResource SettingsItemBackground}"
+                      Padding="12,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid Height="96"
+                          Width="96"
+                          Margin="0,0,12,0">
+                        <controls:ProfilePicture x:Name="Photo"
+                                                 Source="{x:Bind ConvertPhoto(ViewModel.Title, ViewModel.Preview), Mode=OneWay}"
+                                                 Click="EditPhoto_Click"
+                                                 Height="96"
+                                                 Width="96" />
+                        <Border Background="{ThemeResource MessageServiceBackgroundBrush}"
+                                CornerRadius="48"
+                                Height="96"
+                                Width="96" />
 
-                <controls:GlyphButton Visibility="{x:Bind ConvertPhotoVisibility(ViewModel.Title, ViewModel.Preview), Mode=OneWay}"
-                                      Click="EditPhoto_Click"
-                                      Glyph="&#xE722;"
-                                      AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"
-                                      Style="{StaticResource RoundGlyphButtonStyle}"
-                                      HorizontalAlignment="Center"
-                                      RequestedTheme="Dark"
-                                      CornerRadius="70"
-                                      Height="140"
-                                      Width="140"
-                                      FontSize="48" />
-            </Grid>
+                        <controls:GlyphButton Visibility="{x:Bind ConvertPhotoVisibility(ViewModel.Title, ViewModel.Preview), Mode=OneWay}"
+                                              Click="EditPhoto_Click"
+                                              Glyph="&#xE722;"
+                                              AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"
+                                              Style="{StaticResource RoundGlyphButtonStyle}"
+                                              HorizontalAlignment="Center"
+                                              RequestedTheme="Dark"
+                                              CornerRadius="48"
+                                              Height="96"
+                                              Width="96"
+                                              FontSize="36" />
+                    </Grid>
 
-            <TextBox x:Name="TitleLabel"
-                     Loaded="Title_Loaded"
-                     Text="{x:Bind ViewModel.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                     MaxLength="{StaticResource ChannelTitleMaxLength}"
-                     PlaceholderText="{CustomResource EnterChannelName}"
-                     HorizontalAlignment="Left"
-                     Width="280"
-                     Margin="24,8,24,0" />
-
-            <TextBox Text="{x:Bind ViewModel.About, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                     MaxLength="{StaticResource ChannelAboutMaxLength}"
-                     PlaceholderText="{CustomResource DescriptionPlaceholder}"
-                     HorizontalAlignment="Left"
-                     Width="280"
-                     Margin="24,8,24,0" />
+                    <TextBox x:Name="TitleLabel"
+                             Loaded="Title_Loaded"
+                             Text="{x:Bind ViewModel.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                             MaxLength="{StaticResource ChannelTitleMaxLength}"
+                             PlaceholderText="{CustomResource EnterChannelName}"
+                             VerticalAlignment="Center"
+                             Grid.Column="1" />
+                </Grid>
+                <TextBox Text="{x:Bind ViewModel.About, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                         MaxLength="{StaticResource ChannelAboutMaxLength}"
+                         PlaceholderText="{CustomResource DescriptionPlaceholder}"
+                         TextWrapping="Wrap"
+                         AcceptsReturn="True"
+                         Padding="12,11,6,12" />
+            </controls:HeaderedControl>
 
             <TextBlock Text="{CustomResource DescriptionInfo}"
                        Style="{StaticResource InfoCaptionTextBlockStyle}"
