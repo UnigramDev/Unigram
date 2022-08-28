@@ -683,6 +683,11 @@ namespace Unigram.Views.Host
             SettingsService.Current.Appearance.UpdateNightMode();
         }
 
+        private void Theme_ActualThemeChanged(FrameworkElement sender, object args)
+        {
+            Theme.IsChecked = sender.ActualTheme == ElementTheme.Dark;
+        }
+
         public bool IsPaneOpen
         {
             get => Navigation.IsPaneOpen;

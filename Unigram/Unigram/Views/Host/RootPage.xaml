@@ -4,6 +4,7 @@
       xmlns:local="using:Unigram.Views"
       xmlns:controls="using:Unigram.Controls"
       xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+      xmlns:icons="using:Unigram.Assets.Icons"
       xmlns:services="using:Unigram.Services"
       xmlns:settings="using:Unigram.Views.Settings"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -228,14 +229,19 @@
 
         <Border x:Name="Transition" />
 
-        <controls:SwitchThemeButton x:Name="Theme"
-                                    Click="Theme_Click"
-                                    Visibility="Collapsed"
-                                    VerticalAlignment="Top"
-                                    HorizontalAlignment="Left"
-                                    IsTabStop="False"
-                                    Width="40"
-                                    Height="40" />
+        <controls:AnimatedIconToggleButton x:Name="Theme"
+                                           Click="Theme_Click"
+                                           ActualThemeChanged="Theme_ActualThemeChanged"
+                                           Visibility="Collapsed"
+                                           VerticalAlignment="Top"
+                                           HorizontalAlignment="Left"
+                                           IsTabStop="False"
+                                           Width="40"
+                                           Height="40">
+            <controls:AnimatedIconToggleButton.Source>
+                <icons:Sun />
+            </controls:AnimatedIconToggleButton.Source>
+        </controls:AnimatedIconToggleButton>
 
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>

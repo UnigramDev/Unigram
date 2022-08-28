@@ -152,6 +152,7 @@
     <Compile Include="Assets\Icons\Stickers.cs" />
     <Compile Include="Assets\Icons\StickerToEmoji.cs" />
     <Compile Include="Assets\Icons\StickerToGif.cs" />
+    <Compile Include="Assets\Icons\Sun.cs" />
     <Compile Include="Assets\Icons\Unlock.cs" />
     <Compile Include="Assets\Icons\Username.cs" />
     <Compile Include="Assets\Icons\Profile.cs" />
@@ -555,7 +556,6 @@
       <DependentUpon>StickerPanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\StorageChart.cs" />
-    <Compile Include="Controls\SwitchThemeButton.cs" />
     <Compile Include="Controls\TableListView.cs" />
     <Compile Include="Controls\TextListViewItem.cs" />
     <Compile Include="Controls\TopNavView.cs" />
@@ -1494,7 +1494,6 @@
     <Content Include="Assets\Animations\ChatListNewFolder.tgs" />
     <PRIResource Include="Strings\be\Resources.resw" />
     <Content Include="Assets\Animations\DiscussionGroupSetup.tgs" />
-    <Content Include="Assets\Animations\Sun.tgs" />
     <Content Include="Assets\Animations\VoiceHandOff.tgs" />
     <Content Include="Assets\Animations\VoiceHandOff2.tgs" />
     <Content Include="Assets\Animations\VoiceHandOn.tgs" />
