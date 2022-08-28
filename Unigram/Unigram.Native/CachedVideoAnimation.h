@@ -2,7 +2,7 @@
 
 #include "CachedVideoAnimation.g.h"
 
-#include <queue>
+#include <stack>
 #include <mutex>
 
 #include <winrt/Microsoft.Graphics.Canvas.h>
@@ -127,7 +127,7 @@ namespace winrt::Unigram::Native::implementation
 	{
 		std::condition_variable work_available;
 		std::mutex work_mutex;
-		std::queue<WorkItem> work;
+		std::stack<WorkItem> work;
 
 	public:
 		void push_work(WorkItem item)
@@ -166,7 +166,7 @@ namespace winrt::Unigram::Native::implementation
 				}
 			}
 
-			WorkItem tmp = std::move(work.front());
+			WorkItem tmp = std::move(work.top());
 			work.pop();
 			return std::make_optional<WorkItem>(tmp);
 		}

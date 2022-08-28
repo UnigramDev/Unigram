@@ -14,7 +14,7 @@ namespace winrt::Unigram::Native::implementation
 {
 	std::map<std::string, winrt::slim_mutex> CachedVideoAnimation::s_locks;
 
-	winrt::slim_mutex s_compressLock;
+	winrt::slim_mutex CachedVideoAnimation::s_compressLock;
 	bool CachedVideoAnimation::s_compressStarted;
 	std::thread CachedVideoAnimation::s_compressWorker;
 	WorkQueue CachedVideoAnimation::s_compressQueue;
