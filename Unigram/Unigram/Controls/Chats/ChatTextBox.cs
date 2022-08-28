@@ -222,8 +222,7 @@ namespace Unigram.Controls.Chats
                 }
             }
             else if ((e.Key == VirtualKey.Tab || e.Key == VirtualKey.Enter) && Autocomplete != null && Autocomplete.Items.Count > 0 && ViewModel.Autocomplete != null
-                && ((ViewModel.Autocomplete is EmojiCollection emojiCollection && Autocomplete.SelectedItem != null)
-                || (ViewModel.Autocomplete is SearchStickersCollection && Autocomplete.SelectedItem != null) || ViewModel.Autocomplete is not SearchStickersCollection and not EmojiCollection))
+                && ((ViewModel.Autocomplete is SearchStickersCollection && Autocomplete.SelectedItem != null) || ViewModel.Autocomplete is not SearchStickersCollection))
             {
                 var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
                 if (shift)
@@ -606,52 +605,24 @@ namespace Unigram.Controls.Chats
                 {
                     count = 0;
 
-                    if (string.IsNullOrWhiteSpace(_query))
+                    if (_emoji == null)
                     {
-                        foreach (var emoji in SettingsService.Current.Emoji.GetRecentEmoji())
+                        var response = await _protoService.SendAsync(new SearchEmojis(_query, false, new[] { _inputLanguage }));
+                        if (response is Emojis emojis)
                         {
-                            Add(emoji);
-                            count++;
-                        }
-                    }
-                    else
-                    {
-                        if (_emoji == null)
-                        {
-                            var response = await _protoService.SendAsync(new SearchEmojis(_query, false, new[] { _inputLanguage }));
-                            if (response is Emojis emojis)
+                            var results = emojis.EmojisValue.Reverse();
+                            results = results.OrderBy(x =>
                             {
-                                var results = emojis.EmojisValue.Reverse();
-                                results = results.OrderBy(x =>
+                                var index = SettingsService.Current.Emoji.RecentEmoji.IndexOf(x);
+                                if (index < 0)
                                 {
-                                    var index = SettingsService.Current.Emoji.RecentEmoji.IndexOf(x);
-                                    if (index < 0)
-                                    {
-                                        return int.MaxValue;
-                                    }
-
-                                    return index;
-                                });
-
-                                _emoji = results.ToArray();
-                            }
-                        }
-
-                        if (_emojiIndex < _emoji.Length)
-                        {
-                            var response = await _protoService.SendAsync(new GetStickers(new StickerTypeCustomEmoji(), _emoji[_emojiIndex++], 1000, _chatId));
-                            if (response is Stickers stickers)
-                            {
-                                foreach (var sticker in stickers.StickersValue)
-                                {
-                                    Add(sticker);
-                                    count++;
+                                    return int.MaxValue;
                                 }
-                            }
-                        }
-                        else
-                        {
-                            _emojiIndex++;
+
+                                return index;
+                            });
+
+                            _emoji = results.ToArray();
 
                             foreach (var emoji in _emoji)
                             {
@@ -661,7 +632,20 @@ namespace Unigram.Controls.Chats
                         }
                     }
 
-                    _hasMore = _emojiIndex <= _emoji.Length;
+                    if (_emojiIndex < _emoji.Length)
+                    {
+                        var response = await _protoService.SendAsync(new GetStickers(new StickerTypeCustomEmoji(), _emoji[_emojiIndex++], 1000, _chatId));
+                        if (response is Stickers stickers)
+                        {
+                            foreach (var sticker in stickers.StickersValue)
+                            {
+                                Add(sticker);
+                                count++;
+                            }
+                        }
+                    }
+
+                    _hasMore = _emojiIndex < _emoji.Length;
                     return new LoadMoreItemsResult { Count = count };
                 });
             }
