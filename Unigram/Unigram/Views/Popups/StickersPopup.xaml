@@ -102,7 +102,7 @@
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
-                                <TextBlock common:TextBlockHelper.Text="{x:Bind Title, Mode=OneWay}"
+                                <TextBlock common:TextBlockHelper.Text="{x:Bind Title}"
                                            VerticalAlignment="Bottom"
                                            Margin="12,0"
                                            Style="{StaticResource BaseTextBlockStyle}" />

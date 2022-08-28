@@ -105,6 +105,8 @@ namespace Unigram.Controls.Messages
             Footer = GetTemplateChild(nameof(Footer)) as MessageFooter;
             Reactions = GetTemplateChild(nameof(Reactions)) as ReactionsPanel;
 
+            //ContentPanel.CanDrag = true;
+            //ContentPanel.DragStarting += OnDragStarting;
             ContentPanel.SizeChanged += OnSizeChanged;
             Message.ContextMenuOpening += Message_ContextMenuOpening;
             Footer.SizeChanged += Footer_SizeChanged;
@@ -121,6 +123,69 @@ namespace Unigram.Controls.Messages
             {
                 UpdateMessage(_message);
             }
+        }
+
+        private async void OnDragStarting(UIElement sender, DragStartingEventArgs args)
+        {
+            var deferral = args.GetDeferral();
+
+            if (AllowDrag(_message, out string path))
+            {
+                var file = await _message.ProtoService.GetFileAsync(path);
+                if (file != null)
+                {
+                    using (var stream = new InMemoryRandomAccessStream())
+                    {
+                        using (var writer = new DataWriter(stream.GetOutputStreamAt(0)))
+                        {
+                            writer.WriteInt64(_message.ChatId);
+                            writer.WriteInt64(_message.Id);
+
+                            await writer.FlushAsync();
+                            await writer.StoreAsync();
+                        }
+
+                        stream.Seek(0);
+
+                        args.Data.SetData("application/x-tl-message", stream.CloneStream());
+                        args.Data.SetStorageItems(new[] { file }, true);
+
+                        args.Data.RequestedOperation = Windows.ApplicationModel.DataTransfer.DataPackageOperation.Copy;
+
+                        // Exception in some condition
+                        args.DragUI.SetContentFromDataPackage();
+                    }
+                }
+                else
+                {
+                    args.Cancel = true;
+                }
+            }
+            else
+            {
+                args.Cancel = true;
+            }
+
+            deferral.Complete();
+        }
+
+        private bool AllowDrag(MessageViewModel message, out string path)
+        {
+            if (message == null || message.Ttl > 0 || !message.CanBeSaved)
+            {
+                path = null;
+                return false;
+            }
+
+            var file = message.GetFile();
+            if (file != null && file.Local.IsFileExisting())
+            {
+                path = file.Local.Path;
+                return true;
+            }
+
+            path = null;
+            return false;
         }
 
         #endregion

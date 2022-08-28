@@ -184,15 +184,21 @@ namespace Unigram.Common
                 }
             }
 
-            if (Frame.Content is ChatPage page && chat.Id.Equals((long)CurrentPageParam) && thread == null && !scheduled && !createNewWindow)
+            if (Frame.Content is ChatPage page && page.ViewModel != null && chat.Id.Equals((long)CurrentPageParam) && thread == null && !scheduled && !createNewWindow)
             {
+                var viewModel = page.ViewModel;
                 if (message != null)
                 {
-                    await page.ViewModel.LoadMessageSliceAsync(null, message.Value);
+                    await viewModel.LoadMessageSliceAsync(null, message.Value);
                 }
                 else
                 {
-                    await page.ViewModel.LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? long.MaxValue, VerticalAlignment.Bottom);
+                    await viewModel.LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? long.MaxValue, VerticalAlignment.Bottom);
+                }
+
+                if (viewModel != page.ViewModel)
+                {
+                    return;
                 }
 
                 if (accessToken != null && ProtoService.TryGetUser(chat, out User user) && ProtoService.TryGetUserFull(chat, out UserFullInfo userFull))

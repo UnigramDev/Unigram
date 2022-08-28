@@ -50,7 +50,7 @@ namespace Unigram.Controls.Cells
         private IProtoService _protoService;
 
         private Visual _onlineBadge;
-        private bool _onlineCall;
+        private bool _onlineCall; 
 
         // Used only to prevent garbage collection
         private CompositionAnimation _size1;
@@ -157,6 +157,8 @@ namespace Unigram.Controls.Cells
             Minithumbnail = GetTemplateChild(nameof(Minithumbnail)) as Image;
             SelectionOutline = GetTemplateChild(nameof(SelectionOutline)) as Ellipse;
             Photo = GetTemplateChild(nameof(Photo)) as ProfilePicture;
+
+            BriefInfo.SizeChanged += OnSizeChanged;
 
             var tooltip = new ToolTip();
             tooltip.Opened += ToolTip_Opened;
@@ -877,6 +879,11 @@ namespace Unigram.Controls.Cells
         private readonly List<EmojiPosition> _positions = new();
         private bool _ignoreLayoutUpdated = true;
 
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            _ignoreLayoutUpdated = false;
+        }
+
         private void OnLayoutUpdated(object sender, object e)
         {
             if (_ignoreLayoutUpdated)
@@ -914,7 +921,7 @@ namespace Unigram.Controls.Cells
                 }
 
                 var rect = pointer.GetCharacterRect(LogicalDirection.Forward);
-                if (rect.X + 18 > BriefInfo.ActualWidth && BriefInfo.IsTextTrimmed)
+                if (rect.X + 20 > BriefInfo.ActualWidth && BriefInfo.IsTextTrimmed)
                 {
                     break;
                 }

@@ -3,6 +3,7 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services;
 using Unigram.ViewModels;
+using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
@@ -22,6 +23,7 @@ namespace Unigram.Controls.Messages
 
         #region InitializeComponent
 
+        private Grid LayoutRoot;
         private TextBlock Label;
         private Run TitleLabel;
         private Run ServiceLabel;
@@ -36,6 +38,7 @@ namespace Unigram.Controls.Messages
 
         protected override void OnApplyTemplate()
         {
+            LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as Grid;
             Label = GetTemplateChild(nameof(Label)) as TextBlock;
             TitleLabel = GetTemplateChild(nameof(TitleLabel)) as Run;
             ServiceLabel = GetTemplateChild(nameof(ServiceLabel)) as Run;
@@ -105,7 +108,7 @@ namespace Unigram.Controls.Messages
                 }
 
                 var rect = pointer.GetCharacterRect(LogicalDirection.Forward);
-                if (rect.X + 18 > Label.ActualWidth && Label.IsTextTrimmed)
+                if (rect.X + 20 > Label.ActualWidth && Label.IsTextTrimmed)
                 {
                     break;
                 }
@@ -463,5 +466,17 @@ namespace Unigram.Controls.Messages
         }
 
         #endregion
+
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            LayoutRoot.Measure(availableSize);
+            return new Size(0, LayoutRoot.DesiredSize.Height);
+        }
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            LayoutRoot.Arrange(new Rect(0, 0, finalSize.Width, LayoutRoot.DesiredSize.Height));
+            return new Size(finalSize.Width, LayoutRoot.DesiredSize.Height);
+        }
     }
 }
