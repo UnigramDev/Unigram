@@ -136,6 +136,11 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand<Session> TerminateCommand { get; }
         private async void TerminateExecute(Session session)
         {
+            if (session == null)
+            {
+                return;
+            }
+
             var dialog = new SettingsSessionPopup(session);
 
             var confirm = await dialog.ShowQueuedAsync();

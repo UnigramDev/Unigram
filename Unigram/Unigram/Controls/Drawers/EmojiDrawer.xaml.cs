@@ -517,19 +517,7 @@ namespace Unigram.Controls.Drawers
 
                 if (args.InRecycleQueue)
                 {
-                    if (content.Children[0] is Border border && border.Child is Image photo)
-                    {
-                        photo.Source = null;
-                    }
-                    else if (content.Children[0] is LottieView lottie)
-                    {
-                        lottie.Source = null;
-                    }
-                    else if (content.Children[0] is AnimationView video)
-                    {
-                        video.Source = null;
-                    }
-
+                    ClearContanerContent(content);
                     return;
                 }
 
@@ -574,19 +562,7 @@ namespace Unigram.Controls.Drawers
             }
             else
             {
-                if (content.Children[0] is Border border && border.Child is Image photo)
-                {
-                    photo.Source = null;
-                }
-                else if (content.Children[0] is LottieView lottie)
-                {
-                    lottie.Source = null;
-                }
-                else if (content.Children[0] is AnimationView video)
-                {
-                    video.Source = null;
-                }
-
+                ClearContanerContent(content);
                 content.Tag = sticker;
 
                 CompositionPathParser.ParseThumbnail(sticker, out ShapeVisual visual, false);
@@ -626,6 +602,22 @@ namespace Unigram.Controls.Drawers
             }
         }
 
+        private void ClearContanerContent(Grid content)
+        {
+            if (content.Children[0] is Border border && border.Child is Image photo)
+            {
+                photo.Source = null;
+            }
+            else if (content.Children[0] is LottieView lottie)
+            {
+                lottie.Source = null;
+            }
+            else if (content.Children[0] is AnimationView video)
+            {
+                video.Source = null;
+            }
+        }
+
         #endregion
 
         private void Toolbar_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -640,17 +632,17 @@ namespace Unigram.Controls.Drawers
                 Automation.SetToolTip(args.ItemContainer, sticker.Title);
 
                 var content = args.ItemContainer.ContentTemplateRoot as Grid;
-                var photo = content?.Children[0] as Image;
 
                 if (content == null || sticker == null || (sticker.Thumbnail == null && sticker.Covers == null))
                 {
+                    ClearContanerContent(content);
                     return;
                 }
 
                 var cover = sticker.GetThumbnail();
                 if (cover == null)
                 {
-                    photo.Source = null;
+                    ClearContanerContent(content);
                     return;
                 }
 
