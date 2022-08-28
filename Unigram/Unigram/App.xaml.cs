@@ -53,6 +53,11 @@ namespace Unigram
         /// </summary>
         public App()
         {
+            if (SettingsService.Current.Diagnostics.LastErrorVersion < Package.Current.Id.Version.Build)
+            {
+                SettingsService.Current.Diagnostics.LastUpdateTime = DateTime.Now.ToTimestamp();
+            }
+
             TLContainer.Current.Configure(out int count);
 
             RequestedTheme = SettingsService.Current.Appearance.GetCalculatedApplicationTheme();
@@ -119,10 +124,13 @@ namespace Unigram
         {
             if (verbosityLevel == 0)
             {
+                var next = DateTime.Now.ToTimestamp();
+                var prev = SettingsService.Current.Diagnostics.LastUpdateTime;
+
                 message += Environment.NewLine;
-                message += "Application version: " + SettingsPage.GetVersion();
+                message += $"Current version: {SettingsPage.GetVersion()}";
                 message += Environment.NewLine;
-                message += "Entered background: " + IsBackground;
+                message += $"Last update: {next - prev}s";
 
                 SettingsService.Current.Diagnostics.LastErrorMessage = message;
                 SettingsService.Current.Diagnostics.LastErrorVersion = Package.Current.Id.Version.Build;

@@ -58,6 +58,13 @@ namespace Unigram.Services.Settings
             set => AddOrUpdateValue(ref _lastErrorVersion, "LastErrorVersion", value);
         }
 
+        private int? _lastUpdateTime;
+        public int LastUpdateTime
+        {
+            get => _lastUpdateTime ??= GetValueOrDefault("LastUpdateTime", 0);
+            set => AddOrUpdateValue(ref _lastUpdateTime, "LastUpdateTime", value);
+        }
+
         public bool IsLastErrorDiskFull { get; set; }
     }
 }
