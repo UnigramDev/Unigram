@@ -301,7 +301,7 @@ namespace Unigram.Services
 
             public void Subscribe(object subscriber, Delegate handler)
             {
-                _delegates.Add(subscriber, handler);
+                _delegates.AddOrUpdate(subscriber, handler);
             }
 
             public void Unsubscribe(object subscriber)
