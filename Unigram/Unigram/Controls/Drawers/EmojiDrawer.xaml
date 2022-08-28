@@ -283,7 +283,8 @@
             <GridView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <ItemsWrapGrid Orientation="Horizontal"
-                                   AreStickyGroupHeadersEnabled="False" />
+                                   AreStickyGroupHeadersEnabled="False"
+                                   CacheLength="2" />
                 </ItemsPanelTemplate>
             </GridView.ItemsPanel>
         </GridView>

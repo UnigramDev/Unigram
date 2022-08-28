@@ -183,7 +183,7 @@ namespace Unigram.Controls.Drawers
                     {
                         view.Thumbnail = null;
 
-                        UpdateManager.Subscribe(view, ViewModel.ProtoService, thumbnail, UpdateThumbnail, true);
+                        UpdateManager.Subscribe(content, ViewModel.ProtoService, thumbnail, UpdateThumbnail, true);
 
                         if (thumbnail.Local.CanBeDownloaded && !thumbnail.Local.IsDownloadingActive)
                         {
@@ -233,7 +233,7 @@ namespace Unigram.Controls.Drawers
 
         private void UpdateThumbnail(object target, File file)
         {
-            if (target is AnimationView view)
+            if (target is Border content && content.Child is AnimationView view)
             {
                 view.Thumbnail = new BitmapImage(UriEx.ToLocal(file.Local.Path));
             }

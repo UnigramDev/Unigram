@@ -42,14 +42,14 @@
                   IsItemClickEnabled="True"
                   SelectionMode="None"
                   ItemClick="OnItemClick"
-                  Padding="2,0"
+                  Padding="2,0,0,0"
                   Grid.Row="2">
             <common:FluidGridView.Triggers>
                 <common:FluidGridViewTrigger RowsOrColumns="3" />
             </common:FluidGridView.Triggers>
             <GridView.ItemTemplate>
                 <DataTemplate>
-                    <Border Margin="2">
+                    <Border>
                         <controls:AnimationView30Fps x:Name="Player"
                                                      AutoPlay="False"
                                                      Stretch="UniformToFill" />
@@ -63,7 +63,7 @@
                 <Style TargetType="GridViewItem"
                        BasedOn="{StaticResource DefaultGridViewItemStyle}">
                     <Setter Property="Margin"
-                            Value="0" />
+                            Value="0,0,2,2" />
                     <Setter Property="Padding"
                             Value="0" />
                     <Setter Property="HorizontalContentAlignment"

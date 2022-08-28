@@ -433,7 +433,6 @@ namespace Unigram.Controls.Drawers
 
                 if (content == null || sticker == null || (sticker.Thumbnail == null && sticker.Covers == null))
                 {
-                    ClearContainerContent(content);
                     return;
                 }
 
