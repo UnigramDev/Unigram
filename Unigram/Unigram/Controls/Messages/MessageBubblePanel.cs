@@ -18,6 +18,9 @@ namespace Unigram.Controls.Messages
         // Needed for Text CanvasTextLayout
         public MessageContent Content { get; set; }
 
+        // Needed for Measure
+        public MessageReference Reply { get; set; }
+
         private bool _placeholder = true;
         public bool Placeholder
         {
@@ -77,6 +80,11 @@ namespace Unigram.Controls.Messages
             var width = media.DesiredSize.Width == availableSize.Width
                 ? media.DesiredSize.Width
                 : Math.Max(media.DesiredSize.Width, text.DesiredSize.Width + margin.Width);
+
+            if (Reply != null)
+            {
+                Reply.ContentWidth = Math.Max(Math.Max(reactions.DesiredSize.Width, footer.DesiredSize.Width), width);
+            }
 
             return new Size(Math.Max(Math.Max(reactions.DesiredSize.Width, footer.DesiredSize.Width), width),
                 text.DesiredSize.Height + media.DesiredSize.Height + reactions.DesiredSize.Height + margin.Height);

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services;
@@ -467,16 +468,28 @@ namespace Unigram.Controls.Messages
 
         #endregion
 
+        public double ContentWidth { get; set; }
+
         protected override Size MeasureOverride(Size availableSize)
         {
-            LayoutRoot.Measure(availableSize);
-            return new Size(0, LayoutRoot.DesiredSize.Height);
+            if (ContentWidth > 0 && ContentWidth <= availableSize.Width)
+            {
+                LayoutRoot.Measure(new Size(Math.Max(144, ContentWidth), availableSize.Height));
+                return LayoutRoot.DesiredSize;
+            }
+
+            return base.MeasureOverride(availableSize);
         }
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            LayoutRoot.Arrange(new Rect(0, 0, finalSize.Width, LayoutRoot.DesiredSize.Height));
-            return new Size(finalSize.Width, LayoutRoot.DesiredSize.Height);
+            if (ContentWidth > 0 && ContentWidth <= finalSize.Width)
+            {
+                LayoutRoot.Arrange(new Rect(0, 0, finalSize.Width, LayoutRoot.DesiredSize.Height));
+                return new Size(finalSize.Width, LayoutRoot.DesiredSize.Height);
+            }
+
+            return base.ArrangeOverride(finalSize);
         }
     }
 }

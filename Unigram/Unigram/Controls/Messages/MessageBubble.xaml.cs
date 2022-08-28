@@ -707,6 +707,8 @@ namespace Unigram.Controls.Messages
             {
                 Reply = GetTemplateChild(nameof(Reply)) as MessageReference;
                 Reply.Click += Reply_Click;
+
+                Panel.Reply = Reply;
             }
 
             if (Reply != null)
@@ -2725,6 +2727,8 @@ namespace Unigram.Controls.Messages
 
                 Reply = GetTemplateChild(nameof(Reply)) as MessageReference;
                 Reply.LayoutUpdated += layoutUpdated;
+
+                Panel.Reply = Reply;
             }
             else
             {

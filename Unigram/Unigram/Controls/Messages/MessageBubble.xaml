@@ -170,6 +170,41 @@
                                         Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" />
                             </Border>
 
+                            <local:MessageBubblePanel x:Name="Panel"
+                                                      Grid.Column="1"
+                                                      Grid.Row="1">
+                                <RichTextBlock x:Name="Message"
+                                               Style="{StaticResource BodyRichTextBlockStyle}"
+                                               Foreground="{ThemeResource MessageForegroundBrush}"
+                                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                               TextReadingOrder="UseFlowDirection"
+                                               OpticalMarginAlignment="None"
+                                               Margin="10,0,10,6"
+                                               Grid.Column="1"
+                                               Grid.Row="2" />
+                                <local:CustomEmojiCanvas x:Name="CustomEmoji"
+                                                         x:Load="False"
+                                                         IsHitTestVisible="False"
+                                                         Margin="8,-2,8,4" />
+
+                                <Border x:Name="Media"
+                                        Grid.Column="1"
+                                        Grid.Row="3" />
+
+                                <local:ReactionsPanel x:Name="Reactions"
+                                                      HorizontalAlignment="Stretch"
+                                                      VerticalAlignment="Bottom"
+                                                      Padding="4,0,4,4" />
+
+                                <local:MessageFooter x:Name="Footer"
+                                                     Stroke="{ThemeResource MessageSubtleLabelBrush}"
+                                                     VerticalAlignment="Bottom"
+                                                     HorizontalAlignment="Right"
+                                                     Margin="4,0,4,4"
+                                                     Grid.Column="1"
+                                                     Grid.Row="4" />
+                            </local:MessageBubblePanel>
+
                             <Grid x:Name="Header"
                                   Margin="10,0,10,0"
                                   Grid.Column="1">
@@ -210,41 +245,6 @@
                                                         Grid.ColumnSpan="2"
                                                         Grid.Row="1" />
                             </Grid>
-
-                            <local:MessageBubblePanel x:Name="Panel"
-                                                      Grid.Column="1"
-                                                      Grid.Row="1">
-                                <RichTextBlock x:Name="Message"
-                                               Style="{StaticResource BodyRichTextBlockStyle}"
-                                               Foreground="{ThemeResource MessageForegroundBrush}"
-                                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                               TextReadingOrder="UseFlowDirection"
-                                               OpticalMarginAlignment="None"
-                                               Margin="10,0,10,6"
-                                               Grid.Column="1"
-                                               Grid.Row="2" />
-                                <local:CustomEmojiCanvas x:Name="CustomEmoji"
-                                                         x:Load="False"
-                                                         IsHitTestVisible="False"
-                                                         Margin="8,-2,8,4" />
-
-                                <Border x:Name="Media"
-                                        Grid.Column="1"
-                                        Grid.Row="3" />
-
-                                <local:ReactionsPanel x:Name="Reactions"
-                                                      HorizontalAlignment="Stretch"
-                                                      VerticalAlignment="Bottom"
-                                                      Padding="4,0,4,4" />
-
-                                <local:MessageFooter x:Name="Footer"
-                                                     Stroke="{ThemeResource MessageSubtleLabelBrush}"
-                                                     VerticalAlignment="Bottom"
-                                                     HorizontalAlignment="Right"
-                                                     Margin="4,0,4,4"
-                                                     Grid.Column="1"
-                                                     Grid.Row="4" />
-                            </local:MessageBubblePanel>
 
                             <HyperlinkButton x:Name="Thread"
                                              x:Load="False"
