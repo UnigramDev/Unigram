@@ -16,6 +16,7 @@ using Windows.ApplicationModel.AppService;
 using Windows.Data.Xml.Dom;
 using Windows.Foundation.Collections;
 using Windows.Networking.PushNotifications;
+using Windows.Storage;
 using Windows.UI.Notifications;
 using Windows.UI.Xaml.Controls;
 
@@ -390,7 +391,7 @@ namespace Unigram.Services
 
             foreach (var notification in update.AddedNotifications)
             {
-                ProcessNotification(update.NotificationGroupId, update.ChatId, notification);
+                ProcessNotification(update.NotificationGroupId, update.NotificationSoundId, update.ChatId, notification);
                 //_protoService.Send(new RemoveNotification(update.NotificationGroupId, notification.Id));
             }
         }
@@ -407,24 +408,24 @@ namespace Unigram.Services
             //ProcessNotification(update.NotificationGroupId, 0, update.Notification);
         }
 
-        private void ProcessNotification(int group, long chatId, Telegram.Td.Api.Notification notification)
+        private void ProcessNotification(int group, long soundId, long chatId, Telegram.Td.Api.Notification notification)
         {
             switch (notification.Type)
             {
                 case NotificationTypeNewCall:
                     break;
                 case NotificationTypeNewMessage newMessage:
-                    ProcessNewMessage(group, notification.Id, newMessage.Message, notification.Date, notification.IsSilent);
+                    ProcessNewMessage(group, notification.Id, newMessage.Message, notification.Date, soundId, notification.IsSilent);
                     break;
                 case NotificationTypeNewPushMessage newPushMessage:
-                    ProcessNewPushMessage(group, notification.Id, chatId, newPushMessage, notification.Date, notification.IsSilent);
+                    ProcessNewPushMessage(group, notification.Id, chatId, newPushMessage, notification.Date, soundId, notification.IsSilent);
                     break;
                 case NotificationTypeNewSecretChat:
                     break;
             }
         }
 
-        private async void ProcessNewPushMessage(int groupId, int id, long chatId, NotificationTypeNewPushMessage message, int date, bool silent)
+        private async void ProcessNewPushMessage(int groupId, int id, long chatId, NotificationTypeNewPushMessage message, int date, long soundId, bool silent)
         {
             var chat = _protoService.GetChat(chatId);
             if (chat == null)
@@ -440,14 +441,21 @@ namespace Unigram.Services
             var dateTime = Converter.DateTime(date).ToUniversalTime().ToString("s") + "Z";
             var canReply = !(chat.Type is ChatTypeSupergroup super && super.IsChannel);
 
-            //if (soundId != 0)
-            //{
-            //    var response = await _protoService.SendAsync(new GetSavedNotificationSound(soundId));
-            //    if (response is NotificationSound notificationSound && notificationSound.Sound.Local.IsFileExisting())
-            //    {
-            //        sound = "ms-appdata:///local/" + Path.GetRelativePath(ApplicationData.Current.LocalFolder.Path, notificationSound.Sound.Local.Path);
-            //    }
-            //}
+            if (soundId != 0 && !silent)
+            {
+                var response = await _protoService.SendAsync(new GetSavedNotificationSound(soundId));
+                if (response is NotificationSound notificationSound)
+                {
+                    if (notificationSound.Sound.Local.IsFileExisting())
+                    {
+                        sound = "ms-appdata:///local/" + Path.GetRelativePath(ApplicationData.Current.LocalFolder.Path, notificationSound.Sound.Local.Path);
+                    }
+                    else
+                    {
+                        _protoService.DownloadFile(notificationSound.Sound.Id, 32);
+                    }
+                }
+            }
 
             var user = _protoService.GetUser(_protoService.Options.MyId);
             var attribution = user?.GetFullName() ?? string.Empty;
@@ -469,7 +477,7 @@ namespace Unigram.Services
             });
         }
 
-        private async void ProcessNewMessage(int groupId, int id, Message message, int date, bool silent)
+        private async void ProcessNewMessage(int groupId, int id, Message message, int date, long soundId, bool silent)
         {
             var chat = _protoService.GetChat(message.ChatId);
             if (chat == null)
@@ -485,14 +493,21 @@ namespace Unigram.Services
             var dateTime = Converter.DateTime(date).ToUniversalTime().ToString("s") + "Z";
             var canReply = !(chat.Type is ChatTypeSupergroup super && super.IsChannel);
 
-            //if (soundId != 0)
-            //{
-            //    var response = await _protoService.SendAsync(new GetSavedNotificationSound(soundId));
-            //    if (response is NotificationSound notificationSound && notificationSound.Sound.Local.IsFileExisting())
-            //    {
-            //        sound = "ms-appdata:///local/" + Path.GetRelativePath(ApplicationData.Current.LocalFolder.Path, notificationSound.Sound.Local.Path);
-            //    }
-            //}
+            if (soundId != 0 && !silent)
+            {
+                var response = await _protoService.SendAsync(new GetSavedNotificationSound(soundId));
+                if (response is NotificationSound notificationSound)
+                {
+                    if (notificationSound.Sound.Local.IsFileExisting())
+                    {
+                        sound = "ms-appdata:///local/" + Path.GetRelativePath(ApplicationData.Current.LocalFolder.Path, notificationSound.Sound.Local.Path);
+                    }
+                    else
+                    {
+                        _protoService.DownloadFile(notificationSound.Sound.Id, 32);
+                    }
+                }
+            }
 
             var user = _protoService.GetUser(_protoService.Options.MyId);
             var attribution = user?.GetFullName() ?? string.Empty;
