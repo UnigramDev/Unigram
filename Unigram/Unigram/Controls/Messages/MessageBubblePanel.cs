@@ -1,6 +1,7 @@
 ﻿using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Text;
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -177,13 +178,15 @@ namespace Unigram.Controls.Messages
                 return Vector2.Zero;
             }
 
+            var formatted = FormatText(caption);
+
             var text = Children[0] as RichTextBlock;
             var fontSize = Theme.Current.MessageFontSize * BootStrapper.Current.UISettings.TextScaleFactor;
             var width = availableWidth - text.Margin.Left - text.Margin.Right;
 
             try
             {
-                var bounds = PlaceholderImageHelper.Current.ContentEnd(caption.Text, fontSize, width);
+                var bounds = PlaceholderImageHelper.Current.ContentEnd(formatted.Text, formatted.Entities, fontSize, width);
                 if (bounds.Y < text.DesiredSize.Height)
                 {
                     return bounds;
@@ -194,42 +197,51 @@ namespace Unigram.Controls.Messages
             return new Vector2(int.MaxValue, 0);
         }
 
-        private CanvasTextFormat _format;
-        private CanvasTextLayout _layout;
-
         private FormattedText _prevText;
+        private IList<PlaceholderEntity> _prevTextEntities;
 
-        private CanvasTextLayout GetTextLayout(FormattedText caption, float width)
+        // Not the most elegant solution
+        private (string Text, IList<PlaceholderEntity> Entities) FormatText(FormattedText text)
         {
-            if (_prevText == caption && _layout != null)
+            if (text == _prevText)
             {
-                _layout.RequestedSize = new Size(width, double.PositiveInfinity);
-                return _layout;
+                return (_prevText.Text, _prevTextEntities);
             }
 
-            var fontSize = (float)(Theme.Current.MessageFontSize * BootStrapper.Current.UISettings.TextScaleFactor);
+            IList<PlaceholderEntity> entities = null;
 
-            _format ??= new CanvasTextFormat { FontFamily = "Assets\\Emoji\\apple.ttf#Segoe UI Emoji", FontSize = fontSize };
-            _layout = new CanvasTextLayout(CanvasDevice.GetSharedDevice(), caption.Text, _format, width, float.PositiveInfinity);
-
-            foreach (var entity in caption.Entities)
+            foreach (var entity in text.Entities)
             {
-                if (entity.Type is TextEntityTypeBold)
+                if (entity.Type is TextEntityTypeCustomEmoji
+                    or TextEntityTypeSpoiler
+                    or TextEntityTypeMentionName
+                    or TextEntityTypeTextUrl)
                 {
-                    _layout.SetFontWeight(entity.Offset, entity.Length, FontWeights.SemiBold);
+                    continue;
                 }
-                else if (entity.Type is TextEntityTypeItalic)
+
+                entities ??= new List<PlaceholderEntity>();
+                entities.Add(new PlaceholderEntity
                 {
-                    _layout.SetFontStyle(entity.Offset, entity.Length, FontStyle.Italic);
-                }
-                else if (entity.Type is TextEntityTypeCode or TextEntityTypePre or TextEntityTypePreCode)
-                {
-                    _layout.SetFontFamily(entity.Offset, entity.Length, "Consolas");
-                }
+                    Offset = entity.Offset,
+                    Length = entity.Length,
+                    Type = entity.Type switch
+                    {
+                        TextEntityTypeBold => PlaceholderEntityType.Bold,
+                        TextEntityTypeCode => PlaceholderEntityType.Code,
+                        TextEntityTypeItalic => PlaceholderEntityType.Italic,
+                        TextEntityTypePre => PlaceholderEntityType.Code,
+                        TextEntityTypePreCode => PlaceholderEntityType.Code,
+                        TextEntityTypeStrikethrough => PlaceholderEntityType.Strikethrough,
+                        _ => PlaceholderEntityType.Underline
+                    }
+                });
             }
 
-            _prevText = caption;
-            return _layout;
+            _prevText = text;
+            _prevTextEntities = entities ?? Array.Empty<PlaceholderEntity>();
+            
+            return (text.Text, _prevTextEntities);
         }
     }
 }

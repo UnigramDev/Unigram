@@ -1,5 +1,21 @@
 namespace Unigram.Native
 {
+	enum PlaceholderEntityType
+	{
+		Bold,
+		Italic,
+		Strikethrough,
+		Underline,
+		Code
+	};
+
+	struct PlaceholderEntity
+	{
+		Int32 Offset;
+		Int32 Length;
+		PlaceholderEntityType Type;
+	};
+
 	[default_interface]
 	runtimeclass PlaceholderImageHelper
 	{
@@ -24,7 +40,7 @@ namespace Unigram.Native
 		void DrawThumbnailPlaceholder(String fileName, Single blurAmount, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
 		void DrawThumbnailPlaceholder(Windows.Foundation.Collections.IVector<byte> bytes, Single blurAmount, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
 
-		Windows.Foundation.Numerics.Vector2 ContentEnd(String text, Double fontSize, Double width);
+		Windows.Foundation.Numerics.Vector2 ContentEnd(String text, Windows.Foundation.Collections.IVector<PlaceholderEntity> entities, Double fontSize, Double width);
 		Windows.Foundation.Collections.IVector<Windows.Foundation.Rect> LineMetrics(String text, Double fontSize, Double width, Boolean rtl);
 		//Windows.Foundation.Collections.IVector<Windows.Foundation.Rect> EntityMetrics(String text, Windows.Foundation.Collections.IVector<Telegram.Td.Api.TextEntity> entities, Double fontSize, Double width, Boolean rtl);
 	}
