@@ -60,12 +60,26 @@ namespace Unigram.Services
                 var response = await SendAsync(new LoadChats(chatList, count - sorted.Count));
                 if (response is Ok or Error)
                 {
-                    if (response is Error error && error.Code == 404)
+                    if (response is Error error)
                     {
-                        _haveFullChatList[index] = true;
+                        if (error.Code == 404)
+                        {
+                            _haveFullChatList[index] = true;
+                        }
+                        else if (error.Code == 400 && chatList is ChatListFilter chatListFilter)
+                        {
+                            // TODO: this is a workaround to try to recover the chat filter.
+                            // Figure out the exact error here.
+
+                            var filter = await SendAsync(new GetChatFilter(chatListFilter.ChatFilterId)) as ChatFilter;
+                            if (filter != null)
+                            {
+                                await SendAsync(new EditChatFilter(chatListFilter.ChatFilterId, filter));
+                            }
+                        }
                     }
 
-                    // chats had already been received through updates, let's retry request
+                    // Chats have already been received through updates, let's retry request
                     return await GetChatListAsync(chatList, offset, limit);
                 }
 
@@ -73,7 +87,7 @@ namespace Unigram.Services
             }
 #endif
 
-            // have enough chats in the chat list to answer request
+            // Have enough chats in the chat list to answer request
             var result = new long[Math.Max(0, Math.Min(limit, sorted.Count - offset))];
             var pos = 0;
 
