@@ -1067,6 +1067,13 @@
         </Setter>
     </Style>
 
+    <SolidColorBrush x:Key="SwitchPmButtonBackground"
+                     Color="#2ca5e0" />
+    <SolidColorBrush x:Key="SwitchPmButtonBackgroundPointerOver"
+                     Color="#2ca5e0" />
+    <SolidColorBrush x:Key="SwitchPmButtonBackgroundPressed"
+                     Color="#227eab" />
+    
     <SolidColorBrush x:Key="StartButtonBackground"
                      Color="Transparent" />
     <!--<SolidColorBrush x:Key="StartButtonBackgroundPointerOver"
@@ -1238,7 +1245,7 @@
         <Setter Property="Padding"
                 Value="12,3,12,5" />
         <Setter Property="Foreground"
-                Value="{ThemeResource StartButtonBackground}" />
+                Value="{ThemeResource SwitchPmButtonBackground}" />
         <Setter Property="Background"
                 Value="Transparent" />
         <Setter Property="BorderBrush"
@@ -1251,17 +1258,13 @@
                           CornerRadius="{TemplateBinding CornerRadius}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal">
-                                    <Storyboard>
-                                        <PointerUpThemeAnimation Storyboard.TargetName="RootGrid" />
-                                    </Storyboard>
-                                </VisualState>
+                                <VisualState x:Name="Normal" />
                                 <VisualState x:Name="PointerOver">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
                                                                        Storyboard.TargetProperty="Background">
                                             <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource StartButtonBackgroundPointerOver}" />
+                                                                    Value="{ThemeResource SwitchPmButtonBackgroundPointerOver}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
                                                                        Storyboard.TargetProperty="BorderBrush">
@@ -1273,7 +1276,6 @@
                                             <DiscreteObjectKeyFrame KeyTime="0"
                                                                     Value="{ThemeResource StartButtonForegroundPointerOver}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <PointerUpThemeAnimation Storyboard.TargetName="RootGrid" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
@@ -1281,7 +1283,7 @@
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
                                                                        Storyboard.TargetProperty="Background">
                                             <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource StartButtonBackgroundPressed}" />
+                                                                    Value="{ThemeResource SwitchPmButtonBackgroundPressed}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
                                                                        Storyboard.TargetProperty="BorderBrush">
@@ -1293,7 +1295,6 @@
                                             <DiscreteObjectKeyFrame KeyTime="0"
                                                                     Value="{ThemeResource StartButtonForegroundPressed}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <PointerDownThemeAnimation Storyboard.TargetName="RootGrid" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
@@ -1318,7 +1319,7 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <ContentPresenter x:Name="ContentPresenter"
-                                          CornerRadius="16"
+                                          CornerRadius="{TemplateBinding CornerRadius}"
                                           BorderBrush="{TemplateBinding BorderBrush}"
                                           BorderThickness="{TemplateBinding BorderThickness}"
                                           Content="{TemplateBinding Content}"

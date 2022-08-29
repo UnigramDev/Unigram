@@ -2878,6 +2878,8 @@ namespace Unigram.ViewModels
             var response = await ProtoService.SendAsync(new CreatePrivateChat(_currentInlineBot.Id, false));
             if (response is Chat chat)
             {
+                SetText(null, false);
+
                 ProtoService.Send(new SendBotStartMessage(_currentInlineBot.Id, chat.Id, start ?? string.Empty));
                 NavigationService.NavigateToChat(chat);
             }
