@@ -32,6 +32,7 @@ namespace Unigram.Controls.Chats
     public class ChatTextBox : FormattedTextBox
     {
         private TextBlock InlinePlaceholderTextContentPresenter;
+        private ScrollViewer ContentElement;
 
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
@@ -51,7 +52,8 @@ namespace Unigram.Controls.Chats
 
         protected override void OnApplyTemplate()
         {
-            InlinePlaceholderTextContentPresenter = (TextBlock)GetTemplateChild("InlinePlaceholderTextContentPresenter");
+            InlinePlaceholderTextContentPresenter = (TextBlock)GetTemplateChild(nameof(InlinePlaceholderTextContentPresenter));
+            ContentElement = (ScrollViewer)GetTemplateChild(nameof(ContentElement));
 
             base.OnApplyTemplate();
         }
@@ -158,17 +160,35 @@ namespace Unigram.Controls.Chats
                 var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
                 var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
 
-                if (e.Key == VirtualKey.Up && !alt && !ctrl && !shift && IsEmpty && ViewModel.Autocomplete == null)
+                if (e.Key is VirtualKey.Up or VirtualKey.Down && !alt && !ctrl && !shift && ViewModel.Autocomplete == null)
                 {
-                    ViewModel.MessageEditLast();
-                    e.Handled = true;
+                    if (e.Key == VirtualKey.Up && IsEmpty)
+                    {
+                        ViewModel.MessageEditLast();
+                        e.Handled = true;
+                    }
+                    else
+                    {
+                        Document.Selection.GetRect(PointOptions.ClientCoordinates, out Rect rect, out _);
+
+                        if (e.Key == VirtualKey.Up && rect.Y.AlmostEqualsToZero())
+                        {
+                            Document.Selection.SetRange(0, 0);
+                            e.Handled = true;
+                        }
+                        else if (e.Key == VirtualKey.Down && (rect.Bottom > ContentElement.ExtentHeight || rect.Bottom.AlmostEquals(ContentElement.ExtentHeight)))
+                        {
+                            Document.Selection.SetRange(TextConstants.MaxUnitCount, TextConstants.MaxUnitCount);
+                            e.Handled = true;
+                        }
+                    }
                 }
-                else if (e.Key == VirtualKey.Up && ctrl)
+                else if (e.Key == VirtualKey.Up && ctrl && !alt && !shift)
                 {
                     ViewModel.MessageReplyPrevious();
                     e.Handled = true;
                 }
-                else if (e.Key == VirtualKey.Down && ctrl)
+                else if (e.Key == VirtualKey.Down && ctrl && !alt && !shift)
                 {
                     ViewModel.MessageReplyNext();
                     e.Handled = true;

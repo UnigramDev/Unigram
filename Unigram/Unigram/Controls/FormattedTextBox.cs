@@ -960,9 +960,7 @@ namespace Unigram.Controls
                     }
                 }
 
-                // We need to get full text as hidden content has been added and we don't want to hardcode lengths
-                Document.GetText(TextGetOptions.None, out string result);
-                Document.Selection.SetRange(result.Length, result.Length);
+                Document.Selection.SetRange(TextConstants.MaxUnitCount, TextConstants.MaxUnitCount);
             }
 
             Document.ApplyDisplayUpdates();
