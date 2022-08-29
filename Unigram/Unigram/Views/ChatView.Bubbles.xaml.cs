@@ -715,9 +715,9 @@ namespace Unigram.Views
 
                 var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
 
-                var anim = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-                anim.InsertKeyFrame(0, new Vector3(0, (float)diff, 0));
-                anim.InsertKeyFrame(1, new Vector3());
+                var anim = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                anim.InsertKeyFrame(0, (float)diff);
+                anim.InsertKeyFrame(1, 0);
                 //anim.Duration = TimeSpan.FromSeconds(5);
 
                 System.Diagnostics.Debug.WriteLine(diff);
@@ -733,7 +733,7 @@ namespace Unigram.Views
                     var child = VisualTreeHelper.GetChild(container, 0) as UIElement;
 
                     var visual = ElementCompositionPreview.GetElementVisual(child);
-                    visual.StartAnimation("Offset", anim);
+                    visual.StartAnimation("Offset.Y", anim);
                 }
 
                 batch.End();
