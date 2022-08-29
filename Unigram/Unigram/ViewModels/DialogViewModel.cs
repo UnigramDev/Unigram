@@ -557,6 +557,7 @@ namespace Unigram.ViewModels
 
         public Stack<long> RepliesStack => _repliesStack;
 
+        // Scrolling to top
         public virtual async Task LoadNextSliceAsync(bool force = false, bool init = false)
         {
             if (_type is not DialogType.History and not DialogType.Thread and not DialogType.Pinned)
@@ -641,30 +642,22 @@ namespace Unigram.ViewModels
                         Logs.Logger.Debug(Logs.LogTarget.Chat, "Setting scroll mode to KeepLastItemInView");
                     }
 
-                    var replied = messages.MessagesValue.OrderByDescending(x => x.Id).Select(x => _messageFactory.Create(this, x)).ToList();
+                    var replied = new MessageCollection(messages.MessagesValue.OrderByDescending(x => x.Id).Select(x => _messageFactory.Create(this, x)));
                     await ProcessMessagesAsync(chat, replied);
 
-                    foreach (var message in replied)
+                    if (replied.Count > 0 && replied[0].Content is MessageChatUpgradeFrom chatUpgradeFrom)
                     {
-                        if (message.Content is MessageChatUpgradeFrom chatUpgradeFrom)
-                        {
                             var chatUpgradeTo = await PrepareMigratedAsync(chatUpgradeFrom.BasicGroupId);
                             if (chatUpgradeTo != null)
                             {
-                                Items.Insert(0, chatUpgradeTo);
+                            replied[0] = chatUpgradeTo;
                             }
                         }
-                        else
-                        {
-                            Items.Insert(0, message);
-                        }
 
-                        //var index = InsertMessageInOrder(Messages, message);
-                    }
+                    Items.RawInsertRange(0, replied, out bool empty);
+                    IsLastSliceLoaded = empty;
 
-                    IsLastSliceLoaded = replied.IsEmpty();
-
-                    if (replied.IsEmpty())
+                    if (empty)
                     {
                         await AddHeaderAsync();
                     }
@@ -677,6 +670,7 @@ namespace Unigram.ViewModels
             }
         }
 
+        // Scrolling to bottom
         public async Task LoadPreviousSliceAsync(bool force = false, bool init = false)
         {
             if (_type is not DialogType.History and not DialogType.Thread and not DialogType.Pinned)
@@ -775,24 +769,12 @@ namespace Unigram.ViewModels
                         Logs.Logger.Debug(Logs.LogTarget.Chat, "Setting scroll mode to KeepLastItemInView");
                     }
 
-                    var added = false;
-
-                    var replied = messages.MessagesValue.OrderBy(x => x.Id).Select(x => _messageFactory.Create(this, x)).ToList();
+                    var replied = new MessageCollection(messages.MessagesValue.OrderBy(x => x.Id).Select(x => _messageFactory.Create(this, x)));
                     await ProcessMessagesAsync(chat, replied);
 
-                    foreach (var message in replied)
-                    {
-                        var index = InsertMessageInOrder(Items, message);
-                        if (index > -1)
-                        {
-                            added = true;
-                        }
-
-                        //Messages.Add(message);
+                    Items.RawAddRange(replied, out bool empty);
+                    IsFirstSliceLoaded = empty || IsEndReached();
                     }
-
-                    IsFirstSliceLoaded = !added || IsEndReached();
-                }
 
                 _isLoadingPreviousSlice = false;
                 IsLoading = false;
@@ -1224,7 +1206,7 @@ namespace Unigram.ViewModels
                         Logs.Logger.Debug(Logs.LogTarget.Chat, "Setting scroll mode to KeepLastItemInView");
                     }
 
-                    var replied = messages.MessagesValue.OrderBy(x => x.Id).Select(x => _messageFactory.Create(this, x)).ToList();
+                    var replied = new MessageCollection(messages.MessagesValue.OrderBy(x => x.Id).Select(x => _messageFactory.Create(this, x)));
                     await ProcessMessagesAsync(chat, replied);
 
                     long lastReadMessageId;
@@ -1303,7 +1285,7 @@ namespace Unigram.ViewModels
                         }
                     }
 
-                    Items.ReplaceWith(replied);
+                    Items.RawReplaceWith(replied);
                     NotifyMessageSliceLoaded();
 
                     IsLastSliceLoaded = null;
@@ -3475,9 +3457,21 @@ namespace Unigram.ViewModels
 
     public class MessageCollection : MvxObservableCollection<MessageViewModel>
     {
-        private readonly HashSet<long> _messages = new HashSet<long>();
+        private readonly HashSet<long> _messages;
+        private bool _suppressOperations = false;
 
         public Action<IEnumerable<MessageViewModel>> AttachChanged;
+
+        public MessageCollection()
+        {
+            _messages = new();
+        }
+
+        public MessageCollection(IEnumerable<MessageViewModel> source)
+            : base(source)
+        {
+
+        }
 
         //~MessageCollection()
         //{
@@ -3490,9 +3484,64 @@ namespace Unigram.ViewModels
             return _messages.Contains(id);
         }
 
+        public void RawAddRange(IList<MessageViewModel> source, out bool empty)
+        {
+            empty = true;
+
+            for (int i = 0; i < source.Count; i++)
+            {
+                if (_messages.Contains(source[i].Id))
+                {
+                    continue;
+                }
+
+                _suppressOperations = i > 0;
+
+                Add(source[i]);
+                empty = false;
+            }
+
+            _suppressOperations = false;
+        }
+
+        public void RawInsertRange(int index, IList<MessageViewModel> source, out bool empty)
+        {
+            empty = true;
+
+            for (int i = 0; i < source.Count; i++)
+            {
+                if (_messages.Contains(source[i].Id))
+                {
+                    continue;
+                }
+
+                _suppressOperations = i < source.Count - 1;
+
+                Insert(0, source[i]);
+                empty = false;
+            }
+
+            _suppressOperations = false;
+        }
+
+        public void RawReplaceWith(IList<MessageViewModel> source)
+        {
+            _suppressOperations = true;
+
+            ReplaceWith(source);
+
+            _suppressOperations = false;
+        }
+
         protected override void InsertItem(int index, MessageViewModel item)
         {
-            _messages.Add(item.Id);
+            _messages?.Add(item.Id);
+
+            if (_suppressOperations)
+            {
+                base.InsertItem(index, item);
+                return;
+            }
 
             var previous = index > 0 ? this[index - 1] : null;
             var next = index < Count ? this[index] : null;
@@ -3554,7 +3603,7 @@ namespace Unigram.ViewModels
 
         protected override void RemoveItem(int index)
         {
-            _messages.Remove(this[index].Id);
+            _messages?.Remove(this[index].Id);
 
             var next = index > 0 ? this[index - 1] : null;
             var previous = index < Count - 1 ? this[index + 1] : null;
