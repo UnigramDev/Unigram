@@ -33,8 +33,6 @@ namespace Unigram.Controls.Messages
         private readonly MenuFlyoutPresenter _presenter;
         private readonly Popup _popup;
 
-        private bool _expanded;
-
         public static MenuFlyoutReactions ShowAt(IList<Reaction> reactions, MessageViewModel message, MessageBubble bubble, MenuFlyout flyout)
         {
             return new MenuFlyoutReactions(reactions, message, bubble, flyout);
@@ -106,7 +104,7 @@ namespace Unigram.Controls.Messages
                     DownloadFile(message, item.AppearAnimation.StickerValue);
                     break;
                 }
-                
+
                 var view = new LottieView();
                 view.AutoPlay = offset < visible;
                 view.IsLoopingEnabled = false;
@@ -346,298 +344,177 @@ namespace Unigram.Controls.Messages
 
         private async void Expand_Click(object sender, RoutedEventArgs e)
         {
-            if (_expanded)
+            var cols = 6;
+            var rows = (int)Math.Ceiling((double)_reactions.Count / cols);
+
+            var width = 8 + cols * 34 - 2;
+            var viewport = 8 + cols * 34 - 2;
+            var height = (rows + 1) * 34;
+
+            ScrollingHost.VerticalScrollMode = ScrollMode.Auto;
+            ScrollingHost.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
+
+            ScrollingHost.HorizontalScrollMode = ScrollMode.Disabled;
+            ScrollingHost.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
+
+            ScrollingHost.HorizontalAlignment = HorizontalAlignment.Left;
+            ScrollingHost.VerticalAlignment = VerticalAlignment.Top;
+
+            Shadow.Height = height;
+            Pill.Height = height;
+            ScrollingHost.Height = rows * 34 - 4;
+
+            BubbleMedium.Visibility = Visibility.Collapsed;
+            BubbleOverlay.Visibility = Visibility.Collapsed;
+
+            var pillShadow = Window.Current.Compositor.CreateDropShadow();
+            pillShadow.BlurRadius = 16;
+            pillShadow.Opacity = 0.14f;
+            pillShadow.Color = Colors.Black;
+            pillShadow.Mask = Pill.GetAlphaMask();
+
+            var pillReceiver = Window.Current.Compositor.CreateSpriteVisual();
+            pillReceiver.Shadow = pillShadow;
+            pillReceiver.Size = new Vector2(viewport, height);
+            pillReceiver.Offset = new Vector3(0, 8, 0);
+
+            var receivers = Window.Current.Compositor.CreateContainerVisual();
+            receivers.Children.InsertAtBottom(pillReceiver);
+            receivers.Size = new Vector2(width, height + 18);
+
+            ElementCompositionPreview.SetElementChildVisual(Shadow, receivers);
+
+            Presenter.ColumnDefinitions.Clear();
+            Presenter.RowDefinitions.Clear();
+
+            for (int y = 0; y < rows; y++)
             {
-                _expanded = false;
-
-                var cols = 5;
-                var rows = (int)Math.Ceiling((double)_reactions.Count / cols);
-
-                var width = 8 + 5 * 34 - 2;
-                var viewport = 8 + 6 * 34 - 6;
-                var height = (rows + 1) * 34;
-
-                var actualWidth = _presenter.ActualSize.X + 18 + 12 + 18;
-                var width2 = 8 + 6 * 34 - 6;
-
-                var padding = actualWidth - width2;
-
-                ScrollingHost.VerticalScrollMode = ScrollMode.Disabled;
-                ScrollingHost.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
-
-                ScrollingHost.HorizontalAlignment = HorizontalAlignment.Stretch;
-                ScrollingHost.VerticalAlignment = VerticalAlignment.Stretch;
-
-                Shadow.Height = 36;
-                Pill.Height = 36;
-                ScrollingHost.Height = 36;
-
-                BubbleMedium.Visibility = Visibility.Visible;
-                BubbleOverlay.Visibility = Visibility.Visible;
-
-                var pillShadow = Window.Current.Compositor.CreateDropShadow();
-                pillShadow.BlurRadius = 16;
-                pillShadow.Opacity = 0.14f;
-                pillShadow.Color = Colors.Black;
-                pillShadow.Mask = Pill.GetAlphaMask();
-
-                var pillReceiver = Window.Current.Compositor.CreateSpriteVisual();
-                pillReceiver.Shadow = pillShadow;
-                pillReceiver.Size = new Vector2(width, 36);
-                pillReceiver.Offset = new Vector3(0, 8, 0);
-
-                var mediumShadow = Window.Current.Compositor.CreateDropShadow();
-                mediumShadow.BlurRadius = 16;
-                mediumShadow.Opacity = 0.14f;
-                mediumShadow.Color = Colors.Black;
-                mediumShadow.Mask = BubbleMedium.GetAlphaMask();
-
-                var mediumReceiver = Window.Current.Compositor.CreateSpriteVisual();
-                mediumReceiver.Shadow = mediumShadow;
-                mediumReceiver.Size = new Vector2(12, 12);
-                mediumReceiver.Offset = new Vector3(width - 18 - 12, 36 - 8, 0);
-
-                var receivers = Window.Current.Compositor.CreateContainerVisual();
-                receivers.Children.InsertAtBottom(pillReceiver);
-                receivers.Children.InsertAtBottom(mediumReceiver);
-                receivers.Size = new Vector2(width, 54);
-
-                ElementCompositionPreview.SetElementChildVisual(Shadow, receivers);
-
-                Presenter.ColumnDefinitions.Clear();
-                Presenter.RowDefinitions.Clear();
-
-                for (int i = Presenter.Children.Count - 1; i >= 0; i--)
+                for (int x = 0; x < cols; x++)
                 {
-                    if (i >= 5)
+                    var i = x + y * cols;
+
+                    var button = Presenter.Children[i] as HyperlinkButton;
+                    if (button == null)
                     {
-                        Presenter.Children.RemoveAt(i);
-                    }
-                    else
-                    {
-                        Presenter.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
-
-                        Grid.SetColumn(Presenter.Children[i] as FrameworkElement, i);
-                        Grid.SetRow(Presenter.Children[i] as FrameworkElement, 0);
-                    }
-                }
-
-                var device = CanvasDevice.GetSharedDevice();
-                var rect1 = CanvasGeometry.CreateRectangle(device, Math.Min(width2 - actualWidth, 0), 0, width2 + 16 + 16 + Math.Max(0, padding), 86);
-                var elli1 = CanvasGeometry.CreateRoundedRectangle(device, width2 - actualWidth + 18 + 16, 16 + 36 + 4, _presenter.ActualSize.X, 86, 8, 8);
-                var group1 = CanvasGeometry.CreateGroup(device, new[] { elli1, rect1 }, CanvasFilledRegionDetermination.Alternate);
-
-                var rootVisual = ElementCompositionPreview.GetElementVisual(LayoutRoot);
-                rootVisual.Clip = rootVisual.Compositor.CreateGeometricClip(rootVisual.Compositor.CreatePathGeometry(new CompositionPath(group1)));
-
-                var visualPill = ElementCompositionPreview.GetElementVisual(Pill);
-                var clip = visualPill.Clip as CompositionGeometricClip;
-                var geometry = clip.Geometry as CompositionRoundedRectangleGeometry;
-
-                var resize = visualPill.Compositor.CreateVector2KeyFrameAnimation();
-                resize.InsertKeyFrame(0, geometry.Size);
-                resize.InsertKeyFrame(1, new Vector2(geometry.Size.X, 36));
-                resize.Duration = TimeSpan.FromMilliseconds(150);
-
-                geometry.StartAnimation("Size", resize);
-
-                var offset = visualPill.Compositor.CreateVector3KeyFrameAnimation();
-                offset.InsertKeyFrame(0, new Vector3(0, 30, 0));
-                offset.InsertKeyFrame(1, Vector3.Zero);
-
-                ElementCompositionPreview.SetIsTranslationEnabled(ScrollingHost, true);
-                var scrollingVisual = ElementCompositionPreview.GetElementVisual(ScrollingHost);
-                scrollingVisual.StartAnimation("Translation", offset);
-
-                // Animating this breaks the menu flyout when it comes back
-                _presenter.Visibility = Visibility.Collapsed;
-
-                if (InfoText != null)
-                {
-                    var infoVisual = ElementCompositionPreview.GetElementVisual(InfoText);
-                    infoVisual.CenterPoint = new Vector3(InfoText.ActualSize / 2, 0);
-
-                    var show = visualPill.Compositor.CreateScalarKeyFrameAnimation();
-                    show.InsertKeyFrame(0, 1);
-                    show.InsertKeyFrame(1, 0);
-
-                    var scale = visualPill.Compositor.CreateVector3KeyFrameAnimation();
-                    scale.InsertKeyFrame(0, Vector3.One);
-                    scale.InsertKeyFrame(1, Vector3.Zero);
-
-                    infoVisual.StartAnimation("Opacity", show);
-                    infoVisual.StartAnimation("Scale", scale);
-                }
-            }
-            else
-            {
-                _expanded = true;
-
-                var cols = 6;
-                var rows = (int)Math.Ceiling((double)_reactions.Count / cols);
-
-                var width = 8 + cols * 34 - 2;
-                var viewport = 8 + cols * 34 - 2;
-                var height = (rows + 1) * 34;
-
-                ScrollingHost.VerticalScrollMode = ScrollMode.Auto;
-                ScrollingHost.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
-
-                ScrollingHost.HorizontalScrollMode = ScrollMode.Disabled;
-                ScrollingHost.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
-
-                ScrollingHost.HorizontalAlignment = HorizontalAlignment.Left;
-                ScrollingHost.VerticalAlignment = VerticalAlignment.Top;
-
-                Shadow.Height = height;
-                Pill.Height = height;
-                ScrollingHost.Height = rows * 34 - 4;
-
-                BubbleMedium.Visibility = Visibility.Collapsed;
-                BubbleOverlay.Visibility = Visibility.Collapsed;
-
-                var pillShadow = Window.Current.Compositor.CreateDropShadow();
-                pillShadow.BlurRadius = 16;
-                pillShadow.Opacity = 0.14f;
-                pillShadow.Color = Colors.Black;
-                pillShadow.Mask = Pill.GetAlphaMask();
-
-                var pillReceiver = Window.Current.Compositor.CreateSpriteVisual();
-                pillReceiver.Shadow = pillShadow;
-                pillReceiver.Size = new Vector2(viewport, height);
-                pillReceiver.Offset = new Vector3(0, 8, 0);
-
-                var receivers = Window.Current.Compositor.CreateContainerVisual();
-                receivers.Children.InsertAtBottom(pillReceiver);
-                receivers.Size = new Vector2(width, height + 18);
-
-                ElementCompositionPreview.SetElementChildVisual(Shadow, receivers);
-
-                Presenter.ColumnDefinitions.Clear();
-                Presenter.RowDefinitions.Clear();
-
-                for (int y = 0; y < rows; y++)
-                {
-                    for (int x = 0; x < cols; x++)
-                    {
-                        var i = x + y * cols;
-
-                        var button = Presenter.Children[i] as HyperlinkButton;
-                        if (button == null)
+                        if (i < _reactions.Count)
                         {
-                            if (i < _reactions.Count)
+                            var item = _reactions[i];
+
+                            var view2 = new LottieView();
+                            view2.AutoPlay = false;
+                            view2.IsLoopingEnabled = false;
+                            view2.FrameSize = new Size(24, 24);
+                            view2.DecodeFrameType = DecodePixelType.Logical;
+                            view2.Width = 24;
+                            view2.Height = 24;
+                            view2.Tag = new object();
+
+                            var file = item.AppearAnimation.StickerValue;
+                            if (file.Local.IsFileExisting())
                             {
-                                var item = _reactions[i];
-
-                                var view2 = new LottieView();
-                                view2.AutoPlay = false;
-                                view2.IsLoopingEnabled = false;
-                                view2.FrameSize = new Size(24, 24);
-                                view2.DecodeFrameType = DecodePixelType.Logical;
-                                view2.Width = 24;
-                                view2.Height = 24;
-                                view2.Tag = new object();
-
-                                var file = item.AppearAnimation.StickerValue;
-                                if (file.Local.IsFileExisting())
-                                {
-                                    view2.Source = UriEx.ToLocal(file.Local.Path);
-                                }
-                                else
-                                {
-                                    view2.Source = null;
-
-                                    UpdateManager.Subscribe(view2, _message, file, /*UpdateReaction*/UpdateFile, true);
-
-                                    if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-                                    {
-                                        _message.ProtoService.DownloadFile(file.Id, 32);
-                                    }
-                                }
-
-                                button = new HyperlinkButton
-                                {
-                                    Tag = _reactions[i],
-                                    Content = view2,
-                                    Margin = new Thickness(0, 0, 10, 0),
-                                    Style = BootStrapper.Current.Resources["EmptyHyperlinkButtonStyle"] as Style
-                                };
-
-                                button.Click += Reaction_Click;
-                                Presenter.Children.Add(button);
+                                view2.Source = UriEx.ToLocal(file.Local.Path);
                             }
                             else
                             {
-                                continue;
+                                view2.Source = null;
+
+                                UpdateManager.Subscribe(view2, _message, file, /*UpdateReaction*/UpdateFile, true);
+
+                                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                                {
+                                    _message.ProtoService.DownloadFile(file.Id, 32);
+                                }
                             }
+
+                            button = new HyperlinkButton
+                            {
+                                Tag = _reactions[i],
+                                Content = view2,
+                                Margin = new Thickness(0, 0, 10, 0),
+                                Style = BootStrapper.Current.Resources["EmptyHyperlinkButtonStyle"] as Style
+                            };
+
+                            button.Click += Reaction_Click;
+                            Presenter.Children.Add(button);
                         }
-
-                        if (button.Content is LottieView view && view.Tag != null)
+                        else
                         {
-                            view.Play();
-                            view.Tag = null;
-                        }
-
-                        if (y > 0)
-                        {
-                            button.Margin = new Thickness(0, 10, 10, 0);
-                        }
-
-                        Grid.SetColumn(button, x);
-                        Grid.SetRow(button, y);
-
-                        if (y == 0)
-                        {
-                            Presenter.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
+                            continue;
                         }
                     }
 
-                    Presenter.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
+                    if (button.Content is LottieView view && view.Tag != null)
+                    {
+                        view.Play();
+                        view.Tag = null;
+                    }
+
+                    if (y > 0)
+                    {
+                        button.Margin = new Thickness(0, 10, 10, 0);
+                    }
+
+                    Grid.SetColumn(button, x);
+                    Grid.SetRow(button, y);
+
+                    if (y == 0)
+                    {
+                        Presenter.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
+                    }
                 }
 
-                var rootVisual = ElementCompositionPreview.GetElementVisual(LayoutRoot);
-                rootVisual.Clip = null;
-
-                var visualPill = ElementCompositionPreview.GetElementVisual(Pill);
-                var clip = visualPill.Clip as CompositionGeometricClip;
-                var geometry = clip.Geometry as CompositionRoundedRectangleGeometry;
-
-                var resize = visualPill.Compositor.CreateVector2KeyFrameAnimation();
-                resize.InsertKeyFrame(0, geometry.Size);
-                resize.InsertKeyFrame(1, new Vector2(geometry.Size.X, height));
-                resize.Duration = TimeSpan.FromMilliseconds(150);
-
-                geometry.StartAnimation("Size", resize);
-
-                var offset = visualPill.Compositor.CreateVector3KeyFrameAnimation();
-                offset.InsertKeyFrame(0, Vector3.Zero);
-                offset.InsertKeyFrame(1, new Vector3(0, 30, 0));
-
-                ElementCompositionPreview.SetIsTranslationEnabled(ScrollingHost, true);
-                var scrollingVisual = ElementCompositionPreview.GetElementVisual(ScrollingHost);
-                scrollingVisual.StartAnimation("Translation", offset);
-
-                // Animating this breaks the menu flyout when it comes back
-                _presenter.Visibility = Visibility.Collapsed;
-
-                FindName(nameof(InfoText));
-
-                await this.UpdateLayoutAsync();
-
-                var infoVisual = ElementCompositionPreview.GetElementVisual(InfoText);
-                infoVisual.CenterPoint = new Vector3(InfoText.ActualSize / 2, 0);
-
-                var show = visualPill.Compositor.CreateScalarKeyFrameAnimation();
-                show.InsertKeyFrame(0, 0);
-                show.InsertKeyFrame(1, 1);
-
-                var scale = visualPill.Compositor.CreateVector3KeyFrameAnimation();
-                scale.InsertKeyFrame(0, Vector3.Zero);
-                scale.InsertKeyFrame(1, Vector3.One);
-
-                infoVisual.StartAnimation("Opacity", show);
-                infoVisual.StartAnimation("Scale", scale);
+                Presenter.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
             }
+
+            var rootVisual = ElementCompositionPreview.GetElementVisual(LayoutRoot);
+            rootVisual.Clip = null;
+
+            var visualPill = ElementCompositionPreview.GetElementVisual(Pill);
+            var clip = visualPill.Clip as CompositionGeometricClip;
+            var geometry = clip.Geometry as CompositionRoundedRectangleGeometry;
+
+            var resize = visualPill.Compositor.CreateVector2KeyFrameAnimation();
+            resize.InsertKeyFrame(0, geometry.Size);
+            resize.InsertKeyFrame(1, new Vector2(geometry.Size.X, height));
+            resize.Duration = TimeSpan.FromMilliseconds(150);
+
+            geometry.StartAnimation("Size", resize);
+
+            var offset = visualPill.Compositor.CreateVector3KeyFrameAnimation();
+            offset.InsertKeyFrame(0, Vector3.Zero);
+            offset.InsertKeyFrame(1, new Vector3(0, 30, 0));
+
+            ElementCompositionPreview.SetIsTranslationEnabled(ScrollingHost, true);
+            var scrollingVisual = ElementCompositionPreview.GetElementVisual(ScrollingHost);
+            scrollingVisual.StartAnimation("Translation", offset);
+
+            // Animating this breaks the menu flyout when it comes back
+            _presenter.Visibility = Visibility.Collapsed;
+
+            FindName(nameof(InfoText));
+
+            await this.UpdateLayoutAsync();
+
+            var expandVisual = ElementCompositionPreview.GetElementVisual(Expand);
+            var infoVisual = ElementCompositionPreview.GetElementVisual(InfoText);
+            infoVisual.CenterPoint = new Vector3(InfoText.ActualSize / 2, 0);
+
+            var show = visualPill.Compositor.CreateScalarKeyFrameAnimation();
+            show.InsertKeyFrame(0, 0);
+            show.InsertKeyFrame(1, 1);
+
+            var hide = visualPill.Compositor.CreateScalarKeyFrameAnimation();
+            hide.InsertKeyFrame(0, 1);
+            hide.InsertKeyFrame(1, 0);
+
+            var scale = visualPill.Compositor.CreateVector3KeyFrameAnimation();
+            scale.InsertKeyFrame(0, Vector3.Zero);
+            scale.InsertKeyFrame(1, Vector3.One);
+
+            infoVisual.StartAnimation("Opacity", show);
+            infoVisual.StartAnimation("Scale", scale);
+
+            expandVisual.StartAnimation("Opacity", hide);
         }
     }
 }

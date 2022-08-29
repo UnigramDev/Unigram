@@ -208,18 +208,5 @@
                       Width="32"
                       Height="24"
                       Margin="6" />
-
-        <controls:BadgeButton x:Name="EditButton"
-                              x:Load="False"
-                              Content="EDIT"
-                              Style="{StaticResource StartButtonStyle}"
-                              Background="#2ca5e0"
-                              Padding="8,2,8,4"
-                              CornerRadius="12"
-                              FontSize="12"
-                              HorizontalAlignment="Center"
-                              VerticalAlignment="Bottom"
-                              Margin="0,0,0,8" />
-
     </Grid>
 </UserControl>
