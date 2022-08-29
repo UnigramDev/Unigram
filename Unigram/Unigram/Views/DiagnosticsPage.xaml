@@ -32,8 +32,8 @@
                               Content="Allow right to left"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox IsChecked="{x:Bind ViewModel.LowLatencyGC, Mode=TwoWay}"
-                              Content="Low latency Garbage Collection"
+                    <CheckBox IsChecked="{x:Bind ViewModel.IsPointerOverEnabled, Mode=TwoWay}"
+                              Content="Show stickers panel on pointer over"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
                 </controls:HeaderedControl>
 

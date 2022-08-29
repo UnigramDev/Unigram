@@ -156,12 +156,12 @@ namespace Unigram.ViewModels
             }
         }
 
-        public bool LowLatencyGC
+        public bool IsPointerOverEnabled
         {
-            get => SettingsService.Current.Diagnostics.LowLatencyGC;
+            get => SettingsService.Current.Stickers.IsPointerOverEnabled;
             set
             {
-                SettingsService.Current.Diagnostics.LowLatencyGC = value;
+                SettingsService.Current.Stickers.IsPointerOverEnabled = value;
                 RaisePropertyChanged();
             }
         }

@@ -351,7 +351,7 @@ namespace Unigram.Views
 
         private void Stickers_PointerExited(object sender, PointerRoutedEventArgs e)
         {
-            if (e.Pointer.PointerDeviceType == PointerDeviceType.Mouse)
+            if (IsPointerOverEnabled(e.Pointer))
             {
                 _stickersTimer.Start();
             }
@@ -361,6 +361,16 @@ namespace Unigram.Views
             }
         }
 
+        private bool IsPointerOverEnabled(Pointer pointer)
+        {
+            return pointer?.PointerDeviceType == PointerDeviceType.Mouse && _viewModel.Settings.Stickers.IsPointerOverEnabled;
+        }
+
+        private bool IsPointerOverDisabled(Pointer pointer)
+        {
+            return pointer != null && (pointer.PointerDeviceType != PointerDeviceType.Mouse || !_viewModel.Settings.Stickers.IsPointerOverEnabled);
+        }
+
         private void Stickers_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
             if (_stickersTimer.IsEnabled)
@@ -368,7 +378,7 @@ namespace Unigram.Views
                 _stickersTimer.Stop();
             }
 
-            if (StickersPanel.Visibility == Visibility.Visible || (e != null && e?.Pointer.PointerDeviceType != PointerDeviceType.Mouse))
+            if (StickersPanel.Visibility == Visibility.Visible || IsPointerOverDisabled(e?.Pointer))
             {
                 return;
             }
