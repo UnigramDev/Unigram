@@ -2931,7 +2931,7 @@ namespace Unigram.Views
             }
             else if (e.ClickedItem is EmojiData emoji)
                 {
-                    InsertText($"{emoji.Value} ", result);
+                InsertText($"{emoji.Value}", result);
                 }
             else if (e.ClickedItem is Sticker sticker)
             {
@@ -4629,6 +4629,7 @@ namespace Unigram.Views
 
         private void InlineBotResults_Loaded(object sender, RoutedEventArgs e)
         {
+            ListInline.UpdateCornerRadius(SettingsService.Current.Appearance.BubbleRadius);
             ListInline.MaxHeight = Math.Min(320, Math.Max(ContentPanel.ActualHeight - 48, 0));
 
             if (ViewModel?.Chat is Chat chat)
