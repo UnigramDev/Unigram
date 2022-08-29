@@ -147,6 +147,8 @@ namespace Unigram.Controls.Chats
                 return;
             }
 
+            ViewModel.PlaybackService.Pause();
+
             Logger.Debug(LogTarget.Recording, "Permissions granted, mode: " + Mode);
 
             _recorder.Start(Mode, ViewModel.Chat);
