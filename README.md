@@ -9,8 +9,6 @@
     Telegram for Windows
     <br>
     <br>
-    Download:
-    <br>
     <a href="https://www.microsoft.com/store/apps/9n97zckpd60q">Microsoft Store</a>
     &middot;
     <a href="https://unigramdev.github.io">Direct Download</a>
