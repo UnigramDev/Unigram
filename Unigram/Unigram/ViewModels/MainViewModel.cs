@@ -28,6 +28,7 @@ namespace Unigram.ViewModels
         //IHandle<UpdateUnreadMessageCount>,
         //IHandle<UpdateUnreadChatCount>,
         //IHandle<UpdateChatFilters>,
+        //IHandle<UpdateDeleteMessages>,
         //IHandle<UpdateAppVersion>,
         //IHandle<UpdateWindowActivated>,
         //, IHandle
@@ -228,6 +229,25 @@ namespace Unigram.ViewModels
             }
         }
 
+        public void Handle(UpdateDeleteMessages update)
+        {
+            if (update.FromCache)
+            {
+                return;
+            }
+
+            var message = _playbackService.CurrentItem;
+            if (message == null || message.ProtoService != ProtoService)
+            {
+                return;
+            }
+
+            if (message.ChatId == update.ChatId && update.MessageIds.Contains(message.Id))
+            {
+                _playbackService.Clear();
+            }
+        }
+
         public void Handle(UpdateChatFilters update)
         {
             BeginOnUIThread(() => UpdateChatFilters(update.ChatFilters, update.MainChatListPosition));
@@ -402,6 +422,7 @@ namespace Unigram.ViewModels
             Aggregator.Subscribe<UpdateServiceNotification>(this, Handle)
                 .Subscribe<UpdateUnreadMessageCount>(Handle)
                 .Subscribe<UpdateUnreadChatCount>(Handle)
+                .Subscribe<UpdateDeleteMessages>(Handle)
                 .Subscribe<UpdateChatFilters>(Handle)
                 .Subscribe<UpdateAppVersion>(Handle)
                 .Subscribe<UpdateWindowActivated>(Handle);
