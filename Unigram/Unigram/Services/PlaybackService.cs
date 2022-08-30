@@ -47,9 +47,6 @@ namespace Unigram.Services
         bool IsReversed { get; set; }
 
 
-        bool IsSupportedPlaybackRateRange(double min, double max);
-
-
 
         event TypedEventHandler<IPlaybackService, MediaPlayerFailedEventArgs> MediaFailed;
         event TypedEventHandler<IPlaybackService, object> PlaybackStateChanged;
@@ -61,9 +58,7 @@ namespace Unigram.Services
     {
         private readonly ISettingsService _settingsService;
 
-        private readonly MediaPlayer _mediaPlayer;
-
-        private readonly SystemMediaTransportControls _transport;
+        private MediaPlayer _mediaPlayer;
 
         private readonly Dictionary<string, PlaybackItem> _mapping;
 
@@ -81,24 +76,6 @@ namespace Unigram.Services
         {
             _settingsService = settingsService;
 
-            if (!ApiInfo.IsMediaSupported)
-            {
-                return;
-            }
-
-            _mediaPlayer = new MediaPlayer();
-            _mediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
-            _mediaPlayer.PlaybackSession.PositionChanged += OnPositionChanged;
-            _mediaPlayer.MediaFailed += OnMediaFailed;
-            _mediaPlayer.MediaEnded += OnMediaEnded;
-            _mediaPlayer.SourceChanged += OnSourceChanged;
-            _mediaPlayer.CommandManager.IsEnabled = false;
-            _mediaPlayer.Volume = _settingsService.VolumeLevel;
-
-            _transport = _mediaPlayer.SystemMediaTransportControls;
-            _transport.ButtonPressed += Transport_ButtonPressed;
-
-            _transport.AutoRepeatMode = _settingsService.Playback.RepeatMode;
             _isRepeatEnabled = _settingsService.Playback.RepeatMode == MediaPlaybackAutoRepeatMode.Track
                 ? null
                 : _settingsService.Playback.RepeatMode == MediaPlaybackAutoRepeatMode.List;
@@ -129,10 +106,10 @@ namespace Unigram.Services
                     Pause();
                     break;
                 case SystemMediaTransportControlsButton.Rewind:
-                    _mediaPlayer.StepBackwardOneFrame();
+                    Execute(player => player.StepBackwardOneFrame());
                     break;
                 case SystemMediaTransportControlsButton.FastForward:
-                    _mediaPlayer.StepForwardOneFrame();
+                    Execute(player => player.StepForwardOneFrame());
                     break;
                 case SystemMediaTransportControlsButton.Previous:
                     if (Position.TotalSeconds > 5)
@@ -183,7 +160,7 @@ namespace Unigram.Services
                     {
                         if (item.Message.Content is MessageAudio && _isRepeatEnabled == true)
                         {
-                            _mediaPlayer.Source = _items[_isReversed ? _items.Count - 1 : 0].Source;
+                            sender.Source = _items[_isReversed ? _items.Count - 1 : 0].Source;
                             Play();
                         }
                         else
@@ -193,7 +170,7 @@ namespace Unigram.Services
                     }
                     else
                     {
-                        _mediaPlayer.Source = _items[_isReversed ? index - 1 : index + 1].Source;
+                        sender.Source = _items[_isReversed ? index - 1 : index + 1].Source;
                         Play();
                     }
                 }
@@ -213,30 +190,22 @@ namespace Unigram.Services
                 sender.PlaybackRate = _playbackRate;
             }
 
-            switch (sender.PlaybackState)
+            Execute(player =>
             {
-                case MediaPlaybackState.Playing:
-                    _transport.PlaybackStatus = MediaPlaybackStatus.Playing;
-                    break;
-                case MediaPlaybackState.Paused:
-                    _transport.PlaybackStatus = MediaPlaybackStatus.Paused;
-                    break;
-                case MediaPlaybackState.None:
-                    _transport.PlaybackStatus = MediaPlaybackStatus.Stopped;
-                    PlaybackState = MediaPlaybackState.None;
-                    break;
-            }
-
-            //else if (sender.PlaybackState == MediaPlaybackState.Paused && sender.Position == sender.NaturalDuration && _playlist.CurrentItem == _playlist.Items.LastOrDefault())
-            //{
-            //    Clear();
-            //}
-            //else
-            //{
-            //    Debugger.Break();
-            //}
-
-            //PlaybackStateChanged?.Invoke(this, args);
+                switch (sender.PlaybackState)
+                {
+                    case MediaPlaybackState.Playing:
+                        player.SystemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Playing;
+                        break;
+                    case MediaPlaybackState.Paused:
+                        player.SystemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Paused;
+                        break;
+                    case MediaPlaybackState.None:
+                        player.SystemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Stopped;
+                        PlaybackState = MediaPlaybackState.None;
+                        break;
+                }
+            });
         }
 
         private void OnPositionChanged(MediaPlaybackSession sender, object args)
@@ -246,31 +215,37 @@ namespace Unigram.Services
 
         private async void UpdateTransport()
         {
+            var transport = _mediaPlayer.SystemMediaTransportControls;
+            if (transport == null)
+            {
+                return;
+            }
+
             var items = _items;
             var item = CurrentPlayback;
 
             if (items == null || item?.File == null)
             {
-                _transport.IsEnabled = false;
-                _transport.DisplayUpdater.ClearAll();
+                transport.IsEnabled = false;
+                transport.DisplayUpdater.ClearAll();
                 return;
             }
 
-            _transport.IsEnabled = true;
-            _transport.IsPlayEnabled = true;
-            _transport.IsPauseEnabled = true;
-            _transport.IsPreviousEnabled = true;
-            _transport.IsNextEnabled = items.Count > 1;
+            transport.IsEnabled = true;
+            transport.IsPlayEnabled = true;
+            transport.IsPauseEnabled = true;
+            transport.IsPreviousEnabled = true;
+            transport.IsNextEnabled = items.Count > 1;
 
             void SetProperties(string title, string artist)
             {
-                _transport.DisplayUpdater.ClearAll();
-                _transport.DisplayUpdater.Type = MediaPlaybackType.Music;
+                transport.DisplayUpdater.ClearAll();
+                transport.DisplayUpdater.Type = MediaPlaybackType.Music;
 
                 try
                 {
-                    _transport.DisplayUpdater.MusicProperties.Title = title ?? string.Empty;
-                    _transport.DisplayUpdater.MusicProperties.Artist = artist ?? string.Empty;
+                    transport.DisplayUpdater.MusicProperties.Title = title ?? string.Empty;
+                    transport.DisplayUpdater.MusicProperties.Artist = artist ?? string.Empty;
                 }
                 catch { }
             }
@@ -280,7 +255,7 @@ namespace Unigram.Services
                 try
                 {
                     var file = await item.Message.ProtoService.GetFileAsync(item.File);
-                    await _transport.DisplayUpdater.CopyFromFileAsync(MediaPlaybackType.Music, file);
+                    await transport.DisplayUpdater.CopyFromFileAsync(MediaPlaybackType.Music, file);
                 }
                 catch
                 {
@@ -292,7 +267,7 @@ namespace Unigram.Services
                 SetProperties(item.Title, item.Artist);
             }
 
-            _transport.DisplayUpdater.Update();
+            transport.DisplayUpdater.Update();
         }
 
         public IReadOnlyList<PlaybackItem> Items => _items ?? (IReadOnlyList<PlaybackItem>)new PlaybackItem[0];
@@ -312,35 +287,9 @@ namespace Unigram.Services
         private MessageWithOwner _currentItem;
         public MessageWithOwner CurrentItem => _currentItem;
 
-        public TimeSpan Position
-        {
-            get
-            {
-                try
-                {
-                    return _mediaPlayer?.PlaybackSession?.Position ?? TimeSpan.Zero;
-                }
-                catch
-                {
-                    return TimeSpan.Zero;
-                }
-            }
-        }
+        public TimeSpan Position => Execute(player => player.PlaybackSession?.Position ?? TimeSpan.Zero, TimeSpan.Zero);
 
-        public TimeSpan Duration
-        {
-            get
-            {
-                try
-                {
-                    return _mediaPlayer?.PlaybackSession?.NaturalDuration ?? TimeSpan.Zero;
-                }
-                catch
-                {
-                    return TimeSpan.Zero;
-                }
-            }
-        }
+        public TimeSpan Duration => Execute(player => player.PlaybackSession?.NaturalDuration ?? TimeSpan.Zero, TimeSpan.Zero);
 
         private MediaPlaybackState _playbackState;
         public MediaPlaybackState PlaybackState
@@ -374,12 +323,11 @@ namespace Unigram.Services
             set
             {
                 _isRepeatEnabled = value;
-                _transport.AutoRepeatMode =
-                    _settingsService.Playback.RepeatMode = value == true
-                        ? MediaPlaybackAutoRepeatMode.List
-                        : value == null
-                        ? MediaPlaybackAutoRepeatMode.Track
-                        : MediaPlaybackAutoRepeatMode.None;
+                Execute(player => player.SystemMediaTransportControls.AutoRepeatMode = _settingsService.Playback.RepeatMode = value == true
+                    ? MediaPlaybackAutoRepeatMode.List
+                    : value == null
+                    ? MediaPlaybackAutoRepeatMode.Track
+                    : MediaPlaybackAutoRepeatMode.None);
             }
         }
 
@@ -397,7 +345,7 @@ namespace Unigram.Services
             set
             {
                 _isShuffleEnabled = value;
-                _transport.ShuffleEnabled = value;
+                Execute(player => player.SystemMediaTransportControls.ShuffleEnabled = value);
             }
         }
 
@@ -409,43 +357,81 @@ namespace Unigram.Services
             {
                 _playbackRate = value;
                 _settingsService.Playback.PlaybackRate = value;
-                try
+
+                Execute(player =>
                 {
-                    _mediaPlayer.PlaybackSession.PlaybackRate = value;
-                    _transport.PlaybackRate = value;
-                }
-                catch { }
+                    player.PlaybackSession.PlaybackRate = value;
+                    player.SystemMediaTransportControls.PlaybackRate = value;
+                });
             }
         }
 
         public double Volume
         {
-            get => _mediaPlayer.Volume;
+            get => _settingsService.VolumeLevel;
             set
             {
                 _settingsService.VolumeLevel = value;
-                _mediaPlayer.Volume = value;
+                Execute(player => player.Volume = value);
             }
         }
 
         public void Pause()
         {
-            if (_mediaPlayer.PlaybackSession.CanPause)
+            Execute(player =>
             {
-                _mediaPlayer.Pause();
-                PlaybackState = MediaPlaybackState.Paused;
-            }
+                if (player.PlaybackSession.CanPause)
+                {
+                    player.Pause();
+                    PlaybackState = MediaPlaybackState.Paused;
+                }
+            });
         }
 
         public void Play()
         {
-            _mediaPlayer.Play();
-            PlaybackState = MediaPlaybackState.Playing;
+            Execute(player =>
+            {
+                player.Play();
+                PlaybackState = MediaPlaybackState.Playing;
+            });
+        }
+
+        private void Execute(Action<MediaPlayer> action)
+        {
+            if (_mediaPlayer != null)
+            {
+                try
+                {
+                    action(_mediaPlayer);
+                }
+                catch
+                {
+
+                }
+            }
+        }
+
+        private T Execute<T>(Func<MediaPlayer, T> action, T defaultValue)
+        {
+            if (_mediaPlayer != null)
+            {
+                try
+                {
+                    return action(_mediaPlayer);
+                }
+                catch
+                {
+
+                }
+            }
+
+            return defaultValue;
         }
 
         public void Seek(TimeSpan span)
         {
-            _mediaPlayer.PlaybackSession.Position = span;
+            Execute(player => player.PlaybackSession.Position = span);
             //var index = _playlist.CurrentItemIndex;
             //var playing = _mediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing;
 
@@ -505,7 +491,7 @@ namespace Unigram.Services
         {
             if (index >= 0 && index <= items.Count - 1)
             {
-                _mediaPlayer.Source = items[index].Source;
+                Execute(player => player.Source = items[index].Source);
             }
         }
 
@@ -515,7 +501,7 @@ namespace Unigram.Services
 
             //Execute.BeginOnUIThread(() => CurrentItem = null);
             CurrentPlayback = null;
-            Dispose();
+            Dispose(true);
         }
 
         public void Play(MessageWithOwner message, long threadId)
@@ -531,14 +517,15 @@ namespace Unigram.Services
                 var already = previous.FirstOrDefault(x => x.Message.Id == message.Id && x.Message.ChatId == message.ChatId);
                 if (already != null)
                 {
-                    _mediaPlayer.Source = already.Source;
+                    Execute(player => player.Source = already.Source);
                     Play();
 
                     return;
                 }
             }
 
-            Dispose();
+            Dispose(false);
+            Create();
 
             if (message.Content is not MessageAudio)
             {
@@ -719,12 +706,25 @@ namespace Unigram.Services
             return 0;
         }
 
-        private void Dispose()
+        private void Dispose(bool full)
         {
             if (_mediaPlayer != null)
             {
                 _mediaPlayer.Source = null;
                 _mediaPlayer.CommandManager.IsEnabled = false;
+
+                if (full)
+                {
+                    _mediaPlayer.SystemMediaTransportControls.ButtonPressed -= Transport_ButtonPressed;
+                    _mediaPlayer.PlaybackSession.PlaybackStateChanged -= OnPlaybackStateChanged;
+                    _mediaPlayer.PlaybackSession.PositionChanged -= OnPositionChanged;
+                    _mediaPlayer.MediaFailed -= OnMediaFailed;
+                    _mediaPlayer.MediaEnded -= OnMediaEnded;
+                    _mediaPlayer.SourceChanged -= OnSourceChanged;
+                    _mediaPlayer.Dispose();
+
+                    _mediaPlayer = null;
+                }
             }
 
             //if (_playlist != null)
@@ -752,14 +752,23 @@ namespace Unigram.Services
             }
         }
 
-        public bool IsSupportedPlaybackRateRange(double min, double max)
+        private void Create()
         {
             if (_mediaPlayer != null)
             {
-                return _mediaPlayer.PlaybackSession.IsSupportedPlaybackRateRange(min, max);
+                return;
             }
 
-            return false;
+            _mediaPlayer = new MediaPlayer();
+            _mediaPlayer.SystemMediaTransportControls.AutoRepeatMode = _settingsService.Playback.RepeatMode;
+            _mediaPlayer.SystemMediaTransportControls.ButtonPressed += Transport_ButtonPressed;
+            _mediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
+            _mediaPlayer.PlaybackSession.PositionChanged += OnPositionChanged;
+            _mediaPlayer.MediaFailed += OnMediaFailed;
+            _mediaPlayer.MediaEnded += OnMediaEnded;
+            _mediaPlayer.SourceChanged += OnSourceChanged;
+            _mediaPlayer.CommandManager.IsEnabled = false;
+            _mediaPlayer.Volume = _settingsService.VolumeLevel;
         }
     }
 
