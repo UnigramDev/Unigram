@@ -3468,9 +3468,11 @@ namespace Unigram.ViewModels
         }
 
         public MessageCollection(IEnumerable<MessageViewModel> source)
-            : base(source)
         {
-
+            foreach (var item in source)
+        {
+                Add(item);
+            }
         }
 
         //~MessageCollection()
