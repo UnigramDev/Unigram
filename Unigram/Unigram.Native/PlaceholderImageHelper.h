@@ -105,7 +105,7 @@ namespace winrt::Unigram::Native::implementation
 		winrt::com_ptr<IDWriteFactory1> m_dwriteFactory;
 		winrt::com_ptr<IDWriteFontCollectionLoader> m_customLoader;
 		winrt::com_ptr<IDWriteFontCollection> m_fontCollection;
-		winrt::com_ptr<IDWriteFontCollection> m_appleCollection;
+		winrt::com_ptr<IDWriteFontCollection> m_systemCollection;
 		winrt::com_ptr<IDWriteTextFormat> m_symbolFormat;
 		winrt::com_ptr<IDWriteTextFormat> m_mdl2Format;
 		winrt::com_ptr<IDWriteTextFormat> m_textFormat;

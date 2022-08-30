@@ -30,24 +30,28 @@ namespace winrt::Unigram::Native::implementation
         : public winrt::implements<CustomFontFileEnumerator, IDWriteFontFileEnumerator>
     {
         winrt::com_ptr<IDWriteFactory> m_factory;
-        std::wstring m_filename;
+        std::vector<const wchar_t*> m_filenames;
+        int32_t m_index;
         winrt::com_ptr<IDWriteFontFile> m_theFile;
 
     public:
         CustomFontFileEnumerator(IDWriteFactory* factory, void const* collectionKey, uint32_t collectionKeySize)
             : m_factory()
-            , m_filename(static_cast<wchar_t const*>(collectionKey), collectionKeySize / 2)
+            , m_index(0)
         {
+            auto keys = static_cast<const wchar_t* const*>(collectionKey);
+
+            m_filenames = std::vector<const wchar_t*>(keys, keys + 2);
             m_factory.copy_from(factory);
         }
 
         IFACEMETHODIMP MoveNext(BOOL* hasCurrentFile) override
         {
-            if (m_theFile)
+            if (m_index == m_filenames.size())
             {
                 *hasCurrentFile = FALSE;
             }
-            else if (SUCCEEDED(m_factory->CreateFontFileReference(m_filename.c_str(), nullptr, m_theFile.put())))
+            else if (SUCCEEDED(m_factory->CreateFontFileReference(m_filenames[m_index++], nullptr, m_theFile.put())))
             {
                 *hasCurrentFile = TRUE;
             }
@@ -831,19 +835,21 @@ namespace winrt::Unigram::Native::implementation
 
 
 
-        hstring path = Package::Current().InstalledLocation().Path() + L"\\Assets\\Fonts\\Telegram.ttf";
-        void const* key = path.begin();
-        uint32_t keySize = static_cast<uint32_t>(std::distance(path.begin(), path.end()) * sizeof(wchar_t));
+        hstring path1 = Package::Current().InstalledLocation().Path() + L"\\Assets\\Fonts\\Telegram.ttf";
+        hstring path2 = Package::Current().InstalledLocation().Path() + L"\\Assets\\Emoji\\apple.ttf";
+
+        auto keySize = path1.size() + path2.size();
+        const wchar_t* keys[]
+        {
+            path1.c_str(),
+            path2.c_str()
+        };
 
         m_customLoader = winrt::make_self<CustomFontLoader>();
 
         ReturnIfFailed(result, m_dwriteFactory->RegisterFontCollectionLoader(m_customLoader.get()));
-        ReturnIfFailed(result, m_dwriteFactory->CreateCustomFontCollection(m_customLoader.get(), key, keySize, m_fontCollection.put()));
-
-        path = Package::Current().InstalledLocation().Path() + L"\\Assets\\Emoji\\apple.ttf";
-        key = path.begin();
-        keySize = static_cast<uint32_t>(std::distance(path.begin(), path.end()) * sizeof(wchar_t));
-        ReturnIfFailed(result, m_dwriteFactory->CreateCustomFontCollection(m_customLoader.get(), key, keySize, m_appleCollection.put()));
+        ReturnIfFailed(result, m_dwriteFactory->CreateCustomFontCollection(m_customLoader.get(), keys, keySize, m_fontCollection.put()));
+        ReturnIfFailed(result, m_dwriteFactory->GetSystemFontCollection(m_systemCollection.put()));
 
         ReturnIfFailed(result, m_dwriteFactory->CreateTextFormat(
             L"Telegram",							// font family name
@@ -978,7 +984,7 @@ namespace winrt::Unigram::Native::implementation
     {
         winrt::check_hresult(m_dwriteFactory->CreateTextFormat(
             L"Segoe UI Emoji",						// font family name
-            m_appleCollection.get(),				// system font collection
+            m_fontCollection.get(),			        // system font collection
             DWRITE_FONT_WEIGHT_NORMAL,				// font weight 
             DWRITE_FONT_STYLE_NORMAL,				// font style
             DWRITE_FONT_STRETCH_NORMAL,				// default font stretch
@@ -1018,7 +1024,8 @@ namespace winrt::Unigram::Native::implementation
                 textLayout->SetUnderline(TRUE, { startPosition, length });
                 break;
             case PlaceholderEntityType::Code:
-                textLayout->SetFontFamilyName(L"Consolas", {startPosition, length});
+                textLayout->SetFontCollection(m_systemCollection.get(), { startPosition, length });
+                textLayout->SetFontFamilyName(L"Consolas", { startPosition, length });
                 break;
             default:
                 break;
@@ -1037,7 +1044,7 @@ namespace winrt::Unigram::Native::implementation
     {
         winrt::check_hresult(m_dwriteFactory->CreateTextFormat(
             L"Segoe UI Emoji",						// font family name
-            m_appleCollection.get(),				// system font collection
+            m_fontCollection.get(),		            // system font collection
             DWRITE_FONT_WEIGHT_NORMAL,				// font weight 
             DWRITE_FONT_STYLE_NORMAL,				// font style
             DWRITE_FONT_STRETCH_NORMAL,				// default font stretch
