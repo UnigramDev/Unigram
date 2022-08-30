@@ -45,7 +45,10 @@ namespace Unigram.Controls.Cells
 
         private void OnActualThemeChanged(FrameworkElement sender, object args)
         {
-            Update(_protoService, _theme);
+            if (_protoService != null && _theme != null)
+            {
+                Update(_protoService, _theme);
+            }
         }
     }
 }
