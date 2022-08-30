@@ -115,6 +115,8 @@ namespace Unigram.Views.Settings
                 radio.RequestedTheme = theme.Parent == TelegramTheme.Dark ? ElementTheme.Dark : ElementTheme.Light;
                 radio.IsChecked = SettingsService.Current.Appearance[SettingsService.Current.Appearance.RequestedTheme].Type == TelegramThemeType.Classic && SettingsService.Current.Appearance.RequestedTheme == theme.Parent;
             }
+
+            args.ItemContainer.Tag = args.Item;
         }
 
         #endregion
