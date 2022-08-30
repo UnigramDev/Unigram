@@ -113,7 +113,7 @@
                                            Grid.Row="1" />
 
                                 <controls:BadgeButton Content="{CustomResource Add}"
-                                                      Visibility="{x:Bind IsInstalled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
+                                                      Visibility="{x:Bind IsInstalled, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
                                                       Style="{StaticResource StartButtonStyle}"
                                                       Background="#2ca5e0"
                                                       HorizontalAlignment="Right"

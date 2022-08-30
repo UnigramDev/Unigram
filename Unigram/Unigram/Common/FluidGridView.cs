@@ -441,16 +441,29 @@ namespace Unigram.Common
             DependencyProperty.Register("MaxLength", typeof(double), typeof(FluidGridViewTrigger), new PropertyMetadata(0d));
         #endregion
 
+        #region Margin
+
+        public double Margin
+        {
+            get { return (double)GetValue(MarginProperty); }
+            set { SetValue(MarginProperty, value); }
+        }
+
+        public static readonly DependencyProperty MarginProperty =
+            DependencyProperty.Register("Margin", typeof(double), typeof(FluidGridViewTrigger), new PropertyMetadata(0d));
+
+        #endregion
+
         public override double GetItemLength(double parentLength, out int maximumRowsOrColumns)
         {
             maximumRowsOrColumns = RowsOrColumns;
 
             if (MaxLength > 0)
             {
-                return Math.Min(MaxLength, parentLength / RowsOrColumns);
+                return Math.Min(MaxLength, parentLength / RowsOrColumns) - Margin;
             }
 
-            return parentLength / RowsOrColumns;
+            return (parentLength / RowsOrColumns) - Margin;
         }
 
         #region PropertyChanged

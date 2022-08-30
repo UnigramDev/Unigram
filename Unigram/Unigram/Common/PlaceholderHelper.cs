@@ -482,6 +482,9 @@ namespace Unigram.Common
         {
             try
             {
+                maxWidth = maxWidth < 512 ? maxWidth * TLWindowContext.Current.RasterizationScale : maxWidth;
+                maxWidth = Math.Min(maxWidth, 512);
+
                 Size size;
                 var buffer = await Task.Run(() => PlaceholderImageHelper.Current.DrawWebP(path, (int)maxWidth, out size));
 

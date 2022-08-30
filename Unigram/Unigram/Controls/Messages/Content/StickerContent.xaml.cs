@@ -72,13 +72,7 @@ namespace Unigram.Controls.Messages.Content
 
             if (file.Local.IsFileExisting())
             {
-                var size = 180 * WindowContext.Current.RasterizationScale;
-                if (size > 512)
-                {
-                    size = 512;
-                }
-
-                Source = await PlaceholderHelper.GetWebPFrameAsync(file.Local.Path, size);
+                Source = await PlaceholderHelper.GetWebPFrameAsync(file.Local.Path, 180);
                 ElementCompositionPreview.SetElementChildVisual(this, null);
 
                 UpdateManager.Unsubscribe(this, ref _fileToken);

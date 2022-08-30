@@ -262,7 +262,7 @@ namespace Unigram.Controls
                 Changed();
 
                 _unloaded = false;
-                SourceChanged();
+                OnSourceChanged();
 
                 return true;
             }
@@ -304,7 +304,6 @@ namespace Unigram.Controls
                 _layoutRoot?.Children.Remove(_canvas);
                 _canvas = null;
 
-                _surface?.Device.Trim();
                 _surface = null;
             }
 

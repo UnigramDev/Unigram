@@ -100,6 +100,8 @@ namespace Unigram.Controls.Drawers
             var scrollingHost = List.Descendants<ScrollViewer>().FirstOrDefault();
             if (scrollingHost != null)
             {
+                scrollingHost.VerticalSnapPointsType = SnapPointsType.None;
+
                 // Syncronizes GridView with the toolbar ListView
                 scrollingHost.ViewChanged += ScrollingHost_ViewChanged;
                 ScrollingHost_ViewChanged(null, null);
@@ -527,14 +529,14 @@ namespace Unigram.Controls.Drawers
                 }
                 else
                 {
-                    UpdateContainerContent(sticker, content, UpdateSticker);
+                    UpdateContainerContent(sticker, content, UpdateSticker, args);
                 }
 
                 args.Handled = true;
             }
         }
 
-        private async void UpdateContainerContent(Sticker sticker, Grid content, UpdateHandler<File> handler)
+        private async void UpdateContainerContent(Sticker sticker, Grid content, UpdateHandler<File> handler, ContainerContentChangingEventArgs args = null)
         {
             var file = sticker?.StickerValue;
             if (file == null)
@@ -542,7 +544,13 @@ namespace Unigram.Controls.Drawers
                 return;
             }
 
-            if (file.Local.IsFileExisting())
+            if (content.Tag is not null
+                || content.Tag is Sticker prev && prev?.StickerValue.Id == file.Id)
+            {
+                return;
+            }
+
+            if ((args == null || args.Phase == 2) && file.Local.IsFileExisting())
             {
                 if (content.Children[0] is Border border && border.Child is Image photo)
                 {
@@ -558,12 +566,12 @@ namespace Unigram.Controls.Drawers
                     video.Source = new LocalVideoSource(file);
                 }
 
+                content.Tag = sticker;
                 UpdateManager.Unsubscribe(content);
             }
             else
             {
                 ClearContainerContent(content);
-                content.Tag = sticker;
 
                 CompositionPathParser.ParseThumbnail(sticker, out ShapeVisual visual, false);
                 ElementCompositionPreview.SetElementChildVisual(content.Children[0], visual);
@@ -574,6 +582,11 @@ namespace Unigram.Controls.Drawers
                 {
                     ViewModel.ProtoService.DownloadFile(file.Id, 1);
                 }
+            }
+
+            if (args?.Phase == 0)
+            {
+                args.RegisterUpdateCallback(2, OnContainerContentChanging);
             }
         }
 
@@ -604,6 +617,8 @@ namespace Unigram.Controls.Drawers
 
         private void ClearContainerContent(Grid content)
         {
+            content.Tag = null;
+
             if (content.Children[0] is Border border && border.Child is Image photo)
             {
                 photo.Source = null;

@@ -105,10 +105,10 @@ namespace Unigram.Common
 
         public void LoadVisibleItems(bool intermediate)
         {
-            if (intermediate && _prev.Count < 1)
-            {
-                return;
-            }
+            //if (intermediate && _prev.Count < 1)
+            //{
+            //    return;
+            //}
 
             int lastVisibleIndex;
             int firstVisibleIndex;
@@ -212,10 +212,10 @@ namespace Unigram.Common
                 _prev.Remove(item);
             }
 
-            if (intermediate)
-            {
-                return;
-            }
+            //if (intermediate)
+            //{
+            //    return;
+            //}
 
             foreach (var item in next)
             {

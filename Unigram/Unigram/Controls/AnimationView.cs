@@ -225,6 +225,11 @@ namespace Unigram.Controls
             _animation = animation;
             _hideThumbnail = null;
 
+            if (Load())
+            {
+                return;
+            }
+
             OnSourceChanged();
         }
 

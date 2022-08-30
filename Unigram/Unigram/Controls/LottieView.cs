@@ -291,6 +291,11 @@ namespace Unigram.Controls
                 _index = 0; //_isCachingEnabled ? 0 : _animationTotalFrame - 1;
             }
 
+            if (Load())
+            {
+                return;
+            }
+
             OnSourceChanged();
         }
 

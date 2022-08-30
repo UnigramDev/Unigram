@@ -148,7 +148,7 @@ namespace Unigram.Controls.Drawers
                 return;
             }
 
-            var view = content.Child as AnimationView;
+            var view = content.Child as AnimationView; 
 
             var file = animation.AnimationValue;
             if (file == null)
@@ -156,7 +156,7 @@ namespace Unigram.Controls.Drawers
                 return;
             }
 
-            if (file.Local.IsFileExisting())
+            if (args.Phase == 2 && file.Local.IsFileExisting())
             {
                 view.Source = new LocalVideoSource(file);
                 view.Thumbnail = null;
@@ -191,6 +191,11 @@ namespace Unigram.Controls.Drawers
                         }
                     }
                 }
+            }
+
+            if (args.Phase == 0)
+            {
+                args.RegisterUpdateCallback(2, OnContainerContentChanging);
             }
         }
 

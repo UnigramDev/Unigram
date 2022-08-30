@@ -45,7 +45,8 @@
                   Padding="2,0,0,0"
                   Grid.Row="2">
             <common:FluidGridView.Triggers>
-                <common:FluidGridViewTrigger RowsOrColumns="3" />
+                <common:FluidGridViewTrigger RowsOrColumns="3"
+                                             Margin="2" />
             </common:FluidGridView.Triggers>
             <GridView.ItemTemplate>
                 <DataTemplate>
