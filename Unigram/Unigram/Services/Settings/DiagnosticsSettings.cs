@@ -51,11 +51,32 @@ namespace Unigram.Services.Settings
             set => AddOrUpdateValue(ref _lastErrorMessage, "LastErrorMessage", value);
         }
 
+        private string _lastErrorProperties;
+        public string LastErrorProperties
+        {
+            get => _lastErrorProperties ??= GetValueOrDefault("LastErrorProperties", string.Empty);
+            set => AddOrUpdateValue(ref _lastErrorProperties, "LastErrorProperties", value);
+        }
+
         private int? _lastErrorVersion;
         public int LastErrorVersion
         {
             get => _lastErrorVersion ??= GetValueOrDefault("LastErrorVersion", 0);
             set => AddOrUpdateValue(ref _lastErrorVersion, "LastErrorVersion", value);
+        }
+
+        private int? _updateCount;
+        public int UpdateCount
+        {
+            get => _updateCount ??= GetValueOrDefault("UpdateCount", 0);
+            set => AddOrUpdateValue(ref _updateCount, "UpdateCount", value);
+        }
+
+        private int? _lastUpdateVersion;
+        public int LastUpdateVersion
+        {
+            get => _lastErrorVersion ??= GetValueOrDefault("LastUpdateVersion", 0);
+            set => AddOrUpdateValue(ref _lastErrorVersion, "LastUpdateVersion", value);
         }
 
         private int? _lastUpdateTime;

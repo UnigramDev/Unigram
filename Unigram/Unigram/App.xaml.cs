@@ -53,9 +53,11 @@ namespace Unigram
         /// </summary>
         public App()
         {
-            if (SettingsService.Current.Diagnostics.LastErrorVersion < Package.Current.Id.Version.Build)
+            if (SettingsService.Current.Diagnostics.LastUpdateVersion < Package.Current.Id.Version.Build)
             {
                 SettingsService.Current.Diagnostics.LastUpdateTime = DateTime.Now.ToTimestamp();
+                SettingsService.Current.Diagnostics.LastUpdateVersion = Package.Current.Id.Version.Build;
+                SettingsService.Current.Diagnostics.UpdateCount++;
             }
 
             TLContainer.Current.Configure(out int count);
@@ -111,7 +113,8 @@ namespace Unigram
                 var exception = TdException.FromMessage(lastMessage);
                 if (exception.IsUnhandled)
                 {
-                    Microsoft.AppCenter.Crashes.Crashes.TrackError(exception);
+                    Microsoft.AppCenter.Crashes.Crashes.TrackError(exception,
+                        SettingsService.Current.Diagnostics.LastErrorProperties.Split(';').Select(x => x.Split('=')).ToDictionary(x => x[0], y => y[1]));
                 }
             }
 #endif
@@ -127,13 +130,14 @@ namespace Unigram
                 var next = DateTime.Now.ToTimestamp();
                 var prev = SettingsService.Current.Diagnostics.LastUpdateTime;
 
-                message += Environment.NewLine;
-                message += $"Current version: {SettingsPage.GetVersion()}";
-                message += Environment.NewLine;
-                message += $"Last update: {next - prev}s";
-
                 SettingsService.Current.Diagnostics.LastErrorMessage = message;
                 SettingsService.Current.Diagnostics.LastErrorVersion = Package.Current.Id.Version.Build;
+                SettingsService.Current.Diagnostics.LastErrorProperties = string.Join(';', new[]
+                {
+                    $"CurrentVersion={SettingsPage.GetVersion()}",
+                    $"LastUpdate={next - prev}s",
+                    $"UpdateCount={SettingsService.Current.Diagnostics.UpdateCount}"
+                });
             }
         }
 
