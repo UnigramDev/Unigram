@@ -4,6 +4,7 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Navigation;
 using Unigram.Services;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -53,11 +54,13 @@ namespace Unigram.Controls.Chats
             _aggregator?.Unsubscribe(this);
         }
 
+        private bool IsDarkTheme => WindowContext.Current.ActualTheme == ElementTheme.Dark;
+
         public void Handle(UpdateSelectedBackground update)
         {
             this.BeginOnUIThread(() =>
             {
-                if (update.ForDarkTheme == (ActualTheme == ElementTheme.Dark))
+                if (update.ForDarkTheme == IsDarkTheme)
                 {
                     var background = update.Background;
 
@@ -72,12 +75,12 @@ namespace Unigram.Controls.Chats
             _protoService = protoService;
             _aggregator = aggregator;
 
-            UpdateBackground(protoService.SelectedBackground, ActualTheme == ElementTheme.Dark);
+            UpdateBackground(protoService.SelectedBackground, IsDarkTheme);
         }
 
         public void Update(Background background, bool forDarkTheme)
         {
-            if (forDarkTheme == (ActualTheme == ElementTheme.Dark))
+            if (forDarkTheme == IsDarkTheme)
             {
                 SyncBackgroundWithChatTheme(ref background, forDarkTheme);
                 UpdateBackground(background, forDarkTheme);
