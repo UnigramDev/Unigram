@@ -872,247 +872,257 @@ namespace Unigram.ViewModels
 
         #region Keyboard button
 
-        public async void KeyboardButtonExecute(MessageViewModel message, object button)
+        public async void KeyboardButtonInline(MessageViewModel message, InlineKeyboardButton inline)
         {
-            var chat = _chat;
-            if (chat == null)
+            if (_chat is not Chat chat)
             {
                 return;
             }
 
-            if (button is InlineKeyboardButton inline)
+            if (message.SchedulingState != null)
             {
-                if (message.SchedulingState != null)
-                {
-                    await MessagePopup.ShowAsync(Strings.Resources.MessageScheduledBotAction, Strings.Resources.AppName, Strings.Resources.OK);
-                    return;
-                }
+                await MessagePopup.ShowAsync(Strings.Resources.MessageScheduledBotAction, Strings.Resources.AppName, Strings.Resources.OK);
+                return;
+            }
 
-                if (inline.Type is InlineKeyboardButtonTypeBuy)
+            if (inline.Type is InlineKeyboardButtonTypeBuy)
+            {
+                NavigationService.NavigateToInvoice(message);
+            }
+            else if (inline.Type is InlineKeyboardButtonTypeUser user)
+            {
+                var response = await ProtoService.SendAsync(new CreatePrivateChat(user.UserId, false));
+                if (response is Chat userChat)
                 {
-                    NavigationService.NavigateToInvoice(message);
+                    NavigationService.NavigateToChat(userChat);
                 }
-                else if (inline.Type is InlineKeyboardButtonTypeUser user)
+            }
+            else if (inline.Type is InlineKeyboardButtonTypeLoginUrl loginUrl)
+            {
+                var response = await ProtoService.SendAsync(new GetLoginUrlInfo(chat.Id, message.Id, loginUrl.Id));
+                if (response is LoginUrlInfoOpen infoOpen)
                 {
-                    var response = await ProtoService.SendAsync(new CreatePrivateChat(user.UserId, false));
-                    if (response is Chat userChat)
-                    {
-                        NavigationService.NavigateToChat(userChat);
-                    }
+                    OpenUrl(infoOpen.Url, !infoOpen.SkipConfirm);
                 }
-                else if (inline.Type is InlineKeyboardButtonTypeLoginUrl loginUrl)
+                else if (response is LoginUrlInfoRequestConfirmation requestConfirmation)
                 {
-                    var response = await ProtoService.SendAsync(new GetLoginUrlInfo(chat.Id, message.Id, loginUrl.Id));
-                    if (response is LoginUrlInfoOpen infoOpen)
-                    {
-                        OpenUrl(infoOpen.Url, !infoOpen.SkipConfirm);
-                    }
-                    else if (response is LoginUrlInfoRequestConfirmation requestConfirmation)
-                    {
-                        var dialog = new LoginUrlInfoPopup(CacheService, requestConfirmation);
-                        var confirm = await dialog.ShowQueuedAsync();
-                        if (confirm != ContentDialogResult.Primary || !dialog.HasAccepted)
-                        {
-                            return;
-                        }
-
-                        response = await ProtoService.SendAsync(new GetLoginUrl(chat.Id, message.Id, loginUrl.Id, dialog.HasWriteAccess));
-                        if (response is HttpUrl httpUrl)
-                        {
-                            if (MessageHelper.TryCreateUri(httpUrl.Url, out Uri uri))
-                            {
-                                await Launcher.LaunchUriAsync(uri);
-                            }
-                        }
-                        else if (response is Error)
-                        {
-                            if (MessageHelper.TryCreateUri(loginUrl.Url, out Uri uri))
-                            {
-                                await Launcher.LaunchUriAsync(uri);
-                            }
-                        }
-                    }
-                }
-                else if (inline.Type is InlineKeyboardButtonTypeSwitchInline switchInline)
-                {
-                    var bot = message.GetViaBotUser();
-                    if (bot == null)
+                    var dialog = new LoginUrlInfoPopup(CacheService, requestConfirmation);
+                    var confirm = await dialog.ShowQueuedAsync();
+                    if (confirm != ContentDialogResult.Primary || !dialog.HasAccepted)
                     {
                         return;
                     }
 
-                    if (switchInline.InCurrentChat)
+                    response = await ProtoService.SendAsync(new GetLoginUrl(chat.Id, message.Id, loginUrl.Id, dialog.HasWriteAccess));
+                    if (response is HttpUrl httpUrl)
                     {
-                        SetText(string.Format("@{0} {1}", bot.Username, switchInline.Query), focus: true);
-                        ResolveInlineBot(bot.Username, switchInline.Query);
-                    }
-                    else
-                    {
-                        await SharePopup.GetForCurrentView().ShowAsync(switchInline, bot);
-                    }
-                }
-                else if (inline.Type is InlineKeyboardButtonTypeUrl urlButton)
-                {
-                    if (MessageHelper.TryCreateUri(urlButton.Url, out Uri uri))
-                    {
-                        if (MessageHelper.IsTelegramUrl(uri))
+                        if (MessageHelper.TryCreateUri(httpUrl.Url, out Uri uri))
                         {
-                            MessageHelper.OpenTelegramUrl(ProtoService, NavigationService, uri);
+                            await Launcher.LaunchUriAsync(uri);
                         }
-                        else
+                    }
+                    else if (response is Error)
+                    {
+                        if (MessageHelper.TryCreateUri(loginUrl.Url, out Uri uri))
                         {
-                            var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.OpenUrlAlert, urlButton.Url), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
-                            if (confirm != ContentDialogResult.Primary)
-                            {
-                                return;
-                            }
-
                             await Launcher.LaunchUriAsync(uri);
                         }
                     }
                 }
-                else if (inline.Type is InlineKeyboardButtonTypeCallback callback)
+            }
+            else if (inline.Type is InlineKeyboardButtonTypeSwitchInline switchInline)
+            {
+                var bot = message.GetViaBotUser();
+                if (bot == null)
                 {
-                    var bot = message.GetViaBotUser();
-                    if (bot != null)
-                    {
-                        InformativeMessage = _messageFactory.Create(this, new Message(0, new MessageSenderUser(bot.Id), 0, null, null, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, 0, 0, null, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText(Strings.Resources.Loading, new TextEntity[0]), null), null));
-                    }
-
-                    var response = await ProtoService.SendAsync(new GetCallbackQueryAnswer(chat.Id, message.Id, new CallbackQueryPayloadData(callback.Data)));
-                    if (response is CallbackQueryAnswer answer)
-                    {
-                        InformativeMessage = null;
-
-                        if (!string.IsNullOrEmpty(answer.Text))
-                        {
-                            if (answer.ShowAlert)
-                            {
-                                await new MessagePopup(answer.Text).ShowQueuedAsync();
-                            }
-                            else
-                            {
-                                if (bot == null)
-                                {
-                                    // TODO:
-                                    await new MessagePopup(answer.Text).ShowQueuedAsync();
-                                    return;
-                                }
-
-                                InformativeMessage = _messageFactory.Create(this, new Message(0, new MessageSenderUser(bot.Id), 0, null, null, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, 0, 0, null, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText(answer.Text, new TextEntity[0]), null), null));
-                            }
-                        }
-                        else if (!string.IsNullOrEmpty(answer.Url))
-                        {
-                            if (MessageHelper.TryCreateUri(answer.Url, out Uri uri))
-                            {
-                                if (MessageHelper.IsTelegramUrl(uri))
-                                {
-                                    MessageHelper.OpenTelegramUrl(ProtoService, NavigationService, uri);
-                                }
-                                else
-                                {
-                                    //var dialog = new MessagePopup(response.Result.Url, "Open this link?");
-                                    //dialog.PrimaryButtonText = "OK";
-                                    //dialog.SecondaryButtonText = "Cancel";
-
-                                    //var result = await dialog.ShowQueuedAsync();
-                                    //if (result != ContentDialogResult.Primary)
-                                    //{
-                                    //    return;
-                                    //}
-
-                                    await Launcher.LaunchUriAsync(uri);
-                                }
-                            }
-                        }
-                    }
+                    return;
                 }
-                else if (inline.Type is InlineKeyboardButtonTypeCallbackGame)
+
+                if (switchInline.InCurrentChat)
                 {
-                    var game = message.Content as MessageGame;
-                    if (game == null)
+                    SetText(string.Format("@{0} {1}", bot.Username, switchInline.Query), focus: true);
+                    ResolveInlineBot(bot.Username, switchInline.Query);
+                }
+                else
+                {
+                    await SharePopup.GetForCurrentView().ShowAsync(switchInline, bot);
+                }
+            }
+            else if (inline.Type is InlineKeyboardButtonTypeUrl urlButton)
+            {
+                if (MessageHelper.TryCreateUri(urlButton.Url, out Uri uri))
+                {
+                    if (MessageHelper.IsTelegramUrl(uri))
                     {
-                        return;
+                        MessageHelper.OpenTelegramUrl(ProtoService, NavigationService, uri);
                     }
-
-                    var response = await ProtoService.SendAsync(new GetCallbackQueryAnswer(chat.Id, message.Id, new CallbackQueryPayloadGame(game.Game.ShortName)));
-                    if (response is CallbackQueryAnswer answer && !string.IsNullOrEmpty(answer.Url))
+                    else
                     {
-                        var bundle = new Dictionary<string, object>();
-                        bundle.Add("title", game.Game.Title);
-                        bundle.Add("url", answer.Url);
-                        bundle.Add("message", message.Id);
-                        bundle.Add("chat", message.ChatId);
-
-                        var viaBot = message.GetViaBotUser();
-                        if (viaBot != null)
+                        var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.OpenUrlAlert, urlButton.Url), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+                        if (confirm != ContentDialogResult.Primary)
                         {
-                            bundle.Add("username", viaBot.Username);
+                            return;
                         }
 
-                        ChatActionManager.SetTyping(new ChatActionStartPlayingGame());
-                        NavigationService.Navigate(typeof(GamePage), bundle);
-                    }
-                }
-                else if (inline.Type is InlineKeyboardButtonTypeWebApp webApp)
-                {
-                    var bot = message.GetViaBotUser();
-                    if (bot == null)
-                    {
-                        return;
-                    }
-
-                    var response = await ProtoService.SendAsync(new OpenWebApp(chat.Id, bot.Id, webApp.Url, Theme.Current.Parameters, 0));
-                    if (response is WebAppInfo webAppInfo)
-                    {
-                        await new WebBotPopup(SessionId, webAppInfo, inline.Text).ShowQueuedAsync();
+                        await Launcher.LaunchUriAsync(uri);
                     }
                 }
             }
-            else if (button is KeyboardButton keyboardButton)
+            else if (inline.Type is InlineKeyboardButtonTypeCallback callback)
             {
-                if (keyboardButton.Type is KeyboardButtonTypeRequestPhoneNumber)
+                var bot = message.GetViaBotUser();
+                if (bot != null)
                 {
-                    if (CacheService.TryGetUser(CacheService.Options.MyId, out Telegram.Td.Api.User cached))
+                    InformativeMessage = _messageFactory.Create(this, new Message(0, new MessageSenderUser(bot.Id), 0, null, null, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, 0, 0, null, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText(Strings.Resources.Loading, new TextEntity[0]), null), null));
+                }
+
+                var response = await ProtoService.SendAsync(new GetCallbackQueryAnswer(chat.Id, message.Id, new CallbackQueryPayloadData(callback.Data)));
+                if (response is CallbackQueryAnswer answer)
+                {
+                    InformativeMessage = null;
+
+                    if (!string.IsNullOrEmpty(answer.Text))
                     {
-                        var content = Strings.Resources.AreYouSureShareMyContactInfo;
-                        if (chat.Type is ChatTypePrivate privata)
+                        if (answer.ShowAlert)
                         {
-                            var withUser = ProtoService.GetUser(privata.UserId);
-                            if (withUser != null)
+                            await new MessagePopup(answer.Text).ShowQueuedAsync();
+                        }
+                        else
+                        {
+                            if (bot == null)
                             {
-                                content = withUser.Type is UserTypeBot ? Strings.Resources.AreYouSureShareMyContactInfoBot : string.Format(Strings.Resources.AreYouSureShareMyContactInfoUser, PhoneNumber.Format(cached.PhoneNumber), withUser.GetFullName());
+                                // TODO:
+                                await new MessagePopup(answer.Text).ShowQueuedAsync();
+                                return;
+                            }
+
+                            InformativeMessage = _messageFactory.Create(this, new Message(0, new MessageSenderUser(bot.Id), 0, null, null, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, 0, 0, null, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText(answer.Text, new TextEntity[0]), null), null));
+                        }
+                    }
+                    else if (!string.IsNullOrEmpty(answer.Url))
+                    {
+                        if (MessageHelper.TryCreateUri(answer.Url, out Uri uri))
+                        {
+                            if (MessageHelper.IsTelegramUrl(uri))
+                            {
+                                MessageHelper.OpenTelegramUrl(ProtoService, NavigationService, uri);
+                            }
+                            else
+                            {
+                                //var dialog = new MessagePopup(response.Result.Url, "Open this link?");
+                                //dialog.PrimaryButtonText = "OK";
+                                //dialog.SecondaryButtonText = "Cancel";
+
+                                //var result = await dialog.ShowQueuedAsync();
+                                //if (result != ContentDialogResult.Primary)
+                                //{
+                                //    return;
+                                //}
+
+                                await Launcher.LaunchUriAsync(uri);
                             }
                         }
-
-                        var confirm = await MessagePopup.ShowAsync(content, Strings.Resources.ShareYouPhoneNumberTitle, Strings.Resources.OK, Strings.Resources.Cancel);
-                        if (confirm == ContentDialogResult.Primary)
-                        {
-                            await SendContactAsync(chat, new Contact(cached.PhoneNumber, cached.FirstName, cached.LastName, string.Empty, cached.Id), null);
-                        }
                     }
                 }
-                else if (keyboardButton.Type is KeyboardButtonTypeRequestLocation)
+            }
+            else if (inline.Type is InlineKeyboardButtonTypeCallbackGame)
+            {
+                var game = message.Content as MessageGame;
+                if (game == null)
                 {
-                    var confirm = await MessagePopup.ShowAsync(Strings.Resources.ShareYouLocationInfo, Strings.Resources.ShareYouLocationTitle, Strings.Resources.OK, Strings.Resources.Cancel);
+                    return;
+                }
+
+                var response = await ProtoService.SendAsync(new GetCallbackQueryAnswer(chat.Id, message.Id, new CallbackQueryPayloadGame(game.Game.ShortName)));
+                if (response is CallbackQueryAnswer answer && !string.IsNullOrEmpty(answer.Url))
+                {
+                    var bundle = new Dictionary<string, object>();
+                    bundle.Add("title", game.Game.Title);
+                    bundle.Add("url", answer.Url);
+                    bundle.Add("message", message.Id);
+                    bundle.Add("chat", message.ChatId);
+
+                    var viaBot = message.GetViaBotUser();
+                    if (viaBot != null)
+                    {
+                        bundle.Add("username", viaBot.Username);
+                    }
+
+                    ChatActionManager.SetTyping(new ChatActionStartPlayingGame());
+                    NavigationService.Navigate(typeof(GamePage), bundle);
+                }
+            }
+            else if (inline.Type is InlineKeyboardButtonTypeWebApp webApp)
+            {
+                var bot = message.GetViaBotUser();
+                if (bot == null)
+                {
+                    return;
+                }
+
+                var response = await ProtoService.SendAsync(new OpenWebApp(chat.Id, bot.Id, webApp.Url, Theme.Current.Parameters, 0));
+                if (response is WebAppInfo webAppInfo)
+                {
+                    await new WebBotPopup(SessionId, webAppInfo, inline.Text).ShowQueuedAsync();
+                }
+            }
+        }
+
+        public async void KeyboardButtonExecute(MessageViewModel message, KeyboardButton keyboardButton)
+        {
+            if (_chat is not Chat chat)
+            {
+                return;
+            }
+
+            if (keyboardButton.Type is KeyboardButtonTypeRequestPhoneNumber)
+            {
+                if (CacheService.TryGetUser(CacheService.Options.MyId, out Telegram.Td.Api.User cached))
+                {
+                    var content = Strings.Resources.AreYouSureShareMyContactInfo;
+                    if (chat.Type is ChatTypePrivate privata)
+                    {
+                        var withUser = ProtoService.GetUser(privata.UserId);
+                        if (withUser != null)
+                        {
+                            content = withUser.Type is UserTypeBot ? Strings.Resources.AreYouSureShareMyContactInfoBot : string.Format(Strings.Resources.AreYouSureShareMyContactInfoUser, PhoneNumber.Format(cached.PhoneNumber), withUser.GetFullName());
+                        }
+                    }
+
+                    var confirm = await MessagePopup.ShowAsync(content, Strings.Resources.ShareYouPhoneNumberTitle, Strings.Resources.OK, Strings.Resources.Cancel);
                     if (confirm == ContentDialogResult.Primary)
                     {
-                        var location = await _locationService.GetPositionAsync();
-                        if (location != null)
-                        {
-                            await SendMessageAsync(chat, 0, new InputMessageLocation(location, 0, 0, 0), null);
-                        }
+                        await SendContactAsync(chat, new Contact(cached.PhoneNumber, cached.FirstName, cached.LastName, string.Empty, cached.Id), null);
                     }
                 }
-                else if (keyboardButton.Type is KeyboardButtonTypeRequestPoll requestPoll)
+            }
+            else if (keyboardButton.Type is KeyboardButtonTypeRequestLocation)
+            {
+                var confirm = await MessagePopup.ShowAsync(Strings.Resources.ShareYouLocationInfo, Strings.Resources.ShareYouLocationTitle, Strings.Resources.OK, Strings.Resources.Cancel);
+                if (confirm == ContentDialogResult.Primary)
                 {
-                    await SendPollAsync(requestPoll.ForceQuiz, requestPoll.ForceRegular, _chat?.Type is ChatTypeSupergroup super && super.IsChannel);
+                    var location = await _locationService.GetPositionAsync();
+                    if (location != null)
+                    {
+                        await SendMessageAsync(chat, 0, new InputMessageLocation(location, 0, 0, 0), null);
+                    }
                 }
-                else if (keyboardButton.Type is KeyboardButtonTypeText)
+            }
+            else if (keyboardButton.Type is KeyboardButtonTypeRequestPoll requestPoll)
+            {
+                await SendPollAsync(requestPoll.ForceQuiz, requestPoll.ForceRegular, _chat?.Type is ChatTypeSupergroup super && super.IsChannel);
+            }
+            else if (keyboardButton.Type is KeyboardButtonTypeText)
+            {
+                var input = new InputMessageText(new FormattedText(keyboardButton.Text, null), false, true);
+                await SendMessageAsync(chat, chat.Type is ChatTypeSupergroup or ChatTypeBasicGroup ? message.Id : 0, input, null);
+            }
+            else if (keyboardButton.Type is KeyboardButtonTypeWebApp webApp && message.SenderId is MessageSenderUser bot)
+            {
+                var response = await ProtoService.SendAsync(new OpenWebApp(chat.Id, bot.UserId, webApp.Url, Theme.Current.Parameters, 0));
+                if (response is WebAppInfo webAppInfo)
                 {
-                    var input = new InputMessageText(new FormattedText(keyboardButton.Text, null), false, true);
-                    await SendMessageAsync(chat, chat.Type is ChatTypeSupergroup or ChatTypeBasicGroup ? message.Id : 0, input, null);
+                    await new WebBotPopup(SessionId, webAppInfo, keyboardButton.Text).ShowQueuedAsync();
                 }
             }
         }

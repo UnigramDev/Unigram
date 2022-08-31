@@ -251,7 +251,7 @@ namespace Unigram.ViewModels
 
         public void OpenInlineButton(MessageViewModel message, InlineKeyboardButton button)
         {
-            KeyboardButtonExecute(message, button);
+            KeyboardButtonInline(message, button);
         }
 
         public void Call(MessageViewModel message, bool video)
@@ -475,7 +475,7 @@ namespace Unigram.ViewModels
                     {
                         if (button.Type is InlineKeyboardButtonTypeCallbackGame)
                         {
-                            KeyboardButtonExecute(message, button);
+                            KeyboardButtonInline(message, button);
                             return;
                         }
                     }

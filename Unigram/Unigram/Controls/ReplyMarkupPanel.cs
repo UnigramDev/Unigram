@@ -164,6 +164,11 @@ namespace Unigram.Controls
                         else if (row[i] is KeyboardButton keyboardButton)
                         {
                             button.Content = keyboardButton.Text;
+
+                            if (keyboardButton.Type is KeyboardButtonTypeWebApp)
+                            {
+                                button.Glyph = Icons.Window16;
+                            }
                         }
 
                         if (inline)

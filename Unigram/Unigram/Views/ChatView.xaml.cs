@@ -785,7 +785,7 @@ namespace Unigram.Views
                 if (content is MessageSelector selector)
                 {
                     content = selector.Content as MessageBubble;
-                    }
+                }
 
                 if (content is MessageBubble bubble)
                 {
@@ -1589,6 +1589,7 @@ namespace Unigram.Views
 
         private void CollapseMarkup(bool keyboard)
         {
+            _textShadowVisual.IsVisible = Math.Round(InlinePanel.ActualHeight) > ViewModel.Settings.Appearance.BubbleRadius;
             ReplyMarkupPanel.Visibility = Visibility.Collapsed;
 
             ButtonMarkup.Glyph = Icons.BotMarkup24;
@@ -1605,6 +1606,7 @@ namespace Unigram.Views
 
         public void ShowMarkup()
         {
+            _textShadowVisual.IsVisible = true;
             ReplyMarkupPanel.Visibility = Visibility.Visible;
 
             ButtonMarkup.Glyph = Icons.ChevronDown;
@@ -2611,7 +2613,8 @@ namespace Unigram.Views
 
         private void InlinePanel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            _textShadowVisual.IsVisible = Math.Round(e.NewSize.Height) > ViewModel.Settings.Appearance.BubbleRadius;
+            _textShadowVisual.IsVisible = Math.Round(e.NewSize.Height) > ViewModel.Settings.Appearance.BubbleRadius
+                || ReplyMarkup.Visibility == Visibility.Visible;
         }
 
         private void TextArea_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -2930,9 +2933,9 @@ namespace Unigram.Views
                 InsertText($"{hashtag} ", result);
             }
             else if (e.ClickedItem is EmojiData emoji)
-                {
+            {
                 InsertText($"{emoji.Value}", result);
-                }
+            }
             else if (e.ClickedItem is Sticker sticker)
             {
                 if (sticker.CustomEmojiId != 0)
@@ -2945,13 +2948,14 @@ namespace Unigram.Views
                     TextField.Document.Selection.StartPosition = start;
                 }
                 else
-            {
-                TextField.SetText(null, null);
-                ViewModel.StickerSendExecute(sticker, null, null, text);
-
-                if (_stickersMode == StickersPanelMode.Overlay)
                 {
-                    Collapse_Click(null, null);
+                    TextField.SetText(null, null);
+                    ViewModel.StickerSendExecute(sticker, null, null, text);
+
+                    if (_stickersMode == StickersPanelMode.Overlay)
+                    {
+                        Collapse_Click(null, null);
+                    }
                 }
             }
         }
@@ -4080,12 +4084,16 @@ namespace Unigram.Views
 
             ListInline?.UpdateCornerRadius(radius);
 
+            ReplyMarkupPanel.CornerRadius = new CornerRadius(0, 0, radius, radius);
+            ReplyMarkupPanel.Padding = new Thickness(0, radius, 0, 0);
+
             if (radius > 0)
             {
                 TextArea.MaxWidth = ChatRecord.MaxWidth = ChatFooter.MaxWidth = ManagePanel.MaxWidth = InlinePanel.MaxWidth = Separator.MaxWidth =
                     SettingsService.Current.IsAdaptiveWideEnabled ? 640 : double.PositiveInfinity;
                 TextArea.Margin = ChatRecord.Margin = ChatFooter.Margin = ManagePanel.Margin = Separator.Margin = new Thickness(12, 0, 12, 8);
                 InlinePanel.Margin = new Thickness(12, 0, 12, -radius);
+                ReplyMarkupPanel.Margin = new Thickness(12, -8 - radius, 12, 8);
             }
             else
             {
@@ -4093,6 +4101,7 @@ namespace Unigram.Views
                     SettingsService.Current.IsAdaptiveWideEnabled ? 664 : double.PositiveInfinity;
                 TextArea.Margin = ChatRecord.Margin = ChatFooter.Margin = ManagePanel.Margin = Separator.Margin = new Thickness();
                 InlinePanel.Margin = new Thickness();
+                ReplyMarkupPanel.Margin = new Thickness();
             }
 
             var messages = ElementCompositionPreview.GetElementVisual(Messages);
