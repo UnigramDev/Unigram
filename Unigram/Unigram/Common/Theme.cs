@@ -240,51 +240,59 @@ namespace Unigram.Common
                     target["Accent"] = ThemeInfoBase.Accents[TelegramThemeType.Day][AccentShade.Default];
                 }
 
+                Color GetShade(AccentShade shade)
+                {
+                    if (shades != null && shades.TryGetValue(shade, out Color accent))
+                    {
+                        return accent;
+                    }
+                    else
+                    {
+                        return ThemeInfoBase.Accents[TelegramThemeType.Day][shade];
+                    }
+                }
+
                 foreach (var item in lookup)
                 {
-                    if (target.TryGet(item.Key, out SolidColorBrush brush))
+                    if (target.TryGetValue(item.Key, out object resource))
                     {
-                        Color value;
-                        if (item.Value is AccentShade shade)
+                        if (resource is SolidColorBrush brush)
                         {
-                            if (shades != null && shades.TryGetValue(shade, out Color accent))
+                            Color value;
+                            if (item.Value is AccentShade shade)
                             {
-                                value = accent;
+                                value = GetShade(shade);
                             }
-                            else
+                            else if (values != null && values.TryGetValue(item.Key, out Color themed))
                             {
-                                value = ThemeInfoBase.Accents[TelegramThemeType.Day][shade];
+                                value = themed;
+                            }
+                            else if (item.Value is Color color)
+                            {
+                                value = color;
+                            }
+
+                            if (brush.Color != value)
+                            {
+                                brush.Color = value;
                             }
                         }
-                        else if (values != null && values.TryGetValue(item.Key, out Color themed))
+                        else if (resource is Microsoft.UI.Xaml.Media.AcrylicBrush acrylicBrush)
                         {
-                            value = themed;
-                        }
-                        else if (item.Value is Color color)
-                        {
-                            value = color;
-                        }
-
-                        if (brush.Color == value)
-                        {
-                            continue;
-                        }
-
-                        try
-                        {
-                            brush.Color = value;
-                        }
-                        catch (UnauthorizedAccessException)
-                        {
-                            // Some times access denied is thrown,
-                            // this seems to happen after the application
-                            // is resumed, but unfortunately I can't see
-                            // any fix to this. The exception is going
-                            // to be thrown any time - even minutes after 
-                            // the resume - if the theme changes.
-
-                            // The exception MIGHT be related to StaticResources
-                            // but I'm not able to confirm this.
+                            if (item.Value is Acrylic<Color> acrylicColor)
+                            {
+                                acrylicBrush.TintColor = acrylicColor.TintColor;
+                                acrylicBrush.TintOpacity = acrylicColor.TintOpacity;
+                                acrylicBrush.TintLuminosityOpacity = acrylicColor.TintLuminosityOpacity;
+                                acrylicBrush.FallbackColor = acrylicColor.FallbackColor;
+                            }
+                            else if (item.Value is Acrylic<AccentShade> acrylicShade)
+                            {
+                                acrylicBrush.TintColor = GetShade(acrylicShade.TintColor);
+                                acrylicBrush.TintOpacity = acrylicShade.TintOpacity;
+                                acrylicBrush.TintLuminosityOpacity = acrylicShade.TintLuminosityOpacity;
+                                acrylicBrush.FallbackColor = GetShade(acrylicShade.FallbackColor);
+                            }
                         }
                     }
                 }
@@ -309,7 +317,18 @@ namespace Unigram.Common
                     LinkColor = GetColor("HyperlinkForeground")
                 };
             }
-            catch { }
+            catch (UnauthorizedAccessException)
+            {
+                // Some times access denied is thrown,
+                // this seems to happen after the application
+                // is resumed, but unfortunately I can't see
+                // any fix to this. The exception is going
+                // to be thrown any time - even minutes after 
+                // the resume - if the theme changes.
+
+                // The exception MIGHT be related to StaticResources
+                // but I'm not able to confirm this.
+            }
         }
 
         #region Acrylic patch

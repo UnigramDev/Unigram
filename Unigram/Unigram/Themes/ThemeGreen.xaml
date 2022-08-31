@@ -440,7 +440,7 @@
             <SolidColorBrush x:Key="MenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOver" Color="{StaticResource TextFillColorSecondary}" />
             <SolidColorBrush x:Key="MenuFlyoutItemKeyboardAcceleratorTextForegroundPressed" Color="{StaticResource TextFillColorSecondary}" />
             <SolidColorBrush x:Key="MenuFlyoutItemKeyboardAcceleratorTextForegroundDisabled" Color="{StaticResource TextFillColorDisabled}" />
-            <StaticResource x:Key="MenuFlyoutPresenterBackground" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
+            <media:AcrylicBrush x:Key="MenuFlyoutPresenterBackground" TintColor="#FCFCFC" TintOpacity="0.0" FallbackColor="#F9F9F9" />
             <SolidColorBrush x:Key="MenuFlyoutPresenterBorderBrush" Color="{StaticResource SurfaceStrokeColorFlyout}" />
             <Thickness x:Key="MenuFlyoutPresenterBorderThemeThickness">1</Thickness>
             <Thickness x:Key="MenuFlyoutItemBorderThickness">0</Thickness>
@@ -1040,13 +1040,13 @@
             <x:Double x:Key="CommandBarOverflowMaxWidth">480</x:Double>
             <x:Double x:Key="CommandBarOverflowMaxHeight">198</x:Double>
             <SolidColorBrush x:Key="CommandBarBackground" Color="{StaticResource ControlFillColorTransparent}" />
-            <StaticResource x:Key="CommandBarBackgroundOpen" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
+            <media:AcrylicBrush x:Key="CommandBarBackgroundOpen" TintColor="#FCFCFC" TintOpacity="0.0" FallbackColor="#F9F9F9" />
             <SolidColorBrush x:Key="CommandBarBorderBrushOpen" Color="{StaticResource CardStrokeColorDefaultSolid}" />
             <Thickness x:Key="CommandBarBorderThicknessOpen">1</Thickness>
             <SolidColorBrush x:Key="CommandBarForeground" Color="{StaticResource TextFillColorPrimary}" />
             <SolidColorBrush x:Key="CommandBarHighContrastBorder" Color="{StaticResource ControlFillColorTransparent}" />
             <SolidColorBrush x:Key="CommandBarEllipsisIconForegroundDisabled" Color="{StaticResource TextFillColorDisabled}" />
-            <StaticResource x:Key="CommandBarOverflowPresenterBackground" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
+            <media:AcrylicBrush x:Key="CommandBarOverflowPresenterBackground" TintColor="#FCFCFC" TintOpacity="0.0" FallbackColor="#F9F9F9" />
             <SolidColorBrush x:Key="CommandBarOverflowPresenterBorderBrush" Color="#000000" />
             <SolidColorBrush x:Key="CommandBarLightDismissOverlayBackground" Color="{StaticResource SystemAltMediumColor}" />
             <Thickness x:Key="CommandBarOverflowPresenterBorderThickness">1</Thickness>
@@ -1230,7 +1230,7 @@
                     <GradientStop Offset="1.0" Color="{StaticResource ControlStrokeColorDefault}" />
                 </LinearGradientBrush.GradientStops>
             </LinearGradientBrush>
-            <StaticResource x:Key="FlyoutPresenterBackground" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
+            <media:AcrylicBrush x:Key="FlyoutPresenterBackground" TintColor="#FCFCFC" TintOpacity="0.0" FallbackColor="#F9F9F9" />
             <SolidColorBrush x:Key="FlyoutBorderThemeBrush" Color="{StaticResource SurfaceStrokeColorFlyout}" />
             <Thickness x:Key="FlyoutBorderThemeThickness">1</Thickness>
             <SolidColorBrush x:Key="AccentButtonBackground" Color="{StaticResource SystemAccentColorDark1}" />
@@ -1328,7 +1328,7 @@
             <CornerRadius x:Key="OverlayCornerRadius">8,8,8,8</CornerRadius>
             <Thickness x:Key="MediaTransportControlsTitleSafeBounds">48,0,48,27</Thickness>
             <SolidColorBrush x:Key="MediaTransportControlsPanelBackground" Color="{StaticResource ControlOnImageFillColorDefault}" />
-            <StaticResource x:Key="MediaTransportControlsFlyoutBackground" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
+            <media:AcrylicBrush x:Key="MediaTransportControlsFlyoutBackground" TintColor="#FCFCFC" TintOpacity="0.0" FallbackColor="#F9F9F9" />
             <SolidColorBrush x:Key="MediaTransportControlsThumbBorderBackground" Color="{StaticResource ControlStrongFillColorDefault}" />
             <SolidColorBrush x:Key="MediaTransportControlsFillTimeElapsedText" Color="{StaticResource TextFillColorSecondary}" />
             <SolidColorBrush x:Key="MediaTransportControlsFillMediaText" Color="{StaticResource TextFillColorPrimary}" />
@@ -1516,7 +1516,7 @@
             <SolidColorBrush x:Key="DatePickerButtonForegroundPressed" Color="{StaticResource TextFillColorSecondary}" />
             <SolidColorBrush x:Key="DatePickerButtonForegroundDisabled" Color="{StaticResource TextFillColorDisabled}" />
             <SolidColorBrush x:Key="DatePickerButtonForegroundFocused" Color="{StaticResource TextFillColorPrimary}" />
-            <StaticResource x:Key="DatePickerFlyoutPresenterBackground" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
+            <media:AcrylicBrush x:Key="DatePickerFlyoutPresenterBackground" TintColor="#FCFCFC" TintOpacity="0.0" FallbackColor="#F9F9F9" />
             <SolidColorBrush x:Key="DatePickerFlyoutPresenterBorderBrush" Color="{StaticResource SurfaceStrokeColorFlyout}" />
             <SolidColorBrush x:Key="DatePickerFlyoutPresenterSpacerFill" Color="{StaticResource DividerStrokeColorDefault}" />
             <SolidColorBrush x:Key="DatePickerFlyoutPresenterHighlightFill" Color="{StaticResource SystemAccentColorDark1}" />
@@ -1534,7 +1534,7 @@
             <SolidColorBrush x:Key="DateTimePickerFlyoutButtonForegroundPointerOver" Color="{StaticResource TextFillColorPrimary}" />
             <SolidColorBrush x:Key="DateTimePickerFlyoutButtonForegroundPressed" Color="{StaticResource TextFillColorPrimary}" />
             <SolidColorBrush x:Key="LoopingSelectorButtonBackground" Color="{StaticResource SubtleFillColorTransparent}" />
-            <StaticResource x:Key="LoopingSelectorUpDownButtonBackground" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
+            <media:AcrylicBrush x:Key="LoopingSelectorUpDownButtonBackground" TintColor="#FCFCFC" TintOpacity="0.0" FallbackColor="#F9F9F9" />
             <SolidColorBrush x:Key="LoopingSelectorItemForeground" Color="{StaticResource TextFillColorPrimary}" />
             <SolidColorBrush x:Key="LoopingSelectorItemForegroundSelected" Color="{StaticResource TextFillColorPrimary}" />
             <SolidColorBrush x:Key="LoopingSelectorItemForegroundPointerOver" Color="{StaticResource TextFillColorPrimary}" />
@@ -1543,9 +1543,9 @@
             <SolidColorBrush x:Key="LoopingSelectorItemBackgroundPressed" Color="{StaticResource SubtleFillColorTertiary}" />
             <Thickness x:Key="FlipViewButtonBorderThemeThickness">0</Thickness>
             <SolidColorBrush x:Key="FlipViewBackground" Color="{StaticResource SolidBackgroundFillColorBase}" />
-            <StaticResource x:Key="FlipViewNextPreviousButtonBackground" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
-            <StaticResource x:Key="FlipViewNextPreviousButtonBackgroundPointerOver" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
-            <StaticResource x:Key="FlipViewNextPreviousButtonBackgroundPressed" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
+            <media:AcrylicBrush x:Key="FlipViewNextPreviousButtonBackground" TintColor="#FCFCFC" TintOpacity="0.0" FallbackColor="#F9F9F9" />
+            <media:AcrylicBrush x:Key="FlipViewNextPreviousButtonBackgroundPointerOver" TintColor="#FCFCFC" TintOpacity="0.0" FallbackColor="#F9F9F9" />
+            <media:AcrylicBrush x:Key="FlipViewNextPreviousButtonBackgroundPressed" TintColor="#FCFCFC" TintOpacity="0.0" FallbackColor="#F9F9F9" />
             <SolidColorBrush x:Key="FlipViewNextPreviousArrowForeground" Color="{StaticResource ControlStrongFillColorDefault}" />
             <SolidColorBrush x:Key="FlipViewNextPreviousArrowForegroundPointerOver" Color="{StaticResource TextFillColorSecondary}" />
             <SolidColorBrush x:Key="FlipViewNextPreviousArrowForegroundPressed" Color="{StaticResource TextFillColorSecondary}" />
@@ -1653,12 +1653,12 @@
             <SolidColorBrush x:Key="ScrollBarThumbFillPressed" Color="{StaticResource ControlStrongFillColorDefault}" />
             <SolidColorBrush x:Key="ScrollBarThumbFillDisabled" Color="{StaticResource ControlStrongFillColorDisabled}" />
             <SolidColorBrush x:Key="ScrollBarThumbBorderBrush" Color="{StaticResource ControlFillColorTransparent}" />
-            <StaticResource x:Key="ScrollBarTrackFill" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
-            <StaticResource x:Key="ScrollBarTrackFillPointerOver" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
-            <StaticResource x:Key="ScrollBarTrackFillDisabled" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
-            <StaticResource x:Key="ScrollBarTrackStroke" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
-            <StaticResource x:Key="ScrollBarTrackStrokePointerOver" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
-            <StaticResource x:Key="ScrollBarTrackStrokeDisabled" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
+            <media:AcrylicBrush x:Key="ScrollBarTrackFill" TintColor="#FCFCFC" TintOpacity="0.0" FallbackColor="#F9F9F9" />
+            <media:AcrylicBrush x:Key="ScrollBarTrackFillPointerOver" TintColor="#FCFCFC" TintOpacity="0.0" FallbackColor="#F9F9F9" />
+            <media:AcrylicBrush x:Key="ScrollBarTrackFillDisabled" TintColor="#FCFCFC" TintOpacity="0.0" FallbackColor="#F9F9F9" />
+            <media:AcrylicBrush x:Key="ScrollBarTrackStroke" TintColor="#FCFCFC" TintOpacity="0.0" FallbackColor="#F9F9F9" />
+            <media:AcrylicBrush x:Key="ScrollBarTrackStrokePointerOver" TintColor="#FCFCFC" TintOpacity="0.0" FallbackColor="#F9F9F9" />
+            <media:AcrylicBrush x:Key="ScrollBarTrackStrokeDisabled" TintColor="#FCFCFC" TintOpacity="0.0" FallbackColor="#F9F9F9" />
             <SolidColorBrush x:Key="ScrollBarThumbBackground" Color="{StaticResource ControlStrongFillColorDefault}" />
             <SolidColorBrush x:Key="ScrollBarPanningThumbBackground" Color="{StaticResource ControlStrongFillColorDefault}" />
             <SolidColorBrush x:Key="ScrollBarPanningThumbBackgroundDisabled" Color="{StaticResource ControlStrongFillColorDisabled}" />
@@ -1758,7 +1758,7 @@
             <SolidColorBrush x:Key="TimePickerButtonForegroundPressed" Color="{StaticResource TextFillColorSecondary}" />
             <SolidColorBrush x:Key="TimePickerButtonForegroundDisabled" Color="{StaticResource TextFillColorDisabled}" />
             <SolidColorBrush x:Key="TimePickerButtonForegroundFocused" Color="{StaticResource TextFillColorPrimary}" />
-            <StaticResource x:Key="TimePickerFlyoutPresenterBackground" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
+            <media:AcrylicBrush x:Key="TimePickerFlyoutPresenterBackground" TintColor="#FCFCFC" TintOpacity="0.0" FallbackColor="#F9F9F9" />
             <SolidColorBrush x:Key="TimePickerFlyoutPresenterBorderBrush" Color="{StaticResource SurfaceStrokeColorFlyout}" />
             <SolidColorBrush x:Key="TimePickerFlyoutPresenterSpacerFill" Color="{StaticResource DividerStrokeColorDefault}" />
             <SolidColorBrush x:Key="TimePickerFlyoutPresenterHighlightFill" Color="{StaticResource SystemAccentColorDark1}" />
@@ -1782,9 +1782,9 @@
             <SolidColorBrush x:Key="RatingControlPointerOverSelectedForeground" Color="{StaticResource SystemAccentColorDark1}" />
             <SolidColorBrush x:Key="RatingControlDisabledSelectedForeground" Color="{StaticResource TextFillColorDisabled}" />
             <SolidColorBrush x:Key="RatingControlCaptionForeground" Color="{StaticResource TextFillColorSecondary}" />
-            <StaticResource x:Key="NavigationViewDefaultPaneBackground" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
+            <media:AcrylicBrush x:Key="NavigationViewDefaultPaneBackground" TintColor="#FCFCFC" TintOpacity="0.0" FallbackColor="#F9F9F9" />
             <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="{StaticResource ControlFillColorTransparent}" />
-            <StaticResource x:Key="NavigationViewTopPaneBackground" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
+            <media:AcrylicBrush x:Key="NavigationViewTopPaneBackground" TintColor="#FCFCFC" TintOpacity="0.0" FallbackColor="#F9F9F9" />
             <SolidColorBrush x:Key="NavigationViewContentBackground" Color="{StaticResource SolidBackgroundFillColorBase}" />
             <SolidColorBrush x:Key="NavigationViewItemBackground" Color="{StaticResource SubtleFillColorTransparent}" />
             <SolidColorBrush x:Key="NavigationViewItemBackgroundPointerOver" Color="{StaticResource SubtleFillColorSecondary}" />
@@ -1943,7 +1943,7 @@
             <SolidColorBrush x:Key="RadioButtonsHeaderForegroundDisabled" Color="{StaticResource TextFillColorDisabled}" />
             <SolidColorBrush x:Key="TeachingTipBorderBrush" Color="{StaticResource SurfaceStrokeColorDefault}" />
             <SolidColorBrush x:Key="TeachingTipTopHighlightBrush" Color="#0DFFFFFF" />
-            <StaticResource x:Key="TeachingTipTransientBackground" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
+            <media:AcrylicBrush x:Key="TeachingTipTransientBackground" TintColor="#FCFCFC" TintOpacity="0.0" FallbackColor="#F9F9F9" />
             <SolidColorBrush x:Key="TeachingTipForegroundBrush" Color="{StaticResource TextFillColorPrimary}" />
             <SolidColorBrush x:Key="TeachingTipBackgroundBrush" Color="{StaticResource SystemChromeLowColor}" />
             <SolidColorBrush x:Key="TeachingTipTitleForegroundBrush" Color="{StaticResource TextFillColorPrimary}" />
@@ -1991,7 +1991,7 @@
             <SolidColorBrush x:Key="TabViewItemHeaderDisabledCloseButtonForeground" Color="{StaticResource TextFillColorDisabled}" />
             <SolidColorBrush x:Key="TabViewButtonBackgroundActiveTab" Color="{StaticResource SubtleFillColorTransparent}" />
             <SolidColorBrush x:Key="TabViewButtonForegroundActiveTab" Color="{StaticResource ControlStrongFillColorDefault}" />
-            <StaticResource x:Key="AutoSuggestBoxSuggestionsListBackground" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
+            <media:AcrylicBrush x:Key="AutoSuggestBoxSuggestionsListBackground" TintColor="#FCFCFC" TintOpacity="0.0" FallbackColor="#F9F9F9" />
             <SolidColorBrush x:Key="AutoSuggestBoxSuggestionsListBorderBrush" Color="{StaticResource SurfaceStrokeColorFlyout}" />
             <SolidColorBrush x:Key="AutoSuggestBoxLightDismissOverlayBackground" Color="{StaticResource SystemAltMediumColor}" />
             <x:Double x:Key="AutoSuggestBoxIconFontSize">12</x:Double>
@@ -2053,7 +2053,7 @@
             <SolidColorBrush x:Key="ComboBoxDropDownGlyphForegroundFocused" Color="{StaticResource TextFillColorSecondary}" />
             <SolidColorBrush x:Key="ComboBoxDropDownGlyphForegroundFocusedPressed" Color="{StaticResource SystemBaseMediumHighColor}" />
             <SolidColorBrush x:Key="ComboBoxDropDownForeground" Color="{StaticResource TextFillColorPrimary}" />
-            <StaticResource x:Key="ComboBoxDropDownBackground" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
+            <media:AcrylicBrush x:Key="ComboBoxDropDownBackground" TintColor="#FCFCFC" TintOpacity="0.0" FallbackColor="#F9F9F9" />
             <SolidColorBrush x:Key="ComboBoxDropDownBorderBrush" Color="{StaticResource SurfaceStrokeColorFlyout}" />
             <SolidColorBrush x:Key="ComboBoxLightDismissOverlayBackground" Color="{StaticResource SystemAltMediumColor}" />
             <SolidColorBrush x:Key="ComboBoxArrowDisabledForegroundThemeBrush" Color="#66FFFFFF" />
@@ -2107,7 +2107,7 @@
             <SolidColorBrush x:Key="ProgressRingForegroundThemeBrush" Color="{StaticResource SystemAccentColorDark1}" />
             <SolidColorBrush x:Key="ProgressRingBackgroundThemeBrush" Color="{StaticResource ControlFillColorTertiary}" />
             <SolidColorBrush x:Key="NumberBoxPopupIndicatorForeground" Color="{StaticResource TextFillColorSecondary}" />
-            <StaticResource x:Key="NumberBoxPopupBackground" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
+            <media:AcrylicBrush x:Key="NumberBoxPopupBackground" TintColor="#FCFCFC" TintOpacity="0.0" FallbackColor="#F9F9F9" />
             <SolidColorBrush x:Key="NumberBoxPopupBorderBrush" Color="{StaticResource SurfaceStrokeColorFlyout}" />
             <Thickness x:Key="NumberBoxPopupBorderThickness">1</Thickness>
             <SolidColorBrush x:Key="NumberBoxPopupSpinButtonBackground" Color="{StaticResource SubtleFillColorTransparent}" />
@@ -2176,7 +2176,7 @@
             <SolidColorBrush x:Key="BreadcrumbBarForegroundBrush" Color="{StaticResource TextFillColorPrimary}" />
             <SolidColorBrush x:Key="BreadcrumbBarBackgroundBrush" Color="Transparent" />
             <SolidColorBrush x:Key="BreadcrumbBarBorderBrush" Color="Transparent" />
-            <StaticResource x:Key="BreadcrumbBarEllipsisFlyoutPresenterBackground" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
+            <media:AcrylicBrush x:Key="BreadcrumbBarEllipsisFlyoutPresenterBackground" TintColor="#FCFCFC" TintOpacity="0.0" FallbackColor="#F9F9F9" />
             <SolidColorBrush x:Key="BreadcrumbBarEllipsisFlyoutPresenterBorderBrush" Color="{StaticResource SurfaceStrokeColorFlyout}" />
             <Thickness x:Key="BreadcrumbBarEllipsisFlyoutPresenterBorderThemeThickness">1</Thickness>
             <SolidColorBrush x:Key="PipsPagerSelectionIndicatorBackground" Color="{StaticResource ControlFillColorTransparent}" />
@@ -2216,7 +2216,7 @@
             <media:AcrylicBrush x:Key="AccentAcrylicInAppFillColorDefaultBrush" TintColor="{StaticResource SystemAccentColorDark1}" TintOpacity="0.8" FallbackColor="{StaticResource SystemAccentColorDark1}" BackgroundSource="Backdrop" />
             <media:AcrylicBrush x:Key="AccentAcrylicBackgroundFillColorBaseBrush" TintColor="{StaticResource SystemAccentColorDark2}" TintOpacity="0.8" FallbackColor="{StaticResource SystemAccentColorDark2}" BackgroundSource="HostBackdrop" />
             <media:AcrylicBrush x:Key="AccentAcrylicInAppFillColorBaseBrush" TintColor="{StaticResource SystemAccentColorDark2}" TintOpacity="0.8" FallbackColor="{StaticResource SystemAccentColorDark2}" BackgroundSource="Backdrop" />
-            <StaticResource x:Key="CommandBarFlyoutBackground" ResourceKey="SystemControlTransientBackgroundBrush" />
+            <media:AcrylicBrush x:Key="CommandBarFlyoutBackground" TintColor="#FCFCFC" TintOpacity="0.0" FallbackColor="#FCFCFC" />
             <SolidColorBrush x:Key="CommandBarFlyoutForeground" Color="{StaticResource TextFillColorPrimary}" />
             <SolidColorBrush x:Key="CommandBarFlyoutBorderBrush" Color="{StaticResource ControlStrokeColorDefault}" />
             <SolidColorBrush x:Key="CommandBarFlyoutAppBarButtonBackground" Color="{StaticResource SubtleFillColorTransparent}" />
@@ -2245,7 +2245,7 @@
             <Thickness x:Key="CommandBarFlyoutBorderDownThemeThickness">1,0,1,1</Thickness>
             <StaticResource x:Key="CommandBarFlyoutButtonBackground" ResourceKey="SystemControlTransparentBrush" />
             <SolidColorBrush x:Key="ToolTipForegroundBrush" Color="{StaticResource TextFillColorPrimary}" />
-            <StaticResource x:Key="ToolTipBackgroundBrush" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
+            <media:AcrylicBrush x:Key="ToolTipBackgroundBrush" TintColor="#FCFCFC" TintOpacity="0.0" FallbackColor="#F9F9F9" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="Light">
             <x:String x:Key="BreadcrumbBarChevronLeftToRight">&#xE0E3;</x:String>
@@ -2685,7 +2685,7 @@
             <SolidColorBrush x:Key="MenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOver" Color="{StaticResource TextFillColorSecondary}" />
             <SolidColorBrush x:Key="MenuFlyoutItemKeyboardAcceleratorTextForegroundPressed" Color="{StaticResource TextFillColorSecondary}" />
             <SolidColorBrush x:Key="MenuFlyoutItemKeyboardAcceleratorTextForegroundDisabled" Color="{StaticResource TextFillColorDisabled}" />
-            <StaticResource x:Key="MenuFlyoutPresenterBackground" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
+            <media:AcrylicBrush x:Key="MenuFlyoutPresenterBackground" TintColor="#2C2C2C" TintOpacity="0.15" FallbackColor="#2C2C2C" />
             <SolidColorBrush x:Key="MenuFlyoutPresenterBorderBrush" Color="{StaticResource SurfaceStrokeColorFlyout}" />
             <Thickness x:Key="MenuFlyoutPresenterBorderThemeThickness">1</Thickness>
             <Thickness x:Key="MenuFlyoutItemBorderThickness">0</Thickness>
@@ -3285,13 +3285,13 @@
             <x:Double x:Key="CommandBarOverflowMaxWidth">480</x:Double>
             <x:Double x:Key="CommandBarOverflowMaxHeight">198</x:Double>
             <SolidColorBrush x:Key="CommandBarBackground" Color="{StaticResource ControlFillColorTransparent}" />
-            <StaticResource x:Key="CommandBarBackgroundOpen" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
+            <media:AcrylicBrush x:Key="CommandBarBackgroundOpen" TintColor="#2C2C2C" TintOpacity="0.15" FallbackColor="#2C2C2C" />
             <SolidColorBrush x:Key="CommandBarBorderBrushOpen" Color="{StaticResource CardStrokeColorDefaultSolid}" />
             <Thickness x:Key="CommandBarBorderThicknessOpen">1</Thickness>
             <SolidColorBrush x:Key="CommandBarForeground" Color="{StaticResource TextFillColorPrimary}" />
             <SolidColorBrush x:Key="CommandBarHighContrastBorder" Color="{StaticResource ControlFillColorTransparent}" />
             <SolidColorBrush x:Key="CommandBarEllipsisIconForegroundDisabled" Color="{StaticResource TextFillColorDisabled}" />
-            <StaticResource x:Key="CommandBarOverflowPresenterBackground" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
+            <media:AcrylicBrush x:Key="CommandBarOverflowPresenterBackground" TintColor="#2C2C2C" TintOpacity="0.15" FallbackColor="#2C2C2C" />
             <SolidColorBrush x:Key="CommandBarOverflowPresenterBorderBrush" Color="#000000" />
             <SolidColorBrush x:Key="CommandBarLightDismissOverlayBackground" Color="{StaticResource SystemAltMediumColor}" />
             <Thickness x:Key="CommandBarOverflowPresenterBorderThickness">1</Thickness>
@@ -3475,7 +3475,7 @@
                     <GradientStop Offset="1.0" Color="{StaticResource ControlStrokeColorDefault}" />
                 </LinearGradientBrush.GradientStops>
             </LinearGradientBrush>
-            <StaticResource x:Key="FlyoutPresenterBackground" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
+            <media:AcrylicBrush x:Key="FlyoutPresenterBackground" TintColor="#2C2C2C" TintOpacity="0.15" FallbackColor="#2C2C2C" />
             <SolidColorBrush x:Key="FlyoutBorderThemeBrush" Color="{StaticResource SurfaceStrokeColorFlyout}" />
             <Thickness x:Key="FlyoutBorderThemeThickness">1</Thickness>
             <SolidColorBrush x:Key="AccentButtonBackground" Color="{StaticResource SystemAccentColorLight2}" />
@@ -3573,7 +3573,7 @@
             <CornerRadius x:Key="OverlayCornerRadius">8,8,8,8</CornerRadius>
             <Thickness x:Key="MediaTransportControlsTitleSafeBounds">48,0,48,27</Thickness>
             <SolidColorBrush x:Key="MediaTransportControlsPanelBackground" Color="{StaticResource ControlOnImageFillColorDefault}" />
-            <StaticResource x:Key="MediaTransportControlsFlyoutBackground" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
+            <media:AcrylicBrush x:Key="MediaTransportControlsFlyoutBackground" TintColor="#2C2C2C" TintOpacity="0.15" FallbackColor="#2C2C2C" />
             <SolidColorBrush x:Key="MediaTransportControlsThumbBorderBackground" Color="{StaticResource ControlStrongFillColorDefault}" />
             <SolidColorBrush x:Key="MediaTransportControlsFillTimeElapsedText" Color="{StaticResource TextFillColorSecondary}" />
             <SolidColorBrush x:Key="MediaTransportControlsFillMediaText" Color="{StaticResource TextFillColorPrimary}" />
@@ -3761,7 +3761,7 @@
             <SolidColorBrush x:Key="DatePickerButtonForegroundPressed" Color="{StaticResource TextFillColorSecondary}" />
             <SolidColorBrush x:Key="DatePickerButtonForegroundDisabled" Color="{StaticResource TextFillColorDisabled}" />
             <SolidColorBrush x:Key="DatePickerButtonForegroundFocused" Color="{StaticResource TextFillColorPrimary}" />
-            <StaticResource x:Key="DatePickerFlyoutPresenterBackground" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
+            <media:AcrylicBrush x:Key="DatePickerFlyoutPresenterBackground" TintColor="#2C2C2C" TintOpacity="0.15" FallbackColor="#2C2C2C" />
             <SolidColorBrush x:Key="DatePickerFlyoutPresenterBorderBrush" Color="{StaticResource SurfaceStrokeColorFlyout}" />
             <SolidColorBrush x:Key="DatePickerFlyoutPresenterSpacerFill" Color="{StaticResource DividerStrokeColorDefault}" />
             <SolidColorBrush x:Key="DatePickerLightDismissOverlayBackground" Color="{StaticResource SystemAltMediumColor}" />
@@ -3779,7 +3779,7 @@
             <SolidColorBrush x:Key="DateTimePickerFlyoutButtonForegroundPointerOver" Color="{StaticResource TextFillColorPrimary}" />
             <SolidColorBrush x:Key="DateTimePickerFlyoutButtonForegroundPressed" Color="{StaticResource TextFillColorPrimary}" />
             <SolidColorBrush x:Key="LoopingSelectorButtonBackground" Color="{StaticResource SubtleFillColorTransparent}" />
-            <StaticResource x:Key="LoopingSelectorUpDownButtonBackground" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
+            <media:AcrylicBrush x:Key="LoopingSelectorUpDownButtonBackground" TintColor="#2C2C2C" TintOpacity="0.15" FallbackColor="#2C2C2C" />
             <SolidColorBrush x:Key="LoopingSelectorItemForeground" Color="{StaticResource TextFillColorPrimary}" />
             <SolidColorBrush x:Key="LoopingSelectorItemForegroundSelected" Color="{StaticResource TextFillColorPrimary}" />
             <SolidColorBrush x:Key="LoopingSelectorItemForegroundPointerOver" Color="{StaticResource TextFillColorPrimary}" />
@@ -3788,9 +3788,9 @@
             <SolidColorBrush x:Key="LoopingSelectorItemBackgroundPressed" Color="{StaticResource SubtleFillColorTertiary}" />
             <Thickness x:Key="FlipViewButtonBorderThemeThickness">0</Thickness>
             <SolidColorBrush x:Key="FlipViewBackground" Color="{StaticResource SolidBackgroundFillColorBase}" />
-            <StaticResource x:Key="FlipViewNextPreviousButtonBackground" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
-            <StaticResource x:Key="FlipViewNextPreviousButtonBackgroundPointerOver" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
-            <StaticResource x:Key="FlipViewNextPreviousButtonBackgroundPressed" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
+            <media:AcrylicBrush x:Key="FlipViewNextPreviousButtonBackground" TintColor="#2C2C2C" TintOpacity="0.15" FallbackColor="#2C2C2C" />
+            <media:AcrylicBrush x:Key="FlipViewNextPreviousButtonBackgroundPointerOver" TintColor="#2C2C2C" TintOpacity="0.15" FallbackColor="#2C2C2C" />
+            <media:AcrylicBrush x:Key="FlipViewNextPreviousButtonBackgroundPressed" TintColor="#2C2C2C" TintOpacity="0.15" FallbackColor="#2C2C2C" />
             <SolidColorBrush x:Key="FlipViewNextPreviousArrowForeground" Color="{StaticResource ControlStrongFillColorDefault}" />
             <SolidColorBrush x:Key="FlipViewNextPreviousArrowForegroundPointerOver" Color="{StaticResource TextFillColorSecondary}" />
             <SolidColorBrush x:Key="FlipViewNextPreviousArrowForegroundPressed" Color="{StaticResource TextFillColorSecondary}" />
@@ -3898,12 +3898,12 @@
             <SolidColorBrush x:Key="ScrollBarThumbFillPressed" Color="{StaticResource ControlStrongFillColorDefault}" />
             <SolidColorBrush x:Key="ScrollBarThumbFillDisabled" Color="{StaticResource ControlStrongFillColorDisabled}" />
             <SolidColorBrush x:Key="ScrollBarThumbBorderBrush" Color="{StaticResource ControlFillColorTransparent}" />
-            <StaticResource x:Key="ScrollBarTrackFill" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
-            <StaticResource x:Key="ScrollBarTrackFillPointerOver" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
-            <StaticResource x:Key="ScrollBarTrackFillDisabled" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
-            <StaticResource x:Key="ScrollBarTrackStroke" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
-            <StaticResource x:Key="ScrollBarTrackStrokePointerOver" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
-            <StaticResource x:Key="ScrollBarTrackStrokeDisabled" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
+            <media:AcrylicBrush x:Key="ScrollBarTrackFill" TintColor="#2C2C2C" TintOpacity="0.15" FallbackColor="#2C2C2C" />
+            <media:AcrylicBrush x:Key="ScrollBarTrackFillPointerOver" TintColor="#2C2C2C" TintOpacity="0.15" FallbackColor="#2C2C2C" />
+            <media:AcrylicBrush x:Key="ScrollBarTrackFillDisabled" TintColor="#2C2C2C" TintOpacity="0.15" FallbackColor="#2C2C2C" />
+            <media:AcrylicBrush x:Key="ScrollBarTrackStroke" TintColor="#2C2C2C" TintOpacity="0.15" FallbackColor="#2C2C2C" />
+            <media:AcrylicBrush x:Key="ScrollBarTrackStrokePointerOver" TintColor="#2C2C2C" TintOpacity="0.15" FallbackColor="#2C2C2C" />
+            <media:AcrylicBrush x:Key="ScrollBarTrackStrokeDisabled" TintColor="#2C2C2C" TintOpacity="0.15" FallbackColor="#2C2C2C" />
             <SolidColorBrush x:Key="ScrollBarThumbBackground" Color="{StaticResource ControlStrongFillColorDefault}" />
             <SolidColorBrush x:Key="ScrollBarPanningThumbBackground" Color="{StaticResource ControlStrongFillColorDefault}" />
             <SolidColorBrush x:Key="ScrollBarPanningThumbBackgroundDisabled" Color="{StaticResource ControlStrongFillColorDisabled}" />
@@ -4003,7 +4003,7 @@
             <SolidColorBrush x:Key="TimePickerButtonForegroundPressed" Color="{StaticResource TextFillColorSecondary}" />
             <SolidColorBrush x:Key="TimePickerButtonForegroundDisabled" Color="{StaticResource TextFillColorDisabled}" />
             <SolidColorBrush x:Key="TimePickerButtonForegroundFocused" Color="{StaticResource TextFillColorPrimary}" />
-            <StaticResource x:Key="TimePickerFlyoutPresenterBackground" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
+            <media:AcrylicBrush x:Key="TimePickerFlyoutPresenterBackground" TintColor="#2C2C2C" TintOpacity="0.15" FallbackColor="#2C2C2C" />
             <SolidColorBrush x:Key="TimePickerFlyoutPresenterBorderBrush" Color="{StaticResource SurfaceStrokeColorFlyout}" />
             <SolidColorBrush x:Key="TimePickerFlyoutPresenterSpacerFill" Color="{StaticResource DividerStrokeColorDefault}" />
             <SolidColorBrush x:Key="TimePickerFlyoutPresenterHighlightFill" Color="{StaticResource SystemAccentColorLight2}" />
@@ -4027,9 +4027,9 @@
             <SolidColorBrush x:Key="RatingControlPointerOverSelectedForeground" Color="{StaticResource SystemAccentColorLight2}" />
             <SolidColorBrush x:Key="RatingControlDisabledSelectedForeground" Color="{StaticResource TextFillColorDisabled}" />
             <SolidColorBrush x:Key="RatingControlCaptionForeground" Color="{StaticResource TextFillColorSecondary}" />
-            <StaticResource x:Key="NavigationViewDefaultPaneBackground" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
+            <media:AcrylicBrush x:Key="NavigationViewDefaultPaneBackground" TintColor="#2C2C2C" TintOpacity="0.15" FallbackColor="#2C2C2C" />
             <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="{StaticResource ControlFillColorTransparent}" />
-            <StaticResource x:Key="NavigationViewTopPaneBackground" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
+            <media:AcrylicBrush x:Key="NavigationViewTopPaneBackground" TintColor="#2C2C2C" TintOpacity="0.15" FallbackColor="#2C2C2C" />
             <SolidColorBrush x:Key="NavigationViewContentBackground" Color="{StaticResource SolidBackgroundFillColorBase}" />
             <SolidColorBrush x:Key="NavigationViewItemBackground" Color="{StaticResource SubtleFillColorTransparent}" />
             <SolidColorBrush x:Key="NavigationViewItemBackgroundPointerOver" Color="{StaticResource SubtleFillColorSecondary}" />
@@ -4188,7 +4188,7 @@
             <SolidColorBrush x:Key="RadioButtonsHeaderForegroundDisabled" Color="{StaticResource TextFillColorDisabled}" />
             <SolidColorBrush x:Key="TeachingTipBorderBrush" Color="{StaticResource SurfaceStrokeColorDefault}" />
             <SolidColorBrush x:Key="TeachingTipTopHighlightBrush" Color="#99FFFFFF" />
-            <StaticResource x:Key="TeachingTipTransientBackground" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
+            <media:AcrylicBrush x:Key="TeachingTipTransientBackground" TintColor="#2C2C2C" TintOpacity="0.15" FallbackColor="#2C2C2C" />
             <SolidColorBrush x:Key="TeachingTipForegroundBrush" Color="{StaticResource TextFillColorPrimary}" />
             <SolidColorBrush x:Key="TeachingTipBackgroundBrush" Color="{StaticResource SystemChromeLowColor}" />
             <SolidColorBrush x:Key="TeachingTipTitleForegroundBrush" Color="{StaticResource TextFillColorPrimary}" />
@@ -4236,7 +4236,7 @@
             <SolidColorBrush x:Key="TabViewItemHeaderDisabledCloseButtonForeground" Color="{StaticResource TextFillColorDisabled}" />
             <SolidColorBrush x:Key="TabViewButtonBackgroundActiveTab" Color="{StaticResource SubtleFillColorTransparent}" />
             <SolidColorBrush x:Key="TabViewButtonForegroundActiveTab" Color="{StaticResource ControlStrongFillColorDefault}" />
-            <StaticResource x:Key="AutoSuggestBoxSuggestionsListBackground" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
+            <media:AcrylicBrush x:Key="AutoSuggestBoxSuggestionsListBackground" TintColor="#2C2C2C" TintOpacity="0.15" FallbackColor="#2C2C2C" />
             <SolidColorBrush x:Key="AutoSuggestBoxSuggestionsListBorderBrush" Color="{StaticResource SurfaceStrokeColorFlyout}" />
             <SolidColorBrush x:Key="AutoSuggestBoxLightDismissOverlayBackground" Color="{StaticResource SystemAltMediumColor}" />
             <x:Double x:Key="AutoSuggestBoxIconFontSize">12</x:Double>
@@ -4298,7 +4298,7 @@
             <SolidColorBrush x:Key="ComboBoxDropDownGlyphForegroundFocused" Color="{StaticResource TextFillColorSecondary}" />
             <SolidColorBrush x:Key="ComboBoxDropDownGlyphForegroundFocusedPressed" Color="{StaticResource SystemBaseMediumHighColor}" />
             <SolidColorBrush x:Key="ComboBoxDropDownForeground" Color="{StaticResource TextFillColorPrimary}" />
-            <StaticResource x:Key="ComboBoxDropDownBackground" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
+            <media:AcrylicBrush x:Key="ComboBoxDropDownBackground" TintColor="#2C2C2C" TintOpacity="0.15" FallbackColor="#2C2C2C" />
             <SolidColorBrush x:Key="ComboBoxDropDownBorderBrush" Color="{StaticResource SurfaceStrokeColorFlyout}" />
             <SolidColorBrush x:Key="ComboBoxLightDismissOverlayBackground" Color="{StaticResource SystemAltMediumColor}" />
             <SolidColorBrush x:Key="ComboBoxArrowDisabledForegroundThemeBrush" Color="#66000000" />
@@ -4352,7 +4352,7 @@
             <SolidColorBrush x:Key="ProgressRingForegroundThemeBrush" Color="{StaticResource SystemAccentColorLight2}" />
             <SolidColorBrush x:Key="ProgressRingBackgroundThemeBrush" Color="{StaticResource ControlFillColorTertiary}" />
             <SolidColorBrush x:Key="NumberBoxPopupIndicatorForeground" Color="{StaticResource TextFillColorSecondary}" />
-            <StaticResource x:Key="NumberBoxPopupBackground" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
+            <media:AcrylicBrush x:Key="NumberBoxPopupBackground" TintColor="#2C2C2C" TintOpacity="0.15" FallbackColor="#2C2C2C" />
             <SolidColorBrush x:Key="NumberBoxPopupBorderBrush" Color="{StaticResource SurfaceStrokeColorFlyout}" />
             <Thickness x:Key="NumberBoxPopupBorderThickness">1</Thickness>
             <SolidColorBrush x:Key="NumberBoxPopupSpinButtonBackground" Color="{StaticResource SubtleFillColorTransparent}" />
@@ -4421,7 +4421,7 @@
             <SolidColorBrush x:Key="BreadcrumbBarForegroundBrush" Color="{StaticResource TextFillColorPrimary}" />
             <SolidColorBrush x:Key="BreadcrumbBarBackgroundBrush" Color="Transparent" />
             <SolidColorBrush x:Key="BreadcrumbBarBorderBrush" Color="Transparent" />
-            <StaticResource x:Key="BreadcrumbBarEllipsisFlyoutPresenterBackground" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
+            <media:AcrylicBrush x:Key="BreadcrumbBarEllipsisFlyoutPresenterBackground" TintColor="#2C2C2C" TintOpacity="0.15" FallbackColor="#2C2C2C" />
             <SolidColorBrush x:Key="BreadcrumbBarEllipsisFlyoutPresenterBorderBrush" Color="{StaticResource SurfaceStrokeColorFlyout}" />
             <Thickness x:Key="BreadcrumbBarEllipsisFlyoutPresenterBorderThemeThickness">1</Thickness>
             <SolidColorBrush x:Key="PipsPagerSelectionIndicatorBackground" Color="{StaticResource ControlFillColorTransparent}" />
@@ -4461,7 +4461,7 @@
             <media:AcrylicBrush x:Key="AccentAcrylicInAppFillColorDefaultBrush" TintColor="{StaticResource SystemAccentColorLight3}" TintOpacity="0.8" FallbackColor="{StaticResource SystemAccentColorLight3}" BackgroundSource="Backdrop" />
             <media:AcrylicBrush x:Key="AccentAcrylicBackgroundFillColorBaseBrush" TintColor="{StaticResource SystemAccentColorLight3}" TintOpacity="0.8" FallbackColor="{StaticResource SystemAccentColorLight3}" BackgroundSource="HostBackdrop" />
             <media:AcrylicBrush x:Key="AccentAcrylicInAppFillColorBaseBrush" TintColor="{StaticResource SystemAccentColorLight3}" TintOpacity="0.8" FallbackColor="{StaticResource SystemAccentColorLight3}" BackgroundSource="Backdrop" />
-            <StaticResource x:Key="CommandBarFlyoutBackground" ResourceKey="SystemControlTransientBackgroundBrush" />
+            <media:AcrylicBrush x:Key="CommandBarFlyoutBackground" TintColor="#2C2C2C" TintOpacity="0.15" FallbackColor="#2C2C2C" />
             <SolidColorBrush x:Key="CommandBarFlyoutForeground" Color="{StaticResource TextFillColorPrimary}" />
             <SolidColorBrush x:Key="CommandBarFlyoutBorderBrush" Color="{StaticResource ControlStrokeColorDefault}" />
             <SolidColorBrush x:Key="CommandBarFlyoutAppBarButtonBackground" Color="{StaticResource SubtleFillColorTransparent}" />
@@ -4490,7 +4490,7 @@
             <Thickness x:Key="CommandBarFlyoutBorderDownThemeThickness">1,0,1,1</Thickness>
             <StaticResource x:Key="CommandBarFlyoutButtonBackground" ResourceKey="SystemControlTransparentBrush" />
             <SolidColorBrush x:Key="ToolTipForegroundBrush" Color="{StaticResource TextFillColorPrimary}" />
-            <StaticResource x:Key="ToolTipBackgroundBrush" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
+            <media:AcrylicBrush x:Key="ToolTipBackgroundBrush" TintColor="#2C2C2C" TintOpacity="0.15" FallbackColor="#2C2C2C" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 

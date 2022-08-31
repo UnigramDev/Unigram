@@ -45,6 +45,38 @@ namespace Unigram.Services.Settings
         Dark3
     }
 
+    public readonly struct Acrylic
+    {
+        public static Acrylic<Color> Color(Color tint, Color fallback, double opacity, double? luminosity = null)
+        {
+            return new Acrylic<Color>(tint, fallback, opacity, luminosity);
+        }
+
+        public static Acrylic<AccentShade> Shade(AccentShade tint, AccentShade fallback, double opacity, double? luminosity = null)
+        {
+            return new Acrylic<AccentShade>(tint, fallback, opacity, luminosity);
+        }
+    }
+
+    public readonly struct Acrylic<T> where T : struct
+    {
+        public T TintColor { get; }
+
+        public T FallbackColor { get; }
+
+        public double TintOpacity { get; }
+
+        public double? TintLuminosityOpacity { get; }
+
+        public Acrylic(T tint, T fallback, double opacity, double? tonality = null)
+        {
+            TintColor = tint;
+            FallbackColor = fallback;
+            TintOpacity = opacity;
+            TintLuminosityOpacity = tonality;
+        }
+    }
+
     public class InstalledEmojiSet
     {
         public string Id { get; set; }
