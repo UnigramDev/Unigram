@@ -568,6 +568,18 @@ namespace Unigram.Common
             return value;
         }
 
+        public static bool IsBetween(this TimeSpan value, TimeSpan minimum, TimeSpan maximum)
+        {
+            // see if start comes before end
+            if (minimum < maximum)
+            {
+                return minimum <= value && value <= maximum;
+            }
+
+            // start is after end, so do the inverse comparison
+            return !(maximum < value && value < minimum);
+        }
+
         public static bool Contains(this string source, string toCheck, StringComparison comp)
         {
             return source.IndexOf(toCheck, comp) >= 0;

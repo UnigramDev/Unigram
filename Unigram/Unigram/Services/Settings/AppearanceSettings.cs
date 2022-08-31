@@ -505,16 +505,7 @@ namespace Unigram.Services.Settings
                     end = end.Add(To);
                 }
 
-                var now = DateTime.Now.TimeOfDay;
-
-                // see if start comes before end
-                if (start < end)
-                {
-                    return start <= now && now <= end;
-                }
-
-                // start is after end, so do the inverse comparison
-                return !(end < now && now < start);
+                return DateTime.Now.TimeOfDay.IsBetween(start, end);
             }
             else if (NightMode == NightMode.System)
             {
