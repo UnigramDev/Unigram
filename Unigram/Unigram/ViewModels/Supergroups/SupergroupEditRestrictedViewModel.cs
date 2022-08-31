@@ -320,19 +320,12 @@ namespace Unigram.ViewModels.Supergroups
         public RelayCommand DismissCommand { get; }
         private async void DismissExecute()
         {
-            var chat = _chat;
-            if (chat == null)
+            if (_chat is not Chat chat || _member is not ChatMember member)
             {
                 return;
             }
 
-            var member = _member;
-            if (member == null)
-            {
-                return;
-            }
-
-            var response = await ProtoService.SendAsync(new SetChatMemberStatus(chat.Id, member.MemberId, new ChatMemberStatusMember()));
+            var response = await ProtoService.SendAsync(new SetChatMemberStatus(chat.Id, member.MemberId, new ChatMemberStatusBanned()));
             if (response is Ok)
             {
                 NavigationService.GoBack();

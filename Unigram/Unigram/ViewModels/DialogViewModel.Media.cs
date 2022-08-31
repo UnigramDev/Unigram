@@ -675,28 +675,10 @@ namespace Unigram.ViewModels
 
                 await SendMessageAsync(chat, reply, input, options);
 
-                //if (page.Media is TLMessageMediaVenue venue)
-                //{
-                //    await SendGeoAsync(venue);
-                //}
-                //else if (page.Media is TLMessageMediaGeoLive geoLive)
-                //{
-                //    if (geoLive.Geo == null || geoLive.Period == 0 || _liveLocationService.IsTracking(Peer.ToPeer()))
-                //    {
-                //        _liveLocationService.StopTracking(Peer.ToPeer());
-                //    }
-                //    else
-                //    {
-                //        await SendGeoAsync(geoLive);
-                //    }
-                //}
-                //else if (page.Media is TLMessageMediaGeo geo && geo.Geo is TLGeoPoint geoPoint)
-                //{
-                //    await SendGeoAsync(geoPoint.Lat, geoPoint.Long);
-                //}
+#if !DEBUG
+                Microsoft.AppCenter.Analytics.Analytics.TrackEvent("SendLocation");
+#endif
             }
-
-            //NavigationService.Navigate(typeof(DialogSendLocationPage));
         }
 
         public RelayCommand SendPollCommand { get; }

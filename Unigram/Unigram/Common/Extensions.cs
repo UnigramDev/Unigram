@@ -120,6 +120,27 @@ namespace Unigram.Common
             return (color.R << 16) + (color.G << 8) + color.B;
         }
 
+        /// <summary>
+        /// Test for almost equality to 0.
+        /// </summary>
+        /// <param name="number"></param>
+        /// <param name="epsilon"></param>
+        public static bool AlmostEqualsToZero(this double number, double epsilon = 1e-5)
+        {
+            return number > -epsilon && number < epsilon;
+        }
+
+        /// <summary>
+        /// Test for almost equality.
+        /// </summary>
+        /// <param name="number"></param>
+        /// <param name="other"></param>
+        /// <param name="epsilon"></param>
+        public static bool AlmostEquals(this double number, double other, double epsilon = 1e-5)
+        {
+            return (number - other).AlmostEqualsToZero(epsilon);
+        }
+
         public static int ToTimestamp(this DateTime dateTime)
         {
             var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);

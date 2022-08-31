@@ -215,7 +215,7 @@ namespace Unigram.Services
 
         private async void UpdateTransport()
         {
-            var transport = _mediaPlayer.SystemMediaTransportControls;
+            var transport = _mediaPlayer?.SystemMediaTransportControls;
             if (transport == null)
             {
                 return;
