@@ -5,6 +5,7 @@ using Unigram.Converters;
 using Unigram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Messages.Content
 {
@@ -169,24 +170,40 @@ namespace Unigram.Controls.Messages.Content
             UpdateThumbnail(_message, animation, animation.Thumbnail?.File, false);
         }
 
-        private void UpdateThumbnail(MessageViewModel message, Animation animation, File file, bool download)
+        private async void UpdateThumbnail(MessageViewModel message, Animation animation, File file, bool download)
         {
-            var thumbnail = animation.Thumbnail;
-            var minithumbnail = animation.Minithumbnail;
+            ImageSource source = null;
+            ImageBrush brush;
 
-            if (thumbnail != null && thumbnail.Format is ThumbnailFormatJpeg)
+            if (LayoutRoot.Background is ImageBrush existing)
+            {
+                brush = existing;
+            }
+            else
+            {
+                brush = new ImageBrush
+                {
+                    Stretch = Stretch.UniformToFill,
+                    AlignmentX = AlignmentX.Center,
+                    AlignmentY = AlignmentY.Center
+                };
+
+                LayoutRoot.Background = brush;
+            }
+
+            if (animation.Thumbnail != null && animation.Thumbnail.Format is ThumbnailFormatJpeg)
             {
                 if (file.Local.IsFileExisting())
                 {
-                    Texture.Source = PlaceholderHelper.GetBlurred(file.Local.Path);
+                    source = await PlaceholderHelper.GetBlurredAsync(file.Local.Path, message.IsSecret() ? 15 : 3);
                 }
                 else if (download)
                 {
                     if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                     {
-                        if (minithumbnail != null)
+                        if (animation.Minithumbnail != null)
                         {
-                            Texture.Source = PlaceholderHelper.GetBlurred(minithumbnail.Data);
+                            source = await PlaceholderHelper.GetBlurredAsync(animation.Minithumbnail.Data, message.IsSecret() ? 15 : 3);
                         }
 
                         message.ProtoService.DownloadFile(file.Id, 1);
@@ -195,14 +212,12 @@ namespace Unigram.Controls.Messages.Content
                     UpdateManager.Subscribe(this, message, file, ref _thumbnailToken, UpdateThumbnail, true);
                 }
             }
-            else if (minithumbnail != null)
+            else if (animation.Minithumbnail != null)
             {
-                Texture.Source = PlaceholderHelper.GetBlurred(minithumbnail.Data);
+                source = await PlaceholderHelper.GetBlurredAsync(animation.Minithumbnail.Data, message.IsSecret() ? 15 : 3);
             }
-            else
-            {
-                Texture.Source = null;
-            }
+
+            brush.ImageSource = source;
         }
 
         public bool IsValid(MessageContent content, bool primary)

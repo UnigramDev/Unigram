@@ -282,13 +282,32 @@ namespace Unigram.Controls.Messages.Content
             UpdateThumbnail(_message, file, photo.Minithumbnail, false);
         }
 
-        private void UpdateThumbnail(MessageViewModel message, File file, Minithumbnail minithumbnail, bool download)
+        private async void UpdateThumbnail(MessageViewModel message, File file, Minithumbnail minithumbnail, bool download)
         {
+            ImageSource source = null;
+            ImageBrush brush;
+
+            if (LayoutRoot.Background is ImageBrush existing)
+            {
+                brush = existing;
+            }
+            else
+            {
+                brush = new ImageBrush
+                {
+                    Stretch = Stretch.UniformToFill,
+                    AlignmentX = AlignmentX.Center,
+                    AlignmentY = AlignmentY.Center
+                };
+
+                LayoutRoot.Background = brush;
+            }
+
             if (file != null)
             {
                 if (file.Local.IsFileExisting())
                 {
-                    LayoutRoot.Background = new ImageBrush { ImageSource = PlaceholderHelper.GetBlurred(file.Local.Path, message.IsSecret() ? 15 : 3), Stretch = Stretch.UniformToFill };
+                    source = await PlaceholderHelper.GetBlurredAsync(file.Local.Path, message.IsSecret() ? 15 : 3);
                 }
                 else if (download)
                 {
@@ -296,7 +315,7 @@ namespace Unigram.Controls.Messages.Content
                     {
                         if (minithumbnail != null)
                         {
-                            LayoutRoot.Background = new ImageBrush { ImageSource = PlaceholderHelper.GetBlurred(minithumbnail.Data, message.IsSecret() ? 15 : 3), Stretch = Stretch.UniformToFill };
+                            source = await PlaceholderHelper.GetBlurredAsync(minithumbnail.Data, message.IsSecret() ? 15 : 3);
                         }
 
                         message.ProtoService.DownloadFile(file.Id, 1);
@@ -307,8 +326,10 @@ namespace Unigram.Controls.Messages.Content
             }
             else if (minithumbnail != null)
             {
-                LayoutRoot.Background = new ImageBrush { ImageSource = PlaceholderHelper.GetBlurred(minithumbnail.Data, message.IsSecret() ? 15 : 3), Stretch = Stretch.UniformToFill };
+                source = await PlaceholderHelper.GetBlurredAsync(minithumbnail.Data, message.IsSecret() ? 15 : 3);
             }
+
+            brush.ImageSource = source;
         }
 
         public bool IsValid(MessageContent content, bool primary)

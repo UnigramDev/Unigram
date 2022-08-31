@@ -175,24 +175,40 @@ namespace Unigram.Controls.Messages.Content
             UpdateThumbnail(_message, videoNote, file, false);
         }
 
-        private void UpdateThumbnail(MessageViewModel message, VideoNote videoNote, File file, bool download)
+        private async void UpdateThumbnail(MessageViewModel message, VideoNote videoNote, File file, bool download)
         {
-            var thumbnail = videoNote.Thumbnail;
-            var minithumbnail = videoNote.Minithumbnail;
+            ImageSource source = null;
+            ImageBrush brush;
 
-            if (thumbnail != null && thumbnail.Format is ThumbnailFormatJpeg)
+            if (LayoutRoot.Background is ImageBrush existing)
+            {
+                brush = existing;
+            }
+            else
+            {
+                brush = new ImageBrush
+                {
+                    Stretch = Stretch.UniformToFill,
+                    AlignmentX = AlignmentX.Center,
+                    AlignmentY = AlignmentY.Center
+                };
+
+                LayoutRoot.Background = brush;
+            }
+
+            if (videoNote.Thumbnail != null && videoNote.Thumbnail.Format is ThumbnailFormatJpeg)
             {
                 if (file.Local.IsFileExisting())
                 {
-                    Texture.ImageSource = PlaceholderHelper.GetBlurred(file.Local.Path);
+                    source = await PlaceholderHelper.GetBlurredAsync(file.Local.Path, message.IsSecret() ? 15 : 3);
                 }
                 else if (download)
                 {
                     if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                     {
-                        if (minithumbnail != null)
+                        if (videoNote.Minithumbnail != null)
                         {
-                            Texture.ImageSource = PlaceholderHelper.GetBlurred(minithumbnail.Data);
+                            source = await PlaceholderHelper.GetBlurredAsync(videoNote.Minithumbnail.Data, message.IsSecret() ? 15 : 3);
                         }
 
                         message.ProtoService.DownloadFile(file.Id, 1);
@@ -201,14 +217,12 @@ namespace Unigram.Controls.Messages.Content
                     UpdateManager.Subscribe(this, message, file, ref _thumbnailToken, UpdateThumbnail, true);
                 }
             }
-            else if (minithumbnail != null)
+            else if (videoNote.Minithumbnail != null)
             {
-                Texture.ImageSource = PlaceholderHelper.GetBlurred(minithumbnail.Data);
+                source = await PlaceholderHelper.GetBlurredAsync(videoNote.Minithumbnail.Data, message.IsSecret() ? 15 : 3);
             }
-            else
-            {
-                Texture.ImageSource = null;
-            }
+
+            brush.ImageSource = source;
         }
 
         public bool IsValid(MessageContent content, bool primary)

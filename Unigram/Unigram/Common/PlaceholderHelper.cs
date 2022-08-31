@@ -438,6 +438,22 @@ namespace Unigram.Common
             return bitmap;
         }
 
+        public static async Task<ImageSource> GetBlurredAsync(string path, float amount = 3)
+        {
+            var bitmap = new BitmapImage();
+            using (var stream = new InMemoryRandomAccessStream())
+            {
+                try
+                {
+                    await Task.Run(() => PlaceholderImageHelper.Current.DrawThumbnailPlaceholder(path, amount, stream));
+                    bitmap.SetSource(stream);
+                }
+                catch { }
+            }
+
+            return bitmap;
+        }
+
         public static ImageSource GetBlurred(IList<byte> bytes, float amount = 3)
         {
             var bitmap = new BitmapImage();
@@ -446,6 +462,22 @@ namespace Unigram.Common
                 try
                 {
                     PlaceholderImageHelper.Current.DrawThumbnailPlaceholder(bytes, amount, stream);
+                    bitmap.SetSource(stream);
+                }
+                catch { }
+            }
+
+            return bitmap;
+        }
+
+        public static async Task<ImageSource> GetBlurredAsync(IList<byte> bytes, float amount = 3)
+        {
+            var bitmap = new BitmapImage();
+            using (var stream = new InMemoryRandomAccessStream())
+            {
+                try
+                {
+                    await Task.Run(() => PlaceholderImageHelper.Current.DrawThumbnailPlaceholder(bytes, amount, stream));
                     bitmap.SetSource(stream);
                 }
                 catch { }
