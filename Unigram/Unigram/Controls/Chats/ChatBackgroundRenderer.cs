@@ -358,7 +358,7 @@ namespace Unigram.Controls.Chats
                     thumbnail = false;
                 }
 
-                if (file.Local.IsFileExisting())
+                if (file.Local.IsDownloadingCompleted)
                 {
                     _background = file;
                     _backgroundId = 0;
@@ -394,7 +394,7 @@ namespace Unigram.Controls.Chats
                     thumbnail = false;
                 }
 
-                if (file.Local.IsFileExisting())
+                if (file.Local.IsDownloadingCompleted)
                 {
                     _background = file;
                     _backgroundId = 0;

@@ -166,7 +166,7 @@ namespace Unigram.Controls.Messages
 
         private void UpdateThumbnail(MessageViewModel message, PhotoSize photoSize, Minithumbnail minithumbnail)
         {
-            if (photoSize != null && photoSize.Photo.Local.IsFileExisting())
+            if (photoSize != null && photoSize.Photo.Local.IsDownloadingCompleted)
             {
                 double ratioX = (double)36 / photoSize.Width;
                 double ratioY = (double)36 / photoSize.Height;
@@ -191,7 +191,7 @@ namespace Unigram.Controls.Messages
 
         private void UpdateThumbnail(MessageViewModel message, Thumbnail thumbnail, Minithumbnail minithumbnail, CornerRadius radius = default)
         {
-            if (thumbnail != null && thumbnail.File.Local.IsFileExisting() && thumbnail.Format is ThumbnailFormatJpeg)
+            if (thumbnail != null && thumbnail.File.Local.IsDownloadingCompleted && thumbnail.Format is ThumbnailFormatJpeg)
             {
                 double ratioX = (double)36 / thumbnail.Width;
                 double ratioY = (double)36 / thumbnail.Height;

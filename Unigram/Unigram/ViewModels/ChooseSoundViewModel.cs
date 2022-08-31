@@ -131,7 +131,7 @@ namespace Unigram.ViewModels
             if (Set(ref _isSelected, value, nameof(IsSelected)) && _isSelected)
             {
                 var file = _notificationSound.Sound;
-                if (file.Local.IsFileExisting())
+                if (file.Local.IsDownloadingCompleted)
                 {
                     SoundEffects.Play(file);
                 }
@@ -139,7 +139,7 @@ namespace Unigram.ViewModels
                 {
                     UpdateManager.Subscribe(this, _parent.ProtoService, file, ref _soundToken, _parent.UpdateFile, true);
 
-                    if (file.Local.CanBeDownloaded && !file.Local.IsFileExisting())
+                    if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
                     {
                         _parent.ProtoService.DownloadFile(file.Id, 16);
                     }

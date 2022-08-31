@@ -216,7 +216,7 @@ namespace Unigram.Controls.Messages.Content
             {
                 _message.ProtoService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsFileExisting())
+            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
                 _message.ProtoService.DownloadFile(file.Id, 30);
             }

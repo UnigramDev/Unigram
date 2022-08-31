@@ -2453,7 +2453,7 @@ namespace Unigram.Views
             }
 
             var file = message.GetFile();
-            if (file != null && file.Local.IsFileExisting())
+            if (file != null && file.Local.IsDownloadingCompleted)
             {
                 return true;
             }
@@ -3287,7 +3287,7 @@ namespace Unigram.Views
                     content.Height = 72;
                 }
 
-                if (file.Local.IsFileExisting())
+                if (file.Local.IsDownloadingCompleted)
                 {
                     if (content.Children[0] is Border border && border.Child is Image photo)
                     {

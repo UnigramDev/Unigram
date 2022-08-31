@@ -550,7 +550,7 @@ namespace Unigram.Controls.Drawers
                 return;
             }
 
-            if ((args == null || args.Phase == 2) && file.Local.IsFileExisting())
+            if ((args == null || args.Phase == 2) && file.Local.IsDownloadingCompleted)
             {
                 if (content.Children[0] is Border border && border.Child is Image photo)
                 {

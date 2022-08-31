@@ -178,7 +178,7 @@ namespace Unigram.Controls.Messages
             }
 
             var file = message.GetFile();
-            if (file != null && file.Local.IsFileExisting())
+            if (file != null && file.Local.IsDownloadingCompleted)
             {
                 path = file.Local.Path;
                 return true;

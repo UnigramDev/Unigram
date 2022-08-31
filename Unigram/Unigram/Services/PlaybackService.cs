@@ -250,7 +250,7 @@ namespace Unigram.Services
                 catch { }
             }
 
-            if (item.File.Local.IsFileExisting())
+            if (item.File.Local.IsDownloadingCompleted)
             {
                 try
                 {

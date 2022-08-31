@@ -210,7 +210,7 @@ namespace Unigram.Views
 
         private void SetBitmap(File file)
         {
-            if (file.Local.IsFileExisting())
+            if (file.Local.IsDownloadingCompleted)
             {
                 Presenter.Fill = new ImageBrush { ImageSource =  UriEx.ToBitmap(file.Local.Path, 0, 0), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
             }
@@ -227,7 +227,7 @@ namespace Unigram.Views
 
         private async Task SetPatternAsync(File file, bool download)
         {
-            if (file.Local.IsFileExisting())
+            if (file.Local.IsDownloadingCompleted)
             {
                 if (Presenter.Fill is TiledBrush brush)
                 {
@@ -521,7 +521,7 @@ namespace Unigram.Views
                 var content = root.Children[0] as Image;
 
                 var file = small.File;
-                if (file.Local.IsFileExisting())
+                if (file.Local.IsDownloadingCompleted)
                 {
                     content.Source = PlaceholderHelper.GetBitmap(null, small.File, wallpaper.Document.Thumbnail.Width, wallpaper.Document.Thumbnail.Height);
                 }

@@ -230,7 +230,7 @@ namespace Unigram.Controls
                         return;
                     }
 
-                    if (file.Local.IsFileExisting())
+                    if (file.Local.IsDownloadingCompleted)
                     {
                         image.Source = new BitmapImage(UriEx.ToLocal(file.Local.Path));
                     }
@@ -253,7 +253,7 @@ namespace Unigram.Controls
                         return;
                     }
 
-                    if (file.Local.IsFileExisting())
+                    if (file.Local.IsDownloadingCompleted)
                     {
                         image.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
                     }
@@ -281,7 +281,7 @@ namespace Unigram.Controls
                         return;
                     }
 
-                    if (file.Local.IsFileExisting())
+                    if (file.Local.IsDownloadingCompleted)
                     {
                         stickerView.Source = UriEx.ToLocal(file.Local.Path);
                     }
@@ -306,7 +306,7 @@ namespace Unigram.Controls
                         return;
                     }
 
-                    if (file.Local.IsFileExisting())
+                    if (file.Local.IsDownloadingCompleted)
                     {
                         animationView.Source = new LocalVideoSource(file);
                     }
@@ -332,7 +332,7 @@ namespace Unigram.Controls
                     return;
                 }
 
-                if (file.Local.IsFileExisting())
+                if (file.Local.IsDownloadingCompleted)
                 {
                     animationView.Source = new LocalVideoSource(file);
                 }
@@ -349,7 +349,7 @@ namespace Unigram.Controls
                     var thumbnail = animation.Animation.Thumbnail?.File;
                     if (thumbnail != null)
                     {
-                        if (thumbnail.Local.IsFileExisting())
+                        if (thumbnail.Local.IsDownloadingCompleted)
                         {
                             animationView.Thumbnail = new BitmapImage(UriEx.ToLocal(thumbnail.Local.Path));
                         }
@@ -462,7 +462,7 @@ namespace Unigram.Controls
 
                 if (file != null)
                 {
-                    if (file.Local.IsFileExisting())
+                    if (file.Local.IsDownloadingCompleted)
                     {
                         thumb.Source = new BitmapImage(UriEx.ToLocal(file.Local.Path));
                     }

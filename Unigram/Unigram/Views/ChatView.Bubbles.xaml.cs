@@ -612,7 +612,7 @@ namespace Unigram.Views
                         var file = chatChangePhoto.Photo.GetSmall();
                         if (file != null)
                         {
-                            if (file.Photo.Local.IsFileExisting())
+                            if (file.Photo.Local.IsDownloadingCompleted)
                             {
                                 photo.Source = UriEx.ToBitmap(file.Photo.Local.Path, 120, 120);
                             }

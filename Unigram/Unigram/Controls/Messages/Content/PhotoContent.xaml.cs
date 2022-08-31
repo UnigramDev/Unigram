@@ -91,7 +91,7 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            if (!big.Photo.Local.IsFileExisting() || message.IsSecret())
+            if (!big.Photo.Local.IsDownloadingCompleted || message.IsSecret())
             {
                 UpdateThumbnail(message, small, photo.Minithumbnail, true);
             }
@@ -183,7 +183,7 @@ namespace Unigram.Controls.Messages.Content
                     UpdateTexture(message, big, file);
                 }
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsFileExisting())
+            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
             {
                 //Button.Glyph = Icons.Download;
                 Button.SetGlyph(file.Id, MessageContentState.Download);
@@ -305,7 +305,7 @@ namespace Unigram.Controls.Messages.Content
 
             if (file != null)
             {
-                if (file.Local.IsFileExisting())
+                if (file.Local.IsDownloadingCompleted)
                 {
                     source = await PlaceholderHelper.GetBlurredAsync(file.Local.Path, message.IsSecret() ? 15 : 3);
                 }
@@ -396,7 +396,7 @@ namespace Unigram.Controls.Messages.Content
             {
                 _message.ProtoService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsFileExisting())
+            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
                 _message.ProtoService.DownloadFile(file.Id, 30);
             }

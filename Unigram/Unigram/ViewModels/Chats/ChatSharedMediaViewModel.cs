@@ -522,7 +522,7 @@ namespace Unigram.ViewModels.Chats
 
         public async void OpenFile(File file)
         {
-            if (file.Local.IsFileExisting())
+            if (file.Local.IsDownloadingCompleted)
             {
                 try
                 {

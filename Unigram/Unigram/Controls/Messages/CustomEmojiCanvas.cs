@@ -528,7 +528,7 @@ namespace Unigram.Controls.Messages
             public async Task CreateAsync()
             {
                 var file = _sticker.StickerValue;
-                if (file.Local.CanBeDownloaded && !file.Local.IsFileExisting())
+                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
                 {
                     file = await _protoService.DownloadFileAsync(file, 32);
                 }

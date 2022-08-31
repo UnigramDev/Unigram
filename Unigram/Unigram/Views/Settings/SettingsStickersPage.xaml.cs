@@ -176,7 +176,7 @@ namespace Unigram.Views.Settings
             }
 
             var file = cover.StickerValue;
-            if (file.Local.IsFileExisting())
+            if (file.Local.IsDownloadingCompleted)
             {
                 if (content.Children[0] is Image photo)
                 {

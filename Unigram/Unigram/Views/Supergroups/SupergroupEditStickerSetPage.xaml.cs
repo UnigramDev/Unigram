@@ -56,7 +56,7 @@ namespace Unigram.Views.Supergroups
                 }
 
                 var file = cover.File;
-                if (file.Local.IsFileExisting())
+                if (file.Local.IsDownloadingCompleted)
                 {
                     if (cover.Format is ThumbnailFormatTgs)
                     {
@@ -109,7 +109,7 @@ namespace Unigram.Views.Supergroups
             }
 
             var file = cover.File;
-            if (file.Local.IsFileExisting())
+            if (file.Local.IsDownloadingCompleted)
             {
                 if (cover.Format is ThumbnailFormatTgs)
                 {

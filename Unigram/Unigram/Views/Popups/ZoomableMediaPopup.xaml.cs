@@ -101,7 +101,7 @@ namespace Unigram.Views.Popups
 
         private void UpdateFile(object target, File file)
         {
-            if (_lastItem is Sticker sticker && file.Local.IsFileExisting())
+            if (_lastItem is Sticker sticker && file.Local.IsDownloadingCompleted)
             {
                 if (sticker.StickerValue.Id == file.Id)
                 {
@@ -112,7 +112,7 @@ namespace Unigram.Views.Popups
                     UpdateThumbnail(file, false);
                 }
             }
-            else if (_lastItem is Animation animation && file.Local.IsFileExisting())
+            else if (_lastItem is Animation animation && file.Local.IsDownloadingCompleted)
             {
                 if (animation.AnimationValue.Id == file.Id)
                 {
@@ -123,7 +123,7 @@ namespace Unigram.Views.Popups
 
         private void UpdateFile(Sticker sticker, File file, bool download)
         {
-            if (file.Local.IsFileExisting())
+            if (file.Local.IsDownloadingCompleted)
             {
                 if (sticker.Format is StickerFormatTgs)
                 {
@@ -161,7 +161,7 @@ namespace Unigram.Views.Popups
 
         private void UpdateFile(Animation animation, File file, bool download)
         {
-            if (file.Local.IsFileExisting())
+            if (file.Local.IsDownloadingCompleted)
             {
                 Thumbnail.Opacity = 0;
                 Texture.Source = null;
@@ -189,7 +189,7 @@ namespace Unigram.Views.Popups
 
         private void UpdateThumbnail(File file, bool download)
         {
-            if (file.Local.IsFileExisting())
+            if (file.Local.IsDownloadingCompleted)
             {
                 Thumbnail.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
             }

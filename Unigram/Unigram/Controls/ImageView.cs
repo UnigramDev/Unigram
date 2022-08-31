@@ -330,7 +330,7 @@ namespace Unigram.Controls
 
         private ImageSource GetSource(IProtoService protoService, File file, int width, int height, bool download)
         {
-            if (file.Local.IsFileExisting())
+            if (file.Local.IsDownloadingCompleted)
             {
                 return UriEx.ToBitmap(file.Local.Path, width, height);
             }

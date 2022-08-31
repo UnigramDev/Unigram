@@ -572,7 +572,7 @@ namespace Unigram.Controls.Gallery
 
             try
             {
-                if (!file.Local.IsFileExisting() && !SettingsService.Current.IsStreamingEnabled)
+                if (!file.Local.IsDownloadingCompleted && !SettingsService.Current.IsStreamingEnabled)
                 {
                     return;
                 }
@@ -602,7 +602,7 @@ namespace Unigram.Controls.Gallery
                 //Transport.DownloadMaximum = file.Size;
                 //Transport.DownloadValue = file.Local.DownloadOffset + file.Local.DownloadedPrefixSize;
 
-                var streamable = SettingsService.Current.IsStreamingEnabled && item.IsStreamable /*&& !file.Local.IsFileExisting()*/;
+                var streamable = SettingsService.Current.IsStreamingEnabled && item.IsStreamable /*&& !file.Local.IsDownloadingCompleted*/;
                 if (streamable)
                 {
                     _fileStream = new RemoteFileStream(item.ProtoService, file, item.Duration);

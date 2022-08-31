@@ -70,7 +70,7 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            if (file.Local.IsFileExisting())
+            if (file.Local.IsDownloadingCompleted)
             {
                 Source = await PlaceholderHelper.GetWebPFrameAsync(file.Local.Path, 180);
                 ElementCompositionPreview.SetElementChildVisual(this, null);

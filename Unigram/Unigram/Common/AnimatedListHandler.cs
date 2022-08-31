@@ -184,7 +184,7 @@ namespace Unigram.Common
                     file = inlineQueryResultSticker.Sticker.StickerValue;
                 }
 
-                if (item is not Chat && (file == null || !file.Local.IsFileExisting()))
+                if (item is not Chat && (file == null || !file.Local.IsDownloadingCompleted))
                 {
                     continue;
                 }

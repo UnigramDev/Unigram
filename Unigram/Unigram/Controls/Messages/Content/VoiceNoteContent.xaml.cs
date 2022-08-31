@@ -280,7 +280,7 @@ namespace Unigram.Controls.Messages.Content
                 Button.SetGlyph(file.Id, MessageContentState.Uploading);
                 Button.Progress = (double)file.Remote.UploadedSize / size;
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsFileExisting())
+            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
             {
                 //Button.Glyph = Icons.Download;
                 Button.SetGlyph(file.Id, MessageContentState.Download);
@@ -371,7 +371,7 @@ namespace Unigram.Controls.Messages.Content
             {
                 _message.ProtoService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsFileExisting())
+            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
                 _message.Delegate.PlayMessage(_message);
             }

@@ -230,7 +230,7 @@ namespace Unigram.Views.Popups
             }
 
             var file = sticker.StickerValue;
-            if (file.Local.IsFileExisting())
+            if (file.Local.IsDownloadingCompleted)
             {
                 if (content.Children[0] is Border border && border.Child is Image photo)
                 {

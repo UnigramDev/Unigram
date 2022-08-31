@@ -237,7 +237,7 @@ namespace Unigram.Common
 
         public static ImageSource GetBitmap(IProtoService protoService, File file, int width, int height)
         {
-            if (file.Local.IsFileExisting())
+            if (file.Local.IsDownloadingCompleted)
             {
                 return UriEx.ToBitmap(file.Local.Path, width, height);
             }
@@ -255,7 +255,7 @@ namespace Unigram.Common
         {
             using var locked = await _patternSurfaceLock.WaitAsync();
 
-            if (file.Local.IsFileExisting())
+            if (file.Local.IsDownloadingCompleted)
             {
                 var bitmap = default(LoadedImageSurface);
 
@@ -305,7 +305,7 @@ namespace Unigram.Common
         {
             using var locked = await _patternSurfaceLock.WaitAsync();
 
-            if (file.Local.IsFileExisting())
+            if (file.Local.IsDownloadingCompleted)
             {
                 var bitmap = default(CanvasBitmap);
 

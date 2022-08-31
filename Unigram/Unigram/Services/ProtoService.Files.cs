@@ -14,7 +14,7 @@ namespace Unigram.Services
             }
             else
             {
-                _files[file.Id] = file;
+                _files[file.Id] = file.Update();
                 return file;
             }
         }

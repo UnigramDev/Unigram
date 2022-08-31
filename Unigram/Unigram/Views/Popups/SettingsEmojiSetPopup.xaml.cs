@@ -54,7 +54,7 @@ namespace Unigram.Views.Popups
             }
 
             var file = emojiSet.Document;
-            if (file == null || !file.Local.IsFileExisting())
+            if (file == null || !file.Local.IsDownloadingCompleted)
             {
                 args.Cancel = true;
                 return;
@@ -89,7 +89,7 @@ namespace Unigram.Views.Popups
             _selectedSet = emojiSet;
 
             var file = emojiSet.Document;
-            if (file.Local.IsFileExisting())
+            if (file.Local.IsDownloadingCompleted)
             {
 
             }
@@ -145,7 +145,7 @@ namespace Unigram.Views.Popups
                     subtitle.Text = string.Format("{0} {1} / {2}", "Downloading", FileSizeConverter.Convert(file.Local.DownloadedSize, size), FileSizeConverter.Convert(size));
                     subtitle.Foreground = BootStrapper.Current.Resources["SystemControlDisabledChromeDisabledLowBrush"] as Brush;
                 }
-                else if (file.Local.CanBeDownloaded && !file.Local.IsFileExisting())
+                else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
                 {
                     subtitle.Text = string.Format("{0} {1}", Strings.Resources.AccActionDownload, FileSizeConverter.Convert(size));
                     subtitle.Foreground = BootStrapper.Current.Resources["SystemControlDisabledChromeDisabledLowBrush"] as Brush;
@@ -169,7 +169,7 @@ namespace Unigram.Views.Popups
                 var photo = content.Children[0] as Image;
 
                 var file = emojiPack.Thumbnail;
-                if (file != null && file.Local.IsFileExisting())
+                if (file != null && file.Local.IsDownloadingCompleted)
                 {
                     photo.Source = new BitmapImage { UriSource = UriEx.ToLocal(file.Local.Path), DecodePixelWidth = 40, DecodePixelHeight = 40 };
                 }
@@ -196,7 +196,7 @@ namespace Unigram.Views.Popups
 
         private void UpdateFile(object target, File file)
         {
-            if (file.Id == _selectedSet?.Document.Id && !file.Local.IsFileExisting())
+            if (file.Id == _selectedSet?.Document.Id && !file.Local.IsDownloadingCompleted)
             {
                 IsPrimaryButtonEnabled = false;
             }
@@ -233,7 +233,7 @@ namespace Unigram.Views.Popups
                 subtitle.Text = string.Format("{0} {1} / {2}", "Downloading", FileSizeConverter.Convert(file.Local.DownloadedSize, size), FileSizeConverter.Convert(size));
                 subtitle.Foreground = BootStrapper.Current.Resources["SystemControlDisabledChromeDisabledLowBrush"] as Brush;
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsFileExisting())
+            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
             {
                 subtitle.Text = string.Format("{0} {1}", Strings.Resources.AccActionDownload, FileSizeConverter.Convert(size));
                 subtitle.Foreground = BootStrapper.Current.Resources["SystemControlDisabledChromeDisabledLowBrush"] as Brush;

@@ -2357,7 +2357,7 @@ namespace Unigram.ViewModels
                 var sticker = await ProtoService.SendAsync(new GetAnimatedEmoji(emoji)) as AnimatedEmoji;
                 if (sticker != null)
                 {
-                    if (sticker.Sticker.StickerValue.Local.IsFileExisting())
+                    if (sticker.Sticker.StickerValue.Local.IsDownloadingCompleted)
                     {
                         var arguments = new GenerationService.ChatPhotoConversion
                         {

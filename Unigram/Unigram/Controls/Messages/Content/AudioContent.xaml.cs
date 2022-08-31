@@ -226,7 +226,7 @@ namespace Unigram.Controls.Messages.Content
 
                 Subtitle.Text = string.Format("{0} / {1}", FileSizeConverter.Convert(file.Remote.UploadedSize, size), FileSizeConverter.Convert(size));
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsFileExisting())
+            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
             {
                 FileButton target;
                 if (SettingsService.Current.IsStreamingEnabled)
@@ -289,7 +289,7 @@ namespace Unigram.Controls.Messages.Content
                 Button.SetGlyph(file.Id, MessageContentState.Play);
                 Button.Progress = 1;
 
-                if (file.Local.CanBeDownloaded && !file.Local.IsFileExisting() && !file.Local.IsDownloadingActive && !file.Remote.IsUploadingActive)
+                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted && !file.Local.IsDownloadingActive && !file.Remote.IsUploadingActive)
                 {
                     Subtitle.Text = audio.GetDuration() + " - " + FileSizeConverter.Convert(Math.Max(file.Size, file.ExpectedSize));
                 }
@@ -320,7 +320,7 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            if (file.Local.IsFileExisting())
+            if (file.Local.IsDownloadingCompleted)
             {
                 double ratioX = (double)48 / thumbnail.Width;
                 double ratioY = (double)48 / thumbnail.Height;
@@ -434,7 +434,7 @@ namespace Unigram.Controls.Messages.Content
             {
                 _message.ProtoService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsFileExisting())
+            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
                 if (_message.Content is not MessageAudio)
                 {

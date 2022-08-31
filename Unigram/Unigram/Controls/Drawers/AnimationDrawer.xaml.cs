@@ -156,7 +156,7 @@ namespace Unigram.Controls.Drawers
                 return;
             }
 
-            if (args.Phase == 2 && file.Local.IsFileExisting())
+            if (args.Phase == 2 && file.Local.IsDownloadingCompleted)
             {
                 view.Source = new LocalVideoSource(file);
                 view.Thumbnail = null;
@@ -175,7 +175,7 @@ namespace Unigram.Controls.Drawers
                 var thumbnail = animation.Thumbnail?.File;
                 if (thumbnail != null)
                 {
-                    if (thumbnail.Local.IsFileExisting())
+                    if (thumbnail.Local.IsDownloadingCompleted)
                     {
                         view.Thumbnail = new BitmapImage(UriEx.ToLocal(thumbnail.Local.Path));
                     }

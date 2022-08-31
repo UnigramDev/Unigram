@@ -899,7 +899,7 @@ namespace Unigram.Views
             content.ClearValue(MaxWidthProperty);
             content.ClearValue(MaxHeightProperty);
 
-            if (block.Animation.AnimationValue.Local.IsFileExisting())
+            if (block.Animation.AnimationValue.Local.IsDownloadingCompleted)
             {
                 _animations.Add(content.GetPlaybackElement());
             }

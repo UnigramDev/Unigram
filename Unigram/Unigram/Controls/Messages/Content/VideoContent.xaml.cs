@@ -134,7 +134,7 @@ namespace Unigram.Controls.Messages.Content
                         Subtitle.Text = string.Format("{0} / {1}", FileSizeConverter.Convert(file.Remote.UploadedSize, size), FileSizeConverter.Convert(size));
                     }
                 }
-                else if (file.Local.CanBeDownloaded && !file.Local.IsFileExisting())
+                else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
                 {
                     Button.SetGlyph(file.Id, MessageContentState.Download);
                     Button.Progress = 0;
@@ -194,7 +194,7 @@ namespace Unigram.Controls.Messages.Content
                         Subtitle.Text = video.GetDuration() + Environment.NewLine + string.Format("{0} / {1}", FileSizeConverter.Convert(file.Remote.UploadedSize, size), FileSizeConverter.Convert(size));
                     }
                 }
-                else if (file.Local.CanBeDownloaded && !file.Local.IsFileExisting())
+                else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
                 {
                     Button.SetGlyph(file.Id, MessageContentState.Play);
                     Button.Progress = 0;
@@ -265,7 +265,7 @@ namespace Unigram.Controls.Messages.Content
 
             if (video.Thumbnail != null && video.Thumbnail.Format is ThumbnailFormatJpeg)
             {
-                if (file.Local.IsFileExisting())
+                if (file.Local.IsDownloadingCompleted)
                 {
                     source = await PlaceholderHelper.GetBlurredAsync(file.Local.Path, message.IsSecret() ? 15 : 3);
                 }
@@ -377,7 +377,7 @@ namespace Unigram.Controls.Messages.Content
             {
                 _message.ProtoService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsFileExisting())
+            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
                 if (_message.Content is not MessageVideo)
                 {
@@ -413,7 +413,7 @@ namespace Unigram.Controls.Messages.Content
                 {
                     _message.ProtoService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
                 }
-                else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsFileExisting())
+                else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
                 {
                     if (_message.Content is not MessageVideo)
                     {

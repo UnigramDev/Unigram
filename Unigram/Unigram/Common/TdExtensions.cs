@@ -671,29 +671,29 @@ namespace Unigram.Common
             switch (content)
             {
                 case MessageAnimation animation:
-                    return animation.Animation.AnimationValue.Local.IsFileExisting();
+                    return animation.Animation.AnimationValue.Local.IsDownloadingCompleted;
                 case MessageSticker sticker:
-                    return sticker.Sticker.Format is StickerFormatTgs or StickerFormatWebm && sticker.Sticker.StickerValue.Local.IsFileExisting();
+                    return sticker.Sticker.Format is StickerFormatTgs or StickerFormatWebm && sticker.Sticker.StickerValue.Local.IsDownloadingCompleted;
                 case MessageVideoNote videoNote:
-                    return videoNote.VideoNote.Video.Local.IsFileExisting();
+                    return videoNote.VideoNote.Video.Local.IsDownloadingCompleted;
                 case MessageGame game:
                     if (game.Game.Animation != null)
                     {
-                        return game.Game.Animation.AnimationValue.Local.IsFileExisting();
+                        return game.Game.Animation.AnimationValue.Local.IsDownloadingCompleted;
                     }
                     return false;
                 case MessageText text:
                     if (text.WebPage?.Animation != null)
                     {
-                        return text.WebPage.Animation.AnimationValue.Local.IsFileExisting();
+                        return text.WebPage.Animation.AnimationValue.Local.IsDownloadingCompleted;
                     }
                     else if (text.WebPage?.Sticker != null)
                     {
-                        return text.WebPage.Sticker.Format is StickerFormatTgs or StickerFormatWebm && text.WebPage.Sticker.StickerValue.Local.IsFileExisting();
+                        return text.WebPage.Sticker.Format is StickerFormatTgs or StickerFormatWebm && text.WebPage.Sticker.StickerValue.Local.IsDownloadingCompleted;
                     }
                     else if (text.WebPage?.VideoNote != null)
                     {
-                        return text.WebPage.VideoNote.Video.Local.IsFileExisting();
+                        return text.WebPage.VideoNote.Video.Local.IsDownloadingCompleted;
                     }
                     else if (text.WebPage?.Video != null)
                     {
@@ -705,15 +705,15 @@ namespace Unigram.Common
                     var state = dice.InitialState;
                     if (state is DiceStickersRegular regular)
                     {
-                        return regular.Sticker.StickerValue.Local.IsFileExisting();
+                        return regular.Sticker.StickerValue.Local.IsDownloadingCompleted;
                     }
                     else if (state is DiceStickersSlotMachine slotMachine)
                     {
-                        return slotMachine.Background.StickerValue.Local.IsFileExisting()
-                            && slotMachine.LeftReel.StickerValue.Local.IsFileExisting()
-                            && slotMachine.CenterReel.StickerValue.Local.IsFileExisting()
-                            && slotMachine.RightReel.StickerValue.Local.IsFileExisting()
-                            && slotMachine.Lever.StickerValue.Local.IsFileExisting();
+                        return slotMachine.Background.StickerValue.Local.IsDownloadingCompleted
+                            && slotMachine.LeftReel.StickerValue.Local.IsDownloadingCompleted
+                            && slotMachine.CenterReel.StickerValue.Local.IsDownloadingCompleted
+                            && slotMachine.RightReel.StickerValue.Local.IsDownloadingCompleted
+                            && slotMachine.Lever.StickerValue.Local.IsDownloadingCompleted;
                     }
 
                     return false;
@@ -728,7 +728,7 @@ namespace Unigram.Common
         public static bool IsInitialState(this MessageDice dice)
         {
             var state = dice.FinalState;
-            if (state == null || !state.IsFileExisting())
+            if (state == null || !state.IsDownloadingCompleted())
             {
                 return true;
             }
@@ -739,7 +739,7 @@ namespace Unigram.Common
         public static bool IsFinalState(this MessageDice dice)
         {
             var state = dice.FinalState;
-            if (state == null || !state.IsFileExisting())
+            if (state == null || !state.IsDownloadingCompleted())
             {
                 return false;
             }
@@ -750,7 +750,7 @@ namespace Unigram.Common
         public static DiceStickers GetState(this MessageDice dice)
         {
             var state = dice.FinalState;
-            if (state == null || !state.IsFileExisting())
+            if (state == null || !state.IsDownloadingCompleted())
             {
                 state = dice.InitialState;
             }
@@ -758,19 +758,19 @@ namespace Unigram.Common
             return state;
         }
 
-        public static bool IsFileExisting(this DiceStickers state)
+        public static bool IsDownloadingCompleted(this DiceStickers state)
         {
             if (state is DiceStickersRegular regular)
             {
-                return regular.Sticker.StickerValue.Local.IsFileExisting();
+                return regular.Sticker.StickerValue.Local.IsDownloadingCompleted;
             }
             else if (state is DiceStickersSlotMachine slotMachine)
             {
-                return slotMachine.Background.StickerValue.Local.IsFileExisting()
-                    && slotMachine.LeftReel.StickerValue.Local.IsFileExisting()
-                    && slotMachine.CenterReel.StickerValue.Local.IsFileExisting()
-                    && slotMachine.RightReel.StickerValue.Local.IsFileExisting()
-                    && slotMachine.Lever.StickerValue.Local.IsFileExisting();
+                return slotMachine.Background.StickerValue.Local.IsDownloadingCompleted
+                    && slotMachine.LeftReel.StickerValue.Local.IsDownloadingCompleted
+                    && slotMachine.CenterReel.StickerValue.Local.IsDownloadingCompleted
+                    && slotMachine.RightReel.StickerValue.Local.IsDownloadingCompleted
+                    && slotMachine.Lever.StickerValue.Local.IsDownloadingCompleted;
             }
 
             return false;
@@ -1364,45 +1364,45 @@ namespace Unigram.Common
         public static PhotoSize GetSmall(this Photo photo)
         {
             //var local = photo.Sizes.FirstOrDefault(x => string.Equals(x.Type, "t"));
-            //if (local != null && (local.Photo.Local.IsFileExisting() || local.Photo.Local.CanBeDownloaded))
+            //if (local != null && (local.Photo.Local.IsDownloadingCompleted || local.Photo.Local.CanBeDownloaded))
             //{
             //    return local;
             //}
 
-            return photo.Sizes.FirstOrDefault(x => x.Photo.Local.IsFileExisting() || x.Photo.Local.CanBeDownloaded);
+            return photo.Sizes.FirstOrDefault(x => x.Photo.Local.IsDownloadingCompleted || x.Photo.Local.CanBeDownloaded);
         }
 
         public static PhotoSize GetBig(this Photo photo)
         {
             //var local = photo.Sizes.LastOrDefault(x => string.Equals(x.Type, "i"));
-            //if (local != null && (local.Photo.Local.IsFileExisting() || local.Photo.Local.CanBeDownloaded))
+            //if (local != null && (local.Photo.Local.IsDownloadingCompleted || local.Photo.Local.CanBeDownloaded))
             //{
             //    return local;
             //}
 
-            return photo.Sizes.LastOrDefault(x => x.Photo.Local.IsFileExisting() || x.Photo.Local.CanBeDownloaded);
+            return photo.Sizes.LastOrDefault(x => x.Photo.Local.IsDownloadingCompleted || x.Photo.Local.CanBeDownloaded);
         }
 
         public static PhotoSize GetSmall(this ChatPhoto photo)
         {
             //var local = photo.Sizes.FirstOrDefault(x => string.Equals(x.Type, "t"));
-            //if (local != null && (local.Photo.Local.IsFileExisting() || local.Photo.Local.CanBeDownloaded))
+            //if (local != null && (local.Photo.Local.IsDownloadingCompleted || local.Photo.Local.CanBeDownloaded))
             //{
             //    return local;
             //}
 
-            return photo.Sizes.FirstOrDefault(x => x.Photo.Local.IsFileExisting() || x.Photo.Local.CanBeDownloaded);
+            return photo.Sizes.FirstOrDefault(x => x.Photo.Local.IsDownloadingCompleted || x.Photo.Local.CanBeDownloaded);
         }
 
         public static PhotoSize GetBig(this ChatPhoto photo)
         {
             //var local = photo.Sizes.LastOrDefault(x => string.Equals(x.Type, "i"));
-            //if (local != null && (local.Photo.Local.IsFileExisting() || local.Photo.Local.CanBeDownloaded))
+            //if (local != null && (local.Photo.Local.IsDownloadingCompleted || local.Photo.Local.CanBeDownloaded))
             //{
             //    return local;
             //}
 
-            return photo.Sizes.LastOrDefault(x => x.Photo.Local.IsFileExisting() || x.Photo.Local.CanBeDownloaded);
+            return photo.Sizes.LastOrDefault(x => x.Photo.Local.IsDownloadingCompleted || x.Photo.Local.CanBeDownloaded);
         }
 
         public static StickerSetInfo ToInfo(this StickerSet set)
@@ -1786,6 +1786,17 @@ namespace Unigram.Common
             file.Remote = update.Remote;
         }
 
+        public static File Update(this File file)
+        {
+            if (file.Local.IsDownloadingCompleted)
+            {
+                file.Local.IsDownloadingCompleted = file.Local.Path.Length > 0
+                    && NativeUtils.FileExists(file.Local.Path);
+            }
+
+            return file;
+        }
+
         public static File GetLocalFile(string path, string uniqueId = "")
         {
             return new File(0, 0, 0, new LocalFile(System.IO.Path.Combine(Windows.ApplicationModel.Package.Current.InstalledLocation.Path, path), false, false, false, true, 0, 0, 0), new RemoteFile(string.Empty, uniqueId, false, false, 0));
@@ -2041,22 +2052,6 @@ namespace Unigram.Common
 
 namespace Telegram.Td.Api
 {
-    public static class Extensions
-    {
-        public static bool IsFileExisting(this LocalFile localFile)
-        {
-            if (localFile.IsDownloadingCompleted)
-            {
-                localFile.IsDownloadingCompleted = localFile.Path.Length > 0
-                    && NativeUtils.FileExists(localFile.Path);
-
-                return localFile.IsDownloadingCompleted;
-            }
-
-            return false;
-        }
-    }
-
     public class MessageBigEmoji : MessageContent
     {
         public FormattedText Text { get; set; }
