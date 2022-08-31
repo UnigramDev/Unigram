@@ -639,19 +639,19 @@ namespace Unigram.ViewModels
                     var replied = new MessageCollection(Items.Ids, messages.MessagesValue.Select(x => _messageFactory.Create(this, x)));
                     if (replied.Count > 0)
                     {
-                    await ProcessMessagesAsync(chat, replied);
+                        await ProcessMessagesAsync(chat, replied);
 
-                    if (replied.Count > 0 && replied[0].Content is MessageChatUpgradeFrom chatUpgradeFrom)
-                    {
+                        if (replied.Count > 0 && replied[0].Content is MessageChatUpgradeFrom chatUpgradeFrom)
+                        {
                             var chatUpgradeTo = await PrepareMigratedAsync(chatUpgradeFrom.BasicGroupId);
                             if (chatUpgradeTo != null)
                             {
-                            replied[0] = chatUpgradeTo;
+                                replied[0] = chatUpgradeTo;
                             }
                         }
 
                         SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, force);
-                    Items.RawInsertRange(0, replied, out bool empty);
+                        Items.RawInsertRange(0, replied, out bool empty);
                     }
                     else
                     {
@@ -770,7 +770,7 @@ namespace Unigram.ViewModels
                     }
 
                     IsFirstSliceLoaded = replied.Count == 0 || IsEndReached();
-                    }
+                }
 
                 _isLoadingPreviousSlice = false;
                 IsLoading = false;
@@ -1199,83 +1199,96 @@ namespace Unigram.ViewModels
                     var replied = new MessageCollection(null, messages.MessagesValue.Select(x => _messageFactory.Create(this, x)));
                     await ProcessMessagesAsync(chat, replied);
 
-                    long lastReadMessageId;
-                    long lastMessageId;
-
-                    var thread = _thread;
-                    if (thread != null)
-                    {
-                        lastReadMessageId = thread.ReplyInfo?.LastReadInboxMessageId ?? long.MaxValue;
-                        lastMessageId = thread.ReplyInfo?.LastMessageId ?? long.MaxValue;
-                    }
-                    else
-                    {
-                        lastReadMessageId = chat.LastReadInboxMessageId;
-                        lastMessageId = chat.LastMessage?.Id ?? long.MaxValue;
-                    }
-
                     var firstVisibleIndex = -1;
                     var firstVisibleItem = default(MessageViewModel);
-                    
+
                     var unread = false;
 
-                    // If we're loading from the last read message
-                    // then we want to skip it to align first unread message at top
-                    if (lastReadMessageId != lastMessageId)
+                    if (alignment != VerticalAlignment.Center)
                     {
-                        var target = default(MessageViewModel);
-                        var index = -1;
+                        long lastReadMessageId;
+                        long lastMessageId;
 
-                        for (int i = 0; i < replied.Count; i++)
+                        var thread = _thread;
+                        if (thread != null)
                         {
-                            var current = replied[i];
-                            if (current.Id > lastReadMessageId)
+                            lastReadMessageId = thread.ReplyInfo?.LastReadInboxMessageId ?? long.MaxValue;
+                            lastMessageId = thread.ReplyInfo?.LastMessageId ?? long.MaxValue;
+                        }
+                        else
+                        {
+                            lastReadMessageId = chat.LastReadInboxMessageId;
+                            lastMessageId = chat.LastMessage?.Id ?? long.MaxValue;
+                        }
+
+                        // If we're loading from the last read message
+                        // then we want to skip it to align first unread message at top
+                        if (lastReadMessageId != lastMessageId && maxId >= lastReadMessageId)
+                        {
+                            var target = default(MessageViewModel);
+                            var index = -1;
+
+                            for (int i = 0; i < replied.Count; i++)
                             {
-                                if (index == -1)
+                                var current = replied[i];
+                                if (current.Id > lastReadMessageId)
+                                {
+                                    if (index == -1)
+                                    {
+                                        firstVisibleIndex = i;
+                                        firstVisibleItem = current;
+                                    }
+
+                                    if (target == null && !current.IsOutgoing)
+                                    {
+                                        target = current;
+                                        index = i;
+                                    }
+                                    else if (current.IsOutgoing)
+                                    {
+                                        target = current;
+                                        index = -1;
+                                    }
+                                }
+                                else if (firstVisibleIndex == -1 && i == replied.Count - 1)
                                 {
                                     firstVisibleIndex = i;
                                     firstVisibleItem = current;
                                 }
+                            }
 
-                                if (target == null && !current.IsOutgoing)
+                            if (target != null)
+                            {
+                                if (index > 0)
                                 {
-                                    target = current;
-                                    index = i;
+                                    replied.Insert(index, _messageFactory.Create(this, new Message(0, target.SenderId, target.ChatId, null, null, target.IsOutgoing, false, false, false, false, true, false, false, false, false, false, false, false, target.IsChannelPost, false, target.Date, 0, null, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderUnread(), null)));
+                                    unread = true;
                                 }
-                                else if (current.IsOutgoing)
+                                else if (maxId == lastReadMessageId)
                                 {
-                                    target = current;
-                                    index = -1;
+                                    Logs.Logger.Debug(Logs.LogTarget.Chat, "Looking for first unread message, can't find it");
+                                }
+
+                                if (maxId == lastReadMessageId)
+                                {
+                                    maxId = target.Id;
+                                    pixel = 28 + 48;
                                 }
                             }
                         }
 
-                        if (target != null)
+                        if (firstVisibleItem != null)
                         {
-                            if (index > 0)
-                            {
-                                replied.Insert(index, _messageFactory.Create(this, new Message(0, target.SenderId, target.ChatId, null, null, target.IsOutgoing, false, false, false, false, true, false, false, false, false, false, false, false, target.IsChannelPost, false, target.Date, 0, null, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderUnread(), null)));
-                                unread = true;
-                            }
-                            else if (maxId == lastReadMessageId)
-                            {
-                                Logs.Logger.Debug(Logs.LogTarget.Chat, "Looking for first unread message, can't find it");
-                            }
-
-                            if (maxId == lastReadMessageId)
-                            {
-                                maxId = target.Id;
-                                pixel = 28 + 48 + 4;
-                            }
+                            maxId = firstVisibleItem.Id;
                         }
-                    }
 
-                    // If we're loading the last message and it has been read already
-                    // then we want to align it at bottom, as it might be taller than the window height
-                    if (maxId == lastMessageId && maxId == firstVisibleItem?.Id && alignment != VerticalAlignment.Center)
-                    {
-                        alignment = VerticalAlignment.Bottom;
-                        pixel = null;
+                        // If we're loading the last message and it has been read already
+                        // then we want to align it at bottom, as it might be taller than the window height
+                        if (maxId == lastMessageId)
+                        {
+                            alignment = VerticalAlignment.Bottom;
+                            pixel = null;
+                        }
                     }
 
                     if (replied.Count > 0 && replied[0].Content is MessageChatUpgradeFrom chatUpgradeFrom)
@@ -1290,7 +1303,7 @@ namespace Unigram.ViewModels
                     if (firstVisibleIndex == -1)
                     {
                         firstVisibleItem = replied.FirstOrDefault(x => x.Id == maxId);
-                        
+
                         if (firstVisibleItem != null)
                         {
                             firstVisibleIndex = replied.IndexOf(firstVisibleItem);
@@ -1321,7 +1334,7 @@ namespace Unigram.ViewModels
                     else
                     {
                         SetScrollMode(direction == ScrollIntoViewAlignment.Default ? ItemsUpdatingScrollMode.KeepLastItemInView : ItemsUpdatingScrollMode.KeepItemsInView, true);
-                    Items.RawReplaceWith(replied);
+                        Items.RawReplaceWith(replied);
                     }
 
                     NotifyMessageSliceLoaded();
@@ -3513,14 +3526,14 @@ namespace Unigram.ViewModels
         public MessageCollection(ISet<long> exclude, IEnumerable<MessageViewModel> source)
         {
             foreach (var item in source)
-        {
+            {
                 if (exclude != null && exclude.Contains(item.Id))
                 {
                     continue;
-            }
+                }
 
                 Insert(0, item);
-        }
+            }
         }
 
         //~MessageCollection()
@@ -3657,62 +3670,62 @@ namespace Unigram.ViewModels
             else
             {
                 var prev = index > 0 ? this[index - 1] : null;
-            var next = index < Count ? this[index] : null;
+                var next = index < Count ? this[index] : null;
 
-            // Order must be:
-            // Separator between previous and item
-            // Item
-            // Separator between item and next
-            // UpdateSeparatorOnInsert must return the new messages
-            // This way only two AttachChanged will be needed at most
+                // Order must be:
+                // Separator between previous and item
+                // Item
+                // Separator between item and next
+                // UpdateSeparatorOnInsert must return the new messages
+                // This way only two AttachChanged will be needed at most
 
                 var prevSeparator = UpdateSeparatorOnInsert(prev, item);
-            var nextSeparator = UpdateSeparatorOnInsert(item, next);
+                var nextSeparator = UpdateSeparatorOnInsert(item, next);
 
                 var nextHash = AttachHash(next);
                 var prevHash = AttachHash(prev);
 
-            if (prevSeparator != null)
-            {
+                if (prevSeparator != null)
+                {
                     UpdateAttach(null, prev);
-                UpdateAttach(prevSeparator, item);
-            }
-            else
-            {
+                    UpdateAttach(prevSeparator, item);
+                }
+                else
+                {
                     UpdateAttach(item, prev);
-            }
+                }
 
-            if (nextSeparator != null)
-            {
-                UpdateAttach(next, null);
-                UpdateAttach(item, nextSeparator);
-            }
-            else
-            {
-                UpdateAttach(next, item);
-            }
+                if (nextSeparator != null)
+                {
+                    UpdateAttach(next, null);
+                    UpdateAttach(item, nextSeparator);
+                }
+                else
+                {
+                    UpdateAttach(next, item);
+                }
 
-            if (prevSeparator != null)
-            {
-                base.InsertItem(index++, prevSeparator);
-            }
+                if (prevSeparator != null)
+                {
+                    base.InsertItem(index++, prevSeparator);
+                }
 
-            base.InsertItem(index, item);
+                base.InsertItem(index, item);
 
-            if (nextSeparator != null)
-            {
-                base.InsertItem(++index, nextSeparator);
-            }
+                if (nextSeparator != null)
+                {
+                    base.InsertItem(++index, nextSeparator);
+                }
 
                 var nextUpdate = AttachHash(next);
                 var prevUpdate = AttachHash(prev);
 
-            AttachChanged?.Invoke(new[]
-            {
+                AttachChanged?.Invoke(new[]
+                {
                     prevHash != prevUpdate ? prev : null,
                     nextHash != nextUpdate ? next : null
-            });
-        }
+                });
+            }
         }
 
         protected override void RemoveItem(int index)

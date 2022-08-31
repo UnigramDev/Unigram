@@ -1,6 +1,5 @@
 ﻿using LinqToVisualTree;
 using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Unigram.Common;
@@ -61,7 +60,7 @@ namespace Unigram.Controls.Chats
             }
         }
 
-        private async void OnLoaded(object sender, RoutedEventArgs e)
+        private void OnLoaded(object sender, RoutedEventArgs e)
         {
             var panel = ItemsPanelRoot as ItemsStackPanel;
             if (panel != null)
@@ -72,22 +71,7 @@ namespace Unigram.Controls.Chats
                 SetScrollMode();
             }
 
-            _loadingMore = true;
-
-            using (await _loadMoreLock.WaitAsync())
-            {
-                if (ScrollingHost.ScrollableHeight < 200 && Items.Count > 0)
-                {
-                    if (ViewModel.IsFirstSliceLoaded != true)
-                    {
-                        await ViewModel.LoadPreviousSliceAsync(false, true);
-                    }
-
-                    await ViewModel.LoadNextSliceAsync(false, true);
-                }
-            }
-
-            _loadingMore = false;
+            ViewChanged();
         }
 
         protected override void OnApplyTemplate()
@@ -98,27 +82,9 @@ namespace Unigram.Controls.Chats
             base.OnApplyTemplate();
         }
 
-        private async void Panel_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void Panel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            _loadingMore = true;
-
-            using (await _loadMoreLock.WaitAsync())
-            {
-                if (ScrollingHost.ScrollableHeight < 200)
-                {
-                    if (ViewModel.IsLastSliceLoaded != true)
-                    {
-                        await ViewModel.LoadNextSliceAsync(false, true);
-                    }
-
-                    if (ViewModel.IsFirstSliceLoaded != true)
-                    {
-                        await ViewModel.LoadPreviousSliceAsync(false, true);
-                    }
-                }
-            }
-
-            _loadingMore = false;
+            ViewChanged();
         }
 
         private void ScrollingHost_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
@@ -170,7 +136,7 @@ namespace Unigram.Controls.Chats
                         Logger.Debug(LogTarget.Chat, "Going Nowhere, first visible index is minValue");
                         await ViewModel.LoadNextSliceAsync(true);
                     }
-                    
+
                     if (firstSlice && ItemsStack.LastCacheIndex == ViewModel.Items.Count - 1)
                     {
                         Logger.Debug(LogTarget.Chat, "Going Nowhere, last visible index is maxValue");
@@ -230,15 +196,15 @@ namespace Unigram.Controls.Chats
             {
                 if (panel.ItemsUpdatingScrollMode != mode)
                 {
-                    Debug.WriteLine("Changed scrolling mode to KeepItemsInView");
+                    Logger.Debug(LogTarget.Chat, "Changed scrolling mode to KeepItemsInView");
                     panel.ItemsUpdatingScrollMode = _currentMode = ItemsUpdatingScrollMode.KeepItemsInView;
                 }
             }
-            else if (panel.ItemsUpdatingScrollMode != mode && mode == ItemsUpdatingScrollMode.KeepLastItemInView && (force || scroll.ScrollableHeight - scroll.VerticalOffset < 200))
+            else if (mode == ItemsUpdatingScrollMode.KeepLastItemInView && (force || scroll.ScrollableHeight - scroll.VerticalOffset < 200))
             {
                 if (panel.ItemsUpdatingScrollMode != mode)
                 {
-                    Debug.WriteLine("Changed scrolling mode to KeepLastItemInView");
+                    Logger.Debug(LogTarget.Chat, "Changed scrolling mode to KeepLastItemInView");
                     panel.ItemsUpdatingScrollMode = _currentMode = ItemsUpdatingScrollMode.KeepLastItemInView;
                 }
             }
@@ -254,10 +220,8 @@ namespace Unigram.Controls.Chats
             var scrollViewer = ScrollingHost;
             if (scrollViewer == null)
             {
-                ViewVisibleMessages?.Invoke(true);
-
-                Logs.Logger.Debug(Logs.LogTarget.Chat, "ScrollingHost == null");
-                return;
+                Logger.Debug(LogTarget.Chat, "ScrollingHost == null");
+                goto Exit;
             }
 
             _programmaticScrolling = true;
@@ -266,11 +230,8 @@ namespace Unigram.Controls.Chats
             var selectorItem = ContainerFromItem(item) as SelectorItem;
             if (selectorItem == null)
             {
-                _programmaticScrolling = _programmaticExternal = false;
-                ViewVisibleMessages?.Invoke(true);
-
-                Logs.Logger.Debug(Logs.LogTarget.Chat, "selectorItem == null, abort");
-                return;
+                Logger.Debug(LogTarget.Chat, "selectorItem == null, abort");
+                goto Exit;
             }
 
             // calculate the position object in order to know how much to scroll to
@@ -316,9 +277,15 @@ namespace Unigram.Controls.Chats
 
             if (scrollViewer.VerticalOffset < scrollViewer.ScrollableHeight || position.Y < scrollViewer.ScrollableHeight)
             {
+                if (scrollViewer.VerticalOffset.AlmostEquals(position.Y))
+                {
+                    goto Exit;
+                }
+
                 await scrollViewer.ChangeViewAsync(null, position.Y, disableAnimation ?? alignment != VerticalAlignment.Center, false);
             }
 
+        Exit:
             _programmaticScrolling = _programmaticExternal = false;
 
             ViewVisibleMessages?.Invoke(true);
