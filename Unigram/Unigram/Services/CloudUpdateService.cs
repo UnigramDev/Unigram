@@ -236,7 +236,7 @@ namespace Unigram.Services
 
                         return set;
                     }
-                    else
+                    else if (set.Document.Local.IsDownloadingCompleted)
                     {
                         // Delete the file from chat cache as it isn't needed anymore
                         _protoService.Send(new DeleteFileW(set.Document.Id));
@@ -262,7 +262,7 @@ namespace Unigram.Services
 
             await _protoService.SendAsync(new OpenChat(chat.Id));
 
-            var response = await _protoService.SendAsync(new SearchChatMessages(chat.Id, "#update", null, 0, 0, 100, new SearchMessagesFilterDocument(), 0)) as Messages;
+            var response = await _protoService.SendAsync(new SearchChatMessages(chat.Id, "#update", null, 0, 0, 10, new SearchMessagesFilterDocument(), 0)) as Messages;
             if (response == null)
             {
                 _protoService.Send(new CloseChat(chat.Id));
@@ -327,7 +327,7 @@ namespace Unigram.Services
 
             foreach (var set in dict)
             {
-                if (set.Version < current)
+                if (set.Version < current && set.Document.Local.IsDownloadingCompleted)
                 {
                     // Delete the file from chat cache as it isn't needed anymore
                     _protoService.Send(new DeleteFileW(set.Document.Id));

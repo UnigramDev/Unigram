@@ -278,7 +278,7 @@ namespace Unigram.Services
 
                         results.Add(set);
                     }
-                    else
+                    else if (set.Document.Local.IsDownloadingCompleted)
                     {
                         // Delete the file from chat cache as it isn't needed anymore
                         _protoService.Send(new DeleteFileW(set.Document.Id));
