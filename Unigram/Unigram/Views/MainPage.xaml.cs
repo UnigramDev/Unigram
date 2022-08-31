@@ -2665,7 +2665,7 @@ namespace Unigram.Views
         {
             ViewModel.SelectedFilter = filter;
 
-            if (filter == ChatFilterViewModel.Archive)
+            if (filter.ChatList is ChatListArchive)
             {
                 _shouldGoBackWithDetail = false;
             }
