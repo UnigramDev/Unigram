@@ -636,13 +636,9 @@ namespace Unigram.ViewModels
                         return;
                     }
 
-                    if (messages.MessagesValue.Count > 0)
+                    var replied = new MessageCollection(Items.Ids, messages.MessagesValue.Select(x => _messageFactory.Create(this, x)));
+                    if (replied.Count > 0)
                     {
-                        SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, force);
-                        Logs.Logger.Debug(Logs.LogTarget.Chat, "Setting scroll mode to KeepLastItemInView");
-                    }
-
-                    var replied = new MessageCollection(messages.MessagesValue.OrderByDescending(x => x.Id).Select(x => _messageFactory.Create(this, x)));
                     await ProcessMessagesAsync(chat, replied);
 
                     if (replied.Count > 0 && replied[0].Content is MessageChatUpgradeFrom chatUpgradeFrom)
@@ -654,13 +650,15 @@ namespace Unigram.ViewModels
                             }
                         }
 
+                        SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, force);
                     Items.RawInsertRange(0, replied, out bool empty);
-                    IsLastSliceLoaded = empty;
-
-                    if (empty)
+                    }
+                    else
                     {
                         await AddHeaderAsync();
                     }
+
+                    IsLastSliceLoaded = replied.Count == 0;
                 }
 
                 _isLoadingNextSlice = false;
@@ -758,22 +756,20 @@ namespace Unigram.ViewModels
                         return;
                     }
 
-                    if (messages.MessagesValue.Any(x => !Items.ContainsKey(x.Id)))
+                    var replied = new MessageCollection(Items.Ids, messages.MessagesValue.Select(x => _messageFactory.Create(this, x)));
+                    if (replied.Count > 0)
                     {
+                        await ProcessMessagesAsync(chat, replied);
+
                         SetScrollMode(ItemsUpdatingScrollMode.KeepItemsInView, true);
-                        Logs.Logger.Debug(Logs.LogTarget.Chat, "Setting scroll mode to KeepItemsInView");
+                        Items.RawAddRange(replied, out bool empty);
                     }
                     else
                     {
                         SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
-                        Logs.Logger.Debug(Logs.LogTarget.Chat, "Setting scroll mode to KeepLastItemInView");
                     }
 
-                    var replied = new MessageCollection(messages.MessagesValue.OrderBy(x => x.Id).Select(x => _messageFactory.Create(this, x)));
-                    await ProcessMessagesAsync(chat, replied);
-
-                    Items.RawAddRange(replied, out bool empty);
-                    IsFirstSliceLoaded = empty || IsEndReached();
+                    IsFirstSliceLoaded = replied.Count == 0 || IsEndReached();
                     }
 
                 _isLoadingPreviousSlice = false;
@@ -1200,13 +1196,7 @@ namespace Unigram.ViewModels
 
                     _groupedMessages.Clear();
 
-                    if (messages.MessagesValue.Count > 0)
-                    {
-                        SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
-                        Logs.Logger.Debug(Logs.LogTarget.Chat, "Setting scroll mode to KeepLastItemInView");
-                    }
-
-                    var replied = new MessageCollection(messages.MessagesValue.OrderBy(x => x.Id).Select(x => _messageFactory.Create(this, x)));
+                    var replied = new MessageCollection(null, messages.MessagesValue.Select(x => _messageFactory.Create(this, x)));
                     await ProcessMessagesAsync(chat, replied);
 
                     long lastReadMessageId;
@@ -1224,6 +1214,9 @@ namespace Unigram.ViewModels
                         lastMessageId = chat.LastMessage?.Id ?? long.MaxValue;
                     }
 
+                    var firstVisibleIndex = -1;
+                    var firstVisibleItem = default(MessageViewModel);
+
                     // If we're loading from the last read message
                     // then we want to skip it to align first unread message at top
                     if (lastReadMessageId != lastMessageId)
@@ -1236,6 +1229,12 @@ namespace Unigram.ViewModels
                             var current = replied[i];
                             if (current.Id > lastReadMessageId)
                             {
+                                if (index == -1)
+                                {
+                                    firstVisibleIndex = i;
+                                    firstVisibleItem = current;
+                                }
+
                                 if (target == null && !current.IsOutgoing)
                                 {
                                     target = current;
@@ -1270,7 +1269,7 @@ namespace Unigram.ViewModels
 
                     // If we're loading the last message and it has been read already
                     // then we want to align it at bottom, as it might be taller than the window height
-                    if (maxId == lastReadMessageId && maxId == lastMessageId && alignment != VerticalAlignment.Center)
+                    if (maxId == lastMessageId && maxId == firstVisibleItem?.Id && alignment != VerticalAlignment.Center)
                     {
                         alignment = VerticalAlignment.Bottom;
                         pixel = null;
@@ -1285,7 +1284,37 @@ namespace Unigram.ViewModels
                         }
                     }
 
+                    if (firstVisibleIndex == -1)
+                    {
+                        firstVisibleItem = replied.FirstOrDefault(x => x.Id == maxId);
+                        
+                        if (firstVisibleItem != null)
+                        {
+                            firstVisibleIndex = replied.IndexOf(firstVisibleItem);
+                        }
+                    }
+
+                    if (firstVisibleIndex == -1)
+                    {
+                        System.Diagnostics.Debugger.Break();
+                    }
+
+                    if (alignment == VerticalAlignment.Bottom)
+                    {
+                        SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
+                        Items.RawReplaceWith(firstVisibleIndex == -1 ? replied : replied.Take(firstVisibleIndex + 1));
+                    }
+                    else if (alignment == VerticalAlignment.Top)
+                    {
+                        SetScrollMode(ItemsUpdatingScrollMode.KeepItemsInView, true);
+                        Items.RawReplaceWith(firstVisibleIndex == -1 ? replied : replied.Skip(firstVisibleIndex));
+                    }
+                    else
+                    {
+                        SetScrollMode(direction == ScrollIntoViewAlignment.Default ? ItemsUpdatingScrollMode.KeepLastItemInView : ItemsUpdatingScrollMode.KeepItemsInView, true);
                     Items.RawReplaceWith(replied);
+                    }
+
                     NotifyMessageSliceLoaded();
 
                     IsLastSliceLoaded = null;
@@ -3458,7 +3487,12 @@ namespace Unigram.ViewModels
     public class MessageCollection : MvxObservableCollection<MessageViewModel>
     {
         private readonly HashSet<long> _messages;
+
         private bool _suppressOperations = false;
+        private bool _suppressPrev = false;
+        private bool _suppressNext = false;
+
+        public ISet<long> Ids => _messages;
 
         public Action<IEnumerable<MessageViewModel>> AttachChanged;
 
@@ -3467,12 +3501,17 @@ namespace Unigram.ViewModels
             _messages = new();
         }
 
-        public MessageCollection(IEnumerable<MessageViewModel> source)
+        public MessageCollection(ISet<long> exclude, IEnumerable<MessageViewModel> source)
         {
             foreach (var item in source)
         {
-                Add(item);
+                if (exclude != null && exclude.Contains(item.Id))
+                {
+                    continue;
             }
+
+                Insert(0, item);
+        }
         }
 
         //~MessageCollection()
@@ -3498,6 +3537,7 @@ namespace Unigram.ViewModels
                 }
 
                 _suppressOperations = i > 0;
+                _suppressNext = !_suppressOperations;
 
                 Add(source[i]);
                 empty = false;
@@ -3510,7 +3550,7 @@ namespace Unigram.ViewModels
         {
             empty = true;
 
-            for (int i = 0; i < source.Count; i++)
+            for (int i = source.Count - 1; i >= 0; i--)
             {
                 if (_messages.Contains(source[i].Id))
                 {
@@ -3518,6 +3558,7 @@ namespace Unigram.ViewModels
                 }
 
                 _suppressOperations = i < source.Count - 1;
+                _suppressPrev = !_suppressOperations;
 
                 Insert(0, source[i]);
                 empty = false;
@@ -3526,7 +3567,7 @@ namespace Unigram.ViewModels
             _suppressOperations = false;
         }
 
-        public void RawReplaceWith(IList<MessageViewModel> source)
+        public void RawReplaceWith(IEnumerable<MessageViewModel> source)
         {
             _suppressOperations = true;
 
@@ -3544,8 +3585,69 @@ namespace Unigram.ViewModels
                 base.InsertItem(index, item);
                 return;
             }
+            else if (_suppressNext)
+            {
+                var prev = index > 0 ? this[index - 1] : null;
+                var prevSeparator = UpdateSeparatorOnInsert(prev, item);
+                var prevHash = AttachHash(prev);
 
-            var previous = index > 0 ? this[index - 1] : null;
+                if (prevSeparator != null)
+                {
+                    UpdateAttach(null, prev);
+                    UpdateAttach(prevSeparator, item);
+                }
+                else
+                {
+                    UpdateAttach(item, prev);
+                }
+
+                if (prevSeparator != null)
+                {
+                    base.InsertItem(index++, prevSeparator);
+                }
+
+                base.InsertItem(index, item);
+
+                var prevUpdate = AttachHash(prev);
+
+                AttachChanged?.Invoke(new[]
+                {
+                    prevHash != prevUpdate ? prev : null,
+                });
+            }
+            else if (_suppressPrev)
+            {
+                var next = index < Count ? this[index] : null;
+                var nextSeparator = UpdateSeparatorOnInsert(item, next);
+                var nextHash = AttachHash(next);
+
+                if (nextSeparator != null)
+                {
+                    UpdateAttach(next, null);
+                    UpdateAttach(item, nextSeparator);
+                }
+                else
+                {
+                    UpdateAttach(next, item);
+                }
+
+                base.InsertItem(index, item);
+
+                if (nextSeparator != null)
+                {
+                    base.InsertItem(++index, nextSeparator);
+                }
+
+                var nextUpdate = AttachHash(next);
+
+                AttachChanged?.Invoke(new[]
+                {
+                    nextHash != nextUpdate ? next : null
+                });
+            }
+            else
+            {
+                var prev = index > 0 ? this[index - 1] : null;
             var next = index < Count ? this[index] : null;
 
             // Order must be:
@@ -3555,20 +3657,20 @@ namespace Unigram.ViewModels
             // UpdateSeparatorOnInsert must return the new messages
             // This way only two AttachChanged will be needed at most
 
-            var prevSeparator = UpdateSeparatorOnInsert(previous, item);
+                var prevSeparator = UpdateSeparatorOnInsert(prev, item);
             var nextSeparator = UpdateSeparatorOnInsert(item, next);
 
-            var hash2 = AttachHash(next);
-            var hash3 = AttachHash(previous);
+                var nextHash = AttachHash(next);
+                var prevHash = AttachHash(prev);
 
             if (prevSeparator != null)
             {
-                UpdateAttach(null, previous);
+                    UpdateAttach(null, prev);
                 UpdateAttach(prevSeparator, item);
             }
             else
             {
-                UpdateAttach(item, previous);
+                    UpdateAttach(item, prev);
             }
 
             if (nextSeparator != null)
@@ -3593,14 +3695,15 @@ namespace Unigram.ViewModels
                 base.InsertItem(++index, nextSeparator);
             }
 
-            var update2 = AttachHash(next);
-            var update3 = AttachHash(previous);
+                var nextUpdate = AttachHash(next);
+                var prevUpdate = AttachHash(prev);
 
             AttachChanged?.Invoke(new[]
             {
-                hash3 != update3 ? previous : null,
-                hash2 != update2 ? next : null
+                    prevHash != prevUpdate ? prev : null,
+                    nextHash != nextUpdate ? next : null
             });
+        }
         }
 
         protected override void RemoveItem(int index)

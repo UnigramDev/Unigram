@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Controls.Messages;
+using Unigram.Logs;
 using Unigram.ViewModels;
 using Windows.Devices.Input;
 using Windows.UI.Input;
@@ -120,7 +121,12 @@ namespace Unigram.Controls.Chats
             _loadingMore = false;
         }
 
-        private async void ScrollingHost_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        private void ScrollingHost_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        {
+            ViewChanged();
+        }
+
+        private async void ViewChanged()
         {
             if (ScrollingHost == null || ItemsStack == null || ViewModel == null || _loadingMore)
             {
@@ -133,20 +139,42 @@ namespace Unigram.Controls.Chats
             //if (ItemsStack.FirstCacheIndex == 0 && !e.IsIntermediate)
             using (await _loadMoreLock.WaitAsync())
             {
-                if (ItemsStack.FirstCacheIndex == 0 && ViewModel.IsLastSliceLoaded != true)
+                var lastSlice = ViewModel.IsLastSliceLoaded != true;
+                var firstSlice = ViewModel.IsFirstSliceLoaded != true;
+
+                if (ItemsStack.ScrollingDirection == PanelScrollingDirection.Backward
+                    && ItemsStack.FirstCacheIndex == 0
+                    && lastSlice)
                 {
+                    Logger.Debug(LogTarget.Chat, "Going Backward, first cache index is minValue");
                     await ViewModel.LoadNextSliceAsync(true);
                 }
                 //else if (ScrollingHost.ScrollableHeight - ScrollingHost.VerticalOffset < 200 && ScrollingHost.ScrollableHeight > 0)
-                else if (ItemsStack.LastCacheIndex == ViewModel.Items.Count - 1)
+                else if (ItemsStack.ScrollingDirection == PanelScrollingDirection.Forward
+                    && ItemsStack.LastCacheIndex == ViewModel.Items.Count - 1)
                 {
-                    if (ViewModel.IsFirstSliceLoaded != true)
+                    if (firstSlice)
                     {
+                        Logger.Debug(LogTarget.Chat, "Going Forward, last cache index is maxValue");
                         await ViewModel.LoadPreviousSliceAsync(true);
                     }
                     else
                     {
                         SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
+                    }
+                }
+                else if (ItemsStack.ScrollingDirection == PanelScrollingDirection.None)
+                {
+                    if (lastSlice && ItemsStack.FirstVisibleIndex == 0)
+                    {
+                        Logger.Debug(LogTarget.Chat, "Going Nowhere, first visible index is minValue");
+                        await ViewModel.LoadNextSliceAsync(true);
+                    }
+                    
+                    if (firstSlice && ItemsStack.LastCacheIndex == ViewModel.Items.Count - 1)
+                    {
+                        Logger.Debug(LogTarget.Chat, "Going Nowhere, last visible index is maxValue");
+                        await ViewModel.LoadPreviousSliceAsync(true);
                     }
                 }
             }
@@ -157,6 +185,8 @@ namespace Unigram.Controls.Chats
         private ItemsUpdatingScrollMode _currentMode;
         private ItemsUpdatingScrollMode? _pendingMode;
         private bool? _pendingForce;
+
+        public ItemsUpdatingScrollMode ScrollMode => ItemsStack?.ItemsUpdatingScrollMode ?? _currentMode;
 
         public void SetScrollMode()
         {
@@ -290,7 +320,9 @@ namespace Unigram.Controls.Chats
             }
 
             _programmaticScrolling = _programmaticExternal = false;
+
             ViewVisibleMessages?.Invoke(true);
+            ViewChanged();
         }
 
         public async Task ScrollIntoViewAsync(MessageViewModel item, ScrollIntoViewAlignment alignment)

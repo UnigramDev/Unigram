@@ -713,16 +713,20 @@ namespace Unigram.Views
                     return;
                 }
 
+                var direction = Messages.ScrollMode == ItemsUpdatingScrollMode.KeepItemsInView ? -1 : 1;
                 var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
 
                 var anim = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-                anim.InsertKeyFrame(0, (float)diff);
+                anim.InsertKeyFrame(0, (float)(diff * direction));
                 anim.InsertKeyFrame(1, 0);
                 //anim.Duration = TimeSpan.FromSeconds(5);
 
                 System.Diagnostics.Debug.WriteLine(diff);
 
-                for (int i = panel.FirstCacheIndex; i <= index; i++)
+                var first = direction == 1 ? panel.FirstCacheIndex : index;
+                var last = direction == 1 ? index : panel.LastCacheIndex;
+
+                for (int i = first; i <= last; i++)
                 {
                     var container = Messages.ContainerFromIndex(i) as SelectorItem;
                     if (container == null)

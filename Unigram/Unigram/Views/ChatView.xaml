@@ -194,7 +194,7 @@
         <!-- Region Service -->
 
         <DataTemplate x:Key="ServiceMessagePhotoTemplate">
-            <StackPanel Margin="0,8,0,4">
+            <StackPanel Margin="0,4,0,0">
                 <messages:MessageService x:Name="Service"
                                          Click="ServiceMessage_Click">
                     <TextBlock Foreground="White"
@@ -217,7 +217,7 @@
 
         <DataTemplate x:Key="ServiceMessageTemplate">
             <messages:MessageService Click="ServiceMessage_Click"
-                                     Margin="0,8,0,4">
+                                     Margin="0,4,0,0">
                 <TextBlock Foreground="White"
                            TextAlignment="Center"
                            FontFamily="{ThemeResource EmojiThemeFontFamily}"
@@ -227,7 +227,7 @@
 
         <DataTemplate x:Key="ServiceMessageUnreadTemplate">
             <Grid AutomationProperties.Name="{CustomResource UnreadMessages}"
-                  Margin="-12,8,-12,4"
+                  Margin="-12,4,-12,0"
                   Background="{ThemeResource MessageBackgroundBrush}">
                 <TextBlock Text="{CustomResource UnreadMessages}"
                            Padding="0"
@@ -781,8 +781,8 @@
                              <TextBlock Text="What can this bot do?" Style="{StaticResource BaseTextBlockStyle}"/>
                              <TextBlock Style="{StaticResource BodyTextBlockStyle}"/>
                              </StackPanel>-->
-                        <Border Height="4"
-                                Grid.Row="1" />
+                        <!--<Border Height="4"
+                                Grid.Row="1" />-->
                     </Grid>
                 </ListView.Header>
             </chats:ChatListView>
