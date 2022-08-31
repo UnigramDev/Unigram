@@ -1216,6 +1216,8 @@ namespace Unigram.ViewModels
 
                     var firstVisibleIndex = -1;
                     var firstVisibleItem = default(MessageViewModel);
+                    
+                    var unread = false;
 
                     // If we're loading from the last read message
                     // then we want to skip it to align first unread message at top
@@ -1253,6 +1255,7 @@ namespace Unigram.ViewModels
                             if (index > 0)
                             {
                                 replied.Insert(index, _messageFactory.Create(this, new Message(0, target.SenderId, target.ChatId, null, null, target.IsOutgoing, false, false, false, false, true, false, false, false, false, false, false, false, target.IsChannelPost, false, target.Date, 0, null, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderUnread(), null)));
+                                unread = true;
                             }
                             else if (maxId == lastReadMessageId)
                             {
@@ -1291,6 +1294,7 @@ namespace Unigram.ViewModels
                         if (firstVisibleItem != null)
                         {
                             firstVisibleIndex = replied.IndexOf(firstVisibleItem);
+                            unread = false;
                         }
                     }
 
@@ -1301,6 +1305,11 @@ namespace Unigram.ViewModels
 
                     if (alignment == VerticalAlignment.Bottom)
                     {
+                        if (unread)
+                        {
+                            firstVisibleIndex++;
+                        }
+
                         SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
                         Items.RawReplaceWith(firstVisibleIndex == -1 ? replied : replied.Take(firstVisibleIndex + 1));
                     }
