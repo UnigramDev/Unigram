@@ -60,8 +60,7 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            var user = message.ProtoService.GetUser(contact.Contact.UserId);
-            if (user != null)
+            if (message.ProtoService.TryGetUser(contact.Contact.UserId, out User user))
             {
                 Photo.SetUser(message.ProtoService, user, 48);
             }

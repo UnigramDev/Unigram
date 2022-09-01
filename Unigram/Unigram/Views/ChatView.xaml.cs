@@ -662,7 +662,7 @@ namespace Unigram.Views
 
                         if (messages.Clip is InsetClip messagesClip)
                         {
-                            messagesClip.BottomInset = -SettingsService.Current.Appearance.BubbleRadius;
+                            messagesClip.BottomInset = -8 - SettingsService.Current.Appearance.BubbleRadius;
                         }
                     };
 
@@ -2614,7 +2614,7 @@ namespace Unigram.Views
         private void InlinePanel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             _textShadowVisual.IsVisible = Math.Round(e.NewSize.Height) > ViewModel.Settings.Appearance.BubbleRadius
-                || ReplyMarkup.Visibility == Visibility.Visible;
+                || ReplyMarkupPanel.Visibility == Visibility.Visible;
         }
 
         private void TextArea_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -4108,11 +4108,11 @@ namespace Unigram.Views
             if (messages.Clip is InsetClip messagesClip)
             {
                 messagesClip.TopInset = -48;
-                messagesClip.BottomInset = -radius;
+                messagesClip.BottomInset = -8 - radius;
             }
             else
             {
-                messages.Clip = Window.Current.Compositor.CreateInsetClip(0, -48, 0, -radius);
+                messages.Clip = Window.Current.Compositor.CreateInsetClip(0, -48, 0, -8 - radius);
             }
         }
 
