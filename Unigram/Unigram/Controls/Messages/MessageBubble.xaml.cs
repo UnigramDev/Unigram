@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Text;
+using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls.Messages.Content;
@@ -1631,7 +1632,7 @@ namespace Unigram.Controls.Messages
             {
                 //Message.Visibility = Visibility.Visible;
 
-                var response = message.ProtoService.Execute(new GetTextEntities(text));
+                var response = Client.Execute(new GetTextEntities(text));
                 if (response is TextEntities entities)
                 {
                     return ReplaceEntities(message, textBlock, text, entities.Entities, out adjust);
@@ -2553,7 +2554,7 @@ namespace Unigram.Controls.Messages
                 type = Strings.Resources.PsaMessageInfoDefault;
             }
 
-            var entities = message.ProtoService.Execute(new GetTextEntities(type)) as TextEntities;
+            var entities = Client.Execute(new GetTextEntities(type)) as TextEntities;
             Window.Current.ShowTeachingTip(PsaInfo, new FormattedText(type, entities.Entities), TeachingTipPlacementMode.TopLeft);
         }
 

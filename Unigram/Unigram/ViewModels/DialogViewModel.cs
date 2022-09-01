@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
@@ -807,7 +808,7 @@ namespace Unigram.ViewModels
 
             if (fullInfo != null && fullInfo.BotInfo?.Description.Length > 0)
             {
-                var result = ProtoService.Execute(new GetTextEntities(fullInfo.BotInfo.Description)) as TextEntities;
+                var result = Client.Execute(new GetTextEntities(fullInfo.BotInfo.Description)) as TextEntities;
                 var entities = result?.Entities ?? new List<TextEntity>();
 
                 foreach (var entity in entities)

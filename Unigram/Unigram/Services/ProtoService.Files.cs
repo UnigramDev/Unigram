@@ -1,5 +1,6 @@
 ﻿using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Native;
 
 namespace Unigram.Services
 {
@@ -14,7 +15,13 @@ namespace Unigram.Services
             }
             else
             {
-                _files[file.Id] = file.Update();
+                _files[file.Id] = file;
+
+                if (file.Local.IsDownloadingCompleted && !NativeUtils.FileExists(file.Local.Path))
+                {
+                    Send(new DeleteFileW(file.Id));
+                }
+
                 return file;
             }
         }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls.Gallery;
@@ -684,7 +685,7 @@ namespace Unigram.Controls
             DescriptionSpan.Inlines.Clear();
             Description.BadgeLabel = text;
 
-            var response = ViewModel.ProtoService.Execute(new GetTextEntities(text));
+            var response = Client.Execute(new GetTextEntities(text));
             if (response is TextEntities entities)
             {
                 ReplaceEntities(DescriptionSpan, text, entities.Entities);

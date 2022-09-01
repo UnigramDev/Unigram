@@ -21,8 +21,6 @@ namespace Unigram.Services
         bool TryInitialize();
         void Close(bool restart);
 
-        BaseObject Execute(Function function);
-
         //void Send(Function function);
         //void Send(Function function, ClientResultHandler handler);
         void Send(Function function, Action<BaseObject> handler = null);
@@ -617,23 +615,6 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 
 
 
-        public BaseObject Execute(Function function)
-        {
-            return Client.Execute(function);
-        }
-
-
-
-        //public void Send(Function function)
-        //{
-        //    _client.Send(function);
-        //}
-
-        //public void Send(Function function, ClientResultHandler handler)
-        //{
-        //    _client.Send(function, handler);
-        //}
-
         public void Send(Function function, Action<BaseObject> handler = null)
         {
             if (handler != null)
@@ -782,12 +763,12 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 
         public void AddFileToDownloads(int fileId, long chatId, long messageId, int priority = 30)
         {
-            _client.Send(new AddFileToDownloads(fileId, chatId, messageId, priority));
+            Send(new AddFileToDownloads(fileId, chatId, messageId, priority));
         }
 
         public void DownloadFile(int fileId, int priority, int offset = 0, int limit = 0, bool synchronous = false)
         {
-            _client.Send(new DownloadFile(fileId, priority, offset, limit, synchronous));
+            Send(new DownloadFile(fileId, priority, offset, limit, synchronous));
         }
 
         public async Task<File> DownloadFileAsync(File file, int priority, int offset = 0, int limit = 0)
@@ -804,8 +785,8 @@ Read more about how to update your device [here](https://support.microsoft.com/h
         public void CancelDownloadFile(int fileId, bool onlyIfPending = false)
         {
             _canceledDownloads.Add(fileId);
-            _client.Send(new CancelDownloadFile(fileId, onlyIfPending));
-            _client.Send(new RemoveFileFromDownloads(fileId, false));
+            Send(new CancelDownloadFile(fileId, onlyIfPending));
+            Send(new RemoveFileFromDownloads(fileId, false));
         }
 
         public bool IsDownloadFileCanceled(int fileId)
