@@ -20,6 +20,12 @@ namespace Unigram.Controls.Cells
 
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
+
+            _selectionPhoto = ElementCompositionPreview.GetElementVisual(Photo);
+            _selectionOutline = ElementCompositionPreview.GetElementVisual(SelectionOutline);
+            _selectionPhoto.CenterPoint = new Vector3(24);
+            _selectionOutline.CenterPoint = new Vector3(24);
+            _selectionOutline.Opacity = 0;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -235,12 +241,6 @@ namespace Unigram.Controls.Cells
             _ellipse = shape2;
             _stroke = shape3;
             _visual = visual;
-
-            _selectionPhoto = ElementCompositionPreview.GetElementVisual(PhotoElement);
-            _selectionOutline = ElementCompositionPreview.GetElementVisual(SelectionOutline);
-            _selectionPhoto.CenterPoint = new Vector3(18);
-            _selectionOutline.CenterPoint = new Vector3(18);
-            _selectionOutline.Opacity = 0;
         }
 
         public void UpdateState(bool selected, bool animate)
