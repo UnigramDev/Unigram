@@ -3592,6 +3592,7 @@ namespace Unigram.ViewModels
 
         public void RawReplaceWith(IEnumerable<MessageViewModel> source)
         {
+            _messages.Clear();
             _suppressOperations = true;
 
             ReplaceWith(source);

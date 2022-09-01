@@ -114,39 +114,42 @@ namespace Unigram.Controls.Chats
                     && ItemsStack.FirstCacheIndex == 0
                     && lastSlice)
                 {
-                    Logger.Debug(LogTarget.Chat, "Going Backward, loading history in the past");
+                    Logger.Debug(LogTarget.Chat, $"Going {direction}, loading history in the past");
                     await ViewModel.LoadNextSliceAsync(true);
                 }
                 else if (direction == PanelScrollingDirection.Forward
                     && ItemsStack.LastCacheIndex == ViewModel.Items.Count - 1)
                 {
-                    if (firstSlice)
-                    {
-                        Logger.Debug(LogTarget.Chat, "Going Forward, loading history in the future");
-                        await ViewModel.LoadPreviousSliceAsync(true);
-                    }
-                    else
-                    {
-                        SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
-                    }
+                    await LoadPreviousSliceAsync(direction, firstSlice);
                 }
                 else if (direction == PanelScrollingDirection.None)
                 {
                     if (lastSlice && ItemsStack.FirstVisibleIndex == 0)
                     {
-                        Logger.Debug(LogTarget.Chat, "Going Nowhere, loading history in the past");
+                        Logger.Debug(LogTarget.Chat, $"Going {direction}, loading history in the past");
                         await ViewModel.LoadNextSliceAsync(true);
                     }
 
-                    if (firstSlice && ItemsStack.LastCacheIndex == ViewModel.Items.Count - 1)
+                    if (ItemsStack.LastCacheIndex == ViewModel.Items.Count - 1)
                     {
-                        Logger.Debug(LogTarget.Chat, "Going Nowhere, loading history in the future");
-                        await ViewModel.LoadPreviousSliceAsync(true);
+                        await LoadPreviousSliceAsync(direction, firstSlice);
                     }
                 }
             }
 
             _loadingMore = false;
+        }
+
+        private Task LoadPreviousSliceAsync(PanelScrollingDirection direction, bool firstSlice)
+        {
+            if (firstSlice)
+            {
+                Logger.Debug(LogTarget.Chat, $"Going {direction}, loading history in the future");
+                return ViewModel.LoadPreviousSliceAsync(true);
+            }
+
+            SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
+            return Task.CompletedTask;
         }
 
         private ItemsUpdatingScrollMode _currentMode;
