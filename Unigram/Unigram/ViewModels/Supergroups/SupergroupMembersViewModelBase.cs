@@ -61,7 +61,7 @@ namespace Unigram.ViewModels.Supergroups
                     Delegate?.UpdateSupergroupFullInfo(chat, item, cache);
                 }
 
-                Members.SetQuery(string.Empty);
+                Members.UpdateQuery(string.Empty);
             }
             else if (chat.Type is ChatTypeBasicGroup basicGroup)
             {
@@ -72,7 +72,7 @@ namespace Unigram.ViewModels.Supergroups
                     basicDelegate.UpdateBasicGroup(chat, item);
                 }
 
-                Members.SetQuery(string.Empty);
+                Members.UpdateQuery(string.Empty);
             }
 
             return Task.CompletedTask;

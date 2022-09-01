@@ -85,12 +85,12 @@ namespace Unigram.ViewModels.Chats
 
             Chat = ProtoService.GetChat(chatId);
 
-            Media.SetQuery(string.Empty);
-            Files.SetQuery(string.Empty);
-            Links.SetQuery(string.Empty);
-            Music.SetQuery(string.Empty);
-            Voice.SetQuery(string.Empty);
-            Animations.SetQuery(string.Empty);
+            Media.UpdateQuery(string.Empty);
+            Files.UpdateQuery(string.Empty);
+            Links.UpdateQuery(string.Empty);
+            Music.UpdateQuery(string.Empty);
+            Voice.UpdateQuery(string.Empty);
+            Animations.UpdateQuery(string.Empty);
 
             Aggregator.Subscribe<UpdateDeleteMessages>(this, Handle);
 

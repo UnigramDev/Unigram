@@ -1,6 +1,8 @@
 ﻿using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Numerics;
+using Telegram.Td.Api;
+using Unigram.Common;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -10,11 +12,11 @@ using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Cells
 {
-    public sealed partial class ChatShareCell : Grid, IMultipleElement
+    public sealed partial class VenueCell : Grid, IMultipleElement
     {
         private bool _selected;
 
-        public ChatShareCell()
+        public VenueCell()
         {
             InitializeComponent();
 
@@ -23,18 +25,13 @@ namespace Unigram.Controls.Cells
 
             _selectionPhoto = ElementCompositionPreview.GetElementVisual(Photo);
             _selectionOutline = ElementCompositionPreview.GetElementVisual(SelectionOutline);
-            _selectionPhoto.CenterPoint = new Vector3(18);
-            _selectionOutline.CenterPoint = new Vector3(18);
+            _selectionPhoto.CenterPoint = new Vector3(20);
+            _selectionOutline.CenterPoint = new Vector3(20);
             _selectionOutline.Opacity = 0;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (Stroke is SolidColorBrush stroke && _strokeToken == 0 && _visual != null)
-            {
-                _strokeToken = stroke.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, OnStrokeChanged);
-            }
-
             if (SelectionStroke is SolidColorBrush selectionStroke && _selectionStrokeToken == 0 && _visual != null)
             {
                 _selectionStrokeToken = selectionStroke.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, OnSelectionStrokeChanged);
@@ -43,12 +40,6 @@ namespace Unigram.Controls.Cells
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            if (Stroke is SolidColorBrush stroke && _strokeToken != 0)
-            {
-                stroke.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, _strokeToken);
-                _strokeToken = 0;
-            }
-
             if (SelectionStroke is SolidColorBrush selectionStroke && _selectionStrokeToken != 0)
             {
                 selectionStroke.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, _selectionStrokeToken);
@@ -56,55 +47,38 @@ namespace Unigram.Controls.Cells
             }
         }
 
-        public ProfilePicture Photo => PhotoElement;
-
-        #region Stroke
-
-        private long _strokeToken;
-
-        public Brush Stroke
+        public string Glyph
         {
-            get => (Brush)GetValue(StrokeProperty);
-            set => SetValue(StrokeProperty, value);
+            get => GlyphElement.Glyph;
+            set => GlyphElement.Glyph = value;
         }
 
-        public static readonly DependencyProperty StrokeProperty =
-            DependencyProperty.Register("Stroke", typeof(Brush), typeof(ChatShareCell), new PropertyMetadata(null, OnStrokeChanged));
-
-        private static void OnStrokeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        public string Title
         {
-            ((ChatShareCell)d).OnStrokeChanged(e.NewValue as SolidColorBrush, e.OldValue as SolidColorBrush);
+            get => TitleLabel.Text;
+            set => TitleLabel.Text = value;
         }
 
-        private void OnStrokeChanged(SolidColorBrush newValue, SolidColorBrush oldValue)
+        public string Address
         {
-            if (oldValue != null && _strokeToken != 0)
+            get => AddressLabel.Text;
+            set => AddressLabel.Text = value;
+        }
+
+        public void UpdateVenue(Venue venue)
+        {
+            SelectionOutline.Stroke = PlaceholderHelper.GetBrush(venue.Id.GetHashCode());
+            Photo.Background = PlaceholderHelper.GetBrush(venue.Id.GetHashCode());
+            PhotoElement.UriSource = new Uri(string.Format("https://ss3.4sqi.net/img/categories_v2/{0}_88.png", venue.Type));
+
+            TitleLabel.Text = venue.Title;
+            AddressLabel.Text = venue.Address;
+
+            if (_ellipse != null)
             {
-                oldValue.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, _strokeToken);
-                _strokeToken = 0;
+                _ellipse.FillBrush = PlaceholderHelper.GetBrush(_ellipse.Compositor, venue.Id.GetHashCode());
             }
-
-            if (newValue == null || _ellipse == null)
-            {
-                return;
-            }
-
-            _ellipse.FillBrush = Window.Current.Compositor.CreateColorBrush(newValue.Color);
-            _strokeToken = newValue.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, OnStrokeChanged);
         }
-
-        private void OnStrokeChanged(DependencyObject sender, DependencyProperty dp)
-        {
-            var solid = sender as SolidColorBrush;
-            if (solid == null || _ellipse == null)
-            {
-                return;
-            }
-
-            _ellipse.FillBrush = Window.Current.Compositor.CreateColorBrush(solid.Color);
-        }
-
-        #endregion
 
         #region SelectionStroke
 
@@ -117,11 +91,11 @@ namespace Unigram.Controls.Cells
         }
 
         public static readonly DependencyProperty SelectionStrokeProperty =
-            DependencyProperty.Register("SelectionStroke", typeof(SolidColorBrush), typeof(ChatShareCell), new PropertyMetadata(null, OnSelectionStrokeChanged));
+            DependencyProperty.Register("SelectionStroke", typeof(SolidColorBrush), typeof(VenueCell), new PropertyMetadata(null, OnSelectionStrokeChanged));
 
         private static void OnSelectionStrokeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((ChatShareCell)d).OnSelectionStrokeChanged(e.NewValue as SolidColorBrush, e.OldValue as SolidColorBrush);
+            ((VenueCell)d).OnSelectionStrokeChanged(e.NewValue as SolidColorBrush, e.OldValue as SolidColorBrush);
         }
 
         private void OnSelectionStrokeChanged(SolidColorBrush newValue, SolidColorBrush oldValue)
@@ -163,6 +137,16 @@ namespace Unigram.Controls.Cells
         private CompositionSpriteShape _ellipse;
         private CompositionSpriteShape _stroke;
         private ShapeVisual _visual;
+
+        private CompositionBrush GetBrush(Compositor compositor, Brush brush)
+        {
+            if (brush is SolidColorBrush solid)
+            {
+                return compositor.CreateColorBrush(solid.Color);
+            }
+
+            return null;
+        }
 
         private CompositionBrush GetBrush(DependencyProperty dp, ref long token, DependencyPropertyChangedCallback callback)
         {
@@ -216,7 +200,7 @@ namespace Unigram.Controls.Cells
 
             var shape2 = compositor.CreateSpriteShape();
             shape2.Geometry = ellipse;
-            shape2.FillBrush = GetBrush(StrokeProperty, ref _strokeToken, OnStrokeChanged);
+            shape2.FillBrush = GetBrush(compositor, SelectionOutline.Stroke);
 
             var outer = compositor.CreateEllipseGeometry();
             outer.Radius = new Vector2(10);
@@ -231,7 +215,7 @@ namespace Unigram.Controls.Cells
             visual.Shapes.Add(shape2);
             visual.Shapes.Add(shape1);
             visual.Size = new Vector2(20, 20);
-            visual.Offset = new Vector3(36 - 17, 36 - 17, 0);
+            visual.Offset = new Vector3(40 - 17, 40 - 17, 0);
             visual.CenterPoint = new Vector3(8);
             visual.Scale = new Vector3(0);
 
@@ -279,11 +263,11 @@ namespace Unigram.Controls.Cells
 
                 var anim4 = compositor.CreateVector3KeyFrameAnimation();
                 anim4.InsertKeyFrame(selected ? 0 : 1, new Vector3(1));
-                anim4.InsertKeyFrame(selected ? 1 : 0, new Vector3(28f / 36f));
+                anim4.InsertKeyFrame(selected ? 1 : 0, new Vector3(32f / 40f));
 
                 var anim5 = compositor.CreateVector3KeyFrameAnimation();
                 anim5.InsertKeyFrame(selected ? 1 : 0, new Vector3(1));
-                anim5.InsertKeyFrame(selected ? 0 : 1, new Vector3(28f / 36f));
+                anim5.InsertKeyFrame(selected ? 0 : 1, new Vector3(32f / 40f));
 
                 _selectionPhoto.StartAnimation("Scale", anim4);
                 _selectionOutline.StartAnimation("Scale", anim5);
@@ -295,8 +279,8 @@ namespace Unigram.Controls.Cells
                 _visual.Scale = new Vector3(selected ? 1 : 0);
                 _visual.Opacity = selected ? 1 : 0;
 
-                _selectionPhoto.Scale = new Vector3(selected ? 28f / 36f : 1);
-                _selectionOutline.Scale = new Vector3(selected ? 1 : 28f / 36f);
+                _selectionPhoto.Scale = new Vector3(selected ? 32f / 40f : 1);
+                _selectionOutline.Scale = new Vector3(selected ? 1 : 32f / 40f);
                 _selectionOutline.Opacity = selected ? 1 : 0;
             }
 

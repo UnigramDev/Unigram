@@ -1,9 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using Rg.DiffUtils;
+using System.Collections.ObjectModel;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
 using Unigram.Collections;
-using Unigram.Navigation.Services;
 using Unigram.Services;
-using Windows.UI.Xaml.Navigation;
+using Windows.Foundation;
+using Windows.UI.Xaml.Data;
 
 namespace Unigram.ViewModels
 {
@@ -16,55 +18,87 @@ namespace Unigram.ViewModels
         {
             _locationService = foursquareService;
 
-            Items = new MvxObservableCollection<Venue>();
-            OnNavigatedToAsync(null, NavigationMode.New, null);
+            Items = new SearchCollection<Venue, VenueCollection>(CreateSearch, new VenueDiffHandler());
         }
 
-        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        public SearchCollection<Venue, VenueCollection> Items { get; private set; }
+
+        private VenueCollection CreateSearch(object sender, string query)
         {
-            var location = await _locationService.GetPositionAsync();
-            if (location == null)
+            if (_location != null)
             {
-                Location = null;
-                return;
+                return new VenueCollection(_locationService, _location.Latitude, _location.Longitude, query);
             }
 
-            Location = location;
-
-            var venues = await _locationService.GetVenuesAsync(0, location.Latitude, location.Longitude);
-            Items.ReplaceWith(venues);
+            return null;
         }
-
-        public MvxObservableCollection<Venue> Items { get; private set; }
 
         private Location _location;
         public Location Location
         {
             get => _location;
-            set => Set(ref _location, value);
-        }
-
-        #region Search
-
-        public async void Find(string query)
-        {
-            var location = _location;
-            if (location == null)
+            set
             {
-                return;
+                if (value?.Latitude != _location?.Latitude || value?.Longitude != _location?.Longitude)
+                {
+                    Set(ref _location, value);
+                    Items.UpdateQuery(Items.Query);
+                }
             }
-
-            var venues = await _locationService.GetVenuesAsync(0, location.Latitude, location.Longitude, query);
-            Search = new MvxObservableCollection<Venue>(venues);
         }
+    }
 
-        private MvxObservableCollection<Venue> _search;
-        public MvxObservableCollection<Venue> Search
+    public class VenueCollection : ObservableCollection<Venue>, ISupportIncrementalLoading
+    {
+        private readonly ILocationService _locationService;
+        private readonly double _latitude;
+        private readonly double _longitude;
+        private readonly string _query;
+
+        private string _nextOffset;
+        private bool _hasMoreItems = true;
+
+        public VenueCollection(ILocationService locationService, double latitude, double longitude, string query)
         {
-            get => _search;
-            set => Set(ref _search, value);
+            _locationService = locationService;
+            _latitude = latitude;
+            _longitude = longitude;
+            _query = query;
         }
 
-        #endregion
+        public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+        {
+            return AsyncInfo.Run(async token =>
+            {
+                var response = await _locationService.GetVenuesAsync(0, _latitude, _longitude, _query, _nextOffset);
+                var count = 0u;
+
+                foreach (var item in response.Venues)
+                {
+                    Add(item);
+                    count++;
+                }
+
+                _hasMoreItems = !string.IsNullOrEmpty(response.NextOffset);
+                _nextOffset = response.NextOffset;
+
+                return new LoadMoreItemsResult { Count = count };
+            });
+        }
+
+        public bool HasMoreItems => _hasMoreItems;
+    }
+
+    public class VenueDiffHandler : IDiffHandler<Venue>
+    {
+        public bool CompareItems(Venue oldItem, Venue newItem)
+        {
+            return oldItem.Id == newItem.Id;
+        }
+
+        public void UpdateItem(Venue oldItem, Venue newItem)
+        {
+
+        }
     }
 }

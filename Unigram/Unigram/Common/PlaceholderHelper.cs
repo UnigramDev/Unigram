@@ -14,6 +14,7 @@ using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI;
+using Windows.UI.Composition;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
@@ -51,6 +52,11 @@ namespace Unigram.Common
         public static SolidColorBrush GetBrush(long i)
         {
             return new SolidColorBrush(_colors[Math.Abs(i % _colors.Length)]);
+        }
+
+        public static CompositionBrush GetBrush(Compositor compositor, long i)
+        {
+            return compositor.CreateColorBrush(_colors[Math.Abs(i % _colors.Length)]);
         }
 
         public static ImageSource GetIdenticon(IList<byte> hash, int side)

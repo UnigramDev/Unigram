@@ -29,7 +29,7 @@ namespace Unigram.ViewModels
 
             //Items = new ItemCollection(this, string.Empty);
             Items = new SearchCollection<FileDownloadViewModel, ItemCollection>(SetSearch, new FileDownloadDiffHandler());
-            Items.SetQuery(string.Empty);
+            Items.UpdateQuery(string.Empty);
 
             RemoveAllCommand = new RelayCommand(RemoveAll);
             ToggleAllPausedCommand = new RelayCommand(ToggleAllPaused);

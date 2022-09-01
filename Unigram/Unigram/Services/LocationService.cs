@@ -11,6 +11,19 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Services
 {
+    public readonly struct GetVenuesResult
+    {
+        public string NextOffset { get; }
+
+        public List<Venue> Venues { get; }
+
+        public GetVenuesResult(string offset, List<Venue> venues)
+        {
+            NextOffset = offset;
+            Venues = venues;
+        }
+    }
+
     public interface ILocationService
     {
         Task<Geolocator> StartTrackingAsync();
@@ -18,7 +31,7 @@ namespace Unigram.Services
 
         Task<Location> GetPositionAsync();
 
-        Task<List<Venue>> GetVenuesAsync(long chatId, double latitude, double longitude, string query = null);
+        Task<GetVenuesResult> GetVenuesAsync(long chatId, double latitude, double longitude, string query = null, string offset = null);
     }
 
     public class LocationService : ILocationService
@@ -133,7 +146,7 @@ namespace Unigram.Services
             return true;
         }
 
-        public async Task<List<Venue>> GetVenuesAsync(long chatId, double latitude, double longitude, string query = null)
+        public async Task<GetVenuesResult> GetVenuesAsync(long chatId, double latitude, double longitude, string query = null, string offset = null)
         {
             var results = new List<Venue>();
 
@@ -141,23 +154,23 @@ namespace Unigram.Services
             if (string.IsNullOrEmpty(option))
             {
                 // TODO: use hardcoded bot?
-                return results;
+                return new GetVenuesResult(null, results);
             }
 
             var chat = await _protoService.SendAsync(new SearchPublicChat(option)) as Chat;
             if (chat == null)
             {
-                return results;
+                return new GetVenuesResult(null, results);
             }
 
 
             var user = _cacheService.GetUser(chat);
             if (user == null)
             {
-                return results;
+                return new GetVenuesResult(null, results);
             }
 
-            var response = await _protoService.SendAsync(new GetInlineQueryResults(user.Id, chatId, new Location(latitude, longitude, 0), query ?? string.Empty, string.Empty));
+            var response = await _protoService.SendAsync(new GetInlineQueryResults(user.Id, chatId, new Location(latitude, longitude, 0), query ?? string.Empty, offset ?? string.Empty));
             if (response is InlineQueryResults inlineResults)
             {
                 foreach (var item in inlineResults.Results)
@@ -167,9 +180,11 @@ namespace Unigram.Services
                         results.Add(venue.Venue);
                     }
                 }
+
+                new GetVenuesResult(inlineResults.NextOffset, results);
             }
 
-            return results;
+            return new GetVenuesResult(null, results);
         }
     }
 }

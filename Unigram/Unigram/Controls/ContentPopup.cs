@@ -105,7 +105,7 @@ namespace Unigram.Controls
                 }
                 else
                 {
-                    BackgroundElement.MaxHeight = Math.Min(sender.VisibleBounds.Height - 32 - 32 - 48 - 48 - 48, ContentMaxHeight);
+                    BackgroundElement.MaxHeight = Math.Min(sender.VisibleBounds.Height - 32 - 32 - 48, ContentMaxHeight);
                 }
             }
         }

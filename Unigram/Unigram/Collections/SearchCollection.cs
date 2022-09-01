@@ -33,7 +33,7 @@ namespace Unigram.Collections
         {
             _factory = factory;
             _sender = sender;
-            _query = new PropertyDebouncer<string>(Constants.TypingTimeout, SetQuery);
+            _query = new PropertyDebouncer<string>(Constants.TypingTimeout, UpdateQuery);
         }
 
         private readonly PropertyDebouncer<string> _query;
@@ -45,7 +45,7 @@ namespace Unigram.Collections
 
         public TSource Source => _source;
 
-        public void SetQuery(string value)
+        public void UpdateQuery(string value)
         {
             Update(_factory(_sender ?? this, value));
             OnPropertyChanged(new PropertyChangedEventArgs(nameof(Query)));
@@ -81,6 +81,7 @@ namespace Unigram.Collections
                     }
 
                     ReplaceDiff(source);
+                    UpdateEmpty();
 
                     if (Count < 1 && incremental.HasMoreItems)
                     {
@@ -117,6 +118,7 @@ namespace Unigram.Collections
                     if (result.Count > 0)
                     {
                         ReplaceDiff(_source);
+                        UpdateEmpty();
                     }
 
                     return result;
@@ -124,6 +126,37 @@ namespace Unigram.Collections
             });
         }
 
-        public bool HasMoreItems => _incrementalSource?.HasMoreItems ?? false;
+        public bool HasMoreItems
+        {
+            get
+            {
+                if (_incrementalSource != null)
+                {
+                    return _incrementalSource.HasMoreItems;
+                }
+
+                _initialized = true;
+                return false;
+            }
+        }
+
+        private bool _isEmpty = true;
+        public bool IsEmpty
+        {
+            get => _isEmpty;
+            private set
+            {
+                if (_isEmpty != value)
+                {
+                    _isEmpty = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsEmpty)));
+                }
+            }
+        }
+
+        private void UpdateEmpty()
+        {
+            IsEmpty = Count == 0;
+        }
     }
 }
