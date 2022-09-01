@@ -176,7 +176,7 @@ namespace Unigram.Controls.Chats
                             Document.Selection.SetRange(0, 0);
                             e.Handled = true;
                         }
-                        else if (e.Key == VirtualKey.Down && (rect.Bottom > ContentElement.ExtentHeight || rect.Bottom.AlmostEquals(ContentElement.ExtentHeight)))
+                        else if (e.Key == VirtualKey.Down && rect.Bottom >= ContentElement.ExtentHeight - 1)
                         {
                             Document.Selection.SetRange(TextConstants.MaxUnitCount, TextConstants.MaxUnitCount);
                             e.Handled = true;

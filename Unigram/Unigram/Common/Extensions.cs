@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Controls.Messages;
 using Unigram.Entities;
@@ -578,6 +579,17 @@ namespace Unigram.Common
 
             // start is after end, so do the inverse comparison
             return !(maximum < value && value < minimum);
+        }
+
+        public static bool IsValidUrl(this string url)
+        {
+            var response = Client.Execute(new GetTextEntities(url));
+            if (response is TextEntities entities)
+            {
+                return entities.Entities.Count == 1 && entities.Entities[0].Offset == 0 && entities.Entities[0].Length == url.Length && entities.Entities[0].Type is TextEntityTypeUrl;
+            }
+
+            return false;
         }
 
         public static bool Contains(this string source, string toCheck, StringComparison comp)

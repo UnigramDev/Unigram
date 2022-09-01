@@ -511,7 +511,7 @@ namespace Unigram.Controls
         {
             link = link.Trim('"');
 
-            if (IsUrlValid(link))
+            if (link.IsValidUrl())
             {
                 type = new TextEntityTypeTextUrl(link);
                 return true;
@@ -523,17 +523,6 @@ namespace Unigram.Controls
             }
 
             type = null;
-            return false;
-        }
-
-        private bool IsUrlValid(string url)
-        {
-            var response = Client.Execute(new GetTextEntities(url));
-            if (response is TextEntities entities)
-            {
-                return entities.Entities.Count == 1 && entities.Entities[0].Offset == 0 && entities.Entities[0].Length == url.Length && entities.Entities[0].Type is TextEntityTypeUrl;
-            }
-
             return false;
         }
 
@@ -625,9 +614,18 @@ namespace Unigram.Controls
 
                     var text = await package.GetTextAsync();
                     var start = Document.Selection.StartPosition;
+                    var length = Math.Abs(Document.Selection.Length);
 
-                    Document.Selection.SetText(TextSetOptions.None, text);
-                    Document.Selection.SetRange(start + text.Length, start + text.Length);
+                    if (length > 0 && text.IsValidUrl())
+                    {
+                        Document.Selection.GetText(TextGetOptions.NoHidden, out string value);
+                        InsertText(value, new[] { new TextEntity(0, value.Length, new TextEntityTypeTextUrl(text)) });
+                    }
+                    else
+                    {
+                        Document.Selection.SetText(TextSetOptions.None, text);
+                        Document.Selection.SetRange(start + text.Length, start + text.Length);
+                    }
                 }
             }
             catch { }
