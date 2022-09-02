@@ -420,8 +420,8 @@ namespace Unigram.Controls.Messages
             SetText(message.ProtoService,
                 outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
-                Strings.Resources.AttachLocation + ", " + venue.Venue.Title.Replace('\n', ' '),
-                null);
+                Strings.Resources.AttachLocation,
+                new FormattedText(venue.Venue.Title, null));
 
             return true;
         }

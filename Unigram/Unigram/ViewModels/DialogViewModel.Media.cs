@@ -658,10 +658,8 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var dialog = new SendLocationPopup();
-            //page.LiveLocation = !_liveLocationService.IsTracking(Peer.ToPeer());
-
-            var confirm = await dialog.OpenAsync();
+            var popup = new SendLocationPopup();
+            var confirm = await popup.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
                 var options = await PickMessageSendOptionsAsync();
@@ -671,7 +669,7 @@ namespace Unigram.ViewModels
                 }
 
                 var reply = GetReply(true);
-                var input = dialog.Media;
+                var input = popup.Media;
 
                 await SendMessageAsync(chat, reply, input, options);
 

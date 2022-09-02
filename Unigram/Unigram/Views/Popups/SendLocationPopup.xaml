@@ -49,7 +49,7 @@
                             <Image x:Name="Map"
                                    ImageOpened="Map_ImageOpened" />
                             <Border x:Name="MapShimmer"
-                                    BorderBrush="{ThemeResource ControlStrokeColorSecondaryBrush}"
+                                    BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
                                     BorderThickness="1"
                                     CornerRadius="4" />
                         </controls:AspectView>
