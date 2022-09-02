@@ -130,7 +130,7 @@ namespace Unigram.Controls
             }
         }
 
-        public bool IsConstrainedToRootBounds => _popupHost?.IsConstrainedToRootBounds ?? true;
+        public bool IsConstrainedToRootBounds => _popupHost?.IsConstrainedToRootBounds ?? !CanUnconstrainFromRootBounds;
 
         public bool CanUnconstrainFromRootBounds
         {
@@ -155,67 +155,64 @@ namespace Unigram.Controls
             }
         }
 
-        public IAsyncOperation<ContentDialogResult> ShowAsync()
+        public async Task<ContentDialogResult> ShowAsync()
         {
-            return AsyncInfo.Run(async (token) =>
+            Margin = new Thickness();
+
+            if (DataContext is INavigable navigable)
             {
-                Margin = new Thickness();
+                navigable.NavigationService = new ContentDialogNavigationService(this);
+            }
 
-                if (DataContext is INavigable navigable)
+            var previous = _callback;
+
+            _result = ContentDialogResult.None;
+            _callback = new TaskCompletionSource<ContentDialogResult>();
+
+            if (_popupHost == null)
+            {
+                _popupHost = new Popup();
+                _popupHost.Child = this;
+                _popupHost.IsLightDismissEnabled = false;
+                _popupHost.Loading += PopupHost_Loading;
+                _popupHost.Loaded += PopupHost_Loaded;
+                _popupHost.Opened += PopupHost_Opened;
+                _popupHost.Closed += PopupHost_Closed;
+
+                if (CanUnconstrainFromRootBounds)
                 {
-                    navigable.NavigationService = new ContentDialogNavigationService(this);
+                    _popupHost.ShouldConstrainToRootBounds = false;
                 }
 
-                var previous = _callback;
+                Unloaded += PopupHost_Unloaded;
+            }
 
-                _result = ContentDialogResult.None;
-                _callback = new TaskCompletionSource<ContentDialogResult>();
+            // Cool down
+            if (previous != null)
+            {
+                await previous.Task;
+            }
+            //if (Environment.TickCount - _lastHide < 500)
+            //{
+            //    await Task.Delay(200);
+            //}
 
-                if (_popupHost == null)
-                {
-                    _popupHost = new Popup();
-                    _popupHost.Child = this;
-                    _popupHost.IsLightDismissEnabled = false;
-                    _popupHost.Loading += PopupHost_Loading;
-                    _popupHost.Loaded += PopupHost_Loaded;
-                    _popupHost.Opened += PopupHost_Opened;
-                    _popupHost.Closed += PopupHost_Closed;
+            if (CanUnconstrainFromRootBounds && _displayRegion is Rect region)
+            {
+                DisplayRegion_Changed(region, null);
+            }
+            else
+            {
+                _applicationView = ApplicationView.GetForCurrentView();
+                OnVisibleBoundsChanged(_applicationView, null);
 
-                    if (CanUnconstrainFromRootBounds)
-                    {
-                        _popupHost.ShouldConstrainToRootBounds = false;
-                    }
+                Padding = new Thickness(0, CoreApplication.GetCurrentView().TitleBar.Height, 0, 0);
+            }
 
-                    Unloaded += PopupHost_Unloaded;
-                }
+            _closing = false;
+            _popupHost.IsOpen = true;
 
-                // Cool down
-                if (previous != null)
-                {
-                    await previous.Task;
-                }
-                //if (Environment.TickCount - _lastHide < 500)
-                //{
-                //    await Task.Delay(200);
-                //}
-
-                if (CanUnconstrainFromRootBounds && _displayRegion is Rect region)
-                {
-                    DisplayRegion_Changed(region, null);
-                }
-                else
-                {
-                    _applicationView = ApplicationView.GetForCurrentView();
-                    OnVisibleBoundsChanged(_applicationView, null);
-
-                    Padding = new Thickness(0, CoreApplication.GetCurrentView().TitleBar.Height, 0, 0);
-                }
-
-                _closing = false;
-                _popupHost.IsOpen = true;
-
-                return await _callback.Task;
-            });
+            return await _callback.Task;
         }
 
         private void DisplayRegion_Changed(Rect sender, object args)
@@ -453,7 +450,7 @@ namespace Unigram.Controls
         public IDictionary<string, long> CacheKeyToChatId => throw new NotImplementedException();
 
         public event TypedEventHandler<INavigationService, Type> AfterRestoreSavedNavigation;
-        
+
         public event EventHandler<NavigatingEventArgs> Navigating;
 
         public void ClearCache(bool removeCachedPagesInBackStack = false)

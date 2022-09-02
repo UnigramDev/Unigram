@@ -191,7 +191,7 @@ namespace Unigram.Controls.Gallery
 
         public void OpenItem(GalleryContent item)
         {
-            OnBackRequested(new HandledEventArgs());
+            OnBackRequested(new BackRequestedRoutedEventArgs());
         }
 
         private void OnSourceChanged(MediaPlayer sender, object args)
@@ -266,48 +266,46 @@ namespace Unigram.Controls.Gallery
             return new GalleryView();
         }
 
-        public IAsyncOperation<ContentDialogResult> ShowAsync(GalleryViewModelBase parameter, Func<FrameworkElement> closing = null)
+        public Task<ContentDialogResult> ShowAsync(GalleryViewModelBase parameter, Func<FrameworkElement> closing = null)
         {
-            return AsyncInfo.Run(async token =>
+            _closing = closing;
+
+            if (_closing != null && IsConstrainedToRootBounds)
             {
-                _closing = closing;
+                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", _closing());
+            }
 
-                if (_closing != null)
-                {
-                    ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", _closing());
-                }
+            parameter.Items.CollectionChanged -= OnCollectionChanged;
+            parameter.Items.CollectionChanged += OnCollectionChanged;
 
-                parameter.Items.CollectionChanged -= OnCollectionChanged;
+            Load(parameter);
                 parameter.Items.CollectionChanged += OnCollectionChanged;
 
-                Load(parameter);
+            PrepareNext(0, true);
 
-                PrepareNext(0, true);
-
-                RoutedEventHandler handler = null;
-                handler = new RoutedEventHandler(async (s, args) =>
+            RoutedEventHandler handler = null;
+            handler = new RoutedEventHandler(async (s, args) =>
+            {
+                if (_unloaded)
                 {
-                    if (_unloaded)
-                    {
-                        return;
-                    }
+                    return;
+                }
 
-                    _wasFullScreen = ApplicationView.GetForCurrentView().IsFullScreenMode;
+                _wasFullScreen = ApplicationView.GetForCurrentView().IsFullScreenMode;
 
-                    Transport.Focus(FocusState.Programmatic);
+                Transport.Focus(FocusState.Programmatic);
 
-                    Loaded -= handler;
+                Loaded -= handler;
 
-                    var viewModel = ViewModel;
-                    if (viewModel != null)
-                    {
-                        await viewModel.NavigatedToAsync(parameter, NavigationMode.New, null);
-                    }
-                });
-
-                Loaded += handler;
-                return await ShowAsync();
+                var viewModel = ViewModel;
+                if (viewModel != null)
+                {
+                    await viewModel.NavigatedToAsync(parameter, NavigationMode.New, null);
+                }
             });
+
+            Loaded += handler;
+            return ShowAsync();
         }
 
         private void OnCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -368,7 +366,7 @@ namespace Unigram.Controls.Gallery
                 Preview.Opacity = 1;
 
                 var root = Preview.Presenter;
-                if (root.IsLoaded)
+                if (root.IsLoaded && IsConstrainedToRootBounds)
                 {
                     var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", root);
                     if (animation != null)
@@ -598,8 +596,8 @@ namespace Unigram.Controls.Gallery
 
                 if (_surface != parent)
                 {
-                _surface = parent;
-                _surface.Children.Add(_mediaPlayerElement);
+                    _surface = parent;
+                    _surface.Children.Add(_mediaPlayerElement);
                 }
 
                 //Transport.DownloadMaximum = file.Size;
@@ -610,8 +608,8 @@ namespace Unigram.Controls.Gallery
                 {
                     if (_fileStream == null || _fileStream.FileId != file.Id)
                     {
-                    _fileStream = new RemoteFileStream(item.ProtoService, file, item.Duration);
-                    _mediaPlayer.Source = MediaSource.CreateFromStream(_fileStream, item.MimeType);
+                        _fileStream = new RemoteFileStream(item.ProtoService, file, item.Duration);
+                        _mediaPlayer.Source = MediaSource.CreateFromStream(_fileStream, item.MimeType);
                     }
 
                     //Transport.DownloadMaximum = file.Size;
