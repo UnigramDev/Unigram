@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Native.Calls;
-using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Services.Settings;
 using Unigram.Views.Popups;
@@ -13,7 +11,6 @@ using Unigram.Views.Settings.Popups;
 using Windows.Storage.AccessCache;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
@@ -146,6 +143,7 @@ namespace Unigram.ViewModels.Settings
         public async void AutoDownloadExecute(AutoDownloadType type)
         {
             await NavigationService.ShowAsync(typeof(SettingsDataAutoPopup), type);
+            RaisePropertyChanged(nameof(AutoDownload));
         }
 
         public RelayCommand ResetAutoDownloadCommand { get; }

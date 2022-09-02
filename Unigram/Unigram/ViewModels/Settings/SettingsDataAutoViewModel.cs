@@ -144,7 +144,6 @@ namespace Unigram.ViewModels.Settings
             }
 
             Settings.AutoDownload = preferences;
-            NavigationService.GoBack();
         }
     }
 }
