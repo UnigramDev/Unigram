@@ -178,23 +178,7 @@ namespace Unigram.Controls.Messages.Content
         private async void UpdateThumbnail(MessageViewModel message, VideoNote videoNote, File file, bool download)
         {
             ImageSource source = null;
-            ImageBrush brush;
-
-            if (LayoutRoot.Background is ImageBrush existing)
-            {
-                brush = existing;
-            }
-            else
-            {
-                brush = new ImageBrush
-                {
-                    Stretch = Stretch.UniformToFill,
-                    AlignmentX = AlignmentX.Center,
-                    AlignmentY = AlignmentY.Center
-                };
-
-                LayoutRoot.Background = brush;
-            }
+            ImageBrush brush = Texture;
 
             if (videoNote.Thumbnail != null && videoNote.Thumbnail.Format is ThumbnailFormatJpeg)
             {
