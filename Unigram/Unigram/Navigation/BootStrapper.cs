@@ -320,7 +320,7 @@ namespace Unigram.Navigation
         {
             Logger.Info();
 
-            var args = new HandledEventArgs();
+            var args = new BackRequestedRoutedEventArgs(key);
             BackRequested?.Invoke(null, args);
             if (handled = args.Handled)
             {
@@ -845,9 +845,19 @@ namespace Unigram.Navigation
         }
     }
 
+    public class BackRequestedRoutedEventArgs : HandledEventArgs
+    {
+        public BackRequestedRoutedEventArgs(Windows.System.VirtualKey key = Windows.System.VirtualKey.None)
+        {
+            Key = key;
+        }
+
+        public Windows.System.VirtualKey Key { get; }
+    }
+
     public interface INavigablePage
     {
-        void OnBackRequested(HandledEventArgs args);
+        void OnBackRequested(BackRequestedRoutedEventArgs args);
     }
 
     public interface INavigatingPage : INavigablePage

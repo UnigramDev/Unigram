@@ -57,8 +57,8 @@ namespace Unigram.Navigation.Services
             }
         }
 
-        public event EventHandler<HandledEventArgs> BackRequested;
-        public void RaiseBackRequested(HandledEventArgs args)
+        public event EventHandler<BackRequestedRoutedEventArgs> BackRequested;
+        public void RaiseBackRequested(BackRequestedRoutedEventArgs args)
         {
             BackRequested?.Invoke(this, args);
 

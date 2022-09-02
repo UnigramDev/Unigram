@@ -39,7 +39,7 @@ namespace Unigram.Views
             View.OnNavigatingFrom(e.SourcePageType);
         }
 
-        public void OnBackRequested(HandledEventArgs args)
+        public void OnBackRequested(BackRequestedRoutedEventArgs args)
         {
             View.OnBackRequested(args);
         }

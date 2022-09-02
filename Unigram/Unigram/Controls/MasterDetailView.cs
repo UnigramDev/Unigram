@@ -82,7 +82,7 @@ namespace Unigram.Controls
             }
         }
 
-        private void OnBackRequested(object sender, HandledEventArgs args)
+        private void OnBackRequested(object sender, BackRequestedRoutedEventArgs args)
         {
             //var type = BackStackType.Navigation;
             //if (_backStack.Count > 0)

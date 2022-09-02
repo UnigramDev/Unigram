@@ -1093,8 +1093,13 @@ namespace Unigram.Views
             }
         }
 
-        public void OnBackRequested(HandledEventArgs args)
+        public void OnBackRequested(BackRequestedRoutedEventArgs args)
         {
+            if (args.Key != Windows.System.VirtualKey.Escape)
+            {
+                return;
+            }
+
             if (ViewModel.Search != null)
             {
                 args.Handled = SearchMask.OnBackRequested();

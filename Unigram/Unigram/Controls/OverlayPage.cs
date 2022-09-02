@@ -59,7 +59,7 @@ namespace Unigram.Controls
             var pointer = e.GetCurrentPoint(this);
             if (!IsConstrainedToRootBounds && KeyboardHelper.IsPointerGoBackGesture(pointer.Properties))
             {
-                var args = new HandledEventArgs();
+                var args = new BackRequestedRoutedEventArgs();
                 OnBackRequested(args);
                 e.Handled = args.Handled;
             }
@@ -277,7 +277,7 @@ namespace Unigram.Controls
             }
         }
 
-        public void OnBackRequested(HandledEventArgs e)
+        public void OnBackRequested(BackRequestedRoutedEventArgs e)
         {
             if (_closing)
             {

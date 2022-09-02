@@ -753,7 +753,7 @@ namespace Unigram.Views
             }
         }
 
-        public void OnBackRequested(HandledEventArgs args)
+        public void OnBackRequested(BackRequestedRoutedEventArgs args)
         {
             OnBackRequesting(args);
 
@@ -1320,7 +1320,7 @@ namespace Unigram.Views
                 {
                     if (popup.Child is GalleryView gallery)
                     {
-                        gallery.OnBackRequested(new HandledEventArgs());
+                        gallery.OnBackRequested(new BackRequestedRoutedEventArgs());
                         break;
                     }
                 }
@@ -2657,7 +2657,7 @@ namespace Unigram.Views
             else
             {
                 _shouldGoBackWithDetail = true;
-                OnBackRequested(new HandledEventArgs());
+                OnBackRequested(new BackRequestedRoutedEventArgs());
             }
         }
 
