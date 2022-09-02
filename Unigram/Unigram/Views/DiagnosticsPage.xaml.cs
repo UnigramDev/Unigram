@@ -1,4 +1,5 @@
 ﻿using System;
+using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Converters;
 using Unigram.ViewModels;
@@ -70,8 +71,7 @@ namespace Unigram.Views
 
         private void Crash_Click(object sender, RoutedEventArgs e)
         {
-            var zero = 0;
-            var uno = 1 / zero;
+            Client.Execute(new AddLogMessage(0, "Crash_Click"));
         }
     }
 }
