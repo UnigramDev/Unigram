@@ -294,7 +294,7 @@ namespace Unigram.Controls.Messages.Content
 
         private void UpdateSource(MessageViewModel message, File file, int duration)
         {
-            if (message == null || file == null || !SettingsService.Current.IsAutoPlayVideosEnabled)
+            if (message == null || file == null || !message.Delegate.Settings.IsAutoPlayVideosEnabled)
             {
                 Player.Source = _source = null;
             }

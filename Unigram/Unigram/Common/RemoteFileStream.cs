@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,6 +20,7 @@ namespace Unigram.Common
         private readonly RemoteVideoSource _source;
 
         private IRandomAccessStream _fileStream;
+        private string _filePath;
 
         public RemoteFileStream(IProtoService protoService, File file, int duration)
         {
@@ -54,10 +56,22 @@ namespace Unigram.Common
                 {
                     _source.ReadCallback((int)count);
 
-                    if (_fileStream == null)
+                    var path = _file.Local.Path;
+                    if (path.Length > 0 && !_source.IsCanceled && (_fileStream == null || _filePath != path))
                     {
+                        if (_fileStream != null)
+                        {
+                            _fileStream.Dispose();
+                        }
+
                         var file = await _protoService.GetFileAsync(_file, false);
+
                         _fileStream = await file.OpenAsync(FileAccessMode.Read, StorageOpenOptions.AllowReadersAndWriters);
+                        _filePath = path;
+                    }
+                    else if (_fileStream == null)
+                    {
+                        throw new InvalidOperationException();
                     }
 
                     _fileStream.Seek((ulong)_source.Offset);
@@ -81,9 +95,10 @@ namespace Unigram.Common
 
         #region Not Implemented
 
+        [DebuggerStepThrough]
         public IRandomAccessStream CloneStream()
         {
-            return this;
+            throw new NotImplementedException();
         }
 
         public IInputStream GetInputStreamAt(ulong position)
@@ -118,7 +133,7 @@ namespace Unigram.Common
         private readonly File _file;
 
         private readonly int _chunk;
-        private readonly object _readLock = new();
+        private readonly SemaphoreSlim _readLock = new(1, 1);
 
         private bool _canceled;
 
@@ -149,38 +164,45 @@ namespace Unigram.Common
 
         public void ReadCallback(long count)
         {
-            lock (_readLock)
+            _readLock.Wait();
+            _bufferSize = Math.Max(count, _bufferSize);
+
+            var begin = _file.Local.DownloadOffset;
+            var end = _file.Local.DownloadOffset + _file.Local.DownloadedPrefixSize;
+
+            var inBegin = _offset >= begin;
+            var inEnd = end >= _offset + count || end == _file.Size;
+            var difference = end - _offset;
+
+            if (_canceled)
             {
-                _bufferSize = Math.Max(count, _bufferSize);
+                _readLock.Release();
+                return;
+            }
 
-                var begin = _file.Local.DownloadOffset;
-                var end = _file.Local.DownloadOffset + _file.Local.DownloadedPrefixSize;
-
-                var inBegin = _offset >= begin;
-                var inEnd = end >= _offset + count || end == _file.Size;
-                var difference = end - _offset;
-
-                if (_canceled)
-                {
-                    return;
-                }
-
-                if (_file.Local.Path.Length > 0 && (inBegin && inEnd) || _file.Local.IsDownloadingCompleted)
-                {
-                    if (difference < _chunk / 3 * 2 && _offset > _next)
-                    {
-                        _protoService.Send(new DownloadFile(_file.Id, 32, _offset, /*_chunk*/ 0, false));
-                        _next = _offset + _chunk / 3;
-                    }
-                }
-                else
+            if (_file.Local.Path.Length > 0 && ((inBegin && inEnd) || _file.Local.IsDownloadingCompleted))
+            {
+                if (difference < _chunk / 3 * 2 && _offset > _next)
                 {
                     _protoService.Send(new DownloadFile(_file.Id, 32, _offset, /*_chunk*/ 0, false));
                     _next = _offset + _chunk / 3;
-
-                    _event.Reset();
-                    _event.WaitOne();
                 }
+
+                //Logs.Logger.Debug($"Enough data available, offset: {_offset}, next: {_next}, size: {_file.Size}");
+
+                _readLock.Release();
+            }
+            else
+            {
+                _readLock.Release();
+                _event.Reset();
+
+                _protoService.Send(new DownloadFile(_file.Id, 32, _offset, /*_chunk*/ 0, false));
+                _next = _offset + _chunk / 3;
+
+                //Logs.Logger.Debug($"Not enough data available, offset: {_offset}, next: {_next}, size: {_file.Size}");
+
+                _event.WaitOne();
             }
         }
 
@@ -190,6 +212,8 @@ namespace Unigram.Common
         public long Offset => _offset;
 
         public int Id => _file.Id;
+
+        public bool IsCanceled => _canceled;
 
         private void UpdateFile(object target, File file)
         {
@@ -201,16 +225,25 @@ namespace Unigram.Common
             var enough = file.Local.DownloadedPrefixSize >= _bufferSize;
             var end = file.Local.DownloadOffset + file.Local.DownloadedPrefixSize == file.Size;
 
-            if (file.Local.Path.Length > 0 && file.Local.DownloadOffset == _offset && (enough || end || file.Local.IsDownloadingCompleted))
+            if (file.Local.Path.Length > 0 && ((file.Local.DownloadOffset == _offset && (enough || end)) || file.Local.IsDownloadingCompleted))
             {
+                //Logs.Logger.Debug($"Next chunk is available, offset: {_offset}, prefix: {file.Local.DownloadedPrefixSize}, size: {_file.Size}");
                 _event.Set();
             }
+            //else
+            //{
+            //    Logs.Logger.Debug($"Next chunk is not available, offset: {_offset}, real: {file.Local.DownloadOffset}, prefix: {file.Local.DownloadedPrefixSize}, size: {_file.Size}, completed: {file.Local.IsDownloadingCompleted}");
+            //}
         }
 
         public void Dispose()
         {
+            //Logs.Logger.Debug($"Disposing the stream");
+
             _canceled = true;
             _protoService.Send(new CancelDownloadFile(_file.Id, false));
+
+            _event.Set();
         }
     }
 

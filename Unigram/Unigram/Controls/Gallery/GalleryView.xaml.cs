@@ -577,7 +577,7 @@ namespace Unigram.Controls.Gallery
                     return;
                 }
 
-                if (_surface != null && _mediaPlayerElement != null)
+                if (_surface != parent && _surface != null && _mediaPlayerElement != null)
                 {
                     _surface.Children.Remove(_mediaPlayerElement);
                     _surface = null;
@@ -596,8 +596,11 @@ namespace Unigram.Controls.Gallery
                 var dpi = WindowContext.Current.RasterizationScale;
                 _mediaPlayer.SetSurfaceSize(new Size(parent.ActualWidth * dpi, parent.ActualHeight * dpi));
 
+                if (_surface != parent)
+                {
                 _surface = parent;
                 _surface.Children.Add(_mediaPlayerElement);
+                }
 
                 //Transport.DownloadMaximum = file.Size;
                 //Transport.DownloadValue = file.Local.DownloadOffset + file.Local.DownloadedPrefixSize;
@@ -605,8 +608,11 @@ namespace Unigram.Controls.Gallery
                 var streamable = SettingsService.Current.IsStreamingEnabled && item.IsStreamable /*&& !file.Local.IsDownloadingCompleted*/;
                 if (streamable)
                 {
+                    if (_fileStream == null || _fileStream.FileId != file.Id)
+                    {
                     _fileStream = new RemoteFileStream(item.ProtoService, file, item.Duration);
                     _mediaPlayer.Source = MediaSource.CreateFromStream(_fileStream, item.MimeType);
+                    }
 
                     //Transport.DownloadMaximum = file.Size;
                     //Transport.DownloadValue = file.Local.DownloadOffset + file.Local.DownloadedPrefixSize;
@@ -981,7 +987,7 @@ namespace Unigram.Controls.Gallery
             }
 
             var item = viewModel.Items[index];
-            if (item.IsVideo && item.IsLoop)
+            if (item.IsVideo && (item.IsLoop || initialize))
             {
                 Play(target.Presenter, item, item.GetFile());
             }
