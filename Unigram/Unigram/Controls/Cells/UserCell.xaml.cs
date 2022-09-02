@@ -184,7 +184,7 @@ namespace Unigram.Controls.Cells
             }
             else if (args.Phase == 1)
             {
-                if (result.User != null || (result.Chat != null && (result.Chat.Type is ChatTypePrivate privata || result.Chat.Type is ChatTypeSecret)))
+                if (result.User != null || (result.Chat != null && result.Chat.Type is ChatTypePrivate or ChatTypeSecret))
                 {
                     var user = result.User ?? protoService.GetUser(result.Chat);
                     if (result.IsPublic)
@@ -217,6 +217,18 @@ namespace Unigram.Controls.Cells
                     else if (supergroup.MemberCount > 0)
                     {
                         SubtitleLabel.Text = Locale.Declension(supergroup.IsChannel ? "Subscribers" : "Members", supergroup.MemberCount);
+                    }
+                    else
+                    {
+                        SubtitleLabel.Text = string.Empty;
+                    }
+                }
+                else if (result.Chat != null && result.Chat.Type is ChatTypeBasicGroup basic)
+                {
+                    var basicGroup = protoService.GetBasicGroup(basic.BasicGroupId);
+                    if (basicGroup.MemberCount > 0)
+                    {
+                        SubtitleLabel.Text = Locale.Declension("Members", basicGroup.MemberCount);
                     }
                     else
                     {
