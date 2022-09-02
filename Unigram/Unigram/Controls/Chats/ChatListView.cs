@@ -29,7 +29,6 @@ namespace Unigram.Controls.Chats
         public Action<bool> ViewVisibleMessages { get; set; }
 
         private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
-        private bool _loadingMore = false;
 
         private bool _programmaticExternal;
         private bool _programmaticScrolling;
@@ -98,12 +97,10 @@ namespace Unigram.Controls.Chats
 
         private async void ViewChanged(PanelScrollingDirection direction = PanelScrollingDirection.None)
         {
-            if (ScrollingHost == null || ItemsStack == null || ViewModel == null || _loadingMore)
+            if (ScrollingHost == null || ItemsStack == null || ViewModel == null)
             {
                 return;
             }
-
-            _loadingMore = true;
 
             using (await _loadMoreLock.WaitAsync())
             {
@@ -135,9 +132,10 @@ namespace Unigram.Controls.Chats
                         await LoadPreviousSliceAsync(direction, firstSlice);
                     }
                 }
-            }
 
-            _loadingMore = false;
+                // Not sure if this is extremely effective, but we try
+                await this.UpdateLayoutAsync();
+            }
         }
 
         private Task LoadPreviousSliceAsync(PanelScrollingDirection direction, bool firstSlice)
