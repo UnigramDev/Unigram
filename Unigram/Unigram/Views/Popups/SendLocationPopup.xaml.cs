@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
@@ -9,7 +8,6 @@ using Unigram.Navigation;
 using Unigram.ViewModels;
 using Windows.Devices.Geolocation;
 using Windows.Foundation;
-using Windows.Services.Maps;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -25,6 +23,10 @@ namespace Unigram.Views.Popups
         private CompositionAnimation _previewShimmer;
         private Geolocator _geolocator;
 
+        private readonly Visual _position;
+        private readonly Visual _accuracy;
+        private float _accuracyRadius;
+
         public InputMessageContent Media { get; private set; }
 
         public SendLocationPopup()
@@ -39,7 +41,16 @@ namespace Unigram.Views.Popups
 
             MapPresenter.Constraint = new Size(16, 9);
 
+            Accuracy.Width = 0;
+            Accuracy.Height = 0;
+
             Loaded += OnLoaded;
+
+            _accuracy = ElementCompositionPreview.GetElementVisual(Accuracy);
+            _position = ElementCompositionPreview.GetElementVisual(Position);
+
+            _position.CenterPoint = new Vector3(20, 48,0);
+            _position.Scale = Vector3.Zero;
 
             _previewShimmer = CompositionPathParser.CreateThumbnail(16, 9, 0, out ShapeVisual visual);
             ElementCompositionPreview.SetElementChildVisual(MapShimmer, visual);
@@ -84,18 +95,19 @@ namespace Unigram.Views.Popups
                         ElementCompositionPreview.SetElementChildVisual(MapShimmer, visual);
                     }
 
-                    await UpdateLocationAsync(await _geolocator.GetGeopositionAsync());
+                    UpdateLocation(await _geolocator.GetGeopositionAsync());
                 }
             }
         }
 
         private async void OnPositionChanged(Geolocator sender, PositionChangedEventArgs args)
         {
-            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal,
-                async () => await UpdateLocationAsync(args.Position));
+            await Dispatcher.RunAsync(
+                Windows.UI.Core.CoreDispatcherPriority.Normal,
+                () => UpdateLocation(args.Position));
         }
 
-        private async Task UpdateLocationAsync(Geoposition point)
+        private void UpdateLocation(Geoposition point)
         {
             ViewModel.Location = new Location(
                 point.Coordinate.Point.Position.Latitude,
@@ -119,29 +131,44 @@ namespace Unigram.Views.Popups
             var width = MapPresenter.ActualWidth * WindowContext.Current.RasterizationScale;
             var height = MapPresenter.ActualHeight * WindowContext.Current.RasterizationScale;
 
-            MapService.ServiceToken = Constants.BingMapsApiKey;
+            var pixels = 96 * WindowContext.Current.RasterizationScale;
+            var scale = pixels * 39.37 * 156543.04 * Math.Cos(latitude * Math.PI / 180) / Math.Pow(2, 15);
+            var accuracy = point.Coordinate.Accuracy * 39.37;
+
+            var radius = (float)(accuracy / scale * pixels);
+            if (radius != _accuracyRadius)
+            {
+                if (_position.Scale == Vector3.Zero)
+                {
+                    var spring = _accuracy.Compositor.CreateSpringVector3Animation();
+                    spring.InitialValue = Vector3.Zero;
+                    spring.FinalValue = Vector3.One;
+                    spring.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
+                    spring.DampingRatio = 0.6f;
+
+                    _position.StartAnimation("Scale", spring);
+                }
+
+                Accuracy.Width = radius * 2;
+                Accuracy.Height = radius * 2;
+
+                var prev = new Vector2(_accuracyRadius, _accuracyRadius);
+                var next = new Vector2(radius, radius);
+
+                var anim = _accuracy.Compositor.CreateVector3KeyFrameAnimation();
+                anim.InsertKeyFrame(0, new Vector3(prev / next, 1));
+                anim.InsertKeyFrame(1, Vector3.One);
+
+                _accuracy.CenterPoint = new Vector3(next, 0); 
+                _accuracy.StartAnimation("Scale", anim);
+                _accuracyRadius = radius;
+            }
+
             Map.Source = new BitmapImage(new Uri(string.Format("https://dev.virtualearth.net/REST/v1/Imagery/Map/Road/{0},{1}/{2}?mapSize={3:F0},{4:F0}&key={5}",
                 latitude, longitude, 15, width, height, Constants.BingMapsApiKey)));
 
-            CurrentLocation.Address = "Getting your location...";
-
-            var result = await MapLocationFinder.FindLocationsAtAsync(point.Coordinate.Point);
-            if (result.Status == MapLocationFinderStatus.Success)
-            {
-                var location = result.Locations.FirstOrDefault();
-                if (location != null)
-                {
-                    CurrentLocation.Address = location.Address.FormattedAddress;
-                }
-                else
-                {
-                    CurrentLocation.Address = "Unknown location";
-                }
-            }
-            else
-            {
-                CurrentLocation.Address = "Unknown location";
-            }
+            CurrentLocation.Address = string.Format(Strings.Resources.AccurateTo,
+                Locale.Declension("Meters", (int)point.Coordinate.Accuracy));
 
             if (ScrollingHost.SelectedItem == null)
             {

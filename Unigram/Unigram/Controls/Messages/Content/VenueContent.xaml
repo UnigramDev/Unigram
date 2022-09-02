@@ -20,7 +20,7 @@
                                             MaxHeight="200" />
                         <Canvas Width="40"
                                 Height="47.691"
-                                Margin="0,-24,0,0"
+                                Margin="0,-36,0,0"
                                 VerticalAlignment="Center"
                                 IsHitTestVisible="False">
                             <Path Width="40"

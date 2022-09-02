@@ -52,26 +52,34 @@
                                     BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
                                     BorderThickness="1"
                                     CornerRadius="4" />
-                        </controls:AspectView>
 
-                        <Canvas Width="40"
-                                Height="47.691"
-                                Margin="0,-24,0,0"
-                                VerticalAlignment="Center"
-                                IsHitTestVisible="False">
-                            <Path Width="40"
-                                  Height="47.691"
-                                  Data="F1M20,47.691C20,47.691 0,33.847 0,20 0,8.955 8.955,0 20,0 31.044,0 40,8.955 40,20 40,33.847 20,47.691 20,47.691"
-                                  Fill="{ThemeResource MessageHeaderForegroundBrush}"
-                                  StrokeThickness="0" />
-                            <Path Canvas.Left="13"
-                                  Canvas.Top="13"
-                                  Width="14"
-                                  Height="14"
-                                  Data="F1M7,0C3.135,0 0,3.136 0,7 0,10.865 3.135,14 7,14 10.865,14 14,10.865 14,7 14,3.136 10.865,0 7,0"
-                                  Fill="White"
-                                  StrokeThickness="0" />
-                        </Canvas>
+                            <Ellipse x:Name="Accuracy"
+                                     Opacity="0.5"
+                                     HorizontalAlignment="Center"
+                                     VerticalAlignment="Center"
+                                     Fill="{ThemeResource MessageHeaderForegroundBrush}"
+                                     StrokeThickness="2" />
+
+                            <Canvas x:Name="Position"
+                                    Width="40"
+                                    Height="47.691"
+                                    Margin="0,-36,0,0"
+                                    VerticalAlignment="Center"
+                                    IsHitTestVisible="False">
+                                <Path Width="40"
+                                      Height="47.691"
+                                      Data="F1M20,47.691C20,47.691 0,33.847 0,20 0,8.955 8.955,0 20,0 31.044,0 40,8.955 40,20 40,33.847 20,47.691 20,47.691"
+                                      Fill="{ThemeResource MessageHeaderForegroundBrush}"
+                                      StrokeThickness="0" />
+                                <Path Canvas.Left="13"
+                                      Canvas.Top="13"
+                                      Width="14"
+                                      Height="14"
+                                      Data="F1M7,0C3.135,0 0,3.136 0,7 0,10.865 3.135,14 7,14 10.865,14 14,10.865 14,7 14,3.136 10.865,0 7,0"
+                                      Fill="White"
+                                      StrokeThickness="0" />
+                            </Canvas>
+                        </controls:AspectView>
                     </Grid>
 
                     <StackPanel>
@@ -85,7 +93,7 @@
                             <cells:VenueCell x:Name="CurrentLocation"
                                              Glyph="&#xE9F0;"
                                              Title="{CustomResource SendLocation}"
-                                             Address="Getting your location..."
+                                             Address="{CustomResource Loading}"
                                              SelectionStroke="{ThemeResource ContentDialogBackground}"
                                              Margin="12,6" />
                         </Button>
