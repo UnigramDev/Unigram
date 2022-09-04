@@ -1468,7 +1468,7 @@ namespace Unigram.Views
                 ViewModel.Gallery.SelectedItem = item;
                 ViewModel.Gallery.FirstItem = item;
 
-                await GalleryView.GetForCurrentView().ShowAsync(ViewModel.Gallery, () => image);
+                await GalleryView.ShowAsync(ViewModel.Gallery, () => image);
             }
         }
 
@@ -1600,7 +1600,7 @@ namespace Unigram.Views
             ViewModel.Gallery.SelectedItem = content;
             ViewModel.Gallery.FirstItem = content;
 
-            await GalleryView.GetForCurrentView().ShowAsync(ViewModel.Gallery, () => target);
+            await GalleryView.ShowAsync(ViewModel.Gallery, () => target);
         }
 
         public void PlayMessage(MessageViewModel message)

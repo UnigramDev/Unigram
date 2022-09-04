@@ -459,13 +459,10 @@ namespace Unigram.ViewModels
                 {
                     _playbackService.Seek(TimeSpan.FromSeconds(timestamp));
                 }
-
-                return;
             }
             else if (message.Content is MessagePoll poll)
             {
                 await new PollResultsPopup(ProtoService, CacheService, Settings, Aggregator, this, message.ChatId, message.Id, poll.Poll).ShowQueuedAsync();
-                return;
             }
             else if (message.Content is MessageGame game && message.ReplyMarkup is ReplyMarkupInlineKeyboard inline)
             {
@@ -476,50 +473,43 @@ namespace Unigram.ViewModels
                         if (button.Type is InlineKeyboardButtonTypeCallbackGame)
                         {
                             KeyboardButtonInline(message, button);
-                            return;
                         }
                     }
                 }
             }
-
-            GalleryViewModelBase viewModel = null;
-
-            var webPage = message.Content is MessageText text ? text.WebPage : null;
-            if (webPage != null && webPage.IsInstantGallery())
-            {
-                viewModel = await InstantGalleryViewModel.CreateAsync(ProtoService, StorageService, Aggregator, message, webPage);
-
-                if (viewModel.Items.IsEmpty())
-                {
-                    viewModel = null;
-                }
-            }
-
-            if (viewModel == null && (message.Content is MessageVideoNote || (webPage != null && webPage.VideoNote != null) || message.Content is MessageAnimation || (webPage != null && webPage.Animation != null)))
-            {
-                Delegate?.PlayMessage(message, target);
-            }
             else
             {
-                if (viewModel == null)
+                GalleryViewModelBase viewModel = null;
+
+                var webPage = message.Content is MessageText text ? text.WebPage : null;
+                if (webPage != null && webPage.IsInstantGallery())
                 {
-                    if ((message.Content is MessageAnimation || message.Content is MessagePhoto || message.Content is MessageVideo) && !message.IsSecret())
-                    {
-                        viewModel = new ChatGalleryViewModel(ProtoService, _storageService, Aggregator, message.ChatId, _threadId, message.Get());
-                    }
-                    else
-                    {
-                        viewModel = new SingleGalleryViewModel(ProtoService, _storageService, Aggregator, new GalleryMessage(ProtoService, message.Get()));
-                    }
+                    viewModel = await InstantGalleryViewModel.CreateAsync(ProtoService, StorageService, Aggregator, message, webPage);
                 }
 
-                var gallery = GalleryView.GetForCurrentView();
-                gallery.InitialPosition = timestamp;
+                if (viewModel == null && (message.Content is MessageAnimation || webPage?.Animation != null))
+                {
+                    Delegate?.PlayMessage(message, target);
+                }
+                else
+                {
+                    if (viewModel == null)
+                    {
+                        if (message.Content is MessageVideoNote or MessagePhoto or MessageVideo && !message.IsSecret())
+                        {
+                            viewModel = new ChatGalleryViewModel(ProtoService, _storageService, Aggregator, message.ChatId, _threadId, message.Get());
+                        }
+                        else
+                        {
+                            viewModel = new SingleGalleryViewModel(ProtoService, _storageService, Aggregator, new GalleryMessage(ProtoService, message.Get()));
+                        }
+                    }
 
-                await gallery.ShowAsync(viewModel, target != null ? () => target : null);
+                    await GalleryView.ShowAsync(viewModel, target != null ? () => target : null, timestamp);
+                }
+
+                TextField?.Focus(FocusState.Programmatic);
             }
-
-            TextField?.Focus(FocusState.Programmatic);
         }
 
         public void PlayMessage(MessageViewModel message)

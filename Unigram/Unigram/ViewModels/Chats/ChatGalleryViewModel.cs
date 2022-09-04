@@ -34,6 +34,10 @@ namespace Unigram.ViewModels.Chats
             {
                 _filter = new SearchMessagesFilterAnimation();
             }
+            else if (selected.Content is MessageVideoNote)
+            {
+                _filter = new SearchMessagesFilterVideoNote();
+            }
             else
             {
                 _filter = new SearchMessagesFilterPhotoAndVideo();

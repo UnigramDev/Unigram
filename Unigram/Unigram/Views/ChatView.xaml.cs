@@ -834,7 +834,7 @@ namespace Unigram.Views
                 }
 
                 var viewModel = new UserPhotosViewModel(ViewModel.ProtoService, ViewModel.StorageService, ViewModel.Aggregator, user, userFull);
-                await GalleryView.GetForCurrentView().ShowAsync(viewModel, () => Photo);
+                await GalleryView.ShowAsync(viewModel, () => Photo);
             }
             else if (chat.Type is ChatTypeBasicGroup)
             {
@@ -845,7 +845,7 @@ namespace Unigram.Views
                 }
 
                 var viewModel = new ChatPhotosViewModel(ViewModel.ProtoService, ViewModel.StorageService, ViewModel.Aggregator, chat, basicGroupFull.Photo);
-                await GalleryView.GetForCurrentView().ShowAsync(viewModel, () => Photo);
+                await GalleryView.ShowAsync(viewModel, () => Photo);
             }
             else if (chat.Type is ChatTypeSupergroup)
             {
@@ -856,7 +856,7 @@ namespace Unigram.Views
                 }
 
                 var viewModel = new ChatPhotosViewModel(ViewModel.ProtoService, ViewModel.StorageService, ViewModel.Aggregator, chat, supergroupFull.Photo);
-                await GalleryView.GetForCurrentView().ShowAsync(viewModel, () => Photo);
+                await GalleryView.ShowAsync(viewModel, () => Photo);
             }
         }
 

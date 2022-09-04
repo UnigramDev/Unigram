@@ -4,6 +4,7 @@ using Unigram.Common;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Gallery;
+using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -54,8 +55,22 @@ namespace Unigram.Controls.Gallery
             var file = item.GetFile();
             var thumbnail = item.GetThumbnail();
 
-            Constraint = item.Constraint;
-            InvalidateMeasure();
+            if (item.IsVideoNote)
+            {
+                MaxWidth = 384;
+                MaxHeight = 384;
+
+                CornerRadius = new CornerRadius(384 / 2);
+                Constraint = new Size(384, 384);
+            }
+            else
+            {
+                MaxWidth = double.PositiveInfinity;
+                MaxHeight = double.PositiveInfinity;
+
+                CornerRadius = new CornerRadius(0);
+                Constraint = item.Constraint;
+            }
 
             UpdateManager.Subscribe(this, delegato.ProtoService, file, ref _fileToken, UpdateFile);
             UpdateFile(item, file);

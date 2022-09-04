@@ -46,13 +46,18 @@ namespace Unigram.ViewModels
                 }
             }
 
-            var result = new InstantGalleryViewModel(protoService, storageService, aggregator);
-            result.Items.ReplaceWith(items);
-            result.FirstItem = items.FirstOrDefault();
-            result.SelectedItem = items.FirstOrDefault();
-            result.TotalItems = items.Count;
+            if (items.Count > 0)
+            {
+                var result = new InstantGalleryViewModel(protoService, storageService, aggregator);
+                result.Items.ReplaceWith(items);
+                result.FirstItem = items.FirstOrDefault();
+                result.SelectedItem = items.FirstOrDefault();
+                result.TotalItems = items.Count;
 
-            return result;
+                return result;
+            }
+
+            return null;
         }
 
         private static GalleryContent CountBlock(IProtoService protoService, WebPageInstantView webPage, PageBlock pageBlock)

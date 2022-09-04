@@ -1,5 +1,4 @@
-﻿using System;
-using Telegram.Td.Api;
+﻿using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Gallery;
@@ -71,7 +70,7 @@ namespace Unigram.Views.Chats
             var message = element.Tag as MessageWithOwner;
 
             var viewModel = new ChatGalleryViewModel(ViewModel.ProtoService, ViewModel.StorageService, ViewModel.Aggregator, message.ChatId, 0, message.Get(), true);
-            await GalleryView.GetForCurrentView().ShowAsync(viewModel, () => element);
+            await GalleryView.ShowAsync(viewModel, () => element);
         }
     }
 }
