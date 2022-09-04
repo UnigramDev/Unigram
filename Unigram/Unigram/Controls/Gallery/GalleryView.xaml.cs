@@ -20,6 +20,7 @@ using Windows.Media.Playback;
 using Windows.System.Display;
 using Windows.UI.Composition;
 using Windows.UI.Core;
+using Windows.UI.Input;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -90,7 +91,7 @@ namespace Unigram.Controls.Gallery
 
             Transport.Visibility = Visibility.Collapsed;
 
-            ScrollingHost.AddHandler(PointerPressedEvent, new PointerEventHandler(OnPointerPressed), true);
+            ScrollingHost.AddHandler(PointerReleasedEvent, new PointerEventHandler(OnPointerReleased), true);
         }
 
         private void OnTick(object sender, object e)
@@ -116,10 +117,10 @@ namespace Unigram.Controls.Gallery
             base.OnPointerMoved(e);
         }
 
-        private void OnPointerPressed(object sender, PointerRoutedEventArgs e)
+        private void OnPointerReleased(object sender, PointerRoutedEventArgs e)
         {
             var point = e.GetCurrentPoint((UIElement)_surface ?? this);
-            if (point.Properties.IsLeftButtonPressed is false || !_areInteractionsEnabled || e.Handled)
+            if (point.Properties.PointerUpdateKind != PointerUpdateKind.LeftButtonReleased || !_areInteractionsEnabled)
             {
                 return;
             }
@@ -316,6 +317,7 @@ namespace Unigram.Controls.Gallery
 
                 _wasFullScreen = ApplicationView.GetForCurrentView().IsFullScreenMode;
 
+                InitializeBackButton();
                 Transport.Focus(FocusState.Programmatic);
 
                 Loaded -= handler;
@@ -329,6 +331,22 @@ namespace Unigram.Controls.Gallery
 
             Loaded += handler;
             return ShowAsync();
+        }
+
+        private void InitializeBackButton()
+        {
+            if (IsConstrainedToRootBounds)
+            {
+                BackButton.Glyph = "\uE72B";
+                BackButton.Margin = new Thickness(0, -40, 0, 0);
+                BackButton.HorizontalAlignment = HorizontalAlignment.Left;
+            }
+            else
+            {
+                BackButton.Glyph = "\uE711";
+                BackButton.Margin = new Thickness();
+                BackButton.HorizontalAlignment = HorizontalAlignment.Right;
+            }
         }
 
         private void OnCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -707,9 +725,9 @@ namespace Unigram.Controls.Gallery
                 return;
             }
 
-            var alt = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
-            var ctrl = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
-            var shift = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
+            var alt = Window.Current.CoreWindow.IsKeyDown(Windows.System.VirtualKey.Menu);
+            var ctrl = Window.Current.CoreWindow.IsKeyDown(Windows.System.VirtualKey.Control);
+            var shift = Window.Current.CoreWindow.IsKeyDown(Windows.System.VirtualKey.Shift);
 
             var keyCode = (int)args.VirtualKey;
 

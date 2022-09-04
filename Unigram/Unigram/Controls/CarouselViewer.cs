@@ -103,7 +103,14 @@ namespace Unigram.Controls
                 return;
             }
 
+            var ctrl = Window.Current.CoreWindow.IsKeyDown(Windows.System.VirtualKey.Control);
+
             var point = e.GetCurrentPoint(this);
+            if (point.Properties.IsHorizontalMouseWheel || ctrl)
+            {
+                return;
+            }
+
             var direction = point.Properties.MouseWheelDelta > 0
                 ? CarouselDirection.Previous
                 : CarouselDirection.Next;
@@ -286,7 +293,7 @@ namespace Unigram.Controls
             _interactionSource = VisualInteractionSource.Create(_hitTest);
 
             //Configure for x-direction panning
-            _interactionSource.ManipulationRedirectionMode = VisualInteractionSourceRedirectionMode.CapableTouchpadOnly;
+            _interactionSource.ManipulationRedirectionMode = VisualInteractionSourceRedirectionMode.CapableTouchpadAndPointerWheel;
             _interactionSource.PositionXSourceMode = InteractionSourceMode.EnabledWithInertia;
             _interactionSource.PositionXChainingMode = InteractionChainingMode.Never;
             _interactionSource.IsPositionXRailsEnabled = true;

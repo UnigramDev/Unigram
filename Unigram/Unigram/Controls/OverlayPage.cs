@@ -207,7 +207,7 @@ namespace Unigram.Controls
                 _applicationView = ApplicationView.GetForCurrentView();
                 OnVisibleBoundsChanged(_applicationView, null);
 
-                Padding = new Thickness(0, CoreApplication.GetCurrentView().TitleBar.Height, 0, 0);
+                Padding = new Thickness(0, 40, 0, 0);
             }
 
             _closing = false;
