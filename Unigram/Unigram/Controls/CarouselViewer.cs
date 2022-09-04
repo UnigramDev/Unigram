@@ -43,6 +43,8 @@ namespace Unigram.Controls
 
     public class CarouselViewer : Grid, IInteractionTrackerOwner
     {
+        private bool _requiresArrange;
+
         public CarouselViewer()
         {
             Loaded += OnLoaded;
@@ -57,14 +59,19 @@ namespace Unigram.Controls
             {
                 _hitTest = Window.Current.Compositor.CreateSpriteVisual();
                 _hitTest.Brush = Window.Current.Compositor.CreateColorBrush(Windows.UI.Colors.Transparent);
-                _hitTest.RelativeSizeAdjustment = Vector2.One;
 
-                _container = Window.Current.Compositor.CreateContainerVisual();
-                _container.Children.InsertAtBottom(_hitTest);
-                _container.RelativeSizeAdjustment = Vector2.One;
+                if (ApiInfo.IsWindows11)
+                {
+                    _requiresArrange = false;
+                    _hitTest.RelativeSizeAdjustment = Vector2.One;
+                }
+                else
+                {
+                    _requiresArrange = true;
+                    _hitTest.Size = ActualSize;
+                }
 
-                ElementCompositionPreview.SetElementChildVisual(this, _container);
-
+                ElementCompositionPreview.SetElementChildVisual(this, _hitTest);
                 ConfigureInteractionTracker();
             }
 
@@ -96,15 +103,17 @@ namespace Unigram.Controls
                 catch { }
             }
         }
-
-        protected override Size MeasureOverride(Size availableSize)
+        protected override Size ArrangeOverride(Size finalSize)
         {
-            availableSize = base.MeasureOverride(availableSize);
-
             ConfigureElements();
             ConfigureAnimations(_restingValue);
 
-            return availableSize;
+            if (_hitTest != null && _requiresArrange)
+            {
+                _hitTest.Size = finalSize.ToVector2();
+            }
+
+            return base.ArrangeOverride(finalSize);
         }
 
         private void ConfigureElements()
@@ -221,7 +230,6 @@ namespace Unigram.Controls
         #region IInteractionTrackerOwner
 
         private SpriteVisual _hitTest;
-        private ContainerVisual _container;
 
         private readonly FrameworkElement[] _elements = new FrameworkElement[3];
         private readonly Visual[] _visuals = new Visual[3];

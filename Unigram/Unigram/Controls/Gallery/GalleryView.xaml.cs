@@ -744,27 +744,20 @@ namespace Unigram.Controls.Gallery
 
         #region Flippitiflip
 
-        protected override Size MeasureOverride(Size availableSize)
+        protected override Size ArrangeOverride(Size finalSize)
         {
-            var size = base.MeasureOverride(availableSize);
+            LayoutRoot.Width = finalSize.Width;
+            LayoutRoot.Height = finalSize.Height - Padding.Top;
 
-            //LayoutRoot.SnapPointWidth = (float)availableSize.Width;
-            LayoutRoot.Width = availableSize.Width;
-            LayoutRoot.Height = availableSize.Height - Padding.Top;
-
-            //Element0.Width = availableSize.Width;
-            //Element1.Width = availableSize.Width;
-            //Element2.Width = availableSize.Width;
-
-            Element0.MaxWidth = Element1.MaxWidth = Element2.MaxWidth = availableSize.Width;
-            Element0.MaxHeight = Element1.MaxHeight = Element2.MaxHeight = availableSize.Height - Padding.Top;
+            Element0.MaxWidth = Element1.MaxWidth = Element2.MaxWidth = finalSize.Width;
+            Element0.MaxHeight = Element1.MaxHeight = Element2.MaxHeight = finalSize.Height - Padding.Top;
 
             if (_layout != null)
             {
                 _layout.Offset = new Vector3(0, 0, 0);
             }
 
-            return size;
+            return base.ArrangeOverride(finalSize);
         }
 
         private bool ChangeView(CarouselDirection direction, bool disableAnimation)

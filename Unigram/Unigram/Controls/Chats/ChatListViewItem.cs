@@ -5,6 +5,7 @@ using Unigram.Common;
 using Unigram.Controls.Messages;
 using Unigram.Services;
 using Unigram.ViewModels;
+using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.Composition.Interactions;
 using Windows.UI.Xaml;
@@ -28,6 +29,8 @@ namespace Unigram.Controls.Chats
         private bool _hasInitialLoadedEventFired;
         private InteractionTracker _tracker;
         private VisualInteractionSource _interactionSource;
+
+        private bool _requiresArrange;
 
         private bool _forward;
         private bool _reply;
@@ -53,15 +56,28 @@ namespace Unigram.Controls.Chats
 
             if (ApiInfo.IsWindows11)
             {
+                _requiresArrange = false;
                 _presenter = VisualTreeHelper.GetChild(this, 0) as FrameworkElement;
             }
             else
             {
+                _requiresArrange = true;
                 _presenter = GetTemplateChild("ContentBorder") as FrameworkElement;
             }
 
             DetachEventHandlers();
             AttachEventHandlers();
+        }
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            if (_hitTest != null && _requiresArrange)
+            {
+                _hitTest.Size = finalSize.ToVector2();
+                _container.Size = finalSize.ToVector2();
+            }
+
+            return base.ArrangeOverride(finalSize);
         }
 
         private void AttachEventHandlers()
@@ -82,11 +98,20 @@ namespace Unigram.Controls.Chats
 
                 _hitTest = _visual.Compositor.CreateSpriteVisual();
                 _hitTest.Brush = _visual.Compositor.CreateColorBrush(Windows.UI.Colors.Transparent);
-                _hitTest.RelativeSizeAdjustment = Vector2.One;
 
                 _container = _visual.Compositor.CreateContainerVisual();
                 _container.Children.InsertAtBottom(_hitTest);
-                _container.RelativeSizeAdjustment = Vector2.One;
+
+                if (_requiresArrange)
+                {
+                    _hitTest.Size = ActualSize;
+                    _container.Size = ActualSize;
+                }
+                else
+                {
+                    _hitTest.RelativeSizeAdjustment = Vector2.One;
+                    _container.RelativeSizeAdjustment = Vector2.One;
+                }
 
                 ElementCompositionPreview.SetElementChildVisual(this, _container);
 
