@@ -49,32 +49,32 @@ namespace Unigram.Views
         , IRootContentPage
         , INavigatingPage
         , IChatListDelegate
-        //, IHandle<UpdateFileDownloads>
-        //, IHandle<UpdateChatPosition>
-        //, IHandle<UpdateChatIsMarkedAsUnread>
-        //, IHandle<UpdateChatReadInbox>
-        //, IHandle<UpdateChatReadOutbox>
-        //, IHandle<UpdateChatUnreadMentionCount>
-        //, IHandle<UpdateChatUnreadReactionCount>
-        //, IHandle<UpdateChatTitle>
-        //, IHandle<UpdateChatPhoto>
-        //, IHandle<UpdateChatVideoChat>
-        //, IHandle<UpdateUserStatus>
-        //, IHandle<UpdateUser>
-        //, IHandle<UpdateChatAction>
-        //, IHandle<UpdateMessageMentionRead>
-        //, IHandle<UpdateMessageUnreadReactions>
-        //, IHandle<UpdateUnreadChatCount>
-        //, //, IHandle<UpdateMessageContent>
-        //, IHandle<UpdateSecretChat>
-        //, IHandle<UpdateChatFilters>
-        //, IHandle<UpdateChatNotificationSettings>
-        //, IHandle<UpdatePasscodeLock>
-        //, IHandle<UpdateConnectionState>
-        //, IHandle<UpdateOption>
-        //, IHandle<UpdateCallDialog>
-        //, IHandle<UpdateChatFiltersLayout>
-        //, IHandle<UpdateConfetti>
+    //, IHandle<UpdateFileDownloads>
+    //, IHandle<UpdateChatPosition>
+    //, IHandle<UpdateChatIsMarkedAsUnread>
+    //, IHandle<UpdateChatReadInbox>
+    //, IHandle<UpdateChatReadOutbox>
+    //, IHandle<UpdateChatUnreadMentionCount>
+    //, IHandle<UpdateChatUnreadReactionCount>
+    //, IHandle<UpdateChatTitle>
+    //, IHandle<UpdateChatPhoto>
+    //, IHandle<UpdateChatVideoChat>
+    //, IHandle<UpdateUserStatus>
+    //, IHandle<UpdateUser>
+    //, IHandle<UpdateChatAction>
+    //, IHandle<UpdateMessageMentionRead>
+    //, IHandle<UpdateMessageUnreadReactions>
+    //, IHandle<UpdateUnreadChatCount>
+    //, //, IHandle<UpdateMessageContent>
+    //, IHandle<UpdateSecretChat>
+    //, IHandle<UpdateChatFilters>
+    //, IHandle<UpdateChatNotificationSettings>
+    //, IHandle<UpdatePasscodeLock>
+    //, IHandle<UpdateConnectionState>
+    //, IHandle<UpdateOption>
+    //, IHandle<UpdateCallDialog>
+    //, IHandle<UpdateChatFiltersLayout>
+    //, IHandle<UpdateConfetti>
     {
         public MainViewModel ViewModel => DataContext as MainViewModel;
         public RootPage Root { get; set; }
@@ -764,7 +764,7 @@ namespace Unigram.Views
 
             if (rpMasterTitlebar.SelectedIndex > 0)
             {
-                rpMasterTitlebar.SelectedIndex = 0;
+                SetPivotIndex(0);
                 ViewModel.RaisePropertyChanged(nameof(ViewModel.SelectedFilter));
                 args.Handled = true;
             }
@@ -1780,18 +1780,12 @@ namespace Unigram.Views
                     break;
             }
 
-
             SearchField.Text = string.Empty;
 
             UpdateHeader();
             UpdatePaneToggleButtonVisibility();
 
-            try
-            {
-                SearchReset();
-                rpMasterTitlebar.IsLocked = false;
-            }
-            catch { }
+            SearchReset();
 
             MasterDetail.NavigationService.GoBackAt(0);
 
@@ -1902,7 +1896,6 @@ namespace Unigram.Views
 
         private void Search_LostFocus(object sender, RoutedEventArgs e)
         {
-            rpMasterTitlebar.IsLocked = false;
             MasterDetail.AllowCompact = MasterDetail.NavigationService.CurrentPageType != typeof(BlankPage) && rpMasterTitlebar.SelectedIndex == 0;
 
             SearchReset();
@@ -1919,7 +1912,6 @@ namespace Unigram.Views
 
             _shouldGoBackWithDetail = false;
 
-            rpMasterTitlebar.IsLocked = true;
             MasterDetail.AllowCompact = false;
 
             ComposeButton.Visibility = string.IsNullOrEmpty(SearchField.Text)
@@ -2338,23 +2330,32 @@ namespace Unigram.Views
             content.UpdateCall(ViewModel.ProtoService, call);
         }
 
+        private void SetPivotIndex(int index)
+        {
+            if (rpMasterTitlebar.SelectedIndex != index)
+            {
+                rpMasterTitlebar.IsLocked = false;
+                rpMasterTitlebar.SelectedIndex = index;
+            }
+        }
+
         public async void NavigationView_ItemClick(RootDestination destination)
         {
             if (destination == RootDestination.Chats)
             {
-                rpMasterTitlebar.SelectedIndex = 0;
+                SetPivotIndex(0);
             }
             else if (destination == RootDestination.Contacts)
             {
-                rpMasterTitlebar.SelectedIndex = 1;
+                SetPivotIndex(1);
             }
             else if (destination == RootDestination.Calls)
             {
-                rpMasterTitlebar.SelectedIndex = 2;
+                SetPivotIndex(2);
             }
             else if (destination == RootDestination.Settings)
             {
-                rpMasterTitlebar.SelectedIndex = 3;
+                SetPivotIndex(3);
             }
             else if (destination == RootDestination.ArchivedChats)
             {
@@ -3003,11 +3004,11 @@ namespace Unigram.Views
                 var index = int.MaxValue - chatFilter.ChatFilterId;
                 if (index >= 0 && index <= 3)
                 {
-                    rpMasterTitlebar.SelectedIndex = index;
+                    SetPivotIndex(index);
                 }
                 else
                 {
-                    rpMasterTitlebar.SelectedIndex = 0;
+                    SetPivotIndex(0);
                 }
             }
 

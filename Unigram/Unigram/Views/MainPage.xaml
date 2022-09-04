@@ -692,6 +692,7 @@
                 <Pivot x:Name="rpMasterTitlebar"
                        SelectionChanged="Pivot_SelectionChanged"
                        Style="{StaticResource HeaderlessPivotStyle}"
+                       IsLocked="True"
                        Grid.Row="1">
                     <PivotItem x:Name="TabChats"
                                Header="Chats">
@@ -817,10 +818,11 @@
                                                 </Grid.ColumnDefinitions>
                                                 <TextBlock Text="{CustomResource Recent}"
                                                            Style="{StaticResource BaseTextBlockStyle}"
-                                                           Margin="12,16,12,8" />
+                                                           Margin="12,16,12,0" />
                                                 <controls:GlyphButton Command="{x:Bind ViewModel.Chats.ClearRecentChatsCommand}"
                                                                       AllowFocusOnInteraction="False"
                                                                       VerticalAlignment="Bottom"
+                                                                      Margin="0,0,0,-8"
                                                                       Glyph="&#xE711;"
                                                                       FontSize="12"
                                                                       Width="48"
@@ -861,7 +863,7 @@
                                                 <DataTemplate>
                                                     <TextBlock Text="{Binding Key}"
                                                                Style="{StaticResource BaseTextBlockStyle}"
-                                                               Margin="0,16,0,8" />
+                                                               Margin="0,16,0,0" />
                                                 </DataTemplate>
                                             </GroupStyle.HeaderTemplate>
                                             <GroupStyle.HeaderContainerStyle>

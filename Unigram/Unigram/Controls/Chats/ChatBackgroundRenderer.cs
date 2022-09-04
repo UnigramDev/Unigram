@@ -144,7 +144,7 @@ namespace Unigram.Controls.Chats
 
         protected override void DrawFrame(CanvasImageSource sender, CanvasDrawingSession args)
         {
-            if (_pattern != null && _additionalResourcesLock.Wait(0))
+            if (_pattern != null && _bitmap != null && _additionalResourcesLock.Wait(0))
             {
                 if (_backgroundFill != null)
                 {
