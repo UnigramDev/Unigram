@@ -119,8 +119,8 @@ namespace Unigram.Controls.Gallery
 
         private void OnPointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            var pointer = e.GetCurrentPoint(this);
-            if (pointer.Properties.IsLeftButtonPressed is false || !_areInteractionsEnabled || e.Handled)
+            var point = e.GetCurrentPoint((UIElement)_surface ?? this);
+            if (point.Properties.IsLeftButtonPressed is false || !_areInteractionsEnabled || e.Handled)
             {
                 return;
             }
@@ -132,8 +132,13 @@ namespace Unigram.Controls.Gallery
             }
             else
             {
-                if (TogglePlaybackState())
+                if (_surface != null
+                    && point.Position.X >= 0
+                    && point.Position.Y >= 0
+                    && point.Position.X <= _surface.ActualWidth
+                    && point.Position.Y <= _surface.ActualHeight)
                 {
+                    TogglePlaybackState();
                     return;
                 }
 
