@@ -116,14 +116,9 @@ namespace Unigram.Controls
 
         }
 
-        private bool _resetSize;
-
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (_resetSize)
-            {
-                Height = double.NaN;
-            }
+            Height = double.NaN;
         }
 
         protected override void OnApplyTemplate()
@@ -181,6 +176,12 @@ namespace Unigram.Controls
 
         protected override void OnKeyDown(KeyRoutedEventArgs e)
         {
+            //if (_resetSize)
+            //{
+            //    _resetSize = false;
+            //    Height = double.NaN;
+            //}
+
             if (e.Key == VirtualKey.Back && IsReplaceEmojiEnabled)
             {
                 Document.GetText(TextGetOptions.None, out _);
@@ -819,13 +820,6 @@ namespace Unigram.Controls
 
             if (clear)
             {
-                // This is needed to prevent resize animation, doh
-                if (ActualHeight > 48)
-                {
-                    _resetSize = true;
-                    Height = 48;
-                }
-
                 Document.LoadFromStream(TextSetOptions.None, new InMemoryRandomAccessStream());
                 SelectionFlyout.Hide();
             }
