@@ -997,15 +997,7 @@ namespace Unigram.Views
                 ViewModel.SendDocumentCommand.Execute();
                 args.Handled = true;
             }
-            else if (args.VirtualKey == Windows.System.VirtualKey.Escape && !ctrl && !alt && !shift)
-            {
-                if (ViewModel.ComposerHeader != null && ViewModel.ComposerHeader.ReplyToMessage != null)
-                {
-                    ViewModel.ClearReply();
-                    args.Handled = true;
-                }
-            }
-            else if ((args.VirtualKey == Windows.System.VirtualKey.PageUp) && !ctrl && !alt && !shift && TextField.Document.Selection.StartPosition == 0 && ViewModel.Autocomplete == null)
+            else if (args.VirtualKey == Windows.System.VirtualKey.PageUp && !ctrl && !alt && !shift && TextField.Document.Selection.StartPosition == 0 && ViewModel.Autocomplete == null)
             {
                 var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
                 if (popups.Count > 0)
@@ -1117,7 +1109,7 @@ namespace Unigram.Views
                 args.Handled = true;
             }
 
-            if (ViewModel.ComposerHeader != null && ViewModel.ComposerHeader.EditingMessage != null)
+            if (ViewModel.ComposerHeader != null)
             {
                 ViewModel.ClearReply();
                 args.Handled = true;
