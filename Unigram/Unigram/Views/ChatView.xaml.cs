@@ -3038,7 +3038,7 @@ namespace Unigram.Views
             ShowHideManagePanel(ViewModel.IsSelectionEnabled);
         }
 
-        private bool _manageCollapsed;
+        private bool _manageCollapsed = true;
 
         private void ShowHideManagePanel(bool show)
         {
@@ -3181,7 +3181,7 @@ namespace Unigram.Views
         {
             if (e.NewSize.Width >= 500 && ManageCount.OverflowVisibility == Visibility.Collapsed)
             {
-                ManageCount.OverflowVisibility = Visibility.Collapsed;
+                ManageCount.OverflowVisibility = Visibility.Visible;
             }
             else if (e.NewSize.Width < 500 && ManageCount.OverflowVisibility == Visibility.Visible)
             {
