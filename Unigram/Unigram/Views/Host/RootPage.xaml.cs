@@ -622,7 +622,7 @@ namespace Unigram.Views.Host
 
         private void Theme_Click(object sender, RoutedEventArgs e)
         {
-            var animate = false;
+            var animate = true;
             if (animate)
             {
                 var bitmap = ScreenshotManager.Capture();
