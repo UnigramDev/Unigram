@@ -381,6 +381,7 @@
     <Compile Include="Controls\FormattedTextFlyout.xaml.cs">
       <DependentUpon>FormattedTextFlyout.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\CarouselViewer.cs" />
     <Compile Include="Controls\Gallery\GalleryBottomPanel.cs" />
     <Compile Include="Controls\Gallery\GalleryCompactView.cs" />
     <Compile Include="Controls\Gallery\GalleryContentView.xaml.cs">
@@ -391,6 +392,7 @@
     <Compile Include="Controls\Gallery\GalleryView.xaml.cs">
       <DependentUpon>GalleryView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ZoomViewer.cs" />
     <Compile Include="Controls\GroupCallActiveHeader.xaml.cs">
       <DependentUpon>GroupCallActiveHeader.xaml</DependentUpon>
     </Compile>
@@ -398,6 +400,7 @@
       <DependentUpon>GroupCallHeader.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\HeaderedControl.cs" />
+    <Compile Include="Controls\IdentityTextBlock.cs" />
     <Compile Include="Controls\ImageCropper.cs" />
     <Compile Include="Controls\InlineBotResultsView.xaml.cs">
       <DependentUpon>InlineBotResultsView.xaml</DependentUpon>

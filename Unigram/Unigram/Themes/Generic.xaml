@@ -284,6 +284,37 @@
         </Setter>
     </Style>
 
+    <Style TargetType="local:ZoomViewer">
+        <Setter Property="IsTabStop"
+                Value="False" />
+        <Setter Property="MinZoomFactor"
+                Value="1" />
+        <Setter Property="MaxZoomFactor"
+                Value="4" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:ZoomViewer">
+                    <ScrollViewer x:Name="ScrollingHost"
+                                  Content="{TemplateBinding Content}"
+                                  ContentTemplate="{TemplateBinding ContentTemplate}"
+                                  ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                  ContentTransitions="{TemplateBinding ContentTransitions}"
+                                  ZoomMode="Enabled"
+                                  MinZoomFactor="{TemplateBinding MinZoomFactor}"
+                                  MaxZoomFactor="{TemplateBinding MaxZoomFactor}"
+                                  IsZoomInertiaEnabled="True"
+                                  HorizontalContentAlignment="Stretch"
+                                  VerticalContentAlignment="Stretch"
+                                  VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
+                                  HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                                  HorizontalScrollMode="Auto"
+                                  VerticalScrollMode="Auto"
+                                  CanContentRenderOutsideBounds="True" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    </Style>
 
     <Style TargetType="local:PremiumLock">
         <Setter Property="AutomationProperties.AccessibilityView"

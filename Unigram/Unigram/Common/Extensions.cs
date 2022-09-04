@@ -142,6 +142,27 @@ namespace Unigram.Common
             return (number - other).AlmostEqualsToZero(epsilon);
         }
 
+        /// <summary>
+        /// Test for almost equality to 0.
+        /// </summary>
+        /// <param name="number"></param>
+        /// <param name="epsilon"></param>
+        public static bool AlmostEqualsToZero(this float number, float epsilon = 1e-5f)
+        {
+            return number > -epsilon && number < epsilon;
+        }
+
+        /// <summary>
+        /// Test for almost equality.
+        /// </summary>
+        /// <param name="number"></param>
+        /// <param name="other"></param>
+        /// <param name="epsilon"></param>
+        public static bool AlmostEquals(this float number, float other, float epsilon = 1e-5f)
+        {
+            return (number - other).AlmostEqualsToZero(epsilon);
+        }
+
         public static int ToTimestamp(this DateTime dateTime)
         {
             var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
@@ -252,11 +273,48 @@ namespace Unigram.Common
             return props.Orientation is VideoOrientation.Rotate180 or VideoOrientation.Normal ? props.Width : props.Height;
         }
 
+        public static void Shiftino<T>(this T[] array, int offset)
+        {
+            if (offset < 0)
+            {
+                while (offset < 0)
+                {
+                    var element = array[array.Length - 1];
+                    Array.Copy(array, 0, array, 1, array.Length - 1);
+                    array[0] = element;
+                    offset += 1;
+                }
+            }
+            else if (offset > 0)
+            {
+                while (offset > 0)
+                {
+                    var element = array[0];
+                    Array.Copy(array, 1, array, 0, array.Length - 1);
+                    array[array.Length - 1] = element;
+                    offset -= 1;
+                }
+            }
+        }
+
+
         public static T[] Shift<T>(this T[] array, int offset)
         {
             var output = new T[array.Length];
 
-            if (offset > 0)
+            if (offset < 0)
+            {
+                while (offset < 0)
+                {
+                    var element = array[output.Length - 1];
+                    Array.Copy(array, 0, output, 1, array.Length - 1);
+                    output[0] = element;
+                    offset += 1;
+
+                    array = output;
+                }
+            }
+            else if (offset > 0)
             {
                 while (offset > 0)
                 {

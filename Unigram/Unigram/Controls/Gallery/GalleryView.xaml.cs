@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Numerics;
-using System.Runtime.InteropServices.WindowsRuntime;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -91,12 +91,23 @@ namespace Unigram.Controls.Gallery
             _inactivityTimer.Start();
 
             Transport.Visibility = Visibility.Collapsed;
+
+            ScrollingHost.AddHandler(PointerWheelChangedEvent, new PointerEventHandler(OnPointerWheelChanged), true);
+
+            ElementCompositionPreview.SetIsTranslationEnabled(Element2, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(Element0, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(Element1, true);
         }
 
         private void OnTick(object sender, object e)
         {
             _inactivityTimer.Stop();
             ShowHideTransport(false);
+        }
+
+        private void OnPointerWheelChanged(object sender, PointerRoutedEventArgs args)
+        {
+            var a = args.GetCurrentPoint(ScrollingHost).Properties.MouseWheelDelta;
         }
 
         protected override void OnPointerMoved(PointerRoutedEventArgs e)
@@ -186,7 +197,7 @@ namespace Unigram.Controls.Gallery
 
         public void OpenFile(GalleryContent item, File file)
         {
-            Play(item, file);
+            Play(item);
         }
 
         public void OpenItem(GalleryContent item)
@@ -279,7 +290,6 @@ namespace Unigram.Controls.Gallery
             parameter.Items.CollectionChanged += OnCollectionChanged;
 
             Load(parameter);
-                parameter.Items.CollectionChanged += OnCollectionChanged;
 
             PrepareNext(0, true);
 
@@ -362,16 +372,17 @@ namespace Unigram.Controls.Gallery
             //var root = container.Presenter;
             if (ViewModel != null && ViewModel.SelectedItem == ViewModel.FirstItem && _closing != null)
             {
-                ScrollingHost.Opacity = 0;
-                Preview.Opacity = 1;
-
-                var root = Preview.Presenter;
+                var root = Element0;
                 if (root.IsLoaded && IsConstrainedToRootBounds)
                 {
                     var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", root);
                     if (animation != null)
                     {
-                        animation.Configuration = new BasicConnectedAnimationConfiguration();
+                        animation.Configuration = new DirectConnectedAnimationConfiguration();
+                        animation.Completed += (s, args) =>
+                        {
+                            Hide();
+                        };
 
                         var element = _closing();
                         if (element.ActualWidth > 0)
@@ -428,32 +439,27 @@ namespace Unigram.Controls.Gallery
                 return;
             }
 
-            ScrollingHost.Opacity = 0;
-            Preview.Opacity = 1;
-
-            var container = GetContainer(0);
+            var container = LayoutRoot.CurrentElement as Grid;
 
             var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
             if (animation != null)
             {
-                animation.Configuration = new BasicConnectedAnimationConfiguration();
+                //animation.Configuration = new BasicConnectedAnimationConfiguration
 
                 _layer.StartAnimation("Opacity", CreateScalarAnimation(0, 1));
                 _bottom.StartAnimation("Opacity", CreateScalarAnimation(0, 1));
 
-                if (animation.TryStart(image.Presenter))
+                if (animation.TryStart(image))
                 {
                     void handler(ConnectedAnimation s, object args)
                     {
                         animation.Completed -= handler;
 
                         Transport.Show();
-                        ScrollingHost.Opacity = 1;
-                        Preview.Opacity = 0;
 
-                        if (item.IsVideo && container != null)
+                        if (item.IsVideo)
                         {
-                            Play(container.Presenter, item, item.GetFile());
+                            Play(container, item);
 
                             if (GalleryCompactView.Current is ViewLifetimeControl compact)
                             {
@@ -478,12 +484,10 @@ namespace Unigram.Controls.Gallery
             _bottom.Opacity = 1;
 
             Transport.Show();
-            ScrollingHost.Opacity = 1;
-            Preview.Opacity = 0;
 
-            if (item.IsVideo && container != null)
+            if (item.IsVideo)
             {
-                Play(container.Presenter, item, item.GetFile());
+                Play(container, item);
             }
         }
 
@@ -492,7 +496,7 @@ namespace Unigram.Controls.Gallery
             var scalar = _layer.Compositor.CreateScalarKeyFrameAnimation();
             scalar.InsertKeyFrame(0, from);
             scalar.InsertKeyFrame(1, to, ConnectedAnimationService.GetForCurrentView().DefaultEasingFunction);
-            scalar.Duration = ConnectedAnimationService.GetForCurrentView().DefaultDuration - TimeSpan.FromMilliseconds(50);
+            scalar.Duration = TimeSpan.FromMilliseconds(150);
 
             return scalar;
         }
@@ -541,7 +545,7 @@ namespace Unigram.Controls.Gallery
 
         #endregion
 
-        private void Play(GalleryContent item, File file)
+        private void Play(GalleryContent item)
         {
             try
             {
@@ -550,18 +554,13 @@ namespace Unigram.Controls.Gallery
                     _surface.Children.Remove(_mediaPlayerElement);
                 }
 
-                var container = GetContainer(0);
-                //if (container != null && container.ContentTemplateRoot is Grid parent)
-                //{
-                //    Play(parent, item);
-                //}
-
-                Play(container.Presenter, item, file);
+                var container = LayoutRoot.CurrentElement as Grid;
+                Play(container, item);
             }
             catch { }
         }
 
-        private void Play(Grid parent, GalleryContent item, File file)
+        private void Play(Grid parent, GalleryContent item)
         {
             if (_unloaded)
             {
@@ -570,6 +569,7 @@ namespace Unigram.Controls.Gallery
 
             try
             {
+                var file = item.GetFile();
                 if (!file.Local.IsDownloadingCompleted && !SettingsService.Current.IsStreamingEnabled)
                 {
                     return;
@@ -634,9 +634,7 @@ namespace Unigram.Controls.Gallery
 
         private void Dispose()
         {
-            Element2.Reset();
-            Element0.Reset();
-            Element1.Reset();
+            ScrollingHost.Zoom(1, true);
 
             if (_surface != null)
             {
@@ -733,12 +731,12 @@ namespace Unigram.Controls.Gallery
 
             if (args.VirtualKey is Windows.System.VirtualKey.Left or Windows.System.VirtualKey.GamepadLeftShoulder)
             {
-                ChangeView(0, false);
+                ChangeView(CarouselDirection.Previous, false);
                 args.Handled = true;
             }
             else if (args.VirtualKey is Windows.System.VirtualKey.Right or Windows.System.VirtualKey.GamepadRightShoulder)
             {
-                ChangeView(2, false);
+                ChangeView(CarouselDirection.Next, false);
                 args.Handled = true;
             }
             else if (args.VirtualKey is Windows.System.VirtualKey.Space && !ctrl && !alt && !shift)
@@ -769,20 +767,32 @@ namespace Unigram.Controls.Gallery
             }
             else if (keyCode is 187 or 189 || args.VirtualKey is Windows.System.VirtualKey.Add or Windows.System.VirtualKey.Subtract)
             {
-                var container = GetContainer(0);
-                container.Zoom(keyCode is 187 || args.VirtualKey is Windows.System.VirtualKey.Add);
+                ScrollingHost.Zoom(keyCode is 187 || args.VirtualKey is Windows.System.VirtualKey.Add);
                 args.Handled = true;
+            }
+        }
+
+        private void LayoutRoot_ViewChanging(object sender, CarouselViewChangingEventArgs e)
+        {
+            ChangeView(e.Direction);
+        }
+
+        private void LayoutRoot_ViewChanged(object sender, CarouselViewChangedEventArgs e)
+        {
+            if (ViewModel?.SelectedItem is GalleryContent item && item.IsVideo && (item.IsLoop || SettingsService.Current.IsStreamingEnabled))
+            {
+                Play(item);
             }
         }
 
         private void PrevButton_Click(object sender, RoutedEventArgs e)
         {
-            ChangeView(0, false);
+            ChangeView(CarouselDirection.Previous, false);
         }
 
         private void NextButton_Click(object sender, RoutedEventArgs e)
         {
-            ChangeView(2, false);
+            ChangeView(CarouselDirection.Next, false);
         }
 
         #region Flippitiflip
@@ -791,12 +801,16 @@ namespace Unigram.Controls.Gallery
         {
             var size = base.MeasureOverride(availableSize);
 
-            LayoutRoot.SnapPointWidth = (float)availableSize.Width;
+            //LayoutRoot.SnapPointWidth = (float)availableSize.Width;
+            LayoutRoot.Width = availableSize.Width;
             LayoutRoot.Height = availableSize.Height - Padding.Top;
 
-            Element0.Width = availableSize.Width;
-            Element1.Width = availableSize.Width;
-            Element2.Width = availableSize.Width;
+            //Element0.Width = availableSize.Width;
+            //Element1.Width = availableSize.Width;
+            //Element2.Width = availableSize.Width;
+
+            Element0.MaxWidth = Element1.MaxWidth = Element2.MaxWidth = availableSize.Width;
+            Element0.MaxHeight = Element1.MaxHeight = Element2.MaxHeight = availableSize.Height - Padding.Top;
 
             if (_layout != null)
             {
@@ -806,75 +820,23 @@ namespace Unigram.Controls.Gallery
             return size;
         }
 
-        private void LayoutRoot_HorizontalSnapPointsChanged(object sender, object e)
+        private bool ChangeView(CarouselDirection direction, bool disableAnimation)
         {
-            ScrollingHost.HorizontalSnapPointsType = SnapPointsType.None;
-            ScrollingHost.ChangeView(LayoutRoot.SnapPointWidth, null, null, true);
-            ScrollingHost.HorizontalSnapPointsType = SnapPointsType.MandatorySingle;
+            if (ChangeView(direction))
+            {
+                if (disableAnimation)
+                {
+                    return true;
+                }
+
+                LayoutRoot.ChangeView(direction);
+                return true;
+            }
+
+            return false;
         }
 
-        private bool _needFinal;
-
-        private void ScrollingHost_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
-        {
-            // We want to update containers when the view has been scrolled to the start/end or when the change has ended
-            if (ScrollingHost.HorizontalOffset == 0 || ScrollingHost.HorizontalOffset == ScrollingHost.ScrollableWidth || (_needFinal && !e.IsIntermediate))
-            {
-                _needFinal = false;
-
-                var viewModel = ViewModel;
-                if (viewModel == null)
-                {
-                    // Page is most likely being closed, just reset the view
-                    LayoutRoot_HorizontalSnapPointsChanged(LayoutRoot, null);
-                    return;
-                }
-
-                var selected = viewModel.SelectedIndex;
-                var previous = selected > 0;
-                var next = selected < viewModel.Items.Count - 1;
-
-#if GALLERY_EXPERIMENTAL
-                var difference = previous ? 0 : LayoutRoot.SnapPointWidth;
-#else
-                var difference = 0;
-#endif
-
-                var index = Math.Round((difference + ScrollingHost.HorizontalOffset) / LayoutRoot.SnapPointWidth);
-                if (index == 0 && previous)
-                {
-                    viewModel.SelectedItem = viewModel.Items[selected - 1];
-                    PrepareNext(-1, dispose: true);
-                }
-                else if (index == 2 && next)
-                {
-                    viewModel.SelectedItem = viewModel.Items[selected + 1];
-                    PrepareNext(+1, dispose: true);
-                }
-
-                viewModel.LoadMore();
-
-#if GALLERY_EXPERIMENTAL
-                if (ViewModel.SelectedIndex == 0 || !previous)
-                {
-                    //ScrollingHost.ChangeView(index == 2 ? LayoutRoot.SnapPointWidth : 0, null, null, true);
-                    ScrollingHost.ChangeView(0, null, null, true);
-                }
-                else
-#endif
-                {
-                    ScrollingHost.HorizontalSnapPointsType = SnapPointsType.None;
-                    ScrollingHost.ChangeView(LayoutRoot.SnapPointWidth, null, null, true);
-                    ScrollingHost.HorizontalSnapPointsType = SnapPointsType.MandatorySingle;
-                }
-            }
-            else
-            {
-                _needFinal = true;
-            }
-        }
-
-        private bool ChangeView(int index, bool disableAnimation)
+        private bool ChangeView(CarouselDirection direction)
         {
             var viewModel = ViewModel;
             if (viewModel == null)
@@ -886,30 +848,27 @@ namespace Unigram.Controls.Gallery
             var previous = selected > 0;
             var next = selected < viewModel.Items.Count - 1;
 
-            if (previous && index == 0)
+            if (previous && direction == CarouselDirection.Previous)
             {
                 viewModel.SelectedItem = viewModel.Items[selected - 1];
-                PrepareNext(-1, dispose: true);
+                PrepareNext(direction, dispose: true);
 
                 viewModel.LoadMore();
-
                 return true;
             }
-            else if (next && index == 2)
+            else if (next && direction == CarouselDirection.Next)
             {
                 viewModel.SelectedItem = viewModel.Items[selected + 1];
-                PrepareNext(+1, dispose: true);
+                PrepareNext(direction, dispose: true);
 
                 viewModel.LoadMore();
-
                 return true;
             }
 
             return false;
-            //ScrollingHost.ChangeView(ActualWidth * index, null, null, disableAnimation);
         }
 
-        private void PrepareNext(int direction, bool initialize = false, bool dispose = false)
+        private void PrepareNext(CarouselDirection direction, bool initialize = false, bool dispose = false)
         {
             var viewModel = ViewModel;
             if (viewModel == null)
@@ -917,31 +876,10 @@ namespace Unigram.Controls.Gallery
                 return;
             }
 
-            GalleryContentView previous = null;
-            GalleryContentView target = null;
-            GalleryContentView next = null;
-            if (Grid.GetColumn(Element1) == direction + 1)
-            {
-                previous = Element0;
-                target = Element1;
-                next = Element2;
-            }
-            else if (Grid.GetColumn(Element0) == direction + 1)
-            {
-                previous = Element2;
-                target = Element0;
-                next = Element1;
-            }
-            else if (Grid.GetColumn(Element2) == direction + 1)
-            {
-                previous = Element1;
-                target = Element2;
-                next = Element0;
-            }
-
-            Grid.SetColumn(target, 1);
-            Grid.SetColumn(previous, 0);
-            Grid.SetColumn(next, 2);
+            LayoutRoot.PrepareElements(direction,
+                out GalleryContentView previous,
+                out GalleryContentView target,
+                out GalleryContentView next);
 
             var index = viewModel.SelectedIndex;
             if (index < 0 || viewModel.Items.IsEmpty())
@@ -953,10 +891,8 @@ namespace Unigram.Controls.Gallery
             TrySet(previous, index > 0 ? viewModel.Items[index - 1] : null);
             TrySet(next, index < viewModel.Items.Count - 1 ? viewModel.Items[index + 1] : null);
 
-            if (initialize)
-            {
-                TrySet(Preview, viewModel.Items[index]);
-            }
+            LayoutRoot.CanGoPrev = index > 0;
+            LayoutRoot.CanGoNext = index < viewModel.Items.Count - 1;
 
             if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
             {
@@ -969,11 +905,6 @@ namespace Unigram.Controls.Gallery
                 NextButton.Visibility = Visibility.Collapsed;
             }
 
-#if GALLERY_EXPERIMENTAL
-            LayoutRoot.ColumnDefinitions[0].Width = new GridLength(0, index > 0 ? GridUnitType.Auto : GridUnitType.Pixel);
-            LayoutRoot.ColumnDefinitions[2].Width = new GridLength(0, index < viewModel.Items.Count - 1 ? GridUnitType.Auto : GridUnitType.Pixel);
-#endif
-
             if (set)
             {
                 Dispose();
@@ -985,28 +916,10 @@ namespace Unigram.Controls.Gallery
             }
 
             var item = viewModel.Items[index];
-            if (item.IsVideo && (item.IsLoop || initialize))
+            if (item.IsVideo && initialize)
             {
-                Play(target.Presenter, item, item.GetFile());
+                Play(target, item);
             }
-        }
-
-        private GalleryContentView GetContainer(int direction)
-        {
-            if (Grid.GetColumn(Element1) == direction + 1)
-            {
-                return Element1;
-            }
-            else if (Grid.GetColumn(Element0) == direction + 1)
-            {
-                return Element0;
-            }
-            else if (Grid.GetColumn(Element2) == direction + 1)
-            {
-                return Element2;
-            }
-
-            return null;
         }
 
         private bool TrySet(GalleryContentView element, GalleryContent content)
@@ -1128,7 +1041,7 @@ namespace Unigram.Controls.Gallery
 
             if (_mediaPlayer == null || _mediaPlayer.Source == null)
             {
-                Play(item, item.GetFile());
+                Play(item);
             }
 
             _mediaPlayerElement.SetMediaPlayer(null);
@@ -1211,25 +1124,55 @@ namespace Unigram.Controls.Gallery
 
         private void ZoomIn_Click(object sender, RoutedEventArgs e)
         {
-            var container = GetContainer(0);
-            container.Zoom(true);
+            ScrollingHost.Zoom(true);
         }
 
         private void ZoomOut_Click(object sender, RoutedEventArgs e)
         {
-            var container = GetContainer(0);
-            container.Zoom(false);
+            ScrollingHost.Zoom(false);
         }
 
-        private void ImageView_InteractionsEnabledChanged(object sender, EventArgs e)
-        {
-            //var container = GetContainer(0);
-            //ZoomIn.IsEnabled = container.CanZoomIn;
-            //ZoomOut.IsEnabled = container.CanZoomOut;
+        private bool _areInteractionsEnabled = true;
 
-            IsLightDismissEnabled = Element2.AreInteractionsEnabled
-                && Element0.AreInteractionsEnabled
-                && Element1.AreInteractionsEnabled;
+        private void ScrollingHost_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        {
+            var neutral = ScrollingHost.ZoomFactor.AlmostEquals(1);
+            if (neutral == _areInteractionsEnabled)
+            {
+                return;
+            }
+
+            _areInteractionsEnabled = neutral;
+            IsLightDismissEnabled = neutral;
+
+            LayoutRoot.IsManipulationEnabled = neutral;
+
+            ZoomIn.IsEnabled = ScrollingHost.CanZoomIn;
+            ZoomOut.IsEnabled = ScrollingHost.CanZoomOut;
+
+            var container = GetElement(CarouselDirection.None);
+            container.IsEnabled = neutral;
+            container.ManipulationMode = neutral ? ManipulationModes.TranslateY | ManipulationModes.TranslateRailsY | ManipulationModes.System : ManipulationModes.System;
+
+            var container2 = GetElement(CarouselDirection.Previous);
+            container2.Opacity = neutral ? 1 : 0;
+
+            var container1 = GetElement(CarouselDirection.Next);
+            container1.Opacity = neutral ? 1 : 0;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private GalleryContentView GetElement(CarouselDirection direction)
+        {
+            return LayoutRoot.GetElement<GalleryContentView>(direction);
+        }
+
+        private void ScrollingHost_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            if (ScrollingHost.ZoomFactor > 1)
+            {
+                OpenItem(null);
+            }
         }
     }
 }
