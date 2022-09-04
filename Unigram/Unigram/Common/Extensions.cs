@@ -20,6 +20,7 @@ using Windows.Storage.AccessCache;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Pickers;
 using Windows.UI;
+using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -94,6 +95,16 @@ namespace Unigram.Common
                 target.Resources["TeachingTip"] = tip;
             }
             tip.IsOpen = true;
+        }
+
+        public static bool IsKeyDown(this CoreWindow window, Windows.System.VirtualKey key)
+        {
+            return window.GetKeyState(key).HasFlag(CoreVirtualKeyStates.Down);
+        }
+
+        public static bool IsKeyDownAsync(this CoreWindow window, Windows.System.VirtualKey key)
+        {
+            return window.GetAsyncKeyState(key).HasFlag(CoreVirtualKeyStates.Down);
         }
 
         public static Color ToColor(this int color, bool alpha = false)
