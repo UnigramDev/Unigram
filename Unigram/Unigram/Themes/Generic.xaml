@@ -4171,13 +4171,6 @@
                                     </VisualState.Setters>
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
-                                                                       Storyboard.TargetName="UncheckedContentPresenter">
-                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{TemplateBinding UncheckedForeground}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
                                     <VisualState.Setters>
                                         <Setter Target="Icon.(muxc:AnimatedIcon.State)"
                                                 Value="Normal" />

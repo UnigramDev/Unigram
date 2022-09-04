@@ -2,7 +2,6 @@
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.ViewModels;
-using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -98,21 +97,6 @@ namespace Unigram.Controls.Messages.Content
 
             UpdateManager.Subscribe(this, message, big.Photo, ref _fileToken, UpdateFile);
             UpdateFile(message, big.Photo);
-        }
-
-        protected override Size MeasureOverride(Size availableSize)
-        {
-            availableSize = base.MeasureOverride(availableSize);
-
-            var photo = GetContent(_message?.Content);
-            var big = photo?.GetBig();
-
-            if (big == null)
-            {
-                return availableSize;
-            }
-
-            return availableSize;
         }
 
         public void Mockup(MessagePhoto photo)
