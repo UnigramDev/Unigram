@@ -555,6 +555,16 @@ namespace Unigram.Views
             OnNavigatedTo();
         }
 
+        public void PopupOpened()
+        {
+            ViewVisibleMessages(true);
+        }
+
+        public void PopupClosed()
+        {
+            ViewVisibleMessages(false);
+        }
+
         private MessageBubble _measurement;
         private int _collectionChanging;
 

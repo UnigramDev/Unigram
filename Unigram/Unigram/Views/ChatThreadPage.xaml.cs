@@ -65,5 +65,15 @@ namespace Unigram.Views
         {
             View.Activate(sessionId);
         }
+
+        public void PopupOpened()
+        {
+            View.PopupOpened();
+        }
+
+        public void PopupClosed()
+        {
+            View.PopupClosed();
+        }
     }
 }

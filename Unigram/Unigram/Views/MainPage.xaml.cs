@@ -3099,11 +3099,21 @@ namespace Unigram.Views
         public void PopupOpened()
         {
             Window.Current.SetTitleBar(null);
+
+            if (MasterDetail.NavigationService.Frame.Content is IActivablePage page)
+            {
+                page.PopupOpened();
+            }
         }
 
         public void PopupClosed()
         {
             Window.Current.SetTitleBar(TitleBarHandle);
+
+            if (MasterDetail.NavigationService.Frame.Content is IActivablePage page)
+            {
+                page.PopupClosed();
+            }
         }
 
         #region Context menu
