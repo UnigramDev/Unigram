@@ -874,5 +874,8 @@ namespace Unigram.Navigation
     {
         void Activate(int sessionId);
         void Deactivate(bool navigating);
+
+        void PopupOpened();
+        void PopupClosed();
     }
 }
