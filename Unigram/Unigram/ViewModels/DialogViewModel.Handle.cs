@@ -754,13 +754,27 @@ namespace Unigram.ViewModels
         {
             if (update.ChatId == _chat?.Id)
             {
-                _hasLoadedLastPinnedMessage = false;
-                BeginOnUIThread(() => LoadPinnedMessagesSliceAsync(update.MessageId, VerticalAlignment.Center));
-
-                Handle(update.MessageId, message =>
+                if (_type == DialogType.Pinned)
                 {
-                    message.IsPinned = update.IsPinned;
-                }, (bubble, message) => bubble.UpdateMessageIsPinned(message));
+                    if (update.IsPinned)
+                    {
+                        // TODO
+                    }
+                    else
+                    {
+                        Handle(new UpdateDeleteMessages(update.ChatId, new[] { update.MessageId }, true, true));
+                    }
+                }
+                else
+                {
+                    _hasLoadedLastPinnedMessage = false;
+                    BeginOnUIThread(() => LoadPinnedMessagesSliceAsync(update.MessageId, VerticalAlignment.Center));
+
+                    Handle(update.MessageId, message =>
+                    {
+                        message.IsPinned = update.IsPinned;
+                    }, (bubble, message) => bubble.UpdateMessageIsPinned(message));
+                }
             }
         }
 
