@@ -211,6 +211,7 @@
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition />
@@ -232,18 +233,32 @@
                                            Style="{StaticResource CaptionTextBlockStyle}"
                                            HorizontalAlignment="Right"
                                            Visibility="Collapsed"
-                                           Margin="0,0,0,2" />
+                                           Margin="0,0,0,2"
+                                           Grid.Column="1" />
+
+                                <TextBlock x:Name="ForwardLabel"
+                                           x:Load="False"
+                                           Margin="0,0,0,2"
+                                           Foreground="{ThemeResource MessageHeaderForegroundBrush}"
+                                           Style="{StaticResource CaptionTextBlockStyle}"
+                                           FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                           TextTrimming="CharacterEllipsis"
+                                           TextWrapping="NoWrap"
+                                           FontWeight="SemiBold"
+                                           Visibility="Collapsed"
+                                           Grid.Row="1" />
 
                                 <controls:GlyphButton x:Name="PsaInfo"
                                                       x:Load="False"
                                                       Glyph="&#xE9CE;"
                                                       Margin="0,-6,-10,-8"
-                                                      Grid.Column="1" />
+                                                      Grid.Column="1"
+                                                      Grid.RowSpan="2" />
 
                                 <local:MessageReference x:Name="Reply"
                                                         x:Load="False"
                                                         Grid.ColumnSpan="2"
-                                                        Grid.Row="1" />
+                                                        Grid.Row="2" />
                             </Grid>
 
                             <HyperlinkButton x:Name="Thread"

@@ -69,6 +69,8 @@ namespace Unigram.Controls.Messages
         private ReactionsPanel Reactions;
 
         // Lazy loaded
+        private TextBlock ForwardLabel;
+
         private CustomEmojiCanvas CustomEmoji;
 
         private ProfilePicture Photo;
@@ -99,6 +101,7 @@ namespace Unigram.Controls.Messages
             ContentPanel = GetTemplateChild(nameof(ContentPanel)) as Grid;
             Header = GetTemplateChild(nameof(Header)) as Grid;
             HeaderLabel = GetTemplateChild(nameof(HeaderLabel)) as TextBlock;
+            ForwardLabel = GetTemplateChild(nameof(ForwardLabel)) as TextBlock;
             AdminLabel = GetTemplateChild(nameof(AdminLabel)) as TextBlock;
             Panel = GetTemplateChild(nameof(Panel)) as MessageBubblePanel;
             Message = GetTemplateChild(nameof(Message)) as RichTextBlock;
@@ -730,11 +733,9 @@ namespace Unigram.Controls.Messages
                 return;
             }
 
-            var paragraph = HeaderLabel;
-            var admin = AdminLabel;
-            var parent = Header;
 
-            paragraph.Inlines.Clear();
+            HeaderLabel.Inlines.Clear();
+            ForwardLabel?.Inlines.Clear();
 
             var chat = message?.GetChat();
             if (chat == null)
@@ -779,14 +780,14 @@ namespace Unigram.Controls.Messages
                     var hyperlink = new Hyperlink();
                     hyperlink.Inlines.Add(CreateRun(title ?? string.Empty));
                     hyperlink.UnderlineStyle = UnderlineStyle.None;
-                    hyperlink.Click += (s, args) => FwdFrom_Click(message);
+                    hyperlink.Click += FwdFrom_Click;
 
                     if (foreground != null)
                     {
                         hyperlink.Foreground = foreground;
                     }
 
-                    paragraph.Inlines.Add(hyperlink);
+                    HeaderLabel.Inlines.Add(hyperlink);
                     shown = true;
                 }
                 else if (message.ProtoService.TryGetUser(message.SenderId, out User senderUser))
@@ -795,9 +796,9 @@ namespace Unigram.Controls.Messages
                     hyperlink.Inlines.Add(CreateRun(senderUser.GetFullName()));
                     hyperlink.UnderlineStyle = UnderlineStyle.None;
                     hyperlink.Foreground = PlaceholderHelper.GetBrush(senderUser.Id);
-                    hyperlink.Click += (s, args) => From_Click(message);
+                    hyperlink.Click += From_Click;
 
-                    paragraph.Inlines.Add(hyperlink);
+                    HeaderLabel.Inlines.Add(hyperlink);
                     shown = true;
                 }
                 else if (message.ProtoService.TryGetChat(message.SenderId, out Chat senderChat))
@@ -806,9 +807,9 @@ namespace Unigram.Controls.Messages
                     hyperlink.Inlines.Add(CreateRun(senderChat.Title));
                     hyperlink.UnderlineStyle = UnderlineStyle.None;
                     hyperlink.Foreground = PlaceholderHelper.GetBrush(senderChat.Id);
-                    hyperlink.Click += (s, args) => From_Click(message);
+                    hyperlink.Click += From_Click;
 
-                    paragraph.Inlines.Add(hyperlink);
+                    HeaderLabel.Inlines.Add(hyperlink);
                     shown = true;
                 }
             }
@@ -818,9 +819,9 @@ namespace Unigram.Controls.Messages
                 hyperlink.Inlines.Add(CreateRun(message.ProtoService.GetTitle(chat)));
                 hyperlink.UnderlineStyle = UnderlineStyle.None;
                 //hyperlink.Foreground = Convert.Bubble(message.ChatId);
-                hyperlink.Click += (s, args) => From_Click(message);
+                hyperlink.Click += From_Click;
 
-                paragraph.Inlines.Add(hyperlink);
+                HeaderLabel.Inlines.Add(hyperlink);
                 shown = false;
             }
             else if (!light && message.IsFirst && message.IsSaved)
@@ -853,52 +854,31 @@ namespace Unigram.Controls.Messages
                 var hyperlink = new Hyperlink();
                 hyperlink.Inlines.Add(CreateRun(title ?? string.Empty));
                 hyperlink.UnderlineStyle = UnderlineStyle.None;
-                hyperlink.Click += (s, args) => FwdFrom_Click(message);
+                hyperlink.Click += FwdFrom_Click;
 
                 if (foreground != null)
                 {
                     hyperlink.Foreground = foreground;
                 }
 
-                paragraph.Inlines.Add(hyperlink);
+                HeaderLabel.Inlines.Add(hyperlink);
                 shown = true;
             }
 
-            if (shown)
-            {
-                var title = message.Delegate.GetAdminTitle(message);
-                if (title != null)
-                {
-                    if (admin != null && !message.IsOutgoing)
-                    {
-                        paragraph.Inlines.Add(new Run { Text = " " + title, Foreground = null });
-                    }
-                }
-                else if (message.ForwardInfo != null && !message.IsChannelPost)
-                {
-                    paragraph.Inlines.Add(new Run { Text = " " + Strings.Resources.DiscussChannel, Foreground = null });
-                }
-            }
-
-            var forward = false;
-
             if (message.ForwardInfo != null && !message.IsSaved)
             {
-                if (paragraph.Inlines.Count > 0)
-                {
-                    paragraph.Inlines.Add(new LineBreak());
-                }
+                ForwardLabel ??= GetTemplateChild(nameof(ForwardLabel)) as TextBlock;
 
                 if (message.ForwardInfo.PublicServiceAnnouncementType.Length > 0)
                 {
                     var type = LocaleService.Current.GetString("PsaMessage_" + message.ForwardInfo.PublicServiceAnnouncementType);
                     if (type.Length > 0)
                     {
-                        paragraph.Inlines.Add(CreateRun(type, FontWeights.Normal));
+                        ForwardLabel.Inlines.Add(CreateRun(type, FontWeights.Normal));
                     }
                     else
                     {
-                        paragraph.Inlines.Add(CreateRun(Strings.Resources.PsaMessageDefault, FontWeights.Normal));
+                        ForwardLabel.Inlines.Add(CreateRun(Strings.Resources.PsaMessageDefault, FontWeights.Normal));
                     }
 
                     if (PsaInfo == null)
@@ -911,7 +891,7 @@ namespace Unigram.Controls.Messages
                 }
                 else
                 {
-                    paragraph.Inlines.Add(CreateRun(Strings.Resources.ForwardedMessage, FontWeights.Normal));
+                    ForwardLabel.Inlines.Add(CreateRun(Strings.Resources.ForwardedMessage, FontWeights.Normal));
 
                     if (PsaInfo != null)
                     {
@@ -919,8 +899,8 @@ namespace Unigram.Controls.Messages
                     }
                 }
 
-                paragraph.Inlines.Add(new LineBreak());
-                paragraph.Inlines.Add(CreateRun(Strings.Resources.From + " ", FontWeights.Normal));
+                ForwardLabel.Inlines.Add(new LineBreak());
+                ForwardLabel.Inlines.Add(CreateRun($"{Strings.Resources.From} ", FontWeights.Normal));
 
                 var title = string.Empty;
                 var bold = true;
@@ -951,78 +931,92 @@ namespace Unigram.Controls.Messages
                 hyperlink.Inlines.Add(CreateRun(title, bold ? FontWeights.SemiBold : FontWeights.Normal));
                 hyperlink.UnderlineStyle = UnderlineStyle.None;
                 hyperlink.Foreground = light ? new SolidColorBrush(Colors.White) : GetBrush("MessageHeaderForegroundBrush");
-                hyperlink.Click += (s, args) => FwdFrom_Click(message);
+                hyperlink.Click += FwdFrom_Click;
 
-                paragraph.Inlines.Add(hyperlink);
-                forward = true;
+                ForwardLabel.Inlines.Add(hyperlink);
+                ForwardLabel.Visibility = Visibility.Visible;
             }
-            else if (PsaInfo != null)
+            else
             {
-                PsaInfo.Visibility = Visibility.Collapsed;
+                if (PsaInfo != null)
+                {
+                    PsaInfo.Visibility = Visibility.Collapsed;
+                }
+
+                if (ForwardLabel != null)
+                {
+                    ForwardLabel.Visibility = Visibility.Collapsed;
+                }
             }
 
-            //if (message.HasViaBotId && message.ViaBot != null && !message.ViaBot.IsDeleted && message.ViaBot.HasUsername)
             var viaBot = message.ProtoService.GetUser(message.ViaBotUserId);
             if (viaBot != null && viaBot.Type is UserTypeBot && !string.IsNullOrEmpty(viaBot.Username))
             {
                 var hyperlink = new Hyperlink();
-                hyperlink.Inlines.Add(CreateRun(paragraph.Inlines.Count > 0 ? " via @" : "via @", FontWeights.Normal));
+                hyperlink.Inlines.Add(CreateRun(HeaderLabel.Inlines.Count > 0 ? " via @" : "via @", FontWeights.Normal));
                 hyperlink.Inlines.Add(CreateRun(viaBot.Username));
                 hyperlink.UnderlineStyle = UnderlineStyle.None;
                 hyperlink.Foreground = light ? new SolidColorBrush(Colors.White) : GetBrush("MessageHeaderForegroundBrush");
-                hyperlink.Click += (s, args) => ViaBot_Click(message);
+                hyperlink.Click += ViaBot_Click;
 
-                if (paragraph.Inlines.Count > 0 && !forward)
-                {
-                    paragraph.Inlines.Insert(1, hyperlink);
-                }
-                else
-                {
-                    paragraph.Inlines.Add(hyperlink);
-                }
+                HeaderLabel.Inlines.Add(hyperlink);
             }
 
-            if (paragraph.Inlines.Count > 0)
+            if (HeaderLabel.Inlines.Count > 0)
             {
                 var title = message.Delegate.GetAdminTitle(message);
-                if (admin != null && shown && !message.IsOutgoing && message.Delegate != null && !string.IsNullOrEmpty(title))
+                if (AdminLabel != null && shown && !message.IsOutgoing && message.Delegate != null && !string.IsNullOrEmpty(title))
                 {
-                    admin.Visibility = Visibility.Visible;
-                    admin.Text = title;
+                    AdminLabel.Visibility = Visibility.Visible;
+                    AdminLabel.Text = title;
                 }
-                else if (admin != null && shown && !message.IsChannelPost && message.SenderId is MessageSenderChat && message.ForwardInfo != null)
+                else if (AdminLabel != null && shown && !message.IsChannelPost && message.SenderId is MessageSenderChat && message.ForwardInfo != null)
                 {
-                    admin.Visibility = Visibility.Visible;
-                    admin.Text = Strings.Resources.DiscussChannel;
+                    AdminLabel.Visibility = Visibility.Visible;
+                    AdminLabel.Text = Strings.Resources.DiscussChannel;
                 }
-                else if (admin != null)
+                else if (AdminLabel != null)
                 {
-                    admin.Visibility = Visibility.Collapsed;
+                    AdminLabel.Visibility = Visibility.Collapsed;
                 }
 
-                paragraph.Inlines.Add(CreateRun(" "));
-                paragraph.Visibility = Visibility.Visible;
-                parent.Visibility = Visibility.Visible;
+                HeaderLabel.Inlines.Add(CreateRun(" "));
+                HeaderLabel.Visibility = Visibility.Visible;
+                Header.Visibility = Visibility.Visible;
+
+                ForwardLabel.Margin = new Thickness(0, -2, 0, 2);
             }
             else
             {
-                if (admin != null)
+                if (AdminLabel != null)
                 {
-                    admin.Visibility = Visibility.Collapsed;
+                    AdminLabel.Visibility = Visibility.Collapsed;
                 }
 
-                paragraph.Visibility = Visibility.Collapsed;
-                parent.Visibility = (message.ReplyToMessageId != 0 && message.ReplyToMessageState != ReplyToMessageState.Hidden) ? Visibility.Visible : Visibility.Collapsed;
+                HeaderLabel.Visibility = Visibility.Collapsed;
+                Header.Visibility = (message.ReplyToMessageId != 0 && message.ReplyToMessageState != ReplyToMessageState.Hidden) || ForwardLabel.Inlines.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+
+                ForwardLabel.Margin = new Thickness(0, 0, 0, 2);
             }
         }
 
-        private void ViaBot_Click(MessageViewModel message)
+        private void ViaBot_Click(Hyperlink sender, HyperlinkClickEventArgs args)
         {
+            if (_message is not MessageViewModel message)
+            {
+                return;
+            }
+
             message.Delegate.OpenViaBot(message.ViaBotUserId);
         }
 
-        private void FwdFrom_Click(MessageViewModel message)
+        private void FwdFrom_Click(Hyperlink sender, HyperlinkClickEventArgs args)
         {
+            if (_message is not MessageViewModel message)
+            {
+                return;
+            }
+
             if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
             {
                 message.Delegate.OpenUser(fromUser.SenderUserId);
@@ -1041,8 +1035,13 @@ namespace Unigram.Controls.Messages
             }
         }
 
-        private void From_Click(MessageViewModel message)
+        private void From_Click(Hyperlink sender, HyperlinkClickEventArgs args)
         {
+            if (_message is not MessageViewModel message)
+            {
+                return;
+            }
+
             if (message.ProtoService.TryGetChat(message.SenderId, out Chat senderChat))
             {
                 if (senderChat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
