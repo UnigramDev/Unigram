@@ -103,10 +103,18 @@ namespace Unigram.Controls.Gallery
 
         protected override void OnPointerMoved(PointerRoutedEventArgs e)
         {
+            _inactivityTimer.Stop();
             ShowHideTransport(true);
 
-            _inactivityTimer.Stop();
-            _inactivityTimer.Start();
+            var point = e.GetCurrentPoint(Transport);
+            if (point.Position.X < 0
+                || point.Position.Y < 0
+                || point.Position.X > Transport.ActualWidth
+                || point.Position.Y > Transport.ActualHeight)
+            {
+                _inactivityTimer.Start();
+            }
+
             base.OnPointerMoved(e);
         }
 
@@ -125,6 +133,11 @@ namespace Unigram.Controls.Gallery
             }
             else
             {
+                if (TogglePlaybackState())
+                {
+                    return;
+                }
+
                 OnBackRequested(new BackRequestedRoutedEventArgs());
             }
         }
@@ -679,6 +692,25 @@ namespace Unigram.Controls.Gallery
             Bindings.StopTracking();
         }
 
+        private bool TogglePlaybackState()
+        {
+            if (_mediaPlayer != null)
+            {
+                if (_mediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Paused)
+                {
+                    _mediaPlayer.Play();
+                }
+                else
+                {
+                    _mediaPlayer.Pause();
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
         private void OnAcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
         {
             if (args.EventType is not CoreAcceleratorKeyEventType.KeyDown and not CoreAcceleratorKeyEventType.SystemKeyDown)
@@ -704,19 +736,7 @@ namespace Unigram.Controls.Gallery
             }
             else if (args.VirtualKey is Windows.System.VirtualKey.Space && !ctrl && !alt && !shift)
             {
-                if (_mediaPlayer != null)
-                {
-                    if (_mediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Paused)
-                    {
-                        _mediaPlayer.Play();
-                    }
-                    else
-                    {
-                        _mediaPlayer.Pause();
-                    }
-
-                    args.Handled = true;
-                }
+                args.Handled = TogglePlaybackState();
             }
             else if (args.VirtualKey is Windows.System.VirtualKey.C && ctrl && !alt && !shift)
             {
