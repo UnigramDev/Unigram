@@ -91,7 +91,6 @@ namespace Unigram.Controls.Gallery
             Transport.Visibility = Visibility.Collapsed;
 
             ScrollingHost.AddHandler(PointerPressedEvent, new PointerEventHandler(OnPointerPressed), true);
-            ScrollingHost.AddHandler(PointerWheelChangedEvent, new PointerEventHandler(OnPointerWheelChanged), true);
         }
 
         private void OnTick(object sender, object e)
@@ -144,11 +143,6 @@ namespace Unigram.Controls.Gallery
 
                 OnBackRequested(new BackRequestedRoutedEventArgs());
             }
-        }
-
-        private void OnPointerWheelChanged(object sender, PointerRoutedEventArgs args)
-        {
-            var a = args.GetCurrentPoint(ScrollingHost).Properties.MouseWheelDelta;
         }
 
         private bool _transportCollapsed = false;

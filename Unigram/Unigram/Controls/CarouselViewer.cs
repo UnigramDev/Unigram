@@ -50,6 +50,7 @@ namespace Unigram.Controls
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
 
+            AddHandler(PointerWheelChangedEvent, new PointerEventHandler(OnPointerWheelChanged), true);
             AddHandler(PointerPressedEvent, new PointerEventHandler(OnPointerPressed), true);
         }
 
@@ -92,17 +93,48 @@ namespace Unigram.Controls
             _hasInitialLoadedEventFired = false;
         }
 
+        private void OnPointerWheelChanged(object sender, PointerRoutedEventArgs e)
+        {
+            // TODO: I don't understand how to use VisualInteractionSource
+            // for vertical pointer wheel + horizontal position source
+
+            if (_interactionSource?.PositionXSourceMode != InteractionSourceMode.EnabledWithInertia)
+            {
+                return;
+            }
+
+            var point = e.GetCurrentPoint(this);
+            var direction = point.Properties.MouseWheelDelta > 0
+                ? CarouselDirection.Next
+                : CarouselDirection.Previous;
+
+            ViewChanging?.Invoke(this, new CarouselViewChangingEventArgs(_viewChanged = direction));
+            ChangeView(direction);
+
+            e.Handled = true;
+        }
+
         private void OnPointerPressed(object sender, PointerRoutedEventArgs e)
         {
+            if (_interactionSource?.PositionXSourceMode != InteractionSourceMode.EnabledWithInertia)
+            {
+                return;
+            }
+
             if (e.Pointer.PointerDeviceType != Windows.Devices.Input.PointerDeviceType.Mouse)
             {
                 try
                 {
                     _interactionSource.TryRedirectForManipulation(e.GetCurrentPoint(this));
+                    e.Handled = true;
                 }
-                catch { }
+                catch
+                {
+                    // We don't care
+                }
             }
         }
+
         protected override Size ArrangeOverride(Size finalSize)
         {
             ConfigureElements();
@@ -254,7 +286,6 @@ namespace Unigram.Controls
             _interactionSource = VisualInteractionSource.Create(_hitTest);
 
             //Configure for x-direction panning
-            _interactionSource.PointerWheelConfig.PositionXSourceMode = InteractionSourceRedirectionMode.Enabled;
             _interactionSource.ManipulationRedirectionMode = VisualInteractionSourceRedirectionMode.CapableTouchpadOnly;
             _interactionSource.PositionXSourceMode = InteractionSourceMode.EnabledWithInertia;
             _interactionSource.PositionXChainingMode = InteractionChainingMode.Never;
@@ -279,19 +310,16 @@ namespace Unigram.Controls
 
             // Is NaturalRestingPosition less than the halfway point between Snap Points?
             snapPrevModifier.Condition = _tracker.Compositor.CreateExpressionAnimation(
-            "this.Target.NaturalRestingPosition.X < (this.Target.RestingValue - " +
-            "(this.Target.RestingValue - this.Target.MinPosition.X) / 2)");
-            snapPrevModifier.Condition = _tracker.Compositor.CreateExpressionAnimation(
                 "this.Target.NaturalRestingPosition.X <= (this.Target.RestingValue - " +
-                "(this.Target.RestingValue - this.Target.MaxPosition.X) / 2)");
+                "(this.Target.RestingValue - this.Target.MaxPosition.X) * 0.25)");
             // Is NaturalRestingPosition greater than the halfway point between Snap Points?
             snapNextModifier.Condition = _tracker.Compositor.CreateExpressionAnimation(
                 "this.Target.NaturalRestingPosition.X > (this.Target.RestingValue - " +
-                "(this.Target.RestingValue - this.Target.MaxPosition.X) / 2)");
+                "(this.Target.RestingValue - this.Target.MaxPosition.X) * 0.25)");
 
             snapPrevModifier.RestingValue = _tracker.Compositor.CreateExpressionAnimation(
                 "this.Target.NaturalRestingPosition.X < (this.Target.RestingValue - " +
-                "(this.Target.RestingValue - this.Target.MinPosition.X) / 2) " +
+                "(this.Target.RestingValue - this.Target.MinPosition.X) * 0.25) " +
                 "? this.Target.MinPosition.X : this.Target.RestingValue");
             snapNextModifier.RestingValue = _tracker.Compositor.CreateExpressionAnimation("this.Target.MaxPosition.X");
 
@@ -330,7 +358,7 @@ namespace Unigram.Controls
             _tracker.Properties.InsertBoolean("CanGoPrev", _canGoPrev);
 
             _tracker.MaxPosition = new Vector3(restingValue + (_canGoNext ? ActualSize.X : 0), 0, 0);
-            _tracker.MinPosition = new Vector3(restingValue + (_canGoPrev ? -ActualSize.X : 0), 0, 0);
+            _tracker.MinPosition = new Vector3(restingValue - (_canGoPrev ? ActualSize.X : 0), 0, 0);
 
             var progress = _tracker.Compositor.CreateExpressionAnimation(
                 "tracker.Position.X < restingValue " +
