@@ -17,4 +17,6 @@
                          Click="Button_Click"
                          ManipulationMode="System"
                          Style="{StaticResource ImmersiveFileButtonStyle}" />
+
+    <Border x:Name="Panel" />
 </controls:AspectView>

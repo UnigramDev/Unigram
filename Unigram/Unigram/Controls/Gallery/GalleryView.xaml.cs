@@ -13,6 +13,7 @@ using Unigram.Services.ViewService;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Gallery;
 using Unigram.Views;
+using Windows.Devices.Input;
 using Windows.Foundation;
 using Windows.Media.Core;
 using Windows.Media.Playback;
@@ -48,7 +49,7 @@ namespace Unigram.Controls.Gallery
         private readonly MediaPlayerElement _mediaPlayerElement;
         private MediaPlayer _mediaPlayer;
         private RemoteFileStream _fileStream;
-        private Grid _surface;
+        private Border _surface;
 
         private readonly Visual _layout;
 
@@ -90,6 +91,7 @@ namespace Unigram.Controls.Gallery
 
             Transport.Visibility = Visibility.Collapsed;
 
+            ScrollingHost.AddHandler(PointerPressedEvent, new PointerEventHandler(OnPointerPressed), true);
             ScrollingHost.AddHandler(PointerWheelChangedEvent, new PointerEventHandler(OnPointerWheelChanged), true);
         }
 
@@ -97,11 +99,6 @@ namespace Unigram.Controls.Gallery
         {
             _inactivityTimer.Stop();
             ShowHideTransport(false);
-        }
-
-        private void OnPointerWheelChanged(object sender, PointerRoutedEventArgs args)
-        {
-            var a = args.GetCurrentPoint(ScrollingHost).Properties.MouseWheelDelta;
         }
 
         protected override void OnPointerMoved(PointerRoutedEventArgs e)
@@ -113,9 +110,28 @@ namespace Unigram.Controls.Gallery
             base.OnPointerMoved(e);
         }
 
-        protected override void OnPointerPressed(PointerRoutedEventArgs e)
+        private void OnPointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            base.OnPointerPressed(e);
+            var pointer = e.GetCurrentPoint(this);
+            if (pointer.Properties.IsLeftButtonPressed is false || !_areInteractionsEnabled || e.Handled)
+            {
+                return;
+            }
+
+            if (e.Pointer.PointerDeviceType != PointerDeviceType.Mouse)
+            {
+                _inactivityTimer.Stop();
+                ShowHideTransport(true);
+            }
+            else
+            {
+                OnBackRequested(new BackRequestedRoutedEventArgs());
+            }
+        }
+
+        private void OnPointerWheelChanged(object sender, PointerRoutedEventArgs args)
+        {
+            var a = args.GetCurrentPoint(ScrollingHost).Properties.MouseWheelDelta;
         }
 
         private bool _transportCollapsed = false;
@@ -506,7 +522,7 @@ namespace Unigram.Controls.Gallery
 
         private void Play(FrameworkElement container, GalleryContent item)
         {
-            if (_unloaded || container is not Grid parent)
+            if (_unloaded || container is not GalleryContentView content)
             {
                 return;
             }
@@ -519,9 +535,9 @@ namespace Unigram.Controls.Gallery
                     return;
                 }
 
-                if (_surface != parent && _surface != null && _mediaPlayerElement != null)
+                if (_surface != content.Presenter && _surface != null && _mediaPlayerElement != null)
                 {
-                    _surface.Children.Remove(_mediaPlayerElement);
+                    _surface.Child = null;
                     _surface = null;
                 }
 
@@ -537,13 +553,13 @@ namespace Unigram.Controls.Gallery
 
                 var dpi = WindowContext.Current.RasterizationScale;
                 _mediaPlayer.SetSurfaceSize(new Size(
-                    parent.ActualWidth * dpi,
-                    parent.ActualHeight * dpi));
+                    content.Presenter.ActualWidth * dpi,
+                    content.Presenter.ActualHeight * dpi));
 
-                if (_surface != parent)
+                if (_surface != content.Presenter)
                 {
-                    _surface = parent;
-                    _surface.Children.Add(_mediaPlayerElement);
+                    _surface = content.Presenter;
+                    _surface.Child = _mediaPlayerElement;
                 }
 
                 //Transport.DownloadMaximum = file.Size;
@@ -584,7 +600,7 @@ namespace Unigram.Controls.Gallery
 
             if (_surface != null)
             {
-                _surface.Children.Remove(_mediaPlayerElement);
+                _surface.Child = null;
                 _surface = null;
             }
 
@@ -831,8 +847,8 @@ namespace Unigram.Controls.Gallery
             TrySet(previous, index > 0 ? viewModel.Items[index - 1] : null);
             TrySet(next, index < viewModel.Items.Count - 1 ? viewModel.Items[index + 1] : null);
 
-            LayoutRoot.CanGoPrev = index > 0;
-            LayoutRoot.CanGoNext = index < viewModel.Items.Count - 1;
+            LayoutRoot.HasPrevious = index > 0;
+            LayoutRoot.HasNext = index < viewModel.Items.Count - 1;
 
             if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
             {
@@ -879,8 +895,13 @@ namespace Unigram.Controls.Gallery
 
         private void Menu_ContextRequested(object sender, RoutedEventArgs e)
         {
+            Menu_ContextRequested(sender as UIElement, null);
+        }
+
+        private void Menu_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
             var viewModel = ViewModel;
-            if (viewModel == null)
+            if (viewModel == null || sender is not FrameworkElement element)
             {
                 return;
             }
@@ -895,34 +916,14 @@ namespace Unigram.Controls.Gallery
 
             PopulateContextRequested(flyout, viewModel, item);
 
-            flyout.ShowAt(sender as FrameworkElement, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedRight });
-        }
-
-        private void ImageView_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
-        {
-            var viewModel = ViewModel;
-            if (viewModel == null)
+            if (args != null)
             {
-                return;
+                args.ShowAt(flyout, element);
             }
-
-            var element = sender as FrameworkElement;
-            if (element == null)
+            else
             {
-                return;
+                flyout.ShowAt(element, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedRight });
             }
-
-            var item = element.Tag as GalleryContent;
-            if (item == null)
-            {
-                return;
-            }
-
-            var flyout = new MenuFlyout();
-
-            PopulateContextRequested(flyout, viewModel, item);
-
-            args.ShowAt(flyout, element);
         }
 
         private void PopulateContextRequested(MenuFlyout flyout, GalleryViewModelBase viewModel, GalleryContent item)
@@ -1083,8 +1084,6 @@ namespace Unigram.Controls.Gallery
             }
 
             _areInteractionsEnabled = neutral;
-            IsLightDismissEnabled = neutral;
-
             LayoutRoot.IsManipulationEnabled = neutral;
 
             ZoomIn.IsEnabled = ScrollingHost.CanZoomIn;
@@ -1104,15 +1103,7 @@ namespace Unigram.Controls.Gallery
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private GalleryContentView GetElement(CarouselDirection direction)
         {
-            return LayoutRoot.GetElement<GalleryContentView>(direction);
-        }
-
-        private void ScrollingHost_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            if (ScrollingHost.ZoomFactor > 1)
-            {
-                OpenItem(null);
-            }
+            return LayoutRoot.GetElement(direction) as GalleryContentView;
         }
     }
 }

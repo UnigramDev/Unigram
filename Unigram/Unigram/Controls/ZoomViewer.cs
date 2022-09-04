@@ -106,6 +106,11 @@ namespace Unigram.Controls
 
         private void ScrollingHost_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
+            if (e.Pointer.PointerDeviceType != Windows.Devices.Input.PointerDeviceType.Mouse)
+            {
+                return;
+            }
+
             ScrollingHost.CapturePointer(e.Pointer);
 
             _pointerPressed = true;
@@ -117,6 +122,11 @@ namespace Unigram.Controls
 
         private void ScrollingHost_PointerMoved(object sender, PointerRoutedEventArgs e)
         {
+            if (e.Pointer.PointerDeviceType != Windows.Devices.Input.PointerDeviceType.Mouse)
+            {
+                return;
+            }
+
             if (_pointerPressed)
             {
                 var point = e.GetCurrentPoint(ScrollingHost);
@@ -130,6 +140,11 @@ namespace Unigram.Controls
 
         private void ScrollingHost_PointerReleased(object sender, PointerRoutedEventArgs e)
         {
+            if (e.Pointer.PointerDeviceType != Windows.Devices.Input.PointerDeviceType.Mouse)
+            {
+                return;
+            }
+
             if (ScrollingHost.PointerCaptures?.Count > 0)
             {
                 ScrollingHost.ReleasePointerCapture(e.Pointer);

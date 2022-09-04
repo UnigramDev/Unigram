@@ -156,15 +156,13 @@ namespace Unigram.Controls
             };
         }
 
-        public FrameworkElement CurrentElement => _elements[1];
-
-        public bool CanGoPrev
+        public bool HasPrevious
         {
             get => _canGoPrev;
             set => _canGoPrev = value;
         }
 
-        public bool CanGoNext
+        public bool HasNext
         {
             get => _canGoNext;
             set => _canGoNext = value;
@@ -184,10 +182,12 @@ namespace Unigram.Controls
             }
         }
 
-        public T GetElement<T>(CarouselDirection direction) where T : FrameworkElement
+        public FrameworkElement CurrentElement => _elements[1];
+
+        public FrameworkElement GetElement(CarouselDirection direction)
         {
             var index = (int)direction;
-            return _elements[1 + index] as T;
+            return _elements[1 + index];
         }
 
         public void PrepareElements<T>(CarouselDirection direction, out T previous, out T target, out T next) where T : FrameworkElement
@@ -220,7 +220,9 @@ namespace Unigram.Controls
             anim.InsertKeyFrame(0, new Vector3(_restingValue, 0, 0));
             anim.InsertKeyFrame(1, position);
 
+            _viewChanged = direction;
             _tracker.TryUpdatePositionWithAnimation(anim);
+
             ConfigureAnimations(position.X);
         }
 

@@ -5,6 +5,7 @@ using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Gallery;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
@@ -16,6 +17,8 @@ namespace Unigram.Controls.Gallery
         private GalleryContent _item;
 
         public GalleryContent Item => _item;
+
+        public Border Presenter => Panel;
 
         private string _fileToken;
         private string _thumbnailToken;
@@ -132,6 +135,9 @@ namespace Unigram.Controls.Gallery
                     }
                 }
             }
+
+            Canvas.SetZIndex(Button,
+                Button.State == MessageContentState.Photo ? -1 : 0);
         }
 
         private void UpdateThumbnail(object target, File file)
@@ -186,16 +192,9 @@ namespace Unigram.Controls.Gallery
                     item.ProtoService.DownloadFile(file.Id, 32);
                 }
             }
-            else
+            else if (item.IsVideo)
             {
-                if (item.IsVideo)
-                {
-                    _delegate?.OpenFile(item, file);
-                }
-                else
-                {
-                    _delegate?.OpenItem(item);
-                }
+                _delegate?.OpenFile(item, file);
             }
         }
     }

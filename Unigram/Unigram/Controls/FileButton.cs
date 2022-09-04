@@ -51,6 +51,8 @@ namespace Unigram.Controls
             DefaultStyleKey = typeof(FileButton);
         }
 
+        public MessageContentState State => _state;
+
         public bool IsSmall { get; set; }
 
         protected override void OnApplyTemplate()
