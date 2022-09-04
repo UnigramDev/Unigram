@@ -491,7 +491,7 @@ namespace Unigram.Services
             set => AddOrUpdateValue(ref _isTranslateEnabled, _local, "IsTranslateEnabled", value);
         }
 
-        private static bool? _fullScreenGallery;
+        private static bool? _fullScreenGallery = false;
         public bool FullScreenGallery
         {
             get => _fullScreenGallery ??= GetValueOrDefault(_local, "FullScreenGallery", false);

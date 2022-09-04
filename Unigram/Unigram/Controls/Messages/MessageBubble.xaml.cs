@@ -600,7 +600,11 @@ namespace Unigram.Controls.Messages
             }
 
             var content = message.GeneratedContent ?? message.Content;
-            var light = content is MessageSticker or MessageDice or MessageVideoNote or MessageBigEmoji;
+            var light = content is MessageSticker
+                or MessageDice
+                or MessageVideoNote
+                or MessageBigEmoji
+                or MessageAnimatedEmoji;
 
             var info = message.InteractionInfo?.ReplyInfo;
             if (info != null && light && message.IsChannelPost && message.CanGetMessageThread)
@@ -676,7 +680,11 @@ namespace Unigram.Controls.Messages
             }
 
             var content = message.GeneratedContent ?? message.Content;
-            var light = content is MessageSticker or MessageDice or MessageVideoNote or MessageBigEmoji;
+            var light = content is MessageSticker
+                or MessageDice
+                or MessageVideoNote
+                or MessageBigEmoji
+                or MessageAnimatedEmoji;
 
             var info = message.InteractionInfo?.ReplyInfo;
             if (info != null && light && message.IsChannelPost && message.CanGetMessageThread)
@@ -744,8 +752,12 @@ namespace Unigram.Controls.Messages
             }
 
             var content = message.GeneratedContent ?? message.Content;
+            var light = content is MessageSticker
+                or MessageDice
+                or MessageVideoNote
+                or MessageBigEmoji
+                or MessageAnimatedEmoji;
 
-            var light = content is MessageSticker or MessageDice or MessageVideoNote or MessageBigEmoji;
             var shown = false;
 
             if (!light && message.IsFirst && !message.IsOutgoing && !message.IsChannelPost && (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup))
