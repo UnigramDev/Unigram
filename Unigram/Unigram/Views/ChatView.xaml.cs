@@ -972,10 +972,22 @@ namespace Unigram.Views
             var ctrl = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
             var shift = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
 
-            if (args.VirtualKey == Windows.System.VirtualKey.Delete && ViewModel.IsSelectionEnabled && ViewModel.SelectedItems.Count > 0)
+            if (args.VirtualKey == Windows.System.VirtualKey.Delete)
             {
-                ViewModel.MessagesDeleteCommand.Execute();
-                args.Handled = true;
+                if (ViewModel.IsSelectionEnabled && ViewModel.SelectedItems.Count > 0)
+                {
+                    ViewModel.MessagesDeleteCommand.Execute();
+                    args.Handled = true;
+                }
+                else
+                {
+                    var focused = FocusManager.GetFocusedElement();
+                    if (focused is MessageSelector selector)
+                    {
+                        ViewModel.MessageDeleteCommand.Execute(selector.Message);
+                        args.Handled = true;
+                    }
+                }
             }
             else if (args.VirtualKey == Windows.System.VirtualKey.C && ctrl && !alt && !shift && ViewModel.IsSelectionEnabled && ViewModel.SelectedItems.Count > 0)
             {

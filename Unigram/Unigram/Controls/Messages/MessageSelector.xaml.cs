@@ -38,6 +38,8 @@ namespace Unigram.Controls.Messages
             Content = child;
         }
 
+        public MessageViewModel Message => _message;
+
         public void Unload()
         {
             if (Content is MessageBubble bubble)
