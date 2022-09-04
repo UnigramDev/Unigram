@@ -2956,7 +2956,6 @@ namespace Unigram.Views
                 }
             }
         }
-        }
 
         private void List_SelectionModeChanged(DependencyObject sender, DependencyProperty dp)
         {
@@ -2967,24 +2966,18 @@ namespace Unigram.Views
 
         private void ShowHideManagePanel(bool show)
         {
-            if ((show && ManagePanel.Visibility == Visibility.Visible && !_manageCollapsed) || (!show && (ManagePanel.Visibility == Visibility.Collapsed || _manageCollapsed)))
+            if (_manageCollapsed != show)
             {
                 return;
             }
 
-            if (show)
-            {
-                _manageCollapsed = false;
-            }
-            else
-            {
-                _manageCollapsed = true;
-            }
+            _manageCollapsed = !show;
+            ManagePanel.Visibility = Visibility.Visible;
+
+            TextArea.IsEnabled = !show;
 
             var manage = ElementCompositionPreview.GetElementVisual(ManagePanel);
             manage.StopAnimation("Opacity");
-
-            ManagePanel.Visibility = Visibility.Visible;
 
             var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
