@@ -168,7 +168,7 @@
     <Grid RequestedTheme="Dark">
         <Grid>
             <Border x:Name="Layer"
-                    Margin="0,-32,0,0"
+                    Margin="0,-40,0,0"
                     Background="#EB222222" />
             <controls:ZoomViewer x:Name="ScrollingHost"
                                  MinZoomFactor="1"
@@ -194,13 +194,16 @@
                 </controls:CarouselViewer>
             </controls:ZoomViewer>
         </Grid>
-        <controls:GlyphButton Glyph="&#xE711;"
+        <controls:GlyphButton x:Name="BackButton"
+                              Glyph="&#xE72B;"
                               Click="BackButton_Click"
-                              Height="{ThemeResource AppBarThemeCompactHeight}"
                               AutomationProperties.Name="{CustomResource AccDescrGoBack}"
                               ToolTipService.ToolTip="{CustomResource AccDescrGoBack}"
-                              HorizontalAlignment="Right"
-                              VerticalAlignment="Top" />
+                              HorizontalAlignment="Left"
+                              VerticalAlignment="Top"
+                              Margin="0,-40,0,0"
+                              Width="56"
+                              Height="40" />
 
         <local:GalleryBottomPanel x:Name="BottomPanel">
             <Border x:Name="Details"
