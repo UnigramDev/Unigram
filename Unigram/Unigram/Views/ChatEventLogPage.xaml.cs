@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using Unigram.Navigation;
+﻿using Unigram.Navigation;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
 using Windows.UI.Xaml.Navigation;
@@ -64,6 +63,16 @@ namespace Unigram.Views
         public void Activate(int sessionId)
         {
             View.Activate(sessionId);
+        }
+
+        public void PopupOpened()
+        {
+            View.PopupOpened();
+        }
+
+        public void PopupClosed()
+        {
+            View.PopupClosed();
         }
     }
 }
