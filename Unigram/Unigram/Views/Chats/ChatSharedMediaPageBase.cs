@@ -1,5 +1,4 @@
 ﻿using System;
-using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Chats;
@@ -31,8 +30,6 @@ namespace Unigram.Views.Chats
 
         public ChatSharedMediaPageBase()
         {
-            _dateHeaderPanel = ElementCompositionPreview.GetElementVisual(DateHeader);
-
             _dateHeaderTimer = new DispatcherTimer();
             _dateHeaderTimer.Interval = TimeSpan.FromMilliseconds(2000);
             _dateHeaderTimer.Tick += (s, args) =>
@@ -53,6 +50,8 @@ namespace Unigram.Views.Chats
 
             _dateHeaderCollapsed = !show;
             DateHeader.Visibility = show || animate ? Visibility.Visible : Visibility.Collapsed;
+
+            _dateHeaderPanel ??= ElementCompositionPreview.GetElementVisual(DateHeader);
 
             if (!animate)
             {
@@ -279,7 +278,7 @@ namespace Unigram.Views.Chats
                 };
 
                 var container = ScrollingHost.ContainerFromIndex(index) as SelectorItem;
-                if (container == null || container.Tag is not Message message)
+                if (container == null || container.Tag is not MessageWithOwner message)
                 {
                     return;
                 }
