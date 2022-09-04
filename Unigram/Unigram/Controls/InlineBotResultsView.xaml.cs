@@ -1,5 +1,4 @@
-﻿using Microsoft.UI.Xaml.Controls;
-using System;
+﻿using System;
 using System.Globalization;
 using System.Linq;
 using Telegram.Td.Api;
@@ -58,28 +57,6 @@ namespace Unigram.Controls
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             Bindings.StopTracking();
-        }
-
-        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            var layout = Resources["GridLayout"] as UniformGridLayout;
-            if (layout == null)
-            {
-                return;
-            }
-
-            if (e.NewSize.Width <= 400)
-            {
-                layout.MaximumRowsOrColumns = 4;
-            }
-            else if (e.NewSize.Width <= 500)
-            {
-                layout.MaximumRowsOrColumns = 5;
-            }
-            else
-            {
-                layout.MaximumRowsOrColumns = (int)Math.Ceiling(e.NewSize.Width / 96);
-            }
         }
 
         public event ItemClickEventHandler ItemClick;

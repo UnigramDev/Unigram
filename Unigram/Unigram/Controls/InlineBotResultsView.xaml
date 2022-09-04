@@ -12,7 +12,6 @@
              d:DesignHeight="300"
              d:DesignWidth="400"
              DataContextChanged="OnDataContextChanged"
-             SizeChanged="OnSizeChanged"
              Unloaded="OnUnloaded">
 
     <UserControl.Resources>
@@ -106,12 +105,6 @@
         </local:InlineQueryTemplateSelector>
 
         <controls:MosaicLayout x:Key="MosaicLayout" />
-
-        <muxc:StackLayout x:Key="StackLayout" />
-        <muxc:UniformGridLayout x:Key="GridLayout"
-                                MinItemWidth="40"
-                                MinItemHeight="40"
-                                ItemsStretch="Uniform" />
     </UserControl.Resources>
 
     <Grid x:Name="Root"
