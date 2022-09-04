@@ -105,8 +105,8 @@ namespace Unigram.Controls
 
             var point = e.GetCurrentPoint(this);
             var direction = point.Properties.MouseWheelDelta > 0
-                ? CarouselDirection.Next
-                : CarouselDirection.Previous;
+                ? CarouselDirection.Previous
+                : CarouselDirection.Next;
 
             ViewChanging?.Invoke(this, new CarouselViewChangingEventArgs(_viewChanged = direction));
             ChangeView(direction);
