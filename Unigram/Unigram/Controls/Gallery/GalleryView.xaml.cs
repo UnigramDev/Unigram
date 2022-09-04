@@ -291,7 +291,17 @@ namespace Unigram.Controls.Gallery
             return new GalleryView();
         }
 
-        public Task<ContentDialogResult> ShowAsync(GalleryViewModelBase parameter, Func<FrameworkElement> closing = null)
+        public static Task<ContentDialogResult> ShowAsync(GalleryViewModelBase parameter, Func<FrameworkElement> closing = null, int timestamp = 0)
+        {
+            var popup = new GalleryView
+            {
+                InitialPosition = timestamp
+            };
+
+            return popup.ShowAsyncInternal(parameter, closing);
+        }
+
+        private Task<ContentDialogResult> ShowAsyncInternal(GalleryViewModelBase parameter, Func<FrameworkElement> closing = null)
         {
             _closing = closing;
 
@@ -798,8 +808,18 @@ namespace Unigram.Controls.Gallery
             LayoutRoot.Width = finalSize.Width;
             LayoutRoot.Height = finalSize.Height - Padding.Top;
 
-            Element0.MaxWidth = Element1.MaxWidth = Element2.MaxWidth = finalSize.Width;
-            Element0.MaxHeight = Element1.MaxHeight = Element2.MaxHeight = finalSize.Height - Padding.Top;
+            static void Apply(AspectView element, Size size)
+            {
+                if (element.Constraint is not Size)
+                {
+                    element.MaxWidth = size.Width;
+                    element.MaxHeight = size.Height;
+                }
+            }
+
+            Apply(Element2, finalSize);
+            Apply(Element0, finalSize);
+            Apply(Element1, finalSize);
 
             if (_layout != null)
             {

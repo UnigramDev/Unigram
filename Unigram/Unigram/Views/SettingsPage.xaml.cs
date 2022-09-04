@@ -218,7 +218,7 @@ namespace Unigram.Views
                 }
 
                 var viewModel = new UserPhotosViewModel(ViewModel.ProtoService, ViewModel.StorageService, ViewModel.Aggregator, user, userFull);
-                await GalleryView.GetForCurrentView().ShowAsync(viewModel, () => Photo);
+                await GalleryView.ShowAsync(viewModel, () => Photo);
             }
         }
 

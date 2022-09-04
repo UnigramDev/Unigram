@@ -82,7 +82,7 @@ namespace Unigram.ViewModels.Gallery
         {
             get
             {
-                if (_message.Content is MessageVideo or MessageAnimation)
+                if (_message.Content is MessageVideo or MessageAnimation or MessageVideoNote)
                 {
                     return true;
                 }
@@ -92,7 +92,9 @@ namespace Unigram.ViewModels.Gallery
                 }
                 else if (_message.Content is MessageText text)
                 {
-                    return text.WebPage?.Video != null || text.WebPage?.Animation != null;
+                    return text.WebPage?.Video != null
+                        || text.WebPage?.Animation != null
+                        || text.WebPage?.VideoNote != null;
                 }
 
                 return false;
@@ -103,7 +105,7 @@ namespace Unigram.ViewModels.Gallery
         {
             get
             {
-                if (_message.Content is MessageAnimation)
+                if (_message.Content is MessageAnimation or MessageVideoNote)
                 {
                     return true;
                 }
@@ -113,7 +115,25 @@ namespace Unigram.ViewModels.Gallery
                 }
                 else if (_message.Content is MessageText text)
                 {
-                    return text.WebPage?.Animation != null;
+                    return text.WebPage?.Animation != null
+                        || text.WebPage?.VideoNote != null;
+                }
+
+                return false;
+            }
+        }
+
+        public override bool IsVideoNote
+        {
+            get
+            {
+                if (_message.Content is MessageVideoNote)
+                {
+                    return true;
+                }
+                else if (_message.Content is MessageText text)
+                {
+                    return text.WebPage?.VideoNote != null;
                 }
 
                 return false;
@@ -158,6 +178,10 @@ namespace Unigram.ViewModels.Gallery
                 {
                     return animation.Animation.Duration;
                 }
+                else if (_message.Content is MessageVideoNote videoNote)
+                {
+                    return videoNote.VideoNote.Duration;
+                }
                 else if (_message.Content is MessageGame game)
                 {
                     return game.Game.Animation?.Duration ?? 0;
@@ -171,6 +195,10 @@ namespace Unigram.ViewModels.Gallery
                     else if (text.WebPage?.Animation != null)
                     {
                         return text.WebPage.Video.Duration;
+                    }
+                    else if (text.WebPage?.VideoNote != null)
+                    {
+                        return text.WebPage.VideoNote.Duration;
                     }
                 }
 
@@ -189,6 +217,10 @@ namespace Unigram.ViewModels.Gallery
                 else if (_message.Content is MessageAnimation animation)
                 {
                     return animation.Animation.MimeType;
+                }
+                else if (_message.Content is MessageVideoNote videoNote)
+                {
+                    return "video/mp4"; // videoNote.VideoNote.MimeType;
                 }
                 else if (_message.Content is MessageGame game)
                 {

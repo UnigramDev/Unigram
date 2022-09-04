@@ -35,6 +35,7 @@ namespace Unigram.ViewModels.Gallery
         public virtual bool IsVideo { get; private set; }
         public virtual bool IsStreamable { get; private set; } = true;
         public virtual bool IsLoop { get; private set; }
+        public virtual bool IsVideoNote { get; private set; }
 
         public virtual bool HasStickers { get; private set; }
 

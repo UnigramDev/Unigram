@@ -330,53 +330,7 @@ namespace Unigram.Views
         {
             var text = message.Content as MessageText;
 
-            // If autoplay is enabled and the message contains a video note, then we want a different behavior
-            if (ViewModel.Settings.IsAutoPlayAnimationsEnabled && (message.Content is MessageVideoNote || text?.WebPage != null && text.WebPage.Video != null))
-            {
-                ViewModel.PlaybackService.Play(message, ViewModel.ThreadId);
-                //if (_old.TryGetValue(message.Id, out MediaPlayerItem item))
-                //{
-                //    if (item.Presenter == null || item.Presenter.MediaPlayer == null)
-                //    {
-                //        return;
-                //    }
-
-                //    // If the video player is muted, then let's play the video again with audio turned on
-                //    if (item.Presenter.MediaPlayer.IsMuted)
-                //    {
-                //        TypedEventHandler<MediaPlayer, object> handler = null;
-                //        handler = (player, args) =>
-                //        {
-                //            player.MediaEnded -= handler;
-                //            player.IsMuted = true;
-                //            player.IsLoopingEnabled = true;
-                //            player.Play();
-                //        };
-
-                //        item.Presenter.MediaPlayer.MediaEnded += handler;
-                //        item.Presenter.MediaPlayer.IsMuted = false;
-                //        item.Presenter.MediaPlayer.IsLoopingEnabled = false;
-                //        item.Presenter.MediaPlayer.PlaybackSession.Position = TimeSpan.Zero;
-
-                //        // Mark it as viewed if needed
-                //        if (message.Content is MessageVideoNote videoNote && !message.IsOutgoing && !videoNote.IsViewed)
-                //        {
-                //            ViewModel.ProtoService.Send(new OpenMessageContent(message.ChatId, message.Id));
-                //        }
-                //    }
-                //    // If the video player is paused, then resume playback
-                //    else if (item.Presenter.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Paused)
-                //    {
-                //        item.Presenter.MediaPlayer.Play();
-                //    }
-                //    // And last, if the video player can be pause, then pause it
-                //    else if (item.Presenter.MediaPlayer.PlaybackSession.CanPause)
-                //    {
-                //        item.Presenter.MediaPlayer.Pause();
-                //    }
-                //}
-            }
-            else if (ViewModel.Settings.IsAutoPlayAnimationsEnabled && (message.Content is MessageAnimation || (text?.WebPage != null && text.WebPage.Animation != null) || (message.Content is MessageGame game && game.Game.Animation != null)))
+            if (ViewModel.Settings.IsAutoPlayAnimationsEnabled && (message.Content is MessageAnimation || (text?.WebPage != null && text.WebPage.Animation != null) || (message.Content is MessageGame game && game.Game.Animation != null)))
             {
                 if (_prev.TryGetValue(message.AnimationHash(), out WeakReference reference) && reference.Target is IPlayerView item)
                 {
@@ -390,7 +344,7 @@ namespace Unigram.Views
                         viewModel = new SingleGalleryViewModel(ViewModel.ProtoService, ViewModel.StorageService, ViewModel.Aggregator, new GalleryMessage(ViewModel.ProtoService, message.Get()));
                     }
 
-                    await GalleryView.GetForCurrentView().ShowAsync(viewModel, () => target);
+                    await GalleryView.ShowAsync(viewModel, () => target);
                 }
                 else
                 {
