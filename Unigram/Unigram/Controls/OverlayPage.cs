@@ -10,7 +10,6 @@ using Unigram.Services;
 using Unigram.Services.Keyboard;
 using Unigram.Services.ViewService;
 using Unigram.Views.Host;
-using Windows.ApplicationModel.Core;
 using Windows.Devices.Input;
 using Windows.Foundation;
 using Windows.Graphics.Display;

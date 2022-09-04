@@ -333,6 +333,12 @@ namespace Unigram.Controls.Gallery
             return ShowAsync();
         }
 
+        protected override void MaskTitleAndStatusBar()
+        {
+            base.MaskTitleAndStatusBar();
+            Window.Current.SetTitleBar(TitleBar);
+        }
+
         private void InitializeBackButton()
         {
             if (IsConstrainedToRootBounds)
