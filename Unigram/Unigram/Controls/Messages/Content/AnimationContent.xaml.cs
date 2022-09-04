@@ -173,23 +173,7 @@ namespace Unigram.Controls.Messages.Content
         private async void UpdateThumbnail(MessageViewModel message, Animation animation, File file, bool download)
         {
             ImageSource source = null;
-            ImageBrush brush;
-
-            if (LayoutRoot.Background is ImageBrush existing)
-            {
-                brush = existing;
-            }
-            else
-            {
-                brush = new ImageBrush
-                {
-                    Stretch = Stretch.UniformToFill,
-                    AlignmentX = AlignmentX.Center,
-                    AlignmentY = AlignmentY.Center
-                };
-
-                LayoutRoot.Background = brush;
-            }
+            Image brush = Texture;
 
             if (animation.Thumbnail != null && animation.Thumbnail.Format is ThumbnailFormatJpeg)
             {
@@ -217,7 +201,7 @@ namespace Unigram.Controls.Messages.Content
                 source = await PlaceholderHelper.GetBlurredAsync(animation.Minithumbnail.Data, message.IsSecret() ? 15 : 3);
             }
 
-            brush.ImageSource = source;
+            brush.Source = source;
         }
 
         public bool IsValid(MessageContent content, bool primary)

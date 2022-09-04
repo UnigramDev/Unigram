@@ -6,6 +6,7 @@ using Unigram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Controls.Messages.Content
 {
@@ -241,29 +242,13 @@ namespace Unigram.Controls.Messages.Content
         private async void UpdateThumbnail(MessageViewModel message, Video video, File file, bool download)
         {
             ImageSource source = null;
-            ImageBrush brush;
-
-            if (LayoutRoot.Background is ImageBrush existing)
-            {
-                brush = existing;
-            }
-            else
-            {
-                brush = new ImageBrush
-                {
-                    Stretch = Stretch.UniformToFill,
-                    AlignmentX = AlignmentX.Center,
-                    AlignmentY = AlignmentY.Center
-                };
-
-                LayoutRoot.Background = brush;
-            }
+            Image brush = Texture;
 
             if (video.Thumbnail != null && video.Thumbnail.Format is ThumbnailFormatJpeg)
             {
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    source = await PlaceholderHelper.GetBlurredAsync(file.Local.Path, message.IsSecret() ? 15 : 3);
+                    source = new BitmapImage(UriEx.ToLocal(file.Local.Path));
                 }
                 else if (download)
                 {
@@ -285,7 +270,7 @@ namespace Unigram.Controls.Messages.Content
                 source = await PlaceholderHelper.GetBlurredAsync(video.Minithumbnail.Data, message.IsSecret() ? 15 : 3);
             }
 
-            brush.ImageSource = source;
+            brush.Source = source;
         }
 
         private void UpdateSource(MessageViewModel message, File file, int duration)
