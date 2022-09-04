@@ -5,7 +5,6 @@ using Unigram.Common;
 using Unigram.Navigation;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Chats;
-using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
@@ -184,7 +183,7 @@ namespace Unigram.Controls.Chats
 
         private void OnKeyDown(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
         {
-            var shift = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
+            var shift = Window.Current.CoreWindow.IsKeyDown(Windows.System.VirtualKey.Shift);
 
             if (e.Key == Windows.System.VirtualKey.Enter && !shift && Field.State != ChatSearchState.Members)
             {

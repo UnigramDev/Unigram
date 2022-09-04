@@ -968,9 +968,9 @@ namespace Unigram.Views
                 return;
             }
 
-            var alt = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
-            var ctrl = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
-            var shift = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
+            var alt = Window.Current.CoreWindow.IsKeyDown(Windows.System.VirtualKey.Menu);
+            var ctrl = Window.Current.CoreWindow.IsKeyDown(Windows.System.VirtualKey.Control);
+            var shift = Window.Current.CoreWindow.IsKeyDown(Windows.System.VirtualKey.Shift);
 
             if (args.VirtualKey == Windows.System.VirtualKey.Delete)
             {
@@ -2988,7 +2988,7 @@ namespace Unigram.Views
                     }
                 }
 
-                var complete = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Tab).HasFlag(CoreVirtualKeyStates.Down);
+                var complete = Window.Current.CoreWindow.IsKeyDown(Windows.System.VirtualKey.Tab);
                 if (complete)
                 {
                     InsertText($"{insert} ", result);

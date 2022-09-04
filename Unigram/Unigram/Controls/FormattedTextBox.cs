@@ -232,9 +232,9 @@ namespace Unigram.Controls
             }
             else if (e.Key == VirtualKey.Z)
             {
-                var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
-                var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
-                var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
+                var alt = Window.Current.CoreWindow.IsKeyDown(VirtualKey.Menu);
+                var ctrl = Window.Current.CoreWindow.IsKeyDown(VirtualKey.Control);
+                var shift = Window.Current.CoreWindow.IsKeyDown(VirtualKey.Shift);
 
                 if (ctrl && shift && !alt)
                 {

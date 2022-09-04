@@ -19,7 +19,6 @@ using Unigram.Views.SignIn;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.UI.Composition;
-using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
@@ -394,9 +393,9 @@ namespace Unigram.Views.Host
             }
             else if (container.Content is RootDestination.AddAccount)
             {
-                var alt = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
-                var ctrl = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
-                var shift = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
+                var alt = Window.Current.CoreWindow.IsKeyDown(Windows.System.VirtualKey.Menu);
+                var ctrl = Window.Current.CoreWindow.IsKeyDown(Windows.System.VirtualKey.Control);
+                var shift = Window.Current.CoreWindow.IsKeyDown(Windows.System.VirtualKey.Shift);
 
                 if (alt && !ctrl && shift)
                 {
