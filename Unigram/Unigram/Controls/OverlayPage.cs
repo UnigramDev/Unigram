@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Native;
@@ -15,6 +14,7 @@ using Windows.ApplicationModel.Core;
 using Windows.Devices.Input;
 using Windows.Foundation;
 using Windows.Graphics.Display;
+using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -99,20 +99,10 @@ namespace Unigram.Controls
             }
 
             var titlebar = ApplicationView.GetForCurrentView().TitleBar;
-            var backgroundBrush = Application.Current.Resources["PageHeaderBackgroundBrush"] as SolidColorBrush;
-            var foregroundBrush = Application.Current.Resources["SystemControlForegroundBaseHighBrush"] as SolidColorBrush;
-            var overlayBrush = OverlayBrush as SolidColorBrush;
-
-            if (overlayBrush != null)
-            {
-                var maskBackground = ColorsHelper.AlphaBlend(backgroundBrush.Color, overlayBrush.Color);
-                var maskForeground = ColorsHelper.AlphaBlend(foregroundBrush.Color, overlayBrush.Color);
-
-                titlebar.BackgroundColor = maskBackground;
-                titlebar.ForegroundColor = maskForeground;
-                //titlebar.ButtonBackgroundColor = maskBackground;
-                titlebar.ButtonForegroundColor = maskForeground;
-            }
+            //titlebar.BackgroundColor = Colors.Black;
+            titlebar.ForegroundColor = Colors.White;
+            //titlebar.ButtonBackgroundColor = Colors.Black;
+            titlebar.ButtonForegroundColor = Colors.White;
         }
 
         protected void UnmaskTitleAndStatusBar()

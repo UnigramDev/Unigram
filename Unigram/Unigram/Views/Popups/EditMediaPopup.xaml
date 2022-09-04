@@ -1,43 +1,40 @@
-<controls:OverlayPage
-    x:Class="Unigram.Views.Popups.EditMediaPopup"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Unigram.Views.Popups"
-    xmlns:controls="using:Unigram.Controls"
-    xmlns:xaml="using:Microsoft.Graphics.Canvas.UI.Xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    VerticalAlignment="Stretch"
-    HorizontalAlignment="Stretch"
-    Background="{x:Null}"
-    RequestedTheme="Dark">
-    
+<controls:OverlayPage x:Class="Unigram.Views.Popups.EditMediaPopup"
+                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:local="using:Unigram.Views.Popups"
+                      xmlns:controls="using:Unigram.Controls"
+                      xmlns:xaml="using:Microsoft.Graphics.Canvas.UI.Xaml"
+                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                      mc:Ignorable="d"
+                      VerticalAlignment="Stretch"
+                      HorizontalAlignment="Stretch"
+                      Background="{x:Null}"
+                      RequestedTheme="Dark">
+
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition Height="44"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition />
+            <RowDefinition Height="44" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <controls:ImageCropper x:Name="Cropper" Padding="24">
+        <controls:ImageCropper x:Name="Cropper"
+                               Padding="24">
             <Grid>
-                <MediaPlayerElement
-                    x:Name="Media"/>
-                <controls:PencilCanvas
-                    x:Name="Canvas"
-                    StrokesChanged="Canvas_StrokesChanged"
-                    IsEnabled="False"/>
+                <MediaPlayerElement x:Name="Media" />
+                <controls:PencilCanvas x:Name="Canvas"
+                                       StrokesChanged="Canvas_StrokesChanged"
+                                       IsEnabled="False" />
             </Grid>
         </controls:ImageCropper>
 
-        <controls:ColorSlider
-            x:Name="DrawSlider"
-            x:Load="False"
-            StrokeChanged="DrawSlider_StrokeChanged"
-            Margin="12,0,12,24"
-            MaxWidth="320"
-            Grid.Row="1"/>
+        <controls:ColorSlider x:Name="DrawSlider"
+                              x:Load="False"
+                              StrokeChanged="DrawSlider_StrokeChanged"
+                              Margin="12,0,12,24"
+                              MaxWidth="320"
+                              Grid.Row="1" />
 
         <Grid x:Name="Commands"
               Background="{ThemeResource SystemControlChromeMediumLowAcrylicElementMediumBrush}"
@@ -46,138 +43,129 @@
               CornerRadius="15"
               Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <controls:GlyphButton
-                Click="Cancel_Click"
-                Glyph="&#xE711;"
-                CornerRadius="13,4,4,13"
-                AutomationProperties.Name="{CustomResource Close}"
-                ToolTipService.ToolTip="{CustomResource Close}"/>
+            <controls:GlyphButton Click="Cancel_Click"
+                                  Glyph="&#xE711;"
+                                  CornerRadius="13,4,4,13"
+                                  AutomationProperties.Name="{CustomResource Close}"
+                                  ToolTipService.ToolTip="{CustomResource Close}" />
 
-            <Rectangle
-                Fill="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
-                Margin="4,12,4,12"
-                Width="{ThemeResource MenuFlyoutSeparatorThemeHeight}"
-                Grid.Column="1"/>
+            <Rectangle Fill="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
+                       Margin="4,12,4,12"
+                       Width="{ThemeResource MenuFlyoutSeparatorThemeHeight}"
+                       Grid.Column="1" />
 
             <!--<controls:GlyphButton Glyph="&#xE7A8;" IsEnabled="False" Grid.Column="2"/>-->
-            <Grid x:Name="BasicToolbar" Grid.Column="2">
+            <Grid x:Name="BasicToolbar"
+                  Grid.Column="2">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <controls:GlyphToggleButton
-                    x:Name="Rotate"
-                    Click="Rotate_Click"
-                    Glyph="&#xE909;"
-                    CheckedGlyph="&#xE909;"
-                    CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
-                    FontFamily="{StaticResource TelegramThemeFontFamily}"
-                    AutomationProperties.Name="{CustomResource AccDescrRotate}"
-                    ToolTipService.ToolTip="{CustomResource AccDescrRotate}"/>
+                <controls:GlyphToggleButton x:Name="Rotate"
+                                            Click="Rotate_Click"
+                                            Glyph="&#xE909;"
+                                            CheckedGlyph="&#xE909;"
+                                            CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
+                                            FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                            AutomationProperties.Name="{CustomResource AccDescrRotate}"
+                                            ToolTipService.ToolTip="{CustomResource AccDescrRotate}" />
 
-                <controls:GlyphToggleButton
-                    x:Name="Flip"
-                    Click="Flip_Click"
-                    Glyph="&#xE908;"
-                    CheckedGlyph="&#xE908;"
-                    CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
-                    FontFamily="{StaticResource TelegramThemeFontFamily}"
-                    Grid.Column="1"/>
-                
-                <controls:GlyphButton
-                    x:Name="Draw"
-                    Click="Draw_Click"
-                    Glyph="&#xEE56;"
-                    AutomationProperties.Name="{CustomResource AccDescrPhotoEditor}"
-                    ToolTipService.ToolTip="{CustomResource AccDescrPhotoEditor}"
-                    Grid.Column="2"/>
+                <controls:GlyphToggleButton x:Name="Flip"
+                                            Click="Flip_Click"
+                                            Glyph="&#xE908;"
+                                            CheckedGlyph="&#xE908;"
+                                            CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
+                                            FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                            Grid.Column="1" />
 
-                <controls:GlyphToggleButton
-                    x:Name="Proportions"
-                    Click="Proportions_Click"
-                    Glyph="&#xE90A;"
-                    CheckedGlyph="&#xE90A;"
-                    CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
-                    FontFamily="{StaticResource TelegramThemeFontFamily}"
-                    AutomationProperties.Name="{CustomResource AccDescrAspectRatio}"
-                    ToolTipService.ToolTip="{CustomResource AccDescrAspectRatio}"
-                    Grid.Column="3"/>
+                <controls:GlyphButton x:Name="Draw"
+                                      Click="Draw_Click"
+                                      Glyph="&#xEE56;"
+                                      AutomationProperties.Name="{CustomResource AccDescrPhotoEditor}"
+                                      ToolTipService.ToolTip="{CustomResource AccDescrPhotoEditor}"
+                                      Grid.Column="2" />
+
+                <controls:GlyphToggleButton x:Name="Proportions"
+                                            Click="Proportions_Click"
+                                            Glyph="&#xE90A;"
+                                            CheckedGlyph="&#xE90A;"
+                                            CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
+                                            FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                            AutomationProperties.Name="{CustomResource AccDescrAspectRatio}"
+                                            ToolTipService.ToolTip="{CustomResource AccDescrAspectRatio}"
+                                            Grid.Column="3" />
             </Grid>
 
-            <Grid x:Name="DrawToolbar" x:Load="False" Grid.Column="2">
+            <Grid x:Name="DrawToolbar"
+                  x:Load="False"
+                  Grid.Column="2">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <controls:GlyphButton
-                    x:Name="Undo"
-                    Click="Undo_Click"
-                    Glyph="&#xE7A7;"/>
+                <controls:GlyphButton x:Name="Undo"
+                                      Click="Undo_Click"
+                                      Glyph="&#xE7A7;" />
 
-                <controls:GlyphButton
-                    x:Name="Redo"
-                    Click="Redo_Click"
-                    Glyph="&#xE7A6;"
-                    Grid.Column="1"/>
+                <controls:GlyphButton x:Name="Redo"
+                                      Click="Redo_Click"
+                                      Glyph="&#xE7A6;"
+                                      Grid.Column="1" />
 
-                <controls:GlyphToggleButton
-                    x:Name="Brush"
-                    Click="Brush_Click"
-                    Glyph="&#xEE56;"
-                    CheckedGlyph="&#xEE56;"
-                    CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
-                    Grid.Column="2"/>
+                <controls:GlyphToggleButton x:Name="Brush"
+                                            Click="Brush_Click"
+                                            Glyph="&#xEE56;"
+                                            CheckedGlyph="&#xEE56;"
+                                            CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
+                                            Grid.Column="2" />
 
-                <controls:GlyphToggleButton
-                    x:Name="Erase"
-                    Click="Erase_Click"
-                    Glyph="&#xE75C;"
-                    CheckedGlyph="&#xE75C;"
-                    CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
-                    Grid.Column="3"/>
+                <controls:GlyphToggleButton x:Name="Erase"
+                                            Click="Erase_Click"
+                                            Glyph="&#xE75C;"
+                                            CheckedGlyph="&#xE75C;"
+                                            CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
+                                            Grid.Column="3" />
             </Grid>
 
-            <Grid x:Name="TrimToolbar" x:Load="False" Grid.Column="2">
-                <StackPanel
-                    x:Name="TrimThumbnails"
-                    Orientation="Horizontal"
-                    Width="296"
-                    CornerRadius="4"/>
-                <controls:VideoRangeSlider
-                    x:Name="TrimRange"
-                    MinimumChanged="TrimRange_MinimumChanged"
-                    MaximumChanged="TrimRange_MaximumChanged"
-                    Height="40"
-                    Width="296"/>
+            <Grid x:Name="TrimToolbar"
+                  x:Load="False"
+                  Grid.Column="2">
+                <StackPanel x:Name="TrimThumbnails"
+                            Orientation="Horizontal"
+                            Width="296"
+                            CornerRadius="4" />
+                <controls:VideoRangeSlider x:Name="TrimRange"
+                                           MinimumChanged="TrimRange_MinimumChanged"
+                                           MaximumChanged="TrimRange_MaximumChanged"
+                                           Height="40"
+                                           Width="296" />
             </Grid>
-            
-            <Rectangle
-                Fill="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
-                Margin="4,12,4,12"
-                Width="{ThemeResource MenuFlyoutSeparatorThemeHeight}"
-                Grid.Column="3"/>
 
-            <controls:GlyphButton
-                Click="Accept_Click"
-                Glyph="&#xE10B;"
-                AllowFocusOnInteraction="False"
-                Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
-                HorizontalAlignment="Right"
-                CornerRadius="4,13,13,4"
-                AutomationProperties.Name="{CustomResource Done}"
-                ToolTipService.ToolTip="{CustomResource Done}"                
-                Grid.Column="4"/>
+            <Rectangle Fill="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
+                       Margin="4,12,4,12"
+                       Width="{ThemeResource MenuFlyoutSeparatorThemeHeight}"
+                       Grid.Column="3" />
+
+            <controls:GlyphButton Click="Accept_Click"
+                                  Glyph="&#xE10B;"
+                                  AllowFocusOnInteraction="False"
+                                  Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
+                                  HorizontalAlignment="Right"
+                                  CornerRadius="4,13,13,4"
+                                  AutomationProperties.Name="{CustomResource Done}"
+                                  ToolTipService.ToolTip="{CustomResource Done}"
+                                  Grid.Column="4" />
 
         </Grid>
     </Grid>

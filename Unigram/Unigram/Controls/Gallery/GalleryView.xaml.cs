@@ -18,7 +18,6 @@ using Windows.Foundation;
 using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.System.Display;
-using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
@@ -336,15 +335,6 @@ namespace Unigram.Controls.Gallery
         private void OnCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             PrepareNext(0, true);
-        }
-
-        protected override void MaskTitleAndStatusBar()
-        {
-            var titlebar = ApplicationView.GetForCurrentView().TitleBar;
-            //titlebar.BackgroundColor = Colors.Black;
-            titlebar.ForegroundColor = Colors.White;
-            //titlebar.ButtonBackgroundColor = Colors.Black;
-            titlebar.ButtonForegroundColor = Colors.White;
         }
 
         protected override void OnBackRequestedOverride(object sender, HandledEventArgs e)
