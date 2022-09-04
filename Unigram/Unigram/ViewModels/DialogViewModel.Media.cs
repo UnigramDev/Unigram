@@ -598,8 +598,18 @@ namespace Unigram.ViewModels
             if (schedule == true || (_type == DialogType.ScheduledMessages && schedule == null))
             {
                 var user = CacheService.GetUser(chat);
+                var until = DateTime.Now;
 
-                var dialog = new ScheduleMessagePopup(user, DateTime.Now, CacheService.IsSavedMessages(chat));
+                if (_type == DialogType.ScheduledMessages)
+                {
+                    var last = Items.LastOrDefault();
+                    if (last != null && last.SchedulingState is MessageSchedulingStateSendAtDate sendAtDate)
+                    {
+                        until = Utils.ToDateTime(sendAtDate.SendDate);
+                    }
+                }
+
+                var dialog = new ScheduleMessagePopup(user, until.AddMinutes(1), CacheService.IsSavedMessages(chat));
                 var confirm = await dialog.ShowQueuedAsync();
 
                 if (confirm != ContentDialogResult.Primary)
