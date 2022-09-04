@@ -1032,7 +1032,7 @@
                         Margin="12,0,12,8"
                         Grid.Row="3">
             <Grid x:Name="TextRoot"
-                  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                  Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
                   MinHeight="{StaticResource TelegramToolBarHeight}"
                   SizeChanged="TextArea_SizeChanged"
                   CornerRadius="15">
@@ -1343,7 +1343,7 @@
         </ContentControl>
 
         <Grid x:Name="ChatRecord"
-              Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+              Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
               Margin="12,0,12,8"
               Visibility="Collapsed"
               Grid.Row="3">
@@ -1501,7 +1501,7 @@
         </Grid>
 
         <Grid x:Name="ManagePanel"
-              Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+              Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
               VerticalAlignment="Bottom"
               Visibility="Collapsed"
               Margin="12,0,12,8"
@@ -1540,6 +1540,13 @@
                                   Style="{StaticResource GlyphButtonWithLabelStyle}"
                                   Grid.Column="4" />
         </Grid>
+
+        <!--<Border x:Name="TextAreaBorder"
+                BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                Margin="12,0,12,8"
+                CornerRadius="15"
+                Grid.Row="3" />-->
 
         <chats:ChatSearchBar x:Name="SearchMask"
                              Visibility="Collapsed"

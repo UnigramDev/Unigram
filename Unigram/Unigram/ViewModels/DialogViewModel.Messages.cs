@@ -1408,5 +1408,42 @@ namespace Unigram.ViewModels
         }
 
         #endregion
+
+        #region Show emoji
+
+        public RelayCommand<MessageViewModel> MessageShowEmojiCommand { get; }
+        private async void MessageShowEmojiExecute(MessageViewModel message)
+        {
+            var caption = message.GetCaption();
+            if (caption == null)
+            {
+                return;
+            }
+
+            var emoji = new HashSet<long>();
+
+            foreach (var item in caption.Entities)
+            {
+                if (item.Type is TextEntityTypeCustomEmoji customEmoji)
+                {
+                    emoji.Add(customEmoji.CustomEmojiId);
+                }
+            }
+
+            var response = await ProtoService.SendAsync(new GetCustomEmojiStickers(emoji.ToList()));
+            if (response is Stickers stickers)
+            {
+                var sets = new HashSet<long>();
+
+                foreach (var sticker in stickers.StickersValue)
+                {
+                    sets.Add(sticker.SetId);
+                }
+
+                await StickersPopup.ShowAsync(sets);
+            }
+        }
+
+        #endregion
     }
 }

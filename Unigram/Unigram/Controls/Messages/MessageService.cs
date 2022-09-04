@@ -1067,11 +1067,13 @@ namespace Unigram.Controls.Messages
 
         private static (string, IList<TextEntity>) UpdateChatUpgradeFrom(MessageViewModel message, MessageChatUpgradeFrom chatUpgradeFrom, bool active)
         {
+            return (string.Empty, null);
             return (Strings.Resources.ActionMigrateFromGroup, null);
         }
 
         private static (string, IList<TextEntity>) UpdateChatUpgradeTo(MessageViewModel message, MessageChatUpgradeTo chatUpgradeTo, bool active)
         {
+            return (string.Empty, null);
             return (Strings.Resources.ActionMigrateFromGroup, null);
         }
 

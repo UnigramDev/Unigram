@@ -107,11 +107,6 @@ namespace Unigram.Views
 
         #endregion
 
-        private string ConvertCount(int count)
-        {
-            return Locale.Declension("Chats", count);
-        }
-
         private SpriteVisual _hitTest;
         private ContainerVisual _container;
         private Visual _visual;

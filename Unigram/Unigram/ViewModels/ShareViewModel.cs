@@ -41,12 +41,6 @@ namespace Unigram.ViewModels
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            //if (mode == NavigationMode.New)
-            //{
-            //    _dialogs = null;
-            //}
-
-            //var response = await ProtoService.SendAsync(new GetChats(new ChatListMain(), long.MaxValue, 0, int.MaxValue));
             var response = await ProtoService.GetChatListAsync(new ChatListMain(), 0, 200);
             if (response is Telegram.Td.Api.Chats chats)
             {
@@ -114,6 +108,13 @@ namespace Unigram.ViewModels
                             Items.Add(chat);
                         }
                     }
+                    else if (_searchType == SearchChatsType.Contacts)
+                    {
+                        if (CacheService.TryGetUser(chat, out User user) && user.PhoneNumber.Length > 0)
+                        {
+                            Items.Add(chat);
+                        }
+                    }
                     else if (_searchType == SearchChatsType.Post)
                     {
                         if (CacheService.CanPostMessages(chat))
@@ -139,11 +140,6 @@ namespace Unigram.ViewModels
                 foreach (var id in pre)
                 {
                     var chat = CacheService.GetChat(id);
-                    if (chat == null)
-                    {
-                        chat = await ProtoService.SendAsync(new GetChat(id)) as Chat;
-                    }
-
                     if (chat == null)
                     {
                         continue;

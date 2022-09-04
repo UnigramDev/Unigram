@@ -271,7 +271,7 @@
         <Border BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
                 BorderThickness="1"
                 CornerRadius="8"
-                Grid.ColumnSpan="9"/>
+                Grid.ColumnSpan="9" />
 
         <Button x:Name="ViewButton"
                 Click="View_Click"
@@ -320,7 +320,7 @@
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <cells:SharedAudioCell Background="Transparent"
-                                                       BorderBrush="Transparent"/>
+                                                       BorderBrush="Transparent" />
                             </DataTemplate>
                         </ListView.ItemTemplate>
                         <ListView.ItemContainerStyle>

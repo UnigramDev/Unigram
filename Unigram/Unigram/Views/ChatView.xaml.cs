@@ -937,7 +937,7 @@ namespace Unigram.Views
             }
 
             var focused = FocusManager.GetFocusedElement();
-            if (focused == null || (focused is TextBox == false && focused is RichEditBox == false))
+            if (focused == null || focused is not TextBox and not RichEditBox)
             {
                 var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
                 if (popups.Count > 0)
@@ -2011,6 +2011,11 @@ namespace Unigram.Views
                 }
 #endif
 
+                if (CanGetMessageEmojis(chat, message, out var emoji))
+                {
+                    LoadMessageEmojis(message, emoji, flyout);
+                }
+
                 if (message.CanBeSaved is false && flyout.Items.Count > 0)
                 {
                     flyout.CreateFlyoutSeparator();
@@ -2045,6 +2050,65 @@ namespace Unigram.Views
             }
 
             args.ShowAt(flyout, sender as FrameworkElement);
+        }
+
+        private bool CanGetMessageEmojis(Chat chat, MessageViewModel message, out HashSet<long> emoji)
+        {
+            var caption = message.GetCaption();
+            if (caption?.Entities == null)
+            {
+                emoji = null;
+                return false;
+            }
+
+            emoji = new HashSet<long>();
+
+            foreach (var item in caption.Entities)
+            {
+                if (item.Type is TextEntityTypeCustomEmoji customEmoji)
+                {
+                    emoji.Add(customEmoji.CustomEmojiId);
+                }
+            }
+
+            return emoji.Count > 0;
+        }
+
+        private async void LoadMessageEmojis(MessageViewModel message, HashSet<long> emoji, MenuFlyout flyout)
+        {
+            var separator = flyout.CreateFlyoutSeparator();
+            var placeholder = flyout.CreateFlyoutItem(ViewModel.MessageShowEmojiCommand, message, "...");
+
+            // Width must be fixed because emojis are loaded asynchronously
+            placeholder.Width = 240;
+
+            var response = await message.ProtoService.SendAsync(new GetCustomEmojiStickers(emoji.ToArray()));
+            if (response is Stickers stickers && stickers.StickersValue.Count > 0)
+            {
+                var sets = new HashSet<long>();
+
+                foreach (var sticker in stickers.StickersValue)
+                {
+                    sets.Add(sticker.SetId);
+                }
+
+                if (sets.Count > 1)
+                {
+                    placeholder.Text = Locale.Declension("MessageContainsEmojiPacks", sets.Count);
+                }
+                else if (sets.Count > 0)
+                {
+                    var response2 = await message.ProtoService.SendAsync(new GetStickerSet(sets.First()));
+                    if (response2 is StickerSet set)
+                    {
+                        placeholder.Text = string.Format(Strings.Resources.MessageContainsEmojiPack, set.Title);
+                    }
+                }
+            }
+            else
+            {
+                placeholder.Text = Strings.Resources.NobodyViewed;
+            }
         }
 
         private bool CanGetMessageViewers(Chat chat, MessageViewModel message)

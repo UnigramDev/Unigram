@@ -150,6 +150,7 @@ namespace Unigram.ViewModels
             MessageSendNowCommand = new RelayCommand<MessageViewModel>(MessageSendNowExecute);
             MessageRescheduleCommand = new RelayCommand<MessageViewModel>(MessageRescheduleExecute);
             MessageTranslateCommand = new RelayCommand<MessageViewModel>(MessageTranslateExecute);
+            MessageShowEmojiCommand = new RelayCommand<MessageViewModel>(MessageShowEmojiExecute);
 
             SendDocumentCommand = new RelayCommand(SendDocumentExecute);
             SendCameraCommand = new RelayCommand(SendCameraExecute);
@@ -1945,6 +1946,7 @@ namespace Unigram.ViewModels
             // Explicit unsubscribe because NavigatedFrom
             // is not invoked when switching between chats.
             Aggregator.Unsubscribe(this);
+            WindowContext.Current.EnableScreenCapture(GetHashCode());
 
             var chat = _chat;
             if (chat == null)

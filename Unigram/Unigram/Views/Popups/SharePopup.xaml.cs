@@ -103,12 +103,12 @@ namespace Unigram.Views.Popups
             return new SharePopup();
         }
 
-        public static async Task<Chat> PickChatAsync(string title)
+        public static async Task<Chat> PickChatAsync(string title, SearchChatsType type = SearchChatsType.Private)
         {
             var dialog = GetForCurrentView();
             dialog.ViewModel.Title = title;
 
-            var confirm = await dialog.PickAsync(new long[0], SearchChatsType.Private, ListViewSelectionMode.Single);
+            var confirm = await dialog.PickAsync(new long[0], type, ListViewSelectionMode.Single);
             if (confirm != ContentDialogResult.Primary)
             {
                 return null;
@@ -117,9 +117,9 @@ namespace Unigram.Views.Popups
             return dialog.ViewModel.SelectedItems.FirstOrDefault();
         }
 
-        public static async Task<User> PickUserAsync(ICacheService cacheService, string title)
+        public static async Task<User> PickUserAsync(ICacheService cacheService, string title, bool contact)
         {
-            return cacheService.GetUser(await PickChatAsync(title));
+            return cacheService.GetUser(await PickChatAsync(title, contact ? SearchChatsType.Contacts : SearchChatsType.Private));
         }
 
         public static async Task<IList<Chat>> PickChatsAsync(string title, long[] selected)
@@ -478,8 +478,8 @@ namespace Unigram.Views.Popups
             if (args.ItemContainer == null)
             {
                 args.ItemContainer = new MultipleListViewItem(false);
-                args.ItemContainer.Style = ChatsPanel.ItemContainerStyle;
-                args.ItemContainer.ContentTemplate = ChatsPanel.ItemTemplate;
+                args.ItemContainer.Style = sender.ItemContainerStyle;
+                args.ItemContainer.ContentTemplate = sender.ItemTemplate;
             }
 
             args.IsContainerPrepared = true;
