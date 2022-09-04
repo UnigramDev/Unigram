@@ -652,7 +652,7 @@ namespace Unigram.ViewModels
                         }
 
                         SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, force);
-                        Items.RawInsertRange(0, replied, out bool empty);
+                        Items.RawInsertRange(0, replied, true, out bool empty);
                     }
                     else
                     {
@@ -763,7 +763,7 @@ namespace Unigram.ViewModels
                         await ProcessMessagesAsync(chat, replied);
 
                         SetScrollMode(ItemsUpdatingScrollMode.KeepItemsInView, true);
-                        Items.RawAddRange(replied, out bool empty);
+                        Items.RawAddRange(replied, true, out bool empty);
                     }
                     else
                     {
@@ -1970,7 +1970,6 @@ namespace Unigram.ViewModels
             IsLastSliceLoaded = null;
             IsFirstSliceLoaded = null;
 
-            WindowContext.Current.EnableScreenCapture(GetHashCode());
             ProtoService.Send(new CloseChat(chat.Id));
 
             try
@@ -3548,13 +3547,13 @@ namespace Unigram.ViewModels
             return _messages.Contains(id);
         }
 
-        public void RawAddRange(IList<MessageViewModel> source, out bool empty)
+        public void RawAddRange(IList<MessageViewModel> source, bool filter, out bool empty)
         {
             empty = true;
 
             for (int i = 0; i < source.Count; i++)
             {
-                if (_messages.Contains(source[i].Id))
+                if (filter && _messages.Contains(source[i].Id))
                 {
                     continue;
                 }
@@ -3569,13 +3568,13 @@ namespace Unigram.ViewModels
             _suppressOperations = false;
         }
 
-        public void RawInsertRange(int index, IList<MessageViewModel> source, out bool empty)
+        public void RawInsertRange(int index, IList<MessageViewModel> source, bool filter, out bool empty)
         {
             empty = true;
 
             for (int i = source.Count - 1; i >= 0; i--)
             {
-                if (_messages.Contains(source[i].Id))
+                if (filter && _messages.Contains(source[i].Id))
                 {
                     continue;
                 }

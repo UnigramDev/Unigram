@@ -141,13 +141,7 @@ namespace Unigram.ViewModels
                     var replied = ProcessEvents(events);
                     await ProcessMessagesAsync(chat, replied);
 
-                    var target = replied.FirstOrDefault();
-                    if (target != null)
-                    {
-                        replied.Insert(0, _messageFactory.Create(this, new Message(0, target.SenderId, target.ChatId, null, target.SchedulingState, target.IsOutgoing, false, false, false, false, true, false, false, false, false, false, false, false, target.IsChannelPost, false, target.Date, 0, null, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderDate(), null)));
-                    }
-
-                    Items.ReplaceWith(replied);
+                    Items.RawReplaceWith(replied);
 
                     IsLastSliceLoaded = false;
                     IsFirstSliceLoaded = true;
@@ -212,14 +206,10 @@ namespace Unigram.ViewModels
                     var replied = ProcessEvents(events);
                     await ProcessMessagesAsync(chat, replied);
 
-                    foreach (var message in replied)
-                    {
-                        Items.Insert(0, message);
-                    }
+                    Items.RawInsertRange(0, replied, false, out bool empty);
+                    IsLastSliceLoaded = empty;
 
-                    IsLastSliceLoaded = replied.IsEmpty();
-
-                    if (replied.IsEmpty())
+                    if (empty)
                     {
                         await AddHeaderAsync();
                     }
@@ -268,7 +258,7 @@ namespace Unigram.ViewModels
 
         private IList<MessageViewModel> ProcessEvents(ChatEvents events)
         {
-            var result = new List<MessageViewModel>();
+            var result = new MessageCollection(Items.Ids, Array.Empty<MessageViewModel>());
             var channel = _chat.Type is ChatTypeSupergroup super && super.IsChannel;
 
             foreach (var item in events.Events)
@@ -334,7 +324,7 @@ namespace Unigram.ViewModels
                         message = GetMessage(_chat.Id, channel, item, true);
                         //message.Content = new MessageChatEvent(item, true);
                         message.Content = GetMessageContent(item, channel);
-                        result.Add(message);
+                        result.Insert(0, message);
                         message = GetMessage(_chat.Id, channel, item);
                         message.Content = new MessageChatEvent(item);
                         break;
@@ -363,7 +353,7 @@ namespace Unigram.ViewModels
 
                 if (message != null)
                 {
-                    result.Add(message);
+                    result.Insert(0, message);
                 }
             }
 
