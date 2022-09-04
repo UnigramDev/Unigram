@@ -98,6 +98,15 @@ namespace Unigram.Collections
                     {
                         return chat.Type is not ChatTypePrivate;
                     }
+                    else if (_type == SearchChatsType.Contacts)
+                    {
+                        if (_protoService.TryGetUser(chat, out User user))
+                        {
+                            return string.IsNullOrEmpty(user.PhoneNumber);
+                        }
+
+                        return true;
+                    }
 
                     return false;
                 }
@@ -401,6 +410,7 @@ namespace Unigram.Collections
         Post,
         Private,
         PrivateAndGroups,
-        BasicAndSupergroups
+        BasicAndSupergroups,
+        Contacts
     }
 }
