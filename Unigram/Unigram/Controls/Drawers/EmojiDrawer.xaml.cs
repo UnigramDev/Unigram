@@ -282,7 +282,7 @@ namespace Unigram.Controls.Drawers
             }
 
             var radio = sender as RadioButton;
-            if (radio.Content is int value)
+            if (radio.Content is int value && ViewModel.Items.Count > 0)
             {
                 if (ViewModel.Items[0] is RecentEmoji recent)
                 {

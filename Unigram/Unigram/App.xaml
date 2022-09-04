@@ -32,12 +32,12 @@
                     <StaticResource x:Key="SettingsPageBackground"
                                     ResourceKey="SystemControlTransparentBrush" />
 
-                    <AcrylicBrush x:Key="PageSubHeaderBackgroundBrush2"
-                                  TintColor="#2C2C2C"
-                                  TintOpacity="0.15"
-                                  TintLuminosityOpacity="1"
-                                  FallbackColor="#2C2C2C"
-                                  BackgroundSource="Backdrop" />
+                    <media:AcrylicBrush x:Key="PageSubHeaderBackgroundBrush2"
+                                        TintColor="#2C2C2C"
+                                        TintOpacity="0.15"
+                                        TintLuminosityOpacity="1"
+                                        FallbackColor="#2C2C2C"
+                                        BackgroundSource="Backdrop" />
 
                     <StaticResource x:Key="UndoViewBackgroundBrush"
                                     ResourceKey="SystemControlChromeMediumAcrylicElementMediumBrush" />
@@ -61,12 +61,12 @@
                     <StaticResource x:Key="SettingsPageBackground"
                                     ResourceKey="SystemControlTransparentBrush" />
 
-                    <AcrylicBrush x:Key="PageSubHeaderBackgroundBrush2"
-                                  TintColor="#FCFCFC"
-                                  TintOpacity="0.0"
-                                  TintLuminosityOpacity="1.85"
-                                  FallbackColor="#F9F9F9"
-                                  BackgroundSource="Backdrop" />
+                    <media:AcrylicBrush x:Key="PageSubHeaderBackgroundBrush2"
+                                        TintColor="#FCFCFC"
+                                        TintOpacity="0.0"
+                                        TintLuminosityOpacity="1"
+                                        FallbackColor="#F9F9F9"
+                                        BackgroundSource="Backdrop" />
 
                     <StaticResource x:Key="UndoViewBackgroundBrush"
                                     ResourceKey="SystemControlChromeMediumAcrylicElementMediumBrush" />
