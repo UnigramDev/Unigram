@@ -192,9 +192,16 @@ namespace Unigram.Common
             {
                 return Strings.Resources.AttachPhotoExpired + ", ";
             }
-            else if (message.Content is MessageVideoNote)
+            else if (message.Content is MessageVideoNote videoNote)
             {
-                return Strings.Resources.AttachRound + ", ";
+                var result = Strings.Resources.AttachRound + ", " + (videoNote.IsViewed ? "" : Strings.Resources.AccDescrMsgNotPlayed + ", ");
+
+                if (details)
+                {
+                    result += videoNote.VideoNote.GetDuration() + ", ";
+                }
+
+                return result;
             }
             else if (message.Content is MessageSticker sticker)
             {
