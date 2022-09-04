@@ -13,37 +13,25 @@ namespace Unigram.Views.Popups
 {
     public sealed partial class ThemePreviewPopup : ContentPopup
     {
-        private string _path;
+        private StorageFile _file;
 
-        public ThemePreviewPopup(string path)
+        public ThemePreviewPopup(StorageFile file)
         {
             InitializeComponent();
-            Initialize(path);
+            Initialize(file);
         }
 
-        private async void Initialize(string path)
+        private async void Initialize(StorageFile file)
         {
-            _path = path;
-            ThemePreview.Initialize(path);
+            _file = file;
+            var theme = await ThemeCustomInfo.FromFileAsync(file);
 
-            var flags = TelegramTheme.Light;
+            ThemePreview.Update(theme);
 
-            var file = await StorageFile.GetFileFromPathAsync(path);
-            var lines = await FileIO.ReadLinesAsync(file);
-
-            foreach (var line in lines)
-            {
-                if (line.StartsWith("name: "))
-                {
-                    TitleLabel.Text = line.Substring("name: ".Length);
-                }
-                else if (line.StartsWith("parent: "))
-                {
-                    flags = (TelegramTheme)int.Parse(line.Substring("parent: ".Length));
-                }
-            }
-
-            LayoutRoot.RequestedTheme = flags == TelegramTheme.Light ? ElementTheme.Light : ElementTheme.Dark;
+            TitleLabel.Text = theme.Name;
+            LayoutRoot.RequestedTheme = theme.Parent == TelegramTheme.Light
+                ? ElementTheme.Light
+                : ElementTheme.Dark;
 
             Chat1.Mockup(new ChatTypePrivate(), 0, "Eva Summer", string.Empty, "Reminds me of a Chinese proverb...", false, 0, false, true, DateTime.Now);
             Chat2.Mockup(new ChatTypePrivate(), 1, "Alexandra Smith", string.Empty, "This is amazing!", false, 2, false, false, DateTime.Now.AddHours(-1));
@@ -78,8 +66,7 @@ namespace Unigram.Views.Popups
         {
             try
             {
-                var file = await StorageFile.GetFileFromPathAsync(_path);
-                await TLContainer.Current.Resolve<IThemeService>().InstallThemeAsync(file);
+                await TLContainer.Current.Resolve<IThemeService>().InstallThemeAsync(_file);
             }
             catch { }
         }

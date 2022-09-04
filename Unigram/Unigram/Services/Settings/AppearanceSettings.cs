@@ -195,7 +195,7 @@ namespace Unigram.Services.Settings
             {
                 if (force is not null)
                 {
-                    Theme.Current.Initialize(theme);
+                    Theme.Current.Update(theme);
                 }
 
                 if (window.ActualTheme != theme || force is true)

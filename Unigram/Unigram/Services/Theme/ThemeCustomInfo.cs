@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Navigation;
 using Unigram.Services.Settings;
+using Windows.Storage;
 using Windows.UI;
 using Windows.UI.ViewManagement;
 
@@ -27,6 +30,11 @@ namespace Unigram.Services
         public static ThemeCustomInfo FromFile(string path)
         {
             return FromFile(path, System.IO.File.ReadAllLines(path));
+        }
+
+        public static async Task<ThemeCustomInfo> FromFileAsync(StorageFile file)
+        {
+            return FromFile(file.Path, await FileIO.ReadLinesAsync(file));
         }
 
         public static ThemeCustomInfo FromFile(string path, IList<string> lines)
