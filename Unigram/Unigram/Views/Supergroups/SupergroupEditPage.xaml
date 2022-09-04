@@ -98,12 +98,7 @@
                                           Header="{CustomResource ChannelInviteLinkTitle}">
                     <TextBox x:Name="InviteLink"
                              IsReadOnly="True"
-                             Padding="12,11,6,12"
-                             Grid.Row="1" />
-
-                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}"
-                               Height="1"
-                               Margin="12,0,0,0" />
+                             Padding="12,11,6,12" />
 
                     <controls:BadgeButton x:Name="RevokeLink"
                                           Content="{CustomResource RevokeLink}"

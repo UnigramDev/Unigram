@@ -135,13 +135,16 @@
                                           Header="{CustomResource EditAdminRank}"
                                           Footer="{CustomResource EditAdminRankInfo}">
                     <TextBox x:Name="EditRankField"
-                             Text="{x:Bind ViewModel.CustomTitle, Mode=TwoWay}"
-                             PlaceholderText="{CustomResource ChannelCreator}"
+                             Text="{x:Bind ViewModel.CustomTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             FontFamily="{ThemeResource EmojiThemeFontFamily}"
                              MaxLength="16"
-                             Margin="12,8" />
+                             PlaceholderText="{CustomResource ChannelCreator}"
+                             TextWrapping="Wrap"
+                             AcceptsReturn="True"
+                             Padding="12,11,6,12" />
                 </controls:HeaderedControl>
 
-                <controls:HeaderedControl>
+                <controls:HeaderedControl Visibility="{x:Bind ConvertActionVisibility(TransferOwnership.Visibility, Dismiss.Visibility), Mode=OneWay}">
                     <controls:BadgeButton x:Name="TransferOwnership"
                                           Command="{x:Bind ViewModel.TransferCommand}"
                                           Content="{CustomResource EditAdminGroupTransfer}"
@@ -149,7 +152,7 @@
                     <controls:BadgeButton x:Name="Dismiss"
                                           Command="{x:Bind ViewModel.DismissCommand}"
                                           Content="{CustomResource EditAdminRemoveAdmin}"
-                                          Foreground="#df3f40"
+                                          Foreground="{ThemeResource DangerButtonBackground}"
                                           Visibility="Collapsed" />
                 </controls:HeaderedControl>
             </StackPanel>

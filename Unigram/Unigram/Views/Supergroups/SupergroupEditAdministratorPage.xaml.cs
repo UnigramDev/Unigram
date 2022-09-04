@@ -100,5 +100,20 @@ namespace Unigram.Views.Supergroups
 
             //TransferOwnership.Content = group.IsChannel ? Strings.Resources.EditAdminChannelTransfer : Strings.Resources.EditAdminGroupTransfer;
         }
+
+        #region Binding
+
+        private Visibility ConvertActionVisibility(Visibility ownership, Visibility dismiss)
+        {
+            if (ownership == Visibility.Visible)
+            {
+                return Visibility.Visible;
+            }
+
+            return dismiss;
+        }
+
+        #endregion
+
     }
 }

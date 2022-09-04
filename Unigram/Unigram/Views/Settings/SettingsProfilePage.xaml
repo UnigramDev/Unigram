@@ -74,7 +74,6 @@
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Footer="{CustomResource UserBioInfo}">
-
                     <TextBox x:Name="About"
                              Text="{x:Bind ViewModel.Bio, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              FontFamily="{ThemeResource EmojiThemeFontFamily}"

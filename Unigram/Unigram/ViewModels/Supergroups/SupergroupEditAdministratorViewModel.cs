@@ -302,7 +302,7 @@ namespace Unigram.ViewModels.Supergroups
             ChatMemberStatus status;
             if (member.Status is ChatMemberStatusCreator creator)
             {
-                status = new ChatMemberStatusCreator(_customTitle ?? string.Empty, channel ? false : _isAnonymous, creator.IsMember);
+                status = new ChatMemberStatusCreator(_customTitle ?? string.Empty, !channel && _isAnonymous, creator.IsMember);
             }
             else
             {
