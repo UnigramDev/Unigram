@@ -10,6 +10,7 @@ using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Services.Keyboard;
 using Unigram.Services.ViewService;
+using Unigram.Views.Host;
 using Windows.ApplicationModel.Core;
 using Windows.Devices.Input;
 using Windows.Foundation;
@@ -92,6 +93,11 @@ namespace Unigram.Controls
 
         protected virtual void MaskTitleAndStatusBar()
         {
+            if (Window.Current.Content is RootPage root)
+            {
+                root.PopupOpened();
+            }
+
             var titlebar = ApplicationView.GetForCurrentView().TitleBar;
             var backgroundBrush = Application.Current.Resources["PageHeaderBackgroundBrush"] as SolidColorBrush;
             var foregroundBrush = Application.Current.Resources["SystemControlForegroundBaseHighBrush"] as SolidColorBrush;
@@ -111,6 +117,11 @@ namespace Unigram.Controls
 
         protected void UnmaskTitleAndStatusBar()
         {
+            if (Window.Current.Content is RootPage root)
+            {
+                root.PopupClosed();
+            }
+
             TLWindowContext.Current.UpdateTitleBar();
         }
 

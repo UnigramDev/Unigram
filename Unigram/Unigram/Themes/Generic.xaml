@@ -291,6 +291,10 @@
                 Value="1" />
         <Setter Property="MaxZoomFactor"
                 Value="4" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility"
+                Value="Hidden" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility"
+                Value="Hidden" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ZoomViewer">
