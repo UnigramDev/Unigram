@@ -194,6 +194,12 @@
                 </controls:CarouselViewer>
             </controls:ZoomViewer>
         </Grid>
+        <Border x:Name="TitleBar"
+                Background="Transparent"
+                VerticalAlignment="Top"
+                Margin="0,-40,0,0"
+                Height="40" />
+
         <controls:GlyphButton x:Name="BackButton"
                               Glyph="&#xE72B;"
                               Click="BackButton_Click"
