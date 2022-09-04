@@ -1823,19 +1823,12 @@ namespace Unigram.Views
 
         private void ShowHideSearch(bool show)
         {
-            if ((show && DialogsPanel.Visibility == Visibility.Collapsed) || (!show && (DialogsPanel.Visibility == Visibility.Visible || _searchCollapsed)))
+            if (_searchCollapsed != show)
             {
                 return;
             }
 
-            if (show)
-            {
-                _searchCollapsed = false;
-            }
-            else
-            {
-                _searchCollapsed = true;
-            }
+            _searchCollapsed = !show;
 
             FindName(nameof(DialogsSearchPanel));
             DialogsPanel.Visibility = Visibility.Visible;
@@ -2580,21 +2573,14 @@ namespace Unigram.Views
 
         private async void ShowHideArchive(bool show)
         {
-            if ((show && ArchivedChatsPresenter.Visibility == Visibility.Visible) || (!show && (ArchivedChatsPresenter.Visibility == Visibility.Collapsed || _archiveCollapsed)))
+            if (_archiveCollapsed != show)
             {
                 return;
             }
 
-            if (show)
-            {
-                _archiveCollapsed = false;
-            }
-            else
-            {
-                _archiveCollapsed = true;
-            }
-
+            _archiveCollapsed = show;
             ArchivedChatsPresenter.Visibility = Visibility.Visible;
+
             await ArchivedChatsPanel.UpdateLayoutAsync();
 
             var element = VisualTreeHelper.GetChild(ChatsList, 0) as UIElement;
@@ -2738,20 +2724,21 @@ namespace Unigram.Views
             UpdatePaneToggleButtonVisibility();
         }
 
+        private bool _manageCollapsed = true;
+
         private void ShowHideManagePanel(bool show)
         {
-            var manage = ElementCompositionPreview.GetElementVisual(ManagePanel);
-            var info = ElementCompositionPreview.GetElementVisual(MainHeader);
-
-            manage.StopAnimation("Offset");
-            manage.StopAnimation("Opacity");
-            info.StopAnimation("Offset");
-            info.StopAnimation("Opacity");
-
-            if ((show && MainHeader.Visibility == Visibility.Collapsed) || (!show && ManagePanel.Visibility == Visibility.Collapsed))
+            if (_manageCollapsed != show)
             {
                 return;
             }
+
+            _manageCollapsed = !show;
+            ManagePanel.Visibility = Visibility.Visible;
+            MainHeader.Visibility = Visibility.Visible;
+
+            var manage = ElementCompositionPreview.GetElementVisual(ManagePanel);
+            var info = ElementCompositionPreview.GetElementVisual(MainHeader);
 
             manage.Offset = new Vector3(show ? -32 : 0, 0, 0);
             manage.Opacity = show ? 0 : 1;

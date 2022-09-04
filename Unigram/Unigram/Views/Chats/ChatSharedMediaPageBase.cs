@@ -26,10 +26,13 @@ namespace Unigram.Views.Chats
         private CompositionPropertySet _properties;
 
         private readonly DispatcherTimer _dateHeaderTimer;
+        private Visual _dateHeaderPanel;
         private bool _dateHeaderCollapsed = true;
 
         public ChatSharedMediaPageBase()
         {
+            _dateHeaderPanel = ElementCompositionPreview.GetElementVisual(DateHeader);
+
             _dateHeaderTimer = new DispatcherTimer();
             _dateHeaderTimer.Interval = TimeSpan.FromMilliseconds(2000);
             _dateHeaderTimer.Tick += (s, args) =>
@@ -43,31 +46,21 @@ namespace Unigram.Views.Chats
 
         private void ShowHideDateHeader(bool show, bool animate)
         {
-            if ((show && DateHeader.Visibility == Visibility.Visible) || (!show && (DateHeader.Visibility == Visibility.Collapsed || _dateHeaderCollapsed)))
+            if (_dateHeaderCollapsed != show)
             {
                 return;
             }
 
-            if (show)
-            {
-                _dateHeaderCollapsed = false;
-            }
-            else
-            {
-                _dateHeaderCollapsed = true;
-            }
+            _dateHeaderCollapsed = !show;
+            DateHeader.Visibility = show || animate ? Visibility.Visible : Visibility.Collapsed;
 
             if (!animate)
             {
-                DateHeader.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
+                _dateHeaderPanel.Opacity = show ? 1 : 0;
                 return;
             }
 
-            DateHeader.Visibility = Visibility.Visible;
-
-            var visual = ElementCompositionPreview.GetElementVisual(DateHeader);
-
-            var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            var batch = _dateHeaderPanel.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
                 if (show)
@@ -80,11 +73,11 @@ namespace Unigram.Views.Chats
                 }
             };
 
-            var opacity = visual.Compositor.CreateScalarKeyFrameAnimation();
+            var opacity = _dateHeaderPanel.Compositor.CreateScalarKeyFrameAnimation();
             opacity.InsertKeyFrame(0, show ? 0 : 1);
             opacity.InsertKeyFrame(1, show ? 1 : 0);
 
-            visual.StartAnimation("Opacity", opacity);
+            _dateHeaderPanel.StartAnimation("Opacity", opacity);
 
             batch.End();
         }

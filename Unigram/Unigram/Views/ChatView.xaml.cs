@@ -3953,7 +3953,7 @@ namespace Unigram.Views
 
         private void ShowHideBotCommands(bool show)
         {
-            if ((show && ButtonMore.Visibility == Visibility.Visible) || (!show && (ButtonMore.Visibility == Visibility.Collapsed || _botCommandsCollapsed)))
+            if (_botCommandsCollapsed != show)
             {
                 return;
             }
@@ -4009,7 +4009,7 @@ namespace Unigram.Views
 
         private async void ShowHideAutocomplete(bool show)
         {
-            if ((show && ListAutocomplete.Visibility == Visibility.Visible && !_autocompleteCollapsed) || (!show && (ListAutocomplete.Visibility == Visibility.Collapsed || _autocompleteCollapsed)))
+            if (_autocompleteCollapsed != show)
             {
                 return;
             }

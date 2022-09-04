@@ -287,28 +287,19 @@ namespace Unigram.Views
 
         private void ShowHideDateHeader(bool show, bool animate)
         {
-            if ((show && DateHeaderPanel.Visibility == Visibility.Visible) || (!show && (DateHeaderPanel.Visibility == Visibility.Collapsed || _dateHeaderCollapsed)))
+            if (_dateHeaderCollapsed != show)
             {
                 return;
             }
 
-            if (show)
-            {
-                _dateHeaderCollapsed = false;
-            }
-            else
-            {
-                _dateHeaderCollapsed = true;
-            }
+            _dateHeaderCollapsed = !show;
+            DateHeaderPanel.Visibility = show || animate ? Visibility.Visible : Visibility.Collapsed;
 
             if (!animate)
             {
                 _dateHeaderPanel.Opacity = show ? 1 : 0;
-                DateHeaderPanel.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
                 return;
             }
-
-            DateHeaderPanel.Visibility = Visibility.Visible;
 
             var batch = _dateHeaderPanel.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>

@@ -208,20 +208,12 @@ namespace Unigram.Controls.Messages
 
         private void ShowHide(bool show)
         {
-            if ((show && Visibility == Visibility.Visible) || (!show && (Visibility == Visibility.Collapsed || _collapsed)))
+            if (_collapsed != show)
             {
                 return;
             }
 
-            if (show)
-            {
-                _collapsed = false;
-            }
-            else
-            {
-                _collapsed = true;
-            }
-
+            _collapsed = !show;
             Visibility = Visibility.Visible;
 
             var parent = ElementCompositionPreview.GetElementVisual(_parent);

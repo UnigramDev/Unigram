@@ -1,7 +1,6 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using Unigram.Collections;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
@@ -159,18 +158,14 @@ namespace Unigram.Controls
 
         private bool _backgroundCollapsed;
 
-        // CORRECT SHOWHIDE IMPLEMENTATION
         public void ShowHideBackground(bool show, bool animate)
         {
-            if (BackgroundPart == null)
+            if (_backgroundCollapsed != show || BackgroundPart == null)
             {
                 return;
             }
 
-            if ((show && BackgroundPart.Visibility == Visibility.Visible && !_backgroundCollapsed) || (!show && (BackgroundPart.Visibility == Visibility.Collapsed || _backgroundCollapsed)))
-            {
-                return;
-            }
+            _backgroundCollapsed = !show;
 
             var visual = ElementCompositionPreview.GetElementVisual(BackgroundPart);
             var border = ElementCompositionPreview.GetElementVisual(BorderPart);
@@ -178,7 +173,6 @@ namespace Unigram.Controls
 
             if (animate)
             {
-                _backgroundCollapsed = !show;
                 BackgroundPart.Visibility = Visibility.Visible;
                 BorderPart.Visibility = Visibility.Visible;
                 DetailHeaderPresenter.Visibility = Visibility.Visible;
@@ -214,8 +208,6 @@ namespace Unigram.Controls
             }
             else
             {
-                _backgroundCollapsed = !show;
-
                 visual.Opacity = show ? 1 : 0;
                 border.Opacity = show ? 1 : 0;
                 bread.Opacity = show ? 0 : 1;
