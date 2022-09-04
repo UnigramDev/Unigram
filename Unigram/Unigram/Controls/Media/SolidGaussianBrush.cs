@@ -1,6 +1,5 @@
 ﻿using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
-using Unigram.Common;
 using Windows.System;
 using Windows.System.Power;
 using Windows.UI;
@@ -87,11 +86,20 @@ namespace Unigram.Controls.Media
                 m_isDisabledByPolicy = isDisabledByPolicy;
                 UpdateBrush();
             }
+            else
+            {
+                m_isDisabledByPolicy = isDisabledByPolicy;
+            }
         }
 
         private void UpdateBrush()
         {
             if (m_isDisabledByPolicy && m_brush is CompositionEffectBrush)
+            {
+                m_brush.Dispose();
+                m_brush = null;
+            }
+            else if (m_brush is CompositionColorBrush && !m_isDisabledByPolicy)
             {
                 m_brush.Dispose();
                 m_brush = null;
