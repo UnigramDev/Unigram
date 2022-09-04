@@ -2,7 +2,6 @@
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Converters;
-using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -216,10 +215,7 @@ namespace Unigram.Controls.Messages.Content
                 }
                 else
                 {
-                    if (message.Delegate.CanBeDownloaded(video, file))
-                    {
-                        UpdateSource(message, file, video.Duration);
-                    }
+                    UpdateSource(message, file, video.Duration);
 
                     Button.SetGlyph(file.Id, message.SendingState is MessageSendingStatePending && message.MediaAlbumId != 0 ? MessageContentState.Confirm : MessageContentState.Play);
                     Button.Progress = 0;
