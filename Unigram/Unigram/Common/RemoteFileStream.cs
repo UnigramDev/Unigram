@@ -22,6 +22,8 @@ namespace Unigram.Common
         private IRandomAccessStream _fileStream;
         private string _filePath;
 
+        private bool _disposed;
+
         public RemoteFileStream(IProtoService protoService, File file, int duration)
         {
             _protoService = protoService;
@@ -56,6 +58,11 @@ namespace Unigram.Common
                 {
                     _source.ReadCallback((int)count);
 
+                    if (_disposed)
+                    {
+                        return BufferSurface.Create(0);
+                    }
+
                     var path = _file.Local.Path;
                     if (path.Length > 0 && !_source.IsCanceled && (_fileStream == null || _filePath != path))
                     {
@@ -71,7 +78,7 @@ namespace Unigram.Common
                     }
                     else if (_fileStream == null)
                     {
-                        throw new InvalidOperationException();
+                        return BufferSurface.Create(0);
                     }
 
                     _fileStream.Seek((ulong)_source.Offset);
@@ -81,15 +88,17 @@ namespace Unigram.Common
 
         public void Dispose()
         {
-            if (_source != null)
+            _disposed = true;
+
+            if (_source.Wait())
             {
                 _source.Dispose();
-            }
 
-            if (_fileStream != null)
-            {
-                _fileStream.Dispose();
-                _fileStream = null;
+                if (_fileStream != null)
+                {
+                    _fileStream.Dispose();
+                    _fileStream = null;
+                }
             }
         }
 
@@ -156,6 +165,8 @@ namespace Unigram.Common
                 UpdateManager.Subscribe(this, protoService, file, UpdateFile);
             }
         }
+
+        public bool Wait() => _readLock.Wait(0);
 
         public void SeekCallback(long offset)
         {
