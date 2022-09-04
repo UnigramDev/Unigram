@@ -196,7 +196,7 @@ namespace Unigram.ViewModels.Chats
 
                 if (stats != null)
                 {
-                    Items.ReplaceWith(stats.Where(x => x != null));
+                    Items.ReplaceWith(stats.Where(x => x?.chartData != null || x?.token != null));
                 }
                 else
                 {

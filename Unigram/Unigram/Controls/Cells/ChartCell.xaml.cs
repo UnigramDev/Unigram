@@ -26,6 +26,15 @@ namespace Unigram.Controls.Cells
 
         public void UpdateData(ChartViewData data)
         {
+            if (data?.chartData == null)
+            {
+                LayoutRoot.Children.Clear();
+                CheckPanel.Children.Clear();
+
+                Visibility = Visibility.Collapsed;
+                return;
+            }
+
             //if (args.ItemIndex != _loadIndex)
             //{
             //    root.Header = data.title;

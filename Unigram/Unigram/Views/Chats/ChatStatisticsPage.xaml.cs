@@ -43,13 +43,14 @@ namespace Unigram.Views.Chats
 
         private async void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
-            if (args.InRecycleQueue)
-            {
-                return;
-            }
-
             var root = args.ItemContainer.ContentTemplateRoot as ChartCell;
             var data = args.Item as ChartViewData;
+
+            if (args.InRecycleQueue)
+            {
+                root.UpdateData(null);
+                return;
+            }
 
             var header = root.Items[0] as ChartHeaderView;
             var border = root.Items[1] as AspectView;
@@ -67,15 +68,17 @@ namespace Unigram.Views.Chats
 
             if (data.token != null && data.chartData == null)
             {
-                var result = await data.LoadAsync(ViewModel.ProtoService, ViewModel.Chat.Id);
-
-                if (!result)
-                {
-                    return;
-                }
+                await data.LoadAsync(ViewModel.ProtoService, ViewModel.Chat.Id);
             }
 
-            root.UpdateData(data);
+            if (data.chartData == null)
+            {
+                ViewModel.Items.Remove(data);
+            }
+            else
+            {
+                root.UpdateData(data);
+            }
         }
 
         private async void OnElementPrepared(Microsoft.UI.Xaml.Controls.ItemsRepeater sender, Microsoft.UI.Xaml.Controls.ItemsRepeaterElementPreparedEventArgs args)
