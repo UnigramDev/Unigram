@@ -190,7 +190,7 @@ namespace Unigram.Common
             return (long)(dateTime.ToUniversalTime() - dtDateTime).TotalMilliseconds;
         }
 
-        public static bool TryGet<T>(this ResourceDictionary dict, object key, out T value)
+        public static bool TryGet<T>(this IDictionary<object, object> dict, object key, out T value)
         {
             bool success;
             if (success = dict.TryGetValue(key, out object tryGetValue))

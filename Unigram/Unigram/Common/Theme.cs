@@ -8,6 +8,7 @@ using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
+using AcrylicBrush = Microsoft.UI.Xaml.Media.AcrylicBrush;
 
 namespace Unigram.Common
 {
@@ -47,88 +48,33 @@ namespace Unigram.Common
             }
             catch { }
 
-            MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/ThemeGreen.xaml") });
-
             if (main)
             {
-                Initialize();
+                Update(ApplicationTheme.Light);
+                Update(ApplicationTheme.Dark);
             }
         }
+
+        public Color Accent { get; private set; } = Colors.Red;
 
         public ChatTheme ChatTheme => _lastTheme;
 
-        public void Initialize()
+        public void Update(ElementTheme requested)
         {
-            var theme = SettingsService.Current.Appearance.GetCalculatedApplicationTheme();
-            Initialize(theme == ApplicationTheme.Light ? TelegramTheme.Dark : TelegramTheme.Light);
-            Initialize(theme);
-        }
-
-        public void Initialize(ApplicationTheme requested)
-        {
-            Initialize(requested == ApplicationTheme.Dark ? TelegramTheme.Dark : TelegramTheme.Light);
-        }
-
-        public void Initialize(ElementTheme requested)
-        {
-            Initialize(requested == ElementTheme.Dark ? TelegramTheme.Dark : TelegramTheme.Light);
-        }
-
-        public void Initialize(TelegramTheme requested)
-        {
-            var settings = SettingsService.Current.Appearance;
-            if (settings.ChatTheme != null)
-            {
-                Update(requested, settings.ChatTheme);
-            }
-            else if (settings[requested].Type == TelegramThemeType.Custom && System.IO.File.Exists(settings[requested].Custom))
-            {
-                Update(ThemeCustomInfo.FromFile(settings[requested].Custom));
-            }
-            else if (ThemeAccentInfo.IsAccent(settings[requested].Type))
-            {
-                Update(ThemeAccentInfo.FromAccent(settings[requested].Type, settings.Accents[settings[requested].Type]));
-            }
-            else
-            {
-                Update(requested);
-            }
-        }
-
-        // This is for global theme
-        private void Update(TelegramTheme requested, ChatTheme theme)
-        {
-            var settings = requested == TelegramTheme.Light ? theme?.LightSettings : theme?.DarkSettings;
-
-            var tint = SettingsService.Current.Appearance[requested].Type;
-            if (tint == TelegramThemeType.Classic || (tint == TelegramThemeType.Custom && requested == TelegramTheme.Light))
-            {
-                tint = TelegramThemeType.Day;
-            }
-            else if (tint == TelegramThemeType.Custom)
-            {
-                tint = TelegramThemeType.Tinted;
-            }
-
-            var accent = settings.AccentColor.ToColor();
-            var outgoing = settings.OutgoingMessageAccentColor.ToColor();
-
-            Update(ThemeAccentInfo.FromAccent(tint, accent, outgoing));
-        }
-
-        public void Initialize(string path)
-        {
-            Update(ThemeCustomInfo.FromFile(path));
+            Update(requested == ElementTheme.Light
+                ? ApplicationTheme.Light
+                : ApplicationTheme.Dark);
         }
 
         public ThemeParameters Parameters { get; private set; }
+
+        #region Local 
 
         private int? _lastAccent;
         private long? _lastBackground;
 
         private ChatTheme _lastTheme;
 
-        // This is for chat specific theme
         public bool Update(ElementTheme elementTheme, ChatTheme theme)
         {
             var updated = false;
@@ -203,43 +149,74 @@ namespace Unigram.Common
             return updated;
         }
 
-        public void Update(ThemeInfoBase info)
+        #endregion
+
+        #region Global
+
+        private void Update(ApplicationTheme theme)
         {
-            if (info is ThemeCustomInfo custom)
+            var settings = SettingsService.Current.Appearance;
+            var requested = theme == ApplicationTheme.Light
+                ? TelegramTheme.Light
+                : TelegramTheme.Dark;
+
+            if (settings.ChatTheme != null)
             {
-                Update(info.Parent, custom);
+                Update(requested, settings.ChatTheme);
             }
-            else if (info is ThemeAccentInfo colorized)
+            else if (settings[requested].Type == TelegramThemeType.Custom && System.IO.File.Exists(settings[requested].Custom))
             {
-                Update(info.Parent, colorized);
+                Update(ThemeCustomInfo.FromFile(settings[requested].Custom));
+            }
+            else if (ThemeAccentInfo.IsAccent(settings[requested].Type))
+            {
+                Update(ThemeAccentInfo.FromAccent(settings[requested].Type, settings.Accents[settings[requested].Type]));
             }
             else
             {
-                Update(info.Parent);
+                Update(requested);
             }
         }
 
-        private void Update(TelegramTheme requested, ThemeAccentInfo info = null)
+        private void Update(TelegramTheme requested, ChatTheme theme)
+        {
+            var settings = requested == TelegramTheme.Light ? theme?.LightSettings : theme?.DarkSettings;
+
+            var tint = SettingsService.Current.Appearance[requested].Type;
+            if (tint == TelegramThemeType.Classic || (tint == TelegramThemeType.Custom && requested == TelegramTheme.Light))
+            {
+                tint = TelegramThemeType.Day;
+            }
+            else if (tint == TelegramThemeType.Custom)
+            {
+                tint = TelegramThemeType.Tinted;
+            }
+
+            var accent = settings.AccentColor.ToColor();
+            var outgoing = settings.OutgoingMessageAccentColor.ToColor();
+
+            Update(ThemeAccentInfo.FromAccent(tint, accent, outgoing));
+        }
+
+        public void Update(string path)
+        {
+            Update(ThemeCustomInfo.FromFile(path));
+        }
+
+        public void Update(ThemeAccentInfo info)
+        {
+            Update(info.Parent, info.Values, info.Shades);
+        }
+
+        private void Update(TelegramTheme requested, IDictionary<string, Color> values = null, IDictionary<AccentShade, Color> shades = null)
         {
             try
             {
-                ThemeOutgoing.Update(requested, info?.Values);
-                ThemeIncoming.Update(requested, info?.Values);
+                ThemeOutgoing.Update(requested, values);
+                ThemeIncoming.Update(requested, values);
 
-                var values = info?.Values;
-                var shades = info?.Shades;
-
-                var target = MergedDictionaries[0].ThemeDictionaries[requested == TelegramTheme.Light ? "Light" : "Dark"] as ResourceDictionary;
+                var target = GetOrCreateResources(requested, out bool create);
                 var lookup = ThemeService.GetLookup(requested);
-
-                if (shades != null && shades.TryGetValue(AccentShade.Default, out Color accentResource))
-                {
-                    target["Accent"] = accentResource;
-                }
-                else
-                {
-                    target["Accent"] = ThemeInfoBase.Accents[TelegramThemeType.Day][AccentShade.Default];
-                }
 
                 Color GetShade(AccentShade shade)
                 {
@@ -253,49 +230,67 @@ namespace Unigram.Common
                     }
                 }
 
+                Accent = GetShade(AccentShade.Default);
+
                 foreach (var item in lookup)
                 {
-                    if (target.TryGetValue(item.Key, out object resource))
+                    if (item.Value is AccentShade or Color)
                     {
-                        if (resource is SolidColorBrush brush)
+                        Color value;
+                        if (item.Value is AccentShade shade)
                         {
-                            Color value;
-                            if (item.Value is AccentShade shade)
-                            {
-                                value = GetShade(shade);
-                            }
-                            else if (values != null && values.TryGetValue(item.Key, out Color themed))
-                            {
-                                value = themed;
-                            }
-                            else if (item.Value is Color color)
-                            {
-                                value = color;
-                            }
+                            value = GetShade(shade);
+                        }
+                        else if (values != null && values.TryGetValue(item.Key, out Color themed))
+                        {
+                            value = themed;
+                        }
+                        else if (item.Value is Color color)
+                        {
+                            value = color;
+                        }
 
-                            if (brush.Color != value)
-                            {
-                                brush.Color = value;
-                            }
-                        }
-                        else if (resource is Microsoft.UI.Xaml.Media.AcrylicBrush acrylicBrush)
-                        {
-                            if (item.Value is Acrylic<Color> acrylicColor)
-                            {
-                                acrylicBrush.TintColor = acrylicColor.TintColor;
-                                acrylicBrush.TintOpacity = acrylicColor.TintOpacity;
-                                acrylicBrush.TintLuminosityOpacity = acrylicColor.TintLuminosityOpacity;
-                                acrylicBrush.FallbackColor = acrylicColor.FallbackColor;
-                            }
-                            else if (item.Value is Acrylic<AccentShade> acrylicShade)
-                            {
-                                acrylicBrush.TintColor = GetShade(acrylicShade.TintColor);
-                                acrylicBrush.TintOpacity = acrylicShade.TintOpacity;
-                                acrylicBrush.TintLuminosityOpacity = acrylicShade.TintLuminosityOpacity;
-                                acrylicBrush.FallbackColor = GetShade(acrylicShade.FallbackColor);
-                            }
-                        }
+                        AddOrUpdate<SolidColorBrush>(target, item.Key, create,
+                            update => update.Color = value);
                     }
+                    else
+                    {
+                        Color tintColor;
+                        double tintOpacity;
+                        double? tintLuminosityOpacity;
+                        Color fallbackColor;
+                        if (item.Value is Acrylic<Color> acrylicColor)
+                        {
+                            tintColor = acrylicColor.TintColor;
+                            tintOpacity = acrylicColor.TintOpacity;
+                            tintLuminosityOpacity = acrylicColor.TintLuminosityOpacity;
+                            fallbackColor = acrylicColor.FallbackColor;
+                        }
+                        else if (item.Value is Acrylic<AccentShade> acrylicShade)
+                        {
+                            tintColor = GetShade(acrylicShade.TintColor);
+                            tintOpacity = acrylicShade.TintOpacity;
+                            tintLuminosityOpacity = acrylicShade.TintLuminosityOpacity;
+                            fallbackColor = GetShade(acrylicShade.FallbackColor);
+                        }
+                        else
+                        {
+                            continue;
+                        }
+
+                        AddOrUpdate<AcrylicBrush>(target, item.Key, create, update =>
+                        {
+                            update.TintColor = tintColor;
+                            update.TintOpacity = tintOpacity;
+                            update.TintLuminosityOpacity = tintLuminosityOpacity;
+                            update.FallbackColor = fallbackColor;
+                        });
+                    }
+                }
+
+                if (create)
+                {
+                    ThemeDictionaries.Add(requested == TelegramTheme.Light ? "Light" : "Dark", target);
                 }
 
                 int GetColor(string key)
@@ -332,6 +327,36 @@ namespace Unigram.Common
             }
         }
 
+        private void AddOrUpdate<T>(ResourceDictionary target, string key, bool create, Action<T> callback) where T : new()
+        {
+            if (create)
+            {
+                var value = new T();
+                callback(value);
+                target[key] = value;
+            }
+            else if (target.TryGet(key, out T update))
+            {
+                callback(update);
+            }
+        }
+
+        private ResourceDictionary GetOrCreateResources(TelegramTheme requested, out bool create)
+        {
+            if (ThemeDictionaries.TryGet(requested == TelegramTheme.Light ? "Light" : "Dark", out ResourceDictionary target))
+            {
+                create = false;
+            }
+            else
+            {
+                create = true;
+                target = new ResourceDictionary();
+            }
+
+            return target;
+        }
+
+        #endregion
 
         #region Settings
 

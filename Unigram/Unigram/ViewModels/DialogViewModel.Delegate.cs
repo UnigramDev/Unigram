@@ -183,18 +183,16 @@ namespace Unigram.ViewModels
 
         public async void OpenFile(File file)
         {
-            if (file.Local.IsDownloadingCompleted)
+            var local = await ProtoService.GetFileAsync(file);
+            if (local != null)
             {
                 if (file.Local.Path.EndsWith(".unigram-theme"))
                 {
-                    await new ThemePreviewPopup(file.Local.Path).ShowQueuedAsync();
-                    return;
+                    await new ThemePreviewPopup(local).ShowQueuedAsync();
                 }
-
-                var temp = await ProtoService.GetFileAsync(file);
-                if (temp != null)
+                else
                 {
-                    await Windows.System.Launcher.LaunchFileAsync(temp);
+                    await Windows.System.Launcher.LaunchFileAsync(local);
                 }
             }
         }

@@ -14,6 +14,7 @@ using Windows.ApplicationModel.Contacts;
 using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
+using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -338,7 +339,10 @@ namespace Unigram.Common
                     service.NavigateToMain(string.Empty);
                 }
 
-                await new ThemePreviewPopup(file.Files[0].Path).ShowQueuedAsync();
+                if (file.Files[0] is StorageFile item)
+                {
+                    await new ThemePreviewPopup(item).ShowQueuedAsync();
+                }
             }
             else
             {
