@@ -39,14 +39,6 @@ namespace Unigram.Controls.Chats
         public ChatTextBox()
         {
             DefaultStyleKey = typeof(ChatTextBox);
-
-            if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
-            {
-                return;
-            }
-
-            //Clipboard.ContentChanged += Clipboard_ContentChanged;
-
             TextChanged += OnTextChanged;
         }
 
