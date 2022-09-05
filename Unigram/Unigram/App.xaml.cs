@@ -80,7 +80,7 @@ namespace Unigram
 
             UnhandledException += (s, args) =>
             {
-                args.Handled = true;
+                args.Handled = args.Exception is not LayoutCycleException;
                 Client.Execute(new AddLogMessage(1, "Unhandled exception:\n" + args.Exception.ToString()));
             };
 

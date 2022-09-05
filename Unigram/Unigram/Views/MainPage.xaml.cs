@@ -2578,7 +2578,7 @@ namespace Unigram.Views
                 return;
             }
 
-            _archiveCollapsed = show;
+            _archiveCollapsed = !show;
             ArchivedChatsPresenter.Visibility = Visibility.Visible;
 
             await ArchivedChatsPanel.UpdateLayoutAsync();
