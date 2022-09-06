@@ -390,6 +390,11 @@ namespace Unigram.Services
 
         public void Play()
         {
+            if (CurrentPlayback is PlaybackItem item)
+            {
+                PlaybackRate = item.CanChangePlaybackRate ? _settingsService.Playback.PlaybackRate : 1;
+            }
+
             Execute(player =>
             {
                 player.Play();
@@ -527,15 +532,6 @@ namespace Unigram.Services
             Dispose(false);
             Create();
 
-            if (message.Content is not MessageAudio)
-            {
-                PlaybackRate = 1;
-            }
-            else
-            {
-                PlaybackRate = _settingsService.Playback.PlaybackRate;
-            }
-
             var item = GetPlaybackItem(message);
             var items = _items = new List<PlaybackItem>();
 
@@ -592,12 +588,13 @@ namespace Unigram.Services
             var token = $"{message.ChatId}_{message.Id}";
             var file = message.GetFile();
 
-            var source = CreateMediaSource(message, file);
+            var source = CreateMediaSource(message, file, out bool speed);
             var item = new PlaybackItem(source)
             {
                 File = file,
                 Message = message,
-                Token = token
+                Token = token,
+                CanChangePlaybackRate = speed
             };
 
             if (message.Content is MessageAudio audio)
@@ -622,12 +619,9 @@ namespace Unigram.Services
             return item;
         }
 
-        private MediaSource CreateMediaSource(MessageWithOwner message, File file)
+        private MediaSource CreateMediaSource(MessageWithOwner message, File file, out bool speed)
         {
-            var token = $"{message.ChatId}_{message.Id}";
-
-            var mime = GetMimeType(message);
-            var duration = GetDuration(message);
+            GetProperties(message, out string mime, out int duration, out speed);
 
             var stream = new RemoteFileStream(message.ProtoService, file, duration);
             var source = MediaSource.CreateFromStream(stream, mime);
@@ -635,75 +629,56 @@ namespace Unigram.Services
             source.CustomProperties["file"] = file.Id;
             source.CustomProperties["message"] = message.Id;
             source.CustomProperties["chat"] = message.ChatId;
-            source.CustomProperties["token"] = token;
+            source.CustomProperties["token"] = $"{message.ChatId}_{message.Id}";
 
             return source;
         }
 
-        private string GetMimeType(MessageWithOwner message)
+        private void GetProperties(MessageWithOwner message, out string mimeType, out int duration, out bool speed)
         {
+            mimeType = null;
+            duration = 0;
+            speed = false;
+
             if (message.Content is MessageAudio audio)
             {
-                return audio.Audio.MimeType;
+                mimeType = audio.Audio.MimeType;
+                duration = audio.Audio.Duration;
+                speed = duration >= 10 * 60;
             }
             else if (message.Content is MessageVoiceNote voiceNote)
             {
-                return voiceNote.VoiceNote.MimeType;
-            }
-            else if (message.Content is MessageVideoNote)
-            {
-                return "video/mp4";
-            }
-            else if (message.Content is MessageText text && text.WebPage != null)
-            {
-                if (text.WebPage.Audio != null)
-                {
-                    return text.WebPage.Audio.MimeType;
-                }
-                else if (text.WebPage.VoiceNote != null)
-                {
-                    return text.WebPage.VoiceNote.MimeType;
-                }
-                else if (text.WebPage.VideoNote != null)
-                {
-                    return "video/mp4";
-                }
-            }
-
-            return null;
-        }
-
-        private int GetDuration(MessageWithOwner message)
-        {
-            if (message.Content is MessageAudio audio)
-            {
-                return audio.Audio.Duration;
-            }
-            else if (message.Content is MessageVoiceNote voiceNote)
-            {
-                return voiceNote.VoiceNote.Duration;
+                mimeType = voiceNote.VoiceNote.MimeType;
+                duration = voiceNote.VoiceNote.Duration;
+                speed = true;
             }
             else if (message.Content is MessageVideoNote videoNote)
             {
-                return videoNote.VideoNote.Duration;
+                mimeType = "video/mp4";
+                duration = videoNote.VideoNote.Duration;
+                speed = true;
             }
             else if (message.Content is MessageText text && text.WebPage != null)
             {
                 if (text.WebPage.Audio != null)
                 {
-                    return text.WebPage.Audio.Duration;
+                    mimeType = text.WebPage.Audio.MimeType;
+                    duration = text.WebPage.Audio.Duration;
+                    speed = duration >= 10 * 60;
                 }
                 else if (text.WebPage.VoiceNote != null)
                 {
-                    return text.WebPage.VoiceNote.Duration;
+                    mimeType = text.WebPage.VoiceNote.MimeType;
+                    duration = text.WebPage.VoiceNote.Duration;
+                    speed = true;
                 }
                 else if (text.WebPage.VideoNote != null)
                 {
-                    return text.WebPage.VideoNote.Duration;
+                    mimeType = "video/mp4";
+                    duration = text.WebPage.VideoNote.Duration;
+                    speed = true;
                 }
             }
-
-            return 0;
         }
 
         private void Dispose(bool full)
@@ -783,6 +758,8 @@ namespace Unigram.Services
 
         public string Title { get; set; }
         public string Artist { get; set; }
+
+        public bool CanChangePlaybackRate { get; set; }
 
         public PlaybackItem(MediaSource source)
         {
