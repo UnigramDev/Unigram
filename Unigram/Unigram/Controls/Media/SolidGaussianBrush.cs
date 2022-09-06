@@ -16,7 +16,7 @@ namespace Unigram.Controls.Media
         private bool m_isDisabledByPolicy;
         private CompositionBrush m_brush;
 
-        private bool m_energySaverStatusChangedRevokerValid;
+        private readonly bool m_energySaverStatusChangedRevokerValid;
         private readonly CompositionCapabilities m_compositionCapabilities;
         private readonly UISettings m_uiSettings;
 

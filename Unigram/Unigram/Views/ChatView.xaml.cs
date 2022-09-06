@@ -84,7 +84,7 @@ namespace Unigram.Views
         private readonly AnimatedListHandler _autocompleteHandler;
 
         private TaskCompletionSource<bool> _updateThemeTask;
-        private TaskCompletionSource<bool> _loadedThemeTask;
+        private readonly TaskCompletionSource<bool> _loadedThemeTask;
 
         private ChatBackgroundPresenter _backgroundPresenter;
 

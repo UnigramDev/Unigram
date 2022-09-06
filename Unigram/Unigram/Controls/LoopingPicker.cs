@@ -14,7 +14,7 @@ namespace Unigram.Controls
 
         private TextBlock ValueText;
 
-        private int _digits = 2;
+        private readonly int _digits = 2;
 
         public LoopingPicker()
         {

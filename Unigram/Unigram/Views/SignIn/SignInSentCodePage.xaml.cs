@@ -65,7 +65,7 @@ namespace Unigram.Views.SignIn
 
         #endregion
 
-        private State _current;
+        private readonly State _current;
         private State _next;
         private double _stop;
 

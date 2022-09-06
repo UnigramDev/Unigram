@@ -610,7 +610,7 @@ namespace Unigram.Views
             _drawable.Draw(sender, args.DrawingSession);
         }
 
-        private ScrollViewer _scrollingHost;
+        private readonly ScrollViewer _scrollingHost;
 
         private bool _bottomRootCollapsed;
 

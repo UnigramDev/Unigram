@@ -14,7 +14,7 @@ namespace Unigram.Controls.Chats
 {
     public class ChatBackgroundRenderer : IndividualAnimatedControl<object>
     {
-        private SemaphoreSlim _additionalResourcesLock = new(1, 1);
+        private readonly SemaphoreSlim _additionalResourcesLock = new(1, 1);
 
         private CanvasBitmap _pattern;
         private string _patternPath;
