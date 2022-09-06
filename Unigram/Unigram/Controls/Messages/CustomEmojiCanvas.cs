@@ -461,12 +461,12 @@ namespace Unigram.Controls.Messages
             private object _animation;
             private IBuffer _buffer;
 
-            private int _size;
+            private readonly int _size;
 
             private int _animationTotalFrame;
             private double _animationFrameRate;
 
-            private bool _limitFps = true;
+            private readonly bool _limitFps = true;
 
             private int _index;
             private double _step;

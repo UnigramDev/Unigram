@@ -211,7 +211,7 @@ namespace Unigram.Services
         private bool _initializeAfterClose;
 
         private static volatile Task _longRunningTask;
-        private static volatile object _longRunningLock = new object();
+        private static readonly object _longRunningLock = new object();
 
         public ProtoService(int session, bool online, IDeviceInfoService deviceInfoService, ISettingsService settings, ILocaleService locale, IEventAggregator aggregator)
         {

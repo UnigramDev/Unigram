@@ -75,8 +75,8 @@ namespace Unigram.Services.Settings
         private int? _lastUpdateVersion;
         public int LastUpdateVersion
         {
-            get => _lastErrorVersion ??= GetValueOrDefault("LastUpdateVersion", 0);
-            set => AddOrUpdateValue(ref _lastErrorVersion, "LastUpdateVersion", value);
+            get => _lastUpdateVersion ??= GetValueOrDefault("LastUpdateVersion", 0);
+            set => AddOrUpdateValue(ref _lastUpdateVersion, "LastUpdateVersion", value);
         }
 
         private int? _lastUpdateTime;

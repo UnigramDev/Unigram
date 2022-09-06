@@ -29,7 +29,7 @@ namespace Unigram.Controls
         protected bool _active = true;
         protected bool _visible = true;
 
-        private bool _autoPause;
+        private readonly bool _autoPause;
 
         protected CanvasImageSource _surface;
         protected CanvasBitmap _bitmap;

@@ -11,7 +11,7 @@ namespace Unigram.Controls.Messages.Content
 {
     public sealed class PhotoContent : Control, IContentWithFile
     {
-        private bool _album;
+        private readonly bool _album;
 
         private MessageViewModel _message;
         public MessageViewModel Message => _message;

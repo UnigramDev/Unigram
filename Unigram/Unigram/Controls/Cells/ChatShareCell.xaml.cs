@@ -156,8 +156,8 @@ namespace Unigram.Controls.Cells
 
         #region Selection Animation
 
-        private Visual _selectionOutline;
-        private Visual _selectionPhoto;
+        private readonly Visual _selectionOutline;
+        private readonly Visual _selectionPhoto;
 
         private CompositionPathGeometry _polygon;
         private CompositionSpriteShape _ellipse;

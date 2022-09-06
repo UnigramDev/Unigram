@@ -61,7 +61,7 @@ namespace Unigram.Services
         private readonly DisposableMutex _registrationLock;
         private bool _alreadyRegistered;
 
-        private bool? _suppress;
+        private readonly bool? _suppress;
 
         public NotificationsService(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, ISessionService sessionService, IEventAggregator aggregator)
         {
