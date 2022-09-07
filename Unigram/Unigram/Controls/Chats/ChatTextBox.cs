@@ -719,7 +719,7 @@ namespace Unigram.Controls.Chats
 
             Sending?.Invoke(this, EventArgs.Empty);
 
-            var options = new MessageSendOptions(disableNotification, false, false, null);
+            var options = new MessageSendOptions(disableNotification, false, false, false, null);
 
             var text = GetFormattedText(true);
             await ViewModel.SendMessageAsync(text, options);

@@ -116,7 +116,7 @@ namespace Unigram.ViewModels
             }
             else
             {
-                ProtoService.SendAsync(new SetMessageReaction(message.ChatId, message.Id, CacheService.Options.DefaultReaction, false));
+                ProtoService.SendAsync(new SetMessageReaction(message.ChatId, message.Id, CacheService.DefaultReaction, false, false));
             }
         }
 

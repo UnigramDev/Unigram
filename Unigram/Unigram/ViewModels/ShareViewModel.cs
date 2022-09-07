@@ -364,7 +364,7 @@ namespace Unigram.ViewModels
             {
                 foreach (var chat in chats)
                 {
-                    var response = await ProtoService.SendAsync(new SendMessage(chat.Id, 0, 0, new MessageSendOptions(false, false, false, null), null, new InputMessageText(_caption, false, false)));
+                    var response = await ProtoService.SendAsync(new SendMessage(chat.Id, 0, 0, null, null, new InputMessageText(_caption, false, false)));
                 }
             }
 
@@ -374,7 +374,7 @@ namespace Unigram.ViewModels
                 {
                     if (IsWithMyScore)
                     {
-                        var response = await ProtoService.SendAsync(new SendMessage(chat.Id, 0, 0, new MessageSendOptions(false, false, false, null), null, new InputMessageForwarded(_messages[0].ChatId, _messages[0].Id, true, new MessageCopyOptions(false, false, null))));
+                        var response = await ProtoService.SendAsync(new SendMessage(chat.Id, 0, 0, null, null, new InputMessageForwarded(_messages[0].ChatId, _messages[0].Id, true, new MessageCopyOptions(false, false, null))));
                     }
                     else
                     {
@@ -386,7 +386,7 @@ namespace Unigram.ViewModels
                             album = first.MediaAlbumId != 0 && _messages.All(x => x.MediaAlbumId == first.MediaAlbumId);
                         }
 
-                        var response = await ProtoService.SendAsync(new ForwardMessages(chat.Id, _messages[0].ChatId, _messages.Select(x => x.Id).ToList(), new MessageSendOptions(false, false, false, null), _sendAsCopy || _removeCaptions, _removeCaptions, false));
+                        var response = await ProtoService.SendAsync(new ForwardMessages(chat.Id, _messages[0].ChatId, _messages.Select(x => x.Id).ToList(), null, _sendAsCopy || _removeCaptions, _removeCaptions, false));
                     }
                 }
 
@@ -396,7 +396,7 @@ namespace Unigram.ViewModels
             {
                 foreach (var chat in chats)
                 {
-                    var response = await ProtoService.SendAsync(new SendMessage(chat.Id, 0, 0, new MessageSendOptions(false, false, false, null), null, _inputMedia));
+                    var response = await ProtoService.SendAsync(new SendMessage(chat.Id, 0, 0, null, null, _inputMedia));
                 }
 
                 //NavigationService.GoBack();
@@ -407,7 +407,7 @@ namespace Unigram.ViewModels
 
                 foreach (var chat in chats)
                 {
-                    var response = await ProtoService.SendAsync(new SendMessage(chat.Id, 0, 0, new MessageSendOptions(false, false, false, null), null, new InputMessageText(formatted, false, false)));
+                    var response = await ProtoService.SendAsync(new SendMessage(chat.Id, 0, 0, null, null, new InputMessageText(formatted, false, false)));
                 }
 
                 //NavigationService.GoBack();
@@ -476,7 +476,7 @@ namespace Unigram.ViewModels
 
                     foreach (var chat in chats)
                     {
-                        await ProtoService.SendAsync(new SendMessage(chat.Id, 0, 0, new MessageSendOptions(false, false, false, null), null, new InputMessageText(formatted, false, false)));
+                        await ProtoService.SendAsync(new SendMessage(chat.Id, 0, 0, null, null, new InputMessageText(formatted, false, false)));
                     }
                 }
             }

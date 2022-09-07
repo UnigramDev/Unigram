@@ -817,7 +817,6 @@ namespace Unigram.Services
             switch (update.AuthorizationState)
             {
                 case AuthorizationStateWaitTdlibParameters:
-                case AuthorizationStateWaitEncryptionKey:
                     break;
                 default:
                     _authorizationStateTask.TrySetResult(update.AuthorizationState);
@@ -865,7 +864,7 @@ namespace Unigram.Services
                     var formatted = Client.Execute(new ParseMarkdown(new FormattedText(messageText, new TextEntity[0]))) as FormattedText;
 
                     var replyToMsgId = data.ContainsKey("msg_id") ? long.Parse(data["msg_id"]) << 20 : 0;
-                    var response = await _protoService.SendAsync(new SendMessage(chat.Id, 0, replyToMsgId, new MessageSendOptions(false, true, false, null), null, new InputMessageText(formatted, false, false)));
+                    var response = await _protoService.SendAsync(new SendMessage(chat.Id, 0, replyToMsgId, new MessageSendOptions(false, true, false, false, null), null, new InputMessageText(formatted, false, false)));
 
                     if (chat.Type is ChatTypePrivate && chat.LastMessage != null)
                     {

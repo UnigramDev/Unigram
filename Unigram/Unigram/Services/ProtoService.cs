@@ -50,10 +50,10 @@ namespace Unigram.Services
         bool IsPremium { get; }
         bool IsPremiumAvailable { get; }
 
-        IDictionary<string, Reaction> Reactions { get; }
-
         IOptionsService Options { get; }
         JsonValueObject Config { get; }
+
+        ReactionType DefaultReaction { get; }
 
         IList<ChatFilterInfo> ChatFilters { get; }
         int MainChatListPosition { get; }
@@ -71,8 +71,8 @@ namespace Unigram.Services
         string GetTitle(Chat chat, bool tiny = false);
         string GetTitle(MessageForwardInfo info);
 
-        IList<Reaction> GetAvailableReactions(Chat chat);
-        Task<IList<Reaction>> GetAvailableReactionsAsync(Message message);
+        Task<IDictionary<string, Reaction>> GetAllReactionsAsync();
+        Task<IList<ReactionType>> GetAvailableReactionsAsync(Message message);
 
         Chat GetChat(long id);
         IList<Chat> GetChats(IList<long> ids);
@@ -191,6 +191,8 @@ namespace Unigram.Services
         private IList<long> _installedMaskSets;
         private IList<long> _installedEmojiSets;
 
+        private ReactionType _defaultReaction;
+
         private IList<ChatFilterInfo> _chatFilters = new ChatFilterInfo[0];
         private int _mainChatListPosition = 0;
 
@@ -256,26 +258,6 @@ namespace Unigram.Services
             }
 
             _client = Client.Create(this);
-
-            var parameters = new TdlibParameters
-            {
-                DatabaseDirectory = System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{_session}"),
-                UseSecretChats = true,
-                UseMessageDatabase = true,
-                ApiId = Constants.ApiId,
-                ApiHash = Constants.ApiHash,
-                ApplicationVersion = _deviceInfoService.ApplicationVersion,
-                SystemVersion = _deviceInfoService.SystemVersion,
-                SystemLanguageCode = _deviceInfoService.SystemLanguageCode,
-                DeviceModel = _deviceInfoService.DeviceModel,
-                UseTestDc = _settings.UseTestDC
-            };
-
-            if (_settings.Diagnostics.DisableDatabase)
-            {
-                // ¯\_(ツ)_/¯
-                parameters.UseMessageDatabase = false;
-            }
 
 #if MOCKUP
             ProfilePhoto ProfilePhoto(string name)
@@ -386,14 +368,24 @@ namespace Unigram.Services
 
             Task.Factory.StartNew(async () =>
             {
+                var filesDirectory = string.Empty;
+                var useMessageDatabase = true;
+
                 if (_settings.FilesDirectory != null && StorageApplicationPermissions.MostRecentlyUsedList.ContainsItem("FilesDirectory"))
                 {
                     var folder = await GetFilesFolderAsync(false);
                     if (folder != null)
                     {
-                        parameters.FilesDirectory = folder.Path;
+                        filesDirectory = folder.Path;
                     }
                 }
+
+                if (_settings.Diagnostics.DisableDatabase)
+                {
+                    // ¯\_(ツ)_/¯
+                    useMessageDatabase = false;
+                }
+
 
                 InitializeDiagnostics();
                 InitializeFlush();
@@ -406,8 +398,20 @@ namespace Unigram.Services
                 _client.Send(new SetOption("online", new OptionValueBoolean(false)));
                 _client.Send(new SetOption("use_pfs", new OptionValueBoolean(true)));
                 _client.Send(new SetOption("notification_group_count_max", new OptionValueInteger(25)));
-                _client.Send(new SetTdlibParameters(parameters));
-                _client.Send(new CheckDatabaseEncryptionKey(new byte[0]));
+                _client.Send(new SetTdlibParameters
+                {
+                    DatabaseDirectory = System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{_session}"),
+                    UseSecretChats = true,
+                    UseMessageDatabase = useMessageDatabase,
+                    FilesDirectory = filesDirectory,
+                    ApiId = Constants.ApiId,
+                    ApiHash = Constants.ApiHash,
+                    ApplicationVersion = _deviceInfoService.ApplicationVersion,
+                    SystemVersion = _deviceInfoService.SystemVersion,
+                    SystemLanguageCode = _deviceInfoService.SystemLanguageCode,
+                    DeviceModel = _deviceInfoService.DeviceModel,
+                    UseTestDc = _settings.UseTestDC,
+                });
                 _client.Send(new GetApplicationConfig(), UpdateConfig);
             });
         }
@@ -780,7 +784,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             }
 
             return file;
-        } 
+        }
 
         public void CancelDownloadFile(int fileId, bool onlyIfPending = false)
         {
@@ -799,7 +803,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 
         public Client Client => _client;
 
-#region Cache
+        #region Cache
 
         public ChatListUnreadCount GetUnreadCount(ChatList chatList)
         {
@@ -878,11 +882,11 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 
         public JsonValueObject Config => _config;
 
+        public ReactionType DefaultReaction => _defaultReaction;
+
         public IList<ChatFilterInfo> ChatFilters => _chatFilters;
 
         public int MainChatListPosition => _mainChatListPosition;
-
-        public IDictionary<string, Reaction> Reactions => _reactions;
 
         public IList<string> AnimationSearchEmojis => _animationSearchParameters?.Emojis ?? new string[0];
 
@@ -957,20 +961,20 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             return null;
         }
 
-        public IList<Reaction> GetAvailableReactions(Chat chat)
+        public Task<IDictionary<string, Reaction>> GetAllReactionsAsync()
         {
-            return chat.AvailableReactions.Join(_reactions.Values, x => x, y => y.ReactionValue, (x, y) => y).ToArray();
+            return Task.FromResult(_reactions);
         }
 
-        public async Task<IList<Reaction>> GetAvailableReactionsAsync(Message message)
+        public async Task<IList<ReactionType>> GetAvailableReactionsAsync(Message message)
         {
             var response = await SendAsync(new GetMessageAvailableReactions(message.ChatId, message.Id));
             if (response is AvailableReactions available)
             {
-                return available.Reactions.Join(_reactions.Values, x => x.Reaction, y => y.ReactionValue, (x, y) => y).ToArray();
+                return available.Reactions.ToArray();
             }
 
-            return Array.Empty<Reaction>();
+            return Array.Empty<ReactionType>();
         }
 
         public Chat GetChat(long id)
@@ -1479,7 +1483,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             return _diceEmojis.Contains(text);
         }
 
-#endregion
+        #endregion
 
 
 
@@ -1750,6 +1754,10 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             else if (update is UpdateConnectionState updateConnectionState)
             {
                 _connectionState = updateConnectionState.State;
+            }
+            else if (update is UpdateDefaultReactionType updateDefaultReactionType)
+            {
+                _defaultReaction = updateDefaultReactionType.ReactionType;
             }
             else if (update is UpdateDeleteMessages updateDeleteMessages)
             {
@@ -2092,7 +2100,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
     {
         public bool Equals(MessageSender x, MessageSender y)
         {
-            return x.IsEqual(y);
+            return x.AreTheSame(y);
         }
 
         public int GetHashCode(MessageSender obj)

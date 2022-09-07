@@ -50,12 +50,6 @@ namespace Unigram.Services
         /// <summary>
         /// TBD
         /// </summary>
-        /// <value>default_reaction</value>
-        string DefaultReaction { get; set; }
-
-        /// <summary>
-        /// TBD
-        /// </summary>
         /// <value>is_premium</value>
         bool IsPremium { get; }
 
@@ -464,9 +458,6 @@ namespace Unigram.Services
                 case "notification_sound_duration_max":
                     _notificationSoundDurationMax = GetValue<long>(value);
                     break;
-                case "default_reaction":
-                    _defaultReaction = GetValue<string>(value);
-                    break;
                 case "is_premium":
                     _isPremium = GetValue<bool>(value);
                     break;
@@ -763,24 +754,6 @@ namespace Unigram.Services
 
         private long _notificationSoundDurationMax;
         public long NotificationSoundDurationMax => _notificationSoundDurationMax;
-
-        private string _defaultReaction;
-        public string DefaultReaction
-        {
-            get => _defaultReaction;
-            set
-            {
-                _defaultReaction = value;
-                if (value == null)
-                {
-                    _protoService.Send(new SetOption("default_reaction", new OptionValueEmpty()));
-                }
-                else
-                {
-                    _protoService.Send(new SetOption("default_reaction", new OptionValueString(value)));
-                }
-            }
-        }
 
         private bool _isPremium;
         public bool IsPremium => _isPremium;
