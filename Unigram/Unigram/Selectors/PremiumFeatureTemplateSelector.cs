@@ -10,15 +10,9 @@ namespace Unigram.Selectors
 
         public DataTemplate StickersTemplate { get; set; }
 
-        public DataTemplate ReactionsTemplate { get; set; }
-
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
-            if (item is PremiumFeatureUniqueReactions)
-            {
-                return ReactionsTemplate;
-            }
-            else if (item is PremiumFeatureUniqueStickers)
+            if (item is PremiumFeatureUniqueStickers)
             {
                 return StickersTemplate;
             }

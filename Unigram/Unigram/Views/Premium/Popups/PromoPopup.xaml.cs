@@ -111,8 +111,8 @@ namespace Unigram.Views.Premium.Popups
                     break;
                 case PremiumFeatureUniqueReactions:
                     iconValue = Icons.HeartFilled24;
-                    titleValue = Strings.Resources.PremiumPreviewReactions;
-                    subtitleValue = Strings.Resources.PremiumPreviewReactionsDescription;
+                    titleValue = Strings.Resources.PremiumPreviewReactions2;
+                    subtitleValue = Strings.Resources.PremiumPreviewReactions2Description;
                     break;
                 case PremiumFeatureUniqueStickers:
                     iconValue = Icons.StickerFilled24;

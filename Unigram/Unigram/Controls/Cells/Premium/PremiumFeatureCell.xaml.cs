@@ -19,6 +19,7 @@ namespace Unigram.Controls.Cells.Premium
             {
                 PremiumFeatureIncreasedUploadFileSize => true,
                 PremiumFeatureDisabledAds => true,
+                PremiumFeatureCustomEmoji => true,
                 _ => false
             };
 
@@ -81,8 +82,8 @@ namespace Unigram.Controls.Cells.Premium
                     subtitleValue = Strings.Resources.PremiumPreviewProfileBadgeDescription;
                     break;
                 case PremiumFeatureUniqueReactions:
-                    titleValue = Strings.Resources.PremiumPreviewReactions;
-                    subtitleValue = Strings.Resources.PremiumPreviewReactionsDescription;
+                    titleValue = Strings.Resources.PremiumPreviewReactions2;
+                    subtitleValue = Strings.Resources.PremiumPreviewReactions2Description;
                     break;
                 case PremiumFeatureUniqueStickers:
                     titleValue = Strings.Resources.PremiumPreviewStickers;
@@ -97,7 +98,14 @@ namespace Unigram.Controls.Cells.Premium
             Title.Text = titleValue;
             Subtitle.Text = subtitleValue;
 
-            Player.Source = new RemoteVideoSource(protoService, value.AnimationValue, value.Duration);
+            if (value != null)
+            {
+                Player.Source = new RemoteVideoSource(protoService, value.AnimationValue, value.Duration);
+            }
+            else
+            {
+                Player.Source = null;
+            }
         }
 
         public void StopAnimation()

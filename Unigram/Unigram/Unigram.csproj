@@ -301,9 +301,6 @@
     <Compile Include="Controls\Cells\Premium\PremiumFeatureCell.xaml.cs">
       <DependentUpon>PremiumFeatureCell.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Cells\Premium\PremiumFeatureUniqueReactionsCell.xaml.cs">
-      <DependentUpon>PremiumFeatureUniqueReactionsCell.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\Cells\Premium\PremiumFeatureUniqueStickersCell.xaml.cs">
       <DependentUpon>PremiumFeatureUniqueStickersCell.xaml</DependentUpon>
     </Compile>
@@ -1613,10 +1610,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Cells\Premium\PremiumFeatureCell.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\Cells\Premium\PremiumFeatureUniqueReactionsCell.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
