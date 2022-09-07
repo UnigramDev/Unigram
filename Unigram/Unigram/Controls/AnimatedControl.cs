@@ -68,7 +68,7 @@ namespace Unigram.Controls
 
             _limitFps = limitFps ?? !Windows.UI.Composition.CompositionCapabilities.GetForCurrentView().AreEffectsFast();
             _currentDpi = DisplayInformation.GetForCurrentView().LogicalDpi;
-            _active = autoPause ? Window.Current.CoreWindow.ActivationMode == CoreWindowActivationMode.ActivatedInForeground : true;
+            _active = !autoPause || Window.Current.CoreWindow.ActivationMode == CoreWindowActivationMode.ActivatedInForeground;
             _visible = Window.Current.CoreWindow.Visible;
 
             _dispatcher = DispatcherQueue.GetForCurrentThread();
@@ -98,6 +98,10 @@ namespace Unigram.Controls
 
         private void RegisterEventHandlers()
         {
+            _currentDpi = DisplayInformation.GetForCurrentView().LogicalDpi;
+            _active = !_autoPause || Window.Current.CoreWindow.ActivationMode == CoreWindowActivationMode.ActivatedInForeground;
+            _visible = Window.Current.CoreWindow.Visible;
+
             DisplayInformation.GetForCurrentView().DpiChanged += OnDpiChanged;
             Window.Current.VisibilityChanged += OnVisibilityChanged;
             CompositionTarget.SurfaceContentsLost += OnSurfaceContentsLost;
@@ -262,12 +266,24 @@ namespace Unigram.Controls
                 Changed();
 
                 _unloaded = false;
-                OnSourceChanged();
+                OnLoaded();
 
                 return true;
             }
 
             return false;
+        }
+
+        protected virtual void OnLoaded()
+        {
+            if (_animation != null)
+            {
+                OnSourceChanged();
+            }
+            else
+            {
+                SourceChanged();
+            }
         }
 
         private void OnLoading(FrameworkElement sender, object args)
