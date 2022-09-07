@@ -156,7 +156,7 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            if (message.IsEqualTo(message.PlaybackService.CurrentItem) /*&& !_pressed*/)
+            if (message.AreTheSame(message.PlaybackService.CurrentItem) /*&& !_pressed*/)
             {
                 Subtitle.Text = FormatTime(message.PlaybackService.Position) + " / " + FormatTime(message.PlaybackService.Duration);
             }
@@ -268,7 +268,7 @@ namespace Unigram.Controls.Messages.Content
 
         private void UpdatePlayback(MessageViewModel message, Audio audio, File file)
         {
-            if (message.IsEqualTo(message.PlaybackService.CurrentItem))
+            if (message.AreTheSame(message.PlaybackService.CurrentItem))
             {
                 if (message.PlaybackService.PlaybackState == MediaPlaybackState.Paused)
                 {
@@ -400,7 +400,7 @@ namespace Unigram.Controls.Messages.Content
             {
                 _message.ProtoService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
             }
-            else if (_message.IsEqualTo(_message.PlaybackService.CurrentItem))
+            else if (_message.AreTheSame(_message.PlaybackService.CurrentItem))
             {
                 if (_message.PlaybackService.PlaybackState == MediaPlaybackState.Paused)
                 {
@@ -447,7 +447,7 @@ namespace Unigram.Controls.Messages.Content
             }
             else
             {
-                if (_message.IsEqualTo(_message.PlaybackService.CurrentItem))
+                if (_message.AreTheSame(_message.PlaybackService.CurrentItem))
                 {
                     if (_message.PlaybackService.PlaybackState == MediaPlaybackState.Paused)
                     {

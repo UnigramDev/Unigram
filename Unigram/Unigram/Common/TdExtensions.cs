@@ -46,6 +46,62 @@ namespace Unigram.Common
             return new File(0, 0, 0, new LocalFile(string.Empty, false, false, false, false, 0, 0, 0), new RemoteFile(string.Empty, string.Empty, false, false, 0));
         }
 
+        public static bool Contains(this ChatAvailableReactions reactions, string value)
+        {
+            if (reactions is ChatAvailableReactionsSome some)
+            {
+                return some.Reactions.OfType<ReactionTypeEmoji>().Any(x => x.Emoji == value);
+            }
+
+            return true;
+        }
+
+        public static bool AreTheSame(this ChatAvailableReactions x, ChatAvailableReactions y)
+        {
+            if (x is ChatAvailableReactionsAll && y is ChatAvailableReactionsAll)
+            {
+                return true;
+            }
+            else if (x is ChatAvailableReactionsSome xSome && y is ChatAvailableReactionsSome ySome)
+            {
+                if (xSome.Reactions.Count != ySome.Reactions.Count)
+                {
+                    return false;
+                }
+
+                var emojiHash = new HashSet<string>();
+                var customHash = new HashSet<long>();
+
+                for (int i = 0; i < xSome.Reactions.Count; i++)
+                {
+                    if (xSome.Reactions[i] is ReactionTypeEmoji emoji)
+                    {
+                        emojiHash.Add(emoji.Emoji);
+                    }
+                    else if (xSome.Reactions[i] is ReactionTypeCustomEmoji custom)
+                    {
+                        customHash.Add(custom.CustomEmojiId);
+                    }
+                }
+
+                for (int i = 0; i < ySome.Reactions.Count; i++)
+                {
+                    if (ySome.Reactions[i] is ReactionTypeEmoji emoji && !emojiHash.Contains(emoji.Emoji))
+                    {
+                        return false;
+                    }
+                    else if (ySome.Reactions[i] is ReactionTypeCustomEmoji custom && !customHash.Contains(custom.CustomEmojiId))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
         public static int ToId(this ChatList chatList)
         {
             if (chatList is ChatListMain or null)
@@ -310,7 +366,7 @@ namespace Unigram.Common
             return new InputThumbnail(new InputFileId(thumbnail.File.Id), thumbnail.Width, thumbnail.Height);
         }
 
-        public static bool IsEqualTo(this Message x, Message y)
+        public static bool AreTheSame(this Message x, Message y)
         {
             if (x == null || y == null)
             {
@@ -320,7 +376,7 @@ namespace Unigram.Common
             return x.Id == y.Id && x.ChatId == y.ChatId;
         }
 
-        public static bool IsEqualTo(this Message x, MessageWithOwner y)
+        public static bool AreTheSame(this Message x, MessageWithOwner y)
         {
             if (x == null || y == null)
             {
@@ -330,7 +386,7 @@ namespace Unigram.Common
             return x.Id == y.Id && x.ChatId == y.ChatId;
         }
 
-        public static bool IsEqualTo(this MessageWithOwner x, Message y)
+        public static bool AreTheSame(this MessageWithOwner x, Message y)
         {
             if (x == null || y == null)
             {
@@ -340,7 +396,7 @@ namespace Unigram.Common
             return x.Id == y.Id && x.ChatId == y.ChatId;
         }
 
-        public static bool IsEqualTo(this MessageWithOwner x, MessageWithOwner y)
+        public static bool AreTheSame(this MessageWithOwner x, MessageWithOwner y)
         {
             if (x == null || y == null)
             {
@@ -1259,7 +1315,7 @@ namespace Unigram.Common
             return TdNetworkType.Other;
         }
 
-        public static bool IsEqual(this MessageSender sender, MessageSender compare)
+        public static bool AreTheSame(this MessageSender sender, MessageSender compare)
         {
             if (sender is MessageSenderUser user1 && compare is MessageSenderUser user2)
             {

@@ -136,7 +136,7 @@ namespace Unigram.Controls.Chats
                 var clone = Document.Selection.GetClone();
                 var end = clone.EndOf(TextRangeUnit.CharacterFormat, true);
 
-                if (clone.EndPosition > Document.Selection.EndPosition && IsEqual(clone.CharacterFormat, Document.Selection.CharacterFormat))
+                if (clone.EndPosition > Document.Selection.EndPosition && AreTheSame(clone.CharacterFormat, Document.Selection.CharacterFormat))
                 {
 
                 }

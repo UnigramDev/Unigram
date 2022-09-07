@@ -1340,7 +1340,7 @@ namespace Unigram.ViewModels
 
                         for (int i = 0; i < items.Count; i++)
                         {
-                            var already = this.OfType<ChatMember>().FirstOrDefault(x => x.MemberId.IsEqual(items[i].MemberId));
+                            var already = this.OfType<ChatMember>().FirstOrDefault(x => x.MemberId.AreTheSame(items[i].MemberId));
                             if (already != null)
                             {
                                 items.RemoveAt(i);

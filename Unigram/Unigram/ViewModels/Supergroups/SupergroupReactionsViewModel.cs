@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
@@ -6,15 +7,19 @@ using Unigram.Common;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Services;
-using Unigram.ViewModels.Delegates;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Supergroups
 {
-    public class SupergroupReactionsViewModel : TLViewModelBase, IDelegable<IChatDelegate>
+    public enum SupergroupAvailableReactions
     {
-        public IChatDelegate Delegate { get; set; }
+        All,
+        Some,
+        None
+    }
 
+    public class SupergroupReactionsViewModel : TLViewModelBase
+    {
         public SupergroupReactionsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
@@ -30,31 +35,54 @@ namespace Unigram.ViewModels.Supergroups
             set => Set(ref _chat, value);
         }
 
-        public bool? AreEnabled
+        private SupergroupAvailableReactions _available;
+        public SupergroupAvailableReactions Available
         {
-            get
+            get => _available;
+            set => SetAvailable(value);
+        }
+
+        private void SetAvailable(SupergroupAvailableReactions value)
+        {
+            if (Set(ref _available, value, nameof(Available)))
             {
-                var count = Items.Count(x => x.IsSelected);
-                if (count == Items.Count)
+                if (value == SupergroupAvailableReactions.Some)
                 {
-                    return true;
+                    Items.ReplaceWith(_items);
+                }
+                else
+                {
+                    Items.Clear();
                 }
 
-                return count == 0 ? false : null;
-            }
-            set
-            {
-                if (value != AreEnabled)
-                {
-                    Items.ForEach(x => x.IsSelected = value is true);
-                    RaisePropertyChanged();
-                }
+                RaisePropertyChanged(nameof(IsAllSelected));
+                RaisePropertyChanged(nameof(IsSomeSelected));
+                RaisePropertyChanged(nameof(IsNoneSelected));
             }
         }
 
+        public bool IsAllSelected
+        {
+            get => _available == SupergroupAvailableReactions.All;
+            set => SetAvailable(SupergroupAvailableReactions.All);
+        }
+
+        public bool IsSomeSelected
+        {
+            get => _available == SupergroupAvailableReactions.Some;
+            set => SetAvailable(SupergroupAvailableReactions.Some);
+        }
+
+        public bool IsNoneSelected
+        {
+            get => _available == SupergroupAvailableReactions.None;
+            set => SetAvailable(SupergroupAvailableReactions.None);
+        }
+
+        private List<SupergroupReactionOption> _items;
         public MvxObservableCollection<SupergroupReactionOption> Items { get; private set; }
 
-        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var chatId = (long)parameter;
 
@@ -63,44 +91,67 @@ namespace Unigram.ViewModels.Supergroups
             var chat = _chat;
             if (chat == null)
             {
-                return Task.CompletedTask;
+                return;
             }
 
-            Delegate?.UpdateChat(chat);
+            var reactions = await ProtoService.GetAllReactionsAsync();
+            if (reactions == null)
+            {
+                return;
+            }
 
-            Items.ReplaceWith(CacheService.Reactions.Where(x => x.Value.IsActive).Select(x => new SupergroupReactionOption(this, x.Value, chat.AvailableReactions.Contains(x.Key))));
-            return Task.CompletedTask;
+            var items = reactions.Where(x => x.Value.IsActive).Select(x => new SupergroupReactionOption(x.Value, chat.AvailableReactions.Contains(x.Key))).ToList();
+            var selected = items.Count(x => x.IsSelected);
+
+            var available = chat.AvailableReactions is ChatAvailableReactionsAll
+                ? SupergroupAvailableReactions.All
+                : selected == 0
+                ? SupergroupAvailableReactions.None
+                : SupergroupAvailableReactions.Some;
+
+            _items = items;
+            Available = available;
         }
 
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
-            var chat = _chat;
-            if (chat == null)
+            if (_chat is not Chat chat || chat.Type is not ChatTypeSupergroup supergroup)
             {
                 return;
             }
 
-            var available = Items.Where(x => x.IsSelected).Select(x => x.Reaction.ReactionValue).ToArray();
-            if (available.OrderBy(x => x).SequenceEqual(chat.AvailableReactions.OrderBy(x => x)))
+            var items = _items.Where(x => x.IsSelected).Select(x => new ReactionTypeEmoji(x.Reaction.ReactionValue)).ToList<ReactionType>();
+            var available = _available;
+
+            if (supergroup.IsChannel && items.Count == _items.Count)
+            {
+                available = SupergroupAvailableReactions.All;
+            }
+
+            ChatAvailableReactions value = _available switch
+            {
+                SupergroupAvailableReactions.All => new ChatAvailableReactionsAll(),
+                SupergroupAvailableReactions.None => new ChatAvailableReactionsSome(),
+                SupergroupAvailableReactions.Some => new ChatAvailableReactionsSome(items),
+                _ => null
+            };
+
+            if (value == null || value.AreTheSame(chat.AvailableReactions))
             {
                 NavigationService.GoBack();
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new SetChatAvailableReactions(chat.Id, available));
+            var response = await ProtoService.SendAsync(new SetChatAvailableReactions(chat.Id, value));
             NavigationService.GoBack();
         }
     }
 
     public class SupergroupReactionOption : BindableBase
     {
-        private readonly SupergroupReactionsViewModel _parent;
-
-        public SupergroupReactionOption(SupergroupReactionsViewModel parent, Reaction reaction, bool selected)
+        public SupergroupReactionOption(Reaction reaction, bool selected)
         {
-            _parent = parent;
-
             Reaction = reaction;
             IsSelected = selected;
         }
@@ -111,13 +162,7 @@ namespace Unigram.ViewModels.Supergroups
         public bool IsSelected
         {
             get => _isSelected;
-            set
-            {
-                if (Set(ref _isSelected, value))
-                {
-                    _parent.RaisePropertyChanged(nameof(_parent.AreEnabled));
-                }
-            }
+            set => Set(ref _isSelected, value);
         }
     }
 }

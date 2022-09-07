@@ -48,7 +48,7 @@ namespace Unigram.Controls.Cells
 
         public bool IsMatch(GroupCallParticipant participant, GroupCallParticipantVideoInfo videoInfo)
         {
-            return participant != null && participant.ParticipantId.IsEqual(ParticipantId) && _videoInfo.EndpointId == _videoInfo.EndpointId;
+            return participant != null && participant.ParticipantId.AreTheSame(ParticipantId) && _videoInfo.EndpointId == _videoInfo.EndpointId;
         }
 
         public CanvasControl Surface

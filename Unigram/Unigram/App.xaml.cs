@@ -528,7 +528,7 @@ namespace Unigram
                 Unigram.Views.Supergroups.SupergroupEditPage supergroupEdit => TLContainer.Current.Resolve<Unigram.ViewModels.Supergroups.SupergroupEditViewModel, Unigram.ViewModels.Delegates.ISupergroupEditDelegate>(supergroupEdit, sessionId),
                 Unigram.Views.Supergroups.SupergroupMembersPage supergroupMembers => TLContainer.Current.Resolve<Unigram.ViewModels.Supergroups.SupergroupMembersViewModel, Unigram.ViewModels.Delegates.ISupergroupDelegate>(supergroupMembers, sessionId),
                 Unigram.Views.Supergroups.SupergroupPermissionsPage supergroupPermissions => TLContainer.Current.Resolve<Unigram.ViewModels.Supergroups.SupergroupPermissionsViewModel, Unigram.ViewModels.Delegates.ISupergroupDelegate>(supergroupPermissions, sessionId),
-                Unigram.Views.Supergroups.SupergroupReactionsPage supergroupReactions => TLContainer.Current.Resolve<Unigram.ViewModels.Supergroups.SupergroupReactionsViewModel, Unigram.ViewModels.Delegates.IChatDelegate>(supergroupReactions, sessionId),
+                Unigram.Views.Supergroups.SupergroupReactionsPage => TLContainer.Current.Resolve<Unigram.ViewModels.Supergroups.SupergroupReactionsViewModel>(sessionId),
                 //
                 Unigram.Views.SignIn.SignInRecoveryPage => TLContainer.Current.Resolve<Unigram.ViewModels.SignIn.SignInRecoveryViewModel>(sessionId),
                 Unigram.Views.SignIn.SignUpPage => TLContainer.Current.Resolve<Unigram.ViewModels.SignIn.SignUpViewModel>(sessionId),

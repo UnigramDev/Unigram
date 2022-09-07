@@ -284,7 +284,7 @@ namespace Unigram.Controls
                 && border.Child is ProfilePicture picture
                 && border.Tag is MessageSender previous)
             {
-                if (_items[newIndex] is MessageSender sender && !sender.IsEqual(previous))
+                if (_items[newIndex] is MessageSender sender && !sender.AreTheSame(previous))
                 {
                     RecentUserHeadChanged?.Invoke(picture, sender);
                 }
@@ -440,7 +440,7 @@ namespace Unigram.Controls
         {
             public bool CompareItems(MessageSender oldItem, MessageSender newItem)
             {
-                return oldItem.IsEqual(newItem);
+                return oldItem.AreTheSame(newItem);
             }
 
             public void UpdateItem(MessageSender oldItem, MessageSender newItem)

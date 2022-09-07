@@ -466,10 +466,10 @@ namespace Unigram.Controls
 
         protected bool IsDefault(ITextCharacterFormat format)
         {
-            return IsEqual(format, Document.GetDefaultCharacterFormat());
+            return AreTheSame(format, Document.GetDefaultCharacterFormat());
         }
 
-        protected bool IsEqual(ITextCharacterFormat format, ITextCharacterFormat document)
+        protected bool AreTheSame(ITextCharacterFormat format, ITextCharacterFormat document)
         {
             return document.AllCaps == format.AllCaps &&
                 document.BackgroundColor == format.BackgroundColor &&

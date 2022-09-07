@@ -101,7 +101,7 @@ namespace Unigram.Collections
                 }
                 else
                 {
-                    var already = this.FirstOrDefault(x => x.ParticipantId.IsEqual(update.Participant.ParticipantId));
+                    var already = this.FirstOrDefault(x => x.ParticipantId.AreTheSame(update.Participant.ParticipantId));
                     if (already != null)
                     {
                         if (already.HasVideoInfo())
@@ -127,7 +127,7 @@ namespace Unigram.Collections
             for (int i = 0; i < Count; i++)
             {
                 var item = this[i];
-                if (item.ParticipantId.IsEqual(participant.ParticipantId))
+                if (item.ParticipantId.AreTheSame(participant.ParticipantId))
                 {
                     prev = i;
                     update = item;
