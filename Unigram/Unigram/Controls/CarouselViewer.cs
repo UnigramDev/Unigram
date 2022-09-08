@@ -44,6 +44,7 @@ namespace Unigram.Controls
     public class CarouselViewer : Grid, IInteractionTrackerOwner
     {
         private bool _requiresArrange;
+        private long _scrolling;
 
         public CarouselViewer()
         {
