@@ -7,6 +7,7 @@ using Unigram.Common;
 using Unigram.Services;
 using Unigram.Services.Settings;
 using Unigram.ViewModels.Drawers;
+using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -470,6 +471,10 @@ namespace Unigram.Controls.Drawers
                 }
                 else
                 {
+                    // Not sure if this belongs here
+                    var tag = args.ItemContainer.Tag as string;
+                    var added = _typeToItemHashSetMapping[tag].Add(args.ItemContainer);
+
                     // The ItemContainer's datatemplate does not match the needed
                     // datatemplate.
                     // Don't remove it from the recycle queue, since XAML will resuggest it later
@@ -582,10 +587,10 @@ namespace Unigram.Controls.Drawers
         {
             if (setId == ViewModel.ProtoService.Options.ThemedEmojiStatusesStickerSetId)
             {
-                if (_currentReplacement != Theme.Current.Accent)
+                if (_currentReplacement != Theme.Accent)
                 {
-                    _currentReplacement = Theme.Current.Accent;
-                    _colorReplacements[0xFFFFFF] = Theme.Current.Accent.ToValue();
+                    _currentReplacement = Theme.Accent;
+                    _colorReplacements[0xFFFFFF] = Theme.Accent.ToValue();
                 }
 
                 return _colorReplacements;
@@ -719,7 +724,6 @@ namespace Unigram.Controls.Drawers
 
                 if (content == null || sticker == null || (sticker.Thumbnail == null && sticker.Covers == null))
                 {
-                    ClearContainerContent(content);
                     return;
                 }
 

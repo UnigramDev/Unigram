@@ -388,6 +388,7 @@
     <Compile Include="Controls\Gallery\GalleryView.xaml.cs">
       <DependentUpon>GalleryView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\CustomEmojiIcon.cs" />
     <Compile Include="Controls\ZoomViewer.cs" />
     <Compile Include="Controls\GroupCallActiveHeader.xaml.cs">
       <DependentUpon>GroupCallActiveHeader.xaml</DependentUpon>

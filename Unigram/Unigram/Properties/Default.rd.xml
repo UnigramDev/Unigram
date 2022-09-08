@@ -40,10 +40,6 @@
       <Method Name="UpdateFile" Dynamic="Required"/>
     </Type>
 
-    <Type Name="Unigram.Controls.Cells.Premium.PremiumFeatureUniqueReactionsCell">
-      <Method Name="UpdateFile" Dynamic="Required"/>
-    </Type>
-
     <Type Name="Unigram.Controls.Cells.SharedAudioCell">
       <Method Name="UpdateFile" Dynamic="Required"/>
     </Type>

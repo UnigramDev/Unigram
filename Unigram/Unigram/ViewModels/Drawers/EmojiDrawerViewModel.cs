@@ -320,10 +320,49 @@ namespace Unigram.ViewModels.Drawers
             }
         }
 
-        public void UpdateReactions(IList<Reaction> reactions)
+        public async Task UpdateReactions(IList<Reaction> reactions2)
         {
-            _reactionSet.Update(reactions.Select(x => x.ActivateAnimation));
+            var reactions = await ProtoService.GetAllReactionsAsync();
+            _reactionSet.Update(reactions.Select(x => x.Value.ActivateAnimation));
             _ = UpdateAsync();
+        }
+
+        public async void UpdateStatuses()
+        {
+            _ = UpdateAsync();
+
+            var themedResponse = await ProtoService.SendAsync(new GetThemedEmojiStatuses()) as EmojiStatuses;
+            var recentResponse = await ProtoService.SendAsync(new GetRecentEmojiStatuses()) as EmojiStatuses;
+            var defaulResponse = await ProtoService.SendAsync(new GetDefaultEmojiStatuses()) as EmojiStatuses;
+
+            var themed = themedResponse?.EmojiStatusesValue ?? Array.Empty<EmojiStatus>();
+            var recent = recentResponse?.EmojiStatusesValue ?? Array.Empty<EmojiStatus>();
+            var defaul = defaulResponse?.EmojiStatusesValue ?? Array.Empty<EmojiStatus>();
+
+            var emoji = new List<long>();
+            var delay = new List<long>();
+
+            var i = 0;
+
+            foreach (var status in themed.Union(recent.Union(defaul)))
+            {
+                if (emoji.Count < 8 * 5 - 1 && !emoji.Contains(status.CustomEmojiId))
+                {
+                    emoji.Add(status.CustomEmojiId);
+                }
+                else if (!delay.Contains(status.CustomEmojiId))
+                {
+                    delay.Add(status.CustomEmojiId);
+                }
+
+                i++;
+            }
+
+            var response = await ProtoService.SendAsync(new GetCustomEmojiStickers(emoji));
+            if (response is Stickers stickers)
+            {
+                _reactionSet.Update(stickers.StickersValue.OrderBy(x => emoji.IndexOf(x.CustomEmojiId)));
+            }
         }
 
         private int _featuredUnreadCount;

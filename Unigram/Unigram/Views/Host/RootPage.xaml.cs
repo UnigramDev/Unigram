@@ -15,7 +15,7 @@ using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Services.Settings;
 using Unigram.ViewModels;
-using Unigram.Views.SignIn;
+using Unigram.Views.Authorization;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.UI.Composition;
@@ -23,6 +23,7 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
@@ -462,9 +463,14 @@ namespace Unigram.Views.Host
                 return;
             }
 
-            if (args.Item is ISessionService session)
+            UpdateContainerContent(args.ItemContainer, args.Item);
+        }
+
+        private void UpdateContainerContent(SelectorItem container, object item)
+        {
+            if (item is ISessionService session)
             {
-                var content = args.ItemContainer.ContentTemplateRoot as Grid;
+                var content = container.ContentTemplateRoot as Grid;
                 if (content == null)
                 {
                     return;
@@ -476,27 +482,17 @@ namespace Unigram.Views.Host
                     return;
                 }
 
-                if (args.Phase == 0)
-                {
-                    var title = content.Children[2] as TextBlock;
-                    title.Text = user.GetFullName();
+                var title = content.Children[2] as TextBlock;
+                title.Text = user.GetFullName();
 
-                    AutomationProperties.SetName(content, user.GetFullName());
-                }
-                else if (args.Phase == 2)
-                {
-                    var photo = content.Children[0] as ProfilePicture;
-                    photo.SetUser(session.ProtoService, user, 28);
-                }
+                AutomationProperties.SetName(content, user.GetFullName());
 
-                if (args.Phase < 2)
-                {
-                    args.RegisterUpdateCallback(OnContainerContentChanging);
-                }
+                var photo = content.Children[0] as ProfilePicture;
+                photo.SetUser(session.ProtoService, user, 28);
             }
-            else if (args.Item is RootDestination destination && _navigationService.Content is MainPage page)
+            else if (item is RootDestination destination && _navigationService.Content is MainPage page)
             {
-                var content = args.ItemContainer as Controls.NavigationViewItem;
+                var content = container as Controls.NavigationViewItem;
                 if (content != null)
                 {
                     content.IsChecked = destination == _navigationViewSelected;
@@ -538,8 +534,8 @@ namespace Unigram.Views.Host
                     case RootDestination.Status:
                         if (page.ViewModel.CacheService.TryGetUser(page.ViewModel.CacheService.Options.MyId, out User user))
                         {
-                            content.Text = Strings.Resources.SetEmojiStatus; // ChangeEmojiStatus
-                            content.Glyph = Icons.EmojiAdd; // EmojiEdit
+                            content.Text = user.EmojiStatus == null ? Strings.Resources.SetEmojiStatus : Strings.Resources.ChangeEmojiStatus;
+                            content.Glyph = user.EmojiStatus == null ? Icons.EmojiAdd : Icons.EmojiEdit;
                         }
                         break;
 
@@ -757,8 +753,23 @@ namespace Unigram.Views.Host
             }
         }
 
+        private void UpdateNavigation()
+        {
+            foreach (SelectorItem container in NavigationViewList.ItemsPanelRoot.Children)
+            {
+                UpdateContainerContent(container, container.Content);
+
+                if (container.Content is RootDestination.Status)
+                {
+                    return;
+                }
+            }
+        }
+
         private void Navigation_PaneOpening(SplitView sender, object args)
         {
+            UpdateNavigation();
+
             Theme.Visibility = Visibility.Visible;
             Accounts.Visibility = Visibility.Visible;
 

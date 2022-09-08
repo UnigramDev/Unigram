@@ -97,6 +97,10 @@ namespace Unigram.Services
                 {
                     audio.AudioValue = ProcessFile(audio.AudioValue);
                 }
+                foreach (var item in audio.ExternalAlbumCovers)
+                {
+                    ProcessFiles(item);
+                }
                 if (audio.AlbumCoverThumbnail != null)
                 {
                     ProcessFiles(audio.AlbumCoverThumbnail);
@@ -545,6 +549,13 @@ namespace Unigram.Services
                 if (messageGame.Game != null)
                 {
                     ProcessFiles(messageGame.Game);
+                }
+            }
+            else if (target is MessageGiftedPremium messageGiftedPremium)
+            {
+                if (messageGiftedPremium.Sticker != null)
+                {
+                    ProcessFiles(messageGiftedPremium.Sticker);
                 }
             }
             else if (target is MessageInvoice messageInvoice)

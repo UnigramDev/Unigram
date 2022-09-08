@@ -12,6 +12,7 @@ using Unigram.Controls;
 using Unigram.Controls.Cells;
 using Unigram.Controls.Chats;
 using Unigram.Controls.Gallery;
+using Unigram.Controls.Messages;
 using Unigram.Converters;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
@@ -40,6 +41,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
@@ -254,14 +256,7 @@ namespace Unigram.Views
         {
             if (update.User.Id == _protoService.Options.MyId)
             {
-                this.BeginOnUIThread(() =>
-                {
-                    LogoBasic.Visibility = _protoService.IsPremium ? Visibility.Collapsed : Visibility.Visible;
-                    LogoPremium.Visibility = _protoService.IsPremium ? Visibility.Visible : Visibility.Collapsed;
-
-                    Photo.SetUser(_protoService, update.User, 28);
-                    PhotoSide?.SetUser(_protoService, update.User, 28);
-                });
+                this.BeginOnUIThread(() => UpdateUser(update.User));
             }
         }
 
@@ -785,15 +780,41 @@ namespace Unigram.Views
             }
         }
 
-        private async void OnLoaded(object sender, RoutedEventArgs e)
+        private void UpdateUser(User user)
         {
-            if (_protoService.TryGetUser(_protoService.Options.MyId, out User user))
+            if (user.EmojiStatus != null)
+            {
+                LogoBasic.Visibility = Visibility.Collapsed;
+                LogoPremium.Visibility = Visibility.Collapsed;
+
+                if (LogoEmoji == null)
+                {
+                    FindName(nameof(LogoEmoji));
+                }
+
+                LogoEmoji.UpdateEntities(ViewModel.ProtoService, user.EmojiStatus.CustomEmojiId);
+            }
+            else
             {
                 LogoBasic.Visibility = _protoService.IsPremium ? Visibility.Collapsed : Visibility.Visible;
                 LogoPremium.Visibility = _protoService.IsPremium ? Visibility.Visible : Visibility.Collapsed;
 
-                Photo.SetUser(_protoService, user, 28);
-                PhotoSide?.SetUser(_protoService, user, 28);
+                if (LogoEmoji != null)
+                {
+                    XamlMarkupHelper.UnloadObject(LogoEmoji);
+                    LogoEmoji = null;
+                }
+            }
+
+            Photo.SetUser(_protoService, user, 28);
+            PhotoSide?.SetUser(_protoService, user, 28);
+        }
+
+        private async void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            if (_protoService.TryGetUser(_protoService.Options.MyId, out User user))
+            {
+                UpdateUser(user);
             }
 
             Subscribe();
@@ -2354,6 +2375,10 @@ namespace Unigram.Views
             {
                 ArchivedChats_Click(null, null);
             }
+            else if (destination == RootDestination.Status)
+            {
+                Status_Click(null, null);
+            }
             else if (destination == RootDestination.SavedMessages)
             {
                 var response = await ViewModel.ProtoService.SendAsync(new CreatePrivateChat(ViewModel.CacheService.Options.MyId, false));
@@ -3342,7 +3367,13 @@ namespace Unigram.Views
 
         #endregion
 
-
+        private void Status_Click(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel.IsPremium)
+            {
+                MenuFlyoutReactions.ShowAt(ViewModel.ProtoService, TitleBarLogo, HorizontalAlignment.Left);
+            }
+        }
     }
 
     public class HostedPage : Page
