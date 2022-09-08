@@ -1,19 +1,18 @@
 ﻿using Unigram.Common;
-using Unigram.ViewModels.SignIn;
+using Unigram.ViewModels.Authorization;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Views.SignIn
+namespace Unigram.Views.Authorization
 {
-    public sealed partial class SignUpPage : Page
+    public sealed partial class AuthorizationRegistrationPage : Page
     {
-        public SignUpViewModel ViewModel => DataContext as SignUpViewModel;
+        public AuthorizationRegistrationViewModel ViewModel => DataContext as AuthorizationRegistrationViewModel;
 
-        public SignUpPage()
+        public AuthorizationRegistrationPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SignUpViewModel>();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)

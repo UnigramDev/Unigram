@@ -169,11 +169,11 @@ namespace Unigram.Views.Host
                         break;
                     case AuthorizationStateWaitPhoneNumber:
                     case AuthorizationStateWaitOtherDeviceConfirmation:
-                        service.Navigate(typeof(SignInPage));
+                        service.Navigate(typeof(AuthorizationPage));
                         service.AddToBackStack(typeof(BlankPage));
                         break;
                     case AuthorizationStateWaitCode:
-                        service.Navigate(typeof(SignInSentCodePage));
+                        service.Navigate(typeof(AuthorizationCodePage));
                         break;
                     case AuthorizationStateWaitEmailAddress:
                         service.Navigate(typeof(AuthorizationEmailAddressPage));
@@ -182,10 +182,10 @@ namespace Unigram.Views.Host
                         service.Navigate(typeof(AuthorizationEmailCodePage));
                         break;
                     case AuthorizationStateWaitRegistration:
-                        service.Navigate(typeof(SignUpPage));
+                        service.Navigate(typeof(AuthorizationRegistrationPage));
                         break;
                     case AuthorizationStateWaitPassword:
-                        service.Navigate(typeof(SignInPasswordPage));
+                        service.Navigate(typeof(AuthorizationPasswordPage));
                         break;
                 }
 

@@ -530,11 +530,13 @@ namespace Unigram
                 Unigram.Views.Supergroups.SupergroupPermissionsPage supergroupPermissions => TLContainer.Current.Resolve<Unigram.ViewModels.Supergroups.SupergroupPermissionsViewModel, Unigram.ViewModels.Delegates.ISupergroupDelegate>(supergroupPermissions, sessionId),
                 Unigram.Views.Supergroups.SupergroupReactionsPage => TLContainer.Current.Resolve<Unigram.ViewModels.Supergroups.SupergroupReactionsViewModel>(sessionId),
                 //
-                Unigram.Views.SignIn.SignInRecoveryPage => TLContainer.Current.Resolve<Unigram.ViewModels.SignIn.SignInRecoveryViewModel>(sessionId),
-                Unigram.Views.SignIn.SignUpPage => TLContainer.Current.Resolve<Unigram.ViewModels.SignIn.SignUpViewModel>(sessionId),
-                Unigram.Views.SignIn.SignInPasswordPage => TLContainer.Current.Resolve<Unigram.ViewModels.SignIn.SignInPasswordViewModel>(sessionId),
-                Unigram.Views.SignIn.SignInSentCodePage => TLContainer.Current.Resolve<Unigram.ViewModels.SignIn.SignInSentCodeViewModel>(sessionId),
-                Unigram.Views.SignIn.SignInPage signIn => TLContainer.Current.Resolve<Unigram.ViewModels.SignIn.SignInViewModel, Unigram.ViewModels.Delegates.ISignInDelegate>(signIn, sessionId),
+                Unigram.Views.Authorization.AuthorizationRecoveryPage => TLContainer.Current.Resolve<Unigram.ViewModels.Authorization.AuthorizationRecoveryViewModel>(sessionId),
+                Unigram.Views.Authorization.AuthorizationRegistrationPage => TLContainer.Current.Resolve<Unigram.ViewModels.Authorization.AuthorizationRegistrationViewModel>(sessionId),
+                Unigram.Views.Authorization.AuthorizationPasswordPage => TLContainer.Current.Resolve<Unigram.ViewModels.Authorization.AuthorizationPasswordViewModel>(sessionId),
+                Unigram.Views.Authorization.AuthorizationCodePage => TLContainer.Current.Resolve<Unigram.ViewModels.Authorization.AuthorizationCodeViewModel>(sessionId),
+                Unigram.Views.Authorization.AuthorizationEmailAddressPage => TLContainer.Current.Resolve<Unigram.ViewModels.Authorization.AuthorizationEmailAddressViewModel>(sessionId),
+                Unigram.Views.Authorization.AuthorizationEmailCodePage => TLContainer.Current.Resolve<Unigram.ViewModels.Authorization.AuthorizationEmailCodeViewModel>(sessionId),
+                Unigram.Views.Authorization.AuthorizationPage signIn => TLContainer.Current.Resolve<Unigram.ViewModels.Authorization.AuthorizationViewModel, Unigram.ViewModels.Delegates.ISignInDelegate>(signIn, sessionId),
                 //
                 Unigram.Views.Folders.FoldersPage => TLContainer.Current.Resolve<Unigram.ViewModels.Folders.FoldersViewModel>(sessionId),
                 Unigram.Views.Folders.FolderPage => TLContainer.Current.Resolve<Unigram.ViewModels.Folders.FolderViewModel>(sessionId),

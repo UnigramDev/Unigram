@@ -7,7 +7,7 @@ using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views;
 using Unigram.Views.Popups;
-using Unigram.Views.SignIn;
+using Unigram.Views.Authorization;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Contacts;
@@ -156,10 +156,10 @@ namespace Unigram.Common
                         break;
                     case AuthorizationStateWaitPhoneNumber:
                     case AuthorizationStateWaitOtherDeviceConfirmation:
-                        service.Navigate(typeof(SignInPage));
+                        service.Navigate(typeof(AuthorizationPage));
                         break;
                     case AuthorizationStateWaitCode:
-                        service.Navigate(typeof(SignInSentCodePage));
+                        service.Navigate(typeof(AuthorizationCodePage));
                         break;
                     case AuthorizationStateWaitEmailAddress:
                         service.Navigate(typeof(AuthorizationEmailAddressPage));
@@ -168,7 +168,7 @@ namespace Unigram.Common
                         service.Navigate(typeof(AuthorizationEmailCodePage));
                         break;
                     case AuthorizationStateWaitRegistration:
-                        service.Navigate(typeof(SignUpPage));
+                        service.Navigate(typeof(AuthorizationRegistrationPage));
                         break;
                     case AuthorizationStateWaitPassword waitPassword:
                         if (!string.IsNullOrEmpty(waitPassword.RecoveryEmailAddressPattern))
@@ -176,7 +176,7 @@ namespace Unigram.Common
                             await MessagePopup.ShowAsync(string.Format(Strings.Resources.RestoreEmailSent, waitPassword.RecoveryEmailAddressPattern), Strings.Resources.AppName, Strings.Resources.OK);
                         }
 
-                        service.Navigate(typeof(SignInPasswordPage));
+                        service.Navigate(typeof(AuthorizationPasswordPage));
                         break;
                 }
             }

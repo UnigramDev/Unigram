@@ -1,11 +1,11 @@
 ﻿using Unigram.Common;
-using Unigram.ViewModels.SignIn;
+using Unigram.ViewModels.Authorization;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Views.SignIn
+namespace Unigram.Views.Authorization
 {
     public sealed partial class AuthorizationEmailAddressPage : Page
     {

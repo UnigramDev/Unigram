@@ -6,7 +6,7 @@ using Unigram.Navigation.Services;
 using Unigram.Services;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels.SignIn
+namespace Unigram.ViewModels.Authorization
 {
     public class AuthorizationEmailAddressViewModel : TLViewModelBase
     {
