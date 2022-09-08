@@ -52,7 +52,7 @@
                      KeyDown="PrimaryInput_KeyDown"
                      Margin="0,12,0,4"
                      InputScope="EmailNameOrAddress"
-                     PlaceholderText="{CustomResource PassportEmail}" />
+                     PlaceholderText="{CustomResource YourEmail}" />
 
             <microsoft:ProgressBar IsIndeterminate="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
                                    Background="Transparent" />

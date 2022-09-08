@@ -18,22 +18,30 @@
                 <controls:HeaderedControl>
                     <controls:BadgeButton Content="{CustomResource BlockedUsers}"
                                           Badge="{x:Bind ViewModel.BlockedUsers, Mode=OneWay}"
-                                          Glyph="&#xE988;"
+                                          Glyph="&#xE98B;"
                                           Click="BlockedUsers_Click"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           IsChevronVisible="True" />
 
                     <controls:BadgeButton Content="{CustomResource Passcode}"
-                                          Badge="{x:Bind ConvertOnOff(ViewModel.IsPasscodeEnabled), Mode=OneWay}"
-                                          Glyph="&#xE9A7;"
+                                          Badge="{x:Bind ConvertOnOff(ViewModel.HasPasscode), Mode=OneWay}"
+                                          Glyph="&#xE72E;"
                                           Command="{x:Bind ViewModel.PasscodeCommand}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           IsChevronVisible="True" />
 
                     <controls:BadgeButton Content="{CustomResource TwoStepVerification}"
-                                          Badge="{x:Bind ConvertOnOff(ViewModel.IsPasswordEnabled), Mode=OneWay}"
+                                          Badge="{x:Bind ConvertOnOff(ViewModel.HasPassword), Mode=OneWay}"
                                           Glyph="&#xE192;"
                                           Command="{x:Bind ViewModel.PasswordCommand}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          IsChevronVisible="True" />
+
+                    <controls:BadgeButton x:Name="ChangeEmail"
+                                          x:Load="{x:Bind ViewModel.HasEmailAddress, Mode=OneWay}"
+                                          Content="{CustomResource EmailLogin}"
+                                          Glyph="&#xE9F2;"
+                                          Command="{x:Bind ViewModel.ChangeEmailCommand}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           IsChevronVisible="True" />
                 </controls:HeaderedControl>
