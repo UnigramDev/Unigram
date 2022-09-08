@@ -345,10 +345,10 @@ namespace Unigram.Controls.Gallery
                 ApplicationView.GetForCurrentView().ExitFullScreenMode();
             }
 
-            WindowContext.Current.EnableScreenCapture(ViewModel.GetHashCode());
-
             if (ViewModel != null)
             {
+                WindowContext.Current.EnableScreenCapture(ViewModel.GetHashCode());
+
                 ViewModel.Aggregator.Unsubscribe(this);
                 ViewModel.Items.CollectionChanged -= OnCollectionChanged;
 
