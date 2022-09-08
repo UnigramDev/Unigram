@@ -1,4 +1,4 @@
-<Page x:Class="Unigram.Views.SignIn.SignInSentCodePage"
+<Page x:Class="Unigram.Views.SignIn.AuthorizationEmailCodePage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:local="using:Unigram.Views"
@@ -31,7 +31,7 @@
                     Grid.Row="1">
             <controls:LottieView FrameSize="160,160"
                                  DecodeFrameType="Logical"
-                                 Source="ms-appx:///Assets/Animations/AuthorizationStateWaitCode.tgs"
+                                 Source="ms-appx:///Assets/Animations/AuthorizationStateWaitEmailCode.tgs"
                                  AutoPlay="True"
                                  IsLoopingEnabled="False"
                                  IsCachingEnabled="False"
@@ -39,16 +39,17 @@
                                  Height="160" />
 
             <TextBlock x:Name="TitleLabel"
-                       Text="{CustomResource YourCode}"
+                       Text="{CustomResource CheckYourEmail}"
                        Style="{StaticResource TitleTextBlockStyle}"
                        TextAlignment="Center" />
-            <TextBlock common:TextBlockHelper.Markdown="{x:Bind ConvertType(ViewModel.CodeInfo), FallbackValue=''}"
+            <TextBlock Text="{x:Bind ConvertType(ViewModel.CodeInfo), FallbackValue=''}"
                        Style="{StaticResource BodyTextBlockStyle}"
                        TextAlignment="Center"
                        Padding="0,8,0,16" />
 
             <TextBox x:Name="PrimaryInput"
                      Text="{x:Bind ViewModel.Code, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     KeyDown="PrimaryInput_KeyDown"
                      Margin="0,12,0,4"
                      InputScope="Digits"
                      IsTextPredictionEnabled="False"
@@ -63,10 +64,6 @@
                     Style="{StaticResource AccentButtonStyle}"
                     HorizontalAlignment="Stretch"
                     Margin="0,4,0,8" />
-
-            <HyperlinkButton Command="{x:Bind ViewModel.ResendCommand}"
-                             Visibility="{x:Bind ViewModel.CodeInfo.NextType, Converter={StaticResource NullToVisibilityConverter}}"
-                             Content="{CustomResource DidNotGetTheCode}" />
         </StackPanel>
 
         <controls:BackButton Grid.Row="1" />

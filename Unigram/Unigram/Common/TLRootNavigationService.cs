@@ -61,6 +61,12 @@ namespace Unigram.Common
                 case AuthorizationStateWaitCode:
                     Navigate(typeof(SignInSentCodePage));
                     break;
+                case AuthorizationStateWaitEmailAddress:
+                    Navigate(typeof(AuthorizationEmailAddressPage));
+                    break;
+                case AuthorizationStateWaitEmailCode:
+                    Navigate(typeof(AuthorizationEmailCodePage));
+                    break;
                 case AuthorizationStateWaitRegistration:
                     Navigate(typeof(SignUpPage));
                     break;

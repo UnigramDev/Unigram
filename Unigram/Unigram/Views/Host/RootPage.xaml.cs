@@ -164,21 +164,27 @@ namespace Unigram.Views.Host
 
                 switch (session.ProtoService.GetAuthorizationState())
                 {
-                    case AuthorizationStateReady ready:
+                    case AuthorizationStateReady:
                         service.Navigate(typeof(MainPage));
                         break;
-                    case AuthorizationStateWaitPhoneNumber waitPhoneNumber:
-                    case AuthorizationStateWaitOtherDeviceConfirmation waitOtherDeviceConfirmation:
+                    case AuthorizationStateWaitPhoneNumber:
+                    case AuthorizationStateWaitOtherDeviceConfirmation:
                         service.Navigate(typeof(SignInPage));
                         service.AddToBackStack(typeof(BlankPage));
                         break;
-                    case AuthorizationStateWaitCode waitCode:
+                    case AuthorizationStateWaitCode:
                         service.Navigate(typeof(SignInSentCodePage));
                         break;
-                    case AuthorizationStateWaitRegistration waitRegistration:
+                    case AuthorizationStateWaitEmailAddress:
+                        service.Navigate(typeof(AuthorizationEmailAddressPage));
+                        break;
+                    case AuthorizationStateWaitEmailCode:
+                        service.Navigate(typeof(AuthorizationEmailCodePage));
+                        break;
+                    case AuthorizationStateWaitRegistration:
                         service.Navigate(typeof(SignUpPage));
                         break;
-                    case AuthorizationStateWaitPassword waitPassword:
+                    case AuthorizationStateWaitPassword:
                         service.Navigate(typeof(SignInPasswordPage));
                         break;
                 }

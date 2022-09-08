@@ -45,7 +45,11 @@ namespace Unigram.ViewModels.SignIn
             });
 
             var authState = ProtoService.GetAuthorizationState();
-            var waitState = authState is AuthorizationStateWaitPhoneNumber or AuthorizationStateWaitCode or AuthorizationStateWaitPassword;
+            var waitState = authState is AuthorizationStateWaitPhoneNumber
+                or AuthorizationStateWaitCode
+                or AuthorizationStateWaitPassword
+                or AuthorizationStateWaitEmailAddress
+                or AuthorizationStateWaitEmailCode;
 
             if (waitState && mode != NavigationMode.Refresh)
             {

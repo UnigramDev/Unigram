@@ -150,18 +150,24 @@ namespace Unigram.Common
             {
                 switch (state)
                 {
-                    case AuthorizationStateReady ready:
+                    case AuthorizationStateReady:
                         //App.Current.NavigationService.Navigate(typeof(Views.MainPage));
                         UseActivatedArgs(args, service);
                         break;
-                    case AuthorizationStateWaitPhoneNumber waitPhoneNumber:
-                    case AuthorizationStateWaitOtherDeviceConfirmation waitOtherDeviceConfirmation:
+                    case AuthorizationStateWaitPhoneNumber:
+                    case AuthorizationStateWaitOtherDeviceConfirmation:
                         service.Navigate(typeof(SignInPage));
                         break;
-                    case AuthorizationStateWaitCode waitCode:
+                    case AuthorizationStateWaitCode:
                         service.Navigate(typeof(SignInSentCodePage));
                         break;
-                    case AuthorizationStateWaitRegistration waitRegistration:
+                    case AuthorizationStateWaitEmailAddress:
+                        service.Navigate(typeof(AuthorizationEmailAddressPage));
+                        break;
+                    case AuthorizationStateWaitEmailCode:
+                        service.Navigate(typeof(AuthorizationEmailCodePage));
+                        break;
+                    case AuthorizationStateWaitRegistration:
                         service.Navigate(typeof(SignUpPage));
                         break;
                     case AuthorizationStateWaitPassword waitPassword:

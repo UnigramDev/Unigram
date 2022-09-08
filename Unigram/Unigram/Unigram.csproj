@@ -615,6 +615,8 @@
     <Compile Include="ViewModels\Settings\SettingsQuickReactionViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsStickersViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsThemeViewModel.cs" />
+    <Compile Include="ViewModels\SignIn\AuthorizationEmailAddressViewModel.cs" />
+    <Compile Include="ViewModels\SignIn\AuthorizationEmailCodeViewModel.cs" />
     <Compile Include="ViewModels\StickersViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupReactionsViewModel.cs" />
     <Compile Include="Views\ChatEventLogPage.xaml.cs">
@@ -1181,8 +1183,14 @@
     <Compile Include="Views\Settings\SettingsWebSessionsPage.xaml.cs">
       <DependentUpon>SettingsWebSessionsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\SignIn\AuthorizationEmailAddressPage.xaml.cs">
+      <DependentUpon>AuthorizationEmailAddressPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SignIn\SignInRecoveryPage.xaml.cs">
       <DependentUpon>SignInRecoveryPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SignIn\AuthorizationEmailCodePage.xaml.cs">
+      <DependentUpon>AuthorizationEmailCodePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SignIn\SignUpPage.xaml.cs">
       <DependentUpon>SignUpPage.xaml</DependentUpon>
@@ -1435,6 +1443,10 @@
     <Content Include="Assets\Animations\AddOne.json" />
     <Content Include="Assets\Animations\Double.json" />
     <Content Include="Assets\Animations\Unlock.json" />
+    <Content Include="Assets\Animations\AuthorizationStateWaitEmailAddress.tgs" />
+    <Content Include="Assets\Animations\AuthorizationStateWaitEmailCode.tgs" />
+    <Content Include="Assets\Animations\AuthorizationStateWaitCode.tgs" />
+    <Content Include="Assets\Animations\AuthorizationStateWaitRegistration.tgs" />
     <None Include="Assets\i420.hlsl" />
     <Content Include="Assets\Images\BoxArt.png" />
     <Content Include="Assets\Images\Reply.scale-100.png" />
@@ -2385,6 +2397,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\SignIn\AuthorizationEmailAddressPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\SignIn\SignInPasswordPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2392,6 +2408,10 @@
     <Page Include="Views\SignIn\SignInRecoveryPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SignIn\AuthorizationEmailCodePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\SignIn\SignInSentCodePage.xaml">
       <Generator>MSBuild:Compile</Generator>

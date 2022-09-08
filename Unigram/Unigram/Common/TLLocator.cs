@@ -122,6 +122,22 @@
                     _settingsService,
                     _eventAggregator);
             }
+            else if (type == typeof(Unigram.ViewModels.SignIn.AuthorizationEmailAddressViewModel))
+            {
+                return (T)(object)new Unigram.ViewModels.SignIn.AuthorizationEmailAddressViewModel(
+                    _protoService,
+                    _cacheService,
+                    _settingsService,
+                    _eventAggregator);
+            }
+            else if (type == typeof(Unigram.ViewModels.SignIn.AuthorizationEmailCodeViewModel))
+            {
+                return (T)(object)new Unigram.ViewModels.SignIn.AuthorizationEmailCodeViewModel(
+                    _protoService,
+                    _cacheService,
+                    _settingsService,
+                    _eventAggregator);
+            }
             else if (type == typeof(Unigram.ViewModels.MainViewModel))
             {
                 return (T)(object)new Unigram.ViewModels.MainViewModel(
@@ -359,17 +375,17 @@
                     _settingsService,
                     _eventAggregator);
             }
-            else if (type == typeof(Unigram.ViewModels.Drawers.EmojiDrawerViewModel))
+            else if (type == typeof(Unigram.ViewModels.Drawers.StickerDrawerViewModel))
             {
-                return (T)(object)new Unigram.ViewModels.Drawers.EmojiDrawerViewModel(
+                return (T)(object)new Unigram.ViewModels.Drawers.StickerDrawerViewModel(
                     _protoService,
                     _cacheService,
                     _settingsService,
                     _eventAggregator);
             }
-            else if (type == typeof(Unigram.ViewModels.Drawers.StickerDrawerViewModel))
+            else if (type == typeof(Unigram.ViewModels.Drawers.EmojiDrawerViewModel))
             {
-                return (T)(object)new Unigram.ViewModels.Drawers.StickerDrawerViewModel(
+                return (T)(object)new Unigram.ViewModels.Drawers.EmojiDrawerViewModel(
                     _protoService,
                     _cacheService,
                     _settingsService,

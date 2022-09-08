@@ -7,6 +7,7 @@
       xmlns:microsoft="using:Microsoft.UI.Xaml.Controls"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      Loaded="OnLoaded"
       mc:Ignorable="d">
 
     <Page.Transitions>
@@ -22,28 +23,40 @@
             <RowDefinition common:TitleBar.IsAttached="True" />
             <RowDefinition />
         </Grid.RowDefinitions>
-
         <StackPanel x:Name="ContentPanel"
                     VerticalAlignment="Center"
                     Padding="12,20"
+                    Margin="0,-80,0,0"
                     MaxWidth="360"
                     Grid.Row="1">
+            <controls:LottieView FrameSize="160,160"
+                                 DecodeFrameType="Logical"
+                                 Source="ms-appx:///Assets/Animations/AuthorizationStateWaitRegistration.tgs"
+                                 AutoPlay="True"
+                                 IsLoopingEnabled="False"
+                                 IsCachingEnabled="False"
+                                 Width="160"
+                                 Height="160" />
+
             <TextBlock x:Name="TitleLabel"
                        Text="{CustomResource YourName}"
                        Style="{StaticResource TitleTextBlockStyle}"
                        TextAlignment="Center" />
             <TextBlock Text="{CustomResource RegisterText}"
                        Style="{StaticResource BodyTextBlockStyle}"
-                       TextAlignment="Center" />
+                       TextAlignment="Center"
+                       Padding="0,8,0,16" />
 
             <TextBox x:Name="PrimaryInput"
                      Text="{x:Bind ViewModel.FirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     KeyDown="PrimaryInput_KeyDown"
                      Margin="0,12,0,8"
                      InputScope="PersonalFullName"
-                     IsTextPredictionEnabled="False"
                      PlaceholderText="{CustomResource FirstName}" />
 
-            <TextBox Text="{x:Bind ViewModel.LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            <TextBox x:Name="SecondaryInput"
+                     Text="{x:Bind ViewModel.LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     KeyDown="PrimaryInput_KeyDown"
                      Margin="0,0,0,4"
                      InputScope="PersonalFullName"
                      IsTextPredictionEnabled="False"
@@ -57,7 +70,7 @@
                     Command="{x:Bind ViewModel.SendCommand}"
                     Style="{StaticResource AccentButtonStyle}"
                     HorizontalAlignment="Stretch"
-                    Margin="0,4,0,0" />
+                    Margin="0,4,0,8" />
         </StackPanel>
 
         <controls:BackButton Grid.Row="1" />

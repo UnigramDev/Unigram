@@ -1,19 +1,20 @@
-﻿using Unigram.Common;
+﻿using Telegram.Td.Api;
+using Unigram.Common;
 using Unigram.ViewModels.SignIn;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.SignIn
 {
-    public sealed partial class SignUpPage : Page
+    public sealed partial class AuthorizationEmailCodePage : Page
     {
-        public SignUpViewModel ViewModel => DataContext as SignUpViewModel;
+        public AuthorizationEmailCodeViewModel ViewModel => DataContext as AuthorizationEmailCodeViewModel;
 
-        public SignUpPage()
+        public AuthorizationEmailCodePage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SignUpViewModel>();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -30,7 +31,7 @@ namespace Unigram.Views.SignIn
         {
             switch (e.PropertyName)
             {
-                case "FIRSTNAME_INVALID":
+                case "CODE_INVALID":
                     VisualUtilities.ShakeView(PrimaryInput);
                     break;
             }
@@ -41,21 +42,28 @@ namespace Unigram.Views.SignIn
             PrimaryInput.Focus(FocusState.Keyboard);
         }
 
-        private void PrimaryInput_KeyDown(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
+        private void PrimaryInput_KeyDown(object sender, KeyRoutedEventArgs e)
         {
             if (e.Key == Windows.System.VirtualKey.Enter)
             {
-                if (sender == PrimaryInput)
-                {
-                    SecondaryInput.Focus(FocusState.Keyboard);
-                }
-                else
-                {
-                    ViewModel.SendCommand.Execute(null);
-                }
-
+                ViewModel.SendCommand.Execute(null);
                 e.Handled = true;
             }
         }
+
+        #region Binding
+
+        private string ConvertType(EmailAddressAuthenticationCodeInfo codeInfo)
+        {
+            if (codeInfo == null)
+            {
+                return null;
+            }
+
+            return string.Format(Strings.Resources.CheckYourEmailSubtitle, codeInfo.EmailAddressPattern);
+        }
+
+        #endregion
+
     }
 }
