@@ -44,6 +44,7 @@ namespace Unigram.Controls
         protected bool _subscribed;
         protected bool _unsubscribe;
 
+        private bool _hasInitialLoadedEventFired;
         protected bool _unloaded;
 
         protected bool _isLoopingEnabled = true;
@@ -67,13 +68,10 @@ namespace Unigram.Controls
             _autoPause = autoPause;
 
             _limitFps = limitFps ?? !Windows.UI.Composition.CompositionCapabilities.GetForCurrentView().AreEffectsFast();
-            _currentDpi = DisplayInformation.GetForCurrentView().LogicalDpi;
-            _active = !autoPause || Window.Current.CoreWindow.ActivationMode == CoreWindowActivationMode.ActivatedInForeground;
-            _visible = Window.Current.CoreWindow.Visible;
-
             _dispatcher = DispatcherQueue.GetForCurrentThread();
 
             SizeChanged += OnSizeChanged;
+            RegisterEventHandlers();
         }
 
         protected override void OnApplyTemplate()
@@ -102,6 +100,11 @@ namespace Unigram.Controls
             _active = !_autoPause || Window.Current.CoreWindow.ActivationMode == CoreWindowActivationMode.ActivatedInForeground;
             _visible = Window.Current.CoreWindow.Visible;
 
+            if (_hasInitialLoadedEventFired)
+            {
+                return;
+            }
+
             DisplayInformation.GetForCurrentView().DpiChanged += OnDpiChanged;
             Window.Current.VisibilityChanged += OnVisibilityChanged;
             CompositionTarget.SurfaceContentsLost += OnSurfaceContentsLost;
@@ -110,6 +113,8 @@ namespace Unigram.Controls
             {
                 Window.Current.Activated += OnActivated;
             }
+
+            _hasInitialLoadedEventFired = true;
         }
 
         private void UnregisterEventHandlers()
@@ -122,6 +127,8 @@ namespace Unigram.Controls
             {
                 Window.Current.Activated -= OnActivated;
             }
+
+            _hasInitialLoadedEventFired = false;
         }
 
         private void OnDpiChanged(DisplayInformation sender, object args)
@@ -206,7 +213,7 @@ namespace Unigram.Controls
 
         private void Changed(bool force = false)
         {
-            if (_canvas == null)
+            if (_canvas == null || !_visible)
             {
                 // Load is going to invoke Changed again
                 Load();
@@ -223,7 +230,7 @@ namespace Unigram.Controls
                 needsCreate |= _surface?.Size.Width != newSize.X || _surface?.Size.Height != newSize.Y;
                 needsCreate |= force;
 
-                if (needsCreate && newSize.X > 0 && newSize.Y > 0 && _visible)
+                if (needsCreate && newSize.X > 0 && newSize.Y > 0)
                 {
                     try
                     {

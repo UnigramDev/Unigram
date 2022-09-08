@@ -195,7 +195,7 @@ namespace Unigram.Controls
 
                     if (!_isLoopingEnabled)
                     {
-                        Subscribe(false);
+                        Pause();
                     }
                 }
             }
@@ -209,7 +209,7 @@ namespace Unigram.Controls
                 {
                     if (!_isLoopingEnabled)
                     {
-                        Subscribe(false);
+                        Pause();
                     }
                     else
                     {
