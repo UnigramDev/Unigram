@@ -247,7 +247,7 @@ namespace Unigram.Controls.Drawers
                                     continue;
                                 }
 
-                                UpdateContainerContent(sticker, container.ContentTemplateRoot as Grid, false, UpdateSticker);
+                                UpdateContainerContent(sticker, container.ContentTemplateRoot as Grid, UpdateSticker);
                             }
                         }
                     }
@@ -534,7 +534,7 @@ namespace Unigram.Controls.Drawers
                             continue;
                         }
 
-                        UpdateContainerContent(sticker, container.ContentTemplateRoot as Grid, false, UpdateSticker);
+                        UpdateContainerContent(sticker, container.ContentTemplateRoot as Grid, UpdateSticker);
                     }
                 }
             }
@@ -580,14 +580,14 @@ namespace Unigram.Controls.Drawers
                 return;
             }
 
-            if (toolbar)
-            {
-                content.Padding = new Thickness(4);
-            }
-            else
-            {
-                content.Padding = new Thickness(_mode == EmojiDrawerMode.Reactions ? 0 : 8);
-            }
+            //if (toolbar)
+            //{
+            //    content.Padding = new Thickness(4);
+            //}
+            //else
+            //{
+            //    content.Padding = new Thickness(_mode == EmojiDrawerMode.Reactions ? 0 : 8);
+            //}
 
             if (content.Tag is not null
                 || content.Tag is Sticker prev && prev?.StickerValue.Id == file.Id)
@@ -706,7 +706,7 @@ namespace Unigram.Controls.Drawers
                     return;
                 }
 
-                UpdateContainerContent(cover, content, true, UpdateStickerSet);
+                UpdateContainerContent(cover, content, UpdateStickerSet);
             }
         }
 

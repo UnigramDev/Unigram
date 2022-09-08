@@ -95,7 +95,7 @@ namespace Unigram.Controls.Messages
 
             static void DownloadFile(MessageViewModel message, File file)
             {
-                if (file != null && file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsFileExisting())
+                if (file != null && file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
                 {
                     message.ProtoService.DownloadFile(file.Id, 31);
                 }
@@ -125,7 +125,7 @@ namespace Unigram.Controls.Messages
                 view.Tag = offset < visible ? null : new object();
 
                 var file = item.AppearAnimation.StickerValue;
-                if (file.Local.IsFileExisting())
+                if (file.Local.IsDownloadingCompleted)
                 {
                     view.Source = UriEx.ToLocal(file.Local.Path);
                 }
