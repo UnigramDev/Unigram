@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Linq;
 using System.Numerics;
@@ -62,6 +63,7 @@ namespace Unigram.Controls.Gallery
 
         private bool _unloaded;
 
+        private static readonly ConcurrentDictionary<int, double> _knownPositions = new();
         private int? _initialPosition;
 
         public int InitialPosition
@@ -660,6 +662,10 @@ namespace Unigram.Controls.Gallery
                     _initialPosition = null;
                     _mediaPlayer.PlaybackSession.Position = TimeSpan.FromSeconds(initialPosition);
                 }
+                else if (_knownPositions.TryRemove(file.Id, out double knownPosition))
+                {
+                    _mediaPlayer.PlaybackSession.Position = TimeSpan.FromSeconds(knownPosition);
+                }
 
                 _mediaPlayer.IsLoopingEnabled = item.IsLoop;
                 _mediaPlayer.Play();
@@ -677,8 +683,12 @@ namespace Unigram.Controls.Gallery
                 _surface = null;
             }
 
+            var fileId = 0;
+
             if (_fileStream != null)
             {
+                fileId = _fileStream.FileId;
+
                 if (GalleryCompactView.Current == null)
                 {
                     _fileStream.Dispose();
@@ -689,6 +699,11 @@ namespace Unigram.Controls.Gallery
 
             if (_mediaPlayer != null)
             {
+                if (fileId != 0 && _mediaPlayer.PlaybackSession.NaturalDuration.TotalSeconds > 30)
+                {
+                    _knownPositions[fileId] = _mediaPlayer.PlaybackSession.Position.TotalSeconds;
+                }
+
                 _mediaPlayer.VolumeChanged -= OnVolumeChanged;
                 _mediaPlayer.SourceChanged -= OnSourceChanged;
                 _mediaPlayer.MediaOpened -= OnMediaOpened;
