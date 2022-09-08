@@ -39,7 +39,7 @@ namespace Unigram.Controls
 
         protected TAnimation _animation;
 
-        protected bool _playing;
+        protected bool? _playing;
 
         protected bool _subscribed;
         protected bool _unsubscribe;
@@ -136,7 +136,6 @@ namespace Unigram.Controls
             lock (_drawFrameLock)
             {
                 _currentDpi = sender.LogicalDpi;
-
                 Changed();
             }
         }
@@ -146,7 +145,6 @@ namespace Unigram.Controls
             lock (_drawFrameLock)
             {
                 _currentSize = e.NewSize.ToVector2();
-
                 Changed();
             }
         }
@@ -177,10 +175,7 @@ namespace Unigram.Controls
 
                 if (e.WindowActivationState != CoreWindowActivationState.Deactivated)
                 {
-                    if (_playing && _animation != null && _layoutRoot.IsLoaded)
-                    {
-                        Play();
-                    }
+                    OnSourceChanged();
                 }
                 else
                 {
@@ -241,7 +236,7 @@ namespace Unigram.Controls
 
                         _bitmap = CreateBitmap(_surface);
 
-                        DrawFrame();
+                        OnSourceChanged();
                     }
                     catch
                     {
@@ -317,7 +312,7 @@ namespace Unigram.Controls
 
         public async void Unload()
         {
-            _playing = false;
+            _playing = null;
             _unloaded = true;
             Subscribe(false);
 
@@ -497,12 +492,10 @@ namespace Unigram.Controls
 
         protected async void OnSourceChanged()
         {
-            if (_active && (AutoPlay || _playing))
+            var playing = AutoPlay ? _playing != false : _playing == true;
+            if (playing && _active)
             {
-                _playing = true;
-
-                CreateBitmap();
-                Subscribe(true);
+                Play(false);
             }
             else
             {
@@ -523,8 +516,17 @@ namespace Unigram.Controls
 
         public bool Play()
         {
+            return Play(true);
+        }
+
+        private bool Play(bool tryLoad)
+        {
             _playing = true;
-            Load();
+
+            if (tryLoad)
+            {
+                Load();
+            }
 
             if (_canvas == null || _animation == null || _subscribed || !_active)
             {
@@ -533,6 +535,11 @@ namespace Unigram.Controls
 
             if (_canvas.IsLoaded || _layoutRoot.IsLoaded)
             {
+                if (tryLoad is false)
+                {
+                    CreateBitmap();
+                }
+
                 Subscribe(true);
             }
 

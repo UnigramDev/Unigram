@@ -848,7 +848,7 @@ namespace Unigram.Controls.Gallery
         private bool ChangeView(CarouselDirection direction)
         {
             var viewModel = ViewModel;
-            if (viewModel == null)
+            if (viewModel == null || LayoutRoot.IsScrolling)
             {
                 return false;
             }
