@@ -595,6 +595,13 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resw</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\Authorization\AuthorizationCodeViewModel.cs" />
+    <Compile Include="ViewModels\Authorization\AuthorizationEmailAddressViewModel.cs" />
+    <Compile Include="ViewModels\Authorization\AuthorizationEmailCodeViewModel.cs" />
+    <Compile Include="ViewModels\Authorization\AuthorizationPasswordViewModel.cs" />
+    <Compile Include="ViewModels\Authorization\AuthorizationRecoveryViewModel.cs" />
+    <Compile Include="ViewModels\Authorization\AuthorizationRegistrationViewModel.cs" />
+    <Compile Include="ViewModels\Authorization\AuthorizationViewModel.cs" />
     <Compile Include="ViewModels\ChatListViewModel.cs" />
     <Compile Include="ViewModels\ChooseSoundViewModel.cs" />
     <Compile Include="ViewModels\Delegates\IChatListDelegate.cs" />
@@ -615,10 +622,29 @@
     <Compile Include="ViewModels\Settings\SettingsQuickReactionViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsStickersViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsThemeViewModel.cs" />
-    <Compile Include="ViewModels\SignIn\AuthorizationEmailAddressViewModel.cs" />
-    <Compile Include="ViewModels\SignIn\AuthorizationEmailCodeViewModel.cs" />
     <Compile Include="ViewModels\StickersViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupReactionsViewModel.cs" />
+    <Compile Include="Views\Authorization\AuthorizationCodePage.xaml.cs">
+      <DependentUpon>AuthorizationCodePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Authorization\AuthorizationEmailAddressPage.xaml.cs">
+      <DependentUpon>AuthorizationEmailAddressPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Authorization\AuthorizationEmailCodePage.xaml.cs">
+      <DependentUpon>AuthorizationEmailCodePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Authorization\AuthorizationPage.xaml.cs">
+      <DependentUpon>AuthorizationPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Authorization\AuthorizationPasswordPage.xaml.cs">
+      <DependentUpon>AuthorizationPasswordPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Authorization\AuthorizationRecoveryPage.xaml.cs">
+      <DependentUpon>AuthorizationRecoveryPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Authorization\AuthorizationRegistrationPage.xaml.cs">
+      <DependentUpon>AuthorizationRegistrationPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ChatEventLogPage.xaml.cs">
       <DependentUpon>ChatEventLogPage.xaml</DependentUpon>
     </Compile>
@@ -896,8 +922,6 @@
     <Compile Include="ViewModels\Settings\SettingsThemesViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsWebSessionsViewModel.cs" />
     <Compile Include="ViewModels\ShareViewModel.cs" />
-    <Compile Include="ViewModels\SignIn\SignInRecoveryViewModel.cs" />
-    <Compile Include="ViewModels\SignIn\SignUpViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsNotificationsViewModel.cs" />
     <Compile Include="ViewModels\SingleGalleryViewModel.cs" />
     <Compile Include="ViewModels\Delegates\IMemberDelegate.cs" />
@@ -1183,18 +1207,6 @@
     <Compile Include="Views\Settings\SettingsWebSessionsPage.xaml.cs">
       <DependentUpon>SettingsWebSessionsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SignIn\AuthorizationEmailAddressPage.xaml.cs">
-      <DependentUpon>AuthorizationEmailAddressPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\SignIn\SignInRecoveryPage.xaml.cs">
-      <DependentUpon>SignInRecoveryPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\SignIn\AuthorizationEmailCodePage.xaml.cs">
-      <DependentUpon>AuthorizationEmailCodePage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\SignIn\SignUpPage.xaml.cs">
-      <DependentUpon>SignUpPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Supergroups\SupergroupAddAdministratorPage.xaml.cs">
       <DependentUpon>SupergroupAddAdministratorPage.xaml</DependentUpon>
     </Compile>
@@ -1300,9 +1312,6 @@
     <Compile Include="ViewModels\DialogViewModel.Info.cs" />
     <Compile Include="ViewModels\DialogViewModel.Inline.cs" />
     <Compile Include="ViewModels\DialogViewModel.Messages.cs" />
-    <Compile Include="ViewModels\SignIn\SignInPasswordViewModel.cs" />
-    <Compile Include="ViewModels\SignIn\SignInSentCodeViewModel.cs" />
-    <Compile Include="ViewModels\SignIn\SignInViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsSessionsViewModel.cs" />
@@ -1317,15 +1326,6 @@
     </Compile>
     <Compile Include="Views\GamePage.xaml.cs">
       <DependentUpon>GamePage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\SignIn\SignInPasswordPage.xaml.cs">
-      <DependentUpon>SignInPasswordPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\SignIn\SignInSentCodePage.xaml.cs">
-      <DependentUpon>SignInSentCodePage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\SignIn\SignInPage.xaml.cs">
-      <DependentUpon>SignInPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
@@ -1885,6 +1885,34 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Authorization\AuthorizationCodePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Authorization\AuthorizationEmailAddressPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Authorization\AuthorizationEmailCodePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Authorization\AuthorizationPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Authorization\AuthorizationPasswordPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Authorization\AuthorizationRecoveryPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Authorization\AuthorizationRegistrationPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\ChatEventLogPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2394,34 +2422,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\SettingsWebSessionsPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\SignIn\AuthorizationEmailAddressPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\SignIn\SignInPasswordPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\SignIn\SignInRecoveryPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\SignIn\AuthorizationEmailCodePage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\SignIn\SignInSentCodePage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\SignIn\SignInPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\SignIn\SignUpPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -11,16 +11,14 @@ using Windows.UI.Xaml.Navigation;
 namespace Unigram.Common
 {
     public class TLRootNavigationService : NavigationService
-        //, IHandle<UpdateAuthorizationState>
+    //, IHandle<UpdateAuthorizationState>
     {
         private readonly ILifetimeService _lifetimeService;
-        private readonly ISessionService _sessionService;
 
         public TLRootNavigationService(ISessionService sessionService, Frame frame, int session, string id)
             : base(frame, session, id)
         {
             _lifetimeService = TLContainer.Current.Lifetime;
-            _sessionService = sessionService;
         }
 
         public async void Handle(UpdateAuthorizationState update)
