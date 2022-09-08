@@ -196,7 +196,7 @@
 
         <ToggleButton x:Name="Expand"
                       Checked="Expand_Click"
-                      Unchecked="Expand_Click"
+                      Visibility="Collapsed"
                       HorizontalAlignment="Right"
                       VerticalAlignment="Top"
                       Foreground="{ThemeResource SystemColorControlAccentBrush}"

@@ -42,7 +42,9 @@
         <DataTemplate x:Key="AnimatedItemTemplate">
             <Grid>
                 <controls:LottieView30Fps x:Name="Player"
-                                          AutoPlay="False" />
+                                          AutoPlay="False"
+                                          FrameSize="100,100"
+                                          DecodeFrameType="Physical" />
             </Grid>
         </DataTemplate>
 
@@ -287,7 +289,7 @@
                 <ItemsPanelTemplate>
                     <ItemsWrapGrid Orientation="Horizontal"
                                    AreStickyGroupHeadersEnabled="False"
-                                   CacheLength="2" />
+                                   CacheLength="4" />
                 </ItemsPanelTemplate>
             </GridView.ItemsPanel>
         </GridView>

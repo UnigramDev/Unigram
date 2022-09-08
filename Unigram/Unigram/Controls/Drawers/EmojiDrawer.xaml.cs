@@ -572,6 +572,28 @@ namespace Unigram.Controls.Drawers
             }
         }
 
+        private Color _currentReplacement = Colors.Black;
+        private readonly Dictionary<int, int> _colorReplacements = new()
+        {
+            { 0xFFFFFF, 0x000000 }
+        };
+
+        private IReadOnlyDictionary<int, int> GetColorReplacements(long setId)
+        {
+            if (setId == ViewModel.ProtoService.Options.ThemedEmojiStatusesStickerSetId)
+            {
+                if (_currentReplacement != Theme.Current.Accent)
+                {
+                    _currentReplacement = Theme.Current.Accent;
+                    _colorReplacements[0xFFFFFF] = Theme.Current.Accent.ToValue();
+                }
+
+                return _colorReplacements;
+            }
+
+            return null;
+        }
+
         private async void UpdateContainerContent(Sticker sticker, Grid content, UpdateHandler<File> handler, ContainerContentChangingEventArgs args = null)
         {
             var file = sticker?.StickerValue;
@@ -595,7 +617,13 @@ namespace Unigram.Controls.Drawers
                 return;
             }
 
-            if ((args == null || args.Phase == 2) && file.Local.IsDownloadingCompleted)
+            if (args != null && args.Phase < 2)
+            {
+                args.RegisterUpdateCallback(2, OnContainerContentChanging);
+                return;
+            }
+
+            if (file.Local.IsDownloadingCompleted)
             {
                 if (content.Children[0] is Border border && border.Child is Image photo)
                 {
@@ -604,6 +632,7 @@ namespace Unigram.Controls.Drawers
                 }
                 else if (content.Children[0] is LottieView lottie)
                 {
+                    lottie.ColorReplacements = GetColorReplacements(sticker.SetId);
                     lottie.Source = UriEx.ToLocal(file.Local.Path);
                 }
                 else if (content.Children[0] is AnimationView video)
@@ -627,11 +656,6 @@ namespace Unigram.Controls.Drawers
                 {
                     ViewModel.ProtoService.DownloadFile(file.Id, 1);
                 }
-            }
-
-            if (args?.Phase == 0)
-            {
-                args.RegisterUpdateCallback(2, OnContainerContentChanging);
             }
         }
 
