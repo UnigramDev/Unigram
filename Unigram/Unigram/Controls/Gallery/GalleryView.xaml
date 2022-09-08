@@ -170,6 +170,9 @@
             <Border x:Name="Layer"
                     Margin="0,-40,0,0"
                     Background="#EB222222" />
+            <Border x:Name="LayerFullScreen"
+                    Margin="0,-40,0,0"
+                    Background="#000000" />
             <controls:ZoomViewer x:Name="ScrollingHost"
                                  MinZoomFactor="1"
                                  MaxZoomFactor="4"
@@ -244,14 +247,24 @@
                                       Glyph="&#xF4AA;"
                                       FontSize="{StaticResource GlyphMediumFontSize}" />
 
+                <controls:AnimatedGlyphToggleButton x:Name="FullScreen"
+                                                    Click="FullScreen_Click"
+                                                    Height="{ThemeResource AppBarThemeCompactHeight}"
+                                                    Glyph="&#xE9F4;"
+                                                    CheckedGlyph="&#xE9F3;"/>
+
                 <controls:GlyphButton x:Name="ZoomOut"
                                       Click="ZoomOut_Click"
                                       Height="{ThemeResource AppBarThemeCompactHeight}"
+                                      AutomationProperties.Name="{CustomResource MediaZoomOut}"
+                                      ToolTipService.ToolTip="{CustomResource MediaZoomOut}"
                                       Glyph="&#xE96A;" />
 
                 <controls:GlyphButton x:Name="ZoomIn"
                                       Click="ZoomIn_Click"
                                       Height="{ThemeResource AppBarThemeCompactHeight}"
+                                      AutomationProperties.Name="{CustomResource MediaZoomIn}"
+                                      ToolTipService.ToolTip="{CustomResource MediaZoomIn}"
                                       Glyph="&#xE969;" />
 
                 <controls:GlyphButton Click="Compact_Click"
@@ -271,7 +284,12 @@
                                         ShowAndHideAutomatically="False"
                                         IsFullWindowButtonVisible="False"
                                         IsZoomButtonVisible="False"
-                                        MaxWidth="396" />
+                                        IsSkipBackwardButtonVisible="True"
+                                        IsSkipForwardButtonVisible="True"
+                                        IsSkipBackwardEnabled="True"
+                                        IsSkipForwardEnabled="True"
+                                        MaxWidth="396"
+                                        Margin="0"/>
                 <Border Background="{ThemeResource SystemControlPageBackgroundAltMediumBrush}"
                         Visibility="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                         HorizontalAlignment="Center"

@@ -28,7 +28,7 @@ namespace Unigram.Controls.Gallery
                 element3.Measure(new Size(availableSize.Width - width * 2, availableSize.Height - height));
             }
 
-            return base.MeasureOverride(availableSize);
+            return new Size(0, 0);
         }
 
         protected override Size ArrangeOverride(Size finalSize)
@@ -68,7 +68,7 @@ namespace Unigram.Controls.Gallery
                     element3.DesiredSize.Height));
             }
 
-            return base.ArrangeOverride(finalSize);
+            return finalSize;
         }
     }
 }

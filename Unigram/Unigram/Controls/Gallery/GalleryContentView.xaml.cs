@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services;
@@ -7,6 +8,7 @@ using Unigram.ViewModels.Gallery;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
@@ -24,6 +26,8 @@ namespace Unigram.Controls.Gallery
         private string _fileToken;
         private string _thumbnailToken;
 
+        private Stretch _lastStretch;
+
         public bool IsEnabled
         {
             get => Button.IsEnabled;
@@ -33,6 +37,34 @@ namespace Unigram.Controls.Gallery
         public GalleryContentView()
         {
             InitializeComponent();
+        }
+
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (_lastStretch == Stretch)
+            {
+                return;
+            }
+
+            _lastStretch = Stretch;
+
+            var prev = e.PreviousSize.ToVector2();
+            var next = e.NewSize.ToVector2();
+
+            var anim = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            anim.InsertKeyFrame(0, new Vector3(prev / next, 1));
+            anim.InsertKeyFrame(1, Vector3.One);
+
+            var panel = ElementCompositionPreview.GetElementVisual(this);
+            panel.CenterPoint = new Vector3(next.X / 2, next.Y / 2, 0);
+            panel.StartAnimation("Scale", anim);
+
+            var factor = Window.Current.Compositor.CreateExpressionAnimation("Vector3(1 / content.Scale.X, 1 / content.Scale.Y, 1)");
+            factor.SetReferenceParameter("content", panel);
+
+            var button = ElementCompositionPreview.GetElementVisual(Button);
+            button.CenterPoint = new Vector3(Button.ActualSize.X / 2, Button.ActualSize.Y / 2, 0);
+            button.StartAnimation("Scale", factor);
         }
 
         public void UpdateItem(IGalleryDelegate delegato, GalleryContent item)

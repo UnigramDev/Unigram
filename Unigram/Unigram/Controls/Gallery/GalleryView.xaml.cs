@@ -54,9 +54,12 @@ namespace Unigram.Controls.Gallery
         private readonly Visual _layout;
 
         private readonly Visual _layer;
+        private readonly Visual _layerFullScreen;
         private readonly Visual _bottom;
 
         private bool _wasFullScreen;
+        private bool _lastFullScreen;
+
         private bool _unloaded;
 
         private int? _initialPosition;
@@ -74,9 +77,11 @@ namespace Unigram.Controls.Gallery
             _layout = ElementCompositionPreview.GetElementVisual(LayoutRoot);
 
             _layer = ElementCompositionPreview.GetElementVisual(Layer);
+            _layerFullScreen = ElementCompositionPreview.GetElementVisual(LayerFullScreen);
             _bottom = ElementCompositionPreview.GetElementVisual(BottomPanel);
 
             _layer.Opacity = 0;
+            _layerFullScreen.Opacity = 0;
             _bottom.Opacity = 0;
 
             _mediaPlayerElement = new MediaPlayerElement { Style = Resources["TransportLessMediaPlayerStyle"] as Style };
@@ -161,6 +166,7 @@ namespace Unigram.Controls.Gallery
             var parent = ElementCompositionPreview.GetElementVisual(BottomPanel);
             var next = ElementCompositionPreview.GetElementVisual(NextButton);
             var prev = ElementCompositionPreview.GetElementVisual(PrevButton);
+            var back = ElementCompositionPreview.GetElementVisual(BackButton);
 
             var batch = parent.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
@@ -181,6 +187,7 @@ namespace Unigram.Controls.Gallery
             parent.StartAnimation("Opacity", opacity);
             next.StartAnimation("Opacity", opacity);
             prev.StartAnimation("Opacity", opacity);
+            back.StartAnimation("Opacity", opacity);
 
             batch.End();
         }
@@ -325,7 +332,11 @@ namespace Unigram.Controls.Gallery
                     return;
                 }
 
-                _wasFullScreen = ApplicationView.GetForCurrentView().IsFullScreenMode;
+                var applicationView = ApplicationView.GetForCurrentView();
+
+                _wasFullScreen = applicationView.IsFullScreenMode;
+                applicationView.VisibleBoundsChanged += OnVisibleBoundsChanged;
+                OnVisibleBoundsChanged(applicationView, null);
 
                 InitializeBackButton();
                 Transport.Focus(FocusState.Programmatic);
@@ -341,6 +352,30 @@ namespace Unigram.Controls.Gallery
 
             Loaded += handler;
             return ShowAsync();
+        }
+
+        private void OnVisibleBoundsChanged(ApplicationView sender, object args)
+        {
+            if (_lastFullScreen != sender.IsFullScreenMode)
+            {
+                FullScreen.IsChecked = sender.IsFullScreenMode;
+                Padding = new Thickness(0, sender.IsFullScreenMode ? 0 : 40, 0, 0);
+
+                if (LayoutRoot.CurrentElement is GalleryContentView container)
+                {
+                    container.Stretch = sender.IsFullScreenMode
+                        ? Stretch.UniformToFill
+                        : Stretch.Uniform;
+                }
+
+                var anim = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                anim.InsertKeyFrame(0, sender.IsFullScreenMode ? 0 : 1);
+                anim.InsertKeyFrame(1, sender.IsFullScreenMode ? 1 : 0);
+
+                _layerFullScreen.StartAnimation("Opacity", anim);
+            }
+
+            _lastFullScreen = sender.IsFullScreenMode;
         }
 
         protected override void MaskTitleAndStatusBar()
@@ -378,6 +413,8 @@ namespace Unigram.Controls.Gallery
             {
                 ApplicationView.GetForCurrentView().ExitFullScreenMode();
             }
+
+            ApplicationView.GetForCurrentView().VisibleBoundsChanged -= OnVisibleBoundsChanged;
 
             if (ViewModel != null)
             {
@@ -1157,6 +1194,19 @@ namespace Unigram.Controls.Gallery
         private GalleryContentView GetElement(CarouselDirection direction)
         {
             return LayoutRoot.GetElement(direction) as GalleryContentView;
+        }
+
+        private void FullScreen_Click(object sender, RoutedEventArgs e)
+        {
+            var applicationView = ApplicationView.GetForCurrentView();
+            if (applicationView.IsFullScreenMode)
+            {
+                applicationView.ExitFullScreenMode();
+            }
+            else
+            {
+                applicationView.TryEnterFullScreenMode();
+            }
         }
     }
 }
