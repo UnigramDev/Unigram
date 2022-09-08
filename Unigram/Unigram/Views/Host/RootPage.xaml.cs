@@ -49,6 +49,10 @@ namespace Unigram.Views.Host
             _navigationViewSelected = RootDestination.Chats;
             _navigationViewItems = new MvxObservableCollection<object>
             {
+                RootDestination.Status,
+                // ------------
+                RootDestination.Separator,
+                // ------------
                 RootDestination.ArchivedChats,
                 RootDestination.SavedMessages,
                 // ------------
@@ -262,18 +266,17 @@ namespace Unigram.Views.Host
         {
             if (frame?.Content is MainPage main)
             {
-                InitializeUser(main.ViewModel);
+                InitializeUser(main.ViewModel.ProtoService);
+                InitializeSessions(main.ViewModel.ProtoService, SettingsService.Current.IsAccountsSelectorExpanded, _lifetime.Items);
             }
-
-            InitializeSessions(SettingsService.Current.IsAccountsSelectorExpanded, _lifetime.Items);
         }
 
-        private async void InitializeUser(MainViewModel viewModel)
+        private async void InitializeUser(IProtoService protoService)
         {
-            var user = viewModel.CacheService.GetUser(viewModel.CacheService.Options.MyId);
+            var user = protoService.GetUser(protoService.Options.MyId);
             if (user == null)
             {
-                user = await viewModel.ProtoService.SendAsync(new GetMe()) as User;
+                user = await protoService.SendAsync(new GetMe()) as User;
             }
 
             if (user == null)
@@ -281,7 +284,7 @@ namespace Unigram.Views.Host
                 return;
             }
 
-            Photo.SetUser(viewModel.ProtoService, user, 48);
+            Photo.SetUser(protoService, user, 48);
             NameLabel.Text = user.GetFullName();
 #if DEBUG
             PhoneLabel.Text = "+42 --- --- ----";
@@ -300,6 +303,14 @@ namespace Unigram.Views.Host
         }
 
         private void InitializeSessions(bool show, IList<ISessionService> items)
+        {
+            if (_navigationService.Content is MainPage main)
+            {
+                InitializeSessions(main.ViewModel.ProtoService, SettingsService.Current.IsAccountsSelectorExpanded, _lifetime.Items);
+            }
+        }
+
+        private void InitializeSessions(IProtoService protoService, bool show, IList<ISessionService> items)
         {
             for (int i = 0; i < _navigationViewItems.Count; i++)
             {
@@ -327,16 +338,33 @@ namespace Unigram.Views.Host
                 }
             }
 
-            if (SettingsService.Current.HideArchivedChats is false)
+            var index = 2;
+
+            if (protoService.IsPremium is false)
             {
-                if (_navigationViewItems[0] is RootDestination.ArchivedChats)
+                if (_navigationViewItems[0] is RootDestination.Status)
                 {
                     _navigationViewItems.RemoveAt(0);
+                    _navigationViewItems.RemoveAt(0);
+                    index = 0;
                 }
             }
-            else if (_navigationViewItems[0] is not RootDestination.ArchivedChats)
+            else if (_navigationViewItems[0] is not RootDestination.Status)
             {
-                _navigationViewItems.Insert(0, RootDestination.ArchivedChats);
+                _navigationViewItems.Insert(0, RootDestination.Separator);
+                _navigationViewItems.Insert(0, RootDestination.Status);
+            }
+
+            if (SettingsService.Current.HideArchivedChats is false)
+            {
+                if (_navigationViewItems[index] is RootDestination.ArchivedChats)
+                {
+                    _navigationViewItems.RemoveAt(index);
+                }
+            }
+            else if (_navigationViewItems[index] is not RootDestination.ArchivedChats)
+            {
+                _navigationViewItems.Insert(index, RootDestination.ArchivedChats);
             }
 
             if (show && items != null)
@@ -461,7 +489,7 @@ namespace Unigram.Views.Host
                     args.RegisterUpdateCallback(OnContainerContentChanging);
                 }
             }
-            else if (args.Item is RootDestination destination)
+            else if (args.Item is RootDestination destination && _navigationService.Content is MainPage page)
             {
                 var content = args.ItemContainer as Controls.NavigationViewItem;
                 if (content != null)
@@ -500,6 +528,14 @@ namespace Unigram.Views.Host
                     case RootDestination.SavedMessages:
                         content.Text = Strings.Resources.SavedMessages;
                         content.Glyph = Icons.Bookmark;
+                        break;
+
+                    case RootDestination.Status:
+                        if (page.ViewModel.CacheService.TryGetUser(page.ViewModel.CacheService.Options.MyId, out User user))
+                        {
+                            content.Text = Strings.Resources.SetEmojiStatus; // ChangeEmojiStatus
+                            content.Glyph = Icons.EmojiAdd; // EmojiEdit
+                        }
                         break;
 
                     case RootDestination.Tips:
@@ -913,6 +949,8 @@ namespace Unigram.Views.Host
     public enum RootDestination
     {
         AddAccount,
+
+        Status,
 
         ArchivedChats,
         SavedMessages,

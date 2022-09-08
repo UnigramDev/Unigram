@@ -278,7 +278,9 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate>
-                    <Grid Height="16" />
+                    <Rectangle Fill="{ThemeResource NavigationViewItemSeparatorForeground}"
+                               Margin="12,2"
+                               Height="1" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

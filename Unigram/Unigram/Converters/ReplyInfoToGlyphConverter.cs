@@ -150,6 +150,9 @@ namespace Unigram.Converters
         public const string Person = "\uE77B";
         public const string PersonAdd = "\uE8FA";
 
+        public const string EmojiEdit = "\uE9EC";
+        public const string EmojiAdd = "\uE9ED";
+
         public const string Block = "\uF140";
         public const string Search = "\uE721";
         public const string Settings = "\uE713";
