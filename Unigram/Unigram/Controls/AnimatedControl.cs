@@ -236,6 +236,7 @@ namespace Unigram.Controls
 
                         _bitmap = CreateBitmap(_surface);
 
+                        Invalidate();
                         OnSourceChanged();
                     }
                     catch
