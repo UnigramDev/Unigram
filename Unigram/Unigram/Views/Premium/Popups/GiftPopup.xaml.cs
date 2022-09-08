@@ -18,9 +18,9 @@ namespace Unigram.Views.Premium.Popups
         private readonly IProtoService _protoService;
         private readonly INavigationService _navigationService;
 
-        private PremiumGiftOption _selectedOption;
+        private PremiumPaymentOption _selectedOption;
 
-        public GiftPopup(IProtoService protoService, INavigationService navigationService, User user, IList<PremiumGiftOption> options)
+        public GiftPopup(IProtoService protoService, INavigationService navigationService, User user, IList<PremiumPaymentOption> options)
         {
             InitializeComponent();
 
@@ -65,7 +65,7 @@ namespace Unigram.Views.Premium.Popups
                 return;
             }
 
-            var option = args.Item as PremiumGiftOption;
+            var option = args.Item as PremiumPaymentOption;
             var content = args.ItemContainer.ContentTemplateRoot as RadioButton;
 
             var title = content.FindName("Title") as TextBlock;
@@ -98,7 +98,7 @@ namespace Unigram.Views.Premium.Popups
 
         private void Option_Checked(object sender, RoutedEventArgs e)
         {
-            if (sender is FrameworkElement element && element.Tag is PremiumGiftOption option)
+            if (sender is FrameworkElement element && element.Tag is PremiumPaymentOption option)
             {
                 _selectedOption = option;
                 PurchaseCommand.Content = string.Format(Strings.Resources.GiftSubscriptionFor, Locale.FormatCurrency(option.Amount, option.Currency));

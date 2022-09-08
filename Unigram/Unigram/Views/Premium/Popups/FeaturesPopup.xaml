@@ -39,11 +39,6 @@
                             <cells:PremiumFeatureCell DataContextChanged="OnDataContextChanged" />
                         </DataTemplate>
                     </selectors:PremiumFeatureTemplateSelector.ItemTemplate>
-                    <selectors:PremiumFeatureTemplateSelector.ReactionsTemplate>
-                        <DataTemplate>
-                            <cells:PremiumFeatureUniqueReactionsCell DataContextChanged="OnDataContextChanged" />
-                        </DataTemplate>
-                    </selectors:PremiumFeatureTemplateSelector.ReactionsTemplate>
                     <selectors:PremiumFeatureTemplateSelector.StickersTemplate>
                         <DataTemplate>
                             <cells:PremiumFeatureUniqueStickersCell DataContextChanged="OnDataContextChanged" />

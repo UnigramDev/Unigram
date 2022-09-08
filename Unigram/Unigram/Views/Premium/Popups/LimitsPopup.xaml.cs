@@ -25,7 +25,7 @@ namespace Unigram.Views.Premium.Popups
             Color.FromArgb(0xFF, 0xF2, 0x82, 0x2A)
         };
 
-        public LimitsPopup(IProtoService protoService, PremiumState state, IList<PremiumLimit> limits)
+        public LimitsPopup(IProtoService protoService, PremiumPaymentOption option, IList<PremiumLimit> limits)
         {
             InitializeComponent();
 
@@ -35,7 +35,7 @@ namespace Unigram.Views.Premium.Popups
 
             PurchaseCommand.Content = protoService.IsPremium
                 ? Strings.Resources.OK
-                : string.Format(Strings.Resources.SubscribeToPremium, Locale.FormatCurrency(state.MonthlyAmount, state.Currency));
+                : string.Format(Strings.Resources.SubscribeToPremium, Locale.FormatCurrency(option.Amount / option.MonthCount, option.Currency));
         }
 
         public bool ShouldPurchase { get; private set; }

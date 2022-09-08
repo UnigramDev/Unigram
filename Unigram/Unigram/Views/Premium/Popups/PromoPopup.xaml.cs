@@ -36,17 +36,19 @@ namespace Unigram.Views.Premium.Popups
 
         private readonly Color[] _gradient = new Color[]
         {
-            Color.FromArgb(0xFF, 0xF2, 0x7C, 0x30),
-            Color.FromArgb(0xFF, 0xE3, 0x68, 0x50),
-            Color.FromArgb(0xFF, 0xD1, 0x50, 0x78),
-            Color.FromArgb(0xFF, 0xC1, 0x49, 0x98),
-            Color.FromArgb(0xFF, 0xB2, 0x4C, 0xB5),
-            Color.FromArgb(0xFF, 0xA3, 0x4E, 0xD0),
-            Color.FromArgb(0xFF, 0x90, 0x54, 0xE9),
-            Color.FromArgb(0xFF, 0x75, 0x61, 0xEB),
-            Color.FromArgb(0xFF, 0x5A, 0x6E, 0xEE),
-            Color.FromArgb(0xFF, 0x54, 0x8D, 0xFF),
-            Color.FromArgb(0xFF, 0x54, 0xA3, 0xFF),
+            Color.FromArgb(0xFF, 0xF2, 0x87, 0x2C),
+            Color.FromArgb(0xFF, 0xEC, 0x7C, 0x47),
+            Color.FromArgb(0xFF, 0xE7, 0x72, 0x62),
+            Color.FromArgb(0xFF, 0xE1, 0x68, 0x7E),
+            Color.FromArgb(0xFF, 0xDC, 0x5D, 0x99),
+            Color.FromArgb(0xFF, 0xC9, 0x60, 0xBF),
+            Color.FromArgb(0xFF, 0xB4, 0x64, 0xE7),
+            Color.FromArgb(0xFF, 0x9B, 0x70, 0xFF),
+            Color.FromArgb(0xFF, 0x73, 0x8E, 0xFF),
+            Color.FromArgb(0xFF, 0x55, 0xA5, 0xFF),
+            Color.FromArgb(0xFF, 0x51, 0xB2, 0xC3),
+            Color.FromArgb(0xFF, 0x4F, 0xBC, 0x95),
+            Color.FromArgb(0xFF, 0x4C, 0xC5, 0x67),
         };
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -88,6 +90,11 @@ namespace Unigram.Views.Premium.Popups
                     iconValue = Icons.MegaphoneFilled24;
                     titleValue = Strings.Resources.PremiumPreviewNoAds;
                     subtitleValue = Strings.Resources.PremiumPreviewNoAdsDescription;
+                    break;
+                case PremiumFeatureEmojiStatus:
+                    iconValue = Icons.ReactionFilled24;
+                    titleValue = Strings.Resources.PremiumPreviewEmojiStatus;
+                    subtitleValue = Strings.Resources.PremiumPreviewEmojiStatusDescription;
                     break;
                 case PremiumFeatureImprovedDownloadSpeed:
                     iconValue = Icons.TopSpeedFilled24;
@@ -131,10 +138,12 @@ namespace Unigram.Views.Premium.Popups
             var icon = content.FindName("Icon") as TextBlock;
             var iconPanel = content.FindName("IconPanel") as Border;
 
+            var index = Math.Min(args.ItemIndex, _gradient.Length - 1);
+
             title.Text = titleValue;
             subtitle.Text = subtitleValue;
             icon.Text = iconValue;
-            iconPanel.Background = new SolidColorBrush(_gradient[args.ItemIndex]);
+            iconPanel.Background = new SolidColorBrush(_gradient[index]);
         }
 
         public string ConvertTitle(bool premium, bool title)
@@ -147,14 +156,14 @@ namespace Unigram.Views.Premium.Popups
             return premium ? Strings.Resources.TelegramPremiumSubscribedSubtitle : Strings.Resources.TelegramPremiumSubtitle;
         }
 
-        public string ConvertPurchase(bool premium, long amount, string currency)
+        public string ConvertPurchase(bool premium, PremiumPaymentOption option)
         {
             if (premium)
             {
                 return Strings.Resources.OK;
             }
 
-            return string.Format(Strings.Resources.SubscribeToPremium, Locale.FormatCurrency(amount, currency));
+            return string.Format(Strings.Resources.SubscribeToPremium, Locale.FormatCurrency(option.Amount / option.MonthCount, option.Currency));
         }
 
         private void PurchaseShadow_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)

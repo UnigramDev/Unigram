@@ -42,6 +42,13 @@ namespace Unigram.ViewModels.Premium
             get => _state;
             set => Set(ref _state, value);
         }
+        
+        private PremiumPaymentOption _option;
+        public PremiumPaymentOption Option
+        {
+            get => _option;
+            set => Set(ref _option, value);
+        }
 
         private bool _canPurchase;
         public bool CanPurchase
@@ -81,6 +88,7 @@ namespace Unigram.ViewModels.Premium
             Features.ReplaceWith(features.Features);
 
             State = state;
+            Option = state.PaymentOptions.FirstOrDefault();
 
             CanPurchase = features.PaymentLink != null
                 && ProtoService.IsPremiumAvailable;
@@ -110,7 +118,7 @@ namespace Unigram.ViewModels.Premium
 
             if (feature is PremiumFeatureIncreasedLimits)
             {
-                var dialog = new LimitsPopup(ProtoService, State, Limits);
+                var dialog = new LimitsPopup(ProtoService, Option, Limits);
                 await dialog.ShowQueuedAsync();
 
                 if (dialog.ShouldPurchase && !ProtoService.IsPremium)
@@ -123,7 +131,7 @@ namespace Unigram.ViewModels.Premium
             }
             else
             {
-                var dialog = new FeaturesPopup(ProtoService, State, Features, _animations, _stickers, feature);
+                var dialog = new FeaturesPopup(ProtoService, Option, Features, _animations, _stickers, feature);
                 await dialog.ShowQueuedAsync();
 
                 if (dialog.ShouldPurchase && !ProtoService.IsPremium)

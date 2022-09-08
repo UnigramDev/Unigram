@@ -18,7 +18,7 @@ namespace Unigram.Views.Premium.Popups
         private readonly IDictionary<Type, Animation> _animations;
         private readonly Stickers _stickers;
 
-        public FeaturesPopup(IProtoService protoService, PremiumState state, IList<PremiumFeature> features, IDictionary<Type, Animation> animations, Stickers stickers, PremiumFeature selectedFeature)
+        public FeaturesPopup(IProtoService protoService, PremiumPaymentOption option, IList<PremiumFeature> features, IDictionary<Type, Animation> animations, Stickers stickers, PremiumFeature selectedFeature)
         {
             InitializeComponent();
 
@@ -35,7 +35,7 @@ namespace Unigram.Views.Premium.Popups
 
             PurchaseCommand.Content = protoService.IsPremium
                 ? Strings.Resources.OK
-                : string.Format(Strings.Resources.SubscribeToPremium, Locale.FormatCurrency(state.MonthlyAmount, state.Currency));
+                : string.Format(Strings.Resources.SubscribeToPremium, Locale.FormatCurrency(option.Amount / option.MonthCount, option.Currency));
         }
 
         public bool ShouldPurchase { get; private set; }
@@ -75,13 +75,10 @@ namespace Unigram.Views.Premium.Popups
 
         private void OnDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
         {
-            if (sender is PremiumFeatureCell cell && args.NewValue is PremiumFeature feature && _animations.TryGetValue(feature.GetType(), out Animation value))
+            if (sender is PremiumFeatureCell cell && args.NewValue is PremiumFeature feature)
             {
+                _animations.TryGetValue(feature.GetType(), out Animation value);
                 cell.UpdateFeature(_protoService, feature, value);
-            }
-            else if (sender is PremiumFeatureUniqueReactionsCell uniqueReactionsCell)
-            {
-                uniqueReactionsCell.UpdateFeature(_protoService);
             }
             else if (sender is PremiumFeatureUniqueStickersCell uniqueStickersCell)
             {

@@ -247,6 +247,8 @@ namespace Unigram.Converters
         public const string LinkFilled = "\uE9BC";
         public const string FolderFilled = "\uE9BD";
 
+        public const string ReactionFilled24 = "\uE9F1";
+
         public static readonly ChatFilterIcon[] Filters = new ChatFilterIcon[]
         {
             ChatFilterIcon.Cat,
