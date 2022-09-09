@@ -24,8 +24,8 @@ namespace Unigram.ViewModels.Settings
         private readonly ILocaleService _localeService;
         private readonly List<LanguagePackInfo> _officialLanguages = new();
 
-        public SettingsLanguageViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ILocaleService localeService)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public SettingsLanguageViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, ILocaleService localeService)
+            : base(clientService, settingsService, aggregator)
         {
             _localeService = localeService;
 
@@ -39,7 +39,7 @@ namespace Unigram.ViewModels.Settings
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            var response = await ProtoService.SendAsync(new GetLocalizationTargetInfo(false));
+            var response = await ClientService.SendAsync(new GetLocalizationTargetInfo(false));
             if (response is LocalizationTargetInfo pack)
             {
                 var customs = new List<LanguagePackInfo>();
@@ -192,7 +192,7 @@ namespace Unigram.ViewModels.Settings
                 return;
             }
 
-            ProtoService.Send(new DeleteLanguagePack(info.Id));
+            ClientService.Send(new DeleteLanguagePack(info.Id));
             list.Remove(info);
 
             if (list.IsEmpty())

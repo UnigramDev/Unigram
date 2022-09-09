@@ -13,8 +13,8 @@ namespace Unigram.ViewModels.Supergroups
         , IHandle
         //, IHandle<UpdateSupergroupFullInfo>
     {
-        public SupergroupEditStickerSetViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public SupergroupEditStickerSetViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute);
             CancelCommand = new RelayCommand(CancelExecute);
@@ -90,7 +90,7 @@ namespace Unigram.ViewModels.Supergroups
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            ProtoService.Send(new GetInstalledStickerSets(new StickerTypeRegular()), result =>
+            ClientService.Send(new GetInstalledStickerSets(new StickerTypeRegular()), result =>
             {
                 if (result is StickerSets sets)
                 {
@@ -100,7 +100,7 @@ namespace Unigram.ViewModels.Supergroups
 
             var chatId = (long)parameter;
 
-            Chat = ProtoService.GetChat(chatId);
+            Chat = ClientService.GetChat(chatId);
 
             var chat = _chat;
             if (chat == null)
@@ -112,14 +112,14 @@ namespace Unigram.ViewModels.Supergroups
 
             if (chat.Type is ChatTypeSupergroup super)
             {
-                var item = ProtoService.GetSupergroup(super.SupergroupId);
-                var cache = ProtoService.GetSupergroupFull(super.SupergroupId);
+                var item = ClientService.GetSupergroup(super.SupergroupId);
+                var cache = ClientService.GetSupergroupFull(super.SupergroupId);
 
                 //Delegate?.UpdateSupergroup(chat, item);
 
                 if (cache == null)
                 {
-                    ProtoService.Send(new GetSupergroupFullInfo(super.SupergroupId));
+                    ClientService.Send(new GetSupergroupFullInfo(super.SupergroupId));
                 }
                 else
                 {
@@ -146,7 +146,7 @@ namespace Unigram.ViewModels.Supergroups
 
             if (chat.Type is ChatTypeSupergroup super && super.SupergroupId == update.SupergroupId)
             {
-                BeginOnUIThread(() => UpdateSupergroupFullInfo(chat, ProtoService.GetSupergroup(update.SupergroupId), update.SupergroupFullInfo));
+                BeginOnUIThread(() => UpdateSupergroupFullInfo(chat, ClientService.GetSupergroup(update.SupergroupId), update.SupergroupFullInfo));
             }
         }
 
@@ -160,7 +160,7 @@ namespace Unigram.ViewModels.Supergroups
             }
             else
             {
-                var response = await ProtoService.SendAsync(new GetStickerSet(fullInfo.StickerSetId));
+                var response = await ClientService.SendAsync(new GetStickerSet(fullInfo.StickerSetId));
                 if (response is StickerSet set)
                 {
                     SelectedItem = new StickerSetInfo(set.Id, set.Title, set.Name, set.Thumbnail, set.ThumbnailOutline, set.IsInstalled, set.IsArchived, set.IsOfficial, set.StickerFormat, set.StickerType, set.IsViewed, set.Stickers.Count, set.Stickers);
@@ -187,7 +187,7 @@ namespace Unigram.ViewModels.Supergroups
 
             if (chat.Type is ChatTypeSupergroup supergroup)
             {
-                var response = await ProtoService.SendAsync(new SetSupergroupStickerSet(supergroup.SupergroupId, _selectedItem?.Id ?? 0));
+                var response = await ClientService.SendAsync(new SetSupergroupStickerSet(supergroup.SupergroupId, _selectedItem?.Id ?? 0));
                 if (response is Ok)
                 {
                     NavigationService.GoBack();
@@ -215,7 +215,7 @@ namespace Unigram.ViewModels.Supergroups
         {
             IsLoading = true;
 
-            var response = await ProtoService.SendAsync(new SearchStickerSet(shortName));
+            var response = await ClientService.SendAsync(new SearchStickerSet(shortName));
             if (response is StickerSet stickerSet)
             {
                 IsLoading = false;

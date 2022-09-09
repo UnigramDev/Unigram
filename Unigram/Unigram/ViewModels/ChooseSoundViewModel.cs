@@ -16,8 +16,8 @@ namespace Unigram.ViewModels
         , IHandle
         //, IHandle<UpdateSavedNotificationSounds>
     {
-        public ChooseSoundViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public ChooseSoundViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             Items = new DiffObservableCollection<NotificationSoundViewModel>(new NotificationSoundDiffHandler());
 
@@ -26,11 +26,11 @@ namespace Unigram.ViewModels
 
         public DiffObservableCollection<NotificationSoundViewModel> Items { get; }
 
-        public bool CanUploadMore => Items.Count < CacheService.Options.NotificationSoundCountMax;
+        public bool CanUploadMore => Items.Count < ClientService.Options.NotificationSoundCountMax;
 
         public async void Handle(UpdateSavedNotificationSounds update)
         {
-            var response = await ProtoService.SendAsync(new GetSavedNotificationSounds());
+            var response = await ClientService.SendAsync(new GetSavedNotificationSounds());
             if (response is NotificationSounds sounds)
             {
                 BeginOnUIThread(() =>
@@ -43,7 +43,7 @@ namespace Unigram.ViewModels
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            var response = await ProtoService.SendAsync(new GetSavedNotificationSounds());
+            var response = await ClientService.SendAsync(new GetSavedNotificationSounds());
             if (response is NotificationSounds sounds && parameter is long selected)
             {
                 Items.ReplaceDiff(sounds.NotificationSoundsValue.Select(x => new NotificationSoundViewModel(this, x, x.Id == selected)));
@@ -78,20 +78,20 @@ namespace Unigram.ViewModels
                 if (file != null)
                 {
                     var properties = await file.GetBasicPropertiesAsync();
-                    if ((long)properties.Size > CacheService.Options.NotificationSoundSizeMax)
+                    if ((long)properties.Size > ClientService.Options.NotificationSoundSizeMax)
                     {
                         // TODO: ...
                         return;
                     }
 
                     var music = await file.Properties.GetMusicPropertiesAsync();
-                    if (music.Duration.TotalSeconds > CacheService.Options.NotificationSoundDurationMax)
+                    if (music.Duration.TotalSeconds > ClientService.Options.NotificationSoundDurationMax)
                     {
                         // TODO: ...
                         return;
                     }
 
-                    ProtoService.Send(new AddSavedNotificationSound(await file.ToGeneratedAsync()));
+                    ClientService.Send(new AddSavedNotificationSound(await file.ToGeneratedAsync()));
                 }
             }
             catch { }
@@ -137,11 +137,11 @@ namespace Unigram.ViewModels
                 }
                 else
                 {
-                    UpdateManager.Subscribe(this, _parent.ProtoService, file, ref _soundToken, _parent.UpdateFile, true);
+                    UpdateManager.Subscribe(this, _parent.ClientService, file, ref _soundToken, _parent.UpdateFile, true);
 
                     if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
                     {
-                        _parent.ProtoService.DownloadFile(file.Id, 16);
+                        _parent.ClientService.DownloadFile(file.Id, 16);
                     }
                 }
             }

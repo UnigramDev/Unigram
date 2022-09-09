@@ -16,7 +16,7 @@ namespace Unigram.Controls.Cells
             InitializeComponent();
         }
 
-        public void UpdateCall(IProtoService protoService, TLCallGroup call)
+        public void UpdateCall(IClientService clientService, TLCallGroup call)
         {
             _call = call;
 
@@ -24,7 +24,7 @@ namespace Unigram.Controls.Cells
             DateLabel.Text = Converter.DateExtended(call.Message.Date);
             TypeLabel.Text = call.DisplayType;
 
-            Photo.SetUser(protoService, call.Peer, 36);
+            Photo.SetUser(clientService, call.Peer, 36);
 
             VisualStateManager.GoToState(LayoutRoot, call.IsFailed ? "Missed" : "Default", false);
         }

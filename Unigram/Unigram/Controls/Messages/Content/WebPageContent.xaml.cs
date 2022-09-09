@@ -88,7 +88,7 @@ namespace Unigram.Controls.Messages.Content
 
             UpdateWebPage(webPage, Label, TitleLabel, SubtitleLabel, ContentLabel);
             UpdateInstantView(webPage, Button, Run1, Run2, Run3);
-            UpdateInstantView(message.ProtoService, _instantViewToken.Token, webPage, Overlay, Subtitle);
+            UpdateInstantView(message.ClientService, _instantViewToken.Token, webPage, Overlay, Subtitle);
 
             if (webPage.IsMedia())
             {

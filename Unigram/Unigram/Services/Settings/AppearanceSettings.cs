@@ -217,10 +217,10 @@ namespace Unigram.Services.Settings
             if (updateBackground)
             {
                 var aggregator = TLContainer.Current.Resolve<IEventAggregator>();
-                var protoService = TLContainer.Current.Resolve<IProtoService>();
+                var clientService = TLContainer.Current.Resolve<IClientService>();
 
                 var dark = theme == ElementTheme.Dark;
-                aggregator.Publish(new UpdateSelectedBackground(dark, protoService.GetSelectedBackground(dark)));
+                aggregator.Publish(new UpdateSelectedBackground(dark, clientService.GetSelectedBackground(dark)));
             }
         }
 

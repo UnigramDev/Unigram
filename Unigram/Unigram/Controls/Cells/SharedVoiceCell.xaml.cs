@@ -50,11 +50,11 @@ namespace Unigram.Controls.Cells
                 return;
             }
 
-            if (message.ProtoService.TryGetUser(message.SenderId, out User user))
+            if (message.ClientService.TryGetUser(message.SenderId, out User user))
             {
                 Title.Text = user.GetFullName();
             }
-            else if (message.ProtoService.TryGetChat(message.SenderId, out Chat chat))
+            else if (message.ClientService.TryGetChat(message.SenderId, out Chat chat))
             {
                 Title.Text = chat.Title;
             }
@@ -172,7 +172,7 @@ namespace Unigram.Controls.Cells
 
                 //if (message.Delegate.CanBeDownloaded(message))
                 //{
-                //    _message.ProtoService.DownloadFile(file.Id, 32);
+                //    _message.ClientService.DownloadFile(file.Id, 32);
                 //}
             }
             else
@@ -233,15 +233,15 @@ namespace Unigram.Controls.Cells
             var file = voiceNote.Voice;
             if (file.Local.IsDownloadingActive)
             {
-                _message.ProtoService.Send(new CancelDownloadFile(file.Id, false));
+                _message.ClientService.Send(new CancelDownloadFile(file.Id, false));
             }
             else if (file.Remote.IsUploadingActive || _message.SendingState is MessageSendingStateFailed)
             {
-                _message.ProtoService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
+                _message.ClientService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
-                //_protoService.DownloadFile(file.Id, 32);
+                //_clientService.DownloadFile(file.Id, 32);
                 _playbackService.Play(_message);
             }
             else

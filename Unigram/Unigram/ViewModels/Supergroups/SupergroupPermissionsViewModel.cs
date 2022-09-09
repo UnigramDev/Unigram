@@ -10,8 +10,8 @@ namespace Unigram.ViewModels.Supergroups
 {
     public class SupergroupPermissionsViewModel : SupergroupMembersViewModelBase
     {
-        public SupergroupPermissionsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator, new SupergroupMembersFilterRestricted(), query => new SupergroupMembersFilterRestricted(query))
+        public SupergroupPermissionsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator, new SupergroupMembersFilterRestricted(), query => new SupergroupMembersFilterRestricted(query))
         {
             SendCommand = new RelayCommand(SendExecute);
             AddCommand = new RelayCommand(AddExecute);
@@ -186,7 +186,7 @@ namespace Unigram.ViewModels.Supergroups
                 CanSendMessages = _canSendMessages
             };
 
-            var response = await ProtoService.SendAsync(new SetChatPermissions(chat.Id, permissions));
+            var response = await ClientService.SendAsync(new SetChatPermissions(chat.Id, permissions));
             if (response is Error error)
             {
                 return;
@@ -196,7 +196,7 @@ namespace Unigram.ViewModels.Supergroups
             {
                 if (_slowModeDelay != 0)
                 {
-                    chat = await ProtoService.SendAsync(new UpgradeBasicGroupChatToSupergroupChat(chat.Id)) as Chat;
+                    chat = await ClientService.SendAsync(new UpgradeBasicGroupChatToSupergroupChat(chat.Id)) as Chat;
                 }
                 else
                 {
@@ -211,7 +211,7 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            var fullInfo = CacheService.GetSupergroupFull(chat);
+            var fullInfo = ClientService.GetSupergroupFull(chat);
             if (fullInfo == null)
             {
                 return;
@@ -219,7 +219,7 @@ namespace Unigram.ViewModels.Supergroups
 
             if (fullInfo.SlowModeDelay != _slowModeDelay)
             {
-                var slowMode = await ProtoService.SendAsync(new SetChatSlowModeDelay(chat.Id, _slowModeDelay));
+                var slowMode = await ClientService.SendAsync(new SetChatSlowModeDelay(chat.Id, _slowModeDelay));
                 if (slowMode is Error)
                 {
                     return;

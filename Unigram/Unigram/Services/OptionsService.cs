@@ -440,12 +440,12 @@ namespace Unigram.Services
 
     public class OptionsService : IOptionsService
     {
-        private readonly IProtoService _protoService;
+        private readonly IClientService _clientService;
         private readonly Dictionary<string, OptionValue> _values = new Dictionary<string, OptionValue>();
 
-        public OptionsService(IProtoService protoService)
+        public OptionsService(IClientService clientService)
         {
-            _protoService = protoService;
+            _clientService = clientService;
         }
 
         public void Update(string name, OptionValue value)
@@ -751,7 +751,7 @@ namespace Unigram.Services
             set
             {
                 _storageMaxTimeFromLastAccess = value;
-                _protoService.Send(new SetOption("storage_max_time_from_last_access", new OptionValueInteger(value)));
+                _clientService.Send(new SetOption("storage_max_time_from_last_access", new OptionValueInteger(value)));
             }
         }
 
@@ -789,7 +789,7 @@ namespace Unigram.Services
             set
             {
                 _systemProxyId = value;
-                _protoService.Send(new SetOption("x_system_proxy_id", new OptionValueInteger(value)));
+                _clientService.Send(new SetOption("x_system_proxy_id", new OptionValueInteger(value)));
             }
         }
 
@@ -800,7 +800,7 @@ namespace Unigram.Services
             set
             {
                 _alwaysParseMarkdown = value;
-                _protoService.Send(new SetOption("always_parse_markdown", new OptionValueBoolean(value)));
+                _clientService.Send(new SetOption("always_parse_markdown", new OptionValueBoolean(value)));
             }
         }
 
@@ -811,7 +811,7 @@ namespace Unigram.Services
             set
             {
                 _archiveAndMuteNewChatsFromUnknownUsers = value;
-                _protoService.Send(new SetOption("archive_and_mute_new_chats_from_unknown_users", new OptionValueBoolean(value)));
+                _clientService.Send(new SetOption("archive_and_mute_new_chats_from_unknown_users", new OptionValueBoolean(value)));
             }
         }
 
@@ -822,7 +822,7 @@ namespace Unigram.Services
             set
             {
                 _disableAnimatedEmoji = value;
-                _protoService.Send(new SetOption("disable_animated_emoji", new OptionValueBoolean(value)));
+                _clientService.Send(new SetOption("disable_animated_emoji", new OptionValueBoolean(value)));
             }
         }
 
@@ -833,7 +833,7 @@ namespace Unigram.Services
             set
             {
                 _disableContactRegisteredNotifications = value;
-                _protoService.Send(new SetOption("disable_contact_registered_notifications", new OptionValueBoolean(value)));
+                _clientService.Send(new SetOption("disable_contact_registered_notifications", new OptionValueBoolean(value)));
             }
         }
 
@@ -844,7 +844,7 @@ namespace Unigram.Services
             set
             {
                 _disablePersistentNetworkStatistics = value;
-                _protoService.Send(new SetOption("disable_persistent_network_statistics", new OptionValueBoolean(value)));
+                _clientService.Send(new SetOption("disable_persistent_network_statistics", new OptionValueBoolean(value)));
             }
         }
 
@@ -855,7 +855,7 @@ namespace Unigram.Services
             set
             {
                 _disableSentScheduledMessageNotifications = value;
-                _protoService.Send(new SetOption("disable_sent_scheduled_message_notifications", new OptionValueBoolean(value)));
+                _clientService.Send(new SetOption("disable_sent_scheduled_message_notifications", new OptionValueBoolean(value)));
             }
         }
 
@@ -866,7 +866,7 @@ namespace Unigram.Services
             set
             {
                 _disableTimeAdjustmentProtection = value;
-                _protoService.Send(new SetOption("disable_time_adjustment_protection", new OptionValueBoolean(value)));
+                _clientService.Send(new SetOption("disable_time_adjustment_protection", new OptionValueBoolean(value)));
             }
         }
 
@@ -877,7 +877,7 @@ namespace Unigram.Services
             set
             {
                 _disableTopChats = value;
-                _protoService.Send(new SetOption("disable_top_chats", new OptionValueBoolean(value)));
+                _clientService.Send(new SetOption("disable_top_chats", new OptionValueBoolean(value)));
             }
         }
 
@@ -888,7 +888,7 @@ namespace Unigram.Services
             set
             {
                 _ignoreBackgroundUpdates = value;
-                _protoService.Send(new SetOption("ignore_background_updates", new OptionValueBoolean(value)));
+                _clientService.Send(new SetOption("ignore_background_updates", new OptionValueBoolean(value)));
             }
         }
 
@@ -899,7 +899,7 @@ namespace Unigram.Services
             set
             {
                 _ignoreDefaultDisableNotification = value;
-                _protoService.Send(new SetOption("ignore_default_disable_notification", new OptionValueBoolean(value)));
+                _clientService.Send(new SetOption("ignore_default_disable_notification", new OptionValueBoolean(value)));
             }
         }
 
@@ -910,7 +910,7 @@ namespace Unigram.Services
             set
             {
                 _ignoreInlineThumbnails = value;
-                _protoService.Send(new SetOption("ignore_inline_thumbnails", new OptionValueBoolean(value)));
+                _clientService.Send(new SetOption("ignore_inline_thumbnails", new OptionValueBoolean(value)));
             }
         }
 
@@ -921,7 +921,7 @@ namespace Unigram.Services
             set
             {
                 _ignorePlatformRestrictions = value;
-                _protoService.Send(new SetOption("ignore_platform_restrictions", new OptionValueBoolean(value)));
+                _clientService.Send(new SetOption("ignore_platform_restrictions", new OptionValueBoolean(value)));
             }
         }
 
@@ -932,7 +932,7 @@ namespace Unigram.Services
             set
             {
                 _ignoreSensitiveContentRestrictions = value;
-                _protoService.Send(new SetOption("ignore_sensitive_content_restrictions", new OptionValueBoolean(value)));
+                _clientService.Send(new SetOption("ignore_sensitive_content_restrictions", new OptionValueBoolean(value)));
             }
         }
 
@@ -943,7 +943,7 @@ namespace Unigram.Services
             set
             {
                 _isLocationVisible = value;
-                _protoService.Send(new SetOption("is_location_visible", new OptionValueBoolean(value)));
+                _clientService.Send(new SetOption("is_location_visible", new OptionValueBoolean(value)));
             }
         }
 
@@ -956,11 +956,11 @@ namespace Unigram.Services
                 _languagePackDatabasePath = value;
                 if (value == null)
                 {
-                    _protoService.Send(new SetOption("language_pack_database_path", new OptionValueEmpty()));
+                    _clientService.Send(new SetOption("language_pack_database_path", new OptionValueEmpty()));
                 }
                 else
                 {
-                    _protoService.Send(new SetOption("language_pack_database_path", new OptionValueString(value)));
+                    _clientService.Send(new SetOption("language_pack_database_path", new OptionValueString(value)));
                 }
             }
         }
@@ -974,11 +974,11 @@ namespace Unigram.Services
                 _languagePackId = value;
                 if (value == null)
                 {
-                    _protoService.Send(new SetOption("language_pack_id", new OptionValueEmpty()));
+                    _clientService.Send(new SetOption("language_pack_id", new OptionValueEmpty()));
                 }
                 else
                 {
-                    _protoService.Send(new SetOption("language_pack_id", new OptionValueString(value)));
+                    _clientService.Send(new SetOption("language_pack_id", new OptionValueString(value)));
                 }
             }
         }
@@ -992,11 +992,11 @@ namespace Unigram.Services
                 _localizationTarget = value;
                 if (value == null)
                 {
-                    _protoService.Send(new SetOption("localization_target", new OptionValueEmpty()));
+                    _clientService.Send(new SetOption("localization_target", new OptionValueEmpty()));
                 }
                 else
                 {
-                    _protoService.Send(new SetOption("localization_target", new OptionValueString(value)));
+                    _clientService.Send(new SetOption("localization_target", new OptionValueString(value)));
                 }
             }
         }
@@ -1008,7 +1008,7 @@ namespace Unigram.Services
             set
             {
                 _messageUnloadDelay = value;
-                _protoService.Send(new SetOption("message_unload_delay", new OptionValueInteger(value)));
+                _clientService.Send(new SetOption("message_unload_delay", new OptionValueInteger(value)));
             }
         }
 
@@ -1019,7 +1019,7 @@ namespace Unigram.Services
             set
             {
                 _notificationGroupCountMax = value;
-                _protoService.Send(new SetOption("notification_group_count_max", new OptionValueInteger(value)));
+                _clientService.Send(new SetOption("notification_group_count_max", new OptionValueInteger(value)));
             }
         }
 
@@ -1030,7 +1030,7 @@ namespace Unigram.Services
             set
             {
                 _notificationGroupSizeMax = value;
-                _protoService.Send(new SetOption("notification_group_size_max", new OptionValueInteger(value)));
+                _clientService.Send(new SetOption("notification_group_size_max", new OptionValueInteger(value)));
             }
         }
 
@@ -1041,7 +1041,7 @@ namespace Unigram.Services
             set
             {
                 _online = value;
-                _protoService.Send(new SetOption("online", new OptionValueBoolean(value)));
+                _clientService.Send(new SetOption("online", new OptionValueBoolean(value)));
             }
         }
 
@@ -1052,7 +1052,7 @@ namespace Unigram.Services
             set
             {
                 _preferIpv6 = value;
-                _protoService.Send(new SetOption("prefer_ipv6", new OptionValueBoolean(value)));
+                _clientService.Send(new SetOption("prefer_ipv6", new OptionValueBoolean(value)));
             }
         }
 
@@ -1063,7 +1063,7 @@ namespace Unigram.Services
             set
             {
                 _usePfs = value;
-                _protoService.Send(new SetOption("use_pfs", new OptionValueBoolean(value)));
+                _clientService.Send(new SetOption("use_pfs", new OptionValueBoolean(value)));
             }
         }
 
@@ -1074,7 +1074,7 @@ namespace Unigram.Services
             set
             {
                 _useQuickAck = value;
-                _protoService.Send(new SetOption("use_quick_ack", new OptionValueBoolean(value)));
+                _clientService.Send(new SetOption("use_quick_ack", new OptionValueBoolean(value)));
             }
         }
 
@@ -1085,7 +1085,7 @@ namespace Unigram.Services
             set
             {
                 _useStorageOptimizer = value;
-                _protoService.Send(new SetOption("use_storage_optimizer", new OptionValueBoolean(value)));
+                _clientService.Send(new SetOption("use_storage_optimizer", new OptionValueBoolean(value)));
             }
         }
 
@@ -1096,7 +1096,7 @@ namespace Unigram.Services
             set
             {
                 _utcTimeOffset = value;
-                _protoService.Send(new SetOption("utc_time_offset", new OptionValueInteger(value)));
+                _clientService.Send(new SetOption("utc_time_offset", new OptionValueInteger(value)));
             }
         }
 

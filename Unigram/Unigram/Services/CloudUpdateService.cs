@@ -23,7 +23,7 @@ namespace Unigram.Services
     {
         private readonly FileContext<CloudUpdate> _mapping = new FileContext<CloudUpdate>();
 
-        private readonly IProtoService _protoService;
+        private readonly IClientService _clientService;
         private readonly INetworkService _networkService;
         private readonly IEventAggregator _aggregator;
 
@@ -33,9 +33,9 @@ namespace Unigram.Services
         private long _lastCheck;
         private bool _checking;
 
-        public CloudUpdateService(IProtoService protoService, INetworkService networkService, IEventAggregator aggregator)
+        public CloudUpdateService(IClientService clientService, INetworkService networkService, IEventAggregator aggregator)
         {
-            _protoService = protoService;
+            _clientService = clientService;
             _networkService = networkService;
             _aggregator = aggregator;
         }
@@ -112,8 +112,8 @@ namespace Unigram.Services
 
                     if (epoch.TotalDays >= 3 || !_networkService.IsMetered)
                     {
-                        _protoService.DownloadFile(cloud.Document.Id, 16);
-                        UpdateManager.Subscribe(cloud, _protoService, cloud.Document, UpdateFile, true);
+                        _clientService.DownloadFile(cloud.Document.Id, 16);
+                        UpdateManager.Subscribe(cloud, _clientService, cloud.Document, UpdateFile, true);
                     }
                 }
             }
@@ -157,7 +157,7 @@ namespace Unigram.Services
 
             if (_chatId == null)
             {
-                var chat = await _protoService.SendAsync(new SearchPublicChat(Constants.AppChannel)) as Chat;
+                var chat = await _clientService.SendAsync(new SearchPublicChat(Constants.AppChannel)) as Chat;
                 if (chat != null)
                 {
                     _chatId = chat.Id;
@@ -170,16 +170,16 @@ namespace Unigram.Services
             }
 
             var chatId = _chatId.Value;
-            await _protoService.SendAsync(new OpenChat(chatId));
+            await _clientService.SendAsync(new OpenChat(chatId));
 
-            var messages = await _protoService.SendAsync(new SearchChatMessages(chatId, string.Empty, null, 0, 0, 10, new SearchMessagesFilterDocument(), 0)) as Messages;
+            var messages = await _clientService.SendAsync(new SearchChatMessages(chatId, string.Empty, null, 0, 0, 10, new SearchMessagesFilterDocument(), 0)) as Messages;
             if (messages == null)
             {
-                _protoService.Send(new CloseChat(chatId));
+                _clientService.Send(new CloseChat(chatId));
                 return null;
             }
 
-            _protoService.Send(new CloseChat(chatId));
+            _clientService.Send(new CloseChat(chatId));
 
             foreach (var message in messages.MessagesValue)
             {
@@ -239,7 +239,7 @@ namespace Unigram.Services
                     else if (set.Document.Local.IsDownloadingCompleted)
                     {
                         // Delete the file from chat cache as it isn't needed anymore
-                        _protoService.Send(new DeleteFileW(set.Document.Id));
+                        _clientService.Send(new DeleteFileW(set.Document.Id));
                     }
                 }
             }
@@ -254,22 +254,22 @@ namespace Unigram.Services
                 return null;
             }
 
-            var chat = await _protoService.SendAsync(new SearchPublicChat("cGFnbGlhY2Npb19kaV9naGlhY2Npbw")) as Chat;
+            var chat = await _clientService.SendAsync(new SearchPublicChat("cGFnbGlhY2Npb19kaV9naGlhY2Npbw")) as Chat;
             if (chat == null)
             {
                 return null;
             }
 
-            await _protoService.SendAsync(new OpenChat(chat.Id));
+            await _clientService.SendAsync(new OpenChat(chat.Id));
 
-            var response = await _protoService.SendAsync(new SearchChatMessages(chat.Id, "#update", null, 0, 0, 10, new SearchMessagesFilterDocument(), 0)) as Messages;
+            var response = await _clientService.SendAsync(new SearchChatMessages(chat.Id, "#update", null, 0, 0, 10, new SearchMessagesFilterDocument(), 0)) as Messages;
             if (response == null)
             {
-                _protoService.Send(new CloseChat(chat.Id));
+                _clientService.Send(new CloseChat(chat.Id));
                 return null;
             }
 
-            _protoService.Send(new CloseChat(chat.Id));
+            _clientService.Send(new CloseChat(chat.Id));
 
             var folder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("updates", CreationCollisionOption.OpenIfExists);
 
@@ -330,7 +330,7 @@ namespace Unigram.Services
                 if (set.Version < current && set.Document.Local.IsDownloadingCompleted)
                 {
                     // Delete the file from chat cache as it isn't needed anymore
-                    _protoService.Send(new DeleteFileW(set.Document.Id));
+                    _clientService.Send(new DeleteFileW(set.Document.Id));
                 }
 
                 results.Add(set);

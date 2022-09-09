@@ -6,8 +6,8 @@ namespace Unigram.ViewModels.Supergroups
 {
     public class SupergroupAddAdministratorViewModel : SupergroupMembersViewModelBase
     {
-        public SupergroupAddAdministratorViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator, new SupergroupMembersFilterRecent(), query => new SupergroupMembersFilterSearch(query))
+        public SupergroupAddAdministratorViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator, new SupergroupMembersFilterRecent(), query => new SupergroupMembersFilterSearch(query))
         {
         }
 

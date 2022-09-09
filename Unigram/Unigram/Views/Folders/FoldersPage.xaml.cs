@@ -30,7 +30,7 @@ namespace Unigram.Views.Folders
             button.Content = filter.Title;
             button.Command = ViewModel.EditCommand;
             button.CommandParameter = filter;
-            button.ChevronGlyph = args.Index < ViewModel.CacheService.Options.ChatFilterCountMax ? Icons.ChevronRight : Icons.LockClosed;
+            button.ChevronGlyph = args.Index < ViewModel.ClientService.Options.ChatFilterCountMax ? Icons.ChevronRight : Icons.LockClosed;
         }
 
         private void Recommended_ElementPrepared(Microsoft.UI.Xaml.Controls.ItemsRepeater sender, Microsoft.UI.Xaml.Controls.ItemsRepeaterElementPreparedEventArgs args)

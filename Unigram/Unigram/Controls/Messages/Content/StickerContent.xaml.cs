@@ -39,8 +39,8 @@ namespace Unigram.Controls.Messages.Content
 
             if (message.Content is MessageAnimatedEmoji)
             {
-                MaxWidth = 180 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
-                MaxHeight = 180 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
+                MaxWidth = 180 * message.ClientService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
+                MaxHeight = 180 * message.ClientService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
             }
             else
             {
@@ -86,7 +86,7 @@ namespace Unigram.Controls.Messages.Content
 
                 if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
-                    message.ProtoService.DownloadFile(file.Id, 1);
+                    message.ClientService.DownloadFile(file.Id, 1);
                 }
             }
         }

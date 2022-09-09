@@ -45,14 +45,14 @@ namespace Unigram.ViewModels
             var chat = Chat;
             if (chat != null && chat.Type is ChatTypeSupergroup super && super.IsChannel)
             {
-                var supergroup = ProtoService.GetSupergroup(super.SupergroupId);
+                var supergroup = ClientService.GetSupergroup(super.SupergroupId);
                 if (supergroup != null && !supergroup.CanPostMessages())
                 {
                     return false;
                 }
             }
 
-            var response = await ProtoService.SendAsync(new SearchPublicChat(username));
+            var response = await ClientService.SendAsync(new SearchPublicChat(username));
             if (response is Chat result && result.Type is ChatTypePrivate privata)
             {
                 if (token.IsCancellationRequested)
@@ -60,7 +60,7 @@ namespace Unigram.ViewModels
                     return true;
                 }
 
-                var user = ProtoService.GetUser(privata.UserId);
+                var user = ClientService.GetUser(privata.UserId);
                 if (user.Type is UserTypeBot bot && bot.IsInline)
                 {
                     CurrentInlineBot = user;
@@ -79,14 +79,14 @@ namespace Unigram.ViewModels
             var chat = Chat;
             if (chat != null && chat.Type is ChatTypeSupergroup super && super.IsChannel)
             {
-                var supergroup = ProtoService.GetSupergroup(super.SupergroupId);
+                var supergroup = ClientService.GetSupergroup(super.SupergroupId);
                 if (supergroup != null && !supergroup.CanPostMessages())
                 {
                     return;
                 }
             }
 
-            var response = await ProtoService.SendAsync(new SearchPublicChat(username));
+            var response = await ClientService.SendAsync(new SearchPublicChat(username));
             if (response is Chat result && result.Type is ChatTypePrivate privata)
             {
                 if (token.IsCancellationRequested)
@@ -94,7 +94,7 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                CurrentInlineBot = ProtoService.GetUser(privata.UserId);
+                CurrentInlineBot = ClientService.GetUser(privata.UserId);
                 GetInlineBotResults(command ?? string.Empty, token);
             }
         }
@@ -128,7 +128,7 @@ namespace Unigram.ViewModels
             }
             else
             {
-                var collection = new BotResultsCollection(ProtoService, _currentInlineBot.Id, chat.Id, null, query);
+                var collection = new BotResultsCollection(ClientService, _currentInlineBot.Id, chat.Id, null, query);
                 var result = await collection.LoadMoreItemsAsync(0);
 
                 if (collection.Results != null && !token.IsCancellationRequested)
@@ -136,7 +136,7 @@ namespace Unigram.ViewModels
                     InlineBotResults = collection;
                 }
 
-                //var response = await ProtoService.GetInlineBotResultsAsync(CurrentInlineBot.ToInputUser(), Peer, null, query, string.Empty);
+                //var response = await ClientService.GetInlineBotResultsAsync(CurrentInlineBot.ToInputUser(), Peer, null, query, string.Empty);
                 //if (response.IsSucceeded)
                 //{
                 //    foreach (var item in response.Result.Results)
@@ -191,13 +191,13 @@ namespace Unigram.ViewModels
             InlineBotResults = null;
 
             var reply = GetReply(true);
-            var response = await ProtoService.SendAsync(new SendInlineQueryResultMessage(chat.Id, _threadId, reply, options, queryId, queryResult.GetId(), false));
+            var response = await ClientService.SendAsync(new SendInlineQueryResultMessage(chat.Id, _threadId, reply, options, queryId, queryResult.GetId(), false));
         }
     }
 
     public class BotResultsCollection : IncrementalCollection<InlineQueryResult>
     {
-        private readonly IProtoService _protoService;
+        private readonly IClientService _clientService;
 
         private readonly Dictionary<InlineQueryResult, long> _queryIds;
 
@@ -209,9 +209,9 @@ namespace Unigram.ViewModels
         private InlineQueryResults _results;
         private string _nextOffset;
 
-        public BotResultsCollection(IProtoService protoService, long botUserId, long chatId, Location location, string query)
+        public BotResultsCollection(IClientService clientService, long botUserId, long chatId, Location location, string query)
         {
-            _protoService = protoService;
+            _clientService = clientService;
 
             _queryIds = new Dictionary<InlineQueryResult, long>();
 
@@ -247,7 +247,7 @@ namespace Unigram.ViewModels
         {
             if (_nextOffset != null)
             {
-                var response = await _protoService.SendAsync(new GetInlineQueryResults(_botUserId, _chatId, _location, _query, _nextOffset));
+                var response = await _clientService.SendAsync(new GetInlineQueryResults(_botUserId, _chatId, _location, _query, _nextOffset));
                 if (response is InlineQueryResults results)
                 {
                     _results = results;

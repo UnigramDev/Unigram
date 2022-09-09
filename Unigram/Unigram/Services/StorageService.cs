@@ -18,11 +18,11 @@ namespace Unigram.Services
 
     public class StorageService : IStorageService
     {
-        private readonly IProtoService _protoService;
+        private readonly IClientService _clientService;
 
-        public StorageService(IProtoService protoService)
+        public StorageService(IClientService clientService)
         {
-            _protoService = protoService;
+            _clientService = clientService;
         }
 
         public async Task SaveAsAsync(File file)
@@ -32,13 +32,13 @@ namespace Unigram.Services
                 return;
             }
 
-            var cached = await _protoService.GetFileAsync(file);
+            var cached = await _clientService.GetFileAsync(file);
             if (cached == null)
             {
                 return;
             }
 
-            var response = await _protoService.SendAsync(new GetSuggestedFileName(file.Id, string.Empty));
+            var response = await _clientService.SendAsync(new GetSuggestedFileName(file.Id, string.Empty));
             if (response is Text text)
             {
                 var extension = Path.GetExtension(text.TextValue);
@@ -73,7 +73,7 @@ namespace Unigram.Services
                 return;
             }
 
-            var cached = await _protoService.GetFileAsync(file);
+            var cached = await _clientService.GetFileAsync(file);
             if (cached == null)
             {
                 return;
@@ -96,7 +96,7 @@ namespace Unigram.Services
                 return;
             }
 
-            var cached = await _protoService.GetFileAsync(file);
+            var cached = await _clientService.GetFileAsync(file);
             if (cached == null)
             {
                 return;

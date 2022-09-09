@@ -22,8 +22,8 @@ namespace Unigram.ViewModels.Settings
 
         private string _fileToken;
 
-        public SettingsAdvancedViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ICloudUpdateService cloudUpdateService)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public SettingsAdvancedViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, ICloudUpdateService cloudUpdateService)
+            : base(clientService, settingsService, aggregator)
         {
             _cloudUpdateService = cloudUpdateService;
 
@@ -103,12 +103,12 @@ namespace Unigram.ViewModels.Settings
             }
             else if (file.Local.CanBeDownloaded)
             {
-                ProtoService.DownloadFile(update.Document.Id, 32);
+                ClientService.DownloadFile(update.Document.Id, 32);
             }
 
             if (download && file != null)
             {
-                UpdateManager.Subscribe(this, ProtoService, file, ref _fileToken, UpdateFile);
+                UpdateManager.Subscribe(this, ClientService, file, ref _fileToken, UpdateFile);
             }
         }
 
@@ -156,10 +156,10 @@ namespace Unigram.ViewModels.Settings
 
         public bool PreferIpv6
         {
-            get => CacheService.Options.PreferIpv6;
+            get => ClientService.Options.PreferIpv6;
             set
             {
-                CacheService.Options.PreferIpv6 = value;
+                ClientService.Options.PreferIpv6 = value;
                 RaisePropertyChanged();
             }
         }

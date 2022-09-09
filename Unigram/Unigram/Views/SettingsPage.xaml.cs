@@ -204,19 +204,19 @@ namespace Unigram.Views
 
             if (chat.Type is ChatTypePrivate)
             {
-                var user = ViewModel.ProtoService.GetUser(chat);
+                var user = ViewModel.ClientService.GetUser(chat);
                 if (user == null || user.ProfilePhoto == null)
                 {
                     return;
                 }
 
-                var userFull = ViewModel.ProtoService.GetUserFull(user.Id);
+                var userFull = ViewModel.ClientService.GetUserFull(user.Id);
                 if (userFull?.Photo == null)
                 {
                     return;
                 }
 
-                var viewModel = new UserPhotosViewModel(ViewModel.ProtoService, ViewModel.StorageService, ViewModel.Aggregator, user, userFull);
+                var viewModel = new UserPhotosViewModel(ViewModel.ClientService, ViewModel.StorageService, ViewModel.Aggregator, user, userFull);
                 await GalleryView.ShowAsync(viewModel, () => Photo);
             }
         }
@@ -226,8 +226,8 @@ namespace Unigram.Views
         public void UpdateUser(Chat chat, User user, bool secret)
         {
             Title.Text = user.GetFullName();
-            Photo.SetUser(ViewModel.ProtoService, user, 48);
-            Identity.SetStatus(ViewModel.ProtoService, user);
+            Photo.SetUser(ViewModel.ClientService, user, 48);
+            Identity.SetStatus(ViewModel.ClientService, user);
         }
 
         public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret, bool accessToken)

@@ -10,7 +10,7 @@ namespace Unigram.Views.Popups
 {
     public sealed partial class DeleteMessagesPopup : ContentPopup
     {
-        public DeleteMessagesPopup(ICacheService cacheService, IList<Message> messages)
+        public DeleteMessagesPopup(IClientService clientService, IList<Message> messages)
         {
             InitializeComponent();
 
@@ -24,16 +24,16 @@ namespace Unigram.Views.Popups
                 return;
             }
 
-            var chat = cacheService.GetChat(first.ChatId);
+            var chat = clientService.GetChat(first.ChatId);
             if (chat == null)
             {
                 return;
             }
 
-            var user = cacheService.GetUser(chat);
+            var user = clientService.GetUser(chat);
 
             var sameUser = messages.All(x => x.SenderId.AreTheSame(first.SenderId));
-            if (sameUser && !first.IsOutgoing && cacheService.TryGetSupergroup(chat, out Supergroup supergroup) && !supergroup.IsChannel)
+            if (sameUser && !first.IsOutgoing && clientService.TryGetSupergroup(chat, out Supergroup supergroup) && !supergroup.IsChannel)
             {
                 RevokeCheck.Visibility = Visibility.Collapsed;
                 ReportSpamCheck.Visibility = Visibility.Visible;
@@ -43,7 +43,7 @@ namespace Unigram.Views.Popups
                     ? Visibility.Visible
                     : Visibility.Collapsed;
 
-                var sender = cacheService.GetMessageSender(first.SenderId);
+                var sender = clientService.GetMessageSender(first.SenderId);
                 if (sender is User senderUser)
                 {
                     DeleteAllCheck.Content = string.Format(Strings.Resources.DeleteAllFrom, senderUser.GetFullName());

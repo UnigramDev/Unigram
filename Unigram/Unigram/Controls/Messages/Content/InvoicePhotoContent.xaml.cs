@@ -101,7 +101,7 @@ namespace Unigram.Controls.Messages.Content
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
-                message.ProtoService.DownloadFile(file.Id, 1);
+                message.ClientService.DownloadFile(file.Id, 1);
             }
         }
 

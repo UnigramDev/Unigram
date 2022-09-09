@@ -31,7 +31,7 @@ namespace Unigram.Views.Supergroups
 
         public void UpdateUser(Chat chat, User user, bool secret)
         {
-            Cell.UpdateUser(ViewModel.ProtoService, user, 64);
+            Cell.UpdateUser(ViewModel.ClientService, user, 64);
         }
 
         public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret, bool accessToken)
@@ -47,7 +47,7 @@ namespace Unigram.Views.Supergroups
         {
             if (member.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator)
             {
-                var canBeEdited = (member.Status is ChatMemberStatusCreator && member.MemberId.IsUser(ViewModel.CacheService.Options.MyId)) || (member.Status is ChatMemberStatusAdministrator administrator && administrator.CanBeEdited);
+                var canBeEdited = (member.Status is ChatMemberStatusCreator && member.MemberId.IsUser(ViewModel.ClientService.Options.MyId)) || (member.Status is ChatMemberStatusAdministrator administrator && administrator.CanBeEdited);
 
                 Done.Visibility = canBeEdited ? Visibility.Visible : Visibility.Collapsed;
                 Dismiss.Visibility = member.Status is ChatMemberStatusAdministrator && canBeEdited ? Visibility.Visible : Visibility.Collapsed;

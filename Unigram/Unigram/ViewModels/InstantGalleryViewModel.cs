@@ -13,18 +13,18 @@ namespace Unigram.ViewModels
     {
         private readonly bool _shouldGroup;
 
-        public InstantGalleryViewModel(IProtoService protoService, IStorageService storageService, IEventAggregator aggregator)
-            : base(protoService, storageService, aggregator)
+        public InstantGalleryViewModel(IClientService clientService, IStorageService storageService, IEventAggregator aggregator)
+            : base(clientService, storageService, aggregator)
         {
             Items = new MvxObservableCollection<GalleryContent>();
             Items.CollectionChanged += OnCollectionChanged;
         }
 
-        public static async Task<InstantGalleryViewModel> CreateAsync(IProtoService protoService, IStorageService storageService, IEventAggregator aggregator, MessageViewModel message, WebPage webPage)
+        public static async Task<InstantGalleryViewModel> CreateAsync(IClientService clientService, IStorageService storageService, IEventAggregator aggregator, MessageViewModel message, WebPage webPage)
         {
             var items = new List<GalleryContent>();
 
-            var response = await protoService.SendAsync(new GetWebPageInstantView(webPage.Url, false));
+            var response = await clientService.SendAsync(new GetWebPageInstantView(webPage.Url, false));
             if (response is WebPageInstantView instantView && instantView.IsFull)
             {
                 foreach (var block in instantView.PageBlocks)
@@ -33,14 +33,14 @@ namespace Unigram.ViewModels
                     {
                         foreach (var item in slideshow.PageBlocks)
                         {
-                            items.Add(CountBlock(protoService, instantView, item));
+                            items.Add(CountBlock(clientService, instantView, item));
                         }
                     }
                     else if (block is PageBlockCollage collage)
                     {
                         foreach (var item in collage.PageBlocks)
                         {
-                            items.Add(CountBlock(protoService, instantView, item));
+                            items.Add(CountBlock(clientService, instantView, item));
                         }
                     }
                 }
@@ -48,7 +48,7 @@ namespace Unigram.ViewModels
 
             if (items.Count > 0)
             {
-                var result = new InstantGalleryViewModel(protoService, storageService, aggregator);
+                var result = new InstantGalleryViewModel(clientService, storageService, aggregator);
                 result.Items.ReplaceWith(items);
                 result.FirstItem = items.FirstOrDefault();
                 result.SelectedItem = items.FirstOrDefault();
@@ -60,19 +60,19 @@ namespace Unigram.ViewModels
             return null;
         }
 
-        private static GalleryContent CountBlock(IProtoService protoService, WebPageInstantView webPage, PageBlock pageBlock)
+        private static GalleryContent CountBlock(IClientService clientService, WebPageInstantView webPage, PageBlock pageBlock)
         {
             if (pageBlock is PageBlockPhoto photoBlock)
             {
-                return new GalleryPhoto(protoService, photoBlock.Photo, photoBlock.Caption.ToPlainText());
+                return new GalleryPhoto(clientService, photoBlock.Photo, photoBlock.Caption.ToPlainText());
             }
             else if (pageBlock is PageBlockVideo videoBlock)
             {
-                return new GalleryVideo(protoService, videoBlock.Video, videoBlock.Caption.ToPlainText());
+                return new GalleryVideo(clientService, videoBlock.Video, videoBlock.Caption.ToPlainText());
             }
             else if (pageBlock is PageBlockAnimation animationBlock)
             {
-                return new GalleryAnimation(protoService, animationBlock.Animation, animationBlock.Caption.ToPlainText());
+                return new GalleryAnimation(clientService, animationBlock.Animation, animationBlock.Caption.ToPlainText());
             }
 
             return null;

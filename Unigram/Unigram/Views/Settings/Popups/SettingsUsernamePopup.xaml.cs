@@ -49,7 +49,7 @@ namespace Unigram.Views.Settings.Popups
 
         private string ConvertUsername(string username)
         {
-            return MeUrlPrefixConverter.Convert(ViewModel.CacheService, username);
+            return MeUrlPrefixConverter.Convert(ViewModel.ClientService, username);
         }
 
         public string UsernameHelpLink

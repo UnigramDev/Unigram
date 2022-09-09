@@ -32,13 +32,13 @@ namespace Unigram.Services
 
     public partial class ThemeService : IThemeService
     {
-        private readonly IProtoService _protoService;
+        private readonly IClientService _clientService;
         private readonly ISettingsService _settingsService;
         private readonly IEventAggregator _aggregator;
 
-        public ThemeService(IProtoService protoService, ISettingsService settingsService, IEventAggregator aggregator)
+        public ThemeService(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
         {
-            _protoService = protoService;
+            _clientService = clientService;
             _settingsService = settingsService;
             _aggregator = aggregator;
         }

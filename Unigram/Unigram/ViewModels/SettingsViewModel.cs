@@ -32,8 +32,8 @@ namespace Unigram.ViewModels
 
         public ISettingsDelegate Delegate { get; set; }
 
-        public SettingsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IStorageService storageService, IEventAggregator aggregator, ISettingsSearchService searchService)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public SettingsViewModel(IClientService clientService, ISettingsService settingsService, IStorageService storageService, IEventAggregator aggregator, ISettingsSearchService searchService)
+            : base(clientService, settingsService, aggregator)
         {
             _searchService = searchService;
             _storageService = storageService;
@@ -58,14 +58,14 @@ namespace Unigram.ViewModels
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            var response = await ProtoService.SendAsync(new CreatePrivateChat(CacheService.Options.MyId, false));
+            var response = await ClientService.SendAsync(new CreatePrivateChat(ClientService.Options.MyId, false));
             if (response is Chat chat)
             {
                 Chat = chat;
 
                 if (chat.Type is ChatTypePrivate privata)
                 {
-                    var item = ProtoService.GetUser(privata.UserId);
+                    var item = ClientService.GetUser(privata.UserId);
                     if (item == null)
                     {
                         return;
@@ -73,10 +73,10 @@ namespace Unigram.ViewModels
 
                     Delegate?.UpdateUser(chat, item, false);
 
-                    var cache = ProtoService.GetUserFull(privata.UserId);
+                    var cache = ClientService.GetUserFull(privata.UserId);
                     if (cache == null)
                     {
-                        ProtoService.Send(new GetUserFullInfo(privata.UserId));
+                        ClientService.Send(new GetUserFullInfo(privata.UserId));
                     }
                     else
                     {
@@ -128,7 +128,7 @@ namespace Unigram.ViewModels
 
             if (chat.Type is ChatTypePrivate privata && privata.UserId == update.UserId)
             {
-                BeginOnUIThread(() => Delegate?.UpdateUserFullInfo(chat, ProtoService.GetUser(update.UserId), update.UserFullInfo, false, false));
+                BeginOnUIThread(() => Delegate?.UpdateUserFullInfo(chat, ClientService.GetUser(update.UserId), update.UserFullInfo, false, false));
             }
         }
 
@@ -174,12 +174,12 @@ namespace Unigram.ViewModels
                 conversion.CropRectangle = rectangle;
 
                 var generated = await media.File.ToGeneratedAsync(ConversionType.Transcode, JsonConvert.SerializeObject(conversion));
-                var response = await ProtoService.SendAsync(new SetProfilePhoto(new InputChatPhotoAnimation(generated, 0)));
+                var response = await ClientService.SendAsync(new SetProfilePhoto(new InputChatPhotoAnimation(generated, 0)));
             }
             else
             {
                 var generated = await media.File.ToGeneratedAsync(ConversionType.Compress, JsonConvert.SerializeObject(media.EditState));
-                var response = await ProtoService.SendAsync(new SetProfilePhoto(new InputChatPhotoStatic(generated)));
+                var response = await ClientService.SendAsync(new SetProfilePhoto(new InputChatPhotoStatic(generated)));
             }
         }
 
@@ -191,10 +191,10 @@ namespace Unigram.ViewModels
             var confirm = await MessagePopup.ShowAsync(text, Strings.Resources.AskAQuestion, Strings.Resources.AskButton, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
-                var response = await ProtoService.SendAsync(new GetSupportUser());
+                var response = await ClientService.SendAsync(new GetSupportUser());
                 if (response is User user)
                 {
-                    response = await ProtoService.SendAsync(new CreatePrivateChat(user.Id, false));
+                    response = await ClientService.SendAsync(new CreatePrivateChat(user.Id, false));
                     if (response is Chat chat)
                     {
                         NavigationService.NavigateToChat(chat);

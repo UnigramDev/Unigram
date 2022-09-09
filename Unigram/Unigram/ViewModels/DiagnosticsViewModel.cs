@@ -25,8 +25,8 @@ namespace Unigram.ViewModels
 {
     public class DiagnosticsViewModel : TLViewModelBase
     {
-        public DiagnosticsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public DiagnosticsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             Options = new MvxObservableCollection<DiagnosticsOption>();
             Tags = new MvxObservableCollection<DiagnosticsTag>();
@@ -75,7 +75,7 @@ namespace Unigram.ViewModels
                     continue;
                 }
 
-                var value = prop.GetValue(CacheService.Options);
+                var value = prop.GetValue(ClientService.Options);
                 if (value == null)
                 {
                     continue;
@@ -92,7 +92,7 @@ namespace Unigram.ViewModels
                 Options.Add(new DiagnosticsOption { Name = prop.Name, Value = value });
             }
 
-            foreach (var item in CacheService.Options.Values)
+            foreach (var item in ClientService.Options.Values)
             {
                 var value = default(object);
                 if (item.Value is OptionValueBoolean boolean)
@@ -166,7 +166,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public bool CanUseTestDC => ProtoService.AuthorizationState is not AuthorizationStateReady;
+        public bool CanUseTestDC => ClientService.AuthorizationState is not AuthorizationStateReady;
 
         public bool DisableDatabase => Settings.Diagnostics.DisableDatabase;
 

@@ -31,7 +31,7 @@ namespace Unigram.Views.Settings
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            BackgroundPresenter.Update(ViewModel.SessionId, ViewModel.ProtoService, ViewModel.Aggregator);
+            BackgroundPresenter.Update(ViewModel.SessionId, ViewModel.ClientService, ViewModel.Aggregator);
 
             ViewModel.PropertyChanged += OnPropertyChanged;
         }
@@ -135,7 +135,7 @@ namespace Unigram.Views.Settings
 
             if (cell != null && theme != null)
             {
-                cell.Update(ViewModel.ProtoService, theme);
+                cell.Update(ViewModel.ClientService, theme);
             }
         }
 

@@ -178,7 +178,7 @@ namespace Unigram.Controls.Messages.Content
 
                 if (message.Delegate.CanBeDownloaded(photo, file))
                 {
-                    _message.ProtoService.DownloadFile(file.Id, 32);
+                    _message.ClientService.DownloadFile(file.Id, 32);
                 }
             }
             else
@@ -237,7 +237,7 @@ namespace Unigram.Controls.Messages.Content
                 BitmapImage image;
                 Texture.Source = image = new BitmapImage { DecodePixelWidth = width, DecodePixelHeight = height }; // UriEx.GetLocal(file.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height };
 
-                var test = await message.ProtoService.GetFileAsync(file);
+                var test = await message.ClientService.GetFileAsync(file);
                 if (test == null)
                 {
                     Texture.Source = null;
@@ -302,7 +302,7 @@ namespace Unigram.Controls.Messages.Content
                             source = await PlaceholderHelper.GetBlurredAsync(minithumbnail.Data, message.IsSecret() ? 15 : 3);
                         }
 
-                        message.ProtoService.DownloadFile(file.Id, 1);
+                        message.ClientService.DownloadFile(file.Id, 1);
                     }
 
                     UpdateManager.Subscribe(this, message, file, ref _thumbnailToken, UpdateThumbnail, true);
@@ -365,7 +365,7 @@ namespace Unigram.Controls.Messages.Content
             {
                 if (_message?.SendingState is MessageSendingStateFailed)
                 {
-                    _message.ProtoService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
+                    _message.ClientService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
                 }
 
                 return;
@@ -374,15 +374,15 @@ namespace Unigram.Controls.Messages.Content
             var file = big.Photo;
             if (file.Local.IsDownloadingActive)
             {
-                _message.ProtoService.CancelDownloadFile(file.Id);
+                _message.ClientService.CancelDownloadFile(file.Id);
             }
             else if (file.Remote.IsUploadingActive || _message.SendingState is MessageSendingStateFailed)
             {
-                _message.ProtoService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
+                _message.ClientService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
-                _message.ProtoService.DownloadFile(file.Id, 30);
+                _message.ClientService.DownloadFile(file.Id, 30);
             }
             else
             {

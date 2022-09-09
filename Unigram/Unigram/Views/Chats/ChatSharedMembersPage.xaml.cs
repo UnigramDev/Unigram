@@ -42,11 +42,11 @@ namespace Unigram.Views.Chats
             ChatMemberStatus status = null;
             if (chat.Type is ChatTypeBasicGroup basic)
             {
-                status = ViewModel.ProtoService.GetBasicGroup(basic.BasicGroupId)?.Status;
+                status = ViewModel.ClientService.GetBasicGroup(basic.BasicGroupId)?.Status;
             }
             else if (chat.Type is ChatTypeSupergroup super)
             {
-                status = ViewModel.ProtoService.GetSupergroup(super.SupergroupId)?.Status;
+                status = ViewModel.ClientService.GetSupergroup(super.SupergroupId)?.Status;
             }
 
             if (status == null)
@@ -72,7 +72,7 @@ namespace Unigram.Views.Chats
                 return false;
             }
 
-            if (member.MemberId.IsUser(ViewModel.CacheService.Options.MyId))
+            if (member.MemberId.IsUser(ViewModel.ClientService.Options.MyId))
             {
                 return false;
             }
@@ -87,7 +87,7 @@ namespace Unigram.Views.Chats
                 return false;
             }
 
-            if (member.MemberId.IsUser(ViewModel.CacheService.Options.MyId))
+            if (member.MemberId.IsUser(ViewModel.ClientService.Options.MyId))
             {
                 return false;
             }
@@ -107,14 +107,14 @@ namespace Unigram.Views.Chats
                 return false;
             }
 
-            if (member.MemberId.IsUser(ViewModel.CacheService.Options.MyId))
+            if (member.MemberId.IsUser(ViewModel.ClientService.Options.MyId))
             {
                 return false;
             }
 
             if (chatType is ChatTypeBasicGroup && status is ChatMemberStatusAdministrator)
             {
-                return member.InviterUserId == ViewModel.CacheService.Options.MyId;
+                return member.InviterUserId == ViewModel.ClientService.Options.MyId;
             }
 
             return status is ChatMemberStatusCreator || status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanRestrictMembers;
@@ -156,7 +156,7 @@ namespace Unigram.Views.Chats
             var content = args.ItemContainer.ContentTemplateRoot as UserCell;
             if (content != null)
             {
-                content.UpdateChatSharedMembers(ViewModel.ProtoService, args, OnContainerContentChanging);
+                content.UpdateChatSharedMembers(ViewModel.ClientService, args, OnContainerContentChanging);
             }
         }
 

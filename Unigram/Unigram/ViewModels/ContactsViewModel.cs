@@ -18,8 +18,8 @@ namespace Unigram.ViewModels
 
         private readonly DisposableMutex _loadMoreLock;
 
-        public ContactsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IContactsService contactsService)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public ContactsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IContactsService contactsService)
+            : base(clientService, settingsService, aggregator)
         {
             _contactsService = contactsService;
 
@@ -45,7 +45,7 @@ namespace Unigram.ViewModels
 
                 if (Settings.IsContactsSyncEnabled)
                 {
-                    ProtoService.Send(new GetContacts(), async result =>
+                    ClientService.Send(new GetContacts(), async result =>
                     {
                         if (result is Telegram.Td.Api.Users users)
                         {
@@ -62,14 +62,14 @@ namespace Unigram.ViewModels
 
             using (await _loadMoreLock.WaitAsync())
             {
-                var response = await ProtoService.SendAsync(new GetContacts());
+                var response = await ClientService.SendAsync(new GetContacts());
                 if (response is Telegram.Td.Api.Users users)
                 {
                     var items = new List<User>();
 
                     foreach (var id in users.UserIds)
                     {
-                        var user = ProtoService.GetUser(id);
+                        var user = ClientService.GetUser(id);
                         if (user != null)
                         {
                             items.Add(user);
@@ -105,14 +105,14 @@ namespace Unigram.ViewModels
         {
             using (await _loadMoreLock.WaitAsync())
             {
-                var response = await ProtoService.SendAsync(new GetContacts());
+                var response = await ClientService.SendAsync(new GetContacts());
                 if (response is Telegram.Td.Api.Users users)
                 {
                     var items = new List<User>();
 
                     foreach (var id in users.UserIds)
                     {
-                        var user = ProtoService.GetUser(id);
+                        var user = ClientService.GetUser(id);
                         if (user != null)
                         {
                             items.Add(user);
@@ -137,8 +137,8 @@ namespace Unigram.ViewModels
 
         public void Handle(UpdateUserStatus update)
         {
-            var user = CacheService.GetUser(update.UserId);
-            if (user == null || user.Id == CacheService.Options.MyId || !user.IsContact)
+            var user = ClientService.GetUser(update.UserId);
+            if (user == null || user.Id == ClientService.Options.MyId || !user.IsContact)
             {
                 return;
             }
@@ -165,7 +165,7 @@ namespace Unigram.ViewModels
         //        //{
         //        //    if (contact)
         //        //    {
-        //        //        var user = CacheService.GetUser(update.UserId) as TLUser;
+        //        //        var user = ClientService.GetUser(update.UserId) as TLUser;
         //        //        if (user != null)
         //        //        {
         //        //            Items.Add(user);

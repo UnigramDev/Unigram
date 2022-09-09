@@ -13,8 +13,8 @@ namespace Unigram.ViewModels
 {
     public class StickersViewModel : TLViewModelBase
     {
-        public StickersViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public StickersViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             Items = new MvxObservableCollection<Drawers.StickerSetViewModel>();
             ItemsSource = new CollectionViewSource
@@ -33,11 +33,11 @@ namespace Unigram.ViewModels
 
             if (parameter is long setId)
             {
-                UpdateStickerSet(await ProtoService.SendAsync(new GetStickerSet(setId)));
+                UpdateStickerSet(await ClientService.SendAsync(new GetStickerSet(setId)));
             }
             else if (parameter is string name)
             {
-                UpdateStickerSet(await ProtoService.SendAsync(new SearchStickerSet(name)));
+                UpdateStickerSet(await ClientService.SendAsync(new SearchStickerSet(name)));
             }
             else if (parameter is StickerSet stickerSet)
             {
@@ -49,7 +49,7 @@ namespace Unigram.ViewModels
             }
             else if (parameter is InputFileId inputFile)
             {
-                UpdateStickerSets(await ProtoService.SendAsync(new GetAttachedStickerSets(inputFile.Id)));
+                UpdateStickerSets(await ClientService.SendAsync(new GetAttachedStickerSets(inputFile.Id)));
             }
             else if (parameter is HashSet<long> ids)
             {
@@ -57,7 +57,7 @@ namespace Unigram.ViewModels
 
                 foreach (var id in ids)
                 {
-                    var response = await ProtoService.SendAsync(new GetStickerSet(id));
+                    var response = await ClientService.SendAsync(new GetStickerSet(id));
                     if (response is StickerSet set)
                     {
                         sets.Add(set);
@@ -75,7 +75,7 @@ namespace Unigram.ViewModels
                     Count = sets.Sum(x => x.Stickers.Count);
                     StickerType = sets[0].StickerType;
 
-                    Items.ReplaceWith(sets.Select(x => new Drawers.StickerSetViewModel(ProtoService, x)));
+                    Items.ReplaceWith(sets.Select(x => new Drawers.StickerSetViewModel(ClientService, x)));
                 }
                 else
                 {
@@ -100,7 +100,7 @@ namespace Unigram.ViewModels
                 Count = sets.Sets.Sum(x => x.Size);
                 StickerType = sets.Sets[0].StickerType;
 
-                Items.ReplaceWith(sets.Sets.Select(x => new Drawers.StickerSetViewModel(ProtoService, x)));
+                Items.ReplaceWith(sets.Sets.Select(x => new Drawers.StickerSetViewModel(ClientService, x)));
             }
             else
             {
@@ -122,7 +122,7 @@ namespace Unigram.ViewModels
                 Count = stickerSet.Stickers.Count;
                 StickerType = stickerSet.StickerType;
 
-                Items.ReplaceWith(new[] { new Drawers.StickerSetViewModel(ProtoService, stickerSet) });
+                Items.ReplaceWith(new[] { new Drawers.StickerSetViewModel(ClientService, stickerSet) });
             }
             else
             {
@@ -187,11 +187,11 @@ namespace Unigram.ViewModels
             {
                 if (IsInstalled && set.IsInstalled)
                 {
-                    ProtoService.Send(new ChangeStickerSet(set.Id, set.IsOfficial, set.IsOfficial));
+                    ClientService.Send(new ChangeStickerSet(set.Id, set.IsOfficial, set.IsOfficial));
                 }
                 else if (!IsInstalled && !set.IsInstalled)
                 {
-                    ProtoService.Send(new ChangeStickerSet(set.Id, true, false));
+                    ClientService.Send(new ChangeStickerSet(set.Id, true, false));
                 }
             }
 

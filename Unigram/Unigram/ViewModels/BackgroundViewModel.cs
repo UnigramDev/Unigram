@@ -19,8 +19,8 @@ namespace Unigram.ViewModels
     {
         public IBackgroundDelegate Delegate { get; set; }
 
-        public BackgroundViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public BackgroundViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             Patterns = new MvxObservableCollection<Background>();
 
@@ -54,7 +54,7 @@ namespace Unigram.ViewModels
                     }
                     else
                     {
-                        var response = await ProtoService.SendAsync(new SearchBackground(uri.Segments.Last()));
+                        var response = await ClientService.SendAsync(new SearchBackground(uri.Segments.Last()));
                         if (response is Background)
                         {
                             background = response as Background;
@@ -123,7 +123,7 @@ namespace Unigram.ViewModels
 
             if (_item.Type is BackgroundTypePattern or BackgroundTypeFill)
             {
-                var response = await ProtoService.SendAsync(new GetBackgrounds());
+                var response = await ClientService.SendAsync(new GetBackgrounds());
                 if (response is Backgrounds backgrounds)
                 {
                     var patterns = backgrounds.BackgroundsValue.Where(x => x.Type is BackgroundTypePattern)
@@ -148,7 +148,7 @@ namespace Unigram.ViewModels
             //    }
             //    else
             //    {
-            //        var response = await ProtoService.SendAsync(new SearchBackground(name));
+            //        var response = await ClientService.SendAsync(new SearchBackground(name));
             //        if (response is Background background)
             //        {
             //        }
@@ -378,7 +378,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new GetBackgroundUrl(background.Name, background.Type));
+            var response = await ClientService.SendAsync(new GetBackgroundUrl(background.Name, background.Type));
             if (response is HttpUrl url)
             {
                 await SharePopup.GetForCurrentView().ShowAsync(new Uri(url.Url), null);
@@ -404,14 +404,14 @@ namespace Unigram.ViewModels
                 var item = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(wallpaper.Name);
                 var generated = await item.ToGeneratedAsync(ConversionType.Copy, forceCopy: true);
 
-                task = ProtoService.SendAsync(new SetBackground(new InputBackgroundLocal(generated), new BackgroundTypeWallpaper(_isBlurEnabled, false), dark));
+                task = ClientService.SendAsync(new SetBackground(new InputBackgroundLocal(generated), new BackgroundTypeWallpaper(_isBlurEnabled, false), dark));
             }
             else
             {
                 var fill = GetFill();
                 if (wallpaper.Type is BackgroundTypeFill && fill is BackgroundFillFreeformGradient fillFreeform && fillFreeform.Colors.SequenceEqual(freeform))
                 {
-                    task = ProtoService.SendAsync(new SetBackground(null, null, dark));
+                    task = ClientService.SendAsync(new SetBackground(null, null, dark));
                 }
                 else
                 {
@@ -438,7 +438,7 @@ namespace Unigram.ViewModels
                         ? null
                         : new InputBackgroundRemote(wallpaper.Id);
 
-                    task = ProtoService.SendAsync(new SetBackground(input, type, dark));
+                    task = ClientService.SendAsync(new SetBackground(input, type, dark));
                 }
             }
 

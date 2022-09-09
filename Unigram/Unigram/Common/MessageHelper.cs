@@ -166,7 +166,7 @@ namespace Unigram.Common
             return string.Equals(uri.Scheme, "tg", StringComparison.OrdinalIgnoreCase);
         }
 
-        public static async void OpenTelegramUrl(IProtoService protoService, INavigationService navigation, Uri uri)
+        public static async void OpenTelegramUrl(IClientService clientService, INavigationService navigation, Uri uri)
         {
             var url = uri.ToString();
             if (url.Contains("telegra.ph"))
@@ -175,14 +175,14 @@ namespace Unigram.Common
                 return;
             }
 
-            var response = await protoService.SendAsync(new GetInternalLinkType(url));
+            var response = await clientService.SendAsync(new GetInternalLinkType(url));
             if (response is InternalLinkType internalLink)
             {
-                OpenTelegramUrl(protoService, navigation, internalLink);
+                OpenTelegramUrl(clientService, navigation, internalLink);
             }
         }
 
-        public static void OpenTelegramUrl(IProtoService protoService, INavigationService navigation, InternalLinkType internalLink)
+        public static void OpenTelegramUrl(IClientService clientService, INavigationService navigation, InternalLinkType internalLink)
         {
             if (internalLink is InternalLinkTypeActiveSessions)
             {
@@ -194,16 +194,16 @@ namespace Unigram.Common
             }
             else if (internalLink is InternalLinkTypeBackground background)
             {
-                NavigateToBackground(protoService, navigation, background.BackgroundName);
+                NavigateToBackground(clientService, navigation, background.BackgroundName);
             }
             else if (internalLink is InternalLinkTypeBotStart botStart)
             {
-                NavigateToBotStart(protoService, navigation, botStart.BotUsername, botStart.StartParameter, botStart.Autostart, false);
+                NavigateToBotStart(clientService, navigation, botStart.BotUsername, botStart.StartParameter, botStart.Autostart, false);
             }
             else if (internalLink is InternalLinkTypeBotStartInGroup botStartInGroup)
             {
                 // Not yet supported: AdministratorRights
-                NavigateToBotStart(protoService, navigation, botStartInGroup.BotUsername, botStartInGroup.StartParameter, false, true);
+                NavigateToBotStart(clientService, navigation, botStartInGroup.BotUsername, botStartInGroup.StartParameter, false, true);
             }
             else if (internalLink is InternalLinkTypeChangePhoneNumber)
             {
@@ -211,7 +211,7 @@ namespace Unigram.Common
             }
             else if (internalLink is InternalLinkTypeChatInvite chatInvite)
             {
-                NavigateToInviteLink(protoService, navigation, chatInvite.InviteLink);
+                NavigateToInviteLink(clientService, navigation, chatInvite.InviteLink);
             }
             else if (internalLink is InternalLinkTypeFilterSettings)
             {
@@ -219,7 +219,7 @@ namespace Unigram.Common
             }
             else if (internalLink is InternalLinkTypeGame game)
             {
-                NavigateToUsername(protoService, navigation, game.BotUsername, null, game.GameShortName);
+                NavigateToUsername(clientService, navigation, game.BotUsername, null, game.GameShortName);
             }
             else if (internalLink is InternalLinkTypeInvoice invoice)
             {
@@ -227,11 +227,11 @@ namespace Unigram.Common
             }
             else if (internalLink is InternalLinkTypeLanguagePack languagePack)
             {
-                NavigateToLanguage(protoService, navigation, languagePack.LanguagePackId);
+                NavigateToLanguage(clientService, navigation, languagePack.LanguagePackId);
             }
             else if (internalLink is InternalLinkTypeMessage message)
             {
-                NavigateToMessage(protoService, navigation, message.Url);
+                NavigateToMessage(clientService, navigation, message.Url);
             }
             else if (internalLink is InternalLinkTypeMessageDraft messageDraft)
             {
@@ -251,15 +251,15 @@ namespace Unigram.Common
             }
             else if (internalLink is InternalLinkTypePhoneNumberConfirmation phoneNumberConfirmation)
             {
-                NavigateToConfirmPhone(protoService, phoneNumberConfirmation.PhoneNumber, phoneNumberConfirmation.Hash);
+                NavigateToConfirmPhone(clientService, phoneNumberConfirmation.PhoneNumber, phoneNumberConfirmation.Hash);
             }
             else if (internalLink is InternalLinkTypeProxy proxy)
             {
-                NavigateToProxy(protoService, proxy.Server, proxy.Port, proxy.Type);
+                NavigateToProxy(clientService, proxy.Server, proxy.Port, proxy.Type);
             }
             else if (internalLink is InternalLinkTypePublicChat publicChat)
             {
-                NavigateToUsername(protoService, navigation, publicChat.ChatUsername, null, null);
+                NavigateToUsername(clientService, navigation, publicChat.ChatUsername, null, null);
             }
             else if (internalLink is InternalLinkTypeQrCodeAuthentication)
             {
@@ -275,7 +275,7 @@ namespace Unigram.Common
             }
             else if (internalLink is InternalLinkTypeTheme theme)
             {
-                NavigateToTheme(protoService, theme.ThemeName);
+                NavigateToTheme(clientService, theme.ThemeName);
             }
             else if (internalLink is InternalLinkTypeThemeSettings)
             {
@@ -283,21 +283,21 @@ namespace Unigram.Common
             }
             else if (internalLink is InternalLinkTypeUnknownDeepLink unknownDeepLink)
             {
-                NavigateToUnknownDeepLink(protoService, unknownDeepLink.Link);
+                NavigateToUnknownDeepLink(clientService, unknownDeepLink.Link);
             }
             else if (internalLink is InternalLinkTypeUserPhoneNumber phoneNumber)
             {
-                NavigateToPhoneNumber(protoService, navigation, phoneNumber.PhoneNumber);
+                NavigateToPhoneNumber(clientService, navigation, phoneNumber.PhoneNumber);
             }
             else if (internalLink is InternalLinkTypeVideoChat videoChat)
             {
-                NavigateToUsername(protoService, navigation, videoChat.ChatUsername, videoChat.InviteHash, null);
+                NavigateToUsername(clientService, navigation, videoChat.ChatUsername, videoChat.InviteHash, null);
             }
         }
 
-        private static async void NavigateToUnknownDeepLink(IProtoService protoService, string url)
+        private static async void NavigateToUnknownDeepLink(IClientService clientService, string url)
         {
-            var response = await protoService.SendAsync(new GetDeepLinkInfo(url));
+            var response = await clientService.SendAsync(new GetDeepLinkInfo(url));
             if (response is DeepLinkInfo info)
             {
                 var confirm = await MessagePopup.ShowAsync(info.Text, Strings.Resources.AppName, Strings.Resources.OK, info.NeedUpdateApplication ? Strings.Resources.UpdateApp : null);
@@ -308,20 +308,20 @@ namespace Unigram.Common
             }
         }
 
-        private static async void NavigateToBackground(IProtoService protoService, INavigationService navigation, string slug)
+        private static async void NavigateToBackground(IClientService clientService, INavigationService navigation, string slug)
         {
             await new BackgroundPopup(slug).ShowQueuedAsync();
 
-            //var response = await protoService.SendAsync(new SearchBackground(slug));
+            //var response = await clientService.SendAsync(new SearchBackground(slug));
             //if (response is Background background)
             //{
 
             //}
         }
 
-        private static async void NavigateToMessage(IProtoService protoService, INavigationService navigation, string url)
+        private static async void NavigateToMessage(IClientService clientService, INavigationService navigation, string url)
         {
-            var response = await protoService.SendAsync(new GetMessageLinkInfo(url));
+            var response = await clientService.SendAsync(new GetMessageLinkInfo(url));
             if (response is MessageLinkInfo info && info.ChatId != 0)
             {
                 if (info.Message != null)
@@ -346,7 +346,7 @@ namespace Unigram.Common
             }
         }
 
-        private static async void NavigateToTheme(IProtoService protoService, string slug)
+        private static async void NavigateToTheme(IClientService clientService, string slug)
         {
             await MessagePopup.ShowAsync(Strings.Resources.ThemeNotSupported, Strings.Resources.Theme, Strings.Resources.OK);
         }
@@ -356,9 +356,9 @@ namespace Unigram.Common
             navigation.NavigateToInvoice(new InputInvoiceName(invoiceName));
         }
 
-        public static async void NavigateToLanguage(IProtoService protoService, INavigationService navigation, string languagePackId)
+        public static async void NavigateToLanguage(IClientService clientService, INavigationService navigation, string languagePackId)
         {
-            var response = await protoService.SendAsync(new GetLanguagePackInfo(languagePackId));
+            var response = await clientService.SendAsync(new GetLanguagePackInfo(languagePackId));
             if (response is LanguagePackInfo info)
             {
                 if (info.Id == SettingsService.Current.LanguagePackId)
@@ -425,25 +425,25 @@ namespace Unigram.Common
             }
         }
 
-        public static async void NavigateToSendCode(IProtoService protoService, string phoneCode)
+        public static async void NavigateToSendCode(IClientService clientService, string phoneCode)
         {
-            var state = protoService.GetAuthorizationState();
+            var state = clientService.GetAuthorizationState();
             if (state is AuthorizationStateWaitCode)
             {
                 var firstName = string.Empty;
                 var lastName = string.Empty;
 
-                if (protoService.Options.TryGetValue("x_firstname", out string firstValue))
+                if (clientService.Options.TryGetValue("x_firstname", out string firstValue))
                 {
                     firstName = firstValue;
                 }
 
-                if (protoService.Options.TryGetValue("x_lastname", out string lastValue))
+                if (clientService.Options.TryGetValue("x_lastname", out string lastValue))
                 {
                     lastName = lastValue;
                 }
 
-                var response = await protoService.SendAsync(new CheckAuthenticationCode(phoneCode));
+                var response = await clientService.SendAsync(new CheckAuthenticationCode(phoneCode));
                 if (response is Error error)
                 {
                     if (error.TypeEquals(ErrorType.PHONE_NUMBER_INVALID))
@@ -494,7 +494,7 @@ namespace Unigram.Common
             await SharePopup.GetForCurrentView().ShowAsync(text);
         }
 
-        public static async void NavigateToProxy(IProtoService protoService, string server, int port, ProxyType type)
+        public static async void NavigateToProxy(IClientService clientService, string server, int port, ProxyType type)
         {
             string userText = string.Empty;
             string passText = string.Empty;
@@ -520,13 +520,13 @@ namespace Unigram.Common
             var confirm = await MessagePopup.ShowAsync($"{Strings.Resources.EnableProxyAlert}\n\n{Strings.Resources.UseProxyAddress}: {server}\n{Strings.Resources.UseProxyPort}: {port}\n{userText}{passText}{secretText}\n{Strings.Resources.EnableProxyAlert2}{secretInfo}", Strings.Resources.Proxy, Strings.Resources.ConnectingConnectProxy, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
-                protoService.Send(new AddProxy(server ?? string.Empty, port, true, type));
+                clientService.Send(new AddProxy(server ?? string.Empty, port, true, type));
             }
         }
 
-        public static async void NavigateToConfirmPhone(IProtoService protoService, string phone, string hash)
+        public static async void NavigateToConfirmPhone(IClientService clientService, string phone, string hash)
         {
-            //var response = await protoService.SendConfirmPhoneCodeAsync(hash, false);
+            //var response = await clientService.SendConfirmPhoneCodeAsync(hash, false);
             //if (response.IsSucceeded)
             //{
             //    var state = new SignInSentCodePage.NavigationParameters
@@ -561,12 +561,12 @@ namespace Unigram.Common
             await StickersPopup.ShowAsync(text);
         }
 
-        public static async void NavigateToPhoneNumber(IProtoService protoService, INavigationService navigation, string phoneNumber)
+        public static async void NavigateToPhoneNumber(IClientService clientService, INavigationService navigation, string phoneNumber)
         {
-            var response = await protoService.SendAsync(new SearchUserByPhoneNumber(phoneNumber));
+            var response = await clientService.SendAsync(new SearchUserByPhoneNumber(phoneNumber));
             if (response is User user)
             {
-                var chat = await protoService.SendAsync(new CreatePrivateChat(user.Id, false)) as Chat;
+                var chat = await clientService.SendAsync(new CreatePrivateChat(user.Id, false)) as Chat;
                 if (chat != null)
                 {
                     navigation.Navigate(typeof(ProfilePage), chat.Id);
@@ -582,10 +582,10 @@ namespace Unigram.Common
             }
         }
 
-        public static async void NavigateToBotStart(IProtoService protoService, INavigationService navigation, string username, string startParameter, bool autoStart, bool group)
+        public static async void NavigateToBotStart(IClientService clientService, INavigationService navigation, string username, string startParameter, bool autoStart, bool group)
         {
-            var response = await protoService.SendAsync(new SearchPublicChat(username));
-            if (response is Chat chat && protoService.TryGetUser(chat, out User user))
+            var response = await clientService.SendAsync(new SearchPublicChat(username));
+            if (response is Chat chat && clientService.TryGetUser(chat, out User user))
             {
                 if (group)
                 {
@@ -593,7 +593,7 @@ namespace Unigram.Common
                 }
                 else if (autoStart)
                 {
-                    protoService.Send(new SendBotStartMessage(user.Id, chat.Id, startParameter));
+                    clientService.Send(new SendBotStartMessage(user.Id, chat.Id, startParameter));
                     navigation.NavigateToChat(chat);
                 }
                 else
@@ -607,16 +607,16 @@ namespace Unigram.Common
             }
         }
 
-        public static async void NavigateToUsername(IProtoService protoService, INavigationService navigation, string username, string videoChat, string game)
+        public static async void NavigateToUsername(IClientService clientService, INavigationService navigation, string username, string videoChat, string game)
         {
-            var response = await protoService.SendAsync(new SearchPublicChat(username));
+            var response = await clientService.SendAsync(new SearchPublicChat(username));
             if (response is Chat chat)
             {
                 if (game != null)
                 {
 
                 }
-                else if (protoService.TryGetUser(chat, out User user))
+                else if (clientService.TryGetUser(chat, out User user))
                 {
                     if (user.Type is UserTypeBot)
                     {
@@ -642,9 +642,9 @@ namespace Unigram.Common
             }
         }
 
-        public static async void NavigateToInviteLink(IProtoService protoService, INavigationService navigation, string link)
+        public static async void NavigateToInviteLink(IClientService clientService, INavigationService navigation, string link)
         {
-            var response = await protoService.CheckChatInviteLinkAsync(link);
+            var response = await clientService.CheckChatInviteLinkAsync(link);
             if (response is ChatInviteLinkInfo info)
             {
                 if (info.ChatId != 0)
@@ -653,7 +653,7 @@ namespace Unigram.Common
                 }
                 else
                 {
-                    var dialog = new JoinChatPopup(protoService, info);
+                    var dialog = new JoinChatPopup(clientService, info);
 
                     var confirm = await dialog.ShowQueuedAsync();
                     if (confirm != ContentDialogResult.Primary)
@@ -661,7 +661,7 @@ namespace Unigram.Common
                         return;
                     }
 
-                    var import = await protoService.SendAsync(new JoinChatByInviteLink(link));
+                    var import = await clientService.SendAsync(new JoinChatByInviteLink(link));
                     if (import is Chat chat)
                     {
                         navigation.NavigateToChat(chat);
@@ -730,13 +730,13 @@ namespace Unigram.Common
             return (symbol >= 'a' && symbol <= 'z') || (symbol >= 'A' && symbol <= 'Z') || (symbol >= '0' && symbol <= '9') || symbol == '_';
         }
 
-        public static async void OpenUrl(IProtoService protoService, INavigationService navigationService, string url, bool untrust)
+        public static async void OpenUrl(IClientService clientService, INavigationService navigationService, string url, bool untrust)
         {
             if (TryCreateUri(url, out Uri uri))
             {
                 if (IsTelegramUrl(uri))
                 {
-                    OpenTelegramUrl(protoService, navigationService, uri);
+                    OpenTelegramUrl(clientService, navigationService, uri);
                 }
                 else
                 {

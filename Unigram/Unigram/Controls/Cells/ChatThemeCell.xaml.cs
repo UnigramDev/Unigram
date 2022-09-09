@@ -10,7 +10,7 @@ namespace Unigram.Controls.Cells
 {
     public sealed partial class ChatThemeCell : UserControl
     {
-        private IProtoService _protoService;
+        private IClientService _clientService;
         private ChatTheme _theme;
 
         public ChatThemeCell()
@@ -18,9 +18,9 @@ namespace Unigram.Controls.Cells
             InitializeComponent();
         }
 
-        public void Update(IProtoService protoService, ChatTheme theme)
+        public void Update(IClientService clientService, ChatTheme theme)
         {
-            _protoService = protoService;
+            _clientService = clientService;
             _theme = theme;
 
             Name.Text = theme?.Name ?? string.Empty;
@@ -38,16 +38,16 @@ namespace Unigram.Controls.Cells
 
             NoTheme.Visibility = Visibility.Collapsed;
 
-            Preview.UpdateSource(protoService, settings.Background, true);
+            Preview.UpdateSource(clientService, settings.Background, true);
             Outgoing.Fill = settings.OutgoingMessageFill;
             Incoming.Fill = new SolidColorBrush(ThemeAccentInfo.Colorize(ActualTheme == ElementTheme.Light ? TelegramThemeType.Day : TelegramThemeType.Tinted, settings.AccentColor.ToColor(), "MessageBackgroundBrush"));
         }
 
         private void OnActualThemeChanged(FrameworkElement sender, object args)
         {
-            if (_protoService != null && _theme != null)
+            if (_clientService != null && _theme != null)
             {
-                Update(_protoService, _theme);
+                Update(_clientService, _theme);
             }
         }
     }

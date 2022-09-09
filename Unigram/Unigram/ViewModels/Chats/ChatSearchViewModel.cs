@@ -15,8 +15,8 @@ namespace Unigram.ViewModels.Chats
         private readonly DialogViewModel _dialog;
         private readonly DisposableMutex _loadMoreLock;
 
-        public ChatSearchViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, DialogViewModel viewModel)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public ChatSearchViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, DialogViewModel viewModel)
+            : base(clientService, settingsService, aggregator)
         {
             _dialog = viewModel;
             _loadMoreLock = new DisposableMutex();
@@ -215,7 +215,7 @@ namespace Unigram.ViewModels.Chats
                 //    fromMessageId = _dialog.Items[panel.LastVisibleIndex].Id;
                 //}
 
-                var collection = new SearchChatMessagesCollection(ProtoService, chat.Id, _dialog.ThreadId, query, from, fromMessageId, filter);
+                var collection = new SearchChatMessagesCollection(ClientService, chat.Id, _dialog.ThreadId, query, from, fromMessageId, filter);
 
                 var result = await collection.LoadMoreItemsAsync(100);
                 if (result.Count > 0)

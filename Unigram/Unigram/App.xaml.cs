@@ -242,10 +242,10 @@ namespace Unigram
                 aggregator.Publish(new UpdateWindowActivated(active));
             }
 
-            var cacheService = TLContainer.Current.Resolve<ICacheService>();
-            if (cacheService != null)
+            var clientService = TLContainer.Current.Resolve<IClientService>();
+            if (clientService != null)
             {
-                cacheService.Options.Online = active;
+                clientService.Options.Online = active;
             }
         }
 
@@ -339,7 +339,7 @@ namespace Unigram
             }
 
             var navService = WindowContext.Current.NavigationServices.GetByFrameId($"{TLContainer.Current.Lifetime.ActiveItem.Id}");
-            var service = TLContainer.Current.Resolve<IProtoService>();
+            var service = TLContainer.Current.Resolve<IClientService>();
             if (service == null)
             {
                 return;
@@ -397,7 +397,7 @@ namespace Unigram
                 return new TLRootNavigationService(TLContainer.Current.Resolve<ISessionService>(session), frame, session, id);
             }
 
-            return new TLNavigationService(TLContainer.Current.Resolve<IProtoService>(session), TLContainer.Current.Resolve<IViewService>(session), frame, session, id);
+            return new TLNavigationService(TLContainer.Current.Resolve<IClientService>(session), TLContainer.Current.Resolve<IViewService>(session), frame, session, id);
         }
 
         private async void OnStartSync()

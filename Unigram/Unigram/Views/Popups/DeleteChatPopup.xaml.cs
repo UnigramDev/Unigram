@@ -9,11 +9,11 @@ namespace Unigram.Views.Popups
 {
     public sealed partial class DeleteChatPopup : ContentPopup
     {
-        public DeleteChatPopup(IProtoService protoService, Chat chat, ChatList chatList, bool clear, bool asOwner = false)
+        public DeleteChatPopup(IClientService clientService, Chat chat, ChatList chatList, bool clear, bool asOwner = false)
         {
             InitializeComponent();
 
-            //Photo.Source = PlaceholderHelper.GetChat(protoService, chat, 36);
+            //Photo.Source = PlaceholderHelper.GetChat(clientService, chat, 36);
 
             var position = chat.GetPosition(chatList);
             if (position?.Source is ChatSourcePublicServiceAnnouncement)
@@ -28,13 +28,13 @@ namespace Unigram.Views.Popups
                 return;
             }
 
-            Title = clear ? Strings.Resources.ClearHistory : Strings.Resources.DeleteChatUser; // protoService.GetTitle(chat);
+            Title = clear ? Strings.Resources.ClearHistory : Strings.Resources.DeleteChatUser; // clientService.GetTitle(chat);
 
-            var user = protoService.GetUser(chat);
-            var basicGroup = protoService.GetBasicGroup(chat);
-            var supergroup = protoService.GetSupergroup(chat);
+            var user = clientService.GetUser(chat);
+            var basicGroup = clientService.GetBasicGroup(chat);
+            var supergroup = clientService.GetSupergroup(chat);
 
-            var deleteAll = user != null && chat.Type is ChatTypePrivate privata && privata.UserId != protoService.Options.MyId && chat.CanBeDeletedForAllUsers;
+            var deleteAll = user != null && chat.Type is ChatTypePrivate privata && privata.UserId != clientService.Options.MyId && chat.CanBeDeletedForAllUsers;
             if (deleteAll)
             {
                 CheckBox.Visibility = Visibility.Visible;
@@ -63,7 +63,7 @@ namespace Unigram.Views.Popups
                     {
                         TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.Resources.AreYouSureClearHistoryWithSecretUser, user.GetFullName()));
                     }
-                    else if (user.Id == protoService.Options.MyId)
+                    else if (user.Id == clientService.Options.MyId)
                     {
                         TextBlockHelper.SetMarkdown(Subtitle, Strings.Resources.AreYouSureClearHistorySavedMessages);
                     }
@@ -98,7 +98,7 @@ namespace Unigram.Views.Popups
                 {
                     TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.Resources.AreYouSureDeleteThisChatWithSecretUser, user.GetFullName()));
                 }
-                else if (user.Id == protoService.Options.MyId)
+                else if (user.Id == clientService.Options.MyId)
                 {
                     TextBlockHelper.SetMarkdown(Subtitle, Strings.Resources.AreYouSureDeleteThisChatSavedMessages);
                 }

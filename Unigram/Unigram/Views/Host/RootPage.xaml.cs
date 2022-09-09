@@ -126,7 +126,7 @@ namespace Unigram.Views.Host
                     continue;
                 }
 
-                if (session.ProtoService.Options.IsPremium)
+                if (session.ClientService.Options.IsPremium)
                 {
                     premium++;
                 }
@@ -163,7 +163,7 @@ namespace Unigram.Views.Host
                 service.Frame.Navigating += OnNavigating;
                 service.Frame.Navigated += OnNavigated;
 
-                switch (session.ProtoService.GetAuthorizationState())
+                switch (session.ClientService.GetAuthorizationState())
                 {
                     case AuthorizationStateReady:
                         service.Navigate(typeof(MainPage));
@@ -190,14 +190,14 @@ namespace Unigram.Views.Host
                         break;
                 }
 
-                var counters = session.ProtoService.GetUnreadCount(new ChatListMain());
+                var counters = session.ClientService.GetUnreadCount(new ChatListMain());
                 if (counters != null)
                 {
                     session.Aggregator.Publish(counters.UnreadChatCount);
                     session.Aggregator.Publish(counters.UnreadMessageCount);
                 }
 
-                session.Aggregator.Publish(new UpdateConnectionState(session.ProtoService.GetConnectionState()));
+                session.Aggregator.Publish(new UpdateConnectionState(session.ClientService.GetConnectionState()));
             }
             else
             {
@@ -272,17 +272,17 @@ namespace Unigram.Views.Host
         {
             if (frame?.Content is MainPage main)
             {
-                InitializeUser(main.ViewModel.ProtoService);
-                InitializeSessions(main.ViewModel.ProtoService, SettingsService.Current.IsAccountsSelectorExpanded, _lifetime.Items);
+                InitializeUser(main.ViewModel.ClientService);
+                InitializeSessions(main.ViewModel.ClientService, SettingsService.Current.IsAccountsSelectorExpanded, _lifetime.Items);
             }
         }
 
-        private async void InitializeUser(IProtoService protoService)
+        private async void InitializeUser(IClientService clientService)
         {
-            var user = protoService.GetUser(protoService.Options.MyId);
+            var user = clientService.GetUser(clientService.Options.MyId);
             if (user == null)
             {
-                user = await protoService.SendAsync(new GetMe()) as User;
+                user = await clientService.SendAsync(new GetMe()) as User;
             }
 
             if (user == null)
@@ -290,12 +290,12 @@ namespace Unigram.Views.Host
                 return;
             }
 
-            Photo.SetUser(protoService, user, 48);
+            Photo.SetUser(clientService, user, 48);
             NameLabel.Text = user.GetFullName();
 #if DEBUG
             PhoneLabel.Text = "+42 --- --- ----";
 #else
-            if (protoService.Options.TestMode)
+            if (clientService.Options.TestMode)
             {
                 PhoneLabel.Text = "+42 --- --- ----";
             }
@@ -312,11 +312,11 @@ namespace Unigram.Views.Host
         {
             if (_navigationService.Content is MainPage main)
             {
-                InitializeSessions(main.ViewModel.ProtoService, SettingsService.Current.IsAccountsSelectorExpanded, _lifetime.Items);
+                InitializeSessions(main.ViewModel.ClientService, SettingsService.Current.IsAccountsSelectorExpanded, _lifetime.Items);
             }
         }
 
-        private void InitializeSessions(IProtoService protoService, bool show, IList<ISessionService> items)
+        private void InitializeSessions(IClientService clientService, bool show, IList<ISessionService> items)
         {
             for (int i = 0; i < _navigationViewItems.Count; i++)
             {
@@ -346,7 +346,7 @@ namespace Unigram.Views.Host
 
             var index = 2;
 
-            if (protoService.IsPremium is false)
+            if (clientService.IsPremium is false)
             {
                 if (_navigationViewItems[0] is RootDestination.Status)
                 {
@@ -476,7 +476,7 @@ namespace Unigram.Views.Host
                     return;
                 }
 
-                var user = session.ProtoService.GetUser(session.UserId);
+                var user = session.ClientService.GetUser(session.UserId);
                 if (user == null)
                 {
                     return;
@@ -486,10 +486,10 @@ namespace Unigram.Views.Host
                 title.Text = user.GetFullName();
 
                 var photo = content.Children[0] as ProfilePicture;
-                photo.SetUser(session.ProtoService, user, 28);
+                photo.SetUser(session.ClientService, user, 28);
 
                 var identity = content.FindName("Identity") as IdentityIcon;
-                identity.SetStatus(session.ProtoService, user);
+                identity.SetStatus(session.ClientService, user);
 
                 AutomationProperties.SetName(container, user.GetFullName());
             }
@@ -535,7 +535,7 @@ namespace Unigram.Views.Host
                         break;
 
                     case RootDestination.Status:
-                        if (page.ViewModel.CacheService.TryGetUser(page.ViewModel.CacheService.Options.MyId, out User user))
+                        if (page.ViewModel.ClientService.TryGetUser(page.ViewModel.ClientService.Options.MyId, out User user))
                         {
                             content.Text = user.EmojiStatus == null ? Strings.Resources.SetEmojiStatus : Strings.Resources.ChangeEmojiStatus;
                             content.Glyph = user.EmojiStatus == null ? Icons.EmojiAdd : Icons.EmojiEdit;

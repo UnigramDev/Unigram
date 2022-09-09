@@ -39,7 +39,7 @@ namespace Unigram.Views.Payments
             }
 
             Photo.Visibility = Visibility.Visible;
-            return PlaceholderHelper.GetBitmap(ViewModel.ProtoService, small);
+            return PlaceholderHelper.GetBitmap(ViewModel.ClientService, small);
         }
 
         private string ConvertAddress(Address address)

@@ -5,8 +5,8 @@ namespace Unigram.ViewModels.Settings.Privacy
 {
     public class SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesViewModel : SettingsPrivacyViewModelBase
     {
-        public SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator, new UserPrivacySettingAllowPrivateVoiceAndVideoNoteMessages())
+        public SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator, new UserPrivacySettingAllowPrivateVoiceAndVideoNoteMessages())
         {
         }
     }

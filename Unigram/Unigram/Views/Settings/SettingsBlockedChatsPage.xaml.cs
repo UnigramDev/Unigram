@@ -24,15 +24,15 @@ namespace Unigram.Views.Settings
         {
             if (e.ClickedItem is MessageSender messageSender)
             {
-                if (ViewModel.CacheService.TryGetUser(messageSender, out User user))
+                if (ViewModel.ClientService.TryGetUser(messageSender, out User user))
                 {
-                    var response = await ViewModel.ProtoService.SendAsync(new CreatePrivateChat(user.Id, false));
+                    var response = await ViewModel.ClientService.SendAsync(new CreatePrivateChat(user.Id, false));
                     if (response is Chat chat)
                     {
                         ViewModel.NavigationService.Navigate(typeof(ProfilePage), chat.Id);
                     }
                 }
-                else if (ViewModel.CacheService.TryGetChat(messageSender, out Chat chat))
+                else if (ViewModel.ClientService.TryGetChat(messageSender, out Chat chat))
                 {
                     ViewModel.NavigationService.Navigate(typeof(ProfilePage), chat.Id);
                 }
@@ -62,7 +62,7 @@ namespace Unigram.Views.Settings
             }
             else if (args.ItemContainer.ContentTemplateRoot is UserCell content)
             {
-                content.UpdateMessageSender(ViewModel.ProtoService, args, OnContainerContentChanging);
+                content.UpdateMessageSender(ViewModel.ClientService, args, OnContainerContentChanging);
             }
         }
 

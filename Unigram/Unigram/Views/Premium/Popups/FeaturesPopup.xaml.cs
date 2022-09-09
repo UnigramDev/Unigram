@@ -14,15 +14,15 @@ namespace Unigram.Views.Premium.Popups
 {
     public sealed partial class FeaturesPopup : ContentPopup
     {
-        private readonly IProtoService _protoService;
+        private readonly IClientService _clientService;
         private readonly IDictionary<Type, Animation> _animations;
         private readonly Stickers _stickers;
 
-        public FeaturesPopup(IProtoService protoService, PremiumPaymentOption option, IList<PremiumFeature> features, IDictionary<Type, Animation> animations, Stickers stickers, PremiumFeature selectedFeature)
+        public FeaturesPopup(IClientService clientService, PremiumPaymentOption option, IList<PremiumFeature> features, IDictionary<Type, Animation> animations, Stickers stickers, PremiumFeature selectedFeature)
         {
             InitializeComponent();
 
-            _protoService = protoService;
+            _clientService = clientService;
             _animations = animations;
             _stickers = stickers;
 
@@ -33,7 +33,7 @@ namespace Unigram.Views.Premium.Popups
             ScrollingHost.ItemsSource = items;
             ScrollingHost.SelectedItem = selectedFeature;
 
-            PurchaseCommand.Content = protoService.IsPremium
+            PurchaseCommand.Content = clientService.IsPremium
                 ? Strings.Resources.OK
                 : string.Format(Strings.Resources.SubscribeToPremium, Locale.FormatCurrency(option.Amount / option.MonthCount, option.Currency));
         }
@@ -58,7 +58,7 @@ namespace Unigram.Views.Premium.Popups
                     content.PlayAnimation();
                 }
 
-                _protoService.Send(new ViewPremiumFeature(e.AddedItems[0] as PremiumFeature));
+                _clientService.Send(new ViewPremiumFeature(e.AddedItems[0] as PremiumFeature));
             }
 
             if (e.RemovedItems?.Count > 0)
@@ -78,11 +78,11 @@ namespace Unigram.Views.Premium.Popups
             if (sender is PremiumFeatureCell cell && args.NewValue is PremiumFeature feature)
             {
                 _animations.TryGetValue(feature.GetType(), out Animation value);
-                cell.UpdateFeature(_protoService, feature, value);
+                cell.UpdateFeature(_clientService, feature, value);
             }
             else if (sender is PremiumFeatureUniqueStickersCell uniqueStickersCell)
             {
-                uniqueStickersCell.UpdateFature(_protoService, _stickers?.StickersValue);
+                uniqueStickersCell.UpdateFature(_clientService, _stickers?.StickersValue);
             }
         }
 

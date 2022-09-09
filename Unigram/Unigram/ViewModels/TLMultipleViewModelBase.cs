@@ -12,8 +12,8 @@ namespace Unigram.ViewModels
     {
         public readonly List<TLViewModelBase> Children;
 
-        public TLMultipleViewModelBase(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public TLMultipleViewModelBase(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             Children = new List<TLViewModelBase>();
         }

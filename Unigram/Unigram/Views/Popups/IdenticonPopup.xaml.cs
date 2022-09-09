@@ -20,7 +20,7 @@ namespace Unigram.Views.Popups
 
             if (chat.Type is ChatTypeSecret secret)
             {
-                var service = TLContainer.Current.Resolve<IProtoService>(sessionId);
+                var service = TLContainer.Current.Resolve<IClientService>(sessionId);
 
                 var secretChat = service.GetSecretChat(secret.SecretChatId);
                 if (secretChat == null)

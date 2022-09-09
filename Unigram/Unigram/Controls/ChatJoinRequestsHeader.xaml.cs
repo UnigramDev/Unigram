@@ -13,7 +13,7 @@ namespace Unigram.Controls
 {
     public sealed partial class ChatJoinRequestsHeader : HyperlinkButton
     {
-        private IProtoService _protoService;
+        private IClientService _clientService;
 
         private UIElement _parent;
         private Chat _chat;
@@ -23,9 +23,9 @@ namespace Unigram.Controls
             InitializeComponent();
         }
 
-        public void InitializeParent(UIElement parent, IProtoService protoService)
+        public void InitializeParent(UIElement parent, IClientService clientService)
         {
-            _protoService = protoService;
+            _clientService = clientService;
 
             _parent = parent;
             ElementCompositionPreview.SetIsTranslationEnabled(parent, true);
@@ -33,13 +33,13 @@ namespace Unigram.Controls
 
         private void RecentUsers_RecentUserHeadChanged(ProfilePicture sender, MessageSender messageSender)
         {
-            if (_protoService.TryGetUser(messageSender, out User user))
+            if (_clientService.TryGetUser(messageSender, out User user))
             {
-                sender.SetUser(_protoService, user, 32);
+                sender.SetUser(_clientService, user, 32);
             }
-            else if (_protoService.TryGetChat(messageSender, out Chat chat))
+            else if (_clientService.TryGetChat(messageSender, out Chat chat))
             {
-                sender.SetChat(_protoService, chat, 32);
+                sender.SetChat(_clientService, chat, 32);
             }
         }
 
@@ -55,7 +55,7 @@ namespace Unigram.Controls
                 if (chat.PendingJoinRequests.UserIds.Count < 3 
                     && chat.PendingJoinRequests.UserIds.Count < chat.PendingJoinRequests.TotalCount)
                 {
-                    _protoService.Send(new GetChatJoinRequests(chat.Id, string.Empty, string.Empty, null, 3));
+                    _clientService.Send(new GetChatJoinRequests(chat.Id, string.Empty, string.Empty, null, 3));
                 }
 
                 Label.Text = Locale.Declension("JoinRequests", chat.PendingJoinRequests.TotalCount);

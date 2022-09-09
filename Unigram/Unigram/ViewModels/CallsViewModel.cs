@@ -15,10 +15,10 @@ namespace Unigram.ViewModels
 {
     public class CallsViewModel : TLViewModelBase
     {
-        public CallsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public CallsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
-            Items = new ItemsCollection(protoService, cacheService);
+            Items = new ItemsCollection(clientService);
 
             CallDeleteCommand = new RelayCommand<TLCallGroup>(CallDeleteExecute);
         }
@@ -27,21 +27,19 @@ namespace Unigram.ViewModels
 
         public class ItemsCollection : IncrementalCollection<TLCallGroup>
         {
-            private readonly IProtoService _protoService;
-            private readonly ICacheService _cacheService;
+            private readonly IClientService _clientService;
 
             private long _lastMaxId;
             private bool _hasMoreItems = true;
 
-            public ItemsCollection(IProtoService protoService, ICacheService cacheService)
+            public ItemsCollection(IClientService clientService)
             {
-                _protoService = protoService;
-                _cacheService = cacheService;
+                _clientService = clientService;
             }
 
             public override async Task<IList<TLCallGroup>> LoadDataAsync()
             {
-                var response = await _protoService.SendAsync(new SearchCallMessages(_lastMaxId, 50, false)); //(new TLInputPeerEmpty(), null, null, new TLInputMessagesFilterPhoneCalls(), 0, 0, 0, _lastMaxId, 50);
+                var response = await _clientService.SendAsync(new SearchCallMessages(_lastMaxId, 50, false)); //(new TLInputPeerEmpty(), null, null, new TLInputMessagesFilterPhoneCalls(), 0, 0, 0, _lastMaxId, 50);
                 if (response is Messages messages)
                 {
                     if (messages.MessagesValue.Count > 0)
@@ -62,7 +60,7 @@ namespace Unigram.ViewModels
 
                     foreach (var message in messages.MessagesValue)
                     {
-                        var chat = _protoService.GetChat(message.ChatId);
+                        var chat = _clientService.GetChat(message.ChatId);
                         if (chat == null)
                         {
                             continue;
@@ -74,7 +72,7 @@ namespace Unigram.ViewModels
                             continue;
                         }
 
-                        var peer = _protoService.GetUser(chat);
+                        var peer = _clientService.GetUser(chat);
                         if (peer == null)
                         {
                             continue;
@@ -142,7 +140,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new DeleteMessages(group.ChatId, group.Items.Select(x => x.Id).ToArray(), popup.IsChecked == true));
+            var response = await ClientService.SendAsync(new DeleteMessages(group.ChatId, group.Items.Select(x => x.Id).ToArray(), popup.IsChecked == true));
             if (response is Ok)
             {
                 Items.Remove(group);

@@ -9,12 +9,12 @@ namespace Unigram.ViewModels.Gallery
         protected readonly Message _message;
         protected readonly bool _hasProtectedContent;
 
-        public GalleryMessage(IProtoService protoService, Message message)
-            : base(protoService)
+        public GalleryMessage(IClientService clientService, Message message)
+            : base(clientService)
         {
             _message = message;
 
-            var chat = protoService.GetChat(message.ChatId);
+            var chat = clientService.GetChat(message.ChatId);
             if (chat != null)
             {
                 _hasProtectedContent = chat.Type is ChatTypeSecret || chat.HasProtectedContent;
@@ -64,11 +64,11 @@ namespace Unigram.ViewModels.Gallery
 
                 if (_message.SenderId is MessageSenderChat senderChat)
                 {
-                    return _protoService.GetChat(senderChat.ChatId);
+                    return _clientService.GetChat(senderChat.ChatId);
                 }
                 else if (_message.SenderId is MessageSenderUser senderUser)
                 {
-                    return _protoService.GetUser(senderUser.UserId);
+                    return _clientService.GetUser(senderUser.UserId);
                 }
 
                 return null;

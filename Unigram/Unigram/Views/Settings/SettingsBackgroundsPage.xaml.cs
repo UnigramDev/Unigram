@@ -64,7 +64,7 @@ namespace Unigram.Views.Settings
             var preview = root.Children[0] as ChatBackgroundRenderer;
             var check = root.Children[1];
 
-            preview.UpdateSource(ViewModel.ProtoService, wallpaper, true);
+            preview.UpdateSource(ViewModel.ClientService, wallpaper, true);
             check.Visibility = wallpaper == ViewModel.SelectedItem ? Visibility.Visible : Visibility.Collapsed;
         }
 

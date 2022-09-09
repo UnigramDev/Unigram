@@ -14,19 +14,19 @@ namespace Unigram.ViewModels.Chats
         private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
         private readonly Chat _chat;
 
-        public ChatPhotosViewModel(IProtoService protoService, IStorageService storageService, IEventAggregator aggregator, Chat chat, ChatPhoto photo)
-            : base(protoService, storageService, aggregator)
+        public ChatPhotosViewModel(IClientService clientService, IStorageService storageService, IEventAggregator aggregator, Chat chat, ChatPhoto photo)
+            : base(clientService, storageService, aggregator)
         {
             _chat = chat;
-            Items = new MvxObservableCollection<GalleryContent> { new GalleryChatPhoto(protoService, chat, photo, 0) };
+            Items = new MvxObservableCollection<GalleryContent> { new GalleryChatPhoto(clientService, chat, photo, 0) };
             SelectedItem = Items[0];
             FirstItem = Items[0];
 
             Initialize(photo.GetBig().Photo.Id, photo.GetSmall().Photo.Id);
         }
 
-        //public ChatPhotosViewModel(IProtoService protoService, IEventAggregator aggregator, TLChatFullBase chatFull, TLChatBase chat, TLMessageService serviceMessage)
-        //    : base(protoService, aggregator)
+        //public ChatPhotosViewModel(IClientService clientService, IEventAggregator aggregator, TLChatFullBase chatFull, TLChatBase chat, TLMessageService serviceMessage)
+        //    : base(clientService, aggregator)
         //{
         //    _peer = chat.ToInputPeer();
         //    _lastMaxId = serviceMessage.Id;
@@ -48,7 +48,7 @@ namespace Unigram.ViewModels.Chats
                 var limit = 20;
                 var offset = -limit / 2;
 
-                var response = await ProtoService.SendAsync(new SearchChatMessages(_chat.Id, string.Empty, null, 0, offset, limit, new SearchMessagesFilterChatPhoto(), 0));
+                var response = await ClientService.SendAsync(new SearchChatMessages(_chat.Id, string.Empty, null, 0, offset, limit, new SearchMessagesFilterChatPhoto(), 0));
                 if (response is Messages messages)
                 {
                     TotalItems = messages.TotalCount;
@@ -65,7 +65,7 @@ namespace Unigram.ViewModels.Chats
                                 continue;
                             }
 
-                            Items.Add(new GalleryChatPhoto(ProtoService, _chat, chatChangePhoto.Photo, message.Id));
+                            Items.Add(new GalleryChatPhoto(ClientService, _chat, chatChangePhoto.Photo, message.Id));
                         }
                         else
                         {
@@ -98,7 +98,7 @@ namespace Unigram.ViewModels.Chats
             //    var limit = 20;
             //    var offset = -limit / 2;
 
-            //    var response = await ProtoService.SendAsync(new SearchChatMessages(_chatId, string.Empty, 0, fromMessageId, offset, limit, new SearchMessagesFilterChatPhoto()));
+            //    var response = await ClientService.SendAsync(new SearchChatMessages(_chatId, string.Empty, 0, fromMessageId, offset, limit, new SearchMessagesFilterChatPhoto()));
             //    if (response is Telegram.Td.Api.Messages messages)
             //    {
             //        TotalItems = messages.TotalCount;
@@ -107,7 +107,7 @@ namespace Unigram.ViewModels.Chats
             //        {
             //            if (message.Content is MessageChatChangePhoto)
             //            {
-            //                Items.Insert(0, new GalleryMessageItem(ProtoService, message));
+            //                Items.Insert(0, new GalleryMessageItem(ClientService, message));
             //            }
             //            else
             //            {
@@ -135,7 +135,7 @@ namespace Unigram.ViewModels.Chats
             //    var limit = 20;
             //    var offset = -limit / 2;
 
-            //    var response = await ProtoService.SendAsync(new SearchChatMessages(_chatId, string.Empty, 0, fromMessageId, offset, limit, new SearchMessagesFilterChatPhoto()));
+            //    var response = await ClientService.SendAsync(new SearchChatMessages(_chatId, string.Empty, 0, fromMessageId, offset, limit, new SearchMessagesFilterChatPhoto()));
             //    if (response is Telegram.Td.Api.Messages messages)
             //    {
             //        TotalItems = messages.TotalCount;
@@ -144,7 +144,7 @@ namespace Unigram.ViewModels.Chats
             //        {
             //            if (message.Content is MessageChatChangePhoto)
             //            {
-            //                Items.Add(new GalleryMessageItem(ProtoService, message));
+            //                Items.Add(new GalleryMessageItem(ClientService, message));
             //            }
             //            else
             //            {
@@ -162,7 +162,7 @@ namespace Unigram.ViewModels.Chats
             get
             {
                 var chat = _chat;
-                if (chat != null && CacheService.TryGetSupergroup(chat, out Supergroup supergroup))
+                if (chat != null && ClientService.TryGetSupergroup(chat, out Supergroup supergroup))
                 {
                     if (supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanChangeInfo)
                     {
@@ -171,7 +171,7 @@ namespace Unigram.ViewModels.Chats
 
                     return supergroup.Status is ChatMemberStatusMember && chat.Permissions.CanChangeInfo;
                 }
-                else if (chat != null && CacheService.TryGetBasicGroup(chat, out BasicGroup basicGroup))
+                else if (chat != null && ClientService.TryGetBasicGroup(chat, out BasicGroup basicGroup))
                 {
                     if (basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanChangeInfo)
                     {
@@ -200,7 +200,7 @@ namespace Unigram.ViewModels.Chats
                     function = new DeleteMessages(_chat.Id, new[] { chatPhoto.MessageId }, true);
                 }
 
-                var response = await ProtoService.SendAsync(function);
+                var response = await ClientService.SendAsync(function);
                 if (response is Ok)
                 {
                     var index = Items.IndexOf(chatPhoto);

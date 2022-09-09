@@ -11,7 +11,7 @@ namespace Unigram.Collections
 {
     public class MediaCollection : ObservableCollection<MessageWithOwner>, ISupportIncrementalLoading
     {
-        private readonly IProtoService _protoService;
+        private readonly IClientService _clientService;
         private readonly SearchMessagesFilter _filter;
         private readonly long _chatId;
         private readonly string _query;
@@ -19,9 +19,9 @@ namespace Unigram.Collections
         private long _lastMaxId;
         private bool _hasMore = true;
 
-        public MediaCollection(IProtoService protoService, long chatId, SearchMessagesFilter filter, string query = null)
+        public MediaCollection(IClientService clientService, long chatId, SearchMessagesFilter filter, string query = null)
         {
-            _protoService = protoService;
+            _clientService = clientService;
             _chatId = chatId;
             _filter = filter;
             _query = query ?? string.Empty;
@@ -33,7 +33,7 @@ namespace Unigram.Collections
             {
                 var count = 0u;
 
-                var response = await _protoService.SendAsync(new SearchChatMessages(_chatId, _query, null, _lastMaxId, 0, 50, _filter, 0));
+                var response = await _clientService.SendAsync(new SearchChatMessages(_chatId, _query, null, _lastMaxId, 0, 50, _filter, 0));
                 if (response is Messages messages)
                 {
                     if (messages.MessagesValue.Count > 0)
@@ -48,7 +48,7 @@ namespace Unigram.Collections
 
                     foreach (var message in messages.MessagesValue)
                     {
-                        Add(new MessageWithOwner(_protoService, message));
+                        Add(new MessageWithOwner(_clientService, message));
                         count++;
                     }
                 }

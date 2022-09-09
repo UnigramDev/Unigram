@@ -28,8 +28,8 @@ namespace Unigram.ViewModels.Supergroups
     {
         public ISupergroupEditDelegate Delegate { get; set; }
 
-        public SupergroupEditViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public SupergroupEditViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             EditTypeCommand = new RelayCommand(EditTypeExecute);
             EditHistoryCommand = new RelayCommand(EditHistoryExecute);
@@ -90,7 +90,7 @@ namespace Unigram.ViewModels.Supergroups
         {
             var chatId = (long)parameter;
 
-            Chat = ProtoService.GetChat(chatId);
+            Chat = ClientService.GetChat(chatId);
 
             var chat = _chat;
             if (chat == null)
@@ -102,14 +102,14 @@ namespace Unigram.ViewModels.Supergroups
 
             if (chat.Type is ChatTypeSupergroup super)
             {
-                var item = ProtoService.GetSupergroup(super.SupergroupId);
-                var cache = ProtoService.GetSupergroupFull(super.SupergroupId);
+                var item = ClientService.GetSupergroup(super.SupergroupId);
+                var cache = ClientService.GetSupergroupFull(super.SupergroupId);
 
                 Delegate?.UpdateSupergroup(chat, item);
 
                 if (cache == null)
                 {
-                    ProtoService.Send(new GetSupergroupFullInfo(super.SupergroupId));
+                    ClientService.Send(new GetSupergroupFullInfo(super.SupergroupId));
                 }
                 else
                 {
@@ -118,14 +118,14 @@ namespace Unigram.ViewModels.Supergroups
             }
             else if (chat.Type is ChatTypeBasicGroup basic)
             {
-                var item = ProtoService.GetBasicGroup(basic.BasicGroupId);
-                var cache = ProtoService.GetBasicGroupFull(basic.BasicGroupId);
+                var item = ClientService.GetBasicGroup(basic.BasicGroupId);
+                var cache = ClientService.GetBasicGroupFull(basic.BasicGroupId);
 
                 Delegate?.UpdateBasicGroup(chat, item);
 
                 if (cache == null)
                 {
-                    ProtoService.Send(new GetBasicGroupFullInfo(basic.BasicGroupId));
+                    ClientService.Send(new GetBasicGroupFullInfo(basic.BasicGroupId));
                 }
                 else
                 {
@@ -183,7 +183,7 @@ namespace Unigram.ViewModels.Supergroups
 
             if (chat.Type is ChatTypeSupergroup super && super.SupergroupId == update.SupergroupId)
             {
-                BeginOnUIThread(() => Delegate?.UpdateSupergroupFullInfo(chat, ProtoService.GetSupergroup(update.SupergroupId), update.SupergroupFullInfo));
+                BeginOnUIThread(() => Delegate?.UpdateSupergroupFullInfo(chat, ClientService.GetSupergroup(update.SupergroupId), update.SupergroupFullInfo));
             }
         }
 
@@ -211,7 +211,7 @@ namespace Unigram.ViewModels.Supergroups
 
             if (chat.Type is ChatTypeBasicGroup basic && basic.BasicGroupId == update.BasicGroupId)
             {
-                BeginOnUIThread(() => Delegate?.UpdateBasicGroupFullInfo(chat, ProtoService.GetBasicGroup(update.BasicGroupId), update.BasicGroupFullInfo));
+                BeginOnUIThread(() => Delegate?.UpdateBasicGroupFullInfo(chat, ClientService.GetBasicGroup(update.BasicGroupId), update.BasicGroupFullInfo));
             }
         }
 
@@ -234,8 +234,8 @@ namespace Unigram.ViewModels.Supergroups
 
             if (chat.Type is ChatTypeSupergroup)
             {
-                var item = ProtoService.GetSupergroup(chat);
-                var cache = ProtoService.GetSupergroupFull(chat);
+                var item = ClientService.GetSupergroup(chat);
+                var cache = ClientService.GetSupergroupFull(chat);
 
                 if (item == null || cache == null)
                 {
@@ -248,7 +248,7 @@ namespace Unigram.ViewModels.Supergroups
 
                 if (item.IsChannel && _isSignatures != item.SignMessages)
                 {
-                    var response = await ProtoService.SendAsync(new ToggleSupergroupSignMessages(item.Id, _isSignatures));
+                    var response = await ClientService.SendAsync(new ToggleSupergroupSignMessages(item.Id, _isSignatures));
                     if (response is Error)
                     {
                         // TODO:
@@ -257,15 +257,15 @@ namespace Unigram.ViewModels.Supergroups
             }
             else if (chat.Type is ChatTypeBasicGroup basicGroup)
             {
-                var item = ProtoService.GetBasicGroup(basicGroup.BasicGroupId);
-                var cache = ProtoService.GetBasicGroupFull(basicGroup.BasicGroupId);
+                var item = ClientService.GetBasicGroup(basicGroup.BasicGroupId);
+                var cache = ClientService.GetBasicGroupFull(basicGroup.BasicGroupId);
 
                 oldAbout = cache.Description;
             }
 
             if (!string.Equals(title, chat.Title))
             {
-                var response = await ProtoService.SendAsync(new SetChatTitle(chat.Id, title));
+                var response = await ClientService.SendAsync(new SetChatTitle(chat.Id, title));
                 if (response is Error)
                 {
                     // TODO:
@@ -274,7 +274,7 @@ namespace Unigram.ViewModels.Supergroups
 
             if (!string.Equals(about, oldAbout))
             {
-                var response = await ProtoService.SendAsync(new SetChatDescription(chat.Id, about));
+                var response = await ClientService.SendAsync(new SetChatDescription(chat.Id, about));
                 if (response is Error)
                 {
                     // TODO:
@@ -283,12 +283,12 @@ namespace Unigram.ViewModels.Supergroups
 
             if (_isAllHistoryAvailable && chat.Type is ChatTypeBasicGroup)
             {
-                var response = await ProtoService.SendAsync(new UpgradeBasicGroupChatToSupergroupChat(chat.Id));
+                var response = await ClientService.SendAsync(new UpgradeBasicGroupChatToSupergroupChat(chat.Id));
                 if (response is Chat result && result.Type is ChatTypeSupergroup super)
                 {
                     chat = result;
-                    supergroup = await ProtoService.SendAsync(new GetSupergroup(super.SupergroupId)) as Supergroup;
-                    fullInfo = await ProtoService.SendAsync(new GetSupergroupFullInfo(super.SupergroupId)) as SupergroupFullInfo;
+                    supergroup = await ClientService.SendAsync(new GetSupergroup(super.SupergroupId)) as Supergroup;
+                    fullInfo = await ClientService.SendAsync(new GetSupergroupFullInfo(super.SupergroupId)) as SupergroupFullInfo;
                 }
                 else if (response is Error)
                 {
@@ -298,7 +298,7 @@ namespace Unigram.ViewModels.Supergroups
 
             if (supergroup != null && fullInfo != null && _isAllHistoryAvailable != fullInfo.IsAllHistoryAvailable)
             {
-                var response = await ProtoService.SendAsync(new ToggleSupergroupIsAllHistoryAvailable(supergroup.Id, _isAllHistoryAvailable));
+                var response = await ClientService.SendAsync(new ToggleSupergroupIsAllHistoryAvailable(supergroup.Id, _isAllHistoryAvailable));
                 if (response is Error)
                 {
                     // TODO:
@@ -346,12 +346,12 @@ namespace Unigram.ViewModels.Supergroups
                 conversion.CropRectangle = rectangle;
 
                 var generated = await media.File.ToGeneratedAsync(ConversionType.Transcode, JsonConvert.SerializeObject(conversion));
-                var response = await ProtoService.SendAsync(new SetChatPhoto(chat.Id, new InputChatPhotoAnimation(generated, 0)));
+                var response = await ClientService.SendAsync(new SetChatPhoto(chat.Id, new InputChatPhotoAnimation(generated, 0)));
             }
             else if (file is StoragePhoto photo)
             {
                 var generated = await photo.File.ToGeneratedAsync(ConversionType.Compress, JsonConvert.SerializeObject(photo.EditState));
-                var response = await ProtoService.SendAsync(new SetChatPhoto(chat.Id, new InputChatPhotoStatic(generated)));
+                var response = await ClientService.SendAsync(new SetChatPhoto(chat.Id, new InputChatPhotoStatic(generated)));
             }
         }
 
@@ -380,13 +380,13 @@ namespace Unigram.ViewModels.Supergroups
 
             if (chat.Type is ChatTypeSupergroup)
             {
-                var supergroup = CacheService.GetSupergroup(chat);
+                var supergroup = ClientService.GetSupergroup(chat);
                 if (supergroup == null)
                 {
                     return;
                 }
 
-                var full = CacheService.GetSupergroupFull(chat);
+                var full = ClientService.GetSupergroupFull(chat);
                 if (full == null)
                 {
                     return;
@@ -434,7 +434,7 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            var supergroup = CacheService.GetSupergroup(chat);
+            var supergroup = ClientService.GetSupergroup(chat);
             if (supergroup == null)
             {
                 return;
@@ -464,8 +464,8 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            var updated = await ProtoService.SendAsync(new GetChat(chat.Id)) as Chat ?? chat;
-            var dialog = new DeleteChatPopup(ProtoService, updated, null, false, true);
+            var updated = await ClientService.SendAsync(new GetChat(chat.Id)) as Chat ?? chat;
+            var dialog = new DeleteChatPopup(ClientService, updated, null, false, true);
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm != ContentDialogResult.Primary)
@@ -473,7 +473,7 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new DeleteChat(chat.Id));
+            var response = await ClientService.SendAsync(new DeleteChat(chat.Id));
             if (response is Ok)
             {
                 NavigationService.RemovePeerFromStack(chat.Id);

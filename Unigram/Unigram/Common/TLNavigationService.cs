@@ -24,21 +24,21 @@ namespace Unigram.Common
 {
     public class TLNavigationService : NavigationService
     {
-        private readonly IProtoService _protoService;
+        private readonly IClientService _clientService;
         private readonly IPasscodeService _passcodeService;
         private readonly IViewService _viewService;
 
         private readonly Dictionary<string, AppWindow> _instantWindows = new Dictionary<string, AppWindow>();
 
-        public TLNavigationService(IProtoService protoService, IViewService viewService, Frame frame, int session, string id)
+        public TLNavigationService(IClientService clientService, IViewService viewService, Frame frame, int session, string id)
             : base(frame, session, id)
         {
-            _protoService = protoService;
+            _clientService = clientService;
             _passcodeService = TLContainer.Current.Passcode;
             _viewService = viewService;
         }
 
-        public IProtoService ProtoService => _protoService;
+        public IClientService ClientService => _clientService;
 
         public async void NavigateToInstant(string url)
         {
@@ -76,7 +76,7 @@ namespace Unigram.Common
 
         public async void ShowLimitReached(PremiumLimitType type)
         {
-            await new LimitReachedPopup(this, _protoService, type).ShowQueuedAsync();
+            await new LimitReachedPopup(this, _clientService, type).ShowQueuedAsync();
         }
 
         public async void ShowPromo(PremiumSource source = null)
@@ -130,7 +130,7 @@ namespace Unigram.Common
         {
             if (sender is MessageSenderUser user)
             {
-                var response = await ProtoService.SendAsync(new CreatePrivateChat(user.UserId, false));
+                var response = await ClientService.SendAsync(new CreatePrivateChat(user.UserId, false));
                 if (response is Chat chat)
                 {
                     Navigate(typeof(ProfilePage), chat.Id);
@@ -151,7 +151,7 @@ namespace Unigram.Common
 
             if (chat.Type is ChatTypePrivate privata)
             {
-                var user = _protoService.GetUser(privata.UserId);
+                var user = _clientService.GetUser(privata.UserId);
                 if (user == null)
                 {
                     return;
@@ -165,13 +165,13 @@ namespace Unigram.Common
             }
             else if (chat.Type is ChatTypeSupergroup super)
             {
-                var supergroup = _protoService.GetSupergroup(super.SupergroupId);
+                var supergroup = _clientService.GetSupergroup(super.SupergroupId);
                 if (supergroup == null)
                 {
                     return;
                 }
 
-                if (supergroup.Status is ChatMemberStatusLeft && string.IsNullOrEmpty(supergroup.Username) && !supergroup.HasLocation && !supergroup.HasLinkedChat && !_protoService.IsChatAccessible(chat))
+                if (supergroup.Status is ChatMemberStatusLeft && string.IsNullOrEmpty(supergroup.Username) && !supergroup.HasLocation && !supergroup.HasLinkedChat && !_clientService.IsChatAccessible(chat))
                 {
                     await MessagePopup.ShowAsync(Strings.Resources.ChannelCantOpenPrivate, Strings.Resources.AppName, Strings.Resources.OK);
                     return;
@@ -201,7 +201,7 @@ namespace Unigram.Common
                     return;
                 }
 
-                if (accessToken != null && ProtoService.TryGetUser(chat, out User user) && ProtoService.TryGetUserFull(chat, out UserFullInfo userFull))
+                if (accessToken != null && ClientService.TryGetUser(chat, out User user) && ClientService.TryGetUserFull(chat, out UserFullInfo userFull))
                 {
                     page.ViewModel.AccessToken = accessToken;
                     page.View.UpdateUserFullInfo(chat, user, userFull, false, true);
@@ -319,10 +319,10 @@ namespace Unigram.Common
 
         public async void NavigateToChat(long chatId, long? message = null, long? thread = null, string accessToken = null, NavigationState state = null, bool scheduled = false, bool force = true, bool createNewWindow = false)
         {
-            var chat = _protoService.GetChat(chatId);
+            var chat = _clientService.GetChat(chatId);
             if (chat == null)
             {
-                chat = await _protoService.SendAsync(new GetChat(chatId)) as Chat;
+                chat = await _clientService.SendAsync(new GetChat(chatId)) as Chat;
             }
 
             if (chat == null)

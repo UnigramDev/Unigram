@@ -13,8 +13,8 @@ namespace Unigram.ViewModels.Users
 {
     public class UserCommonChatsViewModel : TLViewModelBase
     {
-        public UserCommonChatsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public UserCommonChatsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
         }
 
@@ -22,24 +22,24 @@ namespace Unigram.ViewModels.Users
         {
             if (parameter is long chatId)
             {
-                var chat = CacheService.GetChat(chatId);
+                var chat = ClientService.GetChat(chatId);
                 if (chat == null)
                 {
                     return Task.CompletedTask;
                 }
 
-                var user = CacheService.GetUser(chat);
+                var user = ClientService.GetUser(chat);
                 if (user == null)
                 {
                     return Task.CompletedTask;
                 }
 
-                Items = new ItemsCollection(ProtoService, user.Id);
+                Items = new ItemsCollection(ClientService, user.Id);
                 RaisePropertyChanged(nameof(Items));
             }
             else if (parameter is long userId)
             {
-                Items = new ItemsCollection(ProtoService, userId);
+                Items = new ItemsCollection(ClientService, userId);
                 RaisePropertyChanged(nameof(Items));
             }
 
@@ -50,12 +50,12 @@ namespace Unigram.ViewModels.Users
 
         public class ItemsCollection : MvxObservableCollection<Chat>, ISupportIncrementalLoading
         {
-            private readonly IProtoService _protoService;
+            private readonly IClientService _clientService;
             private readonly long _userId;
 
-            public ItemsCollection(IProtoService protoService, long userId)
+            public ItemsCollection(IClientService clientService, long userId)
             {
-                _protoService = protoService;
+                _clientService = clientService;
                 _userId = userId;
             }
 
@@ -71,12 +71,12 @@ namespace Unigram.ViewModels.Users
                         offset = last.Id;
                     }
 
-                    var response = await _protoService.SendAsync(new GetGroupsInCommon(_userId, offset, 20));
+                    var response = await _clientService.SendAsync(new GetGroupsInCommon(_userId, offset, 20));
                     if (response is Telegram.Td.Api.Chats chats)
                     {
                         foreach (var id in chats.ChatIds)
                         {
-                            var chat = _protoService.GetChat(id);
+                            var chat = _clientService.GetChat(id);
                             if (chat != null)
                             {
                                 Add(chat);

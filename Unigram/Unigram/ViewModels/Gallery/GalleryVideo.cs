@@ -9,14 +9,14 @@ namespace Unigram.ViewModels.Gallery
         private readonly Video _video;
         private readonly string _caption;
 
-        public GalleryVideo(IProtoService protoService, Video video)
-            : base(protoService)
+        public GalleryVideo(IClientService clientService, Video video)
+            : base(clientService)
         {
             _video = video;
         }
 
-        public GalleryVideo(IProtoService protoService, Video video, string caption)
-            : base(protoService)
+        public GalleryVideo(IClientService clientService, Video video, string caption)
+            : base(clientService)
         {
             _video = video;
             _caption = caption;

@@ -24,16 +24,16 @@ namespace Unigram.Services
 
     public class NetworkService : INetworkService
     {
-        private readonly IProtoService _protoService;
+        private readonly IClientService _clientService;
         private readonly ISettingsService _settingsService;
         private readonly IEventAggregator _aggregator;
 
         private readonly HttpProxyWatcher _watcher;
         private readonly EventDebouncer<bool> _debouncer;
 
-        public NetworkService(IProtoService protoService, ISettingsService settingsService, IEventAggregator aggregator)
+        public NetworkService(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
         {
-            _protoService = protoService;
+            _clientService = clientService;
             _settingsService = settingsService;
             _aggregator = aggregator;
 
@@ -119,7 +119,7 @@ namespace Unigram.Services
 
         public async Task<int> GetSystemProxyId()
         {
-            var response = await _protoService.SendAsync(new GetOption("x_system_proxy"));
+            var response = await _clientService.SendAsync(new GetOption("x_system_proxy"));
             if (response is OptionValueInteger integer)
             {
                 return (int)integer.Value;
@@ -138,10 +138,10 @@ namespace Unigram.Services
                 port = 80;
             }
 
-            var proxy = await _protoService.SendAsync(new AddProxy(host, port, false, new ProxyTypeHttp())) as Proxy;
+            var proxy = await _clientService.SendAsync(new AddProxy(host, port, false, new ProxyTypeHttp())) as Proxy;
             if (proxy != null)
             {
-                _protoService.Send(new SetOption("x_system_proxy", new OptionValueInteger(proxy.Id)));
+                _clientService.Send(new SetOption("x_system_proxy", new OptionValueInteger(proxy.Id)));
                 return proxy.Id;
             }
 
@@ -152,7 +152,7 @@ namespace Unigram.Services
         {
             if (_settingsService.UseSystemProxy && !_watcher.IsEnabled)
             {
-                _protoService.Send(new DisableProxy());
+                _clientService.Send(new DisableProxy());
             }
 
             string host;
@@ -170,16 +170,16 @@ namespace Unigram.Services
 
             var enabled = _settingsService.UseSystemProxy && _watcher.IsEnabled;
 
-            var response = await _protoService.SendAsync(new GetOption("x_system_proxy"));
+            var response = await _clientService.SendAsync(new GetOption("x_system_proxy"));
             if (response is OptionValueInteger integer)
             {
-                return await _protoService.SendAsync(new EditProxy((int)integer.Value, host, port, enabled, new ProxyTypeHttp())) as Proxy;
+                return await _clientService.SendAsync(new EditProxy((int)integer.Value, host, port, enabled, new ProxyTypeHttp())) as Proxy;
             }
 
-            var proxy = await _protoService.SendAsync(new AddProxy(host, port, enabled, new ProxyTypeHttp())) as Proxy;
+            var proxy = await _clientService.SendAsync(new AddProxy(host, port, enabled, new ProxyTypeHttp())) as Proxy;
             if (proxy != null)
             {
-                _protoService.Send(new SetOption("x_system_proxy", new OptionValueInteger(proxy.Id)));
+                _clientService.Send(new SetOption("x_system_proxy", new OptionValueInteger(proxy.Id)));
                 return proxy;
             }
 
@@ -209,7 +209,7 @@ namespace Unigram.Services
 
         public void Reconnect()
         {
-            _protoService.Send(new SetNetworkType(_type));
+            _clientService.Send(new SetNetworkType(_type));
         }
 
         private void OnNetworkStatusChanged(object sender)
@@ -223,7 +223,7 @@ namespace Unigram.Services
 
         private void Update(ConnectionProfile profile)
         {
-            _protoService.Send(new SetNetworkType(_type = GetNetworkType(profile)));
+            _clientService.Send(new SetNetworkType(_type = GetNetworkType(profile)));
         }
 
         private NetworkType GetNetworkType(ConnectionProfile profile)

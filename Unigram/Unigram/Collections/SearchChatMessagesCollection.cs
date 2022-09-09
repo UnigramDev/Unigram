@@ -9,7 +9,7 @@ namespace Unigram.Collections
 {
     public class SearchChatMessagesCollection : MvxObservableCollection<Message>, ISupportIncrementalLoading
     {
-        private readonly IProtoService _protoService;
+        private readonly IClientService _clientService;
 
         private readonly long _chatId;
         private readonly long _threadId;
@@ -19,9 +19,9 @@ namespace Unigram.Collections
 
         private readonly SearchMessagesFilter _filter;
 
-        public SearchChatMessagesCollection(IProtoService protoService, long chatId, long threadId, string query, MessageSender sender, long fromMessageId, SearchMessagesFilter filter)
+        public SearchChatMessagesCollection(IClientService clientService, long chatId, long threadId, string query, MessageSender sender, long fromMessageId, SearchMessagesFilter filter)
         {
-            _protoService = protoService;
+            _clientService = clientService;
 
             _chatId = chatId;
             _threadId = threadId;
@@ -49,7 +49,7 @@ namespace Unigram.Collections
                     offset = 0;
                 }
 
-                var response = await _protoService.SendAsync(new SearchChatMessages(_chatId, _query, _sender, fromMessageId, offset, (int)count, _filter, _threadId));
+                var response = await _clientService.SendAsync(new SearchChatMessages(_chatId, _query, _sender, fromMessageId, offset, (int)count, _filter, _threadId));
                 if (response is Messages messages)
                 {
                     TotalCount = messages.TotalCount;

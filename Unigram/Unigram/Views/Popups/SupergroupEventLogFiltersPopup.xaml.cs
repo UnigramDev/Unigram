@@ -12,8 +12,7 @@ namespace Unigram.Views.Popups
 {
     public sealed partial class SupergroupEventLogFiltersPopup : ContentPopup
     {
-        private IProtoService _protoService;
-        private ICacheService _cacheService;
+        private IClientService _clientService;
 
         public ChatEventLogFilters Filters { get; private set; }
         public IList<long> UserIds { get; private set; }
@@ -27,10 +26,9 @@ namespace Unigram.Views.Popups
             SecondaryButtonText = Strings.Resources.Cancel;
         }
 
-        public Task<ContentDialogResult> ShowAsync(IProtoService protoService, long supergroupId, ChatEventLogFilters filters, IList<long> userIds)
+        public Task<ContentDialogResult> ShowAsync(IClientService clientService, long supergroupId, ChatEventLogFilters filters, IList<long> userIds)
         {
-            _protoService = protoService;
-            _cacheService = protoService;
+            _clientService = clientService;
 
             if (filters == null)
             {
@@ -50,7 +48,7 @@ namespace Unigram.Views.Popups
 
             Event_Toggled(null, null);
 
-            protoService.Send(new GetSupergroupMembers(supergroupId, new SupergroupMembersFilterAdministrators(), 0, 200), response =>
+            clientService.Send(new GetSupergroupMembers(supergroupId, new SupergroupMembersFilterAdministrators(), 0, 200), response =>
             {
                 if (response is ChatMembers members)
                 {
@@ -84,7 +82,7 @@ namespace Unigram.Views.Popups
                 }
             });
 
-            //List.ItemsSource = new ChatMemberCollection(protoService, supergroupId, new SupergroupMembersFilterAdministrators());
+            //List.ItemsSource = new ChatMemberCollection(clientService, supergroupId, new SupergroupMembersFilterAdministrators());
             return this.ShowQueuedAsync();
         }
 
@@ -185,7 +183,7 @@ namespace Unigram.Views.Popups
             var content = args.ItemContainer.ContentTemplateRoot as Grid;
             var member = args.Item as ChatMember;
 
-            var user = _cacheService.GetMessageSender(member.MemberId) as User;
+            var user = _clientService.GetMessageSender(member.MemberId) as User;
             if (user == null)
             {
                 return;
@@ -199,7 +197,7 @@ namespace Unigram.Views.Popups
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.SetUser(_protoService, user, 32);
+                photo.SetUser(_clientService, user, 32);
             }
 
             if (args.Phase < 2)

@@ -68,7 +68,7 @@ namespace Unigram.Views.Chats
 
             if (data.token != null && data.chartData == null)
             {
-                await data.LoadAsync(ViewModel.ProtoService, ViewModel.Chat.Id);
+                await data.LoadAsync(ViewModel.ClientService, ViewModel.Chat.Id);
             }
 
             if (data.chartData == null)
@@ -221,7 +221,7 @@ namespace Unigram.Views.Chats
 
                 if (button.DataContext is ChatStatisticsMessageSenderInfo senderInfo)
                 {
-                    var user = ViewModel.CacheService.GetUser(senderInfo.UserId);
+                    var user = ViewModel.ClientService.GetUser(senderInfo.UserId);
                     if (user == null)
                     {
                         return;
@@ -244,14 +244,14 @@ namespace Unigram.Views.Chats
 
                     title.Text = user.GetFullName();
                     subtitle.Text = stringBuilder.ToString();
-                    photo.SetUser(ViewModel.ProtoService, user, 36);
+                    photo.SetUser(ViewModel.ClientService, user, 36);
 
                     button.CommandParameter = senderInfo.UserId;
                     button.Command = ViewModel.OpenProfileCommand;
                 }
                 else if (button.DataContext is ChatStatisticsAdministratorActionsInfo adminInfo)
                 {
-                    var user = ViewModel.CacheService.GetUser(adminInfo.UserId);
+                    var user = ViewModel.ClientService.GetUser(adminInfo.UserId);
                     if (user == null)
                     {
                         return;
@@ -285,14 +285,14 @@ namespace Unigram.Views.Chats
 
                     title.Text = user.GetFullName();
                     subtitle.Text = stringBuilder.ToString();
-                    photo.SetUser(ViewModel.ProtoService, user, 36);
+                    photo.SetUser(ViewModel.ClientService, user, 36);
 
                     button.CommandParameter = adminInfo.UserId;
                     button.Command = ViewModel.OpenProfileCommand;
                 }
                 else if (button.DataContext is ChatStatisticsInviterInfo inviterInfo)
                 {
-                    var user = ViewModel.CacheService.GetUser(inviterInfo.UserId);
+                    var user = ViewModel.ClientService.GetUser(inviterInfo.UserId);
                     if (user == null)
                     {
                         return;
@@ -308,7 +308,7 @@ namespace Unigram.Views.Chats
                     }
 
                     title.Text = user.GetFullName();
-                    photo.SetUser(ViewModel.ProtoService, user, 36);
+                    photo.SetUser(ViewModel.ClientService, user, 36);
 
                     button.CommandParameter = inviterInfo.UserId;
                     button.Command = ViewModel.OpenProfileCommand;

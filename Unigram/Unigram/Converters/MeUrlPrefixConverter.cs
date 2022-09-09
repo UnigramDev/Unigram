@@ -11,7 +11,7 @@ namespace Unigram.Converters
             return Convert(null, value as string, parameter != null);
         }
 
-        public static string Convert(ICacheService cacheService, string value, bool shorty = false)
+        public static string Convert(IClientService clientService, string value, bool shorty = false)
         {
             if (value == null)
             {
@@ -20,9 +20,9 @@ namespace Unigram.Converters
 
             var linkPrefix = "https://t.me/"; // config.MeUrlPrefix;
 
-            if (cacheService != null)
+            if (clientService != null)
             {
-                var option = cacheService.Options.TMeUrl;
+                var option = clientService.Options.TMeUrl;
                 if (!string.IsNullOrEmpty(option))
                 {
                     linkPrefix = option;

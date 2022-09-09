@@ -48,7 +48,7 @@ namespace Unigram.Controls.Chats
 
             if (chat.ActionBar is ChatActionBarAddContact)
             {
-                var user = ViewModel.CacheService.GetUser(chat);
+                var user = ViewModel.ClientService.GetUser(chat);
                 if (user != null)
                 {
                     CreateButton(string.Format(Strings.Resources.AddContactFullChat, user.FirstName.ToUpper()), ViewModel.AddContactCommand);
@@ -81,7 +81,7 @@ namespace Unigram.Controls.Chats
             }
             else if (chat.ActionBar is ChatActionBarReportSpam reportSpam)
             {
-                var user = ViewModel.CacheService.GetUser(chat);
+                var user = ViewModel.ClientService.GetUser(chat);
                 if (user != null)
                 {
                     CreateButton(Strings.Resources.ReportSpamUser, ViewModel.ReportSpamCommand, danger: true);

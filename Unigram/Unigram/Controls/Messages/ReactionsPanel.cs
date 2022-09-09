@@ -54,7 +54,7 @@ namespace Unigram.Controls.Messages
                 {
                     if (item.Type is ReactionTypeEmoji emoji)
                     {
-                        var required = UpdateButton<string, Reaction>(_reactions, emoji.Emoji, message, item, message.ProtoService.TryGetCachedReaction, animate);
+                        var required = UpdateButton<string, Reaction>(_reactions, emoji.Emoji, message, item, message.ClientService.TryGetCachedReaction, animate);
                         if (required)
                         {
                             emojiIds[emoji.Emoji] = item;
@@ -88,7 +88,7 @@ namespace Unigram.Controls.Messages
                     }
                 }
 
-                var response = await message.ProtoService.SendAsync(new GetCustomEmojiStickers(customEmojiIds.Keys.ToArray()));
+                var response = await message.ClientService.SendAsync(new GetCustomEmojiStickers(customEmojiIds.Keys.ToArray()));
                 if (response is Stickers stickers)
                 {
                     foreach (var sticker in stickers.StickersValue)

@@ -23,7 +23,7 @@ namespace Unigram.Controls.Cells.Premium
     {
         private readonly DispatcherQueue _dispatcher;
 
-        private IProtoService _protoService;
+        private IClientService _clientService;
 
         private IList<Sticker> _stickers;
         private int _index;
@@ -35,14 +35,14 @@ namespace Unigram.Controls.Cells.Premium
             _dispatcher = DispatcherQueue.GetForCurrentThread();
         }
 
-        public void UpdateFature(IProtoService protoService, IList<Sticker> stickers)
+        public void UpdateFature(IClientService clientService, IList<Sticker> stickers)
         {
             if (stickers == null)
             {
                 return;
             }
 
-            _protoService = protoService;
+            _clientService = clientService;
 
             _stickers = stickers;
             _index = 0;
@@ -80,8 +80,8 @@ namespace Unigram.Controls.Cells.Premium
 
             var sticker = _stickers[index];
 
-            _protoService.DownloadFile(sticker.StickerValue.Id, 32);
-            _protoService.DownloadFile(sticker.PremiumAnimation.Id, 32);
+            _clientService.DownloadFile(sticker.StickerValue.Id, 32);
+            _clientService.DownloadFile(sticker.PremiumAnimation.Id, 32);
         }
 
         private void OnPositionChanged(object sender, double e)

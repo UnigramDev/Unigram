@@ -25,8 +25,8 @@ namespace Unigram.ViewModels.Settings
         private readonly IThemeService _themeService;
         private readonly bool _darkOnly;
 
-        public SettingsThemesViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IThemeService themeService, bool darkOnly = false)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public SettingsThemesViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IThemeService themeService, bool darkOnly = false)
+            : base(clientService, settingsService, aggregator)
         {
             _themeService = themeService;
             _darkOnly = darkOnly;

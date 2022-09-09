@@ -40,7 +40,7 @@ namespace Unigram.Controls.Gallery
     {
         public GalleryViewModelBase ViewModel => DataContext as GalleryViewModelBase;
 
-        public IProtoService ProtoService => ViewModel.ProtoService;
+        public IClientService ClientService => ViewModel.ClientService;
 
         private Func<FrameworkElement> _closing;
 
@@ -645,7 +645,7 @@ namespace Unigram.Controls.Gallery
                 {
                     if (_fileStream == null || _fileStream.FileId != file.Id)
                     {
-                        _fileStream = new RemoteFileStream(item.ProtoService, file, item.Duration);
+                        _fileStream = new RemoteFileStream(item.ClientService, file, item.Duration);
                         _mediaPlayer.Source = MediaSource.CreateFromStream(_fileStream, item.MimeType);
                     }
 

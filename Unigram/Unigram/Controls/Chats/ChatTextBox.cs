@@ -407,7 +407,7 @@ namespace Unigram.Controls.Chats
                     return false;
                 }
 
-                if (ViewModel.CacheService.TryGetSupergroup(chat, out Supergroup supergroup))
+                if (ViewModel.ClientService.TryGetSupergroup(chat, out Supergroup supergroup))
                 {
                     if (supergroup.Status is ChatMemberStatusRestricted restricted && !restricted.Permissions.CanSendOtherMessages)
                     {
@@ -422,7 +422,7 @@ namespace Unigram.Controls.Chats
                     return true;
                 }
 
-                autocomplete = new SearchStickersCollection(ViewModel.ProtoService, ViewModel.Settings, false, text.Trim(), ViewModel.Chat.Id);
+                autocomplete = new SearchStickersCollection(ViewModel.ClientService, ViewModel.Settings, false, text.Trim(), ViewModel.Chat.Id);
                 return true;
             }
             else if (AutocompleteEntityFinder.TrySearch(query, out AutocompleteEntity entity, out string result, out int index))
@@ -448,7 +448,7 @@ namespace Unigram.Controls.Chats
                         return true;
                     }
 
-                    autocomplete = new UsernameCollection(ViewModel.ProtoService, ViewModel.Chat.Id, ViewModel.ThreadId, result, index == 0, members);
+                    autocomplete = new UsernameCollection(ViewModel.ClientService, ViewModel.Chat.Id, ViewModel.ThreadId, result, index == 0, members);
                     return true;
                 }
                 else if (entity == AutocompleteEntity.Hashtag)
@@ -459,7 +459,7 @@ namespace Unigram.Controls.Chats
                         return true;
                     }
 
-                    autocomplete = new SearchHashtagsCollection(ViewModel.ProtoService, result);
+                    autocomplete = new SearchHashtagsCollection(ViewModel.ClientService, result);
                     return true;
                 }
                 else if (entity == AutocompleteEntity.Sticker)
@@ -470,7 +470,7 @@ namespace Unigram.Controls.Chats
                         return true;
                     }
 
-                    autocomplete = new SearchStickersCollection(ViewModel.ProtoService, ViewModel.Settings, true, result, ViewModel.Chat.Id);
+                    autocomplete = new SearchStickersCollection(ViewModel.ClientService, ViewModel.Settings, true, result, ViewModel.Chat.Id);
                     return true;
                 }
                 else if (entity == AutocompleteEntity.Emoji && fromTextChanging)
@@ -481,7 +481,7 @@ namespace Unigram.Controls.Chats
                         return true;
                     }
 
-                    autocomplete = new EmojiCollection(ViewModel.ProtoService, result, ViewModel.Chat.Id);
+                    autocomplete = new EmojiCollection(ViewModel.ClientService, result, ViewModel.Chat.Id);
                     return true;
                 }
                 else if (entity == AutocompleteEntity.Command && index == 0)
@@ -518,7 +518,7 @@ namespace Unigram.Controls.Chats
 
         public class UsernameCollection : MvxObservableCollection<Telegram.Td.Api.User>, IAutocompleteCollection, ISupportIncrementalLoading
         {
-            private readonly IProtoService _protoService;
+            private readonly IClientService _clientService;
             private readonly long _chatId;
             private readonly long _threadId;
             private readonly string _query;
@@ -528,9 +528,9 @@ namespace Unigram.Controls.Chats
 
             private bool _hasMore = true;
 
-            public UsernameCollection(IProtoService protoService, long chatId, long threadId, string query, bool bots, bool members)
+            public UsernameCollection(IClientService clientService, long chatId, long threadId, string query, bool bots, bool members)
             {
-                _protoService = protoService;
+                _clientService = clientService;
                 _chatId = chatId;
                 _threadId = threadId;
                 _query = query;
@@ -548,12 +548,12 @@ namespace Unigram.Controls.Chats
 
                     if (_bots)
                     {
-                        var response = await _protoService.SendAsync(new GetTopChats(new TopChatCategoryInlineBots(), 10));
+                        var response = await _clientService.SendAsync(new GetTopChats(new TopChatCategoryInlineBots(), 10));
                         if (response is Telegram.Td.Api.Chats chats)
                         {
                             foreach (var id in chats.ChatIds)
                             {
-                                var user = _protoService.GetUser(_protoService.GetChat(id));
+                                var user = _clientService.GetUser(_clientService.GetChat(id));
                                 if (user != null && user.Username.StartsWith(_query, StringComparison.OrdinalIgnoreCase))
                                 {
                                     Add(user);
@@ -565,12 +565,12 @@ namespace Unigram.Controls.Chats
 
                     if (_members)
                     {
-                        var response = await _protoService.SendAsync(new SearchChatMembers(_chatId, _query, 20, new ChatMembersFilterMention(_threadId)));
+                        var response = await _clientService.SendAsync(new SearchChatMembers(_chatId, _query, 20, new ChatMembersFilterMention(_threadId)));
                         if (response is ChatMembers members)
                         {
                             foreach (var member in members.Members)
                             {
-                                if (_protoService.TryGetUser(member.MemberId, out Telegram.Td.Api.User user))
+                                if (_clientService.TryGetUser(member.MemberId, out Telegram.Td.Api.User user))
                                 {
                                     Add(user);
                                     count++;
@@ -592,7 +592,7 @@ namespace Unigram.Controls.Chats
 
         public class EmojiCollection : MvxObservableCollection<object>, IAutocompleteCollection, ISupportIncrementalLoading
         {
-            private readonly IProtoService _protoService;
+            private readonly IClientService _clientService;
             private readonly string _query;
             private readonly string _inputLanguage;
             private readonly long _chatId;
@@ -602,9 +602,9 @@ namespace Unigram.Controls.Chats
             private string[] _emoji;
             private int _emojiIndex;
 
-            public EmojiCollection(IProtoService protoService, string query, long chatId)
+            public EmojiCollection(IClientService clientService, string query, long chatId)
             {
-                _protoService = protoService;
+                _clientService = clientService;
                 _query = query;
                 _inputLanguage = CoreTextServicesManager.GetForCurrentView().InputLanguage.LanguageTag;
                 _chatId = chatId;
@@ -618,7 +618,7 @@ namespace Unigram.Controls.Chats
 
                     if (_emoji == null)
                     {
-                        var response = await _protoService.SendAsync(new SearchEmojis(_query, false, new[] { _inputLanguage }));
+                        var response = await _clientService.SendAsync(new SearchEmojis(_query, false, new[] { _inputLanguage }));
                         if (response is Emojis emojis)
                         {
                             var results = emojis.EmojisValue.Reverse();
@@ -645,7 +645,7 @@ namespace Unigram.Controls.Chats
 
                     if (_emojiIndex < _emoji.Length)
                     {
-                        var response = await _protoService.SendAsync(new GetStickers(new StickerTypeCustomEmoji(), _emoji[_emojiIndex++], 1000, _chatId));
+                        var response = await _clientService.SendAsync(new GetStickers(new StickerTypeCustomEmoji(), _emoji[_emojiIndex++], 1000, _chatId));
                         if (response is Stickers stickers)
                         {
                             foreach (var sticker in stickers.StickersValue)
@@ -670,14 +670,14 @@ namespace Unigram.Controls.Chats
 
         public class SearchHashtagsCollection : MvxObservableCollection<string>, IAutocompleteCollection, ISupportIncrementalLoading
         {
-            private readonly IProtoService _protoService;
+            private readonly IClientService _clientService;
             private readonly string _query;
 
             private bool _hasMore = true;
 
-            public SearchHashtagsCollection(IProtoService protoService, string query)
+            public SearchHashtagsCollection(IClientService clientService, string query)
             {
-                _protoService = protoService;
+                _clientService = clientService;
                 _query = query;
             }
 
@@ -688,7 +688,7 @@ namespace Unigram.Controls.Chats
                     count = 0;
                     _hasMore = false;
 
-                    var response = await _protoService.SendAsync(new SearchHashtags(_query, 20));
+                    var response = await _clientService.SendAsync(new SearchHashtags(_query, 20));
                     if (response is Hashtags hashtags)
                     {
                         foreach (var value in hashtags.HashtagsValue)

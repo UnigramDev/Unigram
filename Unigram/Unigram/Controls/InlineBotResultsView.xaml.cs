@@ -27,8 +27,8 @@ namespace Unigram.Controls
             _zoomer = new ZoomableListHandler(ScrollingHost);
             _zoomer.Opening = _handler.UnloadVisibleItems;
             _zoomer.Closing = _handler.ThrottleVisibleItems;
-            _zoomer.DownloadFile = fileId => ViewModel.ProtoService.DownloadFile(fileId, 32);
-            _zoomer.SessionId = () => ViewModel.ProtoService.SessionId;
+            _zoomer.DownloadFile = fileId => ViewModel.ClientService.DownloadFile(fileId, 32);
+            _zoomer.SessionId = () => ViewModel.ClientService.SessionId;
         }
 
         public void UpdateCornerRadius(double radius)
@@ -214,11 +214,11 @@ namespace Unigram.Controls
                     else 
                     {
                         image.Source = null;
-                        UpdateManager.Subscribe(image, ViewModel.ProtoService, file, UpdateThumbnail, true);
+                        UpdateManager.Subscribe(image, ViewModel.ClientService, file, UpdateThumbnail, true);
 
                         if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                         {
-                            ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                            ViewModel.ClientService.DownloadFile(file.Id, 1);
                         }
                     }
                 }
@@ -237,11 +237,11 @@ namespace Unigram.Controls
                     else
                     {
                         image.Source = null;
-                        UpdateManager.Subscribe(image, ViewModel.ProtoService, file, UpdateThumbnail, true);
+                        UpdateManager.Subscribe(image, ViewModel.ClientService, file, UpdateThumbnail, true);
 
                         if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                         {
-                            ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                            ViewModel.ClientService.DownloadFile(file.Id, 1);
                         }
                     }
                 }
@@ -265,11 +265,11 @@ namespace Unigram.Controls
                     else
                     {
                         stickerView.Source = null;
-                        UpdateManager.Subscribe(content, ViewModel.ProtoService, file, UpdateFile, true);
+                        UpdateManager.Subscribe(content, ViewModel.ClientService, file, UpdateFile, true);
 
                         if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                         {
-                            ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                            ViewModel.ClientService.DownloadFile(file.Id, 1);
                         }
                     }
                 }
@@ -290,11 +290,11 @@ namespace Unigram.Controls
                     else
                     {
                         animationView.Source = null;
-                        UpdateManager.Subscribe(content, ViewModel.ProtoService, file, UpdateFile, true);
+                        UpdateManager.Subscribe(content, ViewModel.ClientService, file, UpdateFile, true);
 
                         if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                         {
-                            ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                            ViewModel.ClientService.DownloadFile(file.Id, 1);
                         }
                     }
                 }
@@ -316,11 +316,11 @@ namespace Unigram.Controls
                 else
                 {
                     animationView.Source = null;
-                    UpdateManager.Subscribe(content, ViewModel.ProtoService, file, UpdateFile, true);
+                    UpdateManager.Subscribe(content, ViewModel.ClientService, file, UpdateFile, true);
 
                     if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                     {
-                        ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                        ViewModel.ClientService.DownloadFile(file.Id, 1);
                     }
 
                     var thumbnail = animation.Animation.Thumbnail?.File;
@@ -333,11 +333,11 @@ namespace Unigram.Controls
                         else
                         {
                             animationView.Thumbnail = null;
-                            UpdateManager.Subscribe(animationView, ViewModel.ProtoService, thumbnail, UpdateThumbnail, true);
+                            UpdateManager.Subscribe(animationView, ViewModel.ClientService, thumbnail, UpdateThumbnail, true);
 
                             if (thumbnail.Local.CanBeDownloaded && !thumbnail.Local.IsDownloadingActive)
                             {
-                                ViewModel.ProtoService.DownloadFile(thumbnail.Id, 1);
+                                ViewModel.ClientService.DownloadFile(thumbnail.Id, 1);
                             }
                         }
                     }
@@ -446,11 +446,11 @@ namespace Unigram.Controls
                     else
                     {
                         thumb.Source = null;
-                        UpdateManager.Subscribe(thumb, ViewModel.ProtoService, file, UpdateThumbnail, true);
+                        UpdateManager.Subscribe(thumb, ViewModel.ClientService, file, UpdateThumbnail, true);
 
                         if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                         {
-                            ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                            ViewModel.ClientService.DownloadFile(file.Id, 1);
                         }
                     }
                 }

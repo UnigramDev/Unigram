@@ -184,7 +184,7 @@ namespace Unigram.Controls.Messages
 
                 if (photoSize != null && photoSize.Photo.Local.CanBeDownloaded && !photoSize.Photo.Local.IsDownloadingActive)
                 {
-                    message.ProtoService.DownloadFile(photoSize.Photo.Id, 1);
+                    message.ClientService.DownloadFile(photoSize.Photo.Id, 1);
                 }
             }
         }
@@ -209,7 +209,7 @@ namespace Unigram.Controls.Messages
 
                 if (thumbnail != null && thumbnail.File.Local.CanBeDownloaded && !thumbnail.File.Local.IsDownloadingActive)
                 {
-                    message.ProtoService.DownloadFile(thumbnail.File.Id, 1);
+                    message.ClientService.DownloadFile(thumbnail.File.Id, 1);
                 }
             }
         }
@@ -333,7 +333,7 @@ namespace Unigram.Controls.Messages
 
             HideThumbnail();
 
-            SetText(message.ProtoService,
+            SetText(message.ClientService,
                 outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
                 string.Empty,
@@ -348,7 +348,7 @@ namespace Unigram.Controls.Messages
 
             HideThumbnail();
 
-            SetText(message.ProtoService,
+            SetText(message.ClientService,
                 outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
                 dice.Emoji,
@@ -363,7 +363,7 @@ namespace Unigram.Controls.Messages
 
             // 🖼
 
-            SetText(message.ProtoService,
+            SetText(message.ClientService,
                 outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
                 Strings.Resources.AttachPhoto,
@@ -387,7 +387,7 @@ namespace Unigram.Controls.Messages
 
             HideThumbnail();
 
-            SetText(message.ProtoService,
+            SetText(message.ClientService,
                 outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
                 invoice.Title,
@@ -402,7 +402,7 @@ namespace Unigram.Controls.Messages
 
             HideThumbnail();
 
-            SetText(message.ProtoService,
+            SetText(message.ClientService,
                 outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
                 location.LivePeriod > 0 ? Strings.Resources.AttachLiveLocation : Strings.Resources.AttachLocation,
@@ -417,7 +417,7 @@ namespace Unigram.Controls.Messages
 
             HideThumbnail();
 
-            SetText(message.ProtoService,
+            SetText(message.ClientService,
                 outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
                 Strings.Resources.AttachLocation,
@@ -432,7 +432,7 @@ namespace Unigram.Controls.Messages
 
             HideThumbnail();
 
-            SetText(message.ProtoService,
+            SetText(message.ClientService,
                 outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
                 call.ToOutcomeText(message.IsOutgoing),
@@ -445,7 +445,7 @@ namespace Unigram.Controls.Messages
         {
             Visibility = Visibility.Visible;
 
-            SetText(message.ProtoService,
+            SetText(message.ClientService,
                 outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
                 $"\uD83C\uDFAE {game.Game.Title}",
@@ -462,7 +462,7 @@ namespace Unigram.Controls.Messages
 
             HideThumbnail();
 
-            SetText(message.ProtoService,
+            SetText(message.ClientService,
                 outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
                 Strings.Resources.AttachContact,
@@ -490,7 +490,7 @@ namespace Unigram.Controls.Messages
                 service = $"\uD83C\uDFB5 {performer} - {audioTitle}";
             }
 
-            SetText(message.ProtoService,
+            SetText(message.ClientService,
                 outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
                 service,
@@ -505,7 +505,7 @@ namespace Unigram.Controls.Messages
 
             HideThumbnail();
 
-            SetText(message.ProtoService,
+            SetText(message.ClientService,
                 outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
                 $"\uD83D\uDCCA {poll.Poll.Question.Replace('\n', ' ')}",
@@ -520,7 +520,7 @@ namespace Unigram.Controls.Messages
 
             HideThumbnail();
 
-            SetText(message.ProtoService,
+            SetText(message.ClientService,
                 outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
                 Strings.Resources.AttachAudio,
@@ -533,7 +533,7 @@ namespace Unigram.Controls.Messages
         {
             Visibility = Visibility.Visible;
 
-            SetText(message.ProtoService,
+            SetText(message.ClientService,
                 outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
                 Strings.Resources.AttachVideo,
@@ -555,7 +555,7 @@ namespace Unigram.Controls.Messages
         {
             Visibility = Visibility.Visible;
 
-            SetText(message.ProtoService,
+            SetText(message.ClientService,
                 outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
                 Strings.Resources.AttachRound,
@@ -570,7 +570,7 @@ namespace Unigram.Controls.Messages
         {
             Visibility = Visibility.Visible;
 
-            SetText(message.ProtoService,
+            SetText(message.ClientService,
                 outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
                 animatedEmoji.Emoji,
@@ -585,7 +585,7 @@ namespace Unigram.Controls.Messages
         {
             Visibility = Visibility.Visible;
 
-            SetText(message.ProtoService,
+            SetText(message.ClientService,
                 outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
                 Strings.Resources.AttachGif,
@@ -602,7 +602,7 @@ namespace Unigram.Controls.Messages
 
             HideThumbnail();
 
-            SetText(message.ProtoService,
+            SetText(message.ClientService,
                 outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
                 string.IsNullOrEmpty(sticker.Sticker.Emoji) ? Strings.Resources.AttachSticker : $"{sticker.Sticker.Emoji} {Strings.Resources.AttachSticker}",
@@ -617,7 +617,7 @@ namespace Unigram.Controls.Messages
 
             HideThumbnail();
 
-            SetText(message.ProtoService,
+            SetText(message.ClientService,
                 outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
                 document.Document.FileName,
@@ -632,7 +632,7 @@ namespace Unigram.Controls.Messages
 
             HideThumbnail();
 
-            SetText(message.ProtoService,
+            SetText(message.ClientService,
                 outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
                 MessageService.GetText(message),
@@ -677,7 +677,7 @@ namespace Unigram.Controls.Messages
 
             HideThumbnail();
 
-            SetText(message.ProtoService,
+            SetText(message.ClientService,
                 outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
                 Strings.Resources.UnsupportedAttachment,
@@ -696,7 +696,7 @@ namespace Unigram.Controls.Messages
         protected abstract void ShowThumbnail(CornerRadius radius = default);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected abstract void SetText(IProtoService protoService, MessageSender sender, string title, string service, FormattedText message);
+        protected abstract void SetText(IClientService clientService, MessageSender sender, string title, string service, FormattedText message);
 
         #endregion
 
@@ -707,16 +707,16 @@ namespace Unigram.Controls.Messages
                 return title;
             }
 
-            var forwardedTitle = message.ProtoService.GetTitle(message.ForwardInfo);
+            var forwardedTitle = message.ClientService.GetTitle(message.ForwardInfo);
             if (forwardedTitle != null)
             {
                 return forwardedTitle;
             }
-            else if (message.ProtoService.TryGetChat(message.SenderId, out Chat senderChat))
+            else if (message.ClientService.TryGetChat(message.SenderId, out Chat senderChat))
             {
-                return message.ProtoService.GetTitle(senderChat);
+                return message.ClientService.GetTitle(senderChat);
             }
-            if (message.ProtoService.TryGetUser(message.SenderId, out User user))
+            if (message.ClientService.TryGetUser(message.SenderId, out User user))
             {
                 return user.GetFullName();
             }

@@ -313,22 +313,22 @@ namespace Unigram.Controls
 
         #region Bitmap
 
-        private IProtoService _protoService;
+        private IClientService _clientService;
         private File _file;
         private int _width;
         private int _height;
 
-        public void SetSource(IProtoService protoService, File file, int width = 0, int height = 0)
+        public void SetSource(IClientService clientService, File file, int width = 0, int height = 0)
         {
-            _protoService = protoService;
+            _clientService = clientService;
             _file = file;
             _width = width;
             _height = height;
 
-            Source = GetSource(protoService, file, width, height, true);
+            Source = GetSource(clientService, file, width, height, true);
         }
 
-        private ImageSource GetSource(IProtoService protoService, File file, int width, int height, bool download)
+        private ImageSource GetSource(IClientService clientService, File file, int width, int height, bool download)
         {
             if (file.Local.IsDownloadingCompleted)
             {
@@ -336,11 +336,11 @@ namespace Unigram.Controls
             }
             else if (download)
             {
-                UpdateManager.Subscribe(this, protoService, file, UpdateSource, true);
+                UpdateManager.Subscribe(this, clientService, file, UpdateSource, true);
 
                 if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
-                    protoService.DownloadFile(file.Id, 1);
+                    clientService.DownloadFile(file.Id, 1);
                 }
             }
 
@@ -350,7 +350,7 @@ namespace Unigram.Controls
         private void UpdateSource(object target, File file)
         {
             UpdateManager.Unsubscribe(this);
-            Source = GetSource(_protoService, _file, _width, _height, false);
+            Source = GetSource(_clientService, _file, _width, _height, false);
         }
 
         #endregion

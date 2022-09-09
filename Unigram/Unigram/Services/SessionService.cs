@@ -18,7 +18,7 @@ namespace Unigram.Services
 
 
 
-        IProtoService ProtoService { get; }
+        IClientService ClientService { get; }
         ISettingsService Settings { get; }
         IEventAggregator Aggregator { get; }
 
@@ -34,8 +34,8 @@ namespace Unigram.Services
         private readonly ILifetimeService _lifetimeService;
         private readonly int _id;
 
-        public SessionService(int session, bool selected, IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ILifetimeService lifecycleService)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public SessionService(int session, bool selected, IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, ILifetimeService lifecycleService)
+            : base(clientService, settingsService, aggregator)
         {
             _lifetimeService = lifecycleService;
             _id = session;
@@ -44,7 +44,7 @@ namespace Unigram.Services
 
             IsActive = selected;
 
-            var unreadCount = CacheService.GetUnreadCount(new ChatListMain());
+            var unreadCount = ClientService.GetUnreadCount(new ChatListMain());
             Handle(unreadCount.UnreadChatCount);
             Handle(unreadCount.UnreadMessageCount);
         }
@@ -57,7 +57,7 @@ namespace Unigram.Services
         }
 
         public int Id => _id;
-        public long UserId => ProtoService.Options.MyId;
+        public long UserId => ClientService.Options.MyId;
 
         private int _unreadCount;
         public int UnreadCount
@@ -77,14 +77,14 @@ namespace Unigram.Services
 
                 if (!value)
                 {
-                    CacheService.Options.Online = value;
+                    ClientService.Options.Online = value;
                 }
             }
         }
 
         public void Handle(UpdateUser update)
         {
-            if (update.User.Id == CacheService.Options.MyId)
+            if (update.User.Id == ClientService.Options.MyId)
             {
                 _lifetimeService.Update();
             }
@@ -142,7 +142,7 @@ namespace Unigram.Services
             _continueOnLogOut = function;
             _continueResult = new TaskCompletionSource<BaseObject>();
 
-            ProtoService.Send(new LogOut());
+            ClientService.Send(new LogOut());
 
             return _continueResult.Task;
         }
@@ -163,7 +163,7 @@ namespace Unigram.Services
 
             _continueOnLogOut = null;
 
-            var response = await ProtoService.SendAsync(function);
+            var response = await ClientService.SendAsync(function);
             source.SetResult(response);
         }
 
@@ -182,7 +182,7 @@ namespace Unigram.Services
                 }
                 else if (_continueOnLogOut != null)
                 {
-                    ProtoService.TryInitialize();
+                    ClientService.TryInitialize();
                 }
             }
             else if (update.AuthorizationState is AuthorizationStateWaitPhoneNumber && _continueOnLogOut != null)
@@ -191,7 +191,7 @@ namespace Unigram.Services
             }
             else if ((update.AuthorizationState is AuthorizationStateWaitPhoneNumber || update.AuthorizationState is AuthorizationStateWaitOtherDeviceConfirmation) && !_isActive && _lifetimeService.Items.Count > 1)
             {
-                ProtoService.Send(new Destroy());
+                ClientService.Send(new Destroy());
             }
             else
             {

@@ -25,8 +25,8 @@ namespace Unigram.ViewModels.Settings
 
         private StorageFile _file;
 
-        public SettingsThemeViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IThemeService themeService)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public SettingsThemeViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IThemeService themeService)
+            : base(clientService, settingsService, aggregator)
         {
             _themeService = themeService;
 

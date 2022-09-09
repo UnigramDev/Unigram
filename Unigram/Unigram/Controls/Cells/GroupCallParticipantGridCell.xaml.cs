@@ -30,12 +30,12 @@ namespace Unigram.Controls.Cells
 
         private readonly bool _screenSharing;
 
-        public GroupCallParticipantGridCell(ICacheService cacheService, GroupCallParticipant participant, GroupCallParticipantVideoInfo videoInfo, bool screenSharing)
+        public GroupCallParticipantGridCell(IClientService clientService, GroupCallParticipant participant, GroupCallParticipantVideoInfo videoInfo, bool screenSharing)
         {
             _screenSharing = screenSharing;
 
             InitializeComponent();
-            UpdateGroupCallParticipant(cacheService, participant, videoInfo);
+            UpdateGroupCallParticipant(clientService, participant, videoInfo);
 
             if (screenSharing)
             {
@@ -99,7 +99,7 @@ namespace Unigram.Controls.Cells
 
         public event EventHandler ToggleDocked;
 
-        public void UpdateGroupCallParticipant(ICacheService cacheService, GroupCallParticipant participant, GroupCallParticipantVideoInfo videoInfo)
+        public void UpdateGroupCallParticipant(IClientService clientService, GroupCallParticipant participant, GroupCallParticipantVideoInfo videoInfo)
         {
             _participant = participant;
             _videoInfo = videoInfo;
@@ -108,13 +108,13 @@ namespace Unigram.Controls.Cells
 
             ShowHidePaused(videoInfo.IsPaused);
 
-            if (cacheService.TryGetUser(participant.ParticipantId, out User user))
+            if (clientService.TryGetUser(participant.ParticipantId, out User user))
             {
                 Title.Text = user.GetFullName();
             }
-            else if (cacheService.TryGetChat(participant.ParticipantId, out Chat chat))
+            else if (clientService.TryGetChat(participant.ParticipantId, out Chat chat))
             {
-                Title.Text = cacheService.GetTitle(chat);
+                Title.Text = clientService.GetTitle(chat);
             }
 
             if (participant.IsSpeaking)

@@ -104,7 +104,7 @@ namespace Unigram.Controls.Gallery
                 Constraint = item.Constraint;
             }
 
-            UpdateManager.Subscribe(this, delegato.ProtoService, file, ref _fileToken, UpdateFile);
+            UpdateManager.Subscribe(this, delegato.ClientService, file, ref _fileToken, UpdateFile);
             UpdateFile(item, file);
 
             if (thumbnail != null && (item.IsVideo || (item.IsPhoto && !file.Local.IsDownloadingCompleted)))
@@ -147,7 +147,7 @@ namespace Unigram.Controls.Gallery
 
                 if (item.IsPhoto)
                 {
-                    item.ProtoService.DownloadFile(file.Id, 1);
+                    item.ClientService.DownloadFile(file.Id, 1);
                 }
             }
             else
@@ -168,7 +168,7 @@ namespace Unigram.Controls.Gallery
                         BitmapImage image;
                         Texture.Source = image = new BitmapImage(); // (UriEx.GetLocal(file.Local.Path));
 
-                        var test = await item.ProtoService.GetFileAsync(file);
+                        var test = await item.ClientService.GetFileAsync(file);
                         using (var stream = await test.OpenReadAsync())
                         {
                             await image.SetSourceAsync(stream);
@@ -203,10 +203,10 @@ namespace Unigram.Controls.Gallery
             {
                 if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
-                    item.ProtoService.DownloadFile(file.Id, 1);
+                    item.ClientService.DownloadFile(file.Id, 1);
                 }
 
-                UpdateManager.Subscribe(this, _delegate.ProtoService, file, ref _thumbnailToken, UpdateThumbnail, true);
+                UpdateManager.Subscribe(this, _delegate.ClientService, file, ref _thumbnailToken, UpdateThumbnail, true);
             }
         }
 
@@ -226,7 +226,7 @@ namespace Unigram.Controls.Gallery
 
             if (file.Local.IsDownloadingActive)
             {
-                item.ProtoService.Send(new CancelDownloadFile(file.Id, false));
+                item.ClientService.Send(new CancelDownloadFile(file.Id, false));
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
@@ -236,7 +236,7 @@ namespace Unigram.Controls.Gallery
                 }
                 else
                 {
-                    item.ProtoService.DownloadFile(file.Id, 32);
+                    item.ClientService.DownloadFile(file.Id, 32);
                 }
             }
             else if (item.IsVideo)

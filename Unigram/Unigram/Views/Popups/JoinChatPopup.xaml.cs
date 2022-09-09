@@ -9,15 +9,15 @@ namespace Unigram.Views.Popups
 {
     public sealed partial class JoinChatPopup : ContentPopup
     {
-        private readonly IProtoService _protoService;
+        private readonly IClientService _clientService;
 
-        public JoinChatPopup(IProtoService protoService, ChatInviteLinkInfo info)
+        public JoinChatPopup(IClientService clientService, ChatInviteLinkInfo info)
         {
             InitializeComponent();
 
-            _protoService = protoService;
+            _clientService = clientService;
 
-            Photo.SetChat(protoService, info, 72);
+            Photo.SetChat(clientService, info, 72);
 
             Title.Text = info.Title;
             Subtitle.Text = ConvertCount(info.MemberCount, info.MemberUserIds.Count == 0);
@@ -31,7 +31,7 @@ namespace Unigram.Views.Popups
                 Footer.Text = ConvertMore(info.MemberCount, info.MemberUserIds.Count);
 
                 Members.Visibility = Visibility.Visible;
-                Members.ItemsSource = protoService.GetUsers(info.MemberUserIds);
+                Members.ItemsSource = clientService.GetUsers(info.MemberUserIds);
             }
             else
             {
@@ -82,7 +82,7 @@ namespace Unigram.Views.Popups
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.SetUser(_protoService, user, 48);
+                photo.SetUser(_clientService, user, 48);
             }
 
             if (args.Phase < 2)

@@ -16,8 +16,8 @@ namespace Unigram.ViewModels.Settings
 {
     public class SettingsNetworkViewModel : TLViewModelBase
     {
-        public SettingsNetworkViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public SettingsNetworkViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             Items = new MvxObservableCollection<NetworkStatisticsList>();
 
@@ -26,7 +26,7 @@ namespace Unigram.ViewModels.Settings
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            var response = await ProtoService.SendAsync(new GetNetworkStatistics(false));
+            var response = await ClientService.SendAsync(new GetNetworkStatistics(false));
             if (response is NetworkStatistics statistics)
             {
                 SinceDate = Converter.DateTime(statistics.SinceDate);
@@ -148,7 +148,7 @@ namespace Unigram.ViewModels.Settings
             var confirm = await MessagePopup.ShowAsync(Strings.Resources.ResetStatisticsAlert, Strings.Resources.AppName, Strings.Resources.Reset, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
-                await ProtoService.SendAsync(new ResetNetworkStatistics());
+                await ClientService.SendAsync(new ResetNetworkStatistics());
                 await OnNavigatedToAsync(null, NavigationMode.Refresh, null);
             }
         }

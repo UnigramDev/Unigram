@@ -21,8 +21,8 @@ namespace Unigram.ViewModels.Settings
     {
         public IUserDelegate Delegate { get; set; }
 
-        public SettingsProfileViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public SettingsProfileViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             SendCommand = new RelayCommand(Send, CanSend);
         }
@@ -66,18 +66,18 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public int BioLengthMax => (int)CacheService.Options.BioLengthMax;
+        public int BioLengthMax => (int)ClientService.Options.BioLengthMax;
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            if (CacheService.TryGetUser(CacheService.Options.MyId, out User user))
+            if (ClientService.TryGetUser(ClientService.Options.MyId, out User user))
             {
                 FirstName = user.FirstName;
                 LastName = user.LastName;
 
                 Delegate?.UpdateUser(null, user, false);
 
-                if (CacheService.TryGetUserFull(user.Id, out UserFullInfo userFull))
+                if (ClientService.TryGetUserFull(user.Id, out UserFullInfo userFull))
                 {
                     Bio = userFull.Bio.Text;
 
@@ -85,7 +85,7 @@ namespace Unigram.ViewModels.Settings
                 }
                 else
                 {
-                    ProtoService.Send(new GetUserFullInfo(user.Id));
+                    ClientService.Send(new GetUserFullInfo(user.Id));
                 }
             }
 
@@ -100,7 +100,7 @@ namespace Unigram.ViewModels.Settings
 
         public void Handle(UpdateUser update)
         {
-            if (update.User.Id == CacheService.Options.MyId)
+            if (update.User.Id == ClientService.Options.MyId)
             {
                 BeginOnUIThread(() =>
                 {
@@ -114,7 +114,7 @@ namespace Unigram.ViewModels.Settings
 
         public void Handle(UpdateUserFullInfo update)
         {
-            if (update.UserId == CacheService.Options.MyId && CacheService.TryGetUser(CacheService.Options.MyId, out User user))
+            if (update.UserId == ClientService.Options.MyId && ClientService.TryGetUser(ClientService.Options.MyId, out User user))
             {
                 BeginOnUIThread(() =>
                 {
@@ -128,7 +128,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand SendCommand { get; }
         private async void Send()
         {
-            if (CacheService.TryGetUser(CacheService.Options.MyId, out User user) && CacheService.TryGetUserFull(user.Id, out UserFullInfo userFull))
+            if (ClientService.TryGetUser(ClientService.Options.MyId, out User user) && ClientService.TryGetUserFull(user.Id, out UserFullInfo userFull))
             {
                 if (string.IsNullOrEmpty(_firstName))
                 {
@@ -142,7 +142,7 @@ namespace Unigram.ViewModels.Settings
 
                 if (!string.Equals(_firstName, user.FirstName) || !string.Equals(_lastName, user.LastName))
                 {
-                    var response = await ProtoService.SendAsync(new SetName(_firstName, _lastName));
+                    var response = await ClientService.SendAsync(new SetName(_firstName, _lastName));
                     if (response is Error error)
                     {
                         // TODO:
@@ -152,7 +152,7 @@ namespace Unigram.ViewModels.Settings
 
                 if (!string.Equals(_bio, userFull.Bio))
                 {
-                    var response = await ProtoService.SendAsync(new SetBio(_bio));
+                    var response = await ClientService.SendAsync(new SetBio(_bio));
                     if (response is Error error)
                     {
                         // TODO:
@@ -169,7 +169,7 @@ namespace Unigram.ViewModels.Settings
             return _firstName.Length > 0
                 && _firstName.Length <= 64
                 && _lastName.Length <= 64
-                && _bio.Length <= CacheService.Options.BioLengthMax;
+                && _bio.Length <= ClientService.Options.BioLengthMax;
         }
 
         public async Task EditPhotoAsync(StorageMedia file)
@@ -203,12 +203,12 @@ namespace Unigram.ViewModels.Settings
                 conversion.CropRectangle = rectangle;
 
                 var generated = await media.File.ToGeneratedAsync(ConversionType.Transcode, JsonConvert.SerializeObject(conversion));
-                var response = await ProtoService.SendAsync(new SetProfilePhoto(new InputChatPhotoAnimation(generated, 0)));
+                var response = await ClientService.SendAsync(new SetProfilePhoto(new InputChatPhotoAnimation(generated, 0)));
             }
             else if (file is StoragePhoto photo)
             {
                 var generated = await photo.File.ToGeneratedAsync(ConversionType.Compress, JsonConvert.SerializeObject(photo.EditState));
-                var response = await ProtoService.SendAsync(new SetProfilePhoto(new InputChatPhotoStatic(generated)));
+                var response = await ClientService.SendAsync(new SetProfilePhoto(new InputChatPhotoStatic(generated)));
             }
         }
     }

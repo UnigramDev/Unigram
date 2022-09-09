@@ -113,12 +113,12 @@ namespace Unigram.Services
 
             LoadCurrentCulture();
 
-            foreach (var protoService in TLContainer.Current.ResolveAll<IProtoService>())
+            foreach (var clientService in TLContainer.Current.ResolveAll<IClientService>())
             {
 #if DEBUG
-                await protoService.SendAsync(new SynchronizeLanguagePack(info.Id));
+                await clientService.SendAsync(new SynchronizeLanguagePack(info.Id));
 
-                var test = await protoService.SendAsync(new GetLanguagePackStrings(info.Id, new string[0]));
+                var test = await clientService.SendAsync(new GetLanguagePackStrings(info.Id, new string[0]));
                 if (test is LanguagePackStrings strings)
                 {
                     SaveRemoteLocaleStrings(info.Id, strings);
@@ -127,15 +127,15 @@ namespace Unigram.Services
                 return new Error();
 #endif
 
-                var response = await protoService.SendAsync(new SetOption("language_pack_id", new OptionValueString(info.Id)));
+                var response = await clientService.SendAsync(new SetOption("language_pack_id", new OptionValueString(info.Id)));
                 if (response is Ok && refresh)
                 {
                     if (!info.IsOfficial && !info.IsInstalled)
                     {
-                        protoService.Send(new AddCustomServerLanguagePack(info.Id));
+                        clientService.Send(new AddCustomServerLanguagePack(info.Id));
                     }
 
-                    response = await protoService.SendAsync(new SynchronizeLanguagePack(info.Id));
+                    response = await clientService.SendAsync(new SynchronizeLanguagePack(info.Id));
 
                     if (response is Error)
                     {

@@ -87,7 +87,7 @@ namespace Unigram.Controls.Messages.Content
 
             Progress.UpdateWaveform(voiceNote);
 
-            if (message.ProtoService.IsPremium && message.SchedulingState == null)
+            if (message.ClientService.IsPremium && message.SchedulingState == null)
             {
                 if (Recognize == null)
                 {
@@ -288,7 +288,7 @@ namespace Unigram.Controls.Messages.Content
 
                 if (message.Delegate.CanBeDownloaded(voiceNote, file))
                 {
-                    _message.ProtoService.DownloadFile(file.Id, 32);
+                    _message.ClientService.DownloadFile(file.Id, 32);
                 }
                 else
                 {
@@ -365,11 +365,11 @@ namespace Unigram.Controls.Messages.Content
             var file = voiceNote.Voice;
             if (file.Local.IsDownloadingActive)
             {
-                _message.ProtoService.CancelDownloadFile(file.Id);
+                _message.ClientService.CancelDownloadFile(file.Id);
             }
             else if (file.Remote.IsUploadingActive || _message.SendingState is MessageSendingStateFailed)
             {
-                _message.ProtoService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
+                _message.ClientService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
@@ -407,7 +407,7 @@ namespace Unigram.Controls.Messages.Content
 
                 if (voiceNote.SpeechRecognitionResult == null)
                 {
-                    _message.ProtoService.Send(new RecognizeSpeech(_message.ChatId, _message.Id));
+                    _message.ClientService.Send(new RecognizeSpeech(_message.ChatId, _message.Id));
                 }
                 else
                 {

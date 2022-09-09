@@ -16,8 +16,8 @@ namespace Unigram.ViewModels.Folders
         , IHandle
         //, IHandle<UpdateChatFilters>
     {
-        public FoldersViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public FoldersViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             UseLeftLayout = settingsService.IsLeftTabsEnabled;
             UseTopLayout = !settingsService.IsLeftTabsEnabled;
@@ -44,21 +44,21 @@ namespace Unigram.ViewModels.Folders
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            Items.ReplaceWith(CacheService.ChatFilters);
+            Items.ReplaceWith(ClientService.ChatFilters);
 
-            if (CacheService.IsPremiumAvailable)
+            if (ClientService.IsPremiumAvailable)
             {
-                var limit = await ProtoService.SendAsync(new GetPremiumLimit(new PremiumLimitTypeChatFilterCount())) as PremiumLimit;
+                var limit = await ClientService.SendAsync(new GetPremiumLimit(new PremiumLimitTypeChatFilterCount())) as PremiumLimit;
                 CanCreateNew = Items.Count < limit.PremiumValue;
             }
             else
             {
-                CanCreateNew = Items.Count < CacheService.Options.ChatFilterCountMax;
+                CanCreateNew = Items.Count < ClientService.Options.ChatFilterCountMax;
             }
 
-            if (CacheService.Options.ChatFilterCountMax > Items.Count)
+            if (ClientService.Options.ChatFilterCountMax > Items.Count)
             {
-                var response = await ProtoService.SendAsync(new GetRecommendedChatFilters());
+                var response = await ClientService.SendAsync(new GetRecommendedChatFilters());
                 if (response is RecommendedChatFilters filters)
                 {
                     Recommended.ReplaceWith(filters.ChatFilters);
@@ -105,7 +105,7 @@ namespace Unigram.ViewModels.Folders
 
                 if (Items.Count < 10)
                 {
-                    var response = await ProtoService.SendAsync(new GetRecommendedChatFilters());
+                    var response = await ClientService.SendAsync(new GetRecommendedChatFilters());
                     if (response is RecommendedChatFilters recommended)
                     {
                         Recommended.ReplaceWith(recommended.ChatFilters);
@@ -122,14 +122,14 @@ namespace Unigram.ViewModels.Folders
         private void RecommendExecute(RecommendedChatFilter filter)
         {
             Recommended.Remove(filter);
-            ProtoService.Send(new CreateChatFilter(filter.Filter));
+            ClientService.Send(new CreateChatFilter(filter.Filter));
         }
 
         public RelayCommand<ChatFilterInfo> EditCommand { get; }
         private void EditExecute(ChatFilterInfo filter)
         {
             var index = Items.IndexOf(filter);
-            if (index < CacheService.Options.ChatFilterCountMax)
+            if (index < ClientService.Options.ChatFilterCountMax)
             {
                 NavigationService.Navigate(typeof(FolderPage), filter.Id);
             }
@@ -148,13 +148,13 @@ namespace Unigram.ViewModels.Folders
                 return;
             }
 
-            ProtoService.Send(new DeleteChatFilter(filter.Id));
+            ClientService.Send(new DeleteChatFilter(filter.Id));
         }
 
         public RelayCommand CreateCommand { get; }
         private void CreateExecute()
         {
-            if (Items.Count < CacheService.Options.ChatFilterCountMax)
+            if (Items.Count < ClientService.Options.ChatFilterCountMax)
             {
                 NavigationService.Navigate(typeof(FolderPage));
             }

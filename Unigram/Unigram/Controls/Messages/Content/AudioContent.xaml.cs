@@ -247,7 +247,7 @@ namespace Unigram.Controls.Messages.Content
 
                 if (message.Delegate.CanBeDownloaded(audio, file))
                 {
-                    _message.ProtoService.DownloadFile(file.Id, 32);
+                    _message.ClientService.DownloadFile(file.Id, 32);
                 }
             }
             else
@@ -342,7 +342,7 @@ namespace Unigram.Controls.Messages.Content
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
-                message.ProtoService.DownloadFile(file.Id, 1);
+                message.ClientService.DownloadFile(file.Id, 1);
 
                 Texture.Background = null;
                 Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
@@ -398,7 +398,7 @@ namespace Unigram.Controls.Messages.Content
             var file = audio.AudioValue;
             if (file.Remote.IsUploadingActive || _message.SendingState is MessageSendingStateFailed)
             {
-                _message.ProtoService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
+                _message.ClientService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
             }
             else if (_message.AreTheSame(_message.PlaybackService.CurrentItem))
             {
@@ -428,21 +428,21 @@ namespace Unigram.Controls.Messages.Content
             var file = audio.AudioValue;
             if (file.Local.IsDownloadingActive)
             {
-                _message.ProtoService.CancelDownloadFile(file.Id);
+                _message.ClientService.CancelDownloadFile(file.Id);
             }
             else if (file.Remote.IsUploadingActive || _message.SendingState is MessageSendingStateFailed)
             {
-                _message.ProtoService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
+                _message.ClientService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
                 if (_message.Content is not MessageAudio)
                 {
-                    _message.ProtoService.DownloadFile(file.Id, 30);
+                    _message.ClientService.DownloadFile(file.Id, 30);
                 }
                 else
                 {
-                    _message.ProtoService.AddFileToDownloads(file.Id, _message.ChatId, _message.Id);
+                    _message.ClientService.AddFileToDownloads(file.Id, _message.ChatId, _message.Id);
                 }
             }
             else

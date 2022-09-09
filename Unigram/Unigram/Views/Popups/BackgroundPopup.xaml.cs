@@ -216,11 +216,11 @@ namespace Unigram.Views
             }
             else
             {
-                UpdateManager.Subscribe(this, ViewModel.ProtoService, file, UpdateFile, true);
+                UpdateManager.Subscribe(this, ViewModel.ClientService, file, UpdateFile, true);
 
                 if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
-                    ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                    ViewModel.ClientService.DownloadFile(file.Id, 1);
                 }
             }
         }
@@ -248,11 +248,11 @@ namespace Unigram.Views
             }
             else
             {
-                UpdateManager.Subscribe(this, ViewModel.ProtoService, file, UpdateFile, true);
+                UpdateManager.Subscribe(this, ViewModel.ClientService, file, UpdateFile, true);
 
                 if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && download)
                 {
-                    ViewModel.ProtoService.DownloadFile(file.Id, 16);
+                    ViewModel.ClientService.DownloadFile(file.Id, 16);
                 }
             }
         }
@@ -325,7 +325,7 @@ namespace Unigram.Views
                             continue;
                         }
 
-                        content.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, small.File, wallpaper.Document.Thumbnail.Width, wallpaper.Document.Thumbnail.Height);
+                        content.Source = PlaceholderHelper.GetBitmap(ViewModel.ClientService, small.File, wallpaper.Document.Thumbnail.Width, wallpaper.Document.Thumbnail.Height);
                     }
                     else
                     {
@@ -527,11 +527,11 @@ namespace Unigram.Views
                 }
                 else 
                 {
-                    UpdateManager.Subscribe(root, ViewModel.ProtoService, file, UpdatePattern, true);
+                    UpdateManager.Subscribe(root, ViewModel.ClientService, file, UpdatePattern, true);
 
                     if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                     {
-                        ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                        ViewModel.ClientService.DownloadFile(file.Id, 1);
                     }
                 }
 

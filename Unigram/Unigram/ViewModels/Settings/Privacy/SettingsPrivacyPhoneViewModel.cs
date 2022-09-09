@@ -13,8 +13,8 @@ namespace Unigram.ViewModels.Settings.Privacy
         private readonly SettingsPrivacyShowPhoneViewModel _showPhone;
         private readonly SettingsPrivacyAllowFindingByPhoneNumberViewModel _allowFindingByPhoneNumber;
 
-        public SettingsPrivacyPhoneViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, SettingsPrivacyShowPhoneViewModel showPhone, SettingsPrivacyAllowFindingByPhoneNumberViewModel allowFindingByPhoneNumber)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public SettingsPrivacyPhoneViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, SettingsPrivacyShowPhoneViewModel showPhone, SettingsPrivacyAllowFindingByPhoneNumberViewModel allowFindingByPhoneNumber)
+            : base(clientService, settingsService, aggregator)
         {
             _showPhone = showPhone;
             _allowFindingByPhoneNumber = allowFindingByPhoneNumber;
@@ -37,9 +37,9 @@ namespace Unigram.ViewModels.Settings.Privacy
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            if (CacheService.TryGetUser(CacheService.Options.MyId, out User user))
+            if (ClientService.TryGetUser(ClientService.Options.MyId, out User user))
             {
-                PhoneNumber = MeUrlPrefixConverter.Convert(CacheService, $"+{user.PhoneNumber}");
+                PhoneNumber = MeUrlPrefixConverter.Convert(ClientService, $"+{user.PhoneNumber}");
             }
 
             return Task.CompletedTask;

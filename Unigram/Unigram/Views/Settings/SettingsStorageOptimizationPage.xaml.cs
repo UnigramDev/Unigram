@@ -13,16 +13,16 @@ namespace Unigram.Views.Settings
 {
     public sealed partial class SettingsStorageOptimizationPage : ContentPopup
     {
-        public SettingsStorageOptimizationPage(IProtoService protoService, StorageStatisticsByChat statistics)
+        public SettingsStorageOptimizationPage(IClientService clientService, StorageStatisticsByChat statistics)
         {
             InitializeComponent();
 
             PrimaryButtonText = Strings.Resources.CacheClear;
             SecondaryButtonText = Strings.Resources.Close;
 
-            var chat = protoService.GetChat(statistics.ChatId);
+            var chat = clientService.GetChat(statistics.ChatId);
 
-            Title = chat == null ? "Other Chats" : protoService.GetTitle(chat);
+            Title = chat == null ? "Other Chats" : clientService.GetTitle(chat);
 
             StorageChartItem photo = null;
             StorageChartItem video = null;

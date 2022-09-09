@@ -47,7 +47,7 @@ namespace Unigram.Controls.Cells
 
         private Message _message;
 
-        private IProtoService _protoService;
+        private IClientService _clientService;
 
         private Visual _onlineBadge;
         private bool _onlineCall;
@@ -175,30 +175,30 @@ namespace Unigram.Controls.Cells
 
             if (_chat != null)
             {
-                UpdateChat(_protoService, _chat, _chatList);
+                UpdateChat(_clientService, _chat, _chatList);
             }
             else if (_chatList != null)
             {
-                UpdateChatList(_protoService, _chatList);
+                UpdateChatList(_clientService, _chatList);
             }
             else if (_message != null)
             {
-                UpdateMessage(_protoService, _message);
+                UpdateMessage(_clientService, _message);
             }
         }
 
         #endregion
 
-        public void UpdateChat(IProtoService protoService, Chat chat, ChatList chatList)
+        public void UpdateChat(IClientService clientService, Chat chat, ChatList chatList)
         {
-            _protoService = protoService;
+            _clientService = clientService;
 
             Update(chat, chatList);
         }
 
-        public void UpdateMessage(IProtoService protoService, Message message)
+        public void UpdateMessage(IClientService clientService, Message message)
         {
-            _protoService = protoService;
+            _clientService = clientService;
             _message = message;
 
             if (!_templateApplied)
@@ -206,7 +206,7 @@ namespace Unigram.Controls.Cells
                 return;
             }
 
-            var chat = protoService.GetChat(message.ChatId);
+            var chat = clientService.GetChat(message.ChatId);
             if (chat == null)
             {
                 return;
@@ -230,12 +230,12 @@ namespace Unigram.Controls.Cells
             UpdateMinithumbnail(chat, chat.DraftMessage == null ? message : null);
         }
 
-        public async void UpdateChatList(IProtoService protoService, ChatList chatList)
+        public async void UpdateChatList(IClientService clientService, ChatList chatList)
         {
-            _protoService = protoService;
+            _clientService = clientService;
             _chatList = chatList;
 
-            var response = await protoService.GetChatListAsync(chatList, 0, 20);
+            var response = await clientService.GetChatListAsync(chatList, 0, 20);
             if (response is Telegram.Td.Api.Chats chats)
             {
                 Visibility = chats.ChatIds.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
@@ -266,7 +266,7 @@ namespace Unigram.Controls.Cells
 
                 UpdateTicks(null);
 
-                var unreadCount = protoService.GetUnreadCount(chatList);
+                var unreadCount = clientService.GetUnreadCount(chatList);
                 UnreadBadge.Visibility = unreadCount.UnreadChatCount.UnreadCount > 0 ? Visibility.Visible : Visibility.Collapsed;
                 UnreadBadge.Value = unreadCount.UnreadChatCount.UnreadCount;
 
@@ -274,7 +274,7 @@ namespace Unigram.Controls.Cells
 
                 foreach (var id in chats.ChatIds)
                 {
-                    var chat = protoService.GetChat(id);
+                    var chat = clientService.GetChat(id);
                     if (chat == null)
                     {
                         continue;
@@ -285,7 +285,7 @@ namespace Unigram.Controls.Cells
                         BriefInfo.Inlines.Add(new Run { Text = ", " });
                     }
 
-                    var run = new Run { Text = _protoService.GetTitle(chat) };
+                    var run = new Run { Text = _clientService.GetTitle(chat) };
                     if (chat.IsUnread())
                     {
                         run.Foreground = new SolidColorBrush(ActualTheme == ElementTheme.Dark ? Colors.White : Colors.Black);
@@ -298,28 +298,28 @@ namespace Unigram.Controls.Cells
 
         public string GetAutomationName()
         {
-            if (_protoService == null)
+            if (_clientService == null)
             {
                 return null;
             }
 
             if (_chat != null)
             {
-                return UpdateAutomation(_protoService, _chat, _chat.LastMessage);
+                return UpdateAutomation(_clientService, _chat, _chat.LastMessage);
             }
             else if (_message != null)
             {
-                var chat = _protoService.GetChat(_message.ChatId);
+                var chat = _clientService.GetChat(_message.ChatId);
                 if (chat != null)
                 {
-                    return UpdateAutomation(_protoService, chat, _message);
+                    return UpdateAutomation(_clientService, chat, _message);
                 }
             }
 
             return null;
         }
 
-        private string UpdateAutomation(IProtoService protoService, Chat chat, Message message)
+        private string UpdateAutomation(IClientService clientService, Chat chat, Message message)
         {
             var builder = new StringBuilder();
             if (chat.Type is ChatTypeSecret)
@@ -330,7 +330,7 @@ namespace Unigram.Controls.Cells
 
             if (chat.Type is ChatTypePrivate or ChatTypeSecret)
             {
-                var user = protoService.GetUser(chat);
+                var user = clientService.GetUser(chat);
                 if (user != null)
                 {
                     if (user.Type is UserTypeBot)
@@ -338,7 +338,7 @@ namespace Unigram.Controls.Cells
                         builder.Append(Strings.Resources.Bot);
                         builder.Append(", ");
                     }
-                    if (user.Id == protoService.Options.MyId)
+                    if (user.Id == clientService.Options.MyId)
                     {
                         builder.Append(Strings.Resources.SavedMessages);
                     }
@@ -362,7 +362,7 @@ namespace Unigram.Controls.Cells
                 }
 
                 builder.Append(", ");
-                builder.Append(protoService.GetTitle(chat));
+                builder.Append(clientService.GetTitle(chat));
                 builder.Append(", ");
             }
 
@@ -379,7 +379,7 @@ namespace Unigram.Controls.Cells
             }
 
             //if (!message.IsOutgoing && message.SenderUserId != 0 && !message.IsService())
-            if (ShowFrom(protoService, chat, message, out User fromUser, out Chat fromChat))
+            if (ShowFrom(clientService, chat, message, out User fromUser, out Chat fromChat))
             {
                 if (message.IsOutgoing)
                 {
@@ -403,7 +403,7 @@ namespace Unigram.Controls.Cells
 
             if (chat.Type is ChatTypeSecret == false)
             {
-                builder.Append(Automation.GetSummary(protoService, message));
+                builder.Append(Automation.GetSummary(clientService, message));
             }
 
             var date = Locale.FormatDateAudio(message.Date);
@@ -460,7 +460,7 @@ namespace Unigram.Controls.Cells
             UnreadBadge.Visibility = (chat.UnreadCount > 0 || chat.IsMarkedAsUnread) ? chat.UnreadMentionCount == 1 && chat.UnreadCount == 1 ? Visibility.Collapsed : Visibility.Visible : Visibility.Collapsed;
             UnreadBadge.Value = chat.UnreadCount;
 
-            //UpdateAutomation(_protoService, chat, chat.LastMessage);
+            //UpdateAutomation(_clientService, chat, chat.LastMessage);
         }
 
         public void UpdateChatReadOutbox(Chat chat)
@@ -497,7 +497,7 @@ namespace Unigram.Controls.Cells
                 return;
             }
 
-            var muted = _protoService.Notifications.GetMutedFor(chat) > 0;
+            var muted = _clientService.Notifications.GetMutedFor(chat) > 0;
             VisualStateManager.GoToState(this, muted ? "Muted" : "Unmuted", false);
             MutedIcon.Visibility = muted ? Visibility.Visible : Visibility.Collapsed;
         }
@@ -509,7 +509,7 @@ namespace Unigram.Controls.Cells
                 return;
             }
 
-            TitleLabel.Text = _protoService.GetTitle(chat);
+            TitleLabel.Text = _clientService.GetTitle(chat);
         }
 
         public void UpdateChatPhoto(Chat chat)
@@ -519,7 +519,7 @@ namespace Unigram.Controls.Cells
                 return;
             }
 
-            Photo.SetChat(_protoService, chat, 48);
+            Photo.SetChat(_clientService, chat, 48);
         }
 
         public void UpdateChatActions(Chat chat, IDictionary<MessageSender, ChatAction> actions)
@@ -531,7 +531,7 @@ namespace Unigram.Controls.Cells
 
             if (actions != null && actions.Count > 0)
             {
-                TypingLabel.Text = InputChatActionManager.GetTypingString(chat, actions, _protoService.GetUser, _protoService.GetChat, out ChatAction commonAction);
+                TypingLabel.Text = InputChatActionManager.GetTypingString(chat, actions, _clientService.GetUser, _clientService.GetChat, out ChatAction commonAction);
                 ChatActionIndicator.UpdateAction(commonAction);
                 ChatActionIndicator.Visibility = Visibility.Visible;
                 TypingLabel.Visibility = Visibility.Visible;
@@ -554,7 +554,7 @@ namespace Unigram.Controls.Cells
             TypeIcon.Text = type ?? string.Empty;
             TypeIcon.Visibility = type == null ? Visibility.Collapsed : Visibility.Visible;
 
-            Identity.SetStatus(_protoService, chat);
+            Identity.SetStatus(_clientService, chat);
         }
 
         public void UpdateChatVideoChat(Chat chat)
@@ -795,9 +795,9 @@ namespace Unigram.Controls.Cells
             //UpdateChatReadInbox(chat);
             UpdateChatUnreadMentionCount(chat, position);
             UpdateNotificationSettings(chat);
-            UpdateChatActions(chat, _protoService.GetChatActions(chat.Id));
+            UpdateChatActions(chat, _clientService.GetChatActions(chat.Id));
 
-            if (_protoService.TryGetUser(chat, out User user) && user.Type is UserTypeRegular && user.Id != _protoService.Options.MyId && user.Id != 777000)
+            if (_clientService.TryGetUser(chat, out User user) && user.Type is UserTypeRegular && user.Id != _clientService.Options.MyId && user.Id != 777000)
             {
                 UpdateUserStatus(chat, user.Status);
             }
@@ -1025,7 +1025,7 @@ namespace Unigram.Controls.Cells
                 if (emoji.Count > 0)
                 {
                     CustomEmoji ??= GetTemplateChild(nameof(CustomEmoji)) as CustomEmojiCanvas;
-                    CustomEmoji.UpdateEntities(_protoService, emoji);
+                    CustomEmoji.UpdateEntities(_clientService, emoji);
 
                     if (_playing)
                     {
@@ -1066,16 +1066,16 @@ namespace Unigram.Controls.Cells
             }
             else if (chat.Type is ChatTypeSecret secretType)
             {
-                var secret = _protoService.GetSecretChat(secretType.SecretChatId);
+                var secret = _clientService.GetSecretChat(secretType.SecretChatId);
                 if (secret != null)
                 {
                     if (secret.State is SecretChatStateReady)
                     {
-                        return new FormattedText(secret.IsOutbound ? string.Format(Strings.Resources.EncryptedChatStartedOutgoing, _protoService.GetTitle(chat)) : Strings.Resources.EncryptedChatStartedIncoming, new TextEntity[0]);
+                        return new FormattedText(secret.IsOutbound ? string.Format(Strings.Resources.EncryptedChatStartedOutgoing, _clientService.GetTitle(chat)) : Strings.Resources.EncryptedChatStartedIncoming, new TextEntity[0]);
                     }
                     else if (secret.State is SecretChatStatePending)
                     {
-                        return new FormattedText(string.Format(Strings.Resources.AwaitingEncryption, _protoService.GetTitle(chat)), new TextEntity[0]);
+                        return new FormattedText(string.Format(Strings.Resources.AwaitingEncryption, _clientService.GetTitle(chat)), new TextEntity[0]);
                     }
                     else if (secret.State is SecretChatStateClosed)
                     {
@@ -1175,17 +1175,17 @@ namespace Unigram.Controls.Cells
         {
             if (message.IsService())
             {
-                return MessageService.GetText(new ViewModels.MessageViewModel(_protoService, null, null, message));
+                return MessageService.GetText(new ViewModels.MessageViewModel(_clientService, null, null, message));
             }
 
             var format = "{0}: ";
             var result = string.Empty;
 
-            if (ShowFrom(_protoService, chat, message, out User fromUser, out Chat fromChat))
+            if (ShowFrom(_clientService, chat, message, out User fromUser, out Chat fromChat))
             {
-                if (message.IsSaved(_protoService.Options.MyId))
+                if (message.IsSaved(_clientService.Options.MyId))
                 {
-                    result = string.Format(format, _protoService.GetTitle(message.ForwardInfo));
+                    result = string.Format(format, _clientService.GetTitle(message.ForwardInfo));
                 }
                 else if (message.IsOutgoing)
                 {
@@ -1325,7 +1325,7 @@ namespace Unigram.Controls.Cells
             return result;
         }
 
-        private bool ShowFrom(ICacheService cacheService, Chat chat, Message message, out User senderUser, out Chat senderChat)
+        private bool ShowFrom(IClientService clientService, Chat chat, Message message, out User senderUser, out Chat senderChat)
         {
             if (message.IsService())
             {
@@ -1337,14 +1337,14 @@ namespace Unigram.Controls.Cells
             if (message.IsOutgoing)
             {
                 senderChat = null;
-                return cacheService.TryGetUser(message.SenderId, out senderUser)
-                    || cacheService.TryGetChat(message.SenderId, out senderChat);
+                return clientService.TryGetUser(message.SenderId, out senderUser)
+                    || clientService.TryGetChat(message.SenderId, out senderChat);
             }
 
             if (chat.Type is ChatTypeBasicGroup)
             {
                 senderChat = null;
-                return cacheService.TryGetUser(message.SenderId, out senderUser);
+                return clientService.TryGetUser(message.SenderId, out senderUser);
             }
 
             if (chat.Type is ChatTypeSupergroup supergroup)
@@ -1352,8 +1352,8 @@ namespace Unigram.Controls.Cells
                 senderUser = null;
                 senderChat = null;
                 return !supergroup.IsChannel
-                    && cacheService.TryGetUser(message.SenderId, out senderUser)
-                    || cacheService.TryGetChat(message.SenderId, out senderChat);
+                    && clientService.TryGetUser(message.SenderId, out senderUser)
+                    || clientService.TryGetChat(message.SenderId, out senderChat);
             }
 
             senderUser = null;
@@ -1373,7 +1373,7 @@ namespace Unigram.Controls.Cells
 
             if (message.IsOutgoing /*&& IsOut(ViewModel)*/)
             {
-                if (chat.Type is ChatTypePrivate privata && privata.UserId == _protoService.Options.MyId)
+                if (chat.Type is ChatTypePrivate privata && privata.UserId == _clientService.Options.MyId)
                 {
                     if (message.SendingState is MessageSendingStateFailed)
                     {
@@ -1472,14 +1472,14 @@ namespace Unigram.Controls.Cells
             {
                 return Icons.LockClosedFilled16;
             }
-            else if (chat.Type is ChatTypePrivate privata && _protoService != null)
+            else if (chat.Type is ChatTypePrivate privata && _clientService != null)
             {
-                if (_protoService.IsRepliesChat(chat))
+                if (_clientService.IsRepliesChat(chat))
                 {
                     return null;
                 }
 
-                var user = _protoService.GetUser(privata.UserId);
+                var user = _clientService.GetUser(privata.UserId);
                 if (user != null && user.Type is UserTypeBot)
                 {
                     return Icons.BotFilled;
@@ -1515,7 +1515,7 @@ namespace Unigram.Controls.Cells
 
             try
             {
-                if (_protoService.CanPostMessages(chat) && e.DataView.AvailableFormats.Count > 0)
+                if (_clientService.CanPostMessages(chat) && e.DataView.AvailableFormats.Count > 0)
                 {
                     if (DropVisual == null)
                     {
@@ -1576,7 +1576,7 @@ namespace Unigram.Controls.Cells
                     return;
                 }
 
-                var service = WindowContext.Current.NavigationServices.GetByFrameId($"Main{_protoService.SessionId}") as NavigationService;
+                var service = WindowContext.Current.NavigationServices.GetByFrameId($"Main{_clientService.SessionId}") as NavigationService;
                 if (service != null)
                 {
                     App.DataPackages[chat.Id] = e.DataView;

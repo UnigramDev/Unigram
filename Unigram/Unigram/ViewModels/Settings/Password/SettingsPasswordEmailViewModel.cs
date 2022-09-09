@@ -13,8 +13,8 @@ namespace Unigram.ViewModels.Settings.Password
 {
     public class SettingsPasswordEmailViewModel : TLViewModelBase
     {
-        public SettingsPasswordEmailViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public SettingsPasswordEmailViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute);
         }
@@ -64,7 +64,7 @@ namespace Unigram.ViewModels.Settings.Password
                 }
             }
 
-            var response = await ProtoService.SendAsync(new SetPassword(string.Empty, password, hint, addressValid, address));
+            var response = await ClientService.SendAsync(new SetPassword(string.Empty, password, hint, addressValid, address));
             if (response is PasswordState passwordState)
             {
                 if (passwordState.RecoveryEmailAddressCodeInfo != null)

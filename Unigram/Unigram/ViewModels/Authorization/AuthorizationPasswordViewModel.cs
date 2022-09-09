@@ -14,8 +14,8 @@ namespace Unigram.ViewModels.Authorization
     {
         private AuthorizationStateWaitPassword _parameters;
 
-        public AuthorizationPasswordViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public AuthorizationPasswordViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
             ForgotCommand = new RelayCommand(ForgotExecute);
@@ -24,7 +24,7 @@ namespace Unigram.ViewModels.Authorization
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            var authState = ProtoService.GetAuthorizationState();
+            var authState = ClientService.GetAuthorizationState();
             if (authState is AuthorizationStateWaitPassword waitPassword)
             {
                 _parameters = waitPassword;
@@ -64,7 +64,7 @@ namespace Unigram.ViewModels.Authorization
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new CheckAuthenticationPassword(_password));
+            var response = await ClientService.SendAsync(new CheckAuthenticationPassword(_password));
             if (response is Error error)
             {
                 if (error.TypeEquals(ErrorType.PASSWORD_HASH_INVALID))
@@ -94,7 +94,7 @@ namespace Unigram.ViewModels.Authorization
             {
                 IsLoading = true;
 
-                var response = await ProtoService.SendAsync(new RequestAuthenticationPasswordRecovery());
+                var response = await ClientService.SendAsync(new RequestAuthenticationPasswordRecovery());
                 if (response is Error error)
                 {
                     IsLoading = false;
@@ -116,7 +116,7 @@ namespace Unigram.ViewModels.Authorization
             {
                 IsLoading = true;
 
-                var response = await ProtoService.SendAsync(new DeleteAccount("Forgot password", string.Empty));
+                var response = await ClientService.SendAsync(new DeleteAccount("Forgot password", string.Empty));
                 if (response is Ok)
                 {
                     //var logout = await LegacyService.LogOutAsync();

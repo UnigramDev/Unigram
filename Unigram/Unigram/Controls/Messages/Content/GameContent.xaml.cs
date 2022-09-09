@@ -210,15 +210,15 @@ namespace Unigram.Controls.Messages.Content
             var file = game.Game.Animation?.AnimationValue ?? game.Game.Photo?.GetBig()?.Photo;
             if (file.Local.IsDownloadingActive)
             {
-                _message.ProtoService.CancelDownloadFile(file.Id);
+                _message.ClientService.CancelDownloadFile(file.Id);
             }
             else if (file.Remote.IsUploadingActive)
             {
-                _message.ProtoService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
+                _message.ClientService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
-                _message.ProtoService.DownloadFile(file.Id, 30);
+                _message.ClientService.DownloadFile(file.Id, 30);
             }
             else
             {

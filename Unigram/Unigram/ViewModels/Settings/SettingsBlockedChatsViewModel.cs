@@ -14,10 +14,10 @@ namespace Unigram.ViewModels.Settings
 {
     public class SettingsBlockedChatsViewModel : TLViewModelBase
     {
-        public SettingsBlockedChatsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public SettingsBlockedChatsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
-            Items = new ItemsCollection(protoService);
+            Items = new ItemsCollection(clientService);
 
             BlockCommand = new RelayCommand(BlockExecute);
             UnblockCommand = new RelayCommand<MessageSender>(UnblockExecute);
@@ -37,12 +37,12 @@ namespace Unigram.ViewModels.Settings
             if (selected.Type is ChatTypePrivate privata)
             {
                 Items.Insert(0, new MessageSenderUser(privata.UserId));
-                ProtoService.Send(new ToggleMessageSenderIsBlocked(new MessageSenderUser(privata.UserId), true));
+                ClientService.Send(new ToggleMessageSenderIsBlocked(new MessageSenderUser(privata.UserId), true));
             }
             else
             {
                 Items.Insert(0, new MessageSenderChat(selected.Id));
-                ProtoService.Send(new ToggleMessageSenderIsBlocked(new MessageSenderChat(selected.Id), true));
+                ClientService.Send(new ToggleMessageSenderIsBlocked(new MessageSenderChat(selected.Id), true));
             }
         }
 
@@ -53,24 +53,24 @@ namespace Unigram.ViewModels.Settings
             if (confirm == ContentDialogResult.Primary)
             {
                 Items.Remove(sender);
-                ProtoService.Send(new ToggleMessageSenderIsBlocked(sender, false));
+                ClientService.Send(new ToggleMessageSenderIsBlocked(sender, false));
             }
         }
 
         public class ItemsCollection : MvxObservableCollection<MessageSender>, ISupportIncrementalLoading
         {
-            private readonly IProtoService _protoService;
+            private readonly IClientService _clientService;
 
-            public ItemsCollection(IProtoService protoService)
+            public ItemsCollection(IClientService clientService)
             {
-                _protoService = protoService;
+                _clientService = clientService;
             }
 
             public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
             {
                 return AsyncInfo.Run(async task =>
                 {
-                    var response = await _protoService.SendAsync(new GetBlockedMessageSenders(Count, 20));
+                    var response = await _clientService.SendAsync(new GetBlockedMessageSenders(Count, 20));
                     if (response is MessageSenders chats)
                     {
                         foreach (var sender in chats.Senders)

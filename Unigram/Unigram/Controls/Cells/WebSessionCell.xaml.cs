@@ -12,15 +12,15 @@ namespace Unigram.Controls.Cells
             InitializeComponent();
         }
 
-        public void UpdateConnectedWebsite(IProtoService protoService, ConnectedWebsite session)
+        public void UpdateConnectedWebsite(IClientService clientService, ConnectedWebsite session)
         {
-            var bot = protoService.GetUser(session.BotUserId);
+            var bot = clientService.GetUser(session.BotUserId);
             if (bot == null)
             {
                 return;
             }
 
-            Photo.SetUser(protoService, bot, 18);
+            Photo.SetUser(clientService, bot, 18);
 
             Domain.Text = session.DomainName;
             Title.Text = string.Format("{0}, {1}, {2}", bot.FirstName, session.Browser, session.Platform);

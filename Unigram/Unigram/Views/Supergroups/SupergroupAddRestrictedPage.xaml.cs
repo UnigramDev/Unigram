@@ -86,7 +86,7 @@ namespace Unigram.Views.Supergroups
             var content = args.ItemContainer.ContentTemplateRoot as Grid;
             var member = args.Item as ChatMember;
 
-            var user = ViewModel.ProtoService.GetMessageSender(member.MemberId) as User;
+            var user = ViewModel.ClientService.GetMessageSender(member.MemberId) as User;
             if (user == null)
             {
                 return;
@@ -100,12 +100,12 @@ namespace Unigram.Views.Supergroups
             else if (args.Phase == 1)
             {
                 var subtitle = content.Children[2] as TextBlock;
-                subtitle.Text = ChannelParticipantToTypeConverter.Convert(ViewModel.ProtoService, member);
+                subtitle.Text = ChannelParticipantToTypeConverter.Convert(ViewModel.ClientService, member);
             }
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.SetUser(ViewModel.ProtoService, user, 36);
+                photo.SetUser(ViewModel.ClientService, user, 36);
             }
 
             if (args.Phase < 2)
@@ -128,7 +128,7 @@ namespace Unigram.Views.Supergroups
 
             var result = args.Item as SearchResult;
             var chat = result.Chat;
-            var user = result.User ?? ViewModel.ProtoService.GetUser(chat);
+            var user = result.User ?? ViewModel.ClientService.GetUser(chat);
 
             if (user == null)
             {
@@ -175,7 +175,7 @@ namespace Unigram.Views.Supergroups
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.SetUser(ViewModel.ProtoService, user, 36);
+                photo.SetUser(ViewModel.ClientService, user, 36);
             }
 
             if (args.Phase < 2)
@@ -217,7 +217,7 @@ namespace Unigram.Views.Supergroups
             else
             {
                 ContentPanel.Visibility = Visibility.Collapsed;
-                ViewModel.Search = new SearchMembersAndUsersCollection(ViewModel.ProtoService, ViewModel.Chat.Id, new ChatMembersFilterMembers(), SearchField.Text);
+                ViewModel.Search = new SearchMembersAndUsersCollection(ViewModel.ClientService, ViewModel.Chat.Id, new ChatMembersFilterMembers(), SearchField.Text);
             }
         }
     }

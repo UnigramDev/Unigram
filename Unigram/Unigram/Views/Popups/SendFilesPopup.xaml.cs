@@ -277,7 +277,7 @@ namespace Unigram.Views.Popups
                 name.Text = user.GetFullName();
                 username.Text = string.IsNullOrEmpty(user.Username) ? string.Empty : $" @{user.Username}";
 
-                photo.SetUser(ViewModel.ProtoService, user, 36);
+                photo.SetUser(ViewModel.ClientService, user, 36);
             }
         }
 

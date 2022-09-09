@@ -233,7 +233,7 @@ namespace Unigram.Views
             // Read and play messages logic:
             if (messages.Count > 0 && !Messages.IsProgrammaticScrolling && _windowContext.ActivationMode == CoreWindowActivationMode.ActivatedInForeground)
             {
-                ViewModel.ProtoService.Send(new ViewMessages(chat.Id, ViewModel.ThreadId, messages, false));
+                ViewModel.ClientService.Send(new ViewMessages(chat.Id, ViewModel.ThreadId, messages, false));
             }
 
             if (animations.Count > 0 && !intermediate)
@@ -337,11 +337,11 @@ namespace Unigram.Views
                     GalleryViewModelBase viewModel;
                     if (message.Content is MessageAnimation)
                     {
-                        viewModel = new ChatGalleryViewModel(ViewModel.ProtoService, ViewModel.StorageService, ViewModel.Aggregator, message.ChatId, ViewModel.ThreadId, message.Get());
+                        viewModel = new ChatGalleryViewModel(ViewModel.ClientService, ViewModel.StorageService, ViewModel.Aggregator, message.ChatId, ViewModel.ThreadId, message.Get());
                     }
                     else
                     {
-                        viewModel = new SingleGalleryViewModel(ViewModel.ProtoService, ViewModel.StorageService, ViewModel.Aggregator, new GalleryMessage(ViewModel.ProtoService, message.Get()));
+                        viewModel = new SingleGalleryViewModel(ViewModel.ClientService, ViewModel.StorageService, ViewModel.Aggregator, new GalleryMessage(ViewModel.ClientService, message.Get()));
                     }
 
                     await GalleryView.ShowAsync(viewModel, () => target);
@@ -564,7 +564,7 @@ namespace Unigram.Views
                             else if (file.Photo.Local.CanBeDownloaded && !file.Photo.Local.IsDownloadingActive)
                             {
                                 photo.Source = null;
-                                ViewModel.ProtoService.DownloadFile(file.Photo.Id, 1);
+                                ViewModel.ClientService.DownloadFile(file.Photo.Id, 1);
                             }
                         }
                     }

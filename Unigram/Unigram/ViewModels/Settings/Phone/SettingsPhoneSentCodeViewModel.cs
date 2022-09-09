@@ -14,8 +14,8 @@ namespace Unigram.ViewModels.Settings
     {
         private string _phoneNumber;
 
-        public SettingsPhoneSentCodeViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public SettingsPhoneSentCodeViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
             ResendCommand = new RelayCommand(ResendExecute, () => !IsLoading);
@@ -26,7 +26,7 @@ namespace Unigram.ViewModels.Settings
             var authState = GetAuthorizationState();
             if (authState is AuthenticationCodeInfo codeInfo)
             {
-                _phoneNumber = CacheService.Options.GetValue<string>("x_phonenumber");
+                _phoneNumber = ClientService.Options.GetValue<string>("x_phonenumber");
                 _codeInfo = codeInfo;
 
                 RaisePropertyChanged(nameof(CodeInfo));
@@ -106,7 +106,7 @@ namespace Unigram.ViewModels.Settings
 
 
             //CheckChangePhoneNumberCode
-            var response = await ProtoService.SendAsync(new CheckChangePhoneNumberCode(_phoneCode));
+            var response = await ClientService.SendAsync(new CheckChangePhoneNumberCode(_phoneCode));
             if (response is Ok)
             {
                 while (NavigationService.Frame.BackStackDepth > 1)
@@ -184,7 +184,7 @@ namespace Unigram.ViewModels.Settings
 
             var function = new ResendChangePhoneNumberCode();
 
-            var response = await ProtoService.SendAsync(function);
+            var response = await ClientService.SendAsync(function);
             if (response is AuthenticationCodeInfo info)
             {
                 BootStrapper.Current.SessionState["x_codeinfo"] = info;

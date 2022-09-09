@@ -4,7 +4,7 @@ using Unigram.Native;
 
 namespace Unigram.Services
 {
-    public partial class ProtoService
+    public partial class ClientService
     {
         private File ProcessFile(File file)
         {

@@ -27,13 +27,13 @@ namespace Unigram.ViewModels.Drawers
 
         private readonly StickerSetViewModel _reactionSet;
 
-        public EmojiDrawerViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public EmojiDrawerViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             //Items = new DiffObservableCollection<object>(new EmojiSetDiffHandler());
             Items = new MvxObservableCollection<object>();
 
-            _reactionSet = new StickerSetViewModel(ProtoService, new StickerSetInfo
+            _reactionSet = new StickerSetViewModel(ClientService, new StickerSetInfo
             {
                 Title = string.Empty,
                 Name = "tg/recentlyUsed"
@@ -128,18 +128,18 @@ namespace Unigram.ViewModels.Drawers
                     if (index > -1 && index != i)
                     {
                         destination.RemoveAt(index);
-                        destination.Insert(Math.Min(i, destination.Count), new StickerViewModel(ProtoService, sticker));
+                        destination.Insert(Math.Min(i, destination.Count), new StickerViewModel(ClientService, sticker));
                     }
                     else if (index == -1)
                     {
-                        destination.Insert(Math.Min(i, destination.Count), new StickerViewModel(ProtoService, sticker));
+                        destination.Insert(Math.Min(i, destination.Count), new StickerViewModel(ClientService, sticker));
                     }
                 }
             }
             else
             {
                 destination.Clear();
-                destination.AddRange(origin.Select(x => new StickerViewModel(ProtoService, x)));
+                destination.AddRange(origin.Select(x => new StickerViewModel(ClientService, x)));
             }
         }
 
@@ -192,7 +192,7 @@ namespace Unigram.ViewModels.Drawers
             }
             else
             {
-                var items = SearchStickers = new SearchStickerSetsCollection(ProtoService, new StickerTypeRegular(), query, 0);
+                var items = SearchStickers = new SearchStickerSetsCollection(ClientService, new StickerTypeRegular(), query, 0);
                 await items.LoadMoreItemsAsync(0);
             }
         }
@@ -211,8 +211,8 @@ namespace Unigram.ViewModels.Drawers
 
             _updated = true;
 
-            var result1 = await ProtoService.SendAsync(new GetInstalledStickerSets(new StickerTypeCustomEmoji()));
-            var result2 = await ProtoService.SendAsync(new GetTrendingStickerSets(new StickerTypeCustomEmoji(), 0, 100));
+            var result1 = await ClientService.SendAsync(new GetInstalledStickerSets(new StickerTypeCustomEmoji()));
+            var result2 = await ClientService.SendAsync(new GetTrendingStickerSets(new StickerTypeCustomEmoji(), 0, 100));
 
             if (result1 is StickerSets sets && result2 is TrendingStickerSets trending)
             {
@@ -245,7 +245,7 @@ namespace Unigram.ViewModels.Drawers
 
                     if (customEmoji.Count > 0)
                     {
-                        var response = await ProtoService.SendAsync(new GetCustomEmojiStickers(customEmoji));
+                        var response = await ClientService.SendAsync(new GetCustomEmojiStickers(customEmoji));
                         if (response is Stickers customEmojiStickers)
                         {
                             foreach (var sticker in customEmojiStickers.StickersValue)
@@ -254,7 +254,7 @@ namespace Unigram.ViewModels.Drawers
                                 {
                                     if (source[i] is long customEmojiId && customEmojiId == sticker.CustomEmojiId)
                                     {
-                                        source[i] = new StickerViewModel(ProtoService, sticker);
+                                        source[i] = new StickerViewModel(ClientService, sticker);
                                     }
                                 }
                             }
@@ -280,15 +280,15 @@ namespace Unigram.ViewModels.Drawers
 
                 if (sets.Sets.Count > 0)
                 {
-                    var result3 = await ProtoService.SendAsync(new GetStickerSet(sets.Sets[0].Id));
+                    var result3 = await ClientService.SendAsync(new GetStickerSet(sets.Sets[0].Id));
                     if (result3 is StickerSet set)
                     {
-                        installedSet.Add(new StickerSetViewModel(ProtoService, sets.Sets[0], set));
-                        installedSet.AddRange(sets.Sets.Skip(1).Select(x => new StickerSetViewModel(ProtoService, x)));
+                        installedSet.Add(new StickerSetViewModel(ClientService, sets.Sets[0], set));
+                        installedSet.AddRange(sets.Sets.Skip(1).Select(x => new StickerSetViewModel(ClientService, x)));
                     }
                     else
                     {
-                        installedSet.AddRange(sets.Sets.Select(x => new StickerSetViewModel(ProtoService, x)));
+                        installedSet.AddRange(sets.Sets.Select(x => new StickerSetViewModel(ClientService, x)));
                     }
 
                     var existing = installedSet.Select(x => x.Id).ToArray();
@@ -300,12 +300,12 @@ namespace Unigram.ViewModels.Drawers
                             continue;
                         }
 
-                        installedSet.Add(new StickerSetViewModel(ProtoService, item));
+                        installedSet.Add(new StickerSetViewModel(ClientService, item));
                     }
                 }
                 else if (trending.Sets.Count > 0)
                 {
-                    installedSet.AddRange(trending.Sets.Select(x => new StickerSetViewModel(ProtoService, x)));
+                    installedSet.AddRange(trending.Sets.Select(x => new StickerSetViewModel(ClientService, x)));
                 }
 
                 if (_mode == EmojiDrawerMode.Reactions)
@@ -322,7 +322,7 @@ namespace Unigram.ViewModels.Drawers
 
         public async Task UpdateReactions(IList<Reaction> reactions2)
         {
-            var reactions = await ProtoService.GetAllReactionsAsync();
+            var reactions = await ClientService.GetAllReactionsAsync();
             _reactionSet.Update(reactions.Select(x => x.Value.ActivateAnimation));
             _ = UpdateAsync();
         }
@@ -331,9 +331,9 @@ namespace Unigram.ViewModels.Drawers
         {
             _ = UpdateAsync();
 
-            var themedResponse = await ProtoService.SendAsync(new GetThemedEmojiStatuses()) as EmojiStatuses;
-            var recentResponse = await ProtoService.SendAsync(new GetRecentEmojiStatuses()) as EmojiStatuses;
-            var defaulResponse = await ProtoService.SendAsync(new GetDefaultEmojiStatuses()) as EmojiStatuses;
+            var themedResponse = await ClientService.SendAsync(new GetThemedEmojiStatuses()) as EmojiStatuses;
+            var recentResponse = await ClientService.SendAsync(new GetRecentEmojiStatuses()) as EmojiStatuses;
+            var defaulResponse = await ClientService.SendAsync(new GetDefaultEmojiStatuses()) as EmojiStatuses;
 
             var themed = themedResponse?.EmojiStatusesValue ?? Array.Empty<EmojiStatus>();
             var recent = recentResponse?.EmojiStatusesValue ?? Array.Empty<EmojiStatus>();
@@ -358,7 +358,7 @@ namespace Unigram.ViewModels.Drawers
                 i++;
             }
 
-            var response = await ProtoService.SendAsync(new GetCustomEmojiStickers(emoji));
+            var response = await ClientService.SendAsync(new GetCustomEmojiStickers(emoji));
             if (response is Stickers stickers)
             {
                 _reactionSet.Update(stickers.StickersValue.OrderBy(x => emoji.IndexOf(x.CustomEmojiId)));

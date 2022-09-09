@@ -16,8 +16,8 @@ namespace Unigram.ViewModels.Chats
 {
     public class ChatStatisticsViewModel : TLViewModelBase
     {
-        public ChatStatisticsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public ChatStatisticsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             Items = new MvxObservableCollection<ChartViewData>();
 
@@ -82,7 +82,7 @@ namespace Unigram.ViewModels.Chats
         public RelayCommand<long> OpenProfileCommand { get; }
         private async void OpenProfileExecute(long userId)
         {
-            var response = await ProtoService.SendAsync(new CreatePrivateChat(userId, false));
+            var response = await ClientService.SendAsync(new CreatePrivateChat(userId, false));
             if (response is Chat chat)
             {
                 NavigationService.Navigate(typeof(ProfilePage), chat.Id);
@@ -101,11 +101,11 @@ namespace Unigram.ViewModels.Chats
 
             IsLoading = true;
 
-            Chat = ProtoService.GetChat(chatId);
+            Chat = ClientService.GetChat(chatId);
 
 
 
-            var response = await ProtoService.SendAsync(new GetChatStatistics(chatId, false));
+            var response = await ClientService.SendAsync(new GetChatStatistics(chatId, false));
             if (response is ChatStatistics statistics)
             {
                 Statistics = statistics;
@@ -128,7 +128,7 @@ namespace Unigram.ViewModels.Chats
                         ChartViewData.Create(channelStats.InstantViewInteractionGraph, Strings.Resources.IVInteractionsChartTitle, /*1*/6)
                     };
 
-                    var messages = await ProtoService.SendAsync(new GetMessages(chatId, channelStats.RecentMessageInteractions.Select(x => x.MessageId).ToArray())) as Messages;
+                    var messages = await ClientService.SendAsync(new GetMessages(chatId, channelStats.RecentMessageInteractions.Select(x => x.MessageId).ToArray())) as Messages;
                     if (messages == null)
                     {
                         return;
@@ -308,9 +308,9 @@ namespace Unigram.ViewModels.Chats
             return null;
         }
 
-        public async Task<bool> LoadAsync(IProtoService protoService, long chatId)
+        public async Task<bool> LoadAsync(IClientService clientService, long chatId)
         {
-            var graph = await protoService.SendAsync(new GetStatisticalGraph(chatId, token, 0)) as StatisticalGraph;
+            var graph = await clientService.SendAsync(new GetStatisticalGraph(chatId, token, 0)) as StatisticalGraph;
             var viewData = this;
 
             if (graph is null or StatisticalGraphError)

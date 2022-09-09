@@ -14,8 +14,8 @@ namespace Unigram.ViewModels
 
         private WeakAction _updateSelection;
 
-        public MessageViewModel(IProtoService protoService, IPlaybackService playbackService, IMessageDelegate delegato, Message message)
-            : base(protoService, message)
+        public MessageViewModel(IClientService clientService, IPlaybackService playbackService, IMessageDelegate delegato, Message message)
+            : base(clientService, message)
         {
             _playbackService = playbackService;
             _delegate = new WeakReference(delegato);
@@ -61,7 +61,7 @@ namespace Unigram.ViewModels
         public bool IsService() => _message.IsService();
 
         private bool? _isSaved;
-        public bool IsSaved => _isSaved ??= _message.IsSaved(_protoService.Options.MyId);
+        public bool IsSaved => _isSaved ??= _message.IsSaved(_clientService.Options.MyId);
 
         public bool IsSecret() => _message.IsSecret();
 
@@ -78,11 +78,11 @@ namespace Unigram.ViewModels
         {
             if (_message.SenderId is MessageSenderUser user)
             {
-                return ProtoService.GetUser(user.UserId);
+                return ClientService.GetUser(user.UserId);
             }
             else if (_message.SenderId is MessageSenderChat chat)
             {
-                return ProtoService.GetChat(chat.ChatId);
+                return ClientService.GetChat(chat.ChatId);
             }
 
             return null;
@@ -92,10 +92,10 @@ namespace Unigram.ViewModels
         {
             if (_message.ViaBotUserId != 0)
             {
-                return ProtoService.GetUser(_message.ViaBotUserId);
+                return ClientService.GetUser(_message.ViaBotUserId);
             }
 
-            if (ProtoService.TryGetUser(_message.SenderId, out User user) && user.Type is UserTypeBot)
+            if (ClientService.TryGetUser(_message.SenderId, out User user) && user.Type is UserTypeBot)
             {
                 return user;
             }
@@ -105,7 +105,7 @@ namespace Unigram.ViewModels
 
         public Chat GetChat()
         {
-            return ProtoService.GetChat(_message.ChatId);
+            return ClientService.GetChat(_message.ChatId);
         }
 
         public void Replace(Message message)
@@ -145,7 +145,7 @@ namespace Unigram.ViewModels
                     return false;
                 }
 
-                var user = ProtoService.GetUser(senderUser.UserId);
+                var user = ClientService.GetUser(senderUser.UserId);
                 if (user != null && user.Type is UserTypeBot)
                 {
                     return true;
@@ -158,10 +158,10 @@ namespace Unigram.ViewModels
                         return true;
                     }
 
-                    var chat = ProtoService.GetChat(ChatId);
+                    var chat = ClientService.GetChat(ChatId);
                     if (chat != null && chat.Type is ChatTypeSupergroup super && !super.IsChannel)
                     {
-                        var supergroup = ProtoService.GetSupergroup(super.SupergroupId);
+                        var supergroup = ClientService.GetSupergroup(super.SupergroupId);
                         return supergroup != null && supergroup.Username.Length > 0 && Content is not MessageContact and not MessageLocation;
                     }
                 }
@@ -293,16 +293,16 @@ namespace Unigram.ViewModels
 
     public class MessageWithOwner
     {
-        protected readonly IProtoService _protoService;
+        protected readonly IClientService _clientService;
         protected Message _message;
 
-        public MessageWithOwner(IProtoService protoService, Message message)
+        public MessageWithOwner(IClientService clientService, Message message)
         {
-            _protoService = protoService;
+            _clientService = clientService;
             _message = message;
         }
 
-        public IProtoService ProtoService => _protoService;
+        public IClientService ClientService => _clientService;
 
         public ReplyMarkup ReplyMarkup { get => _message.ReplyMarkup; set => _message.ReplyMarkup = value; }
         public MessageContent Content { get => _message.Content; set => _message.Content = value; }

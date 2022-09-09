@@ -19,7 +19,7 @@ namespace Unigram.Controls
     {
         private readonly DispatcherTimer _scheduledTimer;
 
-        private IProtoService _protoService;
+        private IClientService _clientService;
 
         private UIElement _parent;
         private GroupCall _call;
@@ -45,22 +45,22 @@ namespace Unigram.Controls
             }
         }
 
-        public void InitializeParent(UIElement parent, IProtoService protoService)
+        public void InitializeParent(UIElement parent, IClientService clientService)
         {
-            _protoService = protoService;
+            _clientService = clientService;
             _parent = parent;
             ElementCompositionPreview.SetIsTranslationEnabled(parent, true);
         }
 
         private void RecentUsers_RecentUserHeadChanged(ProfilePicture photo, MessageSender sender)
         {
-            if (_protoService.TryGetUser(sender, out User user))
+            if (_clientService.TryGetUser(sender, out User user))
             {
-                photo.SetUser(_protoService, user, 32);
+                photo.SetUser(_clientService, user, 32);
             }
-            else if (_protoService.TryGetChat(sender, out Chat chat))
+            else if (_clientService.TryGetChat(sender, out Chat chat))
             {
-                photo.SetChat(_protoService, chat, 32);
+                photo.SetChat(_clientService, chat, 32);
             }
             else
             {

@@ -21,7 +21,7 @@ namespace Unigram.Views
         {
             if (e.NavigationMode == NavigationMode.Back && Frame.ForwardStack.Any(x => x.SourcePageType == typeof(AuthorizationPage)))
             {
-                TLContainer.Current.Resolve<IProtoService>().Send(new Destroy());
+                TLContainer.Current.Resolve<IClientService>().Send(new Destroy());
             }
         }
     }

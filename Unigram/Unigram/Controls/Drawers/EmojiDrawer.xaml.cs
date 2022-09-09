@@ -233,7 +233,7 @@ namespace Unigram.Controls.Drawers
                     var groupContainer = List.GroupHeaderContainerFromItemContainer(List.ContainerFromItem(sticker)) as GridViewHeaderItem;
                     if (groupContainer.Content is StickerSetViewModel group)
                     {
-                        var response = await ViewModel.ProtoService.SendAsync(new GetStickerSet(group.Id));
+                        var response = await ViewModel.ClientService.SendAsync(new GetStickerSet(group.Id));
                         if (response is StickerSet full)
                         {
                             group.Update(full, false);
@@ -270,7 +270,7 @@ namespace Unigram.Controls.Drawers
             }
             else
             {
-                EmojiCollection.Source = await Emoji.SearchAsync(ViewModel.ProtoService, FieldEmoji.Text, _selected);
+                EmojiCollection.Source = await Emoji.SearchAsync(ViewModel.ClientService, FieldEmoji.Text, _selected);
             }
         }
 
@@ -524,7 +524,7 @@ namespace Unigram.Controls.Drawers
 
                 //Debug.WriteLine("Loading sticker set " + group.Id);
 
-                var response = await ViewModel.ProtoService.SendAsync(new GetStickerSet(group.Id));
+                var response = await ViewModel.ClientService.SendAsync(new GetStickerSet(group.Id));
                 if (response is StickerSet full)
                 {
                     group.Update(full, false);
@@ -585,7 +585,7 @@ namespace Unigram.Controls.Drawers
 
         private IReadOnlyDictionary<int, int> GetColorReplacements(long setId)
         {
-            if (setId == ViewModel.ProtoService.Options.ThemedEmojiStatusesStickerSetId)
+            if (setId == ViewModel.ClientService.Options.ThemedEmojiStatusesStickerSetId)
             {
                 if (_currentReplacement != Theme.Accent)
                 {
@@ -655,11 +655,11 @@ namespace Unigram.Controls.Drawers
                 CompositionPathParser.ParseThumbnail(sticker, out ShapeVisual visual, false);
                 ElementCompositionPreview.SetElementChildVisual(content.Children[0], visual);
 
-                UpdateManager.Subscribe(content, ViewModel.ProtoService, file, handler, true);
+                UpdateManager.Subscribe(content, ViewModel.ClientService, file, handler, true);
 
                 if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive /*&& args.Phase == 0*/)
                 {
-                    ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                    ViewModel.ClientService.DownloadFile(file.Id, 1);
                 }
             }
         }

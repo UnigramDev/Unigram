@@ -22,7 +22,7 @@ namespace Unigram.Views
             var flyout = new MenuFlyout();
             flyout.CreateFlyoutItem(ViewModel.StickerViewCommand, sticker, Strings.Resources.ViewPackPreview, new FontIcon { Glyph = Icons.Sticker });
 
-            if (ViewModel.ProtoService.IsStickerFavorite(sticker.StickerValue.Id))
+            if (ViewModel.ClientService.IsStickerFavorite(sticker.StickerValue.Id))
             {
                 flyout.CreateFlyoutItem(ViewModel.StickerUnfaveCommand, sticker, Strings.Resources.DeleteFromFavorites, new FontIcon { Glyph = Icons.StarOff });
             }
@@ -31,7 +31,7 @@ namespace Unigram.Views
                 flyout.CreateFlyoutItem(ViewModel.StickerFaveCommand, sticker, Strings.Resources.AddToFavorites, new FontIcon { Glyph = Icons.Star });
             }
 
-            if (ViewModel.ProtoService.IsStickerRecent(sticker.StickerValue.Id))
+            if (ViewModel.ClientService.IsStickerRecent(sticker.StickerValue.Id))
             {
                 flyout.CreateFlyoutItem(ViewModel.StickerDeleteCommand, sticker, Strings.Resources.DeleteFromRecent, new FontIcon { Glyph = Icons.Delete });
             }
@@ -44,7 +44,7 @@ namespace Unigram.Views
                     return;
                 }
 
-                var self = ViewModel.CacheService.IsSavedMessages(chat);
+                var self = ViewModel.ClientService.IsSavedMessages(chat);
 
                 flyout.CreateFlyoutSeparator();
                 flyout.CreateFlyoutItem(new RelayCommand<Sticker>(anim => ViewModel.StickerSendExecute(anim, null, true)), sticker, Strings.Resources.SendWithoutSound, new FontIcon { Glyph = Icons.AlertOff });
@@ -66,7 +66,7 @@ namespace Unigram.Views
 
             var flyout = new MenuFlyout();
 
-            if (ViewModel.ProtoService.IsAnimationSaved(animation.AnimationValue.Id))
+            if (ViewModel.ClientService.IsAnimationSaved(animation.AnimationValue.Id))
             {
                 flyout.CreateFlyoutItem(ViewModel.AnimationDeleteCommand, animation, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
             }
@@ -83,7 +83,7 @@ namespace Unigram.Views
                     return;
                 }
 
-                var self = ViewModel.CacheService.IsSavedMessages(chat);
+                var self = ViewModel.ClientService.IsSavedMessages(chat);
 
                 flyout.CreateFlyoutSeparator();
                 flyout.CreateFlyoutItem(new RelayCommand<Animation>(anim => ViewModel.AnimationSendExecute(anim, null, true)), animation, Strings.Resources.SendWithoutSound, new FontIcon { Glyph = Icons.AlertOff });

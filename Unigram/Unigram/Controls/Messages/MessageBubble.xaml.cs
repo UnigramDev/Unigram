@@ -135,7 +135,7 @@ namespace Unigram.Controls.Messages
 
             if (AllowDrag(_message, out string path))
             {
-                var file = await _message.ProtoService.GetFileAsync(path);
+                var file = await _message.ClientService.GetFileAsync(path);
                 if (file != null)
                 {
                     using (var stream = new InMemoryRandomAccessStream())
@@ -277,7 +277,7 @@ namespace Unigram.Controls.Messages
 
             if (message.IsSaved)
             {
-                title = message.ProtoService.GetTitle(message.ForwardInfo);
+                title = message.ClientService.GetTitle(message.ForwardInfo);
             }
             else if (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup supergroup && !supergroup.IsChannel)
             {
@@ -285,14 +285,14 @@ namespace Unigram.Controls.Messages
                 {
                     title = null;
                 }
-                else if (message.ProtoService.TryGetUser(message.SenderId, out User senderUser))
+                else if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
                 {
                     senderBot = senderUser.Type is UserTypeBot;
                     title = senderUser.GetFullName();
                 }
-                else if (message.ProtoService.TryGetChat(message.SenderId, out Chat senderChat))
+                else if (message.ClientService.TryGetChat(message.SenderId, out Chat senderChat))
                 {
-                    title = message.ProtoService.GetTitle(senderChat);
+                    title = message.ClientService.GetTitle(senderChat);
                 }
             }
 
@@ -304,13 +304,13 @@ namespace Unigram.Controls.Messages
 
             if (message.ReplyToMessage != null)
             {
-                if (message.ProtoService.TryGetUser(message.ReplyToMessage.SenderId, out User replyUser))
+                if (message.ClientService.TryGetUser(message.ReplyToMessage.SenderId, out User replyUser))
                 {
                     builder.AppendLine($"{Strings.Resources.AccDescrReplying} {replyUser.GetFullName()}. ");
                 }
-                else if (message.ProtoService.TryGetChat(message.ReplyToMessage.SenderId, out Chat replyChat))
+                else if (message.ClientService.TryGetChat(message.ReplyToMessage.SenderId, out Chat replyChat))
                 {
-                    builder.AppendLine($"{Strings.Resources.AccDescrReplying} {message.ProtoService.GetTitle(replyChat)}. ");
+                    builder.AppendLine($"{Strings.Resources.AccDescrReplying} {message.ClientService.GetTitle(replyChat)}. ");
                 }
             }
 
@@ -318,22 +318,22 @@ namespace Unigram.Controls.Messages
             {
                 if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
                 {
-                    title = message.ProtoService.GetUser(fromUser.SenderUserId)?.GetFullName();
+                    title = message.ClientService.GetUser(fromUser.SenderUserId)?.GetFullName();
                     builder.AppendLine($"{Strings.Resources.AccDescrForwarding} {title}. ");
                 }
                 if (message.ForwardInfo?.Origin is MessageForwardOriginChat fromChat)
                 {
-                    title = message.ProtoService.GetTitle(message.ProtoService.GetChat(fromChat.SenderChatId));
+                    title = message.ClientService.GetTitle(message.ClientService.GetChat(fromChat.SenderChatId));
                     builder.AppendLine($"{Strings.Resources.AccDescrForwarding} {title}. ");
                 }
                 else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel)
                 {
-                    title = message.ProtoService.GetTitle(message.ProtoService.GetChat(fromChannel.ChatId));
+                    title = message.ClientService.GetTitle(message.ClientService.GetChat(fromChannel.ChatId));
                     builder.AppendLine($"{Strings.Resources.AccDescrForwarding} {title}. ");
                 }
             }
 
-            builder.Append(Automation.GetSummary(message.ProtoService, message.Get(), true));
+            builder.Append(Automation.GetSummary(message.ClientService, message.Get(), true));
 
             if (message.AuthorSignature.Length > 0)
             {
@@ -494,17 +494,17 @@ namespace Unigram.Controls.Messages
 
                         if (message.IsSaved)
                         {
-                            if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser && message.ProtoService.TryGetUser(fromUser.SenderUserId, out User fromUserUser))
+                            if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser && message.ClientService.TryGetUser(fromUser.SenderUserId, out User fromUserUser))
                             {
-                                Photo.SetUser(message.ProtoService, fromUserUser, 30);
+                                Photo.SetUser(message.ClientService, fromUserUser, 30);
                             }
-                            else if (message.ForwardInfo?.Origin is MessageForwardOriginChat fromChat && message.ProtoService.TryGetChat(fromChat.SenderChatId, out Chat fromChatChat))
+                            else if (message.ForwardInfo?.Origin is MessageForwardOriginChat fromChat && message.ClientService.TryGetChat(fromChat.SenderChatId, out Chat fromChatChat))
                             {
-                                Photo.SetChat(message.ProtoService, fromChatChat, 30);
+                                Photo.SetChat(message.ClientService, fromChatChat, 30);
                             }
-                            else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel && message.ProtoService.TryGetChat(fromChannel.ChatId, out Chat fromChannelChat))
+                            else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel && message.ClientService.TryGetChat(fromChannel.ChatId, out Chat fromChannelChat))
                             {
-                                Photo.SetChat(message.ProtoService, fromChannelChat, 30);
+                                Photo.SetChat(message.ClientService, fromChannelChat, 30);
                             }
                             else if (message.ForwardInfo?.Origin is MessageForwardOriginMessageImport fromImport)
                             {
@@ -515,13 +515,13 @@ namespace Unigram.Controls.Messages
                                 Photo.Source = PlaceholderHelper.GetNameForUser(fromHiddenUser.SenderName, 30);
                             }
                         }
-                        else if (message.ProtoService.TryGetUser(message.SenderId, out User senderUser))
+                        else if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
                         {
-                            Photo.SetUser(message.ProtoService, senderUser, 30);
+                            Photo.SetUser(message.ClientService, senderUser, 30);
                         }
-                        else if (message.ProtoService.TryGetChat(message.SenderId, out Chat senderChat))
+                        else if (message.ClientService.TryGetChat(message.SenderId, out Chat senderChat))
                         {
-                            Photo.SetChat(message.ProtoService, senderChat, 30);
+                            Photo.SetChat(message.ClientService, senderChat, 30);
                         }
 
                         _photoId = message.Id;
@@ -574,7 +574,7 @@ namespace Unigram.Controls.Messages
                     //await MessagePopup.ShowAsync(Strings.Resources.HidAccount, Strings.Resources.AppName, Strings.Resources.OK);
                 }
             }
-            else if (message.ProtoService.TryGetChat(message.SenderId, out Chat senderChat))
+            else if (message.ClientService.TryGetChat(message.SenderId, out Chat senderChat))
             {
                 if (senderChat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
                 {
@@ -624,7 +624,7 @@ namespace Unigram.Controls.Messages
                     ? Locale.Declension("Comments", info.ReplyCount)
                     : Strings.Resources.LeaveAComment);
             }
-            else if (message.ChatId == message.ProtoService.Options.RepliesBotChatId && Action != null)
+            else if (message.ChatId == message.ClientService.Options.RepliesBotChatId && Action != null)
             {
                 Action.Visibility = Visibility.Collapsed;
             }
@@ -769,16 +769,16 @@ namespace Unigram.Controls.Messages
 
                     if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
                     {
-                        title = message.ProtoService.GetUser(fromUser.SenderUserId)?.GetFullName();
+                        title = message.ClientService.GetUser(fromUser.SenderUserId)?.GetFullName();
                         foreground = PlaceholderHelper.GetBrush(fromUser.SenderUserId);
                     }
                     else if (message.ForwardInfo?.Origin is MessageForwardOriginChat fromChat)
                     {
-                        title = message.ProtoService.GetTitle(message.ProtoService.GetChat(fromChat.SenderChatId));
+                        title = message.ClientService.GetTitle(message.ClientService.GetChat(fromChat.SenderChatId));
                     }
                     else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel)
                     {
-                        title = message.ProtoService.GetTitle(message.ProtoService.GetChat(fromChannel.ChatId));
+                        title = message.ClientService.GetTitle(message.ClientService.GetChat(fromChannel.ChatId));
                     }
                     else if (message.ForwardInfo?.Origin is MessageForwardOriginMessageImport fromImport)
                     {
@@ -802,7 +802,7 @@ namespace Unigram.Controls.Messages
                     HeaderLabel.Inlines.Add(hyperlink);
                     shown = true;
                 }
-                else if (message.ProtoService.TryGetUser(message.SenderId, out User senderUser))
+                else if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
                 {
                     var hyperlink = new Hyperlink();
                     hyperlink.Inlines.Add(CreateRun(senderUser.GetFullName()));
@@ -813,7 +813,7 @@ namespace Unigram.Controls.Messages
                     HeaderLabel.Inlines.Add(hyperlink);
                     shown = true;
                 }
-                else if (message.ProtoService.TryGetChat(message.SenderId, out Chat senderChat))
+                else if (message.ClientService.TryGetChat(message.SenderId, out Chat senderChat))
                 {
                     var hyperlink = new Hyperlink();
                     hyperlink.Inlines.Add(CreateRun(senderChat.Title));
@@ -828,7 +828,7 @@ namespace Unigram.Controls.Messages
             else if (!light && message.IsChannelPost && chat.Type is ChatTypeSupergroup && string.IsNullOrEmpty(message.ForwardInfo?.PublicServiceAnnouncementType))
             {
                 var hyperlink = new Hyperlink();
-                hyperlink.Inlines.Add(CreateRun(message.ProtoService.GetTitle(chat)));
+                hyperlink.Inlines.Add(CreateRun(message.ClientService.GetTitle(chat)));
                 hyperlink.UnderlineStyle = UnderlineStyle.None;
                 //hyperlink.Foreground = Convert.Bubble(message.ChatId);
                 hyperlink.Click += From_Click;
@@ -843,16 +843,16 @@ namespace Unigram.Controls.Messages
 
                 if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
                 {
-                    title = message.ProtoService.GetUser(fromUser.SenderUserId)?.GetFullName();
+                    title = message.ClientService.GetUser(fromUser.SenderUserId)?.GetFullName();
                     foreground = PlaceholderHelper.GetBrush(fromUser.SenderUserId);
                 }
                 else if (message.ForwardInfo?.Origin is MessageForwardOriginChat fromChat)
                 {
-                    title = message.ProtoService.GetTitle(message.ProtoService.GetChat(fromChat.SenderChatId));
+                    title = message.ClientService.GetTitle(message.ClientService.GetChat(fromChat.SenderChatId));
                 }
                 else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel)
                 {
-                    title = message.ProtoService.GetTitle(message.ProtoService.GetChat(fromChannel.ChatId));
+                    title = message.ClientService.GetTitle(message.ClientService.GetChat(fromChannel.ChatId));
                 }
                 else if (message.ForwardInfo?.Origin is MessageForwardOriginMessageImport fromImport)
                 {
@@ -919,15 +919,15 @@ namespace Unigram.Controls.Messages
 
                 if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
                 {
-                    title = message.ProtoService.GetUser(fromUser.SenderUserId)?.GetFullName();
+                    title = message.ClientService.GetUser(fromUser.SenderUserId)?.GetFullName();
                 }
                 else if (message.ForwardInfo?.Origin is MessageForwardOriginChat fromChat)
                 {
-                    title = message.ProtoService.GetTitle(message.ProtoService.GetChat(fromChat.SenderChatId));
+                    title = message.ClientService.GetTitle(message.ClientService.GetChat(fromChat.SenderChatId));
                 }
                 else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel)
                 {
-                    title = message.ProtoService.GetTitle(message.ProtoService.GetChat(fromChannel.ChatId));
+                    title = message.ClientService.GetTitle(message.ClientService.GetChat(fromChannel.ChatId));
                 }
                 else if (message.ForwardInfo?.Origin is MessageForwardOriginMessageImport fromImport)
                 {
@@ -961,7 +961,7 @@ namespace Unigram.Controls.Messages
                 }
             }
 
-            var viaBot = message.ProtoService.GetUser(message.ViaBotUserId);
+            var viaBot = message.ClientService.GetUser(message.ViaBotUserId);
             if (viaBot != null && viaBot.Type is UserTypeBot && !string.IsNullOrEmpty(viaBot.Username))
             {
                 var hyperlink = new Hyperlink();
@@ -1054,7 +1054,7 @@ namespace Unigram.Controls.Messages
                 return;
             }
 
-            if (message.ProtoService.TryGetChat(message.SenderId, out Chat senderChat))
+            if (message.ClientService.TryGetChat(message.SenderId, out Chat senderChat))
             {
                 if (senderChat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
                 {
@@ -1152,7 +1152,7 @@ namespace Unigram.Controls.Messages
             var info = message.InteractionInfo?.ReplyInfo;
             if (info == null || !message.IsChannelPost || !message.CanGetMessageThread)
             {
-                if (message.ChatId == message.ProtoService.Options.RepliesBotChatId)
+                if (message.ChatId == message.ClientService.Options.RepliesBotChatId)
                 {
                     if (Thread == null)
                     {
@@ -1198,13 +1198,13 @@ namespace Unigram.Controls.Messages
                     picture.Height = 24;
                     picture.IsEnabled = false;
 
-                    if (message.ProtoService.TryGetUser(sender, out User user))
+                    if (message.ClientService.TryGetUser(sender, out User user))
                     {
-                        picture.SetUser(message.ProtoService, user, 24);
+                        picture.SetUser(message.ClientService, user, 24);
                     }
-                    else if (message.ProtoService.TryGetChat(sender, out Chat chat))
+                    else if (message.ClientService.TryGetChat(sender, out Chat chat))
                     {
-                        picture.SetChat(message.ProtoService, chat, 24);
+                        picture.SetChat(message.ClientService, chat, 24);
                     }
 
                     if (RecentRepliers.Children.Count > 0)
@@ -1515,8 +1515,8 @@ namespace Unigram.Controls.Messages
                 {
                     Media.Child = new Border
                     {
-                        Width = 180 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f),
-                        Height = 180 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f)
+                        Width = 180 * message.ClientService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f),
+                        Height = 180 * message.ClientService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f)
                     };
                 }
                 else
@@ -1959,7 +1959,7 @@ namespace Unigram.Controls.Messages
             if (emojis.Count > 0)
             {
                 CustomEmoji ??= GetTemplateChild(nameof(CustomEmoji)) as CustomEmojiCanvas;
-                CustomEmoji.UpdateEntities(message.ProtoService, emojis);
+                CustomEmoji.UpdateEntities(message.ClientService, emojis);
 
                 if (_playing)
                 {

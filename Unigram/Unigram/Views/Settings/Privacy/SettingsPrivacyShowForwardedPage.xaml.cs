@@ -33,13 +33,13 @@ namespace Unigram.Views.Settings.Privacy
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            var user = ViewModel.CacheService.GetUser(ViewModel.CacheService.Options.MyId);
+            var user = ViewModel.ClientService.GetUser(ViewModel.ClientService.Options.MyId);
             if (user != null)
             {
                 MessagePreview.Mockup(Strings.Resources.PrivacyForwardsMessageLine, user.GetFullName(), true, false, DateTime.Now);
             }
 
-            BackgroundPresenter.Update(ViewModel.SessionId, ViewModel.ProtoService, ViewModel.Aggregator);
+            BackgroundPresenter.Update(ViewModel.SessionId, ViewModel.ClientService, ViewModel.Aggregator);
         }
 
         #region Binding

@@ -12,8 +12,8 @@ namespace Unigram.ViewModels.Settings
 {
     public class SettingsQuickReactionViewModel : TLViewModelBase
     {
-        public SettingsQuickReactionViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public SettingsQuickReactionViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             Items = new MvxObservableCollection<SettingsReactionOption>();
 
@@ -34,13 +34,13 @@ namespace Unigram.ViewModels.Settings
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            //if (ProtoService.IsPremium)
+            //if (ClientService.IsPremium)
             //{
-            //    Items.ReplaceWith(CacheService.Reactions.Where(x => x.Value.IsActive).Select(x => new SettingsReactionOption(this, x.Value, x.Key == ProtoService.Options.DefaultReaction && !IsQuickReplySelected)));
+            //    Items.ReplaceWith(ClientService.Reactions.Where(x => x.Value.IsActive).Select(x => new SettingsReactionOption(this, x.Value, x.Key == ClientService.Options.DefaultReaction && !IsQuickReplySelected)));
             //}
             //else
             //{
-            //    Items.ReplaceWith(CacheService.Reactions.Where(x => x.Value.IsActive && !x.Value.IsPremium).Select(x => new SettingsReactionOption(this, x.Value, x.Key == ProtoService.Options.DefaultReaction && !IsQuickReplySelected)));
+            //    Items.ReplaceWith(ClientService.Reactions.Where(x => x.Value.IsActive && !x.Value.IsPremium).Select(x => new SettingsReactionOption(this, x.Value, x.Key == ClientService.Options.DefaultReaction && !IsQuickReplySelected)));
             //}
 
             return Task.CompletedTask;
@@ -75,7 +75,7 @@ namespace Unigram.ViewModels.Settings
             {
                 if (Set(ref _isSelected, value) && value)
                 {
-                    //_parent.ProtoService.Options.DefaultReaction = Reaction.ReactionValue;
+                    //_parent.ClientService.Options.DefaultReaction = Reaction.ReactionValue;
                 }
             }
         }

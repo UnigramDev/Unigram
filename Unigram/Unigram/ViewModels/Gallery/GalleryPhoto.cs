@@ -9,14 +9,14 @@ namespace Unigram.ViewModels.Gallery
         private readonly Photo _photo;
         private readonly string _caption;
 
-        public GalleryPhoto(IProtoService protoService, Photo photo)
-            : base(protoService)
+        public GalleryPhoto(IClientService clientService, Photo photo)
+            : base(clientService)
         {
             _photo = photo;
         }
 
-        public GalleryPhoto(IProtoService protoService, Photo photo, string caption)
-            : base(protoService)
+        public GalleryPhoto(IClientService clientService, Photo photo, string caption)
+            : base(clientService)
         {
             _photo = photo;
             _caption = caption;

@@ -88,7 +88,7 @@ namespace Unigram.Controls.Messages.Content
                     LivePanel.Visibility = Visibility.Visible;
                     PinDot.Visibility = Visibility.Collapsed;
 
-                    PinPhoto.SetMessageSender(message.ProtoService, message.SenderId, 32);
+                    PinPhoto.SetMessageSender(message.ClientService, message.SenderId, 32);
 
                     Title.Text = Strings.Resources.AttachLiveLocation;
                     Subtitle.Text = Locale.FormatLocationUpdateDate(message.EditDate > 0 ? message.EditDate : message.Date);
@@ -121,13 +121,13 @@ namespace Unigram.Controls.Messages.Content
             //}
             //else
             {
-                if (_message.ProtoService.TryGetUser(_message.SenderId, out User senderUser))
+                if (_message.ClientService.TryGetUser(_message.SenderId, out User senderUser))
                 {
                     _message.Delegate.OpenLocation(location.Location, senderUser.GetFullName());
                 }
-                else if (_message.ProtoService.TryGetChat(_message.SenderId, out Chat senderChat))
+                else if (_message.ClientService.TryGetChat(_message.SenderId, out Chat senderChat))
                 {
-                    _message.Delegate.OpenLocation(location.Location, _message.ProtoService.GetTitle(senderChat));
+                    _message.Delegate.OpenLocation(location.Location, _message.ClientService.GetTitle(senderChat));
                 }
             }
         }

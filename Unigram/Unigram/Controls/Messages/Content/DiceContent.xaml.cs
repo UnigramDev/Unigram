@@ -64,8 +64,8 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            Width = Player.Width = 180 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
-            Height = Player.Height = 180 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
+            Width = Player.Width = 180 * message.ClientService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
+            Height = Player.Height = 180 * message.ClientService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
 
             var state = dice.GetState();
             if (state is DiceStickersRegular regular)
@@ -167,7 +167,7 @@ namespace Unigram.Controls.Messages.Content
                     UpdateManager.Unsubscribe(this);
 
                     UpdateManager.Subscribe(this, message, regular.Sticker.StickerValue, ref _part1Token, UpdateFile, true);
-                    message.ProtoService.DownloadFile(regular.Sticker.StickerValue.Id, 1);
+                    message.ClientService.DownloadFile(regular.Sticker.StickerValue.Id, 1);
                 }
             }
             else if (stickers is DiceStickersSlotMachine slotMachine)
@@ -175,27 +175,27 @@ namespace Unigram.Controls.Messages.Content
                 if (slotMachine.Background.StickerValue.Local.CanBeDownloaded && !slotMachine.Background.StickerValue.Local.IsDownloadingActive)
                 {
                     UpdateManager.Subscribe(this, message, slotMachine.Background.StickerValue, ref _part1Token, UpdateFile, true);
-                    message.ProtoService.DownloadFile(slotMachine.Background.StickerValue.Id, 1);
+                    message.ClientService.DownloadFile(slotMachine.Background.StickerValue.Id, 1);
                 }
                 if (slotMachine.LeftReel.StickerValue.Local.CanBeDownloaded && !slotMachine.LeftReel.StickerValue.Local.IsDownloadingActive)
                 {
                     UpdateManager.Subscribe(this, message, slotMachine.LeftReel.StickerValue, ref _part2Token, UpdateFile, true);
-                    message.ProtoService.DownloadFile(slotMachine.LeftReel.StickerValue.Id, 1);
+                    message.ClientService.DownloadFile(slotMachine.LeftReel.StickerValue.Id, 1);
                 }
                 if (slotMachine.CenterReel.StickerValue.Local.CanBeDownloaded && !slotMachine.CenterReel.StickerValue.Local.IsDownloadingActive)
                 {
                     UpdateManager.Subscribe(this, message, slotMachine.CenterReel.StickerValue, ref _part3Token, UpdateFile, true);
-                    message.ProtoService.DownloadFile(slotMachine.CenterReel.StickerValue.Id, 1);
+                    message.ClientService.DownloadFile(slotMachine.CenterReel.StickerValue.Id, 1);
                 }
                 if (slotMachine.RightReel.StickerValue.Local.CanBeDownloaded && !slotMachine.RightReel.StickerValue.Local.IsDownloadingActive)
                 {
                     UpdateManager.Subscribe(this, message, slotMachine.RightReel.StickerValue, ref _part4Token, UpdateFile, true);
-                    message.ProtoService.DownloadFile(slotMachine.RightReel.StickerValue.Id, 1);
+                    message.ClientService.DownloadFile(slotMachine.RightReel.StickerValue.Id, 1);
                 }
                 if (slotMachine.Lever.StickerValue.Local.CanBeDownloaded && !slotMachine.Lever.StickerValue.Local.IsDownloadingActive)
                 {
                     UpdateManager.Subscribe(this, message, slotMachine.Lever.StickerValue, ref _part5Token, UpdateFile, true);
-                    message.ProtoService.DownloadFile(slotMachine.Lever.StickerValue.Id, 1);
+                    message.ClientService.DownloadFile(slotMachine.Lever.StickerValue.Id, 1);
                 }
             }
         }

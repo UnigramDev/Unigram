@@ -160,11 +160,11 @@ namespace Unigram.Views.Chats
             {
                 if (sender is ListView)
                 {
-                    args.ItemContainer = new TableAccessibleChatListViewItem(ViewModel.ProtoService);
+                    args.ItemContainer = new TableAccessibleChatListViewItem(ViewModel.ClientService);
                 }
                 else
                 {
-                    args.ItemContainer = new ChatGridViewItem(ViewModel.ProtoService);
+                    args.ItemContainer = new ChatGridViewItem(ViewModel.ClientService);
                 }
 
                 args.ItemContainer.Style = sender.ItemContainerStyle;

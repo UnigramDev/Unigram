@@ -31,7 +31,7 @@ namespace Unigram.Controls.Cells
                 return;
             }
 
-            UpdateMessage(null, new MessageWithOwner(viewModel.ProtoService, fileDownload.Message));
+            UpdateMessage(null, new MessageWithOwner(viewModel.ClientService, fileDownload.Message));
         }
 
         public void UpdateMessage(IMessageDelegate delegato, MessageWithOwner message)
@@ -49,11 +49,11 @@ namespace Unigram.Controls.Cells
 
             if (string.IsNullOrEmpty(data.FileName))
             {
-                if (message.ProtoService.TryGetUser(message.SenderId, out User user))
+                if (message.ClientService.TryGetUser(message.SenderId, out User user))
                 {
                     Title.Text = user.GetFullName();
                 }
-                else if (message.ProtoService.TryGetChat(message.SenderId, out Chat chat))
+                else if (message.ClientService.TryGetChat(message.SenderId, out Chat chat))
                 {
                     Title.Text = chat.Title;
                 }
@@ -168,7 +168,7 @@ namespace Unigram.Controls.Cells
 
                 if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
-                    message.ProtoService.DownloadFile(file.Id, 1);
+                    message.ClientService.DownloadFile(file.Id, 1);
                 }
             }
         }
@@ -244,27 +244,27 @@ namespace Unigram.Controls.Cells
             {
                 if (_delegate != null)
                 {
-                    _message.ProtoService.CancelDownloadFile(file.Id);
+                    _message.ClientService.CancelDownloadFile(file.Id);
                 }
                 else
                 {
-                    _message.ProtoService.Send(new ToggleDownloadIsPaused(file.Id, true));
+                    _message.ClientService.Send(new ToggleDownloadIsPaused(file.Id, true));
                 }
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
                 if (_delegate != null)
                 {
-                    _message.ProtoService.AddFileToDownloads(file.Id, _message.ChatId, _message.Id);
+                    _message.ClientService.AddFileToDownloads(file.Id, _message.ChatId, _message.Id);
                 }
                 else
                 {
-                    _message.ProtoService.Send(new ToggleDownloadIsPaused(file.Id, false));
+                    _message.ClientService.Send(new ToggleDownloadIsPaused(file.Id, false));
                 }
             }
             else if (_delegate == null)
             {
-                var temp = await _message.ProtoService.GetFileAsync(file);
+                var temp = await _message.ClientService.GetFileAsync(file);
                 if (temp != null)
                 {
                     await Windows.System.Launcher.LaunchFileAsync(temp);

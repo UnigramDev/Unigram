@@ -8,8 +8,8 @@ namespace Unigram.ViewModels.Supergroups
 {
     public class SupergroupAdministratorsViewModel : SupergroupMembersViewModelBase
     {
-        public SupergroupAdministratorsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator, new SupergroupMembersFilterAdministrators(), query => new SupergroupMembersFilterAdministrators())
+        public SupergroupAdministratorsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator, new SupergroupMembersFilterAdministrators(), query => new SupergroupMembersFilterAdministrators())
         {
             EventLogCommand = new RelayCommand(EventLogExecute);
             AddCommand = new RelayCommand(AddExecute);

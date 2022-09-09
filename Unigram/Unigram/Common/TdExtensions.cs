@@ -1823,14 +1823,14 @@ namespace Unigram.Common
         {
             if (group.IsChannel || group.IsBroadcastGroup)
             {
-                if ((group.Status is ChatMemberStatusLeft && (group.Username.Length > 0 /*|| ViewModel.CacheService.IsChatAccessible(chat)*/)) || (group.Status is ChatMemberStatusCreator creator && !creator.IsMember))
+                if ((group.Status is ChatMemberStatusLeft && (group.Username.Length > 0 /*|| ViewModel.ClientService.IsChatAccessible(chat)*/)) || (group.Status is ChatMemberStatusCreator creator && !creator.IsMember))
                 {
                     return true;
                 }
             }
             else
             {
-                if ((group.Status is ChatMemberStatusLeft && (group.Username.Length > 0 || group.HasLocation || group.HasLinkedChat /*|| ViewModel.CacheService.IsChatAccessible(chat)*/)) || (group.Status is ChatMemberStatusCreator creator && !creator.IsMember))
+                if ((group.Status is ChatMemberStatusLeft && (group.Username.Length > 0 || group.HasLocation || group.HasLinkedChat /*|| ViewModel.ClientService.IsChatAccessible(chat)*/)) || (group.Status is ChatMemberStatusCreator creator && !creator.IsMember))
                 {
                     return true;
                 }

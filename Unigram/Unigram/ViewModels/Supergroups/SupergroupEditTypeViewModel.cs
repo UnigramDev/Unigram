@@ -8,8 +8,8 @@ namespace Unigram.ViewModels.Supergroups
 {
     public class SupergroupEditTypeViewModel : SupergroupEditViewModelBase
     {
-        public SupergroupEditTypeViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public SupergroupEditTypeViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
         }
 
@@ -39,7 +39,7 @@ namespace Unigram.ViewModels.Supergroups
             await base.OnNavigatedToAsync(parameter, mode, state);
             HasProtectedContent = Chat?.HasProtectedContent ?? false;
 
-            if (CacheService.TryGetSupergroup(Chat, out Supergroup supergroup))
+            if (ClientService.TryGetSupergroup(Chat, out Supergroup supergroup))
             {
                 JoinToSendMessages = supergroup.JoinToSendMessages;
                 JoinByRequest = supergroup.JoinByRequest;
@@ -56,7 +56,7 @@ namespace Unigram.ViewModels.Supergroups
 
             if (chat.HasProtectedContent != HasProtectedContent)
             {
-                await ProtoService.SendAsync(new ToggleChatHasProtectedContent(Chat.Id, HasProtectedContent));
+                await ClientService.SendAsync(new ToggleChatHasProtectedContent(Chat.Id, HasProtectedContent));
             }
 
             var username = _isPublic ? (_username?.Trim() ?? string.Empty) : string.Empty;
@@ -65,18 +65,18 @@ namespace Unigram.ViewModels.Supergroups
             // then we need to upgrade it to a supergroup first.
             if (chat.Type is ChatTypeBasicGroup && !string.IsNullOrEmpty(username))
             {
-                var response = await ProtoService.SendAsync(new UpgradeBasicGroupChatToSupergroupChat(chat.Id));
+                var response = await ClientService.SendAsync(new UpgradeBasicGroupChatToSupergroupChat(chat.Id));
                 if (response is Chat result && result.Type is ChatTypeSupergroup supergroup)
                 {
                     chat = result;
-                    await ProtoService.SendAsync(new GetSupergroupFullInfo(supergroup.SupergroupId));
+                    await ClientService.SendAsync(new GetSupergroupFullInfo(supergroup.SupergroupId));
                 }
             }
 
             if (chat.Type is ChatTypeSupergroup)
             {
-                var item = ProtoService.GetSupergroup(chat);
-                var cache = ProtoService.GetSupergroupFull(chat);
+                var item = ClientService.GetSupergroup(chat);
+                var cache = ClientService.GetSupergroupFull(chat);
 
                 if (item == null || cache == null)
                 {
@@ -85,17 +85,17 @@ namespace Unigram.ViewModels.Supergroups
 
                 if (item.JoinToSendMessages != _joinToSendMessages)
                 {
-                    ProtoService.Send(new ToggleSupergroupJoinToSendMessages(item.Id, _joinToSendMessages));
+                    ClientService.Send(new ToggleSupergroupJoinToSendMessages(item.Id, _joinToSendMessages));
                 }
 
                 if (item.JoinByRequest != _joinByRequest)
                 {
-                    ProtoService.Send(new ToggleSupergroupJoinByRequest(item.Id, _joinByRequest));
+                    ClientService.Send(new ToggleSupergroupJoinByRequest(item.Id, _joinByRequest));
                 }
 
                 if (!string.Equals(username, item.Username))
                 {
-                    var response = await ProtoService.SendAsync(new SetSupergroupUsername(item.Id, username));
+                    var response = await ClientService.SendAsync(new SetSupergroupUsername(item.Id, username));
                     if (response is Error error)
                     {
                         if (error.TypeEquals(ErrorType.CHANNELS_ADMIN_PUBLIC_TOO_MUCH))

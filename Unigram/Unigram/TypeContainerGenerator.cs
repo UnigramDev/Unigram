@@ -40,8 +40,8 @@ namespace Unigram
 
             _singletons = new List<(Type, Type)>
             {
-                ( typeof(ICacheService), typeof(ProtoService) ),
-                ( typeof(IProtoService), typeof(ProtoService) ),
+                ( typeof(ICacheService), typeof(ClientService) ),
+                ( typeof(IClientService), typeof(ClientService) ),
                 ( typeof(INotificationsService), typeof(NotificationsService) ),
                 ( typeof(IGenerationService), typeof(GenerationService) ),
                 ( typeof(INetworkService), typeof(NetworkService) )

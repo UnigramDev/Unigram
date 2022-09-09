@@ -19,8 +19,8 @@ namespace Unigram.ViewModels.Settings
 
         private UserPrivacySettingRules _rules;
 
-        public SettingsPrivacyViewModelBase(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, UserPrivacySetting inputKey)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public SettingsPrivacyViewModelBase(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, UserPrivacySetting inputKey)
+            : base(clientService, settingsService, aggregator)
         {
             _inputKey = inputKey;
 
@@ -50,7 +50,7 @@ namespace Unigram.ViewModels.Settings
 
         private void UpdatePrivacyAsync()
         {
-            ProtoService.Send(new GetUserPrivacySettingRules(_inputKey), result =>
+            ClientService.Send(new GetUserPrivacySettingRules(_inputKey), result =>
             {
                 if (result is UserPrivacySettingRules rules)
                 {
@@ -103,17 +103,17 @@ namespace Unigram.ViewModels.Settings
 
                     foreach (var chatId in restrictChatMembers.ChatIds)
                     {
-                        var chat = CacheService.GetChat(chatId);
+                        var chat = ClientService.GetChat(chatId);
                         if (chat == null)
                         {
                             continue;
                         }
 
-                        if (CacheService.TryGetBasicGroup(chat, out BasicGroup basicGroup))
+                        if (ClientService.TryGetBasicGroup(chat, out BasicGroup basicGroup))
                         {
                             restricted += basicGroup.MemberCount;
                         }
-                        else if (CacheService.TryGetSupergroup(chat, out Supergroup supergroup))
+                        else if (ClientService.TryGetSupergroup(chat, out Supergroup supergroup))
                         {
                             restricted += supergroup.MemberCount;
                         }
@@ -125,17 +125,17 @@ namespace Unigram.ViewModels.Settings
 
                     foreach (var chatId in allowChatMembers.ChatIds)
                     {
-                        var chat = CacheService.GetChat(chatId);
+                        var chat = ClientService.GetChat(chatId);
                         if (chat == null)
                         {
                             continue;
                         }
 
-                        if (CacheService.TryGetBasicGroup(chat, out BasicGroup basicGroup))
+                        if (ClientService.TryGetBasicGroup(chat, out BasicGroup basicGroup))
                         {
                             allowed += basicGroup.MemberCount;
                         }
-                        else if (CacheService.TryGetSupergroup(chat, out Supergroup supergroup))
+                        else if (ClientService.TryGetSupergroup(chat, out Supergroup supergroup))
                         {
                             allowed += supergroup.MemberCount;
                         }
@@ -231,7 +231,7 @@ namespace Unigram.ViewModels.Settings
 
             foreach (var id in _allowedUsers.UserIds)
             {
-                var chat = await ProtoService.SendAsync(new CreatePrivateChat(id, true)) as Chat;
+                var chat = await ClientService.SendAsync(new CreatePrivateChat(id, true)) as Chat;
                 if (chat != null)
                 {
                     chats.Add(chat.Id);
@@ -303,7 +303,7 @@ namespace Unigram.ViewModels.Settings
 
             foreach (var id in _restrictedUsers.UserIds)
             {
-                var chat = await ProtoService.SendAsync(new CreatePrivateChat(id, true)) as Chat;
+                var chat = await ClientService.SendAsync(new CreatePrivateChat(id, true)) as Chat;
                 if (chat != null)
                 {
                     chats.Add(chat.Id);
@@ -409,7 +409,7 @@ namespace Unigram.ViewModels.Settings
                     break;
             }
 
-            return ProtoService.SendAsync(new SetUserPrivacySettingRules(_inputKey, new UserPrivacySettingRules(rules)));
+            return ClientService.SendAsync(new SetUserPrivacySettingRules(_inputKey, new UserPrivacySettingRules(rules)));
         }
 
         private string GetBadge(IList<long> userIds, IList<long> chatIds)
@@ -418,17 +418,17 @@ namespace Unigram.ViewModels.Settings
 
             foreach (var chatId in chatIds)
             {
-                var chat = CacheService.GetChat(chatId);
+                var chat = ClientService.GetChat(chatId);
                 if (chat == null)
                 {
                     continue;
                 }
 
-                if (CacheService.TryGetBasicGroup(chat, out BasicGroup basicGroup))
+                if (ClientService.TryGetBasicGroup(chat, out BasicGroup basicGroup))
                 {
                     count += basicGroup.MemberCount;
                 }
-                else if (CacheService.TryGetSupergroup(chat, out Supergroup supergroup))
+                else if (ClientService.TryGetSupergroup(chat, out Supergroup supergroup))
                 {
                     count += supergroup.MemberCount;
                 }

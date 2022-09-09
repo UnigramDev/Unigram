@@ -17,8 +17,8 @@ namespace Unigram.ViewModels.Supergroups
 
         public ISupergroupDelegate Delegate { get; set; }
 
-        public SupergroupMembersViewModelBase(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, SupergroupMembersFilter filter, Func<string, SupergroupMembersFilter> search)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public SupergroupMembersViewModelBase(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, SupergroupMembersFilter filter, Func<string, SupergroupMembersFilter> search)
+            : base(clientService, settingsService, aggregator)
         {
             _filter = filter;
             _find = search;
@@ -37,7 +37,7 @@ namespace Unigram.ViewModels.Supergroups
         {
             var chatId = (long)parameter;
 
-            Chat = ProtoService.GetChat(chatId);
+            Chat = ClientService.GetChat(chatId);
 
             var chat = _chat;
             if (chat == null)
@@ -47,14 +47,14 @@ namespace Unigram.ViewModels.Supergroups
 
             if (chat.Type is ChatTypeSupergroup supergroup)
             {
-                var item = ProtoService.GetSupergroup(supergroup.SupergroupId);
-                var cache = ProtoService.GetSupergroupFull(supergroup.SupergroupId);
+                var item = ClientService.GetSupergroup(supergroup.SupergroupId);
+                var cache = ClientService.GetSupergroupFull(supergroup.SupergroupId);
 
                 Delegate?.UpdateSupergroup(chat, item);
 
                 if (cache == null)
                 {
-                    ProtoService.Send(new GetSupergroupFullInfo(supergroup.SupergroupId));
+                    ClientService.Send(new GetSupergroupFullInfo(supergroup.SupergroupId));
                 }
                 else
                 {
@@ -65,7 +65,7 @@ namespace Unigram.ViewModels.Supergroups
             }
             else if (chat.Type is ChatTypeBasicGroup basicGroup)
             {
-                var item = ProtoService.GetBasicGroup(basicGroup.BasicGroupId);
+                var item = ClientService.GetBasicGroup(basicGroup.BasicGroupId);
 
                 if (Delegate is IBasicGroupDelegate basicDelegate)
                 {
@@ -84,7 +84,7 @@ namespace Unigram.ViewModels.Supergroups
         {
             if (_chat?.Type is ChatTypeSupergroup supergroup)
             {
-                return new ChatMemberCollection(ProtoService, supergroup.SupergroupId, _find(query));
+                return new ChatMemberCollection(ClientService, supergroup.SupergroupId, _find(query));
             }
             else if (_chat?.Type is ChatTypeBasicGroup)
             {
@@ -97,7 +97,7 @@ namespace Unigram.ViewModels.Supergroups
                     _ => null
                 };
 
-                return new ChatMemberCollection(ProtoService, _chat.Id, query, filter);
+                return new ChatMemberCollection(ClientService, _chat.Id, query, filter);
             }
 
             return null;

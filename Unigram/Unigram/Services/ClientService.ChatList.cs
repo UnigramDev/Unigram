@@ -7,7 +7,7 @@ using Unigram.Common;
 
 namespace Unigram.Services
 {
-    public partial class ProtoService
+    public partial class ClientService
     {
         private readonly NewDictionary<int, SortedSet<OrderedChat>> _chatList = new NewDictionary<int, SortedSet<OrderedChat>>();
         private readonly DefaultDictionary<int, bool> _haveFullChatList = new DefaultDictionary<int, bool>();

@@ -33,9 +33,9 @@ namespace Unigram.Views.Host
             Grid.SetRow(navigationService.Frame, 2);
             LayoutRoot.Children.Add(navigationService.Frame);
 
-            if (navigationService is TLNavigationService service && service.ProtoService != null)
+            if (navigationService is TLNavigationService service && service.ClientService != null)
             {
-                var user = service.ProtoService.GetUser(service.ProtoService.Options.MyId);
+                var user = service.ClientService.GetUser(service.ClientService.Options.MyId);
                 if (user != null)
                 {
                     StatusLabel.Text = string.Format("{0} - {1}", user.GetFullName(), "Unigram");

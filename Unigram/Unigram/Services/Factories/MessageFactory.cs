@@ -27,12 +27,12 @@ namespace Unigram.Services.Factories
 
     public class MessageFactory : IMessageFactory
     {
-        private readonly IProtoService _protoService;
+        private readonly IClientService _clientService;
         private readonly IPlaybackService _playbackService;
 
-        public MessageFactory(IProtoService protoService, IPlaybackService playbackService)
+        public MessageFactory(IClientService clientService, IPlaybackService playbackService)
         {
-            _protoService = protoService;
+            _clientService = clientService;
             _playbackService = playbackService;
         }
 
@@ -43,7 +43,7 @@ namespace Unigram.Services.Factories
                 return null;
             }
 
-            return new MessageViewModel(_protoService, _playbackService, delegato, message);
+            return new MessageViewModel(_clientService, _playbackService, delegato, message);
         }
 
 

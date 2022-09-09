@@ -80,7 +80,7 @@ namespace Unigram.Converters
 
                 return bot.CanReadAllGroupMessages ? Strings.Resources.BotStatusRead : Strings.Resources.BotStatusCantRead;
             }
-            //else if (cacheService.IsUserSavedMessages(user))
+            //else if (clientService.IsUserSavedMessages(user))
             //{
             //    return Strings.Resources.ChatYourSelf;
             //}

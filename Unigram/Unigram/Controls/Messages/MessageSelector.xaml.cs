@@ -445,7 +445,7 @@ namespace Unigram.Controls.Messages
     public class MessageSelectorAutomationPeer : CheckBoxAutomationPeer
     {
         private readonly MessageSelector _owner;
-        private readonly IProtoService _protoService;
+        private readonly IClientService _clientService;
 
         public MessageSelectorAutomationPeer(MessageSelector owner)
             : base(owner)
@@ -453,11 +453,11 @@ namespace Unigram.Controls.Messages
             _owner = owner;
         }
 
-        public MessageSelectorAutomationPeer(MessageSelector owner, IProtoService protoService)
+        public MessageSelectorAutomationPeer(MessageSelector owner, IClientService clientService)
             : base(owner)
         {
             _owner = owner;
-            _protoService = protoService;
+            _clientService = clientService;
         }
 
         protected override string GetNameCore()
@@ -470,9 +470,9 @@ namespace Unigram.Controls.Messages
             {
                 return child.GetAutomationName() ?? base.GetNameCore();
             }
-            else if (_owner.Content is Message message && _protoService != null)
+            else if (_owner.Content is Message message && _clientService != null)
             {
-                return Automation.GetDescription(_protoService, message);
+                return Automation.GetDescription(_clientService, message);
             }
 
             return base.GetNameCore();

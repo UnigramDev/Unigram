@@ -31,7 +31,7 @@ namespace Unigram.Views.Settings
             }
             else if (args.ItemContainer.ContentTemplateRoot is UserCell content)
             {
-                content.UpdateNotificationException(ViewModel.ProtoService, args, OnContainerContentChanging);
+                content.UpdateNotificationException(ViewModel.ClientService, args, OnContainerContentChanging);
             }
         }
     }

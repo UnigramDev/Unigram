@@ -182,11 +182,11 @@ namespace Unigram.Controls
             }
         }
 
-        public void UpdateChatPermissions(ICacheService cacheService, Chat chat)
+        public void UpdateChatPermissions(IClientService clientService, Chat chat)
         {
-            var emojisRights = DialogViewModel.VerifyRights(cacheService, chat, x => x.CanSendMessages, Strings.Resources.GlobalSendMessageRestricted, Strings.Resources.SendMessageRestrictedForever, Strings.Resources.SendMessageRestricted, out string emojisLabel);
-            var stickersRights = DialogViewModel.VerifyRights(cacheService, chat, x => x.CanSendOtherMessages, Strings.Resources.GlobalAttachStickersRestricted, Strings.Resources.AttachStickersRestrictedForever, Strings.Resources.AttachStickersRestricted, out string stickersLabel);
-            var animationsRights = DialogViewModel.VerifyRights(cacheService, chat, x => x.CanSendOtherMessages, Strings.Resources.GlobalAttachGifRestricted, Strings.Resources.AttachGifRestrictedForever, Strings.Resources.AttachGifRestricted, out string animationsLabel);
+            var emojisRights = DialogViewModel.VerifyRights(clientService, chat, x => x.CanSendMessages, Strings.Resources.GlobalSendMessageRestricted, Strings.Resources.SendMessageRestrictedForever, Strings.Resources.SendMessageRestricted, out string emojisLabel);
+            var stickersRights = DialogViewModel.VerifyRights(clientService, chat, x => x.CanSendOtherMessages, Strings.Resources.GlobalAttachStickersRestricted, Strings.Resources.AttachStickersRestrictedForever, Strings.Resources.AttachStickersRestricted, out string stickersLabel);
+            var animationsRights = DialogViewModel.VerifyRights(clientService, chat, x => x.CanSendOtherMessages, Strings.Resources.GlobalAttachGifRestricted, Strings.Resources.AttachGifRestrictedForever, Strings.Resources.AttachGifRestricted, out string animationsLabel);
 
             EmojisPanel.Visibility = emojisRights ? Visibility.Collapsed : Visibility.Visible;
             EmojisPermission.Visibility = emojisRights ? Visibility.Visible : Visibility.Collapsed;

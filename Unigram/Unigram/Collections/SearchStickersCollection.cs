@@ -12,7 +12,7 @@ namespace Unigram.Collections
 {
     public class SearchStickersCollection : MvxObservableCollection<Sticker>, IAutocompleteCollection, ISupportIncrementalLoading
     {
-        private readonly IProtoService _protoService;
+        private readonly IClientService _clientService;
         private readonly ISettingsService _settings;
         private readonly StickerType _type;
         private readonly string _query;
@@ -25,9 +25,9 @@ namespace Unigram.Collections
 
         public bool IsCustomEmoji => _type is StickerTypeCustomEmoji;
 
-        public SearchStickersCollection(IProtoService protoService, ISettingsService settings, bool customEmoji, string query, long chatId)
+        public SearchStickersCollection(IClientService clientService, ISettingsService settings, bool customEmoji, string query, long chatId)
         {
-            _protoService = protoService;
+            _clientService = clientService;
             _settings = settings;
             _type = customEmoji ? new StickerTypeCustomEmoji() : new StickerTypeRegular();
             _query = query;
@@ -46,7 +46,7 @@ namespace Unigram.Collections
                 {
                     _first = false;
 
-                    var response = await _protoService.SendAsync(new GetStickers(_type, _query, 1000, _chatId));
+                    var response = await _clientService.SendAsync(new GetStickers(_type, _query, 1000, _chatId));
                     if (response is Stickers stickers)
                     {
                         foreach (var sticker in stickers.StickersValue)
@@ -62,7 +62,7 @@ namespace Unigram.Collections
                 {
                     _hasMore = false;
 
-                    var response = await _protoService.SendAsync(new SearchStickers(_query, 20));
+                    var response = await _clientService.SendAsync(new SearchStickers(_query, 20));
                     if (response is Stickers stickers)
                     {
                         foreach (var sticker in stickers.StickersValue)

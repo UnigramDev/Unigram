@@ -49,7 +49,7 @@ namespace Unigram.Views.Users
             if (args.Phase == 0)
             {
                 var title = content.Children[1] as TextBlock;
-                title.Text = ViewModel.ProtoService.GetTitle(chat);
+                title.Text = ViewModel.ClientService.GetTitle(chat);
             }
             else if (args.Phase == 1)
             {
@@ -58,7 +58,7 @@ namespace Unigram.Views.Users
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.SetChat(ViewModel.ProtoService, chat, 36);
+                photo.SetChat(ViewModel.ClientService, chat, 36);
             }
 
             if (args.Phase < 2)

@@ -11,8 +11,8 @@ namespace Unigram.ViewModels.Settings
     {
         private AutoDownloadType _type;
 
-        public SettingsDataAutoViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public SettingsDataAutoViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute);
         }

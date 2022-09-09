@@ -9,8 +9,8 @@ namespace Unigram.ViewModels.Supergroups
 {
     public class SupergroupAddRestrictedViewModel : SupergroupMembersViewModelBase
     {
-        public SupergroupAddRestrictedViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator, new SupergroupMembersFilterRecent(), query => new SupergroupMembersFilterSearch(query))
+        public SupergroupAddRestrictedViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator, new SupergroupMembersFilterRecent(), query => new SupergroupMembersFilterSearch(query))
         {
             AddCommand = new RelayCommand<MessageSender>(AddExecute);
         }
@@ -33,7 +33,7 @@ namespace Unigram.ViewModels.Supergroups
 
             if (chat.Type is ChatTypeSupergroup super && super.IsChannel)
             {
-                var response = await ProtoService.SendAsync(new SetChatMemberStatus(chat.Id, memberId, new ChatMemberStatusBanned()));
+                var response = await ClientService.SendAsync(new SetChatMemberStatus(chat.Id, memberId, new ChatMemberStatusBanned()));
                 if (response is Ok)
                 {
                     NavigationService.GoBack();

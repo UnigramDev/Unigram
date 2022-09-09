@@ -20,8 +20,8 @@ namespace Unigram.ViewModels.Supergroups
     {
         public ISupergroupDelegate Delegate { get; set; }
 
-        public SupergroupEditLinkedChatViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public SupergroupEditLinkedChatViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             Items = new MvxObservableCollection<Chat>();
 
@@ -56,7 +56,7 @@ namespace Unigram.ViewModels.Supergroups
         {
             var chatId = (long)parameter;
 
-            Chat = ProtoService.GetChat(chatId);
+            Chat = ClientService.GetChat(chatId);
 
             var chat = _chat;
             if (chat == null)
@@ -68,14 +68,14 @@ namespace Unigram.ViewModels.Supergroups
 
             if (chat.Type is ChatTypeSupergroup super)
             {
-                var item = ProtoService.GetSupergroup(super.SupergroupId);
-                var cache = ProtoService.GetSupergroupFull(super.SupergroupId);
+                var item = ClientService.GetSupergroup(super.SupergroupId);
+                var cache = ClientService.GetSupergroupFull(super.SupergroupId);
 
                 UpdateSupergroup(chat, item);
 
                 if (cache == null)
                 {
-                    ProtoService.Send(new GetSupergroupFullInfo(super.SupergroupId));
+                    ClientService.Send(new GetSupergroupFullInfo(super.SupergroupId));
                 }
                 else
                 {
@@ -116,7 +116,7 @@ namespace Unigram.ViewModels.Supergroups
 
             if (chat.Type is ChatTypeSupergroup super && super.SupergroupId == update.SupergroupId)
             {
-                BeginOnUIThread(() => UpdateSupergroupFullInfo(chat, ProtoService.GetSupergroup(update.SupergroupId), update.SupergroupFullInfo));
+                BeginOnUIThread(() => UpdateSupergroupFullInfo(chat, ClientService.GetSupergroup(update.SupergroupId), update.SupergroupFullInfo));
             }
         }
 
@@ -131,10 +131,10 @@ namespace Unigram.ViewModels.Supergroups
 
             if (fullInfo.LinkedChatId != 0)
             {
-                var linkedChat = CacheService.GetChat(fullInfo.LinkedChatId);
+                var linkedChat = ClientService.GetChat(fullInfo.LinkedChatId);
                 if (linkedChat != null)
                 {
-                    if (CacheService.TryGetSupergroup(linkedChat, out Supergroup linkedSupergroup))
+                    if (ClientService.TryGetSupergroup(linkedChat, out Supergroup linkedSupergroup))
                     {
                         JoinToSendMessages = linkedSupergroup.JoinToSendMessages;
                         JoinByRequest = linkedSupergroup.JoinByRequest;
@@ -155,14 +155,14 @@ namespace Unigram.ViewModels.Supergroups
 
         private async void LoadSuitableChats()
         {
-            var response = await ProtoService.SendAsync(new GetSuitableDiscussionChats());
+            var response = await ClientService.SendAsync(new GetSuitableDiscussionChats());
             if (response is Telegram.Td.Api.Chats chats)
             {
                 var result = new List<Chat>();
 
                 foreach (var id in chats.ChatIds)
                 {
-                    var linkedChat = CacheService.GetChat(id);
+                    var linkedChat = ClientService.GetChat(id);
                     if (linkedChat != null)
                     {
                         result.Add(linkedChat);
@@ -182,13 +182,13 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            var supergroup = CacheService.GetSupergroup(chat);
+            var supergroup = ClientService.GetSupergroup(chat);
             if (supergroup == null)
             {
                 return;
             }
 
-            var fullInfo = CacheService.GetSupergroupFull(chat);
+            var fullInfo = ClientService.GetSupergroupFull(chat);
             if (fullInfo == null)
             {
                 return;
@@ -202,12 +202,12 @@ namespace Unigram.ViewModels.Supergroups
             {
                 string message;
                 bool history = false;
-                if (CacheService.TryGetSupergroup(linkedChat, out Supergroup linkedSupergroup))
+                if (ClientService.TryGetSupergroup(linkedChat, out Supergroup linkedSupergroup))
                 {
-                    var linkedFullInfo = CacheService.GetSupergroupFull(linkedChat);
+                    var linkedFullInfo = ClientService.GetSupergroupFull(linkedChat);
                     if (linkedFullInfo == null)
                     {
-                        linkedFullInfo = await ProtoService.SendAsync(new GetSupergroupFullInfo(linkedSupergroup.Id)) as SupergroupFullInfo;
+                        linkedFullInfo = await ClientService.SendAsync(new GetSupergroupFullInfo(linkedSupergroup.Id)) as SupergroupFullInfo;
                     }
 
                     if (linkedSupergroup == null)
@@ -251,7 +251,7 @@ namespace Unigram.ViewModels.Supergroups
 
                 if (linkedChat.Type is ChatTypeBasicGroup)
                 {
-                    linkedChat = await ProtoService.SendAsync(new UpgradeBasicGroupChatToSupergroupChat(linkedChat.Id)) as Chat;
+                    linkedChat = await ClientService.SendAsync(new UpgradeBasicGroupChatToSupergroupChat(linkedChat.Id)) as Chat;
                 }
 
                 if (linkedChat == null)
@@ -261,10 +261,10 @@ namespace Unigram.ViewModels.Supergroups
 
                 if (history && linkedChat.Type is ChatTypeSupergroup super)
                 {
-                    await ProtoService.SendAsync(new ToggleSupergroupIsAllHistoryAvailable(super.SupergroupId, true));
+                    await ClientService.SendAsync(new ToggleSupergroupIsAllHistoryAvailable(super.SupergroupId, true));
                 }
 
-                var response = await ProtoService.SendAsync(new SetChatDiscussionGroup(chat.Id, linkedChat.Id));
+                var response = await ClientService.SendAsync(new SetChatDiscussionGroup(chat.Id, linkedChat.Id));
                 if (response is Ok)
                 {
                     NavigationService.GoBack();
@@ -282,19 +282,19 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            var supergroup = CacheService.GetSupergroup(chat);
+            var supergroup = ClientService.GetSupergroup(chat);
             if (supergroup == null)
             {
                 return;
             }
 
-            var fullInfo = CacheService.GetSupergroupFull(chat);
+            var fullInfo = ClientService.GetSupergroupFull(chat);
             if (fullInfo == null)
             {
                 return;
             }
 
-            var linkedChat = CacheService.GetChat(fullInfo.LinkedChatId);
+            var linkedChat = ClientService.GetChat(fullInfo.LinkedChatId);
             if (linkedChat == null)
             {
                 return;
@@ -306,7 +306,7 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new SetChatDiscussionGroup(supergroup.IsChannel ? chat.Id : linkedChat.Id, 0));
+            var response = await ClientService.SendAsync(new SetChatDiscussionGroup(supergroup.IsChannel ? chat.Id : linkedChat.Id, 0));
             if (response is Ok && !supergroup.IsChannel)
             {
                 NavigationService.GoBack();

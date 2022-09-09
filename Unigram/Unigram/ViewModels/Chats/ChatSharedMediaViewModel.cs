@@ -43,8 +43,8 @@ namespace Unigram.ViewModels.Chats
         private readonly IPlaybackService _playbackService;
         private readonly IStorageService _storageService;
 
-        public ChatSharedMediaViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IStorageService storageService, IEventAggregator aggregator, IPlaybackService playbackService)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public ChatSharedMediaViewModel(IClientService clientService, ISettingsService settingsService, IStorageService storageService, IEventAggregator aggregator, IPlaybackService playbackService)
+            : base(clientService, settingsService, aggregator)
         {
             _playbackService = playbackService;
             _storageService = storageService;
@@ -83,7 +83,7 @@ namespace Unigram.ViewModels.Chats
                 SelectedIndex = selectedIndex;
             }
 
-            Chat = ProtoService.GetChat(chatId);
+            Chat = ClientService.GetChat(chatId);
 
             Media.UpdateQuery(string.Empty);
             Files.UpdateQuery(string.Empty);
@@ -141,7 +141,7 @@ namespace Unigram.ViewModels.Chats
 
             for (int i = 0; i < filters.Length; i++)
             {
-                var response = await ProtoService.SendAsync(new GetChatMessageCount(chat.Id, filters[i], false));
+                var response = await ClientService.SendAsync(new GetChatMessageCount(chat.Id, filters[i], false));
                 if (response is Count count)
                 {
                     SharedCount[i] = count.CountValue;
@@ -173,13 +173,13 @@ namespace Unigram.ViewModels.Chats
 
             if (chat.Type is ChatTypePrivate or ChatTypeSecret)
             {
-                var user = ProtoService.GetUser(chat);
+                var user = ClientService.GetUser(chat);
 
-                var cached = ProtoService.GetUserFull(chat);
+                var cached = ClientService.GetUserFull(chat);
                 if (cached == null)
                 {
                     // This should really rarely happen
-                    cached = await ProtoService.SendAsync(new GetUserFullInfo(user.Id)) as UserFullInfo;
+                    cached = await ClientService.SendAsync(new GetUserFullInfo(user.Id)) as UserFullInfo;
                 }
 
                 if (cached.GroupInCommonCount > 0)
@@ -249,7 +249,7 @@ namespace Unigram.ViewModels.Chats
         {
             if (sender is SearchMessagesFilter filter)
             {
-                return new MediaCollection(ProtoService, Chat.Id, filter, query);
+                return new MediaCollection(ClientService, Chat.Id, filter, query);
             }
 
             return null;
@@ -326,7 +326,7 @@ namespace Unigram.ViewModels.Chats
                 return;
             }
 
-            var chat = ProtoService.GetChat(message.ChatId);
+            var chat = ClientService.GetChat(message.ChatId);
             if (chat == null)
             {
                 return;
@@ -352,7 +352,7 @@ namespace Unigram.ViewModels.Chats
 
             var items = messages.Select(x => x.Get()).ToArray();
 
-            var response = await ProtoService.SendAsync(new GetMessages(chat.Id, items.Select(x => x.Id).ToArray()));
+            var response = await ClientService.SendAsync(new GetMessages(chat.Id, items.Select(x => x.Id).ToArray()));
             if (response is Messages updated)
             {
                 for (int i = 0; i < updated.MessagesValue.Count; i++)
@@ -372,7 +372,7 @@ namespace Unigram.ViewModels.Chats
             }
 
             var sameUser = messages.All(x => x.SenderId.AreTheSame(first.SenderId));
-            var dialog = new DeleteMessagesPopup(CacheService, items.Where(x => x != null).ToArray());
+            var dialog = new DeleteMessagesPopup(ClientService, items.Where(x => x != null).ToArray());
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm != ContentDialogResult.Primary)
@@ -384,21 +384,21 @@ namespace Unigram.ViewModels.Chats
 
             if (dialog.DeleteAll && sameUser)
             {
-                ProtoService.Send(new DeleteChatMessagesBySender(chat.Id, first.SenderId));
+                ClientService.Send(new DeleteChatMessagesBySender(chat.Id, first.SenderId));
             }
             else
             {
-                ProtoService.Send(new DeleteMessages(chat.Id, messages.Select(x => x.Id).ToList(), dialog.Revoke));
+                ClientService.Send(new DeleteMessages(chat.Id, messages.Select(x => x.Id).ToList(), dialog.Revoke));
             }
 
             if (dialog.BanUser && sameUser)
             {
-                ProtoService.Send(new SetChatMemberStatus(chat.Id, first.SenderId, new ChatMemberStatusBanned()));
+                ClientService.Send(new SetChatMemberStatus(chat.Id, first.SenderId, new ChatMemberStatusBanned()));
             }
 
             if (dialog.ReportSpam && sameUser && chat.Type is ChatTypeSupergroup supertype)
             {
-                ProtoService.Send(new ReportSupergroupSpam(supertype.SupergroupId, messages.Select(x => x.Id).ToList()));
+                ClientService.Send(new ReportSupergroupSpam(supertype.SupergroupId, messages.Select(x => x.Id).ToList()));
             }
         }
 
@@ -428,7 +428,7 @@ namespace Unigram.ViewModels.Chats
                 return;
             }
 
-            var chat = ProtoService.GetChat(first.ChatId);
+            var chat = ClientService.GetChat(first.ChatId);
             if (chat == null)
             {
                 return;
@@ -526,7 +526,7 @@ namespace Unigram.ViewModels.Chats
             {
                 try
                 {
-                    var temp = await ProtoService.GetFileAsync(file);
+                    var temp = await ClientService.GetFileAsync(file);
                     var result = await Windows.System.Launcher.LaunchFileAsync(temp);
                     //var folder = await temp.GetParentAsync();
                     //var options = new Windows.System.FolderLauncherOptions();
@@ -569,12 +569,12 @@ namespace Unigram.ViewModels.Chats
 
         public async void OpenUsername(string username)
         {
-            var response = await ProtoService.SendAsync(new SearchPublicChat(username));
+            var response = await ClientService.SendAsync(new SearchPublicChat(username));
             if (response is Chat chat)
             {
                 if (chat.Type is ChatTypePrivate privata)
                 {
-                    var user = ProtoService.GetUser(privata.UserId);
+                    var user = ClientService.GetUser(privata.UserId);
                     if (user?.Type is UserTypeBot)
                     {
                         NavigationService.NavigateToChat(chat);
@@ -601,10 +601,10 @@ namespace Unigram.ViewModels.Chats
 
         public async void OpenUser(long userId)
         {
-            var response = await ProtoService.SendAsync(new CreatePrivateChat(userId, false));
+            var response = await ClientService.SendAsync(new CreatePrivateChat(userId, false));
             if (response is Chat chat)
             {
-                var user = ProtoService.GetUser(userId);
+                var user = ClientService.GetUser(userId);
                 if (user?.Type is UserTypeBot)
                 {
                     NavigationService.NavigateToChat(chat);
@@ -634,7 +634,7 @@ namespace Unigram.ViewModels.Chats
             {
                 if (MessageHelper.IsTelegramUrl(uri))
                 {
-                    MessageHelper.OpenTelegramUrl(ProtoService, NavigationService, uri);
+                    MessageHelper.OpenTelegramUrl(ClientService, NavigationService, uri);
                 }
                 else
                 {

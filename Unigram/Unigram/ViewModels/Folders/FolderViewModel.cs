@@ -15,8 +15,8 @@ namespace Unigram.ViewModels.Folders
 {
     public class FolderViewModel : TLViewModelBase
     {
-        public FolderViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public FolderViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             Include = new MvxObservableCollection<ChatFilterElement>();
             Exclude = new MvxObservableCollection<ChatFilterElement>();
@@ -44,7 +44,7 @@ namespace Unigram.ViewModels.Folders
 
             if (parameter is int id)
             {
-                var response = await ProtoService.SendAsync(new GetChatFilter(id));
+                var response = await ClientService.SendAsync(new GetChatFilter(id));
                 if (response is ChatFilter result)
                 {
                     Id = id;
@@ -98,7 +98,7 @@ namespace Unigram.ViewModels.Folders
 
             foreach (var chatId in filter.PinnedChatIds.Union(filter.IncludedChatIds))
             {
-                var chat = CacheService.GetChat(chatId);
+                var chat = ClientService.GetChat(chatId);
                 if (chat == null)
                 {
                     continue;
@@ -109,7 +109,7 @@ namespace Unigram.ViewModels.Folders
 
             foreach (var chatId in filter.ExcludedChatIds)
             {
-                var chat = CacheService.GetChat(chatId);
+                var chat = ClientService.GetChat(chatId);
                 if (chat == null)
                 {
                     continue;
@@ -271,7 +271,7 @@ namespace Unigram.ViewModels.Folders
                 function = new CreateChatFilter(GetFilter());
             }
 
-            return ProtoService.SendAsync(function);
+            return ClientService.SendAsync(function);
         }
 
         private bool SendCanExecute()

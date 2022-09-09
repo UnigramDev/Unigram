@@ -10,19 +10,19 @@ namespace Unigram.Views.Popups
 {
     public sealed partial class ChatThemePopup : ContentPopup
     {
-        private readonly IProtoService _protoService;
+        private readonly IClientService _clientService;
 
-        public ChatThemePopup(IProtoService protoService, string selectedTheme)
+        public ChatThemePopup(IClientService clientService, string selectedTheme)
         {
             InitializeComponent();
 
-            _protoService = protoService;
+            _clientService = clientService;
 
             Title = Strings.Resources.SelectTheme;
             PrimaryButtonText = Strings.Resources.ChatApplyTheme;
             SecondaryButtonText = Strings.Resources.Cancel;
 
-            var items = new List<ChatTheme>(protoService.GetChatThemes());
+            var items = new List<ChatTheme>(clientService.GetChatThemes());
             items.Insert(0, new ChatTheme("\u274C", null, null));
 
             List.ItemsSource = items;
@@ -51,7 +51,7 @@ namespace Unigram.Views.Popups
 
             if (cell != null && theme != null)
             {
-                cell.Update(_protoService, theme);
+                cell.Update(_clientService, theme);
             }
         }
 

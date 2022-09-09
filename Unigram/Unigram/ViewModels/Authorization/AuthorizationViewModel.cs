@@ -22,8 +22,8 @@ namespace Unigram.ViewModels.Authorization
 
         public ISignInDelegate Delegate { get; set; }
 
-        public AuthorizationViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ISessionService sessionService, ILifetimeService lifecycleService, INotificationsService notificationsService)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public AuthorizationViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, ISessionService sessionService, ILifetimeService lifecycleService, INotificationsService notificationsService)
+            : base(clientService, settingsService, aggregator)
         {
             _sessionService = sessionService;
             _lifetimeService = lifecycleService;
@@ -36,7 +36,7 @@ namespace Unigram.ViewModels.Authorization
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            ProtoService.Send(new GetCountryCode(), result =>
+            ClientService.Send(new GetCountryCode(), result =>
             {
                 if (result is Text text)
                 {
@@ -44,7 +44,7 @@ namespace Unigram.ViewModels.Authorization
                 }
             });
 
-            var authState = ProtoService.GetAuthorizationState();
+            var authState = ClientService.GetAuthorizationState();
             var waitState = authState is AuthorizationStateWaitPhoneNumber
                 or AuthorizationStateWaitCode
                 or AuthorizationStateWaitPassword
@@ -57,7 +57,7 @@ namespace Unigram.ViewModels.Authorization
 
                 Delegate.UpdateQrCodeMode(QrCodeMode.Loading);
 
-                ProtoService.Send(new GetApplicationConfig(), result =>
+                ClientService.Send(new GetApplicationConfig(), result =>
                 {
                     if (result is JsonValueObject json)
                     {
@@ -80,7 +80,7 @@ namespace Unigram.ViewModels.Authorization
                                     }
                                 }
 
-                                ProtoService.Send(new RequestQrCodeAuthentication(userIds));
+                                ClientService.Send(new RequestQrCodeAuthentication(userIds));
                             }
 
                             return;
@@ -151,9 +151,9 @@ namespace Unigram.ViewModels.Authorization
         public RelayCommand SwitchCommand { get; }
         private void SwitchExecute()
         {
-            if (ProtoService.AuthorizationState is AuthorizationStateWaitPhoneNumber)
+            if (ClientService.AuthorizationState is AuthorizationStateWaitPhoneNumber)
             {
-                ProtoService.Send(new RequestQrCodeAuthentication());
+                ClientService.Send(new RequestQrCodeAuthentication());
             }
         }
 
@@ -175,7 +175,7 @@ namespace Unigram.ViewModels.Authorization
                     continue;
                 }
 
-                var user = session.ProtoService.GetUser(session.UserId);
+                var user = session.ClientService.GetUser(session.UserId);
                 if (user == null)
                 {
                     continue;
@@ -187,7 +187,7 @@ namespace Unigram.ViewModels.Authorization
                     if (confirm == ContentDialogResult.Primary)
                     {
                         _lifetimeService.PreviousItem = session;
-                        ProtoService.Send(new Destroy());
+                        ClientService.Send(new Destroy());
                     }
 
                     return;
@@ -200,13 +200,13 @@ namespace Unigram.ViewModels.Authorization
 
             var function = new SetAuthenticationPhoneNumber(phoneNumber, new PhoneNumberAuthenticationSettings(false, false, false, false, new string[0]));
             Task<BaseObject> request;
-            if (ProtoService.AuthorizationState is AuthorizationStateWaitOtherDeviceConfirmation)
+            if (ClientService.AuthorizationState is AuthorizationStateWaitOtherDeviceConfirmation)
             {
                 request = _sessionService.SetAuthenticationPhoneNumberAsync(function);
             }
             else
             {
-                request = ProtoService.SendAsync(function);
+                request = ClientService.SendAsync(function);
             }
 
             var response = await request;

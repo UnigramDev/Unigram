@@ -7,18 +7,18 @@ namespace Unigram.ViewModels
 {
     public class ChatViewModel : BindableBase
     {
-        private readonly IProtoService _protoService;
+        private readonly IClientService _clientService;
 
         private readonly Chat _chat;
 
-        public ChatViewModel(IProtoService protoService, Chat chat)
+        public ChatViewModel(IClientService clientService, Chat chat)
         {
-            _protoService = protoService;
+            _clientService = clientService;
 
             _chat = chat;
         }
 
-        public IProtoService ProtoService => _protoService;
+        public IClientService ClientService => _clientService;
 
         public Chat Native => _chat;
 

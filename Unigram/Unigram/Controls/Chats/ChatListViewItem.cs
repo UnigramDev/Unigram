@@ -243,7 +243,7 @@ namespace Unigram.Controls.Chats
                 var chat = message.GetChat();
                 if (chat != null && chat.Type is ChatTypeSupergroup supergroupType)
                 {
-                    var supergroup = _parent.ViewModel.ProtoService.GetSupergroup(supergroupType.SupergroupId);
+                    var supergroup = _parent.ViewModel.ClientService.GetSupergroup(supergroupType.SupergroupId);
                     if (supergroup.IsChannel)
                     {
                         return supergroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator;
@@ -366,48 +366,48 @@ namespace Unigram.Controls.Chats
 
     public class AccessibleChatListViewItem : ListViewItem
     {
-        private readonly IProtoService _protoService;
+        private readonly IClientService _clientService;
 
         public AccessibleChatListViewItem()
         {
 
         }
 
-        public AccessibleChatListViewItem(IProtoService protoService)
+        public AccessibleChatListViewItem(IClientService clientService)
         {
-            _protoService = protoService;
+            _clientService = clientService;
         }
 
         protected override AutomationPeer OnCreateAutomationPeer()
         {
-            return new ChatListViewAutomationPeer(this, _protoService);
+            return new ChatListViewAutomationPeer(this, _clientService);
         }
     }
 
     public class TableAccessibleChatListViewItem : TableListViewItem
     {
-        private readonly IProtoService _protoService;
+        private readonly IClientService _clientService;
 
         public TableAccessibleChatListViewItem()
         {
 
         }
 
-        public TableAccessibleChatListViewItem(IProtoService protoService)
+        public TableAccessibleChatListViewItem(IClientService clientService)
         {
-            _protoService = protoService;
+            _clientService = clientService;
         }
 
         protected override AutomationPeer OnCreateAutomationPeer()
         {
-            return new ChatListViewAutomationPeer(this, _protoService);
+            return new ChatListViewAutomationPeer(this, _clientService);
         }
     }
 
     public class ChatListViewAutomationPeer : ListViewItemAutomationPeer
     {
         private readonly ListViewItem _owner;
-        private readonly IProtoService _protoService;
+        private readonly IClientService _clientService;
 
         public ChatListViewAutomationPeer(ListViewItem owner)
             : base(owner)
@@ -415,11 +415,11 @@ namespace Unigram.Controls.Chats
             _owner = owner;
         }
 
-        public ChatListViewAutomationPeer(ListViewItem owner, IProtoService protoService)
+        public ChatListViewAutomationPeer(ListViewItem owner, IClientService clientService)
             : base(owner)
         {
             _owner = owner;
-            _protoService = protoService;
+            _clientService = clientService;
         }
 
         protected override string GetNameCore()
@@ -436,9 +436,9 @@ namespace Unigram.Controls.Chats
             {
                 return child.GetAutomationName() ?? base.GetNameCore();
             }
-            else if (_owner.Content is Message message && _protoService != null)
+            else if (_owner.Content is Message message && _clientService != null)
             {
-                return Automation.GetDescription(_protoService, message);
+                return Automation.GetDescription(_clientService, message);
             }
 
             return base.GetNameCore();
@@ -447,28 +447,28 @@ namespace Unigram.Controls.Chats
 
     public class ChatGridViewItem : GridViewItem
     {
-        private readonly IProtoService _protoService;
+        private readonly IClientService _clientService;
 
         public ChatGridViewItem()
         {
 
         }
 
-        public ChatGridViewItem(IProtoService protoService)
+        public ChatGridViewItem(IClientService clientService)
         {
-            _protoService = protoService;
+            _clientService = clientService;
         }
 
         protected override AutomationPeer OnCreateAutomationPeer()
         {
-            return new ChatGridViewAutomationPeer(this, _protoService);
+            return new ChatGridViewAutomationPeer(this, _clientService);
         }
     }
 
     public class ChatGridViewAutomationPeer : GridViewItemAutomationPeer
     {
         private readonly ChatGridViewItem _owner;
-        private readonly IProtoService _protoService;
+        private readonly IClientService _clientService;
 
         public ChatGridViewAutomationPeer(ChatGridViewItem owner)
             : base(owner)
@@ -476,11 +476,11 @@ namespace Unigram.Controls.Chats
             _owner = owner;
         }
 
-        public ChatGridViewAutomationPeer(ChatGridViewItem owner, IProtoService protoService)
+        public ChatGridViewAutomationPeer(ChatGridViewItem owner, IClientService clientService)
             : base(owner)
         {
             _owner = owner;
-            _protoService = protoService;
+            _clientService = clientService;
         }
 
         protected override string GetNameCore()
@@ -497,9 +497,9 @@ namespace Unigram.Controls.Chats
             {
                 return child.GetAutomationName() ?? base.GetNameCore();
             }
-            else if (_owner.Content is Message message && _protoService != null)
+            else if (_owner.Content is Message message && _clientService != null)
             {
-                return Automation.GetDescription(_protoService, message);
+                return Automation.GetDescription(_clientService, message);
             }
 
             return base.GetNameCore();

@@ -13,8 +13,8 @@ namespace Unigram.ViewModels
     {
         private readonly ILocationService _locationService;
 
-        public SendLocationViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ILocationService foursquareService)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public SendLocationViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, ILocationService foursquareService)
+            : base(clientService, settingsService, aggregator)
         {
             _locationService = foursquareService;
 

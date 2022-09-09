@@ -10,8 +10,8 @@ namespace Unigram.ViewModels.Payments
     {
         private PaymentForm _paymentForm;
 
-        public PaymentCredentialsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public PaymentCredentialsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
         }
 
@@ -136,7 +136,7 @@ namespace Unigram.ViewModels.Payments
             //    //_paymentForm.HasSavedCredentials = false;
             //    _paymentForm.SavedCredentials = null;
 
-            //    ProtoService.Send(new DeleteSavedCredentials());
+            //    ClientService.Send(new DeleteSavedCredentials());
             //}
 
             var month = 0;

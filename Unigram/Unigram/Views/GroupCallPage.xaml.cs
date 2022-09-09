@@ -34,8 +34,7 @@ namespace Unigram.Views
 {
     public sealed partial class GroupCallPage : Page, IGroupCallDelegate
     {
-        private readonly IProtoService _protoService;
-        private readonly ICacheService _cacheService;
+        private readonly IClientService _clientService;
         private readonly IEventAggregator _aggregator;
 
         private IGroupCallService _service;
@@ -61,12 +60,11 @@ namespace Unigram.Views
         private ParticipantsGridMode _mode = ParticipantsGridMode.Compact;
         private bool _docked = true;
 
-        public GroupCallPage(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator, IGroupCallService voipService)
+        public GroupCallPage(IClientService clientService, IEventAggregator aggregator, IGroupCallService voipService)
         {
             InitializeComponent();
 
-            _protoService = protoService;
-            _cacheService = cacheService;
+            _clientService = clientService;
             _aggregator = aggregator;
 
             _scheduledTimer = new DispatcherTimer();
@@ -142,7 +140,7 @@ namespace Unigram.Views
 
                 if (_gridCells.TryGetValue(item.EndpointId, out var cell))
                 {
-                    cell.UpdateGroupCallParticipant(_cacheService, participant, item);
+                    cell.UpdateGroupCallParticipant(_clientService, participant, item);
                 }
                 else
                 {
@@ -151,7 +149,7 @@ namespace Unigram.Views
 
                 if (_listCells.TryGetValue(item.EndpointId, out cell))
                 {
-                    cell.UpdateGroupCallParticipant(_cacheService, participant, item);
+                    cell.UpdateGroupCallParticipant(_clientService, participant, item);
                 }
                 else if (_mode != ParticipantsGridMode.Compact && _selectedEndpointId != null)
                 {
@@ -887,7 +885,7 @@ namespace Unigram.Views
 
             this.BeginOnUIThread(() =>
             {
-                TitleInfo.Text = call.Title.Length > 0 ? call.Title : _cacheService.GetTitle(_service.Chat);
+                TitleInfo.Text = call.Title.Length > 0 ? call.Title : _clientService.GetTitle(_service.Chat);
 
                 RecordingInfo.Visibility = call.RecordDuration > 0 ? Visibility.Visible : Visibility.Collapsed;
 
@@ -1146,11 +1144,11 @@ namespace Unigram.Views
             {
                 if (call.CanBeManaged)
                 {
-                    _protoService.Send(new StartScheduledGroupCall(call.Id));
+                    _clientService.Send(new StartScheduledGroupCall(call.Id));
                 }
                 else
                 {
-                    _protoService.Send(new ToggleGroupCallEnabledStartNotification(call.Id, !call.EnabledStartNotification));
+                    _clientService.Send(new ToggleGroupCallEnabledStartNotification(call.Id, !call.EnabledStartNotification));
                 }
             }
             //else if (currentUser != null && (currentUser.CanBeMutedForAllUsers || currentUser.CanBeUnmutedForAllUsers))
@@ -1158,7 +1156,7 @@ namespace Unigram.Views
             //    if (_service.Manager != null)
             //    {
             //        _service.Manager.IsMuted = !currentUser.IsMutedForAllUsers;
-            //        _protoService.Send(new ToggleGroupCallParticipantIsMuted(call.Id, currentUser.ParticipantId, _service.Manager.IsMuted));
+            //        _clientService.Send(new ToggleGroupCallParticipantIsMuted(call.Id, currentUser.ParticipantId, _service.Manager.IsMuted));
             //    }
             //}
             else if (currentUser != null && currentUser.CanUnmuteSelf && _service.IsMuted)
@@ -1177,7 +1175,7 @@ namespace Unigram.Views
             }
             else if (currentUser != null)
             {
-                _protoService.Send(new ToggleGroupCallParticipantIsHandRaised(call.Id, _service.CurrentUser.ParticipantId, true));
+                _clientService.Send(new ToggleGroupCallParticipantIsHandRaised(call.Id, _service.CurrentUser.ParticipantId, true));
             }
         }
 
@@ -1465,7 +1463,7 @@ namespace Unigram.Views
                 toggleFalse.IsChecked = !call.MuteNewParticipants;
                 toggleFalse.Click += (s, args) =>
                 {
-                    _protoService.Send(new ToggleGroupCallMuteNewParticipants(call.Id, false));
+                    _clientService.Send(new ToggleGroupCallMuteNewParticipants(call.Id, false));
                 };
 
                 var toggleTrue = new ToggleMenuFlyoutItem();
@@ -1473,7 +1471,7 @@ namespace Unigram.Views
                 toggleTrue.IsChecked = call.MuteNewParticipants;
                 toggleTrue.Click += (s, args) =>
                 {
-                    _protoService.Send(new ToggleGroupCallMuteNewParticipants(call.Id, true));
+                    _clientService.Send(new ToggleGroupCallMuteNewParticipants(call.Id, true));
                 };
 
                 var settings = new MenuFlyoutSubItem();
@@ -1642,7 +1640,7 @@ namespace Unigram.Views
             var confirm = await input.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
-                _protoService.Send(new SetGroupCallTitle(call.Id, input.Text));
+                _clientService.Send(new SetGroupCallTitle(call.Id, input.Text));
             }
         }
 
@@ -1662,7 +1660,7 @@ namespace Unigram.Views
             var confirm = await input.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
-                _protoService.Send(new StartGroupCallRecording(call.Id, input.FileName, input.RecordVideo, input.UsePortraitOrientation));
+                _clientService.Send(new StartGroupCallRecording(call.Id, input.FileName, input.RecordVideo, input.UsePortraitOrientation));
             }
         }
 
@@ -1684,7 +1682,7 @@ namespace Unigram.Views
             var confirm = await popup.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
-                _protoService.Send(new EndGroupCallRecording(call.Id));
+                _clientService.Send(new EndGroupCallRecording(call.Id));
             }
         }
 
@@ -1739,7 +1737,7 @@ namespace Unigram.Views
                 {
                     if (_gridCells.TryGetValue(videoInfo.EndpointId, out var cell))
                     {
-                        cell.UpdateGroupCallParticipant(_cacheService, participant, videoInfo);
+                        cell.UpdateGroupCallParticipant(_clientService, participant, videoInfo);
                     }
                 }
 
@@ -1772,15 +1770,15 @@ namespace Unigram.Views
                 element.Scale = new Vector3(0.9f);
             }
 
-            if (_cacheService.TryGetUser(participant.ParticipantId, out User user))
+            if (_clientService.TryGetUser(participant.ParticipantId, out User user))
             {
-                photo.SetUser(_protoService, user, 36);
+                photo.SetUser(_clientService, user, 36);
                 title.Text = user.GetFullName();
             }
-            else if (_cacheService.TryGetChat(participant.ParticipantId, out Chat chat))
+            else if (_clientService.TryGetChat(participant.ParticipantId, out Chat chat))
             {
-                photo.SetChat(_protoService, chat, 36);
-                title.Text = _protoService.GetTitle(chat);
+                photo.SetChat(_clientService, chat, 36);
+                title.Text = _clientService.GetTitle(chat);
             }
 
             if (participant.HasVideoInfo())
@@ -1925,7 +1923,7 @@ namespace Unigram.Views
                 return;
             }
 
-            var child = new GroupCallParticipantGridCell(_cacheService, participant, videoInfo, screenSharing);
+            var child = new GroupCallParticipantGridCell(_clientService, participant, videoInfo, screenSharing);
             child.Click += Participant_Click;
             child.ToggleDocked += Participant_ToggleDocked;
             child.ContextRequested += Participant_ContextRequested;
@@ -2072,7 +2070,7 @@ namespace Unigram.Views
             {
                 if (participant.IsHandRaised)
                 {
-                    flyout.CreateFlyoutItem(() => _protoService.Send(new ToggleGroupCallParticipantIsHandRaised(_service.Call.Id, participant.ParticipantId, false)), Strings.Resources.VoipGroupCancelRaiseHand, new FontIcon { Glyph = Icons.EmojiHand });
+                    flyout.CreateFlyoutItem(() => _clientService.Send(new ToggleGroupCallParticipantIsHandRaised(_service.Call.Id, participant.ParticipantId, false)), Strings.Resources.VoipGroupCancelRaiseHand, new FontIcon { Glyph = Icons.EmojiHand });
                 }
 
                 if (participant.HasVideoInfo())
@@ -2104,11 +2102,11 @@ namespace Unigram.Views
                 {
                     if (args.NewValue > 0)
                     {
-                        _protoService.Send(new SetGroupCallParticipantVolumeLevel(call.Id, participant.ParticipantId, (int)(args.NewValue * 100)));
+                        _clientService.Send(new SetGroupCallParticipantVolumeLevel(call.Id, participant.ParticipantId, (int)(args.NewValue * 100)));
                     }
                     else
                     {
-                        _protoService.Send(new ToggleGroupCallParticipantIsMuted(call.Id, participant.ParticipantId, true));
+                        _clientService.Send(new ToggleGroupCallParticipantIsMuted(call.Id, participant.ParticipantId, true));
                     }
                 };
 
@@ -2128,26 +2126,26 @@ namespace Unigram.Views
 
                 if (participant.CanBeUnmutedForAllUsers)
                 {
-                    flyout.CreateFlyoutItem(() => _protoService.Send(new ToggleGroupCallParticipantIsMuted(_service.Call.Id, participant.ParticipantId, false)), Strings.Resources.VoipGroupAllowToSpeak, new FontIcon { Glyph = Icons.MicOn });
+                    flyout.CreateFlyoutItem(() => _clientService.Send(new ToggleGroupCallParticipantIsMuted(_service.Call.Id, participant.ParticipantId, false)), Strings.Resources.VoipGroupAllowToSpeak, new FontIcon { Glyph = Icons.MicOn });
                 }
                 else if (participant.CanBeUnmutedForCurrentUser)
                 {
-                    flyout.CreateFlyoutItem(() => _protoService.Send(new ToggleGroupCallParticipantIsMuted(_service.Call.Id, participant.ParticipantId, false)), Strings.Resources.VoipGroupUnmuteForMe, new FontIcon { Glyph = Icons.MicOn });
+                    flyout.CreateFlyoutItem(() => _clientService.Send(new ToggleGroupCallParticipantIsMuted(_service.Call.Id, participant.ParticipantId, false)), Strings.Resources.VoipGroupUnmuteForMe, new FontIcon { Glyph = Icons.MicOn });
                 }
                 else if (participant.CanBeMutedForAllUsers)
                 {
-                    flyout.CreateFlyoutItem(() => _protoService.Send(new ToggleGroupCallParticipantIsMuted(_service.Call.Id, participant.ParticipantId, true)), Strings.Resources.VoipGroupMute, new FontIcon { Glyph = Icons.MicOff });
+                    flyout.CreateFlyoutItem(() => _clientService.Send(new ToggleGroupCallParticipantIsMuted(_service.Call.Id, participant.ParticipantId, true)), Strings.Resources.VoipGroupMute, new FontIcon { Glyph = Icons.MicOff });
                 }
                 else if (participant.CanBeMutedForCurrentUser)
                 {
-                    flyout.CreateFlyoutItem(() => _protoService.Send(new ToggleGroupCallParticipantIsMuted(_service.Call.Id, participant.ParticipantId, true)), Strings.Resources.VoipGroupMuteForMe, new FontIcon { Glyph = Icons.MicOff });
+                    flyout.CreateFlyoutItem(() => _clientService.Send(new ToggleGroupCallParticipantIsMuted(_service.Call.Id, participant.ParticipantId, true)), Strings.Resources.VoipGroupMuteForMe, new FontIcon { Glyph = Icons.MicOff });
                 }
 
-                //if (_cacheService.TryGetUser(participant.ParticipantId, out User user))
+                //if (_clientService.TryGetUser(participant.ParticipantId, out User user))
                 //{
                 //    flyout.CreateFlyoutItem(() => _aggregator.Publish(new UpdateSwitchToSender(participant.ParticipantId)), Strings.Resources.VoipGroupOpenProfile, new FontIcon { Glyph = Icons.Person });
                 //}
-                //else if (_cacheService.TryGetChat(participant.ParticipantId, out Chat chat))
+                //else if (_clientService.TryGetChat(participant.ParticipantId, out Chat chat))
                 //{
                 //    if (chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
                 //    {

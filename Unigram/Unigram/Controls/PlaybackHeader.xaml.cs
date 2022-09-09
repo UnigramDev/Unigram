@@ -19,7 +19,7 @@ namespace Unigram.Controls
 {
     public sealed partial class PlaybackHeader : UserControl
     {
-        private IProtoService _cacheService;
+        private IClientService _clientService;
         private IPlaybackService _playbackService;
         private INavigationService _navigationService;
 
@@ -62,9 +62,9 @@ namespace Unigram.Controls
             }
         }
 
-        public void Update(IProtoService cacheService, IPlaybackService playbackService, INavigationService navigationService)
+        public void Update(IClientService clientService, IPlaybackService playbackService, INavigationService navigationService)
         {
-            _cacheService = cacheService;
+            _clientService = clientService;
             _playbackService = playbackService;
             _navigationService = navigationService;
 
@@ -174,13 +174,13 @@ namespace Unigram.Controls
                 var title = string.Empty;
                 var date = Converter.DateTime(message.Date);
 
-                if (_cacheService.TryGetUser(message.SenderId, out Telegram.Td.Api.User senderUser))
+                if (_clientService.TryGetUser(message.SenderId, out Telegram.Td.Api.User senderUser))
                 {
-                    title = senderUser.Id == _cacheService.Options.MyId ? Strings.Resources.ChatYourSelfName : senderUser.GetFullName();
+                    title = senderUser.Id == _clientService.Options.MyId ? Strings.Resources.ChatYourSelfName : senderUser.GetFullName();
                 }
-                else if (_cacheService.TryGetChat(message.SenderId, out Chat senderChat))
+                else if (_clientService.TryGetChat(message.SenderId, out Chat senderChat))
                 {
-                    title = _cacheService.GetTitle(senderChat);
+                    title = _clientService.GetTitle(senderChat);
                 }
 
                 var subtitle = string.Format(Strings.Resources.formatDateAtTime, Converter.ShortDate.Format(date), Converter.ShortTime.Format(date));

@@ -5,14 +5,14 @@ namespace Unigram.ViewModels.Gallery
 {
     public abstract class GalleryContent
     {
-        protected readonly IProtoService _protoService;
+        protected readonly IClientService _clientService;
 
-        public GalleryContent(IProtoService protoService)
+        public GalleryContent(IClientService clientService)
         {
-            _protoService = protoService;
+            _clientService = clientService;
         }
 
-        public IProtoService ProtoService => _protoService;
+        public IClientService ClientService => _clientService;
 
         public abstract File GetFile();
 

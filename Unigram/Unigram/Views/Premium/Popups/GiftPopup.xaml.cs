@@ -15,16 +15,16 @@ namespace Unigram.Views.Premium.Popups
 {
     public sealed partial class GiftPopup : ContentPopup
     {
-        private readonly IProtoService _protoService;
+        private readonly IClientService _clientService;
         private readonly INavigationService _navigationService;
 
         private PremiumPaymentOption _selectedOption;
 
-        public GiftPopup(IProtoService protoService, INavigationService navigationService, User user, IList<PremiumPaymentOption> options)
+        public GiftPopup(IClientService clientService, INavigationService navigationService, User user, IList<PremiumPaymentOption> options)
         {
             InitializeComponent();
 
-            _protoService = protoService;
+            _clientService = clientService;
             _navigationService = navigationService;
 
             _selectedOption = options.FirstOrDefault();
@@ -114,7 +114,7 @@ namespace Unigram.Views.Premium.Popups
         {
             if (_selectedOption?.PaymentLink != null)
             {
-                MessageHelper.OpenTelegramUrl(_protoService, _navigationService, _selectedOption?.PaymentLink);
+                MessageHelper.OpenTelegramUrl(_clientService, _navigationService, _selectedOption?.PaymentLink);
             }
         }
     }

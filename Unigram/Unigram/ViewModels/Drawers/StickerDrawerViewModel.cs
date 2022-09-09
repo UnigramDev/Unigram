@@ -36,28 +36,28 @@ namespace Unigram.ViewModels.Drawers
         private bool _updating;
         private long _updatedHash;
 
-        public StickerDrawerViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public StickerDrawerViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
-            _premiumSet = new StickerSetViewModel(ProtoService, new StickerSetInfo
+            _premiumSet = new StickerSetViewModel(ClientService, new StickerSetInfo
             {
                 Title = Strings.Resources.PremiumStickers,
                 Name = "tg/premiumStickers"
             });
 
-            _favoriteSet = new StickerSetViewModel(ProtoService, new StickerSetInfo
+            _favoriteSet = new StickerSetViewModel(ClientService, new StickerSetInfo
             {
                 Title = Strings.Resources.FavoriteStickers,
                 Name = "tg/favedStickers"
             });
 
-            _recentSet = new StickerSetViewModel(ProtoService, new StickerSetInfo
+            _recentSet = new StickerSetViewModel(ClientService, new StickerSetInfo
             {
                 Title = Strings.Resources.RecentStickers,
                 Name = "tg/recentlyUsed"
             });
 
-            _groupSet = new SupergroupStickerSetViewModel(ProtoService, new StickerSetInfo
+            _groupSet = new SupergroupStickerSetViewModel(ClientService, new StickerSetInfo
             {
                 Title = Strings.Resources.GroupStickers,
                 Name = "tg/groupStickers"
@@ -99,7 +99,7 @@ namespace Unigram.ViewModels.Drawers
 
         public void Handle(UpdateFavoriteStickers update)
         {
-            ProtoService.Send(new GetFavoriteStickers(), result =>
+            ClientService.Send(new GetFavoriteStickers(), result =>
             {
                 if (result is Stickers favorite)
                 {
@@ -115,7 +115,7 @@ namespace Unigram.ViewModels.Drawers
                 return;
             }
 
-            ProtoService.Send(new GetRecentStickers(), result =>
+            ClientService.Send(new GetRecentStickers(), result =>
             {
                 if (result is Stickers recent)
                 {
@@ -188,18 +188,18 @@ namespace Unigram.ViewModels.Drawers
                     if (index > -1 && index != i)
                     {
                         destination.RemoveAt(index);
-                        destination.Insert(Math.Min(i, destination.Count), new StickerViewModel(ProtoService, sticker));
+                        destination.Insert(Math.Min(i, destination.Count), new StickerViewModel(ClientService, sticker));
                     }
                     else if (index == -1)
                     {
-                        destination.Insert(Math.Min(i, destination.Count), new StickerViewModel(ProtoService, sticker));
+                        destination.Insert(Math.Min(i, destination.Count), new StickerViewModel(ClientService, sticker));
                     }
                 }
             }
             else
             {
                 destination.Clear();
-                destination.AddRange(origin.Select(x => new StickerViewModel(ProtoService, x)));
+                destination.AddRange(origin.Select(x => new StickerViewModel(ClientService, x)));
             }
         }
 
@@ -248,7 +248,7 @@ namespace Unigram.ViewModels.Drawers
             }
             else
             {
-                var items = SearchStickers = new SearchStickerSetsCollection(ProtoService, new StickerTypeRegular(), query, 0);
+                var items = SearchStickers = new SearchStickerSetsCollection(ClientService, new StickerTypeRegular(), query, 0);
                 await items.LoadMoreItemsAsync(0);
             }
         }
@@ -285,7 +285,7 @@ namespace Unigram.ViewModels.Drawers
 
                 if (fullInfo.StickerSetId != 0)
                 {
-                    var response = await ProtoService.SendAsync(new GetStickerSet(fullInfo.StickerSetId));
+                    var response = await ClientService.SendAsync(new GetStickerSet(fullInfo.StickerSetId));
                     if (response is StickerSet stickerSet)
                     {
                         _groupSet.Update(chat.Id, stickerSet);
@@ -319,10 +319,10 @@ namespace Unigram.ViewModels.Drawers
             _updated = true;
             _updating = true;
 
-            var result1 = await ProtoService.SendAsync(new GetFavoriteStickers());
-            var result2 = await ProtoService.SendAsync(new GetRecentStickers());
-            var result3 = await ProtoService.SendAsync(new GetPremiumStickers(60));
-            var result4 = await ProtoService.SendAsync(new GetInstalledStickerSets(new StickerTypeRegular()));
+            var result1 = await ClientService.SendAsync(new GetFavoriteStickers());
+            var result2 = await ClientService.SendAsync(new GetRecentStickers());
+            var result3 = await ClientService.SendAsync(new GetPremiumStickers(60));
+            var result4 = await ClientService.SendAsync(new GetInstalledStickerSets(new StickerTypeRegular()));
 
             if (result1 is Stickers favorite && result2 is Stickers recent && result3 is Stickers premium && result4 is StickerSets sets)
             {
@@ -378,14 +378,14 @@ namespace Unigram.ViewModels.Drawers
 
                 if (sets.Sets.Count > 0)
                 {
-                    var result5 = await ProtoService.SendAsync(new GetStickerSet(sets.Sets[0].Id));
+                    var result5 = await ClientService.SendAsync(new GetStickerSet(sets.Sets[0].Id));
 
                     _updating = false;
 
                     if (result5 is StickerSet set)
                     {
-                        stickers.Add(new StickerSetViewModel(ProtoService, sets.Sets[0], set));
-                        stickers.AddRange(sets.Sets.Skip(1).Select(x => new StickerSetViewModel(ProtoService, x)));
+                        stickers.Add(new StickerSetViewModel(ClientService, sets.Sets[0], set));
+                        stickers.AddRange(sets.Sets.Skip(1).Select(x => new StickerSetViewModel(ClientService, x)));
 
                         if (_premiumSet.Stickers.Count > 0 && IsPremiumAvailable && !IsPremium)
                         {
@@ -396,7 +396,7 @@ namespace Unigram.ViewModels.Drawers
                     }
                     else
                     {
-                        stickers.AddRange(sets.Sets.Select(x => new StickerSetViewModel(ProtoService, x)));
+                        stickers.AddRange(sets.Sets.Select(x => new StickerSetViewModel(ClientService, x)));
 
                         if (_premiumSet.Stickers.Count > 0 && IsPremiumAvailable && !IsPremium)
                         {
@@ -409,7 +409,7 @@ namespace Unigram.ViewModels.Drawers
                 else
                 {
                     _updating = false;
-                    SavedStickers.ReplaceWith(stickers.Union(sets.Sets.Select(x => new StickerSetViewModel(ProtoService, x))));
+                    SavedStickers.ReplaceWith(stickers.Union(sets.Sets.Select(x => new StickerSetViewModel(ClientService, x))));
                 }
             }
         }
@@ -424,8 +424,8 @@ namespace Unigram.ViewModels.Drawers
 
     public class SupergroupStickerSetViewModel : StickerSetViewModel
     {
-        public SupergroupStickerSetViewModel(IProtoService protoService, StickerSetInfo info)
-            : base(protoService, info)
+        public SupergroupStickerSetViewModel(IClientService clientService, StickerSetInfo info)
+            : base(clientService, info)
         {
         }
 
@@ -436,11 +436,11 @@ namespace Unigram.ViewModels.Drawers
 
             if (reset)
             {
-                Stickers = new MvxObservableCollection<StickerViewModel>(set.Stickers.Select(x => new StickerViewModel(_protoService, x)));
+                Stickers = new MvxObservableCollection<StickerViewModel>(set.Stickers.Select(x => new StickerViewModel(_clientService, x)));
             }
             else
             {
-                Stickers.ReplaceWith(set.Stickers.Select(x => new StickerViewModel(_protoService, x)));
+                Stickers.ReplaceWith(set.Stickers.Select(x => new StickerViewModel(_clientService, x)));
             }
         }
 
@@ -453,14 +453,14 @@ namespace Unigram.ViewModels.Drawers
 
     public class StickerSetViewModel
     {
-        protected readonly IProtoService _protoService;
+        protected readonly IClientService _clientService;
 
         protected readonly StickerSetInfo _info;
         protected StickerSet _set;
 
-        public StickerSetViewModel(IProtoService protoService, StickerSetInfo info)
+        public StickerSetViewModel(IClientService clientService, StickerSetInfo info)
         {
-            _protoService = protoService;
+            _clientService = clientService;
             _info = info;
 
             var placeholders = new List<StickerViewModel>();
@@ -474,19 +474,19 @@ namespace Unigram.ViewModels.Drawers
 
                 for (int i = 0; i < count; i++)
                 {
-                    placeholders.Add(new StickerViewModel(_protoService, info.Covers[i]));
+                    placeholders.Add(new StickerViewModel(_clientService, info.Covers[i]));
                 }
 
                 if (limit)
                 {
-                    placeholders.Add(new MoreStickerViewModel(_protoService, info.Id, info.StickerFormat, info.Size - count));
+                    placeholders.Add(new MoreStickerViewModel(_clientService, info.Id, info.StickerFormat, info.Size - count));
                 }
             }
             else
             {
                 for (int i = 0; i < info.Size; i++)
                 {
-                    placeholders.Add(new StickerViewModel(_protoService, info.Id, info.StickerFormat));
+                    placeholders.Add(new StickerViewModel(_clientService, info.Id, info.StickerFormat));
                 }
             }
 
@@ -494,28 +494,28 @@ namespace Unigram.ViewModels.Drawers
             Covers = info.Covers;
         }
 
-        public StickerSetViewModel(IProtoService protoService, StickerSetInfo info, StickerSet set)
-            : this(protoService, info)
+        public StickerSetViewModel(IClientService clientService, StickerSetInfo info, StickerSet set)
+            : this(clientService, info)
         {
             IsLoaded = true;
             Update(set);
         }
 
-        public StickerSetViewModel(IProtoService protoService, StickerSet set)
-            : this(protoService, set.ToInfo())
+        public StickerSetViewModel(IClientService clientService, StickerSet set)
+            : this(clientService, set.ToInfo())
         {
             IsLoaded = true;
             Update(set);
         }
 
-        public StickerSetViewModel(IProtoService protoService, StickerSetInfo info, IList<Sticker> stickers)
+        public StickerSetViewModel(IClientService clientService, StickerSetInfo info, IList<Sticker> stickers)
         {
-            _protoService = protoService;
+            _clientService = clientService;
 
             _info = info;
 
             IsLoaded = true;
-            Stickers = new MvxObservableCollection<StickerViewModel>(stickers.Select(x => new StickerViewModel(protoService, x)));
+            Stickers = new MvxObservableCollection<StickerViewModel>(stickers.Select(x => new StickerViewModel(clientService, x)));
             Covers = info.Covers;
         }
 
@@ -529,7 +529,7 @@ namespace Unigram.ViewModels.Drawers
                 {
                     if (Stickers[i] is MoreStickerViewModel)
                     {
-                        Stickers[i] = new StickerViewModel(_protoService, set.Stickers[i]);
+                        Stickers[i] = new StickerViewModel(_clientService, set.Stickers[i]);
                     }
                     else
                     {
@@ -538,7 +538,7 @@ namespace Unigram.ViewModels.Drawers
                 }
                 else
                 {
-                    Stickers.Add(new StickerViewModel(_protoService, set.Stickers[i]));
+                    Stickers.Add(new StickerViewModel(_clientService, set.Stickers[i]));
                 }
             }
 
@@ -552,11 +552,11 @@ namespace Unigram.ViewModels.Drawers
         {
             if (raise)
             {
-                Stickers.ReplaceWith(stickers.Select(x => new StickerViewModel(_protoService, x)));
+                Stickers.ReplaceWith(stickers.Select(x => new StickerViewModel(_clientService, x)));
             }
             else
             {
-                Stickers = new MvxObservableCollection<StickerViewModel>(stickers.Select(x => new StickerViewModel(_protoService, x)));
+                Stickers = new MvxObservableCollection<StickerViewModel>(stickers.Select(x => new StickerViewModel(_clientService, x)));
             }
         }
 
@@ -597,19 +597,19 @@ namespace Unigram.ViewModels.Drawers
         private readonly long _setId;
         private readonly StickerFormat _format;
 
-        private readonly IProtoService _protoService;
+        private readonly IClientService _clientService;
 
-        public StickerViewModel(IProtoService protoService, long setId, StickerFormat format)
+        public StickerViewModel(IClientService clientService, long setId, StickerFormat format)
         {
-            _protoService = protoService;
+            _clientService = clientService;
 
             _setId = setId;
             _format = format;
         }
 
-        public StickerViewModel(IProtoService protoService, Sticker sticker)
+        public StickerViewModel(IClientService clientService, Sticker sticker)
         {
-            _protoService = protoService;
+            _clientService = clientService;
 
             _sticker = sticker;
             _format = sticker.Format;
@@ -620,7 +620,7 @@ namespace Unigram.ViewModels.Drawers
             _sticker = sticker;
         }
 
-        public IProtoService ProtoService => _protoService;
+        public IClientService ClientService => _clientService;
 
         public static implicit operator Sticker(StickerViewModel viewModel)
         {
@@ -642,8 +642,8 @@ namespace Unigram.ViewModels.Drawers
 
     public class MoreStickerViewModel : StickerViewModel
     {
-        public MoreStickerViewModel(IProtoService protoService, long setId, StickerFormat format, int totalCount)
-            : base(protoService, setId, format)
+        public MoreStickerViewModel(IClientService clientService, long setId, StickerFormat format, int totalCount)
+            : base(clientService, setId, format)
         {
             TotalCount = totalCount;
         }
@@ -707,15 +707,15 @@ namespace Unigram.ViewModels.Drawers
 
     public class SearchStickerSetsCollection : MvxObservableCollection<StickerSetViewModel>, ISupportIncrementalLoading
     {
-        private readonly IProtoService _protoService;
+        private readonly IClientService _clientService;
         private readonly StickerType _type;
         private readonly string _query;
         private readonly string _inputLanguage;
         private readonly long _chatId;
 
-        public SearchStickerSetsCollection(IProtoService protoService, StickerType type, string query, long chatId)
+        public SearchStickerSetsCollection(IClientService clientService, StickerType type, string query, long chatId)
         {
-            _protoService = protoService;
+            _clientService = clientService;
             _type = type;
             _query = query;
             _inputLanguage = CoreTextServicesManager.GetForCurrentView().InputLanguage.LanguageTag;
@@ -730,40 +730,40 @@ namespace Unigram.ViewModels.Drawers
             {
                 if (phase == 0)
                 {
-                    var response = await _protoService.SendAsync(new SearchInstalledStickerSets(_type, _query, 100));
+                    var response = await _clientService.SendAsync(new SearchInstalledStickerSets(_type, _query, 100));
                     if (response is StickerSets sets)
                     {
-                        foreach (var item in sets.Sets.Select(x => new StickerSetViewModel(_protoService, x)))
+                        foreach (var item in sets.Sets.Select(x => new StickerSetViewModel(_clientService, x)))
                         {
                             Add(item);
                         }
 
-                        //AddRange(sets.Sets.Select(x => new StickerSetViewModel(_protoService, _aggregator, x)));
+                        //AddRange(sets.Sets.Select(x => new StickerSetViewModel(_clientService, _aggregator, x)));
                     }
                 }
                 else if (phase == 1 && _query.Length > 1)
                 {
                     if (Emoji.ContainsSingleEmoji(_query))
                     {
-                        var response = await _protoService.SendAsync(new GetStickers(_type, _query, 100, _chatId));
+                        var response = await _clientService.SendAsync(new GetStickers(_type, _query, 100, _chatId));
                         if (response is Stickers stickers && stickers.StickersValue.Count > 0)
                         {
-                            Add(new StickerSetViewModel(_protoService,
+                            Add(new StickerSetViewModel(_clientService,
                                 new StickerSetInfo(0, _query, "emoji", null, new ClosedVectorPath[0], false, false, false, new StickerFormatWebp(), _type, false, stickers.StickersValue.Count, stickers.StickersValue),
                                 new StickerSet(0, _query, "emoji", null, new ClosedVectorPath[0], false, false, false, new StickerFormatWebp(), _type, false, stickers.StickersValue, new Emojis[0])));
                         }
                     }
                     else
                     {
-                        var emojis = await _protoService.SendAsync(new SearchEmojis(_query, false, new[] { _inputLanguage })) as Emojis;
+                        var emojis = await _clientService.SendAsync(new SearchEmojis(_query, false, new[] { _inputLanguage })) as Emojis;
                         if (emojis != null)
                         {
                             for (int i = 0; i < Math.Min(10, emojis.EmojisValue.Count); i++)
                             {
-                                var response = await _protoService.SendAsync(new GetStickers(_type, emojis.EmojisValue[i], 100, _chatId));
+                                var response = await _clientService.SendAsync(new GetStickers(_type, emojis.EmojisValue[i], 100, _chatId));
                                 if (response is Stickers stickers && stickers.StickersValue.Count > 0)
                                 {
-                                    Add(new StickerSetViewModel(_protoService,
+                                    Add(new StickerSetViewModel(_clientService,
                                         new StickerSetInfo(0, emojis.EmojisValue[i], "emoji", null, new ClosedVectorPath[0], false, false, false, new StickerFormatWebp(), _type, false, stickers.StickersValue.Count, stickers.StickersValue),
                                         new StickerSet(0, emojis.EmojisValue[i], "emoji", null, new ClosedVectorPath[0], false, false, false, new StickerFormatWebp(), _type, false, stickers.StickersValue, new Emojis[0])));
                                 }
@@ -773,15 +773,15 @@ namespace Unigram.ViewModels.Drawers
                 }
                 else if (phase == 2)
                 {
-                    var response = await _protoService.SendAsync(new SearchStickerSets(_query));
+                    var response = await _clientService.SendAsync(new SearchStickerSets(_query));
                     if (response is StickerSets sets)
                     {
-                        foreach (var item in sets.Sets.Select(x => new StickerSetViewModel(_protoService, x, x.Covers)))
+                        foreach (var item in sets.Sets.Select(x => new StickerSetViewModel(_clientService, x, x.Covers)))
                         {
                             Add(item);
                         }
 
-                        //AddRange(sets.Sets.Select(x => new StickerSetViewModel(_protoService, _aggregator, x)));
+                        //AddRange(sets.Sets.Select(x => new StickerSetViewModel(_clientService, _aggregator, x)));
                     }
                 }
 

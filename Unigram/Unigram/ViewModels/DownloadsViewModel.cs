@@ -22,8 +22,8 @@ namespace Unigram.ViewModels
     {
         private readonly IStorageService _storageService;
 
-        public DownloadsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IStorageService storageService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public DownloadsViewModel(IClientService clientService, ISettingsService settingsService, IStorageService storageService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             _storageService = storageService;
 
@@ -145,13 +145,13 @@ namespace Unigram.ViewModels
         public RelayCommand RemoveAllCommand { get; }
         private void RemoveAll()
         {
-            ProtoService.Send(new RemoveAllFilesFromDownloads(false, false, true));
+            ClientService.Send(new RemoveAllFilesFromDownloads(false, false, true));
         }
 
         public RelayCommand ToggleAllPausedCommand { get; }
         private void ToggleAllPaused()
         {
-            ProtoService.Send(new ToggleAllDownloadsArePaused(_totalActiveCount > 0));
+            ClientService.Send(new ToggleAllDownloadsArePaused(_totalActiveCount > 0));
         }
 
         public RelayCommand SettingsCommand { get; }
@@ -164,7 +164,7 @@ namespace Unigram.ViewModels
         public RelayCommand<FileDownloadViewModel> RemoveFileDownloadCommand { get; }
         private void RemoveFileDownload(FileDownloadViewModel fileDownload)
         {
-            ProtoService.Send(new RemoveFileFromDownloads(fileDownload.FileId, true));
+            ClientService.Send(new RemoveFileFromDownloads(fileDownload.FileId, true));
         }
 
         public RelayCommand<FileDownloadViewModel> ViewFileDownloadCommand { get; }
@@ -177,7 +177,7 @@ namespace Unigram.ViewModels
         public RelayCommand<FileDownloadViewModel> ShowFileDownloadCommand { get; }
         private async void ShowFileDownload(FileDownloadViewModel fileDownload)
         {
-            var file = await ProtoService.SendAsync(new GetFile(fileDownload.FileId)) as File;
+            var file = await ClientService.SendAsync(new GetFile(fileDownload.FileId)) as File;
             if (file != null)
             {
                 await _storageService.OpenFolderAsync(file);
@@ -212,7 +212,7 @@ namespace Unigram.ViewModels
             {
                 return AsyncInfo.Run(async token =>
                 {
-                    var response = await _viewModel.ProtoService.SendAsync(new SearchFileDownloads(_query, _onlyActive, _onlyCompleted, _offset, 100));
+                    var response = await _viewModel.ClientService.SendAsync(new SearchFileDownloads(_query, _onlyActive, _onlyCompleted, _offset, 100));
                     if (response is FoundFileDownloads found)
                     {
                         foreach (var file in found.Files)

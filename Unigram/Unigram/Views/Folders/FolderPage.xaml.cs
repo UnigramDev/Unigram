@@ -30,7 +30,7 @@ namespace Unigram.Views.Folders
             var content = args.Element as UserCell;
             var element = content.DataContext as ChatFilterElement;
 
-            content.UpdateChatFilter(ViewModel.ProtoService, element);
+            content.UpdateChatFilter(ViewModel.ClientService, element);
         }
 
         private void Include_ContextRequested(UIElement sender, ContextRequestedEventArgs args)

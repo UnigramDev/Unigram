@@ -22,8 +22,7 @@ namespace Unigram.Views
 {
     public sealed partial class LiveStreamPage : Page
     {
-        private readonly IProtoService _protoService;
-        private readonly ICacheService _cacheService;
+        private readonly IClientService _clientService;
         private readonly IEventAggregator _aggregator;
 
         private IGroupCallService _service;
@@ -38,12 +37,11 @@ namespace Unigram.Views
 
         private readonly DisplayRequest _displayRequest = new();
 
-        public LiveStreamPage(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator, IGroupCallService voipService)
+        public LiveStreamPage(IClientService clientService, IEventAggregator aggregator, IGroupCallService voipService)
         {
             InitializeComponent();
 
-            _protoService = protoService;
-            _cacheService = cacheService;
+            _clientService = clientService;
             _aggregator = aggregator;
 
             _scheduledTimer = new DispatcherTimer();
@@ -105,11 +103,11 @@ namespace Unigram.Views
             }
             else
             {
-                if (_protoService.TryGetSupergroup(_service.Chat, out Supergroup supergroup))
+                if (_clientService.TryGetSupergroup(_service.Chat, out Supergroup supergroup))
                 {
                     TextBlockHelper.SetMarkdown(NoStream, supergroup.Status is ChatMemberStatusCreator ? Strings.Resources.NoRtmpStreamFromAppOwner : string.Format(Strings.Resources.NoRtmpStreamFromAppViewer, _service.Chat.Title));
                 }
-                else if (_protoService.TryGetBasicGroup(_service.Chat, out BasicGroup basicGroup))
+                else if (_clientService.TryGetBasicGroup(_service.Chat, out BasicGroup basicGroup))
                 {
                     TextBlockHelper.SetMarkdown(NoStream, basicGroup.Status is ChatMemberStatusCreator ? Strings.Resources.NoRtmpStreamFromAppOwner : string.Format(Strings.Resources.NoRtmpStreamFromAppViewer, _service.Chat.Title));
                 }
@@ -262,7 +260,7 @@ namespace Unigram.Views
 
             this.BeginOnUIThread(() =>
             {
-                TitleInfo.Text = call.Title.Length > 0 ? call.Title : _cacheService.GetTitle(_service.Chat);
+                TitleInfo.Text = call.Title.Length > 0 ? call.Title : _clientService.GetTitle(_service.Chat);
 
                 RecordingInfo.Visibility = call.RecordDuration > 0 ? Visibility.Visible : Visibility.Collapsed;
 
@@ -486,7 +484,7 @@ namespace Unigram.Views
 
             //flyout.CreateFlyoutItem(ShareInviteLink, Strings.Resources.VoipGroupShareInviteLink, new FontIcon { Glyph = Icons.Link });
 
-            if (chat.Type is ChatTypeSupergroup && _protoService.TryGetSupergroup(chat, out Supergroup supergroup))
+            if (chat.Type is ChatTypeSupergroup && _clientService.TryGetSupergroup(chat, out Supergroup supergroup))
             {
                 if (supergroup.Status is ChatMemberStatusCreator)
                 {
@@ -494,7 +492,7 @@ namespace Unigram.Views
                     flyout.CreateFlyoutItem(StreamWith, "Stream with...", new FontIcon { Glyph = Icons.Live });
                 }
             }
-            else if (chat.Type is ChatTypeBasicGroup && _protoService.TryGetBasicGroup(chat, out BasicGroup basicGroup))
+            else if (chat.Type is ChatTypeBasicGroup && _clientService.TryGetBasicGroup(chat, out BasicGroup basicGroup))
             {
                 if (basicGroup.Status is ChatMemberStatusCreator)
                 {
@@ -519,7 +517,7 @@ namespace Unigram.Views
 
         private async void StreamWith()
         {
-            var popup = new VideoChatStreamsPopup(_protoService, _service.Chat.Id, false);
+            var popup = new VideoChatStreamsPopup(_clientService, _service.Chat.Id, false);
             popup.RequestedTheme = ElementTheme.Dark;
 
             await popup.ShowQueuedAsync();
@@ -548,7 +546,7 @@ namespace Unigram.Views
             var confirm = await input.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
-                _protoService.Send(new SetGroupCallTitle(call.Id, input.Text));
+                _clientService.Send(new SetGroupCallTitle(call.Id, input.Text));
             }
         }
 
@@ -568,7 +566,7 @@ namespace Unigram.Views
             var confirm = await input.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
-                _protoService.Send(new StartGroupCallRecording(call.Id, input.FileName, input.RecordVideo, input.UsePortraitOrientation));
+                _clientService.Send(new StartGroupCallRecording(call.Id, input.FileName, input.RecordVideo, input.UsePortraitOrientation));
             }
         }
 
@@ -590,7 +588,7 @@ namespace Unigram.Views
             var confirm = await popup.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
-                _protoService.Send(new EndGroupCallRecording(call.Id));
+                _clientService.Send(new EndGroupCallRecording(call.Id));
             }
         }
 

@@ -14,15 +14,15 @@ namespace Unigram.ViewModels.Settings
 {
     public class SettingsPhoneViewModel : TLViewModelBase
     {
-        public SettingsPhoneViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public SettingsPhoneViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
         }
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            ProtoService.Send(new GetCountryCode(), result =>
+            ClientService.Send(new GetCountryCode(), result =>
             {
                 if (result is Text text)
                 {
@@ -81,9 +81,9 @@ namespace Unigram.ViewModels.Settings
 
             IsLoading = true;
 
-            await ProtoService.SendAsync(new SetOption("x_phonenumber", new OptionValueString(phoneNumber)));
+            await ClientService.SendAsync(new SetOption("x_phonenumber", new OptionValueString(phoneNumber)));
 
-            var response = await ProtoService.SendAsync(new ChangePhoneNumber(phoneNumber, new PhoneNumberAuthenticationSettings(false, false, false, false, new string[0])));
+            var response = await ClientService.SendAsync(new ChangePhoneNumber(phoneNumber, new PhoneNumberAuthenticationSettings(false, false, false, false, new string[0])));
             if (response is AuthenticationCodeInfo info)
             {
                 BootStrapper.Current.SessionState["x_codeinfo"] = info;

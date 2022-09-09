@@ -19,16 +19,16 @@ namespace Unigram.ViewModels.Drawers
     {
         private bool _updated;
 
-        public AnimationDrawerViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public AnimationDrawerViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             SavedItems = new AnimationsCollection();
-            TrendingItems = new TrendingAnimationsCollection(protoService);
+            TrendingItems = new TrendingAnimationsCollection(clientService);
 
             Sets = new List<AnimationsCollection>();
             Sets.Add(SavedItems);
             Sets.Add(TrendingItems);
-            Sets.AddRange(cacheService.AnimationSearchEmojis.Select(x => new SearchAnimationsCollection(protoService, x)));
+            Sets.AddRange(clientService.AnimationSearchEmojis.Select(x => new SearchAnimationsCollection(clientService, x)));
 
             SelectedSet = Sets[0];
 
@@ -71,7 +71,7 @@ namespace Unigram.ViewModels.Drawers
 
             _updated = true;
 
-            ProtoService.Send(new GetSavedAnimations(), result =>
+            ClientService.Send(new GetSavedAnimations(), result =>
             {
                 if (result is Animations animation)
                 {
@@ -82,7 +82,7 @@ namespace Unigram.ViewModels.Drawers
 
         public void Handle(UpdateSavedAnimations update)
         {
-            ProtoService.Send(new GetSavedAnimations(), result =>
+            ClientService.Send(new GetSavedAnimations(), result =>
             {
                 if (result is Animations animation)
                 {
@@ -162,7 +162,7 @@ namespace Unigram.ViewModels.Drawers
             }
             else
             {
-                SetAnimationSet(new SearchAnimationsCollection(ProtoService, query), true);
+                SetAnimationSet(new SearchAnimationsCollection(ClientService, query), true);
             }
         }
 
@@ -235,8 +235,8 @@ namespace Unigram.ViewModels.Drawers
 
     public class TrendingAnimationsCollection : SearchAnimationsCollection
     {
-        public TrendingAnimationsCollection(IProtoService protoService)
-            : base(protoService, string.Empty)
+        public TrendingAnimationsCollection(IClientService clientService)
+            : base(clientService, string.Empty)
         {
         }
 
@@ -246,16 +246,16 @@ namespace Unigram.ViewModels.Drawers
 
     public class SearchAnimationsCollection : AnimationsCollection, ISupportIncrementalLoading
     {
-        private readonly IProtoService _protoService;
+        private readonly IClientService _clientService;
         private readonly string _query;
 
         private long? _userId;
         private string _offset = string.Empty;
         private bool _hasMoreItems = true;
 
-        public SearchAnimationsCollection(IProtoService protoService, string query)
+        public SearchAnimationsCollection(IClientService clientService, string query)
         {
-            _protoService = protoService;
+            _clientService = clientService;
             _query = query;
         }
 
@@ -272,7 +272,7 @@ namespace Unigram.ViewModels.Drawers
 
                 if (_userId == null)
                 {
-                    var bot = await _protoService.SendAsync(new SearchPublicChat(_protoService.Options.AnimationSearchBotUsername));
+                    var bot = await _clientService.SendAsync(new SearchPublicChat(_clientService.Options.AnimationSearchBotUsername));
                     if (bot is Chat chat && chat.Type is ChatTypePrivate privata)
                     {
                         _userId = privata.UserId;
@@ -281,7 +281,7 @@ namespace Unigram.ViewModels.Drawers
 
                 if (_userId != null)
                 {
-                    var response = await _protoService.SendAsync(new GetInlineQueryResults(_userId.Value, 0, null, _query, _offset));
+                    var response = await _clientService.SendAsync(new GetInlineQueryResults(_userId.Value, 0, null, _query, _offset));
                     if (response is InlineQueryResults results)
                     {
                         _offset = results.NextOffset;

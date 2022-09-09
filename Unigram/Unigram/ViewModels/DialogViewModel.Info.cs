@@ -51,7 +51,7 @@
         //    {
         //        return;
         //    }
-        //    var result = await ProtoService.GetFullUserAsync(new TLInputUser { UserId = user.Id, AccessHash = user.AccessHash.Value });
+        //    var result = await ClientService.GetFullUserAsync(new TLInputUser { UserId = user.Id, AccessHash = user.AccessHash.Value });
         //    if (result.IsSucceeded)
         //    {
         //        var userFull = result.Result;

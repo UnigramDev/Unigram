@@ -9,8 +9,8 @@ namespace Unigram.ViewModels.Settings.Password
 {
     public class SettingsPasswordConfirmViewModel : TLViewModelBase
     {
-        public SettingsPasswordConfirmViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public SettingsPasswordConfirmViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             ResendCommand = new RelayCommand(ResendExecute);
             SendCommand = new RelayCommand(SendExecute);
@@ -62,7 +62,7 @@ namespace Unigram.ViewModels.Settings.Password
         public RelayCommand ResendCommand { get; }
         private async void ResendExecute()
         {
-            var response = await ProtoService.SendAsync(new ResendRecoveryEmailAddressCode());
+            var response = await ClientService.SendAsync(new ResendRecoveryEmailAddressCode());
         }
 
         public RelayCommand SendCommand { get; }
@@ -74,7 +74,7 @@ namespace Unigram.ViewModels.Settings.Password
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new CheckRecoveryEmailAddressCode(code));
+            var response = await ClientService.SendAsync(new CheckRecoveryEmailAddressCode(code));
             if (response is PasswordState passwordState)
             {
 

@@ -21,7 +21,7 @@ namespace Unigram.Controls.Chats
     public class ChatBackgroundPresenter : Grid
         //, IHandle<UpdateSelectedBackground>
     {
-        private IProtoService _protoService;
+        private IClientService _clientService;
         private IEventAggregator _aggregator;
 
         private Background _oldBackground = new Background();
@@ -70,12 +70,12 @@ namespace Unigram.Controls.Chats
             });
         }
 
-        public void Update(int session, IProtoService protoService, IEventAggregator aggregator)
+        public void Update(int session, IClientService clientService, IEventAggregator aggregator)
         {
-            _protoService = protoService;
+            _clientService = clientService;
             _aggregator = aggregator;
 
-            UpdateBackground(protoService.SelectedBackground, IsDarkTheme);
+            UpdateBackground(clientService.SelectedBackground, IsDarkTheme);
         }
 
         public void Update(Background background, bool forDarkTheme)
@@ -127,7 +127,7 @@ namespace Unigram.Controls.Chats
             _oldBackground = background;
             _oldDark = dark;
 
-            _renderer.UpdateSource(_protoService, background, false);
+            _renderer.UpdateSource(_clientService, background, false);
         }
 
         private bool BackgroundEquals(Background prev, Background next)

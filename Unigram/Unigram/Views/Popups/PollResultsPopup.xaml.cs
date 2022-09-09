@@ -14,14 +14,14 @@ namespace Unigram.Views.Popups
 {
     public sealed partial class PollResultsPopup : ContentPopup
     {
-        private readonly IProtoService _protoService;
+        private readonly IClientService _clientService;
         private readonly IMessageDelegate _delegate;
 
-        public PollResultsPopup(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IMessageDelegate delegato, long chatId, long messageId, Poll poll)
+        public PollResultsPopup(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IMessageDelegate delegato, long chatId, long messageId, Poll poll)
         {
             InitializeComponent();
 
-            _protoService = protoService;
+            _clientService = clientService;
             _delegate = delegato;
 
             Title = Strings.Resources.PollResults;
@@ -32,7 +32,7 @@ namespace Unigram.Views.Popups
             var options = new List<PollResultViewModel>();
             foreach (var option in poll.Options)
             {
-                options.Add(new PollResultViewModel(chatId, messageId, poll, option, protoService, cacheService, settingsService, aggregator));
+                options.Add(new PollResultViewModel(chatId, messageId, poll, option, clientService, settingsService, aggregator));
             }
 
             Repeater.ItemsSource = options;
@@ -54,7 +54,7 @@ namespace Unigram.Views.Popups
                 var button = args.Element as Button;
                 var content = button.Content as UserCell;
 
-                content.UpdateUser(_protoService, user, 36);
+                content.UpdateUser(_clientService, user, 36);
                 button.Click += User_Click;
             }
             else if (item is PollResultViewModel option)
@@ -86,8 +86,8 @@ namespace Unigram.Views.Popups
         private int _offset;
         private int _remaining;
 
-        public PollResultViewModel(long chatId, long messageId, Poll poll, PollOption option, IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public PollResultViewModel(long chatId, long messageId, Poll poll, PollOption option, IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             _chatId = chatId;
             _messageId = messageId;
@@ -114,12 +114,12 @@ namespace Unigram.Views.Popups
             var limit = _option.VoterCount <= 15 ? 15 : 10;
             limit = _offset > 0 ? 50 : limit;
 
-            var response = await ProtoService.SendAsync(new GetPollVoters(_chatId, _messageId, _poll.Options.IndexOf(_option), _offset, limit));
+            var response = await ClientService.SendAsync(new GetPollVoters(_chatId, _messageId, _poll.Options.IndexOf(_option), _offset, limit));
             if (response is Telegram.Td.Api.Users users)
             {
                 foreach (var id in users.UserIds)
                 {
-                    var user = CacheService.GetUser(id);
+                    var user = ClientService.GetUser(id);
                     if (user == null)
                     {
                         continue;

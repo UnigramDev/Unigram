@@ -20,8 +20,8 @@ namespace Unigram.ViewModels.Payments
     {
         private readonly bool _save;
 
-        public PaymentFormViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public PaymentFormViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
         }
@@ -31,7 +31,7 @@ namespace Unigram.ViewModels.Payments
             if (state.TryGet("chatId", out long chatId)
                 && state.TryGet("messageId", out long messageId))
             {
-                var message = await ProtoService.SendAsync(new GetMessage(chatId, messageId)) as Message;
+                var message = await ClientService.SendAsync(new GetMessage(chatId, messageId)) as Message;
                 if (message?.Content is MessageInvoice invoice)
                 {
                     if (invoice.ReceiptMessageId == 0)
@@ -59,7 +59,7 @@ namespace Unigram.ViewModels.Payments
         {
             IsReceipt = false;
 
-            var paymentForm = await ProtoService.SendAsync(new GetPaymentForm(invoice, new ThemeParameters())) as PaymentForm;
+            var paymentForm = await ClientService.SendAsync(new GetPaymentForm(invoice, new ThemeParameters())) as PaymentForm;
             if (paymentForm == null)
             {
                 return;
@@ -73,7 +73,7 @@ namespace Unigram.ViewModels.Payments
             Description = paymentForm.ProductDescription;
 
             Invoice = paymentForm.Invoice;
-            Bot = CacheService.GetUser(paymentForm.SellerBotUserId);
+            Bot = ClientService.GetUser(paymentForm.SellerBotUserId);
 
             Credentials = paymentForm.SavedCredentials.FirstOrDefault();
             Info = paymentForm.SavedOrderInfo;
@@ -82,7 +82,7 @@ namespace Unigram.ViewModels.Payments
 
             if (paymentForm.SavedOrderInfo != null)
             {
-                var response = await ProtoService.SendAsync(new ValidateOrderInfo(invoice, paymentForm.SavedOrderInfo, false));
+                var response = await ClientService.SendAsync(new ValidateOrderInfo(invoice, paymentForm.SavedOrderInfo, false));
                 if (response is ValidatedOrderInfo validated)
                 {
                     ValidatedInfo = validated;
@@ -94,7 +94,7 @@ namespace Unigram.ViewModels.Payments
         {
             IsReceipt = true;
 
-            var paymentReceipt = await ProtoService.SendAsync(new GetPaymentReceipt(message.ChatId, receiptMessageId)) as PaymentReceipt;
+            var paymentReceipt = await ClientService.SendAsync(new GetPaymentReceipt(message.ChatId, receiptMessageId)) as PaymentReceipt;
             if (paymentReceipt == null)
             {
                 return;
@@ -105,7 +105,7 @@ namespace Unigram.ViewModels.Payments
             Description = paymentReceipt.Description;
 
             Invoice = paymentReceipt.Invoice;
-            Bot = CacheService.GetUser(paymentReceipt.SellerBotUserId);
+            Bot = ClientService.GetUser(paymentReceipt.SellerBotUserId);
 
             Credentials = new SavedCredentials(string.Empty, paymentReceipt.CredentialsTitle);
             Info = paymentReceipt.OrderInfo;
@@ -413,8 +413,8 @@ namespace Unigram.ViewModels.Payments
                 return;
             }
 
-            var bot = CacheService.GetUser(_paymentForm.SellerBotUserId);
-            var provider = CacheService.GetUser(_paymentForm.PaymentProviderUserId);
+            var bot = ClientService.GetUser(_paymentForm.SellerBotUserId);
+            var provider = ClientService.GetUser(_paymentForm.PaymentProviderUserId);
 
             var disclaimer = await MessagePopup.ShowAsync(string.Format(Strings.Resources.PaymentWarningText, bot.FirstName, provider.FirstName), Strings.Resources.PaymentWarning, Strings.Resources.OK);
 
@@ -448,7 +448,7 @@ namespace Unigram.ViewModels.Payments
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new SendPaymentForm(_inputInvoice, formId, infoId, shippingId, credentials, 0));
+            var response = await ClientService.SendAsync(new SendPaymentForm(_inputInvoice, formId, infoId, shippingId, credentials, 0));
             if (response is PaymentResult result)
             {
                 if (Uri.TryCreate(result.VerificationUrl, UriKind.Absolute, out Uri uri))
@@ -462,7 +462,7 @@ namespace Unigram.ViewModels.Payments
 
         private async Task<TemporaryPasswordState> GetTemporaryPasswordStateAsync()
         {
-            var response = await ProtoService.SendAsync(new GetTemporaryPasswordState());
+            var response = await ClientService.SendAsync(new GetTemporaryPasswordState());
             if (response is TemporaryPasswordState state)
             {
                 if (state.HasPassword && state.ValidFor > 0)
@@ -492,7 +492,7 @@ namespace Unigram.ViewModels.Payments
                 return new TemporaryPasswordState(false, 0);
             }
 
-            var response = await ProtoService.SendAsync(new CreateTemporaryPassword(popup.Text, 60 * 30));
+            var response = await ClientService.SendAsync(new CreateTemporaryPassword(popup.Text, 60 * 30));
             if (response is TemporaryPasswordState state)
             {
                 return state;

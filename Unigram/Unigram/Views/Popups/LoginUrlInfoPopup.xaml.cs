@@ -8,7 +8,7 @@ namespace Unigram.Views.Popups
 {
     public sealed partial class LoginUrlInfoPopup : ContentPopup
     {
-        public LoginUrlInfoPopup(ICacheService cacheService, LoginUrlInfoRequestConfirmation requestConfirmation)
+        public LoginUrlInfoPopup(IClientService clientService, LoginUrlInfoRequestConfirmation requestConfirmation)
         {
             InitializeComponent();
 
@@ -17,7 +17,7 @@ namespace Unigram.Views.Popups
             PrimaryButtonText = Strings.Resources.Open;
             SecondaryButtonText = Strings.Resources.Cancel;
 
-            var self = cacheService.GetUser(cacheService.Options.MyId);
+            var self = clientService.GetUser(clientService.Options.MyId);
             if (self == null)
             {
                 // ??
@@ -27,7 +27,7 @@ namespace Unigram.Views.Popups
 
             if (requestConfirmation.RequestWriteAccess)
             {
-                var bot = cacheService.GetUser(requestConfirmation.BotUserId);
+                var bot = clientService.GetUser(requestConfirmation.BotUserId);
                 if (bot == null)
                 {
                     // ??

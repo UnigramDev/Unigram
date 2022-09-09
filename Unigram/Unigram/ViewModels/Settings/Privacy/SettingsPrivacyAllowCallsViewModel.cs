@@ -7,8 +7,8 @@ namespace Unigram.ViewModels.Settings.Privacy
     {
         private readonly SettingsPrivacyAllowP2PCallsViewModel _allowP2PCallsRules;
 
-        public SettingsPrivacyAllowCallsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, SettingsPrivacyAllowP2PCallsViewModel p2pCall)
-            : base(protoService, cacheService, settingsService, aggregator, new UserPrivacySettingAllowCalls())
+        public SettingsPrivacyAllowCallsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, SettingsPrivacyAllowP2PCallsViewModel p2pCall)
+            : base(clientService, settingsService, aggregator, new UserPrivacySettingAllowCalls())
         {
             _allowP2PCallsRules = p2pCall;
 

@@ -311,7 +311,7 @@ namespace Unigram.Controls.Chats
 
         private int _phase;
 
-        public void UpdateSource(IProtoService protoService, Background background, bool thumbnail)
+        public void UpdateSource(IClientService clientService, Background background, bool thumbnail)
         {
             if (_fileToken is string fileToken)
             {
@@ -372,10 +372,10 @@ namespace Unigram.Controls.Chats
 
                     if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                     {
-                        protoService.DownloadFile(file.Id, 16);
+                        clientService.DownloadFile(file.Id, 16);
                     }
 
-                    UpdateManager.Subscribe(background, protoService, file, ref _fileToken, UpdateFile, true);
+                    UpdateManager.Subscribe(background, clientService, file, ref _fileToken, UpdateFile, true);
                 }
             }
             else if (background.Type is BackgroundTypeWallpaper typeWallpaper)
@@ -408,10 +408,10 @@ namespace Unigram.Controls.Chats
 
                     if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                     {
-                        protoService.DownloadFile(file.Id, 16);
+                        clientService.DownloadFile(file.Id, 16);
                     }
 
-                    UpdateManager.Subscribe(background, protoService, file, ref _fileToken, UpdateFile, true);
+                    UpdateManager.Subscribe(background, clientService, file, ref _fileToken, UpdateFile, true);
                 }
             }
 

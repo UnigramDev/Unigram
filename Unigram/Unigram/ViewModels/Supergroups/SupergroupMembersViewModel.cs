@@ -13,8 +13,8 @@ namespace Unigram.ViewModels.Supergroups
 {
     public class SupergroupMembersViewModel : SupergroupMembersViewModelBase, IDelegable<ISupergroupDelegate>
     {
-        public SupergroupMembersViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator, new SupergroupMembersFilterRecent(), query => new SupergroupMembersFilterSearch(query))
+        public SupergroupMembersViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator, new SupergroupMembersFilterRecent(), query => new SupergroupMembersFilterSearch(query))
         {
             AddCommand = new RelayCommand(AddExecute);
 
@@ -35,7 +35,7 @@ namespace Unigram.ViewModels.Supergroups
             }
 
             var selected = await SharePopup.PickChatAsync(Strings.Resources.SelectContact);
-            var user = CacheService.GetUser(selected);
+            var user = ClientService.GetUser(selected);
 
             if (user == null)
             {
@@ -48,7 +48,7 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new AddChatMember(chat.Id, user.Id, (int)CacheService.Options.ForwardedMessageCountMax));
+            var response = await ClientService.SendAsync(new AddChatMember(chat.Id, user.Id, (int)ClientService.Options.ForwardedMessageCountMax));
             if (response is Error error)
             {
 
@@ -94,7 +94,7 @@ namespace Unigram.ViewModels.Supergroups
 
             Members.Remove(member);
 
-            var response = await ProtoService.SendAsync(new SetChatMemberStatus(chat.Id, member.MemberId, new ChatMemberStatusBanned()));
+            var response = await ClientService.SendAsync(new SetChatMemberStatus(chat.Id, member.MemberId, new ChatMemberStatusBanned()));
             if (response is Error)
             {
                 Members.Insert(index, member);

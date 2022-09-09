@@ -30,7 +30,7 @@ namespace Unigram.Services
         event EventHandler AvailableStreamsChanged;
         int AvailableStreamsCount { get; }
 
-        ICacheService CacheService { get; }
+        IClientService ClientService { get; }
 
         string CurrentVideoInput { get; set; }
         string CurrentAudioInput { get; set; }
@@ -134,8 +134,8 @@ namespace Unigram.Services
 
         private int _availableStreamsCount = 0;
 
-        public GroupCallService(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IViewService viewService)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public GroupCallService(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IViewService viewService)
+            : base(clientService, settingsService, aggregator)
         {
             _viewService = viewService;
 
@@ -193,7 +193,7 @@ namespace Unigram.Services
 
         private async Task<MessageSenders> CanChooseAliasAsyncInternal(TaskCompletionSource<MessageSenders> tsc, long chatId)
         {
-            var response = await ProtoService.SendAsync(new GetVideoChatAvailableParticipants(chatId));
+            var response = await ClientService.SendAsync(new GetVideoChatAvailableParticipants(chatId));
             if (response is MessageSenders senders)
             {
                 _availableAliases = senders;
@@ -207,7 +207,7 @@ namespace Unigram.Services
 
         public async Task JoinAsync(long chatId)
         {
-            var chat = CacheService.GetChat(chatId);
+            var chat = ClientService.GetChat(chatId);
             if (chat == null || chat.VideoChat.GroupCallId == 0)
             {
                 return;
@@ -216,7 +216,7 @@ namespace Unigram.Services
             //var call = Call;
             //if (call != null)
             //{
-            //    var callUser = CacheService.GetUser(call.UserId);
+            //    var callUser = ClientService.GetUser(call.UserId);
             //    if (callUser != null && callUser.Id != user.Id)
             //    {
             //        var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.VoipOngoingAlert, callUser.GetFullName(), user.GetFullName()), Strings.Resources.VoipOngoingAlertTitle, Strings.Resources.OK, Strings.Resources.Cancel);
@@ -243,7 +243,7 @@ namespace Unigram.Services
 
         public async Task CreateAsync(long chatId)
         {
-            var chat = CacheService.GetChat(chatId);
+            var chat = ClientService.GetChat(chatId);
             if (chat == null || chat.VideoChat.GroupCallId != 0)
             {
                 return;
@@ -251,12 +251,12 @@ namespace Unigram.Services
 
             await CanChooseAliasAsync(chat.Id);
 
-            var popup = new VideoChatAliasesPopup(ProtoService, chat, true, _availableAliases?.Senders.ToArray());
+            var popup = new VideoChatAliasesPopup(ClientService, chat, true, _availableAliases?.Senders.ToArray());
 
             var confirm = await popup.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
-                var participantId = popup.SelectedSender ?? new MessageSenderUser(CacheService.Options.MyId);
+                var participantId = popup.SelectedSender ?? new MessageSenderUser(ClientService.Options.MyId);
                 var startDate = 0;
 
                 if (popup.IsScheduleSelected)
@@ -273,7 +273,7 @@ namespace Unigram.Services
                 }
                 else if (popup.IsStartWithSelected)
                 {
-                    var streams = new VideoChatStreamsPopup(ProtoService, chat.Id, true);
+                    var streams = new VideoChatStreamsPopup(ClientService, chat.Id, true);
 
                     var again = await streams.ShowQueuedAsync();
                     if (again != ContentDialogResult.Primary)
@@ -295,7 +295,7 @@ namespace Unigram.Services
                     }
                 }
 
-                var response = await ProtoService.SendAsync(new CreateVideoChat(chat.Id, string.Empty, startDate, popup.IsStartWithSelected));
+                var response = await ClientService.SendAsync(new CreateVideoChat(chat.Id, string.Empty, startDate, popup.IsStartWithSelected));
                 if (response is GroupCallId groupCallId)
                 {
                     await JoinAsyncInternal(chat, groupCallId.Id, participantId);
@@ -332,10 +332,10 @@ namespace Unigram.Services
                 alias = await PickAliasAsync(chat, false);
             }
 
-            var response = await ProtoService.SendAsync(new GetGroupCall(groupCallId));
+            var response = await ClientService.SendAsync(new GetGroupCall(groupCallId));
             if (response is GroupCall groupCall)
             {
-                var unix = await ProtoService.SendAsync(new GetOption("unix_time")) as OptionValueInteger;
+                var unix = await ClientService.SendAsync(new GetOption("unix_time")) as OptionValueInteger;
                 if (unix == null)
                 {
                     return;
@@ -396,7 +396,7 @@ namespace Unigram.Services
 
                 if (groupCall.ScheduledStartDate > 0)
                 {
-                    ProtoService.Send(new SetVideoChatDefaultParticipant(chat.Id, alias));
+                    ClientService.Send(new SetVideoChatDefaultParticipant(chat.Id, alias));
                 }
                 else
                 {
@@ -433,7 +433,7 @@ namespace Unigram.Services
             var available = await CanChooseAliasAsync(chat.Id);
             if (available && _availableAliases != null)
             {
-                var popup = new VideoChatAliasesPopup(ProtoService, chat, false, _availableAliases.Senders.ToArray());
+                var popup = new VideoChatAliasesPopup(ClientService, chat, false, _availableAliases.Senders.ToArray());
                 popup.RequestedTheme = darkTheme ? ElementTheme.Dark : ElementTheme.Default;
 
                 var confirm = await popup.ShowQueuedAsync();
@@ -461,10 +461,10 @@ namespace Unigram.Services
                 }
                 else
                 {
-                    Participants ??= new GroupCallParticipantsCollection(ProtoService, Aggregator, groupCall);
+                    Participants ??= new GroupCallParticipantsCollection(ClientService, Aggregator, groupCall);
                 }
 
-                var response = await ProtoService.SendAsync(new JoinGroupCall(groupCall.Id, alias, ssrc, payload, _manager.IsMuted, _capturer != null, string.Empty));
+                var response = await ClientService.SendAsync(new JoinGroupCall(groupCall.Id, alias, ssrc, payload, _manager.IsMuted, _capturer != null, string.Empty));
                 if (response is Text json)
                 {
                     _isJoining = false;
@@ -538,7 +538,7 @@ namespace Unigram.Services
                 _manager.SetVideoCapture(_capturer);
             }
 
-            ProtoService.Send(new ToggleGroupCallIsMyVideoEnabled(call.Id, _capturer != null));
+            ClientService.Send(new ToggleGroupCallIsMyVideoEnabled(call.Id, _capturer != null));
         }
 #endif
         #endregion
@@ -588,7 +588,7 @@ namespace Unigram.Services
             var call = _call;
             if (call != null)
             {
-                ProtoService.SendAsync(new ToggleGroupCallScreenSharingIsPaused(call.Id, paused));
+                ClientService.SendAsync(new ToggleGroupCallScreenSharingIsPaused(call.Id, paused));
             }
         }
 
@@ -602,7 +602,7 @@ namespace Unigram.Services
             _screenManager?.SetConnectionMode(VoipGroupConnectionMode.None, false, groupCall.IsRtmpStream);
             _screenManager?.EmitJoinPayload(async (ssrc, payload) =>
             {
-                var response = await ProtoService.SendAsync(new StartGroupCallScreenSharing(groupCall.Id, ssrc, payload));
+                var response = await ClientService.SendAsync(new StartGroupCallScreenSharing(groupCall.Id, ssrc, payload));
                 if (response is Text json)
                 {
                     if (_screenManager == null)
@@ -643,7 +643,7 @@ namespace Unigram.Services
             var call = _call;
             if (call != null)
             {
-                ProtoService.Send(new EndGroupCallScreenSharing(call.Id));
+                ClientService.Send(new EndGroupCallScreenSharing(call.Id));
             }
         }
 #endif
@@ -661,7 +661,7 @@ namespace Unigram.Services
 
             if (call.IsRtmpStream)
             {
-                var response = await ProtoService.SendAsync(new GetGroupCallStreams(call.Id));
+                var response = await ClientService.SendAsync(new GetGroupCallStreams(call.Id));
                 if (response is GroupCallStreams streams && streams.Streams.Count > 0)
                 {
                     args.Deferral(streams.Streams[0].TimeOffset);
@@ -711,7 +711,7 @@ namespace Unigram.Services
 
             var test = args.VideoQuality;
 
-            var response = await ProtoService.SendAsync(new GetGroupCallStreamSegment(call.Id, time, args.Scale, args.ChannelId, args.VideoQuality));
+            var response = await ClientService.SendAsync(new GetGroupCallStreamSegment(call.Id, time, args.Scale, args.ChannelId, args.VideoQuality));
 
             now = DateTime.Now + _timeDifference;
             stamp = now.ToTimestamp();
@@ -800,7 +800,7 @@ namespace Unigram.Services
 
             foreach (var item in levels)
             {
-                ProtoService.Send(new SetGroupCallParticipantIsSpeaking(call.Id, item.Key, validSpeakers.ContainsKey(item.Key)));
+                ClientService.Send(new SetGroupCallParticipantIsSpeaking(call.Id, item.Key, validSpeakers.ContainsKey(item.Key)));
             }
 
             _speakingParticipants = validSpeakers;
@@ -817,11 +817,11 @@ namespace Unigram.Services
         {
             if (_call != null && discard is true)
             {
-                ProtoService.Send(new EndGroupCall(_call.Id));
+                ClientService.Send(new EndGroupCall(_call.Id));
             }
             else if (_call != null && discard is false)
             {
-                ProtoService.Send(new LeaveGroupCall(_call.Id));
+                ClientService.Send(new LeaveGroupCall(_call.Id));
             }
 
             _call = null;
@@ -915,7 +915,7 @@ namespace Unigram.Services
                 if (_manager != null && _manager.IsMuted != value)
                 {
                     _manager.IsMuted = value;
-                    ProtoService.Send(new ToggleGroupCallParticipantIsMuted(_call.Id, _currentUser.ParticipantId, value));
+                    ClientService.Send(new ToggleGroupCallParticipantIsMuted(_call.Id, _currentUser.ParticipantId, value));
                     MutedChanged?.Invoke(_manager, EventArgs.Empty);
 
                     //if (value)
@@ -1115,8 +1115,8 @@ namespace Unigram.Services
                         Height = call.IsRtmpStream ? 380 : 580,
                         PersistentId = call.IsRtmpStream ? "LiveStream" : "VideoChat",
                         Content = call.IsRtmpStream
-                            ? control => new LiveStreamPage(ProtoService, CacheService, Aggregator, this)
-                            : control => new GroupCallPage(ProtoService, CacheService, Aggregator, this)
+                            ? control => new LiveStreamPage(ClientService, Aggregator, this)
+                            : control => new GroupCallPage(ClientService, Aggregator, this)
                     };
 
                     _lifetime = await _viewService.OpenAsync(parameters);

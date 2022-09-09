@@ -6,7 +6,7 @@ namespace Unigram.ViewModels.Delegates
 {
     public interface IGalleryDelegate
     {
-        IProtoService ProtoService { get; }
+        IClientService ClientService { get; }
 
         void OpenItem(GalleryContent item);
         void OpenFile(GalleryContent item, File file);

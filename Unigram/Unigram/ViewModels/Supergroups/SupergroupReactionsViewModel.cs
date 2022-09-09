@@ -20,8 +20,8 @@ namespace Unigram.ViewModels.Supergroups
 
     public class SupergroupReactionsViewModel : TLViewModelBase
     {
-        public SupergroupReactionsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public SupergroupReactionsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             Items = new MvxObservableCollection<SupergroupReactionOption>();
 
@@ -86,7 +86,7 @@ namespace Unigram.ViewModels.Supergroups
         {
             var chatId = (long)parameter;
 
-            Chat = ProtoService.GetChat(chatId);
+            Chat = ClientService.GetChat(chatId);
 
             var chat = _chat;
             if (chat == null)
@@ -94,7 +94,7 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            var reactions = await ProtoService.GetAllReactionsAsync();
+            var reactions = await ClientService.GetAllReactionsAsync();
             if (reactions == null)
             {
                 return;
@@ -143,7 +143,7 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new SetChatAvailableReactions(chat.Id, value));
+            var response = await ClientService.SendAsync(new SetChatAvailableReactions(chat.Id, value));
             NavigationService.GoBack();
         }
     }

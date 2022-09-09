@@ -59,7 +59,7 @@ namespace Unigram.Controls.Cells
             }
         }
 
-        public void UpdateChat(IProtoService protoService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        public void UpdateChat(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
         {
             var chat = args.Item as Chat;
             if (chat == null)
@@ -72,12 +72,12 @@ namespace Unigram.Controls.Cells
 
             if (args.Phase == 0)
             {
-                TitleLabel.Text = protoService.GetTitle(chat);
+                TitleLabel.Text = clientService.GetTitle(chat);
             }
             else if (args.Phase == 2)
             {
-                Photo.SetChat(protoService, chat, 36);
-                Identity.SetStatus(protoService, chat);
+                Photo.SetChat(clientService, chat, 36);
+                Identity.SetStatus(clientService, chat);
             }
 
             if (args.Phase < 2)

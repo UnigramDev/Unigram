@@ -39,7 +39,7 @@ namespace Unigram.Views.Supergroups
 
         public void UpdateUser(Chat chat, User user, bool secret)
         {
-            Cell.UpdateUser(ViewModel.ProtoService, user, 64);
+            Cell.UpdateUser(ViewModel.ClientService, user, 64);
         }
 
         public void UpdateUserStatus(Chat chat, User user)

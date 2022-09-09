@@ -15,8 +15,8 @@ namespace Unigram.ViewModels.Settings
     {
         private readonly ILocationService _locationService;
 
-        public SettingsNightModeViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IThemeService themeService, ILocationService locationService)
-            : base(protoService, cacheService, settingsService, aggregator, themeService, true)
+        public SettingsNightModeViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IThemeService themeService, ILocationService locationService)
+            : base(clientService, settingsService, aggregator, themeService, true)
         {
             _locationService = locationService;
 

@@ -20,8 +20,8 @@ namespace Unigram.ViewModels.Chats
 
         private readonly MvxObservableCollection<GalleryContent> _group;
 
-        public ChatGalleryViewModel(IProtoService protoService, IStorageService storageService, IEventAggregator aggregator, long chatId, long threadId, Message selected, bool mirrored = false)
-            : base(protoService, storageService, aggregator)
+        public ChatGalleryViewModel(IClientService clientService, IStorageService storageService, IEventAggregator aggregator, long chatId, long threadId, Message selected, bool mirrored = false)
+            : base(clientService, storageService, aggregator)
         {
             _isMirrored = mirrored;
 
@@ -56,7 +56,7 @@ namespace Unigram.ViewModels.Chats
 
             //Initialize(selected.Id);
 
-            Items = new MvxObservableCollection<GalleryContent> { new GalleryMessage(protoService, selected) };
+            Items = new MvxObservableCollection<GalleryContent> { new GalleryMessage(clientService, selected) };
             SelectedItem = Items[0];
             FirstItem = Items[0];
 
@@ -70,7 +70,7 @@ namespace Unigram.ViewModels.Chats
                 var limit = 20;
                 var offset = -limit / 2;
 
-                var response = await ProtoService.SendAsync(new SearchChatMessages(_chatId, string.Empty, null, fromMessageId, offset, limit, _filter, _threadId));
+                var response = await ClientService.SendAsync(new SearchChatMessages(_chatId, string.Empty, null, fromMessageId, offset, limit, _filter, _threadId));
                 if (response is Messages messages)
                 {
                     TotalItems = messages.TotalCount;
@@ -79,7 +79,7 @@ namespace Unigram.ViewModels.Chats
                     {
                         if (message.Content is MessagePhoto or MessageVideo or MessageAnimation)
                         {
-                            Items.Put(!_isMirrored, new GalleryMessage(ProtoService, message));
+                            Items.Put(!_isMirrored, new GalleryMessage(ClientService, message));
                         }
                         else
                         {
@@ -91,7 +91,7 @@ namespace Unigram.ViewModels.Chats
                     {
                         if (message.Content is MessagePhoto or MessageVideo or MessageAnimation)
                         {
-                            Items.Put(_isMirrored, new GalleryMessage(ProtoService, message));
+                            Items.Put(_isMirrored, new GalleryMessage(ClientService, message));
                         }
                         else
                         {
@@ -119,7 +119,7 @@ namespace Unigram.ViewModels.Chats
                 var limit = 21;
                 var offset = _isMirrored ? -limit + 1 : 0;
 
-                var response = await ProtoService.SendAsync(new SearchChatMessages(_chatId, string.Empty, null, fromMessageId, offset, limit, _filter, _threadId));
+                var response = await ClientService.SendAsync(new SearchChatMessages(_chatId, string.Empty, null, fromMessageId, offset, limit, _filter, _threadId));
                 if (response is Messages messages)
                 {
                     TotalItems = messages.TotalCount;
@@ -128,7 +128,7 @@ namespace Unigram.ViewModels.Chats
                     {
                         if (message.Content is MessagePhoto or MessageVideo or MessageAnimation)
                         {
-                            Items.Insert(0, new GalleryMessage(ProtoService, message));
+                            Items.Insert(0, new GalleryMessage(ClientService, message));
                         }
                         else
                         {
@@ -156,7 +156,7 @@ namespace Unigram.ViewModels.Chats
                 var limit = 21;
                 var offset = _isMirrored ? 0 : -limit + 1;
 
-                var response = await ProtoService.SendAsync(new SearchChatMessages(_chatId, string.Empty, null, fromMessageId, offset, limit, _filter, _threadId));
+                var response = await ClientService.SendAsync(new SearchChatMessages(_chatId, string.Empty, null, fromMessageId, offset, limit, _filter, _threadId));
                 if (response is Messages messages)
                 {
                     TotalItems = messages.TotalCount;
@@ -165,7 +165,7 @@ namespace Unigram.ViewModels.Chats
                     {
                         if (message.Content is MessagePhoto or MessageVideo or MessageAnimation)
                         {
-                            Items.Add(new GalleryMessage(ProtoService, message));
+                            Items.Add(new GalleryMessage(ClientService, message));
                         }
                         else
                         {

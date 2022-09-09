@@ -35,7 +35,7 @@ namespace Unigram.Views.Settings
 
             if (args.ItemContainer.ContentTemplateRoot is WebSessionCell cell)
             {
-                cell.UpdateConnectedWebsite(ViewModel.ProtoService, args.Item as ConnectedWebsite);
+                cell.UpdateConnectedWebsite(ViewModel.ClientService, args.Item as ConnectedWebsite);
             }
         }
     }

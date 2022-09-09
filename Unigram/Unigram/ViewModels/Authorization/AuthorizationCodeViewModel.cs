@@ -10,8 +10,8 @@ namespace Unigram.ViewModels.Authorization
 {
     public class AuthorizationCodeViewModel : TLViewModelBase
     {
-        public AuthorizationCodeViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public AuthorizationCodeViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
             ResendCommand = new RelayCommand(ResendExecute, () => !IsLoading);
@@ -19,7 +19,7 @@ namespace Unigram.ViewModels.Authorization
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            var authState = ProtoService.GetAuthorizationState();
+            var authState = ClientService.GetAuthorizationState();
             if (authState is AuthorizationStateWaitCode waitCode)
             {
                 _codeInfo = waitCode.CodeInfo;
@@ -82,7 +82,7 @@ namespace Unigram.ViewModels.Authorization
 
             IsLoading = true;
 
-            var response = await ProtoService.SendAsync(new CheckAuthenticationCode(_code));
+            var response = await ClientService.SendAsync(new CheckAuthenticationCode(_code));
             if (response is Error error)
             {
                 IsLoading = false;
@@ -147,7 +147,7 @@ namespace Unigram.ViewModels.Authorization
 
             var function = new ResendAuthenticationCode();
 
-            var response = await ProtoService.SendAsync(function);
+            var response = await ClientService.SendAsync(function);
             if (response is Error error)
             {
 

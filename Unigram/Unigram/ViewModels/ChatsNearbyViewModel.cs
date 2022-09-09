@@ -21,8 +21,8 @@ namespace Unigram.ViewModels
     {
         private readonly ILocationService _locationService;
 
-        public ChatsNearbyViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ILocationService locationService)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public ChatsNearbyViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, ILocationService locationService)
+            : base(clientService, settingsService, aggregator)
         {
             _locationService = locationService;
 
@@ -68,7 +68,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new SearchChatsNearby(location));
+            var response = await ClientService.SendAsync(new SearchChatsNearby(location));
             if (response is ChatsNearby nearby)
             {
                 if (nearby.UsersNearby.Count > 5)

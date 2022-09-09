@@ -10,15 +10,15 @@ namespace Unigram.ViewModels.Authorization
 {
     public class AuthorizationEmailCodeViewModel : TLViewModelBase
     {
-        public AuthorizationEmailCodeViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public AuthorizationEmailCodeViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
         }
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            var authState = ProtoService.GetAuthorizationState();
+            var authState = ClientService.GetAuthorizationState();
             if (authState is AuthorizationStateWaitEmailCode waitEmailCode)
             {
                 CodeInfo = waitEmailCode.CodeInfo;
@@ -98,7 +98,7 @@ namespace Unigram.ViewModels.Authorization
 
             IsLoading = true;
 
-            var response = await ProtoService.SendAsync(new CheckAuthenticationEmailCode(new EmailAddressAuthenticationCode(_code)));
+            var response = await ClientService.SendAsync(new CheckAuthenticationEmailCode(new EmailAddressAuthenticationCode(_code)));
             if (response is Error error)
             {
                 IsLoading = false;

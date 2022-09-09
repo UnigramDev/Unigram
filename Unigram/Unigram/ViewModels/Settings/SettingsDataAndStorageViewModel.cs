@@ -16,8 +16,8 @@ namespace Unigram.ViewModels.Settings
 {
     public class SettingsDataAndStorageViewModel : TLViewModelBase
     {
-        public SettingsDataAndStorageViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public SettingsDataAndStorageViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             AutoDownloadCommand = new RelayCommand<AutoDownloadType>(AutoDownloadExecute);
             ResetAutoDownloadCommand = new RelayCommand(ResetAutoDownloadExecute);
@@ -136,7 +136,7 @@ namespace Unigram.ViewModels.Settings
                 return;
             }
 
-            ProtoService.Close(true);
+            ClientService.Close(true);
         }
 
         public RelayCommand<AutoDownloadType> AutoDownloadCommand { get; }
@@ -152,7 +152,7 @@ namespace Unigram.ViewModels.Settings
             var confirm = await MessagePopup.ShowAsync(Strings.Resources.ResetAutomaticMediaDownloadAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
-                var response = await ProtoService.SendAsync(new GetAutoDownloadSettingsPresets());
+                var response = await ClientService.SendAsync(new GetAutoDownloadSettingsPresets());
                 if (response is AutoDownloadSettingsPresets presets)
                 {
                     Settings.AutoDownload = Services.Settings.AutoDownloadSettings.FromPreset(presets.High);

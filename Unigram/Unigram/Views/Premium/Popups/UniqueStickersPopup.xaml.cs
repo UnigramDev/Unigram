@@ -7,11 +7,11 @@ namespace Unigram.Views.Premium.Popups
 {
     public sealed partial class UniqueStickersPopup : ContentPopup
     {
-        public UniqueStickersPopup(IProtoService protoService, Sticker sticker)
+        public UniqueStickersPopup(IClientService clientService, Sticker sticker)
         {
             InitializeComponent();
 
-            Presenter.UpdateFature(protoService, new[] { sticker });
+            Presenter.UpdateFature(clientService, new[] { sticker });
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

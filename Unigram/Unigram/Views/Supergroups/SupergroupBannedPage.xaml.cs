@@ -105,7 +105,7 @@ namespace Unigram.Views.Supergroups
             args.ItemContainer.Tag = args.Item;
             content.Tag = args.Item;
 
-            content.UpdateSupergroupBanned(ViewModel.ProtoService, args, OnContainerContentChanging);
+            content.UpdateSupergroupBanned(ViewModel.ClientService, args, OnContainerContentChanging);
         }
 
         #endregion

@@ -21,7 +21,7 @@ namespace Unigram.Collections
         //, IHandle<UpdateGroupCall>
         //, IHandle<UpdateGroupCallParticipant>
     {
-        private readonly IProtoService _protoService;
+        private readonly IClientService _clientService;
         private readonly IEventAggregator _aggregator;
 
         private readonly Dictionary<int, GroupCallParticipant> _audioSources = new();
@@ -30,9 +30,9 @@ namespace Unigram.Collections
 
         public IGroupCallDelegate Delegate { get; set; }
 
-        public GroupCallParticipantsCollection(IProtoService protoService, IEventAggregator aggregator, GroupCall groupCall)
+        public GroupCallParticipantsCollection(IClientService clientService, IEventAggregator aggregator, GroupCall groupCall)
         {
-            _protoService = protoService;
+            _clientService = clientService;
             _aggregator = aggregator;
 
             _groupCall = groupCall;
@@ -43,7 +43,7 @@ namespace Unigram.Collections
 
         public void Load()
         {
-            _protoService.Send(new LoadGroupCallParticipants(_groupCall.Id, 100));
+            _clientService.Send(new LoadGroupCallParticipants(_groupCall.Id, 100));
         }
 
         public void Dispose()
@@ -234,7 +234,7 @@ namespace Unigram.Collections
             {
                 count = (uint)Count;
 
-                var response = await _protoService.SendAsync(new LoadGroupCallParticipants(_groupCall.Id, 100));
+                var response = await _clientService.SendAsync(new LoadGroupCallParticipants(_groupCall.Id, 100));
                 if (response is Ok)
                 {
                     count = (uint)Count - count;

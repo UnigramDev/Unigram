@@ -44,11 +44,11 @@ namespace Unigram.Views.Chats
                 if (message.Content is MessagePhoto photoMessage)
                 {
                     var small = photoMessage.Photo.GetSmall();
-                    photo.SetSource(ViewModel.ProtoService, small.Photo);
+                    photo.SetSource(ViewModel.ClientService, small.Photo);
                 }
                 else if (message.Content is MessageVideo videoMessage && videoMessage.Video.Thumbnail != null)
                 {
-                    photo.SetSource(ViewModel.ProtoService, videoMessage.Video.Thumbnail.File);
+                    photo.SetSource(ViewModel.ClientService, videoMessage.Video.Thumbnail.File);
 
                     var panel = content.Children[1] as Grid;
                     var duration = panel.Children[1] as TextBlock;
@@ -69,7 +69,7 @@ namespace Unigram.Views.Chats
             var element = sender as FrameworkElement;
             var message = element.Tag as MessageWithOwner;
 
-            var viewModel = new ChatGalleryViewModel(ViewModel.ProtoService, ViewModel.StorageService, ViewModel.Aggregator, message.ChatId, 0, message.Get(), true);
+            var viewModel = new ChatGalleryViewModel(ViewModel.ClientService, ViewModel.StorageService, ViewModel.Aggregator, message.ChatId, 0, message.Get(), true);
             await GalleryView.ShowAsync(viewModel, () => element);
         }
     }

@@ -222,13 +222,13 @@ namespace Unigram.Controls.Messages.Content
 
         private void RecentVoters_RecentUserHeadChanged(ProfilePicture photo, MessageSender sender)
         {
-            if (_message.ProtoService.TryGetUser(sender, out User user))
+            if (_message.ClientService.TryGetUser(sender, out User user))
             {
-                photo.SetUser(_message.ProtoService, user, 20);
+                photo.SetUser(_message.ClientService, user, 20);
             }
-            else if (_message.ProtoService.TryGetChat(sender, out Chat chat))
+            else if (_message.ClientService.TryGetChat(sender, out Chat chat))
             {
-                photo.SetChat(_message.ProtoService, chat, 20);
+                photo.SetChat(_message.ClientService, chat, 20);
             }
             else
             {

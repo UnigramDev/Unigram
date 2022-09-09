@@ -12,8 +12,8 @@ namespace Unigram.ViewModels
         private readonly IContactsService _contactsService;
         private readonly IPasscodeService _passcodeService;
 
-        public LogOutViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService notificationsService, IContactsService contactsService, IPasscodeService passcodeService)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public LogOutViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService notificationsService, IContactsService contactsService, IPasscodeService passcodeService)
+            : base(clientService, settingsService, aggregator)
         {
             _pushService = notificationsService;
             _contactsService = contactsService;
@@ -34,10 +34,10 @@ namespace Unigram.ViewModels
             var confirm = await MessagePopup.ShowAsync(Strings.Resources.AskAQuestionInfo, Strings.Resources.AskAQuestion, Strings.Resources.AskButton, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
-                var response = await ProtoService.SendAsync(new GetSupportUser());
+                var response = await ClientService.SendAsync(new GetSupportUser());
                 if (response is User user)
                 {
-                    response = await ProtoService.SendAsync(new CreatePrivateChat(user.Id, false));
+                    response = await ClientService.SendAsync(new CreatePrivateChat(user.Id, false));
                     if (response is Chat chat)
                     {
                         NavigationService.NavigateToChat(chat);
@@ -60,7 +60,7 @@ namespace Unigram.ViewModels
 
             await _contactsService.RemoveAsync();
 
-            var response = await ProtoService.SendAsync(new LogOut());
+            var response = await ClientService.SendAsync(new LogOut());
             if (response is Error error)
             {
                 // TODO:

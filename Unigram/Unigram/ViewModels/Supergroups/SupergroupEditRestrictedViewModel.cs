@@ -15,8 +15,8 @@ namespace Unigram.ViewModels.Supergroups
     {
         public IMemberDelegate Delegate { get; set; }
 
-        public SupergroupEditRestrictedViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public SupergroupEditRestrictedViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute);
             EditUntilCommand = new RelayCommand(EditUntilExecute);
@@ -42,7 +42,7 @@ namespace Unigram.ViewModels.Supergroups
             state.TryGet("chatId", out long chatId);
             state.TryGet("senderUserId", out long userId);
 
-            Chat = ProtoService.GetChat(chatId);
+            Chat = ClientService.GetChat(chatId);
 
             var chat = _chat;
             if (chat == null)
@@ -50,18 +50,18 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new GetChatMember(chat.Id, new MessageSenderUser(userId)));
+            var response = await ClientService.SendAsync(new GetChatMember(chat.Id, new MessageSenderUser(userId)));
             if (response is ChatMember member)
             {
-                var item = ProtoService.GetUser(userId);
-                var cache = ProtoService.GetUserFull(userId);
+                var item = ClientService.GetUser(userId);
+                var cache = ClientService.GetUserFull(userId);
 
                 Delegate?.UpdateMember(chat, item, member);
                 Delegate?.UpdateUser(chat, item, false);
 
                 if (cache == null)
                 {
-                    ProtoService.Send(new GetUserFullInfo(userId));
+                    ClientService.Send(new GetUserFullInfo(userId));
                 }
                 else
                 {
@@ -288,7 +288,7 @@ namespace Unigram.ViewModels.Supergroups
                 }
             };
 
-            var response = await ProtoService.SendAsync(new SetChatMemberStatus(chat.Id, member.MemberId, status));
+            var response = await ClientService.SendAsync(new SetChatMemberStatus(chat.Id, member.MemberId, status));
             if (response is Ok)
             {
                 NavigationService.GoBack();
@@ -323,7 +323,7 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new SetChatMemberStatus(chat.Id, member.MemberId, new ChatMemberStatusBanned()));
+            var response = await ClientService.SendAsync(new SetChatMemberStatus(chat.Id, member.MemberId, new ChatMemberStatusBanned()));
             if (response is Ok)
             {
                 NavigationService.GoBack();

@@ -47,24 +47,24 @@ namespace Unigram.Views.Channels
             if (args.Phase == 0)
             {
                 var title = content.Children[1] as TextBlock;
-                title.Text = ViewModel.ProtoService.GetTitle(chat);
+                title.Text = ViewModel.ClientService.GetTitle(chat);
             }
             else if (args.Phase == 1)
             {
                 if (chat.Type is ChatTypeSupergroup super)
                 {
-                    var supergroup = ViewModel.ProtoService.GetSupergroup(super.SupergroupId);
+                    var supergroup = ViewModel.ClientService.GetSupergroup(super.SupergroupId);
                     if (supergroup != null)
                     {
                         var subtitle = content.Children[2] as TextBlock;
-                        subtitle.Text = MeUrlPrefixConverter.Convert(ViewModel.CacheService, supergroup.Username, true);
+                        subtitle.Text = MeUrlPrefixConverter.Convert(ViewModel.ClientService, supergroup.Username, true);
                     }
                 }
             }
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.SetChat(ViewModel.ProtoService, chat, 36);
+                photo.SetChat(ViewModel.ClientService, chat, 36);
             }
 
             if (args.Phase < 2)
@@ -103,7 +103,7 @@ namespace Unigram.Views.Channels
 
             if (fullInfo.InviteLink == null && string.IsNullOrEmpty(group.Username))
             {
-                ViewModel.ProtoService.Send(new CreateChatInviteLink(chat.Id, string.Empty, 0, 0, false));
+                ViewModel.ClientService.Send(new CreateChatInviteLink(chat.Id, string.Empty, 0, 0, false));
             }
         }
 
@@ -131,13 +131,13 @@ namespace Unigram.Views.Channels
 
             if (fullInfo.InviteLink == null)
             {
-                ViewModel.ProtoService.Send(new CreateChatInviteLink(chat.Id, string.Empty, 0, 0, false));
+                ViewModel.ClientService.Send(new CreateChatInviteLink(chat.Id, string.Empty, 0, 0, false));
             }
         }
 
         public void UpdateChat(Chat chat)
         {
-            Username.Prefix = MeUrlPrefixConverter.Convert(ViewModel.CacheService, string.Empty);
+            Username.Prefix = MeUrlPrefixConverter.Convert(ViewModel.ClientService, string.Empty);
         }
 
         public void UpdateChatTitle(Chat chat) { }

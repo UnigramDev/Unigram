@@ -16,8 +16,8 @@ namespace Unigram.ViewModels.Settings
 {
     public class SettingsNotificationsExceptionsViewModel : TLMultipleViewModelBase
     {
-        public SettingsNotificationsExceptionsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public SettingsNotificationsExceptionsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             ChooseSoundCommand = new RelayCommand(ChooseSound);
         }
@@ -29,16 +29,16 @@ namespace Unigram.ViewModels.Settings
                 switch (scope)
                 {
                     case SettingsNotificationsExceptionsScope.PrivateChats:
-                        Scope = new SettingsNotificationsScope(ProtoService, typeof(NotificationSettingsScopePrivateChats), Strings.Resources.NotificationsPrivateChats, Icons.Person);
-                        Items = new ItemsCollection(ProtoService, new NotificationSettingsScopePrivateChats());
+                        Scope = new SettingsNotificationsScope(ClientService, typeof(NotificationSettingsScopePrivateChats), Strings.Resources.NotificationsPrivateChats, Icons.Person);
+                        Items = new ItemsCollection(ClientService, new NotificationSettingsScopePrivateChats());
                         break;
                     case SettingsNotificationsExceptionsScope.GroupChats:
-                        Scope = new SettingsNotificationsScope(ProtoService, typeof(NotificationSettingsScopeGroupChats), Strings.Resources.NotificationsGroups, Icons.People);
-                        Items = new ItemsCollection(ProtoService, new NotificationSettingsScopeGroupChats());
+                        Scope = new SettingsNotificationsScope(ClientService, typeof(NotificationSettingsScopeGroupChats), Strings.Resources.NotificationsGroups, Icons.People);
+                        Items = new ItemsCollection(ClientService, new NotificationSettingsScopeGroupChats());
                         break;
                     case SettingsNotificationsExceptionsScope.ChannelChats:
-                        Scope = new SettingsNotificationsScope(ProtoService, typeof(NotificationSettingsScopeChannelChats), Strings.Resources.NotificationsChannels, Icons.Megaphone);
-                        Items = new ItemsCollection(ProtoService, new NotificationSettingsScopeChannelChats());
+                        Scope = new SettingsNotificationsScope(ClientService, typeof(NotificationSettingsScopeChannelChats), Strings.Resources.NotificationsChannels, Icons.Megaphone);
+                        Items = new ItemsCollection(ClientService, new NotificationSettingsScopeChannelChats());
                         break;
                 }
 
@@ -57,14 +57,14 @@ namespace Unigram.ViewModels.Settings
 
         public class ItemsCollection : MvxObservableCollection<Chat>, ISupportIncrementalLoading
         {
-            private readonly IProtoService _protoService;
+            private readonly IClientService _clientService;
             private readonly NotificationSettingsScope _scope;
 
             private bool _hasMoreItems = true;
 
-            public ItemsCollection(IProtoService protoService, NotificationSettingsScope scope)
+            public ItemsCollection(IClientService clientService, NotificationSettingsScope scope)
             {
-                _protoService = protoService;
+                _clientService = clientService;
                 _scope = scope;
             }
 
@@ -72,12 +72,12 @@ namespace Unigram.ViewModels.Settings
             {
                 return AsyncInfo.Run(async token =>
                 {
-                    var response = await _protoService.SendAsync(new GetChatNotificationSettingsExceptions(_scope, false));
+                    var response = await _clientService.SendAsync(new GetChatNotificationSettingsExceptions(_scope, false));
                     if (response is Telegram.Td.Api.Chats chats)
                     {
                         foreach (var id in chats.ChatIds)
                         {
-                            var chat = _protoService.GetChat(id);
+                            var chat = _clientService.GetChat(id);
                             if (chat != null)
                             {
                                 Add(chat);

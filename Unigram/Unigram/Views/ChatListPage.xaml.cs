@@ -92,7 +92,7 @@ namespace Unigram.Views
                         return position.IsPinned;
                     }).Select(x => x.Id).ToArray();
 
-                    ViewModel.ProtoService.Send(new SetPinnedChats(chatList, pinned));
+                    ViewModel.ClientService.Send(new SetPinnedChats(chatList, pinned));
                 }
                 else
                 {

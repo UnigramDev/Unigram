@@ -9,8 +9,8 @@ namespace Unigram.ViewModels.Channels
 {
     public class ChannelCreateStep1ViewModel : TLViewModelBase
     {
-        public ChannelCreateStep1ViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public ChannelCreateStep1ViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute, () => !string.IsNullOrWhiteSpace(Title));
             EditPhotoCommand = new RelayCommand<StorageFile>(EditPhotoExecute);
@@ -44,7 +44,7 @@ namespace Unigram.ViewModels.Channels
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
-            var response = await ProtoService.SendAsync(new CreateNewSupergroupChat(_title, true, _about ?? string.Empty, null, false));
+            var response = await ClientService.SendAsync(new CreateNewSupergroupChat(_title, true, _about ?? string.Empty, null, false));
             if (response is Chat chat)
             {
                 // TODO: photo

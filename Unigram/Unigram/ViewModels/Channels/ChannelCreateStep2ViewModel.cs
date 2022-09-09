@@ -7,8 +7,8 @@ namespace Unigram.ViewModels.Channels
 {
     public class ChannelCreateStep2ViewModel : SupergroupEditViewModelBase
     {
-        public ChannelCreateStep2ViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public ChannelCreateStep2ViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
         }
 
@@ -22,8 +22,8 @@ namespace Unigram.ViewModels.Channels
 
             if (chat.Type is ChatTypeSupergroup supergroup)
             {
-                var item = ProtoService.GetSupergroup(supergroup.SupergroupId);
-                var cache = ProtoService.GetSupergroupFull(supergroup.SupergroupId);
+                var item = ClientService.GetSupergroup(supergroup.SupergroupId);
+                var cache = ClientService.GetSupergroupFull(supergroup.SupergroupId);
 
                 if (item == null || cache == null)
                 {
@@ -34,7 +34,7 @@ namespace Unigram.ViewModels.Channels
 
                 if (!string.Equals(username, item.Username))
                 {
-                    var response = await ProtoService.SendAsync(new SetSupergroupUsername(item.Id, username));
+                    var response = await ClientService.SendAsync(new SetSupergroupUsername(item.Id, username));
                     if (response is Error error)
                     {
                         if (error.TypeEquals(ErrorType.CHANNELS_ADMIN_PUBLIC_TOO_MUCH))

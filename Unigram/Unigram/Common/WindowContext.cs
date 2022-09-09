@@ -141,7 +141,7 @@ namespace Unigram.Common
 
         public void SetActivatedArgs(IActivatedEventArgs args, INavigationService service)
         {
-            UseActivatedArgs(args, service, _lifetime.ActiveItem.ProtoService.GetAuthorizationState());
+            UseActivatedArgs(args, service, _lifetime.ActiveItem.ClientService.GetAuthorizationState());
         }
 
         private async void UseActivatedArgs(IActivatedEventArgs args, INavigationService service, AuthorizationState state)
@@ -242,7 +242,7 @@ namespace Unigram.Common
                 var contactId = await ContactsService.GetContactIdAsync(share.ShareOperation.Contacts.FirstOrDefault());
                 if (contactId is long userId)
                 {
-                    var response = await _lifetime.ActiveItem.ProtoService.SendAsync(new CreatePrivateChat(userId, false));
+                    var response = await _lifetime.ActiveItem.ClientService.SendAsync(new CreatePrivateChat(userId, false));
                     if (response is Chat chat)
                     {
                         query = $"ms-contact-profile://meh?ContactRemoteIds=u" + userId;
@@ -285,7 +285,7 @@ namespace Unigram.Common
                 var contactId = await ContactsService.GetContactIdAsync(contact.Contact.Id);
                 if (contactId is long userId)
                 {
-                    var response = await _lifetime.ActiveItem.ProtoService.SendAsync(new CreatePrivateChat(userId, false));
+                    var response = await _lifetime.ActiveItem.ClientService.SendAsync(new CreatePrivateChat(userId, false));
                     if (response is Chat chat)
                     {
                         service.NavigateToChat(chat);

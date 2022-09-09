@@ -19,8 +19,8 @@ namespace Unigram.ViewModels.Chats
         //, IHandle<UpdateBasicGroupFullInfo>
         //, IHandle<UpdateSupergroupFullInfo>
     {
-        public ChatInviteLinkViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public ChatInviteLinkViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             Members = new MvxObservableCollection<User>();
             Administrators = new MvxObservableCollection<ChatInviteLinkCount>();
@@ -54,21 +54,21 @@ namespace Unigram.ViewModels.Chats
 
             state.TryGet("inviteLink", out string inviteLink);
 
-            Chat = ProtoService.GetChat(chatId);
+            Chat = ClientService.GetChat(chatId);
 
             if (inviteLink == null)
             {
-                if (CacheService.TryGetSupergroupFull(_chat, out SupergroupFullInfo supergroup))
+                if (ClientService.TryGetSupergroupFull(_chat, out SupergroupFullInfo supergroup))
                 {
                     inviteLink = supergroup.InviteLink?.InviteLink;
                 }
-                else if (CacheService.TryGetBasicGroupFull(_chat, out BasicGroupFullInfo basicGroup))
+                else if (ClientService.TryGetBasicGroupFull(_chat, out BasicGroupFullInfo basicGroup))
                 {
                     inviteLink = basicGroup.InviteLink?.InviteLink;
                 }
             }
 
-            Items = new ItemsCollection(this, _chat, inviteLink, CacheService.Options.MyId);
+            Items = new ItemsCollection(this, _chat, inviteLink, ClientService.Options.MyId);
 
             var chat = _chat;
             if (chat == null)
@@ -80,14 +80,14 @@ namespace Unigram.ViewModels.Chats
 
             if (chat.Type is ChatTypeBasicGroup basic)
             {
-                var item = ProtoService.GetBasicGroup(basic.BasicGroupId);
-                var cache = ProtoService.GetBasicGroupFull(basic.BasicGroupId);
+                var item = ClientService.GetBasicGroup(basic.BasicGroupId);
+                var cache = ClientService.GetBasicGroupFull(basic.BasicGroupId);
 
                 //Delegate?.UpdateBasicGroup(chat, item);
 
                 if (cache == null)
                 {
-                    ProtoService.Send(new GetBasicGroupFullInfo(basic.BasicGroupId));
+                    ClientService.Send(new GetBasicGroupFullInfo(basic.BasicGroupId));
                 }
                 else
                 {
@@ -97,14 +97,14 @@ namespace Unigram.ViewModels.Chats
             }
             else if (chat.Type is ChatTypeSupergroup super)
             {
-                var item = ProtoService.GetSupergroup(super.SupergroupId);
-                var cache = ProtoService.GetSupergroupFull(super.SupergroupId);
+                var item = ClientService.GetSupergroup(super.SupergroupId);
+                var cache = ClientService.GetSupergroupFull(super.SupergroupId);
 
                 //Delegate?.UpdateSupergroup(chat, item);
 
                 if (cache == null)
                 {
-                    ProtoService.Send(new GetSupergroupFullInfo(super.SupergroupId));
+                    ClientService.Send(new GetSupergroupFullInfo(super.SupergroupId));
                 }
                 else
                 {
@@ -154,7 +154,7 @@ namespace Unigram.ViewModels.Chats
         {
             if (inviteLink == null)
             {
-                ProtoService.Send(new CreateChatInviteLink(chat.Id, string.Empty, 0, 0, false));
+                ClientService.Send(new CreateChatInviteLink(chat.Id, string.Empty, 0, 0, false));
             }
             else
             {
@@ -187,7 +187,7 @@ namespace Unigram.ViewModels.Chats
                 return;
             }
 
-            //ProtoService.Send(new ReplacePermanentChatInviteLink(chat.Id));
+            //ClientService.Send(new ReplacePermanentChatInviteLink(chat.Id));
         }
 
         public class ItemsCollection : MvxObservableCollection<object>, IGroupSupportIncrementalLoading
@@ -235,7 +235,7 @@ namespace Unigram.ViewModels.Chats
 
                     if (_stage == ItemsStage.Members)
                     {
-                        var response = await _viewModel.ProtoService.SendAsync(new GetChatInviteLinkMembers(_chat.Id, _inviteLink, _offsetMember, 20));
+                        var response = await _viewModel.ClientService.SendAsync(new GetChatInviteLinkMembers(_chat.Id, _inviteLink, _offsetMember, 20));
                         if (response is ChatInviteLinkMembers members)
                         {
                             foreach (var item in members.Members)
@@ -262,7 +262,7 @@ namespace Unigram.ViewModels.Chats
                     }
                     else if (_stage is ItemsStage.Links or ItemsStage.ExpiredLinks)
                     {
-                        var response = await _viewModel.ProtoService.SendAsync(new GetChatInviteLinks(_chat.Id, _userId, _stage == ItemsStage.ExpiredLinks, _offsetDate, _offsetInviteLink, 20));
+                        var response = await _viewModel.ClientService.SendAsync(new GetChatInviteLinks(_chat.Id, _userId, _stage == ItemsStage.ExpiredLinks, _offsetDate, _offsetInviteLink, 20));
                         if (response is ChatInviteLinks inviteLinks)
                         {
                             if (inviteLinks.TotalCount > 0 && _stageHeader)
@@ -306,7 +306,7 @@ namespace Unigram.ViewModels.Chats
                     }
                     else if (_stage == ItemsStage.Administrators && IsChatOwner(_chat))
                     {
-                        var response = await _viewModel.ProtoService.SendAsync(new GetChatInviteLinkCounts(_chat.Id));
+                        var response = await _viewModel.ClientService.SendAsync(new GetChatInviteLinkCounts(_chat.Id));
                         if (response is ChatInviteLinkCounts inviteLinkCounts)
                         {
                             if (inviteLinkCounts.InviteLinkCounts.Count > 0 && _stageHeader)
@@ -340,11 +340,11 @@ namespace Unigram.ViewModels.Chats
 
             private bool IsChatOwner(Chat chat)
             {
-                if (_viewModel.CacheService.TryGetSupergroup(chat, out Supergroup supergroup))
+                if (_viewModel.ClientService.TryGetSupergroup(chat, out Supergroup supergroup))
                 {
                     return supergroup.Status is ChatMemberStatusCreator;
                 }
-                else if (_viewModel.CacheService.TryGetBasicGroup(chat, out BasicGroup basicGroup))
+                else if (_viewModel.ClientService.TryGetBasicGroup(chat, out BasicGroup basicGroup))
                 {
                     return basicGroup.Status is ChatMemberStatusCreator;
                 }

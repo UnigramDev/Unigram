@@ -14,8 +14,8 @@ namespace Unigram.ViewModels.Chats
 {
     public class MessageStatisticsViewModel : TLViewModelBase
     {
-        public MessageStatisticsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public MessageStatisticsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             OpenChannelCommand = new RelayCommand(OpenChannelExecute);
             OpenPostCommand = new RelayCommand<Message>(OpenPostExecute);
@@ -87,17 +87,17 @@ namespace Unigram.ViewModels.Chats
 
             IsLoading = true;
 
-            Chat = ProtoService.GetChat(chatId);
+            Chat = ClientService.GetChat(chatId);
 
-            Items = new ItemsCollection(ProtoService, chatId, messageId);
+            Items = new ItemsCollection(ClientService, chatId, messageId);
 
-            var message = await ProtoService.SendAsync(new GetMessage(chatId, messageId));
+            var message = await ClientService.SendAsync(new GetMessage(chatId, messageId));
             if (message is Message result)
             {
                 Message = result;
             }
 
-            var response = await ProtoService.SendAsync(new GetMessageStatistics(chatId, messageId, false));
+            var response = await ClientService.SendAsync(new GetMessageStatistics(chatId, messageId, false));
             if (response is MessageStatistics statistics)
             {
                 Interactions = ChartViewData.Create(statistics.MessageInteractionGraph, Strings.Resources.InteractionsChartTitle, /*1*/6);
@@ -108,16 +108,16 @@ namespace Unigram.ViewModels.Chats
 
         public class ItemsCollection : MvxObservableCollection<Message>, ISupportIncrementalLoading
         {
-            private readonly IProtoService _protoService;
+            private readonly IClientService _clientService;
 
             private readonly long _chatId;
             private readonly long _messageId;
 
             private string _nextOffset;
 
-            public ItemsCollection(IProtoService protoService, long chatId, long messageId)
+            public ItemsCollection(IClientService clientService, long chatId, long messageId)
             {
-                _protoService = protoService;
+                _clientService = clientService;
 
                 _chatId = chatId;
                 _messageId = messageId;
@@ -132,7 +132,7 @@ namespace Unigram.ViewModels.Chats
 
             private async Task<LoadMoreItemsResult> LoadMoreItemsAsync()
             {
-                var response = await _protoService.SendAsync(new GetMessagePublicForwards(_chatId, _messageId, _nextOffset, 50));
+                var response = await _clientService.SendAsync(new GetMessagePublicForwards(_chatId, _messageId, _nextOffset, 50));
                 if (response is FoundMessages messages)
                 {
                     foreach (var message in messages.Messages)

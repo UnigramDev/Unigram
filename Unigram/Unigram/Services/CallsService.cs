@@ -76,8 +76,8 @@ namespace Unigram.Services
 
         private ViewLifetimeControl _callLifetime;
 
-        public VoipService(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IViewService viewService)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public VoipService(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IViewService viewService)
+            : base(clientService, settingsService, aggregator)
         {
             _viewService = viewService;
 
@@ -179,13 +179,13 @@ namespace Unigram.Services
 
         public async void Start(long chatId, bool video)
         {
-            var chat = CacheService.GetChat(chatId);
+            var chat = ClientService.GetChat(chatId);
             if (chat == null)
             {
                 return;
             }
 
-            var user = CacheService.GetUser(chat);
+            var user = ClientService.GetUser(chat);
             if (user == null)
             {
                 return;
@@ -194,7 +194,7 @@ namespace Unigram.Services
             var call = Call;
             if (call != null)
             {
-                var callUser = CacheService.GetUser(call.UserId);
+                var callUser = ClientService.GetUser(call.UserId);
                 if (callUser != null && callUser.Id != user.Id)
                 {
                     var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.VoipOngoingAlert, callUser.GetFullName(), user.GetFullName()), Strings.Resources.VoipOngoingAlertTitle, Strings.Resources.OK, Strings.Resources.Cancel);
@@ -211,7 +211,7 @@ namespace Unigram.Services
                 return;
             }
 
-            var fullInfo = CacheService.GetUserFull(user.Id);
+            var fullInfo = ClientService.GetUserFull(user.Id);
             if (fullInfo != null && fullInfo.HasPrivateCalls)
             {
                 await MessagePopup.ShowAsync(string.Format(Strings.Resources.CallNotAvailable, user.FirstName), Strings.Resources.VoipFailed, Strings.Resources.OK);
@@ -226,7 +226,7 @@ namespace Unigram.Services
 
             var protocol = VoipManager.Protocol;
 
-            var response = await ProtoService.SendAsync(new CreateCall(user.Id, protocol, video));
+            var response = await ClientService.SendAsync(new CreateCall(user.Id, protocol, video));
             if (response is Error error)
             {
                 if (error.Code == 400 && error.Message.Equals("PARTICIPANT_VERSION_OUTDATED"))
@@ -300,7 +300,7 @@ namespace Unigram.Services
                 }
                 else if (update.Call.State is CallStateReady ready)
                 {
-                    var user = CacheService.GetUser(update.Call.UserId);
+                    var user = ClientService.GetUser(update.Call.UserId);
                     if (user == null)
                     {
                         return;
@@ -311,8 +311,8 @@ namespace Unigram.Services
                     var logFile = Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{SessionId}", $"voip{update.Call.Id}.txt");
                     var statsDumpFile = Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{SessionId}", "tgvoip.statsDump.txt");
 
-                    var call_packet_timeout_ms = CacheService.Options.CallPacketTimeoutMs;
-                    var call_connect_timeout_ms = CacheService.Options.CallConnectTimeoutMs;
+                    var call_packet_timeout_ms = ClientService.Options.CallPacketTimeoutMs;
+                    var call_connect_timeout_ms = ClientService.Options.CallConnectTimeoutMs;
 
                     if (_manager != null)
                     {
@@ -350,7 +350,7 @@ namespace Unigram.Services
                 {
                     if (discarded.NeedDebugInformation)
                     {
-                        //ProtoService.Send(new SendCallDebugInformation(update.Call.Id, _controller.GetDebugLog()));
+                        //ClientService.Send(new SendCallDebugInformation(update.Call.Id, _controller.GetDebugLog()));
                     }
 
                     if (discarded.NeedRating)
@@ -383,7 +383,7 @@ namespace Unigram.Services
                 {
                     if (string.Equals(error.Error.Message, "PARTICIPANT_VERSION_OUTDATED", StringComparison.OrdinalIgnoreCase))
                     {
-                        var user = CacheService.GetUser(update.Call.UserId);
+                        var user = ClientService.GetUser(update.Call.UserId);
                         if (user == null)
                         {
                             return;
@@ -442,7 +442,7 @@ namespace Unigram.Services
             var call = _call;
             if (call != null)
             {
-                ProtoService.Send(new SendCallSignalingData(_call.Id, args.Data));
+                ClientService.Send(new SendCallSignalingData(_call.Id, args.Data));
             }
             else
             {
@@ -476,7 +476,7 @@ namespace Unigram.Services
             if (confirm == ContentDialogResult.Primary)
             {
                 // We need updates here
-                //await ProtoService.SendAsync(new SendCallRating(callId, dialog.Rating, dialog.Rating >= 1 && dialog.Rating <= 4 ? dialog.Comment : string.Empty));
+                //await ClientService.SendAsync(new SendCallRating(callId, dialog.Rating, dialog.Rating >= 1 && dialog.Rating <= 4 ? dialog.Comment : string.Empty));
 
                 if (dialog.IncludeDebugLogs && dialog.Rating <= 3)
                 {
@@ -486,13 +486,13 @@ namespace Unigram.Services
                         return;
                     }
 
-                    var chat = await ProtoService.SendAsync(new CreatePrivateChat(4244000, false)) as Chat;
+                    var chat = await ClientService.SendAsync(new CreatePrivateChat(4244000, false)) as Chat;
                     if (chat == null)
                     {
                         return;
                     }
 
-                    ProtoService.Send(new SendMessage(chat.Id, 0, 0, null, null, new InputMessageDocument(new InputFileLocal(file.Path), null, false, null)));
+                    ClientService.Send(new SendMessage(chat.Id, 0, 0, null, null, new InputMessageDocument(new InputFileLocal(file.Path), null, false, null)));
                 }
             }
         }
@@ -522,7 +522,7 @@ namespace Unigram.Services
                     Width = 720,
                     Height = 540,
                     PersistentId = "Call",
-                    Content = control => _callPage = new VoIPPage(ProtoService, CacheService, Aggregator, this)
+                    Content = control => _callPage = new VoIPPage(ClientService, Aggregator, this)
                 };
 
                 _callLifetime = await _viewService.OpenAsync(parameters);

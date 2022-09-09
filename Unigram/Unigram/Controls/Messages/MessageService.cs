@@ -361,12 +361,12 @@ namespace Unigram.Controls.Messages
                 if (linkedChatChanged.NewLinkedChatId != 0)
                 {
                     content = ReplaceWithLink(Strings.Resources.EventLogChangedLinkedGroup, "un1", fromUser, ref entities);
-                    content = ReplaceWithLink(content, "un2", message.ProtoService.GetChat(linkedChatChanged.NewLinkedChatId), ref entities);
+                    content = ReplaceWithLink(content, "un2", message.ClientService.GetChat(linkedChatChanged.NewLinkedChatId), ref entities);
                 }
                 else
                 {
                     content = ReplaceWithLink(Strings.Resources.EventLogRemovedLinkedGroup, "un1", fromUser, ref entities);
-                    content = ReplaceWithLink(content, "un2", message.ProtoService.GetChat(linkedChatChanged.OldLinkedChatId), ref entities);
+                    content = ReplaceWithLink(content, "un2", message.ClientService.GetChat(linkedChatChanged.OldLinkedChatId), ref entities);
                 }
             }
             else
@@ -374,12 +374,12 @@ namespace Unigram.Controls.Messages
                 if (linkedChatChanged.NewLinkedChatId != 0)
                 {
                     content = ReplaceWithLink(Strings.Resources.EventLogChangedLinkedChannel, "un1", fromUser, ref entities);
-                    content = ReplaceWithLink(content, "un2", message.ProtoService.GetChat(linkedChatChanged.NewLinkedChatId), ref entities);
+                    content = ReplaceWithLink(content, "un2", message.ClientService.GetChat(linkedChatChanged.NewLinkedChatId), ref entities);
                 }
                 else
                 {
                     content = ReplaceWithLink(Strings.Resources.EventLogRemovedLinkedChannel, "un1", fromUser, ref entities);
-                    content = ReplaceWithLink(content, "un2", message.ProtoService.GetChat(linkedChatChanged.OldLinkedChatId), ref entities);
+                    content = ReplaceWithLink(content, "un2", message.ClientService.GetChat(linkedChatChanged.OldLinkedChatId), ref entities);
                 }
             }
 
@@ -582,7 +582,7 @@ namespace Unigram.Controls.Messages
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            if (message.ProtoService.TryGetUser(message.SenderId, out User fromUser))
+            if (message.ClientService.TryGetUser(message.SenderId, out User fromUser))
             {
                 if (message.IsChannelPost)
                 {
@@ -602,7 +602,7 @@ namespace Unigram.Controls.Messages
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            if (message.ProtoService.TryGetUser(message.SenderId, out User fromUser))
+            if (message.ClientService.TryGetUser(message.SenderId, out User fromUser))
             {
                 if (message.IsChannelPost)
                 {
@@ -622,7 +622,7 @@ namespace Unigram.Controls.Messages
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            if (message.ProtoService.TryGetUser(message.SenderId, out User fromUser))
+            if (message.ClientService.TryGetUser(message.SenderId, out User fromUser))
             {
                 if (videoChatMuteNewParticipantsToggled.MuteNewParticipants)
                 {
@@ -642,9 +642,9 @@ namespace Unigram.Controls.Messages
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            var whoUser = message.ProtoService.GetMessageSender(videoChatParticipantIsMutedToggled.ParticipantId);
+            var whoUser = message.ClientService.GetMessageSender(videoChatParticipantIsMutedToggled.ParticipantId);
 
-            if (message.ProtoService.TryGetUser(message.SenderId, out User fromUser))
+            if (message.ClientService.TryGetUser(message.SenderId, out User fromUser))
             {
                 if (videoChatParticipantIsMutedToggled.IsMuted)
                 {
@@ -666,9 +666,9 @@ namespace Unigram.Controls.Messages
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            var whoUser = message.ProtoService.GetMessageSender(videoChatParticipantVolumeLevelChanged.ParticipantId);
+            var whoUser = message.ClientService.GetMessageSender(videoChatParticipantVolumeLevelChanged.ParticipantId);
 
-            if (message.ProtoService.TryGetUser(message.SenderId, out User fromUser))
+            if (message.ClientService.TryGetUser(message.SenderId, out User fromUser))
             {
                 content = ReplaceWithLink(string.Format(Strings.Resources.ActionVolumeChanged, videoChatParticipantVolumeLevelChanged.VolumeLevel), "un1", fromUser, ref entities);
                 content = ReplaceWithLink(content, "un2", whoUser, ref entities);
@@ -711,7 +711,7 @@ namespace Unigram.Controls.Messages
 
             if (singleUserId != 0)
             {
-                var whoUser = message.ProtoService.GetUser(singleUserId);
+                var whoUser = message.ClientService.GetUser(singleUserId);
                 if (message.SenderId is MessageSenderUser senderUser && singleUserId == senderUser.UserId)
                 {
                     var chat = message.GetChat();
@@ -723,7 +723,7 @@ namespace Unigram.Controls.Messages
                     var supergroup = chat.Type as ChatTypeSupergroup;
                     if (supergroup != null && supergroup.IsChannel)
                     {
-                        if (singleUserId == message.ProtoService.Options.MyId)
+                        if (singleUserId == message.ClientService.Options.MyId)
                         {
                             content = Strings.Resources.ChannelJoined;
                         }
@@ -736,7 +736,7 @@ namespace Unigram.Controls.Messages
                     {
                         if (supergroup != null && !supergroup.IsChannel)
                         {
-                            if (singleUserId == message.ProtoService.Options.MyId)
+                            if (singleUserId == message.ClientService.Options.MyId)
                             {
                                 content = Strings.Resources.ChannelMegaJoined;
                             }
@@ -761,7 +761,7 @@ namespace Unigram.Controls.Messages
                     {
                         content = ReplaceWithLink(Strings.Resources.ActionYouAddUser, "un2", whoUser, ref entities);
                     }
-                    else if (singleUserId == message.ProtoService.Options.MyId)
+                    else if (singleUserId == message.ClientService.Options.MyId)
                     {
                         var chat = message.GetChat();
                         var supergroup = chat.Type as ChatTypeSupergroup;
@@ -792,12 +792,12 @@ namespace Unigram.Controls.Messages
             {
                 if (message.IsOutgoing)
                 {
-                    content = ReplaceWithLink(Strings.Resources.ActionYouAddUser, "un2", chatAddMembers.MemberUserIds, message.ProtoService, ref entities);
+                    content = ReplaceWithLink(Strings.Resources.ActionYouAddUser, "un2", chatAddMembers.MemberUserIds, message.ClientService, ref entities);
                 }
                 else
                 {
                     content = ReplaceWithLink(Strings.Resources.ActionAddUser, "un1", fromUser, ref entities);
-                    content = ReplaceWithLink(content, "un2", chatAddMembers.MemberUserIds, message.ProtoService, ref entities);
+                    content = ReplaceWithLink(content, "un2", chatAddMembers.MemberUserIds, message.ClientService, ref entities);
                 }
             }
 
@@ -916,12 +916,12 @@ namespace Unigram.Controls.Messages
             }
             else
             {
-                var whoUser = message.ProtoService.GetUser(chatDeleteMember.UserId);
+                var whoUser = message.ClientService.GetUser(chatDeleteMember.UserId);
                 if (message.IsOutgoing)
                 {
                     content = ReplaceWithLink(Strings.Resources.ActionYouKickUser, "un2", whoUser, ref entities);
                 }
-                else if (chatDeleteMember.UserId == message.ProtoService.Options.MyId)
+                else if (chatDeleteMember.UserId == message.ClientService.Options.MyId)
                 {
                     content = ReplaceWithLink(Strings.Resources.ActionKickUserYou, "un1", fromUser, ref entities);
                 }
@@ -950,7 +950,7 @@ namespace Unigram.Controls.Messages
                 {
                     content = Strings.Resources.ActionYouRemovedPhoto;
                 }
-                else if (message.ProtoService.TryGetUser(message.SenderId, out User senderUser))
+                else if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
                 {
                     content = ReplaceWithLink(Strings.Resources.ActionRemovedPhoto, "un1", senderUser, ref entities);
                 }
@@ -968,7 +968,7 @@ namespace Unigram.Controls.Messages
             {
                 content = Strings.Resources.ActionInviteYou;
             }
-            else if (message.ProtoService.TryGetUser(message.SenderId, out User senderUser))
+            else if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
             {
                 content = ReplaceWithLink(Strings.Resources.ActionInviteUser, "un1", senderUser, ref entities);
             }
@@ -986,7 +986,7 @@ namespace Unigram.Controls.Messages
             //    content = Strings.Resources.ActionInviteYou;
             //}
             //else
-            if (message.ProtoService.TryGetUser(message.SenderId, out User senderUser))
+            if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
             {
                 content = ReplaceWithLink(Strings.Resources.UserAcceptedToGroupAction, "un1", senderUser, ref entities);
             }
@@ -1080,7 +1080,7 @@ namespace Unigram.Controls.Messages
 
         private static (string, IList<TextEntity>) UpdateContactRegistered(MessageViewModel message, MessageContactRegistered contactRegistered, bool active)
         {
-            if (message.ProtoService.TryGetUser(message.SenderId, out User senderUser))
+            if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
             {
                 return (string.Format(Strings.Resources.NotificationContactJoined, senderUser.GetFullName()), null);
             }
@@ -1101,9 +1101,9 @@ namespace Unigram.Controls.Messages
             var game = GetGame(message);
             if (game == null)
             {
-                if (message.ProtoService.TryGetUser(message.SenderId, out User senderUser))
+                if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
                 {
-                    if (senderUser.Id == message.ProtoService.Options.MyId)
+                    if (senderUser.Id == message.ClientService.Options.MyId)
                     {
                         content = string.Format(Strings.Resources.ActionYouScored, Locale.Declension("Points", gameScore.Score));
                     }
@@ -1115,9 +1115,9 @@ namespace Unigram.Controls.Messages
             }
             else
             {
-                if (message.ProtoService.TryGetUser(message.SenderId, out User senderUser))
+                if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
                 {
-                    if (senderUser.Id == message.ProtoService.Options.MyId)
+                    if (senderUser.Id == message.ClientService.Options.MyId)
                     {
                         content = string.Format(Strings.Resources.ActionYouScoredInGame, Locale.Declension("Points", gameScore.Score));
                     }
@@ -1138,11 +1138,11 @@ namespace Unigram.Controls.Messages
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            if (message.SenderId is MessageSenderUser user && user.UserId == message.ProtoService.Options.MyId)
+            if (message.SenderId is MessageSenderUser user && user.UserId == message.ClientService.Options.MyId)
             {
                 content = ReplaceWithLink(Strings.Resources.ActionGiftOutbound, "un2", giftedPremium, ref entities);
             }
-            else if (message.ProtoService.TryGetUser(message.SenderId, out User senderUser))
+            else if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
             {
                 content = ReplaceWithLink(Strings.Resources.ActionGiftInbound, "un1", senderUser, ref entities);
                 content = ReplaceWithLink(content, "un2", giftedPremium, ref entities);
@@ -1160,7 +1160,7 @@ namespace Unigram.Controls.Messages
             {
                 content = string.Format(Strings.Resources.ActionGroupCallEndedByYou, videoChatEnded.GetDuration());
             }
-            else if (message.ProtoService.TryGetUser(message.SenderId, out User senderUser))
+            else if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
             {
                 content = ReplaceWithLink(string.Format(Strings.Resources.ActionGroupCallEndedBy, videoChatEnded.GetDuration()), "un1", senderUser, ref entities);
             }
@@ -1198,9 +1198,9 @@ namespace Unigram.Controls.Messages
             {
                 content = Strings.Resources.ActionChannelCallJustStarted;
             }
-            else if (message.ProtoService.TryGetUser(message.SenderId, out User senderUser))
+            else if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
             {
-                if (senderUser.Id == message.ProtoService.Options.MyId)
+                if (senderUser.Id == message.ClientService.Options.MyId)
                 {
                     content = Strings.Resources.ActionGroupCallStartedByYou;
                 }
@@ -1209,7 +1209,7 @@ namespace Unigram.Controls.Messages
                     content = ReplaceWithLink(Strings.Resources.ActionGroupCallStarted, "un1", senderUser, ref entities);
                 }
             }
-            else if (message.ProtoService.TryGetChat(message.SenderId, out Chat senderChat))
+            else if (message.ClientService.TryGetChat(message.SenderId, out Chat senderChat))
             {
                 content = ReplaceWithLink(Strings.Resources.ActionGroupCallStarted, "un1", senderChat, ref entities);
             }
@@ -1232,12 +1232,12 @@ namespace Unigram.Controls.Messages
 
             if (singleUserId != 0)
             {
-                var whoUser = message.ProtoService.GetUser(singleUserId);
+                var whoUser = message.ClientService.GetUser(singleUserId);
                 if (message.IsOutgoing)
                 {
                     content = ReplaceWithLink(Strings.Resources.ActionGroupCallYouInvited, "un2", whoUser, ref entities);
                 }
-                else if (singleUserId == message.ProtoService.Options.MyId)
+                else if (singleUserId == message.ClientService.Options.MyId)
                 {
                     content = ReplaceWithLink(Strings.Resources.ActionGroupCallInvitedYou, "un1", fromUser, ref entities);
                 }
@@ -1251,12 +1251,12 @@ namespace Unigram.Controls.Messages
             {
                 if (message.IsOutgoing)
                 {
-                    content = ReplaceWithLink(Strings.Resources.ActionGroupCallYouInvited, "un2", inviteVideoChatParticipants.UserIds, message.ProtoService, ref entities);
+                    content = ReplaceWithLink(Strings.Resources.ActionGroupCallYouInvited, "un2", inviteVideoChatParticipants.UserIds, message.ClientService, ref entities);
                 }
                 else
                 {
                     content = ReplaceWithLink(Strings.Resources.ActionGroupCallInvited, "un1", fromUser, ref entities);
-                    content = ReplaceWithLink(content, "un2", inviteVideoChatParticipants.UserIds, message.ProtoService, ref entities);
+                    content = ReplaceWithLink(content, "un2", inviteVideoChatParticipants.UserIds, message.ClientService, ref entities);
                 }
             }
 
@@ -1271,16 +1271,16 @@ namespace Unigram.Controls.Messages
             User traveler;
             User watcher;
 
-            message.ProtoService.TryGetUser(proximityAlertTriggered.TravelerId, out traveler);
-            message.ProtoService.TryGetUser(proximityAlertTriggered.WatcherId, out watcher);
+            message.ClientService.TryGetUser(proximityAlertTriggered.TravelerId, out traveler);
+            message.ClientService.TryGetUser(proximityAlertTriggered.WatcherId, out watcher);
 
             if (traveler != null && watcher != null)
             {
-                if (traveler.Id == message.ProtoService.Options.MyId)
+                if (traveler.Id == message.ClientService.Options.MyId)
                 {
                     content = ReplaceWithLink(string.Format(Strings.Resources.ActionUserWithinYouRadius, Converter.Distance(proximityAlertTriggered.Distance, false)), "un1", watcher, ref entities);
                 }
-                else if (watcher.Id == message.ProtoService.Options.MyId)
+                else if (watcher.Id == message.ClientService.Options.MyId)
                 {
                     content = ReplaceWithLink(string.Format(Strings.Resources.ActionUserWithinRadius, Converter.Distance(proximityAlertTriggered.Distance, false)), "un1", traveler, ref entities);
                 }
@@ -1360,7 +1360,7 @@ namespace Unigram.Controls.Messages
                 }
             }
 
-            var chat = message.ProtoService.GetChat(message.ChatId);
+            var chat = message.ClientService.GetChat(message.ChatId);
             content = string.Format(Strings.Resources.ActionBotDocuments, chat?.Title ?? string.Empty, str.ToString());
 
             return (content, null);
@@ -1375,11 +1375,11 @@ namespace Unigram.Controls.Messages
 
             if (invoice != null)
             {
-                content = string.Format(Strings.Resources.PaymentSuccessfullyPaid, Locale.FormatCurrency(paymentSuccessful.TotalAmount, paymentSuccessful.Currency), message.ProtoService.GetTitle(chat), invoice.Title);
+                content = string.Format(Strings.Resources.PaymentSuccessfullyPaid, Locale.FormatCurrency(paymentSuccessful.TotalAmount, paymentSuccessful.Currency), message.ClientService.GetTitle(chat), invoice.Title);
             }
             else
             {
-                content = string.Format(Strings.Resources.PaymentSuccessfullyPaidNoItem, Locale.FormatCurrency(paymentSuccessful.TotalAmount, paymentSuccessful.Currency), message.ProtoService.GetTitle(chat));
+                content = string.Format(Strings.Resources.PaymentSuccessfullyPaidNoItem, Locale.FormatCurrency(paymentSuccessful.TotalAmount, paymentSuccessful.Currency), message.ClientService.GetTitle(chat));
             }
 
             return (content, null);
@@ -1609,7 +1609,7 @@ namespace Unigram.Controls.Messages
             return source;
         }
 
-        private static string ReplaceWithLink(string source, string param, IList<long> uids, IProtoService cacheService, ref List<TextEntity> entities)
+        private static string ReplaceWithLink(string source, string param, IList<long> uids, IClientService clientService, ref List<TextEntity> entities)
         {
             var index = 0;
             int start = index = source.IndexOf(param);
@@ -1621,7 +1621,7 @@ namespace Unigram.Controls.Messages
                     User user = null;
                     if (user == null)
                     {
-                        user = cacheService.GetUser(uids[a]);
+                        user = clientService.GetUser(uids[a]);
                     }
                     if (user != null)
                     {

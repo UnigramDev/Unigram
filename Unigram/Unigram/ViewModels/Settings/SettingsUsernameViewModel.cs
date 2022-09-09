@@ -13,8 +13,8 @@ namespace Unigram.ViewModels.Settings
 {
     public class SettingsUsernameViewModel : TLViewModelBase
     {
-        public SettingsUsernameViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public SettingsUsernameViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             CopyCommand = new RelayCommand(CopyExecute);
         }
@@ -25,7 +25,7 @@ namespace Unigram.ViewModels.Settings
             IsLoading = false;
             ErrorMessage = null;
 
-            if (CacheService.TryGetUser(CacheService.Options.MyId, out User user))
+            if (ClientService.TryGetUser(ClientService.Options.MyId, out User user))
             {
                 Set(ref _username, user.Username, nameof(Username));
             }
@@ -67,10 +67,10 @@ namespace Unigram.ViewModels.Settings
 
         public async void CheckAvailability(string text)
         {
-            var response = await ProtoService.SendAsync(new SearchPublicChat(text));
+            var response = await ClientService.SendAsync(new SearchPublicChat(text));
             if (response is Chat chat)
             {
-                if (chat.Type is ChatTypePrivate privata && privata.UserId == CacheService.Options.MyId)
+                if (chat.Type is ChatTypePrivate privata && privata.UserId == ClientService.Options.MyId)
                 {
                     IsLoading = false;
                     IsAvailable = false;
@@ -170,7 +170,7 @@ namespace Unigram.ViewModels.Settings
 
         public async Task<bool> SendAsync()
         {
-            var response = await ProtoService.SendAsync(new SetUsername(_username ?? string.Empty));
+            var response = await ClientService.SendAsync(new SetUsername(_username ?? string.Empty));
             if (response is Ok)
             {
                 return true;
@@ -245,7 +245,7 @@ namespace Unigram.ViewModels.Settings
         private async void CopyExecute()
         {
             var dataPackage = new DataPackage();
-            dataPackage.SetText(MeUrlPrefixConverter.Convert(ProtoService, _username));
+            dataPackage.SetText(MeUrlPrefixConverter.Convert(ClientService, _username));
             ClipboardEx.TrySetContent(dataPackage);
 
             await MessagePopup.ShowAsync(Strings.Resources.LinkCopied, Strings.Resources.AppName, Strings.Resources.OK);

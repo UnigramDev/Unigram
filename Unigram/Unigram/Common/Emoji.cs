@@ -242,12 +242,12 @@ namespace Unigram.Common
             return results;
         }
 
-        public static async Task<List<EmojiGroup>> SearchAsync(IProtoService protoService, string query, EmojiSkinTone skin)
+        public static async Task<List<EmojiGroup>> SearchAsync(IClientService clientService, string query, EmojiSkinTone skin)
         {
             var result = new List<EmojiData>();
             var inputLanguage = CoreTextServicesManager.GetForCurrentView().InputLanguage.LanguageTag;
 
-            var response = await protoService.SendAsync(new SearchEmojis(query, false, new[] { inputLanguage }));
+            var response = await clientService.SendAsync(new SearchEmojis(query, false, new[] { inputLanguage }));
             if (response is Emojis suggestions)
             {
                 foreach (var item in suggestions.EmojisValue)

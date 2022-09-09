@@ -14,7 +14,7 @@ namespace Unigram.Controls
 
         private bool _templateApplied;
 
-        private IProtoService _protoService;
+        private IClientService _clientService;
         private object _parameter;
 
         public IdentityIcon()
@@ -28,35 +28,35 @@ namespace Unigram.Controls
 
             if (_parameter is Chat chat)
             {
-                SetStatus(_protoService, chat);
+                SetStatus(_clientService, chat);
             }
             else if (_parameter is User user)
             {
-                SetStatus(_protoService, user);
+                SetStatus(_clientService, user);
             }
             else if (_parameter is Supergroup supergroup)
             {
                 SetStatus(supergroup);
             }
 
-            _protoService = null;
+            _clientService = null;
             _parameter = null;
         }
 
-        public void SetStatus(IProtoService protoService, Chat chat)
+        public void SetStatus(IClientService clientService, Chat chat)
         {
             if (!_templateApplied)
             {
-                _protoService = protoService;
+                _clientService = clientService;
                 _parameter = chat;
                 return;
             }
 
-            if (protoService.TryGetUser(chat, out User user))
+            if (clientService.TryGetUser(chat, out User user))
             {
-                SetStatus(protoService, user, true);
+                SetStatus(clientService, user, true);
             }
-            else if (protoService.TryGetSupergroup(chat, out Supergroup supergroup))
+            else if (clientService.TryGetSupergroup(chat, out Supergroup supergroup))
             {
                 SetStatus(supergroup);
             }
@@ -67,26 +67,26 @@ namespace Unigram.Controls
             }
         }
 
-        public void SetStatus(IProtoService protoService, User user, bool chatList = false)
+        public void SetStatus(IClientService clientService, User user, bool chatList = false)
         {
             if (!_templateApplied)
             {
-                _protoService = protoService;
+                _clientService = clientService;
                 _parameter = user;
                 return;
             }
 
-            if (user.EmojiStatus != null && (!chatList || user.Id != protoService.Options.MyId))
+            if (user.EmojiStatus != null && (!chatList || user.Id != clientService.Options.MyId))
             {
                 LoadObject(ref Status, nameof(Status));
-                Status.SetCustomEmoji(protoService, user.EmojiStatus.CustomEmojiId);
+                Status.SetCustomEmoji(clientService, user.EmojiStatus.CustomEmojiId);
 
                 UnloadObject(ref Icon);
             }
             else
             {
                 var verified = user.IsVerified;
-                var premium = user.IsPremium && protoService.IsPremiumAvailable && user.Id != protoService.Options.MyId;
+                var premium = user.IsPremium && clientService.IsPremiumAvailable && user.Id != clientService.Options.MyId;
 
                 if (premium || verified)
                 {

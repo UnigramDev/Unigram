@@ -25,7 +25,7 @@ namespace Unigram.Views.Premium.Popups
             Color.FromArgb(0xFF, 0xF2, 0x82, 0x2A)
         };
 
-        public LimitsPopup(IProtoService protoService, PremiumPaymentOption option, IList<PremiumLimit> limits)
+        public LimitsPopup(IClientService clientService, PremiumPaymentOption option, IList<PremiumLimit> limits)
         {
             InitializeComponent();
 
@@ -33,7 +33,7 @@ namespace Unigram.Views.Premium.Popups
 
             ScrollingHost.ItemsSource = limits;
 
-            PurchaseCommand.Content = protoService.IsPremium
+            PurchaseCommand.Content = clientService.IsPremium
                 ? Strings.Resources.OK
                 : string.Format(Strings.Resources.SubscribeToPremium, Locale.FormatCurrency(option.Amount / option.MonthCount, option.Currency));
         }

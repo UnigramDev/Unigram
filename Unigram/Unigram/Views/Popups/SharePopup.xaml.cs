@@ -117,9 +117,9 @@ namespace Unigram.Views.Popups
             return dialog.ViewModel.SelectedItems.FirstOrDefault();
         }
 
-        public static async Task<User> PickUserAsync(ICacheService cacheService, string title, bool contact)
+        public static async Task<User> PickUserAsync(IClientService clientService, string title, bool contact)
         {
-            return cacheService.GetUser(await PickChatAsync(title, contact ? SearchChatsType.Contacts : SearchChatsType.Private));
+            return clientService.GetUser(await PickChatAsync(title, contact ? SearchChatsType.Contacts : SearchChatsType.Private));
         }
 
         public static async Task<IList<Chat>> PickChatsAsync(string title, long[] selected)
@@ -136,9 +136,9 @@ namespace Unigram.Views.Popups
             return dialog.ViewModel.SelectedItems.ToList();
         }
 
-        public static async Task<IList<User>> PickUsersAsync(ICacheService cacheService, string title)
+        public static async Task<IList<User>> PickUsersAsync(IClientService clientService, string title)
         {
-            return (await PickChatsAsync(title, new long[0]))?.Select(x => cacheService.GetUser(x)).Where(x => x != null).ToList();
+            return (await PickChatsAsync(title, new long[0]))?.Select(x => clientService.GetUser(x)).Where(x => x != null).ToList();
         }
 
         public Task<ContentDialogResult> ShowAsync(GroupCall call)
@@ -205,8 +205,8 @@ namespace Unigram.Views.Popups
             ViewModel.Messages = new[] { message };
             ViewModel.IsWithMyScore = withMyScore;
 
-            var chat = ViewModel.ProtoService.GetChat(message.ChatId);
-            if (chat != null && chat.Type is ChatTypeSupergroup super && super.IsChannel && ViewModel.ProtoService.GetSupergroup(super.SupergroupId) is Supergroup supergroup && supergroup.Username.Length > 0)
+            var chat = ViewModel.ClientService.GetChat(message.ChatId);
+            if (chat != null && chat.Type is ChatTypeSupergroup super && super.IsChannel && ViewModel.ClientService.GetSupergroup(super.SupergroupId) is Supergroup supergroup && supergroup.Username.Length > 0)
             {
                 var link = $"{supergroup.Username}/{message.Id}";
 
@@ -216,7 +216,7 @@ namespace Unigram.Views.Popups
                 }
                 else
                 {
-                    link = MeUrlPrefixConverter.Convert(ViewModel.ProtoService, link);
+                    link = MeUrlPrefixConverter.Convert(ViewModel.ClientService, link);
                 }
 
                 var title = message.Content.GetCaption()?.Text;
@@ -226,14 +226,14 @@ namespace Unigram.Views.Popups
                 }
 
                 ViewModel.ShareLink = new Uri(link);
-                ViewModel.ShareTitle = title ?? ViewModel.ProtoService.GetTitle(chat);
+                ViewModel.ShareTitle = title ?? ViewModel.ClientService.GetTitle(chat);
             }
             else if (message.Content is MessageGame game)
             {
-                var viaBot = ViewModel.ProtoService.GetUser(message.ViaBotUserId);
+                var viaBot = ViewModel.ClientService.GetUser(message.ViaBotUserId);
                 if (viaBot != null && viaBot.Username.Length > 0)
                 {
-                    ViewModel.ShareLink = new Uri(MeUrlPrefixConverter.Convert(ViewModel.ProtoService, $"{viaBot.Username}?game={game.Game.ShortName}"));
+                    ViewModel.ShareLink = new Uri(MeUrlPrefixConverter.Convert(ViewModel.ClientService, $"{viaBot.Username}?game={game.Game.ShortName}"));
                     ViewModel.ShareTitle = game.Game.Title;
                 }
             }
@@ -494,7 +494,7 @@ namespace Unigram.Views.Popups
             else if (args.ItemContainer.ContentTemplateRoot is ChatShareCell content)
             {
                 content.UpdateState(sender.SelectionMode == ListViewSelectionMode.Multiple && args.ItemContainer.IsSelected, false);
-                content.UpdateChat(ViewModel.ProtoService, args, OnContainerContentChanging);
+                content.UpdateChat(ViewModel.ClientService, args, OnContainerContentChanging);
             }
         }
 
@@ -515,7 +515,7 @@ namespace Unigram.Views.Popups
                     var title = grid.Children[0] as TextBlock;
                     if (result.Chat != null)
                     {
-                        title.Text = ViewModel.ProtoService.GetTitle(result.Chat);
+                        title.Text = ViewModel.ClientService.GetTitle(result.Chat);
                     }
                     else if (result.User != null)
                     {
@@ -526,12 +526,12 @@ namespace Unigram.Views.Popups
 
                     if (result.User != null || result.Chat.Type is ChatTypePrivate || result.Chat.Type is ChatTypeSecret)
                     {
-                        var user = result.User ?? ViewModel.ProtoService.GetUser(result.Chat);
+                        var user = result.User ?? ViewModel.ClientService.GetUser(result.Chat);
                         verified.Visibility = user != null && user.IsVerified ? Visibility.Visible : Visibility.Collapsed;
                     }
                     else if (result.Chat != null && result.Chat.Type is ChatTypeSupergroup supergroup)
                     {
-                        var group = ViewModel.ProtoService.GetSupergroup(supergroup.SupergroupId);
+                        var group = ViewModel.ClientService.GetSupergroup(supergroup.SupergroupId);
                         verified.Visibility = group != null && group.IsVerified ? Visibility.Visible : Visibility.Collapsed;
                     }
                     else
@@ -544,7 +544,7 @@ namespace Unigram.Views.Popups
                     var subtitle = content.Children[2] as TextBlock;
                     if (result.User != null || result.Chat != null && result.Chat.Type is ChatTypePrivate privata)
                     {
-                        var user = result.User ?? ViewModel.ProtoService.GetUser(result.Chat);
+                        var user = result.User ?? ViewModel.ClientService.GetUser(result.Chat);
                         if (result.IsPublic)
                         {
                             subtitle.Text = $"@{user.Username}";
@@ -556,7 +556,7 @@ namespace Unigram.Views.Popups
                     }
                     else if (result.Chat != null && result.Chat.Type is ChatTypeSupergroup super)
                     {
-                        var supergroup = ViewModel.ProtoService.GetSupergroup(super.SupergroupId);
+                        var supergroup = ViewModel.ClientService.GetSupergroup(super.SupergroupId);
                         if (result.IsPublic)
                         {
                             if (supergroup.MemberCount > 0)
@@ -601,11 +601,11 @@ namespace Unigram.Views.Popups
                     var photo = content.Children[0] as ProfilePicture;
                     if (result.Chat != null)
                     {
-                        photo.SetChat(ViewModel.ProtoService, result.Chat, 36);
+                        photo.SetChat(ViewModel.ClientService, result.Chat, 36);
                     }
                     else if (result.User != null)
                     {
-                        photo.SetUser(ViewModel.ProtoService, result.User, 36);
+                        photo.SetUser(ViewModel.ClientService, result.User, 36);
                     }
                 }
 
@@ -633,8 +633,8 @@ namespace Unigram.Views.Popups
             var photo = grid.Children[0] as ProfilePicture;
             var title = content.Children[1] as TextBlock;
 
-            photo.SetChat(ViewModel.ProtoService, chat, 48);
-            title.Text = ViewModel.ProtoService.GetTitle(chat, true);
+            photo.SetChat(ViewModel.ClientService, chat, 48);
+            title.Text = ViewModel.ClientService.GetTitle(chat, true);
 
             var badge = grid.Children[1] as Border;
             var text = badge.Child as TextBlock;
@@ -692,7 +692,7 @@ namespace Unigram.Views.Popups
 
                 if (string.IsNullOrEmpty(SearchField.Text))
                 {
-                    var top = ViewModel.TopChats = new TopChatsCollection(ViewModel.ProtoService, new TopChatCategoryUsers(), 30);
+                    var top = ViewModel.TopChats = new TopChatsCollection(ViewModel.ClientService, new TopChatCategoryUsers(), 30);
                     await top.LoadMoreItemsAsync(0);
                 }
                 else
@@ -700,7 +700,7 @@ namespace Unigram.Views.Popups
                     ViewModel.TopChats = null;
                 }
 
-                var items = ViewModel.Search = new SearchChatsCollection(ViewModel.ProtoService, SearchField.Text, null, ViewModel.SearchType);
+                var items = ViewModel.Search = new SearchChatsCollection(ViewModel.ClientService, SearchField.Text, null, ViewModel.SearchType);
                 await items.LoadMoreItemsAsync(0);
                 await items.LoadMoreItemsAsync(1);
             }
@@ -777,7 +777,7 @@ namespace Unigram.Views.Popups
                 return;
             }
 
-            if (e.ClickedItem is Chat chat && ViewModel.CacheService.IsSavedMessages(chat))
+            if (e.ClickedItem is Chat chat && ViewModel.ClientService.IsSavedMessages(chat))
             {
                 if (ViewModel.SelectedItems.IsEmpty())
                 {
@@ -797,7 +797,7 @@ namespace Unigram.Views.Popups
                 if (result.Chat != null)
                 {
                     item = result.Chat;
-                    ViewModel.ProtoService.Send(new AddRecentlyFoundChat(result.Chat.Id));
+                    ViewModel.ClientService.Send(new AddRecentlyFoundChat(result.Chat.Id));
                 }
                 else
                 {
@@ -807,7 +807,7 @@ namespace Unigram.Views.Popups
 
             if (item is User user)
             {
-                var response = await ViewModel.ProtoService.SendAsync(new CreatePrivateChat(user.Id, false));
+                var response = await ViewModel.ClientService.SendAsync(new CreatePrivateChat(user.Id, false));
                 if (response is Chat)
                 {
                     item = response as Chat;

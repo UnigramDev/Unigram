@@ -194,7 +194,7 @@ namespace Unigram.Services
         {
             foreach (var session in Items)
             {
-                var user = session.ProtoService.GetUser(session.UserId);
+                var user = session.ClientService.GetUser(session.UserId);
                 if (user == null)
                 {
                     continue;

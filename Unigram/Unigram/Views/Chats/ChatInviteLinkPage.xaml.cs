@@ -118,7 +118,7 @@ namespace Unigram.Views.Chats
 
         private void UpdateChatInviteLinkMember(ChatInviteLinkMember member, Grid content, uint phase)
         {
-            var user = ViewModel.ProtoService.GetUser(member.UserId);
+            var user = ViewModel.ClientService.GetUser(member.UserId);
             if (user == null)
             {
                 return;
@@ -137,13 +137,13 @@ namespace Unigram.Views.Chats
             else if (phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.SetUser(ViewModel.ProtoService, user, 36);
+                photo.SetUser(ViewModel.ClientService, user, 36);
             }
         }
 
         private void UpdateChatInviteLinkCount(ChatInviteLinkCount count, Grid content, uint phase)
         {
-            var user = ViewModel.ProtoService.GetUser(count.UserId);
+            var user = ViewModel.ClientService.GetUser(count.UserId);
             if (user == null)
             {
                 return;
@@ -162,7 +162,7 @@ namespace Unigram.Views.Chats
             else if (phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.SetUser(ViewModel.ProtoService, user, 36);
+                photo.SetUser(ViewModel.ClientService, user, 36);
             }
         }
     }

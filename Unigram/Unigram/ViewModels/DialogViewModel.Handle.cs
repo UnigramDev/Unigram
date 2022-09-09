@@ -114,7 +114,7 @@ namespace Unigram.ViewModels
         {
             if (update.ChatId == _chat?.Id && update.MessageThreadId == _threadId && (_type == DialogType.History || _type == DialogType.Thread))
             {
-                BeginOnUIThread(() => Delegate?.UpdateChatActions(_chat, CacheService.GetChatActions(update.ChatId)));
+                BeginOnUIThread(() => Delegate?.UpdateChatActions(_chat, ClientService.GetChatActions(update.ChatId)));
             }
         }
 
@@ -148,11 +148,11 @@ namespace Unigram.ViewModels
 
             if (chat.Type is ChatTypePrivate privata && privata.UserId == update.UserId)
             {
-                BeginOnUIThread(() => Delegate?.UpdateUserFullInfo(chat, ProtoService.GetUser(update.UserId), update.UserFullInfo, false, _accessToken != null));
+                BeginOnUIThread(() => Delegate?.UpdateUserFullInfo(chat, ClientService.GetUser(update.UserId), update.UserFullInfo, false, _accessToken != null));
             }
             else if (chat.Type is ChatTypeSecret secret && secret.UserId == update.UserId)
             {
-                BeginOnUIThread(() => Delegate?.UpdateUserFullInfo(chat, ProtoService.GetUser(update.UserId), update.UserFullInfo, true, false));
+                BeginOnUIThread(() => Delegate?.UpdateUserFullInfo(chat, ClientService.GetUser(update.UserId), update.UserFullInfo, true, false));
             }
         }
 
@@ -196,7 +196,7 @@ namespace Unigram.ViewModels
 
             if (chat.Type is ChatTypeBasicGroup basic && basic.BasicGroupId == update.BasicGroupId)
             {
-                BeginOnUIThread(() => Delegate?.UpdateBasicGroupFullInfo(chat, ProtoService.GetBasicGroup(update.BasicGroupId), update.BasicGroupFullInfo));
+                BeginOnUIThread(() => Delegate?.UpdateBasicGroupFullInfo(chat, ClientService.GetBasicGroup(update.BasicGroupId), update.BasicGroupFullInfo));
             }
         }
 
@@ -228,8 +228,8 @@ namespace Unigram.ViewModels
             {
                 BeginOnUIThread(() =>
                 {
-                    _stickers?.UpdateSupergroupFullInfo(chat, ProtoService.GetSupergroup(update.SupergroupId), update.SupergroupFullInfo);
-                    Delegate?.UpdateSupergroupFullInfo(chat, ProtoService.GetSupergroup(update.SupergroupId), update.SupergroupFullInfo);
+                    _stickers?.UpdateSupergroupFullInfo(chat, ClientService.GetSupergroup(update.SupergroupId), update.SupergroupFullInfo);
+                    Delegate?.UpdateSupergroupFullInfo(chat, ClientService.GetSupergroup(update.SupergroupId), update.SupergroupFullInfo);
                 });
             }
         }
@@ -257,7 +257,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new GetGroupCall(groupCallId));
+            var response = await ClientService.SendAsync(new GetGroupCall(groupCallId));
             if (response is GroupCall groupCall)
             {
                 BeginOnUIThread(() => Delegate?.UpdateGroupCall(chat, groupCall));
@@ -294,7 +294,7 @@ namespace Unigram.ViewModels
         {
             if (_chat?.Type is ChatTypePrivate privata && privata.UserId == update.UserId || _chat?.Type is ChatTypeSecret secret && secret.UserId == update.UserId)
             {
-                BeginOnUIThread(() => Delegate?.UpdateUserStatus(_chat, ProtoService.GetUser(update.UserId)));
+                BeginOnUIThread(() => Delegate?.UpdateUserStatus(_chat, ClientService.GetUser(update.UserId)));
             }
         }
 
@@ -362,7 +362,7 @@ namespace Unigram.ViewModels
         {
             if (update.ChatId == _chat?.Id)
             {
-                var response = await ProtoService.SendAsync(new GetMessage(update.ChatId, update.ReplyMarkupMessageId));
+                var response = await ClientService.SendAsync(new GetMessage(update.ChatId, update.ReplyMarkupMessageId));
                 if (response is Message message)
                 {
                     BeginOnUIThread(() => Delegate?.UpdateChatReplyMarkup(_chat, _messageFactory.Create(this, message)));
@@ -484,10 +484,10 @@ namespace Unigram.ViewModels
 
             if (update.ChatId == _chat?.Id && _chat.Type is ChatTypePrivate privata)
             {
-                var user = CacheService.GetUser(privata.UserId);
+                var user = ClientService.GetUser(privata.UserId);
                 if (user != null && user.Type is UserTypeBot)
                 {
-                    var fullInfo = CacheService.GetUserFull(user.Id);
+                    var fullInfo = ClientService.GetUserFull(user.Id);
                     if (fullInfo != null)
                     {
                         BeginOnUIThread(() => Delegate?.UpdateUserFullInfo(_chat, user, fullInfo, false, _accessToken != null));
@@ -632,7 +632,7 @@ namespace Unigram.ViewModels
                     {
                         message.Content = update.NewContent;
 
-                        if (!ProtoService.Options.DisableAnimatedEmoji)
+                        if (!ClientService.Options.DisableAnimatedEmoji)
                         {
                             ProcessEmoji(new[] { message });
                         }
@@ -840,7 +840,7 @@ namespace Unigram.ViewModels
             if (header?.EditingMessageMedia != null && header?.EditingMessageFileId == update.File.Id && update.File.Size == update.File.Remote.UploadedSize)
             {
                 BeginOnUIThread(() => ComposerHeader = null);
-                ProtoService.Send(new EditMessageMedia(chat.Id, header.EditingMessage.Id, null, header.EditingMessageMedia.Delegate(new InputFileId(update.File.Id), header.EditingMessageCaption)));
+                ClientService.Send(new EditMessageMedia(chat.Id, header.EditingMessage.Id, null, header.EditingMessageMedia.Delegate(new InputFileId(update.File.Id), header.EditingMessageCaption)));
             }
         }
 

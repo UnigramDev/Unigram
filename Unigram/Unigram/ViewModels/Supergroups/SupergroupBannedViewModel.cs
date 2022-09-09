@@ -8,8 +8,8 @@ namespace Unigram.ViewModels.Supergroups
 {
     public class SupergroupBannedViewModel : SupergroupMembersViewModelBase
     {
-        public SupergroupBannedViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator, new SupergroupMembersFilterBanned(), query => new SupergroupMembersFilterBanned(query))
+        public SupergroupBannedViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator, new SupergroupMembersFilterBanned(), query => new SupergroupMembersFilterBanned(query))
         {
             AddCommand = new RelayCommand(AddExecute);
             MemberUnbanCommand = new RelayCommand<ChatMember>(MemberUnbanExecute);
@@ -46,7 +46,7 @@ namespace Unigram.ViewModels.Supergroups
 
             Members.Remove(member);
 
-            var response = await ProtoService.SendAsync(new SetChatMemberStatus(chat.Id, member.MemberId, new ChatMemberStatusLeft()));
+            var response = await ClientService.SendAsync(new SetChatMemberStatus(chat.Id, member.MemberId, new ChatMemberStatusLeft()));
             if (response is Error)
             {
                 Members.Insert(index, member);

@@ -7,14 +7,14 @@ namespace Unigram.Views.Popups
 {
     public sealed partial class VideoChatStreamsPopup : ContentPopup
     {
-        private readonly IProtoService _protoService;
+        private readonly IClientService _clientService;
         private readonly long _chatId;
 
-        public VideoChatStreamsPopup(IProtoService protoService, long chatId, bool start)
+        public VideoChatStreamsPopup(IClientService clientService, long chatId, bool start)
         {
             InitializeComponent();
 
-            _protoService = protoService;
+            _clientService = clientService;
             _chatId = chatId;
 
             Title = "Stream with...";
@@ -37,7 +37,7 @@ namespace Unigram.Views.Popups
 
         private async void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
         {
-            var response = await _protoService.SendAsync(new GetVideoChatRtmpUrl(_chatId));
+            var response = await _clientService.SendAsync(new GetVideoChatRtmpUrl(_chatId));
             if (response is RtmpUrl rtmp)
             {
                 ServerField.Text = rtmp.Url;

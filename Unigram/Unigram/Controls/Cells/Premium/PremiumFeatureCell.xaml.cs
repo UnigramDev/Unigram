@@ -14,7 +14,7 @@ namespace Unigram.Controls.Cells.Premium
             InitializeComponent();
         }
 
-        internal void UpdateFeature(IProtoService protoService, PremiumFeature feature, Animation value)
+        internal void UpdateFeature(IClientService clientService, PremiumFeature feature, Animation value)
         {
             var bottom = feature switch
             {
@@ -105,7 +105,7 @@ namespace Unigram.Controls.Cells.Premium
 
             if (value != null)
             {
-                Player.Source = new RemoteVideoSource(protoService, value.AnimationValue, value.Duration);
+                Player.Source = new RemoteVideoSource(clientService, value.AnimationValue, value.Duration);
             }
             else
             {

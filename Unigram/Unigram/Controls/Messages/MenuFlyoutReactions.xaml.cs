@@ -25,7 +25,7 @@ namespace Unigram.Controls.Messages
 {
     public sealed partial class MenuFlyoutReactions : UserControl
     {
-        private readonly IProtoService _protoService;
+        private readonly IClientService _clientService;
 
         private readonly IList<ReactionType> _reactions;
         private readonly bool _canUnlockMore;
@@ -46,8 +46,8 @@ namespace Unigram.Controls.Messages
 
         private MenuFlyoutReactions(IList<ReactionType> reactions, MessageViewModel message, MessageBubble bubble, MenuFlyout flyout, bool expand = false)
         {
-            _reactions = reactions /*message.ProtoService.IsPremium ? reactions : reactions.Where(x => !x.IsPremium).ToList()*/;
-            _canUnlockMore = false; //message.ProtoService.IsPremiumAvailable && !message.ProtoService.IsPremium && reactions.Any(x => x.IsPremium);
+            _reactions = reactions /*message.ClientService.IsPremium ? reactions : reactions.Where(x => !x.IsPremium).ToList()*/;
+            _canUnlockMore = false; //message.ClientService.IsPremiumAvailable && !message.ClientService.IsPremium && reactions.Any(x => x.IsPremium);
             _message = message;
             _bubble = bubble;
             _flyout = flyout;
@@ -100,7 +100,7 @@ namespace Unigram.Controls.Messages
             {
                 if (file != null && file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
                 {
-                    message.ProtoService.DownloadFile(file.Id, 31);
+                    message.ClientService.DownloadFile(file.Id, 31);
                 }
             }
 
@@ -140,7 +140,7 @@ namespace Unigram.Controls.Messages
 
             //        if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             //        {
-            //            message.ProtoService.DownloadFile(file.Id, 32);
+            //            message.ClientService.DownloadFile(file.Id, 32);
             //        }
             //    }
 
@@ -314,7 +314,7 @@ namespace Unigram.Controls.Messages
             if (sender is HyperlinkButton button && button.Tag is ReactionType reaction)
             {
                 _flyout.Hide();
-                await _message.ProtoService.SendAsync(new SetMessageReaction(_message.ChatId, _message.Id, reaction, false, true));
+                await _message.ClientService.SendAsync(new SetMessageReaction(_message.ChatId, _message.Id, reaction, false, true));
 
                 if (_bubble != null)
                 {
@@ -436,7 +436,7 @@ namespace Unigram.Controls.Messages
             // Animating this breaks the menu flyout when it comes back
             _presenter.Visibility = Visibility.Collapsed;
 
-            var viewModel = EmojiDrawerViewModel.GetForCurrentView(_message.ProtoService.SessionId, EmojiDrawerMode.Reactions);
+            var viewModel = EmojiDrawerViewModel.GetForCurrentView(_message.ClientService.SessionId, EmojiDrawerMode.Reactions);
             var view = new EmojiDrawer(EmojiDrawerMode.Reactions);
             view.DataContext = viewModel;
             view.VerticalAlignment = VerticalAlignment.Top;
@@ -469,11 +469,11 @@ namespace Unigram.Controls.Messages
 
                 if (sticker.CustomEmojiId != 0)
                 {
-                    await _message.ProtoService.SendAsync(new SetMessageReaction(_message.ChatId, _message.Id, new ReactionTypeCustomEmoji(sticker.CustomEmojiId), false, true));
+                    await _message.ClientService.SendAsync(new SetMessageReaction(_message.ChatId, _message.Id, new ReactionTypeCustomEmoji(sticker.CustomEmojiId), false, true));
                 }
                 else
                 {
-                    await _message.ProtoService.SendAsync(new SetMessageReaction(_message.ChatId, _message.Id, new ReactionTypeEmoji(sticker.Emoji), false, true));
+                    await _message.ClientService.SendAsync(new SetMessageReaction(_message.ChatId, _message.Id, new ReactionTypeEmoji(sticker.Emoji), false, true));
                 }
 
                 if (_bubble != null)
@@ -506,16 +506,16 @@ namespace Unigram.Controls.Messages
 
 
 
-        public static MenuFlyoutReactions ShowAt(IProtoService protoService, FrameworkElement element, HorizontalAlignment alignment)
+        public static MenuFlyoutReactions ShowAt(IClientService clientService, FrameworkElement element, HorizontalAlignment alignment)
         {
-            return new MenuFlyoutReactions(protoService, element, alignment);
+            return new MenuFlyoutReactions(clientService, element, alignment);
         }
 
-        private MenuFlyoutReactions(IProtoService protoService, FrameworkElement element, HorizontalAlignment alignment)
+        private MenuFlyoutReactions(IClientService clientService, FrameworkElement element, HorizontalAlignment alignment)
         {
             InitializeComponent();
 
-            _protoService = protoService;
+            _clientService = clientService;
             _popup = new Popup();
 
             var transform = element.TransformToVisual(Window.Current.Content);
@@ -539,7 +539,7 @@ namespace Unigram.Controls.Messages
 
             var padding = actualWidth - width;
 
-            var viewModel = EmojiDrawerViewModel.GetForCurrentView(protoService.SessionId, EmojiDrawerMode.Reactions);
+            var viewModel = EmojiDrawerViewModel.GetForCurrentView(clientService.SessionId, EmojiDrawerMode.Reactions);
             var view = new EmojiDrawer(EmojiDrawerMode.Reactions);
             view.DataContext = viewModel;
             view.VerticalAlignment = VerticalAlignment.Top;
@@ -710,7 +710,7 @@ namespace Unigram.Controls.Messages
             if (e.ClickedItem is StickerViewModel sticker)
             {
                 _popup.IsOpen = false;
-                _protoService.Send(new SetEmojiStatus(new EmojiStatus(sticker.CustomEmojiId), 0));
+                _clientService.Send(new SetEmojiStatus(new EmojiStatus(sticker.CustomEmojiId), 0));
             }
         }
     }

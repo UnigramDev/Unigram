@@ -164,8 +164,8 @@ namespace Unigram.Services
 
         private readonly Dictionary<Shortcut, List<ShortcutCommand>> _commands = new Dictionary<Shortcut, List<ShortcutCommand>>();
 
-        public ShortcutsService(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public ShortcutsService(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             InitializeDefault();
             InitializeCustom();

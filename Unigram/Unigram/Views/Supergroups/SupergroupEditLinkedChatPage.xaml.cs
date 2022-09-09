@@ -26,9 +26,9 @@ namespace Unigram.Views.Supergroups
             var chat = button.DataContext as Chat;
 
             var title = content.Children[1] as TextBlock;
-            title.Text = ViewModel.ProtoService.GetTitle(chat);
+            title.Text = ViewModel.ClientService.GetTitle(chat);
 
-            if (ViewModel.CacheService.TryGetSupergroup(chat, out Supergroup supergroup))
+            if (ViewModel.ClientService.TryGetSupergroup(chat, out Supergroup supergroup))
             {
                 var subtitle = content.Children[2] as TextBlock;
                 if (string.IsNullOrEmpty(supergroup.Username))
@@ -42,7 +42,7 @@ namespace Unigram.Views.Supergroups
             }
 
             var photo = content.Children[0] as ProfilePicture;
-            photo.SetChat(ViewModel.ProtoService, chat, 36);
+            photo.SetChat(ViewModel.ClientService, chat, 36);
 
             button.Command = ViewModel.LinkCommand;
             button.CommandParameter = chat;
@@ -61,7 +61,7 @@ namespace Unigram.Views.Supergroups
 
         public void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo)
         {
-            var linkedChat = ViewModel.CacheService.GetChat(fullInfo.LinkedChatId);
+            var linkedChat = ViewModel.ClientService.GetChat(fullInfo.LinkedChatId);
             if (linkedChat != null)
             {
                 if (group.IsChannel)

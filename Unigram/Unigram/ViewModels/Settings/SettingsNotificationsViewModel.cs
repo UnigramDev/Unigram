@@ -19,14 +19,14 @@ namespace Unigram.ViewModels.Settings
         , IHandle
         //, IHandle<UpdateScopeNotificationSettings>
     {
-        public SettingsNotificationsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public SettingsNotificationsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             Scopes = new MvxObservableCollection<SettingsNotificationsScope>
             {
-                new SettingsNotificationsScope(protoService, typeof(NotificationSettingsScopePrivateChats), Strings.Resources.NotificationsPrivateChats, Icons.Person),
-                new SettingsNotificationsScope(protoService, typeof(NotificationSettingsScopeGroupChats), Strings.Resources.NotificationsGroups, Icons.People),
-                new SettingsNotificationsScope(protoService, typeof(NotificationSettingsScopeChannelChats), Strings.Resources.NotificationsChannels, Icons.Megaphone),
+                new SettingsNotificationsScope(clientService, typeof(NotificationSettingsScopePrivateChats), Strings.Resources.NotificationsPrivateChats, Icons.Person),
+                new SettingsNotificationsScope(clientService, typeof(NotificationSettingsScopeGroupChats), Strings.Resources.NotificationsGroups, Icons.People),
+                new SettingsNotificationsScope(clientService, typeof(NotificationSettingsScopeChannelChats), Strings.Resources.NotificationsChannels, Icons.Megaphone),
             };
 
             foreach (var scope in Scopes)
@@ -86,10 +86,10 @@ namespace Unigram.ViewModels.Settings
 
         public bool IsContactEnabled
         {
-            get => !CacheService.Options.DisableContactRegisteredNotifications;
+            get => !ClientService.Options.DisableContactRegisteredNotifications;
             set
             {
-                CacheService.Options.DisableContactRegisteredNotifications = !value;
+                ClientService.Options.DisableContactRegisteredNotifications = !value;
                 RaisePropertyChanged();
             }
         }
@@ -130,7 +130,7 @@ namespace Unigram.ViewModels.Settings
                 Settings.Notifications.IncludeMutedChats = value;
                 RaisePropertyChanged();
 
-                var unreadCount = CacheService.GetUnreadCount(new ChatListMain());
+                var unreadCount = ClientService.GetUnreadCount(new ChatListMain());
                 Aggregator.Publish(unreadCount.UnreadChatCount);
                 Aggregator.Publish(unreadCount.UnreadMessageCount);
             }
@@ -144,7 +144,7 @@ namespace Unigram.ViewModels.Settings
                 Settings.Notifications.CountUnreadMessages = value;
                 RaisePropertyChanged();
 
-                var unreadCount = CacheService.GetUnreadCount(new ChatListMain());
+                var unreadCount = ClientService.GetUnreadCount(new ChatListMain());
                 Aggregator.Publish(unreadCount.UnreadChatCount);
                 Aggregator.Publish(unreadCount.UnreadMessageCount);
             }
@@ -173,7 +173,7 @@ namespace Unigram.ViewModels.Settings
                 InAppSounds = true;
                 InAppPreview = true;
 
-                ProtoService.Send(new ResetAllNotificationSettings());
+                ClientService.Send(new ResetAllNotificationSettings());
             }
         }
     }
@@ -184,8 +184,8 @@ namespace Unigram.ViewModels.Settings
         private readonly string _title;
         private readonly string _glyph;
 
-        public SettingsNotificationsScope(IProtoService protoService, Type type, string title, string glyph)
-            : base(protoService, null, null, null)
+        public SettingsNotificationsScope(IClientService clientService, Type type, string title, string glyph)
+            : base(clientService, null, null)
         {
             _type = type;
             _title = title;
@@ -262,7 +262,7 @@ namespace Unigram.ViewModels.Settings
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            var settings = await ProtoService.SendAsync(new GetScopeNotificationSettings(GetScope())) as ScopeNotificationSettings;
+            var settings = await ClientService.SendAsync(new GetScopeNotificationSettings(GetScope())) as ScopeNotificationSettings;
             if (settings != null)
             {
                 Alert = settings.MuteFor == 0;
@@ -275,7 +275,7 @@ namespace Unigram.ViewModels.Settings
                 ReloadSound();
             }
 
-            var chats = await ProtoService.SendAsync(new GetChatNotificationSettingsExceptions(GetScope(), false)) as Telegram.Td.Api.Chats;
+            var chats = await ClientService.SendAsync(new GetChatNotificationSettingsExceptions(GetScope(), false)) as Telegram.Td.Api.Chats;
             if (chats != null)
             {
                 ExceptionsCount = string.Format("{0}, {1}", Alert ? Strings.Resources.NotificationsOn : Strings.Resources.NotificationsOff, Locale.Declension("Exception", chats.ChatIds.Count));
@@ -285,10 +285,10 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand SendCommand { get; }
         public async void SendExecute()
         {
-            var settings = await ProtoService.SendAsync(new GetScopeNotificationSettings(GetScope())) as ScopeNotificationSettings;
+            var settings = await ClientService.SendAsync(new GetScopeNotificationSettings(GetScope())) as ScopeNotificationSettings;
             if (settings != null)
             {
-                await ProtoService.SendAsync(new SetScopeNotificationSettings(GetScope(), new ScopeNotificationSettings(_alert ? 0 : int.MaxValue, _soundId, _preview, _disablePinnedMessage, _disableMention)));
+                await ClientService.SendAsync(new SetScopeNotificationSettings(GetScope(), new ScopeNotificationSettings(_alert ? 0 : int.MaxValue, _soundId, _preview, _disablePinnedMessage, _disableMention)));
 
                 ReloadSound();
             }
@@ -296,10 +296,10 @@ namespace Unigram.ViewModels.Settings
 
         public async Task ToggleDisablePinnedMessage(bool disable)
         {
-            var settings = await ProtoService.SendAsync(new GetScopeNotificationSettings(GetScope())) as ScopeNotificationSettings;
+            var settings = await ClientService.SendAsync(new GetScopeNotificationSettings(GetScope())) as ScopeNotificationSettings;
             if (settings != null)
             {
-                await ProtoService.SendAsync(new SetScopeNotificationSettings(GetScope(), new ScopeNotificationSettings(settings.MuteFor, settings.SoundId, settings.ShowPreview, disable, settings.DisableMentionNotifications)));
+                await ClientService.SendAsync(new SetScopeNotificationSettings(GetScope(), new ScopeNotificationSettings(settings.MuteFor, settings.SoundId, settings.ShowPreview, disable, settings.DisableMentionNotifications)));
             }
         }
 
@@ -329,7 +329,7 @@ namespace Unigram.ViewModels.Settings
         {
             if (_soundId != 0)
             {
-                var response = await ProtoService.SendAsync(new GetSavedNotificationSound(_soundId));
+                var response = await ClientService.SendAsync(new GetSavedNotificationSound(_soundId));
                 if (response is NotificationSound sound)
                 {
                     SoundTitle = sound.Title;

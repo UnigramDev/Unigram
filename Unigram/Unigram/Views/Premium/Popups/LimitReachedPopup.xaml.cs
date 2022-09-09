@@ -15,22 +15,22 @@ namespace Unigram.Views.Premium.Popups
     public sealed partial class LimitReachedPopup : ContentPopup
     {
         private readonly INavigationService _navigationService;
-        private readonly IProtoService _protoService;
+        private readonly IClientService _clientService;
 
-        public LimitReachedPopup(INavigationService navigationService, IProtoService protoService, PremiumLimitType type)
+        public LimitReachedPopup(INavigationService navigationService, IClientService clientService, PremiumLimitType type)
         {
             _navigationService = navigationService;
-            _protoService = protoService;
+            _clientService = clientService;
 
             InitializeComponent();
-            InitializeLimit(protoService, type);
+            InitializeLimit(clientService, type);
 
             Title = Strings.Resources.LimitReached;
         }
 
-        private async void InitializeLimit(IProtoService protoService, PremiumLimitType type)
+        private async void InitializeLimit(IClientService clientService, PremiumLimitType type)
         {
-            var limit = await GetPremiumLimitAsync(protoService, type) as PremiumLimit;
+            var limit = await GetPremiumLimitAsync(clientService, type) as PremiumLimit;
             if (limit != null)
             {
                 var iconValue = string.Empty;
@@ -83,7 +83,7 @@ namespace Unigram.Views.Premium.Popups
                         break;
                 }
 
-                if (protoService.IsPremium)
+                if (clientService.IsPremium)
                 {
                     TextBlockHelper.SetMarkdown(Subtitle, string.Format(premiumValue, limit.PremiumValue));
 
@@ -105,7 +105,7 @@ namespace Unigram.Views.Premium.Popups
                     PurchaseIcon.Source = animatedValue;
                     PurchaseLabel.Text = Strings.Resources.IncreaseLimit;
                 }
-                else if (protoService.IsPremiumAvailable)
+                else if (clientService.IsPremiumAvailable)
                 {
                     TextBlockHelper.SetMarkdown(Subtitle, string.Format(freeValue, limit.DefaultValue, limit.PremiumValue));
 
@@ -141,16 +141,16 @@ namespace Unigram.Views.Premium.Popups
             }
         }
 
-        private Task<BaseObject> GetPremiumLimitAsync(IProtoService protoService, PremiumLimitType type)
+        private Task<BaseObject> GetPremiumLimitAsync(IClientService clientService, PremiumLimitType type)
         {
             if (type is PremiumLimitTypeConnectedAccounts)
             {
                 return Task.FromResult<BaseObject>(new PremiumLimit(type, 3, 4));
             }
 
-            if (protoService.IsPremiumAvailable)
+            if (clientService.IsPremiumAvailable)
             {
-                return protoService.SendAsync(new GetPremiumLimit(type));
+                return clientService.SendAsync(new GetPremiumLimit(type));
             }
 
             static Task<BaseObject> CreateLimit(PremiumLimitType type, long value)
@@ -161,15 +161,15 @@ namespace Unigram.Views.Premium.Popups
             switch (type)
             {
                 case PremiumLimitTypeChatFilterChosenChatCount:
-                    return CreateLimit(type, protoService.Options.ChatFilterChosenChatCountMax);
+                    return CreateLimit(type, clientService.Options.ChatFilterChosenChatCountMax);
                 case PremiumLimitTypeChatFilterCount:
-                    return CreateLimit(type, protoService.Options.ChatFilterCountMax);
+                    return CreateLimit(type, clientService.Options.ChatFilterCountMax);
                 case PremiumLimitTypeCreatedPublicChatCount:
                     return CreateLimit(type, 500);
                 case PremiumLimitTypePinnedArchivedChatCount:
-                    return CreateLimit(type, protoService.Options.PinnedArchivedChatCountMax);
+                    return CreateLimit(type, clientService.Options.PinnedArchivedChatCountMax);
                 case PremiumLimitTypePinnedChatCount:
-                    return CreateLimit(type, protoService.Options.PinnedChatCountMax);
+                    return CreateLimit(type, clientService.Options.PinnedChatCountMax);
                 case PremiumLimitTypeSupergroupCount:
                     return CreateLimit(type, 10);
                 case PremiumLimitTypeConnectedAccounts:
@@ -196,7 +196,7 @@ namespace Unigram.Views.Premium.Popups
         {
             Hide();
 
-            if (_protoService.IsPremiumAvailable && !_protoService.IsPremium)
+            if (_clientService.IsPremiumAvailable && !_clientService.IsPremium)
             {
                 _navigationService.ShowPromo(new PremiumSourceLimitExceeded());
             }

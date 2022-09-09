@@ -9,30 +9,27 @@ namespace Unigram.ViewModels
 {
     public class TLViewModelBase : ViewModelBase, INavigable
     {
-        private readonly IProtoService _protoService;
-        private readonly ICacheService _cacheService;
+        private readonly IClientService _clientService;
         private readonly ISettingsService _settingsService;
         private readonly IEventAggregator _aggregator;
 
-        public TLViewModelBase(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+        public TLViewModelBase(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
         {
-            _protoService = protoService;
-            _cacheService = cacheService;
+            _clientService = clientService;
             _settingsService = settingsService;
             _aggregator = aggregator;
         }
 
-        public IProtoService ProtoService => _protoService;
-        public ICacheService CacheService => _cacheService;
+        public IClientService ClientService => _clientService;
 
         public ISettingsService Settings => _settingsService;
 
         public IEventAggregator Aggregator => _aggregator;
 
-        public int SessionId => _protoService.SessionId;
+        public int SessionId => _clientService.SessionId;
 
-        public bool IsPremium => _protoService.IsPremium;
-        public bool IsPremiumAvailable => _protoService.IsPremiumAvailable;
+        public bool IsPremium => _clientService.IsPremium;
+        public bool IsPremiumAvailable => _clientService.IsPremiumAvailable;
 
 
         private bool _isLoading;

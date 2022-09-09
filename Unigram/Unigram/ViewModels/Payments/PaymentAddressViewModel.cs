@@ -11,8 +11,8 @@ namespace Unigram.ViewModels.Payments
     {
         private InputInvoice _inputInvoice;
 
-        public PaymentAddressViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public PaymentAddressViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
         }
 
@@ -89,7 +89,7 @@ namespace Unigram.ViewModels.Payments
                 info.ShippingAddress.CountryCode = _selectedCountry?.Code ?? string.Empty;
             }
 
-            var response = await ProtoService.SendAsync(new ValidateOrderInfo(_inputInvoice, info, save));
+            var response = await ClientService.SendAsync(new ValidateOrderInfo(_inputInvoice, info, save));
             if (response is ValidatedOrderInfo validated)
             {
                 IsLoading = false;

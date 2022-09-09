@@ -279,7 +279,7 @@ namespace Unigram.Controls.Cells
         {
             if (MessageHelper.IsTelegramUrl(uri))
             {
-                MessageHelper.OpenTelegramUrl(_message.ProtoService, _navigationService, uri);
+                MessageHelper.OpenTelegramUrl(_message.ClientService, _navigationService, uri);
             }
             else
             {

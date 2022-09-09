@@ -1097,7 +1097,7 @@ namespace Unigram.Controls
             if (CustomEmoji != null && DataContext is TLViewModelBase viewModel)
             {
                 CustomEmoji.UpdatePositions(positions);
-                CustomEmoji.UpdateEntities(viewModel.ProtoService, emoji);
+                CustomEmoji.UpdateEntities(viewModel.ClientService, emoji);
                 CustomEmoji.Play();
             }
         }

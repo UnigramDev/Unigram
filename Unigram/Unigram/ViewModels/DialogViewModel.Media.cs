@@ -46,9 +46,9 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            if (sticker.PremiumAnimation != null && ProtoService.IsPremiumAvailable && !ProtoService.IsPremium)
+            if (sticker.PremiumAnimation != null && ClientService.IsPremiumAvailable && !ClientService.IsPremium)
             {
-                await new UniqueStickersPopup(ProtoService, sticker).ShowQueuedAsync();
+                await new UniqueStickersPopup(ClientService, sticker).ShowQueuedAsync();
                 return;
             }
 
@@ -81,19 +81,19 @@ namespace Unigram.ViewModels
         public RelayCommand<Sticker> StickerFaveCommand { get; }
         private void StickerFaveExecute(Sticker sticker)
         {
-            ProtoService.Send(new AddFavoriteSticker(new InputFileId(sticker.StickerValue.Id)));
+            ClientService.Send(new AddFavoriteSticker(new InputFileId(sticker.StickerValue.Id)));
         }
 
         public RelayCommand<Sticker> StickerUnfaveCommand { get; }
         private void StickerUnfaveExecute(Sticker sticker)
         {
-            ProtoService.Send(new RemoveFavoriteSticker(new InputFileId(sticker.StickerValue.Id)));
+            ClientService.Send(new RemoveFavoriteSticker(new InputFileId(sticker.StickerValue.Id)));
         }
 
         public RelayCommand<Sticker> StickerDeleteCommand { get; }
         private void StickerDeleteExecute(Sticker sticker)
         {
-            ProtoService.Send(new RemoveRecentSticker(false, new InputFileId(sticker.StickerValue.Id)));
+            ClientService.Send(new RemoveRecentSticker(false, new InputFileId(sticker.StickerValue.Id)));
         }
 
         #endregion
@@ -137,13 +137,13 @@ namespace Unigram.ViewModels
         public RelayCommand<Animation> AnimationDeleteCommand { get; }
         private void AnimationDeleteExecute(Animation animation)
         {
-            ProtoService.Send(new RemoveSavedAnimation(new InputFileId(animation.AnimationValue.Id)));
+            ClientService.Send(new RemoveSavedAnimation(new InputFileId(animation.AnimationValue.Id)));
         }
 
         public RelayCommand<Animation> AnimationSaveCommand { get; }
         private void AnimationSaveExecute(Animation animation)
         {
-            ProtoService.Send(new AddSavedAnimation(new InputFileId(animation.AnimationValue.Id)));
+            ClientService.Send(new AddSavedAnimation(new InputFileId(animation.AnimationValue.Id)));
         }
 
         #endregion
@@ -152,7 +152,7 @@ namespace Unigram.ViewModels
         {
             if (chat.Type is ChatTypeSupergroup super)
             {
-                var supergroup = ProtoService.GetSupergroup(super.SupergroupId);
+                var supergroup = ClientService.GetSupergroup(super.SupergroupId);
                 if (supergroup == null)
                 {
                     return false;
@@ -194,12 +194,12 @@ namespace Unigram.ViewModels
 
         public bool VerifyRights(Chat chat, Func<ChatPermissions, bool> permission, string global, string forever, string temporary, out string label)
         {
-            return VerifyRights(CacheService, chat, permission, global, forever, temporary, out label);
+            return VerifyRights(ClientService, chat, permission, global, forever, temporary, out label);
         }
 
-        public static bool VerifyRights(ICacheService cacheService, Chat chat, Func<ChatPermissions, bool> permission, string global, string forever, string temporary, out string label)
+        public static bool VerifyRights(IClientService clientService, Chat chat, Func<ChatPermissions, bool> permission, string global, string forever, string temporary, out string label)
         {
-            if (cacheService.TryGetSupergroup(chat, out var supergroup))
+            if (clientService.TryGetSupergroup(chat, out var supergroup))
             {
                 if (supergroup.Status is ChatMemberStatusRestricted restricted && !permission(restricted.Permissions))
                 {
@@ -282,10 +282,10 @@ namespace Unigram.ViewModels
             if (caption == null)
             {
                 formattedText = GetFormattedText(true);
-                caption = formattedText.Substring(0, CacheService.Options.MessageCaptionLengthMax);
+                caption = formattedText.Substring(0, ClientService.Options.MessageCaptionLengthMax);
             }
 
-            var self = CacheService.IsSavedMessages(_chat);
+            var self = ClientService.IsSavedMessages(_chat);
 
             var dialog = new SendFilesPopup(SessionId, items, media, _chat.Type is ChatTypePrivate && !self, _type == DialogType.History, self);
             dialog.ViewModel = this;
@@ -475,7 +475,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var user = await SharePopup.PickUserAsync(CacheService, Strings.Resources.ShareContactTitle, true);
+            var user = await SharePopup.PickUserAsync(ClientService, Strings.Resources.ShareContactTitle, true);
             if (user == null)
             {
                 return;
@@ -533,7 +533,7 @@ namespace Unigram.ViewModels
 
             if (schedule == true || (_type == DialogType.ScheduledMessages && schedule == null))
             {
-                var user = CacheService.GetUser(chat);
+                var user = ClientService.GetUser(chat);
                 var until = DateTime.Now;
 
                 if (_type == DialogType.ScheduledMessages)
@@ -545,7 +545,7 @@ namespace Unigram.ViewModels
                     }
                 }
 
-                var dialog = new ScheduleMessagePopup(user, until.AddMinutes(1), CacheService.IsSavedMessages(chat));
+                var dialog = new ScheduleMessagePopup(user, until.AddMinutes(1), ClientService.IsSavedMessages(chat));
                 var confirm = await dialog.ShowQueuedAsync();
 
                 if (confirm != ContentDialogResult.Primary)
@@ -570,7 +570,7 @@ namespace Unigram.ViewModels
 
         private async Task<BaseObject> SendMessageAsync(Chat chat, long replyToMessageId, InputMessageContent inputMessageContent, MessageSendOptions options)
         {
-            var response = await ProtoService.SendAsync(new SendMessage(chat.Id, _threadId, replyToMessageId, options, null, inputMessageContent));
+            var response = await ClientService.SendAsync(new SendMessage(chat.Id, _threadId, replyToMessageId, options, null, inputMessageContent));
             if (response is Error error)
             {
                 if (error.TypeEquals(ErrorType.PEER_FLOOD))
@@ -662,7 +662,7 @@ namespace Unigram.ViewModels
         //    //var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), true, true, date, string.Empty, media, 0L, null);
 
         //    //var previousMessage = InsertSendingMessage(message);
-        //    //CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
+        //    //ClientService.SyncSendingMessage(message, previousMessage, async (m) =>
         //    //{
         //    //    var inputMedia = media.ToInputMedia();
 
@@ -738,7 +738,7 @@ namespace Unigram.ViewModels
                 }
             }
 
-            return await ProtoService.SendAsync(new SendMessageAlbum(chat.Id, _threadId, reply, options, operations, false));
+            return await ClientService.SendAsync(new SendMessageAlbum(chat.Id, _threadId, reply, options, operations, false));
         }
 
         private FormattedText GetFormattedText(string text)
@@ -798,7 +798,7 @@ namespace Unigram.ViewModels
                     {
                         var resultCaption = string.Join(Environment.NewLine, captionElements);
                         caption = new FormattedText(resultCaption, new TextEntity[0])
-                            .Substring(0, CacheService.Options.MessageCaptionLengthMax);
+                            .Substring(0, ClientService.Options.MessageCaptionLengthMax);
                     }
 
                     SendFileExecute(media, caption);
@@ -939,7 +939,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var storageFile = await ProtoService.GetFileAsync(file);
+            var storageFile = await ClientService.GetFileAsync(file);
             if (storageFile == null)
             {
                 return;
@@ -966,7 +966,7 @@ namespace Unigram.ViewModels
 
             var dialog = new SendFilesPopup(SessionId, new[] { storage }, true, false, false, false);
             dialog.Caption = formattedText
-                .Substring(0, CacheService.Options.MessageCaptionLengthMax);
+                .Substring(0, ClientService.Options.MessageCaptionLengthMax);
 
             var confirm = await dialog.OpenAsync();
 

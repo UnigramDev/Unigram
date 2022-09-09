@@ -11,8 +11,8 @@ namespace Unigram.ViewModels.Gallery
 
         private readonly long _messageId;
 
-        public GalleryChatPhoto(IProtoService protoService, object from, ChatPhoto photo, long messageId = 0)
-            : base(protoService)
+        public GalleryChatPhoto(IClientService clientService, object from, ChatPhoto photo, long messageId = 0)
+            : base(clientService)
         {
             _from = from;
             _photo = photo;

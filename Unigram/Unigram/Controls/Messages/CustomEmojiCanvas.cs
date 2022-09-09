@@ -190,7 +190,7 @@ namespace Unigram.Controls.Messages
             _dropState = true;
         }
 
-        public async void UpdateEntities(IProtoService protoService, ISet<long> customEmoji)
+        public async void UpdateEntities(IClientService clientService, ISet<long> customEmoji)
         {
             //if (_loadEmojiToken != null)
             //{
@@ -227,7 +227,7 @@ namespace Unigram.Controls.Messages
                 return;
             }
 
-            var response = await protoService.SendAsync(new GetCustomEmojiStickers(request));
+            var response = await clientService.SendAsync(new GetCustomEmojiStickers(request));
             if (response is Stickers stickers)
             {
                 //if (token.IsCancellationRequested)
@@ -243,7 +243,7 @@ namespace Unigram.Controls.Messages
                     }
 
                     _cache.Add(sticker.CustomEmojiId);
-                    EmojiRendererCache.MergeOrCreate(protoService, sticker, _emojiSize, hash, _subscribed);
+                    EmojiRendererCache.MergeOrCreate(clientService, sticker, _emojiSize, hash, _subscribed);
                 }
             }
 
@@ -310,14 +310,14 @@ namespace Unigram.Controls.Messages
             return false;
         }
 
-        public static void MergeOrCreate(IProtoService protoService, Sticker sticker, int size, int hash, bool subscribe)
+        public static void MergeOrCreate(IClientService clientService, Sticker sticker, int size, int hash, bool subscribe)
         {
             if (TryMerge(sticker.CustomEmojiId, hash, subscribe, out EmojiRenderer renderer))
             {
                 return;
             }
 
-            _cache[sticker.CustomEmojiId] = renderer = new EmojiRenderer(protoService, sticker, size);
+            _cache[sticker.CustomEmojiId] = renderer = new EmojiRenderer(clientService, sticker, size);
 
             if (subscribe)
             {
@@ -468,7 +468,7 @@ namespace Unigram.Controls.Messages
 
     public class EmojiRenderer
     {
-        private readonly IProtoService _protoService;
+        private readonly IClientService _clientService;
         private readonly Sticker _sticker;
 
         private object _animation;
@@ -486,16 +486,16 @@ namespace Unigram.Controls.Messages
 
         private int _loopCount;
 
-        public EmojiRenderer(IProtoService protoService, Sticker sticker, int size)
+        public EmojiRenderer(IClientService clientService, Sticker sticker, int size)
         {
-            _protoService = protoService;
+            _clientService = clientService;
             _sticker = sticker;
             _size = size;
         }
 
         public EmojiRenderer Clone(int size)
         {
-            return new EmojiRenderer(_protoService, _sticker, size);
+            return new EmojiRenderer(_clientService, _sticker, size);
         }
 
         public Sticker Sticker => _sticker;
@@ -549,7 +549,7 @@ namespace Unigram.Controls.Messages
             var file = _sticker.StickerValue;
             if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
             {
-                file = await _protoService.DownloadFileAsync(file, 32);
+                file = await _clientService.DownloadFileAsync(file, 32);
             }
 
             // IsDownloadingCompleted was updated either
@@ -654,7 +654,7 @@ namespace Unigram.Controls.Messages
 
         private IReadOnlyDictionary<int, int> GetColorReplacements(long setId)
         {
-            if (setId == _protoService.Options.ThemedEmojiStatusesStickerSetId)
+            if (setId == _clientService.Options.ThemedEmojiStatusesStickerSetId)
             {
                 if (_currentReplacement != Theme.Accent)
                 {

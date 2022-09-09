@@ -26,7 +26,7 @@ namespace Unigram.ViewModels
         public bool CanBeDownloaded(object content, File file)
         {
             var chat = _chat;
-            if (chat == null || ProtoService.IsDownloadFileCanceled(file.Id))
+            if (chat == null || ClientService.IsDownloadFileCanceled(file.Id))
             {
                 return false;
             }
@@ -46,7 +46,7 @@ namespace Unigram.ViewModels
             else if (content is Photo photo)
             {
                 var big = photo.GetBig();
-                if (big != null && ProtoService.IsDownloadFileCanceled(big.Photo.Id))
+                if (big != null && ClientService.IsDownloadFileCanceled(big.Photo.Id))
                 {
                     return false;
                 }
@@ -82,7 +82,7 @@ namespace Unigram.ViewModels
             }
             else if (chat.Type is ChatTypePrivate or ChatTypeSecret)
             {
-                var user = ProtoService.GetUser(chat);
+                var user = ClientService.GetUser(chat);
                 if (user == null)
                 {
                     return AutoDownloadChat.OtherPrivateChat;
@@ -98,7 +98,7 @@ namespace Unigram.ViewModels
 
         public void DownloadFile(MessageViewModel message, File file)
         {
-            ProtoService.DownloadFile(file.Id, 32);
+            ClientService.DownloadFile(file.Id, 32);
         }
 
 
@@ -116,7 +116,7 @@ namespace Unigram.ViewModels
             }
             else
             {
-                ProtoService.SendAsync(new SetMessageReaction(message.ChatId, message.Id, CacheService.DefaultReaction, false, false));
+                ClientService.SendAsync(new SetMessageReaction(message.ChatId, message.Id, ClientService.DefaultReaction, false, false));
             }
         }
 
@@ -147,7 +147,7 @@ namespace Unigram.ViewModels
 
             long? messageId = null;
 
-            if (message.ChatId == CacheService.Options.RepliesBotChatId)
+            if (message.ChatId == ClientService.Options.RepliesBotChatId)
             {
                 if (message.ForwardInfo?.Origin is MessageForwardOriginUser or MessageForwardOriginChat)
                 {
@@ -164,7 +164,7 @@ namespace Unigram.ViewModels
                     messageId = threadId;
                 }
 
-                var original = await ProtoService.SendAsync(new GetMessage(chatId, threadId)) as Message;
+                var original = await ClientService.SendAsync(new GetMessage(chatId, threadId)) as Message;
                 if (original == null || !original.CanGetMessageThread)
                 {
                     NavigationService.NavigateToChat(chatId, threadId);
@@ -172,7 +172,7 @@ namespace Unigram.ViewModels
                 }
             }
 
-            var response = await ProtoService.SendAsync(new GetMessageThread(chatId, threadId));
+            var response = await ClientService.SendAsync(new GetMessageThread(chatId, threadId));
             if (response is MessageThreadInfo)
             {
                 NavigationService.NavigateToThread(chatId, threadId, messageId);
@@ -183,7 +183,7 @@ namespace Unigram.ViewModels
 
         public async void OpenFile(File file)
         {
-            var local = await ProtoService.GetFileAsync(file);
+            var local = await ClientService.GetFileAsync(file);
             if (local != null)
             {
                 if (file.Local.Path.EndsWith(".unigram-theme"))
@@ -215,7 +215,7 @@ namespace Unigram.ViewModels
                      string.Equals(webPage.Type, "telegram_message", StringComparison.OrdinalIgnoreCase) ||
                      string.Equals(webPage.Type, "telegram_background", StringComparison.OrdinalIgnoreCase)))
             {
-                MessageHelper.OpenTelegramUrl(ProtoService, NavigationService, uri);
+                MessageHelper.OpenTelegramUrl(ClientService, NavigationService, uri);
             }
         }
 
@@ -271,7 +271,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            await ProtoService.SendAsync(new SetPollAnswer(message.ChatId, message.Id, ids));
+            await ClientService.SendAsync(new SetPollAnswer(message.ChatId, message.Id, ids));
 
             var updated = message.Content as MessagePoll;
             if (updated.Poll.Type is PollTypeQuiz quiz)
@@ -299,12 +299,12 @@ namespace Unigram.ViewModels
 
         public async void OpenUsername(string username)
         {
-            var response = await ProtoService.SendAsync(new SearchPublicChat(username));
+            var response = await ClientService.SendAsync(new SearchPublicChat(username));
             if (response is Chat chat)
             {
                 if (chat.Type is ChatTypePrivate privata)
                 {
-                    var user = ProtoService.GetUser(privata.UserId);
+                    var user = ClientService.GetUser(privata.UserId);
                     if (user?.Type is UserTypeBot)
                     {
                         NavigationService.NavigateToChat(chat);
@@ -327,10 +327,10 @@ namespace Unigram.ViewModels
 
         public async void OpenUser(long userId)
         {
-            var response = await ProtoService.SendAsync(new CreatePrivateChat(userId, false));
+            var response = await ClientService.SendAsync(new CreatePrivateChat(userId, false));
             if (response is Chat chat)
             {
-                var user = ProtoService.GetUser(userId);
+                var user = ClientService.GetUser(userId);
                 if (user?.Type is UserTypeBot)
                 {
                     NavigationService.NavigateToChat(chat);
@@ -347,14 +347,14 @@ namespace Unigram.ViewModels
             var chat = Chat;
             if (chat != null && chat.Type is ChatTypeSupergroup super && super.IsChannel)
             {
-                var supergroup = ProtoService.GetSupergroup(super.SupergroupId);
+                var supergroup = ClientService.GetSupergroup(super.SupergroupId);
                 if (supergroup != null && !supergroup.CanPostMessages())
                 {
                     return;
                 }
             }
 
-            var user = ProtoService.GetUser(viaBotUserId);
+            var user = ClientService.GetUser(viaBotUserId);
             if (user != null)
             {
                 SetText($"@{user.Username} ");
@@ -364,7 +364,7 @@ namespace Unigram.ViewModels
 
         public void OpenChat(long chatId, bool profile = false)
         {
-            var chat = ProtoService.GetChat(chatId);
+            var chat = ClientService.GetChat(chatId);
             if (chat == null)
             {
                 return;
@@ -382,7 +382,7 @@ namespace Unigram.ViewModels
 
         public void OpenChat(long chatId, long messageId)
         {
-            var chat = ProtoService.GetChat(chatId);
+            var chat = ClientService.GetChat(chatId);
             if (chat == null)
             {
                 return;
@@ -393,7 +393,7 @@ namespace Unigram.ViewModels
 
         public void OpenHashtag(string hashtag)
         {
-            var search = Search = new ChatSearchViewModel(ProtoService, CacheService, Settings, Aggregator, this);
+            var search = Search = new ChatSearchViewModel(ClientService, Settings, Aggregator, this);
             search.Search(hashtag, null, null);
         }
 
@@ -403,7 +403,7 @@ namespace Unigram.ViewModels
             {
                 if (MessageHelper.IsTelegramUrl(uri))
                 {
-                    MessageHelper.OpenTelegramUrl(ProtoService, NavigationService, uri);
+                    MessageHelper.OpenTelegramUrl(ClientService, NavigationService, uri);
                 }
                 else
                 {
@@ -440,7 +440,7 @@ namespace Unigram.ViewModels
 
         public void OpenBankCardNumber(string number)
         {
-            //var response = await ProtoService.SendAsync(new GetBankCardInfo(number));
+            //var response = await ClientService.SendAsync(new GetBankCardInfo(number));
             //if (response is BankCardInfo info)
             //{
             //    var url = info.Actions.FirstOrDefault(x => x.)
@@ -460,7 +460,7 @@ namespace Unigram.ViewModels
             }
             else if (message.Content is MessagePoll poll)
             {
-                await new PollResultsPopup(ProtoService, CacheService, Settings, Aggregator, this, message.ChatId, message.Id, poll.Poll).ShowQueuedAsync();
+                await new PollResultsPopup(ClientService, Settings, Aggregator, this, message.ChatId, message.Id, poll.Poll).ShowQueuedAsync();
             }
             else if (message.Content is MessageGame game && message.ReplyMarkup is ReplyMarkupInlineKeyboard inline)
             {
@@ -482,7 +482,7 @@ namespace Unigram.ViewModels
                 var webPage = message.Content is MessageText text ? text.WebPage : null;
                 if (webPage != null && webPage.IsInstantGallery())
                 {
-                    viewModel = await InstantGalleryViewModel.CreateAsync(ProtoService, StorageService, Aggregator, message, webPage);
+                    viewModel = await InstantGalleryViewModel.CreateAsync(ClientService, StorageService, Aggregator, message, webPage);
                 }
 
                 if (viewModel == null && (message.Content is MessageAnimation || webPage?.Animation != null))
@@ -495,11 +495,11 @@ namespace Unigram.ViewModels
                     {
                         if (message.Content is MessageVideoNote or MessagePhoto or MessageVideo && !message.IsSecret())
                         {
-                            viewModel = new ChatGalleryViewModel(ProtoService, _storageService, Aggregator, message.ChatId, _threadId, message.Get());
+                            viewModel = new ChatGalleryViewModel(ClientService, _storageService, Aggregator, message.ChatId, _threadId, message.Get());
                         }
                         else
                         {
-                            viewModel = new SingleGalleryViewModel(ProtoService, _storageService, Aggregator, new GalleryMessage(ProtoService, message.Get()));
+                            viewModel = new SingleGalleryViewModel(ClientService, _storageService, Aggregator, new GalleryMessage(ClientService, message.Get()));
                         }
                     }
 

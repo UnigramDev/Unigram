@@ -19,8 +19,8 @@ namespace Unigram.ViewModels.Settings
 {
     public class SettingsBackgroundsViewModel : TLViewModelBase
     {
-        public SettingsBackgroundsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public SettingsBackgroundsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             Items = new MvxObservableCollection<Background>();
 
@@ -37,7 +37,7 @@ namespace Unigram.ViewModels.Settings
             var dark = Settings.Appearance.IsDarkTheme();
             var freeform = dark ? new[] { 0x1B2836, 0x121A22, 0x1B2836, 0x121A22 } : new[] { 0xDBDDBB, 0x6BA587, 0xD5D88D, 0x88B884 };
 
-            var background = CacheService.SelectedBackground;
+            var background = ClientService.SelectedBackground;
             var predefined = new Background(Constants.WallpaperLocalId, true, dark, string.Empty,
                 new Document(string.Empty, "application/x-tgwallpattern", null, null, TdExtensions.GetLocalFile("Assets\\Background.tgv", "Background")),
                 new BackgroundTypePattern(new BackgroundFillFreeformGradient(freeform), dark ? 100 : 50, dark, false));
@@ -47,7 +47,7 @@ namespace Unigram.ViewModels.Settings
                 predefined
             };
 
-            var response = await ProtoService.SendAsync(new GetBackgrounds(dark));
+            var response = await ClientService.SendAsync(new GetBackgrounds(dark));
             if (response is Backgrounds wallpapers)
             {
                 items.AddRange(wallpapers.BackgroundsValue);
@@ -132,7 +132,7 @@ namespace Unigram.ViewModels.Settings
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new ResetBackgrounds());
+            var response = await ClientService.SendAsync(new ResetBackgrounds());
             if (response is Ok)
             {
                 await OnNavigatedToAsync(null, NavigationMode.Refresh, null);
@@ -151,7 +151,7 @@ namespace Unigram.ViewModels.Settings
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new GetBackgroundUrl(background.Name, background.Type));
+            var response = await ClientService.SendAsync(new GetBackgroundUrl(background.Name, background.Type));
             if (response is HttpUrl url)
             {
                 await SharePopup.GetForCurrentView().ShowAsync(new Uri(url.Url), null);
@@ -172,7 +172,7 @@ namespace Unigram.ViewModels.Settings
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new RemoveBackground(background.Id));
+            var response = await ClientService.SendAsync(new RemoveBackground(background.Id));
             if (response is Ok)
             {
                 await OnNavigatedToAsync(null, NavigationMode.Refresh, null);

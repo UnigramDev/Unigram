@@ -15,8 +15,8 @@ namespace Unigram.ViewModels.Settings
 {
     public class SettingsWebSessionsViewModel : TLViewModelBase
     {
-        public SettingsWebSessionsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public SettingsWebSessionsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             Items = new SortedObservableCollection<ConnectedWebsite>(new TLAuthorizationComparer());
 
@@ -31,7 +31,7 @@ namespace Unigram.ViewModels.Settings
 
         private async Task UpdateSessionsAsync()
         {
-            var response = await ProtoService.SendAsync(new GetConnectedWebsites());
+            var response = await ClientService.SendAsync(new GetConnectedWebsites());
             if (response is ConnectedWebsites websites)
             {
                 Items.Clear();
@@ -84,7 +84,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand<ConnectedWebsite> TerminateCommand { get; }
         private async void TerminateExecute(ConnectedWebsite session)
         {
-            var bot = CacheService.GetUser(session.BotUserId);
+            var bot = ClientService.GetUser(session.BotUserId);
             if (bot == null)
             {
                 return;
@@ -100,7 +100,7 @@ namespace Unigram.ViewModels.Settings
             var terminate = await dialog.ShowQueuedAsync();
             if (terminate == ContentDialogResult.Primary)
             {
-                var response = await ProtoService.SendAsync(new DisconnectWebsite(session.Id));
+                var response = await ClientService.SendAsync(new DisconnectWebsite(session.Id));
                 if (response is Ok)
                 {
                     Items.Remove(session);
@@ -110,7 +110,7 @@ namespace Unigram.ViewModels.Settings
                     Logs.Logger.Error(Logs.LogTarget.API, "auth.resetWebAuthotization error " + error);
                 }
 
-                ProtoService.Send(new ToggleMessageSenderIsBlocked(new MessageSenderUser(session.BotUserId), true));
+                ClientService.Send(new ToggleMessageSenderIsBlocked(new MessageSenderUser(session.BotUserId), true));
             }
         }
 
@@ -120,7 +120,7 @@ namespace Unigram.ViewModels.Settings
             var terminate = await MessagePopup.ShowAsync(Strings.Resources.AreYouSureWebSessions, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (terminate == ContentDialogResult.Primary)
             {
-                var response = await ProtoService.SendAsync(new DisconnectAllWebsites());
+                var response = await ClientService.SendAsync(new DisconnectAllWebsites());
                 if (response is Ok)
                 {
                     Items.Clear();

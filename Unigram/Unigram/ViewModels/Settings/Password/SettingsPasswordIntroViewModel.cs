@@ -6,8 +6,8 @@ namespace Unigram.ViewModels.Settings.Password
 {
     public class SettingsPasswordIntroViewModel : TLViewModelBase
     {
-        public SettingsPasswordIntroViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public SettingsPasswordIntroViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute);
         }

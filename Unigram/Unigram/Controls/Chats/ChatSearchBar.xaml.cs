@@ -125,7 +125,7 @@ namespace Unigram.Controls.Chats
                 name.Text = user.GetFullName();
                 username.Text = string.IsNullOrEmpty(user.Username) ? string.Empty : $" @{user.Username}";
 
-                photo.SetUser(ViewModel.ProtoService, user, 36);
+                photo.SetUser(ViewModel.ClientService, user, 36);
             }
             else if (args.Item is ChatSearchMediaFilter filter)
             {
@@ -175,7 +175,7 @@ namespace Unigram.Controls.Chats
         {
             if (Field.State == ChatSearchState.Members)
             {
-                ViewModel.Autocomplete = new UsernameCollection(ViewModel.ProtoService, ViewModel.Dialog.Chat.Id, 0, Field.Text, false, true);
+                ViewModel.Autocomplete = new UsernameCollection(ViewModel.ClientService, ViewModel.Dialog.Chat.Id, 0, Field.Text, false, true);
             }
 
             DeleteButton.Visibility = string.IsNullOrEmpty(Field.Text) && Field.State == ChatSearchState.Text ? Visibility.Collapsed : Visibility.Visible;
@@ -256,11 +256,11 @@ namespace Unigram.Controls.Chats
                 Field.Filter = null;
                 Field.From = from;
 
-                if (viewModel.CacheService.TryGetUser(from, out User user))
+                if (viewModel.ClientService.TryGetUser(from, out User user))
                 {
                     Field.Header = user.GetFullName();
                 }
-                else if (viewModel.CacheService.TryGetChat(from, out Chat chat))
+                else if (viewModel.ClientService.TryGetChat(from, out Chat chat))
                 {
                     Field.Header = chat.Title;
                 }
@@ -280,7 +280,7 @@ namespace Unigram.Controls.Chats
             {
                 case ChatSearchState.Members:
                     ToolsPanel.Visibility = Visibility.Collapsed;
-                    viewModel.Autocomplete = new UsernameCollection(viewModel.ProtoService, viewModel.Dialog.Chat.Id, 0, string.Empty, false, true);
+                    viewModel.Autocomplete = new UsernameCollection(viewModel.ClientService, viewModel.Dialog.Chat.Id, 0, string.Empty, false, true);
                     break;
                 case ChatSearchState.Media:
                     ToolsPanel.Visibility = Visibility.Collapsed;

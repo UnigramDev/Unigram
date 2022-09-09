@@ -12,13 +12,13 @@ namespace Unigram.Views.Popups
 {
     public sealed partial class VideoChatAliasesPopup : ContentPopup
     {
-        private readonly IProtoService _protoService;
+        private readonly IClientService _clientService;
 
-        public VideoChatAliasesPopup(IProtoService protoService, Chat chat, bool canSchedule, IList<MessageSender> senders)
+        public VideoChatAliasesPopup(IClientService clientService, Chat chat, bool canSchedule, IList<MessageSender> senders)
         {
             InitializeComponent();
 
-            _protoService = protoService;
+            _clientService = clientService;
             var already = senders.FirstOrDefault(x => x.AreTheSame(chat.VideoChat.DefaultParticipantId));
             var channel = chat.Type is ChatTypeSupergroup super && super.IsChannel;
 
@@ -43,13 +43,13 @@ namespace Unigram.Views.Popups
                 ? Visibility.Visible
                 : Visibility.Collapsed;
 
-            if (protoService.TryGetSupergroup(chat, out Supergroup supergroup))
+            if (clientService.TryGetSupergroup(chat, out Supergroup supergroup))
             {
                 StartWith.Visibility = canSchedule && supergroup.Status is ChatMemberStatusCreator
                     ? Visibility.Visible
                     : Visibility.Collapsed;
             }
-            else if (protoService.TryGetBasicGroup(chat, out BasicGroup basicGroup))
+            else if (clientService.TryGetBasicGroup(chat, out BasicGroup basicGroup))
             {
                 StartWith.Visibility = canSchedule && basicGroup.Status is ChatMemberStatusCreator
                     ? Visibility.Visible
@@ -93,7 +93,7 @@ namespace Unigram.Views.Popups
             else if (args.ItemContainer.ContentTemplateRoot is ChatShareCell content)
             {
                 content.UpdateState(false, false);
-                content.UpdateChat(_protoService, args, OnContainerContentChanging);
+                content.UpdateChat(_clientService, args, OnContainerContentChanging);
             }
         }
 
@@ -103,13 +103,13 @@ namespace Unigram.Views.Popups
         {
             if (List.SelectedItem is MessageSender)
             {
-                //if (_protoService.TryGetUser(messageSender, out User user))
+                //if (_clientService.TryGetUser(messageSender, out User user))
                 //{
                 //    PrimaryButtonText = string.Format(Strings.Resources.VoipGroupContinueAs, user.GetFullName());
                 //}
-                //else if (_protoService.TryGetChat(messageSender, out Chat chat))
+                //else if (_clientService.TryGetChat(messageSender, out Chat chat))
                 //{
-                //    PrimaryButtonText = string.Format(Strings.Resources.VoipGroupContinueAs, _protoService.GetTitle(chat));
+                //    PrimaryButtonText = string.Format(Strings.Resources.VoipGroupContinueAs, _clientService.GetTitle(chat));
                 //}
 
                 IsPrimaryButtonEnabled = true;

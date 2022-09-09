@@ -166,7 +166,7 @@ namespace Unigram.Controls
             OnSourceChanged();
         }
 
-        public async void SetCustomEmoji(IProtoService protoService, long emoji)
+        public async void SetCustomEmoji(IClientService clientService, long emoji)
         {
             //if (_loadEmojiToken != null)
             //{
@@ -200,7 +200,7 @@ namespace Unigram.Controls
                 return;
             }
 
-            var response = await protoService.SendAsync(new GetCustomEmojiStickers(request));
+            var response = await clientService.SendAsync(new GetCustomEmojiStickers(request));
             if (response is Stickers stickers && stickers.StickersValue.Count == 1)
             {
                 var sticker = stickers.StickersValue[0];
@@ -210,7 +210,7 @@ namespace Unigram.Controls
                 }
 
                 _cache = sticker.CustomEmojiId;
-                EmojiRendererCache.MergeOrCreate(protoService, sticker, _emojiSize, hash, _subscribed);
+                EmojiRendererCache.MergeOrCreate(clientService, sticker, _emojiSize, hash, _subscribed);
             }
 
             _loopCount = -1;
@@ -219,7 +219,7 @@ namespace Unigram.Controls
             OnSourceChanged();
         }
 
-        public void SetSticker(IProtoService protoService, Sticker sticker)
+        public void SetSticker(IClientService clientService, Sticker sticker)
         {
             //if (_loadEmojiToken != null)
             //{
@@ -245,7 +245,7 @@ namespace Unigram.Controls
             }
 
             _cache = sticker.CustomEmojiId;
-            EmojiRendererCache.MergeOrCreate(protoService, sticker, _emojiSize, hash, _subscribed);
+            EmojiRendererCache.MergeOrCreate(clientService, sticker, _emojiSize, hash, _subscribed);
 
             _loopCount = -1;
             _playing = null;

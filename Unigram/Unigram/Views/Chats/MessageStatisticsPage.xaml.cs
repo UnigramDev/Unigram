@@ -65,7 +65,7 @@ namespace Unigram.Views.Chats
 
             var photo = content.Children[0] as ProfilePicture;
 
-            var chat = ViewModel.CacheService.GetChat(message.ChatId);
+            var chat = ViewModel.ClientService.GetChat(message.ChatId);
             if (chat == null)
             {
                 return;
@@ -74,7 +74,7 @@ namespace Unigram.Views.Chats
             title.Text = chat.Title;
             subtitle.Text = Locale.Declension("Views", message.InteractionInfo?.ViewCount ?? 0);
 
-            photo.SetChat(ViewModel.ProtoService, chat, 36);
+            photo.SetChat(ViewModel.ClientService, chat, 36);
 
             button.CommandParameter = message;
             button.Command = ViewModel.OpenPostCommand;

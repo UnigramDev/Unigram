@@ -14,8 +14,8 @@ namespace Unigram.ViewModels.Premium
 {
     public class PromoViewModel : TLViewModelBase
     {
-        public PromoViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public PromoViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             Limits = new MvxObservableCollection<PremiumLimit>();
             Features = new MvxObservableCollection<PremiumFeature>();
@@ -61,8 +61,8 @@ namespace Unigram.ViewModels.Premium
         {
             PremiumSource premiumSource = parameter is PremiumSource source ? source : new PremiumSourceSettings();
 
-            var features = await ProtoService.SendAsync(new GetPremiumFeatures(premiumSource)) as PremiumFeatures;
-            var state = await ProtoService.SendAsync(new GetPremiumState()) as PremiumState;
+            var features = await ClientService.SendAsync(new GetPremiumFeatures(premiumSource)) as PremiumFeatures;
+            var state = await ClientService.SendAsync(new GetPremiumState()) as PremiumState;
 
             if (features == null || state == null)
             {
@@ -91,11 +91,11 @@ namespace Unigram.ViewModels.Premium
             Option = state.PaymentOptions.FirstOrDefault();
 
             CanPurchase = features.PaymentLink != null
-                && ProtoService.IsPremiumAvailable;
+                && ClientService.IsPremiumAvailable;
 
             _animations = state.Animations.ToDictionary(x => x.Feature.GetType(), y => y.Animation);
 
-            _stickers = await ProtoService.SendAsync(new GetPremiumStickers()) as Stickers;
+            _stickers = await ClientService.SendAsync(new GetPremiumStickers()) as Stickers;
         }
 
         public string PremiumPreviewLimitsDescription
@@ -114,14 +114,14 @@ namespace Unigram.ViewModels.Premium
 
         public async Task<bool> OpenAsync(PremiumFeature feature)
         {
-            ProtoService.Send(new ViewPremiumFeature(feature));
+            ClientService.Send(new ViewPremiumFeature(feature));
 
             if (feature is PremiumFeatureIncreasedLimits)
             {
-                var dialog = new LimitsPopup(ProtoService, Option, Limits);
+                var dialog = new LimitsPopup(ClientService, Option, Limits);
                 await dialog.ShowQueuedAsync();
 
-                if (dialog.ShouldPurchase && !ProtoService.IsPremium)
+                if (dialog.ShouldPurchase && !ClientService.IsPremium)
                 {
                     Purchase();
                     return false;
@@ -131,10 +131,10 @@ namespace Unigram.ViewModels.Premium
             }
             else
             {
-                var dialog = new FeaturesPopup(ProtoService, Option, Features, _animations, _stickers, feature);
+                var dialog = new FeaturesPopup(ClientService, Option, Features, _animations, _stickers, feature);
                 await dialog.ShowQueuedAsync();
 
-                if (dialog.ShouldPurchase && !ProtoService.IsPremium)
+                if (dialog.ShouldPurchase && !ClientService.IsPremium)
                 {
                     Purchase();
                     return false;
@@ -146,10 +146,10 @@ namespace Unigram.ViewModels.Premium
 
         public void Purchase()
         {
-            if (PaymentLink != null && !ProtoService.IsPremium)
+            if (PaymentLink != null && !ClientService.IsPremium)
             {
-                ProtoService.Send(new ClickPremiumSubscriptionButton());
-                MessageHelper.OpenTelegramUrl(ProtoService, NavigationService, PaymentLink);
+                ClientService.Send(new ClickPremiumSubscriptionButton());
+                MessageHelper.OpenTelegramUrl(ClientService, NavigationService, PaymentLink);
             }
         }
     }

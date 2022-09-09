@@ -47,8 +47,8 @@ namespace Unigram.Controls.Drawers
             _zoomer = new ZoomableListHandler(List);
             _zoomer.Opening = _handler.UnloadVisibleItems;
             _zoomer.Closing = _handler.ThrottleVisibleItems;
-            _zoomer.DownloadFile = fileId => ViewModel.ProtoService.DownloadFile(fileId, 32);
-            _zoomer.SessionId = () => ViewModel.ProtoService.SessionId;
+            _zoomer.DownloadFile = fileId => ViewModel.ClientService.DownloadFile(fileId, 32);
+            _zoomer.SessionId = () => ViewModel.ClientService.SessionId;
 
             _typeToItemHashSetMapping.Add("AnimatedItemTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("VideoItemTemplate", new HashSet<SelectorItem>());
@@ -238,7 +238,7 @@ namespace Unigram.Controls.Drawers
 
                 //Debug.WriteLine("Loading sticker set " + group.Id);
 
-                var response = await ViewModel.ProtoService.SendAsync(new GetStickerSet(group.Id));
+                var response = await ViewModel.ClientService.SendAsync(new GetStickerSet(group.Id));
                 if (response is StickerSet full)
                 {
                     group.Update(full, false);
@@ -353,10 +353,10 @@ namespace Unigram.Controls.Drawers
 
             if (content.Children.Count > 1 && content.Children[1] is Border panel && panel.Child is TextBlock premium)
             {
-                if (sticker.PremiumAnimation != null && ViewModel.CacheService.IsPremiumAvailable)
+                if (sticker.PremiumAnimation != null && ViewModel.ClientService.IsPremiumAvailable)
                 {
-                    premium.Text = ViewModel.CacheService.IsPremium ? Icons.Premium16 : Icons.LockClosed16;
-                    panel.HorizontalAlignment = ViewModel.CacheService.IsPremium ? HorizontalAlignment.Right : HorizontalAlignment.Center;
+                    premium.Text = ViewModel.ClientService.IsPremium ? Icons.Premium16 : Icons.LockClosed16;
+                    panel.HorizontalAlignment = ViewModel.ClientService.IsPremium ? HorizontalAlignment.Right : HorizontalAlignment.Center;
                     panel.Visibility = Visibility.Visible;
                 }
                 else
@@ -397,11 +397,11 @@ namespace Unigram.Controls.Drawers
                 CompositionPathParser.ParseThumbnail(sticker, out ShapeVisual visual, false);
                 ElementCompositionPreview.SetElementChildVisual(content.Children[0], visual);
 
-                UpdateManager.Subscribe(content, ViewModel.ProtoService, file, handler, true);
+                UpdateManager.Subscribe(content, ViewModel.ClientService, file, handler, true);
 
                 if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive /*&& args.Phase == 0*/)
                 {
-                    ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                    ViewModel.ClientService.DownloadFile(file.Id, 1);
                 }
             }
 
@@ -422,7 +422,7 @@ namespace Unigram.Controls.Drawers
             {
                 Automation.SetToolTip(args.ItemContainer, supergroup.Title);
 
-                var chat = ViewModel.CacheService.GetChat(supergroup.ChatId);
+                var chat = ViewModel.ClientService.GetChat(supergroup.ChatId);
                 if (chat == null)
                 {
                     return;
@@ -434,7 +434,7 @@ namespace Unigram.Controls.Drawers
                     return;
                 }
 
-                content.SetChat(ViewModel.ProtoService, chat, 36);
+                content.SetChat(ViewModel.ClientService, chat, 36);
             }
             else if (args.Item is StickerSetViewModel sticker)
             {

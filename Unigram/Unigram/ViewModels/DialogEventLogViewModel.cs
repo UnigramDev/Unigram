@@ -17,8 +17,8 @@ namespace Unigram.ViewModels
 {
     public class DialogEventLogViewModel : DialogViewModel
     {
-        public DialogEventLogViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ILocationService locationService, INotificationsService pushService, IPlaybackService playbackService, IVoipService voipService, IGroupCallService groupCallService, INetworkService networkService, IStorageService storageService, ITranslateService translateService, IMessageFactory messageFactory)
-            : base(protoService, cacheService, settingsService, aggregator, locationService, pushService, playbackService, voipService, groupCallService, networkService, storageService, translateService, messageFactory)
+        public DialogEventLogViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, ILocationService locationService, INotificationsService pushService, IPlaybackService playbackService, IVoipService voipService, IGroupCallService groupCallService, INetworkService networkService, IStorageService storageService, ITranslateService translateService, IMessageFactory messageFactory)
+            : base(clientService, settingsService, aggregator, locationService, pushService, playbackService, voipService, groupCallService, networkService, storageService, translateService, messageFactory)
         {
             HelpCommand = new RelayCommand(HelpExecute);
         }
@@ -72,7 +72,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var supergroup = CacheService.GetSupergroup(chat);
+            var supergroup = ClientService.GetSupergroup(chat);
             if (supergroup == null)
             {
                 return;
@@ -80,7 +80,7 @@ namespace Unigram.ViewModels
 
             var dialog = new SupergroupEventLogFiltersPopup();
 
-            var confirm = await dialog.ShowAsync(ProtoService, supergroup.Id, _filters, _userIds);
+            var confirm = await dialog.ShowAsync(ClientService, supergroup.Id, _filters, _userIds);
             if (confirm == ContentDialogResult.Primary)
             {
                 Filters = dialog.Filters;
@@ -127,7 +127,7 @@ namespace Unigram.ViewModels
 
                 System.Diagnostics.Debug.WriteLine("DialogViewModel: LoadScheduledSliceAsync");
 
-                var response = await ProtoService.SendAsync(new GetChatEventLog(chat.Id, query, 0, 50, _filters, _userIds));
+                var response = await ClientService.SendAsync(new GetChatEventLog(chat.Id, query, 0, 50, _filters, _userIds));
                 if (response is ChatEvents events)
                 {
                     _groupedMessages.Clear();
@@ -194,7 +194,7 @@ namespace Unigram.ViewModels
                 System.Diagnostics.Debug.WriteLine("DialogViewModel: LoadNextSliceAsync");
                 System.Diagnostics.Debug.WriteLine("DialogViewModel: LoadNextSliceAsync: Begin request");
 
-                var response = await ProtoService.SendAsync(new GetChatEventLog(chat.Id, string.Empty, _minEventId, 50, _filters, _userIds));
+                var response = await ClientService.SendAsync(new GetChatEventLog(chat.Id, string.Empty, _minEventId, 50, _filters, _userIds));
                 if (response is ChatEvents events)
                 {
                     if (events.Events.Count > 0)
@@ -377,10 +377,10 @@ namespace Unigram.ViewModels
             }
             else if (item.Action is ChatEventUsernameChanged usernameChanged)
             {
-                var link = string.IsNullOrEmpty(usernameChanged.NewUsername) ? string.Empty : MeUrlPrefixConverter.Convert(CacheService, usernameChanged.NewUsername);
+                var link = string.IsNullOrEmpty(usernameChanged.NewUsername) ? string.Empty : MeUrlPrefixConverter.Convert(ClientService, usernameChanged.NewUsername);
 
                 var text = new FormattedText(link, new[] { new TextEntity(0, link.Length, new TextEntityTypeUrl()) });
-                var webPage = string.IsNullOrEmpty(usernameChanged.OldUsername) ? null : new WebPage { SiteName = Strings.Resources.EventLogPreviousLink, Description = new FormattedText { Text = MeUrlPrefixConverter.Convert(CacheService, usernameChanged.OldUsername) } };
+                var webPage = string.IsNullOrEmpty(usernameChanged.OldUsername) ? null : new WebPage { SiteName = Strings.Resources.EventLogPreviousLink, Description = new FormattedText { Text = MeUrlPrefixConverter.Convert(ClientService, usernameChanged.OldUsername) } };
 
                 return new MessageText(text, webPage);
             }
@@ -460,7 +460,7 @@ namespace Unigram.ViewModels
             {
                 var entities = new List<TextEntity>();
 
-                var whoUser = CacheService.GetMessageSender(memberRestricted.MemberId);
+                var whoUser = ClientService.GetMessageSender(memberRestricted.MemberId);
                 ChatMemberStatusRestricted o = null;
                 ChatMemberStatusRestricted n = null;
 
@@ -635,7 +635,7 @@ namespace Unigram.ViewModels
             {
                 var entities = new List<TextEntity>();
 
-                var whoUser = CacheService.GetUser(memberPromoted.UserId);
+                var whoUser = ClientService.GetUser(memberPromoted.UserId);
                 var str = memberPromoted.NewStatus is ChatMemberStatusCreator
                     ? Strings.Resources.EventLogChangedOwnership
                     : Strings.Resources.EventLogPromoted;
@@ -812,7 +812,7 @@ namespace Unigram.ViewModels
             }
             else if (sender is Chat chat)
             {
-                var name = CacheService.GetTitle(chat);
+                var name = ClientService.GetTitle(chat);
 
                 // Make it clickable
 

@@ -96,7 +96,7 @@ namespace Unigram.Views
 
             ViewModel.IsLoading = true;
 
-            var response = await ViewModel.ProtoService.SendAsync(new GetWebPageInstantView(url, true));
+            var response = await ViewModel.ClientService.SendAsync(new GetWebPageInstantView(url, true));
             if (response is WebPageInstantView instantView)
             {
                 if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
@@ -327,7 +327,7 @@ namespace Unigram.Views
                     var file = article.Photo.GetSmall()?.Photo;
                     if (file != null)
                     {
-                        photo.SetSource(ViewModel.ProtoService, file, 36, 36);
+                        photo.SetSource(ViewModel.ClientService, file, 36, 36);
                     }
 
                     Grid.SetColumn(photo, 1);
@@ -835,7 +835,7 @@ namespace Unigram.Views
 
         private FrameworkElement ProcessPhoto(PageBlockPhoto block)
         {
-            var galleryItem = new GalleryPhoto(ViewModel.ProtoService, block.Photo, block.Caption.ToPlainText());
+            var galleryItem = new GalleryPhoto(ViewModel.ClientService, block.Photo, block.Caption.ToPlainText());
             ViewModel.Gallery.Items.Add(galleryItem);
 
             var message = GetMessage(new MessagePhoto(block.Photo, null, false));
@@ -861,7 +861,7 @@ namespace Unigram.Views
 
         private FrameworkElement ProcessVideo(PageBlockVideo block)
         {
-            var galleryItem = new GalleryVideo(ViewModel.ProtoService, block.Video, block.Caption.ToPlainText());
+            var galleryItem = new GalleryVideo(ViewModel.ClientService, block.Video, block.Caption.ToPlainText());
             ViewModel.Gallery.Items.Add(galleryItem);
 
             var message = GetMessage(new MessageVideo(block.Video, null, false));
@@ -887,7 +887,7 @@ namespace Unigram.Views
 
         private FrameworkElement ProcessAnimation(PageBlockAnimation block)
         {
-            var galleryItem = new GalleryAnimation(ViewModel.ProtoService, block.Animation, block.Caption.ToPlainText());
+            var galleryItem = new GalleryAnimation(ViewModel.ClientService, block.Animation, block.Caption.ToPlainText());
             ViewModel.Gallery.Items.Add(galleryItem);
 
             var message = GetMessage(new MessageAnimation(block.Animation, null, false));
@@ -989,7 +989,7 @@ namespace Unigram.Views
             {
                 if (item is PageBlockPhoto photoBlock)
                 {
-                    var galleryItem = new GalleryPhoto(ViewModel.ProtoService, photoBlock.Photo, block.Caption.ToPlainText());
+                    var galleryItem = new GalleryPhoto(ViewModel.ClientService, photoBlock.Photo, block.Caption.ToPlainText());
                     ViewModel.Gallery.Items.Add(galleryItem);
 
                     var message = GetMessage(new MessagePhoto(photoBlock.Photo, null, false));
@@ -1004,7 +1004,7 @@ namespace Unigram.Views
                 }
                 else if (item is PageBlockVideo videoBlock)
                 {
-                    var galleryItem = new GalleryVideo(ViewModel.ProtoService, videoBlock.Video, block.Caption.ToPlainText());
+                    var galleryItem = new GalleryVideo(ViewModel.ClientService, videoBlock.Video, block.Caption.ToPlainText());
                     ViewModel.Gallery.Items.Add(galleryItem);
 
                     var message = GetMessage(new MessageVideo(videoBlock.Video, null, false));
@@ -1278,7 +1278,7 @@ namespace Unigram.Views
                     var file = icon.Document.DocumentValue;
                     if (file != null)
                     {
-                        photo.SetSource(ViewModel.ProtoService, file, icon.Width, icon.Height);
+                        photo.SetSource(ViewModel.ClientService, file, icon.Width, icon.Height);
                     }
 
                     var inline = new InlineUIContainer();
@@ -1488,7 +1488,7 @@ namespace Unigram.Views
         {
             ViewModel.IsLoading = true;
 
-            var response = await ViewModel.ProtoService.SendAsync(new GetWebPageInstantView(urlText.Url, false));
+            var response = await ViewModel.ClientService.SendAsync(new GetWebPageInstantView(urlText.Url, false));
             if (response is WebPageInstantView)
             {
                 ViewModel.IsLoading = false;
@@ -1500,7 +1500,7 @@ namespace Unigram.Views
 
                 if (MessageHelper.IsTelegramUrl(uri))
                 {
-                    MessageHelper.OpenTelegramUrl(ViewModel.ProtoService, ViewModel.NavigationService, uri);
+                    MessageHelper.OpenTelegramUrl(ViewModel.ClientService, ViewModel.NavigationService, uri);
                 }
                 else
                 {

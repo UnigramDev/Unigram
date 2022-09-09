@@ -10,8 +10,8 @@ namespace Unigram.ViewModels.Settings
     {
         private readonly IShortcutsService _shortcutsService;
 
-        public SettingsShortcutsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IShortcutsService shortcutsService)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public SettingsShortcutsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IShortcutsService shortcutsService)
+            : base(clientService, settingsService, aggregator)
         {
             _shortcutsService = shortcutsService;
 

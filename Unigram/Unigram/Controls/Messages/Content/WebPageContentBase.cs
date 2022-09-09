@@ -164,11 +164,11 @@ namespace Unigram.Controls.Messages.Content
             }
         }
 
-        protected async void UpdateInstantView(IProtoService protoService, CancellationToken token, WebPage webPage, Border border, TextBlock label)
+        protected async void UpdateInstantView(IClientService clientService, CancellationToken token, WebPage webPage, Border border, TextBlock label)
         {
             if (webPage.IsInstantGallery())
             {
-                var response = await protoService.SendAsync(new GetWebPageInstantView(webPage.Url, false));
+                var response = await clientService.SendAsync(new GetWebPageInstantView(webPage.Url, false));
                 if (response is WebPageInstantView instantView && instantView.IsFull && !token.IsCancellationRequested)
                 {
                     var count = CountWebPageMedia(instantView);

@@ -19,18 +19,18 @@ namespace Unigram.Views.Popups
 {
     public sealed partial class SettingsEmojiSetPopup : ContentPopup
     {
-        private readonly IProtoService _protoService;
+        private readonly IClientService _clientService;
         private readonly IEventAggregator _aggregator;
 
         private readonly ItemsCollection _collection;
 
         private EmojiSet _selectedSet;
 
-        public SettingsEmojiSetPopup(IProtoService protoService, IEmojiSetService emojiSetService, IEventAggregator aggregator)
+        public SettingsEmojiSetPopup(IClientService clientService, IEmojiSetService emojiSetService, IEventAggregator aggregator)
         {
             InitializeComponent();
 
-            _protoService = protoService;
+            _clientService = clientService;
             _aggregator = aggregator;
 
             Title = "Emoji Set";
@@ -95,11 +95,11 @@ namespace Unigram.Views.Popups
             }
             else
             {
-                UpdateManager.Subscribe(radio, _protoService, file, UpdateFile);
+                UpdateManager.Subscribe(radio, _clientService, file, UpdateFile);
 
                 if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
-                    _protoService.DownloadFile(file.Id, 32);
+                    _clientService.DownloadFile(file.Id, 32);
                 }
             }
         }
@@ -177,11 +177,11 @@ namespace Unigram.Views.Popups
                 {
                     photo.Source = null;
 
-                    UpdateManager.Subscribe(photo, _protoService, file, UpdateThumbnail, true);
+                    UpdateManager.Subscribe(photo, _clientService, file, UpdateThumbnail, true);
 
                     if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                     {
-                        _protoService.DownloadFile(file.Id, 1);
+                        _clientService.DownloadFile(file.Id, 1);
                     }
                 }
             }

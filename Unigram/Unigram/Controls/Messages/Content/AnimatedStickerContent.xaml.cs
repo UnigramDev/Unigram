@@ -66,21 +66,21 @@ namespace Unigram.Controls.Messages.Content
 
             if (message.Content is MessageAnimatedEmoji animatedEmoji)
             {
-                Width = Player.Width = 180 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
-                Height = Player.Height = 180 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
+                Width = Player.Width = 180 * message.ClientService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
+                Height = Player.Height = 180 * message.ClientService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
                 Player.FitzModifier = (FitzModifier)animatedEmoji.AnimatedEmoji.FitzpatrickType;
                 Player.IsFlipped = false;
 
                 var sound = animatedEmoji.AnimatedEmoji.Sound;
                 if (sound != null && sound.Local.CanBeDownloaded && !sound.Local.IsDownloadingActive)
                 {
-                    message.ProtoService.DownloadFile(sound.Id, 1);
+                    message.ClientService.DownloadFile(sound.Id, 1);
                 }
             }
             else if (message.Content is MessageText)
             {
-                Width = Player.Width = 180 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
-                Height = Player.Height = 180 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
+                Width = Player.Width = 180 * message.ClientService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
+                Height = Player.Height = 180 * message.ClientService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
                 Player.ColorReplacements = null;
                 Player.IsFlipped = false;
             }
@@ -138,7 +138,7 @@ namespace Unigram.Controls.Messages.Content
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
                 Player.Source = null;
-                message.ProtoService.DownloadFile(file.Id, 1);
+                message.ClientService.DownloadFile(file.Id, 1);
             }
         }
 
@@ -213,7 +213,7 @@ namespace Unigram.Controls.Messages.Content
                     }
                 }
 
-                var response = await _message.ProtoService.SendAsync(new ClickAnimatedEmojiMessage(_message.ChatId, _message.Id));
+                var response = await _message.ClientService.SendAsync(new ClickAnimatedEmojiMessage(_message.ChatId, _message.Id));
                 if (response is Sticker interaction)
                 {
                     PlayInteraction(_message, interaction);

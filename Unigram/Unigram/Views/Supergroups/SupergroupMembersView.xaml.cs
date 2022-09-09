@@ -78,11 +78,11 @@ namespace Unigram.Views.Supergroups
             ChatMemberStatus status = null;
             if (chat.Type is ChatTypeBasicGroup basic)
             {
-                status = ViewModel.ProtoService.GetBasicGroup(basic.BasicGroupId)?.Status;
+                status = ViewModel.ClientService.GetBasicGroup(basic.BasicGroupId)?.Status;
             }
             else if (chat.Type is ChatTypeSupergroup super)
             {
-                status = ViewModel.ProtoService.GetSupergroup(super.SupergroupId)?.Status;
+                status = ViewModel.ClientService.GetSupergroup(super.SupergroupId)?.Status;
             }
 
             if (status == null)
@@ -108,7 +108,7 @@ namespace Unigram.Views.Supergroups
                 return false;
             }
 
-            if (member.MemberId.IsUser(ViewModel.CacheService.Options.MyId))
+            if (member.MemberId.IsUser(ViewModel.ClientService.Options.MyId))
             {
                 return false;
             }
@@ -123,7 +123,7 @@ namespace Unigram.Views.Supergroups
                 return false;
             }
 
-            if (member.MemberId.IsUser(ViewModel.CacheService.Options.MyId))
+            if (member.MemberId.IsUser(ViewModel.ClientService.Options.MyId))
             {
                 return false;
             }
@@ -143,14 +143,14 @@ namespace Unigram.Views.Supergroups
                 return false;
             }
 
-            if (member.MemberId.IsUser(ViewModel.CacheService.Options.MyId))
+            if (member.MemberId.IsUser(ViewModel.ClientService.Options.MyId))
             {
                 return false;
             }
 
             if (chatType is ChatTypeBasicGroup && status is ChatMemberStatusAdministrator)
             {
-                return member.InviterUserId == ViewModel.CacheService.Options.MyId;
+                return member.InviterUserId == ViewModel.ClientService.Options.MyId;
             }
 
             return status is ChatMemberStatusCreator || status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanRestrictMembers;
@@ -200,7 +200,7 @@ namespace Unigram.Views.Supergroups
             args.ItemContainer.Tag = args.Item;
             content.Tag = args.Item;
 
-            var user = ViewModel.ProtoService.GetMessageSender(member.MemberId) as User;
+            var user = ViewModel.ClientService.GetMessageSender(member.MemberId) as User;
             if (user == null)
             {
                 return;
@@ -235,14 +235,14 @@ namespace Unigram.Views.Supergroups
                 }
                 else
                 {
-                    subtitle.Text = ChannelParticipantToTypeConverter.Convert(ViewModel.ProtoService, member);
+                    subtitle.Text = ChannelParticipantToTypeConverter.Convert(ViewModel.ClientService, member);
                     label.Text = string.Empty;
                 }
             }
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.SetUser(ViewModel.ProtoService, user, 36);
+                photo.SetUser(ViewModel.ClientService, user, 36);
             }
 
             if (args.Phase < 2)

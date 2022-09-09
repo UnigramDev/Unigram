@@ -19,8 +19,8 @@ namespace Unigram.ViewModels.Supergroups
     {
         public IMemberDelegate Delegate { get; set; }
 
-        public SupergroupEditAdministratorViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public SupergroupEditAdministratorViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute);
             TransferCommand = new RelayCommand(TransferExecute);
@@ -46,7 +46,7 @@ namespace Unigram.ViewModels.Supergroups
             state.TryGet("chatId", out long chatId);
             state.TryGet("senderUserId", out long userId);
 
-            Chat = ProtoService.GetChat(chatId);
+            Chat = ClientService.GetChat(chatId);
 
             var chat = _chat;
             if (chat == null)
@@ -54,18 +54,18 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new GetChatMember(chat.Id, new MessageSenderUser(userId)));
+            var response = await ClientService.SendAsync(new GetChatMember(chat.Id, new MessageSenderUser(userId)));
             if (response is ChatMember member)
             {
-                var item = ProtoService.GetUser(userId);
-                var cache = ProtoService.GetUserFull(userId);
+                var item = ClientService.GetUser(userId);
+                var cache = ClientService.GetUserFull(userId);
 
                 Delegate?.UpdateMember(chat, item, member);
                 Delegate?.UpdateUser(chat, item, false);
 
                 if (cache == null)
                 {
-                    ProtoService.Send(new GetUserFullInfo(userId));
+                    ClientService.Send(new GetUserFullInfo(userId));
                 }
                 else
                 {
@@ -134,7 +134,7 @@ namespace Unigram.ViewModels.Supergroups
                     return false;
                 }
 
-                var supergroup = CacheService.GetSupergroup(chat);
+                var supergroup = ClientService.GetSupergroup(chat);
                 if (supergroup == null || supergroup.Status is not ChatMemberStatusCreator)
                 {
                     return false;
@@ -323,7 +323,7 @@ namespace Unigram.ViewModels.Supergroups
                 };
             }
 
-            var response = await ProtoService.SendAsync(new SetChatMemberStatus(chat.Id, member.MemberId, status));
+            var response = await ClientService.SendAsync(new SetChatMemberStatus(chat.Id, member.MemberId, status));
             if (response is Ok)
             {
                 NavigationService.RemoveLastIf(typeof(SupergroupAddAdministratorPage));
@@ -345,7 +345,7 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            var supergroup = CacheService.GetSupergroup(chat);
+            var supergroup = ClientService.GetSupergroup(chat);
             if (supergroup == null)
             {
                 return;
@@ -357,13 +357,13 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            var user = CacheService.GetMessageSender(member.MemberId) as User;
+            var user = ClientService.GetMessageSender(member.MemberId) as User;
             if (user == null)
             {
                 return;
             }
 
-            var canTransfer = await ProtoService.SendAsync(new CanTransferOwnership());
+            var canTransfer = await ClientService.SendAsync(new CanTransferOwnership());
             if (canTransfer is CanTransferOwnershipResultPasswordNeeded or CanTransferOwnershipResultPasswordTooFresh or CanTransferOwnershipResultSessionTooFresh)
             {
                 var primary = Strings.Resources.OK;
@@ -412,7 +412,7 @@ namespace Unigram.ViewModels.Supergroups
                     return;
                 }
 
-                var response = await ProtoService.SendAsync(new TransferChatOwnership(chat.Id, user.Id, popup.Text));
+                var response = await ClientService.SendAsync(new TransferChatOwnership(chat.Id, user.Id, popup.Text));
                 if (response is Ok)
                 {
 
@@ -435,7 +435,7 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new SetChatMemberStatus(chat.Id, member.MemberId, new ChatMemberStatusMember()));
+            var response = await ClientService.SendAsync(new SetChatMemberStatus(chat.Id, member.MemberId, new ChatMemberStatusMember()));
             if (response is Ok)
             {
                 NavigationService.RemoveLastIf(typeof(SupergroupAddAdministratorPage));

@@ -8,8 +8,8 @@ namespace Unigram.ViewModels.Authorization
 {
     public class AuthorizationRegistrationViewModel : TLViewModelBase
     {
-        public AuthorizationRegistrationViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public AuthorizationRegistrationViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
         }
@@ -43,7 +43,7 @@ namespace Unigram.ViewModels.Authorization
                 return;
             }
 
-            var state = ProtoService.GetAuthorizationState();
+            var state = ClientService.GetAuthorizationState();
             if (state is AuthorizationStateWaitRegistration waitRegistration && waitRegistration.TermsOfService != null && waitRegistration.TermsOfService.ShowPopup)
             {
                 async void CancelSignUp()
@@ -62,7 +62,7 @@ namespace Unigram.ViewModels.Authorization
                         return;
                     }
 
-                    ProtoService.Send(new LogOut());
+                    ClientService.Send(new LogOut());
                 }
 
                 var confirm = await MessagePopup.ShowAsync(waitRegistration.TermsOfService.Text, Strings.Resources.TermsOfService, Strings.Resources.SignUp, Strings.Resources.Decline);
@@ -83,7 +83,7 @@ namespace Unigram.ViewModels.Authorization
                 }
             }
 
-            var response = await ProtoService.SendAsync(new RegisterUser(_firstName ?? string.Empty, _lastName ?? string.Empty));
+            var response = await ClientService.SendAsync(new RegisterUser(_firstName ?? string.Empty, _lastName ?? string.Empty));
             if (response is Error error)
             {
 

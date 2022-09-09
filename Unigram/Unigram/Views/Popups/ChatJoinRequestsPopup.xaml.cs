@@ -17,10 +17,10 @@ namespace Unigram.Views.Popups
     {
         public ChatJoinRequestsViewModel ViewModel => DataContext as ChatJoinRequestsViewModel;
 
-        public ChatJoinRequestsPopup(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, Chat chat, string inviteLink)
+        public ChatJoinRequestsPopup(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, Chat chat, string inviteLink)
         {
             InitializeComponent();
-            DataContext = new ChatJoinRequestsViewModel(chat, inviteLink, protoService, cacheService, settingsService, aggregator);
+            DataContext = new ChatJoinRequestsViewModel(chat, inviteLink, clientService, settingsService, aggregator);
 
             Title = Strings.Resources.MemberRequests;
             PrimaryButtonText = Strings.Resources.Close;
@@ -40,7 +40,7 @@ namespace Unigram.Views.Popups
             var content = args.ItemContainer.ContentTemplateRoot as Grid;
             var request = args.Item as ChatJoinRequest;
 
-            var user = ViewModel.CacheService.GetUser(request.UserId);
+            var user = ViewModel.ClientService.GetUser(request.UserId);
             if (user == null)
             {
                 return;
@@ -89,7 +89,7 @@ namespace Unigram.Views.Popups
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.SetUser(ViewModel.ProtoService, user, 36);
+                photo.SetUser(ViewModel.ClientService, user, 36);
             }
 
             if (args.Phase < 2)
@@ -106,13 +106,13 @@ namespace Unigram.Views.Popups
         private readonly Chat _chat;
         private readonly string _inviteLink;
 
-        public ChatJoinRequestsViewModel(Chat chat, string inviteLink, IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public ChatJoinRequestsViewModel(Chat chat, string inviteLink, IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             _chat = chat;
             _inviteLink = inviteLink;
 
-            Items = new ItemCollection(protoService, chat, inviteLink);
+            Items = new ItemCollection(clientService, chat, inviteLink);
 
             AcceptCommand = new RelayCommand<ChatJoinRequest>(Accept);
             DismissCommand = new RelayCommand<ChatJoinRequest>(Dismiss);
@@ -137,21 +137,21 @@ namespace Unigram.Views.Popups
         private void Process(ChatJoinRequest request, bool approve)
         {
             Items.Remove(request);
-            ProtoService.Send(new ProcessChatJoinRequest(_chat.Id, request.UserId, approve));
+            ClientService.Send(new ProcessChatJoinRequest(_chat.Id, request.UserId, approve));
         }
 
         public class ItemCollection : MvxObservableCollection<ChatJoinRequest>, ISupportIncrementalLoading
         {
-            private readonly IProtoService _protoService;
+            private readonly IClientService _clientService;
             private readonly Chat _chat;
             private readonly string _inviteLink;
 
             private ChatJoinRequest _offset;
             private bool _hasMoreItems = true;
 
-            public ItemCollection(IProtoService protoService, Chat chat, string inviteLink)
+            public ItemCollection(IClientService clientService, Chat chat, string inviteLink)
             {
-                _protoService = protoService;
+                _clientService = clientService;
                 _chat = chat;
                 _inviteLink = inviteLink;
             }
@@ -160,7 +160,7 @@ namespace Unigram.Views.Popups
             {
                 return AsyncInfo.Run(async token =>
                 {
-                    var response = await _protoService.SendAsync(new GetChatJoinRequests(_chat.Id, _inviteLink, string.Empty, _offset, 10));
+                    var response = await _clientService.SendAsync(new GetChatJoinRequests(_chat.Id, _inviteLink, string.Empty, _offset, 10));
                     if (response is ChatJoinRequests requests)
                     {
                         foreach (var item in requests.Requests)

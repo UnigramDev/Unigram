@@ -13,8 +13,8 @@ namespace Unigram.ViewModels.Settings
 {
     public class SettingsStorageViewModel : TLViewModelBase
     {
-        public SettingsStorageViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public SettingsStorageViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             ClearCacheCommand = new RelayCommand(ClearCacheExecute);
         }
@@ -23,7 +23,7 @@ namespace Unigram.ViewModels.Settings
         {
             IsLoading = true;
 
-            ProtoService.Send(new GetStorageStatisticsFast(), result =>
+            ClientService.Send(new GetStorageStatisticsFast(), result =>
             {
                 if (result is StorageStatisticsFast stats)
                 {
@@ -31,7 +31,7 @@ namespace Unigram.ViewModels.Settings
                 }
             });
 
-            ProtoService.Send(new GetStorageStatistics(25), result =>
+            ClientService.Send(new GetStorageStatistics(25), result =>
             {
                 if (result is StorageStatistics stats)
                 {
@@ -48,15 +48,15 @@ namespace Unigram.ViewModels.Settings
         {
             get
             {
-                var enabled = CacheService.Options.UseStorageOptimizer;
-                var ttl = (int)CacheService.Options.StorageMaxTimeFromLastAccess;
+                var enabled = ClientService.Options.UseStorageOptimizer;
+                var ttl = (int)ClientService.Options.StorageMaxTimeFromLastAccess;
 
                 return enabled ? ttl / 60 / 60 / 24 : 0;
             }
             set
             {
-                CacheService.Options.StorageMaxTimeFromLastAccess = value * 60 * 60 * 24;
-                CacheService.Options.UseStorageOptimizer = value > 0;
+                ClientService.Options.StorageMaxTimeFromLastAccess = value * 60 * 60 * 24;
+                ClientService.Options.UseStorageOptimizer = value > 0;
 
                 RaisePropertyChanged();
             }
@@ -109,7 +109,7 @@ namespace Unigram.ViewModels.Settings
                 return;
             }
 
-            var dialog = new SettingsStorageOptimizationPage(ProtoService, byChat);
+            var dialog = new SettingsStorageOptimizationPage(ClientService, byChat);
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm != ContentDialogResult.Primary)
@@ -138,7 +138,7 @@ namespace Unigram.ViewModels.Settings
             IsLoading = true;
             TaskCompleted = false;
 
-            var response = await ProtoService.SendAsync(new OptimizeStorage(long.MaxValue, 0, int.MaxValue, 0, types, chatIds, excludedChatIds, false, 25));
+            var response = await ClientService.SendAsync(new OptimizeStorage(long.MaxValue, 0, int.MaxValue, 0, types, chatIds, excludedChatIds, false, 25));
             if (response is StorageStatistics statistics)
             {
                 Statistics = statistics;

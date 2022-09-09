@@ -38,8 +38,8 @@ namespace Unigram.Views.Popups
             _zoomer = new ZoomableListHandler(List);
             _zoomer.Opening = _handler.UnloadVisibleItems;
             _zoomer.Closing = _handler.ThrottleVisibleItems;
-            _zoomer.DownloadFile = fileId => ViewModel.ProtoService.DownloadFile(fileId, 32);
-            _zoomer.SessionId = () => ViewModel.ProtoService.SessionId;
+            _zoomer.DownloadFile = fileId => ViewModel.ClientService.DownloadFile(fileId, 32);
+            _zoomer.SessionId = () => ViewModel.ClientService.SessionId;
 
             _typeToItemHashSetMapping.Add("AnimatedItemTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("VideoItemTemplate", new HashSet<SelectorItem>());
@@ -217,10 +217,10 @@ namespace Unigram.Views.Popups
 
             if (content.Children.Count > 1 && content.Children[1] is Border panel && panel.Child is TextBlock premium)
             {
-                if (sticker.PremiumAnimation != null && ViewModel.CacheService.IsPremiumAvailable)
+                if (sticker.PremiumAnimation != null && ViewModel.ClientService.IsPremiumAvailable)
                 {
-                    premium.Text = ViewModel.CacheService.IsPremium ? Icons.Premium16 : Icons.LockClosed16;
-                    panel.HorizontalAlignment = ViewModel.CacheService.IsPremium ? HorizontalAlignment.Right : HorizontalAlignment.Center;
+                    premium.Text = ViewModel.ClientService.IsPremium ? Icons.Premium16 : Icons.LockClosed16;
+                    panel.HorizontalAlignment = ViewModel.ClientService.IsPremium ? HorizontalAlignment.Right : HorizontalAlignment.Center;
                     panel.Visibility = Visibility.Visible;
                 }
                 else
@@ -266,11 +266,11 @@ namespace Unigram.Views.Popups
                 CompositionPathParser.ParseThumbnail(sticker, out ShapeVisual visual, false);
                 ElementCompositionPreview.SetElementChildVisual(content.Children[0], visual);
 
-                UpdateManager.Subscribe(content, ViewModel.ProtoService, file, UpdateFile, true);
+                UpdateManager.Subscribe(content, ViewModel.ClientService, file, UpdateFile, true);
 
                 if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
-                    ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                    ViewModel.ClientService.DownloadFile(file.Id, 1);
                 }
             }
 
@@ -364,7 +364,7 @@ namespace Unigram.Views.Popups
                     builder.AppendLine();
                 }
 
-                builder.Append(MeUrlPrefixConverter.Convert(ViewModel.ProtoService, $"addstickers/{item.Name}"));
+                builder.Append(MeUrlPrefixConverter.Convert(ViewModel.ClientService, $"addstickers/{item.Name}"));
             }
 
             Hide();

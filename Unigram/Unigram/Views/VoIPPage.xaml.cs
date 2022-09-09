@@ -34,8 +34,7 @@ namespace Unigram.Views
 
         private bool _collapsed = true;
 
-        private readonly IProtoService _protoService;
-        private readonly ICacheService _cacheService;
+        private readonly IClientService _clientService;
         private readonly IEventAggregator _aggregator;
 
         private readonly IVoipService _service;
@@ -60,12 +59,11 @@ namespace Unigram.Views
 
         public OverlayPage Dialog { get; set; }
 
-        public VoIPPage(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator, IVoipService voipService)
+        public VoIPPage(IClientService clientService, IEventAggregator aggregator, IVoipService voipService)
         {
             InitializeComponent();
 
-            _protoService = protoService;
-            _cacheService = cacheService;
+            _clientService = clientService;
             _aggregator = aggregator;
 
             _service = voipService;
@@ -422,10 +420,10 @@ namespace Unigram.Views
                 return;
             }
 
-            var user = _cacheService.GetUser(call.UserId);
+            var user = _clientService.GetUser(call.UserId);
             if (user != null)
             {
-                Image.SetUser(_protoService, user, 144);
+                Image.SetUser(_clientService, user, 144);
 
                 //if (user.ProfilePhoto != null)
                 //{
@@ -440,7 +438,7 @@ namespace Unigram.Views
                 //        Image.Source = null;
                 //        BackgroundPanel.Background = PlaceholderHelper.GetBrush(user.Id);
 
-                //        _protoService?.DownloadFile(file.Id, 1, 0);
+                //        _clientService?.DownloadFile(file.Id, 1, 0);
                 //    }
                 //}
                 //else
@@ -720,7 +718,7 @@ namespace Unigram.Views
 
             if (call.IsOutgoing && call.State is CallStateDiscarded discarded && discarded.Reason is CallDiscardReasonDeclined)
             {
-                _protoService.Send(new CreateCall(call.UserId, _service.Protocol, false));
+                _clientService.Send(new CreateCall(call.UserId, _service.Protocol, false));
             }
             else if (call.State is CallStateReady || (call.State is CallStatePending && call.IsOutgoing))
             {
@@ -731,18 +729,18 @@ namespace Unigram.Views
                 }
 
                 var duration = _state == VoipState.Established ? DateTime.Now - _service.CallStarted : TimeSpan.Zero;
-                _protoService.Send(new DiscardCall(call.Id, false, (int)duration.TotalSeconds, _service.Capturer != null, relay));
+                _clientService.Send(new DiscardCall(call.Id, false, (int)duration.TotalSeconds, _service.Capturer != null, relay));
             }
             else
             {
                 var permissions = await MediaDeviceWatcher.CheckAccessAsync(call.IsVideo);
                 if (permissions == false)
                 {
-                    _protoService.Send(new DiscardCall(call.Id, false, 0, call.IsVideo, 0));
+                    _clientService.Send(new DiscardCall(call.Id, false, 0, call.IsVideo, 0));
                 }
                 else
                 {
-                    _protoService.Send(new AcceptCall(call.Id, _service.Protocol));
+                    _clientService.Send(new AcceptCall(call.Id, _service.Protocol));
                 }
             }
         }
@@ -762,7 +760,7 @@ namespace Unigram.Views
             }
 
             var duration = _state == VoipState.Established ? DateTime.Now - _service.CallStarted : TimeSpan.Zero;
-            _protoService.Send(new DiscardCall(call.Id, false, (int)duration.TotalSeconds, _service.Capturer != null, relay));
+            _clientService.Send(new DiscardCall(call.Id, false, (int)duration.TotalSeconds, _service.Capturer != null, relay));
         }
 
         private async void Video_Click(object sender, RoutedEventArgs e)

@@ -16,7 +16,7 @@ using Windows.System.Profile;
 
 namespace Unigram.Services
 {
-    public interface IProtoService : ICacheService
+    public interface IClientService : ICacheService
     {
         bool TryInitialize();
         void Close(bool restart);
@@ -149,7 +149,7 @@ namespace Unigram.Services
         Settings.NotificationsSettings Notifications { get; }
     }
 
-    public partial class ProtoService : IProtoService, ClientResultHandler
+    public partial class ClientService : IClientService, ClientResultHandler
     {
         private Client _client;
 
@@ -216,7 +216,7 @@ namespace Unigram.Services
         private static volatile Task _longRunningTask;
         private static readonly object _longRunningLock = new object();
 
-        public ProtoService(int session, bool online, IDeviceInfoService deviceInfoService, ISettingsService settings, ILocaleService locale, IEventAggregator aggregator)
+        public ClientService(int session, bool online, IDeviceInfoService deviceInfoService, ISettingsService settings, ILocaleService locale, IEventAggregator aggregator)
         {
             _session = session;
             _deviceInfoService = deviceInfoService;

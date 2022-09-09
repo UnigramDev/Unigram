@@ -192,7 +192,7 @@ namespace Unigram.Controls.Messages
             }
         }
 
-        protected override void SetText(IProtoService protoService, MessageSender sender, string title, string service, FormattedText message)
+        protected override void SetText(IClientService clientService, MessageSender sender, string title, string service, FormattedText message)
         {
             if (TitleLabel != null)
             {
@@ -269,7 +269,7 @@ namespace Unigram.Controls.Messages
                     if (emoji.Count > 0)
                     {
                         CustomEmoji ??= GetTemplateChild(nameof(CustomEmoji)) as CustomEmojiCanvas;
-                        CustomEmoji.UpdateEntities(protoService, emoji);
+                        CustomEmoji.UpdateEntities(clientService, emoji);
 
                         if (_playing)
                         {

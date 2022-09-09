@@ -48,8 +48,8 @@ namespace Unigram.ViewModels
 
         public bool Refresh { get; set; }
 
-        public MainViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IStorageService storageService, IEventAggregator aggregator, INotificationsService pushService, IContactsService contactsService, IPasscodeService passcodeService, ILifetimeService lifecycle, ISessionService session, IVoipService voipService, IGroupCallService groupCallService, ISettingsSearchService settingsSearchService, IEmojiSetService emojiSetService, ICloudUpdateService cloudUpdateService, IPlaybackService playbackService, IShortcutsService shortcutService)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public MainViewModel(IClientService clientService, ISettingsService settingsService, IStorageService storageService, IEventAggregator aggregator, INotificationsService pushService, IContactsService contactsService, IPasscodeService passcodeService, ILifetimeService lifecycle, ISessionService session, IVoipService voipService, IGroupCallService groupCallService, ISettingsSearchService settingsSearchService, IEmojiSetService emojiSetService, ICloudUpdateService cloudUpdateService, IPlaybackService playbackService, IShortcutsService shortcutService)
+            : base(clientService, settingsService, aggregator)
         {
             _pushService = pushService;
             _contactsService = contactsService;
@@ -75,14 +75,14 @@ namespace Unigram.ViewModels
                 }
             };
 
-            ChatList chatList = CacheService.MainChatListPosition > 0 && CacheService.ChatFilters.Count > 0
-                ? new ChatListFilter(CacheService.ChatFilters[0].Id)
+            ChatList chatList = ClientService.MainChatListPosition > 0 && ClientService.ChatFilters.Count > 0
+                ? new ChatListFilter(ClientService.ChatFilters[0].Id)
                 : new ChatListMain();
 
-            Chats = new ChatListViewModel(protoService, cacheService, settingsService, aggregator, pushService, chatList);
-            Contacts = new ContactsViewModel(protoService, cacheService, settingsService, aggregator, contactsService);
-            Calls = new CallsViewModel(protoService, cacheService, settingsService, aggregator);
-            Settings = new SettingsViewModel(protoService, cacheService, settingsService, storageService, aggregator, settingsSearchService);
+            Chats = new ChatListViewModel(clientService, settingsService, aggregator, pushService, chatList);
+            Contacts = new ContactsViewModel(clientService, settingsService, aggregator, contactsService);
+            Calls = new CallsViewModel(clientService, settingsService, aggregator);
+            Settings = new SettingsViewModel(clientService, settingsService, storageService, aggregator, settingsSearchService);
 
             // This must represent pivot tabs
             Children.Add(Chats);
@@ -237,7 +237,7 @@ namespace Unigram.ViewModels
             }
 
             var message = _playbackService.CurrentItem;
-            if (message == null || message.ProtoService != ProtoService)
+            if (message == null || message.ClientService != ClientService)
             {
                 return;
             }
@@ -282,7 +282,7 @@ namespace Unigram.ViewModels
                         continue;
                     }
 
-                    var unreadCount = CacheService.GetUnreadCount(filter.ChatList);
+                    var unreadCount = ClientService.GetUnreadCount(filter.ChatList);
                     if (unreadCount == null)
                     {
                         continue;
@@ -398,9 +398,9 @@ namespace Unigram.ViewModels
             //Dispatch(() => Contacts.GetSelfAsync());
 
             UpdateAppVersion(_cloudUpdateService.NextUpdate);
-            UpdateChatFilters(CacheService.ChatFilters, CacheService.MainChatListPosition);
+            UpdateChatFilters(ClientService.ChatFilters, ClientService.MainChatListPosition);
 
-            var unreadCount = CacheService.GetUnreadCount(new ChatListMain());
+            var unreadCount = ClientService.GetUnreadCount(new ChatListMain());
             UnreadCount = unreadCount.UnreadMessageCount.UnreadCount;
             UnreadMutedCount = unreadCount.UnreadMessageCount.UnreadCount - unreadCount.UnreadMessageCount.UnreadUnmutedCount;
 
@@ -458,7 +458,7 @@ namespace Unigram.ViewModels
         private async void CreateSecretChatExecute()
         {
             var selected = await SharePopup.PickChatAsync(Strings.Resources.NewSecretChat);
-            var user = CacheService.GetUser(selected);
+            var user = ClientService.GetUser(selected);
 
             if (user == null)
             {
@@ -471,7 +471,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new CreateNewSecretChat(user.Id));
+            var response = await ClientService.SendAsync(new CreateNewSecretChat(user.Id));
             if (response is Chat chat)
             {
                 NavigationService.NavigateToChat(chat);
@@ -509,7 +509,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var chats = await ProtoService.GetChatListAsync(filter.ChatList, 0, int.MaxValue);
+            var chats = await ClientService.GetChatListAsync(filter.ChatList, 0, int.MaxValue);
             if (chats.TotalCount > chats.ChatIds.Count)
             {
                 // ???
@@ -517,13 +517,13 @@ namespace Unigram.ViewModels
 
             foreach (var id in chats.ChatIds)
             {
-                var chat = CacheService.GetChat(id);
+                var chat = ClientService.GetChat(id);
                 if (chat == null || chat.LastMessage == null || !chat.IsUnread())
                 {
                     continue;
                 }
 
-                ProtoService.Send(new ViewMessages(chat.Id, 0, new[] { chat.LastMessage.Id }, true));
+                ClientService.Send(new ViewMessages(chat.Id, 0, new[] { chat.LastMessage.Id }, true));
             }
         }
 
@@ -536,7 +536,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            ProtoService.Send(new DeleteChatFilter(filter.ChatFilterId));
+            ClientService.Send(new DeleteChatFilter(filter.ChatFilterId));
         }
     }
 

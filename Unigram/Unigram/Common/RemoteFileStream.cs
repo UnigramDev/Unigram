@@ -14,7 +14,7 @@ namespace Unigram.Common
 {
     public class RemoteFileStream : IRandomAccessStream
     {
-        private readonly IProtoService _protoService;
+        private readonly IClientService _clientService;
         private readonly File _file;
 
         private readonly RemoteVideoSource _source;
@@ -24,12 +24,12 @@ namespace Unigram.Common
 
         private bool _disposed;
 
-        public RemoteFileStream(IProtoService protoService, File file, int duration)
+        public RemoteFileStream(IClientService clientService, File file, int duration)
         {
-            _protoService = protoService;
+            _clientService = clientService;
             _file = file;
 
-            _source = new RemoteVideoSource(protoService, file, duration);
+            _source = new RemoteVideoSource(clientService, file, duration);
         }
 
         public int FileId => _source.Id;
@@ -71,7 +71,7 @@ namespace Unigram.Common
                             _fileStream.Dispose();
                         }
 
-                        var file = await _protoService.GetFileAsync(_file, false);
+                        var file = await _clientService.GetFileAsync(_file, false);
 
                         _fileStream = await file.OpenAsync(FileAccessMode.Read, StorageOpenOptions.AllowReadersAndWriters);
                         _filePath = path;
@@ -137,7 +137,7 @@ namespace Unigram.Common
     {
         private readonly ManualResetEvent _event;
 
-        private readonly IProtoService _protoService;
+        private readonly IClientService _clientService;
 
         private readonly File _file;
 
@@ -151,18 +151,18 @@ namespace Unigram.Common
 
         private long _bufferSize = 256 * 1024;
 
-        public RemoteVideoSource(IProtoService protoService, File file, int duration)
+        public RemoteVideoSource(IClientService clientService, File file, int duration)
         {
             _event = new ManualResetEvent(false);
 
-            _protoService = protoService;
+            _clientService = clientService;
 
             _file = file;
             _chunk = (int)(file.Size / (duration / 10d));
 
             if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
             {
-                UpdateManager.Subscribe(this, protoService, file, UpdateFile);
+                UpdateManager.Subscribe(this, clientService, file, UpdateFile);
             }
         }
 
@@ -195,7 +195,7 @@ namespace Unigram.Common
             {
                 if (difference < _chunk / 3 * 2 && _offset > _next)
                 {
-                    _protoService.Send(new DownloadFile(_file.Id, 32, _offset, /*_chunk*/ 0, false));
+                    _clientService.Send(new DownloadFile(_file.Id, 32, _offset, /*_chunk*/ 0, false));
                     _next = _offset + _chunk / 3;
                 }
 
@@ -208,7 +208,7 @@ namespace Unigram.Common
                 _readLock.Release();
                 _event.Reset();
 
-                _protoService.Send(new DownloadFile(_file.Id, 32, _offset, /*_chunk*/ 0, false));
+                _clientService.Send(new DownloadFile(_file.Id, 32, _offset, /*_chunk*/ 0, false));
                 _next = _offset + _chunk / 3;
 
                 //Logs.Logger.Debug($"Not enough data available, offset: {_offset}, next: {_next}, size: {_file.Size}");
@@ -252,7 +252,7 @@ namespace Unigram.Common
             //Logs.Logger.Debug($"Disposing the stream");
 
             _canceled = true;
-            _protoService.Send(new CancelDownloadFile(_file.Id, false));
+            _clientService.Send(new CancelDownloadFile(_file.Id, false));
 
             _event.Set();
         }

@@ -19,12 +19,12 @@ namespace Unigram.Services
 
     public class SettingsSearchService : ISettingsSearchService
     {
-        private readonly IProtoService _protoService;
+        private readonly IClientService _clientService;
         private List<SettingsSearchEntry> _searchIndex;
 
-        public SettingsSearchService(IProtoService protoService)
+        public SettingsSearchService(IClientService clientService)
         {
-            _protoService = protoService;
+            _clientService = clientService;
         }
 
         public IEnumerable<SettingsSearchEntry> Search(string query)
@@ -96,7 +96,7 @@ namespace Unigram.Services
             };
 
             // FAQ indexing is done asyncronously
-            var response = await _protoService.SendAsync(new GetWebPageInstantView(Strings.Resources.TelegramFaqUrl, true));
+            var response = await _clientService.SendAsync(new GetWebPageInstantView(Strings.Resources.TelegramFaqUrl, true));
             if (response is WebPageInstantView webPage)
             {
                 var title = string.Empty;

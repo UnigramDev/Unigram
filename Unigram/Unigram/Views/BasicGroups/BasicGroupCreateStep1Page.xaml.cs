@@ -78,9 +78,9 @@ namespace Unigram.Views.BasicGroups
             var chat = button.DataContext as Chat;
 
             var title = content.Children[1] as TextBlock;
-            title.Text = ViewModel.ProtoService.GetTitle(chat);
+            title.Text = ViewModel.ClientService.GetTitle(chat);
 
-            //if (ViewModel.CacheService.TryGetSupergroup(chat, out Supergroup supergroup))
+            //if (ViewModel.ClientService.TryGetSupergroup(chat, out Supergroup supergroup))
             //{
             //    var subtitle = content.Children[2] as TextBlock;
             //    subtitle.Text = string.Format("{0}, {1}", BindConvert.Distance(nearby.Distance), Locale.Declension("Members", supergroup.MemberCount));
@@ -92,7 +92,7 @@ namespace Unigram.Views.BasicGroups
             //}
 
             var photo = content.Children[0] as ProfilePicture;
-            photo.SetChat(ViewModel.ProtoService, chat, 36);
+            photo.SetChat(ViewModel.ClientService, chat, 36);
 
             //button.Command = ViewModel.OpenChatCommand;
             //button.CommandParameter = nearby;

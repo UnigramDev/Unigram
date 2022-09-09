@@ -23,7 +23,7 @@ namespace Unigram.Views.Settings
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (ApiInfo.IsPackagedRelease && ViewModel.CacheService.Options.CanIgnoreSensitiveContentRestrictions)
+            if (ApiInfo.IsPackagedRelease && ViewModel.ClientService.Options.CanIgnoreSensitiveContentRestrictions)
             {
                 FindName(nameof(SensitiveContent));
             }
@@ -71,11 +71,11 @@ namespace Unigram.Views.Settings
 
         private async void VoiceMessages_Click(object sender, RoutedEventArgs e)
         {
-            if (ViewModel.ProtoService.IsPremium)
+            if (ViewModel.ClientService.IsPremium)
             {
                 Frame.Navigate(typeof(SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesPage));
             }
-            else if (ViewModel.ProtoService.IsPremiumAvailable)
+            else if (ViewModel.ClientService.IsPremiumAvailable)
             {
                 var confirm = await MessagePopup.ShowAsync(Strings.Resources.PrivacyVoiceMessagesPremiumOnly, Strings.Resources.PrivacyVoiceMessages, Strings.Resources.OK, Strings.Resources.Cancel);
                 if (confirm == ContentDialogResult.Primary)

@@ -930,9 +930,9 @@ namespace Unigram.Controls.Chats
                         height = width;
                     }
 
-                    var length = viewModel.ProtoService.Options.SuggestedVideoNoteLength;
-                    var videoBitrate = viewModel.ProtoService.Options.SuggestedVideoNoteVideoBitrate;
-                    var audioBitrate = viewModel.ProtoService.Options.SuggestedVideoNoteAudioBitrate;
+                    var length = viewModel.ClientService.Options.SuggestedVideoNoteLength;
+                    var videoBitrate = viewModel.ClientService.Options.SuggestedVideoNoteVideoBitrate;
+                    var audioBitrate = viewModel.ClientService.Options.SuggestedVideoNoteAudioBitrate;
 
                     var transform = new VideoTransformEffectDefinition();
                     transform.CropRectangle = new Rect(x, y, width, height);

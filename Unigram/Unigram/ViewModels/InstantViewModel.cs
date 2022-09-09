@@ -19,12 +19,12 @@ namespace Unigram.ViewModels
         private readonly ITranslateService _translateService;
         private readonly IMessageFactory _messageFactory;
 
-        public InstantViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IStorageService storageService, ITranslateService translateService, IMessageFactory messageFactory, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public InstantViewModel(IClientService clientService, ISettingsService settingsService, IStorageService storageService, ITranslateService translateService, IMessageFactory messageFactory, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             _translateService = translateService;
             _messageFactory = messageFactory;
-            _gallery = new InstantGalleryViewModel(protoService, storageService, aggregator);
+            _gallery = new InstantGalleryViewModel(clientService, storageService, aggregator);
 
             ShareCommand = new RelayCommand(ShareExecute);
             FeedbackCommand = new RelayCommand(FeedbackExecute);
@@ -36,7 +36,7 @@ namespace Unigram.ViewModels
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            var response = await ProtoService.SendAsync(new GetWebPagePreview(new FormattedText((string)parameter, new TextEntity[0])));
+            var response = await ClientService.SendAsync(new GetWebPagePreview(new FormattedText((string)parameter, new TextEntity[0])));
             if (response is WebPage webPage)
             {
                 Title = webPage.SiteName;
@@ -80,7 +80,7 @@ namespace Unigram.ViewModels
         public RelayCommand FeedbackCommand { get; }
         private async void FeedbackExecute()
         {
-            var response = await ProtoService.SendAsync(new SearchPublicChat("previews"));
+            var response = await ClientService.SendAsync(new SearchPublicChat("previews"));
             if (response is Chat chat)
             {
                 NavigationService.NavigateToChat(chat);

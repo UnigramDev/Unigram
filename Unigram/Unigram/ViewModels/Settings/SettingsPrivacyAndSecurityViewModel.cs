@@ -32,8 +32,8 @@ namespace Unigram.ViewModels.Settings
         private readonly SettingsPrivacyAllowChatInvitesViewModel _allowChatInvitesRules;
         private readonly SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesViewModel _allowPrivateVoiceAndVideoNoteMessages;
 
-        public SettingsPrivacyAndSecurityViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IContactsService contactsService, IPasscodeService passcodeService, SettingsPrivacyShowForwardedViewModel showForwarded, SettingsPrivacyShowPhoneViewModel showPhone, SettingsPrivacyShowPhotoViewModel showPhoto, SettingsPrivacyShowStatusViewModel statusTimestamp, SettingsPrivacyAllowCallsViewModel phoneCall, SettingsPrivacyAllowChatInvitesViewModel chatInvite, SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesViewModel privateVoiceAndVideoNoteMessages)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public SettingsPrivacyAndSecurityViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IContactsService contactsService, IPasscodeService passcodeService, SettingsPrivacyShowForwardedViewModel showForwarded, SettingsPrivacyShowPhoneViewModel showPhone, SettingsPrivacyShowPhotoViewModel showPhoto, SettingsPrivacyShowStatusViewModel statusTimestamp, SettingsPrivacyAllowCallsViewModel phoneCall, SettingsPrivacyAllowChatInvitesViewModel chatInvite, SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesViewModel privateVoiceAndVideoNoteMessages)
+            : base(clientService, settingsService, aggregator)
         {
             _contactsService = contactsService;
             _passcodeService = passcodeService;
@@ -64,7 +64,7 @@ namespace Unigram.ViewModels.Settings
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            ProtoService.Send(new GetAccountTtl(), result =>
+            ClientService.Send(new GetAccountTtl(), result =>
             {
                 if (result is AccountTtl ttl)
                 {
@@ -96,7 +96,7 @@ namespace Unigram.ViewModels.Settings
                 }
             });
 
-            ProtoService.Send(new GetBlockedMessageSenders(0, 1), result =>
+            ClientService.Send(new GetBlockedMessageSenders(0, 1), result =>
             {
                 if (result is MessageSenders senders)
                 {
@@ -104,7 +104,7 @@ namespace Unigram.ViewModels.Settings
                 }
             });
 
-            ProtoService.Send(new GetPasswordState(), result =>
+            ClientService.Send(new GetPasswordState(), result =>
             {
                 if (result is PasswordState passwordState)
                 {
@@ -116,9 +116,9 @@ namespace Unigram.ViewModels.Settings
                 }
             });
 
-            if (ApiInfo.IsPackagedRelease && CacheService.Options.CanIgnoreSensitiveContentRestrictions)
+            if (ApiInfo.IsPackagedRelease && ClientService.Options.CanIgnoreSensitiveContentRestrictions)
             {
-                ProtoService.Send(new GetOption("ignore_sensitive_content_restrictions"), result =>
+                ClientService.Send(new GetOption("ignore_sensitive_content_restrictions"), result =>
                 {
                     BeginOnUIThread(() => RaisePropertyChanged(nameof(IgnoreSensitiveContentRestrictions)));
                 });
@@ -151,7 +151,7 @@ namespace Unigram.ViewModels.Settings
             {
                 if (value >= 0 && value < _accountTtlIndexer.Length && _accountTtl != _accountTtlIndexer[value])
                 {
-                    ProtoService.SendAsync(new SetAccountTtl(new AccountTtl(_accountTtl = _accountTtlIndexer[value])));
+                    ClientService.SendAsync(new SetAccountTtl(new AccountTtl(_accountTtl = _accountTtlIndexer[value])));
                     RaisePropertyChanged();
                 }
             }
@@ -213,16 +213,16 @@ namespace Unigram.ViewModels.Settings
 
         public bool IsContactsSuggestEnabled
         {
-            get => !CacheService.Options.DisableTopChats;
+            get => !ClientService.Options.DisableTopChats;
             set => SetSuggestContacts(value);
         }
 
         public bool IsArchiveAndMuteEnabled
         {
-            get => ProtoService.Options.ArchiveAndMuteNewChatsFromUnknownUsers;
+            get => ClientService.Options.ArchiveAndMuteNewChatsFromUnknownUsers;
             set
             {
-                ProtoService.Options.ArchiveAndMuteNewChatsFromUnknownUsers = value;
+                ClientService.Options.ArchiveAndMuteNewChatsFromUnknownUsers = value;
                 RaisePropertyChanged();
             }
         }
@@ -239,12 +239,12 @@ namespace Unigram.ViewModels.Settings
 
         public bool IgnoreSensitiveContentRestrictions
         {
-            get => CacheService.Options.IgnoreSensitiveContentRestrictions;
+            get => ClientService.Options.IgnoreSensitiveContentRestrictions;
             set
             {
-                if (CacheService.Options.CanIgnoreSensitiveContentRestrictions)
+                if (ClientService.Options.CanIgnoreSensitiveContentRestrictions)
                 {
-                    CacheService.Options.IgnoreSensitiveContentRestrictions = value;
+                    ClientService.Options.IgnoreSensitiveContentRestrictions = value;
                     RaisePropertyChanged();
                 }
             }
@@ -276,7 +276,7 @@ namespace Unigram.ViewModels.Settings
                 }
             }
 
-            ProtoService.Options.DisableTopChats = !value;
+            ClientService.Options.DisableTopChats = !value;
         }
 
         public RelayCommand PasscodeCommand { get; }
@@ -288,7 +288,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand PasswordCommand { get; }
         private async void PasswordExecute()
         {
-            var response = await ProtoService.SendAsync(new GetPasswordState());
+            var response = await ClientService.SendAsync(new GetPasswordState());
             if (response is PasswordState passwordState)
             {
                 if (passwordState.HasPassword)
@@ -315,7 +315,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand ChangeEmailCommand { get; }
         private async void ChangeEmailExecute()
         {
-            var response = await ProtoService.SendAsync(new GetPasswordState());
+            var response = await ClientService.SendAsync(new GetPasswordState());
             if (response is PasswordState passwordState)
             {
                 var confirm = await MessagePopup.ShowAsync(Strings.Resources.EmailLoginChangeMessage, passwordState.LoginEmailAddressPattern, Strings.Resources.ChangeEmail, Strings.Resources.Cancel);
@@ -331,7 +331,7 @@ namespace Unigram.ViewModels.Settings
                 return;
             }
 
-            var clear = await ProtoService.SendAsync(new ClearAllDraftMessages(true));
+            var clear = await ClientService.SendAsync(new ClearAllDraftMessages(true));
             if (clear is Error)
             {
                 // TODO
@@ -349,16 +349,16 @@ namespace Unigram.ViewModels.Settings
 
             IsContactsSyncEnabled = false;
 
-            var clear = await ProtoService.SendAsync(new ClearImportedContacts());
+            var clear = await ClientService.SendAsync(new ClearImportedContacts());
             if (clear is Error)
             {
                 // TODO
             }
 
-            var contacts = await ProtoService.SendAsync(new GetContacts());
+            var contacts = await ClientService.SendAsync(new GetContacts());
             if (contacts is Telegram.Td.Api.Users users)
             {
-                var delete = await ProtoService.SendAsync(new RemoveContacts(users.UserIds));
+                var delete = await ClientService.SendAsync(new RemoveContacts(users.UserIds));
                 if (delete is Error)
                 {
                     // TODO
@@ -401,12 +401,12 @@ namespace Unigram.ViewModels.Settings
 
                 if (info)
                 {
-                    ProtoService.Send(new DeleteSavedOrderInfo());
+                    ClientService.Send(new DeleteSavedOrderInfo());
                 }
 
                 if (credential)
                 {
-                    ProtoService.Send(new DeleteSavedCredentials());
+                    ClientService.Send(new DeleteSavedCredentials());
                 }
             }
         }
@@ -419,7 +419,7 @@ namespace Unigram.ViewModels.Settings
             {
                 if (IsContactsSyncEnabled)
                 {
-                    ProtoService.Send(new GetContacts(), async result =>
+                    ClientService.Send(new GetContacts(), async result =>
                     {
                         if (result is Telegram.Td.Api.Users users)
                         {

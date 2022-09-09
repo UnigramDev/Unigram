@@ -9,14 +9,14 @@ namespace Unigram.ViewModels.Gallery
         private readonly Animation _animation;
         private readonly string _caption;
 
-        public GalleryAnimation(IProtoService protoService, Animation animation)
-            : base(protoService)
+        public GalleryAnimation(IClientService clientService, Animation animation)
+            : base(clientService)
         {
             _animation = animation;
         }
 
-        public GalleryAnimation(IProtoService protoService, Animation animation, string caption)
-            : base(protoService)
+        public GalleryAnimation(IClientService clientService, Animation animation, string caption)
+            : base(clientService)
         {
             _animation = animation;
             _caption = caption;

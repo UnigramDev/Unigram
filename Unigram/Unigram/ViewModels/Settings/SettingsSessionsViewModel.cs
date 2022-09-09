@@ -17,8 +17,8 @@ namespace Unigram.ViewModels.Settings
 {
     public class SettingsSessionsViewModel : TLViewModelBase
     {
-        public SettingsSessionsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public SettingsSessionsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             Items = new MvxObservableCollection<KeyedList<SessionsGroup, Session>>();
 
@@ -39,7 +39,7 @@ namespace Unigram.ViewModels.Settings
             {
                 if (value >= 0 && value < _sessionTtlIndexer.Length && _sessionTtl != _sessionTtlIndexer[value])
                 {
-                    ProtoService.SendAsync(new SetInactiveSessionTtl(_sessionTtl = _sessionTtlIndexer[value]));
+                    ClientService.SendAsync(new SetInactiveSessionTtl(_sessionTtl = _sessionTtlIndexer[value]));
                     RaisePropertyChanged();
                 }
             }
@@ -64,7 +64,7 @@ namespace Unigram.ViewModels.Settings
 
         private async Task UpdateSessionsAsync()
         {
-            var response = await ProtoService.SendAsync(new GetActiveSessions());
+            var response = await ClientService.SendAsync(new GetActiveSessions());
             if (response is Sessions sessions)
             {
                 int? period = null;
@@ -149,13 +149,13 @@ namespace Unigram.ViewModels.Settings
                 if (session.CanAcceptCalls != dialog.CanAcceptCalls && confirm == ContentDialogResult.Secondary)
                 {
                     session.CanAcceptCalls = dialog.CanAcceptCalls;
-                    ProtoService.Send(new ToggleSessionCanAcceptCalls(session.Id, dialog.CanAcceptCalls));
+                    ClientService.Send(new ToggleSessionCanAcceptCalls(session.Id, dialog.CanAcceptCalls));
                 }
 
                 if (session.CanAcceptSecretChats != dialog.CanAcceptSecretChats && confirm == ContentDialogResult.Secondary)
                 {
                     session.CanAcceptSecretChats = dialog.CanAcceptSecretChats;
-                    ProtoService.Send(new ToggleSessionCanAcceptSecretChats(session.Id, dialog.CanAcceptSecretChats));
+                    ClientService.Send(new ToggleSessionCanAcceptSecretChats(session.Id, dialog.CanAcceptSecretChats));
                 }
 
                 return;
@@ -164,7 +164,7 @@ namespace Unigram.ViewModels.Settings
             var terminate = await MessagePopup.ShowAsync(Strings.Resources.TerminateSessionQuestion, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (terminate == ContentDialogResult.Primary)
             {
-                var response = await ProtoService.SendAsync(new TerminateSession(session.Id));
+                var response = await ClientService.SendAsync(new TerminateSession(session.Id));
                 if (response is Ok)
                 {
                     foreach (var group in Items)
@@ -185,7 +185,7 @@ namespace Unigram.ViewModels.Settings
             var terminate = await MessagePopup.ShowAsync(Strings.Resources.AreYouSureSessions, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (terminate == ContentDialogResult.Primary)
             {
-                var response = await ProtoService.SendAsync(new TerminateAllOtherSessions());
+                var response = await ClientService.SendAsync(new TerminateAllOtherSessions());
                 if (response is Ok)
                 {
                     Items.Clear();

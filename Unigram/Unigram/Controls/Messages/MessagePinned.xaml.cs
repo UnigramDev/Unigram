@@ -296,7 +296,7 @@ namespace Unigram.Controls.Messages
             }
         }
 
-        protected override void SetText(IProtoService protoService, MessageSender sender, string title, string service, FormattedText message)
+        protected override void SetText(IClientService clientService, MessageSender sender, string title, string service, FormattedText message)
         {
             TitleLabel.Text = title;
 

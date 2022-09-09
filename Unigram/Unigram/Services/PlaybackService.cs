@@ -138,7 +138,7 @@ namespace Unigram.Services
 
                 if ((message.Content is MessageVideoNote videoNote && !videoNote.IsViewed && !message.IsOutgoing) || (message.Content is MessageVoiceNote voiceNote && !voiceNote.IsListened && !message.IsOutgoing))
                 {
-                    message.ProtoService.Send(new OpenMessageContent(message.ChatId, message.Id));
+                    message.ClientService.Send(new OpenMessageContent(message.ChatId, message.Id));
                 }
 
                 CurrentPlayback = item;
@@ -254,7 +254,7 @@ namespace Unigram.Services
             {
                 try
                 {
-                    var file = await item.Message.ProtoService.GetFileAsync(item.File);
+                    var file = await item.Message.ClientService.GetFileAsync(item.File);
                     await transport.DisplayUpdater.CopyFromFileAsync(MediaPlaybackType.Music, file);
                 }
                 catch
@@ -549,7 +549,7 @@ namespace Unigram.Services
             var offset = -49;
             var filter = message.Content is MessageAudio ? new SearchMessagesFilterAudio() : (SearchMessagesFilter)new SearchMessagesFilterVoiceAndVideoNote();
 
-            message.ProtoService.Send(new SearchChatMessages(message.ChatId, string.Empty, null, message.Id, offset, 100, filter, _threadId), result =>
+            message.ClientService.Send(new SearchChatMessages(message.ChatId, string.Empty, null, message.Id, offset, 100, filter, _threadId), result =>
             {
                 if (result is Messages messages)
                 {
@@ -557,11 +557,11 @@ namespace Unigram.Services
                     {
                         if (add.Id > message.Id && add.Content is MessageAudio)
                         {
-                            items.Insert(0, GetPlaybackItem(new MessageWithOwner(message.ProtoService, add)));
+                            items.Insert(0, GetPlaybackItem(new MessageWithOwner(message.ClientService, add)));
                         }
                         else if (add.Id < message.Id && (add.Content is MessageVoiceNote || add.Content is MessageVideoNote))
                         {
-                            items.Insert(0, GetPlaybackItem(new MessageWithOwner(message.ProtoService, add)));
+                            items.Insert(0, GetPlaybackItem(new MessageWithOwner(message.ClientService, add)));
                         }
                     }
 
@@ -569,11 +569,11 @@ namespace Unigram.Services
                     {
                         if (add.Id < message.Id && add.Content is MessageAudio)
                         {
-                            items.Add(GetPlaybackItem(new MessageWithOwner(message.ProtoService, add)));
+                            items.Add(GetPlaybackItem(new MessageWithOwner(message.ClientService, add)));
                         }
                         else if (add.Id > message.Id && (add.Content is MessageVoiceNote || add.Content is MessageVideoNote))
                         {
-                            items.Add(GetPlaybackItem(new MessageWithOwner(message.ProtoService, add)));
+                            items.Add(GetPlaybackItem(new MessageWithOwner(message.ClientService, add)));
                         }
                     }
 
@@ -623,7 +623,7 @@ namespace Unigram.Services
         {
             GetProperties(message, out string mime, out int duration, out speed);
 
-            var stream = new RemoteFileStream(message.ProtoService, file, duration);
+            var stream = new RemoteFileStream(message.ClientService, file, duration);
             var source = MediaSource.CreateFromStream(stream, mime);
 
             source.CustomProperties["file"] = file.Id;

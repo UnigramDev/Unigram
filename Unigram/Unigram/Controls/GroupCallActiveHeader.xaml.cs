@@ -43,7 +43,7 @@ namespace Unigram.Controls
                 _service.MutedChanged += OnMutedChanged;
                 _service.Manager.AudioLevelsUpdated += OnAudioLevelsUpdated;
 
-                TitleInfo.Text = service.Call.Title.Length > 0 ? service.Call.Title : service.CacheService.GetTitle(service.Chat);
+                TitleInfo.Text = service.Call.Title.Length > 0 ? service.Call.Title : service.ClientService.GetTitle(service.Chat);
                 Audio.IsChecked = !_service.IsMuted;
                 Automation.SetToolTip(Audio, _service.IsMuted ? Strings.Resources.VoipGroupUnmute : Strings.Resources.VoipGroupMute);
             }

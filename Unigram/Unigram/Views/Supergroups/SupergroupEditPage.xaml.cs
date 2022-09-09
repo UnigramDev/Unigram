@@ -81,12 +81,12 @@ namespace Unigram.Views.Supergroups
 
         public void UpdateChatTitle(Chat chat)
         {
-            TitleLabel.Text = ViewModel.ProtoService.GetTitle(chat);
+            TitleLabel.Text = ViewModel.ClientService.GetTitle(chat);
         }
 
         public void UpdateChatPhoto(Chat chat)
         {
-            Photo.SetChat(ViewModel.ProtoService, chat, 64);
+            Photo.SetChat(ViewModel.ClientService, chat, 64);
         }
 
         public void UpdateSupergroup(Chat chat, Supergroup group)
@@ -157,7 +157,7 @@ namespace Unigram.Views.Supergroups
             ChatType.Visibility = fullInfo.CanSetUsername ? Visibility.Visible : Visibility.Collapsed;
             ChatHistory.Badge = fullInfo.IsAllHistoryAvailable ? Strings.Resources.ChatHistoryVisible : Strings.Resources.ChatHistoryHidden;
 
-            var linkedChat = ViewModel.CacheService.GetChat(fullInfo.LinkedChatId);
+            var linkedChat = ViewModel.ClientService.GetChat(fullInfo.LinkedChatId);
             if (linkedChat != null)
             {
                 ChatLinked.Badge = linkedChat.Title;
@@ -176,7 +176,7 @@ namespace Unigram.Views.Supergroups
                 if (fullInfo.InviteLink == null && string.IsNullOrEmpty(group.Username))
                 {
                     InviteLinkPanel.Visibility = Visibility.Collapsed;
-                    ViewModel.ProtoService.Send(new CreateChatInviteLink(chat.Id, string.Empty, 0, 0, false));
+                    ViewModel.ClientService.Send(new CreateChatInviteLink(chat.Id, string.Empty, 0, 0, false));
                 }
                 else if (string.IsNullOrEmpty(group.Username))
                 {
@@ -186,7 +186,7 @@ namespace Unigram.Views.Supergroups
                 }
                 else
                 {
-                    InviteLink.Text = MeUrlPrefixConverter.Convert(ViewModel.CacheService, group.Username);
+                    InviteLink.Text = MeUrlPrefixConverter.Convert(ViewModel.ClientService, group.Username);
                     RevokeLink.Visibility = Visibility.Collapsed;
                     InviteLinkPanel.Visibility = Visibility.Visible;
                 }
@@ -207,7 +207,7 @@ namespace Unigram.Views.Supergroups
                 return;
             }
 
-            ViewModel.ProtoService.Send(new GetStickerSet(fullInfo.StickerSetId), result =>
+            ViewModel.ClientService.Send(new GetStickerSet(fullInfo.StickerSetId), result =>
             {
                 this.BeginOnUIThread(() =>
                 {
@@ -277,7 +277,7 @@ namespace Unigram.Views.Supergroups
                 if (fullInfo.InviteLink == null)
                 {
                     InviteLinkPanel.Visibility = Visibility.Collapsed;
-                    ViewModel.ProtoService.Send(new CreateChatInviteLink(chat.Id, string.Empty, 0, 0, false));
+                    ViewModel.ClientService.Send(new CreateChatInviteLink(chat.Id, string.Empty, 0, 0, false));
                 }
                 else
                 {

@@ -43,11 +43,11 @@ namespace Unigram.Views.Settings
                 {
                     player.Source = null;
 
-                    UpdateManager.Subscribe(player, ViewModel.ProtoService, file, UpdateFile, true);
+                    UpdateManager.Subscribe(player, ViewModel.ClientService, file, UpdateFile, true);
 
                     if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                     {
-                        ViewModel.ProtoService.DownloadFile(file.Id, 16);
+                        ViewModel.ClientService.DownloadFile(file.Id, 16);
                     }
                 }
             }

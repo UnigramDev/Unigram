@@ -10,15 +10,15 @@ namespace Unigram.ViewModels.Authorization
 {
     public class AuthorizationEmailAddressViewModel : TLViewModelBase
     {
-        public AuthorizationEmailAddressViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public AuthorizationEmailAddressViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
         }
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            var authState = ProtoService.GetAuthorizationState();
+            var authState = ClientService.GetAuthorizationState();
             if (authState is AuthorizationStateWaitEmailAddress waitEmailAddress)
             {
 
@@ -45,7 +45,7 @@ namespace Unigram.ViewModels.Authorization
 
             IsLoading = true;
 
-            var response = await ProtoService.SendAsync(new SetAuthenticationEmailAddress(_address));
+            var response = await ClientService.SendAsync(new SetAuthenticationEmailAddress(_address));
             if (response is Error error)
             {
                 IsLoading = false;

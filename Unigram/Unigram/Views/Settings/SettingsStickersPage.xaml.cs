@@ -210,11 +210,11 @@ namespace Unigram.Views.Settings
                 CompositionPathParser.ParseThumbnail(cover, out ShapeVisual visual, false);
                 ElementCompositionPreview.SetElementChildVisual(content.Children[0], visual);
 
-                UpdateManager.Subscribe(content, ViewModel.ProtoService, file, UpdateFile, true);
+                UpdateManager.Subscribe(content, ViewModel.ClientService, file, UpdateFile, true);
 
                 if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
-                    ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                    ViewModel.ClientService.DownloadFile(file.Id, 1);
                 }
             }
 

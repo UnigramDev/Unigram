@@ -36,13 +36,11 @@ namespace Unigram.Services
 
     public class LocationService : ILocationService
     {
-        private readonly IProtoService _protoService;
-        private readonly ICacheService _cacheService;
+        private readonly IClientService _clientService;
 
-        public LocationService(IProtoService protoService, ICacheService cacheService)
+        public LocationService(IClientService clientService)
         {
-            _protoService = protoService;
-            _cacheService = cacheService;
+            _clientService = clientService;
         }
 
         private Geolocator _locator;
@@ -150,27 +148,27 @@ namespace Unigram.Services
         {
             var results = new List<Venue>();
 
-            var option = _cacheService.Options.VenueSearchBotUsername;
+            var option = _clientService.Options.VenueSearchBotUsername;
             if (string.IsNullOrEmpty(option))
             {
                 // TODO: use hardcoded bot?
                 return new GetVenuesResult(null, results);
             }
 
-            var chat = await _protoService.SendAsync(new SearchPublicChat(option)) as Chat;
+            var chat = await _clientService.SendAsync(new SearchPublicChat(option)) as Chat;
             if (chat == null)
             {
                 return new GetVenuesResult(null, results);
             }
 
 
-            var user = _cacheService.GetUser(chat);
+            var user = _clientService.GetUser(chat);
             if (user == null)
             {
                 return new GetVenuesResult(null, results);
             }
 
-            var response = await _protoService.SendAsync(new GetInlineQueryResults(user.Id, chatId, new Location(latitude, longitude, 0), query ?? string.Empty, offset ?? string.Empty));
+            var response = await _clientService.SendAsync(new GetInlineQueryResults(user.Id, chatId, new Location(latitude, longitude, 0), query ?? string.Empty, offset ?? string.Empty));
             if (response is InlineQueryResults inlineResults)
             {
                 foreach (var item in inlineResults.Results)

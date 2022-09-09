@@ -249,7 +249,7 @@ namespace Unigram.Views.Supergroups
             }
             else if (args.ItemContainer.ContentTemplateRoot is UserCell content)
             {
-                content.UpdateSupergroupMember(ViewModel.ProtoService, args, OnContainerContentChanging);
+                content.UpdateSupergroupMember(ViewModel.ClientService, args, OnContainerContentChanging);
             }
         }
 

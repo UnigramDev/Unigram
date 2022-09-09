@@ -21,8 +21,8 @@ namespace Unigram.ViewModels.Settings
         private readonly Dictionary<int, int> _indexToSize = new Dictionary<int, int> { { 0, 12 }, { 1, 13 }, { 2, 14 }, { 3, 15 }, { 4, 16 }, { 5, 17 }, { 6, 18 } };
         private readonly Dictionary<int, int> _sizeToIndex = new Dictionary<int, int> { { 12, 0 }, { 13, 1 }, { 14, 2 }, { 15, 3 }, { 16, 4 }, { 17, 5 }, { 18, 6 } };
 
-        public SettingsAppearanceViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IThemeService themeService, IEmojiSetService emojiSetService)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public SettingsAppearanceViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IThemeService themeService, IEmojiSetService emojiSetService)
+            : base(clientService, settingsService, aggregator)
         {
             _themeService = themeService;
             _emojiSetService = emojiSetService;
@@ -63,7 +63,7 @@ namespace Unigram.ViewModels.Settings
             };
 
             var defaultTheme = new ChatTheme("\U0001F3E0", defaultLight, defaultDark);
-            var themes = ProtoService.GetChatThemes();
+            var themes = ClientService.GetChatThemes();
 
             ChatThemes.AddRange(new[] { defaultTheme }.Union(themes));
 
@@ -106,11 +106,11 @@ namespace Unigram.ViewModels.Settings
             {
                 if (background != null && chatTheme.Name != "\U0001F3E0")
                 {
-                    ProtoService.Send(new SetBackground(new InputBackgroundRemote(background.Id), background.Type, forDarkTheme));
+                    ClientService.Send(new SetBackground(new InputBackgroundRemote(background.Id), background.Type, forDarkTheme));
                 }
                 else
                 {
-                    ProtoService.Send(new SetBackground(null, null, forDarkTheme));
+                    ClientService.Send(new SetBackground(null, null, forDarkTheme));
                 }
             }
 
@@ -223,10 +223,10 @@ namespace Unigram.ViewModels.Settings
 
         public bool IsLargeEmojiEnabled
         {
-            get => !ProtoService.Options.DisableAnimatedEmoji;
+            get => !ClientService.Options.DisableAnimatedEmoji;
             set
             {
-                ProtoService.Options.DisableAnimatedEmoji = !value;
+                ClientService.Options.DisableAnimatedEmoji = !value;
                 RaisePropertyChanged();
             }
         }
@@ -281,7 +281,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand EmojiSetCommand { get; }
         private async void EmojiSetExecute()
         {
-            await new SettingsEmojiSetPopup(ProtoService, _emojiSetService, Aggregator).ShowQueuedAsync();
+            await new SettingsEmojiSetPopup(ClientService, _emojiSetService, Aggregator).ShowQueuedAsync();
 
             var emojiSet = Settings.Appearance.EmojiSet;
             EmojiSet = emojiSet.Title;

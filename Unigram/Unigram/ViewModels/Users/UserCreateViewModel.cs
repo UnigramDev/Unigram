@@ -12,15 +12,15 @@ namespace Unigram.ViewModels.Users
 {
     public class UserCreateViewModel : TLViewModelBase
     {
-        public UserCreateViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public UserCreateViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute, () => !string.IsNullOrEmpty(_firstName) && !string.IsNullOrEmpty(_phoneNumber));
         }
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            ProtoService.Send(new GetCountryCode(), result =>
+            ClientService.Send(new GetCountryCode(), result =>
             {
                 if (result is Text text)
                 {
@@ -94,12 +94,12 @@ namespace Unigram.ViewModels.Users
         {
             var phoneNumber = _phoneNumber?.Trim('+').Replace(" ", string.Empty);
 
-            var response = await ProtoService.SendAsync(new ImportContacts(new[] { new Contact(phoneNumber, _firstName, _lastName, string.Empty, 0) }));
+            var response = await ClientService.SendAsync(new ImportContacts(new[] { new Contact(phoneNumber, _firstName, _lastName, string.Empty, 0) }));
             if (response is ImportedContacts imported)
             {
                 if (imported.UserIds.Count > 0)
                 {
-                    var create = await ProtoService.SendAsync(new CreatePrivateChat(imported.UserIds[0], false));
+                    var create = await ClientService.SendAsync(new CreatePrivateChat(imported.UserIds[0], false));
                     if (create is Chat chat)
                     {
                         NavigationService.NavigateToChat(chat);

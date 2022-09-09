@@ -51,7 +51,7 @@ namespace Unigram.Views.Settings
             }
             else if (args.ItemContainer.ContentTemplateRoot is UserCell content)
             {
-                content.UpdateStatisticsByChat(ViewModel.ProtoService, args, OnContainerContentChanging);
+                content.UpdateStatisticsByChat(ViewModel.ClientService, args, OnContainerContentChanging);
             }
         }
 

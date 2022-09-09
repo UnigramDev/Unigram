@@ -15,8 +15,8 @@ namespace Unigram.ViewModels.BasicGroups
         private bool _uploadingPhoto;
         private readonly Action _uploadingCallback;
 
-        public BasicGroupCreateStep1ViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public BasicGroupCreateStep1ViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             Items = new MvxObservableCollection<Chat>();
 
@@ -60,13 +60,13 @@ namespace Unigram.ViewModels.BasicGroups
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
-            var maxSize = CacheService.Options.BasicGroupSizeMax;
+            var maxSize = ClientService.Options.BasicGroupSizeMax;
 
             var peers = Items.Select(x => x.Type).OfType<ChatTypePrivate>().Select(x => x.UserId).ToArray();
             if (peers.Length <= maxSize)
             {
                 // Classic chat
-                var response = await ProtoService.SendAsync(new CreateNewBasicGroupChat(peers, _title));
+                var response = await ClientService.SendAsync(new CreateNewBasicGroupChat(peers, _title));
                 if (response is Chat chat)
                 {
                     // TODO: photo

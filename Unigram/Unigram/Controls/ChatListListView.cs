@@ -35,7 +35,7 @@ namespace Unigram.Controls
             if (content != null && args.Item is Chat chat)
             {
                 content.UpdateViewState(chat, _viewState == MasterDetailState.Compact);
-                content.UpdateChat(ViewModel.ProtoService, chat, ViewModel.Items.ChatList);
+                content.UpdateChat(ViewModel.ClientService, chat, ViewModel.Items.ChatList);
                 args.Handled = true;
             }
         }

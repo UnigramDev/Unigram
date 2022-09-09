@@ -26,10 +26,10 @@ namespace Unigram.ViewModels.Settings
 
         //private TLAccountPassword _passwordBase;
 
-        public SettingsPasswordViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public SettingsPasswordViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
-            Input = new InputViewModel(this, protoService, cacheService, settingsService, aggregator);
+            Input = new InputViewModel(this, clientService, settingsService, aggregator);
 
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
             ForgotCommand = new RelayCommand(ForgotExecute);
@@ -39,7 +39,7 @@ namespace Unigram.ViewModels.Settings
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            var response = await ProtoService.SendAsync(new GetPasswordState());
+            var response = await ClientService.SendAsync(new GetPasswordState());
             if (response is PasswordState passwordState)
             {
                 Update(passwordState, false);
@@ -110,7 +110,7 @@ namespace Unigram.ViewModels.Settings
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new GetRecoveryEmailAddress(_password));
+            var response = await ClientService.SendAsync(new GetRecoveryEmailAddress(_password));
             if (response is RecoveryEmailAddress)
             {
                 State = SettingsPasswordState.Manage;
@@ -151,7 +151,7 @@ namespace Unigram.ViewModels.Settings
             //{
             //    IsLoading = true;
 
-            //    var response = await ProtoService.SendAsync(new RequestPasswordRecovery());
+            //    var response = await ClientService.SendAsync(new RequestPasswordRecovery());
             //    if (response is PasswordRecoveryInfo info)
             //    {
             //        await MessagePopup.ShowAsync(string.Format(Strings.Resources.RestoreEmailSent, info.RecoveryEmailAddressPattern), Strings.Resources.AppName, Strings.Resources.OK);
@@ -198,7 +198,7 @@ namespace Unigram.ViewModels.Settings
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new SetPassword(_password, string.Empty, string.Empty, false, string.Empty));
+            var response = await ClientService.SendAsync(new SetPassword(_password, string.Empty, string.Empty, false, string.Empty));
             if (response is PasswordState passwordState)
             {
                 Update(passwordState, false);
@@ -215,8 +215,8 @@ namespace Unigram.ViewModels.Settings
         {
             private readonly SettingsPasswordViewModel _viewModel;
 
-            public InputViewModel(SettingsPasswordViewModel viewModel, IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-                : base(protoService, cacheService, settingsService, aggregator)
+            public InputViewModel(SettingsPasswordViewModel viewModel, IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+                : base(clientService, settingsService, aggregator)
             {
                 _viewModel = viewModel;
 
@@ -286,7 +286,7 @@ namespace Unigram.ViewModels.Settings
                     }
                 }
 
-                var response = await ProtoService.SendAsync(new SetPassword(oldPassword, password, passwordHint, emailValid, emailAddress));
+                var response = await ClientService.SendAsync(new SetPassword(oldPassword, password, passwordHint, emailValid, emailAddress));
                 if (response is PasswordState passwordState)
                 {
                     _viewModel.Update(passwordState, true);

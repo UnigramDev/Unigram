@@ -178,7 +178,7 @@ namespace Unigram.Views
                 sharedMedia.Header.UpdateBasicGroupFullInfo(chat, group, fullInfo);
             }
 
-            ViewModel.Members = new SortedObservableCollection<ChatMember>(new ChatMemberComparer(ViewModel.ProtoService, true), fullInfo.Members);
+            ViewModel.Members = new SortedObservableCollection<ChatMember>(new ChatMemberComparer(ViewModel.ClientService, true), fullInfo.Members);
         }
 
 

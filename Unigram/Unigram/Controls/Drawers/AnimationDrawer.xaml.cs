@@ -58,8 +58,8 @@ namespace Unigram.Controls.Drawers
             _zoomer = new ZoomableListHandler(List);
             _zoomer.Opening = _handler.UnloadVisibleItems;
             _zoomer.Closing = _handler.ThrottleVisibleItems;
-            _zoomer.DownloadFile = fileId => ViewModel.ProtoService.DownloadFile(fileId, 32);
-            _zoomer.SessionId = () => ViewModel.ProtoService.SessionId;
+            _zoomer.DownloadFile = fileId => ViewModel.ClientService.DownloadFile(fileId, 32);
+            _zoomer.SessionId = () => ViewModel.ClientService.SessionId;
 
             ElementCompositionPreview.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
 
@@ -165,11 +165,11 @@ namespace Unigram.Controls.Drawers
             {
                 view.Source = null;
 
-                UpdateManager.Subscribe(view, ViewModel.ProtoService, file, UpdateFile, true);
+                UpdateManager.Subscribe(view, ViewModel.ClientService, file, UpdateFile, true);
 
                 if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
-                    ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                    ViewModel.ClientService.DownloadFile(file.Id, 1);
                 }
 
                 var thumbnail = animation.Thumbnail?.File;
@@ -183,11 +183,11 @@ namespace Unigram.Controls.Drawers
                     {
                         view.Thumbnail = null;
 
-                        UpdateManager.Subscribe(content, ViewModel.ProtoService, thumbnail, UpdateThumbnail, true);
+                        UpdateManager.Subscribe(content, ViewModel.ClientService, thumbnail, UpdateThumbnail, true);
 
                         if (thumbnail.Local.CanBeDownloaded && !thumbnail.Local.IsDownloadingActive)
                         {
-                            ViewModel.ProtoService.DownloadFile(thumbnail.Id, 1);
+                            ViewModel.ClientService.DownloadFile(thumbnail.Id, 1);
                         }
                     }
                 }

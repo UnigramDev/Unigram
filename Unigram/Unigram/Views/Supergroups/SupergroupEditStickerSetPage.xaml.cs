@@ -70,7 +70,7 @@ namespace Unigram.Views.Supergroups
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
                     photo.Source = null;
-                    ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                    ViewModel.ClientService.DownloadFile(file.Id, 1);
                 }
             }
 
@@ -123,7 +123,7 @@ namespace Unigram.Views.Supergroups
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
                 photo.Source = null;
-                ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                ViewModel.ClientService.DownloadFile(file.Id, 1);
             }
         }
 

@@ -20,15 +20,15 @@ namespace Unigram.Services
     {
         private readonly FileContext<EmojiSet> _mapping = new FileContext<EmojiSet>();
 
-        private readonly IProtoService _protoService;
+        private readonly IClientService _clientService;
         private readonly ISettingsService _settings;
         private readonly IEventAggregator _aggregator;
 
         private long? _chatId;
 
-        public EmojiSetService(IProtoService protoService, ISettingsService settings, IEventAggregator aggregator)
+        public EmojiSetService(IClientService clientService, ISettingsService settings, IEventAggregator aggregator)
         {
-            _protoService = protoService;
+            _clientService = clientService;
             _settings = settings;
             _aggregator = aggregator;
 
@@ -95,12 +95,12 @@ namespace Unigram.Services
                     // There's a new version for the current font
                     if (item.Document.Local.CanBeDownloaded && !item.Document.Local.IsDownloadingActive && !item.Document.Local.IsDownloadingCompleted)
                     {
-                        _protoService.DownloadFile(item.Document.Id, 16);
+                        _clientService.DownloadFile(item.Document.Id, 16);
                     }
 
                     if (item.Thumbnail.Local.CanBeDownloaded && !item.Thumbnail.Local.IsDownloadingActive && !item.Thumbnail.Local.IsDownloadingCompleted)
                     {
-                        _protoService.DownloadFile(item.Thumbnail.Id, 16);
+                        _clientService.DownloadFile(item.Thumbnail.Id, 16);
                     }
                 }
             }
@@ -141,7 +141,7 @@ namespace Unigram.Services
         {
             if (_chatId == null)
             {
-                var chat = await _protoService.SendAsync(new SearchPublicChat(Constants.AppChannel)) as Chat;
+                var chat = await _clientService.SendAsync(new SearchPublicChat(Constants.AppChannel)) as Chat;
                 if (chat != null)
                 {
                     _chatId = chat.Id;
@@ -154,16 +154,16 @@ namespace Unigram.Services
             }
 
             var chatId = _chatId.Value;
-            await _protoService.SendAsync(new OpenChat(chatId));
+            await _clientService.SendAsync(new OpenChat(chatId));
 
-            var response = await _protoService.SendAsync(new SearchChatMessages(chatId, "#emoji", null, 0, 0, 100, null, 0)) as Messages;
+            var response = await _clientService.SendAsync(new SearchChatMessages(chatId, "#emoji", null, 0, 0, 100, null, 0)) as Messages;
             if (response == null)
             {
-                _protoService.Send(new CloseChat(chatId));
+                _clientService.Send(new CloseChat(chatId));
                 return new EmojiSet[0];
             }
 
-            _protoService.Send(new CloseChat(chatId));
+            _clientService.Send(new CloseChat(chatId));
 
             var folder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("emoji", CreationCollisionOption.OpenIfExists);
 
@@ -281,7 +281,7 @@ namespace Unigram.Services
                     else if (set.Document.Local.IsDownloadingCompleted)
                     {
                         // Delete the file from chat cache as it isn't needed anymore
-                        _protoService.Send(new DeleteFileW(set.Document.Id));
+                        _clientService.Send(new DeleteFileW(set.Document.Id));
                     }
                 }
             }

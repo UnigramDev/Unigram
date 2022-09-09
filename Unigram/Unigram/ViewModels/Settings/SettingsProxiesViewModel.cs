@@ -23,8 +23,8 @@ namespace Unigram.ViewModels.Settings
     {
         private readonly INetworkService _networkService;
 
-        public SettingsProxiesViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INetworkService networkService)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public SettingsProxiesViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, INetworkService networkService)
+            : base(clientService, settingsService, aggregator)
         {
             _networkService = networkService;
 
@@ -46,7 +46,7 @@ namespace Unigram.ViewModels.Settings
 
             var systemId = await _networkService.GetSystemProxyId();
 
-            var response = await ProtoService.SendAsync(new GetProxies());
+            var response = await ClientService.SendAsync(new GetProxies());
             if (response is Proxies proxies)
             {
                 var items = proxies.ProxiesValue.Select(x => x.Id == systemId ? new SystemProxyViewModel(x) : new ProxyViewModel(x)).ToList<ConnectionViewModel>();
@@ -101,7 +101,7 @@ namespace Unigram.ViewModels.Settings
                 proxyId = 0;
             }
 
-            var status = await ProtoService.SendAsync(new PingProxy(proxyId));
+            var status = await ClientService.SendAsync(new PingProxy(proxyId));
             BeginOnUIThread(() =>
             {
                 if (status is Seconds seconds)
@@ -151,14 +151,14 @@ namespace Unigram.ViewModels.Settings
 
         public void Handle(UpdateConnectionState update)
         {
-            BeginOnUIThread(() => Handle(update.State, CacheService.Options.EnabledProxyId));
+            BeginOnUIThread(() => Handle(update.State, ClientService.Options.EnabledProxyId));
         }
 
         public void Handle(UpdateOption update)
         {
             if (string.Equals(update.Name, "enabled_proxy_id", StringComparison.OrdinalIgnoreCase))
             {
-                BeginOnUIThread(() => Handle(CacheService.GetConnectionState(), CacheService.Options.EnabledProxyId));
+                BeginOnUIThread(() => Handle(ClientService.GetConnectionState(), ClientService.Options.EnabledProxyId));
             }
         }
 
@@ -225,7 +225,7 @@ namespace Unigram.ViewModels.Settings
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new AddProxy(dialog.Server, dialog.Port, false, dialog.Type));
+            var response = await ClientService.SendAsync(new AddProxy(dialog.Server, dialog.Port, false, dialog.Type));
             if (response is Proxy proxy)
             {
                 var connection = new ProxyViewModel(proxy);
@@ -247,15 +247,15 @@ namespace Unigram.ViewModels.Settings
             else if (connection is ProxyViewModel proxy)
             {
                 _networkService.UseSystemProxy = false;
-                await ProtoService.SendAsync(new EnableProxy(proxy.Id));
+                await ClientService.SendAsync(new EnableProxy(proxy.Id));
             }
             else
             {
                 _networkService.UseSystemProxy = false;
-                await ProtoService.SendAsync(new DisableProxy());
+                await ClientService.SendAsync(new DisableProxy());
             }
 
-            Handle(CacheService.GetConnectionState(), CacheService.Options.EnabledProxyId);
+            Handle(ClientService.GetConnectionState(), ClientService.Options.EnabledProxyId);
         }
 
         public RelayCommand<ConnectionViewModel> EditCommand { get; }
@@ -268,7 +268,7 @@ namespace Unigram.ViewModels.Settings
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new EditProxy(connection.Id, dialog.Server, dialog.Port, false, dialog.Type));
+            var response = await ClientService.SendAsync(new EditProxy(connection.Id, dialog.Server, dialog.Port, false, dialog.Type));
             if (response is Proxy proxy)
             {
                 var index = Items.IndexOf(connection);
@@ -279,7 +279,7 @@ namespace Unigram.ViewModels.Settings
                 await UpdateAsync(edited);
             }
 
-            Handle(CacheService.GetConnectionState(), CacheService.Options.EnabledProxyId);
+            Handle(ClientService.GetConnectionState(), ClientService.Options.EnabledProxyId);
         }
 
         public RelayCommand<ProxyViewModel> RemoveCommand { get; }
@@ -291,19 +291,19 @@ namespace Unigram.ViewModels.Settings
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new RemoveProxy(proxy.Id));
+            var response = await ClientService.SendAsync(new RemoveProxy(proxy.Id));
             if (response is Ok)
             {
                 Items.Remove(proxy);
             }
 
-            Handle(CacheService.GetConnectionState(), CacheService.Options.EnabledProxyId);
+            Handle(ClientService.GetConnectionState(), ClientService.Options.EnabledProxyId);
         }
 
         public RelayCommand<ProxyViewModel> ShareCommand { get; }
         private async void ShareExecute(ProxyViewModel proxy)
         {
-            var response = await ProtoService.SendAsync(new GetProxyLink(proxy.Id));
+            var response = await ClientService.SendAsync(new GetProxyLink(proxy.Id));
             if (response is HttpUrl httpUrl && Uri.TryCreate(httpUrl.Url, UriKind.Absolute, out Uri uri))
             {
                 await SharePopup.GetForCurrentView().ShowAsync(uri, Strings.Resources.Proxy);

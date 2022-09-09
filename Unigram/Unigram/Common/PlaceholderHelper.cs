@@ -236,20 +236,20 @@ namespace Unigram.Common
         }
 
 
-        public static ImageSource GetBitmap(IProtoService protoService, PhotoSize photoSize)
+        public static ImageSource GetBitmap(IClientService clientService, PhotoSize photoSize)
         {
-            return GetBitmap(protoService, photoSize.Photo, photoSize.Width, photoSize.Height);
+            return GetBitmap(clientService, photoSize.Photo, photoSize.Width, photoSize.Height);
         }
 
-        public static ImageSource GetBitmap(IProtoService protoService, File file, int width, int height)
+        public static ImageSource GetBitmap(IClientService clientService, File file, int width, int height)
         {
             if (file.Local.IsDownloadingCompleted)
             {
                 return UriEx.ToBitmap(file.Local.Path, width, height);
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && protoService != null)
+            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && clientService != null)
             {
-                protoService.DownloadFile(file.Id, 1);
+                clientService.DownloadFile(file.Id, 1);
             }
 
             return null;
@@ -257,7 +257,7 @@ namespace Unigram.Common
 
         private static readonly DisposableMutex _patternSurfaceLock = new DisposableMutex();
 
-        public static async Task<LoadedImageSurface> GetPatternSurfaceAsync(IProtoService protoService, File file)
+        public static async Task<LoadedImageSurface> GetPatternSurfaceAsync(IClientService clientService, File file)
         {
             using var locked = await _patternSurfaceLock.WaitAsync();
 
@@ -299,15 +299,15 @@ namespace Unigram.Common
 
                 return bitmap;
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && protoService != null)
+            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && clientService != null)
             {
-                protoService.DownloadFile(file.Id, 1);
+                clientService.DownloadFile(file.Id, 1);
             }
 
             return null;
         }
 
-        public static async Task<CanvasBitmap> GetPatternBitmapAsync(ICanvasResourceCreator resourceCreator, IProtoService protoService, File file)
+        public static async Task<CanvasBitmap> GetPatternBitmapAsync(ICanvasResourceCreator resourceCreator, IClientService clientService, File file)
         {
             using var locked = await _patternSurfaceLock.WaitAsync();
 
@@ -348,9 +348,9 @@ namespace Unigram.Common
 
                 return bitmap;
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && protoService != null)
+            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && clientService != null)
             {
-                protoService.DownloadFile(file.Id, 1);
+                clientService.DownloadFile(file.Id, 1);
             }
 
             return null;

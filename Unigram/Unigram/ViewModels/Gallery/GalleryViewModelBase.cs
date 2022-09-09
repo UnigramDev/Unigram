@@ -15,8 +15,8 @@ namespace Unigram.ViewModels.Gallery
 
         private bool _hasProtectedContent;
 
-        public GalleryViewModelBase(IProtoService protoService, IStorageService storageService, IEventAggregator aggregator)
-            : base(protoService, protoService, null, aggregator)
+        public GalleryViewModelBase(IClientService clientService, IStorageService storageService, IEventAggregator aggregator)
+            : base(clientService, null, aggregator)
         {
             _storageService = storageService;
 
@@ -195,7 +195,7 @@ namespace Unigram.ViewModels.Gallery
                 return;
             }
 
-            var service = WindowContext.Current.NavigationServices.GetByFrameId("Main" + ProtoService.SessionId);
+            var service = WindowContext.Current.NavigationServices.GetByFrameId("Main" + ClientService.SessionId);
             if (service != null)
             {
                 service.NavigateToChat(message.ChatId, message: message.Id);
@@ -241,7 +241,7 @@ namespace Unigram.ViewModels.Gallery
                 return;
             }
 
-            var temp = await ProtoService.GetFileAsync(file);
+            var temp = await ClientService.GetFileAsync(file);
             if (temp != null)
             {
                 var dataPackage = new DataPackage();
@@ -290,7 +290,7 @@ namespace Unigram.ViewModels.Gallery
                 return;
             }
 
-            ProtoService.Send(new OpenMessageContent(message.ChatId, message.Id));
+            ClientService.Send(new OpenMessageContent(message.ChatId, message.Id));
         }
     }
 }

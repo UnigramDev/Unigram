@@ -47,7 +47,7 @@ namespace Unigram.Controls.Cells
             set => SubtitleLabel.Text = value;
         }
 
-        public void UpdateUser(IProtoService protoService, User user, int photoSize, bool phoneNumber = false)
+        public void UpdateUser(IClientService clientService, User user, int photoSize, bool phoneNumber = false)
         {
             TitleLabel.Text = user.GetFullName();
 
@@ -56,7 +56,7 @@ namespace Unigram.Controls.Cells
 #if DEBUG
                 SubtitleLabel.Text = "+42 --- --- ----";
 #else
-                if (protoService.Options.TestMode)
+                if (clientService.Options.TestMode)
                 {
                     SubtitleLabel.Text = "+42 --- --- ----";
                 }
@@ -74,12 +74,12 @@ namespace Unigram.Controls.Cells
             
             Photo.Width = photoSize;
             Photo.Height = photoSize;
-            Photo.SetUser(protoService, user, photoSize);
+            Photo.SetUser(clientService, user, photoSize);
 
-            Identity.SetStatus(protoService, user);
+            Identity.SetStatus(clientService, user);
         }
 
-        public void UpdateUser(IProtoService protoService, User user, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        public void UpdateUser(IClientService clientService, User user, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
         {
             if (args.Phase == 0)
             {
@@ -92,8 +92,8 @@ namespace Unigram.Controls.Cells
             }
             else if (args.Phase == 2)
             {
-                Photo.SetUser(protoService, user, 36);
-                Identity.SetStatus(protoService, user);
+                Photo.SetUser(clientService, user, 36);
+                Identity.SetStatus(clientService, user);
             }
 
             if (args.Phase < 2)
@@ -104,14 +104,14 @@ namespace Unigram.Controls.Cells
             args.Handled = true;
         }
 
-        public void UpdateSupergroupMember(IProtoService protoService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        public void UpdateSupergroupMember(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
         {
             args.ItemContainer.Tag = args.Item;
             Tag = args.Item;
 
             var member = args.Item as ChatMember;
 
-            var user = protoService.GetMessageSender(member.MemberId) as User;
+            var user = clientService.GetMessageSender(member.MemberId) as User;
             if (user == null)
             {
                 return;
@@ -123,12 +123,12 @@ namespace Unigram.Controls.Cells
             }
             else if (args.Phase == 1)
             {
-                SubtitleLabel.Text = ChannelParticipantToTypeConverter.Convert(protoService, member);
+                SubtitleLabel.Text = ChannelParticipantToTypeConverter.Convert(clientService, member);
             }
             else if (args.Phase == 2)
             {
-                Photo.SetUser(protoService, user, 36);
-                Identity.SetStatus(protoService, user);
+                Photo.SetUser(clientService, user, 36);
+                Identity.SetStatus(clientService, user);
             }
 
             if (args.Phase < 2)
@@ -139,11 +139,11 @@ namespace Unigram.Controls.Cells
             args.Handled = true;
         }
 
-        public void UpdateSupergroupBanned(IProtoService protoService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        public void UpdateSupergroupBanned(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
         {
             var member = args.Item as ChatMember;
 
-            var messageSender = protoService.GetMessageSender(member.MemberId);
+            var messageSender = clientService.GetMessageSender(member.MemberId);
             if (messageSender == null)
             {
                 return;
@@ -162,19 +162,19 @@ namespace Unigram.Controls.Cells
             }
             else if (args.Phase == 1)
             {
-                SubtitleLabel.Text = ChannelParticipantToTypeConverter.Convert(protoService, member);
+                SubtitleLabel.Text = ChannelParticipantToTypeConverter.Convert(clientService, member);
             }
             else if (args.Phase == 2)
             {
                 if (messageSender is User user)
                 {
-                    Photo.SetUser(protoService, user, 36);
-                    Identity.SetStatus(protoService, user);
+                    Photo.SetUser(clientService, user, 36);
+                    Identity.SetStatus(clientService, user);
                 }
                 else if (messageSender is Chat chat)
                 {
-                    Photo.SetChat(protoService, chat, 36);
-                    Identity.SetStatus(protoService, chat);
+                    Photo.SetChat(clientService, chat, 36);
+                    Identity.SetStatus(clientService, chat);
                 }
             }
 
@@ -186,7 +186,7 @@ namespace Unigram.Controls.Cells
             args.Handled = true;
         }
 
-        public void UpdateSearchResult(IProtoService protoService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        public void UpdateSearchResult(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
         {
             var result = args.Item as SearchResult;
 
@@ -198,7 +198,7 @@ namespace Unigram.Controls.Cells
 
                 if (result.Chat != null)
                 {
-                    TitleLabel.Text = protoService.GetTitle(result.Chat);
+                    TitleLabel.Text = clientService.GetTitle(result.Chat);
                 }
                 else if (result.User != null)
                 {
@@ -206,24 +206,24 @@ namespace Unigram.Controls.Cells
 
                 if (result.Chat != null)
                 {
-                    TitleLabel.Text = protoService.GetTitle(result.Chat);
+                    TitleLabel.Text = clientService.GetTitle(result.Chat);
                 }
                 else if (result.User != null)
                 {
                     TitleLabel.Text = result.User.GetFullName();
-                    Identity.SetStatus(protoService, result.User);
+                    Identity.SetStatus(clientService, result.User);
                 }
             }
             else if (args.Phase == 1)
             {
                 if (result.User != null || (result.Chat != null && result.Chat.Type is ChatTypePrivate or ChatTypeSecret))
                 {
-                    var user = result.User ?? protoService.GetUser(result.Chat);
+                    var user = result.User ?? clientService.GetUser(result.Chat);
                     if (result.IsPublic)
                     {
                         SubtitleLabel.Text = $"@{user.Username}";
                     }
-                    else if (protoService.IsSavedMessages(user))
+                    else if (clientService.IsSavedMessages(user))
                     {
                         SubtitleLabel.Text = Strings.Resources.ThisIsYou;
                     }
@@ -234,7 +234,7 @@ namespace Unigram.Controls.Cells
                 }
                 else if (result.Chat != null && result.Chat.Type is ChatTypeSupergroup super)
                 {
-                    var supergroup = protoService.GetSupergroup(super.SupergroupId);
+                    var supergroup = clientService.GetSupergroup(super.SupergroupId);
                     if (result.IsPublic)
                     {
                         if (supergroup.MemberCount > 0)
@@ -257,7 +257,7 @@ namespace Unigram.Controls.Cells
                 }
                 else if (result.Chat != null && result.Chat.Type is ChatTypeBasicGroup basic)
                 {
-                    var basicGroup = protoService.GetBasicGroup(basic.BasicGroupId);
+                    var basicGroup = clientService.GetBasicGroup(basic.BasicGroupId);
                     if (basicGroup.MemberCount > 0)
                     {
                         SubtitleLabel.Text = Locale.Declension("Members", basicGroup.MemberCount);
@@ -290,13 +290,13 @@ namespace Unigram.Controls.Cells
             {
                 if (result.Chat != null)
                 {
-                    Photo.SetChat(protoService, result.Chat, 36);
-                    Identity.SetStatus(protoService, result.Chat);
+                    Photo.SetChat(clientService, result.Chat, 36);
+                    Identity.SetStatus(clientService, result.Chat);
                 }
                 else if (result.User != null)
                 {
-                    Photo.SetUser(protoService, result.User, 36);
-                    Identity.SetStatus(protoService, result.User);
+                    Photo.SetUser(clientService, result.User, 36);
+                    Identity.SetStatus(clientService, result.User);
                 }
             }
 
@@ -308,7 +308,7 @@ namespace Unigram.Controls.Cells
             args.Handled = true;
         }
 
-        public void UpdateChatSharedMembers(IProtoService protoService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        public void UpdateChatSharedMembers(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
         {
             var member = args.Item as ChatMember;
             if (member == null)
@@ -319,7 +319,7 @@ namespace Unigram.Controls.Cells
             args.ItemContainer.Tag = args.Item;
             Tag = args.Item;
 
-            var user = protoService.GetMessageSender(member.MemberId) as User;
+            var user = clientService.GetMessageSender(member.MemberId) as User;
             if (user == null)
             {
                 return;
@@ -358,8 +358,8 @@ namespace Unigram.Controls.Cells
             }
             else if (args.Phase == 2)
             {
-                Photo.SetUser(protoService, user, 36);
-                Identity.SetStatus(protoService, user);
+                Photo.SetUser(clientService, user, 36);
+                Identity.SetStatus(clientService, user);
             }
 
             if (args.Phase < 2)
@@ -370,7 +370,7 @@ namespace Unigram.Controls.Cells
             args.Handled = true;
         }
 
-        public void UpdateNotificationException(IProtoService protoService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        public void UpdateNotificationException(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
         {
             UpdateStyleNoSubtitle();
 
@@ -385,7 +385,7 @@ namespace Unigram.Controls.Cells
 
             if (args.Phase == 0)
             {
-                TitleLabel.Text = protoService.GetTitle(chat);
+                TitleLabel.Text = clientService.GetTitle(chat);
             }
             else if (args.Phase == 1)
             {
@@ -393,8 +393,8 @@ namespace Unigram.Controls.Cells
             }
             else if (args.Phase == 2)
             {
-                Photo.SetChat(protoService, chat, 36);
-                Identity.SetStatus(protoService, chat);
+                Photo.SetChat(clientService, chat, 36);
+                Identity.SetStatus(clientService, chat);
             }
 
             if (args.Phase < 2)
@@ -405,13 +405,13 @@ namespace Unigram.Controls.Cells
             args.Handled = true;
         }
 
-        public void UpdateMessageSender(IProtoService protoService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        public void UpdateMessageSender(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
         {
             UpdateStyleNoSubtitle();
 
             var member = args.Item as MessageSender;
 
-            var messageSender = protoService.GetMessageSender(member);
+            var messageSender = clientService.GetMessageSender(member);
             if (messageSender == null)
             {
                 return;
@@ -432,19 +432,19 @@ namespace Unigram.Controls.Cells
             }
             else if (args.Phase == 1)
             {
-                //SubtitleLabel.Text = ChannelParticipantToTypeConverter.Convert(protoService, member);
+                //SubtitleLabel.Text = ChannelParticipantToTypeConverter.Convert(clientService, member);
             }
             else if (args.Phase == 2)
             {
                 if (messageSender is User user)
                 {
-                    Photo.SetUser(protoService, user, 36);
-                    Identity.SetStatus(protoService, user);
+                    Photo.SetUser(clientService, user, 36);
+                    Identity.SetStatus(clientService, user);
                 }
                 else if (messageSender is Chat chat)
                 {
-                    Photo.SetChat(protoService, chat, 36);
-                    Identity.SetStatus(protoService, chat);
+                    Photo.SetChat(clientService, chat, 36);
+                    Identity.SetStatus(clientService, chat);
                 }
             }
 
@@ -456,7 +456,7 @@ namespace Unigram.Controls.Cells
             args.Handled = true;
         }
 
-        public void UpdateStatisticsByChat(IProtoService protoService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        public void UpdateStatisticsByChat(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
         {
             if (args.InRecycleQueue)
             {
@@ -473,8 +473,8 @@ namespace Unigram.Controls.Cells
 
             if (args.Phase == 0)
             {
-                var chat = protoService.GetChat(statistics.ChatId);
-                TitleLabel.Text = chat == null ? "Other Chats" : protoService.GetTitle(chat);
+                var chat = clientService.GetChat(statistics.ChatId);
+                TitleLabel.Text = chat == null ? "Other Chats" : clientService.GetTitle(chat);
             }
             else if (args.Phase == 1)
             {
@@ -489,11 +489,11 @@ namespace Unigram.Controls.Cells
                 }
                 else
                 {
-                    var chat = protoService.GetChat(statistics.ChatId);
+                    var chat = clientService.GetChat(statistics.ChatId);
 
-                    Photo.SetChat(protoService, chat, 36);
+                    Photo.SetChat(clientService, chat, 36);
                     Photo.Visibility = Visibility.Visible;
-                    Identity.SetStatus(protoService, chat);
+                    Identity.SetStatus(clientService, chat);
                 }
             }
 
@@ -503,15 +503,15 @@ namespace Unigram.Controls.Cells
             }
         }
 
-        public void UpdateChatFilter(IProtoService protoService, ChatFilterElement element)
+        public void UpdateChatFilter(IClientService clientService, ChatFilterElement element)
         {
             UpdateStyleNoSubtitle();
 
             if (element is FilterChat chat)
             {
-                TitleLabel.Text = protoService.GetTitle(chat.Chat);
-                Photo.SetChat(protoService, chat.Chat, 36);
-                Identity.SetStatus(protoService, chat.Chat);
+                TitleLabel.Text = clientService.GetTitle(chat.Chat);
+                Photo.SetChat(clientService, chat.Chat, 36);
+                Identity.SetStatus(clientService, chat.Chat);
             }
             else if (element is FilterFlag flag)
             {

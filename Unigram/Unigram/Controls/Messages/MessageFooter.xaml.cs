@@ -199,7 +199,7 @@ namespace Unigram.Controls.Messages
             //}
 
             var bot = false;
-            if (message.ProtoService.TryGetUser(message.SenderId, out User senderUser))
+            if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
             {
                 bot = senderUser.Type is UserTypeBot;
             }
@@ -329,7 +329,7 @@ namespace Unigram.Controls.Messages
             }
 
             var bot = false;
-            if (message.ProtoService.TryGetUser(message.SenderId, out User senderUser))
+            if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
             {
                 bot = senderUser.Type is UserTypeBot;
             }

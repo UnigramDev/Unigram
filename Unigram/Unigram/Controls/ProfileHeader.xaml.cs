@@ -63,8 +63,8 @@ namespace Unigram.Controls
 
             if (chat.Type is ChatTypePrivate privata)
             {
-                var item = ViewModel.ProtoService.GetUser(privata.UserId);
-                var cache = ViewModel.ProtoService.GetUserFull(privata.UserId);
+                var item = ViewModel.ClientService.GetUser(privata.UserId);
+                var cache = ViewModel.ClientService.GetUserFull(privata.UserId);
 
                 UpdateUser(chat, item, false);
 
@@ -75,9 +75,9 @@ namespace Unigram.Controls
             }
             else if (chat.Type is ChatTypeSecret secretType)
             {
-                var secret = ViewModel.ProtoService.GetSecretChat(secretType.SecretChatId);
-                var item = ViewModel.ProtoService.GetUser(secretType.UserId);
-                var cache = ViewModel.ProtoService.GetUserFull(secretType.UserId);
+                var secret = ViewModel.ClientService.GetSecretChat(secretType.SecretChatId);
+                var item = ViewModel.ClientService.GetUser(secretType.UserId);
+                var cache = ViewModel.ClientService.GetUserFull(secretType.UserId);
 
                 UpdateSecretChat(chat, secret);
                 UpdateUser(chat, item, true);
@@ -89,8 +89,8 @@ namespace Unigram.Controls
             }
             else if (chat.Type is ChatTypeBasicGroup basic)
             {
-                var item = ViewModel.ProtoService.GetBasicGroup(basic.BasicGroupId);
-                var cache = ViewModel.ProtoService.GetBasicGroupFull(basic.BasicGroupId);
+                var item = ViewModel.ClientService.GetBasicGroup(basic.BasicGroupId);
+                var cache = ViewModel.ClientService.GetBasicGroupFull(basic.BasicGroupId);
 
                 UpdateBasicGroup(chat, item);
 
@@ -101,8 +101,8 @@ namespace Unigram.Controls
             }
             else if (chat.Type is ChatTypeSupergroup super)
             {
-                var item = ViewModel.ProtoService.GetSupergroup(super.SupergroupId);
-                var cache = ViewModel.ProtoService.GetSupergroupFull(super.SupergroupId);
+                var item = ViewModel.ClientService.GetSupergroup(super.SupergroupId);
+                var cache = ViewModel.ClientService.GetSupergroupFull(super.SupergroupId);
 
                 UpdateSupergroup(chat, item);
 
@@ -123,41 +123,41 @@ namespace Unigram.Controls
 
             if (chat.Type is ChatTypePrivate or ChatTypeSecret)
             {
-                var user = ViewModel.ProtoService.GetUser(chat);
+                var user = ViewModel.ClientService.GetUser(chat);
                 if (user == null || user.ProfilePhoto == null)
                 {
                     return;
                 }
 
-                var userFull = ViewModel.ProtoService.GetUserFull(user.Id);
+                var userFull = ViewModel.ClientService.GetUserFull(user.Id);
                 if (userFull?.Photo == null)
                 {
                     return;
                 }
 
-                var viewModel = new UserPhotosViewModel(ViewModel.ProtoService, ViewModel.StorageService, ViewModel.Aggregator, user, userFull);
+                var viewModel = new UserPhotosViewModel(ViewModel.ClientService, ViewModel.StorageService, ViewModel.Aggregator, user, userFull);
                 await GalleryView.ShowAsync(viewModel, () => Photo);
             }
             else if (chat.Type is ChatTypeBasicGroup)
             {
-                var basicGroupFull = ViewModel.ProtoService.GetBasicGroupFull(chat);
+                var basicGroupFull = ViewModel.ClientService.GetBasicGroupFull(chat);
                 if (basicGroupFull?.Photo == null)
                 {
                     return;
                 }
 
-                var viewModel = new ChatPhotosViewModel(ViewModel.ProtoService, ViewModel.StorageService, ViewModel.Aggregator, chat, basicGroupFull.Photo);
+                var viewModel = new ChatPhotosViewModel(ViewModel.ClientService, ViewModel.StorageService, ViewModel.Aggregator, chat, basicGroupFull.Photo);
                 await GalleryView.ShowAsync(viewModel, () => Photo);
             }
             else if (chat.Type is ChatTypeSupergroup)
             {
-                var supergroupFull = ViewModel.ProtoService.GetSupergroupFull(chat);
+                var supergroupFull = ViewModel.ClientService.GetSupergroupFull(chat);
                 if (supergroupFull?.Photo == null)
                 {
                     return;
                 }
 
-                var viewModel = new ChatPhotosViewModel(ViewModel.ProtoService, ViewModel.StorageService, ViewModel.Aggregator, chat, supergroupFull.Photo);
+                var viewModel = new ChatPhotosViewModel(ViewModel.ClientService, ViewModel.StorageService, ViewModel.Aggregator, chat, supergroupFull.Photo);
                 await GalleryView.ShowAsync(viewModel, () => Photo);
             }
         }
@@ -174,17 +174,17 @@ namespace Unigram.Controls
 
         public void UpdateChatTitle(Chat chat)
         {
-            Title.Text = ViewModel.ProtoService.GetTitle(chat);
+            Title.Text = ViewModel.ClientService.GetTitle(chat);
         }
 
         public void UpdateChatPhoto(Chat chat)
         {
-            Photo.SetChat(ViewModel.ProtoService, chat, 140);
+            Photo.SetChat(ViewModel.ClientService, chat, 140);
         }
 
         public void UpdateChatNotificationSettings(Chat chat)
         {
-            var unmuted = ViewModel.CacheService.Notifications.GetMutedFor(chat) == 0;
+            var unmuted = ViewModel.ClientService.Notifications.GetMutedFor(chat) == 0;
             Notifications.Content = unmuted ? Strings.Resources.ChatsMute : Strings.Resources.ChatsUnmute;
             Notifications.Glyph = unmuted ? Icons.Alert : Icons.AlertOff;
         }
@@ -193,7 +193,7 @@ namespace Unigram.Controls
         {
             Subtitle.Text = LastSeenConverter.GetLabel(user, true);
 
-            Identity.SetStatus(ViewModel.ProtoService, user);
+            Identity.SetStatus(ViewModel.ClientService, user);
 
             UserPhone.Badge = PhoneNumber.Format(user.PhoneNumber);
             UserPhone.Visibility = string.IsNullOrEmpty(user.PhoneNumber) ? Visibility.Collapsed : Visibility.Visible;
@@ -490,9 +490,9 @@ namespace Unigram.Controls
                 return;
             }
 
-            var user = chat.Type is ChatTypePrivate or ChatTypeSecret ? ViewModel.CacheService.GetUser(chat) : null;
-            var basicGroup = chat.Type is ChatTypeBasicGroup basicGroupType ? ViewModel.ProtoService.GetBasicGroup(basicGroupType.BasicGroupId) : null;
-            var supergroup = chat.Type is ChatTypeSupergroup supergroupType ? ViewModel.ProtoService.GetSupergroup(supergroupType.SupergroupId) : null;
+            var user = chat.Type is ChatTypePrivate or ChatTypeSecret ? ViewModel.ClientService.GetUser(chat) : null;
+            var basicGroup = chat.Type is ChatTypeBasicGroup basicGroupType ? ViewModel.ClientService.GetBasicGroup(basicGroupType.BasicGroupId) : null;
+            var supergroup = chat.Type is ChatTypeSupergroup supergroupType ? ViewModel.ClientService.GetSupergroup(supergroupType.SupergroupId) : null;
 
             if ((user != null && user.Type is not UserTypeBot) || (basicGroup != null && basicGroup.CanDeleteMessages()) || (supergroup != null && supergroup.CanDeleteMessages()))
             {
@@ -536,9 +536,9 @@ namespace Unigram.Controls
             if (chat.Type is ChatTypePrivate or ChatTypeSecret && user != null)
             {
                 var userId = chat.Type is ChatTypePrivate privata ? privata.UserId : chat.Type is ChatTypeSecret secret ? secret.UserId : 0;
-                if (userId != ViewModel.CacheService.Options.MyId)
+                if (userId != ViewModel.ClientService.Options.MyId)
                 {
-                    var fullInfo = ViewModel.CacheService.GetUserFull(userId);
+                    var fullInfo = ViewModel.ClientService.GetUserFull(userId);
                     if (fullInfo == null)
                     {
                         return;
@@ -622,7 +622,7 @@ namespace Unigram.Controls
             //}
             if (chat.Type is ChatTypeSupergroup super && supergroup != null)
             {
-                var fullInfo = ViewModel.ProtoService.GetSupergroupFull(super.SupergroupId);
+                var fullInfo = ViewModel.ClientService.GetSupergroupFull(super.SupergroupId);
 
                 if (supergroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator)
                 {
@@ -821,7 +821,7 @@ namespace Unigram.Controls
                 return;
             }
 
-            var muted = ViewModel.CacheService.Notifications.GetMutedFor(chat) > 0;
+            var muted = ViewModel.ClientService.Notifications.GetMutedFor(chat) > 0;
             if (muted)
             {
                 ViewModel.ToggleMuteCommand.Execute();

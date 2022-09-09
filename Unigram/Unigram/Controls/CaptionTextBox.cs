@@ -118,12 +118,12 @@ namespace Unigram.Controls
                         members = false;
                     }
 
-                    View.Autocomplete = new ChatTextBox.UsernameCollection(viewModel.ProtoService, viewModel.Chat.Id, viewModel.ThreadId, result, index == 0, members);
+                    View.Autocomplete = new ChatTextBox.UsernameCollection(viewModel.ClientService, viewModel.Chat.Id, viewModel.ThreadId, result, index == 0, members);
                     return;
                 }
                 else if (entity == AutocompleteEntity.Emoji)
                 {
-                    View.Autocomplete = new ChatTextBox.EmojiCollection(viewModel.ProtoService, result, viewModel.Chat.Id);
+                    View.Autocomplete = new ChatTextBox.EmojiCollection(viewModel.ClientService, result, viewModel.Chat.Id);
                     return;
                 }
             }

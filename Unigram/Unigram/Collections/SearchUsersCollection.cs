@@ -11,7 +11,7 @@ namespace Unigram.Collections
 {
     public class SearchUsersCollection : ObservableCollection<KeyedList<string, object>>, ISupportIncrementalLoading
     {
-        private readonly IProtoService _protoService;
+        private readonly IClientService _clientService;
         private readonly string _query;
 
         private readonly List<long> _users = new List<long>();
@@ -19,9 +19,9 @@ namespace Unigram.Collections
         private readonly KeyedList<string, object> _local;
         private readonly KeyedList<string, object> _remote;
 
-        public SearchUsersCollection(IProtoService protoService, string query)
+        public SearchUsersCollection(IClientService clientService, string query)
         {
-            _protoService = protoService;
+            _clientService = clientService;
             _query = query;
 
             _local = new KeyedList<string, object>(null as string);
@@ -39,12 +39,12 @@ namespace Unigram.Collections
             {
                 if (phase == 0)
                 {
-                    var response = await _protoService.SendAsync(new SearchContacts(_query, 100));
+                    var response = await _clientService.SendAsync(new SearchContacts(_query, 100));
                     if (response is Users users)
                     {
                         foreach (var id in users.UserIds)
                         {
-                            var user = _protoService.GetUser(id);
+                            var user = _clientService.GetUser(id);
                             if (user != null)
                             {
                                 _users.Add(id);
@@ -55,12 +55,12 @@ namespace Unigram.Collections
                 }
                 else if (phase == 1)
                 {
-                    var response = await _protoService.SendAsync(new SearchChatsOnServer(_query, 100));
+                    var response = await _clientService.SendAsync(new SearchChatsOnServer(_query, 100));
                     if (response is Chats chats && _local != null)
                     {
                         foreach (var id in chats.ChatIds)
                         {
-                            var chat = _protoService.GetChat(id);
+                            var chat = _clientService.GetChat(id);
                             if (chat != null && chat.Type is ChatTypePrivate privata)
                             {
                                 if (_users.Contains(privata.UserId))
@@ -76,12 +76,12 @@ namespace Unigram.Collections
                 }
                 else if (phase == 2)
                 {
-                    var response = await _protoService.SendAsync(new SearchPublicChats(_query));
+                    var response = await _clientService.SendAsync(new SearchPublicChats(_query));
                     if (response is Chats chats)
                     {
                         foreach (var id in chats.ChatIds)
                         {
-                            var chat = _protoService.GetChat(id);
+                            var chat = _clientService.GetChat(id);
                             if (chat != null && chat.Type is ChatTypePrivate privata)
                             {
                                 if (_users.Contains(privata.UserId))

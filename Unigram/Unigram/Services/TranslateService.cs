@@ -32,7 +32,7 @@ namespace Unigram.Services
 
     public class TranslateService : ITranslateService
     {
-        private readonly IProtoService _protoService;
+        private readonly IClientService _clientService;
         private readonly ISettingsService _settings;
 
         private readonly string[] _userAgents = new string[]
@@ -45,9 +45,9 @@ namespace Unigram.Services
             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.55 Safari/537.36" // 4.8%
         };
 
-        public TranslateService(IProtoService protoService, ISettingsService settings)
+        public TranslateService(IClientService clientService, ISettingsService settings)
         {
-            _protoService = protoService;
+            _clientService = clientService;
             _settings = settings;
         }
 
@@ -104,7 +104,7 @@ namespace Unigram.Services
 
         public async Task<object> TranslateAsync(string text, string fromLanguage, string toLanguage)
         {
-            //var test = await _protoService.SendAsync(new TranslateText(text, fromLanguage, toLanguage));
+            //var test = await _clientService.SendAsync(new TranslateText(text, fromLanguage, toLanguage));
 
             Random random = new Random();
             try

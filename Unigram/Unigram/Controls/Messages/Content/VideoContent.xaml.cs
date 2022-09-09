@@ -143,7 +143,7 @@ namespace Unigram.Controls.Messages.Content
 
                     if (message.Delegate.CanBeDownloaded(video, file))
                     {
-                        _message.ProtoService.DownloadFile(file.Id, 32);
+                        _message.ClientService.DownloadFile(file.Id, 32);
                     }
                 }
                 else
@@ -206,7 +206,7 @@ namespace Unigram.Controls.Messages.Content
 
                     if (message.Delegate.CanBeDownloaded(video, file))
                     {
-                        _message.ProtoService.DownloadFile(file.Id, 32);
+                        _message.ClientService.DownloadFile(file.Id, 32);
                         UpdateSource(message, file, video.Duration);
                     }
                     else
@@ -259,7 +259,7 @@ namespace Unigram.Controls.Messages.Content
                             source = await PlaceholderHelper.GetBlurredAsync(video.Minithumbnail.Data, message.IsSecret() ? 15 : 3);
                         }
 
-                        message.ProtoService.DownloadFile(file.Id, 1);
+                        message.ClientService.DownloadFile(file.Id, 1);
                     }
 
                     UpdateManager.Subscribe(this, message, file, ref _thumbnailToken, UpdateThumbnail, true);
@@ -283,7 +283,7 @@ namespace Unigram.Controls.Messages.Content
             {
                 if (_source?.Id != file.Id)
                 {
-                    Player.Source = _source = new RemoteVideoSource(message.ProtoService, file, duration);
+                    Player.Source = _source = new RemoteVideoSource(message.ClientService, file, duration);
                     message.Delegate.ViewVisibleMessages(false);
                 }
             }
@@ -352,21 +352,21 @@ namespace Unigram.Controls.Messages.Content
             var file = video.VideoValue;
             if (file.Local.IsDownloadingActive)
             {
-                _message.ProtoService.CancelDownloadFile(file.Id);
+                _message.ClientService.CancelDownloadFile(file.Id);
             }
             else if (file.Remote.IsUploadingActive || _message.SendingState is MessageSendingStateFailed)
             {
-                _message.ProtoService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
+                _message.ClientService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
                 if (_message.Content is not MessageVideo)
                 {
-                    _message.ProtoService.DownloadFile(file.Id, 30);
+                    _message.ClientService.DownloadFile(file.Id, 30);
                 }
                 else
                 {
-                    _message.ProtoService.AddFileToDownloads(file.Id, _message.ChatId, _message.Id);
+                    _message.ClientService.AddFileToDownloads(file.Id, _message.ChatId, _message.Id);
                 }
             }
             else
@@ -388,21 +388,21 @@ namespace Unigram.Controls.Messages.Content
                 var file = video.VideoValue;
                 if (file.Local.IsDownloadingActive)
                 {
-                    _message.ProtoService.CancelDownloadFile(file.Id);
+                    _message.ClientService.CancelDownloadFile(file.Id);
                 }
                 else if (file.Remote.IsUploadingActive || _message.SendingState is MessageSendingStateFailed)
                 {
-                    _message.ProtoService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
+                    _message.ClientService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
                 {
                     if (_message.Content is not MessageVideo)
                     {
-                        _message.ProtoService.DownloadFile(file.Id, 30);
+                        _message.ClientService.DownloadFile(file.Id, 30);
                     }
                     else
                     {
-                        _message.ProtoService.AddFileToDownloads(file.Id, _message.ChatId, _message.Id);
+                        _message.ClientService.AddFileToDownloads(file.Id, _message.ChatId, _message.Id);
                     }
                 }
                 else
@@ -415,7 +415,7 @@ namespace Unigram.Controls.Messages.Content
                 var file = video.VideoValue;
                 if (file.Remote.IsUploadingActive || _message.SendingState is MessageSendingStateFailed)
                 {
-                    _message.ProtoService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
+                    _message.ClientService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
                 }
                 else
                 {

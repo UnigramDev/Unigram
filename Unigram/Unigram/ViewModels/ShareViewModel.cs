@@ -16,8 +16,8 @@ namespace Unigram.ViewModels
 {
     public class ShareViewModel : TLViewModelBase
     {
-        public ShareViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public ShareViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             Items = new MvxObservableCollection<Chat>();
             SelectedItems = new MvxObservableCollection<Chat>();
@@ -41,19 +41,19 @@ namespace Unigram.ViewModels
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            var response = await ProtoService.GetChatListAsync(new ChatListMain(), 0, 200);
+            var response = await ClientService.GetChatListAsync(new ChatListMain(), 0, 200);
             if (response is Telegram.Td.Api.Chats chats)
             {
-                var list = ProtoService.GetChats(chats.ChatIds);
+                var list = ClientService.GetChats(chats.ChatIds);
                 Items.Clear();
 
                 if (_searchType is SearchChatsType.Post or SearchChatsType.All)
                 {
-                    var myId = CacheService.Options.MyId;
+                    var myId = ClientService.Options.MyId;
                     var self = list.FirstOrDefault(x => x.Type is ChatTypePrivate privata && privata.UserId == myId);
                     if (self == null)
                     {
-                        self = await ProtoService.SendAsync(new CreatePrivateChat(myId, false)) as Chat;
+                        self = await ClientService.SendAsync(new CreatePrivateChat(myId, false)) as Chat;
                     }
 
                     if (self != null)
@@ -69,7 +69,7 @@ namespace Unigram.ViewModels
                     {
                         if (chat.Type is ChatTypeBasicGroup basic)
                         {
-                            var basicGroup = ProtoService.GetBasicGroup(basic.BasicGroupId);
+                            var basicGroup = ClientService.GetBasicGroup(basic.BasicGroupId);
                             if (basicGroup == null)
                             {
                                 continue;
@@ -82,7 +82,7 @@ namespace Unigram.ViewModels
                         }
                         else if (chat.Type is ChatTypeSupergroup super)
                         {
-                            var supergroup = ProtoService.GetSupergroup(super.SupergroupId);
+                            var supergroup = ClientService.GetSupergroup(super.SupergroupId);
                             if (supergroup == null)
                             {
                                 continue;
@@ -110,14 +110,14 @@ namespace Unigram.ViewModels
                     }
                     else if (_searchType == SearchChatsType.Contacts)
                     {
-                        if (CacheService.TryGetUser(chat, out User user) && user.PhoneNumber.Length > 0)
+                        if (ClientService.TryGetUser(chat, out User user) && user.PhoneNumber.Length > 0)
                         {
                             Items.Add(chat);
                         }
                     }
                     else if (_searchType == SearchChatsType.Post)
                     {
-                        if (CacheService.CanPostMessages(chat))
+                        if (ClientService.CanPostMessages(chat))
                         {
                             Items.Add(chat);
                         }
@@ -139,7 +139,7 @@ namespace Unigram.ViewModels
 
                 foreach (var id in pre)
                 {
-                    var chat = CacheService.GetChat(id);
+                    var chat = ClientService.GetChat(id);
                     if (chat == null)
                     {
                         continue;
@@ -364,7 +364,7 @@ namespace Unigram.ViewModels
             {
                 foreach (var chat in chats)
                 {
-                    var response = await ProtoService.SendAsync(new SendMessage(chat.Id, 0, 0, null, null, new InputMessageText(_caption, false, false)));
+                    var response = await ClientService.SendAsync(new SendMessage(chat.Id, 0, 0, null, null, new InputMessageText(_caption, false, false)));
                 }
             }
 
@@ -374,7 +374,7 @@ namespace Unigram.ViewModels
                 {
                     if (IsWithMyScore)
                     {
-                        var response = await ProtoService.SendAsync(new SendMessage(chat.Id, 0, 0, null, null, new InputMessageForwarded(_messages[0].ChatId, _messages[0].Id, true, new MessageCopyOptions(false, false, null))));
+                        var response = await ClientService.SendAsync(new SendMessage(chat.Id, 0, 0, null, null, new InputMessageForwarded(_messages[0].ChatId, _messages[0].Id, true, new MessageCopyOptions(false, false, null))));
                     }
                     else
                     {
@@ -386,7 +386,7 @@ namespace Unigram.ViewModels
                             album = first.MediaAlbumId != 0 && _messages.All(x => x.MediaAlbumId == first.MediaAlbumId);
                         }
 
-                        var response = await ProtoService.SendAsync(new ForwardMessages(chat.Id, _messages[0].ChatId, _messages.Select(x => x.Id).ToList(), null, _sendAsCopy || _removeCaptions, _removeCaptions, false));
+                        var response = await ClientService.SendAsync(new ForwardMessages(chat.Id, _messages[0].ChatId, _messages.Select(x => x.Id).ToList(), null, _sendAsCopy || _removeCaptions, _removeCaptions, false));
                     }
                 }
 
@@ -396,7 +396,7 @@ namespace Unigram.ViewModels
             {
                 foreach (var chat in chats)
                 {
-                    var response = await ProtoService.SendAsync(new SendMessage(chat.Id, 0, 0, null, null, _inputMedia));
+                    var response = await ClientService.SendAsync(new SendMessage(chat.Id, 0, 0, null, null, _inputMedia));
                 }
 
                 //NavigationService.GoBack();
@@ -407,7 +407,7 @@ namespace Unigram.ViewModels
 
                 foreach (var chat in chats)
                 {
-                    var response = await ProtoService.SendAsync(new SendMessage(chat.Id, 0, 0, null, null, new InputMessageText(formatted, false, false)));
+                    var response = await ClientService.SendAsync(new SendMessage(chat.Id, 0, 0, null, null, new InputMessageText(formatted, false, false)));
                 }
 
                 //NavigationService.GoBack();
@@ -420,17 +420,17 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                var response = await ProtoService.SendAsync(new GetChatMember(chat.Id, new MessageSenderUser(_inviteBot.Id)));
+                var response = await ClientService.SendAsync(new GetChatMember(chat.Id, new MessageSenderUser(_inviteBot.Id)));
                 if (response is ChatMember member && member.Status is ChatMemberStatusLeft)
                 {
-                    await ProtoService.SendAsync(new SetChatMemberStatus(chat.Id, new MessageSenderUser(_inviteBot.Id), new ChatMemberStatusMember()));
+                    await ClientService.SendAsync(new SetChatMemberStatus(chat.Id, new MessageSenderUser(_inviteBot.Id), new ChatMemberStatusMember()));
                 }
 
                 if (_inviteToken != null)
                 {
-                    response = await ProtoService.SendAsync(new SendBotStartMessage(_inviteBot.Id, chat.Id, _inviteToken));
+                    response = await ClientService.SendAsync(new SendBotStartMessage(_inviteBot.Id, chat.Id, _inviteToken));
 
-                    var service = WindowContext.Current.NavigationServices.GetByFrameId("Main" + ProtoService.SessionId);
+                    var service = WindowContext.Current.NavigationServices.GetByFrameId("Main" + ClientService.SessionId);
                     if (service != null)
                     {
                         service.NavigateToChat(chat, accessToken: _inviteToken);
@@ -445,7 +445,7 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                var service = WindowContext.Current.NavigationServices.GetByFrameId("Main" + ProtoService.SessionId);
+                var service = WindowContext.Current.NavigationServices.GetByFrameId("Main" + ClientService.SessionId);
                 if (service != null)
                 {
                     service.NavigateToChat(chat, state: NavigationState.GetSwitchQuery(_switchInline.Query, _switchInlineBot.Id));
@@ -461,7 +461,7 @@ namespace Unigram.ViewModels
 
                 App.DataPackages[chat.Id] = _package;
 
-                var service = WindowContext.Current.NavigationServices.GetByFrameId("Main" + ProtoService.SessionId);
+                var service = WindowContext.Current.NavigationServices.GetByFrameId("Main" + ClientService.SessionId);
                 if (service != null)
                 {
                     service.NavigateToChat(chat);
@@ -469,14 +469,14 @@ namespace Unigram.ViewModels
             }
             else if (_groupCall != null)
             {
-                var response = await ProtoService.SendAsync(new GetGroupCallInviteLink(_groupCall.Id, _isSpeakerLink));
+                var response = await ClientService.SendAsync(new GetGroupCallInviteLink(_groupCall.Id, _isSpeakerLink));
                 if (response is HttpUrl httpUrl)
                 {
                     var formatted = new FormattedText(string.Format(Strings.Resources.VoipGroupInviteText, httpUrl.Url), new TextEntity[0]);
 
                     foreach (var chat in chats)
                     {
-                        await ProtoService.SendAsync(new SendMessage(chat.Id, 0, 0, null, null, new InputMessageText(formatted, false, false)));
+                        await ClientService.SendAsync(new SendMessage(chat.Id, 0, 0, null, null, new InputMessageText(formatted, false, false)));
                     }
                 }
             }

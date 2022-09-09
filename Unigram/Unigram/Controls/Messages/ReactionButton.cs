@@ -78,7 +78,7 @@ namespace Unigram.Controls.Messages
             var around = value?.AroundAnimation?.StickerValue;
             if (around != null && around.Local.CanBeDownloaded && !around.Local.IsDownloadingActive && !around.Local.IsDownloadingCompleted)
             {
-                _message.ProtoService.DownloadFile(around.Id, 32);
+                _message.ClientService.DownloadFile(around.Id, 32);
             }
 
             var center = value?.CenterAnimation?.StickerValue;
@@ -101,7 +101,7 @@ namespace Unigram.Controls.Messages
 
                 if (center.Local.CanBeDownloaded && !center.Local.IsDownloadingActive)
                 {
-                    _message.ProtoService.DownloadFile(center.Id, 32);
+                    _message.ClientService.DownloadFile(center.Id, 32);
                 }
             }
         }
@@ -134,7 +134,7 @@ namespace Unigram.Controls.Messages
             _presenterId = value.StickerValue.Id;
 
             Icon ??= GetTemplateChild(nameof(Icon)) as CustomEmojiIcon;
-            Icon.SetSticker(message.ProtoService, value);
+            Icon.SetSticker(message.ClientService, value);
         }
 
         private void UpdateInteraction(MessageViewModel message, MessageReaction interaction, bool recycled)
@@ -194,13 +194,13 @@ namespace Unigram.Controls.Messages
 
         private void RecentChoosers_RecentUserHeadChanged(ProfilePicture photo, MessageSender sender)
         {
-            if (_message.ProtoService.TryGetUser(sender, out Telegram.Td.Api.User user))
+            if (_message.ClientService.TryGetUser(sender, out Telegram.Td.Api.User user))
             {
-                photo.SetUser(_message.ProtoService, user, 20);
+                photo.SetUser(_message.ClientService, user, 20);
             }
-            else if (_message.ProtoService.TryGetChat(sender, out Chat chat))
+            else if (_message.ClientService.TryGetChat(sender, out Chat chat))
             {
-                photo.SetChat(_message.ProtoService, chat, 20);
+                photo.SetChat(_message.ClientService, chat, 20);
             }
             else
             {
@@ -268,7 +268,7 @@ namespace Unigram.Controls.Messages
                 return;
             }
 
-            _message.ProtoService.Send(new SetMessageReaction(_message.ChatId, _message.Id, chosen.Type, false, false));
+            _message.ClientService.Send(new SetMessageReaction(_message.ChatId, _message.Id, chosen.Type, false, false));
 
             if (chosen.IsChosen is false)
             {
@@ -349,12 +349,12 @@ namespace Unigram.Controls.Messages
             {
                 if (center.Local.CanBeDownloaded && !center.Local.IsDownloadingActive)
                 {
-                    _message.ProtoService.DownloadFile(center.Id, 32);
+                    _message.ClientService.DownloadFile(center.Id, 32);
                 }
 
                 if (around.Local.CanBeDownloaded && !around.Local.IsDownloadingActive)
                 {
-                    _message.ProtoService.DownloadFile(around.Id, 32);
+                    _message.ClientService.DownloadFile(around.Id, 32);
                 }
             }
         }

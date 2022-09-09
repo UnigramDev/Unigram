@@ -14,12 +14,12 @@ namespace Unigram.ViewModels.Users
         private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
         private readonly User _user;
 
-        public UserPhotosViewModel(IProtoService protoService, IStorageService storageService, IEventAggregator aggregator, User user, UserFullInfo userFull)
-            : base(protoService, storageService, aggregator)
+        public UserPhotosViewModel(IClientService clientService, IStorageService storageService, IEventAggregator aggregator, User user, UserFullInfo userFull)
+            : base(clientService, storageService, aggregator)
         {
             _user = user;
 
-            Items = new MvxObservableCollection<GalleryContent> { new GalleryChatPhoto(protoService, user, userFull.Photo) };
+            Items = new MvxObservableCollection<GalleryContent> { new GalleryChatPhoto(clientService, user, userFull.Photo) };
             SelectedItem = Items[0];
             FirstItem = Items[0];
 
@@ -30,7 +30,7 @@ namespace Unigram.ViewModels.Users
         {
             using (await _loadMoreLock.WaitAsync())
             {
-                var response = await ProtoService.SendAsync(new GetUserProfilePhotos(_user.Id, 0, 20));
+                var response = await ClientService.SendAsync(new GetUserProfilePhotos(_user.Id, 0, 20));
                 if (response is ChatPhotos photos)
                 {
                     TotalItems = photos.TotalCount;
@@ -42,7 +42,7 @@ namespace Unigram.ViewModels.Users
                             continue;
                         }
 
-                        Items.Add(new GalleryChatPhoto(ProtoService, _user, item));
+                        Items.Add(new GalleryChatPhoto(ClientService, _user, item));
                     }
                 }
             }
@@ -52,14 +52,14 @@ namespace Unigram.ViewModels.Users
         {
             using (await _loadMoreLock.WaitAsync())
             {
-                var response = await ProtoService.SendAsync(new GetUserProfilePhotos(_user.Id, Items.Count, 20));
+                var response = await ClientService.SendAsync(new GetUserProfilePhotos(_user.Id, Items.Count, 20));
                 if (response is ChatPhotos photos)
                 {
                     TotalItems = photos.TotalCount;
 
                     foreach (var item in photos.Photos)
                     {
-                        Items.Add(new GalleryChatPhoto(ProtoService, _user, item));
+                        Items.Add(new GalleryChatPhoto(ClientService, _user, item));
                     }
                 }
             }
@@ -67,14 +67,14 @@ namespace Unigram.ViewModels.Users
 
         public override MvxObservableCollection<GalleryContent> Group => Items;
 
-        public override bool CanDelete => _user != null && _user.Id == ProtoService.Options.MyId;
+        public override bool CanDelete => _user != null && _user.Id == ClientService.Options.MyId;
 
         protected override async void DeleteExecute()
         {
             var confirm = await MessagePopup.ShowAsync(Strings.Resources.AreYouSureDeletePhoto, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary && _selectedItem is GalleryChatPhoto profileItem)
             {
-                var response = await ProtoService.SendAsync(new DeleteProfilePhoto(profileItem.Id));
+                var response = await ClientService.SendAsync(new DeleteProfilePhoto(profileItem.Id));
                 if (response is Ok)
                 {
                     var index = Items.IndexOf(profileItem);

@@ -10,12 +10,12 @@ namespace Unigram.Common
 
         public static void Subscribe(object sender, MessageWithOwner message, File file, ref string token, UpdateHandler<File> handler, bool completionOnly = false, bool keepTargetAlive = false)
         {
-            Subscribe(sender, message.ProtoService.SessionId, file, ref token, handler, completionOnly, keepTargetAlive);
+            Subscribe(sender, message.ClientService.SessionId, file, ref token, handler, completionOnly, keepTargetAlive);
         }
 
-        public static void Subscribe(object sender, IProtoService protoService, File file, ref string token, UpdateHandler<File> handler, bool completionOnly = false, bool keepTargetAlive = false)
+        public static void Subscribe(object sender, IClientService clientService, File file, ref string token, UpdateHandler<File> handler, bool completionOnly = false, bool keepTargetAlive = false)
         {
-            Subscribe(sender, protoService.SessionId, file, ref token, handler, completionOnly, keepTargetAlive);
+            Subscribe(sender, clientService.SessionId, file, ref token, handler, completionOnly, keepTargetAlive);
         }
 
         public static void Subscribe(object sender, int sessionId, File file, ref string token, UpdateHandler<File> handler, bool completionOnly = false, bool keepTargetAlive = false)
@@ -35,12 +35,12 @@ namespace Unigram.Common
 
         public static void Subscribe(object sender, MessageViewModel message, File file, UpdateHandler<File> handler, bool completionOnly = false, bool keepTargetAlive = false, bool unsubscribe = true)
         {
-            Subscribe(sender, message.ProtoService.SessionId, file, handler, completionOnly, keepTargetAlive, unsubscribe);
+            Subscribe(sender, message.ClientService.SessionId, file, handler, completionOnly, keepTargetAlive, unsubscribe);
         }
 
-        public static void Subscribe(object sender, IProtoService protoService, File file, UpdateHandler<File> handler, bool completionOnly = false, bool keepTargetAlive = false, bool unsubscribe = true)
+        public static void Subscribe(object sender, IClientService clientService, File file, UpdateHandler<File> handler, bool completionOnly = false, bool keepTargetAlive = false, bool unsubscribe = true)
         {
-            Subscribe(sender, protoService.SessionId, file, handler, completionOnly, keepTargetAlive, unsubscribe);
+            Subscribe(sender, clientService.SessionId, file, handler, completionOnly, keepTargetAlive, unsubscribe);
         }
 
         public static void Subscribe(object sender, int sessionId, File file, UpdateHandler<File> handler, bool completionOnly = false, bool keepTargetAlive = false, bool unsubscribe = true)
