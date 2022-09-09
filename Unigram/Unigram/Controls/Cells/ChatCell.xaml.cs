@@ -50,7 +50,7 @@ namespace Unigram.Controls.Cells
         private IProtoService _protoService;
 
         private Visual _onlineBadge;
-        private bool _onlineCall; 
+        private bool _onlineCall;
 
         // Used only to prevent garbage collection
         private CompositionAnimation _size1;
@@ -102,7 +102,7 @@ namespace Unigram.Controls.Cells
         private Grid PhotoPanel;
         private TextBlock TypeIcon;
         private TextBlock TitleLabel;
-        private FontIcon VerifiedIcon;
+        private IdentityIcon Identity;
         private FontIcon MutedIcon;
         private FontIcon StateIcon;
         private TextBlock TimeLabel;
@@ -136,7 +136,7 @@ namespace Unigram.Controls.Cells
             PhotoPanel = GetTemplateChild(nameof(PhotoPanel)) as Grid;
             TypeIcon = GetTemplateChild(nameof(TypeIcon)) as TextBlock;
             TitleLabel = GetTemplateChild(nameof(TitleLabel)) as TextBlock;
-            VerifiedIcon = GetTemplateChild(nameof(VerifiedIcon)) as FontIcon;
+            Identity = GetTemplateChild(nameof(Identity)) as IdentityIcon;
             MutedIcon = GetTemplateChild(nameof(MutedIcon)) as FontIcon;
             StateIcon = GetTemplateChild(nameof(StateIcon)) as FontIcon;
             TimeLabel = GetTemplateChild(nameof(TimeLabel)) as TextBlock;
@@ -250,7 +250,6 @@ namespace Unigram.Controls.Cells
 
                 TypeIcon.Text = string.Empty;
                 TypeIcon.Visibility = Visibility.Collapsed;
-                VerifiedIcon.Visibility = Visibility.Collapsed;
                 UnreadMentionsBadge.Visibility = Visibility.Collapsed;
                 PinnedIcon.Visibility = Visibility.Collapsed;
 
@@ -555,29 +554,7 @@ namespace Unigram.Controls.Cells
             TypeIcon.Text = type ?? string.Empty;
             TypeIcon.Visibility = type == null ? Visibility.Collapsed : Visibility.Visible;
 
-            var verified = false;
-            var premium = false;
-
-            if (_protoService.TryGetUser(chat, out User user))
-            {
-                verified = user.IsVerified;
-                premium = user.IsPremium && _protoService.IsPremiumAvailable && user.Id != _protoService.Options.MyId;
-            }
-            else if (_protoService.TryGetSupergroup(chat, out Supergroup supergroup))
-            {
-                verified = supergroup.IsVerified;
-                premium = false;
-            }
-
-            if (premium || verified)
-            {
-                VerifiedIcon.Glyph = premium ? Icons.Premium16 : Icons.Verified16;
-                VerifiedIcon.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                VerifiedIcon.Visibility = Visibility.Collapsed;
-            }
+            Identity.SetStatus(_protoService, chat);
         }
 
         public void UpdateChatVideoChat(Chat chat)
@@ -844,7 +821,7 @@ namespace Unigram.Controls.Cells
 
         private void UpdateMinithumbnail(Chat chat, Message message)
         {
-            if (chat.Type is ChatTypePrivate && (message == null || (message.IsOutgoing && message.UnreadReactions.Count > 0)))
+            if (chat.Type is ChatTypePrivate && message == null)
             {
                 MinithumbnailPanel.Visibility = Visibility.Collapsed;
                 Minithumbnail.Source = null;
@@ -1085,11 +1062,6 @@ namespace Unigram.Controls.Cells
             var topMessage = chat.LastMessage;
             if (topMessage != null)
             {
-                if (chat.Type is ChatTypePrivate && topMessage.IsOutgoing && topMessage.UnreadReactions.Count > 0)
-                {
-                    return new FormattedText(string.Format("Reacted {0} to your message", topMessage.UnreadReactions[0].Reaction), new TextEntity[0]);
-                }
-
                 return UpdateBriefLabel(chat, topMessage, true, true);
             }
             else if (chat.Type is ChatTypeSecret secretType)
@@ -1204,10 +1176,6 @@ namespace Unigram.Controls.Cells
             if (message.IsService())
             {
                 return MessageService.GetText(new ViewModels.MessageViewModel(_protoService, null, null, message));
-            }
-            else if (chat.Type is ChatTypePrivate && message.IsOutgoing && message.UnreadReactions.Count > 0)
-            {
-                return string.Empty;
             }
 
             var format = "{0}: ";
@@ -1643,7 +1611,6 @@ namespace Unigram.Controls.Cells
             MutedIcon.Visibility = muted ? Visibility.Visible : Visibility.Collapsed;
             VisualStateManager.GoToState(this, muted ? "Muted" : "Unmuted", false);
 
-            VerifiedIcon.Visibility = Visibility.Collapsed;
             MinithumbnailPanel.Visibility = Visibility.Collapsed;
 
             PinnedIcon.Visibility = pinned ? Visibility.Visible : Visibility.Collapsed;
@@ -2134,7 +2101,7 @@ namespace Unigram.Controls.Cells
 
             var TypeIcon = Children[1];
             var TitleLabel = Children[2];
-            var VerifiedIcon = Children[3];
+            var Identity = Children[3];
             var MutedIcon = Children[4];
             var StateIcon = Children[5];
             var TimeLabel = Children[6];
@@ -2163,13 +2130,13 @@ namespace Unigram.Controls.Cells
             TimeLabel.Measure(availableSize);
             StateIcon.Measure(availableSize);
             TypeIcon.Measure(availableSize);
-            VerifiedIcon.Measure(availableSize);
+            Identity.Measure(availableSize);
             MutedIcon.Measure(availableSize);
 
             var line1Left = 8 + PhotoPanel.DesiredSize.Width + 12 + TypeIcon.DesiredSize.Width;
             var line1Right = availableSize.Width - 12 - TimeLabel.DesiredSize.Width - StateIcon.DesiredSize.Width;
 
-            var titleWidth = Math.Max(0, line1Right - (line1Left + VerifiedIcon.DesiredSize.Width + MutedIcon.DesiredSize.Width));
+            var titleWidth = Math.Max(0, line1Right - (line1Left + Identity.DesiredSize.Width + MutedIcon.DesiredSize.Width));
 
             TitleLabel.Measure(new Size(titleWidth, availableSize.Height));
 
@@ -2209,7 +2176,7 @@ namespace Unigram.Controls.Cells
 
             var TypeIcon = Children[1];
             var TitleLabel = Children[2];
-            var VerifiedIcon = Children[3];
+            var Identity = Children[3];
             var MutedIcon = Children[4];
             var StateIcon = Children[5];
             var TimeLabel = Children[6];
@@ -2264,9 +2231,9 @@ namespace Unigram.Controls.Cells
             var line1Right = finalSize.Width - 8 - TimeLabel.DesiredSize.Width - StateIcon.DesiredSize.Width;
 
             double titleWidth;
-            if (line1Left + TitleLabel.DesiredSize.Width + VerifiedIcon.DesiredSize.Width + MutedIcon.DesiredSize.Width > line1Right)
+            if (line1Left + TitleLabel.DesiredSize.Width + Identity.DesiredSize.Width + MutedIcon.DesiredSize.Width > line1Right)
             {
-                titleWidth = Math.Max(0, line1Right - (line1Left + VerifiedIcon.DesiredSize.Width + MutedIcon.DesiredSize.Width));
+                titleWidth = Math.Max(0, line1Right - (line1Left + Identity.DesiredSize.Width + MutedIcon.DesiredSize.Width));
             }
             else
             {
@@ -2281,11 +2248,11 @@ namespace Unigram.Controls.Cells
 
             rect.X = min + TypeIcon.DesiredSize.Width + titleWidth;
             rect.Y = 14;
-            rect.Width = VerifiedIcon.DesiredSize.Width;
-            rect.Height = VerifiedIcon.DesiredSize.Height;
-            VerifiedIcon.Arrange(rect);
+            rect.Width = Identity.DesiredSize.Width;
+            rect.Height = Identity.DesiredSize.Height;
+            Identity.Arrange(rect);
 
-            rect.X = min + TypeIcon.DesiredSize.Width + titleWidth + VerifiedIcon.DesiredSize.Width;
+            rect.X = min + TypeIcon.DesiredSize.Width + titleWidth + Identity.DesiredSize.Width;
             rect.Y = 14;
             rect.Width = MutedIcon.DesiredSize.Width;
             rect.Height = MutedIcon.DesiredSize.Height;

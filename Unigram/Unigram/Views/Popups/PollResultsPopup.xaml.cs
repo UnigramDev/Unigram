@@ -3,6 +3,7 @@ using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Controls.Cells;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
@@ -51,14 +52,9 @@ namespace Unigram.Views.Popups
             if (item is User user)
             {
                 var button = args.Element as Button;
-                var content = button.Content as Grid;
+                var content = button.Content as UserCell;
 
-                var title = content.Children[1] as TextBlock;
-                title.Text = user.GetFullName();
-
-                var photo = content.Children[0] as ProfilePicture;
-                photo.SetUser(_protoService, user, 36);
-
+                content.UpdateUser(_protoService, user, 36);
                 button.Click += User_Click;
             }
             else if (item is PollResultViewModel option)

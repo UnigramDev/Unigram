@@ -1,6 +1,6 @@
 ﻿using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls;
+using Unigram.Controls.Cells;
 using Unigram.ViewModels.Settings;
 using Windows.UI.Xaml.Controls;
 
@@ -29,102 +29,10 @@ namespace Unigram.Views.Settings
             {
                 return;
             }
-
-            var content = args.ItemContainer.ContentTemplateRoot as Grid;
-            var chat = args.Item as Chat;
-
-            if (args.Phase == 0)
+            else if (args.ItemContainer.ContentTemplateRoot is UserCell content)
             {
-                var title = content.Children[1] as TextBlock;
-                title.Text = ViewModel.ProtoService.GetTitle(chat);
+                content.UpdateNotificationException(ViewModel.ProtoService, args, OnContainerContentChanging);
             }
-            else if (args.Phase == 1)
-            {
-                //var label = content.Children[2] as TextBlock;
-                //var exception = chat.NotificationSettings;
-
-                //String text;
-                //bool enabled;
-                //bool custom = exception.hasCustom;
-                //int value = exception.notify;
-                //int delta = exception.MuteFor;
-                //if (value == 3 && delta != int.MaxValue)
-                //{
-                //    delta -= DateTime.Now.ToTimestamp();
-                //    if (delta <= 0)
-                //    {
-                //        if (custom)
-                //        {
-                //            text = Strings.Resources.NotificationsCustom;
-                //        }
-                //        else
-                //        {
-                //            text = Strings.Resources.NotificationsUnmuted;
-                //        }
-                //    }
-                //    else if (delta < 60 * 60)
-                //    {
-                //        text = string.Format(Strings.Resources.WillUnmuteIn, Locale.Declension("Minutes", delta / 60));
-                //    }
-                //    else if (delta < 60 * 60 * 24)
-                //    {
-                //        text = string.Format(Strings.Resources.WillUnmuteIn, Locale.Declension("Hours", (int)Math.Ceiling(delta / 60.0f / 60)));
-                //    }
-                //    else if (delta < 60 * 60 * 24 * 365)
-                //    {
-                //        text = string.Format(Strings.Resources.WillUnmuteIn, Locale.Declension("Days", (int)Math.Ceiling(delta / 60.0f / 60 / 24)));
-                //    }
-                //    else
-                //    {
-                //        text = null;
-                //    }
-                //}
-                //else
-                //{
-                //    if (value == 0)
-                //    {
-                //        enabled = true;
-                //    }
-                //    else if (value == 1)
-                //    {
-                //        enabled = true;
-                //    }
-                //    else if (value == 2)
-                //    {
-                //        enabled = false;
-                //    }
-                //    else
-                //    {
-                //        enabled = false;
-                //    }
-                //    if (enabled && custom)
-                //    {
-                //        text = Strings.Resources.NotificationsCustom;
-                //    }
-                //    else
-                //    {
-                //        text = enabled ? Strings.Resources.NotificationsUnmuted : Strings.Resources.NotificationsMuted;
-                //    }
-                //}
-                //if (text == null)
-                //{
-                //    text = Strings.Resources.NotificationsOff;
-                //}
-
-                //label.Text = text;
-            }
-            else if (args.Phase == 2)
-            {
-                var photo = content.Children[0] as ProfilePicture;
-                photo.SetChat(ViewModel.ProtoService, chat, 36);
-            }
-
-            if (args.Phase < 2)
-            {
-                args.RegisterUpdateCallback(OnContainerContentChanging);
-            }
-
-            args.Handled = true;
         }
     }
 }

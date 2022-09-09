@@ -28,7 +28,6 @@ using Unigram.Views.Settings;
 using Unigram.Views.Users;
 using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
@@ -38,7 +37,6 @@ using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Markup;
@@ -2220,76 +2218,6 @@ namespace Unigram.Views
             {
                 button.Badge = GetPath(entry.Parent);
                 button.BadgeVisibility = Visibility.Visible;
-            }
-
-            args.Handled = true;
-        }
-
-        private void ContactsSearchListView_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
-        {
-            if (args.InRecycleQueue)
-            {
-                //var photo = content.Children[0] as ProfilePicture;
-                //photo.Source = null;
-
-                return;
-            }
-
-            var result = args.Item as SearchResult;
-            var chat = result.Chat;
-            var user = result.User ?? ViewModel.ProtoService.GetUser(chat);
-
-            if (user == null)
-            {
-                return;
-            }
-
-            var content = args.ItemContainer.ContentTemplateRoot as Grid;
-            if (content == null)
-            {
-                return;
-            }
-
-            if (args.Phase == 0)
-            {
-                var title = content.Children[1] as TextBlock;
-                title.Text = user.GetFullName();
-            }
-            else if (args.Phase == 1)
-            {
-                var subtitle = content.Children[2] as TextBlock;
-                if (result.IsPublic)
-                {
-                    subtitle.Text = $"@{user.Username}";
-                }
-                else
-                {
-                    subtitle.Text = LastSeenConverter.GetLabel(user, true);
-                }
-
-                if (subtitle.Text.StartsWith($"@{result.Query}", StringComparison.OrdinalIgnoreCase))
-                {
-                    var highligher = new TextHighlighter();
-                    highligher.Foreground = new SolidColorBrush(Colors.Red);
-                    highligher.Background = new SolidColorBrush(Colors.Transparent);
-                    highligher.Ranges.Add(new TextRange { StartIndex = 1, Length = result.Query.Length });
-
-                    subtitle.TextHighlighters.Add(highligher);
-                }
-                else
-                {
-                    subtitle.TextHighlighters.Clear();
-                }
-            }
-            else if (args.Phase == 2)
-            {
-                var photo = content.Children[0] as ProfilePicture;
-                photo.SetUser(ViewModel.ProtoService, user, 36);
-            }
-
-            if (args.Phase < 2)
-            {
-                args.RegisterUpdateCallback(ContactsSearchListView_ContainerContentChanging);
             }
 
             args.Handled = true;

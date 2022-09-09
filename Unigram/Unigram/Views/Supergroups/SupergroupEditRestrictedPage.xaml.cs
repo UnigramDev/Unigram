@@ -1,5 +1,4 @@
 ﻿using Telegram.Td.Api;
-using Unigram.Common;
 using Unigram.Converters;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Supergroups;
@@ -40,16 +39,12 @@ namespace Unigram.Views.Supergroups
 
         public void UpdateUser(Chat chat, User user, bool secret)
         {
-            TitleLabel.Text = user.GetFullName();
-            Subtitle.Text = LastSeenConverter.GetLabel(user, true);
-            Photo.SetUser(ViewModel.ProtoService, user, 64);
-
-            Verified.Visibility = user.IsVerified ? Visibility.Visible : Visibility.Collapsed;
+            Cell.UpdateUser(ViewModel.ProtoService, user, 64);
         }
 
         public void UpdateUserStatus(Chat chat, User user)
         {
-            Subtitle.Text = LastSeenConverter.GetLabel(user, true);
+            Cell.Subtitle = LastSeenConverter.GetLabel(user, true);
         }
 
         public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret, bool accessToken) { }

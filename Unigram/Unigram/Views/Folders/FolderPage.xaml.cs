@@ -1,6 +1,6 @@
 ﻿using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls;
+using Unigram.Controls.Cells;
 using Unigram.Converters;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Folders;
@@ -27,55 +27,10 @@ namespace Unigram.Views.Folders
 
         private void OnElementPrepared(Microsoft.UI.Xaml.Controls.ItemsRepeater sender, Microsoft.UI.Xaml.Controls.ItemsRepeaterElementPreparedEventArgs args)
         {
-            var button = args.Element as Button;
-            var content = button.Content as Grid;
+            var content = args.Element as UserCell;
+            var element = content.DataContext as ChatFilterElement;
 
-            var element = button.DataContext as ChatFilterElement;
-
-            var title = content.Children[1] as TextBlock;
-            var photo = content.Children[0] as ProfilePicture;
-
-            if (element is FilterChat chat)
-            {
-                title.Text = ViewModel.ProtoService.GetTitle(chat.Chat);
-                photo.SetChat(ViewModel.ProtoService, chat.Chat, 36);
-            }
-            else if (element is FilterFlag flag)
-            {
-                switch (flag.Flag)
-                {
-                    case ChatListFilterFlags.IncludeContacts:
-                        title.Text = Strings.Resources.FilterContacts;
-                        break;
-                    case ChatListFilterFlags.IncludeNonContacts:
-                        title.Text = Strings.Resources.FilterNonContacts;
-                        break;
-                    case ChatListFilterFlags.IncludeGroups:
-                        title.Text = Strings.Resources.FilterGroups;
-                        break;
-                    case ChatListFilterFlags.IncludeChannels:
-                        title.Text = Strings.Resources.FilterChannels;
-                        break;
-                    case ChatListFilterFlags.IncludeBots:
-                        title.Text = Strings.Resources.FilterBots;
-                        break;
-
-                    case ChatListFilterFlags.ExcludeMuted:
-                        title.Text = Strings.Resources.FilterMuted;
-                        break;
-                    case ChatListFilterFlags.ExcludeRead:
-                        title.Text = Strings.Resources.FilterRead;
-                        break;
-                    case ChatListFilterFlags.ExcludeArchived:
-                        title.Text = Strings.Resources.FilterArchived;
-                        break;
-                }
-
-                photo.Source = PlaceholderHelper.GetGlyph(MainPage.GetFilterIcon(flag.Flag), (int)flag.Flag, 36);
-            }
-
-            //button.Command = ViewModel.OpenChatCommand;
-            //button.CommandParameter = nearby;
+            content.UpdateChatFilter(ViewModel.ProtoService, element);
         }
 
         private void Include_ContextRequested(UIElement sender, ContextRequestedEventArgs args)

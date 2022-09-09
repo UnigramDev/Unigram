@@ -193,15 +193,7 @@ namespace Unigram.Controls
         {
             Subtitle.Text = LastSeenConverter.GetLabel(user, true);
 
-            if (user.IsVerified || (user.Id != ViewModel.ProtoService.Options.MyId && user.IsPremium && ViewModel.ProtoService.IsPremiumAvailable))
-            {
-                Verified.Glyph = user.Id != ViewModel.ProtoService.Options.MyId && user.IsPremium && ViewModel.ProtoService.IsPremiumAvailable ? Icons.Premium16 : Icons.Verified16;
-                Verified.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                Verified.Visibility = Visibility.Collapsed;
-            }
+            Identity.SetStatus(ViewModel.ProtoService, user);
 
             UserPhone.Badge = PhoneNumber.Format(user.PhoneNumber);
             UserPhone.Visibility = string.IsNullOrEmpty(user.PhoneNumber) ? Visibility.Collapsed : Visibility.Visible;
@@ -290,7 +282,8 @@ namespace Unigram.Controls
 
             Description.Content = Strings.Resources.DescriptionPlaceholder;
 
-            Verified.Visibility = Visibility.Collapsed;
+            Identity.ClearStatus();
+
             UserPhone.Visibility = Visibility.Collapsed;
             Location.Visibility = Visibility.Collapsed;
             Username.Visibility = Visibility.Collapsed;
@@ -362,8 +355,7 @@ namespace Unigram.Controls
 
             Description.Content = Strings.Resources.DescriptionPlaceholder;
 
-            Verified.Glyph = Icons.Verified16;
-            Verified.Visibility = group.IsVerified ? Visibility.Visible : Visibility.Collapsed;
+            Identity.SetStatus(group);
 
             Username.Badge = $"{group.Username}";
             Username.Visibility = string.IsNullOrEmpty(group.Username) ? Visibility.Collapsed : Visibility.Visible;

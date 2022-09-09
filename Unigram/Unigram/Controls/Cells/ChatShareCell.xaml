@@ -22,7 +22,7 @@
         <Ellipse x:Name="SelectionOutline"
                  StrokeThickness="2"
                  Stroke="{ThemeResource SystemControlBackgroundAccentBrush}" />
-        <controls:ProfilePicture x:Name="PhotoElement"
+        <controls:ProfilePicture x:Name="Photo"
                                  Width="36"
                                  Height="36"
                                  IsEnabled="False" />
@@ -44,11 +44,22 @@
         </Border>
     </Grid>
 
-    <TextBlock VerticalAlignment="Center"
-               TextWrapping="NoWrap"
-               TextTrimming="CharacterEllipsis"
-               FontFamily="{ThemeResource EmojiThemeFontFamily}"
-               Style="{StaticResource BodyTextBlockStyle}"
-               Grid.Column="1" />
+    <Grid HorizontalAlignment="Left"
+          VerticalAlignment="Center"
+          Grid.Column="1">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <TextBlock x:Name="TitleLabel"
+                   FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                   TextWrapping="NoWrap"
+                   TextTrimming="CharacterEllipsis" />
+
+        <controls:IdentityIcon x:Name="Identity"
+                  VerticalAlignment="Bottom"
+                  Margin="4,0,0,2"
+                  Grid.Column="1" />
+    </Grid>
 
 </Grid>

@@ -1,72 +1,55 @@
-﻿<controls:ContentPopup
-    x:Class="Unigram.Views.Popups.PollResultsPopup"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Unigram.Views.Popups"
-    xmlns:common="using:Unigram.Common"
-    xmlns:controls="using:Unigram.Controls"
-    xmlns:microsoft="using:Microsoft.UI.Xaml.Controls"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    Background="{ThemeResource PageBackgroundDarkBrush}"
-    PrimaryButtonText="Button1"
-    PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-    SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+﻿<controls:ContentPopup x:Class="Unigram.Views.Popups.PollResultsPopup"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:local="using:Unigram.Views.Popups"
+                       xmlns:common="using:Unigram.Common"
+                       xmlns:cells="using:Unigram.Controls.Cells"
+                       xmlns:controls="using:Unigram.Controls"
+                       xmlns:microsoft="using:Microsoft.UI.Xaml.Controls"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       mc:Ignorable="d"
+                       Background="{ThemeResource PageBackgroundDarkBrush}"
+                       PrimaryButtonText="Button1"
+                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
 
     <Grid Margin="-24,-12,-24,-24">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
         </Grid.RowDefinitions>
-        <TextBlock
-            x:Name="Subtitle"
-            Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-            Style="{StaticResource CaptionTextBlockStyle}"
-            Margin="24,0,0,2"/>
-        
+        <TextBlock x:Name="Subtitle"
+                   Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                   Style="{StaticResource CaptionTextBlockStyle}"
+                   Margin="24,0,0,2" />
+
         <microsoft:ItemsRepeaterScrollHost Grid.Row="1">
             <ScrollViewer x:Name="ScrollingHost">
-                <microsoft:ItemsRepeater
-                    x:Name="Repeater"
-                    Layout="{StaticResource ThreadStackLayout}"
-                    ElementPrepared="OnElementPrepared"
-                    Margin="0,0,0,24">
+                <microsoft:ItemsRepeater x:Name="Repeater"
+                                         Layout="{StaticResource ThreadStackLayout}"
+                                         ElementPrepared="OnElementPrepared"
+                                         Margin="0,0,0,24">
                     <microsoft:ItemsRepeater.ItemTemplate>
                         <DataTemplate x:DataType="local:PollResultViewModel">
                             <controls:HeaderedControl Style="{StaticResource FooteredControlStyle}">
-                                <microsoft:ItemsRepeater
-                                    Layout="{StaticResource ThreadStackLayout}"
-                                    ItemsSource="{x:Bind Items}"
-                                    ElementPrepared="OnElementPrepared">
+                                <microsoft:ItemsRepeater Layout="{StaticResource ThreadStackLayout}"
+                                                         ItemsSource="{x:Bind Items}"
+                                                         ElementPrepared="OnElementPrepared">
                                     <microsoft:ItemsRepeater.ItemTemplate>
                                         <DataTemplate>
                                             <Button Style="{StaticResource EmptyButtonStyle}">
-                                                <Grid Margin="12,6">
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="Auto"/>
-                                                        <ColumnDefinition/>
-                                                    </Grid.ColumnDefinitions>
-                                                    <controls:ProfilePicture IsEnabled="False" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
-
-                                                    <TextBlock
-                                                        FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                                        TextWrapping="NoWrap"
-                                                        TextTrimming="CharacterEllipsis"
-                                                        VerticalAlignment="Center"
-                                                        Grid.Column="1"/>
-                                                </Grid>
+                                                <cells:UserCell />
                                             </Button>
                                         </DataTemplate>
 
                                     </microsoft:ItemsRepeater.ItemTemplate>
                                 </microsoft:ItemsRepeater>
 
-                                <controls:BadgeButton
-                                    Command="{x:Bind LoadMoreCommand}"
-                                    Content="{x:Bind LoadMoreLabel, Mode=OneWay}"
-                                    Visibility="{x:Bind LoadMoreVisibility, Mode=OneWay}"
-                                    Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
+                                <controls:BadgeButton Command="{x:Bind LoadMoreCommand}"
+                                                      Content="{x:Bind LoadMoreLabel, Mode=OneWay}"
+                                                      Visibility="{x:Bind LoadMoreVisibility, Mode=OneWay}"
+                                                      Foreground="{ThemeResource SystemControlForegroundAccentBrush}" />
                             </controls:HeaderedControl>
                         </DataTemplate>
                     </microsoft:ItemsRepeater.ItemTemplate>
@@ -74,9 +57,8 @@
             </ScrollViewer>
         </microsoft:ItemsRepeaterScrollHost>
 
-        <controls:ScrollViewerScrim
-            Background="{ThemeResource PageBackgroundDarkBrush}"
-            ScrollingHost="{x:Bind ScrollingHost}"
-            Grid.Row="1"/>
+        <controls:ScrollViewerScrim Background="{ThemeResource PageBackgroundDarkBrush}"
+                                    ScrollingHost="{x:Bind ScrollingHost}"
+                                    Grid.Row="1" />
     </Grid>
 </controls:ContentPopup>

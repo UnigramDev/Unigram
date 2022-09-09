@@ -491,17 +491,11 @@ namespace Unigram.Views.Popups
             {
                 return;
             }
-
-            var content = args.ItemContainer.ContentTemplateRoot as ChatShareCell;
-            var chat = args.Item as Chat;
-
-            content.UpdateState(sender.SelectionMode == ListViewSelectionMode.Multiple && args.ItemContainer.IsSelected, false);
-
-            var photo = content.Photo;
-            var title = content.Children[1] as TextBlock;
-
-            photo.SetChat(ViewModel.ProtoService, chat, 36);
-            title.Text = ViewModel.ProtoService.GetTitle(chat);
+            else if (args.ItemContainer.ContentTemplateRoot is ChatShareCell content)
+            {
+                content.UpdateState(sender.SelectionMode == ListViewSelectionMode.Multiple && args.ItemContainer.IsSelected, false);
+                content.UpdateChat(ViewModel.ProtoService, args, OnContainerContentChanging);
+            }
         }
 
         private void DialogsSearchListView_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)

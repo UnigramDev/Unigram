@@ -31,11 +31,7 @@ namespace Unigram.Views.Supergroups
 
         public void UpdateUser(Chat chat, User user, bool secret)
         {
-            TitleLabel.Text = user.GetFullName();
-            Subtitle.Text = LastSeenConverter.GetLabel(user, true);
-            Photo.SetUser(ViewModel.ProtoService, user, 64);
-
-            Verified.Visibility = user.IsVerified ? Visibility.Visible : Visibility.Collapsed;
+            Cell.UpdateUser(ViewModel.ProtoService, user, 64);
         }
 
         public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret, bool accessToken)
@@ -44,7 +40,7 @@ namespace Unigram.Views.Supergroups
 
         public void UpdateUserStatus(Chat chat, User user)
         {
-            Subtitle.Text = LastSeenConverter.GetLabel(user, true);
+            Cell.Subtitle = LastSeenConverter.GetLabel(user, true);
         }
 
         public void UpdateMember(Chat chat, User user, ChatMember member)

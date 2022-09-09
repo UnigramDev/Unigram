@@ -1,6 +1,9 @@
 ﻿using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Numerics;
+using Telegram.Td.Api;
+using Unigram.Services;
+using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -56,7 +59,34 @@ namespace Unigram.Controls.Cells
             }
         }
 
-        public ProfilePicture Photo => PhotoElement;
+        public void UpdateChat(IProtoService protoService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        {
+            var chat = args.Item as Chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            args.ItemContainer.Tag = args.Item;
+            Tag = args.Item;
+
+            if (args.Phase == 0)
+            {
+                TitleLabel.Text = protoService.GetTitle(chat);
+            }
+            else if (args.Phase == 2)
+            {
+                Photo.SetChat(protoService, chat, 36);
+                Identity.SetStatus(protoService, chat);
+            }
+
+            if (args.Phase < 2)
+            {
+                args.RegisterUpdateCallback(callback);
+            }
+
+            args.Handled = true;
+        }
 
         #region Stroke
 

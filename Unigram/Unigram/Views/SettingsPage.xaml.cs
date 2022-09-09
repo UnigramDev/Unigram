@@ -4,7 +4,6 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Gallery;
-using Unigram.Converters;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Users;
@@ -226,18 +225,9 @@ namespace Unigram.Views
 
         public void UpdateUser(Chat chat, User user, bool secret)
         {
-            Photo.SetUser(ViewModel.ProtoService, user, 48);
             Title.Text = user.GetFullName();
-
-            if (user.IsVerified || (user.IsPremium && ViewModel.ProtoService.IsPremiumAvailable))
-            {
-                Verified.Glyph = user.IsPremium ? Icons.Premium16 : Icons.Verified16;
-                Verified.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                Verified.Visibility = Visibility.Collapsed;
-            }
+            Photo.SetUser(ViewModel.ProtoService, user, 48);
+            Identity.SetStatus(ViewModel.ProtoService, user);
         }
 
         public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret, bool accessToken)

@@ -5,6 +5,8 @@ using Unigram.Converters;
 using Unigram.Navigation;
 using Unigram.Services;
 using Unigram.ViewModels;
+using Unigram.ViewModels.Folders;
+using Unigram.Views;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Xaml;
@@ -21,14 +23,67 @@ namespace Unigram.Controls.Cells
             InitializeComponent();
         }
 
+        public event RoutedEventHandler Click
+        {
+            add { Photo.IsEnabled = true; Photo.Click += value; }
+            remove { Photo.IsEnabled = false; Photo.Click -= value; }
+        }
+
+        public double PhotoSize
+        {
+            get => Photo.Width;
+            set => Photo.Width = Photo.Height = value;
+        }
+
+        public string Title
+        {
+            get => TitleLabel.Text;
+            set => TitleLabel.Text = value;
+        }
+
+        public string Subtitle
+        {
+            get => SubtitleLabel.Text;
+            set => SubtitleLabel.Text = value;
+        }
+
+        public void UpdateUser(IProtoService protoService, User user, int photoSize, bool phoneNumber = false)
+        {
+            TitleLabel.Text = user.GetFullName();
+
+            if (phoneNumber)
+            {
+#if DEBUG
+                SubtitleLabel.Text = "+42 --- --- ----";
+#else
+                if (protoService.Options.TestMode)
+                {
+                    SubtitleLabel.Text = "+42 --- --- ----";
+                }
+                else
+                {
+                    SubtitleLabel.Text = PhoneNumber.Format(user.PhoneNumber);
+                }
+#endif
+            }
+            else
+            {
+                SubtitleLabel.Text = LastSeenConverter.GetLabel(user, false);
+                SubtitleLabel.Style = BootStrapper.Current.Resources[user.Status is UserStatusOnline ? "AccentCaptionTextBlockStyle" : "InfoCaptionTextBlockStyle"] as Style;
+            }
+            
+            Photo.Width = photoSize;
+            Photo.Height = photoSize;
+            Photo.SetUser(protoService, user, photoSize);
+
+            Identity.SetStatus(protoService, user);
+        }
+
         public void UpdateUser(IProtoService protoService, User user, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
         {
             if (args.Phase == 0)
             {
                 TitleLabel.Text = user.GetFullName();
-                Premium.Visibility = user.IsPremium && protoService.IsPremiumAvailable
-                    ? Visibility.Visible
-                    : Visibility.Collapsed;
             }
             else if (args.Phase == 1)
             {
@@ -38,6 +93,7 @@ namespace Unigram.Controls.Cells
             else if (args.Phase == 2)
             {
                 Photo.SetUser(protoService, user, 36);
+                Identity.SetStatus(protoService, user);
             }
 
             if (args.Phase < 2)
@@ -48,8 +104,11 @@ namespace Unigram.Controls.Cells
             args.Handled = true;
         }
 
-        public void UpdateSupergroupPermissions(IProtoService protoService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        public void UpdateSupergroupMember(IProtoService protoService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
         {
+            args.ItemContainer.Tag = args.Item;
+            Tag = args.Item;
+
             var member = args.Item as ChatMember;
 
             var user = protoService.GetMessageSender(member.MemberId) as User;
@@ -61,9 +120,6 @@ namespace Unigram.Controls.Cells
             if (args.Phase == 0)
             {
                 TitleLabel.Text = user.GetFullName();
-                Premium.Visibility = user.IsPremium && protoService.IsPremiumAvailable
-                    ? Visibility.Visible
-                    : Visibility.Collapsed;
             }
             else if (args.Phase == 1)
             {
@@ -72,6 +128,7 @@ namespace Unigram.Controls.Cells
             else if (args.Phase == 2)
             {
                 Photo.SetUser(protoService, user, 36);
+                Identity.SetStatus(protoService, user);
             }
 
             if (args.Phase < 2)
@@ -97,14 +154,10 @@ namespace Unigram.Controls.Cells
                 if (messageSender is User user)
                 {
                     TitleLabel.Text = user.GetFullName();
-                    Premium.Visibility = user.IsPremium && protoService.IsPremiumAvailable
-                        ? Visibility.Visible
-                        : Visibility.Collapsed;
                 }
                 else if (messageSender is Chat chat)
                 {
                     TitleLabel.Text = chat.Title;
-                    Premium.Visibility = Visibility.Collapsed;
                 }
             }
             else if (args.Phase == 1)
@@ -116,10 +169,12 @@ namespace Unigram.Controls.Cells
                 if (messageSender is User user)
                 {
                     Photo.SetUser(protoService, user, 36);
+                    Identity.SetStatus(protoService, user);
                 }
                 else if (messageSender is Chat chat)
                 {
                     Photo.SetChat(protoService, chat, 36);
+                    Identity.SetStatus(protoService, chat);
                 }
             }
 
@@ -147,39 +202,16 @@ namespace Unigram.Controls.Cells
                 }
                 else if (result.User != null)
                 {
-                    TitleLabel.Text = result.User.GetFullName();
                 }
-
-                var verified = false;
-                var premium = false;
 
                 if (result.Chat != null)
                 {
-                    if (protoService.TryGetUser(result.Chat, out User user))
-                    {
-                        verified = user.IsVerified;
-                        premium = user.IsPremium && protoService.IsPremiumAvailable && user.Id != protoService.Options.MyId;
-                    }
-                    else if (protoService.TryGetSupergroup(result.Chat, out Supergroup supergroup))
-                    {
-                        verified = supergroup.IsVerified;
-                        premium = false;
-                    }
+                    TitleLabel.Text = protoService.GetTitle(result.Chat);
                 }
                 else if (result.User != null)
                 {
-                    verified = result.User.IsVerified;
-                    premium = result.User.IsPremium && protoService.IsPremiumAvailable;
-                }
-
-                if (premium || verified)
-                {
-                    Premium.Glyph = premium ? Icons.Premium16 : Icons.Verified16;
-                    Premium.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    Premium.Visibility = Visibility.Collapsed;
+                    TitleLabel.Text = result.User.GetFullName();
+                    Identity.SetStatus(protoService, result.User);
                 }
             }
             else if (args.Phase == 1)
@@ -259,10 +291,12 @@ namespace Unigram.Controls.Cells
                 if (result.Chat != null)
                 {
                     Photo.SetChat(protoService, result.Chat, 36);
+                    Identity.SetStatus(protoService, result.Chat);
                 }
                 else if (result.User != null)
                 {
                     Photo.SetUser(protoService, result.User, 36);
+                    Identity.SetStatus(protoService, result.User);
                 }
             }
 
@@ -294,9 +328,6 @@ namespace Unigram.Controls.Cells
             if (args.Phase == 0)
             {
                 TitleLabel.Text = user.GetFullName();
-                Premium.Visibility = user.IsPremium && protoService.IsPremiumAvailable
-                    ? Visibility.Visible
-                    : Visibility.Collapsed;
             }
             else if (args.Phase == 1)
             {
@@ -328,6 +359,7 @@ namespace Unigram.Controls.Cells
             else if (args.Phase == 2)
             {
                 Photo.SetUser(protoService, user, 36);
+                Identity.SetStatus(protoService, user);
             }
 
             if (args.Phase < 2)
@@ -338,5 +370,192 @@ namespace Unigram.Controls.Cells
             args.Handled = true;
         }
 
+        public void UpdateNotificationException(IProtoService protoService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        {
+            UpdateStyleNoSubtitle();
+
+            var chat = args.Item as Chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            args.ItemContainer.Tag = args.Item;
+            Tag = args.Item;
+
+            if (args.Phase == 0)
+            {
+                TitleLabel.Text = protoService.GetTitle(chat);
+            }
+            else if (args.Phase == 1)
+            {
+                //SubtitleLabel.Text = LastSeenConverter.GetLabel(user, false);
+            }
+            else if (args.Phase == 2)
+            {
+                Photo.SetChat(protoService, chat, 36);
+                Identity.SetStatus(protoService, chat);
+            }
+
+            if (args.Phase < 2)
+            {
+                args.RegisterUpdateCallback(callback);
+            }
+
+            args.Handled = true;
+        }
+
+        public void UpdateMessageSender(IProtoService protoService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        {
+            UpdateStyleNoSubtitle();
+
+            var member = args.Item as MessageSender;
+
+            var messageSender = protoService.GetMessageSender(member);
+            if (messageSender == null)
+            {
+                return;
+            }
+
+            Tag = member;
+
+            if (args.Phase == 0)
+            {
+                if (messageSender is User user)
+                {
+                    TitleLabel.Text = user.GetFullName();
+                }
+                else if (messageSender is Chat chat)
+                {
+                    TitleLabel.Text = chat.Title;
+                }
+            }
+            else if (args.Phase == 1)
+            {
+                //SubtitleLabel.Text = ChannelParticipantToTypeConverter.Convert(protoService, member);
+            }
+            else if (args.Phase == 2)
+            {
+                if (messageSender is User user)
+                {
+                    Photo.SetUser(protoService, user, 36);
+                    Identity.SetStatus(protoService, user);
+                }
+                else if (messageSender is Chat chat)
+                {
+                    Photo.SetChat(protoService, chat, 36);
+                    Identity.SetStatus(protoService, chat);
+                }
+            }
+
+            if (args.Phase < 2)
+            {
+                args.RegisterUpdateCallback(callback);
+            }
+
+            args.Handled = true;
+        }
+
+        public void UpdateStatisticsByChat(IProtoService protoService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        {
+            if (args.InRecycleQueue)
+            {
+                return;
+            }
+
+            var content = args.ItemContainer.ContentTemplateRoot as UserCell;
+            var statistics = args.Item as StorageStatisticsByChat;
+
+            //if (chat == null)
+            //{
+            //    return;
+            //}
+
+            if (args.Phase == 0)
+            {
+                var chat = protoService.GetChat(statistics.ChatId);
+                TitleLabel.Text = chat == null ? "Other Chats" : protoService.GetTitle(chat);
+            }
+            else if (args.Phase == 1)
+            {
+                SubtitleLabel.Text = FileSizeConverter.Convert(statistics.Size, true);
+            }
+            else if (args.Phase == 2)
+            {
+                if (statistics.ChatId == 0)
+                {
+                    Photo.Source = null;
+                    Photo.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    var chat = protoService.GetChat(statistics.ChatId);
+
+                    Photo.SetChat(protoService, chat, 36);
+                    Photo.Visibility = Visibility.Visible;
+                    Identity.SetStatus(protoService, chat);
+                }
+            }
+
+            if (args.Phase < 2)
+            {
+                args.RegisterUpdateCallback(callback);
+            }
+        }
+
+        public void UpdateChatFilter(IProtoService protoService, ChatFilterElement element)
+        {
+            UpdateStyleNoSubtitle();
+
+            if (element is FilterChat chat)
+            {
+                TitleLabel.Text = protoService.GetTitle(chat.Chat);
+                Photo.SetChat(protoService, chat.Chat, 36);
+                Identity.SetStatus(protoService, chat.Chat);
+            }
+            else if (element is FilterFlag flag)
+            {
+                switch (flag.Flag)
+                {
+                    case ChatListFilterFlags.IncludeContacts:
+                        TitleLabel.Text = Strings.Resources.FilterContacts;
+                        break;
+                    case ChatListFilterFlags.IncludeNonContacts:
+                        TitleLabel.Text = Strings.Resources.FilterNonContacts;
+                        break;
+                    case ChatListFilterFlags.IncludeGroups:
+                        TitleLabel.Text = Strings.Resources.FilterGroups;
+                        break;
+                    case ChatListFilterFlags.IncludeChannels:
+                        TitleLabel.Text = Strings.Resources.FilterChannels;
+                        break;
+                    case ChatListFilterFlags.IncludeBots:
+                        TitleLabel.Text = Strings.Resources.FilterBots;
+                        break;
+
+                    case ChatListFilterFlags.ExcludeMuted:
+                        TitleLabel.Text = Strings.Resources.FilterMuted;
+                        break;
+                    case ChatListFilterFlags.ExcludeRead:
+                        TitleLabel.Text = Strings.Resources.FilterRead;
+                        break;
+                    case ChatListFilterFlags.ExcludeArchived:
+                        TitleLabel.Text = Strings.Resources.FilterArchived;
+                        break;
+                }
+
+                Photo.Source = PlaceholderHelper.GetGlyph(MainPage.GetFilterIcon(flag.Flag), (int)flag.Flag, 36);
+            }
+        }
+
+
+        private void UpdateStyleNoSubtitle()
+        {
+            TitlePanel.Margin = new Thickness(0, 0, 0, 2);
+            TitlePanel.VerticalAlignment = VerticalAlignment.Center;
+            SubtitleLabel.Visibility = Visibility.Collapsed;
+
+            Grid.SetRowSpan(TitlePanel, 2);
+        }
     }
 }

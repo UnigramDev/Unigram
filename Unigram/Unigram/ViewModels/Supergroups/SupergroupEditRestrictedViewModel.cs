@@ -18,7 +18,6 @@ namespace Unigram.ViewModels.Supergroups
         public SupergroupEditRestrictedViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
-            ProfileCommand = new RelayCommand(ProfileExecute);
             SendCommand = new RelayCommand(SendExecute);
             EditUntilCommand = new RelayCommand(EditUntilExecute);
             DismissCommand = new RelayCommand(DismissExecute);
@@ -240,8 +239,7 @@ namespace Unigram.ViewModels.Supergroups
             set => Set(ref _untilDate, value);
         }
 
-        public RelayCommand ProfileCommand { get; }
-        private void ProfileExecute()
+        public void OpenProfile()
         {
             var member = _member;
             if (member == null)

@@ -1,7 +1,7 @@
 ﻿using System;
 using Telegram.Td.Api;
-using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Controls.Cells;
 using Unigram.ViewModels.Settings;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -56,45 +56,14 @@ namespace Unigram.Views.Settings
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
-            var content = args.ItemContainer.ContentTemplateRoot as Grid;
-            var messageSender = args.Item as MessageSender;
-
-            content.Tag = messageSender;
-
-            ViewModel.CacheService.TryGetUser(messageSender, out User user);
-            ViewModel.CacheService.TryGetChat(messageSender, out Chat chat);
-
-            if (args.Phase == 0)
+            if (args.InRecycleQueue)
             {
-                var title = content.Children[1] as TextBlock;
-                if (user != null)
-                {
-                    title.Text = user.GetFullName();
-                }
-                else if (chat != null)
-                {
-                    title.Text = ViewModel.ProtoService.GetTitle(chat);
-                }
+                return;
             }
-            else if (args.Phase == 2)
+            else if (args.ItemContainer.ContentTemplateRoot is UserCell content)
             {
-                var photo = content.Children[0] as ProfilePicture;
-                if (user != null)
-                {
-                    photo.SetUser(ViewModel.ProtoService, user, 36);
-                }
-                else if (chat != null)
-                {
-                    photo.SetChat(ViewModel.ProtoService, chat, 36);
-                }
+                content.UpdateMessageSender(ViewModel.ProtoService, args, OnContainerContentChanging);
             }
-
-            if (args.Phase < 2)
-            {
-                args.RegisterUpdateCallback(OnContainerContentChanging);
-            }
-
-            args.Handled = true;
         }
 
         #endregion

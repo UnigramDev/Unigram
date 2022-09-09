@@ -22,7 +22,6 @@ namespace Unigram.ViewModels.Supergroups
         public SupergroupEditAdministratorViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
-            ProfileCommand = new RelayCommand(ProfileExecute);
             SendCommand = new RelayCommand(SendExecute);
             TransferCommand = new RelayCommand(TransferExecute);
             DismissCommand = new RelayCommand(DismissExecute);
@@ -270,8 +269,7 @@ namespace Unigram.ViewModels.Supergroups
             set => Set(ref _customTitle, value);
         }
 
-        public RelayCommand ProfileCommand { get; }
-        private void ProfileExecute()
+        public void OpenProfile()
         {
             var member = _member;
             if (member == null)

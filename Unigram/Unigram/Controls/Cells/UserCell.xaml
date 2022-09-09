@@ -26,7 +26,8 @@
                              Margin="0,0,12,0"
                              Grid.RowSpan="2" />
 
-    <Grid Grid.Column="1"
+    <Grid x:Name="TitlePanel"
+          Grid.Column="1"
           HorizontalAlignment="Left"
           VerticalAlignment="Bottom">
         <Grid.ColumnDefinitions>
@@ -34,18 +35,13 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <TextBlock x:Name="TitleLabel"
+                   FontFamily="{ThemeResource EmojiThemeFontFamily}"
                    TextWrapping="NoWrap"
                    TextTrimming="CharacterEllipsis" />
-
-        <FontIcon x:Name="Premium"
-                  Glyph="&#xE9B5;"
-                  FontFamily="{StaticResource TelegramThemeFontFamily}"
-                  Foreground="{ThemeResource ChatVerifiedBadgeBrush}"
-                  VerticalAlignment="Bottom"
-                  Visibility="Collapsed"
-                  FontSize="16"
-                  Margin="4,0,0,2"
-                  Grid.Column="1" />
+        <controls:IdentityIcon x:Name="Identity"
+                               VerticalAlignment="Bottom"
+                               Margin="4,0,0,2"
+                               Grid.Column="1" />
     </Grid>
     <TextBlock x:Name="SubtitleLabel"
                VerticalAlignment="Top"

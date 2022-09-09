@@ -1,8 +1,7 @@
 ﻿using System;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls;
-using Unigram.Converters;
+using Unigram.Controls.Cells;
 using Unigram.Navigation;
 using Unigram.ViewModels.Settings;
 using Windows.UI.Xaml;
@@ -50,48 +49,10 @@ namespace Unigram.Views.Settings
             {
                 return;
             }
-
-            var content = args.ItemContainer.ContentTemplateRoot as Grid;
-            var statistics = args.Item as StorageStatisticsByChat;
-
-            var chat = ViewModel.ProtoService.GetChat(statistics.ChatId);
-            //if (chat == null)
-            //{
-            //    return;
-            //}
-
-            if (args.Phase == 0)
+            else if (args.ItemContainer.ContentTemplateRoot is UserCell content)
             {
-                var title = content.Children[1] as TextBlock;
-                title.Text = chat == null ? "Other Chats" : ViewModel.ProtoService.GetTitle(chat);
+                content.UpdateStatisticsByChat(ViewModel.ProtoService, args, OnContainerContentChanging);
             }
-            else if (args.Phase == 1)
-            {
-                var subtitle = content.Children[2] as TextBlock;
-                subtitle.Text = FileSizeConverter.Convert(statistics.Size, true);
-            }
-            else if (args.Phase == 2)
-            {
-                var photo = content.Children[0] as ProfilePicture;
-                if (chat == null)
-                {
-                    photo.Source = null;
-                    photo.Visibility = Visibility.Collapsed;
-                }
-                else
-                {
-                    photo.SetChat(ViewModel.ProtoService, chat, 36);
-                    photo.Visibility = Visibility.Visible;
-                }
-            }
-
-            if (args.Phase < 2)
-            {
-                args.RegisterUpdateCallback(OnContainerContentChanging);
-            }
-
-            args.Handled = true;
-
         }
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)

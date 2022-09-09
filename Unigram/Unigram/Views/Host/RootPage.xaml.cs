@@ -295,7 +295,7 @@ namespace Unigram.Views.Host
 #if DEBUG
             PhoneLabel.Text = "+42 --- --- ----";
 #else
-            if (viewModel.Chats.Settings.UseTestDC)
+            if (protoService.Options.TestMode)
             {
                 PhoneLabel.Text = "+42 --- --- ----";
             }
@@ -482,13 +482,16 @@ namespace Unigram.Views.Host
                     return;
                 }
 
-                var title = content.Children[2] as TextBlock;
+                var title = content.FindName("TitleLabel") as TextBlock;
                 title.Text = user.GetFullName();
-
-                AutomationProperties.SetName(content, user.GetFullName());
 
                 var photo = content.Children[0] as ProfilePicture;
                 photo.SetUser(session.ProtoService, user, 28);
+
+                var identity = content.FindName("Identity") as IdentityIcon;
+                identity.SetStatus(session.ProtoService, user);
+
+                AutomationProperties.SetName(container, user.GetFullName());
             }
             else if (item is RootDestination destination && _navigationService.Content is MainPage page)
             {

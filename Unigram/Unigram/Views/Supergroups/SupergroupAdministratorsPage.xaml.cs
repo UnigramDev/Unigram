@@ -1,7 +1,7 @@
 ﻿using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Converters;
+using Unigram.Controls.Cells;
 using Unigram.Navigation.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Supergroups;
@@ -68,41 +68,10 @@ namespace Unigram.Views.Supergroups
             {
                 return;
             }
-
-            var content = args.ItemContainer.ContentTemplateRoot as Grid;
-            var member = args.Item as ChatMember;
-
-            args.ItemContainer.Tag = args.Item;
-            content.Tag = args.Item;
-
-            var user = ViewModel.ProtoService.GetMessageSender(member.MemberId) as User;
-            if (user == null)
+            else if (args.ItemContainer.ContentTemplateRoot is UserCell content)
             {
-                return;
+                content.UpdateSupergroupMember(ViewModel.ProtoService, args, OnContainerContentChanging);
             }
-
-            if (args.Phase == 0)
-            {
-                var title = content.Children[1] as TextBlock;
-                title.Text = user.GetFullName();
-            }
-            else if (args.Phase == 1)
-            {
-                var subtitle = content.Children[2] as TextBlock;
-                subtitle.Text = ChannelParticipantToTypeConverter.Convert(ViewModel.ProtoService, member);
-            }
-            else if (args.Phase == 2)
-            {
-                var photo = content.Children[0] as ProfilePicture;
-                photo.SetUser(ViewModel.ProtoService, user, 36);
-            }
-
-            if (args.Phase < 2)
-            {
-                args.RegisterUpdateCallback(OnContainerContentChanging);
-            }
-
-            args.Handled = true;
         }
 
         #endregion

@@ -398,15 +398,10 @@
                                        TextTrimming="CharacterEllipsis"
                                        MaxLines="1" />
 
-                            <FontIcon x:Name="Verified"
-                                      Glyph="&#xE97A;"
-                                      FontFamily="{StaticResource TelegramThemeFontFamily}"
-                                      Foreground="{ThemeResource ChatVerifiedBadgeBrush}"
-                                      VerticalAlignment="Bottom"
-                                      Visibility="Collapsed"
-                                      FontSize="16"
-                                      Margin="4,0,0,2"
-                                      Grid.Column="1" />
+                            <controls:IdentityIcon x:Name="Identity"
+                                                   VerticalAlignment="Bottom"
+                                                   Margin="4,0,0,2"
+                                                   Grid.Column="1" />
                         </Grid>
 
                         <Grid Visibility="{x:Bind ViewModel.LastSeen, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"

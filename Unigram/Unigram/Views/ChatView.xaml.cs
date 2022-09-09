@@ -4233,14 +4233,13 @@ namespace Unigram.Views
             btnSendMessage.SlowModeDelay = 0;
             btnSendMessage.SlowModeDelayExpiresIn = 0;
 
-            if (user.IsVerified || (user.IsPremium && ViewModel.ProtoService.IsPremiumAvailable))
+            if (user.Id != ViewModel.ProtoService.Options.MyId)
             {
-                Verified.Glyph = user.IsPremium ? Icons.Premium16 : Icons.Verified16;
-                Verified.Visibility = Visibility.Visible;
+                Identity.SetStatus(ViewModel.ProtoService, user);
             }
             else
             {
-                Verified.Visibility = Visibility.Collapsed;
+                Identity.ClearStatus();
             }
 
             if (!secret)
@@ -4340,7 +4339,7 @@ namespace Unigram.Views
 
         public void UpdateBasicGroup(Chat chat, BasicGroup group)
         {
-            Verified.Visibility = Visibility.Collapsed;
+            Identity.ClearStatus();
 
             if (group.Status is ChatMemberStatusLeft or ChatMemberStatusBanned)
             {
@@ -4401,15 +4400,7 @@ namespace Unigram.Views
 
         public void UpdateSupergroup(Chat chat, Supergroup group)
         {
-            if (group.IsVerified)
-            {
-                Verified.Glyph = Icons.Verified16;
-                Verified.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                Verified.Visibility = Visibility.Collapsed;
-            }
+            Identity.SetStatus(group);
 
             if (ViewModel.Type == DialogType.EventLog)
             {

@@ -3,6 +3,7 @@
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:local="using:Unigram.Views"
                   xmlns:controls="using:Unigram.Controls"
+                  xmlns:cells="using:Unigram.Controls.Cells"
                   xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -124,25 +125,9 @@
                                             ElementPrepared="OnElementPrepared">
                             <muxc:ItemsRepeater.ItemTemplate>
                                 <DataTemplate>
-                                    <Button ContextRequested="Include_ContextRequested"
-                                            Style="{StaticResource EmptyButtonStyle}">
-                                        <Grid Margin="12,6">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition />
-                                            </Grid.ColumnDefinitions>
-                                            <controls:ProfilePicture IsHitTestVisible="False"
-                                                                     Width="36"
-                                                                     Height="36"
-                                                                     Margin="0,0,12,0" />
-                                            <TextBlock VerticalAlignment="Center"
-                                                       TextWrapping="NoWrap"
-                                                       TextTrimming="CharacterEllipsis"
-                                                       FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                                       Style="{StaticResource BodyTextBlockStyle}"
-                                                       Grid.Column="1" />
-                                        </Grid>
-                                    </Button>
+                                    <cells:UserCell Background="{ThemeResource SettingsItemBackground}"
+                                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                                    ContextRequested="Include_ContextRequested" />
                                 </DataTemplate>
                             </muxc:ItemsRepeater.ItemTemplate>
                         </muxc:ItemsRepeater>
@@ -158,25 +143,9 @@
                                             ElementPrepared="OnElementPrepared">
                             <muxc:ItemsRepeater.ItemTemplate>
                                 <DataTemplate>
-                                    <Button ContextRequested="Exclude_ContextRequested"
-                                            Style="{StaticResource EmptyButtonStyle}">
-                                        <Grid Margin="12,6">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition />
-                                            </Grid.ColumnDefinitions>
-                                            <controls:ProfilePicture IsHitTestVisible="False"
-                                                                     Width="36"
-                                                                     Height="36"
-                                                                     Margin="0,0,12,0" />
-                                            <TextBlock VerticalAlignment="Center"
-                                                       TextWrapping="NoWrap"
-                                                       TextTrimming="CharacterEllipsis"
-                                                       FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                                       Style="{StaticResource BodyTextBlockStyle}"
-                                                       Grid.Column="1" />
-                                        </Grid>
-                                    </Button>
+                                    <cells:UserCell Background="{ThemeResource SettingsItemBackground}"
+                                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                                    ContextRequested="Exclude_ContextRequested" />
                                 </DataTemplate>
                             </muxc:ItemsRepeater.ItemTemplate>
                         </muxc:ItemsRepeater>

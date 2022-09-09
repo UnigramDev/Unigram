@@ -45,14 +45,10 @@
                                Style="{StaticResource SubtitleTextBlockStyle}"
                                FontFamily="{ThemeResource EmojiThemeFontFamily}" />
 
-                    <FontIcon x:Name="Verified"
-                              Glyph="&#xE97A;"
-                              FontFamily="{StaticResource TelegramThemeFontFamily}"
-                              Foreground="{ThemeResource ChatVerifiedBadgeBrush}"
-                              VerticalAlignment="Center"
-                              FontSize="20"
-                              Margin="4,0,0,-4"
-                              Grid.Column="1" />
+                    <controls:IdentityIcon x:Name="Identity"
+                                           VerticalAlignment="Bottom"
+                                           Margin="4,0,0,4"
+                                           Grid.Column="1" />
                 </Grid>
             </Border>
             <Border VerticalAlignment="Top"

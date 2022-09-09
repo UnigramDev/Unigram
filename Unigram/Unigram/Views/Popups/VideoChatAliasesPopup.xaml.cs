@@ -90,24 +90,10 @@ namespace Unigram.Views.Popups
             {
                 return;
             }
-
-            var content = args.ItemContainer.ContentTemplateRoot as ChatShareCell;
-            var messageSender = args.Item as MessageSender;
-
-            content.UpdateState(false, false);
-
-            var photo = content.Photo;
-            var title = content.Children[1] as TextBlock;
-
-            if (_protoService.TryGetUser(messageSender, out User user))
+            else if (args.ItemContainer.ContentTemplateRoot is ChatShareCell content)
             {
-                photo.SetUser(_protoService, user, 36);
-                title.Text = user.GetFullName();
-            }
-            else if (_protoService.TryGetChat(messageSender, out Chat chat))
-            {
-                photo.SetChat(_protoService, chat, 36);
-                title.Text = _protoService.GetTitle(chat);
+                content.UpdateState(false, false);
+                content.UpdateChat(_protoService, args, OnContainerContentChanging);
             }
         }
 
