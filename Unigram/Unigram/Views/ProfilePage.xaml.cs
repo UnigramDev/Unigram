@@ -85,7 +85,7 @@ namespace Unigram.Views
 
         public void UpdateChatTitle(Chat chat)
         {
-            Title = chat.Title;
+            Title = ViewModel.ClientService.GetTitle(chat);
 
             ProfileHeader?.UpdateChatTitle(chat);
 
@@ -212,10 +212,7 @@ namespace Unigram.Views
 
         private void OnNavigated(object sender, NavigationEventArgs e)
         {
-            if (ProfileHeader != null)
-            {
-                UnloadObject(ProfileHeader);
-            }
+            UnloadObject(ProfileHeader);
         }
     }
 }

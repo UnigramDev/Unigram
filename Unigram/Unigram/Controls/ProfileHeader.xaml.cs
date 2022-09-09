@@ -166,6 +166,12 @@ namespace Unigram.Controls
 
         public void UpdateChat(Chat chat)
         {
+            if (ViewModel.ClientService.IsSavedMessages(chat))
+            {
+                Visibility = Visibility.Collapsed;
+                return;
+            }
+
             UpdateChatTitle(chat);
             UpdateChatPhoto(chat);
 
