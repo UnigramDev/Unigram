@@ -433,7 +433,7 @@ namespace Unigram.Controls.Gallery
             if (ViewModel != null && ViewModel.SelectedItem == ViewModel.FirstItem && _closing != null)
             {
                 var root = LayoutRoot.CurrentElement;
-                if (root.IsLoaded && IsConstrainedToRootBounds)
+                if (root.IsLoaded && IsConstrainedToRootBounds && !_lastFullScreen)
                 {
                     var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", root);
                     if (animation != null)
