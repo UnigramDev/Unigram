@@ -1036,25 +1036,13 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 
         public bool CanPostMessages(Chat chat)
         {
-            if (chat.Type is ChatTypeSupergroup super)
+            if (TryGetSupergroup(chat, out Supergroup supergroup))
             {
-                var supergroup = GetSupergroup(super.SupergroupId);
-                if (supergroup != null && supergroup.CanPostMessages())
-                {
-                    return true;
-                }
-
-                return false;
+                return supergroup.CanPostMessages();
             }
-            else if (chat.Type is ChatTypeBasicGroup basic)
+            else if (TryGetBasicGroup(chat, out BasicGroup basicGroup))
             {
-                var basicGroup = GetBasicGroup(basic.BasicGroupId);
-                if (basicGroup != null && basicGroup.CanPostMessages())
-                {
-                    return true;
-                }
-
-                return false;
+                return basicGroup.CanPostMessages();
             }
 
             // TODO: secret chats maybe?

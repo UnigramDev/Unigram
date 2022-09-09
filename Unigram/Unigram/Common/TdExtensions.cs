@@ -1736,11 +1736,13 @@ namespace Unigram.Common
 
             if (supergroup.IsChannel)
             {
-                return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanPostMessages;
+                return supergroup.Status is ChatMemberStatusCreator
+                    || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanPostMessages;
             }
             else
             {
-                return supergroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator or ChatMemberStatusMember;
+                return supergroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator or ChatMemberStatusMember 
+                    || supergroup.Status is ChatMemberStatusRestricted restricted && restricted.Permissions.CanSendMessages;
             }
         }
 
