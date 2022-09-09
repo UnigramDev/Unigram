@@ -931,7 +931,8 @@ namespace Unigram.Services
         {
             if (chat.Photo != null && chat.Photo.Small.Local.IsDownloadingCompleted)
             {
-                return "ms-appdata:///local/0/profile_photos/" + Path.GetFileName(chat.Photo.Small.Local.Path);
+                var relative = Path.GetRelativePath(ApplicationData.Current.LocalFolder.Path, chat.Photo.Small.Local.Path);
+                return "ms-appdata:///local/" + relative.Replace('\\', '/');
             }
 
             return string.Empty;
