@@ -352,8 +352,9 @@ namespace Unigram.Views.Host
                 {
                     _navigationViewItems.RemoveAt(0);
                     _navigationViewItems.RemoveAt(0);
-                    index = 0;
                 }
+
+                index = 0;
             }
             else if (_navigationViewItems[0] is not RootDestination.Status)
             {
