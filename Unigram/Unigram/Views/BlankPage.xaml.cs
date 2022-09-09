@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Services;
-using Unigram.Views.SignIn;
+using Unigram.Views.Authorization;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -19,7 +19,7 @@ namespace Unigram.Views
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.NavigationMode == NavigationMode.Back && Frame.ForwardStack.Any(x => x.SourcePageType == typeof(SignInPage)))
+            if (e.NavigationMode == NavigationMode.Back && Frame.ForwardStack.Any(x => x.SourcePageType == typeof(AuthorizationPage)))
             {
                 TLContainer.Current.Resolve<IProtoService>().Send(new Destroy());
             }

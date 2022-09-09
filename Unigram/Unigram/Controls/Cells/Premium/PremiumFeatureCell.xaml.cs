@@ -1,5 +1,6 @@
 ﻿using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Converters;
 using Unigram.Services;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -19,6 +20,7 @@ namespace Unigram.Controls.Cells.Premium
             {
                 PremiumFeatureIncreasedUploadFileSize => true,
                 PremiumFeatureDisabledAds => true,
+                PremiumFeatureCustomEmoji => true,
                 _ => false
             };
 
@@ -68,6 +70,10 @@ namespace Unigram.Controls.Cells.Premium
                     titleValue = Strings.Resources.PremiumPreviewNoAds;
                     subtitleValue = Strings.Resources.PremiumPreviewNoAdsDescription;
                     break;
+                case PremiumFeatureEmojiStatus:
+                    titleValue = Strings.Resources.PremiumPreviewEmojiStatus;
+                    subtitleValue = Strings.Resources.PremiumPreviewEmojiStatusDescription;
+                    break;
                 case PremiumFeatureImprovedDownloadSpeed:
                     titleValue = Strings.Resources.PremiumPreviewDownloadSpeed;
                     subtitleValue = Strings.Resources.PremiumPreviewDownloadSpeedDescription;
@@ -81,8 +87,8 @@ namespace Unigram.Controls.Cells.Premium
                     subtitleValue = Strings.Resources.PremiumPreviewProfileBadgeDescription;
                     break;
                 case PremiumFeatureUniqueReactions:
-                    titleValue = Strings.Resources.PremiumPreviewReactions;
-                    subtitleValue = Strings.Resources.PremiumPreviewReactionsDescription;
+                    titleValue = Strings.Resources.PremiumPreviewReactions2;
+                    subtitleValue = Strings.Resources.PremiumPreviewReactions2Description;
                     break;
                 case PremiumFeatureUniqueStickers:
                     titleValue = Strings.Resources.PremiumPreviewStickers;
@@ -97,7 +103,14 @@ namespace Unigram.Controls.Cells.Premium
             Title.Text = titleValue;
             Subtitle.Text = subtitleValue;
 
-            Player.Source = new RemoteVideoSource(protoService, value.AnimationValue, value.Duration);
+            if (value != null)
+            {
+                Player.Source = new RemoteVideoSource(protoService, value.AnimationValue, value.Duration);
+            }
+            else
+            {
+                Player.Source = null;
+            }
         }
 
         public void StopAnimation()

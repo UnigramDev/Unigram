@@ -79,9 +79,9 @@
         public T Resolve<T>()
         {
             var type = typeof(T);
-            if (type == typeof(Unigram.ViewModels.SignIn.SignInViewModel))
+            if (type == typeof(Unigram.ViewModels.Authorization.AuthorizationViewModel))
             {
-                return (T)(object)new Unigram.ViewModels.SignIn.SignInViewModel(
+                return (T)(object)new Unigram.ViewModels.Authorization.AuthorizationViewModel(
                     _protoService,
                     _cacheService,
                     _settingsService,
@@ -90,33 +90,49 @@
                     _lifetimeService,
                     _notificationsService);
             }
-            else if (type == typeof(Unigram.ViewModels.SignIn.SignUpViewModel))
+            else if (type == typeof(Unigram.ViewModels.Authorization.AuthorizationRegistrationViewModel))
             {
-                return (T)(object)new Unigram.ViewModels.SignIn.SignUpViewModel(
+                return (T)(object)new Unigram.ViewModels.Authorization.AuthorizationRegistrationViewModel(
                     _protoService,
                     _cacheService,
                     _settingsService,
                     _eventAggregator);
             }
-            else if (type == typeof(Unigram.ViewModels.SignIn.SignInSentCodeViewModel))
+            else if (type == typeof(Unigram.ViewModels.Authorization.AuthorizationCodeViewModel))
             {
-                return (T)(object)new Unigram.ViewModels.SignIn.SignInSentCodeViewModel(
+                return (T)(object)new Unigram.ViewModels.Authorization.AuthorizationCodeViewModel(
                     _protoService,
                     _cacheService,
                     _settingsService,
                     _eventAggregator);
             }
-            else if (type == typeof(Unigram.ViewModels.SignIn.SignInPasswordViewModel))
+            else if (type == typeof(Unigram.ViewModels.Authorization.AuthorizationPasswordViewModel))
             {
-                return (T)(object)new Unigram.ViewModels.SignIn.SignInPasswordViewModel(
+                return (T)(object)new Unigram.ViewModels.Authorization.AuthorizationPasswordViewModel(
                     _protoService,
                     _cacheService,
                     _settingsService,
                     _eventAggregator);
             }
-            else if (type == typeof(Unigram.ViewModels.SignIn.SignInRecoveryViewModel))
+            else if (type == typeof(Unigram.ViewModels.Authorization.AuthorizationRecoveryViewModel))
             {
-                return (T)(object)new Unigram.ViewModels.SignIn.SignInRecoveryViewModel(
+                return (T)(object)new Unigram.ViewModels.Authorization.AuthorizationRecoveryViewModel(
+                    _protoService,
+                    _cacheService,
+                    _settingsService,
+                    _eventAggregator);
+            }
+            else if (type == typeof(Unigram.ViewModels.Authorization.AuthorizationEmailAddressViewModel))
+            {
+                return (T)(object)new Unigram.ViewModels.Authorization.AuthorizationEmailAddressViewModel(
+                    _protoService,
+                    _cacheService,
+                    _settingsService,
+                    _eventAggregator);
+            }
+            else if (type == typeof(Unigram.ViewModels.Authorization.AuthorizationEmailCodeViewModel))
+            {
+                return (T)(object)new Unigram.ViewModels.Authorization.AuthorizationEmailCodeViewModel(
                     _protoService,
                     _cacheService,
                     _settingsService,
@@ -359,17 +375,17 @@
                     _settingsService,
                     _eventAggregator);
             }
-            else if (type == typeof(Unigram.ViewModels.Drawers.EmojiDrawerViewModel))
+            else if (type == typeof(Unigram.ViewModels.Drawers.StickerDrawerViewModel))
             {
-                return (T)(object)new Unigram.ViewModels.Drawers.EmojiDrawerViewModel(
+                return (T)(object)new Unigram.ViewModels.Drawers.StickerDrawerViewModel(
                     _protoService,
                     _cacheService,
                     _settingsService,
                     _eventAggregator);
             }
-            else if (type == typeof(Unigram.ViewModels.Drawers.StickerDrawerViewModel))
+            else if (type == typeof(Unigram.ViewModels.Drawers.EmojiDrawerViewModel))
             {
-                return (T)(object)new Unigram.ViewModels.Drawers.StickerDrawerViewModel(
+                return (T)(object)new Unigram.ViewModels.Drawers.EmojiDrawerViewModel(
                     _protoService,
                     _cacheService,
                     _settingsService,

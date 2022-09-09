@@ -7,7 +7,7 @@ using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views;
 using Unigram.Views.Popups;
-using Unigram.Views.SignIn;
+using Unigram.Views.Authorization;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Contacts;
@@ -150,19 +150,25 @@ namespace Unigram.Common
             {
                 switch (state)
                 {
-                    case AuthorizationStateReady ready:
+                    case AuthorizationStateReady:
                         //App.Current.NavigationService.Navigate(typeof(Views.MainPage));
                         UseActivatedArgs(args, service);
                         break;
-                    case AuthorizationStateWaitPhoneNumber waitPhoneNumber:
-                    case AuthorizationStateWaitOtherDeviceConfirmation waitOtherDeviceConfirmation:
-                        service.Navigate(typeof(SignInPage));
+                    case AuthorizationStateWaitPhoneNumber:
+                    case AuthorizationStateWaitOtherDeviceConfirmation:
+                        service.Navigate(typeof(AuthorizationPage));
                         break;
-                    case AuthorizationStateWaitCode waitCode:
-                        service.Navigate(typeof(SignInSentCodePage));
+                    case AuthorizationStateWaitCode:
+                        service.Navigate(typeof(AuthorizationCodePage));
                         break;
-                    case AuthorizationStateWaitRegistration waitRegistration:
-                        service.Navigate(typeof(SignUpPage));
+                    case AuthorizationStateWaitEmailAddress:
+                        service.Navigate(typeof(AuthorizationEmailAddressPage));
+                        break;
+                    case AuthorizationStateWaitEmailCode:
+                        service.Navigate(typeof(AuthorizationEmailCodePage));
+                        break;
+                    case AuthorizationStateWaitRegistration:
+                        service.Navigate(typeof(AuthorizationRegistrationPage));
                         break;
                     case AuthorizationStateWaitPassword waitPassword:
                         if (!string.IsNullOrEmpty(waitPassword.RecoveryEmailAddressPattern))
@@ -170,7 +176,7 @@ namespace Unigram.Common
                             await MessagePopup.ShowAsync(string.Format(Strings.Resources.RestoreEmailSent, waitPassword.RecoveryEmailAddressPattern), Strings.Resources.AppName, Strings.Resources.OK);
                         }
 
-                        service.Navigate(typeof(SignInPasswordPage));
+                        service.Navigate(typeof(AuthorizationPasswordPage));
                         break;
                 }
             }

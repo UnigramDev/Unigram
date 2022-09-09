@@ -1111,36 +1111,42 @@ namespace Unigram.Views
         {
             if (args.Key != Windows.System.VirtualKey.Escape)
             {
-                return;
+                if (ViewModel.IsSelectionEnabled)
+                {
+                    ViewModel.IsSelectionEnabled = false;
+                    args.Handled = true;
+                }
             }
-
-            if (ViewModel.Search != null)
+            else
             {
-                args.Handled = SearchMask.OnBackRequested();
-            }
+                if (ViewModel.Search != null)
+                {
+                    args.Handled = SearchMask.OnBackRequested();
+                }
 
-            if (ReplyMarkupPanel.Visibility == Visibility.Visible && ButtonMarkup.Visibility == Visibility.Visible)
-            {
-                CollapseMarkup(false);
-                args.Handled = true;
-            }
+                if (ReplyMarkupPanel.Visibility == Visibility.Visible && ButtonMarkup.Visibility == Visibility.Visible)
+                {
+                    CollapseMarkup(false);
+                    args.Handled = true;
+                }
 
-            if (ViewModel.IsSelectionEnabled)
-            {
-                ViewModel.IsSelectionEnabled = false;
-                args.Handled = true;
-            }
+                if (ViewModel.IsSelectionEnabled)
+                {
+                    ViewModel.IsSelectionEnabled = false;
+                    args.Handled = true;
+                }
 
-            if (ViewModel.ComposerHeader != null)
-            {
-                ViewModel.ClearReply();
-                args.Handled = true;
-            }
+                if (ViewModel.ComposerHeader != null)
+                {
+                    ViewModel.ClearReply();
+                    args.Handled = true;
+                }
 
-            if (ViewModel.Autocomplete != null)
-            {
-                ViewModel.Autocomplete = null;
-                args.Handled = true;
+                if (ViewModel.Autocomplete != null)
+                {
+                    ViewModel.Autocomplete = null;
+                    args.Handled = true;
+                }
             }
 
             if (args.Handled)

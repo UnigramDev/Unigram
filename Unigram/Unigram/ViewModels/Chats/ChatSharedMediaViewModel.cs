@@ -371,7 +371,7 @@ namespace Unigram.ViewModels.Chats
                 }
             }
 
-            var sameUser = messages.All(x => x.SenderId.IsEqual(first.SenderId));
+            var sameUser = messages.All(x => x.SenderId.AreTheSame(first.SenderId));
             var dialog = new DeleteMessagesPopup(CacheService, items.Where(x => x != null).ToArray());
 
             var confirm = await dialog.ShowQueuedAsync();

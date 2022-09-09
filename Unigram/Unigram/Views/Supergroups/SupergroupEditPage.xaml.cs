@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
@@ -63,7 +62,21 @@ namespace Unigram.Views.Supergroups
             //UpdateChatTitle(chat);
             UpdateChatPhoto(chat);
 
-            Reactions.Badge = string.Format("{0}/{1}", chat.AvailableReactions.Count, ViewModel.CacheService.Reactions.Count(x => x.Value.IsActive));
+            if (chat.AvailableReactions is ChatAvailableReactionsAll)
+            {
+                Reactions.Badge = Strings.Resources.AllReactions;
+            }
+            else if (chat.AvailableReactions is ChatAvailableReactionsSome some)
+            {
+                if (some.Reactions.Count > 0)
+                {
+                    Reactions.Badge = some.Reactions.Count.ToString("N0");
+                }
+                else
+                {
+                    Reactions.Badge = Strings.Resources.ReactionsOff;
+                }
+            }
         }
 
         public void UpdateChatTitle(Chat chat)

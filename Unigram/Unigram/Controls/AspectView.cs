@@ -5,6 +5,7 @@ using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls
 {
@@ -22,6 +23,24 @@ namespace Unigram.Controls
             DependencyProperty.Register("Constraint", typeof(object), typeof(AspectView), new PropertyMetadata(null, OnConstraintChanged));
 
         private static void OnConstraintChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((AspectView)d).InvalidateMeasure();
+        }
+
+        #endregion
+
+        #region Stretch
+
+        public Stretch Stretch
+        {
+            get => (Stretch)GetValue(StretchProperty);
+            set => SetValue(StretchProperty, value);
+        }
+
+        public static readonly DependencyProperty StretchProperty =
+            DependencyProperty.Register("Stretch", typeof(Stretch), typeof(AspectView), new PropertyMetadata(Stretch.Uniform, OnConstraintChanged));
+
+        private static void OnStretchChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((AspectView)d).InvalidateMeasure();
         }
@@ -273,7 +292,7 @@ namespace Unigram.Controls
             }
 
             Calculate:
-            if (width > availableWidth || height > availableHeight || Constraint is Size)
+            if (width > availableWidth || height > availableHeight || Constraint is Size || Stretch == Stretch.UniformToFill)
             {
                 var ratioX = availableWidth / width;
                 var ratioY = availableHeight / height;

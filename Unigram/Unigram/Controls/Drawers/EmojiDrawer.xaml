@@ -42,7 +42,9 @@
         <DataTemplate x:Key="AnimatedItemTemplate">
             <Grid>
                 <controls:LottieView30Fps x:Name="Player"
-                                          AutoPlay="False" />
+                                          AutoPlay="False"
+                                          FrameSize="100,100"
+                                          DecodeFrameType="Physical" />
             </Grid>
         </DataTemplate>
 
@@ -193,12 +195,16 @@
             </common:FluidGridView.Triggers>
             <GridView.ItemContainerStyle>
                 <Style TargetType="GridViewItem">
+                    <Setter Property="MinWidth"
+                            Value="0" />
+                    <Setter Property="MinHeight"
+                            Value="0" />
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="GridViewItem">
                                 <ContentPresenter HorizontalContentAlignment="Stretch"
                                                   VerticalContentAlignment="Stretch"
-                                                  Padding="8" />
+                                                  Padding="0" />
                             </ControlTemplate>
                         </Setter.Value>
                     </Setter>
@@ -213,7 +219,8 @@
                                        Style="{StaticResource CaptionTextBlockStyle}" />
                         </DataTemplate>-->
                         <DataTemplate>
-                            <Grid>
+                            <Grid Visibility="{Binding Title, Converter={StaticResource NullToVisibilityConverter}}"
+                                  Padding="0,6,0,0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition />
                                     <ColumnDefinition Width="Auto" />
@@ -245,15 +252,13 @@
                             <Setter Property="Margin"
                                     Value="0,0,0,0" />
                             <Setter Property="Padding"
-                                    Value="10,6,10,6" />
+                                    Value="10,0,10,6" />
                             <Setter Property="HorizontalContentAlignment"
                                     Value="Stretch" />
                             <Setter Property="VerticalContentAlignment"
                                     Value="Top" />
                             <Setter Property="MinHeight"
-                                    Value="32" />
-                            <Setter Property="Height"
-                                    Value="32" />
+                                    Value="0" />
                             <Setter Property="UseSystemFocusVisuals"
                                     Value="True" />
                             <Setter Property="Template">
@@ -284,7 +289,7 @@
                 <ItemsPanelTemplate>
                     <ItemsWrapGrid Orientation="Horizontal"
                                    AreStickyGroupHeadersEnabled="False"
-                                   CacheLength="2" />
+                                   CacheLength="4" />
                 </ItemsPanelTemplate>
             </GridView.ItemsPanel>
         </GridView>
@@ -294,7 +299,7 @@
 
             <GridView x:Name="Toolbar2"
                       ItemsSource="{x:Bind ViewModel.InstalledSets}"
-                      Height="{ThemeResource AppBarThemeCompactHeight}"
+                      Height="36"
                       IsItemClickEnabled="True"
                       ItemClick="Toolbar_ItemClick"
                       ContainerContentChanging="Toolbar_ContainerContentChanging"
@@ -306,7 +311,7 @@
                       Padding="4,0,0,0"
                       Grid.Row="0">
                 <GridView.Header>
-                    <Grid>
+                    <Grid x:Name="Toolbar3">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
@@ -510,7 +515,7 @@
                     <Style TargetType="GridViewItem"
                            BasedOn="{StaticResource DefaultGridViewItemStyle}">
                         <Setter Property="Margin"
-                                Value="0,4,4,4" />
+                                Value="0,2,4,2" />
                         <Setter Property="MinHeight"
                                 Value="0" />
                         <Setter Property="MinWidth"
@@ -520,7 +525,7 @@
                         <Setter Property="Width"
                                 Value="32" />
                         <Setter Property="Padding"
-                                Value="4" />
+                                Value="0" />
                         <Setter Property="HorizontalContentAlignment"
                                 Value="Stretch" />
                         <Setter Property="VerticalContentAlignment"

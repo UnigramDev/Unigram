@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
@@ -12,16 +13,31 @@ using Windows.UI.Xaml;
 
 namespace Unigram.ViewModels.Drawers
 {
+    public enum EmojiDrawerMode
+    {
+        Chat,
+        Reactions,
+        CustomEmojis
+    }
+
     public class EmojiDrawerViewModel : TLViewModelBase
     //IHandle<UpdateInstalledStickerSets>
     {
         private bool _updated;
+
+        private readonly StickerSetViewModel _reactionSet;
 
         public EmojiDrawerViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             //Items = new DiffObservableCollection<object>(new EmojiSetDiffHandler());
             Items = new MvxObservableCollection<object>();
+
+            _reactionSet = new StickerSetViewModel(ProtoService, new StickerSetInfo
+            {
+                Title = string.Empty,
+                Name = "tg/recentlyUsed"
+            });
 
             Subscribe();
         }
@@ -31,25 +47,40 @@ namespace Unigram.ViewModels.Drawers
             Aggregator.Subscribe<UpdateInstalledStickerSets>(this, Handle);
         }
 
-        private static readonly Dictionary<int, Dictionary<int, EmojiDrawerViewModel>> _windowContext = new Dictionary<int, Dictionary<int, EmojiDrawerViewModel>>();
-        public static EmojiDrawerViewModel GetForCurrentView(int sessionId)
+        private static readonly Dictionary<int, Dictionary<int, Dictionary<EmojiDrawerMode, EmojiDrawerViewModel>>> _windowContext = new();
+        public static EmojiDrawerViewModel GetForCurrentView(int sessionId, EmojiDrawerMode mode = EmojiDrawerMode.Chat)
         {
             var id = ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow);
-            if (_windowContext.TryGetValue(id, out Dictionary<int, EmojiDrawerViewModel> reference))
+            if (_windowContext.TryGetValue(id, out Dictionary<int, Dictionary<EmojiDrawerMode, EmojiDrawerViewModel>> reference))
             {
-                if (reference.TryGetValue(sessionId, out EmojiDrawerViewModel value))
+                if (reference.TryGetValue(sessionId, out Dictionary<EmojiDrawerMode, EmojiDrawerViewModel> value))
                 {
-                    return value;
+                    if (value.TryGetValue(mode, out EmojiDrawerViewModel viewModel))
+                    {
+                        return viewModel;
+                    }
+                    else
+                    {
+                        var context2 = TLContainer.Current.Resolve<EmojiDrawerViewModel>();
+                        value[mode] = context2;
+
+                        context2.Mode = mode;
+                        return context2;
+                    }
                 }
             }
             else
             {
-                _windowContext[id] = new Dictionary<int, EmojiDrawerViewModel>();
+                _windowContext[id] = new Dictionary<int, Dictionary<EmojiDrawerMode, EmojiDrawerViewModel>>();
             }
 
             var context = TLContainer.Current.Resolve<EmojiDrawerViewModel>();
-            _windowContext[id][sessionId] = context;
+            _windowContext[id][sessionId] = new Dictionary<EmojiDrawerMode, EmojiDrawerViewModel>
+            {
+                { mode, context }
+            };
 
+            context.Mode = mode;
             return context;
         }
 
@@ -144,6 +175,13 @@ namespace Unigram.ViewModels.Drawers
             }
         }
 
+        private EmojiDrawerMode _mode;
+        public EmojiDrawerMode Mode
+        {
+            get => _mode;
+            set => Set(ref _mode, value);
+        }
+
         //public MvxObservableCollection<StickerSetViewModel> Stickers => SearchStickers ?? (MvxObservableCollection<StickerSetViewModel>)SavedStickers;
 
         public async void Search(string query)
@@ -161,6 +199,11 @@ namespace Unigram.ViewModels.Drawers
 
         public async void Update()
         {
+            _ = UpdateAsync();
+        }
+
+        public async Task UpdateAsync()
+        {
             if (_updated)
             {
                 return;
@@ -173,59 +216,65 @@ namespace Unigram.ViewModels.Drawers
 
             if (result1 is StickerSets sets && result2 is TrendingStickerSets trending)
             {
-                var recents = Emoji.GetRecents(EmojiSkinTone.Default);
-                var emojiGroups = Emoji.Get(EmojiSkinTone.Default, true);
+                var stickers = new List<object>();
 
-                var stickers = new List<object>(emojiGroups);
-
-                var source = new List<object>();
-                var customEmoji = new List<long>();
-
-                foreach (var item in recents)
+                if (_mode != EmojiDrawerMode.Reactions)
                 {
-                    if (item.Value.Contains(';'))
+                    var recents = Emoji.GetRecents(EmojiSkinTone.Default);
+                    var emojiGroups = Emoji.Get(EmojiSkinTone.Default, true);
+
+                    var source = new List<object>();
+                    var customEmoji = new List<long>();
+
+                    foreach (var item in recents)
                     {
-                        var split = item.Value.Split(';');
-                        if (split.Length == 2 && long.TryParse(split[1], out long customEmojiId))
+                        if (item.Value.Contains(';'))
                         {
-                            customEmoji.Add(customEmojiId);
-                            source.Add(customEmojiId);
+                            var split = item.Value.Split(';');
+                            if (split.Length == 2 && long.TryParse(split[1], out long customEmojiId))
+                            {
+                                customEmoji.Add(customEmojiId);
+                                source.Add(customEmojiId);
+                            }
+                        }
+                        else
+                        {
+                            source.Add(item);
                         }
                     }
-                    else
-                    {
-                        source.Add(item);
-                    }
-                }
 
-                if (customEmoji.Count > 0)
-                {
-                    var response = await ProtoService.SendAsync(new GetCustomEmojiStickers(customEmoji));
-                    if (response is Stickers customEmojiStickers)
+                    if (customEmoji.Count > 0)
                     {
-                        foreach (var sticker in customEmojiStickers.StickersValue)
+                        var response = await ProtoService.SendAsync(new GetCustomEmojiStickers(customEmoji));
+                        if (response is Stickers customEmojiStickers)
                         {
-                            for (int i = 0; i < source.Count; i++)
+                            foreach (var sticker in customEmojiStickers.StickersValue)
                             {
-                                if (source[i] is long customEmojiId && customEmojiId == sticker.CustomEmojiId)
+                                for (int i = 0; i < source.Count; i++)
                                 {
-                                    source[i] = new StickerViewModel(ProtoService, sticker);
+                                    if (source[i] is long customEmojiId && customEmojiId == sticker.CustomEmojiId)
+                                    {
+                                        source[i] = new StickerViewModel(ProtoService, sticker);
+                                    }
                                 }
                             }
                         }
                     }
-                }
 
-                for (int i = 0; i < source.Count; i++)
-                {
-                    if (source[i] is long)
+                    for (int i = 0; i < source.Count; i++)
                     {
-                        source.RemoveAt(i);
-                        i--;
+                        if (source[i] is long)
+                        {
+                            source.RemoveAt(i);
+                            i--;
+                        }
                     }
-                }
 
-                stickers.Insert(0, new RecentEmoji(source));
+                    stickers.Add(new RecentEmoji(source));
+                    stickers.AddRange(emojiGroups);
+
+                    StandardSets.ReplaceWith(emojiGroups);
+                }
 
                 var installedSet = new List<StickerSetViewModel>();
 
@@ -259,11 +308,60 @@ namespace Unigram.ViewModels.Drawers
                     installedSet.AddRange(trending.Sets.Select(x => new StickerSetViewModel(ProtoService, x)));
                 }
 
+                if (_mode == EmojiDrawerMode.Reactions)
+                {
+                    installedSet.Insert(0, _reactionSet);
+                }
+
                 stickers.AddRange(installedSet);
                 Items.ReplaceWith(stickers);
 
-                StandardSets.ReplaceWith(emojiGroups);
                 InstalledSets.ReplaceWith(installedSet);
+            }
+        }
+
+        public async Task UpdateReactions(IList<Reaction> reactions2)
+        {
+            var reactions = await ProtoService.GetAllReactionsAsync();
+            _reactionSet.Update(reactions.Select(x => x.Value.ActivateAnimation));
+            _ = UpdateAsync();
+        }
+
+        public async void UpdateStatuses()
+        {
+            _ = UpdateAsync();
+
+            var themedResponse = await ProtoService.SendAsync(new GetThemedEmojiStatuses()) as EmojiStatuses;
+            var recentResponse = await ProtoService.SendAsync(new GetRecentEmojiStatuses()) as EmojiStatuses;
+            var defaulResponse = await ProtoService.SendAsync(new GetDefaultEmojiStatuses()) as EmojiStatuses;
+
+            var themed = themedResponse?.EmojiStatusesValue ?? Array.Empty<EmojiStatus>();
+            var recent = recentResponse?.EmojiStatusesValue ?? Array.Empty<EmojiStatus>();
+            var defaul = defaulResponse?.EmojiStatusesValue ?? Array.Empty<EmojiStatus>();
+
+            var emoji = new List<long>();
+            var delay = new List<long>();
+
+            var i = 0;
+
+            foreach (var status in themed.Union(recent.Union(defaul)))
+            {
+                if (emoji.Count < 8 * 5 - 1 && !emoji.Contains(status.CustomEmojiId))
+                {
+                    emoji.Add(status.CustomEmojiId);
+                }
+                else if (!delay.Contains(status.CustomEmojiId))
+                {
+                    delay.Add(status.CustomEmojiId);
+                }
+
+                i++;
+            }
+
+            var response = await ProtoService.SendAsync(new GetCustomEmojiStickers(emoji));
+            if (response is Stickers stickers)
+            {
+                _reactionSet.Update(stickers.StickersValue.OrderBy(x => emoji.IndexOf(x.CustomEmojiId)));
             }
         }
 

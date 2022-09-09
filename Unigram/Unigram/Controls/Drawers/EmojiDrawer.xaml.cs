@@ -7,6 +7,7 @@ using Unigram.Common;
 using Unigram.Services;
 using Unigram.Services.Settings;
 using Unigram.ViewModels.Drawers;
+using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -25,6 +26,8 @@ namespace Unigram.Controls.Drawers
 
         private bool _needUpdate;
 
+        private EmojiDrawerMode _mode;
+
         private EmojiSkinTone _selected;
         private bool _expanded;
 
@@ -34,13 +37,19 @@ namespace Unigram.Controls.Drawers
         private readonly AnimatedListHandler _toolbarHandler;
 
         public EmojiDrawer()
+            : this(EmojiDrawerMode.Chat)
+        {
+
+        }
+
+        public EmojiDrawer(EmojiDrawerMode mode)
         {
             InitializeComponent();
 
             ElementCompositionPreview.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
 
             var header = DropShadowEx.Attach(Separator);
-            header.Clip = header.Compositor.CreateInsetClip(0, 48, 0, -48);
+            header.Clip = header.Compositor.CreateInsetClip(0, 36, 0, -36);
 
             _handler = new AnimatedListHandler(List);
             _toolbarHandler = new AnimatedListHandler(Toolbar2);
@@ -52,7 +61,25 @@ namespace Unigram.Controls.Drawers
             _typeToItemHashSetMapping.Add("ItemTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("MoreTemplate", new HashSet<SelectorItem>());
 
-            UpdateView();
+            _mode = mode;
+
+            if (mode == EmojiDrawerMode.Reactions)
+            {
+                FieldEmoji.Visibility = Visibility.Collapsed;
+                Toolbar3.Visibility = Visibility.Collapsed;
+                Toolbar2.Header = null;
+
+                List.Padding = new Thickness(8, 0, 0, 0);
+                List.ItemContainerStyle.Setters.Add(new Setter(MarginProperty, new Thickness(0, 0, 4, 4)));
+                List.GroupStyle[0].HeaderContainerStyle.Setters.Add(new Setter(PaddingProperty, new Thickness(0, 0, 0, 6)));
+
+                FluidGridView.GetTriggers(List).Clear();
+                FluidGridView.GetTriggers(List).Add(new FixedGridViewTrigger { ItemLength = 28 });
+            }
+            else
+            {
+                UpdateView();
+            }
         }
 
         public StickersTab Tab => StickersTab.Emoji;
@@ -112,6 +139,11 @@ namespace Unigram.Controls.Drawers
 
         public void UpdateView()
         {
+            if (_mode == EmojiDrawerMode.Reactions)
+            {
+                return;
+            }
+
             var microsoft = string.Equals(SettingsService.Current.Appearance.EmojiSet.Id, "microsoft");
             var tone = SettingsService.Current.Stickers.SkinTone;
 
@@ -278,6 +310,11 @@ namespace Unigram.Controls.Drawers
 
         private void UpdateToolbar(bool collapse = false)
         {
+            if (_mode == EmojiDrawerMode.Reactions)
+            {
+                return;
+            }
+
             if (Toolbar.SelectedItem == null != _emojiCollapsed || collapse)
             {
                 _emojiCollapsed = Toolbar.SelectedItem == null;
@@ -434,6 +471,10 @@ namespace Unigram.Controls.Drawers
                 }
                 else
                 {
+                    // Not sure if this belongs here
+                    var tag = args.ItemContainer.Tag as string;
+                    var added = _typeToItemHashSetMapping[tag].Add(args.ItemContainer);
+
                     // The ItemContainer's datatemplate does not match the needed
                     // datatemplate.
                     // Don't remove it from the recycle queue, since XAML will resuggest it later
@@ -536,6 +577,28 @@ namespace Unigram.Controls.Drawers
             }
         }
 
+        private Color _currentReplacement = Colors.Black;
+        private readonly Dictionary<int, int> _colorReplacements = new()
+        {
+            { 0xFFFFFF, 0x000000 }
+        };
+
+        private IReadOnlyDictionary<int, int> GetColorReplacements(long setId)
+        {
+            if (setId == ViewModel.ProtoService.Options.ThemedEmojiStatusesStickerSetId)
+            {
+                if (_currentReplacement != Theme.Accent)
+                {
+                    _currentReplacement = Theme.Accent;
+                    _colorReplacements[0xFFFFFF] = Theme.Accent.ToValue();
+                }
+
+                return _colorReplacements;
+            }
+
+            return null;
+        }
+
         private async void UpdateContainerContent(Sticker sticker, Grid content, UpdateHandler<File> handler, ContainerContentChangingEventArgs args = null)
         {
             var file = sticker?.StickerValue;
@@ -544,13 +607,28 @@ namespace Unigram.Controls.Drawers
                 return;
             }
 
+            //if (toolbar)
+            //{
+            //    content.Padding = new Thickness(4);
+            //}
+            //else
+            //{
+            //    content.Padding = new Thickness(_mode == EmojiDrawerMode.Reactions ? 0 : 8);
+            //}
+
             if (content.Tag is not null
                 || content.Tag is Sticker prev && prev?.StickerValue.Id == file.Id)
             {
                 return;
             }
 
-            if ((args == null || args.Phase == 2) && file.Local.IsDownloadingCompleted)
+            if (args != null && args.Phase < 2)
+            {
+                args.RegisterUpdateCallback(2, OnContainerContentChanging);
+                return;
+            }
+
+            if (file.Local.IsDownloadingCompleted)
             {
                 if (content.Children[0] is Border border && border.Child is Image photo)
                 {
@@ -559,6 +637,7 @@ namespace Unigram.Controls.Drawers
                 }
                 else if (content.Children[0] is LottieView lottie)
                 {
+                    lottie.ColorReplacements = GetColorReplacements(sticker.SetId);
                     lottie.Source = UriEx.ToLocal(file.Local.Path);
                 }
                 else if (content.Children[0] is AnimationView video)
@@ -582,11 +661,6 @@ namespace Unigram.Controls.Drawers
                 {
                     ViewModel.ProtoService.DownloadFile(file.Id, 1);
                 }
-            }
-
-            if (args?.Phase == 0)
-            {
-                args.RegisterUpdateCallback(2, OnContainerContentChanging);
             }
         }
 
@@ -650,7 +724,6 @@ namespace Unigram.Controls.Drawers
 
                 if (content == null || sticker == null || (sticker.Thumbnail == null && sticker.Covers == null))
                 {
-                    ClearContainerContent(content);
                     return;
                 }
 

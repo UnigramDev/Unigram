@@ -44,6 +44,7 @@ namespace Unigram.Controls
     public class CarouselViewer : Grid, IInteractionTrackerOwner
     {
         private bool _requiresArrange;
+        private long _scrolling;
 
         public CarouselViewer()
         {
@@ -98,7 +99,7 @@ namespace Unigram.Controls
             // TODO: I don't understand how to use VisualInteractionSource
             // for vertical pointer wheel + horizontal position source
 
-            if (_interactionSource?.PositionXSourceMode != InteractionSourceMode.EnabledWithInertia)
+            if (_interactionSource?.PositionXSourceMode != InteractionSourceMode.EnabledWithInertia || IsScrolling)
             {
                 return;
             }
@@ -115,7 +116,7 @@ namespace Unigram.Controls
                 ? CarouselDirection.Previous
                 : CarouselDirection.Next;
 
-            ViewChanging?.Invoke(this, new CarouselViewChangingEventArgs(_viewChanged = direction));
+            ViewChanging?.Invoke(this, new CarouselViewChangingEventArgs(direction));
             ChangeView(direction);
 
             e.Handled = true;
@@ -221,6 +222,8 @@ namespace Unigram.Controls
             }
         }
 
+        public bool IsScrolling => Environment.TickCount - _scrolling < 100;
+
         public FrameworkElement CurrentElement => _elements[1];
 
         public FrameworkElement GetElement(CarouselDirection direction)
@@ -251,11 +254,13 @@ namespace Unigram.Controls
 
         public void ChangeView(CarouselDirection direction)
         {
+            _scrolling = Environment.TickCount;
+
             var position = direction == CarouselDirection.Previous
                 ? _tracker.MinPosition
                 : _tracker.MaxPosition;
 
-            var anim = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var anim = _tracker.Compositor.CreateVector3KeyFrameAnimation();
             anim.InsertKeyFrame(0, new Vector3(_restingValue, 0, 0));
             anim.InsertKeyFrame(1, position);
 

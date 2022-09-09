@@ -31,13 +31,28 @@
                                 Grid.Row="1">
             <ListView.Header>
                 <StackPanel Margin="0,0,0,32">
-                    <controls:HeaderedControl x:Name="Enable"
+                    <controls:HeaderedControl x:Name="Group"
+                                              x:Load="{x:Bind ConvertType(ViewModel.Chat.Type, x:False)}"
+                                              Footer="{x:Bind ConvertFooter(ViewModel.Available), Mode=OneWay}">
+                        <RadioButton IsChecked="{x:Bind ViewModel.IsAllSelected, Mode=TwoWay}"
+                                     Content="{CustomResource AllReactions}"
+                                     Style="{StaticResource SettingsRadioButtonStyle}" />
+                        <RadioButton IsChecked="{x:Bind ViewModel.IsSomeSelected, Mode=TwoWay}"
+                                     Content="{CustomResource SomeReactions}"
+                                     Style="{StaticResource SettingsRadioButtonStyle}" />
+                        <RadioButton IsChecked="{x:Bind ViewModel.IsNoneSelected, Mode=TwoWay}"
+                                     Content="{CustomResource NoReactions}"
+                                     Style="{StaticResource SettingsRadioButtonStyle}" />
+                    </controls:HeaderedControl>
+
+                    <controls:HeaderedControl x:Name="Channel"
+                                              x:Load="{x:Bind ConvertType(ViewModel.Chat.Type, x:True)}"
                                               Footer="{CustomResource EnableReactionsChannelInfo}">
-                        <CheckBox IsChecked="{x:Bind ViewModel.AreEnabled, Mode=TwoWay}"
-                                  IsThreeState="True"
+                        <CheckBox IsChecked="{x:Bind ConvertAvailable(ViewModel.Available), BindBack=ConvertAvailableBack, Mode=TwoWay}"
                                   Content="{CustomResource EnableReactions}"
                                   Style="{StaticResource SettingsCheckBoxStyle}" />
                     </controls:HeaderedControl>
+
                 </StackPanel>
             </ListView.Header>
             <ListView.ItemTemplate>

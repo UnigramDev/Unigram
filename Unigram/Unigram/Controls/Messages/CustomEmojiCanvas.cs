@@ -94,7 +94,7 @@ namespace Unigram.Controls.Messages
                     var y = (int)((2 + item.Y - 1) * (_currentDpi / 96));
 
                     var matches = _emojiSize * _emojiSize * 4 == animation.Buffer?.Length;
-                    if (matches && animation.HasRenderedFirstFrame && x + _emojiSize < _bitmap.Size.Width && y + _emojiSize < _bitmap.Size.Height)
+                    if (matches && animation.HasRenderedFirstFrame && x + _emojiSize <= _bitmap.Size.Width && y + _emojiSize <= _bitmap.Size.Height)
                     {
                         _bitmap.SetPixelBytes(animation.Buffer, x, y, _emojiSize, _emojiSize);
                         animation.CloseOutline();
@@ -249,63 +249,39 @@ namespace Unigram.Controls.Messages
 
             OnSourceChanged();
         }
+    }
 
-        static class EmojiRendererCache
+    public static class EmojiRendererCache
+    {
+        private static readonly ConcurrentDictionary<long, EmojiRenderer> _cache = new();
+
+        private static readonly SemaphoreSlim _nextFrameLock = new(1, 1);
+        private static readonly HashSet<long> _count = new();
+
+        private static ThreadPoolTimer _timer;
+        private static TimeSpan _interval;
+
+        private static readonly object _lock = new();
+
+        static EmojiRendererCache()
         {
-            private static readonly ConcurrentDictionary<long, EmojiRenderer> _cache = new();
+            _interval = TimeSpan.FromMilliseconds(Math.Floor(1000d / 30));
+        }
 
-            private static readonly SemaphoreSlim _nextFrameLock = new(1, 1);
-            private static readonly HashSet<long> _count = new();
+        public static bool Contains(long customEmojiId)
+        {
+            return _cache.ContainsKey(customEmojiId);
+        }
 
-            private static ThreadPoolTimer _timer;
-            private static TimeSpan _interval;
+        public static bool TryGet(long customEmojiId, out EmojiRenderer renderer)
+        {
+            return _cache.TryGetValue(customEmojiId, out renderer);
+        }
 
-            private static readonly object _lock = new();
-
-            static EmojiRendererCache()
+        public static bool TryMerge(long customEmojiId, int hash, bool subscribe, out EmojiRenderer renderer)
+        {
+            if (_cache.TryGetValue(customEmojiId, out renderer))
             {
-                _interval = TimeSpan.FromMilliseconds(Math.Floor(1000d / 30));
-            }
-
-            public static bool Contains(long customEmojiId)
-            {
-                return _cache.ContainsKey(customEmojiId);
-            }
-
-            public static bool TryGet(long customEmojiId, out EmojiRenderer renderer)
-            {
-                return _cache.TryGetValue(customEmojiId, out renderer);
-            }
-
-            public static bool TryMerge(long customEmojiId, int hash, bool subscribe, out EmojiRenderer renderer)
-            {
-                if (_cache.TryGetValue(customEmojiId, out renderer))
-                {
-                    if (subscribe)
-                    {
-                        Show(renderer, hash);
-                    }
-
-                    lock (_lock)
-                    {
-                        renderer.References.Add(hash);
-                    }
-
-                    return true;
-                }
-
-                return false;
-            }
-
-            public static void MergeOrCreate(IProtoService protoService, Sticker sticker, int size, int hash, bool subscribe)
-            {
-                if (TryMerge(sticker.CustomEmojiId, hash, subscribe, out EmojiRenderer renderer))
-                {
-                    return;
-                }
-
-                _cache[sticker.CustomEmojiId] = renderer = new EmojiRenderer(protoService, sticker, size);
-
                 if (subscribe)
                 {
                     Show(renderer, hash);
@@ -315,321 +291,377 @@ namespace Unigram.Controls.Messages
                 {
                     renderer.References.Add(hash);
                 }
+
+                return true;
             }
 
-            public static void Release(long customEmojiId, int hash)
+            return false;
+        }
+
+        public static void MergeOrCreate(IProtoService protoService, Sticker sticker, int size, int hash, bool subscribe)
+        {
+            if (TryMerge(sticker.CustomEmojiId, hash, subscribe, out EmojiRenderer renderer))
             {
-                if (_cache.TryGetValue(customEmojiId, out EmojiRenderer reference))
-                {
-                    lock (_lock)
-                    {
-                        reference.References.Remove(hash);
-                        reference.HashCodes.Remove(hash);
-                    }
-
-                    if (reference.IsAlive is false)
-                    {
-                        _count.Remove(customEmojiId);
-                        _cache.TryRemove(customEmojiId, out _);
-
-                        reference.Dispose();
-                    }
-                }
+                return;
             }
 
-            public static void Show(long customEmojiId, int hash)
+            _cache[sticker.CustomEmojiId] = renderer = new EmojiRenderer(protoService, sticker, size);
+
+            if (subscribe)
             {
-                if (TryGet(customEmojiId, out EmojiRenderer renderer))
-                {
-                    Show(renderer, hash);
-                }
+                Show(renderer, hash);
             }
 
-            public static void Show(EmojiRenderer renderer, int hash)
+            lock (_lock)
             {
-                lock (_lock)
-                {
-                    renderer.HashCodes.Add(hash);
-
-                    if (renderer.IsAnimated && renderer.IsVisible)
-                    {
-                        _count.Add(renderer.CustomEmojiId);
-                    }
-
-                    if (_count.Count > 0 && _timer == null)
-                    {
-                        _timer = ThreadPoolTimer.CreatePeriodicTimer(PrepareNextFrame, _interval);
-                    }
-                }
-            }
-
-            public static void Hide(long customEmojiId, int hash)
-            {
-                if (TryGet(customEmojiId, out EmojiRenderer renderer))
-                {
-                    Hide(renderer, hash);
-                }
-            }
-
-            public static void Hide(EmojiRenderer renderer, int hash)
-            {
-                lock (_lock)
-                {
-                    renderer.HashCodes.Remove(hash);
-
-                    if (renderer.IsAnimated && !renderer.IsVisible)
-                    {
-                        _count.Remove(renderer.CustomEmojiId);
-                    }
-
-                    if (_count.Count == 0 && _timer != null)
-                    {
-                        _timer.Cancel();
-                        _timer = null;
-                    }
-                }
-            }
-
-            private static void PrepareNextFrame(ThreadPoolTimer timer)
-            {
-                if (_nextFrameLock.Wait(0))
-                {
-                    NextFrame();
-                    _nextFrameLock.Release();
-                }
-            }
-
-            private static void NextFrame()
-            {
-                foreach (var item in _cache.Values)
-                {
-                    if (item.IsVisible)
-                    {
-                        item.NextFrame();
-                    }
-                }
-            }
-
-            public static void Reload(ISet<long> emoji, int size)
-            {
-                List<EmojiRenderer> renderers = null;
-
-                foreach (var customEmojiId in emoji)
-                {
-                    if (_cache.TryGetValue(customEmojiId, out EmojiRenderer renderer))
-                    {
-                        if (renderer.Size != size)
-                        {
-                            var clone = renderer.Clone(size);
-                            renderer.Dispose();
-
-                            _cache[customEmojiId] = clone;
-                            clone.IsLoading = true;
-
-                            renderers ??= new List<EmojiRenderer>();
-                            renderers.Add(clone);
-                        }
-                        else if (renderer.Buffer == null && !renderer.IsLoading)
-                        {
-                            renderer.IsLoading = true;
-
-                            renderers ??= new List<EmojiRenderer>();
-                            renderers.Add(renderer);
-                        }
-                    }
-                }
-
-                _ = Windows.System.Threading.ThreadPool.RunAsync(async _ =>
-                {
-                    foreach (var item in renderers)
-                    {
-                        if (item.Buffer == null)
-                        {
-                            await item.CreateAsync();
-                            await Task.Delay(10);
-                        }
-                    }
-                }, WorkItemPriority.Low);
+                renderer.References.Add(hash);
             }
         }
 
-        class EmojiRenderer
+        public static void Release(long customEmojiId, int hash)
         {
-            private readonly IProtoService _protoService;
-            private readonly Sticker _sticker;
-
-            private object _animation;
-            private IBuffer _buffer;
-
-            private readonly int _size;
-
-            private int _animationTotalFrame;
-            private double _animationFrameRate;
-
-            private readonly bool _limitFps = true;
-
-            private int _index;
-            private double _step;
-
-            public EmojiRenderer(IProtoService protoService, Sticker sticker, int size)
+            if (_cache.TryGetValue(customEmojiId, out EmojiRenderer reference))
             {
-                _protoService = protoService;
-                _sticker = sticker;
-                _size = size;
-            }
-
-            public EmojiRenderer Clone(int size)
-            {
-                return new EmojiRenderer(_protoService, _sticker, size);
-            }
-
-            public long CustomEmojiId => _sticker.CustomEmojiId;
-
-            public IBuffer Buffer => _buffer;
-
-            public int Size => _size;
-
-            public HashSet<int> References { get; } = new();
-            public HashSet<int> HashCodes { get; } = new();
-
-            public bool IsAlive => References.Count > 0;
-            public bool IsVisible => HashCodes.Count > 0;
-
-            public bool IsAnimated => _sticker.Format is not StickerFormatWebp; 
-
-            public bool IsLoading { get; set; }
-
-            private CanvasGeometry _outline;
-            public CanvasGeometry GetOutline(ICanvasResourceCreator sender)
-            {
-                if (_outline == null || _outline.Device != sender.Device)
+                lock (_lock)
                 {
-                    var scale = 20f / _sticker.Width;
-                    var outline = CompositionPathParser.Parse(sender, _sticker.Outline, scale);
-
-                    _outline = outline;
+                    reference.References.Remove(hash);
+                    reference.HashCodes.Remove(hash);
                 }
 
-                return _outline;
-            }
-
-            public void CloseOutline()
-            {
-                if (_outline != null)
+                if (reference.IsAlive is false)
                 {
-                    _outline.Dispose();
-                    _outline = null;
+                    _count.Remove(customEmojiId);
+                    _cache.TryRemove(customEmojiId, out _);
+
+                    reference.Dispose();
                 }
             }
+        }
 
-            private bool _hasRenderedFirstFrame;
-            public bool HasRenderedFirstFrame => _hasRenderedFirstFrame && _buffer != null;
-
-            public async Task CreateAsync()
+        public static void Show(long customEmojiId, int hash)
+        {
+            if (TryGet(customEmojiId, out EmojiRenderer renderer))
             {
-                var file = _sticker.StickerValue;
-                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
+                Show(renderer, hash);
+            }
+        }
+
+        public static void Show(EmojiRenderer renderer, int hash)
+        {
+            lock (_lock)
+            {
+                renderer.HashCodes.Add(hash);
+
+                if (renderer.IsAnimated && renderer.IsVisible)
                 {
-                    file = await _protoService.DownloadFileAsync(file, 32);
+                    _count.Add(renderer.CustomEmojiId);
                 }
 
-                // IsDownloadingCompleted was updated either
-                // by IsFileExisting or by DownloadFileAsync.
-                if (file.Local.IsDownloadingCompleted)
+                if (_count.Count > 0 && _timer == null)
                 {
-                    if (_sticker.Format is StickerFormatTgs)
+                    _timer = ThreadPoolTimer.CreatePeriodicTimer(PrepareNextFrame, _interval);
+                }
+            }
+        }
+
+        public static void Hide(long customEmojiId, int hash)
+        {
+            if (TryGet(customEmojiId, out EmojiRenderer renderer))
+            {
+                Hide(renderer, hash);
+            }
+        }
+
+        public static void Hide(EmojiRenderer renderer, int hash)
+        {
+            lock (_lock)
+            {
+                renderer.HashCodes.Remove(hash);
+
+                if (renderer.IsAnimated && !renderer.IsVisible)
+                {
+                    _count.Remove(renderer.CustomEmojiId);
+                }
+
+                if (_count.Count == 0 && _timer != null)
+                {
+                    _timer.Cancel();
+                    _timer = null;
+                }
+            }
+        }
+
+        private static void PrepareNextFrame(ThreadPoolTimer timer)
+        {
+            if (_nextFrameLock.Wait(0))
+            {
+                NextFrame();
+                _nextFrameLock.Release();
+            }
+        }
+
+        private static void NextFrame()
+        {
+            foreach (var item in _cache.Values)
+            {
+                if (item.IsVisible)
+                {
+                    item.NextFrame();
+                }
+            }
+        }
+
+        public static void Reload(ISet<long> emoji, int size)
+        {
+            List<EmojiRenderer> renderers = null;
+
+            foreach (var customEmojiId in emoji)
+            {
+                if (_cache.TryGetValue(customEmojiId, out EmojiRenderer renderer))
+                {
+                    if (renderer.Size != size)
                     {
-                        var animation = LottieAnimation.LoadFromFile(file.Local.Path, new Windows.Graphics.SizeInt32 { Width = _size, Height = _size }, true, null);
-                        if (animation != null)
-                        {
-                            _animationTotalFrame = animation.TotalFrame;
-                            _animationFrameRate = animation.FrameRate;
+                        var clone = renderer.Clone(size);
+                        renderer.Dispose();
 
-                            _buffer = BufferSurface.Create((uint)(_size * _size * 4));
-                            _animation = animation;
-                        }
+                        _cache[customEmojiId] = clone;
+                        clone.IsLoading = true;
+
+                        renderers ??= new List<EmojiRenderer>();
+                        renderers.Add(clone);
                     }
-                    else if (_sticker.Format is StickerFormatWebm)
+                    else if (renderer.Buffer == null && !renderer.IsLoading)
                     {
-                        var animation = CachedVideoAnimation.LoadFromFile(new LocalVideoSource(file), _size, _size, true);
-                        if (animation != null)
-                        {
-                            _animationFrameRate = animation.FrameRate;
+                        renderer.IsLoading = true;
 
-                            _buffer = BufferSurface.Create((uint)(_size * _size * 4));
-                            _animation = animation;
-                        }
+                        renderers ??= new List<EmojiRenderer>();
+                        renderers.Add(renderer);
                     }
-                    else if (_sticker.Format is StickerFormatWebp)
+                }
+            }
+
+            _ = Windows.System.Threading.ThreadPool.RunAsync(async _ =>
+            {
+                foreach (var item in renderers)
+                {
+                    if (item.Buffer == null)
                     {
-                        _buffer = PlaceholderImageHelper.Current.DrawWebP(file.Local.Path, _size, out _);
-                        _hasRenderedFirstFrame = true;
+                        await item.CreateAsync();
+                        await Task.Delay(10);
                     }
                 }
-            }
+            }, WorkItemPriority.Low);
+        }
+    }
 
-            public void NextFrame()
+    public class EmojiRenderer
+    {
+        private readonly IProtoService _protoService;
+        private readonly Sticker _sticker;
+
+        private object _animation;
+        private IBuffer _buffer;
+
+        private readonly int _size;
+
+        private int _animationTotalFrame;
+        private double _animationFrameRate;
+
+        private readonly bool _limitFps = true;
+
+        private int _index;
+        private double _step;
+
+        private int _loopCount;
+
+        public EmojiRenderer(IProtoService protoService, Sticker sticker, int size)
+        {
+            _protoService = protoService;
+            _sticker = sticker;
+            _size = size;
+        }
+
+        public EmojiRenderer Clone(int size)
+        {
+            return new EmojiRenderer(_protoService, _sticker, size);
+        }
+
+        public long CustomEmojiId => _sticker.CustomEmojiId;
+
+        public IBuffer Buffer => _buffer;
+
+        public int Size => _size;
+
+        public HashSet<int> References { get; } = new();
+        public HashSet<int> HashCodes { get; } = new();
+
+        public bool IsAlive => References.Count > 0;
+        public bool IsVisible => HashCodes.Count > 0;
+
+        public bool IsAnimated => _sticker.Format is not StickerFormatWebp; 
+
+        public bool IsLoading { get; set; }
+
+        private CanvasGeometry _outline;
+        public CanvasGeometry GetOutline(ICanvasResourceCreator sender)
+        {
+            if (_outline == null || _outline.Device != sender.Device)
             {
-                if (_animation is LottieAnimation lottie)
-                {
-                    NextFrame(lottie);
-                }
-                else if (_animation is CachedVideoAnimation cached)
-                {
-                    NextFrame(cached);
-                }
+                var scale = 20f / _sticker.Width;
+                var outline = CompositionPathParser.Parse(sender, _sticker.Outline, scale);
+
+                _outline = outline;
             }
 
-            private void NextFrame(LottieAnimation animation)
+            return _outline;
+        }
+
+        public void CloseOutline()
+        {
+            if (_outline != null)
             {
-                if (animation == null || animation.IsCaching || _buffer == null /*|| _unloaded*/)
-                {
-                    return;
-                }
-
-                var index = _index;
-                var framesPerUpdate = _limitFps ? _animationFrameRate < 60 ? 1 : 2 : 1;
-
-                animation.RenderSync(_buffer, _size, _size, index);
-
-                if (index + framesPerUpdate < _animationTotalFrame)
-                {
-                    _index += framesPerUpdate;
-                }
-                else
-                {
-                    _index = 0;
-                }
-
-                _hasRenderedFirstFrame = true;
+                _outline.Dispose();
+                _outline = null;
             }
+        }
 
-            private void NextFrame(CachedVideoAnimation animation)
+        private bool _hasRenderedFirstFrame;
+        public bool HasRenderedFirstFrame => _hasRenderedFirstFrame && _buffer != null;
+
+        public int LoopCount => _loopCount;
+
+        public async Task CreateAsync()
+        {
+            var file = _sticker.StickerValue;
+            if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
             {
-                if (animation == null || animation.IsCaching || _buffer == null /*|| _unloaded*/)
-                {
-                    return;
-                }
-
-                //  This is just wrong
-                if (_step % 30d == 0)
-                {
-                    animation.RenderSync(_buffer, _size, _size, out _);
-                }
-
-                _step += _animationFrameRate;
-                _hasRenderedFirstFrame = true;
+                file = await _protoService.DownloadFileAsync(file, 32);
             }
 
-            public void Dispose()
+            // IsDownloadingCompleted was updated either
+            // by IsFileExisting or by DownloadFileAsync.
+            if (file.Local.IsDownloadingCompleted)
             {
-                if (_animation is LottieAnimation lottie && !lottie.IsCaching)
+                if (_sticker.Format is StickerFormatTgs)
                 {
-                    lottie.Dispose();
+                    var animation = LottieAnimation.LoadFromFile(file.Local.Path, new Windows.Graphics.SizeInt32 { Width = _size, Height = _size }, true, GetColorReplacements(_sticker.SetId));
+                    if (animation != null)
+                    {
+                        _animationTotalFrame = animation.TotalFrame;
+                        _animationFrameRate = animation.FrameRate;
+
+                        _buffer = BufferSurface.Create((uint)(_size * _size * 4));
+                        _animation = animation;
+                    }
+                }
+                else if (_sticker.Format is StickerFormatWebm)
+                {
+                    var animation = CachedVideoAnimation.LoadFromFile(new LocalVideoSource(file), _size, _size, true);
+                    if (animation != null)
+                    {
+                        _animationFrameRate = animation.FrameRate;
+
+                        _buffer = BufferSurface.Create((uint)(_size * _size * 4));
+                        _animation = animation;
+                    }
+                }
+                else if (_sticker.Format is StickerFormatWebp)
+                {
+                    _buffer = PlaceholderImageHelper.Current.DrawWebP(file.Local.Path, _size, out _);
+                    _hasRenderedFirstFrame = true;
+                }
+            }
+        }
+
+        public void NextFrame()
+        {
+            if (_animation is LottieAnimation lottie)
+            {
+                NextFrame(lottie);
+            }
+            else if (_animation is CachedVideoAnimation cached)
+            {
+                NextFrame(cached);
+            }
+        }
+
+        private void NextFrame(LottieAnimation animation)
+        {
+            if (animation == null || animation.IsCaching || _buffer == null /*|| _unloaded*/)
+            {
+                return;
+            }
+
+            var index = _index;
+            var framesPerUpdate = _limitFps ? _animationFrameRate < 60 ? 1 : 2 : 1;
+
+            animation.RenderSync(_buffer, _size, _size, index);
+
+            if (index + framesPerUpdate < _animationTotalFrame)
+            {
+                _index += framesPerUpdate;
+            }
+            else
+            {
+                _index = 0;
+
+                var count = Interlocked.CompareExchange(ref _loopCount, 0, 1);
+                if (count == 0)
+                {
+                    Interlocked.Exchange(ref _loopCount, 1);
+                }
+            }
+
+            _hasRenderedFirstFrame = true;
+        }
+
+        private void NextFrame(CachedVideoAnimation animation)
+        {
+            if (animation == null || animation.IsCaching || _buffer == null /*|| _unloaded*/)
+            {
+                return;
+            }
+
+            //  This is just wrong
+            if (_step % 30d == 0)
+            {
+                animation.RenderSync(_buffer, _size, _size, out _);
+            }
+
+            _step += _animationFrameRate;
+            _hasRenderedFirstFrame = true;
+        }
+
+        private Color _currentReplacement = Colors.Black;
+        private readonly Dictionary<int, int> _colorReplacements = new()
+        {
+            { 0xFFFFFF, 0x000000 }
+        };
+
+        private IReadOnlyDictionary<int, int> GetColorReplacements(long setId)
+        {
+            if (setId == _protoService.Options.ThemedEmojiStatusesStickerSetId)
+            {
+                if (_currentReplacement != Theme.Accent)
+                {
+                    _currentReplacement = Theme.Accent;
+                    _colorReplacements[0xFFFFFF] = Theme.Accent.ToValue();
                 }
 
-                _buffer = null;
+                return _colorReplacements;
             }
+
+            return null;
+        }
+
+        public void Dispose()
+        {
+            if (_animation is LottieAnimation lottie && !lottie.IsCaching)
+            {
+                lottie.Dispose();
+            }
+
+            _buffer = null;
         }
     }
 
@@ -641,5 +673,4 @@ namespace Unigram.Controls.Messages
 
         public int Y { get; set; }
     }
-
 }

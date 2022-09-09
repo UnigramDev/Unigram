@@ -125,7 +125,7 @@
                     Height="36" />
             <controls:BadgeButton x:Name="PurchaseCommand"
                                   Click="Purchase_Click"
-                                  Content="{x:Bind ConvertPurchase(ViewModel.IsPremium, ViewModel.State.MonthlyAmount, ViewModel.State.Currency), Mode=OneWay, FallbackValue=Empty}"
+                                  Content="{x:Bind ConvertPurchase(ViewModel.IsPremium, ViewModel.Option), Mode=OneWay, FallbackValue=Empty}"
                                   Style="{StaticResource StartButtonStyle}"
                                   HorizontalAlignment="Stretch"
                                   HorizontalContentAlignment="Center"

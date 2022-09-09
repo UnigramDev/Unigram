@@ -44,7 +44,8 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ToggleButton">
-                        <Grid CornerRadius="{TemplateBinding CornerRadius}"
+                        <Grid Background="{ThemeResource MenuFlyoutItemBackgroundPointerOver}"
+                              CornerRadius="{TemplateBinding CornerRadius}"
                               Margin="{TemplateBinding Padding}"
                               AutomationProperties.AccessibilityView="Raw">
                             <VisualStateManager.VisualStateGroups>
@@ -52,10 +53,11 @@
                                     <VisualState x:Name="Normal" />
                                     <VisualState x:Name="PointerOver">
                                         <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetName="ContentPresenter"
-                                                             Storyboard.TargetProperty="Opacity"
-                                                             Duration="0"
-                                                             To="0.4" />
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
+                                                                           Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{ThemeResource MenuFlyoutItemBackgroundPointerOver}" />
+                                            </ObjectAnimationUsingKeyFrames>
                                         </Storyboard>
                                         <VisualState.Setters>
                                             <Setter Target="Icon.(muxc:AnimatedIcon.State)"
@@ -64,10 +66,11 @@
                                     </VisualState>
                                     <VisualState x:Name="Pressed">
                                         <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetName="ContentPresenter"
-                                                             Storyboard.TargetProperty="Opacity"
-                                                             Duration="0"
-                                                             To="0.6" />
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
+                                                                           Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{ThemeResource MenuFlyoutItemBackgroundPressed}" />
+                                            </ObjectAnimationUsingKeyFrames>
                                         </Storyboard>
                                         <VisualState.Setters>
                                             <Setter Target="Icon.(muxc:AnimatedIcon.State)"
@@ -91,10 +94,11 @@
                                     </VisualState>
                                     <VisualState x:Name="CheckedPointerOver">
                                         <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetName="ContentPresenter"
-                                                             Storyboard.TargetProperty="Opacity"
-                                                             Duration="0"
-                                                             To="0.4" />
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
+                                                                           Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{ThemeResource MenuFlyoutItemBackgroundPointerOver}" />
+                                            </ObjectAnimationUsingKeyFrames>
                                         </Storyboard>
                                         <VisualState.Setters>
                                             <Setter Target="Icon.(muxc:AnimatedIcon.State)"
@@ -103,10 +107,11 @@
                                     </VisualState>
                                     <VisualState x:Name="CheckedPressed">
                                         <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetName="ContentPresenter"
-                                                             Storyboard.TargetProperty="Opacity"
-                                                             Duration="0"
-                                                             To="0.6" />
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
+                                                                           Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{ThemeResource MenuFlyoutItemBackgroundPressed}" />
+                                            </ObjectAnimationUsingKeyFrames>
                                         </Storyboard>
                                         <VisualState.Setters>
                                             <Setter Target="Icon.(muxc:AnimatedIcon.State)"
@@ -125,9 +130,7 @@
                                 </VisualStateGroup>
                             </VisualStateManager.VisualStateGroups>
 
-                            <Border x:Name="ContentPresenter"
-                                    Background="{ThemeResource SystemColorControlAccentBrush}"
-                                    Opacity="0.2" />
+                            <Border x:Name="ContentPresenter" />
 
                             <muxc:AnimatedIcon x:Name="Icon"
                                                muxc:AnimatedIcon.State="Normal"
@@ -178,29 +181,22 @@
                    RadiusY="6"
                    StrokeThickness="1" />
 
-        <ScrollViewer x:Name="ScrollingHost"
-                      VerticalScrollBarVisibility="Disabled"
-                      VerticalScrollMode="Disabled"
-                      ViewChanging="OnViewChanging"
-                      Width="272"
-                      Height="36"
-                      CornerRadius="18">
-            <Grid x:Name="Presenter"
-                  Padding="8,6,-2,6" />
-        </ScrollViewer>
+        <Grid x:Name="Presenter"
+              Padding="8,6,-2,6"
+              Width="272"
+              Height="36"
+              CornerRadius="18" />
 
-        <TextBlock x:Name="InfoText"
-                   x:Load="False"
-                   Text="{CustomResource AvailableReactions}"
-                   TextAlignment="Center"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Top"
-                   Style="{StaticResource InfoBodyTextBlockStyle}"
-                   Margin="0,8,0,0" />
+        <Grid x:Name="Container"
+              VerticalAlignment="Top"
+              Margin="0,-36,0,0"
+              Width="272"
+              Height="36"
+              CornerRadius="18" />
 
         <ToggleButton x:Name="Expand"
                       Checked="Expand_Click"
-                      Unchecked="Expand_Click"
+                      Visibility="Collapsed"
                       HorizontalAlignment="Right"
                       VerticalAlignment="Top"
                       Foreground="{ThemeResource SystemColorControlAccentBrush}"

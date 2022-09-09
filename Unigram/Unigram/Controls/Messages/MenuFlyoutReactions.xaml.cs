@@ -7,8 +7,9 @@ using System.Linq;
 using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Navigation;
+using Unigram.Controls.Drawers;
 using Unigram.ViewModels;
+using Unigram.ViewModels.Drawers;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -23,7 +24,7 @@ namespace Unigram.Controls.Messages
 {
     public sealed partial class MenuFlyoutReactions : UserControl
     {
-        private readonly IList<Reaction> _reactions;
+        private readonly IProtoService _protoService;
         private readonly bool _canUnlockMore;
 
         private readonly MessageViewModel _message;
@@ -32,6 +33,8 @@ namespace Unigram.Controls.Messages
 
         private readonly MenuFlyoutPresenter _presenter;
         private readonly Popup _popup;
+
+        private bool _expanded;
 
         public static MenuFlyoutReactions ShowAt(IList<Reaction> reactions, MessageViewModel message, MessageBubble bubble, MenuFlyout flyout)
         {
@@ -61,16 +64,21 @@ namespace Unigram.Controls.Messages
             //var relativeLast = Math.Abs(absolute.Y - (position.Y + presenter.ActualHeight));
             var upsideDown = false; //relativeLast < relativeFirst;
 
-            var count = Math.Min(_reactions.Count, 6);
+            var count = Math.Min(_reactions.Count, 8);
+
+            var itemSize = 24;
+            var itemPadding = 4;
+
+            var itemTotal = itemSize + itemPadding;
 
             var actualWidth = presenter.ActualSize.X + 18 + 12 + 18;
-            var width = 8 + count * 34 - 2;
+            var width = 8 + 4 + (count * itemTotal);
 
             var padding = actualWidth - width;
 
             Shadow.Width = width;
             Pill.Width = width;
-            ScrollingHost.Width = width;
+            Presenter.Width = Container.Width = width;
 
             Expand.Visibility = _reactions.Count > 6 ? Visibility.Visible : Visibility.Collapsed;
 
@@ -80,10 +88,10 @@ namespace Unigram.Controls.Messages
             BubbleOverlay.VerticalAlignment = upsideDown ? VerticalAlignment.Top : VerticalAlignment.Bottom;
             BubbleOverlay.Margin = new Thickness(0, upsideDown ? -6 : 0, 18, upsideDown ? 0 : -6);
 
-            LayoutRoot.Padding = new Thickness(16, upsideDown ? 32 : 16, 16, upsideDown ? 16 : 32);
+            LayoutRoot.Padding = new Thickness(16, upsideDown ? 36 : 36, 16, upsideDown ? 16 : 32);
 
             var offset = 0;
-            var visible = _reactions.Count > 6 ? 5 : 6; //Math.Ceiling((width - 8) / 34);
+            var visible = _reactions.Count > 8 ? 7 : 8; //Math.Ceiling((width - 8) / 34);
 
             static void DownloadFile(MessageViewModel message, File file)
             {
@@ -108,10 +116,12 @@ namespace Unigram.Controls.Messages
                 var view = new LottieView();
                 view.AutoPlay = offset < visible;
                 view.IsLoopingEnabled = false;
-                view.FrameSize = new Size(24, 24);
+                view.FrameSize = new Size(itemSize, itemSize);
                 view.DecodeFrameType = DecodePixelType.Logical;
-                view.Width = 24;
-                view.Height = 24;
+                view.Width = itemSize;
+                view.Height = itemSize;
+                view.Margin = new Thickness(0, 0, itemPadding, 0);
+                view.VerticalAlignment = VerticalAlignment.Top;
                 view.Tag = offset < visible ? null : new object();
 
                 var file = item.AppearAnimation.StickerValue;
@@ -131,19 +141,9 @@ namespace Unigram.Controls.Messages
                     }
                 }
 
-                var button = new HyperlinkButton
-                {
-                    Tag = item,
-                    Content = view,
-                    Margin = new Thickness(0, 0, 10, 0),
-                    Style = BootStrapper.Current.Resources["EmptyHyperlinkButtonStyle"] as Style
-                };
+                Grid.SetColumn(view, offset);
 
-                button.Click += Reaction_Click;
-
-                Grid.SetColumn(button, offset);
-
-                Presenter.Children.Add(button);
+                Presenter.Children.Add(view);
                 Presenter.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
 
                 if (offset < visible)
@@ -165,7 +165,7 @@ namespace Unigram.Controls.Messages
 
             var device = CanvasDevice.GetSharedDevice();
             var rect1 = CanvasGeometry.CreateRectangle(device, Math.Min(width - actualWidth, 0), 0, Math.Max(width + 16 + 16 + Math.Max(0, padding), actualWidth), 86);
-            var elli1 = CanvasGeometry.CreateRoundedRectangle(device, width - actualWidth + 18 + 16, upsideDown ? -86 - 4 : 16 + 36 + 4, presenter.ActualSize.X, 86, 8, 8);
+            var elli1 = CanvasGeometry.CreateRoundedRectangle(device, width - actualWidth + 18 + 16, upsideDown ? -86 - 4 : 36 + 36 + 4, presenter.ActualSize.X, 86, 8, 8);
             var group1 = CanvasGeometry.CreateGroup(device, new[] { elli1, rect1 }, CanvasFilledRegionDetermination.Alternate);
 
             var rootVisual = ElementCompositionPreview.GetElementVisual(LayoutRoot);
@@ -210,7 +210,7 @@ namespace Unigram.Controls.Messages
             }
 
             _popup.Child = this;
-            _popup.Margin = new Thickness(x - 16, y - 16, 0, 0);
+            _popup.Margin = new Thickness(x - 16, y - 36, 0, 0);
             _popup.ShouldConstrainToRootBounds = false;
             _popup.RequestedTheme = presenter.ActualTheme;
             _popup.IsOpen = true;
@@ -342,30 +342,35 @@ namespace Unigram.Controls.Messages
             }
         }
 
-        private async void Expand_Click(object sender, RoutedEventArgs e)
+        private void Expand_Click(object sender, RoutedEventArgs e)
         {
-            var cols = 6;
+            var itemSize = 24;
+            var itemPadding = 4;
+
+            var itemTotal = itemSize + itemPadding;
+
+            var cols = 8;
             var rows = (int)Math.Ceiling((double)_reactions.Count / cols);
 
-            var width = 8 + cols * 34 - 2;
-            var viewport = 8 + cols * 34 - 2;
-            var height = (rows + 1) * 34;
+            var width = 8 + 4 + (cols * itemTotal);
+            var viewport = 8 + 4 + (cols * itemTotal);
+            var height = (rows + 3) * itemTotal;
 
-            ScrollingHost.VerticalScrollMode = ScrollMode.Auto;
-            ScrollingHost.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
-
-            ScrollingHost.HorizontalScrollMode = ScrollMode.Disabled;
-            ScrollingHost.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
-
-            ScrollingHost.HorizontalAlignment = HorizontalAlignment.Left;
-            ScrollingHost.VerticalAlignment = VerticalAlignment.Top;
+            Presenter.HorizontalAlignment = HorizontalAlignment.Left;
+            Presenter.VerticalAlignment = VerticalAlignment.Top;
 
             Shadow.Height = height;
             Pill.Height = height;
-            ScrollingHost.Height = rows * 34 - 4;
+            Presenter.Height = Container.Height = height;
 
             BubbleMedium.Visibility = Visibility.Collapsed;
             BubbleOverlay.Visibility = Visibility.Collapsed;
+
+            var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
+                Presenter.Children.Clear();
+            };
 
             var pillShadow = Window.Current.Compositor.CreateDropShadow();
             pillShadow.BlurRadius = 16;
@@ -384,88 +389,6 @@ namespace Unigram.Controls.Messages
 
             ElementCompositionPreview.SetElementChildVisual(Shadow, receivers);
 
-            Presenter.ColumnDefinitions.Clear();
-            Presenter.RowDefinitions.Clear();
-
-            for (int y = 0; y < rows; y++)
-            {
-                for (int x = 0; x < cols; x++)
-                {
-                    var i = x + y * cols;
-
-                    var button = Presenter.Children[i] as HyperlinkButton;
-                    if (button == null)
-                    {
-                        if (i < _reactions.Count)
-                        {
-                            var item = _reactions[i];
-
-                            var view2 = new LottieView();
-                            view2.AutoPlay = false;
-                            view2.IsLoopingEnabled = false;
-                            view2.FrameSize = new Size(24, 24);
-                            view2.DecodeFrameType = DecodePixelType.Logical;
-                            view2.Width = 24;
-                            view2.Height = 24;
-                            view2.Tag = new object();
-
-                            var file = item.AppearAnimation.StickerValue;
-                            if (file.Local.IsDownloadingCompleted)
-                            {
-                                view2.Source = UriEx.ToLocal(file.Local.Path);
-                            }
-                            else
-                            {
-                                view2.Source = null;
-
-                                UpdateManager.Subscribe(view2, _message, file, /*UpdateReaction*/UpdateFile, true);
-
-                                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-                                {
-                                    _message.ProtoService.DownloadFile(file.Id, 32);
-                                }
-                            }
-
-                            button = new HyperlinkButton
-                            {
-                                Tag = _reactions[i],
-                                Content = view2,
-                                Margin = new Thickness(0, 0, 10, 0),
-                                Style = BootStrapper.Current.Resources["EmptyHyperlinkButtonStyle"] as Style
-                            };
-
-                            button.Click += Reaction_Click;
-                            Presenter.Children.Add(button);
-                        }
-                        else
-                        {
-                            continue;
-                        }
-                    }
-
-                    if (button.Content is LottieView view && view.Tag != null)
-                    {
-                        view.Play();
-                        view.Tag = null;
-                    }
-
-                    if (y > 0)
-                    {
-                        button.Margin = new Thickness(0, 10, 10, 0);
-                    }
-
-                    Grid.SetColumn(button, x);
-                    Grid.SetRow(button, y);
-
-                    if (y == 0)
-                    {
-                        Presenter.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
-                    }
-                }
-
-                Presenter.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
-            }
-
             var rootVisual = ElementCompositionPreview.GetElementVisual(LayoutRoot);
             rootVisual.Clip = null;
 
@@ -482,39 +405,268 @@ namespace Unigram.Controls.Messages
 
             var offset = visualPill.Compositor.CreateVector3KeyFrameAnimation();
             offset.InsertKeyFrame(0, Vector3.Zero);
-            offset.InsertKeyFrame(1, new Vector3(0, 30, 0));
+            offset.InsertKeyFrame(1, new Vector3(0, 36, 0));
 
-            ElementCompositionPreview.SetIsTranslationEnabled(ScrollingHost, true);
-            var scrollingVisual = ElementCompositionPreview.GetElementVisual(ScrollingHost);
-            scrollingVisual.StartAnimation("Translation", offset);
+            var opacity = visualPill.Compositor.CreateScalarKeyFrameAnimation();
+            opacity.InsertKeyFrame(0, 1);
+            opacity.InsertKeyFrame(1, 0);
+
+            ElementCompositionPreview.SetIsTranslationEnabled(Expand, true);
+            var expand = ElementCompositionPreview.GetElementVisual(Expand);
+            expand.StartAnimation("Translation", offset);
+            expand.StartAnimation("Opacity", opacity);
+
+            ElementCompositionPreview.SetIsTranslationEnabled(Presenter, true);
+            var scrollingVisual = ElementCompositionPreview.GetElementVisual(Presenter);
 
             // Animating this breaks the menu flyout when it comes back
             _presenter.Visibility = Visibility.Collapsed;
 
-            FindName(nameof(InfoText));
+            var viewModel = EmojiDrawerViewModel.GetForCurrentView(_message.ProtoService.SessionId, EmojiDrawerMode.Reactions);
+            var view = new EmojiDrawer(EmojiDrawerMode.Reactions);
+            view.DataContext = viewModel;
+            view.VerticalAlignment = VerticalAlignment.Top;
+            view.Width = width;
+            view.Height = height;
+            view.ItemClick += OnItemClick;
 
-            await this.UpdateLayoutAsync();
+            Container.Children.Add(view);
+            viewModel.UpdateReactions(_reactions);
 
-            var expandVisual = ElementCompositionPreview.GetElementVisual(Expand);
-            var infoVisual = ElementCompositionPreview.GetElementVisual(InfoText);
-            infoVisual.CenterPoint = new Vector3(InfoText.ActualSize / 2, 0);
+            offset = visualPill.Compositor.CreateVector3KeyFrameAnimation();
+            offset.InsertKeyFrame(0, Vector3.Zero);
+            offset.InsertKeyFrame(1, new Vector3(0, -36, 0));
 
-            var show = visualPill.Compositor.CreateScalarKeyFrameAnimation();
-            show.InsertKeyFrame(0, 0);
-            show.InsertKeyFrame(1, 1);
+            ElementCompositionPreview.SetIsTranslationEnabled(view, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(Pill, true);
+            scrollingVisual = ElementCompositionPreview.GetElementVisual(view);
+            //scrollingVisual.StartAnimation("Translation", offset);
+            receivers.StartAnimation("Offset", offset);
+            visualPill.StartAnimation("Translation", offset);
 
-            var hide = visualPill.Compositor.CreateScalarKeyFrameAnimation();
-            hide.InsertKeyFrame(0, 1);
-            hide.InsertKeyFrame(1, 0);
+            batch.End();
+        }
 
-            var scale = visualPill.Compositor.CreateVector3KeyFrameAnimation();
-            scale.InsertKeyFrame(0, Vector3.Zero);
-            scale.InsertKeyFrame(1, Vector3.One);
+        private async void OnItemClick(object sender, ItemClickEventArgs e)
+        {
+            if (e.ClickedItem is StickerViewModel sticker)
+            {
+                _flyout.Hide();
 
-            infoVisual.StartAnimation("Opacity", show);
-            infoVisual.StartAnimation("Scale", scale);
+                await _message.ProtoService.SendAsync(new SetMessageReaction(_message.ChatId, _message.Id, sticker.Emoji, false));
 
-            expandVisual.StartAnimation("Opacity", hide);
+                if (_bubble != null)
+                {
+                    _bubble.UpdateMessageReactions(_message, true);
+                }
+            }
+        }
+        public static MenuFlyoutReactions ShowAt(IProtoService protoService, FrameworkElement element, HorizontalAlignment alignment)
+        {
+            return new MenuFlyoutReactions(protoService, element, alignment);
+        }
+
+        private MenuFlyoutReactions(IProtoService protoService, FrameworkElement element, HorizontalAlignment alignment)
+        {
+            InitializeComponent();
+
+            _protoService = protoService;
+            _popup = new Popup();
+
+            var transform = element.TransformToVisual(Window.Current.Content);
+            var position = transform.TransformPoint(new Point());
+
+            var count = 8;
+
+            var itemSize = 24;
+            var itemPadding = 4;
+
+            var itemTotal = itemSize + itemPadding;
+
+            var actualWidth = 8 + 4 + (count * itemTotal);
+
+            var cols = 8;
+            var rows = 8;
+
+            var width = 8 + 4 + (cols * itemTotal);
+            var viewport = 8 + 4 + (cols * itemTotal);
+            var height = rows * itemTotal;
+
+            var padding = actualWidth - width;
+
+            var viewModel = EmojiDrawerViewModel.GetForCurrentView(protoService.SessionId, EmojiDrawerMode.Reactions);
+            var view = new EmojiDrawer(EmojiDrawerMode.Reactions);
+            view.DataContext = viewModel;
+            view.VerticalAlignment = VerticalAlignment.Top;
+            view.Width = width;
+            view.Height = height;
+            view.ItemClick += OnStatusClick;
+
+            Container.Margin = new Thickness();
+            Container.Children.Add(view);
+            viewModel.UpdateStatuses();
+
+            Shadow.Width = width;
+            Pill.Width = width;
+            Presenter.Width = Container.Width = width;
+
+            Shadow.Height = height;
+            Pill.Height = height;
+            Presenter.Height = Container.Height = height;
+
+            BubbleMedium.HorizontalAlignment = alignment;
+            BubbleMedium.VerticalAlignment = VerticalAlignment.Top;
+            BubbleMedium.Margin = new Thickness(18, -6, 18, 0);
+
+            BubbleOverlay.HorizontalAlignment = alignment;
+            BubbleOverlay.VerticalAlignment = VerticalAlignment.Top;
+            BubbleOverlay.Margin = new Thickness(18, -6, 18, 0);
+
+            LayoutRoot.Padding = new Thickness(16, 36, 16, 16);
+
+            var rootVisual = ElementCompositionPreview.GetElementVisual(LayoutRoot);
+            var compositor = rootVisual.Compositor;
+
+            var pillShadow = compositor.CreateDropShadow();
+            pillShadow.BlurRadius = 16;
+            pillShadow.Opacity = 0.14f;
+            pillShadow.Color = Colors.Black;
+            pillShadow.Mask = Pill.GetAlphaMask();
+
+            var pillReceiver = compositor.CreateSpriteVisual();
+            pillReceiver.Shadow = pillShadow;
+            pillReceiver.Size = new Vector2(width, height);
+            pillReceiver.Offset = new Vector3(0, 8, 0);
+
+            var mediumShadow = compositor.CreateDropShadow();
+            mediumShadow.BlurRadius = 16;
+            mediumShadow.Opacity = 0.14f;
+            mediumShadow.Color = Colors.Black;
+            mediumShadow.Mask = BubbleMedium.GetAlphaMask();
+
+            var mediumReceiver = compositor.CreateSpriteVisual();
+            mediumReceiver.Shadow = mediumShadow;
+            mediumReceiver.Size = new Vector2(12, 12);
+            mediumReceiver.Offset = new Vector3(alignment == HorizontalAlignment.Left ? 18 : width - 18 - 12, -8, 0);
+
+            var receivers = compositor.CreateContainerVisual();
+            receivers.Children.InsertAtBottom(pillReceiver);
+            receivers.Children.InsertAtBottom(mediumReceiver);
+            receivers.Size = new Vector2(width, 54);
+
+            ElementCompositionPreview.SetElementChildVisual(Shadow, receivers);
+
+            var x = position.X - 4 /*- 18 + padding*/;
+            var y = position.Y + element.ActualHeight - 4;
+
+            if (alignment == HorizontalAlignment.Right)
+            {
+                x = position.X - width + element.ActualWidth + 6;
+            }
+
+            _popup.Child = this;
+            _popup.Margin = new Thickness(x - 16, y - 36, 0, 0);
+            _popup.ShouldConstrainToRootBounds = false;
+            _popup.RequestedTheme = element.ActualTheme;
+            _popup.IsLightDismissEnabled = true;
+            _popup.IsOpen = true;
+
+            var visualMedium = ElementCompositionPreview.GetElementVisual(BubbleMedium);
+            var visualOverlay = ElementCompositionPreview.GetElementVisual(BubbleOverlay);
+            visualMedium.CenterPoint = new Vector3(6, 6, 0);
+            visualOverlay.CenterPoint = new Vector3(6, 6, 0);
+
+            var visualPill = ElementCompositionPreview.GetElementVisual(Pill);
+            visualPill.CenterPoint = new Vector3(alignment == HorizontalAlignment.Left ? 36 / 2 : width - 36 / 2, 36 / 2, 0);
+
+            var visualExpand = ElementCompositionPreview.GetElementVisual(Expand);
+            visualExpand.CenterPoint = new Vector3(32 / 2f, 24 / 2f, 0);
+
+            var clip = compositor.CreateRoundedRectangleGeometry();
+            clip.CornerRadius = new Vector2(36 / 2);
+
+            var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+
+            var scaleMedium = compositor.CreateVector3KeyFrameAnimation();
+            scaleMedium.InsertKeyFrame(0, Vector3.Zero);
+            scaleMedium.InsertKeyFrame(1, Vector3.One);
+            scaleMedium.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
+            scaleMedium.DelayTime = TimeSpan.FromMilliseconds(100);
+            scaleMedium.Duration = TimeSpan.FromMilliseconds(150);
+
+            var scalePill = compositor.CreateSpringVector3Animation();
+            scalePill.InitialValue = Vector3.Zero;
+            scalePill.FinalValue = Vector3.One;
+            scalePill.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
+            scalePill.DampingRatio = 0.6f;
+
+            var translation = compositor.CreateScalarKeyFrameAnimation();
+            translation.InsertKeyFrame(0, 0);
+            translation.InsertKeyFrame(1, 16);
+
+            var opacity = compositor.CreateScalarKeyFrameAnimation();
+
+            var drawer = ElementCompositionPreview.GetElementVisual(view);
+
+            opacity.InsertKeyFrame(0, 0);
+            opacity.InsertKeyFrame(1, 1);
+
+            drawer.CenterPoint = new Vector3(alignment == HorizontalAlignment.Left ? 36 / 2 : width - 36 / 2, 36 / 2, 0);
+            drawer.StartAnimation("Opacity", opacity);
+            drawer.StartAnimation("Scale", scalePill);
+
+            opacity.InsertKeyFrame(0, 0);
+            opacity.InsertKeyFrame(1, 0.14f);
+
+            visualMedium.StartAnimation("Scale", scaleMedium);
+            visualOverlay.StartAnimation("Scale", scaleMedium);
+            visualPill.StartAnimation("Scale", scalePill);
+            visualExpand.StartAnimation("Scale", scalePill);
+
+            mediumShadow.StartAnimation("BlurRadius", translation);
+            mediumShadow.StartAnimation("Opacity", opacity);
+
+            translation.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
+            translation.DelayTime = scaleMedium.Duration + TimeSpan.FromMilliseconds(100);
+            opacity.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
+            opacity.DelayTime = scaleMedium.Duration + TimeSpan.FromMilliseconds(100);
+
+            pillShadow.StartAnimation("BlurRadius", translation);
+            pillShadow.StartAnimation("Opacity", opacity);
+
+            var resize = compositor.CreateVector2KeyFrameAnimation();
+            resize.InsertKeyFrame(0, new Vector2(36, 36));
+            resize.InsertKeyFrame(1, new Vector2(width, height));
+            resize.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
+            resize.DelayTime = TimeSpan.FromMilliseconds(100);
+            resize.Duration = TimeSpan.FromMilliseconds(150);
+
+            drawer.Clip = compositor.CreateGeometricClip(clip);
+            visualPill.Clip = compositor.CreateGeometricClip(clip);
+            clip.StartAnimation("Size", resize);
+
+            if (alignment == HorizontalAlignment.Right)
+            {
+                var move = compositor.CreateVector2KeyFrameAnimation();
+                move.InsertKeyFrame(0, new Vector2(width - 36, 0));
+                move.InsertKeyFrame(1, new Vector2());
+                move.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
+                move.DelayTime = TimeSpan.FromMilliseconds(100);
+                move.Duration = TimeSpan.FromMilliseconds(150);
+
+                clip.StartAnimation("Offset", move);
+            }
+
+            batch.End();
+        }
+
+        private void OnStatusClick(object sender, ItemClickEventArgs e)
+        {
+            if (e.ClickedItem is StickerViewModel sticker)
+            {
+                _popup.IsOpen = false;
+                _protoService.Send(new SetEmojiStatus(new EmojiStatus(sticker.CustomEmojiId), 0));
+            }
         }
     }
 }

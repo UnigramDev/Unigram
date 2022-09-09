@@ -1,19 +1,19 @@
 ﻿using Unigram.Common;
-using Unigram.ViewModels.SignIn;
+using Unigram.ViewModels.Authorization;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Views.SignIn
+namespace Unigram.Views.Authorization
 {
-    public sealed partial class SignUpPage : Page
+    public sealed partial class AuthorizationEmailAddressPage : Page
     {
-        public SignUpViewModel ViewModel => DataContext as SignUpViewModel;
+        public AuthorizationEmailAddressViewModel ViewModel => DataContext as AuthorizationEmailAddressViewModel;
 
-        public SignUpPage()
+        public AuthorizationEmailAddressPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SignUpViewModel>();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -30,7 +30,7 @@ namespace Unigram.Views.SignIn
         {
             switch (e.PropertyName)
             {
-                case "FIRSTNAME_INVALID":
+                case "EMAIL_INVALID":
                     VisualUtilities.ShakeView(PrimaryInput);
                     break;
             }
@@ -39,6 +39,15 @@ namespace Unigram.Views.SignIn
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             PrimaryInput.Focus(FocusState.Keyboard);
+        }
+
+        private void PrimaryInput_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == Windows.System.VirtualKey.Enter)
+            {
+                ViewModel.SendCommand.Execute(null);
+                e.Handled = true;
+            }
         }
     }
 }

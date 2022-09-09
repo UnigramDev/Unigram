@@ -1,7 +1,6 @@
 ﻿using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Supergroups;
 using Windows.Foundation;
 using Windows.UI.Xaml;
@@ -10,7 +9,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Unigram.Views.Supergroups
 {
-    public sealed partial class SupergroupReactionsPage : HostedPage, IChatDelegate
+    public sealed partial class SupergroupReactionsPage : HostedPage
     {
         public SupergroupReactionsViewModel ViewModel => DataContext as SupergroupReactionsViewModel;
 
@@ -74,16 +73,39 @@ namespace Unigram.Views.Supergroups
             }
         }
 
-        #region Delegate
+        #region Binding
 
-        public void UpdateChat(Chat chat)
+        private bool ConvertType(ChatType type, bool channel)
         {
-            Enable.Footer = chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel ? Strings.Resources.EnableReactionsChannelInfo : Strings.Resources.EnableReactionsGroupInfo;
+            if (type is ChatTypeSupergroup supergroup)
+            {
+                return supergroup.IsChannel == channel;
+            }
+
+            return channel;
         }
 
-        public void UpdateChatTitle(Chat chat) { }
+        private bool? ConvertAvailable(SupergroupAvailableReactions value)
+        {
+            return value != SupergroupAvailableReactions.None;
+        }
 
-        public void UpdateChatPhoto(Chat chat) { }
+        private void ConvertAvailableBack(bool? value)
+        {
+            ViewModel.Available = value == false
+                ? SupergroupAvailableReactions.None
+                : SupergroupAvailableReactions.Some;
+        }
+
+        private string ConvertFooter(SupergroupAvailableReactions value)
+        {
+            return value switch
+            {
+                SupergroupAvailableReactions.All => Strings.Resources.EnableAllReactionsInfo,
+                SupergroupAvailableReactions.None => Strings.Resources.DisableReactionsInfo,
+                _ => Strings.Resources.EnableSomeReactionsInfo
+            };
+        }
 
         #endregion
 

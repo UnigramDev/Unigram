@@ -282,7 +282,7 @@ namespace Unigram.Common
 
         private static void CreateOrMerge(int offset, int length, IList<TextEntity> entities, TextEntityType type)
         {
-            var last = entities.LastOrDefault(x => x.Length + x.Offset == offset && AreEquals(x.Type, type));
+            var last = entities.LastOrDefault(x => x.Length + x.Offset == offset && AreTheSame(x.Type, type));
             if (last != null)
             {
                 last.Length += length;
@@ -293,7 +293,7 @@ namespace Unigram.Common
             }
         }
 
-        private static bool AreEquals(TextEntityType x, TextEntityType y)
+        private static bool AreTheSame(TextEntityType x, TextEntityType y)
         {
             if (x is TextEntityTypeTextUrl xTextUrl && y is TextEntityTypeTextUrl yTextUrl)
             {

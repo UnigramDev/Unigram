@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Linq;
 using System.Numerics;
@@ -54,11 +55,15 @@ namespace Unigram.Controls.Gallery
         private readonly Visual _layout;
 
         private readonly Visual _layer;
+        private readonly Visual _layerFullScreen;
         private readonly Visual _bottom;
 
         private bool _wasFullScreen;
+        private bool _lastFullScreen;
+
         private bool _unloaded;
 
+        private static readonly ConcurrentDictionary<int, double> _knownPositions = new();
         private int? _initialPosition;
 
         public int InitialPosition
@@ -74,9 +79,11 @@ namespace Unigram.Controls.Gallery
             _layout = ElementCompositionPreview.GetElementVisual(LayoutRoot);
 
             _layer = ElementCompositionPreview.GetElementVisual(Layer);
+            _layerFullScreen = ElementCompositionPreview.GetElementVisual(LayerFullScreen);
             _bottom = ElementCompositionPreview.GetElementVisual(BottomPanel);
 
             _layer.Opacity = 0;
+            _layerFullScreen.Opacity = 0;
             _bottom.Opacity = 0;
 
             _mediaPlayerElement = new MediaPlayerElement { Style = Resources["TransportLessMediaPlayerStyle"] as Style };
@@ -161,6 +168,7 @@ namespace Unigram.Controls.Gallery
             var parent = ElementCompositionPreview.GetElementVisual(BottomPanel);
             var next = ElementCompositionPreview.GetElementVisual(NextButton);
             var prev = ElementCompositionPreview.GetElementVisual(PrevButton);
+            var back = ElementCompositionPreview.GetElementVisual(BackButton);
 
             var batch = parent.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
@@ -181,6 +189,7 @@ namespace Unigram.Controls.Gallery
             parent.StartAnimation("Opacity", opacity);
             next.StartAnimation("Opacity", opacity);
             prev.StartAnimation("Opacity", opacity);
+            back.StartAnimation("Opacity", opacity);
 
             batch.End();
         }
@@ -325,7 +334,11 @@ namespace Unigram.Controls.Gallery
                     return;
                 }
 
-                _wasFullScreen = ApplicationView.GetForCurrentView().IsFullScreenMode;
+                var applicationView = ApplicationView.GetForCurrentView();
+
+                _wasFullScreen = applicationView.IsFullScreenMode;
+                applicationView.VisibleBoundsChanged += OnVisibleBoundsChanged;
+                OnVisibleBoundsChanged(applicationView, null);
 
                 InitializeBackButton();
                 Transport.Focus(FocusState.Programmatic);
@@ -365,6 +378,52 @@ namespace Unigram.Controls.Gallery
             }
         }
 
+        private void OnVisibleBoundsChanged(ApplicationView sender, object args)
+        {
+            if (_lastFullScreen != sender.IsFullScreenMode)
+            {
+                FullScreen.IsChecked = sender.IsFullScreenMode;
+                Padding = new Thickness(0, sender.IsFullScreenMode ? 0 : 40, 0, 0);
+
+                if (LayoutRoot.CurrentElement is GalleryContentView container)
+                {
+                    container.Stretch = sender.IsFullScreenMode
+                        ? Stretch.UniformToFill
+                        : Stretch.Uniform;
+                }
+
+                var anim = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                anim.InsertKeyFrame(0, sender.IsFullScreenMode ? 0 : 1);
+                anim.InsertKeyFrame(1, sender.IsFullScreenMode ? 1 : 0);
+
+                _layerFullScreen.StartAnimation("Opacity", anim);
+            }
+
+            _lastFullScreen = sender.IsFullScreenMode;
+        }
+
+        protected override void MaskTitleAndStatusBar()
+        {
+            base.MaskTitleAndStatusBar();
+            Window.Current.SetTitleBar(TitleBar);
+        }
+
+        private void InitializeBackButton()
+        {
+            if (IsConstrainedToRootBounds)
+            {
+                BackButton.Glyph = "\uE72B";
+                BackButton.Margin = new Thickness(0, -40, 0, 0);
+                BackButton.HorizontalAlignment = HorizontalAlignment.Left;
+            }
+            else
+            {
+                BackButton.Glyph = "\uE711";
+                BackButton.Margin = new Thickness();
+                BackButton.HorizontalAlignment = HorizontalAlignment.Right;
+            }
+        }
+
         private void OnCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             PrepareNext(0, true);
@@ -378,6 +437,8 @@ namespace Unigram.Controls.Gallery
             {
                 ApplicationView.GetForCurrentView().ExitFullScreenMode();
             }
+
+            ApplicationView.GetForCurrentView().VisibleBoundsChanged -= OnVisibleBoundsChanged;
 
             if (ViewModel != null)
             {
@@ -623,6 +684,10 @@ namespace Unigram.Controls.Gallery
                     _initialPosition = null;
                     _mediaPlayer.PlaybackSession.Position = TimeSpan.FromSeconds(initialPosition);
                 }
+                else if (_knownPositions.TryRemove(file.Id, out double knownPosition))
+                {
+                    _mediaPlayer.PlaybackSession.Position = TimeSpan.FromSeconds(knownPosition);
+                }
 
                 _mediaPlayer.IsLoopingEnabled = item.IsLoop;
                 _mediaPlayer.Play();
@@ -640,8 +705,12 @@ namespace Unigram.Controls.Gallery
                 _surface = null;
             }
 
+            var fileId = 0;
+
             if (_fileStream != null)
             {
+                fileId = _fileStream.FileId;
+
                 if (GalleryCompactView.Current == null)
                 {
                     _fileStream.Dispose();
@@ -652,6 +721,11 @@ namespace Unigram.Controls.Gallery
 
             if (_mediaPlayer != null)
             {
+                if (fileId != 0 && _mediaPlayer.PlaybackSession.NaturalDuration.TotalSeconds > 30)
+                {
+                    _knownPositions[fileId] = _mediaPlayer.PlaybackSession.Position.TotalSeconds;
+                }
+
                 _mediaPlayer.VolumeChanged -= OnVolumeChanged;
                 _mediaPlayer.SourceChanged -= OnSourceChanged;
                 _mediaPlayer.MediaOpened -= OnMediaOpened;
@@ -848,7 +922,7 @@ namespace Unigram.Controls.Gallery
         private bool ChangeView(CarouselDirection direction)
         {
             var viewModel = ViewModel;
-            if (viewModel == null)
+            if (viewModel == null || LayoutRoot.IsScrolling)
             {
                 return false;
             }
@@ -1157,6 +1231,19 @@ namespace Unigram.Controls.Gallery
         private GalleryContentView GetElement(CarouselDirection direction)
         {
             return LayoutRoot.GetElement(direction) as GalleryContentView;
+        }
+
+        private void FullScreen_Click(object sender, RoutedEventArgs e)
+        {
+            var applicationView = ApplicationView.GetForCurrentView();
+            if (applicationView.IsFullScreenMode)
+            {
+                applicationView.ExitFullScreenMode();
+            }
+            else
+            {
+                applicationView.TryEnterFullScreenMode();
+            }
         }
     }
 }

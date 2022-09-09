@@ -2,25 +2,23 @@
 using Unigram.Controls;
 using Unigram.Navigation.Services;
 using Unigram.Services;
-using Unigram.ViewModels.SignIn;
+using Unigram.ViewModels.Authorization;
 using Unigram.Views;
-using Unigram.Views.SignIn;
+using Unigram.Views.Authorization;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Common
 {
     public class TLRootNavigationService : NavigationService
-        //, IHandle<UpdateAuthorizationState>
+    //, IHandle<UpdateAuthorizationState>
     {
         private readonly ILifetimeService _lifetimeService;
-        private readonly ISessionService _sessionService;
 
         public TLRootNavigationService(ISessionService sessionService, Frame frame, int session, string id)
             : base(frame, session, id)
         {
             _lifetimeService = TLContainer.Current.Lifetime;
-            _sessionService = sessionService;
         }
 
         public async void Handle(UpdateAuthorizationState update)
@@ -34,13 +32,13 @@ namespace Unigram.Common
                 case AuthorizationStateWaitOtherDeviceConfirmation:
                     if (_lifetimeService.Items.Count > 1)
                     {
-                        if (Frame.Content is SignInPage page && page.DataContext is SignInViewModel viewModel)
+                        if (Frame.Content is AuthorizationPage page && page.DataContext is AuthorizationViewModel viewModel)
                         {
                             await viewModel.NavigatedToAsync(null, NavigationMode.Refresh, null);
                         }
                         else
                         {
-                            Navigate(typeof(SignInPage));
+                            Navigate(typeof(AuthorizationPage));
                         }
 
                         ClearBackStack();
@@ -48,21 +46,27 @@ namespace Unigram.Common
                     }
                     else
                     {
-                        if (Frame.Content is SignInPage page && page.DataContext is SignInViewModel viewModel)
+                        if (Frame.Content is AuthorizationPage page && page.DataContext is AuthorizationViewModel viewModel)
                         {
                             await viewModel.NavigatedToAsync(null, NavigationMode.Refresh, null);
                         }
                         else
                         {
-                            Navigate(typeof(SignInPage));
+                            Navigate(typeof(AuthorizationPage));
                         }
                     }
                     break;
                 case AuthorizationStateWaitCode:
-                    Navigate(typeof(SignInSentCodePage));
+                    Navigate(typeof(AuthorizationCodePage));
+                    break;
+                case AuthorizationStateWaitEmailAddress:
+                    Navigate(typeof(AuthorizationEmailAddressPage));
+                    break;
+                case AuthorizationStateWaitEmailCode:
+                    Navigate(typeof(AuthorizationEmailCodePage));
                     break;
                 case AuthorizationStateWaitRegistration:
-                    Navigate(typeof(SignUpPage));
+                    Navigate(typeof(AuthorizationRegistrationPage));
                     break;
                 case AuthorizationStateWaitPassword waitPassword:
                     if (!string.IsNullOrEmpty(waitPassword.RecoveryEmailAddressPattern))
@@ -70,7 +74,7 @@ namespace Unigram.Common
                         await MessagePopup.ShowAsync(string.Format(Strings.Resources.RestoreEmailSent, waitPassword.RecoveryEmailAddressPattern), Strings.Resources.AppName, Strings.Resources.OK);
                     }
 
-                    Navigate(string.IsNullOrEmpty(waitPassword.RecoveryEmailAddressPattern) ? typeof(SignInPasswordPage) : typeof(SignInRecoveryPage));
+                    Navigate(string.IsNullOrEmpty(waitPassword.RecoveryEmailAddressPattern) ? typeof(AuthorizationPasswordPage) : typeof(AuthorizationRecoveryPage));
                     break;
             }
         }

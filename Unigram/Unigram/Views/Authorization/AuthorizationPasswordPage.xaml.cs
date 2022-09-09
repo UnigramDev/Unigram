@@ -1,16 +1,16 @@
 ﻿using System;
 using Unigram.Common;
-using Unigram.ViewModels.SignIn;
+using Unigram.ViewModels.Authorization;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Views.SignIn
+namespace Unigram.Views.Authorization
 {
-    public sealed partial class SignInPasswordPage : Page
+    public sealed partial class AuthorizationPasswordPage : Page
     {
-        public SignInPasswordViewModel ViewModel => DataContext as SignInPasswordViewModel;
+        public AuthorizationPasswordViewModel ViewModel => DataContext as AuthorizationPasswordViewModel;
 
         private State _current = State.Idle;
         private State _next = State.Close;
@@ -22,10 +22,9 @@ namespace Unigram.Views.SignIn
             Peek
         }
 
-        public SignInPasswordPage()
+        public AuthorizationPasswordPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SignInPasswordViewModel>();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)

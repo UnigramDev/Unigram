@@ -6,11 +6,11 @@ using Unigram.Navigation.Services;
 using Unigram.Services;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels.SignIn
+namespace Unigram.ViewModels.Authorization
 {
-    public class SignInSentCodeViewModel : TLViewModelBase
+    public class AuthorizationCodeViewModel : TLViewModelBase
     {
-        public SignInSentCodeViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+        public AuthorizationCodeViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
@@ -37,13 +37,13 @@ namespace Unigram.ViewModels.SignIn
             set => Set(ref _codeInfo, value);
         }
 
-        private string _phoneCode;
-        public string PhoneCode
+        private string _code;
+        public string Code
         {
-            get => _phoneCode;
+            get => _code;
             set
             {
-                Set(ref _phoneCode, value);
+                Set(ref _code, value);
 
                 var length = 5;
 
@@ -56,20 +56,14 @@ namespace Unigram.ViewModels.SignIn
                     length = smsType.Length;
                 }
 
-                if (_phoneCode.Length == length)
+                if (_code.Length == length)
                 {
                     SendExecute();
                 }
             }
         }
 
-        public string PhoneNumber
-        {
-            get
-            {
-                return _codeInfo?.PhoneNumber;
-            }
-        }
+        public string PhoneNumber => _codeInfo?.PhoneNumber;
 
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
@@ -80,7 +74,7 @@ namespace Unigram.ViewModels.SignIn
                 return;
             }
 
-            if (string.IsNullOrEmpty(_phoneCode))
+            if (string.IsNullOrEmpty(_code))
             {
                 RaisePropertyChanged("SENT_CODE_INVALID");
                 return;
@@ -88,7 +82,7 @@ namespace Unigram.ViewModels.SignIn
 
             IsLoading = true;
 
-            var response = await ProtoService.SendAsync(new CheckAuthenticationCode(_phoneCode));
+            var response = await ProtoService.SendAsync(new CheckAuthenticationCode(_code));
             if (response is Error error)
             {
                 IsLoading = false;

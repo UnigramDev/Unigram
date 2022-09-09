@@ -8,13 +8,13 @@ using Unigram.Services;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels.SignIn
+namespace Unigram.ViewModels.Authorization
 {
-    public class SignInRecoveryViewModel : TLViewModelBase
+    public class AuthorizationPasswordViewModel : TLViewModelBase
     {
         private AuthorizationStateWaitPassword _parameters;
 
-        public SignInRecoveryViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+        public AuthorizationPasswordViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
@@ -28,24 +28,24 @@ namespace Unigram.ViewModels.SignIn
             if (authState is AuthorizationStateWaitPassword waitPassword)
             {
                 _parameters = waitPassword;
-                RecoveryEmailAddressPattern = waitPassword.RecoveryEmailAddressPattern;
+                PasswordHint = waitPassword.PasswordHint;
             }
 
             return Task.CompletedTask;
         }
 
-        private string _recoveryEmailAddressPattern;
-        public string RecoveryEmailAddressPattern
+        private string _passwordHint;
+        public string PasswordHint
         {
-            get => _recoveryEmailAddressPattern;
-            set => Set(ref _recoveryEmailAddressPattern, value);
+            get => _passwordHint;
+            set => Set(ref _passwordHint, value);
         }
 
-        private string _recoveryCode;
-        public string RecoveryCode
+        private string _password;
+        public string Password
         {
-            get => _recoveryCode;
-            set => Set(ref _recoveryCode, value);
+            get => _password;
+            set => Set(ref _password, value);
         }
 
         private bool _isResettable;
@@ -58,24 +58,23 @@ namespace Unigram.ViewModels.SignIn
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
-            if (string.IsNullOrEmpty(_recoveryCode))
+            if (string.IsNullOrEmpty(_password))
             {
-                RaisePropertyChanged("RECOVERY_CODE_INVALID");
+                RaisePropertyChanged("PASSWORD_INVALID");
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new RecoverAuthenticationPassword(_recoveryCode, string.Empty, string.Empty));
+            var response = await ProtoService.SendAsync(new CheckAuthenticationPassword(_password));
             if (response is Error error)
             {
-                if (error.TypeEquals(ErrorType.CODE_INVALID))
+                if (error.TypeEquals(ErrorType.PASSWORD_HASH_INVALID))
                 {
-                    RecoveryCode = string.Empty;
-                    RaisePropertyChanged("RECOVERY_CODE_INVALID");
+                    Password = string.Empty;
+                    RaisePropertyChanged("PASSWORD_INVALID");
                 }
                 else if (error.CodeEquals(ErrorCode.FLOOD))
                 {
                     AlertsService.ShowFloodWaitAlert(error.Message);
-                    //await new MessageDialog($"{Resources.FloodWaitString}\r\n\r\n({result.Error.Message})", Resources.Error).ShowAsync();
                 }
 
                 Logs.Logger.Error(Logs.LogTarget.API, "account.checkPassword error " + error);

@@ -17,15 +17,16 @@ namespace Unigram.Common
         [ThreadStatic]
         public static Theme Current;
 
-        private readonly ApplicationDataContainer isolatedStore;
+        private readonly ApplicationDataContainer _isolatedStore;
+        private readonly bool _isPrimary;
 
         public Theme()
         {
-            var main = Current == null;
+            _isPrimary = Current == null;
 
             try
             {
-                isolatedStore = ApplicationData.Current.LocalSettings.CreateContainer("Theme", ApplicationDataCreateDisposition.Always);
+                _isolatedStore = ApplicationData.Current.LocalSettings.CreateContainer("Theme", ApplicationDataCreateDisposition.Always);
                 Current ??= this;
 
                 this.Add("MessageFontSize", GetValueOrDefault("MessageFontSize", 14d));
@@ -48,14 +49,14 @@ namespace Unigram.Common
             }
             catch { }
 
-            if (main)
+            if (_isPrimary)
             {
                 Update(ApplicationTheme.Light);
                 Update(ApplicationTheme.Dark);
             }
         }
 
-        public Color Accent { get; private set; } = Colors.Red;
+        public static Color Accent { get; private set; } = Colors.Red;
 
         public ChatTheme ChatTheme => _lastTheme;
 
@@ -230,7 +231,10 @@ namespace Unigram.Common
                     }
                 }
 
-                Accent = GetShade(AccentShade.Default);
+                if (_isPrimary)
+                {
+                    Accent = GetShade(AccentShade.Default);
+                }
 
                 foreach (var item in lookup)
                 {
@@ -383,17 +387,17 @@ namespace Unigram.Common
         {
             bool valueChanged = false;
 
-            if (isolatedStore.Values.ContainsKey(key))
+            if (_isolatedStore.Values.ContainsKey(key))
             {
-                if (isolatedStore.Values[key] != value)
+                if (_isolatedStore.Values[key] != value)
                 {
-                    isolatedStore.Values[key] = value;
+                    _isolatedStore.Values[key] = value;
                     valueChanged = true;
                 }
             }
             else
             {
-                isolatedStore.Values.Add(key, value);
+                _isolatedStore.Values.Add(key, value);
                 valueChanged = true;
             }
 
@@ -420,9 +424,9 @@ namespace Unigram.Common
         {
             valueType value;
 
-            if (isolatedStore.Values.ContainsKey(key))
+            if (_isolatedStore.Values.ContainsKey(key))
             {
-                value = (valueType)isolatedStore.Values[key];
+                value = (valueType)_isolatedStore.Values[key];
             }
             else
             {

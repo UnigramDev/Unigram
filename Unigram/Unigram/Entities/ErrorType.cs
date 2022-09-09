@@ -3,6 +3,9 @@
     public enum ErrorType
     {
         PHONE_MIGRATE,
+        EMAIL_CODE_INVALID,
+        EMAIL_NOT_ALLOWED,
+        EMAIL_VERIFY_EXPIRED,
         NETWORK_MIGRATE,
         FILE_MIGRATE,
         USER_MIGRATE,

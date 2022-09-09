@@ -32,7 +32,7 @@ namespace Unigram.Views.Popups
 
             var user = cacheService.GetUser(chat);
 
-            var sameUser = messages.All(x => x.SenderId.IsEqual(first.SenderId));
+            var sameUser = messages.All(x => x.SenderId.AreTheSame(first.SenderId));
             if (sameUser && !first.IsOutgoing && cacheService.TryGetSupergroup(chat, out Supergroup supergroup) && !supergroup.IsChannel)
             {
                 RevokeCheck.Visibility = Visibility.Collapsed;

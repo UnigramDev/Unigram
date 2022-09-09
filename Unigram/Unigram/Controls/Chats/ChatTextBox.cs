@@ -136,7 +136,7 @@ namespace Unigram.Controls.Chats
                 var clone = Document.Selection.GetClone();
                 var end = clone.EndOf(TextRangeUnit.CharacterFormat, true);
 
-                if (clone.EndPosition > Document.Selection.EndPosition && IsEqual(clone.CharacterFormat, Document.Selection.CharacterFormat))
+                if (clone.EndPosition > Document.Selection.EndPosition && AreTheSame(clone.CharacterFormat, Document.Selection.CharacterFormat))
                 {
 
                 }
@@ -719,7 +719,7 @@ namespace Unigram.Controls.Chats
 
             Sending?.Invoke(this, EventArgs.Empty);
 
-            var options = new MessageSendOptions(disableNotification, false, false, null);
+            var options = new MessageSendOptions(disableNotification, false, false, false, null);
 
             var text = GetFormattedText(true);
             await ViewModel.SendMessageAsync(text, options);

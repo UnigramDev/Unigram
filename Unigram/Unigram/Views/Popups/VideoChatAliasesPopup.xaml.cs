@@ -19,7 +19,7 @@ namespace Unigram.Views.Popups
             InitializeComponent();
 
             _protoService = protoService;
-            var already = senders.FirstOrDefault(x => x.IsEqual(chat.VideoChat.DefaultParticipantId));
+            var already = senders.FirstOrDefault(x => x.AreTheSame(chat.VideoChat.DefaultParticipantId));
             var channel = chat.Type is ChatTypeSupergroup super && super.IsChannel;
 
             Title = chat.VideoChat.GroupCallId != 0

@@ -39,11 +39,12 @@ namespace Unigram.Controls
 
         protected TAnimation _animation;
 
-        protected bool _playing;
+        protected bool? _playing;
 
         protected bool _subscribed;
         protected bool _unsubscribe;
 
+        private bool _hasInitialLoadedEventFired;
         protected bool _unloaded;
 
         protected bool _isLoopingEnabled = true;
@@ -67,13 +68,10 @@ namespace Unigram.Controls
             _autoPause = autoPause;
 
             _limitFps = limitFps ?? !Windows.UI.Composition.CompositionCapabilities.GetForCurrentView().AreEffectsFast();
-            _currentDpi = DisplayInformation.GetForCurrentView().LogicalDpi;
-            _active = autoPause ? Window.Current.CoreWindow.ActivationMode == CoreWindowActivationMode.ActivatedInForeground : true;
-            _visible = Window.Current.CoreWindow.Visible;
-
             _dispatcher = DispatcherQueue.GetForCurrentThread();
 
             SizeChanged += OnSizeChanged;
+            RegisterEventHandlers();
         }
 
         protected override void OnApplyTemplate()
@@ -98,6 +96,15 @@ namespace Unigram.Controls
 
         private void RegisterEventHandlers()
         {
+            _currentDpi = DisplayInformation.GetForCurrentView().LogicalDpi;
+            _active = !_autoPause || Window.Current.CoreWindow.ActivationMode == CoreWindowActivationMode.ActivatedInForeground;
+            _visible = Window.Current.CoreWindow.Visible;
+
+            if (_hasInitialLoadedEventFired)
+            {
+                return;
+            }
+
             DisplayInformation.GetForCurrentView().DpiChanged += OnDpiChanged;
             Window.Current.VisibilityChanged += OnVisibilityChanged;
             CompositionTarget.SurfaceContentsLost += OnSurfaceContentsLost;
@@ -106,6 +113,8 @@ namespace Unigram.Controls
             {
                 Window.Current.Activated += OnActivated;
             }
+
+            _hasInitialLoadedEventFired = true;
         }
 
         private void UnregisterEventHandlers()
@@ -118,6 +127,8 @@ namespace Unigram.Controls
             {
                 Window.Current.Activated -= OnActivated;
             }
+
+            _hasInitialLoadedEventFired = false;
         }
 
         private void OnDpiChanged(DisplayInformation sender, object args)
@@ -125,7 +136,6 @@ namespace Unigram.Controls
             lock (_drawFrameLock)
             {
                 _currentDpi = sender.LogicalDpi;
-
                 Changed();
             }
         }
@@ -135,7 +145,6 @@ namespace Unigram.Controls
             lock (_drawFrameLock)
             {
                 _currentSize = e.NewSize.ToVector2();
-
                 Changed();
             }
         }
@@ -166,10 +175,7 @@ namespace Unigram.Controls
 
                 if (e.WindowActivationState != CoreWindowActivationState.Deactivated)
                 {
-                    if (_playing && _animation != null && _layoutRoot.IsLoaded)
-                    {
-                        Play();
-                    }
+                    OnSourceChanged();
                 }
                 else
                 {
@@ -202,7 +208,7 @@ namespace Unigram.Controls
 
         private void Changed(bool force = false)
         {
-            if (_canvas == null)
+            if (_canvas == null || !_visible)
             {
                 // Load is going to invoke Changed again
                 Load();
@@ -219,7 +225,7 @@ namespace Unigram.Controls
                 needsCreate |= _surface?.Size.Width != newSize.X || _surface?.Size.Height != newSize.Y;
                 needsCreate |= force;
 
-                if (needsCreate && newSize.X > 0 && newSize.Y > 0 && _visible)
+                if (needsCreate && newSize.X > 0 && newSize.Y > 0)
                 {
                     try
                     {
@@ -230,7 +236,8 @@ namespace Unigram.Controls
 
                         _bitmap = CreateBitmap(_surface);
 
-                        DrawFrame();
+                        Invalidate();
+                        OnSourceChanged();
                     }
                     catch
                     {
@@ -262,12 +269,24 @@ namespace Unigram.Controls
                 Changed();
 
                 _unloaded = false;
-                OnSourceChanged();
+                OnLoaded();
 
                 return true;
             }
 
             return false;
+        }
+
+        protected virtual void OnLoaded()
+        {
+            if (_animation != null)
+            {
+                OnSourceChanged();
+            }
+            else
+            {
+                SourceChanged();
+            }
         }
 
         private void OnLoading(FrameworkElement sender, object args)
@@ -294,7 +313,7 @@ namespace Unigram.Controls
 
         public async void Unload()
         {
-            _playing = false;
+            _playing = null;
             _unloaded = true;
             Subscribe(false);
 
@@ -474,12 +493,10 @@ namespace Unigram.Controls
 
         protected async void OnSourceChanged()
         {
-            if (_active && (AutoPlay || _playing))
+            var playing = AutoPlay ? _playing != false : _playing == true;
+            if (playing && _active)
             {
-                _playing = true;
-
-                CreateBitmap();
-                Subscribe(true);
+                Play(false);
             }
             else
             {
@@ -500,8 +517,17 @@ namespace Unigram.Controls
 
         public bool Play()
         {
+            return Play(true);
+        }
+
+        private bool Play(bool tryLoad)
+        {
             _playing = true;
-            Load();
+
+            if (tryLoad)
+            {
+                Load();
+            }
 
             if (_canvas == null || _animation == null || _subscribed || !_active)
             {
@@ -510,6 +536,11 @@ namespace Unigram.Controls
 
             if (_canvas.IsLoaded || _layoutRoot.IsLoaded)
             {
+                if (tryLoad is false)
+                {
+                    CreateBitmap();
+                }
+
                 Subscribe(true);
             }
 

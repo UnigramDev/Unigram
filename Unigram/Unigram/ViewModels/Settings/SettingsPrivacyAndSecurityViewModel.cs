@@ -48,6 +48,7 @@ namespace Unigram.ViewModels.Settings
 
             PasscodeCommand = new RelayCommand(PasscodeExecute);
             PasswordCommand = new RelayCommand(PasswordExecute);
+            ChangeEmailCommand = new RelayCommand(ChangeEmailExecute);
             ClearDraftsCommand = new RelayCommand(ClearDraftsExecute);
             ClearContactsCommand = new RelayCommand(ClearContactsExecute);
             ClearPaymentsCommand = new RelayCommand(ClearPaymentsExecute);
@@ -107,7 +108,11 @@ namespace Unigram.ViewModels.Settings
             {
                 if (result is PasswordState passwordState)
                 {
-                    BeginOnUIThread(() => IsPasswordEnabled = passwordState.HasPassword);
+                    BeginOnUIThread(() =>
+                    {
+                        HasEmailAddress = passwordState.LoginEmailAddressPattern.Length > 0;
+                        HasPassword = passwordState.HasPassword;
+                    });
                 }
             });
 
@@ -119,7 +124,7 @@ namespace Unigram.ViewModels.Settings
                 });
             }
 
-            IsPasscodeEnabled = _passcodeService.IsEnabled;
+            HasPasscode = _passcodeService.IsEnabled;
             return Task.CompletedTask;
         }
 
@@ -175,18 +180,25 @@ namespace Unigram.ViewModels.Settings
             set => Set(ref _blockedUsers, value);
         }
 
-        private bool _isPasswordEnabled;
-        public bool IsPasswordEnabled
+        private bool _hasPassword;
+        public bool HasPassword
         {
-            get => _isPasswordEnabled;
-            set => Set(ref _isPasswordEnabled, value);
+            get => _hasPassword;
+            set => Set(ref _hasPassword, value);
         }
 
-        private bool _isPasscodeEnabled;
-        public bool IsPasscodeEnabled
+        private bool _hasEmailAddress;
+        public bool HasEmailAddress
         {
-            get => _isPasscodeEnabled;
-            set => Set(ref _isPasscodeEnabled, value);
+            get => _hasEmailAddress;
+            set => Set(ref _hasEmailAddress, value);
+        }
+
+        private bool _hasPasscode;
+        public bool HasPasscode
+        {
+            get => _hasPasscode;
+            set => Set(ref _hasPasscode, value);
         }
 
         public bool IsContactsSyncEnabled
@@ -297,6 +309,16 @@ namespace Unigram.ViewModels.Settings
                 {
                     NavigationService.Navigate(typeof(SettingsPasswordIntroPage));
                 }
+            }
+        }
+
+        public RelayCommand ChangeEmailCommand { get; }
+        private async void ChangeEmailExecute()
+        {
+            var response = await ProtoService.SendAsync(new GetPasswordState());
+            if (response is PasswordState passwordState)
+            {
+                var confirm = await MessagePopup.ShowAsync(Strings.Resources.EmailLoginChangeMessage, passwordState.LoginEmailAddressPattern, Strings.Resources.ChangeEmail, Strings.Resources.Cancel);
             }
         }
 

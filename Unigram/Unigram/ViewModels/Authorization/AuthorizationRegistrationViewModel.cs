@@ -4,11 +4,11 @@ using Unigram.Controls;
 using Unigram.Services;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.ViewModels.SignIn
+namespace Unigram.ViewModels.Authorization
 {
-    public class SignUpViewModel : TLViewModelBase
+    public class AuthorizationRegistrationViewModel : TLViewModelBase
     {
-        public SignUpViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+        public AuthorizationRegistrationViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);

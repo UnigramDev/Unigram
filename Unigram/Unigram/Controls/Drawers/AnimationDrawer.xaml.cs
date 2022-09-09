@@ -161,11 +161,11 @@ namespace Unigram.Controls.Drawers
                 view.Source = new LocalVideoSource(file);
                 view.Thumbnail = null;
             }
-            else
+            else if (args.Phase == 0)
             {
                 view.Source = null;
 
-                UpdateManager.Subscribe(content, ViewModel.ProtoService, file, UpdateFile, true);
+                UpdateManager.Subscribe(view, ViewModel.ProtoService, file, UpdateFile, true);
 
                 if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
@@ -223,13 +223,7 @@ namespace Unigram.Controls.Drawers
 
         private void UpdateFile(object target, File file)
         {
-            var content = target as Border;
-            if (content == null)
-            {
-                return;
-            }
-
-            if (content.Child is AnimationView view)
+            if (target is AnimationView view)
             {
                 view.Source = new LocalVideoSource(file);
                 _handler.ThrottleVisibleItems();

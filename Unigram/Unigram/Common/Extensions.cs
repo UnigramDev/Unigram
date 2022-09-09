@@ -650,12 +650,22 @@ namespace Unigram.Common
             return !(maximum < value && value < minimum);
         }
 
-        public static bool IsValidUrl(this string url)
+        public static bool IsValidUrl(this string text)
         {
-            var response = Client.Execute(new GetTextEntities(url));
+            return IsValidEntity<TextEntityTypeUrl>(text);
+        }
+
+        public static bool IsValidEmailAddress(this string text)
+        {
+            return IsValidEntity<TextEntityTypeEmailAddress>(text);
+        }
+
+        public static bool IsValidEntity<T>(this string text)
+        {
+            var response = Client.Execute(new GetTextEntities(text));
             if (response is TextEntities entities)
             {
-                return entities.Entities.Count == 1 && entities.Entities[0].Offset == 0 && entities.Entities[0].Length == url.Length && entities.Entities[0].Type is TextEntityTypeUrl;
+                return entities.Entities.Count == 1 && entities.Entities[0].Offset == 0 && entities.Entities[0].Length == text.Length && entities.Entities[0].Type is T;
             }
 
             return false;

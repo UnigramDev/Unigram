@@ -12,9 +12,9 @@ using Unigram.Views.Settings;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels.SignIn
+namespace Unigram.ViewModels.Authorization
 {
-    public class SignInViewModel : TLViewModelBase, IDelegable<ISignInDelegate>
+    public class AuthorizationViewModel : TLViewModelBase, IDelegable<ISignInDelegate>
     {
         private readonly ISessionService _sessionService;
         private readonly ILifetimeService _lifetimeService;
@@ -22,7 +22,7 @@ namespace Unigram.ViewModels.SignIn
 
         public ISignInDelegate Delegate { get; set; }
 
-        public SignInViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ISessionService sessionService, ILifetimeService lifecycleService, INotificationsService notificationsService)
+        public AuthorizationViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ISessionService sessionService, ILifetimeService lifecycleService, INotificationsService notificationsService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _sessionService = sessionService;
@@ -45,7 +45,11 @@ namespace Unigram.ViewModels.SignIn
             });
 
             var authState = ProtoService.GetAuthorizationState();
-            var waitState = authState is AuthorizationStateWaitPhoneNumber or AuthorizationStateWaitCode or AuthorizationStateWaitPassword;
+            var waitState = authState is AuthorizationStateWaitPhoneNumber
+                or AuthorizationStateWaitCode
+                or AuthorizationStateWaitPassword
+                or AuthorizationStateWaitEmailAddress
+                or AuthorizationStateWaitEmailCode;
 
             if (waitState && mode != NavigationMode.Refresh)
             {

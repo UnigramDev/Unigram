@@ -24,9 +24,10 @@ namespace Unigram.Controls
         {
             ScrollingHost = GetTemplateChild(nameof(ScrollingHost)) as ScrollViewer;
             ScrollingHost.ViewChanged += ScrollingHost_ViewChanged;
-            ScrollingHost.PointerPressed += ScrollingHost_PointerPressed;
-            ScrollingHost.PointerMoved += ScrollingHost_PointerMoved;
-            ScrollingHost.PointerReleased += ScrollingHost_PointerReleased;
+
+            ScrollingHost.AddHandler(PointerPressedEvent, new PointerEventHandler(ScrollingHost_PointerPressed), true);
+            ScrollingHost.AddHandler(PointerMovedEvent, new PointerEventHandler(ScrollingHost_PointerMoved), true);
+            ScrollingHost.AddHandler(PointerReleasedEvent, new PointerEventHandler(ScrollingHost_PointerReleased), true);
         }
 
         public bool CanZoomIn => ScrollingHost?.ZoomFactor < MaxZoomFactor;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using Unigram.Common;
 using Unigram.ViewModels.Delegates;
-using Unigram.ViewModels.SignIn;
+using Unigram.ViewModels.Authorization;
 using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -12,16 +12,15 @@ using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Views.SignIn
+namespace Unigram.Views.Authorization
 {
-    public sealed partial class SignInPage : Page, ISignInDelegate
+    public sealed partial class AuthorizationPage : Page, ISignInDelegate
     {
-        public SignInViewModel ViewModel => DataContext as SignInViewModel;
+        public AuthorizationViewModel ViewModel => DataContext as AuthorizationViewModel;
 
-        public SignInPage()
+        public AuthorizationPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SignInViewModel, ISignInDelegate>(this);
 
             TokenPlaceholder.FrameSize = new Size(259, 259);
             TokenPlaceholder.DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical;

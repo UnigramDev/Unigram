@@ -58,13 +58,16 @@ namespace Unigram.Controls.Cells.Premium
                 index = 0;
             }
 
-            var sticker = _stickers[index];
+            if (index < _stickers.Count)
+            {
+                var sticker = _stickers[index];
 
-            Animation1.Source = UriEx.ToLocal(sticker.StickerValue.Local.Path);
-            PremiumAnimation1.Source = UriEx.ToLocal(sticker.PremiumAnimation.Local.Path);
+                Animation1.Source = UriEx.ToLocal(sticker.StickerValue.Local.Path);
+                PremiumAnimation1.Source = UriEx.ToLocal(sticker.PremiumAnimation.Local.Path);
 
-            _index = index;
-            PreloadSticker();
+                _index = index;
+                PreloadSticker();
+            }
         }
 
         private void PreloadSticker()

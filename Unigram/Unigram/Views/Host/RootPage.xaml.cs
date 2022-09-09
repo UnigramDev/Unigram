@@ -15,7 +15,7 @@ using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Services.Settings;
 using Unigram.ViewModels;
-using Unigram.Views.SignIn;
+using Unigram.Views.Authorization;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.UI.Composition;
@@ -23,6 +23,7 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
@@ -48,6 +49,10 @@ namespace Unigram.Views.Host
             _navigationViewSelected = RootDestination.Chats;
             _navigationViewItems = new MvxObservableCollection<object>
             {
+                RootDestination.Status,
+                // ------------
+                RootDestination.Separator,
+                // ------------
                 RootDestination.ArchivedChats,
                 RootDestination.SavedMessages,
                 // ------------
@@ -160,22 +165,28 @@ namespace Unigram.Views.Host
 
                 switch (session.ProtoService.GetAuthorizationState())
                 {
-                    case AuthorizationStateReady ready:
+                    case AuthorizationStateReady:
                         service.Navigate(typeof(MainPage));
                         break;
-                    case AuthorizationStateWaitPhoneNumber waitPhoneNumber:
-                    case AuthorizationStateWaitOtherDeviceConfirmation waitOtherDeviceConfirmation:
-                        service.Navigate(typeof(SignInPage));
+                    case AuthorizationStateWaitPhoneNumber:
+                    case AuthorizationStateWaitOtherDeviceConfirmation:
+                        service.Navigate(typeof(AuthorizationPage));
                         service.AddToBackStack(typeof(BlankPage));
                         break;
-                    case AuthorizationStateWaitCode waitCode:
-                        service.Navigate(typeof(SignInSentCodePage));
+                    case AuthorizationStateWaitCode:
+                        service.Navigate(typeof(AuthorizationCodePage));
                         break;
-                    case AuthorizationStateWaitRegistration waitRegistration:
-                        service.Navigate(typeof(SignUpPage));
+                    case AuthorizationStateWaitEmailAddress:
+                        service.Navigate(typeof(AuthorizationEmailAddressPage));
                         break;
-                    case AuthorizationStateWaitPassword waitPassword:
-                        service.Navigate(typeof(SignInPasswordPage));
+                    case AuthorizationStateWaitEmailCode:
+                        service.Navigate(typeof(AuthorizationEmailCodePage));
+                        break;
+                    case AuthorizationStateWaitRegistration:
+                        service.Navigate(typeof(AuthorizationRegistrationPage));
+                        break;
+                    case AuthorizationStateWaitPassword:
+                        service.Navigate(typeof(AuthorizationPasswordPage));
                         break;
                 }
 
@@ -261,18 +272,17 @@ namespace Unigram.Views.Host
         {
             if (frame?.Content is MainPage main)
             {
-                InitializeUser(main.ViewModel);
+                InitializeUser(main.ViewModel.ProtoService);
+                InitializeSessions(main.ViewModel.ProtoService, SettingsService.Current.IsAccountsSelectorExpanded, _lifetime.Items);
             }
-
-            InitializeSessions(SettingsService.Current.IsAccountsSelectorExpanded, _lifetime.Items);
         }
 
-        private async void InitializeUser(MainViewModel viewModel)
+        private async void InitializeUser(IProtoService protoService)
         {
-            var user = viewModel.CacheService.GetUser(viewModel.CacheService.Options.MyId);
+            var user = protoService.GetUser(protoService.Options.MyId);
             if (user == null)
             {
-                user = await viewModel.ProtoService.SendAsync(new GetMe()) as User;
+                user = await protoService.SendAsync(new GetMe()) as User;
             }
 
             if (user == null)
@@ -280,7 +290,7 @@ namespace Unigram.Views.Host
                 return;
             }
 
-            Photo.SetUser(viewModel.ProtoService, user, 48);
+            Photo.SetUser(protoService, user, 48);
             NameLabel.Text = user.GetFullName();
 #if DEBUG
             PhoneLabel.Text = "+42 --- --- ----";
@@ -299,6 +309,14 @@ namespace Unigram.Views.Host
         }
 
         private void InitializeSessions(bool show, IList<ISessionService> items)
+        {
+            if (_navigationService.Content is MainPage main)
+            {
+                InitializeSessions(main.ViewModel.ProtoService, SettingsService.Current.IsAccountsSelectorExpanded, _lifetime.Items);
+            }
+        }
+
+        private void InitializeSessions(IProtoService protoService, bool show, IList<ISessionService> items)
         {
             for (int i = 0; i < _navigationViewItems.Count; i++)
             {
@@ -326,16 +344,33 @@ namespace Unigram.Views.Host
                 }
             }
 
-            if (SettingsService.Current.HideArchivedChats is false)
+            var index = 2;
+
+            if (protoService.IsPremium is false)
             {
-                if (_navigationViewItems[0] is RootDestination.ArchivedChats)
+                if (_navigationViewItems[0] is RootDestination.Status)
                 {
                     _navigationViewItems.RemoveAt(0);
+                    _navigationViewItems.RemoveAt(0);
+                    index = 0;
                 }
             }
-            else if (_navigationViewItems[0] is not RootDestination.ArchivedChats)
+            else if (_navigationViewItems[0] is not RootDestination.Status)
             {
-                _navigationViewItems.Insert(0, RootDestination.ArchivedChats);
+                _navigationViewItems.Insert(0, RootDestination.Separator);
+                _navigationViewItems.Insert(0, RootDestination.Status);
+            }
+
+            if (SettingsService.Current.HideArchivedChats is false)
+            {
+                if (_navigationViewItems[index] is RootDestination.ArchivedChats)
+                {
+                    _navigationViewItems.RemoveAt(index);
+                }
+            }
+            else if (_navigationViewItems[index] is not RootDestination.ArchivedChats)
+            {
+                _navigationViewItems.Insert(index, RootDestination.ArchivedChats);
             }
 
             if (show && items != null)
@@ -428,9 +463,14 @@ namespace Unigram.Views.Host
                 return;
             }
 
-            if (args.Item is ISessionService session)
+            UpdateContainerContent(args.ItemContainer, args.Item);
+        }
+
+        private void UpdateContainerContent(SelectorItem container, object item)
+        {
+            if (item is ISessionService session)
             {
-                var content = args.ItemContainer.ContentTemplateRoot as Grid;
+                var content = container.ContentTemplateRoot as Grid;
                 if (content == null)
                 {
                     return;
@@ -442,27 +482,17 @@ namespace Unigram.Views.Host
                     return;
                 }
 
-                if (args.Phase == 0)
-                {
-                    var title = content.Children[2] as TextBlock;
-                    title.Text = user.GetFullName();
+                var title = content.Children[2] as TextBlock;
+                title.Text = user.GetFullName();
 
-                    AutomationProperties.SetName(content, user.GetFullName());
-                }
-                else if (args.Phase == 2)
-                {
-                    var photo = content.Children[0] as ProfilePicture;
-                    photo.SetUser(session.ProtoService, user, 28);
-                }
+                AutomationProperties.SetName(content, user.GetFullName());
 
-                if (args.Phase < 2)
-                {
-                    args.RegisterUpdateCallback(OnContainerContentChanging);
-                }
+                var photo = content.Children[0] as ProfilePicture;
+                photo.SetUser(session.ProtoService, user, 28);
             }
-            else if (args.Item is RootDestination destination)
+            else if (item is RootDestination destination && _navigationService.Content is MainPage page)
             {
-                var content = args.ItemContainer as Controls.NavigationViewItem;
+                var content = container as Controls.NavigationViewItem;
                 if (content != null)
                 {
                     content.IsChecked = destination == _navigationViewSelected;
@@ -499,6 +529,14 @@ namespace Unigram.Views.Host
                     case RootDestination.SavedMessages:
                         content.Text = Strings.Resources.SavedMessages;
                         content.Glyph = Icons.Bookmark;
+                        break;
+
+                    case RootDestination.Status:
+                        if (page.ViewModel.CacheService.TryGetUser(page.ViewModel.CacheService.Options.MyId, out User user))
+                        {
+                            content.Text = user.EmojiStatus == null ? Strings.Resources.SetEmojiStatus : Strings.Resources.ChangeEmojiStatus;
+                            content.Glyph = user.EmojiStatus == null ? Icons.EmojiAdd : Icons.EmojiEdit;
+                        }
                         break;
 
                     case RootDestination.Tips:
@@ -715,8 +753,23 @@ namespace Unigram.Views.Host
             }
         }
 
+        private void UpdateNavigation()
+        {
+            foreach (SelectorItem container in NavigationViewList.ItemsPanelRoot.Children)
+            {
+                UpdateContainerContent(container, container.Content);
+
+                if (container.Content is RootDestination.Status)
+                {
+                    return;
+                }
+            }
+        }
+
         private void Navigation_PaneOpening(SplitView sender, object args)
         {
+            UpdateNavigation();
+
             Theme.Visibility = Visibility.Visible;
             Accounts.Visibility = Visibility.Visible;
 
@@ -912,6 +965,8 @@ namespace Unigram.Views.Host
     public enum RootDestination
     {
         AddAccount,
+
+        Status,
 
         ArchivedChats,
         SavedMessages,
