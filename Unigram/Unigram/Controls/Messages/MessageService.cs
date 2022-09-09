@@ -233,7 +233,8 @@ namespace Unigram.Controls.Messages
 
             var fromUser = message.GetSender();
 
-            if (availableReactionsChanged.NewAvailableReactions.Count > 0)
+            if (availableReactionsChanged.NewAvailableReactions is ChatAvailableReactionsAll
+                || (availableReactionsChanged.NewAvailableReactions is ChatAvailableReactionsSome some && some.Reactions.Count > 0))
             {
                 content = ReplaceWithLink(string.Format(Strings.Resources.ActionReactionsChanged,
                     string.Join(", ", availableReactionsChanged.OldAvailableReactions),

@@ -71,6 +71,7 @@ namespace Unigram.Services
         string GetTitle(Chat chat, bool tiny = false);
         string GetTitle(MessageForwardInfo info);
 
+        bool TryGetCachedReaction(string emoji, out Reaction value);
         Task<IDictionary<string, Reaction>> GetAllReactionsAsync();
         Task<IList<ReactionType>> GetAvailableReactionsAsync(Message message);
 
@@ -959,6 +960,11 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             }
 
             return null;
+        }
+
+        public bool TryGetCachedReaction(string emoji, out Reaction value)
+        {
+            return _reactions.TryGetValue(emoji, out value);
         }
 
         public Task<IDictionary<string, Reaction>> GetAllReactionsAsync()

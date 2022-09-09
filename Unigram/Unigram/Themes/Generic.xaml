@@ -469,6 +469,10 @@
                             <Image x:Name="Presenter"
                                    Width="32"
                                    Height="32" />
+                            <local:CustomEmojiIcon x:Name="Icon"
+                                                   x:Load="False"
+                                                   Width="20"
+                                                   Height="20" />
                             <Popup x:Name="Overlay"
                                    IsHitTestVisible="False"
                                    Margin="-32"

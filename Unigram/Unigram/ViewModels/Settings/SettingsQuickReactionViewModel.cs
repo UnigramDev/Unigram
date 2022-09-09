@@ -34,14 +34,14 @@ namespace Unigram.ViewModels.Settings
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            if (ProtoService.IsPremium)
-            {
-                Items.ReplaceWith(CacheService.Reactions.Where(x => x.Value.IsActive).Select(x => new SettingsReactionOption(this, x.Value, x.Key == ProtoService.Options.DefaultReaction && !IsQuickReplySelected)));
-            }
-            else
-            {
-                Items.ReplaceWith(CacheService.Reactions.Where(x => x.Value.IsActive && !x.Value.IsPremium).Select(x => new SettingsReactionOption(this, x.Value, x.Key == ProtoService.Options.DefaultReaction && !IsQuickReplySelected)));
-            }
+            //if (ProtoService.IsPremium)
+            //{
+            //    Items.ReplaceWith(CacheService.Reactions.Where(x => x.Value.IsActive).Select(x => new SettingsReactionOption(this, x.Value, x.Key == ProtoService.Options.DefaultReaction && !IsQuickReplySelected)));
+            //}
+            //else
+            //{
+            //    Items.ReplaceWith(CacheService.Reactions.Where(x => x.Value.IsActive && !x.Value.IsPremium).Select(x => new SettingsReactionOption(this, x.Value, x.Key == ProtoService.Options.DefaultReaction && !IsQuickReplySelected)));
+            //}
 
             return Task.CompletedTask;
         }
@@ -75,7 +75,7 @@ namespace Unigram.ViewModels.Settings
             {
                 if (Set(ref _isSelected, value) && value)
                 {
-                    _parent.ProtoService.Options.DefaultReaction = Reaction.ReactionValue;
+                    //_parent.ProtoService.Options.DefaultReaction = Reaction.ReactionValue;
                 }
             }
         }

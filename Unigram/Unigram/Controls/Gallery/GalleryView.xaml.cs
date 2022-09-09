@@ -402,28 +402,6 @@ namespace Unigram.Controls.Gallery
             _lastFullScreen = sender.IsFullScreenMode;
         }
 
-        protected override void MaskTitleAndStatusBar()
-        {
-            base.MaskTitleAndStatusBar();
-            Window.Current.SetTitleBar(TitleBar);
-        }
-
-        private void InitializeBackButton()
-        {
-            if (IsConstrainedToRootBounds)
-            {
-                BackButton.Glyph = "\uE72B";
-                BackButton.Margin = new Thickness(0, -40, 0, 0);
-                BackButton.HorizontalAlignment = HorizontalAlignment.Left;
-            }
-            else
-            {
-                BackButton.Glyph = "\uE711";
-                BackButton.Margin = new Thickness();
-                BackButton.HorizontalAlignment = HorizontalAlignment.Right;
-            }
-        }
-
         private void OnCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             PrepareNext(0, true);
