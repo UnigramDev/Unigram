@@ -18,6 +18,7 @@ namespace Unigram.Controls.Messages
     public class ReactionButton : ToggleButton
     {
         private Image Presenter;
+        private CustomEmojiIcon Icon;
         private Popup Overlay;
         private NumericTextBlock Count;
         private RecentUserHeads RecentChoosers;
@@ -31,11 +32,12 @@ namespace Unigram.Controls.Messages
         private MessageViewModel _message;
         private MessageReaction _interaction;
         private Reaction _reaction;
+        private Sticker _sticker;
         private UnreadReaction _unread;
 
         public MessageReaction Reaction => _interaction;
 
-        private int _presenterId;
+        private long _presenterId;
 
         public void SetUnread(UnreadReaction unread)
         {
@@ -63,16 +65,82 @@ namespace Unigram.Controls.Messages
                 return;
             }
 
-            var recycled = _message?.Id == message.Id
-                && _message?.ChatId == message.ChatId
-                && _interaction?.Reaction == interaction.Reaction;
+            var recycled = message.Id == _message?.Id
+                && message.ChatId == _message?.ChatId
+                && interaction.Type.AreTheSame(_interaction?.Type);
 
             _message = message;
             _interaction = interaction;
             _reaction = value;
 
+            UpdateInteraction(message, interaction, recycled);
+
+            var around = value?.AroundAnimation?.StickerValue;
+            if (around != null && around.Local.CanBeDownloaded && !around.Local.IsDownloadingActive && !around.Local.IsDownloadingCompleted)
+            {
+                _message.ProtoService.DownloadFile(around.Id, 32);
+            }
+
+            var center = value?.CenterAnimation?.StickerValue;
+            if (center == null || center.Id == _presenterId)
+            {
+                return;
+            }
+
+            _presenterId = center.Id;
+
+            if (center.Local.IsDownloadingCompleted)
+            {
+                Presenter.Source = await GetLottieFrame(center.Local.Path, 0, 32, 32);
+            }
+            else
+            {
+                Presenter.Source = null;
+
+                UpdateManager.Subscribe(this, _message, center, UpdateFile, true);
+
+                if (center.Local.CanBeDownloaded && !center.Local.IsDownloadingActive)
+                {
+                    _message.ProtoService.DownloadFile(center.Id, 32);
+                }
+            }
+        }
+
+        public void SetReaction(MessageViewModel message, MessageReaction interaction, Sticker value)
+        {
+            if (Presenter == null)
+            {
+                _message = message;
+                _interaction = interaction;
+                _sticker = value;
+                return;
+            }
+
+            var recycled = message.Id == _message?.Id
+                && message.ChatId == _message?.ChatId
+                && interaction.Type.AreTheSame(_interaction?.Type);
+
+            _message = message;
+            _interaction = interaction;
+            _sticker = value;
+
+            UpdateInteraction(message, interaction, recycled);
+
+            if (_presenterId == value?.StickerValue.Id)
+            {
+                return;
+            }
+
+            _presenterId = value.StickerValue.Id;
+
+            Icon ??= GetTemplateChild(nameof(Icon)) as CustomEmojiIcon;
+            Icon.UpdateEntities(message.ProtoService, value);
+        }
+
+        private void UpdateInteraction(MessageViewModel message, MessageReaction interaction, bool recycled)
+        {
             IsChecked = interaction.IsChosen;
-            AutomationProperties.SetName(this, string.Format(Locale.Declension("AccDescrNumberOfPeopleReactions", interaction.TotalCount, false), interaction.TotalCount, interaction.Reaction));
+            AutomationProperties.SetName(this, string.Format(Locale.Declension("AccDescrNumberOfPeopleReactions", interaction.TotalCount, false), interaction.TotalCount, interaction.Type));
 
             if (interaction.TotalCount > interaction.RecentSenderIds.Count)
             {
@@ -107,36 +175,6 @@ namespace Unigram.Controls.Messages
                 if (Count != null)
                 {
                     Count.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-                }
-            }
-
-            var around = value.AroundAnimation?.StickerValue;
-            if (around != null && around.Local.CanBeDownloaded && !around.Local.IsDownloadingActive && !around.Local.IsDownloadingCompleted)
-            {
-                _message.ProtoService.DownloadFile(around.Id, 32);
-            }
-
-            var center = value.CenterAnimation?.StickerValue;
-            if (center == null || center.Id == _presenterId)
-            {
-                return;
-            }
-
-            _presenterId = center.Id;
-
-            if (center.Local.IsDownloadingCompleted)
-            {
-                Presenter.Source = await GetLottieFrame(center.Local.Path, 0, 32, 32);
-            }
-            else
-            {
-                Presenter.Source = null;
-
-                UpdateManager.Subscribe(this, _message, center, UpdateFile, true);
-
-                if (center.Local.CanBeDownloaded && !center.Local.IsDownloadingActive)
-                {
-                    _message.ProtoService.DownloadFile(center.Id, 32);
                 }
             }
         }
@@ -203,7 +241,15 @@ namespace Unigram.Controls.Messages
             Presenter = GetTemplateChild(nameof(Presenter)) as Image;
             Overlay = GetTemplateChild(nameof(Overlay)) as Popup;
 
-            SetReaction(_message, _interaction, _reaction);
+            if (_sticker != null)
+            {
+                SetReaction(_message, _interaction, _sticker);
+            }
+            else if (_interaction != null)
+            {
+                SetReaction(_message, _interaction, _reaction);
+            }
+
             SetUnread(_unread);
 
             base.OnApplyTemplate();
@@ -222,7 +268,7 @@ namespace Unigram.Controls.Messages
                 return;
             }
 
-            _message.ProtoService.Send(new SetMessageReaction(_message.ChatId, _message.Id, chosen.Reaction, false));
+            _message.ProtoService.Send(new SetMessageReaction(_message.ChatId, _message.Id, chosen.Type, false, false));
 
             if (chosen.IsChosen is false)
             {
