@@ -626,7 +626,17 @@ namespace Unigram.Controls
         }
 
         public static readonly DependencyProperty AutoPlayProperty =
-            DependencyProperty.Register("AutoPlay", typeof(bool), typeof(AnimatedControl<TAnimation>), new PropertyMetadata(true));
+            DependencyProperty.Register("AutoPlay", typeof(bool), typeof(AnimatedControl<TAnimation>), new PropertyMetadata(true, OnAutoPlayChanged));
+
+        private static void OnAutoPlayChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((AnimatedControl<TAnimation>)d).OnAutoPlayChanged((bool)e.NewValue, (bool)e.OldValue);
+        }
+
+        protected virtual void OnAutoPlayChanged(bool newValue, bool oldValue)
+        {
+
+        }
 
         #endregion
 

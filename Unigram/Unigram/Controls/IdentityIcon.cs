@@ -79,7 +79,7 @@ namespace Unigram.Controls
             if (user.EmojiStatus != null && (!chatList || user.Id != protoService.Options.MyId))
             {
                 LoadObject(ref Status, nameof(Status));
-                Status.UpdateEntities(protoService, user.EmojiStatus.CustomEmojiId);
+                Status.SetCustomEmoji(protoService, user.EmojiStatus.CustomEmojiId);
 
                 UnloadObject(ref Icon);
             }

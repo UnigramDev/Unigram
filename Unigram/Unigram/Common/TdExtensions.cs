@@ -56,6 +56,22 @@ namespace Unigram.Common
             return true;
         }
 
+        public static bool AreTheSame(this ReactionType x, ReactionType y)
+        {
+            if (x is ReactionTypeEmoji oldEmoji
+                && y is ReactionTypeEmoji newEmoji)
+            {
+                return oldEmoji.Emoji == newEmoji.Emoji;
+            }
+            else if (x is ReactionTypeCustomEmoji oldCustomEmoji
+                && y is ReactionTypeCustomEmoji newCustomEmoji)
+            {
+                return oldCustomEmoji.CustomEmojiId == newCustomEmoji.CustomEmojiId;
+            }
+
+            return false;
+        }
+
         public static bool AreTheSame(this ChatAvailableReactions x, ChatAvailableReactions y)
         {
             if (x is ChatAvailableReactionsAll && y is ChatAvailableReactionsAll)

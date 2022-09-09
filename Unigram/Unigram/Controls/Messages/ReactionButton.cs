@@ -134,7 +134,7 @@ namespace Unigram.Controls.Messages
             _presenterId = value.StickerValue.Id;
 
             Icon ??= GetTemplateChild(nameof(Icon)) as CustomEmojiIcon;
-            Icon.UpdateEntities(message.ProtoService, value);
+            Icon.SetSticker(message.ProtoService, value);
         }
 
         private void UpdateInteraction(MessageViewModel message, MessageReaction interaction, bool recycled)

@@ -790,7 +790,7 @@ namespace Unigram.Views
                     FindName(nameof(LogoEmoji));
                 }
 
-                LogoEmoji.UpdateEntities(ViewModel.ProtoService, user.EmojiStatus.CustomEmojiId);
+                LogoEmoji.SetCustomEmoji(ViewModel.ProtoService, user.EmojiStatus.CustomEmojiId);
             }
             else
             {

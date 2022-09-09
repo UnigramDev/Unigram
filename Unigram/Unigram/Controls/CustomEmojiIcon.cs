@@ -8,6 +8,7 @@ using Unigram.Controls.Messages;
 using Unigram.Services;
 using Windows.Foundation;
 using Windows.UI;
+using Windows.UI.Xaml;
 
 namespace Unigram.Controls
 {
@@ -19,14 +20,42 @@ namespace Unigram.Controls
         private int _loopCount = -1;
         private int _loopTrack;
 
+        private bool _withinViewport;
+
         public CustomEmojiIcon()
             : base(true)
         {
             DefaultStyleKey = typeof(CustomEmojiIcon);
-            AutoPlay = false;
 
             _interval = TimeSpan.FromMilliseconds(Math.Floor(1000d / 30));
             _emojiSize = GetDpiAwareSize(20);
+        }
+
+        protected override void OnAutoPlayChanged(bool newValue, bool oldValue)
+        {
+            if (newValue)
+            {
+                EffectiveViewportChanged += OnEffectiveViewportChanged;
+            }
+            else
+            {
+                EffectiveViewportChanged -= OnEffectiveViewportChanged;
+            }
+        }
+
+        private void OnEffectiveViewportChanged(FrameworkElement sender, EffectiveViewportChangedEventArgs args)
+        {
+            var within = args.BringIntoViewDistanceX == 0 || args.BringIntoViewDistanceY == 0;
+            if (within && !_withinViewport)
+            {
+                _withinViewport = true;
+                Play();
+            }
+            else if (_withinViewport && !within)
+            {
+                _withinViewport = false;
+                Pause();
+            }
         }
 
         protected override CanvasBitmap CreateBitmap(ICanvasResourceCreator sender)
@@ -77,6 +106,8 @@ namespace Unigram.Controls
                         _loopCount++;
                         _loopTrack = animation.LoopCount;
                     }
+
+                    args.DrawImage(_bitmap, new Rect(0, 0, sender.Size.Width, sender.Size.Height));
                 }
                 else
                 {
@@ -89,8 +120,6 @@ namespace Unigram.Controls
                     }
                 }
             }
-
-            args.DrawImage(_bitmap, new Rect(0, 0, sender.Size.Width, sender.Size.Height));
 
             if (brush != null)
             {
@@ -137,7 +166,7 @@ namespace Unigram.Controls
             OnSourceChanged();
         }
 
-        public async void UpdateEntities(IProtoService protoService, long emoji)
+        public async void SetCustomEmoji(IProtoService protoService, long emoji)
         {
             //if (_loadEmojiToken != null)
             //{
@@ -185,6 +214,42 @@ namespace Unigram.Controls
             }
 
             _loopCount = -1;
+            _playing = null;
+
+            OnSourceChanged();
+        }
+
+        public void SetSticker(IProtoService protoService, Sticker sticker)
+        {
+            //if (_loadEmojiToken != null)
+            //{
+            //    _loadEmojiToken.Cancel();
+            //}
+
+            //var tsc = _loadEmoji = new TaskCompletionSource<bool>();
+            //var token = _loadEmojiToken = new CancellationTokenSource();
+
+            _animation = new object();
+
+            var hash = GetHashCode();
+
+            if (_cache == sticker.CustomEmojiId)
+            {
+                return;
+            }
+
+            if (EmojiRendererCache.TryMerge(sticker.CustomEmojiId, hash, _subscribed, out _))
+            {
+                _cache = sticker.CustomEmojiId;
+                return;
+            }
+
+            _cache = sticker.CustomEmojiId;
+            EmojiRendererCache.MergeOrCreate(protoService, sticker, _emojiSize, hash, _subscribed);
+
+            _loopCount = -1;
+            _playing = null;
+
             OnSourceChanged();
         }
     }
