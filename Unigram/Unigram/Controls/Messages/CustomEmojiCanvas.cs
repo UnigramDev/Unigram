@@ -278,6 +278,18 @@ namespace Unigram.Controls.Messages
             return _cache.TryGetValue(customEmojiId, out renderer);
         }
 
+        public static bool TryGetValue(long customEmojiId, out Sticker sticker)
+        {
+            if (_cache.TryGetValue(customEmojiId, out EmojiRenderer renderer))
+            {
+                sticker = renderer.Sticker;
+                return true;
+            }
+
+            sticker = null;
+            return false;
+        }
+
         public static bool TryMerge(long customEmojiId, int hash, bool subscribe, out EmojiRenderer renderer)
         {
             if (_cache.TryGetValue(customEmojiId, out renderer))
@@ -485,6 +497,8 @@ namespace Unigram.Controls.Messages
         {
             return new EmojiRenderer(_protoService, _sticker, size);
         }
+
+        public Sticker Sticker => _sticker;
 
         public long CustomEmojiId => _sticker.CustomEmojiId;
 
