@@ -148,9 +148,12 @@ namespace Unigram.Common
         public static bool IsTelegramUrl(Uri uri)
         {
             var host = uri.Host;
-            if (host.StartsWith("www."))
+
+            var splitHostName = uri.Host.Split('.');
+            if (splitHostName.Length >= 2)
             {
-                host = host.Substring("www.".Length);
+                host = splitHostName[splitHostName.Length - 2] + "." +
+                       splitHostName[splitHostName.Length - 1];
             }
 
             if (Constants.TelegramHosts.Contains(host))
