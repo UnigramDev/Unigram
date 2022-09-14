@@ -60,7 +60,6 @@ namespace Unigram.Controls.Messages
 
         private Grid ContentPanel;
         private Grid Header;
-        private TextBlock HeaderLabel;
         private TextBlock AdminLabel;
         private MessageBubblePanel Panel;
         private RichTextBlock Message;
@@ -78,6 +77,9 @@ namespace Unigram.Controls.Messages
         private Border BackgroundPanel;
         private Border CrossPanel;
 
+        private Grid HeaderPanel;
+        private TextBlock HeaderLabel;
+        private IdentityIcon Identity;
         private GlyphButton PsaInfo;
 
         private MessageReference Reply;
@@ -100,7 +102,6 @@ namespace Unigram.Controls.Messages
             PhotoColumn = GetTemplateChild(nameof(PhotoColumn)) as ColumnDefinition;
             ContentPanel = GetTemplateChild(nameof(ContentPanel)) as Grid;
             Header = GetTemplateChild(nameof(Header)) as Grid;
-            HeaderLabel = GetTemplateChild(nameof(HeaderLabel)) as TextBlock;
             ForwardLabel = GetTemplateChild(nameof(ForwardLabel)) as TextBlock;
             AdminLabel = GetTemplateChild(nameof(AdminLabel)) as TextBlock;
             Panel = GetTemplateChild(nameof(Panel)) as MessageBubblePanel;
@@ -492,8 +493,6 @@ namespace Unigram.Controls.Messages
                             Photo.Click += Photo_Click;
                         }
 
-                        if (message.IsSaved)
-                        {
                             if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser && message.ClientService.TryGetUser(fromUser.SenderUserId, out User fromUserUser))
                             {
                                 Photo.SetUser(message.ClientService, fromUserUser, 30);
@@ -526,6 +525,7 @@ namespace Unigram.Controls.Messages
 
                         _photoId = message.Id;
                         Photo.Visibility = Visibility.Visible;
+                        Photo.SetMessage(message);
                     }
                 }
                 else if (Photo != null)
@@ -742,7 +742,7 @@ namespace Unigram.Controls.Messages
             }
 
 
-            HeaderLabel.Inlines.Clear();
+            HeaderLabel?.Inlines.Clear();
             ForwardLabel?.Inlines.Clear();
 
             var chat = message?.GetChat();
@@ -799,7 +799,11 @@ namespace Unigram.Controls.Messages
                         hyperlink.Foreground = foreground;
                     }
 
+                    LoadHeaderLabel();
+
                     HeaderLabel.Inlines.Add(hyperlink);
+                    Identity.ClearStatus();
+
                     shown = true;
                 }
                 else if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
@@ -810,7 +814,12 @@ namespace Unigram.Controls.Messages
                     hyperlink.Foreground = PlaceholderHelper.GetBrush(senderUser.Id);
                     hyperlink.Click += From_Click;
 
+                    LoadHeaderLabel();
+
                     HeaderLabel.Inlines.Add(hyperlink);
+                    Identity.Foreground = hyperlink.Foreground.WithOpacity(0.6);
+                    Identity.SetStatus(message.ClientService, senderUser);
+
                     shown = true;
                 }
                 else if (message.ClientService.TryGetChat(message.SenderId, out Chat senderChat))
@@ -821,7 +830,11 @@ namespace Unigram.Controls.Messages
                     hyperlink.Foreground = PlaceholderHelper.GetBrush(senderChat.Id);
                     hyperlink.Click += From_Click;
 
+                    LoadHeaderLabel();
+
                     HeaderLabel.Inlines.Add(hyperlink);
+                    Identity.ClearStatus();
+
                     shown = true;
                 }
             }
@@ -833,8 +846,12 @@ namespace Unigram.Controls.Messages
                 //hyperlink.Foreground = Convert.Bubble(message.ChatId);
                 hyperlink.Click += From_Click;
 
+                LoadHeaderLabel();
+
                 HeaderLabel.Inlines.Add(hyperlink);
-                shown = false;
+                Identity.ClearStatus();
+
+                shown = true;
             }
             else if (!light && message.IsFirst && message.IsSaved)
             {
@@ -873,7 +890,11 @@ namespace Unigram.Controls.Messages
                     hyperlink.Foreground = foreground;
                 }
 
+                LoadHeaderLabel();
+
                 HeaderLabel.Inlines.Add(hyperlink);
+                Identity.ClearStatus();
+
                 shown = true;
             }
 
@@ -964,6 +985,8 @@ namespace Unigram.Controls.Messages
             var viaBot = message.ClientService.GetUser(message.ViaBotUserId);
             if (viaBot != null && viaBot.Type is UserTypeBot && !string.IsNullOrEmpty(viaBot.Username))
             {
+                LoadHeaderLabel();
+
                 var hyperlink = new Hyperlink();
                 hyperlink.Inlines.Add(CreateRun(HeaderLabel.Inlines.Count > 0 ? " via @" : "via @", FontWeights.Normal));
                 hyperlink.Inlines.Add(CreateRun(viaBot.Username));
@@ -974,10 +997,10 @@ namespace Unigram.Controls.Messages
                 HeaderLabel.Inlines.Add(hyperlink);
             }
 
-            if (HeaderLabel.Inlines.Count > 0)
+            if (HeaderLabel?.Inlines.Count > 0)
             {
                 var title = message.Delegate.GetAdminTitle(message);
-                if (AdminLabel != null && shown && !message.IsOutgoing && message.Delegate != null && !string.IsNullOrEmpty(title))
+                if (AdminLabel != null && shown && !message.IsOutgoing && !string.IsNullOrEmpty(title))
                 {
                     AdminLabel.Visibility = Visibility.Visible;
                     AdminLabel.Text = title;
@@ -992,8 +1015,7 @@ namespace Unigram.Controls.Messages
                     AdminLabel.Visibility = Visibility.Collapsed;
                 }
 
-                HeaderLabel.Inlines.Add(CreateRun(" "));
-                HeaderLabel.Visibility = Visibility.Visible;
+                HeaderPanel.Visibility = Visibility.Visible;
                 Header.Visibility = Visibility.Visible;
 
                 ForwardLabel.Margin = new Thickness(0, -2, 0, 2);
@@ -1005,11 +1027,34 @@ namespace Unigram.Controls.Messages
                     AdminLabel.Visibility = Visibility.Collapsed;
                 }
 
-                HeaderLabel.Visibility = Visibility.Collapsed;
-                Header.Visibility = (message.ReplyToMessageId != 0 && message.ReplyToMessageState != ReplyToMessageState.Hidden) || ForwardLabel.Inlines.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+                //if (HeaderPanel != null)
+                //{
+                //    XamlMarkupHelper.UnloadObject(HeaderPanel);
+                //    HeaderPanel = null;
+                //    HeaderLabel = null;
+                //    Identity = null;
+                //}
 
+                if (HeaderPanel != null)
+                {
+                    HeaderPanel.Visibility = Visibility.Collapsed;
+                }
+
+                Header.Visibility = (message.ReplyToMessageId != 0 && message.ReplyToMessageState != ReplyToMessageState.Hidden) || ForwardLabel.Inlines.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
                 ForwardLabel.Margin = new Thickness(0, 0, 0, 2);
             }
+        }
+
+        private TextBlock LoadHeaderLabel()
+        {
+            if (HeaderPanel == null)
+            {
+                HeaderPanel = GetTemplateChild(nameof(HeaderPanel)) as Grid;
+                HeaderLabel = GetTemplateChild(nameof(HeaderLabel)) as TextBlock;
+                Identity = GetTemplateChild(nameof(Identity)) as IdentityIcon;
+            }
+
+            return HeaderLabel;
         }
 
         private void ViaBot_Click(Hyperlink sender, HyperlinkClickEventArgs args)

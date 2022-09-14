@@ -43,8 +43,8 @@ namespace winrt::Unigram::Native::implementation
 		static winrt::Unigram::Native::CachedVideoAnimation LoadFromFile(IVideoAnimationSource file, int32_t width, int32_t height, bool precache);
 
 
-		void RenderSync(CanvasBitmap bitmap, int32_t& seconds);
-		void RenderSync(IBuffer bitmap, int32_t width, int32_t height, int32_t& seconds);
+		void RenderSync(CanvasBitmap bitmap, int32_t& seconds, bool& completed);
+		void RenderSync(IBuffer bitmap, int32_t width, int32_t height, int32_t& seconds, bool& completed);
 		void Stop();
 
 		double FrameRate();
@@ -76,7 +76,7 @@ namespace winrt::Unigram::Native::implementation
 
 	private:
 		bool LoadAnimation();
-		void RenderSync(uint8_t* pixels, size_t w, size_t h, int32_t& seconds, bool* rendered);
+		void RenderSync(uint8_t* pixels, size_t w, size_t h, int32_t& seconds, bool& completed, bool* rendered);
 
 		static void CompressThreadProc();
 

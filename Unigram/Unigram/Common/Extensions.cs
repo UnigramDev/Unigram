@@ -132,6 +132,16 @@ namespace Unigram.Common
             return (color.R << 16) + (color.G << 8) + color.B;
         }
 
+        public static Brush WithOpacity(this Brush brush, double opacity)
+        {
+            if (brush is SolidColorBrush solid)
+            {
+                return new SolidColorBrush(solid.Color) { Opacity = opacity };
+            }
+
+            return brush;
+        }
+
         /// <summary>
         /// Test for almost equality to 0.
         /// </summary>

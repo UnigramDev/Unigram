@@ -7,8 +7,8 @@ namespace Unigram.Native
     {
 		static CachedVideoAnimation LoadFromFile(IVideoAnimationSource file, Int32 width, Int32 height, Boolean precache);
 
-        void RenderSync(Microsoft.Graphics.Canvas.CanvasBitmap bitmap, out Int32 seconds);
-        void RenderSync(Windows.Storage.Streams.IBuffer bitmap, Int32 width, Int32 height, out Int32 seconds);
+        void RenderSync(Microsoft.Graphics.Canvas.CanvasBitmap bitmap, out Int32 seconds, out Boolean completed);
+        void RenderSync(Windows.Storage.Streams.IBuffer bitmap, Int32 width, Int32 height, out Int32 seconds, out Boolean completed);
         void Stop();
 
         Double FrameRate{ get; };

@@ -136,7 +136,7 @@ namespace winrt::Unigram::Native::implementation
 		m_frameIndex = 0;
 	}
 
-	void CachedVideoAnimation::RenderSync(CanvasBitmap bitmap, int32_t& seconds)
+	void CachedVideoAnimation::RenderSync(CanvasBitmap bitmap, int32_t& seconds, bool& completed)
 	{
 		auto size = bitmap.SizeInPixels();
 		auto w = size.Width;
@@ -144,7 +144,7 @@ namespace winrt::Unigram::Native::implementation
 
 		uint8_t* pixels = new uint8_t[w * h * 4];
 		bool rendered;
-		RenderSync(pixels, w, h, seconds, &rendered);
+		RenderSync(pixels, w, h, seconds, completed, &rendered);
 
 		if (rendered) {
 			bitmap.SetPixelBytes(winrt::array_view(pixels, w * h * 4));
@@ -153,14 +153,14 @@ namespace winrt::Unigram::Native::implementation
 		delete[] pixels;
 	}
 
-	void CachedVideoAnimation::RenderSync(IBuffer bitmap, int32_t width, int32_t height, int32_t& seconds)
+	void CachedVideoAnimation::RenderSync(IBuffer bitmap, int32_t width, int32_t height, int32_t& seconds, bool& completed)
 	{
 		uint8_t* pixels = bitmap.data();
 		bool rendered;
-		RenderSync(pixels, width, height, seconds, &rendered);
+		RenderSync(pixels, width, height, seconds, completed, &rendered);
 	}
 
-	void CachedVideoAnimation::RenderSync(uint8_t* pixels, size_t w, size_t h, int32_t& seconds, bool* rendered)
+	void CachedVideoAnimation::RenderSync(uint8_t* pixels, size_t w, size_t h, int32_t& seconds, bool& completed, bool* rendered)
 	{
 		bool loadedFromCache = false;
 		if (rendered) {
@@ -195,9 +195,11 @@ namespace winrt::Unigram::Native::implementation
 					int framesPerUpdate = /*limitFps ? fps < 60 ? 1 : 2 :*/ 1;
 					if (m_frameIndex + framesPerUpdate >= m_frameCount) {
 						m_frameIndex = 0;
+						completed = true;
 					}
 					else {
 						m_frameIndex += framesPerUpdate;
+						completed = false;
 					}
 				}
 			}
@@ -208,7 +210,6 @@ namespace winrt::Unigram::Native::implementation
 				return;
 			}
 
-			bool completed;
 			auto result = m_animation->RenderSync(pixels, w, h, false, seconds, completed);
 
 			if (result && rendered) {

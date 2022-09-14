@@ -2,6 +2,7 @@
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Services;
+using Unigram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -297,5 +298,40 @@ namespace Unigram.Controls
         }
 
         #endregion
+
+        public void SetMessage(MessageViewModel message)
+        {
+            if (message.IsSaved)
+            {
+                if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser && message.ClientService.TryGetUser(fromUser.SenderUserId, out User fromUserUser))
+                {
+                    SetUser(message.ClientService, fromUserUser, 30);
+                }
+                else if (message.ForwardInfo?.Origin is MessageForwardOriginChat fromChat && message.ClientService.TryGetChat(fromChat.SenderChatId, out Chat fromChatChat))
+                {
+                    SetChat(message.ClientService, fromChatChat, 30);
+                }
+                else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel && message.ClientService.TryGetChat(fromChannel.ChatId, out Chat fromChannelChat))
+                {
+                    SetChat(message.ClientService, fromChannelChat, 30);
+                }
+                else if (message.ForwardInfo?.Origin is MessageForwardOriginMessageImport fromImport)
+                {
+                    Source = PlaceholderHelper.GetNameForUser(fromImport.SenderName, 30);
+                }
+                else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser fromHiddenUser)
+                {
+                    Source = PlaceholderHelper.GetNameForUser(fromHiddenUser.SenderName, 30);
+                }
+            }
+            else if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
+            {
+                SetUser(message.ClientService, senderUser, 30);
+            }
+            else if (message.ClientService.TryGetChat(message.SenderId, out Chat senderChat))
+            {
+                SetChat(message.ClientService, senderChat, 30);
+            }
+        }
     }
 }

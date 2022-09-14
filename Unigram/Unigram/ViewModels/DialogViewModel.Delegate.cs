@@ -532,10 +532,10 @@ namespace Unigram.ViewModels
             }
             else if (message.SenderId is MessageSenderChat && !message.IsChannelPost)
             {
-                return message.AuthorSignature.Length > 0 ? message.AuthorSignature : null;
+                return message.AuthorSignature.Length > 0 ? message.AuthorSignature : string.Empty;
             }
 
-            return null;
+            return string.Empty;
         }
 
         public string GetAdminTitle(long userId)
@@ -543,7 +543,7 @@ namespace Unigram.ViewModels
             var chat = _chat;
             if (chat == null)
             {
-                return null;
+                return string.Empty;
             }
 
             if (_admins.TryGetValue(chat.Id, out IList<ChatAdministrator> value))
@@ -565,7 +565,7 @@ namespace Unigram.ViewModels
                 }
             }
 
-            return null;
+            return string.Empty;
         }
 
         public void Select(MessageViewModel message)
