@@ -39,7 +39,11 @@ namespace Unigram.Views.Settings
             var reaction = ViewModel.ClientService.DefaultReaction;
             if (reaction is ReactionTypeEmoji emoji)
             {
-                Icon.SetReaction(ViewModel.ClientService, await ViewModel.ClientService.GetReactionAsync(emoji.Emoji));
+                var response = await ViewModel.ClientService.SendAsync(new GetEmojiReaction(emoji.Emoji));
+                if (response is EmojiReaction emojiReaction)
+                {
+                    Icon.SetReaction(ViewModel.ClientService, emojiReaction);
+                }
             }
             else if (reaction is ReactionTypeCustomEmoji customEmoji)
             {
