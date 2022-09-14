@@ -16,66 +16,31 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <local:HostedPage.Footer>
-        <Button Content="{CustomResource Save}"
-                Command="{x:Bind ViewModel.SendCommand}"
-                Style="{StaticResource AccentButtonStyle}" />
-    </local:HostedPage.Footer>
-
     <Grid Background="{ThemeResource SettingsPageBackground}">
-        <controls:TableListView x:Name="ScrollingHost"
-                                ItemsSource="{x:Bind ViewModel.Items}"
-                                IsItemClickEnabled="False"
-                                SelectionMode="None"
-                                ContainerContentChanging="OnContainerContentChanged"
-                                Grid.Row="1">
-            <ListView.Header>
-                <StackPanel Margin="0,0,0,32">
-                    <controls:HeaderedControl x:Name="Enable"
-                                              Footer="Quickly reply to a message by double clicking on it">
-                        <CheckBox IsChecked="{x:Bind ViewModel.IsQuickReplySelected, Mode=TwoWay}"
-                                  Content="Double click to reply"
-                                  Style="{StaticResource SettingsCheckBoxStyle}" />
-                    </controls:HeaderedControl>
-                </StackPanel>
-            </ListView.Header>
-            <ListView.ItemTemplate>
-                <DataTemplate x:DataType="viewModels:SettingsReactionOption">
-                    <Grid Background="{ThemeResource SettingsItemBackground}"
-                          BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
-                        <RadioButton IsChecked="{x:Bind IsSelected, Mode=TwoWay}"
-                                     Style="{StaticResource SettingsRadioButtonStyle}"
-                                     BorderThickness="0"
-                                     GroupName="QuickAction"
-                                     PointerEntered="OnPointerEntered">
-                            <Grid Margin="-6,-12,0,-4">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition />
-                                </Grid.ColumnDefinitions>
-                                <controls:LottieView30Fps x:Name="Player"
-                                                          AutoPlay="False"
-                                                          IsLoopingEnabled="False"
-                                                          DecodeFrameType="Logical"
-                                                          Width="48"
-                                                          Height="48" />
+        <ScrollViewer x:Name="ScrollingHost">
+            <StackPanel Margin="0,0,0,32">
+                <controls:HeaderedControl x:Name="Enable"
+                                          Footer="Quickly reply to a message by double clicking on it">
+                    <CheckBox IsChecked="{x:Bind ViewModel.IsQuickReplySelected, Mode=TwoWay}"
+                              Content="Double click to reply"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+                </controls:HeaderedControl>
 
-                                <TextBlock Text="{x:Bind Reaction.Title}"
-                                           VerticalAlignment="Center"
-                                           Grid.Column="1" />
-                            </Grid>
-                        </RadioButton>
-                    </Grid>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-            <ListView.Footer>
-                <Border MaxWidth="640">
-                    <TextBlock x:Name="Footer"
-                               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                               Style="{StaticResource CaptionTextBlockStyle}"
-                               Margin="12,8,12,32" />
-                </Border>
-            </ListView.Footer>
-        </controls:TableListView>
+                <controls:HeaderedControl>
+                    <controls:BadgeButton IsEnabled="{x:Bind ViewModel.IsQuickReplySelected, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
+                                          Content="{CustomResource DoubleTapSetting}"
+                                          Click="Reaction_Click">
+                        <controls:BadgeButton.Badge>
+                            <Border x:Name="IconPanel"
+                                    Height="40">
+                                <controls:CustomEmojiIcon x:Name="Icon"
+                                                          Width="20"
+                                                          Height="20" />
+                            </Border>
+                        </controls:BadgeButton.Badge>
+                    </controls:BadgeButton>
+                </controls:HeaderedControl>
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </local:HostedPage>

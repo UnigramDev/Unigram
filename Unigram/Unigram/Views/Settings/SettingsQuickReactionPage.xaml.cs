@@ -1,11 +1,10 @@
 ﻿using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls;
+using Unigram.Controls.Messages;
+using Unigram.ViewModels.Drawers;
 using Unigram.ViewModels.Settings;
-using Windows.Foundation;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Settings
 {
@@ -19,58 +18,38 @@ namespace Unigram.Views.Settings
             Title = Strings.Resources.DoubleTapSetting;
         }
 
-        private void OnContainerContentChanged(ListViewBase sender, ContainerContentChangingEventArgs args)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (args.InRecycleQueue)
+            Handle();
+            ViewModel.Aggregator.Subscribe<UpdateDefaultReactionType>(this, Handle);
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            ViewModel.Aggregator.Unsubscribe(this);
+        }
+
+        private void Handle(UpdateDefaultReactionType update)
+        {
+            this.BeginOnUIThread(Handle);
+        }
+
+        private async void Handle()
+        {
+            var reaction = ViewModel.ClientService.DefaultReaction;
+            if (reaction is ReactionTypeEmoji emoji)
             {
-                return;
+                Icon.SetReaction(ViewModel.ClientService, await ViewModel.ClientService.GetReactionAsync(emoji.Emoji));
             }
-
-            var element = args.ItemContainer.ContentTemplateRoot as FrameworkElement;
-            var reaction = args.Item as SettingsReactionOption;
-
-            var player = element.FindName("Player") as LottieView;
-            if (player != null)
+            else if (reaction is ReactionTypeCustomEmoji customEmoji)
             {
-                player.FrameSize = new Size(48, 48);
-
-                var file = reaction.Reaction.CenterAnimation.StickerValue;
-                if (file.Local.IsDownloadingCompleted)
-                {
-                    player.Source = UriEx.ToLocal(file.Local.Path);
-                }
-                else
-                {
-                    player.Source = null;
-
-                    UpdateManager.Subscribe(player, ViewModel.ClientService, file, UpdateFile, true);
-
-                    if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-                    {
-                        ViewModel.ClientService.DownloadFile(file.Id, 16);
-                    }
-                }
+                Icon.SetCustomEmoji(ViewModel.ClientService, customEmoji.CustomEmojiId);
             }
         }
 
-        private void UpdateFile(object target, File file)
+        private void Reaction_Click(object sender, RoutedEventArgs e)
         {
-            if (target is LottieView player && player.IsLoaded)
-            {
-                player.Source = UriEx.ToLocal(file.Local.Path);
-            }
-        }
-
-        private void OnPointerEntered(object sender, PointerRoutedEventArgs e)
-        {
-            if (sender is FrameworkElement element)
-            {
-                var player = element.FindName("Player") as LottieView;
-                if (player != null)
-                {
-                    player.Play();
-                }
-            }
+            MenuFlyoutReactions.ShowAt(ViewModel.ClientService, EmojiDrawerMode.Reactions, IconPanel, HorizontalAlignment.Right);
         }
     }
 }
