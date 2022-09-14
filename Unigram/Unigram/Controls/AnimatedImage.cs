@@ -1,39 +1,31 @@
-﻿using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.UI.Xaml;
-using System;
-using System.Buffers;
-using System.Numerics;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Unigram.Common;
 using Windows.Foundation;
 using Windows.Graphics;
-using Windows.Graphics.DirectX;
 using Windows.Graphics.Display;
 using Windows.System;
 using Windows.System.Threading;
-using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation;
-using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Controls
 {
+    // This is a lightweight fork of AnimatedControl
+    // that just uses a WriteableBitmap rather than DirectX
     [TemplatePart(Name = "Canvas", Type = typeof(Image))]
-    public abstract class AnimatedControl<TAnimation> : Control, IPlayerView
+    public abstract class AnimatedImage<TAnimation> : Control, IPlayerView
     {
-        protected Vector2 _currentSize;
         protected float _currentDpi;
         protected bool _active = true;
         protected bool _visible = true;
 
         private readonly bool _autoPause;
 
-        protected CanvasImageSource _surface;
-        protected CanvasBitmap _bitmap;
+        protected WriteableBitmap _bitmap;
 
         protected Panel _layoutRoot;
         protected Image _canvas;
@@ -49,7 +41,6 @@ namespace Unigram.Controls
         protected bool _unloaded;
 
         protected bool _isLoopingEnabled = true;
-        protected Stretch _stretch = Stretch.Uniform;
 
         protected readonly object _recreateLock = new();
         protected readonly object _drawFrameLock = new();
@@ -62,8 +53,9 @@ namespace Unigram.Controls
         protected readonly bool _limitFps = true;
 
         protected readonly DispatcherQueue _dispatcher;
+        private ThreadPoolTimer _timer;
 
-        protected AnimatedControl(bool? limitFps, bool autoPause = true)
+        protected AnimatedImage(bool? limitFps, bool autoPause = true)
         {
             _interval = TimeSpan.FromMilliseconds(Math.Floor(1000d / 30));
             _autoPause = autoPause;
@@ -71,7 +63,6 @@ namespace Unigram.Controls
             _limitFps = limitFps ?? !Windows.UI.Composition.CompositionCapabilities.GetForCurrentView().AreEffectsFast();
             _dispatcher = DispatcherQueue.GetForCurrentThread();
 
-            SizeChanged += OnSizeChanged;
             RegisterEventHandlers();
         }
 
@@ -84,6 +75,7 @@ namespace Unigram.Controls
             }
 
             _canvas = canvas;
+            _canvas.Source = _bitmap;
 
             _layoutRoot = GetTemplateChild("LayoutRoot") as Panel;
             _layoutRoot.Loaded += OnLoaded;
@@ -107,7 +99,6 @@ namespace Unigram.Controls
 
             DisplayInformation.GetForCurrentView().DpiChanged += OnDpiChanged;
             Window.Current.VisibilityChanged += OnVisibilityChanged;
-            CompositionTarget.SurfaceContentsLost += OnSurfaceContentsLost;
 
             if (_autoPause)
             {
@@ -121,7 +112,6 @@ namespace Unigram.Controls
         {
             DisplayInformation.GetForCurrentView().DpiChanged -= OnDpiChanged;
             Window.Current.VisibilityChanged -= OnVisibilityChanged;
-            CompositionTarget.SurfaceContentsLost -= OnSurfaceContentsLost;
 
             if (_autoPause)
             {
@@ -136,28 +126,6 @@ namespace Unigram.Controls
             lock (_drawFrameLock)
             {
                 _currentDpi = sender.LogicalDpi;
-                Changed();
-            }
-        }
-
-        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            lock (_drawFrameLock)
-            {
-                _currentSize = e.NewSize.ToVector2();
-                Changed();
-            }
-        }
-
-        private void OnSurfaceContentsLost(object sender, object e)
-        {
-            lock (_drawFrameLock)
-            {
-                _surface = null;
-
-                _bitmap?.Dispose();
-                _bitmap = null;
-
                 Changed();
             }
         }
@@ -218,23 +186,16 @@ namespace Unigram.Controls
             lock (_recreateLock)
             {
                 var newDpi = _currentDpi;
-                var newSize = _currentSize;
 
-                bool needsCreate = _surface == null;
-                needsCreate |= _surface?.Dpi != newDpi;
-                needsCreate |= _surface?.Size.Width != newSize.X || _surface?.Size.Height != newSize.Y;
+                bool needsCreate = _bitmap == null;
+                needsCreate |= _currentDpi != newDpi;
                 needsCreate |= force;
 
-                if (needsCreate && newSize.X > 0 && newSize.Y > 0)
+                if (needsCreate)
                 {
                     try
                     {
-                        var device = _surface?.Device ?? CanvasDevice.GetSharedDevice();
-
-                        _surface = new CanvasImageSource(device, newSize.X, newSize.Y, newDpi, CanvasAlphaMode.Premultiplied);
-                        _canvas.Source = _surface;
-
-                        _bitmap = CreateBitmap(_surface);
+                        CreateBitmap();
 
                         Invalidate();
                         OnSourceChanged();
@@ -251,21 +212,6 @@ namespace Unigram.Controls
         {
             if (_unloaded && _layoutRoot != null && _layoutRoot.IsLoaded)
             {
-                while (_layoutRoot.Children.Count > 0)
-                {
-                    _layoutRoot.Children.Remove(_layoutRoot.Children[0]);
-                }
-
-                _canvas = new Image
-                {
-                    Stretch = Stretch.Fill,
-                    HorizontalAlignment = HorizontalAlignment.Stretch,
-                    VerticalAlignment = VerticalAlignment.Stretch
-                };
-
-                AutomationProperties.SetAccessibilityView(_canvas, AccessibilityView.Raw);
-
-                _layoutRoot.Children.Add(_canvas);
                 Changed();
 
                 _unloaded = false;
@@ -319,11 +265,9 @@ namespace Unigram.Controls
 
             lock (_recreateLock)
             {
-                //_canvas.Source = new BitmapImage();
-                _layoutRoot?.Children.Remove(_canvas);
-                _canvas = null;
-
-                _surface = null;
+                ////_canvas.Source = new BitmapImage();
+                //_layoutRoot?.Children.Remove(_canvas);
+                //_canvas = null;
             }
 
             await _nextFrameLock.WaitAsync();
@@ -338,7 +282,6 @@ namespace Unigram.Controls
 
             lock (_drawFrameLock)
             {
-                _bitmap?.Dispose();
                 _bitmap = null;
             }
         }
@@ -382,80 +325,32 @@ namespace Unigram.Controls
 
         protected void DrawFrame()
         {
-            if (_surface == null || !_visible)
+            if (_animation == null || _unloaded || !_visible)
             {
                 return;
             }
 
-            try
+            if (_bitmap == null)
             {
-                using (var session = _surface.CreateDrawingSession(Colors.Transparent))
-                {
-                    if (_animation == null || _unloaded)
-                    {
-                        return;
-                    }
-
-                    if (_bitmap == null)
-                    {
-                        _bitmap = CreateBitmap(session);
-                    }
-                    else
-                    {
-                        DrawFrame(_surface, session);
-                    }
-                }
+                CreateBitmap();
             }
-            catch (Exception ex)
+            else
             {
-                HandleDeviceLost(ex);
+                DrawFrame(_bitmap);
             }
         }
 
         private void CreateBitmap()
         {
-            try
+            _bitmap = CreateBitmap(_currentDpi);
+
+            if (_canvas != null)
             {
-                _bitmap = CreateBitmap(CanvasDevice.GetSharedDevice());
-            }
-            catch (Exception ex)
-            {
-                HandleDeviceLost(ex);
+                _canvas.Source = _bitmap;
             }
         }
 
-        private void HandleDeviceLost(Exception ex)
-        {
-            if (_surface != null && _surface.Device.IsDeviceLost(ex.HResult))
-            {
-                _surface = null;
-
-                _bitmap?.Dispose();
-                _bitmap = null;
-
-                Changed();
-            }
-            else
-            {
-                Unload();
-            }
-        }
-
-        protected abstract CanvasBitmap CreateBitmap(ICanvasResourceCreator sender);
-
-        protected CanvasBitmap CreateBitmap(ICanvasResourceCreator sender, int width, int height, DirectXPixelFormat pixelFormat = DirectXPixelFormat.B8G8R8A8UIntNormalized, float dpi = 96)
-        {
-            var buffer = ArrayPool<byte>.Shared.Rent(width * height * 4);
-            var bitmap = CanvasBitmap.CreateFromBytes(sender, buffer, width, height, pixelFormat, dpi);
-            ArrayPool<byte>.Shared.Return(buffer);
-
-            return bitmap;
-        }
-
-        protected CanvasRenderTarget CreateTarget(ICanvasResourceCreator sender, int width, int height, DirectXPixelFormat pixelFormat = DirectXPixelFormat.B8G8R8A8UIntNormalized, float dpi = 96)
-        {
-            return new CanvasRenderTarget(sender, width, height, dpi, pixelFormat, CanvasAlphaMode.Premultiplied);
-        }
+        protected abstract WriteableBitmap CreateBitmap(float dpi);
 
         protected SizeInt32 GetDpiAwareSize(Size size)
         {
@@ -476,9 +371,18 @@ namespace Unigram.Controls
             return (int)(size * (_currentDpi / 96));
         }
 
-        protected abstract void DrawFrame(CanvasImageSource sender, CanvasDrawingSession args);
+        protected abstract void DrawFrame(WriteableBitmap args);
 
         protected void PrepareNextFrame()
+        {
+            if (_nextFrameLock.Wait(0))
+            {
+                NextFrame();
+                _nextFrameLock.Release();
+            }
+        }
+
+        private void PrepareNextFrame(ThreadPoolTimer sender)
         {
             if (_nextFrameLock.Wait(0))
             {
@@ -507,7 +411,7 @@ namespace Unigram.Controls
                     CreateBitmap();
 
                     // Invalidate to render the first frame
-                    // Would be nice to move this to IndividualAnimatedControl
+                    // Would be nice to move this to IndividualAnimatedImage
                     // but this isn't currently possible
                     await Task.Run(PrepareNextFrame);
                     Invalidate();
@@ -597,7 +501,18 @@ namespace Unigram.Controls
             }
         }
 
-        protected abstract void OnSubscribe(bool subscribe);
+        protected void OnSubscribe(bool subscribe)
+        {
+            if (subscribe)
+            {
+                _timer ??= ThreadPoolTimer.CreatePeriodicTimer(PrepareNextFrame, _interval);
+            }
+            else if (_timer != null)
+            {
+                _timer.Cancel();
+                _timer = null;
+            }
+        }
 
         #region IsLoopingEnabled
 
@@ -608,11 +523,11 @@ namespace Unigram.Controls
         }
 
         public static readonly DependencyProperty IsLoopingEnabledProperty =
-            DependencyProperty.Register("IsLoopingEnabled", typeof(bool), typeof(AnimatedControl<TAnimation>), new PropertyMetadata(true, OnLoopingEnabledChanged));
+            DependencyProperty.Register("IsLoopingEnabled", typeof(bool), typeof(AnimatedImage<TAnimation>), new PropertyMetadata(true, OnLoopingEnabledChanged));
 
         private static void OnLoopingEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((AnimatedControl<TAnimation>)d)._isLoopingEnabled = (bool)e.NewValue;
+            ((AnimatedImage<TAnimation>)d)._isLoopingEnabled = (bool)e.NewValue;
         }
 
         #endregion
@@ -626,11 +541,11 @@ namespace Unigram.Controls
         }
 
         public static readonly DependencyProperty AutoPlayProperty =
-            DependencyProperty.Register("AutoPlay", typeof(bool), typeof(AnimatedControl<TAnimation>), new PropertyMetadata(true, OnAutoPlayChanged));
+            DependencyProperty.Register("AutoPlay", typeof(bool), typeof(AnimatedImage<TAnimation>), new PropertyMetadata(true, OnAutoPlayChanged));
 
         private static void OnAutoPlayChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((AnimatedControl<TAnimation>)d).OnAutoPlayChanged((bool)e.NewValue, (bool)e.OldValue);
+            ((AnimatedImage<TAnimation>)d).OnAutoPlayChanged((bool)e.NewValue, (bool)e.OldValue);
         }
 
         protected virtual void OnAutoPlayChanged(bool newValue, bool oldValue)
@@ -648,47 +563,9 @@ namespace Unigram.Controls
             set { SetValue(StretchProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for Stretch.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty StretchProperty =
-            DependencyProperty.Register("Stretch", typeof(Stretch), typeof(AnimatedControl<TAnimation>), new PropertyMetadata(Stretch.Uniform, OnStretchChanged));
-
-        private static void OnStretchChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((AnimatedControl<TAnimation>)d)._stretch = (Stretch)e.NewValue;
-        }
+            DependencyProperty.Register("Stretch", typeof(Stretch), typeof(AnimatedImage<TAnimation>), new PropertyMetadata(Stretch.Uniform));
 
         #endregion
-    }
-
-    public abstract class IndividualAnimatedControl<TAnimation> : AnimatedControl<TAnimation>
-    {
-        private ThreadPoolTimer _timer;
-
-        protected IndividualAnimatedControl(bool? limitFps, bool autoPause = true)
-            : base(limitFps, autoPause)
-        {
-        }
-
-        protected override void OnSubscribe(bool subscribe)
-        {
-            if (subscribe)
-            {
-                _timer ??= ThreadPoolTimer.CreatePeriodicTimer(PrepareNextFrame, _interval);
-            }
-            else if (_timer != null)
-            {
-                _timer.Cancel();
-                _timer = null;
-            }
-        }
-
-        private void PrepareNextFrame(ThreadPoolTimer sender)
-        {
-            if (_nextFrameLock.Wait(0))
-            {
-                NextFrame();
-                _nextFrameLock.Release();
-            }
-        }
     }
 }

@@ -6,11 +6,13 @@
 #include <mutex>
 
 #include <winrt/Microsoft.Graphics.Canvas.h>
+#include <winrt/Windows.UI.Xaml.Media.Imaging.h>
 
 #include "VideoAnimation.h"
 
 using namespace winrt::Microsoft::Graphics::Canvas;
 using namespace winrt::Windows::Storage::Streams;
+using namespace winrt::Windows::UI::Xaml::Media::Imaging;
 
 #define CACHED_VERSION 5
 
@@ -42,7 +44,9 @@ namespace winrt::Unigram::Native::implementation
 
 		static winrt::Unigram::Native::CachedVideoAnimation LoadFromFile(IVideoAnimationSource file, int32_t width, int32_t height, bool precache);
 
+		void SetTarget(WriteableBitmap bitmap);
 
+		void RenderSync(int32_t& seconds, bool& completed);
 		void RenderSync(CanvasBitmap bitmap, int32_t& seconds, bool& completed);
 		void RenderSync(IBuffer bitmap, int32_t width, int32_t height, int32_t& seconds, bool& completed);
 		void Stop();
@@ -106,6 +110,10 @@ namespace winrt::Unigram::Native::implementation
 		uint32_t m_imageSize = 0;
 		std::vector<uint32_t> m_fileOffsets;
 		std::vector<std::pair<std::uint32_t, std::uint32_t>> m_colors;
+
+		std::unique_ptr<uint8_t*> m_bitmap;
+		int32_t m_bitmapWidth;
+		int32_t m_bitmapHeight;
 	};
 
 	class WorkItem {

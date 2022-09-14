@@ -1,14 +1,12 @@
-﻿using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.UI.Xaml;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Native;
-using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Controls
 {
@@ -22,7 +20,7 @@ namespace Unigram.Controls
     }
 
     [TemplatePart(Name = "Thumbnail", Type = typeof(ImageBrush))]
-    public class AnimationView : IndividualAnimatedControl<CachedVideoAnimation>
+    public class AnimationView : AnimatedImage<CachedVideoAnimation>
     {
         private ImageBrush _thumbnail;
         private bool? _hideThumbnail;
@@ -77,19 +75,18 @@ namespace Unigram.Controls
             _animation = null;
         }
 
-        protected override CanvasBitmap CreateBitmap(ICanvasResourceCreator sender)
+        protected override WriteableBitmap CreateBitmap(float dpi)
         {
             bool needsCreate = _bitmap == null;
-            needsCreate |= _bitmap?.Size.Width != _animation?.PixelWidth || _bitmap?.Size.Height != _animation?.PixelHeight;
+            needsCreate |= _bitmap?.PixelWidth != _animation?.PixelWidth || _bitmap?.PixelHeight != _animation?.PixelHeight;
 
             if (needsCreate)
             {
-                _bitmap?.Dispose();
-                _bitmap = null;
-
                 if (_animation != null)
                 {
-                    return CreateBitmap(sender, _animation.PixelWidth, _animation.PixelHeight);
+                    _bitmap = new WriteableBitmap(_animation.PixelWidth, _animation.PixelHeight);
+                    _animation.SetTarget(_bitmap);
+                    return _bitmap;
                 }
 
                 return null;
@@ -98,59 +95,9 @@ namespace Unigram.Controls
             return _bitmap;
         }
 
-        protected override void DrawFrame(CanvasImageSource sender, CanvasDrawingSession args)
+        protected override void DrawFrame(WriteableBitmap args)
         {
-            var width = (double)_animation.PixelWidth;
-            var height = (double)_animation.PixelHeight;
-
-            if (_stretch == Stretch.UniformToFill)
-            {
-                double ratioX = (double)sender.Size.Width / width;
-                double ratioY = (double)sender.Size.Height / height;
-
-                if (ratioX > ratioY)
-                {
-                    width = sender.Size.Width;
-                    height *= ratioX;
-                }
-                else
-                {
-                    width *= ratioY;
-                    height = sender.Size.Height;
-                }
-            }
-            else if (_stretch == Stretch.Uniform)
-            {
-                double ratioX = (double)sender.Size.Width / width;
-                double ratioY = (double)sender.Size.Height / height;
-
-                if (ratioX <= ratioY)
-                {
-                    width = sender.Size.Width;
-                    height *= ratioX;
-                }
-                else
-                {
-                    width *= ratioY;
-                    height = sender.Size.Height;
-                }
-            }
-
-            var y = (sender.Size.Height - height) / 2;
-            var x = (sender.Size.Width - width) / 2;
-
-            if (width >= _bitmap.Size.Width || height >= _bitmap.Size.Height)
-            {
-                args.DrawImage(_bitmap,
-                    new Rect(x, y, width, height));
-            }
-            else
-            {
-                args.DrawImage(_bitmap,
-                    new Rect(x, y, width, height),
-                    new Rect(0, 0, _bitmap.Size.Width, _bitmap.Size.Height), 1,
-                    CanvasImageInterpolation.MultiSampleLinear);
-            }
+            args.Invalidate();
 
             if (_prevSeconds != _nextSeconds)
             {
@@ -171,7 +118,7 @@ namespace Unigram.Controls
         protected override void NextFrame()
         {
             var animation = _animation;
-            if (animation == null || animation.IsCaching || _surface == null || _bitmap == null || _unloaded)
+            if (animation == null || animation.IsCaching || _bitmap == null || _unloaded)
             {
                 return;
             }
@@ -182,7 +129,7 @@ namespace Unigram.Controls
                 animation.Stop();
             }
 
-            animation.RenderSync(_bitmap, out _nextSeconds, out _);
+            animation.RenderSync(out _nextSeconds, out _);
 
             if (_hideThumbnail == null)
             {
@@ -224,6 +171,9 @@ namespace Unigram.Controls
             _interval = TimeSpan.FromMilliseconds(1000d / frameRate);
             _animation = animation;
             _hideThumbnail = null;
+
+            _bitmap = new WriteableBitmap(animation.PixelWidth, animation.PixelHeight);
+            _animation.SetTarget(_bitmap);
 
             if (Load())
             {
