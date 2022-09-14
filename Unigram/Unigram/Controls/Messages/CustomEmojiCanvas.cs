@@ -639,7 +639,16 @@ namespace Unigram.Controls.Messages
             //  This is just wrong
             if (_step % 30d == 0)
             {
-                animation.RenderSync(_buffer, _size, _size, out _);
+                animation.RenderSync(_buffer, _size, _size, out _, out bool completed);
+
+                if (completed)
+                {
+                    var count = Interlocked.CompareExchange(ref _loopCount, 0, 1);
+                    if (count == 0)
+                    {
+                        Interlocked.Exchange(ref _loopCount, 1);
+                    }
+                }
             }
 
             _step += _animationFrameRate;

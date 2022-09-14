@@ -7,7 +7,7 @@ using Windows.UI.Xaml.Markup;
 
 namespace Unigram.Controls
 {
-    internal class IdentityIcon : Control
+    public class IdentityIcon : Control
     {
         private CustomEmojiIcon Status;
         private FontIcon Icon;

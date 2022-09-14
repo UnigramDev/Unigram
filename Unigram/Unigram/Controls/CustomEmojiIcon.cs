@@ -219,6 +219,11 @@ namespace Unigram.Controls
             OnSourceChanged();
         }
 
+        public void SetReaction(IClientService clientService, Reaction reaction)
+        {
+            SetSticker(clientService, reaction.CenterAnimation);
+        }
+
         public void SetSticker(IClientService clientService, Sticker sticker)
         {
             //if (_loadEmojiToken != null)
@@ -232,19 +237,22 @@ namespace Unigram.Controls
             _animation = new object();
 
             var hash = GetHashCode();
+            var id = sticker.CustomEmojiId == 0
+                ? sticker.StickerValue.Id
+                : sticker.CustomEmojiId;
 
-            if (_cache == sticker.CustomEmojiId)
+            if (_cache == id)
             {
                 return;
             }
 
-            if (EmojiRendererCache.TryMerge(sticker.CustomEmojiId, hash, _subscribed, out _))
+            if (EmojiRendererCache.TryMerge(id, hash, _subscribed, out _))
             {
-                _cache = sticker.CustomEmojiId;
+                _cache = id;
                 return;
             }
 
-            _cache = sticker.CustomEmojiId;
+            _cache = id;
             EmojiRendererCache.MergeOrCreate(clientService, sticker, _emojiSize, hash, _subscribed);
 
             _loopCount = -1;

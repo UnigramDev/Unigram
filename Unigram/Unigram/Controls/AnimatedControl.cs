@@ -5,12 +5,12 @@ using System.Buffers;
 using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
+using Unigram.Common;
 using Windows.Foundation;
 using Windows.Graphics;
 using Windows.Graphics.DirectX;
 using Windows.Graphics.Display;
 using Windows.System;
-using Windows.System.Threading;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -502,7 +502,7 @@ namespace Unigram.Controls
             {
                 Subscribe(false);
 
-                if (!_unloaded)
+                if (_playing == null && !_unloaded)
                 {
                     CreateBitmap();
 
@@ -662,7 +662,7 @@ namespace Unigram.Controls
 
     public abstract class IndividualAnimatedControl<TAnimation> : AnimatedControl<TAnimation>
     {
-        private ThreadPoolTimer _timer;
+        private LoopThread _timer;
 
         protected IndividualAnimatedControl(bool? limitFps, bool autoPause = true)
             : base(limitFps, autoPause)
@@ -673,19 +673,20 @@ namespace Unigram.Controls
         {
             if (subscribe)
             {
-                _timer ??= ThreadPoolTimer.CreatePeriodicTimer(PrepareNextFrame, _interval);
-            }
-            else
-            {
-                if (_timer != null)
+                if (_timer == null)
                 {
-                    _timer.Cancel();
-                    _timer = null;
+                    _timer = LoopThreadPool.Animations.Get();
+                    _timer.Tick += PrepareNextFrame;
                 }
+            }
+            else if (_timer != null)
+            {
+                _timer.Tick -= PrepareNextFrame;
+                _timer = null;
             }
         }
 
-        private void PrepareNextFrame(ThreadPoolTimer timer)
+        private void PrepareNextFrame(object sender, EventArgs e)
         {
             if (_nextFrameLock.Wait(0))
             {

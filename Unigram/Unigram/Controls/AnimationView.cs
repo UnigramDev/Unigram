@@ -182,7 +182,7 @@ namespace Unigram.Controls
                 animation.Stop();
             }
 
-            animation.RenderSync(_bitmap, out _nextSeconds);
+            animation.RenderSync(_bitmap, out _nextSeconds, out _);
 
             if (_hideThumbnail == null)
             {

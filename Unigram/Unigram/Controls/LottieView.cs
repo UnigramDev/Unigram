@@ -177,10 +177,7 @@ namespace Unigram.Controls
             IndexChanged?.Invoke(this, index);
             PositionChanged?.Invoke(this, Math.Min(1, Math.Max(0, (double)index / (_animationTotalFrame - 1))));
 
-            if (_hideThumbnail == null)
-            {
-                _hideThumbnail = true;
-            }
+            _hideThumbnail ??= true;
 
             if (_backward)
             {
