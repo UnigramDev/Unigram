@@ -1277,7 +1277,7 @@ namespace Unigram.Controls.Messages
             }
         }
 
-        public void UpdateMessageReactions(MessageViewModel message, bool? animate)
+        public void UpdateMessageReactions(MessageViewModel message, bool animate)
         {
             var media = Grid.GetRow(Media);
             var footer = Grid.GetRow(Footer);

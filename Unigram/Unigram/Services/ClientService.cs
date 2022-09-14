@@ -71,16 +71,15 @@ namespace Unigram.Services
         string GetTitle(Chat chat, bool tiny = false);
         string GetTitle(MessageForwardInfo info);
 
-        bool TryGetCachedReaction(string emoji, out Reaction value);
-        Task<IDictionary<string, Reaction>> GetAllReactionsAsync();
-        Task<Reaction> GetReactionAsync(string emoji);
-        Task<IList<ReactionType>> GetAvailableReactionsAsync(Message message);
+        bool TryGetCachedReaction(string emoji, out EmojiReaction value);
+        Task<IDictionary<string, EmojiReaction>> GetAllReactionsAsync();
 
         Chat GetChat(long id);
         IList<Chat> GetChats(IList<long> ids);
 
         IDictionary<MessageSender, ChatAction> GetChatActions(long id);
 
+        bool IsSavedMessages(MessageSender sender);
         bool IsSavedMessages(User user);
         bool IsSavedMessages(Chat chat);
 
@@ -198,7 +197,7 @@ namespace Unigram.Services
         private IList<ChatFilterInfo> _chatFilters = new ChatFilterInfo[0];
         private int _mainChatListPosition = 0;
 
-        private IDictionary<string, Reaction> _reactions = new Dictionary<string, Reaction>();
+        private IList<string> _reactions = new List<string>();
 
         private UpdateAnimationSearchParameters _animationSearchParameters;
 
@@ -963,30 +962,26 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             return null;
         }
 
-        public bool TryGetCachedReaction(string emoji, out Reaction value)
+        public bool TryGetCachedReaction(string emoji, out EmojiReaction value)
         {
-            return _reactions.TryGetValue(emoji, out value);
+            value = null;
+            return false;
         }
 
-        public Task<IDictionary<string, Reaction>> GetAllReactionsAsync()
+        public async Task<IDictionary<string, EmojiReaction>> GetAllReactionsAsync()
         {
-            return Task.FromResult(_reactions);
-        }
+            var result = new Dictionary<string, EmojiReaction>();
 
-        public Task<Reaction> GetReactionAsync(string emoji)
-        {
-            return Task.FromResult(_reactions[emoji]);
-        }
-
-        public async Task<IList<ReactionType>> GetAvailableReactionsAsync(Message message)
-        {
-            var response = await SendAsync(new GetMessageAvailableReactions(message.ChatId, message.Id));
-            if (response is AvailableReactions available)
+            foreach (var emoji in _reactions)
             {
-                return available.Reactions.ToArray();
+                var response = await SendAsync(new GetEmojiReaction(emoji));
+                if (response is EmojiReaction reaction)
+                {
+                    result[emoji] = reaction;
+                }
             }
 
-            return Array.Empty<ReactionType>();
+            return result;
         }
 
         public Chat GetChat(long id)
@@ -1007,6 +1002,20 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             }
 
             return null;
+        }
+
+        public bool IsSavedMessages(MessageSender sender)
+        {
+            if (sender is MessageSenderUser user)
+            {
+                return user.UserId == _options.MyId;
+            }
+            else if (sender is MessageSenderChat chat)
+            {
+                return chat.ChatId == _options.MyId;
+            }
+
+            return false;
         }
 
         public bool IsSavedMessages(User user)
@@ -1873,9 +1882,9 @@ Read more about how to update your device [here](https://support.microsoft.com/h
                     _aggregator.Publish(new UpdatePremiumState(IsPremium, IsPremiumAvailable));
                 }
             }
-            else if (update is UpdateReactions updateReactions)
+            else if (update is UpdateActiveEmojiReactions updateReactions)
             {
-                _reactions = updateReactions.Reactions.ToDictionary(x => x.ReactionValue);
+                _reactions = updateReactions.Emojis;
             }
             else if (update is UpdateRecentStickers updateRecentStickers)
             {

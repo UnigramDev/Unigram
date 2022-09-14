@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Rg.DiffUtils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Telegram.Td.Api;
+using Unigram.Common;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.UI.Xaml;
@@ -10,7 +12,7 @@ using Windows.UI.Xaml.Media.Animation;
 
 namespace Unigram.Controls.Messages
 {
-    public partial class ReactionsPanel : Panel
+    public partial class ReactionsPanel : Panel, IDiffEqualityComparer<MessageReaction>
     {
         private readonly Dictionary<string, WeakReference> _reactions = new();
         private readonly Dictionary<long, WeakReference> _customReactions = new();
@@ -30,9 +32,10 @@ namespace Unigram.Controls.Messages
 
         public bool HasReactions => _reactions.Count > 0 || _customReactions.Count > 0;
 
-        public async void UpdateMessageReactions(MessageViewModel message, bool? animate = false)
+        public async void UpdateMessageReactions(MessageViewModel message, bool animate = false)
         {
-            if (message?.ChatId != _chatId || message?.Id != _messageId)
+            var reactions = message?.InteractionInfo?.Reactions;
+            if (reactions == null || message?.ChatId != _chatId || message?.Id != _messageId)
             {
                 _prevValue = null;
 
@@ -42,113 +45,164 @@ namespace Unigram.Controls.Messages
                 Children.Clear();
             }
 
-            var reactions = message?.InteractionInfo?.Reactions;
             if (reactions != null)
             {
-                var customEmojiIds = new Dictionary<long, MessageReaction>();
-                var emojiIds = new Dictionary<string, MessageReaction>();
+                List<long> missingCustomEmoji = null;
+                List<string> missingEmoji = null;
 
-                var unread = message.UnreadReactions;
+                message.UnreadReactions
+                    .Select(x => x.Type)
+                    .Discern(out var unreadEmoji, out var unreadCustomEmoji);
 
-                foreach (var item in reactions)
+                bool Animate(ReactionType reaction)
                 {
-                    if (item.Type is ReactionTypeEmoji emoji)
+                    if (reaction is ReactionTypeEmoji emoji)
                     {
-                        var required = UpdateButton<string, Reaction>(_reactions, emoji.Emoji, message, item, message.ClientService.TryGetCachedReaction, animate);
+                        return animate
+                            && unreadEmoji != null
+                            && unreadEmoji.Contains(emoji.Emoji);
+                    }
+                    else if (reaction is ReactionTypeCustomEmoji customEmoji)
+                    {
+                        return animate
+                            && unreadCustomEmoji != null
+                            && unreadCustomEmoji.Contains(customEmoji.CustomEmojiId);
+                    }
+
+                    return false;
+                }
+
+                void UpdateItem(MessageReaction oldItem, MessageReaction newItem, int index = 0)
+                {
+                    if (newItem != null)
+                    {
+                        oldItem.IsChosen = newItem.IsChosen;
+                        oldItem.RecentSenderIds = newItem.RecentSenderIds;
+                        oldItem.TotalCount = newItem.TotalCount;
+                    }
+
+                    var changed = Animate(oldItem.Type);
+
+                    if (oldItem.Type is ReactionTypeEmoji emoji)
+                    {
+                        var required = UpdateButton<string, EmojiReaction>(_reactions, emoji.Emoji, message, oldItem, message.ClientService.TryGetCachedReaction, changed, index);
                         if (required)
                         {
-                            emojiIds[emoji.Emoji] = item;
+                            missingEmoji ??= new List<string>();
+                            missingEmoji.Add(emoji.Emoji);
                         }
                     }
-                    else if (item.Type is ReactionTypeCustomEmoji customEmoji)
+                    else if (oldItem.Type is ReactionTypeCustomEmoji customEmoji)
                     {
-                        var required = UpdateButton<long, Sticker>(_customReactions, customEmoji.CustomEmojiId, message, item, EmojiRendererCache.TryGetValue, animate);
+                        var required = UpdateButton<long, Sticker>(_customReactions, customEmoji.CustomEmojiId, message, oldItem, EmojiRendererCache.TryGetValue, changed, index);
                         if (required)
                         {
-                            customEmojiIds[customEmoji.CustomEmojiId] = item;
+                            missingCustomEmoji ??= new List<long>();
+                            missingCustomEmoji.Add(customEmoji.CustomEmojiId);
                         }
                     }
                 }
 
-                if (_prevValue != null)
+                var prev = _prevValue ?? Array.Empty<MessageReaction>();
+                var diff = DiffUtil.CalculateDiff(prev, reactions, this, new DiffOptions
                 {
-                    var prev = _prevValue;
-                    var diff = Rg.DiffUtils.DiffUtil.CalculateDiff(prev, reactions, new ReactionDiffHandler(), new Rg.DiffUtils.DiffOptions { AllowBatching = false, DetectMoves = true });
+                    AllowBatching = false,
+                    DetectMoves = true
+                });
 
-                    foreach (var step in diff.Steps)
+                foreach (var step in diff.Steps)
+                {
+                    if (step.Status == DiffStatus.Add)
                     {
-                        if (step.Status == Rg.DiffUtils.DiffStatus.Move && step.OldStartIndex < Children.Count && step.NewStartIndex < Children.Count)
+                        UpdateItem(step.Items[0].NewValue, null, step.NewStartIndex);
+                    }
+                    else if (step.Status == DiffStatus.Move && step.OldStartIndex < Children.Count && step.NewStartIndex < Children.Count)
+                    {
+                        UpdateItem(step.Items[0].OldValue, step.Items[0].NewValue);
+                        Children.Move((uint)step.OldStartIndex, (uint)step.NewStartIndex);
+                    }
+                    else if (step.Status == DiffStatus.Remove && step.OldStartIndex < Children.Count)
+                    {
+                        Children.RemoveAt(step.OldStartIndex);
+                    }
+                }
+
+                foreach (var item in diff.NotMovedItems)
+                {
+                    UpdateItem(item.OldValue, item.NewValue);
+                }
+
+                _chatId = message?.ChatId ?? 0;
+                _messageId = message?.Id ?? 0;
+
+                _prevValue = reactions?.ToArray();
+
+                if (missingCustomEmoji != null)
+                {
+                    var response = await message.ClientService.SendAsync(new GetCustomEmojiStickers(missingCustomEmoji));
+                    if (response is Stickers stickers)
+                    {
+                        foreach (var sticker in stickers.StickersValue)
                         {
-                            Children.Move((uint)step.OldStartIndex, (uint)step.NewStartIndex);
-                        }
-                        else if (step.Status == Rg.DiffUtils.DiffStatus.Remove)
-                        {
-                            Children.RemoveAt(step.OldStartIndex);
+                            UpdateButton<long, Sticker>(_customReactions, sticker.CustomEmojiId, message, sticker, Animate);
                         }
                     }
                 }
 
-                var response = await message.ClientService.SendAsync(new GetCustomEmojiStickers(customEmojiIds.Keys.ToArray()));
-                if (response is Stickers stickers)
+                if (missingEmoji != null)
                 {
-                    foreach (var sticker in stickers.StickersValue)
+                    foreach (var emoji in missingEmoji)
                     {
-                        if (customEmojiIds.TryGetValue(sticker.CustomEmojiId, out MessageReaction item)
-                            && _customReactions.TryGetValue(sticker.CustomEmojiId, out WeakReference reference)
-                            && reference.Target is ReactionButton button)
+                        var response = await message.ClientService.SendAsync(new GetEmojiReaction(emoji));
+                        if (response is EmojiReaction reaction)
                         {
-                            button.SetReaction(message, item, sticker);
-
-                            if (animate is true && item.IsChosen)
-                            {
-                                button.SetUnread(new UnreadReaction(item.Type, null, false));
-                            }
-                        }
-                    }
-                }
-
-                if (animate is null && unread != null)
-                {
-                    foreach (var item in unread)
-                    {
-                        if (item.Type is ReactionTypeEmoji emoji
-                            && _reactions.TryGetValue(emoji.Emoji, out WeakReference reference)
-                            && reference.Target is ReactionButton button)
-                        {
-                            button.SetUnread(item);
-                        }
-                        else if (item.Type is ReactionTypeCustomEmoji customEmoji
-                            && _customReactions.TryGetValue(customEmoji.CustomEmojiId, out WeakReference customReference)
-                            && customReference.Target is ReactionButton customButton)
-                        {
-                            customButton.SetUnread(item);
+                            UpdateButton<string, EmojiReaction>(_reactions, emoji, message, reaction, Animate);
                         }
                     }
                 }
             }
-
-            _chatId = message?.ChatId ?? 0;
-            _messageId = message?.Id ?? 0;
-
-            _prevValue = reactions?.ToArray();
         }
 
         delegate bool TryGetValue<TKey, T>(TKey key, out T value);
         delegate void SetReaction<T>(MessageViewModel message, MessageReaction item, T reaction);
 
-        private bool UpdateButton<T, TValue>(IDictionary<T, WeakReference> cache, T key, MessageViewModel message, MessageReaction item, TryGetValue<T, TValue> tryGet, bool? animate)
+        private void UpdateButton<T, TValue>(IDictionary<T, WeakReference> cache, T key, MessageViewModel message, object value, Func<ReactionType, bool> animate)
+        {
+            if (cache.TryGetValue(key, out WeakReference reference)
+                && reference.Target is ReactionButton button)
+            {
+                if (value is EmojiReaction reaction)
+                {
+                    button.SetReaction(message, button.Reaction, reaction);
+                }
+                else if (value is Sticker sticker)
+                {
+                    button.SetReaction(message, button.Reaction, sticker);
+                }
+
+                if (animate(button.Reaction.Type))
+                {
+                    button.SetUnread(new UnreadReaction(button.Reaction.Type, null, false));
+                }
+            }
+        }
+
+        private bool UpdateButton<T, TValue>(IDictionary<T, WeakReference> cache, T key, MessageViewModel message, MessageReaction item, TryGetValue<T, TValue> tryGet, bool animate, int index)
         {
             var required = false;
-            if (false == tryGet(key, out TValue value))
+
+            var button = GetOrCreateButton(cache, key, message, index);
+            if (button.EmojiReaction != null)
             {
-                required = true;
+                button.SetReaction(message, item, button.EmojiReaction);
             }
-
-            var button = GetOrCreateButton(cache, key, message, item);
-
-            if (value != null)
+            else if (button.CustomReaction != null)
             {
-                if (value is Reaction reaction)
+                button.SetReaction(message, item, button.CustomReaction);
+            }
+            else if (tryGet(key, out TValue value))
+            {
+                if (value is EmojiReaction reaction)
                 {
                     button.SetReaction(message, item, reaction);
                 }
@@ -156,17 +210,24 @@ namespace Unigram.Controls.Messages
                 {
                     button.SetReaction(message, item, sticker);
                 }
+            }
+            else
+            {
+                button.SetReaction(message, item, null as EmojiReaction);
 
-                if (animate is true && item.IsChosen)
-                {
-                    button.SetUnread(new UnreadReaction(item.Type, null, false));
-                }
+                animate = false;
+                required = true;
+            }
+
+            if (animate)
+            {
+                button.SetUnread(new UnreadReaction(item.Type, null, false));
             }
 
             return required;
         }
 
-        private ReactionButton GetOrCreateButton<T>(IDictionary<T, WeakReference> cache, T key, MessageViewModel message, MessageReaction item)
+        private ReactionButton GetOrCreateButton<T>(IDictionary<T, WeakReference> cache, T key, MessageViewModel message, int index)
         {
             if (cache.TryGetValue(key, out WeakReference reference)
                 && reference.Target is ReactionButton button)
@@ -176,33 +237,19 @@ namespace Unigram.Controls.Messages
 
             button = new ReactionButton();
             cache[key] = new WeakReference(button);
-            Children.Add(button);
+            Children.Insert(index, button);
 
             return button;
         }
 
-        private class ReactionDiffHandler : Rg.DiffUtils.IDiffEqualityComparer<MessageReaction>
+        public bool CompareItems(MessageReaction oldItem, MessageReaction newItem)
         {
-            public bool CompareItems(MessageReaction oldItem, MessageReaction newItem)
+            if (oldItem != null)
             {
-                if (oldItem?.Type is ReactionTypeEmoji oldEmoji
-                    && newItem?.Type is ReactionTypeEmoji newEmoji)
-                {
-                    return oldEmoji.Emoji == newEmoji.Emoji;
-                }
-                else if (oldItem?.Type is ReactionTypeCustomEmoji oldCustomEmoji
-                    && newItem?.Type is ReactionTypeCustomEmoji newCustomEmoji)
-                {
-                    return oldCustomEmoji.CustomEmojiId == newCustomEmoji.CustomEmojiId;
-                }
-
-                return false;
+                return oldItem.Type.AreTheSame(newItem?.Type);
             }
 
-            public void UpdateItem(MessageReaction oldItem, MessageReaction newItem)
-            {
-                //throw new NotImplementedException();
-            }
+            return false;
         }
 
         private const double Spacing = 4;

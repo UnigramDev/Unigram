@@ -25,7 +25,9 @@ namespace Unigram.ViewModels.Drawers
     {
         private bool _updated;
 
-        private readonly StickerSetViewModel _reactionSet;
+        private readonly StickerSetViewModel _reactionTopSet;
+        private readonly StickerSetViewModel _reactionPopularSet;
+        private readonly StickerSetViewModel _reactionRecentSet;
 
         public EmojiDrawerViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
@@ -33,9 +35,21 @@ namespace Unigram.ViewModels.Drawers
             //Items = new DiffObservableCollection<object>(new EmojiSetDiffHandler());
             Items = new MvxObservableCollection<object>();
 
-            _reactionSet = new StickerSetViewModel(ClientService, new StickerSetInfo
+            _reactionTopSet = new StickerSetViewModel(ClientService, new StickerSetInfo
             {
                 Title = string.Empty,
+                Name = "tg/topReactions"
+            });
+
+            _reactionPopularSet = new StickerSetViewModel(ClientService, new StickerSetInfo
+            {
+                Title = Strings.Resources.PopularReactions,
+                Name = "tg/popularReactions"
+            });
+
+            _reactionRecentSet = new StickerSetViewModel(ClientService, new StickerSetInfo
+            {
+                Title = Strings.Resources.RecentStickers,
                 Name = "tg/recentlyUsed"
             });
 
@@ -310,7 +324,17 @@ namespace Unigram.ViewModels.Drawers
 
                 if (_mode != EmojiDrawerMode.Chat)
                 {
-                    installedSet.Insert(0, _reactionSet);
+                    if (_reactionPopularSet.Stickers.Count > 0)
+                    {
+                        installedSet.Insert(0, _reactionPopularSet);
+                    }
+
+                    if (_reactionRecentSet.Stickers.Count > 0)
+                    {
+                        installedSet.Insert(0, _reactionRecentSet);
+                    }
+
+                    installedSet.Insert(0, _reactionTopSet);
                 }
 
                 stickers.AddRange(installedSet);
@@ -320,10 +344,54 @@ namespace Unigram.ViewModels.Drawers
             }
         }
 
-        public async Task UpdateReactions()
+        public async Task UpdateReactions(AvailableReactions available)
         {
+            available.TopReactions
+                .Union(available.PopularReactions)
+                .Union(available.RecentReactions)
+                .Select(x => x.Type)
+                .Discern(out _, out var missingEmoji);
+
+            IDictionary<long, Sticker> assets = null;
+            if (missingEmoji != null)
+            {
+                var response = await ClientService.SendAsync(new GetCustomEmojiStickers(missingEmoji.ToArray()));
+                if (response is not Stickers stickers)
+                {
+                    return;
+                }
+
+                assets = stickers.StickersValue.ToDictionary(x => x.CustomEmojiId);
+            }
+
             var reactions = await ClientService.GetAllReactionsAsync();
-            _reactionSet.Update(reactions.Select(x => x.Value.ActivateAnimation));
+
+            var top = new List<Sticker>();
+            var popular = new List<Sticker>();
+            var recent = new List<Sticker>();
+
+            void Populate(IList<AvailableReaction> source, List<Sticker> target)
+            {
+                foreach (var item in source)
+                {
+                    if (item.Type is ReactionTypeEmoji emoji && reactions.TryGetValue(emoji.Emoji, out EmojiReaction reaction))
+                    {
+                        target.Add(reaction.ActivateAnimation);
+                    }
+                    else if (item.Type is ReactionTypeCustomEmoji customEmoji && assets.TryGetValue(customEmoji.CustomEmojiId, out Sticker sticker))
+                    {
+                        target.Add(sticker);
+                    }
+                }
+            }
+
+            Populate(available.TopReactions, top);
+            Populate(available.PopularReactions, popular);
+            Populate(available.RecentReactions, recent);
+
+            _reactionTopSet.Update(top);
+            _reactionPopularSet.Update(popular);
+            _reactionRecentSet.Update(recent);
             _ = UpdateAsync();
         }
 
@@ -361,7 +429,7 @@ namespace Unigram.ViewModels.Drawers
             var response = await ClientService.SendAsync(new GetCustomEmojiStickers(emoji));
             if (response is Stickers stickers)
             {
-                _reactionSet.Update(stickers.StickersValue.OrderBy(x => emoji.IndexOf(x.CustomEmojiId)), true);
+                _reactionTopSet.Update(stickers.StickersValue.OrderBy(x => emoji.IndexOf(x.CustomEmojiId)), true);
             }
         }
 

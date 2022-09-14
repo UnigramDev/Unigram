@@ -114,9 +114,13 @@ namespace Unigram.ViewModels
             {
                 MessageReplyCommand.Execute(message);
             }
+            else if (message.InteractionInfo != null && message.InteractionInfo.Reactions.IsChosen(ClientService.DefaultReaction))
+            {
+                ClientService.SendAsync(new RemoveMessageReaction(message.ChatId, message.Id, ClientService.DefaultReaction));
+            }
             else
             {
-                ClientService.SendAsync(new SetMessageReaction(message.ChatId, message.Id, ClientService.DefaultReaction, false, false));
+                ClientService.SendAsync(new AddMessageReaction(message.ChatId, message.Id, ClientService.DefaultReaction, false, false));
             }
         }
 

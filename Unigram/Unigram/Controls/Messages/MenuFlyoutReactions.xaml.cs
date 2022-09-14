@@ -19,6 +19,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Point = Windows.Foundation.Point;
 
 namespace Unigram.Controls.Messages
@@ -28,7 +29,7 @@ namespace Unigram.Controls.Messages
         private readonly IClientService _clientService;
         private readonly EmojiDrawerMode _mode;
 
-        private readonly IList<ReactionType> _reactions;
+        private readonly AvailableReactions _reactions;
         private readonly bool _canUnlockMore;
 
         private readonly MessageViewModel _message;
@@ -38,12 +39,12 @@ namespace Unigram.Controls.Messages
         private readonly MenuFlyoutPresenter _presenter;
         private readonly Popup _popup;
 
-        public static MenuFlyoutReactions ShowAt(IList<ReactionType> reactions, MessageViewModel message, MessageBubble bubble, MenuFlyout flyout)
+        public static MenuFlyoutReactions ShowAt(AvailableReactions reactions, MessageViewModel message, MessageBubble bubble, MenuFlyout flyout)
         {
             return new MenuFlyoutReactions(reactions, message, bubble, flyout);
         }
 
-        private MenuFlyoutReactions(IList<ReactionType> reactions, MessageViewModel message, MessageBubble bubble, MenuFlyout flyout)
+        private MenuFlyoutReactions(AvailableReactions reactions, MessageViewModel message, MessageBubble bubble, MenuFlyout flyout)
         {
             _reactions = reactions /*message.ClientService.IsPremium ? reactions : reactions.Where(x => !x.IsPremium).ToList()*/;
             _canUnlockMore = false; //message.ClientService.IsPremiumAvailable && !message.ClientService.IsPremium && reactions.Any(x => x.IsPremium);
@@ -62,7 +63,13 @@ namespace Unigram.Controls.Messages
             var transform = presenter.TransformToVisual(Window.Current.Content);
             var position = transform.TransformPoint(new Point());
 
-            var count = Math.Min(_reactions.Count, 8);
+            var source = reactions.PopularReactions.Count > 0
+                ? reactions.PopularReactions
+                : reactions.TopReactions.Count > 0
+                ? reactions.TopReactions
+                : reactions.RecentReactions;
+
+            var count = Math.Min(source.Count, 8);
 
             var itemSize = 24;
             var itemPadding = 4;
@@ -82,7 +89,7 @@ namespace Unigram.Controls.Messages
             Pill.Height = Shadow.Height = 36 + 20;
             Pill.Margin = Shadow.Margin = new Thickness(0, 0, 0, -20);
 
-            Expand.Visibility = _reactions.Count > 6 ? Visibility.Visible : Visibility.Collapsed;
+            Expand.Visibility = source.Count > 6 ? Visibility.Visible : Visibility.Collapsed;
 
             var yy = 20f;
 
@@ -93,9 +100,9 @@ namespace Unigram.Controls.Messages
 
             figure.Segments.Add(new LineSegment { Point = new Point(width - 18, 0) });
             figure.Segments.Add(new ArcSegment { Point = new Point(width - 18, 36), Size = new Size(18, 18), RotationAngle = 180, SweepDirection = SweepDirection.Clockwise });
-            
+
             figure.Segments.Add(new ArcSegment { Point = new Point(width - 18 - 14, 36), Size = new Size(7, 7), RotationAngle = 180, SweepDirection = SweepDirection.Clockwise });
-            
+
             figure.Segments.Add(new LineSegment { Point = new Point(18, 36) });
             figure.Segments.Add(new ArcSegment { Point = new Point(18, 0), Size = new Size(18, 18), RotationAngle = 180, SweepDirection = SweepDirection.Clockwise });
 
@@ -112,77 +119,9 @@ namespace Unigram.Controls.Messages
             LayoutRoot.Padding = new Thickness(16, 36, 16, 32);
 
             var offset = 0;
-            var visible = _reactions.Count > 8 ? 7 : 8; //Math.Ceiling((width - 8) / 34);
+            var visible = source.Count > 8 ? 7 : 8; //Math.Ceiling((width - 8) / 34);
 
-            static void DownloadFile(MessageViewModel message, File file)
-            {
-                if (file != null && file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
-                {
-                    message.ClientService.DownloadFile(file.Id, 31);
-                }
-            }
-
-            //foreach (var item in _reactions)
-            //{
-            //    // Pre-download additional assets
-            //    DownloadFile(message, item.CenterAnimation?.StickerValue);
-            //    DownloadFile(message, item.AroundAnimation?.StickerValue);
-
-            //    if (offset >= visible)
-            //    {
-            //        DownloadFile(message, item.AppearAnimation.StickerValue);
-            //        break;
-            //    }
-
-            //    var view = new LottieView();
-            //    view.AutoPlay = offset < visible;
-            //    view.IsLoopingEnabled = false;
-            //    view.FrameSize = new Size(itemSize, itemSize);
-            //    view.DecodeFrameType = DecodePixelType.Logical;
-            //    view.Width = itemSize;
-            //    view.Height = itemSize;
-            //    view.Margin = new Thickness(0, 0, itemPadding, 0);
-            //    view.VerticalAlignment = VerticalAlignment.Top;
-            //    view.Tag = offset < visible ? null : new object();
-
-            //    var file = item.AppearAnimation.StickerValue;
-            //    if (file.Local.IsDownloadingCompleted)
-            //    {
-            //        view.Source = UriEx.ToLocal(file.Local.Path);
-            //    }
-            //    else
-            //    {
-            //        view.Source = null;
-
-            //        UpdateManager.Subscribe(view, message, file, /*UpdateReaction*/UpdateFile, true);
-
-            //        if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-            //        {
-            //            message.ClientService.DownloadFile(file.Id, 32);
-            //        }
-            //    }
-
-            //    Grid.SetColumn(view, offset);
-
-            //    Presenter.Children.Add(view);
-            //    Presenter.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
-
-            //    if (offset < visible)
-            //    {
-            //        var visual = ElementCompositionPreview.GetElementVisual(view);
-            //        visual.CenterPoint = new Vector3(12, 12, 0);
-            //        visual.Scale = Vector3.Zero;
-
-            //        var scale = visual.Compositor.CreateVector3KeyFrameAnimation();
-            //        scale.InsertKeyFrame(0, Vector3.Zero);
-            //        scale.InsertKeyFrame(1, Vector3.One);
-            //        scale.DelayTime = TimeSpan.FromMilliseconds(50 * (visible - Presenter.Children.Count));
-
-            //        visual.StartAnimation("Scale", scale);
-            //    }
-
-            //    offset++;
-            //}
+            Populate(message, source, offset, visible);
 
             var device = CanvasDevice.GetSharedDevice();
             var rect1 = CanvasGeometry.CreateRectangle(device, Math.Min(width - actualWidth, 0), 0, Math.Max(width + 16 + 16 + Math.Max(0, padding), actualWidth), 860);
@@ -282,6 +221,180 @@ namespace Unigram.Controls.Messages
             presenter.Unloaded += Presenter_Unloaded;
         }
 
+        private async void Populate(MessageViewModel message, IList<AvailableReaction> reactions, int offset, int visible)
+        {
+            static void DownloadFile(MessageViewModel message, File file)
+            {
+                if (file != null && file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
+                {
+                    message.ClientService.DownloadFile(file.Id, 31);
+                }
+            }
+
+            var itemSize = 24;
+            var itemPadding = 4;
+
+            reactions
+                .Select(x => x.Type)
+                .Discern(out _, out var missingEmoji);
+
+            IDictionary<long, Sticker> assets = null;
+            if (missingEmoji != null)
+            {
+                var response = await message.ClientService.SendAsync(new GetCustomEmojiStickers(missingEmoji.ToArray()));
+                if (response is not Stickers stickers)
+                {
+                    return;
+                }
+
+                assets = stickers.StickersValue.ToDictionary(x => x.CustomEmojiId);
+            }
+
+            foreach (var item in reactions.Take(visible))
+            {
+                FrameworkElement child = null;
+                if (item.Type is ReactionTypeEmoji emoji)
+                {
+                    var reaction = await message.ClientService.SendAsync(new GetEmojiReaction(emoji.Emoji)) as EmojiReaction;
+                    if (reaction is null)
+                    {
+                        continue;
+                    }
+
+                    // Pre-download additional assets
+                    DownloadFile(message, reaction.CenterAnimation?.StickerValue);
+                    DownloadFile(message, reaction.AroundAnimation?.StickerValue);
+
+                    child = PopulateReaction(message, reaction.ActivateAnimation, itemSize, itemPadding);
+                }
+                else if (item.Type is ReactionTypeCustomEmoji customEmoji && assets != null && assets.TryGetValue(customEmoji.CustomEmojiId, out Sticker sticker))
+                {
+                    child = PopulateReaction(message, sticker, itemSize, itemPadding);
+                }
+
+                if (child == null)
+                {
+                    continue;
+                }
+
+                Grid.SetColumn(child, offset);
+
+                Presenter.Children.Add(child);
+                Presenter.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
+
+                if (offset < visible)
+                {
+                    var visual = ElementCompositionPreview.GetElementVisual(child);
+                    visual.CenterPoint = new Vector3(12, 12, 0);
+                    visual.Scale = Vector3.Zero;
+
+                    var scale = visual.Compositor.CreateVector3KeyFrameAnimation();
+                    scale.InsertKeyFrame(0, Vector3.Zero);
+                    scale.InsertKeyFrame(1, Vector3.One);
+                    scale.DelayTime = TimeSpan.FromMilliseconds(50 * (visible - Presenter.Children.Count));
+
+                    visual.StartAnimation("Scale", scale);
+                }
+
+                offset++;
+            }
+        }
+
+        private FrameworkElement PopulateReaction(MessageViewModel message, Sticker sticker, int itemSize, int itemPadding)
+        {
+            if (sticker.Format is StickerFormatTgs)
+            {
+                var view = new LottieView();
+                view.AutoPlay = true;
+                view.IsLoopingEnabled = false;
+                view.FrameSize = new Size(itemSize, itemSize);
+                view.DecodeFrameType = DecodePixelType.Logical;
+                view.Width = itemSize;
+                view.Height = itemSize;
+                view.Margin = new Thickness(0, 0, itemPadding, 0);
+                view.VerticalAlignment = VerticalAlignment.Top;
+
+                var file = sticker.StickerValue;
+                if (file.Local.IsDownloadingCompleted)
+                {
+                    view.Source = UriEx.ToLocal(file.Local.Path);
+                }
+                else
+                {
+                    view.Source = null;
+
+                    UpdateManager.Subscribe(view, message, file, /*UpdateReaction*/UpdateFile, true);
+
+                    if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                    {
+                        message.ClientService.DownloadFile(file.Id, 32);
+                    }
+                }
+
+                return view;
+            }
+            else if (sticker.Format is StickerFormatWebm)
+            {
+                var view = new AnimationView();
+                view.AutoPlay = true;
+                view.IsLoopingEnabled = false;
+                //view.FrameSize = new Size(itemSize, itemSize);
+                //view.DecodeFrameType = DecodePixelType.Logical;
+                view.Width = itemSize;
+                view.Height = itemSize;
+                view.Margin = new Thickness(0, 0, itemPadding, 0);
+                view.VerticalAlignment = VerticalAlignment.Top;
+
+                var file = sticker.StickerValue;
+                if (file.Local.IsDownloadingCompleted)
+                {
+                    view.Source = new LocalVideoSource(file);
+                }
+                else
+                {
+                    view.Source = null;
+
+                    UpdateManager.Subscribe(view, message, file, /*UpdateReaction*/UpdateFile, true);
+
+                    if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                    {
+                        message.ClientService.DownloadFile(file.Id, 32);
+                    }
+                }
+
+                return view;
+            }
+            else if (sticker.Format is StickerFormatWebp)
+            {
+                var view = new Image();
+                view.Width = itemSize;
+                view.Height = itemSize;
+                view.Margin = new Thickness(0, 0, itemPadding, 0);
+                view.VerticalAlignment = VerticalAlignment.Top;
+
+                var file = sticker.StickerValue;
+                if (file.Local.IsDownloadingCompleted)
+                {
+                    view.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path, 24);
+                }
+                else
+                {
+                    view.Source = null;
+
+                    UpdateManager.Subscribe(view, message, file, /*UpdateReaction*/UpdateFile, true);
+
+                    if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                    {
+                        message.ClientService.DownloadFile(file.Id, 32);
+                    }
+                }
+
+                return view;
+            }
+
+            return null;
+        }
+
         private void Presenter_Unloaded(object sender, RoutedEventArgs e)
         {
             _popup.IsOpen = false;
@@ -292,7 +405,7 @@ namespace Unigram.Controls.Messages
             if (sender is HyperlinkButton button && button.Tag is ReactionType reaction)
             {
                 _flyout.Hide();
-                await _message.ClientService.SendAsync(new SetMessageReaction(_message.ChatId, _message.Id, reaction, false, true));
+                await _message.ClientService.SendAsync(new AddMessageReaction(_message.ChatId, _message.Id, reaction, false, true));
 
                 if (_bubble != null)
                 {
@@ -307,28 +420,13 @@ namespace Unigram.Controls.Messages
             {
                 lottie.Source = UriEx.ToLocal(file.Local.Path);
             }
-        }
-
-        private void OnViewChanging(object sender, ScrollViewerViewChangingEventArgs e)
-        {
-            var j = (int)Math.Floor((e.NextView.HorizontalOffset - 8) / 34);
-            var k = (int)Math.Ceiling((e.NextView.HorizontalOffset - 8 + Shadow.ActualWidth) / 34);
-
-            for (int i = 0; i < Presenter.Children.Count; i++)
+            else if (target is AnimationView animation)
             {
-                var button = Presenter.Children[i] as HyperlinkButton;
-                if (button.Content is LottieView view)
-                {
-                    if (view.Tag != null && i >= j && i < k)
-                    {
-                        view.Play();
-                        view.Tag = null;
-                    }
-                    else if (view.Tag == null && (i < j || i >= k))
-                    {
-                        view.Tag = new object();
-                    }
-                }
+                animation.Source = new LocalVideoSource(file);
+            }
+            else if (target is Image image)
+            {
+                image.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path, 24);
             }
         }
 
@@ -340,11 +438,11 @@ namespace Unigram.Controls.Messages
             var itemTotal = itemSize + itemPadding;
 
             var cols = 8;
-            var rows = (int)Math.Ceiling((double)_reactions.Count / cols);
+            var rows = 8;
 
             var width = 8 + 4 + (cols * itemTotal);
             var viewport = 8 + 4 + (cols * itemTotal);
-            var height = (rows + 3) * itemTotal;
+            var height = rows * itemTotal;
 
             Presenter.HorizontalAlignment = HorizontalAlignment.Left;
             Presenter.VerticalAlignment = VerticalAlignment.Top;
@@ -438,7 +536,7 @@ namespace Unigram.Controls.Messages
             view.ItemClick += OnItemClick;
 
             Container.Children.Add(view);
-            _ = viewModel.UpdateReactions();
+            _ = viewModel.UpdateReactions(_reactions);
 
             offset = compositor.CreateVector3KeyFrameAnimation();
             offset.InsertKeyFrame(0, Vector3.Zero);
@@ -464,18 +562,32 @@ namespace Unigram.Controls.Messages
             {
                 _flyout.Hide();
 
+                ReactionType reaction;
                 if (sticker.CustomEmojiId != 0)
                 {
-                    await _message.ClientService.SendAsync(new SetMessageReaction(_message.ChatId, _message.Id, new ReactionTypeCustomEmoji(sticker.CustomEmojiId), false, true));
+                    reaction = new ReactionTypeCustomEmoji(sticker.CustomEmojiId);
                 }
                 else
                 {
-                    await _message.ClientService.SendAsync(new SetMessageReaction(_message.ChatId, _message.Id, new ReactionTypeEmoji(sticker.Emoji), false, true));
+                    reaction = new ReactionTypeEmoji(sticker.Emoji);
                 }
 
-                if (_bubble != null)
+                if (_message.InteractionInfo != null && _message.InteractionInfo.Reactions.IsChosen(reaction))
                 {
-                    _bubble.UpdateMessageReactions(_message, true);
+                    _message.ClientService.Send(new RemoveMessageReaction(_message.ChatId, _message.Id, reaction));
+                }
+                else
+                {
+                    await _message.ClientService.SendAsync(new AddMessageReaction(_message.ChatId, _message.Id, reaction, false, true));
+
+                    if (_bubble != null && _bubble.IsLoaded)
+                    {
+                        var unread = new UnreadReaction(reaction, null, false);
+
+                        _message.UnreadReactions.Add(unread);
+                        _bubble.UpdateMessageReactions(_message, true);
+                        _message.UnreadReactions.Remove(unread);
+                    }
                 }
             }
         }
@@ -555,7 +667,7 @@ namespace Unigram.Controls.Messages
             }
             else if (mode == EmojiDrawerMode.Reactions)
             {
-                _ = viewModel.UpdateReactions();
+                _ = viewModel.UpdateReactions(_reactions);
             }
 
             Shadow.Width = width;
@@ -586,7 +698,7 @@ namespace Unigram.Controls.Messages
             figure.Segments.Add(new ArcSegment { Point = new Point(width, yy + 18), Size = new Size(18, 18), RotationAngle = 90, SweepDirection = SweepDirection.Clockwise });
             figure.Segments.Add(new LineSegment { Point = new Point(width, yy + height - 18) });
             figure.Segments.Add(new ArcSegment { Point = new Point(width - 18, yy + height), Size = new Size(18, 18), RotationAngle = 90, SweepDirection = SweepDirection.Clockwise });
-            
+
 
             figure.Segments.Add(new LineSegment { Point = new Point(18, yy + height) });
             figure.Segments.Add(new ArcSegment { Point = new Point(0, yy + height - 18), Size = new Size(18, 18), RotationAngle = 90, SweepDirection = SweepDirection.Clockwise });

@@ -5,7 +5,7 @@ namespace Unigram.Common
 {
     public class LoopThreadPool
     {
-        private static readonly Dictionary<double, LoopThread> _specificFrameRate = new Dictionary<double, LoopThread>();
+        private static readonly Dictionary<double, LoopThread> _specificFrameRate = new();
 
         public static LoopThread Get(double frameRate)
         {

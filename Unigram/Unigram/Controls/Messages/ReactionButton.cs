@@ -1,4 +1,5 @@
 ﻿using RLottie;
+using System;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -31,11 +32,13 @@ namespace Unigram.Controls.Messages
 
         private MessageViewModel _message;
         private MessageReaction _interaction;
-        private Reaction _reaction;
+        private EmojiReaction _reaction;
         private Sticker _sticker;
         private UnreadReaction _unread;
 
         public MessageReaction Reaction => _interaction;
+        public EmojiReaction EmojiReaction => _reaction;
+        public Sticker CustomReaction => _sticker;
 
         private long _presenterId;
 
@@ -55,7 +58,7 @@ namespace Unigram.Controls.Messages
             }
         }
 
-        public async void SetReaction(MessageViewModel message, MessageReaction interaction, Reaction value)
+        public async void SetReaction(MessageViewModel message, MessageReaction interaction, EmojiReaction value)
         {
             if (Presenter == null)
             {
@@ -268,7 +271,14 @@ namespace Unigram.Controls.Messages
                 return;
             }
 
-            _message.ClientService.Send(new SetMessageReaction(_message.ChatId, _message.Id, chosen.Type, false, false));
+            if (chosen.IsChosen)
+            {
+                _message.ClientService.Send(new RemoveMessageReaction(_message.ChatId, _message.Id, chosen.Type));
+            }
+            else
+            {
+                _message.ClientService.Send(new AddMessageReaction(_message.ChatId, _message.Id, chosen.Type, false, false));
+            }
 
             if (chosen.IsChosen is false)
             {
@@ -276,7 +286,60 @@ namespace Unigram.Controls.Messages
             }
         }
 
-        private void Animate()
+        private async void Animate()
+        {
+            if (_reaction != null)
+            {
+                AnimateReaction();
+            }
+            else
+            {
+                var response = await _message.ClientService.SendAsync(new GetCustomEmojiReactionAnimations());
+                if (response is Files files)
+                {
+                    var random = new Random();
+                    var next = random.Next(0, files.FilesValue.Count);
+
+                    var around = await _message.ClientService.DownloadFileAsync(files.FilesValue[next], 32);
+                    if (around.Local.IsDownloadingCompleted && IsLoaded)
+                    {
+                        Icon?.SetCustomEmoji(_message.ClientService, _sticker.CustomEmojiId);
+                        Icon?.Play();
+
+                        var presenter = Presenter;
+                        var popup = Overlay;
+
+                        var dispatcher = DispatcherQueue.GetForCurrentThread();
+
+                        var aroundView = new LottieView();
+                        aroundView.Width = 32 * 3;
+                        aroundView.Height = 32 * 3;
+                        aroundView.IsLoopingEnabled = false;
+                        aroundView.FrameSize = new Size(32 * 3, 32 * 3);
+                        aroundView.DecodeFrameType = DecodePixelType.Logical;
+                        aroundView.Source = UriEx.ToLocal(around.Local.Path);
+                        aroundView.PositionChanged += (s, args) =>
+                        {
+                            if (args == 1)
+                            {
+                                dispatcher.TryEnqueue(Continue2);
+                                //dispatcher.TryEnqueue(() => popup.IsOpen = false);
+                            }
+                        };
+
+                        var root = new Grid();
+                        root.Width = 32 * 3;
+                        root.Height = 32 * 3;
+                        root.Children.Add(aroundView);
+
+                        popup.Child = root;
+                        popup.IsOpen = true;
+                    }
+                }
+            }
+        }
+
+        private void AnimateReaction()
         {
             var reaction = _reaction;
             if (reaction == null)
@@ -342,7 +405,6 @@ namespace Unigram.Controls.Messages
                 root.Children.Add(aroundView);
 
                 popup.Child = root;
-
                 popup.IsOpen = true;
             }
             else

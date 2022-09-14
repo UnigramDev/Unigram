@@ -1503,6 +1503,33 @@ namespace Unigram.Common
             return string.Format(Strings.Resources.formatDateAtTime, Converters.Converter.ShortDate.Format(date), Converters.Converter.ShortTime.Format(date));
         }
 
+        public static void Discern(this IEnumerable<ReactionType> reactions, out HashSet<string> emoji, out HashSet<long> customEmoji)
+        {
+            emoji = null;
+            customEmoji = null;
+
+            foreach (var reaction in reactions)
+            {
+                if (reaction is ReactionTypeEmoji emojiItem)
+                {
+                    emoji ??= new HashSet<string>();
+                    emoji.Add(emojiItem.Emoji);
+                }
+                else if (reaction is ReactionTypeCustomEmoji customEmojiItem)
+                {
+                    customEmoji ??= new HashSet<long>();
+                    customEmoji.Add(customEmojiItem.CustomEmojiId);
+                }
+            }
+        }
+
+        public static bool IsChosen(this IEnumerable<MessageReaction> reactions, ReactionType type)
+        {
+            return reactions.Where(x => x.IsChosen)
+                .Select(x => x.Type)
+                .Any(x => x.AreTheSame(type));
+        }
+
         public static string GetStartsIn(this GroupCall groupCall)
         {
             var date = Converters.Converter.DateTime(groupCall.ScheduledStartDate);

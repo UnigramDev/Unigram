@@ -121,7 +121,7 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            var items = _items.Where(x => x.IsSelected).Select(x => new ReactionTypeEmoji(x.Reaction.ReactionValue)).ToList<ReactionType>();
+            var items = _items.Where(x => x.IsSelected).Select(x => new ReactionTypeEmoji(x.Reaction.Emoji)).ToList<ReactionType>();
             var available = _available;
 
             if (supergroup.IsChannel && items.Count == _items.Count)
@@ -150,13 +150,13 @@ namespace Unigram.ViewModels.Supergroups
 
     public class SupergroupReactionOption : BindableBase
     {
-        public SupergroupReactionOption(Reaction reaction, bool selected)
+        public SupergroupReactionOption(EmojiReaction reaction, bool selected)
         {
             Reaction = reaction;
             IsSelected = selected;
         }
 
-        public Reaction Reaction { get; private set; }
+        public EmojiReaction Reaction { get; private set; }
 
         private bool _isSelected;
         public bool IsSelected

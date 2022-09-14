@@ -202,7 +202,7 @@ namespace Unigram.Views
                     var root = container.ContentTemplateRoot as FrameworkElement;
                     if (root is MessageSelector selector && selector.Content is MessageBubble bubble)
                     {
-                        bubble.UpdateMessageReactions(message, null);
+                        bubble.UpdateMessageReactions(message, true);
                     }
                 }
 
