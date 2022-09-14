@@ -24,6 +24,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
+using Windows.UI.Xaml.Input;
 
 namespace Unigram.Controls.Chats
 {
@@ -37,6 +38,7 @@ namespace Unigram.Controls.Chats
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
+        private AnimatedIcon Icon;
         private Visual _icon;
 
         private readonly DispatcherTimer _timer;
@@ -110,9 +112,11 @@ namespace Unigram.Controls.Chats
 
         protected override void OnApplyTemplate()
         {
-            var icon = GetTemplateChild("Icon") as AnimatedIcon;
+            Icon = GetTemplateChild(nameof(Icon)) as AnimatedIcon;
+            Icon.PointerReleased += OnPointerReleased;
+            Icon.PointerCanceled += OnPointerCanceled;
 
-            _icon = ElementCompositionPreview.GetElementVisual(icon);
+            _icon = ElementCompositionPreview.GetElementVisual(Icon);
             _icon.Opacity = IsRestricted ? 0.2f : 1;
 
             base.OnApplyTemplate();
@@ -134,6 +138,39 @@ namespace Unigram.Controls.Chats
             _recorder.RecordingFailed -= Current_RecordingStopped;
 
             _recorder.QuantumProcessed = null;
+        }
+
+        protected override void OnPointerPressed(PointerRoutedEventArgs e)
+        {
+            Icon.PointerCaptureLost += OnPointerCaptureLost;
+            Icon.CapturePointer(e.Pointer);
+            base.OnPointerPressed(e);
+        }
+
+        private void OnPointerReleased(object sender, PointerRoutedEventArgs e)
+        {
+            Logger.Debug(LogTarget.Recording, "OnPointerReleased");
+
+            Icon.PointerCaptureLost -= OnPointerCaptureLost;
+            Icon.ReleasePointerCapture(e.Pointer);
+
+            OnRelease();
+        }
+
+        private void OnPointerCanceled(object sender, PointerRoutedEventArgs e)
+        {
+            Logger.Debug(LogTarget.Recording, "OnPointerCanceled");
+
+            Icon.PointerCaptureLost -= OnPointerCaptureLost;
+            Icon.ReleasePointerCapture(e.Pointer);
+
+            OnRelease();
+        }
+
+        private void OnPointerCaptureLost(object sender, PointerRoutedEventArgs e)
+        {
+            Logger.Debug(LogTarget.Recording, "OnPointerCaptureLost");
+            OnRelease();
         }
 
         private async void RecordAudioVideoRunnable()
@@ -342,9 +379,6 @@ namespace Unigram.Controls.Chats
             else
             {
                 Logger.Debug(LogTarget.Recording, "Click mode: Release");
-
-                ClickMode = ClickMode.Press;
-
                 OnRelease();
             }
         }
@@ -366,6 +400,8 @@ namespace Unigram.Controls.Chats
 
         private void OnRelease()
         {
+            ClickMode = ClickMode.Press;
+
             if (_recordingLocked)
             {
                 Logger.Debug(LogTarget.Recording, "Recording is locked, abort");
