@@ -2947,36 +2947,30 @@ namespace Unigram.Views
                 return;
             }
 
-            TextField.Document.GetText(TextGetOptions.NoHidden, out string text);
+            var selection = TextField.Document.Selection.GetClone();
+            var entity = AutocompleteEntityFinder.Search(selection, out string result, out int index);
 
-            var query = text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length));
-            var entity = AutocompleteEntityFinder.Search(query, out string result, out int index);
-
-            void InsertText(string insert, string result)
+            void InsertText(string insert)
             {
-                var start = TextField.Document.Selection.StartPosition - 1 - result.Length + insert.Length;
-                var range = TextField.Document.GetRange(TextField.Document.Selection.StartPosition - 1 - result.Length, TextField.Document.Selection.StartPosition);
+                var range = TextField.Document.GetRange(index, TextField.Document.Selection.StartPosition);
                 range.SetText(TextSetOptions.None, insert);
 
-                TextField.Document.Selection.StartPosition = start;
+                TextField.Document.Selection.StartPosition = index + insert.Length;
             }
 
             if (e.ClickedItem is User user && entity is AutocompleteEntity.Username)
             {
-                var adjust = 0;
-
                 string insert;
                 if (string.IsNullOrEmpty(user.Username))
                 {
                     insert = string.IsNullOrEmpty(user.FirstName) ? user.LastName : user.FirstName;
-                    adjust = 1;
                 }
                 else
                 {
-                    insert = user.Username;
+                    insert = $"@{user.Username}";
                 }
 
-                var range = TextField.Document.GetRange(TextField.Document.Selection.StartPosition - result.Length - adjust, TextField.Document.Selection.StartPosition);
+                var range = TextField.Document.GetRange(index, TextField.Document.Selection.StartPosition);
                 range.SetText(TextSetOptions.None, insert);
 
                 if (string.IsNullOrEmpty(user.Username))
@@ -3007,7 +3001,7 @@ namespace Unigram.Views
                 var complete = Window.Current.CoreWindow.IsKeyDown(Windows.System.VirtualKey.Tab);
                 if (complete)
                 {
-                    InsertText($"{insert} ", result);
+                    InsertText($"{insert} ");
                 }
                 else
                 {
@@ -3019,27 +3013,26 @@ namespace Unigram.Views
             }
             else if (e.ClickedItem is string hashtag && entity is AutocompleteEntity.Hashtag)
             {
-                InsertText($"{hashtag} ", result);
+                InsertText($"{hashtag} ");
             }
             else if (e.ClickedItem is EmojiData emoji)
             {
-                InsertText($"{emoji.Value}", result);
+                InsertText($"{emoji.Value}");
             }
             else if (e.ClickedItem is Sticker sticker)
             {
                 if (sticker.CustomEmojiId != 0)
                 {
-                    var start = TextField.Document.Selection.StartPosition - 1 - result.Length + 1;
-                    var range = TextField.Document.GetRange(TextField.Document.Selection.StartPosition - 1 - result.Length, TextField.Document.Selection.StartPosition);
+                    var range = TextField.Document.GetRange(index, TextField.Document.Selection.StartPosition);
                     range.SetText(TextSetOptions.None, string.Empty);
 
                     await TextField.InsertEmojiAsync(range, sticker.Emoji, sticker.CustomEmojiId);
-                    TextField.Document.Selection.StartPosition = start;
+                    TextField.Document.Selection.StartPosition = index + 1;
                 }
                 else
                 {
                     TextField.SetText(null, null);
-                    ViewModel.StickerSendExecute(sticker, null, null, text);
+                    ViewModel.StickerSendExecute(sticker, null, null, result);
 
                     if (_stickersMode == StickersPanelMode.Overlay)
                     {
