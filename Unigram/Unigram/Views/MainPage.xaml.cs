@@ -20,6 +20,7 @@ using Unigram.Services;
 using Unigram.Services.Updates;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
+using Unigram.ViewModels.Drawers;
 using Unigram.Views.BasicGroups;
 using Unigram.Views.Channels;
 using Unigram.Views.Host;
@@ -3297,7 +3298,7 @@ namespace Unigram.Views
         {
             if (ViewModel.IsPremium)
             {
-                MenuFlyoutReactions.ShowAt(ViewModel.ClientService, TitleBarLogo, HorizontalAlignment.Left);
+                MenuFlyoutReactions.ShowAt(ViewModel.ClientService, EmojiDrawerMode.CustomEmojis, TitleBarLogo, HorizontalAlignment.Left);
             }
         }
     }

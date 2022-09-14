@@ -218,7 +218,7 @@ namespace Unigram.ViewModels.Drawers
             {
                 var stickers = new List<object>();
 
-                if (_mode != EmojiDrawerMode.Reactions)
+                if (_mode == EmojiDrawerMode.Chat)
                 {
                     var recents = Emoji.GetRecents(EmojiSkinTone.Default);
                     var emojiGroups = Emoji.Get(EmojiSkinTone.Default, true);
@@ -308,7 +308,7 @@ namespace Unigram.ViewModels.Drawers
                     installedSet.AddRange(trending.Sets.Select(x => new StickerSetViewModel(ClientService, x)));
                 }
 
-                if (_mode == EmojiDrawerMode.Reactions)
+                if (_mode != EmojiDrawerMode.Chat)
                 {
                     installedSet.Insert(0, _reactionSet);
                 }
@@ -320,7 +320,7 @@ namespace Unigram.ViewModels.Drawers
             }
         }
 
-        public async Task UpdateReactions(IList<Reaction> reactions2)
+        public async Task UpdateReactions()
         {
             var reactions = await ClientService.GetAllReactionsAsync();
             _reactionSet.Update(reactions.Select(x => x.Value.ActivateAnimation));
@@ -361,7 +361,7 @@ namespace Unigram.ViewModels.Drawers
             var response = await ClientService.SendAsync(new GetCustomEmojiStickers(emoji));
             if (response is Stickers stickers)
             {
-                _reactionSet.Update(stickers.StickersValue.OrderBy(x => emoji.IndexOf(x.CustomEmojiId)));
+                _reactionSet.Update(stickers.StickersValue.OrderBy(x => emoji.IndexOf(x.CustomEmojiId)), true);
             }
         }
 

@@ -1801,6 +1801,8 @@ namespace Unigram.Views
         private async void Message_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
             var flyout = new MenuFlyout();
+            flyout.MenuFlyoutPresenterStyle = new Style(typeof(MenuFlyoutPresenter));
+            flyout.MenuFlyoutPresenterStyle.Setters.Add(new Setter(MinWidthProperty, 165));
 
             var element = sender as FrameworkElement;
             var message = element.Tag as MessageViewModel;

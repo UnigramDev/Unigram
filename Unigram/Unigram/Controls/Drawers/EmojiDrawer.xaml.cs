@@ -63,7 +63,7 @@ namespace Unigram.Controls.Drawers
 
             _mode = mode;
 
-            if (mode == EmojiDrawerMode.Reactions)
+            if (mode != EmojiDrawerMode.Chat)
             {
                 FieldEmoji.Visibility = Visibility.Collapsed;
                 Toolbar3.Visibility = Visibility.Collapsed;
@@ -139,7 +139,7 @@ namespace Unigram.Controls.Drawers
 
         public void UpdateView()
         {
-            if (_mode == EmojiDrawerMode.Reactions)
+            if (_mode != EmojiDrawerMode.Chat)
             {
                 return;
             }
@@ -310,7 +310,7 @@ namespace Unigram.Controls.Drawers
 
         private void UpdateToolbar(bool collapse = false)
         {
-            if (_mode == EmojiDrawerMode.Reactions)
+            if (_mode != EmojiDrawerMode.Chat)
             {
                 return;
             }
