@@ -24,6 +24,10 @@ namespace Unigram.Views.Authorization
 
             TokenPlaceholder.FrameSize = new Size(259, 259);
             TokenPlaceholder.DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical;
+            TokenPlaceholder.ColorReplacements = new Dictionary<int, int>
+            {
+                { 0xffffff, 0x000000 }
+            };
 
             Diagnostics.Text = $"Unigram " + SettingsPage.GetVersion();
         }
@@ -257,14 +261,6 @@ namespace Unigram.Views.Authorization
 
                 if (mode == QrCodeMode.Loading)
                 {
-                    if (TokenPlaceholder.ActualTheme == ElementTheme.Light)
-                    {
-                        TokenPlaceholder.ColorReplacements = new Dictionary<int, int>
-                        {
-                            { 0xffffff, 0x000000 }
-                        };
-                    }
-
                     TokenPlaceholder.Source = new Uri("ms-appx:///Assets/Animations/Qr.tgs");
                 }
             }
