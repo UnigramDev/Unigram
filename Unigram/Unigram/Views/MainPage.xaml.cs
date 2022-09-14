@@ -127,6 +127,17 @@ namespace Unigram.Views
             //ArchivedChatsCompactPanel.Visibility = show ? Visibility.Collapsed : Visibility.Visible;
         }
 
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            Initialize();
+            Window.Current.SetTitleBar(TitleBarHandle);
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            Window.Current.SetTitleBar(null);
+        }
+
         public void Dispose()
         {
             try
@@ -1028,7 +1039,12 @@ namespace Unigram.Views
 
         private async void ProcessAppCommands(ShortcutCommand command, AcceleratorKeyEventArgs args)
         {
-            if (command is ShortcutCommand.Search)
+            if (command is ShortcutCommand.SetStatus)
+            {
+                Status_Click(null, null);
+                args.Handled = true;
+            }
+            else if (command is ShortcutCommand.Search)
             {
                 if (MasterDetail.NavigationService.Frame.Content is ISearchablePage child)
                 {
@@ -1273,11 +1289,6 @@ namespace Unigram.Views
             ViewModel.Settings.NavigationService = MasterDetail.NavigationService;
 
             ArchivedChats.UpdateChatList(ViewModel.ClientService, new ChatListArchive());
-        }
-
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            Initialize();
         }
 
         public async void Activate(string parameter)
