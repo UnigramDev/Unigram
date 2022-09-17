@@ -103,6 +103,9 @@
   <data name="AccActionOpenFile" xml:space="preserve">
     <value>Fájl megnyitása</value>
   </data>
+  <data name="AccActionOpenForwardedOrigin" xml:space="preserve">
+    <value>Eredeti továbbítva</value>
+  </data>
   <data name="AccActionOpenTranscription" xml:space="preserve">
     <value>Szöveggé alakítás megnyitása</value>
   </data>
@@ -183,6 +186,9 @@
   </data>
   <data name="AccDescrContactSorting" xml:space="preserve">
     <value>Rendezés módosítása</value>
+  </data>
+  <data name="AccDescrCustomEmoji" xml:space="preserve">
+    <value>Egyedi emoji</value>
   </data>
   <data name="AccDescrDownloadProgress" xml:space="preserve">
     <value>{1} letöltve, hátra van {0}</value>
@@ -990,11 +996,20 @@ erre: {1}</value>
   <data name="AddContactTitle" xml:space="preserve">
     <value>Névjegy hozzáadása</value>
   </data>
+  <data name="Added" xml:space="preserve">
+    <value>Hozzáadva</value>
+  </data>
   <data name="AddedBy" xml:space="preserve">
     <value>hozzáadta: {0} {1}</value>
   </data>
   <data name="AddedToFavorites" xml:space="preserve">
     <value>A matrica hozzáadva a kedvencekhez.</value>
+  </data>
+  <data name="AddEmailSubtitle" xml:space="preserve">
+    <value>Kérjük, adj meg egy érvényes e-mail címet, hogy megvédd fiókodat.</value>
+  </data>
+  <data name="AddEmailTitle" xml:space="preserve">
+    <value>Email megadása</value>
   </data>
   <data name="AddEmojiInstalled" xml:space="preserve">
     <value>Emoji hozzáadva.</value>
@@ -1193,6 +1208,9 @@ erre: {1}</value>
   </data>
   <data name="AllPhotos" xml:space="preserve">
     <value>Összes fénykép</value>
+  </data>
+  <data name="AllReactions" xml:space="preserve">
+    <value>Minden reakció</value>
   </data>
   <data name="AllSessionsTerminated" xml:space="preserve">
     <value>Az összes munkamenet lezárva.</value>
@@ -2193,6 +2211,9 @@ Napkelte: {1}</value>
   <data name="Bans_other" xml:space="preserve">
     <value>{0} kitiltás</value>
   </data>
+  <data name="BanUser" xml:space="preserve">
+    <value>Felhasználó kitiltása</value>
+  </data>
   <data name="BioCopied" xml:space="preserve">
     <value>Bemutatkozás a vágólapra másolva.</value>
   </data>
@@ -2547,7 +2568,7 @@ Engedélyezd a mikrofonhoz való hozzáférést a Beállítások &gt; Engedélye
     <value>Visszahívás</value>
   </data>
   <data name="CallEmojiKeyTooltip" xml:space="preserve">
-    <value>Ha ugyanezek a hangulatjelek vannak {0} kijelzőjén, akkor a hívás 100%-ban biztonságos.</value>
+    <value>Ha ugyanezek a emojik vannak {0} kijelzőjén, akkor a hívás 100%-ban biztonságos.</value>
   </data>
   <data name="Calling" xml:space="preserve">
     <value>Hívunk...</value>
@@ -2738,6 +2759,12 @@ Amennyiben nem te voltál, úgy írd be a kódot, amit most küldtünk SMS-ben a
   </data>
   <data name="ChangeColorToColor" xml:space="preserve">
     <value>Szeretnéd használni a jelenleg kiválasztott hátteret, vagy visszaállítod a téma alapértelmezett hátterére?</value>
+  </data>
+  <data name="ChangeEmail" xml:space="preserve">
+    <value>E-mail változtatása</value>
+  </data>
+  <data name="ChangeEmojiStatus" xml:space="preserve">
+    <value>Állapot módosítása</value>
   </data>
   <data name="ChangeLanguageLater" xml:space="preserve">
     <value>A nyelvet később is megváltoztathatod a Beállításokban.</value>
@@ -3441,6 +3468,18 @@ A minimális hossz 5 karakter.</value>
   <data name="CheckPhoneNumberYes" xml:space="preserve">
     <value>Igen</value>
   </data>
+  <data name="CheckYourEmail" xml:space="preserve">
+    <value>Ellenőrizd az e-mailedet</value>
+  </data>
+  <data name="CheckYourEmailSubtitle" xml:space="preserve">
+    <value>Kérjük, add meg a kódot, amelyet elküldtünk az e-mail címedre {0}.</value>
+  </data>
+  <data name="CheckYourNewEmail" xml:space="preserve">
+    <value>Új email címed ellenőrzése</value>
+  </data>
+  <data name="CheckYourNewEmailSubtitle" xml:space="preserve">
+    <value>Kérjük, add meg az új e-mail ({0}) címedre küldött kódot.</value>
+  </data>
   <data name="ChooseCountry" xml:space="preserve">
     <value>Válaszd ki az országot</value>
   </data>
@@ -3585,6 +3624,12 @@ A minimális hossz 5 karakter.</value>
   <data name="ClearRecentEmoji" xml:space="preserve">
     <value>Üríted a legutóbbi emojikat a listáról?</value>
   </data>
+  <data name="ClearRecentEmojiStatusesText" xml:space="preserve">
+    <value>Szeretnéd törölni a legutóbbi emoji állapotokat és visszaállítani a javaslatokat?</value>
+  </data>
+  <data name="ClearRecentEmojiStatusesTitle" xml:space="preserve">
+    <value>Legutóbbi állapotok törlése</value>
+  </data>
   <data name="ClearRecentEmojiText" xml:space="preserve">
     <value>Szeretnéd törölni a legutóbb használt emojikat?</value>
   </data>
@@ -3593,6 +3638,12 @@ A minimális hossz 5 karakter.</value>
   </data>
   <data name="ClearRecentHistory" xml:space="preserve">
     <value>Előzmények törlése</value>
+  </data>
+  <data name="ClearRecentReactionsAlertMessage" xml:space="preserve">
+    <value>Szeretnéd törölni a legutóbbi reakció emojikat a javaslatokból?</value>
+  </data>
+  <data name="ClearRecentReactionsAlertTitle" xml:space="preserve">
+    <value>Legutóbbi emojik törlése</value>
   </data>
   <data name="ClearRecentStickersAlertMessage" xml:space="preserve">
     <value>Szeretnéd törölni az összes nemrég használt matricádat?</value>
@@ -4462,6 +4513,9 @@ Megpróbálhatsz még másik telefonszámot, vagy felveheted a kapcsolatot a Tel
   <data name="DisablePasscodeTurnOff" xml:space="preserve">
     <value>Kikapcsolás</value>
   </data>
+  <data name="DisableReactionsInfo" xml:space="preserve">
+    <value>A csoport tagjai nem adhatnak reakciókat az üzenetekhez.</value>
+  </data>
   <data name="DisappearingGif" xml:space="preserve">
     <value>Eltűnő GIF</value>
   </data>
@@ -4824,8 +4878,20 @@ Ha nincs kiválasztva konkrét csevegés, akkor a legutóbbi csevegések jelenne
 
 Ha senki nincs kiválasztva, akkor a leggyakrabban használtak jelennek meg benne.</value>
   </data>
+  <data name="EmailAddressInvalid" xml:space="preserve">
+    <value>Érvénytelen e-mail cím.</value>
+  </data>
   <data name="EmailCopied" xml:space="preserve">
     <value>Az e-mail cím vágólapra másolva.</value>
+  </data>
+  <data name="EmailLogin" xml:space="preserve">
+    <value>Email bejelentkezés</value>
+  </data>
+  <data name="EmailLoginChangeMessage" xml:space="preserve">
+    <value>Ezt az e-mail címet fogod használni minden alkalommal, amikor egy új eszközről bejelentkezel a Telegram-fiókodba.</value>
+  </data>
+  <data name="EmailNotAllowed" xml:space="preserve">
+    <value>Ez az e-mail domainnév nem engedélyezett.</value>
   </data>
   <data name="EmailPasswordConfirmText" xml:space="preserve">
     <value>Kövesd a következő lépéseket a kétlépcsős azonosítás beállításához:
@@ -4841,11 +4907,14 @@ Ha senki nincs kiválasztva, akkor a leggyakrabban használtak jelennek meg benn
   <data name="EmailPasswordConfirmText3" xml:space="preserve">
     <value>A visszaállító e-mail beállításához nézd meg a(z) e-mail címed ({0}), ne felejted el a Levélszemét mappát sem! Írd be ide a kódot.</value>
   </data>
+  <data name="EmailTokenInvalid" xml:space="preserve">
+    <value>Érvénytelen email token.</value>
+  </data>
   <data name="Emoji" xml:space="preserve">
     <value>Emoji</value>
   </data>
   <data name="Emoji1" xml:space="preserve">
-    <value>Emojik &amp; emberek</value>
+    <value>Emojik és emberek</value>
   </data>
   <data name="Emoji2" xml:space="preserve">
     <value>Állatok és természet</value>
@@ -4880,6 +4949,9 @@ Ha senki nincs kiválasztva, akkor a leggyakrabban használtak jelennek meg benn
   <data name="EmojiBotInfo" xml:space="preserve">
     <value>A művészek hozzáadhatják saját emoji csomagjaikat a @stickers botunk segítségével.</value>
   </data>
+  <data name="EmojiCopied" xml:space="preserve">
+    <value>Emoji a vágólapra másolva.</value>
+  </data>
   <data name="EmojiCount_one" xml:space="preserve">
     <value>{0} emoji</value>
   </data>
@@ -4887,13 +4959,16 @@ Ha senki nincs kiválasztva, akkor a leggyakrabban használtak jelennek meg benn
     <value>{0} emoji</value>
   </data>
   <data name="EmojiCountButton_one" xml:space="preserve">
-    <value>{0} Emoji</value>
+    <value>{0} emoji</value>
   </data>
   <data name="EmojiCountButton_other" xml:space="preserve">
-    <value>{0} Emoji</value>
+    <value>{0} emoji</value>
   </data>
   <data name="EmojiInteractionTapHint" xml:space="preserve">
     <value>Ha **{0}** megnyitná ezt a csevegést, akkor ő is látná ezt az animációt.</value>
+  </data>
+  <data name="EmojiLongtapHint" xml:space="preserve">
+    <value>Tarts lenyomva egy emoji-t az időzítő beállításához</value>
   </data>
   <data name="EmojiPackCount_one" xml:space="preserve">
     <value>{0} Emoji csomag</value>
@@ -4912,6 +4987,9 @@ Ha senki nincs kiválasztva, akkor a leggyakrabban használtak jelennek meg benn
   </data>
   <data name="EmojiRemovedMultipleInfo_other" xml:space="preserve">
     <value>{0} csomag már nincs az emojik között.</value>
+  </data>
+  <data name="EmojiStatusExpireHint" xml:space="preserve">
+    <value>A státuszod lejár: {0}</value>
   </data>
   <data name="EmojiSuggestions" xml:space="preserve">
     <value>Emoji javaslatok</value>
@@ -4933,6 +5011,9 @@ Ha senki nincs kiválasztva, akkor a leggyakrabban használtak jelennek meg benn
   </data>
   <data name="Enable" xml:space="preserve">
     <value>Engedélyez</value>
+  </data>
+  <data name="EnableAllReactionsInfo" xml:space="preserve">
+    <value>A csoport tagjai bármilyen emojit használhatnak reakcióként az üzenetekre.</value>
   </data>
   <data name="EnableAllStreamingInfo" xml:space="preserve">
     <value>Amikor lehetséges, a Telegram azonnal elkezdi lejátszani a hang és videó fájlokat, mielőtt a fájlok letöltése teljesen befejeződött.</value>
@@ -4967,6 +5048,9 @@ Szükséged lesz az itt beállított jelszóra a Telegram fiókba való belépé
   </data>
   <data name="EnableReactionsGroupInfo" xml:space="preserve">
     <value>Engedélyezi a tagok reakcióit a csoport üzeneteire.</value>
+  </data>
+  <data name="EnableSomeReactionsInfo" xml:space="preserve">
+    <value>A csoport tagjai csak néhány jóváhagyott emojit használhatnak az üzenetekre adott reakcióként.</value>
   </data>
   <data name="EnableStreaming" xml:space="preserve">
     <value>Videó és hangfájlok streamelése</value>
@@ -5040,6 +5124,9 @@ További információ: telegram.org</value>
   </data>
   <data name="EnterListName" xml:space="preserve">
     <value>Írd be a lista nevét</value>
+  </data>
+  <data name="EnterNewEmail" xml:space="preserve">
+    <value>E-mail módosítása</value>
   </data>
   <data name="EnterNewFirstPasscode" xml:space="preserve">
     <value>Adj meg egy jelkódot</value>
@@ -6140,6 +6227,12 @@ Minden titkos csevegés elveszik.</value>
   <data name="GifsTab2" xml:space="preserve">
     <value>GIF-ek</value>
   </data>
+  <data name="GiftMonths_one" xml:space="preserve">
+    <value>{0} hónap</value>
+  </data>
+  <data name="GiftMonths_other" xml:space="preserve">
+    <value>{0} hónap</value>
+  </data>
   <data name="GiftPremium" xml:space="preserve">
     <value>Prémium ajándékozása</value>
   </data>
@@ -6649,6 +6742,9 @@ Az üzeneteket az aktuális napra kerül importálásra, de tartalmazzák eredet
   </data>
   <data name="InstallGoogleMaps" xml:space="preserve">
     <value>Google Térkép telepítése?</value>
+  </data>
+  <data name="InstallHuaweiMaps" xml:space="preserve">
+    <value>Petal Maps telepítése?</value>
   </data>
   <data name="InstallOfficialApp" xml:space="preserve">
     <value>Telepítsd a hivatalos appot</value>
@@ -7309,7 +7405,7 @@ Bármikor visszaállíthatod a nyelvet a Beállítások menüpontban.</value>
     <value>Kérjük, várj egy kicsit, míg grafikonokat készítünk.</value>
   </data>
   <data name="LocalAudioCache" xml:space="preserve">
-    <value>Hang és Videóüzenetek</value>
+    <value>Hang és videóüzenetek</value>
   </data>
   <data name="LocalCache" xml:space="preserve">
     <value>Egyéb fájlok</value>
@@ -7387,6 +7483,9 @@ A művelet több percig is eltarthat.</value>
   </data>
   <data name="LoginAttemptsInfo" xml:space="preserve">
     <value>Ezek az eszközök nem férnek hozzá az üzeneteidhez. A kód helyesen került beírásra, de a jelszó nem.</value>
+  </data>
+  <data name="LoginOrSingInWithGoogle" xml:space="preserve">
+    <value>vagy</value>
   </data>
   <data name="LoginPassword" xml:space="preserve">
     <value>Jelszó</value>
@@ -7664,10 +7763,22 @@ A minimális hossz 5 karakter.</value>
     <value>Ez az üzenet ebből a csomagból származó emojikat tartalmaz: {0}.</value>
   </data>
   <data name="MessageContainsEmojiPacks_one" xml:space="preserve">
-    <value>Ez az üzenet {0} csomagból származó emojikat tartalmaz.</value>
+    <value>Ez az üzenet {0} csomagból származó emojit tartalmaz.</value>
   </data>
   <data name="MessageContainsEmojiPacks_other" xml:space="preserve">
     <value>Ez az üzenet {0} csomagból származó emojikat tartalmaz.</value>
+  </data>
+  <data name="MessageContainsEmojiPackSingle" xml:space="preserve">
+    <value>Ez az üzenet **{0}** emojit tartalmaz</value>
+  </data>
+  <data name="MessageContainsReactionsPack" xml:space="preserve">
+    <value>Ebből a csomagból származó emojikat használták reakcióként: {0}.</value>
+  </data>
+  <data name="MessageContainsReactionsPacks_one" xml:space="preserve">
+    <value>**{0} csomagból** származó emojikat használtak reakcióként.</value>
+  </data>
+  <data name="MessageContainsReactionsPacks_other" xml:space="preserve">
+    <value>**{0} csomagból** származó emojikat használtak reakcióként.</value>
   </data>
   <data name="MessageCopied" xml:space="preserve">
     <value>Az üzenet a vágólapra másolva.</value>
@@ -7815,6 +7926,21 @@ A minimális hossz 5 karakter.</value>
   </data>
   <data name="Mi" xml:space="preserve">
     <value>mi</value>
+  </data>
+  <data name="MicrophoneForVoiceMessages" xml:space="preserve">
+    <value>Mikrofon hangüzenetekhez</value>
+  </data>
+  <data name="MicrophoneForVoiceMessagesBuiltIn" xml:space="preserve">
+    <value>Beépített</value>
+  </data>
+  <data name="MicrophoneForVoiceMessagesSco" xml:space="preserve">
+    <value>Fejhallgató</value>
+  </data>
+  <data name="MicrophoneForVoiceMessagesScoHint" xml:space="preserve">
+    <value>A fejhallgató mikrofon használata csökkentheti a háttérzajt, de kissé rontja a hangminőséget.</value>
+  </data>
+  <data name="MicrophoneForVoiceMessagesScoIfConnected" xml:space="preserve">
+    <value>Fejhallgató (ha csatlakoztatva van)</value>
   </data>
   <data name="MigrateOldFolderButton" xml:space="preserve">
     <value>Fájlátvitel most</value>
@@ -8258,6 +8384,12 @@ elérheted bármely eszközödről.</value>
   </data>
   <data name="NoPopup" xml:space="preserve">
     <value>Nincs</value>
+  </data>
+  <data name="NoReactions" xml:space="preserve">
+    <value>Nincs reakció</value>
+  </data>
+  <data name="NoReactionsFound" xml:space="preserve">
+    <value>Nem található reakció</value>
   </data>
   <data name="NoRecent" xml:space="preserve">
     <value>Nincs friss</value>
@@ -8988,6 +9120,9 @@ A Telegram Csapata</value>
   </data>
   <data name="OnlineCount_other" xml:space="preserve">
     <value>{0} elérhető</value>
+  </data>
+  <data name="OnlyAllowThisReactions" xml:space="preserve">
+    <value>Csak ezek a reakciók engedélyezettek</value>
   </data>
   <data name="OnlyIfSilent" xml:space="preserve">
     <value>Csak néma üzemmódban</value>
@@ -9886,7 +10021,7 @@ Ha többet szeretnél megtudni, látogass el a *GYIK* oldalunkra.</value>
     <value>Fizetési mód</value>
   </data>
   <data name="PaymentCheckoutMethodNewCard" xml:space="preserve">
-    <value>Új kártya</value>
+    <value>Új bankkártya hozzáadása…</value>
   </data>
   <data name="PaymentCheckoutName" xml:space="preserve">
     <value>Név</value>
@@ -10433,6 +10568,9 @@ Csak az általad választott időtartamig fogunk hozzáférni tartózkodási hel
   <data name="PollViewResults" xml:space="preserve">
     <value>EREDMÉNYEK</value>
   </data>
+  <data name="PopularReactions" xml:space="preserve">
+    <value>Népszerű</value>
+  </data>
   <data name="PopupDisabled" xml:space="preserve">
     <value>Letiltva</value>
   </data>
@@ -10479,13 +10617,19 @@ Csak az általad választott időtartamig fogunk hozzáférni tartózkodási hel
     <value>Nincs többé korlátozás a média és a dokumentumok letöltésének sebességére vonatkozóan.</value>
   </data>
   <data name="PremiumPreviewEmoji" xml:space="preserve">
-    <value>Animált Emoji</value>
+    <value>Animált emoji</value>
   </data>
   <data name="PremiumPreviewEmojiDescription" xml:space="preserve">
     <value>A különböző emoji-csomagokból származó animált emojikat bármelyik üzenetbe belefoglalhatod.</value>
   </data>
   <data name="PremiumPreviewEmojiPack" xml:space="preserve">
     <value>Ez az emoji csomag csak a **Telegram Prémium** előfizetők számára érhető el.</value>
+  </data>
+  <data name="PremiumPreviewEmojiStatus" xml:space="preserve">
+    <value>Emoji állapot</value>
+  </data>
+  <data name="PremiumPreviewEmojiStatusDescription" xml:space="preserve">
+    <value>Válassz több ezer emoji közül az aktuális tevékenység megjelenítéséhez a neved mellett.</value>
   </data>
   <data name="PremiumPreviewLimits" xml:space="preserve">
     <value>Megduplázott limitek</value>
@@ -10510,6 +10654,12 @@ Csak az általad választott időtartamig fogunk hozzáférni tartózkodási hel
   </data>
   <data name="PremiumPreviewReactions" xml:space="preserve">
     <value>Egyedi reakciók</value>
+  </data>
+  <data name="PremiumPreviewReactions2" xml:space="preserve">
+    <value>Határtalan reakciók</value>
+  </data>
+  <data name="PremiumPreviewReactions2Description" xml:space="preserve">
+    <value>Reagálj ezernyi emojival — üzenetenként több reakciót használva.</value>
   </data>
   <data name="PremiumPreviewReactionsDescription" xml:space="preserve">
     <value>További animált reakciók az üzenetekben, amik csak a Prémium előfizetők számára elérhetők.</value>
@@ -10543,6 +10693,15 @@ Csak az általad választott időtartamig fogunk hozzáférni tartózkodási hel
   </data>
   <data name="PremiumStickerTooltip" xml:space="preserve">
     <value>Ez a készlet hasonló prémium matricákat tartalmaz.</value>
+  </data>
+  <data name="PremiumTierAnnual" xml:space="preserve">
+    <value>Éves</value>
+  </data>
+  <data name="PremiumTierMonthly" xml:space="preserve">
+    <value>Havi</value>
+  </data>
+  <data name="PremiumTierSemiannual" xml:space="preserve">
+    <value>Féléves</value>
   </data>
   <data name="PreviewFeedback" xml:space="preserve">
     <value>Jelezd, ha hibás ez az előnézet</value>
@@ -10621,6 +10780,12 @@ Csak az általad választott időtartamig fogunk hozzáférni tartózkodási hel
   </data>
   <data name="PricePerMonth" xml:space="preserve">
     <value>{0} / hónap</value>
+  </data>
+  <data name="PricePerMonthMe" xml:space="preserve">
+    <value>{0}/hónap</value>
+  </data>
+  <data name="PricePerYear" xml:space="preserve">
+    <value>{0}/év</value>
   </data>
   <data name="PrimaryLinkHelp" xml:space="preserve">
     <value>Bárki, aki telepítette a Telegramot, ezen a linken keresztül csatlakozhat a csoportodhoz.</value>
@@ -11108,11 +11273,17 @@ Csak az általad választott időtartamig fogunk hozzáférni tartózkodási hel
   <data name="Reactions" xml:space="preserve">
     <value>Reakciók</value>
   </data>
+  <data name="ReactionsAll" xml:space="preserve">
+    <value>Összes</value>
+  </data>
   <data name="ReactionsCount_one" xml:space="preserve">
     <value>1 reakció</value>
   </data>
   <data name="ReactionsCount_other" xml:space="preserve">
     <value>{0} reakció</value>
+  </data>
+  <data name="ReactionsLongtapHint" xml:space="preserve">
+    <value>Tartsd az emoji-t szuper reakció küldéséhez</value>
   </data>
   <data name="ReactionsOff" xml:space="preserve">
     <value>Ki</value>
@@ -11134,6 +11305,9 @@ Csak az általad választott időtartamig fogunk hozzáférni tartózkodási hel
   </data>
   <data name="RecentlyDownloaded" xml:space="preserve">
     <value>Nemrég letöltött</value>
+  </data>
+  <data name="RecentlyUsed" xml:space="preserve">
+    <value>Nemrég használt</value>
   </data>
   <data name="RecentlyViewed" xml:space="preserve">
     <value>Legutóbb megtekinetett</value>
@@ -11283,10 +11457,13 @@ Csak az általad választott időtartamig fogunk hozzáférni tartózkodási hel
     <value>Válasz</value>
   </data>
   <data name="ReplyToGroup" xml:space="preserve">
-    <value>Válasz: {0}</value>
+    <value>Válasz</value>
   </data>
   <data name="ReplyToUser" xml:space="preserve">
-    <value>Válasz: {0}</value>
+    <value>Válasz</value>
+  </data>
+  <data name="ReportAlertReaction" xml:space="preserve">
+    <value>Biztos vagy benne, hogy jelenteni akarod ennek a felhasználónak a reakcióit?</value>
   </data>
   <data name="ReportChat" xml:space="preserve">
     <value>Jelentés</value>
@@ -11333,6 +11510,12 @@ Csak az általad választott időtartamig fogunk hozzáférni tartózkodási hel
   <data name="ReportMessagesCount" xml:space="preserve">
     <value>JELENTÉS {0}</value>
   </data>
+  <data name="ReportReaction" xml:space="preserve">
+    <value>Reakció bejelentése</value>
+  </data>
+  <data name="ReportReactionAndBan" xml:space="preserve">
+    <value>Tiltás és bejelentés</value>
+  </data>
   <data name="ReportSelectMessages" xml:space="preserve">
     <value>Üzenetek kiválasztása</value>
   </data>
@@ -11366,6 +11549,9 @@ Köszönjük az együttműködést!</value>
   </data>
   <data name="ReportSpamUser" xml:space="preserve">
     <value>Felhasználó tiltása</value>
+  </data>
+  <data name="ReportSpamUserEmojiStatusHint" xml:space="preserve">
+    <value>Ez a fiók a {0} egyéni státuszt használja a neve mellett. Az ilyen emoji státuszok a {1} összes előfizetője számára elérhetők.</value>
   </data>
   <data name="ReportTitleChild" xml:space="preserve">
     <value>Gyermekbántalmazás jelentése</value>
@@ -11522,7 +11708,7 @@ A törlési folyamatot bármikor megszakíthatod.</value>
     <value>Jelszó alaphelyzetbe állítása</value>
   </data>
   <data name="ResetPasswordWait" xml:space="preserve">
-    <value>A nemrég kért jelszó-visszaállítási folyamatot visszavontad.  {0} elteltével újra próbálhatod.</value>
+    <value>A nemrég kért jelszó-visszaállítási folyamatot visszavontad. {0} elteltével újra próbálhatod.</value>
   </data>
   <data name="ResetStatistics" xml:space="preserve">
     <value>Statisztikák visszaállítása</value>
@@ -11560,7 +11746,7 @@ A törlési folyamatot bármikor megszakíthatod.</value>
     <value>Ha nem férsz hozzá a visszaállítási e-mail címedhez, akkor csak a fiók alaphelyzetbe állítása segíthet.</value>
   </data>
   <data name="RestoreEmailTroubleText2" xml:space="preserve">
-    <value>Ha nincs hozzáférésed a helyreállítási e-mailhez, akkor csak az marad, hogy a jelszót alaposan megjegyzed, vagy 7 nap elteltével a jelszavad alaphelyzetbe áll. </value>
+    <value>Ha nem férsz hozzá a helyreállítási e-mailhez, akkor a hátralévő lehetőségeid egyike, hogy emlékezz a jelszavadra, vagy várj 7 napot, amíg a jelszavadat visszaállítják.</value>
   </data>
   <data name="RestorePasswordNoEmailText" xml:space="preserve">
     <value>Mivel nem állítottál be helyreállító e-mail címet, ezért csak a fiók alaphelyzetbe állítása lehetőség marad, ha nem jut eszedbe a korábbi jelszavad.</value>
@@ -11863,6 +12049,9 @@ A csatornák privátok lesznek.</value>
   <data name="SearchMusic" xml:space="preserve">
     <value>Zene keresés</value>
   </data>
+  <data name="SearchReactionsHint" xml:space="preserve">
+    <value>Reakciók keresése</value>
+  </data>
   <data name="SearchRecentFiles" xml:space="preserve">
     <value>Új fájlok keresése</value>
   </data>
@@ -11982,6 +12171,12 @@ A csatornák privátok lesznek.</value>
   </data>
   <data name="SelectOtherChat" xml:space="preserve">
     <value>Másik csevegés választása</value>
+  </data>
+  <data name="SelectSendAsPeerPremiumHint" xml:space="preserve">
+    <value>Fizess elő a **Telegram Prémium** szolgáltatásra, hogy bármelyik csoportos csevegésben hozzászólhass a csatornáid nevében.</value>
+  </data>
+  <data name="SelectSendAsPeerPremiumOpen" xml:space="preserve">
+    <value>Megnyitás</value>
   </data>
   <data name="SelectTheme" xml:space="preserve">
     <value>Kinézet kiválasztása</value>
@@ -12152,7 +12347,7 @@ A csatornák privátok lesznek.</value>
     <value>Ellenőrizd Telegram üzeneteidet</value>
   </data>
   <data name="SentAppCodeWithPhone" xml:space="preserve">
-    <value>A kódot elküldtük a {0} tartozó **Telegram** fiókra a többi eszközödre.</value>
+    <value>Elküldtük a kódot a **Telegram alkalmazásnak**, {0} számára a másik eszközödre.</value>
   </data>
   <data name="SentCallCode" xml:space="preserve">
     <value>Telefonhívást indítottunk erre a számra: **{0}**.
@@ -12224,6 +12419,30 @@ Ne vedd fel! A Telegram mindent automatikusan elintéz.</value>
   </data>
   <data name="SetColor" xml:space="preserve">
     <value>Szín beállítása</value>
+  </data>
+  <data name="SetEmojiStatus" xml:space="preserve">
+    <value>Emoji állapot beállítása</value>
+  </data>
+  <data name="SetEmojiStatusUntil1Hour" xml:space="preserve">
+    <value>Beállítás 1 órára</value>
+  </data>
+  <data name="SetEmojiStatusUntil2Days" xml:space="preserve">
+    <value>Beállítás 2 napra</value>
+  </data>
+  <data name="SetEmojiStatusUntil2Hours" xml:space="preserve">
+    <value>Beállítás 2 órára</value>
+  </data>
+  <data name="SetEmojiStatusUntil8Hours" xml:space="preserve">
+    <value>Beállítás 8 órára</value>
+  </data>
+  <data name="SetEmojiStatusUntilButton" xml:space="preserve">
+    <value>Állapot beállítása</value>
+  </data>
+  <data name="SetEmojiStatusUntilOther" xml:space="preserve">
+    <value>Egyéb…</value>
+  </data>
+  <data name="SetEmojiStatusUntilTitle" xml:space="preserve">
+    <value>Állapot beállítása eddig…</value>
   </data>
   <data name="SetNewPassword" xml:space="preserve">
     <value>Új jelszó beállítása</value>
@@ -12557,6 +12776,9 @@ Kérjük, add meg a helyes számot, beleértve az országkódot is.</value>
   <data name="ShuffleList" xml:space="preserve">
     <value>Véletlen sorrend</value>
   </data>
+  <data name="SignInWithGoogle" xml:space="preserve">
+    <value>Bejelentkezés a Google segítségével</value>
+  </data>
   <data name="SignUp" xml:space="preserve">
     <value>Regisztráció</value>
   </data>
@@ -12630,6 +12852,9 @@ A lassú mód engedélyezve van. Nem küldhetsz egyszerre több üzenetet.</valu
   </data>
   <data name="SoftUserLimitAlert" xml:space="preserve">
     <value>A csoport létrehozása után további tagokat is felvehetsz.</value>
+  </data>
+  <data name="SomeReactions" xml:space="preserve">
+    <value>Néhány reakció</value>
   </data>
   <data name="SortBy" xml:space="preserve">
     <value>Rendezés</value>
@@ -12843,7 +13068,7 @@ Az online hirdetések többé nem jelenthetnek egyet a felhasználói magánéle
     <value>Archíválás</value>
   </data>
   <data name="StickersName" xml:space="preserve">
-    <value>Matricák és Emojik</value>
+    <value>Matricák és emojik</value>
   </data>
   <data name="StickersRemove" xml:space="preserve">
     <value>Eltávolítás</value>
@@ -13098,6 +13323,9 @@ A &apos;**Névjegyek szinkronizálása**&apos; bekapcsolásakor a névjegyek új
   <data name="TapForVideo" xml:space="preserve">
     <value>Érintéssel kép, nyomva tartással videó készítése</value>
   </data>
+  <data name="TapHereEmoji" xml:space="preserve">
+    <value>Érintsd meg: {0} a további emojik eléréséhez.</value>
+  </data>
   <data name="TapHereGifs" xml:space="preserve">
     <value>Kattints ide az elmentett GIF-ekhez</value>
   </data>
@@ -13211,11 +13439,27 @@ Ezt a jelszót akkor is meg kell adnod, amikor bejelentkezel Telegramra egy új 
   <data name="TelegramPremiumUserGiftedPremiumDialogTitle" xml:space="preserve">
     <value>**{0}** megajándékozott egy {1} havi Telegram Prémium előfizetéssel.</value>
   </data>
+  <data name="TelegramPremiumUserGiftedPremiumDialogTitleWithPlural" xml:space="preserve">
+    <value>**{0}** megajándékozott egy {1} előfizetéssel a Telegram Prémiumra.</value>
+  </data>
   <data name="TelegramPremiumUserGiftedPremiumOutboundDialogSubtitle" xml:space="preserve">
     <value>**{0}** mostantól hozzáférhet további funkciókhoz.</value>
   </data>
   <data name="TelegramPremiumUserGiftedPremiumOutboundDialogTitle" xml:space="preserve">
     <value>**{0}** részére ajándékoztál egy {1} havi Telegram Prémium előfizetést.</value>
+  </data>
+  <data name="TelegramPremiumUserGiftedPremiumOutboundDialogTitleWithPlural" xml:space="preserve">
+    <value>Ajándékoztál **{0}** részére egy {1} előfizetést
+a Telegram Prémiumra.</value>
+  </data>
+  <data name="TelegramPremiumUserStatusDefaultDialogTitle" xml:space="preserve">
+    <value>Ez {0} jelenlegi állapota.</value>
+  </data>
+  <data name="TelegramPremiumUserStatusDialogSubtitle" xml:space="preserve">
+    <value>Az emoji állapotok prémium szolgáltatásnak számítanak. A **Telegram Prémium** egyéb funkciói:</value>
+  </data>
+  <data name="TelegramPremiumUserStatusDialogTitle" xml:space="preserve">
+    <value>{0} ezt az emojit állította be aktuális státuszának: {1}.</value>
   </data>
   <data name="TelegramTones" xml:space="preserve">
     <value>Telegram hangok</value>
@@ -13706,6 +13950,9 @@ Ha nem értesz egyet a Telegram szerény igényeivel, akkor nem tudjuk biztosít
   <data name="UnlockPremiumEmojiPack" xml:space="preserve">
     <value>{0} feloldása</value>
   </data>
+  <data name="UnlockPremiumEmojiReaction" xml:space="preserve">
+    <value>Iratkozz fel a **Telegram Prémium** szolgáltatásra, hogy feloldhasd ezt a reakciót.</value>
+  </data>
   <data name="UnlockPremiumIcons" xml:space="preserve">
     <value>Prémium ikonok beszerzése</value>
   </data>
@@ -14089,6 +14336,9 @@ Használhatod az **a-z**, **0–9** és az aláhúzás karaktereket. A minimáli
   </data>
   <data name="VerificationCode" xml:space="preserve">
     <value>Ellenőrző kód</value>
+  </data>
+  <data name="VerificationCodeSubtitle" xml:space="preserve">
+    <value>Kérjük, ellenőrizd az e-mailed: {0} (ne felejtsd ki a spam mappát), és írd be a kódot, amit most küldtünk neked.</value>
   </data>
   <data name="ViaBot" xml:space="preserve">
     <value>ezzel: </value>
@@ -15245,11 +15495,17 @@ Ha elfelejted a jelszavadat, nem tudsz hozzáférni a Telegram fiókodhoz. Nincs
   <data name="YourLocatedChannelsTooMuch" xml:space="preserve">
     <value>Sajnáljuk, de már túl sok helyi csoporttal rendelkezel. Kérjük, először törölj egyet a létezők közül.</value>
   </data>
+  <data name="YourLoginEmailChangedSuccess" xml:space="preserve">
+    <value>Az email címed megváltozott.</value>
+  </data>
   <data name="YourName" xml:space="preserve">
     <value>Neved</value>
   </data>
   <data name="YourNameChanged" xml:space="preserve">
     <value>Név frissült.</value>
+  </data>
+  <data name="YourNewEmail" xml:space="preserve">
+    <value>Az új e-mail címed</value>
   </data>
   <data name="YourNumber" xml:space="preserve">
     <value>A telefonszámod</value>

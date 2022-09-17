@@ -187,6 +187,9 @@
   <data name="AccDescrContactSorting" xml:space="preserve">
     <value>Endre sortering</value>
   </data>
+  <data name="AccDescrCustomEmoji" xml:space="preserve">
+    <value>Egendefinert emoji</value>
+  </data>
   <data name="AccDescrDownloadProgress" xml:space="preserve">
     <value>Lastet ned {0} av {1}</value>
   </data>
@@ -993,11 +996,20 @@ til: {1}</value>
   <data name="AddContactTitle" xml:space="preserve">
     <value>Legg til kontakt</value>
   </data>
+  <data name="Added" xml:space="preserve">
+    <value>Lagt til</value>
+  </data>
   <data name="AddedBy" xml:space="preserve">
     <value>Lagt til av {0} {1}</value>
   </data>
   <data name="AddedToFavorites" xml:space="preserve">
     <value>Klistremerket lagt til i favoritter</value>
+  </data>
+  <data name="AddEmailSubtitle" xml:space="preserve">
+    <value>Vennligst angi din gyldige e-postadresse for å beskytte kontoen din.</value>
+  </data>
+  <data name="AddEmailTitle" xml:space="preserve">
+    <value>Legg til e-post</value>
   </data>
   <data name="AddEmojiInstalled" xml:space="preserve">
     <value>Emoji ble lagt til.</value>
@@ -1060,7 +1072,7 @@ til: {1}</value>
     <value>Finn folk i nærheten</value>
   </data>
   <data name="AddPhoto" xml:space="preserve">
-    <value>Velg nytt bilde eller ny video</value>
+    <value>Angi nytt bilde eller ny video</value>
   </data>
   <data name="AddProxy" xml:space="preserve">
     <value>Legg til proxy</value>
@@ -1196,6 +1208,9 @@ til: {1}</value>
   </data>
   <data name="AllPhotos" xml:space="preserve">
     <value>Alle bilder</value>
+  </data>
+  <data name="AllReactions" xml:space="preserve">
+    <value>Alle reaksjoner</value>
   </data>
   <data name="AllSessionsTerminated" xml:space="preserve">
     <value>Anne andre økter ble avsluttet.</value>
@@ -2196,6 +2211,9 @@ Soloppgang: {1}</value>
   <data name="Bans_other" xml:space="preserve">
     <value>{0} utestengelser</value>
   </data>
+  <data name="BanUser" xml:space="preserve">
+    <value>Utesteng bruker</value>
+  </data>
   <data name="BioCopied" xml:space="preserve">
     <value>Beskrivelse kopiert til utklippstavle</value>
   </data>
@@ -2361,7 +2379,7 @@ Den vil kunne få tilgang til **IP adressen din** og grunnleggende enhetsinforma
     <value>**{0}** ber om å bli lagt til i vedleggsmenyen din slik at du kan åpne den i alle samtaler.</value>
   </data>
   <data name="BotRestart" xml:space="preserve">
-    <value>Start på nytt</value>
+    <value>Start robot på nytt</value>
   </data>
   <data name="BotRestrictionsCanDo" xml:space="preserve">
     <value>Hva kan denne roboten gjøre?</value>
@@ -2397,7 +2415,7 @@ Den vil kunne få tilgang til **IP adressen din** og grunnleggende enhetsinforma
     <value>Endringer du har gjort er kanskje ikke lagret.</value>
   </data>
   <data name="BotWebViewCloseAnyway" xml:space="preserve">
-    <value>Lukk alikevel</value>
+    <value>Lukk allikevel</value>
   </data>
   <data name="BotWebViewDeleteBot" xml:space="preserve">
     <value>Fjern fra meny</value>
@@ -2742,6 +2760,12 @@ Hvis det ikke var deg, ber vi deg å oppgi koden du akkurat fikk tilsendt på SM
   <data name="ChangeColorToColor" xml:space="preserve">
     <value>Vil du bruke din nåværende bakgrunn eller tilbakestille den til standard for dette temaet?</value>
   </data>
+  <data name="ChangeEmail" xml:space="preserve">
+    <value>Endre e-post</value>
+  </data>
+  <data name="ChangeEmojiStatus" xml:space="preserve">
+    <value>Endre status</value>
+  </data>
   <data name="ChangeLanguageLater" xml:space="preserve">
     <value>Du kan endre språket i innstillingene senere.</value>
   </data>
@@ -3024,7 +3048,7 @@ Merk: hvis du glemmer tilgangskoden, må du reinstallere appen. Alle hemmelige s
     <value>Andre medlemmer</value>
   </data>
   <data name="ChannelOtherSubscriberJoined" xml:space="preserve">
-    <value>ble med i {0}</value>
+    <value>ble med {0}</value>
   </data>
   <data name="ChannelOtherSubscribers" xml:space="preserve">
     <value>Andre abonnenter</value>
@@ -3039,7 +3063,7 @@ Merk: hvis du glemmer tilgangskoden, må du reinstallere appen. Alle hemmelige s
     <value>Kanalen {0} oppdaterte bildet</value>
   </data>
   <data name="ChannelPostDeleted" xml:space="preserve">
-    <value>Beklager, denne meldingen har blitt fjernet fra gruppen.</value>
+    <value>Beklager, denne meldingen har blitt fjernet fra samtalegruppen.</value>
   </data>
   <data name="ChannelPrivate" xml:space="preserve">
     <value>Privat kanal</value>
@@ -3178,7 +3202,7 @@ Minimum lengde er 5 tegn.</value>
     <value>{0} tegn</value>
   </data>
   <data name="CharactersPerMessage" xml:space="preserve">
-    <value>{0} pr melding</value>
+    <value>{0} pr. melding</value>
   </data>
   <data name="ChatAdmin" xml:space="preserve">
     <value>admin</value>
@@ -3292,10 +3316,10 @@ Minimum lengde er 5 tegn.</value>
     <value>Folk vil kunne finne gruppen din i &quot;Folk i nærheten&quot;-seksjonen.</value>
   </data>
   <data name="ChatSetNewPhoto" xml:space="preserve">
-    <value>Velg nytt bilde eller video</value>
+    <value>Angi nytt bilde eller video</value>
   </data>
   <data name="ChatSetPhotoOrVideo" xml:space="preserve">
-    <value>Velg bilde eller video</value>
+    <value>Angi bilde eller video</value>
   </data>
   <data name="ChatSetThisLocation" xml:space="preserve">
     <value>Velg denne posisjonen</value>
@@ -3444,6 +3468,18 @@ Minimum lengde er 5 tegn.</value>
   <data name="CheckPhoneNumberYes" xml:space="preserve">
     <value>Ja</value>
   </data>
+  <data name="CheckYourEmail" xml:space="preserve">
+    <value>Sjekk e-posten din.</value>
+  </data>
+  <data name="CheckYourEmailSubtitle" xml:space="preserve">
+    <value>Vennligst oppgi koden vi har sendt til din e-post {0}.</value>
+  </data>
+  <data name="CheckYourNewEmail" xml:space="preserve">
+    <value>Sjekk din nye e-post</value>
+  </data>
+  <data name="CheckYourNewEmailSubtitle" xml:space="preserve">
+    <value>Vennligst oppgi koden vi har sendt til din nye e-post {0}.</value>
+  </data>
   <data name="ChooseCountry" xml:space="preserve">
     <value>Velg land</value>
   </data>
@@ -3586,7 +3622,13 @@ Minimum lengde er 5 tegn.</value>
     <value>Du kan logge inn på nettsider som støtter innlogging med Telegram.</value>
   </data>
   <data name="ClearRecentEmoji" xml:space="preserve">
-    <value>Fjern nylige emoji?</value>
+    <value>Fjern nylige Emoji?</value>
+  </data>
+  <data name="ClearRecentEmojiStatusesText" xml:space="preserve">
+    <value>Vil du tømme dine nylig brukte emoji statuser og tilbakestille forslagene?</value>
+  </data>
+  <data name="ClearRecentEmojiStatusesTitle" xml:space="preserve">
+    <value>Tøm nylige statuser</value>
   </data>
   <data name="ClearRecentEmojiText" xml:space="preserve">
     <value>Vil du fjerne alle dine nylige brukte emojier?</value>
@@ -3596,6 +3638,12 @@ Minimum lengde er 5 tegn.</value>
   </data>
   <data name="ClearRecentHistory" xml:space="preserve">
     <value>Slett historikk</value>
+  </data>
+  <data name="ClearRecentReactionsAlertMessage" xml:space="preserve">
+    <value>Vil du tømme dine nylige brukte reaksjonsemojier fra forslag?</value>
+  </data>
+  <data name="ClearRecentReactionsAlertTitle" xml:space="preserve">
+    <value>Tøm nylige emojier</value>
   </data>
   <data name="ClearRecentStickersAlertMessage" xml:space="preserve">
     <value>Vil du fjerne alle nylige brukte klistremerker?</value>
@@ -3834,7 +3882,7 @@ Når {1} oppdaterer Telegram, vil bilder med en timer på 1 minutt eller mindre 
     <value>Kontakt support</value>
   </data>
   <data name="ContactSupportInfo" xml:space="preserve">
-    <value>Fortell oss om problemer du støter på; å logge ut hjelper vanligvis ikke.</value>
+    <value>Fortell oss om problemer du støter på – å logge ut hjelper vanligvis ikke.</value>
   </data>
   <data name="Continue" xml:space="preserve">
     <value>Fortsett</value>
@@ -3907,7 +3955,7 @@ Oppgrader til en supergruppe for mer plass og flere funksjoner:
     <value>Opprett</value>
   </data>
   <data name="CreateEncryptedChatError" xml:space="preserve">
-    <value>En feil oppstod.</value>
+    <value>Noe gikk galt.</value>
   </data>
   <data name="CreateGroupError" xml:space="preserve">
     <value>Beklager, du kan ikke lage en gruppe med disse brukerne på grunn av deres personverninnstillinger.</value>
@@ -4464,6 +4512,9 @@ Dine gjenstående alternativer er å prøve et annet nummer eller å kontakte Te
   <data name="DisablePasscodeTurnOff" xml:space="preserve">
     <value>Deaktiver</value>
   </data>
+  <data name="DisableReactionsInfo" xml:space="preserve">
+    <value>Medlemmer av denne gruppen kan ikke legge til reaksjoner på meldinger.</value>
+  </data>
   <data name="DisappearingGif" xml:space="preserve">
     <value>Selvdestruerende GIF</value>
   </data>
@@ -4595,7 +4646,7 @@ Alle fra kanalen vil kunne se meldingene i denne gruppen.</value>
     <value>Delte filer</value>
   </data>
   <data name="Done" xml:space="preserve">
-    <value>Ferdig</value>
+    <value>Fullført</value>
   </data>
   <data name="DoNoSetTheme" xml:space="preserve">
     <value>Ikke bruk tema</value>
@@ -4613,13 +4664,13 @@ Alle fra kanalen vil kunne se meldingene i denne gruppen.</value>
     <value>Jeg håper du nyter dagen like mye som jeg gjør!</value>
   </data>
   <data name="DoubleTapPreviewRational" xml:space="preserve">
-    <value>Trykk dobbelt på denne meldingen for en rask reaksjon.</value>
+    <value>Trykk dobbelt på denne meldingen for hurtigreaksjon.</value>
   </data>
   <data name="DoubleTapPreviewSenderName" xml:space="preserve">
     <value>Dino</value>
   </data>
   <data name="DoubleTapSetting" xml:space="preserve">
-    <value>Hurtig reaksjon</value>
+    <value>Hurtigreaksjon</value>
   </data>
   <data name="DownloadedFiles" xml:space="preserve">
     <value>Nedlastede filer</value>
@@ -4824,8 +4875,20 @@ Hvis ingen spesifikke samtaler blir valgt, vil dine sist brukte samtaler bli vis
 
 Hvis ingen er valgt, vil dine mest brukte kontakter bli vist i dette miniprogrammet.</value>
   </data>
+  <data name="EmailAddressInvalid" xml:space="preserve">
+    <value>Ugyldig e-post adresse.</value>
+  </data>
   <data name="EmailCopied" xml:space="preserve">
     <value>E-post kopiert til utklippstavlen.</value>
+  </data>
+  <data name="EmailLogin" xml:space="preserve">
+    <value>E-post for innlogging</value>
+  </data>
+  <data name="EmailLoginChangeMessage" xml:space="preserve">
+    <value>Denne e-postadressen vil bli brukt hver gang du logger inn på Telegram-kontoen din fra en ny enhet.</value>
+  </data>
+  <data name="EmailNotAllowed" xml:space="preserve">
+    <value>Dette e-post domenet er ikke tillatt.</value>
   </data>
   <data name="EmailPasswordConfirmText" xml:space="preserve">
     <value>Vennligst følg disse stegene for å fullføre oppsett av totrinnsbekreftelse:
@@ -4840,6 +4903,9 @@ Hvis ingen er valgt, vil dine mest brukte kontakter bli vist i dette miniprogram
   </data>
   <data name="EmailPasswordConfirmText3" xml:space="preserve">
     <value>For å fullføre oppsett av totrinnsbekreftelse, sjekk {0} (ikke glem søppelpost) og oppgi koden vi akkurat sendte deg.</value>
+  </data>
+  <data name="EmailTokenInvalid" xml:space="preserve">
+    <value>Ugyldig e-post token.</value>
   </data>
   <data name="Emoji" xml:space="preserve">
     <value>Emoji</value>
@@ -4880,6 +4946,9 @@ Hvis ingen er valgt, vil dine mest brukte kontakter bli vist i dette miniprogram
   <data name="EmojiBotInfo" xml:space="preserve">
     <value>Kunstnere er hjertelig velkomne til å legge til egne emojipakker ved å bruke @stickers roboten vår.</value>
   </data>
+  <data name="EmojiCopied" xml:space="preserve">
+    <value>Emoji kopiert til utklippstavle.</value>
+  </data>
   <data name="EmojiCount_one" xml:space="preserve">
     <value>{0} emoji</value>
   </data>
@@ -4894,6 +4963,9 @@ Hvis ingen er valgt, vil dine mest brukte kontakter bli vist i dette miniprogram
   </data>
   <data name="EmojiInteractionTapHint" xml:space="preserve">
     <value>Hvis **{0}** hadde hatt denne samtalen åpen nå, ville vedkommende også se denne animasjonen.</value>
+  </data>
+  <data name="EmojiLongtapHint" xml:space="preserve">
+    <value>Hold en emoji for å angi en nedtelling</value>
   </data>
   <data name="EmojiPackCount_one" xml:space="preserve">
     <value>{0} emojipakke</value>
@@ -4912,6 +4984,9 @@ Hvis ingen er valgt, vil dine mest brukte kontakter bli vist i dette miniprogram
   </data>
   <data name="EmojiRemovedMultipleInfo_other" xml:space="preserve">
     <value>{0} pakker ble fjernet fra dine emojier.</value>
+  </data>
+  <data name="EmojiStatusExpireHint" xml:space="preserve">
+    <value>Din status utløper {0}</value>
   </data>
   <data name="EmojiSuggestions" xml:space="preserve">
     <value>Emoji forslag</value>
@@ -4933,6 +5008,9 @@ Hvis ingen er valgt, vil dine mest brukte kontakter bli vist i dette miniprogram
   </data>
   <data name="Enable" xml:space="preserve">
     <value>Aktiver</value>
+  </data>
+  <data name="EnableAllReactionsInfo" xml:space="preserve">
+    <value>Medlemmer i gruppen kan bruke en hvilken som helst emoji som reaksjon til meldinger.</value>
   </data>
   <data name="EnableAllStreamingInfo" xml:space="preserve">
     <value>Når det er mulig, vil Telegram starte å spille videoer og musikk med en gang, uten å måtte vente på at filene skal lastes ned først.</value>
@@ -4967,6 +5045,9 @@ Du vil trenge passordet du har angitt her for å logge inn på din Telegram-kont
   </data>
   <data name="EnableReactionsGroupInfo" xml:space="preserve">
     <value>Tillat medlemmer å reagere på gruppemeldinger.</value>
+  </data>
+  <data name="EnableSomeReactionsInfo" xml:space="preserve">
+    <value>Medlemmer av gruppen kan kun bruke enkelte godkjente emojier som reaksjoner på meldinger.</value>
   </data>
   <data name="EnableStreaming" xml:space="preserve">
     <value>Strøm videoer og lydfiler</value>
@@ -5041,6 +5122,9 @@ Les mer på telegram.org</value>
   <data name="EnterListName" xml:space="preserve">
     <value>Oppgi listenavn</value>
   </data>
+  <data name="EnterNewEmail" xml:space="preserve">
+    <value>Angi ny e-post</value>
+  </data>
   <data name="EnterNewFirstPasscode" xml:space="preserve">
     <value>Angi en tilgangskode</value>
   </data>
@@ -5068,7 +5152,7 @@ Vennligst oppgi temanavn:</value>
     <value>Oppgi din Telegram tilgangskode</value>
   </data>
   <data name="ErrorOccurred" xml:space="preserve">
-    <value>En feil oppstod.</value>
+    <value>Noe gikk galt.</value>
   </data>
   <data name="ErrorRingtoneDurationTooLong" xml:space="preserve">
     <value>Maksimum lengde er {0} sekunder.</value>
@@ -5436,7 +5520,7 @@ Varighet: {1}</value>
     <value>un1 deaktiverte saktemodus</value>
   </data>
   <data name="EventLogToggledSlowmodeOn" xml:space="preserve">
-    <value>un1 satte saktemodus nedtelling til {0}</value>
+    <value>un1 anga saktemodus nedtelling til {0}</value>
   </data>
   <data name="EventLogUnpinnedMessages" xml:space="preserve">
     <value>un1 løsnet en melding</value>
@@ -6143,6 +6227,12 @@ Alle hemmelige samtaler vil gå tapt.</value>
   <data name="GifsTab2" xml:space="preserve">
     <value>GIF&apos;er</value>
   </data>
+  <data name="GiftMonths_one" xml:space="preserve">
+    <value>{0}-måneds</value>
+  </data>
+  <data name="GiftMonths_other" xml:space="preserve">
+    <value>{0}-måneders</value>
+  </data>
   <data name="GiftPremium" xml:space="preserve">
     <value>Gi Premium</value>
   </data>
@@ -6649,6 +6739,9 @@ Meldinger blir importert til nåværende dag, men vil også inkludere opprinneli
   <data name="InstallGoogleMaps" xml:space="preserve">
     <value>Installer Google Maps?</value>
   </data>
+  <data name="InstallHuaweiMaps" xml:space="preserve">
+    <value>Installere Petal Maps?</value>
+  </data>
   <data name="InstallOfficialApp" xml:space="preserve">
     <value>Installer offisiell app</value>
   </data>
@@ -7000,7 +7093,7 @@ Du kan endre språket ditt tilbake når som helst i innstillingene.</value>
     <value>Språket ble ikke funnet.</value>
   </data>
   <data name="LargeEmoji" xml:space="preserve">
-    <value>Stor Emoji</value>
+    <value>Store emojier</value>
   </data>
   <data name="LastActiveCommunities" xml:space="preserve">
     <value>Nylige aktive samfunn</value>
@@ -7389,6 +7482,9 @@ Det kan ta noen minutter å fullføre denne handlingen.</value>
   <data name="LoginAttemptsInfo" xml:space="preserve">
     <value>Enhetene ovenfor har ingen tilgang til dine meldinger. Riktig kode ble oppgitt, men ikke riktig passord.</value>
   </data>
+  <data name="LoginOrSingInWithGoogle" xml:space="preserve">
+    <value>eller</value>
+  </data>
   <data name="LoginPassword" xml:space="preserve">
     <value>Passord</value>
   </data>
@@ -7671,6 +7767,15 @@ Minimum lengde er 5 tegn.</value>
   <data name="MessageContainsEmojiPacks_other" xml:space="preserve">
     <value>Denne meldingen inneholder emojier fra **{0} pakker**.</value>
   </data>
+  <data name="MessageContainsEmojiPackSingle" xml:space="preserve">
+    <value>Denne meldingen inneholder **{0}** emoji.</value>
+  </data>
+  <data name="MessageContainsReactionsPack" xml:space="preserve">
+    <value>Emoji fra {0} pakken ble brukt som reaksjoner.</value>
+  </data>
+  <data name="MessageContainsReactionsPacks_other" xml:space="preserve">
+    <value>Emoji fra **{0} pakker** ble brukt som reaksjoner.</value>
+  </data>
   <data name="MessageCopied" xml:space="preserve">
     <value>Melding kopiert til utklippstavlen.</value>
   </data>
@@ -7817,6 +7922,21 @@ Minimum lengde er 5 tegn.</value>
   </data>
   <data name="Mi" xml:space="preserve">
     <value>miles</value>
+  </data>
+  <data name="MicrophoneForVoiceMessages" xml:space="preserve">
+    <value>Mikrofon for talemeldinger</value>
+  </data>
+  <data name="MicrophoneForVoiceMessagesBuiltIn" xml:space="preserve">
+    <value>Innebygget</value>
+  </data>
+  <data name="MicrophoneForVoiceMessagesSco" xml:space="preserve">
+    <value>Hodetelefoner</value>
+  </data>
+  <data name="MicrophoneForVoiceMessagesScoHint" xml:space="preserve">
+    <value>Bruk av mikrofon på hodetelefoner kan redusere bakgrunnsstøy, men det vil også redusere lydkvaliteten.</value>
+  </data>
+  <data name="MicrophoneForVoiceMessagesScoIfConnected" xml:space="preserve">
+    <value>Hodetelefoner (hvis tilkoblet)</value>
   </data>
   <data name="MigrateOldFolderButton" xml:space="preserve">
     <value>Flytt filer nå</value>
@@ -8214,7 +8334,7 @@ Du kan tilpasse varslingsinnstillinger for en samtale ved å åpne profilen og v
     <value>Ingen forespørsler om å få bli med</value>
   </data>
   <data name="NoMemberRequestsDescription" xml:space="preserve">
-    <value>Det er ingen ventende forespørsler.</value>
+    <value>Det er ingen ventende medlemsforespørsler.</value>
   </data>
   <data name="NoMessages" xml:space="preserve">
     <value>Ingen meldinger her enda…</value>
@@ -8260,6 +8380,12 @@ Du kan tilpasse varslingsinnstillinger for en samtale ved å åpne profilen og v
   </data>
   <data name="NoPopup" xml:space="preserve">
     <value>Ingen sprettoppvindu</value>
+  </data>
+  <data name="NoReactions" xml:space="preserve">
+    <value>Ingen reaksjoner</value>
+  </data>
+  <data name="NoReactionsFound" xml:space="preserve">
+    <value>Ingen reaksjoner funnet</value>
   </data>
   <data name="NoRecent" xml:space="preserve">
     <value>Ingen nylige</value>
@@ -8992,6 +9118,9 @@ Telegram teamet</value>
   <data name="OnlineCount_other" xml:space="preserve">
     <value>{0} på nett</value>
   </data>
+  <data name="OnlyAllowThisReactions" xml:space="preserve">
+    <value>Tillat kun disse reaksjonene</value>
+  </data>
   <data name="OnlyIfSilent" xml:space="preserve">
     <value>Bare på lydløs</value>
   </data>
@@ -9017,7 +9146,7 @@ Telegram teamet</value>
     <value>Åpne kanal</value>
   </data>
   <data name="OpenChannelPost" xml:space="preserve">
-    <value>VIS MELDING</value>
+    <value>SE MELDING</value>
   </data>
   <data name="OpenFile" xml:space="preserve">
     <value>ÅPNE FIL</value>
@@ -9038,13 +9167,13 @@ Telegram teamet</value>
     <value>Åpne i…</value>
   </data>
   <data name="OpenMessage" xml:space="preserve">
-    <value>VIS MELDING</value>
+    <value>SE MELDING</value>
   </data>
   <data name="OpenProfile" xml:space="preserve">
     <value>Åpne profil</value>
   </data>
   <data name="OpenTheme" xml:space="preserve">
-    <value>VIS TEMA</value>
+    <value>SE TEMA</value>
   </data>
   <data name="OpenUrlAlert" xml:space="preserve">
     <value>Åpne denne lenken: {0}?</value>
@@ -9890,7 +10019,7 @@ Du kan se *ofte stilte spørsmål* for mer info.</value>
     <value>Betalingsmetode</value>
   </data>
   <data name="PaymentCheckoutMethodNewCard" xml:space="preserve">
-    <value>Nytt kort</value>
+    <value>Legg til bankkort…</value>
   </data>
   <data name="PaymentCheckoutName" xml:space="preserve">
     <value>Navn</value>
@@ -10130,7 +10259,7 @@ Vi henter tilgang til posisjonen din kun i tidsrommet du velger, og du kan stopp
     <value>Telegram trenger tilgang til å tegne over andre apper for å spille av video i bilde-i-bilde modus.</value>
   </data>
   <data name="PermissionDrawAboveOtherAppsGroupCall" xml:space="preserve">
-    <value>Overleggsmodus lar deg bruke trykk for å snakke og se hvem som snakker selv om du er utenfor Telegram.</value>
+    <value>Overleggsmodus lar deg bruke trykk-for-å-snakke og se hvem som snakker selv om du er utenfor Telegram.</value>
   </data>
   <data name="PermissionDrawAboveOtherAppsGroupCallTitle" xml:space="preserve">
     <value>Videosamtale overlegg</value>
@@ -10436,7 +10565,10 @@ Vi henter tilgang til posisjonen din kun i tidsrommet du velger, og du kan stopp
     <value>Trykk for å velge det riktige svaret</value>
   </data>
   <data name="PollViewResults" xml:space="preserve">
-    <value>VIS RESULTATER</value>
+    <value>SE RESULTATER</value>
+  </data>
+  <data name="PopularReactions" xml:space="preserve">
+    <value>Populære</value>
   </data>
   <data name="PopupDisabled" xml:space="preserve">
     <value>Deaktivert</value>
@@ -10457,7 +10589,7 @@ Vi henter tilgang til posisjonen din kun i tidsrommet du velger, og du kan stopp
     <value>Avansert samtalestyring</value>
   </data>
   <data name="PremiumPreviewAdvancedChatManagementDescription" xml:space="preserve">
-    <value>Verktøy for å velge standardmappe, automatisk arkivering og skjuling av nye samtaler fra ikke-kontakter.</value>
+    <value>Verktøy for å angi en standardmappe, automatisk arkivering og skjule nye samtaler fra ikke-kontakter.</value>
   </data>
   <data name="PremiumPreviewAnimatedProfiles" xml:space="preserve">
     <value>Animerte profilbilder</value>
@@ -10492,6 +10624,12 @@ Vi henter tilgang til posisjonen din kun i tidsrommet du velger, og du kan stopp
   <data name="PremiumPreviewEmojiPack" xml:space="preserve">
     <value>Denne emojipakken er kun tilgjengelig for abonnenter på **Telegram Premium**.</value>
   </data>
+  <data name="PremiumPreviewEmojiStatus" xml:space="preserve">
+    <value>Emoji status</value>
+  </data>
+  <data name="PremiumPreviewEmojiStatusDescription" xml:space="preserve">
+    <value>Velg mellom tusener av emojier for å vise nåværende aktivitet ved siden av navnet ditt.</value>
+  </data>
   <data name="PremiumPreviewLimits" xml:space="preserve">
     <value>Doble grenser</value>
   </data>
@@ -10515,6 +10653,12 @@ Vi henter tilgang til posisjonen din kun i tidsrommet du velger, og du kan stopp
   </data>
   <data name="PremiumPreviewReactions" xml:space="preserve">
     <value>Unike reaksjoner</value>
+  </data>
+  <data name="PremiumPreviewReactions2" xml:space="preserve">
+    <value>Uendelige reaksjoner</value>
+  </data>
+  <data name="PremiumPreviewReactions2Description" xml:space="preserve">
+    <value>Reager med tusener av emojier – med flere reaksjoner pr. melding.</value>
   </data>
   <data name="PremiumPreviewReactionsDescription" xml:space="preserve">
     <value>Ekstra animerte reaksjoner på meldinger, tilgjengelig kun for Premium abonnenter.</value>
@@ -10548,6 +10692,15 @@ Vi henter tilgang til posisjonen din kun i tidsrommet du velger, og du kan stopp
   </data>
   <data name="PremiumStickerTooltip" xml:space="preserve">
     <value>Denne klistremerkepakken inneholder premium klistremerker som denne.</value>
+  </data>
+  <data name="PremiumTierAnnual" xml:space="preserve">
+    <value>Årlig</value>
+  </data>
+  <data name="PremiumTierMonthly" xml:space="preserve">
+    <value>Månedlig</value>
+  </data>
+  <data name="PremiumTierSemiannual" xml:space="preserve">
+    <value>Halvårlig</value>
   </data>
   <data name="PreviewFeedback" xml:space="preserve">
     <value>Rapporter en feil med denne visningen</value>
@@ -10626,6 +10779,12 @@ Vi henter tilgang til posisjonen din kun i tidsrommet du velger, og du kan stopp
   </data>
   <data name="PricePerMonth" xml:space="preserve">
     <value>{0} / måned</value>
+  </data>
+  <data name="PricePerMonthMe" xml:space="preserve">
+    <value>{0}/måned</value>
+  </data>
+  <data name="PricePerYear" xml:space="preserve">
+    <value>{0}/år</value>
   </data>
   <data name="PrimaryLinkHelp" xml:space="preserve">
     <value>Alle på Telegram kan bli med i gruppen din ved å bruke denne lenken.</value>
@@ -11113,11 +11272,17 @@ Vi henter tilgang til posisjonen din kun i tidsrommet du velger, og du kan stopp
   <data name="Reactions" xml:space="preserve">
     <value>Reaksjoner</value>
   </data>
+  <data name="ReactionsAll" xml:space="preserve">
+    <value>Alle</value>
+  </data>
   <data name="ReactionsCount_one" xml:space="preserve">
     <value>{0} reaksjon</value>
   </data>
   <data name="ReactionsCount_other" xml:space="preserve">
     <value>{0} reaksjoner</value>
+  </data>
+  <data name="ReactionsLongtapHint" xml:space="preserve">
+    <value>Hold emoji for å sende en super reaksjon</value>
   </data>
   <data name="ReactionsOff" xml:space="preserve">
     <value>Deaktivert</value>
@@ -11139,6 +11304,9 @@ Vi henter tilgang til posisjonen din kun i tidsrommet du velger, og du kan stopp
   </data>
   <data name="RecentlyDownloaded" xml:space="preserve">
     <value>Nylig lastet ned</value>
+  </data>
+  <data name="RecentlyUsed" xml:space="preserve">
+    <value>Nylig brukt</value>
   </data>
   <data name="RecentlyViewed" xml:space="preserve">
     <value>Nylig sett</value>
@@ -11288,10 +11456,13 @@ Vi henter tilgang til posisjonen din kun i tidsrommet du velger, og du kan stopp
     <value>Svar</value>
   </data>
   <data name="ReplyToGroup" xml:space="preserve">
-    <value>Svar {0}</value>
+    <value>Svar</value>
   </data>
   <data name="ReplyToUser" xml:space="preserve">
-    <value>Svar {0}</value>
+    <value>Svar</value>
+  </data>
+  <data name="ReportAlertReaction" xml:space="preserve">
+    <value>Er du sikker på at du vil rapportere reaksjoner fra denne brukeren?</value>
   </data>
   <data name="ReportChat" xml:space="preserve">
     <value>Rapportér</value>
@@ -11338,6 +11509,12 @@ Vi henter tilgang til posisjonen din kun i tidsrommet du velger, og du kan stopp
   <data name="ReportMessagesCount" xml:space="preserve">
     <value>RAPPORTER {0}</value>
   </data>
+  <data name="ReportReaction" xml:space="preserve">
+    <value>Rapporter reaksjon</value>
+  </data>
+  <data name="ReportReactionAndBan" xml:space="preserve">
+    <value>Utesteng og rapporter</value>
+  </data>
   <data name="ReportSelectMessages" xml:space="preserve">
     <value>Velg meldinger</value>
   </data>
@@ -11371,6 +11548,9 @@ Takk for hjelpen!</value>
   </data>
   <data name="ReportSpamUser" xml:space="preserve">
     <value>BLOKKER BRUKER</value>
+  </data>
+  <data name="ReportSpamUserEmojiStatusHint" xml:space="preserve">
+    <value>Denne kontoen bruker {0} som en egendefinert status ved siden av navnet sitt. Slike emojier er tilgjengelige for alle som abonnerer på {1}.</value>
   </data>
   <data name="ReportTitleChild" xml:space="preserve">
     <value>Rapporter misbruk av barn</value>
@@ -11568,7 +11748,7 @@ Du kan avbryte denne prosessen når som helst.</value>
     <value>Hvis du ikke har tilgang til gjenopprettingseposten din, er mulighetene som gjenstår å enten huske passordet eller vente 7 dager til passordet er tilbakestilt.</value>
   </data>
   <data name="RestorePasswordNoEmailText" xml:space="preserve">
-    <value>Siden du ikke satte opp en e-post adresse for gjenoppretting av glemt passord, er dine eneste alternativer enten å huske passordet ditt eller tilbakestille kontoen din.</value>
+    <value>Siden du ikke anga en e-post adresse for gjenoppretting av glemt passord, er dine eneste alternativer enten å huske passordet ditt eller tilbakestille kontoen din.</value>
   </data>
   <data name="RestorePasswordNoEmailText2" xml:space="preserve">
     <value>Siden du ikke oppgav en gjenopprettings e-post når du satt opp passordet ditt, er dine gjenværende alternativer å enten huske passordet ditt eller å vente 7 dager til passordet ditt er tilbakestilt.</value>
@@ -11868,6 +12048,9 @@ Det kan hende du må starte appen på nytt for at endringene skal tre i kraft.</
   <data name="SearchMusic" xml:space="preserve">
     <value>Søk etter musikk</value>
   </data>
+  <data name="SearchReactionsHint" xml:space="preserve">
+    <value>Søk etter reaksjoner</value>
+  </data>
   <data name="SearchRecentFiles" xml:space="preserve">
     <value>Søk nylige filer</value>
   </data>
@@ -11987,6 +12170,12 @@ Det kan hende du må starte appen på nytt for at endringene skal tre i kraft.</
   </data>
   <data name="SelectOtherChat" xml:space="preserve">
     <value>Velg en annen samtale</value>
+  </data>
+  <data name="SelectSendAsPeerPremiumHint" xml:space="preserve">
+    <value>Abonner på **Telegram Premium** for å kunne kommentere på vegne av dine kanaler i en hvilken som helst gruppesamtale.</value>
+  </data>
+  <data name="SelectSendAsPeerPremiumOpen" xml:space="preserve">
+    <value>Åpne</value>
   </data>
   <data name="SelectTheme" xml:space="preserve">
     <value>Velg tema</value>
@@ -12157,7 +12346,7 @@ Det kan hende du må starte appen på nytt for at endringene skal tre i kraft.</
     <value>Sjekk dine Telegram meldinger</value>
   </data>
   <data name="SentAppCodeWithPhone" xml:space="preserve">
-    <value>Vi har sendt koden i **Telegram* appen for {0} på din andre enhet.</value>
+    <value>Vi har sendt koden i **Telegram appen** for {0} på din andre enhet.</value>
   </data>
   <data name="SentCallCode" xml:space="preserve">
     <value>Vi ringer ditt nummer **{0}**.
@@ -12192,13 +12381,13 @@ Ikke ta telefonen. Telegram vil ordne alt automatisk.</value>
     <value>Enheter</value>
   </data>
   <data name="Set" xml:space="preserve">
-    <value>Velg</value>
+    <value>Bruk</value>
   </data>
   <data name="SetAdditionalPassword" xml:space="preserve">
     <value>Angi tilleggspassord</value>
   </data>
   <data name="SetAdditionalPasswordInfo" xml:space="preserve">
-    <value>Du kan velge et passord som kreves når du logger inn på en ny enhet i tillegg til koden du får på SMS.</value>
+    <value>Du kan angi et passord som kreves når du logger inn på en ny enhet i tillegg til koden du får på SMS.</value>
   </data>
   <data name="SetAdmins" xml:space="preserve">
     <value>Legg til administratorer</value>
@@ -12219,16 +12408,40 @@ Ikke ta telefonen. Telegram vil ordne alt automatisk.</value>
     <value>Utnevn til administrator</value>
   </data>
   <data name="SetAsGroupStickerSet" xml:space="preserve">
-    <value>Velg som gruppens klistremerkepakke</value>
+    <value>Angi som gruppens klistremerkepakke</value>
   </data>
   <data name="SetAsMain" xml:space="preserve">
-    <value>Sett som hovedbilde</value>
+    <value>Angi som hovedbilde</value>
   </data>
   <data name="SetBackground" xml:space="preserve">
     <value>BRUK BAKGRUNN</value>
   </data>
   <data name="SetColor" xml:space="preserve">
-    <value>Velg en farge</value>
+    <value>Angi en farge</value>
+  </data>
+  <data name="SetEmojiStatus" xml:space="preserve">
+    <value>Angi emojistatus</value>
+  </data>
+  <data name="SetEmojiStatusUntil1Hour" xml:space="preserve">
+    <value>Bruk i 1 time</value>
+  </data>
+  <data name="SetEmojiStatusUntil2Days" xml:space="preserve">
+    <value>Bruk i 2 dager</value>
+  </data>
+  <data name="SetEmojiStatusUntil2Hours" xml:space="preserve">
+    <value>Bruk i 2 timer</value>
+  </data>
+  <data name="SetEmojiStatusUntil8Hours" xml:space="preserve">
+    <value>Bruk i 8 timer</value>
+  </data>
+  <data name="SetEmojiStatusUntilButton" xml:space="preserve">
+    <value>Angi status</value>
+  </data>
+  <data name="SetEmojiStatusUntilOther" xml:space="preserve">
+    <value>Annet…</value>
+  </data>
+  <data name="SetEmojiStatusUntilTitle" xml:space="preserve">
+    <value>Bruk status frem til…</value>
   </data>
   <data name="SetNewPassword" xml:space="preserve">
     <value>Angi et nytt passord</value>
@@ -12240,7 +12453,7 @@ Ikke ta telefonen. Telegram vil ordne alt automatisk.</value>
     <value>Lås appen med en tilgangskode så andre ikke kan åpne den.</value>
   </data>
   <data name="SetProfilePhoto" xml:space="preserve">
-    <value>Velg profilbilde</value>
+    <value>Angi profilbilde</value>
   </data>
   <data name="SetRecoveryEmail" xml:space="preserve">
     <value>Angi e-post for gjenoppretting</value>
@@ -12249,7 +12462,7 @@ Ikke ta telefonen. Telegram vil ordne alt automatisk.</value>
     <value>Angi en påminnelse</value>
   </data>
   <data name="SetTimeLimit" xml:space="preserve">
-    <value>Velg tidsbegrensning</value>
+    <value>Angi tidsbegrensning</value>
   </data>
   <data name="SetTimer" xml:space="preserve">
     <value>Sett nedtelling for selvdestruering</value>
@@ -12438,7 +12651,7 @@ Ikke ta telefonen. Telegram vil ordne alt automatisk.</value>
     <value>Send til…</value>
   </data>
   <data name="SharesPerPost" xml:space="preserve">
-    <value>Delinger pr post</value>
+    <value>Delinger pr. post</value>
   </data>
   <data name="ShareTelegram" xml:space="preserve">
     <value>Del Telegram…</value>
@@ -12561,6 +12774,9 @@ Vennligst oppgi riktig nummer inkludert landskode.</value>
   <data name="ShuffleList" xml:space="preserve">
     <value>Tilfeldig rekkefølge</value>
   </data>
+  <data name="SignInWithGoogle" xml:space="preserve">
+    <value>Logg på med Google</value>
+  </data>
   <data name="SignUp" xml:space="preserve">
     <value>Registrer deg</value>
   </data>
@@ -12586,7 +12802,7 @@ Vennligst oppgi riktig nummer inkludert landskode.</value>
     <value>Velg hvor lenge hvert enkelt medlem må vente før de kan sende sin neste melding.</value>
   </data>
   <data name="SlowmodeInfoSelected" xml:space="preserve">
-    <value>Medlemmer vil bare sende en melding hver {0}.</value>
+    <value>Medlemmer vil bare kunne sende en melding i løpet av {0}.</value>
   </data>
   <data name="SlowmodeMinutes" xml:space="preserve">
     <value>{0}m</value>
@@ -12634,6 +12850,9 @@ Saktemodus er aktivert. Du kan ikke sende mer enn en melding av gangen.</value>
   </data>
   <data name="SoftUserLimitAlert" xml:space="preserve">
     <value>Du kan legge til flere medlemmer etter at du har opprettet gruppen.</value>
+  </data>
+  <data name="SomeReactions" xml:space="preserve">
+    <value>Noen reaksjoner</value>
   </data>
   <data name="SortBy" xml:space="preserve">
     <value>Sorter etter</value>
@@ -13103,6 +13322,9 @@ Hvis &apos;**synkroniser kontakter**&apos; er aktivert, vil din nåværende kont
   <data name="TapForVideo" xml:space="preserve">
     <value>Trykk for foto, hold for video</value>
   </data>
+  <data name="TapHereEmoji" xml:space="preserve">
+    <value>Trykk {0} for å få tilgang til flere emojier.</value>
+  </data>
   <data name="TapHereGifs" xml:space="preserve">
     <value>Trykk her for å se lagrede GIF&apos;er</value>
   </data>
@@ -13218,11 +13440,26 @@ Premium-abonnent.</value>
   <data name="TelegramPremiumUserGiftedPremiumDialogTitle" xml:space="preserve">
     <value>**{0}** har gitt deg et {1}-måneders abonnement på Telegram Premium.</value>
   </data>
+  <data name="TelegramPremiumUserGiftedPremiumDialogTitleWithPlural" xml:space="preserve">
+    <value>**{0}** har gitt deg et **{1}** abonnement på Telegram Premium.</value>
+  </data>
   <data name="TelegramPremiumUserGiftedPremiumOutboundDialogSubtitle" xml:space="preserve">
     <value>**{0}** har nå tilgang til ekstra funksjoner.</value>
   </data>
   <data name="TelegramPremiumUserGiftedPremiumOutboundDialogTitle" xml:space="preserve">
     <value>Du ga **{0}** et {1}-månedersabonnement på Telegram Premium.</value>
+  </data>
+  <data name="TelegramPremiumUserGiftedPremiumOutboundDialogTitleWithPlural" xml:space="preserve">
+    <value>Du ga **{0}** et {1} abonnement på Telegram Premium.</value>
+  </data>
+  <data name="TelegramPremiumUserStatusDefaultDialogTitle" xml:space="preserve">
+    <value>Dette er {0} sin nåværende status.</value>
+  </data>
+  <data name="TelegramPremiumUserStatusDialogSubtitle" xml:space="preserve">
+    <value>Emojistatus er en premium funksjon. Andre funksjoner inkludert i **Telegram Premium**:</value>
+  </data>
+  <data name="TelegramPremiumUserStatusDialogTitle" xml:space="preserve">
+    <value>{0} har angitt denne emojien fra **{1}** som sin nåværende status.</value>
   </data>
   <data name="TelegramTones" xml:space="preserve">
     <value>Telegram lyder</value>
@@ -13443,7 +13680,7 @@ Temalenker må være lengre enn 5 tegn, og kan bruke a-z, 0-9 og understreker.</
     <value>Tilbakestill innstillinger</value>
   </data>
   <data name="ThemeSetUrl" xml:space="preserve">
-    <value>Sett lenke</value>
+    <value>Bruk lenke</value>
   </data>
   <data name="ThemeSetUrlHelp" xml:space="preserve">
     <value>Du kan bruke a-z, 0-9 og understrek.
@@ -13707,6 +13944,9 @@ Hvis du ikke er komfortabel med Telegram sine beskjedne behov, vil det ikke vær
   </data>
   <data name="UnlockPremiumEmojiPack" xml:space="preserve">
     <value>Lås opp {0}</value>
+  </data>
+  <data name="UnlockPremiumEmojiReaction" xml:space="preserve">
+    <value>Abonner på **Telegram Premium** for å låse opp denne reaksjonen.</value>
   </data>
   <data name="UnlockPremiumIcons" xml:space="preserve">
     <value>Lås opp premium ikoner</value>
@@ -14092,6 +14332,9 @@ Du kan bruke **a–z**, **0–9** og understrek. Minste lengde er **5** tegn.</v
   <data name="VerificationCode" xml:space="preserve">
     <value>Bekreftelseskode</value>
   </data>
+  <data name="VerificationCodeSubtitle" xml:space="preserve">
+    <value>Vennligst sjekk e-posten din {0} (husk å sjekke søppelpost også) og oppgi koden vi akkurat sendte deg.</value>
+  </data>
   <data name="ViaBot" xml:space="preserve">
     <value>via</value>
   </data>
@@ -14165,16 +14408,16 @@ Du kan bruke **a–z**, **0–9** og understrek. Minste lengde er **5** tegn.</v
     <value>Se</value>
   </data>
   <data name="ViewChannelStats" xml:space="preserve">
-    <value>Vis kanalstatistikk</value>
+    <value>Se kanalstatistikk</value>
   </data>
   <data name="ViewContact" xml:space="preserve">
-    <value>VIS KONTAKT</value>
+    <value>SE KONTAKT</value>
   </data>
   <data name="ViewDetails" xml:space="preserve">
-    <value>VIS KONTAKT</value>
+    <value>SE KONTAKT</value>
   </data>
   <data name="ViewDiscussion" xml:space="preserve">
-    <value>Vis samtale</value>
+    <value>Se samtale</value>
   </data>
   <data name="ViewersWatching_one" xml:space="preserve">
     <value>{0} seer</value>
@@ -14189,7 +14432,7 @@ Du kan bruke **a–z**, **0–9** og understrek. Minste lengde er **5** tegn.</v
     <value>Se unntak</value>
   </data>
   <data name="ViewInChat" xml:space="preserve">
-    <value>Vis i samtale</value>
+    <value>Se i samtale</value>
   </data>
   <data name="ViewingMembers" xml:space="preserve">
     <value>Lesende medlemmer</value>
@@ -14201,13 +14444,13 @@ Du kan bruke **a–z**, **0–9** og understrek. Minste lengde er **5** tegn.</v
     <value>Meldingsstatistikk</value>
   </data>
   <data name="ViewPackPreview" xml:space="preserve">
-    <value>Vis pakke</value>
+    <value>Se pakke</value>
   </data>
   <data name="ViewReplies_one" xml:space="preserve">
-    <value>Vis {0} svar</value>
+    <value>Se {0} svar</value>
   </data>
   <data name="ViewReplies_other" xml:space="preserve">
-    <value>Vis {0} svar</value>
+    <value>Se {0} svar</value>
   </data>
   <data name="Views_one" xml:space="preserve">
     <value>{0} visning</value>
@@ -14219,13 +14462,13 @@ Du kan bruke **a–z**, **0–9** og understrek. Minste lengde er **5** tegn.</v
     <value>Visninger etter kilde</value>
   </data>
   <data name="ViewsPerPost" xml:space="preserve">
-    <value>Visniger pr post</value>
+    <value>Visniger pr. post</value>
   </data>
   <data name="ViewStats" xml:space="preserve">
-    <value>Vis statistikk</value>
+    <value>Se statistikk</value>
   </data>
   <data name="ViewThread" xml:space="preserve">
-    <value>Vis tråd</value>
+    <value>Se tråd</value>
   </data>
   <data name="Vignette" xml:space="preserve">
     <value>Vignett</value>
@@ -14387,7 +14630,7 @@ Deltakere vil se at det gjøres opptak av samtalen.</value>
 Nye deltakere har kun tilgang til lydstrømmen.</value>
   </data>
   <data name="VoipChannelViewVoiceChat" xml:space="preserve">
-    <value>VIS DIREKTESENDING</value>
+    <value>SE DIREKTESENDING</value>
   </data>
   <data name="VoipChannelVoiceChat" xml:space="preserve">
     <value>Direktesending</value>
@@ -14525,7 +14768,7 @@ Nye deltakere har kun tilgang til lydstrømmen.</value>
     <value>KOPIER LYTTELENKE</value>
   </data>
   <data name="VoipGroupCopySpeakerLink" xml:space="preserve">
-    <value>KOPIER SNAKKELENKE</value>
+    <value>KOPIER TALERLENKE</value>
   </data>
   <data name="VoipGroupDisplayAs" xml:space="preserve">
     <value>Vis meg som...</value>
@@ -15248,11 +15491,17 @@ Hvis du glemmer passordet ditt, vil du miste all tilgang til Telegram-kontoen di
   <data name="YourLocatedChannelsTooMuch" xml:space="preserve">
     <value>Beklager, du har allerede for mange posisjonsbaserte grupper. Vennligst slett en av disse først.</value>
   </data>
+  <data name="YourLoginEmailChangedSuccess" xml:space="preserve">
+    <value>Din e-post ble endret.</value>
+  </data>
   <data name="YourName" xml:space="preserve">
     <value>Navnet ditt</value>
   </data>
   <data name="YourNameChanged" xml:space="preserve">
     <value>Navn oppdatert.</value>
+  </data>
+  <data name="YourNewEmail" xml:space="preserve">
+    <value>Din nye e-post</value>
   </data>
   <data name="YourNumber" xml:space="preserve">
     <value>Ditt telefonnummer</value>

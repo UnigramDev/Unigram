@@ -187,6 +187,9 @@
   <data name="AccDescrContactSorting" xml:space="preserve">
     <value>تغییر مرتب‌سازی</value>
   </data>
+  <data name="AccDescrCustomEmoji" xml:space="preserve">
+    <value>اموجی سفارشی</value>
+  </data>
   <data name="AccDescrDownloadProgress" xml:space="preserve">
     <value>⁨{0}⁩ از ⁨{1}⁩ دانلود شد</value>
   </data>
@@ -762,10 +765,10 @@
     <value>⁨un1⁩ گروه را ترک کرد</value>
   </data>
   <data name="ActionMigrateFromGroup" xml:space="preserve">
-    <value>این گروه به ابرگروه ارتقاء یافت</value>
+    <value>این گروه به سوپرگروه ارتقاء یافت</value>
   </data>
   <data name="ActionMigrateFromGroupNotify" xml:space="preserve">
-    <value>⁨{0}⁩ به ابرگروه ارتقاء یافت</value>
+    <value>⁨{0}⁩ به سوپرگروه ارتقاء یافت</value>
   </data>
   <data name="ActionPinnedContact" xml:space="preserve">
     <value>⁨un1⁩ یک مخاطب را سنجاق کرد</value>
@@ -994,11 +997,20 @@
   <data name="AddContactTitle" xml:space="preserve">
     <value>افزودن مخاطب</value>
   </data>
+  <data name="Added" xml:space="preserve">
+    <value>اضافه شد</value>
+  </data>
   <data name="AddedBy" xml:space="preserve">
     <value>اضافه شده توسط ⁨{0}⁩ ⁨{1}⁩</value>
   </data>
   <data name="AddedToFavorites" xml:space="preserve">
     <value>استیکر به مورد علاقه‌ها اضافه شد.</value>
+  </data>
+  <data name="AddEmailSubtitle" xml:space="preserve">
+    <value>لطفاً آدرس ایمیل معتبر خود را جهت محافظت از حساب کاربری خود وارد کنید.</value>
+  </data>
+  <data name="AddEmailTitle" xml:space="preserve">
+    <value>افزودن ایمیل</value>
   </data>
   <data name="AddEmojiInstalled" xml:space="preserve">
     <value>اموجی اضافه شد.</value>
@@ -1197,6 +1209,9 @@
   </data>
   <data name="AllPhotos" xml:space="preserve">
     <value>همه عکس‌ها</value>
+  </data>
+  <data name="AllReactions" xml:space="preserve">
+    <value>تمامی واکنش‌ها</value>
   </data>
   <data name="AllSessionsTerminated" xml:space="preserve">
     <value>تمامی نشست‌های دیگر پایان یافتند.</value>
@@ -2197,6 +2212,9 @@
   <data name="Bans_other" xml:space="preserve">
     <value>⁨{0}⁩ محرومیت</value>
   </data>
+  <data name="BanUser" xml:space="preserve">
+    <value>محروم کردن کاربر</value>
+  </data>
   <data name="BioCopied" xml:space="preserve">
     <value>بیوگرافی در حافظه کپی شد.</value>
   </data>
@@ -2742,6 +2760,12 @@
   </data>
   <data name="ChangeColorToColor" xml:space="preserve">
     <value>آیا می‌خواهید از پس‌زمینه انتخاب شده فعلی خود استفاده کنید یا آن را برای این پوسته به حالت پیش‌فرض بازنشانی کنید؟</value>
+  </data>
+  <data name="ChangeEmail" xml:space="preserve">
+    <value>تغییر ایمیل</value>
+  </data>
+  <data name="ChangeEmojiStatus" xml:space="preserve">
+    <value>تغییر وضعیت</value>
   </data>
   <data name="ChangeLanguageLater" xml:space="preserve">
     <value>شما می‌توانید بعداً زبان خود را در قسمت تنظیمات تغییر دهید.</value>
@@ -3445,6 +3469,18 @@
   <data name="CheckPhoneNumberYes" xml:space="preserve">
     <value>بله</value>
   </data>
+  <data name="CheckYourEmail" xml:space="preserve">
+    <value>ایمیل خود را بررسی کنید</value>
+  </data>
+  <data name="CheckYourEmailSubtitle" xml:space="preserve">
+    <value>لطفاً کدی که به ایمیل شما ⁨{0}⁩ ارسال کردیم را وارد کنید.</value>
+  </data>
+  <data name="CheckYourNewEmail" xml:space="preserve">
+    <value>ایمیل جدید خود را بررسی کنید</value>
+  </data>
+  <data name="CheckYourNewEmailSubtitle" xml:space="preserve">
+    <value>لطفاً کدی که به ایمیل جدیدتان ⁨{0}⁩ ارسال کرده‌ایم را وارد کنید.</value>
+  </data>
   <data name="ChooseCountry" xml:space="preserve">
     <value>کشورتان را انتخاب کنید</value>
   </data>
@@ -3589,6 +3625,12 @@
   <data name="ClearRecentEmoji" xml:space="preserve">
     <value>اموجی‌های اخیر پاک شوند؟</value>
   </data>
+  <data name="ClearRecentEmojiStatusesText" xml:space="preserve">
+    <value>آیا می‌خواهید اموجی‌های وضعیت اخیر خود را پاک کرده و پیشنهادها را بازنشانی کنید؟</value>
+  </data>
+  <data name="ClearRecentEmojiStatusesTitle" xml:space="preserve">
+    <value>پاک کردن وضعیت‌های اخیر</value>
+  </data>
   <data name="ClearRecentEmojiText" xml:space="preserve">
     <value>آیا می‌خواهید تمامی اموجی‌های اخیر خود را پاک کنید؟</value>
   </data>
@@ -3597,6 +3639,12 @@
   </data>
   <data name="ClearRecentHistory" xml:space="preserve">
     <value>پاک کردن تاریخچه</value>
+  </data>
+  <data name="ClearRecentReactionsAlertMessage" xml:space="preserve">
+    <value>آیا می‌خواهید اموجی واکنش اخیر خود را از پیشنهادها پاک کنید؟</value>
+  </data>
+  <data name="ClearRecentReactionsAlertTitle" xml:space="preserve">
+    <value>پاک کردن اموحی‌های اخیر</value>
   </data>
   <data name="ClearRecentStickersAlertMessage" xml:space="preserve">
     <value>آیا می‌خواهید تمامی استیکرهای اخیر خود را پاک کنید؟</value>
@@ -3847,10 +3895,10 @@
     <value>کنتراست</value>
   </data>
   <data name="ConvertGroup" xml:space="preserve">
-    <value>تبدیل به ابرگروه</value>
+    <value>تبدیل به سوپرگروه</value>
   </data>
   <data name="ConvertGroupAlert" xml:space="preserve">
-    <value>این عمل بازگشت‌ناپذیر است. امکان بازگرداندن یک ابرگروه به یک گروه عادی وجود ندارد.</value>
+    <value>این عمل بازگشت‌ناپذیر است. امکان بازگرداندن یک سوپرگروه به یک گروه عادی وجود ندارد.</value>
   </data>
   <data name="ConvertGroupAlertWarning" xml:space="preserve">
     <value>هشدار</value>
@@ -3858,16 +3906,16 @@
   <data name="ConvertGroupInfo" xml:space="preserve">
     <value>**به سقف تعداد اعضا رسیده‌اید.**
 
-برای فضا و امکانات بیشتر، گروه را به یک ابرگروه ارتقاء دهید:
+برای فضا و امکانات بیشتر، گروه را به یک سوپرگروه ارتقاء دهید:
 
-• ابرگروه‌ها می‌توانند تا سقف ⁨{0}⁩ داشته باشند
+• سوپرگروه‌ها می‌توانند تا سقف ⁨{0}⁩ داشته باشند
 • اعضای جدید می‌توانند تاریخچه کامل پیام‌ها را ببینند
 • پیام‌های حذف شده برای تمامی اعضا ناپدید خواهد شد
 • مدیران می‌توانند برای گروه توضیحاتی اضافه کنند
 • ایجاد کننده می‌تواند یک لینک عمومی برای گروه تنظیم کند</value>
   </data>
   <data name="ConvertGroupInfo2" xml:space="preserve">
-    <value>**در ابرگروه‌ها:**
+    <value>**در سوپرگروه‌ها:**
 
 • اعضای جدید می‌توانند تاریخچه کامل پیام‌ها را ببینند
 • پیام‌های حذف شده برای تمامی اعضا ناپدید خواهد شد
@@ -3878,7 +3926,7 @@
     <value>**توجه:** این عمل بازگشت‌ناپذیر است.</value>
   </data>
   <data name="ConvertGroupMenu" xml:space="preserve">
-    <value>تبدیل به ابرگروه</value>
+    <value>تبدیل به سوپرگروه</value>
   </data>
   <data name="Copy" xml:space="preserve">
     <value>کپی</value>
@@ -4466,6 +4514,9 @@
   <data name="DisablePasscodeTurnOff" xml:space="preserve">
     <value>غیرفعال کردن</value>
   </data>
+  <data name="DisableReactionsInfo" xml:space="preserve">
+    <value>اعضای گروه نمی‌توانند هیچ واکنشی برای پیام‌ها بگذارند.</value>
+  </data>
   <data name="DisappearingGif" xml:space="preserve">
     <value>گیف ناپدید شونده</value>
   </data>
@@ -4826,8 +4877,20 @@
 
 در صورتی که کسی انتخاب نشده باشد، مخاطبین مکرر شما در این ویجت نمایش داده خواهند شد.</value>
   </data>
+  <data name="EmailAddressInvalid" xml:space="preserve">
+    <value>آدرس ایمیل نامعتبر است.</value>
+  </data>
   <data name="EmailCopied" xml:space="preserve">
     <value>ایمیل در حافظه کپی شد.</value>
+  </data>
+  <data name="EmailLogin" xml:space="preserve">
+    <value>ایمیل ورود به حساب کاربری</value>
+  </data>
+  <data name="EmailLoginChangeMessage" xml:space="preserve">
+    <value>هر بار که از دستگاه جدیدی وارد حساب کاربری تلگرام خود می‌شوید، از این آدرس ایمیل استفاده می‌شود.</value>
+  </data>
+  <data name="EmailNotAllowed" xml:space="preserve">
+    <value>این دامنه ایمیل مجاز نیست.</value>
   </data>
   <data name="EmailPasswordConfirmText" xml:space="preserve">
     <value>برای تکمیل راه‌اندازی تأیید دو مرحله‌ای مراحل زیر را دنبال کنید:
@@ -4838,10 +4901,13 @@
 2. بر روی لینک فعال‌سازی کلیک کنید.</value>
   </data>
   <data name="EmailPasswordConfirmText2" xml:space="preserve">
-    <value>جهت تکمیل راه‌اندازی تأیید دو مرحله‌ای ایمیل خود را بررسی کرده (پوشه هرزنامه را فراموش نکنید) و کدی که به ایمیل شما ارسال شده است را وارد کنید.</value>
+    <value>جهت تکمیل راه‌اندازی تأیید دو مرحله‌ای ایمیل خود را بررسی کرده (پوشه هرزنامه را فراموش نکنید) و کدی که هم اکنون برای شما ارسال کردیم را وارد کنید.</value>
   </data>
   <data name="EmailPasswordConfirmText3" xml:space="preserve">
-    <value>جهت تکمیل راه‌اندازی تأیید دو مرحله‌ای، ⁨{0}⁩ را بررسی کرده (پوشه هرزنامه را فراموش نکنید) و کدی که به ایمیل شما ارسال شده است را وارد کنید.</value>
+    <value>جهت تکمیل راه‌اندازی تأیید دو مرحله‌ای، ⁨{0}⁩ را بررسی کرده (پوشه هرزنامه را فراموش نکنید) و کدی که هم اکنون برای شما ارسال کردیم را وارد کنید.</value>
+  </data>
+  <data name="EmailTokenInvalid" xml:space="preserve">
+    <value>نشان ایمیل نامعتبر است.</value>
   </data>
   <data name="Emoji" xml:space="preserve">
     <value>اموجی</value>
@@ -4882,6 +4948,9 @@
   <data name="EmojiBotInfo" xml:space="preserve">
     <value>هنرمندان می‌توانند بسته‌های اموجی خود را با استفاده از ربات @stickers ما اضافه کنند.</value>
   </data>
+  <data name="EmojiCopied" xml:space="preserve">
+    <value>اموجی در حافظه کپی شد.</value>
+  </data>
   <data name="EmojiCount_one" xml:space="preserve">
     <value>⁨{0}⁩ اموجی</value>
   </data>
@@ -4896,6 +4965,9 @@
   </data>
   <data name="EmojiInteractionTapHint" xml:space="preserve">
     <value>در صورتی که **⁨{0}⁩** هم اکنون در حال مشاهده این گفتگو باشد، این انیمیشن را نیز خواهد دید.</value>
+  </data>
+  <data name="EmojiLongtapHint" xml:space="preserve">
+    <value>برای تنظیم زمان‌سنج، بر روی یک اموجی نگه دارید</value>
   </data>
   <data name="EmojiPackCount_one" xml:space="preserve">
     <value>⁨{0}⁩ بسته اموجی</value>
@@ -4915,6 +4987,9 @@
   <data name="EmojiRemovedMultipleInfo_other" xml:space="preserve">
     <value>
 ⁨{0}⁩ بسته دیگر در اموجی‌های شما نیستند.</value>
+  </data>
+  <data name="EmojiStatusExpireHint" xml:space="preserve">
+    <value>وضعیت شما ظرف ⁨{0}⁩ منقضی می‌شود</value>
   </data>
   <data name="EmojiSuggestions" xml:space="preserve">
     <value>پیشنهادهای اموجی</value>
@@ -4936,6 +5011,9 @@
   </data>
   <data name="Enable" xml:space="preserve">
     <value>فعال کردن</value>
+  </data>
+  <data name="EnableAllReactionsInfo" xml:space="preserve">
+    <value>اعضای گروه می‌توانند از هر اموجی به عنوان واکنش برای پیام‌ها استفاده کنند.</value>
   </data>
   <data name="EnableAllStreamingInfo" xml:space="preserve">
     <value>در صورت امکان، تلگرام ویدیوها و موزیک‌ها را بدون نیاز به دانلود کامل فایل‌ها، در همان لحظه پخش می‌کند.</value>
@@ -4970,6 +5048,9 @@
   </data>
   <data name="EnableReactionsGroupInfo" xml:space="preserve">
     <value>به اعضا اجازه دهید برای پیام‌های گروه واکنش بگذارند.</value>
+  </data>
+  <data name="EnableSomeReactionsInfo" xml:space="preserve">
+    <value>اعضای گروه فقط می‌توانند از اموجی‌های تأیید شده خاصی به عنوان واکنش برای پیام‌ها استفاده کنند.</value>
   </data>
   <data name="EnableStreaming" xml:space="preserve">
     <value>پخش لحظه‌ای ویدیوها و فایل‌های صوتی</value>
@@ -5043,6 +5124,9 @@
   </data>
   <data name="EnterListName" xml:space="preserve">
     <value>نام فهرست را وارد کنید</value>
+  </data>
+  <data name="EnterNewEmail" xml:space="preserve">
+    <value>ایمیل جدید را وارد کنید</value>
   </data>
   <data name="EnterNewFirstPasscode" xml:space="preserve">
     <value>یک گذرواژه وارد کنید</value>
@@ -6146,6 +6230,12 @@
   <data name="GifsTab2" xml:space="preserve">
     <value>گیف‌ها</value>
   </data>
+  <data name="GiftMonths_one" xml:space="preserve">
+    <value>⁨{0}⁩ ماهه</value>
+  </data>
+  <data name="GiftMonths_other" xml:space="preserve">
+    <value>⁨{0}⁩ ماهه</value>
+  </data>
   <data name="GiftPremium" xml:space="preserve">
     <value>هدیه دادن پرمیوم</value>
   </data>
@@ -6651,6 +6741,9 @@
   </data>
   <data name="InstallGoogleMaps" xml:space="preserve">
     <value>Google Maps نصب شود؟</value>
+  </data>
+  <data name="InstallHuaweiMaps" xml:space="preserve">
+    <value>Petal Maps نصب شود؟</value>
   </data>
   <data name="InstallOfficialApp" xml:space="preserve">
     <value>برنامه رسمی را نصب کنید</value>
@@ -7391,6 +7484,9 @@
   <data name="LoginAttemptsInfo" xml:space="preserve">
     <value>دستگاه‌های بالا هیچ گونه دسترسی به حساب کاربری شما ندارند. در این دستگاه‌ها کد به درستی وارد شده، اما گذرواژه دو مرحله‌ای درست وارد نشد.</value>
   </data>
+  <data name="LoginOrSingInWithGoogle" xml:space="preserve">
+    <value>یا</value>
+  </data>
   <data name="LoginPassword" xml:space="preserve">
     <value>گذرواژه</value>
   </data>
@@ -7670,6 +7766,15 @@
   <data name="MessageContainsEmojiPacks_other" xml:space="preserve">
     <value>این پیام حاوی اموجی‌هایی از **⁨{0}⁩ بسته** است.</value>
   </data>
+  <data name="MessageContainsEmojiPackSingle" xml:space="preserve">
+    <value>این پیام حاوی اموجی **⁨{0}⁩** است.</value>
+  </data>
+  <data name="MessageContainsReactionsPack" xml:space="preserve">
+    <value>اموجی‌هایی از بسته ⁨{0}⁩ به عنوان واکنش استفاده شده‌اند.</value>
+  </data>
+  <data name="MessageContainsReactionsPacks_other" xml:space="preserve">
+    <value>اموجی‌هایی از **⁨{0}⁩ بسته** به عنوان واکنش استفاده شده‌اند.</value>
+  </data>
   <data name="MessageCopied" xml:space="preserve">
     <value>پیام در حافظه کپی شد.</value>
   </data>
@@ -7816,6 +7921,18 @@
   </data>
   <data name="Mi" xml:space="preserve">
     <value>مایل</value>
+  </data>
+  <data name="MicrophoneForVoiceMessages" xml:space="preserve">
+    <value>میکروفن پیام‌های صوتی</value>
+  </data>
+  <data name="MicrophoneForVoiceMessagesBuiltIn" xml:space="preserve">
+    <value>داخلی</value>
+  </data>
+  <data name="MicrophoneForVoiceMessagesSco" xml:space="preserve">
+    <value>هدفون</value>
+  </data>
+  <data name="MicrophoneForVoiceMessagesScoIfConnected" xml:space="preserve">
+    <value>هدفون (در صورت اتصال)</value>
   </data>
   <data name="MigrateOldFolderButton" xml:space="preserve">
     <value>انتقال فایل‌ها همین الان</value>
@@ -8258,6 +8375,12 @@
   </data>
   <data name="NoPopup" xml:space="preserve">
     <value>بدون پاپ‌آپ</value>
+  </data>
+  <data name="NoReactions" xml:space="preserve">
+    <value>هیچ واکنشی</value>
+  </data>
+  <data name="NoReactionsFound" xml:space="preserve">
+    <value>واکنشی پیدا نشد</value>
   </data>
   <data name="NoRecent" xml:space="preserve">
     <value>مورد اخیری موجود نیست</value>
@@ -8992,6 +9115,9 @@
   </data>
   <data name="OnlineCount_other" xml:space="preserve">
     <value>⁨{0}⁩ آنلاین</value>
+  </data>
+  <data name="OnlyAllowThisReactions" xml:space="preserve">
+    <value>فقط این واکنش‌ها مجاز هستند</value>
   </data>
   <data name="OnlyIfSilent" xml:space="preserve">
     <value>فقط در حالت بی‌صدا</value>
@@ -9890,7 +10016,7 @@
     <value>روش پرداخت</value>
   </data>
   <data name="PaymentCheckoutMethodNewCard" xml:space="preserve">
-    <value>کارت جدید</value>
+    <value>افزودن کارت بانکی…</value>
   </data>
   <data name="PaymentCheckoutName" xml:space="preserve">
     <value>نام</value>
@@ -10052,9 +10178,9 @@
     <value>هشدار</value>
   </data>
   <data name="PaymentWarningText" xml:space="preserve">
-    <value>تلگرام و ⁨{0}⁩ قادر به دسترسی به اطلاعات کارت اعتباری شما نخواهند بود. جزئیات کارت اعتباری تنها توسط سیستم پرداخت ⁨{1}⁩ مورد استفاده قرار خواهد گرفت.
+    <value>تلگرام و ⁨{0}⁩ به اطلاعات کارت اعتباری شما دسترسی نخواهند داشت. جزئیات مربوط به کارت اعتباری تنها توسط سیستم پرداخت ⁨{1}⁩ مورد استفاده قرار خواهند گرفت.
 
-پرداخت‌ها مستقیماً به توسعه‌دهنده ⁨{0}⁩ ارسال خواهند شد. تلگرام هیچ تضمینی ارائه نمی‌دهد، بنابراین با مسئولیت خودتان ادامه دهید. در صورت بروز هر گونه مشکل، با توسعه‌دهنده ⁨{0}⁩ یا بانک خود تماس بگیرید.</value>
+پرداخت‌ها مستقیماً به توسعه‌دهنده ⁨{0}⁩ ارسال خواهند شد. تلگرام هیچ تضمینی در این خصوص ارائه نمی‌دهد، بنابراین با مسئولیت خودتان ادامه دهید. لطفاً در صورت بروز هر گونه مشکل، با توسعه‌دهنده ⁨{0}⁩ یا بانک خود ارتباط برقرار کنید.</value>
   </data>
   <data name="PendingEmailText" xml:space="preserve">
     <value>ایمیل بازیابی شما ⁨{0}⁩ هنوز فعال نشده و در انتظار تأیید است.</value>
@@ -10437,6 +10563,9 @@
   <data name="PollViewResults" xml:space="preserve">
     <value>مشاهده نتایج</value>
   </data>
+  <data name="PopularReactions" xml:space="preserve">
+    <value>پرطرفدار</value>
+  </data>
   <data name="PopupDisabled" xml:space="preserve">
     <value>غیرفعال</value>
   </data>
@@ -10491,6 +10620,12 @@
   <data name="PremiumPreviewEmojiPack" xml:space="preserve">
     <value>این بسته اموجی فقط برای مشترکین **تلگرام پرمیوم** در دسترس است.</value>
   </data>
+  <data name="PremiumPreviewEmojiStatus" xml:space="preserve">
+    <value>اموجی وضعیت</value>
+  </data>
+  <data name="PremiumPreviewEmojiStatusDescription" xml:space="preserve">
+    <value>از میان هزاران اموجی برای نمایش فعالیت فعلی در کنار نامتان انتخاب کنید.</value>
+  </data>
   <data name="PremiumPreviewLimits" xml:space="preserve">
     <value>محدودیت‌های کمتر</value>
   </data>
@@ -10514,6 +10649,12 @@
   </data>
   <data name="PremiumPreviewReactions" xml:space="preserve">
     <value>واکنش‌های منحصر به فرد</value>
+  </data>
+  <data name="PremiumPreviewReactions2" xml:space="preserve">
+    <value>واکنش‌های بی‌نهایت</value>
+  </data>
+  <data name="PremiumPreviewReactions2Description" xml:space="preserve">
+    <value>با استفاده از چندین واکنش برای هر پیام، می‌توانید با هزاران اموجی واکنش بگذارید.</value>
   </data>
   <data name="PremiumPreviewReactionsDescription" xml:space="preserve">
     <value>واکنش‌های متحرک اضافی که فقط برای مشترکین پرمیوم در دسترس است.</value>
@@ -10547,6 +10688,15 @@
   </data>
   <data name="PremiumStickerTooltip" xml:space="preserve">
     <value>این بسته حاوی استیکرهای پرمیومی مشابه این استیکر است.</value>
+  </data>
+  <data name="PremiumTierAnnual" xml:space="preserve">
+    <value>سالانه</value>
+  </data>
+  <data name="PremiumTierMonthly" xml:space="preserve">
+    <value>ماهانه</value>
+  </data>
+  <data name="PremiumTierSemiannual" xml:space="preserve">
+    <value>شش ماه یکبار</value>
   </data>
   <data name="PreviewFeedback" xml:space="preserve">
     <value>گزارش اشکال برای این پیش‌نمایش</value>
@@ -10625,6 +10775,12 @@
   </data>
   <data name="PricePerMonth" xml:space="preserve">
     <value>⁨{0}⁩ / ماه</value>
+  </data>
+  <data name="PricePerMonthMe" xml:space="preserve">
+    <value>⁨{0}⁩/ماه</value>
+  </data>
+  <data name="PricePerYear" xml:space="preserve">
+    <value>⁨{0}⁩/سال</value>
   </data>
   <data name="PrimaryLinkHelp" xml:space="preserve">
     <value>هر کسی در تلگرام می‌تواند با دنبال کردن این لینک به گروه شما بپیوندد.</value>
@@ -10711,7 +10867,7 @@
     <value>پاک کردن اطلاعات پرداخت و ارسال</value>
   </data>
   <data name="PrivacyPaymentsClearAlert" xml:space="preserve">
-    <value>آیا می‌خواهید تمامی اطلاعات ارسال خود را حذف کرده و از ارائه‌دهندگان خدمات پرداختی بخواهید کارت‌های بانکی ذخیره شده شما را حذف کنند؟ توجه داشته باشید که تلگرام به هیچ وجه اطلاعات کارت‌های بانکی شما را ذخیره نمی کند.</value>
+    <value>آیا می‌خواهید تمامی اطلاعات ارسال خود را حذف کرده و از ارائه‌دهندگان خدمات پرداختی بخواهید کارت‌های اعتباری ذخیره شده شما را حذف کنند؟ توجه داشته باشید که تلگرام به هیچ وجه اطلاعات کارت‌های اعتباری شما را ذخیره نمی کند.</value>
   </data>
   <data name="PrivacyPaymentsClearAlertText" xml:space="preserve">
     <value>آیا از پاک کردن اطلاعات پرداخت و ارسال خود اطمینان دارید؟</value>
@@ -10720,7 +10876,7 @@
     <value>پاک کردن اطلاعات پرداخت</value>
   </data>
   <data name="PrivacyPaymentsClearInfo" xml:space="preserve">
-    <value>شما می‌توانید تمامی اطلاعات ارسال خود را حذف کرده و از ارائه‌دهندگان خدمات پرداختی بخواهید کارت‌های بانکی ذخیره شده شما را حذف کنند. توجه داشته باشید که تلگرام به هیچ وجه اطلاعات کارت‌های بانکی شما را ذخیره نمی کند.</value>
+    <value>شما می‌توانید تمامی اطلاعات ارسال خود را حذف کرده و از ارائه‌دهندگان خدمات پرداختی بخواهید کارت‌های اعتباری ذخیره شده شما را حذف کنند. توجه داشته باشید که تلگرام به هیچ وجه اطلاعات کارت‌های اعتباری شما را ذخیره نمی کند.</value>
   </data>
   <data name="PrivacyPaymentsPaymentInfoCleared" xml:space="preserve">
     <value>اطلاعات پرداخت پاک شد.</value>
@@ -11114,11 +11270,17 @@ https://telegram.org/blog/coronavirus</value>
   <data name="Reactions" xml:space="preserve">
     <value>واکنش‌ها</value>
   </data>
+  <data name="ReactionsAll" xml:space="preserve">
+    <value>همه</value>
+  </data>
   <data name="ReactionsCount_one" xml:space="preserve">
     <value>⁨{0}⁩ واکنش</value>
   </data>
   <data name="ReactionsCount_other" xml:space="preserve">
     <value>⁨{0}⁩ واکنش</value>
+  </data>
+  <data name="ReactionsLongtapHint" xml:space="preserve">
+    <value>برای ارسال سوپر واکنش، بر روی اموجی نگه دارید</value>
   </data>
   <data name="ReactionsOff" xml:space="preserve">
     <value>غیرفعال</value>
@@ -11140,6 +11302,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="RecentlyDownloaded" xml:space="preserve">
     <value>دانلودهای اخیر</value>
+  </data>
+  <data name="RecentlyUsed" xml:space="preserve">
+    <value>اخیراً استفاده شده</value>
   </data>
   <data name="RecentlyViewed" xml:space="preserve">
     <value>اخیراً مشاهده شده</value>
@@ -11289,10 +11454,13 @@ https://telegram.org/blog/coronavirus</value>
     <value>پاسخ</value>
   </data>
   <data name="ReplyToGroup" xml:space="preserve">
-    <value>پاسخ به ⁨{0}⁩</value>
+    <value>پاسخ</value>
   </data>
   <data name="ReplyToUser" xml:space="preserve">
-    <value>پاسخ به ⁨{0}⁩</value>
+    <value>پاسخ</value>
+  </data>
+  <data name="ReportAlertReaction" xml:space="preserve">
+    <value>آیا از گزارش واکنش‌های این کاربر اطمینان دارید؟</value>
   </data>
   <data name="ReportChat" xml:space="preserve">
     <value>گزارش</value>
@@ -11339,6 +11507,12 @@ https://telegram.org/blog/coronavirus</value>
   <data name="ReportMessagesCount" xml:space="preserve">
     <value>گزارش ⁨{0}⁩</value>
   </data>
+  <data name="ReportReaction" xml:space="preserve">
+    <value>گزارش واکنش</value>
+  </data>
+  <data name="ReportReactionAndBan" xml:space="preserve">
+    <value>محروم کردن و گزارش</value>
+  </data>
   <data name="ReportSelectMessages" xml:space="preserve">
     <value>انتخاب پیام‌ها</value>
   </data>
@@ -11372,6 +11546,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="ReportSpamUser" xml:space="preserve">
     <value>مسدود کردن کاربر</value>
+  </data>
+  <data name="ReportSpamUserEmojiStatusHint" xml:space="preserve">
+    <value>این حساب کاربری از ⁨{0}⁩ به عنوان وضعیت سفارشی در کنار نام خود استفاده می‌کند. چنین اموجی‌های وضعیتی برای تمامی مشترکین ⁨{1}⁩ در دسترس هستند.</value>
   </data>
   <data name="ReportTitleChild" xml:space="preserve">
     <value>گزارش کودک آزاری</value>
@@ -11869,6 +12046,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="SearchMusic" xml:space="preserve">
     <value>جستجوی موزیک</value>
   </data>
+  <data name="SearchReactionsHint" xml:space="preserve">
+    <value>جستجوی واکنش‌ها</value>
+  </data>
   <data name="SearchRecentFiles" xml:space="preserve">
     <value>جستجوی فایل‌های اخیر</value>
   </data>
@@ -11988,6 +12168,12 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="SelectOtherChat" xml:space="preserve">
     <value>انتخاب گفتگوی دیگر</value>
+  </data>
+  <data name="SelectSendAsPeerPremiumHint" xml:space="preserve">
+    <value>با خرید اشتراک **تلگرام پرمیوم**، می‌توانید از طرف کانال‌های خود در هر گفتگوی گروهی دیدگاه بگذارید.</value>
+  </data>
+  <data name="SelectSendAsPeerPremiumOpen" xml:space="preserve">
+    <value>باز کردن</value>
   </data>
   <data name="SelectTheme" xml:space="preserve">
     <value>انتخاب پوسته</value>
@@ -12158,7 +12344,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>پیام‌های تلگرام خود را بررسی کنید</value>
   </data>
   <data name="SentAppCodeWithPhone" xml:space="preserve">
-    <value>ما کد را به برنامه **تلگرام** در دستگاه دیگرتان برای ⁨{0}⁩ ارسال کرده‌ایم.</value>
+    <value>ما کد را به **برنامه تلگرام** برای شماره تلفن ⁨{0}⁩ در دستگاه دیگرتان ارسال کرده‌ایم.</value>
   </data>
   <data name="SentCallCode" xml:space="preserve">
     <value>ما با شماره تلفن شما **⁨{0}⁩** تماس می‌گیریم.
@@ -12230,6 +12416,30 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="SetColor" xml:space="preserve">
     <value>تنظیم رنگ</value>
+  </data>
+  <data name="SetEmojiStatus" xml:space="preserve">
+    <value>تنظیم اموجی وضعیت</value>
+  </data>
+  <data name="SetEmojiStatusUntil1Hour" xml:space="preserve">
+    <value>تنظیم به مدت 1 ساعت</value>
+  </data>
+  <data name="SetEmojiStatusUntil2Days" xml:space="preserve">
+    <value>تنظیم به مدت 2 روز</value>
+  </data>
+  <data name="SetEmojiStatusUntil2Hours" xml:space="preserve">
+    <value>تنظیم به مدت 2 ساعت</value>
+  </data>
+  <data name="SetEmojiStatusUntil8Hours" xml:space="preserve">
+    <value>تنظیم به مدت 8 ساعت</value>
+  </data>
+  <data name="SetEmojiStatusUntilButton" xml:space="preserve">
+    <value>تنظیم وضعیت</value>
+  </data>
+  <data name="SetEmojiStatusUntilOther" xml:space="preserve">
+    <value>سایر…</value>
+  </data>
+  <data name="SetEmojiStatusUntilTitle" xml:space="preserve">
+    <value>تنظیم وضعیت تا…</value>
   </data>
   <data name="SetNewPassword" xml:space="preserve">
     <value>تنظیم گذرواژه جدید</value>
@@ -12562,6 +12772,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="ShuffleList" xml:space="preserve">
     <value>تصادفی کردن فهرست</value>
   </data>
+  <data name="SignInWithGoogle" xml:space="preserve">
+    <value>ورود به حساب کاربری با گوگل</value>
+  </data>
   <data name="SignUp" xml:space="preserve">
     <value>ثبت نام</value>
   </data>
@@ -12636,6 +12849,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="SoftUserLimitAlert" xml:space="preserve">
     <value>پس از ایجاد گروه می‌توانید اعضای بیشتری را اضافه کنید.</value>
+  </data>
+  <data name="SomeReactions" xml:space="preserve">
+    <value>برخی از واکنش‌ها</value>
   </data>
   <data name="SortBy" xml:space="preserve">
     <value>مرتب‌سازی بر اساس</value>
@@ -13104,6 +13320,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="TapForVideo" xml:space="preserve">
     <value>برای عکس گرفتن ضربه بزنید، برای ویدیو گرفتن نگه دارید</value>
   </data>
+  <data name="TapHereEmoji" xml:space="preserve">
+    <value>برای دسترسی به اموجی‌های بیشتر، بر روی ⁨{0}⁩ بزنید.</value>
+  </data>
   <data name="TapHereGifs" xml:space="preserve">
     <value>جهت دسترسی به گیف‌های ذخیره شده اینجا را بزنید</value>
   </data>
@@ -13218,11 +13437,26 @@ https://telegram.org/blog/coronavirus</value>
   <data name="TelegramPremiumUserGiftedPremiumDialogTitle" xml:space="preserve">
     <value>**⁨{0}⁩** اشتراک ⁨{1}⁩ ماهه تلگرام پرمیوم را به شما هدیه داده است.</value>
   </data>
+  <data name="TelegramPremiumUserGiftedPremiumDialogTitleWithPlural" xml:space="preserve">
+    <value>**⁨{0}⁩** اشتراک ⁨{1}⁩ تلگرام پرمیوم را به شما هدیه داده است.</value>
+  </data>
   <data name="TelegramPremiumUserGiftedPremiumOutboundDialogSubtitle" xml:space="preserve">
     <value>**⁨{0}⁩** اکنون به قابلیت‌های بیشتری دسترسی دارد.</value>
   </data>
   <data name="TelegramPremiumUserGiftedPremiumOutboundDialogTitle" xml:space="preserve">
     <value>شما به **⁨{0}⁩** اشتراک ⁨{1}⁩ ماهه تلگرام پرمیوم را هدیه دادید.</value>
+  </data>
+  <data name="TelegramPremiumUserGiftedPremiumOutboundDialogTitleWithPlural" xml:space="preserve">
+    <value>شما به **⁨{0}⁩** اشتراک ⁨{1}⁩ تلگرام پرمیوم را هدیه دادید.</value>
+  </data>
+  <data name="TelegramPremiumUserStatusDefaultDialogTitle" xml:space="preserve">
+    <value>این وضعیت فعلی ⁨{0}⁩ است.</value>
+  </data>
+  <data name="TelegramPremiumUserStatusDialogSubtitle" xml:space="preserve">
+    <value>اموجی‌های وضعیت یک قابلیت پرمیوم هستند. سایر قابلیت‌های **تلگرام پرمیوم** عبارت‌اند از:</value>
+  </data>
+  <data name="TelegramPremiumUserStatusDialogTitle" xml:space="preserve">
+    <value>⁨{0}⁩ این اموجی از **⁨{1}⁩** را به عنوان وضعیت فعلی خود تنظیم کرده است.</value>
   </data>
   <data name="TelegramTones" xml:space="preserve">
     <value>زنگ‌های تلگرام</value>
@@ -13711,6 +13945,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="UnlockPremiumEmojiPack" xml:space="preserve">
     <value>دسترسی به ⁨{0}⁩</value>
   </data>
+  <data name="UnlockPremiumEmojiReaction" xml:space="preserve">
+    <value>با خرید اشتراک **تلگرام پرمیوم**، به این واکنش دسترسی پیدا کنید.</value>
+  </data>
   <data name="UnlockPremiumIcons" xml:space="preserve">
     <value>دسترسی به آیکون‌های پرمیوم</value>
   </data>
@@ -13799,7 +14036,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>در حال به‌روزرسانی...</value>
   </data>
   <data name="UpgradeGroup" xml:space="preserve">
-    <value>ارتقاء به ابرگروه</value>
+    <value>ارتقاء به سوپرگروه</value>
   </data>
   <data name="UploadImage" xml:space="preserve">
     <value>آپلود تصویر</value>
@@ -14094,6 +14331,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="VerificationCode" xml:space="preserve">
     <value>کد تأیید</value>
+  </data>
+  <data name="VerificationCodeSubtitle" xml:space="preserve">
+    <value>لطفاً ایمیل خود ⁨{0}⁩ را بررسی کرده (پوشه هرزنامه را فراموش نکنید) و کدی که هم اکنون برای شما ارسال کردیم را وارد کنید.</value>
   </data>
   <data name="ViaBot" xml:space="preserve">
     <value>از طریق</value>
@@ -15222,7 +15462,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>تقریباً تمام شد!</value>
   </data>
   <data name="YourEmailAlmostThereText" xml:space="preserve">
-    <value>لطفاً جهت تکمیل راه‌اندازی تأیید دو مرحله‌ای، ایمیل خود را بررسی کنید (پوشه هرزنامه‌ها را فراموش نکنید).</value>
+    <value>لطفاً جهت تکمیل راه‌اندازی تأیید دو مرحله‌ای، ایمیل خود را بررسی کنید (پوشه هرزنامه را فراموش نکنید).</value>
   </data>
   <data name="YourEmailCode" xml:space="preserve">
     <value>کد ایمیل شما</value>
@@ -15253,11 +15493,17 @@ https://telegram.org/blog/coronavirus</value>
   <data name="YourLocatedChannelsTooMuch" xml:space="preserve">
     <value>متأسفانه در حال حاضر شما گروه‌های زیادی بر اساس موقعیت مکانی دارید. لطفاً ابتدا یکی از گروه‌های فعلی خود را حذف کنید.</value>
   </data>
+  <data name="YourLoginEmailChangedSuccess" xml:space="preserve">
+    <value>ایمیل شما تغییر یافت.</value>
+  </data>
   <data name="YourName" xml:space="preserve">
     <value>نام شما</value>
   </data>
   <data name="YourNameChanged" xml:space="preserve">
     <value>نام به‌روزرسانی شد.</value>
+  </data>
+  <data name="YourNewEmail" xml:space="preserve">
+    <value>ایمیل جدید شما</value>
   </data>
   <data name="YourNumber" xml:space="preserve">
     <value>شماره‌ تلفن شما</value>

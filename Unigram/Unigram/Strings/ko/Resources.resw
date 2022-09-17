@@ -187,6 +187,9 @@
   <data name="AccDescrContactSorting" xml:space="preserve">
     <value>정렬 바꾸기</value>
   </data>
+  <data name="AccDescrCustomEmoji" xml:space="preserve">
+    <value>맞춤 이모지</value>
+  </data>
   <data name="AccDescrDownloadProgress" xml:space="preserve">
     <value> {1}개중 {0}번째 다운로드됨</value>
   </data>
@@ -966,11 +969,20 @@
   <data name="AddContactTitle" xml:space="preserve">
     <value>연락처 추가</value>
   </data>
+  <data name="Added" xml:space="preserve">
+    <value>추가됨</value>
+  </data>
   <data name="AddedBy" xml:space="preserve">
     <value>{0} {1} 에 추가됨</value>
   </data>
   <data name="AddedToFavorites" xml:space="preserve">
     <value>스티커가 즐겨찾기에 추가되었습니다.</value>
+  </data>
+  <data name="AddEmailSubtitle" xml:space="preserve">
+    <value>계정을 보호할 올바른 이메일 주소를 입력해주세요.</value>
+  </data>
+  <data name="AddEmailTitle" xml:space="preserve">
+    <value>이메일 추가</value>
   </data>
   <data name="AddEmojiInstalled" xml:space="preserve">
     <value>이모지가 추가되었습니다.</value>
@@ -1166,6 +1178,9 @@
   </data>
   <data name="AllPhotos" xml:space="preserve">
     <value>모든 사진</value>
+  </data>
+  <data name="AllReactions" xml:space="preserve">
+    <value>전체 반응</value>
   </data>
   <data name="AllSessionsTerminated" xml:space="preserve">
     <value>다른 모든 세션이 종료되었습니다.</value>
@@ -2151,6 +2166,9 @@
   <data name="Bans_other" xml:space="preserve">
     <value>제한 {0}건</value>
   </data>
+  <data name="BanUser" xml:space="preserve">
+    <value>사용자 차단</value>
+  </data>
   <data name="BioCopied" xml:space="preserve">
     <value>클립보드에 자기소개 복사됨</value>
   </data>
@@ -2690,6 +2708,12 @@
   </data>
   <data name="ChangeColorToColor" xml:space="preserve">
     <value>지금 선택한 배경을 사용하시겠습니까? 아니면 이 테마의 기본 설정으로 초기화 하시겠습니까?</value>
+  </data>
+  <data name="ChangeEmail" xml:space="preserve">
+    <value>이메일 변경</value>
+  </data>
+  <data name="ChangeEmojiStatus" xml:space="preserve">
+    <value>상태 변경</value>
   </data>
   <data name="ChangeLanguageLater" xml:space="preserve">
     <value>언어는 나중에 설정에서 바꾸실 수 있습니다.</value>
@@ -3373,6 +3397,18 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="CheckPhoneNumberYes" xml:space="preserve">
     <value>네</value>
   </data>
+  <data name="CheckYourEmail" xml:space="preserve">
+    <value>이메일을 확인해 주세요</value>
+  </data>
+  <data name="CheckYourEmailSubtitle" xml:space="preserve">
+    <value>이메일 {0}으로 보낸 코드를 입력해주세요.</value>
+  </data>
+  <data name="CheckYourNewEmail" xml:space="preserve">
+    <value>새 이메일을 확인해 주세요</value>
+  </data>
+  <data name="CheckYourNewEmailSubtitle" xml:space="preserve">
+    <value>새로운 이메일 {0}으로 보낸 코드를 입력해주세요.</value>
+  </data>
   <data name="ChooseCountry" xml:space="preserve">
     <value>국가를 선택하세요</value>
   </data>
@@ -3517,6 +3553,12 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="ClearRecentEmoji" xml:space="preserve">
     <value>최근에 사용한 이모지를 비울까요?</value>
   </data>
+  <data name="ClearRecentEmojiStatusesText" xml:space="preserve">
+    <value>최근 이모지 상태와 추천을 비우겠습니까?</value>
+  </data>
+  <data name="ClearRecentEmojiStatusesTitle" xml:space="preserve">
+    <value>최근 상태 비우기</value>
+  </data>
   <data name="ClearRecentEmojiText" xml:space="preserve">
     <value>최근 이모지를 모두 비우겠습니까?</value>
   </data>
@@ -3525,6 +3567,12 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   </data>
   <data name="ClearRecentHistory" xml:space="preserve">
     <value>내용 비우기</value>
+  </data>
+  <data name="ClearRecentReactionsAlertMessage" xml:space="preserve">
+    <value>추천에서 최근 반응 이모지를 비우시겠습니까?</value>
+  </data>
+  <data name="ClearRecentReactionsAlertTitle" xml:space="preserve">
+    <value>최근 이모지 비우기</value>
   </data>
   <data name="ClearRecentStickersAlertMessage" xml:space="preserve">
     <value>최근 스티커를 모두 비우겠습니까?</value>
@@ -4348,6 +4396,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="DisablePasscodeTurnOff" xml:space="preserve">
     <value>끄기</value>
   </data>
+  <data name="DisableReactionsInfo" xml:space="preserve">
+    <value>이 그룹에 있는 참가자들은 메시지에 아무런 반응을 추가할 수 없습니다.</value>
+  </data>
   <data name="DisappearingGif" xml:space="preserve">
     <value>사라지는 GIF</value>
   </data>
@@ -4712,8 +4763,20 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
 
 아무도 선택을 하지 않았을 경우, 위젯에는 가장 연락한 연락처가 표시됩니다.</value>
   </data>
+  <data name="EmailAddressInvalid" xml:space="preserve">
+    <value>올바르지 않은 이메일 주소입니다.</value>
+  </data>
   <data name="EmailCopied" xml:space="preserve">
     <value>이메일을 클립보드에 복사했습니다.</value>
+  </data>
+  <data name="EmailLogin" xml:space="preserve">
+    <value>이메일 로그인</value>
+  </data>
+  <data name="EmailLoginChangeMessage" xml:space="preserve">
+    <value>이 이메일 주소는 새 기기에서 텔레그램 계정에 로그인할 때마다 사용됩니다.</value>
+  </data>
+  <data name="EmailNotAllowed" xml:space="preserve">
+    <value>이 이메일 도메인은 사용하실 수 없습니다.</value>
   </data>
   <data name="EmailPasswordConfirmText" xml:space="preserve">
     <value>2단계 인증 설정을 완료하려면 아래 절차대로 진행해 주세요:
@@ -4728,6 +4791,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   </data>
   <data name="EmailPasswordConfirmText3" xml:space="preserve">
     <value>복구 이메일 설정을 완료하려면, {0}을 (스팸 메일함도 잊지 말고) 확인하여 보내 드린 코드를 입력해 주세요.</value>
+  </data>
+  <data name="EmailTokenInvalid" xml:space="preserve">
+    <value>올바르지 않은 이메일 토큰입니다.</value>
   </data>
   <data name="Emoji" xml:space="preserve">
     <value>이모지</value>
@@ -4768,6 +4834,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="EmojiBotInfo" xml:space="preserve">
     <value>아티스트는 @stickers 봇을 활용하여 본인들의 이모지 묶음을 추가할 수 있습니다.</value>
   </data>
+  <data name="EmojiCopied" xml:space="preserve">
+    <value>이메일이 클립보드로 복사되었습니다.</value>
+  </data>
   <data name="EmojiCount_other" xml:space="preserve">
     <value>이모지 {0}개</value>
   </data>
@@ -4776,6 +4845,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   </data>
   <data name="EmojiInteractionTapHint" xml:space="preserve">
     <value>만약 **{0}**님이 이 대화를 보고 있다면, 이 애니메이션도 보게 됩니다.</value>
+  </data>
+  <data name="EmojiLongtapHint" xml:space="preserve">
+    <value>이모지를 꾹 눌러 타이머를 설정할 수 있습니다</value>
   </data>
   <data name="EmojiPackCount_other" xml:space="preserve">
     <value>이모지 묶음 {0}개</value>
@@ -4788,6 +4860,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   </data>
   <data name="EmojiRemovedMultipleInfo_other" xml:space="preserve">
     <value>{0}개의 이모지 묶음이 더 이상 내 이모지에 없습니다.</value>
+  </data>
+  <data name="EmojiStatusExpireHint" xml:space="preserve">
+    <value>내 상태는 {0} 이후에 만기됩니다</value>
   </data>
   <data name="EmojiSuggestions" xml:space="preserve">
     <value>이모지 추천</value>
@@ -4809,6 +4884,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   </data>
   <data name="Enable" xml:space="preserve">
     <value>활성화</value>
+  </data>
+  <data name="EnableAllReactionsInfo" xml:space="preserve">
+    <value>이 그룹에 있는 참가자들은 메시지에 반응을 추가할 수 있습니다.</value>
   </data>
   <data name="EnableAllStreamingInfo" xml:space="preserve">
     <value>가능한 경우 텔레그램은 파일이 완전히 다운로드될 때까지 기다리지 않고 즉시 영상과 음악 재생을 시작합니다.</value>
@@ -4843,6 +4921,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   </data>
   <data name="EnableReactionsGroupInfo" xml:space="preserve">
     <value>참가자들이 그룹 메시지에 반응하도록 허용합니다.</value>
+  </data>
+  <data name="EnableSomeReactionsInfo" xml:space="preserve">
+    <value>이 그룹에 있는 참가자들은 메시지에 몇 개의 허용된 반응만 추가할 수 있습니다.</value>
   </data>
   <data name="EnableStreaming" xml:space="preserve">
     <value>동영상 및 음악 파일 스트리밍</value>
@@ -4916,6 +4997,9 @@ telegram.org에서 자세히 알아보세요.</value>
   </data>
   <data name="EnterListName" xml:space="preserve">
     <value>리스트 이름을 입력하세요</value>
+  </data>
+  <data name="EnterNewEmail" xml:space="preserve">
+    <value>새로운 이메일을 입력하세요</value>
   </data>
   <data name="EnterNewFirstPasscode" xml:space="preserve">
     <value>암호를 입력하세요</value>
@@ -5963,6 +6047,9 @@ telegram.org에서 자세히 알아보세요.</value>
   <data name="GifsTab2" xml:space="preserve">
     <value>GIF</value>
   </data>
+  <data name="GiftMonths_other" xml:space="preserve">
+    <value>{0}-개월</value>
+  </data>
   <data name="GiftPremium" xml:space="preserve">
     <value>프리미엄 선물</value>
   </data>
@@ -6457,6 +6544,9 @@ telegram.org에서 자세히 알아보세요.</value>
   </data>
   <data name="InstallGoogleMaps" xml:space="preserve">
     <value>Google 지도를 설치할까요?</value>
+  </data>
+  <data name="InstallHuaweiMaps" xml:space="preserve">
+    <value>Petal Maps를 설치하겠습니까?</value>
   </data>
   <data name="InstallOfficialApp" xml:space="preserve">
     <value>공식 앱 설치</value>
@@ -7170,6 +7260,9 @@ telegram.org에서 자세히 알아보세요.</value>
   <data name="LoginAttemptsInfo" xml:space="preserve">
     <value>위 기기가 메시지에 접근할 수 없습니다. 코드는 알맞게 입력하셨으나, 비밀번호가 잘못되었습니다.</value>
   </data>
+  <data name="LoginOrSingInWithGoogle" xml:space="preserve">
+    <value>혹은</value>
+  </data>
   <data name="LoginPassword" xml:space="preserve">
     <value>비밀번호</value>
   </data>
@@ -7424,6 +7517,15 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="MessageContainsEmojiPacks_other" xml:space="preserve">
     <value>이 메시지에는 **{0} 묶음**의 이모지가 포함되어있습니다.</value>
   </data>
+  <data name="MessageContainsEmojiPackSingle" xml:space="preserve">
+    <value>이 메시지는 이모지 **{0}**가 포함되어 있습니다</value>
+  </data>
+  <data name="MessageContainsReactionsPack" xml:space="preserve">
+    <value>{0} 이모지 묶음이 반응으로 사용되었습니다.</value>
+  </data>
+  <data name="MessageContainsReactionsPacks_other" xml:space="preserve">
+    <value>**{0} 개의 이모지 묶음**이 반응으로 사용되었습니다.</value>
+  </data>
   <data name="MessageCopied" xml:space="preserve">
     <value>클립보드에 메시지를 복사했습니다.</value>
   </data>
@@ -7546,6 +7648,21 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   </data>
   <data name="Mi" xml:space="preserve">
     <value>mi</value>
+  </data>
+  <data name="MicrophoneForVoiceMessages" xml:space="preserve">
+    <value>음성 메시지를 위한 마이크</value>
+  </data>
+  <data name="MicrophoneForVoiceMessagesBuiltIn" xml:space="preserve">
+    <value>내장</value>
+  </data>
+  <data name="MicrophoneForVoiceMessagesSco" xml:space="preserve">
+    <value>헤드셋</value>
+  </data>
+  <data name="MicrophoneForVoiceMessagesScoHint" xml:space="preserve">
+    <value>헤드셋 마이크를 사용하면 배경 소음을 줄일 수 있지만 음성 품질은 약간 떨어집니다.</value>
+  </data>
+  <data name="MicrophoneForVoiceMessagesScoIfConnected" xml:space="preserve">
+    <value>헤드셋 (연결 되었을 경우)</value>
   </data>
   <data name="MigrateOldFolderButton" xml:space="preserve">
     <value>지금 파일들 이동</value>
@@ -7972,6 +8089,12 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   </data>
   <data name="NoPopup" xml:space="preserve">
     <value>사용 안 함</value>
+  </data>
+  <data name="NoReactions" xml:space="preserve">
+    <value>반응 없음</value>
+  </data>
+  <data name="NoReactionsFound" xml:space="preserve">
+    <value>반응을 찾지 못함</value>
   </data>
   <data name="NoRecent" xml:space="preserve">
     <value>최근 이모지 없음</value>
@@ -8702,6 +8825,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   </data>
   <data name="OnlineCount_other" xml:space="preserve">
     <value>온라인 {0}명</value>
+  </data>
+  <data name="OnlyAllowThisReactions" xml:space="preserve">
+    <value>이 반응들만 허용</value>
   </data>
   <data name="OnlyIfSilent" xml:space="preserve">
     <value>무음일 때만</value>
@@ -9596,7 +9722,7 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
     <value>결제 방법</value>
   </data>
   <data name="PaymentCheckoutMethodNewCard" xml:space="preserve">
-    <value>새로운 신용카드</value>
+    <value>은행 카드 추가...</value>
   </data>
   <data name="PaymentCheckoutName" xml:space="preserve">
     <value>이름</value>
@@ -10117,6 +10243,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="PollViewResults" xml:space="preserve">
     <value>결과 보기</value>
   </data>
+  <data name="PopularReactions" xml:space="preserve">
+    <value>인기</value>
+  </data>
   <data name="PopupDisabled" xml:space="preserve">
     <value>사용 안 함</value>
   </data>
@@ -10171,6 +10300,12 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="PremiumPreviewEmojiPack" xml:space="preserve">
     <value>이 이모지 묶음은 **텔레그램 프리미엄**에 구독자들에게만 제공됩니다.</value>
   </data>
+  <data name="PremiumPreviewEmojiStatus" xml:space="preserve">
+    <value>이모지 상태</value>
+  </data>
+  <data name="PremiumPreviewEmojiStatusDescription" xml:space="preserve">
+    <value>수천 개의 이모지 중에서 선택하여 이름 옆에 현재 활동을 표시할 수 있습니다.</value>
+  </data>
   <data name="PremiumPreviewLimits" xml:space="preserve">
     <value>제한 두배 상승</value>
   </data>
@@ -10194,6 +10329,12 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   </data>
   <data name="PremiumPreviewReactions" xml:space="preserve">
     <value>독점 반응</value>
+  </data>
+  <data name="PremiumPreviewReactions2" xml:space="preserve">
+    <value>무한 반응</value>
+  </data>
+  <data name="PremiumPreviewReactions2Description" xml:space="preserve">
+    <value>메시지당 수천개의 이모지를 활용하여 여러개의 반응을 할 수 있습니다.</value>
   </data>
   <data name="PremiumPreviewReactionsDescription" xml:space="preserve">
     <value>더욱 다양해진 움직이는 반응을 메시지에 남겨보세요. 오직 프리미엄 구독자들에게만 제공됩니다.
@@ -10228,6 +10369,15 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   </data>
   <data name="PremiumStickerTooltip" xml:space="preserve">
     <value>이 묶음은 이와 같이 프리미엄 스티커가 포함되어 있습니다.</value>
+  </data>
+  <data name="PremiumTierAnnual" xml:space="preserve">
+    <value>연간</value>
+  </data>
+  <data name="PremiumTierMonthly" xml:space="preserve">
+    <value>월별</value>
+  </data>
+  <data name="PremiumTierSemiannual" xml:space="preserve">
+    <value>반기별</value>
   </data>
   <data name="PreviewFeedback" xml:space="preserve">
     <value>이 미리보기의 버그 제보하기</value>
@@ -10273,6 +10423,12 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   </data>
   <data name="PricePerMonth" xml:space="preserve">
     <value>{0} / 월</value>
+  </data>
+  <data name="PricePerMonthMe" xml:space="preserve">
+    <value>{0}/월</value>
+  </data>
+  <data name="PricePerYear" xml:space="preserve">
+    <value>{0}/년</value>
   </data>
   <data name="PrimaryLinkHelp" xml:space="preserve">
     <value>텔레그램을 사용하는 누구나 이 링크를 따라 그룹에 들어올 수 있습니다.</value>
@@ -10756,8 +10912,14 @@ https://telegram.org/blog/coronavirus</value>
   <data name="Reactions" xml:space="preserve">
     <value>반응</value>
   </data>
+  <data name="ReactionsAll" xml:space="preserve">
+    <value>모두</value>
+  </data>
   <data name="ReactionsCount_other" xml:space="preserve">
     <value>반응 {0}건</value>
+  </data>
+  <data name="ReactionsLongtapHint" xml:space="preserve">
+    <value>슈퍼 반응을 보내려면 꾹 눌러보세요</value>
   </data>
   <data name="ReactionsOff" xml:space="preserve">
     <value>비활성화</value>
@@ -10779,6 +10941,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="RecentlyDownloaded" xml:space="preserve">
     <value>최근 다운로드</value>
+  </data>
+  <data name="RecentlyUsed" xml:space="preserve">
+    <value>최근 사용</value>
   </data>
   <data name="RecentlyViewed" xml:space="preserve">
     <value>최근 방문</value>
@@ -10913,10 +11078,13 @@ https://telegram.org/blog/coronavirus</value>
     <value>답장</value>
   </data>
   <data name="ReplyToGroup" xml:space="preserve">
-    <value>{0} 그룹에 답장</value>
+    <value>답장</value>
   </data>
   <data name="ReplyToUser" xml:space="preserve">
-    <value>{0} 님에게 답장</value>
+    <value>답장</value>
+  </data>
+  <data name="ReportAlertReaction" xml:space="preserve">
+    <value>정말 이 사용자의 반응을 신고하겠습니까?</value>
   </data>
   <data name="ReportChat" xml:space="preserve">
     <value>신고</value>
@@ -10963,6 +11131,12 @@ https://telegram.org/blog/coronavirus</value>
   <data name="ReportMessagesCount" xml:space="preserve">
     <value>{0} 신고</value>
   </data>
+  <data name="ReportReaction" xml:space="preserve">
+    <value>반응 신고</value>
+  </data>
+  <data name="ReportReactionAndBan" xml:space="preserve">
+    <value>차단 및 신고하기</value>
+  </data>
   <data name="ReportSelectMessages" xml:space="preserve">
     <value>메시지 선택</value>
   </data>
@@ -10995,6 +11169,10 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="ReportSpamUser" xml:space="preserve">
     <value>사용자 차단</value>
+  </data>
+  <data name="ReportSpamUserEmojiStatusHint" xml:space="preserve">
+    <value>이 계정은 이름 옆에 {0}로 맞춤 상태로 사용하고 있습니다.
+이 이모지 상태는 {1} 의 모든 구독자들에게 제공됩니다.</value>
   </data>
   <data name="ReportTitleChild" xml:space="preserve">
     <value>아동학대 신고</value>
@@ -11486,6 +11664,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="SearchMusic" xml:space="preserve">
     <value>음악 검색</value>
   </data>
+  <data name="SearchReactionsHint" xml:space="preserve">
+    <value>반응 검색</value>
+  </data>
   <data name="SearchRecentFiles" xml:space="preserve">
     <value>최근 파일 검색</value>
   </data>
@@ -11596,6 +11777,12 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="SelectOtherChat" xml:space="preserve">
     <value>다른 대화 선택</value>
+  </data>
+  <data name="SelectSendAsPeerPremiumHint" xml:space="preserve">
+    <value>**텔레그램 프리미엄**을 구독하면 그룹 대화에서 채널을 대신하여 댓글을 달 수 있습니다.</value>
+  </data>
+  <data name="SelectSendAsPeerPremiumOpen" xml:space="preserve">
+    <value>열기</value>
   </data>
   <data name="SelectTheme" xml:space="preserve">
     <value>테마 선택</value>
@@ -11766,7 +11953,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>텔레그램 메시지를 확인하세요</value>
   </data>
   <data name="SentAppCodeWithPhone" xml:space="preserve">
-    <value>회원님의 다른 기기에 {0}에 대한 코드를 **텔레그램**앱으로 전송했습니다.</value>
+    <value>회원님의 다른 기기에 {0}에 대한 코드를 **텔레그램 앱**으로 전송했습니다.</value>
   </data>
   <data name="SentCallCode" xml:space="preserve">
     <value>**{0}** 번호로 인증 전화를 걸었습니다. 
@@ -11838,6 +12025,30 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="SetColor" xml:space="preserve">
     <value>색 설정하기</value>
+  </data>
+  <data name="SetEmojiStatus" xml:space="preserve">
+    <value>이모지 상태 설정</value>
+  </data>
+  <data name="SetEmojiStatusUntil1Hour" xml:space="preserve">
+    <value>1시간 동안 설정</value>
+  </data>
+  <data name="SetEmojiStatusUntil2Days" xml:space="preserve">
+    <value>2일동안 설정</value>
+  </data>
+  <data name="SetEmojiStatusUntil2Hours" xml:space="preserve">
+    <value>2시간 동안 설정</value>
+  </data>
+  <data name="SetEmojiStatusUntil8Hours" xml:space="preserve">
+    <value>8시간 동안 설정</value>
+  </data>
+  <data name="SetEmojiStatusUntilButton" xml:space="preserve">
+    <value>상태 설정</value>
+  </data>
+  <data name="SetEmojiStatusUntilOther" xml:space="preserve">
+    <value>이외...</value>
+  </data>
+  <data name="SetEmojiStatusUntilTitle" xml:space="preserve">
+    <value>다음까지 상태 설정...</value>
   </data>
   <data name="SetNewPassword" xml:space="preserve">
     <value>새로운 비밀번호 설정</value>
@@ -12161,6 +12372,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="ShuffleList" xml:space="preserve">
     <value>목록 셔플</value>
   </data>
+  <data name="SignInWithGoogle" xml:space="preserve">
+    <value>Google 계정으로 로그인</value>
+  </data>
   <data name="SignUp" xml:space="preserve">
     <value>가입</value>
   </data>
@@ -12234,6 +12448,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="SoftUserLimitAlert" xml:space="preserve">
     <value>그룹을 만들고 나서 참가자를 더 추가하실 수 있습니다.</value>
+  </data>
+  <data name="SomeReactions" xml:space="preserve">
+    <value>일부 반응</value>
   </data>
   <data name="SortBy" xml:space="preserve">
     <value>정렬</value>
@@ -12692,6 +12909,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="TapForVideo" xml:space="preserve">
     <value>사진은 짧게, 동영상은 길게 누르세요</value>
   </data>
+  <data name="TapHereEmoji" xml:space="preserve">
+    <value>{0}을(를) 탭하여 이모지에 접근하세요.</value>
+  </data>
   <data name="TapHereGifs" xml:space="preserve">
     <value>저장한 GIF 파일을 보려면 탭하세요.</value>
   </data>
@@ -12803,11 +13023,26 @@ https://telegram.org/blog/coronavirus</value>
   <data name="TelegramPremiumUserGiftedPremiumDialogTitle" xml:space="preserve">
     <value>**{0}**님이 텔레그램 프리미엄 구독권 {1}개월치를 선물했습니다.</value>
   </data>
+  <data name="TelegramPremiumUserGiftedPremiumDialogTitleWithPlural" xml:space="preserve">
+    <value>**{0}**님이 회원님에게 {1} 어치의 텔레그램 프리미엄 구독권을 선물했습니다.</value>
+  </data>
   <data name="TelegramPremiumUserGiftedPremiumOutboundDialogSubtitle" xml:space="preserve">
     <value>이제 **{0}**님이 부가 기능들을 사용할 수 있게 됩니다.</value>
   </data>
   <data name="TelegramPremiumUserGiftedPremiumOutboundDialogTitle" xml:space="preserve">
     <value>**{0}**님에게 {1}개월치의 텔레그램 프리미엄 구독권을 선물했습니다</value>
+  </data>
+  <data name="TelegramPremiumUserGiftedPremiumOutboundDialogTitleWithPlural" xml:space="preserve">
+    <value>회원님이 **{0}**님에게 {1} 어치의 텔레그램 프리미엄 구독권을 선물했습니다.</value>
+  </data>
+  <data name="TelegramPremiumUserStatusDefaultDialogTitle" xml:space="preserve">
+    <value>이것은 {0}님의 현재 상태입니다.</value>
+  </data>
+  <data name="TelegramPremiumUserStatusDialogSubtitle" xml:space="preserve">
+    <value>이모지 상태는 프리미엄 기능입니다. **텔레그램 프리미엄**에는 다른 기능들도 포함되어 있습니다:</value>
+  </data>
+  <data name="TelegramPremiumUserStatusDialogTitle" xml:space="preserve">
+    <value>{0}님이 **{1}**에서 이모지를 선택하여 현재 상태를 표시하고 있습니다.</value>
   </data>
   <data name="TelegramTones" xml:space="preserve">
     <value>텔레그램 음</value>
@@ -13292,6 +13527,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="UnlockPremiumEmojiPack" xml:space="preserve">
     <value>{0} 해제</value>
   </data>
+  <data name="UnlockPremiumEmojiReaction" xml:space="preserve">
+    <value>이 반응을 사용하려면 **텔레그램 프리미엄**에 구독하세요.</value>
+  </data>
   <data name="UnlockPremiumIcons" xml:space="preserve">
     <value>프리미엄 아이콘 잠금 해제</value>
   </data>
@@ -13662,6 +13900,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="VerificationCode" xml:space="preserve">
     <value>인증 코드</value>
+  </data>
+  <data name="VerificationCodeSubtitle" xml:space="preserve">
+    <value>이메일 {0}을 확인(스팸 폴더도 잊지 말아주세요)해주시고 보내드린 코드를 입력해주세요.</value>
   </data>
   <data name="ViaBot" xml:space="preserve">
     <value>다음을 통해 보냄: </value>
@@ -14790,11 +15031,17 @@ https://telegram.org/blog/coronavirus</value>
   <data name="YourLocatedChannelsTooMuch" xml:space="preserve">
     <value>죄송합니다. 위치 기반 그룹을 너무 많이 만드셨습니다. 먼저 하나를 삭제해 주세요.</value>
   </data>
+  <data name="YourLoginEmailChangedSuccess" xml:space="preserve">
+    <value>내 이메일 주소가 변경되었습니다.</value>
+  </data>
   <data name="YourName" xml:space="preserve">
     <value>성명</value>
   </data>
   <data name="YourNameChanged" xml:space="preserve">
     <value>이름 업데이트됨.</value>
+  </data>
+  <data name="YourNewEmail" xml:space="preserve">
+    <value>새로운 이메일</value>
   </data>
   <data name="YourNumber" xml:space="preserve">
     <value>내 전화번호</value>

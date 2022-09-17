@@ -187,6 +187,9 @@
   <data name="AccDescrContactSorting" xml:space="preserve">
     <value>Vaihda järjestys</value>
   </data>
+  <data name="AccDescrCustomEmoji" xml:space="preserve">
+    <value>Mukautettu</value>
+  </data>
   <data name="AccDescrDownloadProgress" xml:space="preserve">
     <value>{0} / {1} ladattu</value>
   </data>
@@ -993,11 +996,20 @@ nyt: {1}</value>
   <data name="AddContactTitle" xml:space="preserve">
     <value>Lisää yhteystieto</value>
   </data>
+  <data name="Added" xml:space="preserve">
+    <value>Lisätty</value>
+  </data>
   <data name="AddedBy" xml:space="preserve">
     <value>lisännyt {0} {1}</value>
   </data>
   <data name="AddedToFavorites" xml:space="preserve">
     <value>Tarra lisättiin suosikkeihin.</value>
+  </data>
+  <data name="AddEmailSubtitle" xml:space="preserve">
+    <value>Syötä sähköpostiosoite suojataksesi tiliäsi.</value>
+  </data>
+  <data name="AddEmailTitle" xml:space="preserve">
+    <value>Lisää sähköposti</value>
   </data>
   <data name="AddEmojiInstalled" xml:space="preserve">
     <value>Emoji lisättiin.</value>
@@ -1196,6 +1208,9 @@ nyt: {1}</value>
   </data>
   <data name="AllPhotos" xml:space="preserve">
     <value>Kaikki kuvat</value>
+  </data>
+  <data name="AllReactions" xml:space="preserve">
+    <value>Kaikki reaktiot</value>
   </data>
   <data name="AllSessionsTerminated" xml:space="preserve">
     <value>Kaikki muut istunnot katkaistiin.</value>
@@ -2196,6 +2211,9 @@ Aurinko nousee {1}</value>
   <data name="Bans_other" xml:space="preserve">
     <value>{0} estoa</value>
   </data>
+  <data name="BanUser" xml:space="preserve">
+    <value>Estä keskustelusta</value>
+  </data>
   <data name="BioCopied" xml:space="preserve">
     <value>Kuvaus kopioitiin leikepöydälle.</value>
   </data>
@@ -2701,7 +2719,7 @@ Jos et tehnyt pyyntöä, syötä tähän koodi, jonka juuri lähetimme sinulle t
     <value>Keskeytä rekisteröinti</value>
   </data>
   <data name="CancelReset" xml:space="preserve">
-    <value>Peru nollaus</value>
+    <value>Keskeytä nollaus</value>
   </data>
   <data name="CancelSending" xml:space="preserve">
     <value>Peruuta lähetys</value>
@@ -2741,6 +2759,12 @@ Jos et tehnyt pyyntöä, syötä tähän koodi, jonka juuri lähetimme sinulle t
   </data>
   <data name="ChangeColorToColor" xml:space="preserve">
     <value>Haluatko käyttää nykyistä taustaväriä vai vaihtaa teeman oletusväriin?</value>
+  </data>
+  <data name="ChangeEmail" xml:space="preserve">
+    <value>Vaihda sähköpostia</value>
+  </data>
+  <data name="ChangeEmojiStatus" xml:space="preserve">
+    <value>Vaihda tilaa</value>
   </data>
   <data name="ChangeLanguageLater" xml:space="preserve">
     <value>Voit vaihtaa kieltä myöhemmin asetuksista.</value>
@@ -3444,6 +3468,18 @@ Linkin on oltava vähintään 5 merkkiä pitkä.</value>
   <data name="CheckPhoneNumberYes" xml:space="preserve">
     <value>Kyllä</value>
   </data>
+  <data name="CheckYourEmail" xml:space="preserve">
+    <value>Tarkista sähköpostisi</value>
+  </data>
+  <data name="CheckYourEmailSubtitle" xml:space="preserve">
+    <value>Syötä sähköpostiosoitteeseen {0} lähettämämme koodi.</value>
+  </data>
+  <data name="CheckYourNewEmail" xml:space="preserve">
+    <value>Tarkista uusi sähköpostisi</value>
+  </data>
+  <data name="CheckYourNewEmailSubtitle" xml:space="preserve">
+    <value>Syötä uuteen sähköpostiosoitteeseesi {0} lähettämämme koodi.</value>
+  </data>
   <data name="ChooseCountry" xml:space="preserve">
     <value>Valitse maa</value>
   </data>
@@ -3588,6 +3624,12 @@ Linkin on oltava vähintään 5 merkkiä pitkä.</value>
   <data name="ClearRecentEmoji" xml:space="preserve">
     <value>Tyhjennetäänkö viimeisimmät emojit?</value>
   </data>
+  <data name="ClearRecentEmojiStatusesText" xml:space="preserve">
+    <value>Haluatko tyhjentää äskettäin käyttämäsi emojitilat ja niiden ehdotukset?</value>
+  </data>
+  <data name="ClearRecentEmojiStatusesTitle" xml:space="preserve">
+    <value>Tyhjennä äskettäin käytetyt emojitilat</value>
+  </data>
   <data name="ClearRecentEmojiText" xml:space="preserve">
     <value>Haluatko tyhjentää äskettäin käyttämäsi emojit?</value>
   </data>
@@ -3596,6 +3638,12 @@ Linkin on oltava vähintään 5 merkkiä pitkä.</value>
   </data>
   <data name="ClearRecentHistory" xml:space="preserve">
     <value>Tyhjennä historia</value>
+  </data>
+  <data name="ClearRecentReactionsAlertMessage" xml:space="preserve">
+    <value>Haluatko tyhjentää äskettäin käytetyt reaktioemojit ehdotuksista?</value>
+  </data>
+  <data name="ClearRecentReactionsAlertTitle" xml:space="preserve">
+    <value>Tyhjennä äskettäin käytetyt emojit</value>
   </data>
   <data name="ClearRecentStickersAlertMessage" xml:space="preserve">
     <value>Haluatko tyhjentää viime aikoina käyttämäsi tarrat?</value>
@@ -4464,6 +4512,9 @@ Vaihtoehtoinasi on kokeilla toista numeroa tai ottaa yhteyttä Telegramin tukeen
   <data name="DisablePasscodeTurnOff" xml:space="preserve">
     <value>Poista käytöstä</value>
   </data>
+  <data name="DisableReactionsInfo" xml:space="preserve">
+    <value>Tämän ryhmän jäsenet eivät voi lisätä reaktioita viesteihin.</value>
+  </data>
   <data name="DisappearingGif" xml:space="preserve">
     <value>Katoava GIF</value>
   </data>
@@ -4824,8 +4875,20 @@ Jos keskusteluja ei valita, pienoisohjelmassa näkyy viimeisimmät keskustelut.<
 
 Jos keskusteluja ei valita, pienoisohjelmassa näkyy ne yhteystiedot, joiden kanssa olet yleensä keskustellut.</value>
   </data>
+  <data name="EmailAddressInvalid" xml:space="preserve">
+    <value>Virheellinen sähköpostiosoite.</value>
+  </data>
   <data name="EmailCopied" xml:space="preserve">
     <value>Sähköpostiosoite kopioitiin leikepöydälle.</value>
+  </data>
+  <data name="EmailLogin" xml:space="preserve">
+    <value>Kirjaudu sähköpostilla</value>
+  </data>
+  <data name="EmailLoginChangeMessage" xml:space="preserve">
+    <value>Tätä sähköpostiosoitetta käytetään, kun kirjaudut Telegramille uudelta laitteelta.</value>
+  </data>
+  <data name="EmailNotAllowed" xml:space="preserve">
+    <value>Tämän verkkotunnuksen käyttäminen on kielletty.</value>
   </data>
   <data name="EmailPasswordConfirmText" xml:space="preserve">
     <value>Toimi seuraavasti suorittaaksesi kaksivaiheisen todennuksen käyttöönoton loppuun:
@@ -4840,6 +4903,9 @@ Jos keskusteluja ei valita, pienoisohjelmassa näkyy ne yhteystiedot, joiden kan
   </data>
   <data name="EmailPasswordConfirmText3" xml:space="preserve">
     <value>Tarkista {0} (älä unohda roskapostikansiota) ja syötä lähettämämme koodi suorittaaksesi käyttöönoton loppuun.</value>
+  </data>
+  <data name="EmailTokenInvalid" xml:space="preserve">
+    <value>Virheellinen sähköpostitodenne.</value>
   </data>
   <data name="Emoji" xml:space="preserve">
     <value>Emoji</value>
@@ -4880,6 +4946,9 @@ Jos keskusteluja ei valita, pienoisohjelmassa näkyy ne yhteystiedot, joiden kan
   <data name="EmojiBotInfo" xml:space="preserve">
     <value>Taiteilijat voivat lisätä omia emojeitaan @stickers -botin avulla.</value>
   </data>
+  <data name="EmojiCopied" xml:space="preserve">
+    <value>Emoji kopioitiin leikepöydälle.</value>
+  </data>
   <data name="EmojiCount_one" xml:space="preserve">
     <value>{0} emoji</value>
   </data>
@@ -4894,6 +4963,9 @@ Jos keskusteluja ei valita, pienoisohjelmassa näkyy ne yhteystiedot, joiden kan
   </data>
   <data name="EmojiInteractionTapHint" xml:space="preserve">
     <value>Jos **{0}** katselisi tätä keskustelua, hän näkisi myös tämän animaation.</value>
+  </data>
+  <data name="EmojiLongtapHint" xml:space="preserve">
+    <value>Paina emojia pitkään asettaaksesi ajastimen</value>
   </data>
   <data name="EmojiPackCount_one" xml:space="preserve">
     <value>{0} emojikokoelma</value>
@@ -4912,6 +4984,9 @@ Jos keskusteluja ei valita, pienoisohjelmassa näkyy ne yhteystiedot, joiden kan
   </data>
   <data name="EmojiRemovedMultipleInfo_other" xml:space="preserve">
     <value>{0} kokoelmaa poistettiin emojeistasi.</value>
+  </data>
+  <data name="EmojiStatusExpireHint" xml:space="preserve">
+    <value>Tilasi vanhenee {0}</value>
   </data>
   <data name="EmojiSuggestions" xml:space="preserve">
     <value>Emojiehdotukset</value>
@@ -4933,6 +5008,9 @@ Jos keskusteluja ei valita, pienoisohjelmassa näkyy ne yhteystiedot, joiden kan
   </data>
   <data name="Enable" xml:space="preserve">
     <value>Ota käyttöön</value>
+  </data>
+  <data name="EnableAllReactionsInfo" xml:space="preserve">
+    <value>Tämän ryhmän jäsenet voivat käyttää reaktioihin kaikkia emojeita.</value>
   </data>
   <data name="EnableAllStreamingInfo" xml:space="preserve">
     <value>Telegram pyrkii mahdollisuuksien mukaan toistamaan videoita ja musiikkia heti, vaikka niiden lataus olisi yhä kesken.</value>
@@ -4967,6 +5045,9 @@ Tarvitset täällä asettamasi salasanan kirjautuaksesi Telegram-tilillesi.</val
   </data>
   <data name="EnableReactionsGroupInfo" xml:space="preserve">
     <value>Antaa jäsenten reagoida ryhmän viesteihin.</value>
+  </data>
+  <data name="EnableSomeReactionsInfo" xml:space="preserve">
+    <value>Tämän ryhmän jäsenet voivat käyttää reaktioihin vain tiettyjä emojeita.</value>
   </data>
   <data name="EnableStreaming" xml:space="preserve">
     <value>Suoratoista video- ja äänitiedostot</value>
@@ -5040,6 +5121,9 @@ Lue lisää: telegram.org</value>
   </data>
   <data name="EnterListName" xml:space="preserve">
     <value>Luettelon nimi</value>
+  </data>
+  <data name="EnterNewEmail" xml:space="preserve">
+    <value>Syötä uusi sähköposti</value>
   </data>
   <data name="EnterNewFirstPasscode" xml:space="preserve">
     <value>Syötä pääsykoodi</value>
@@ -6142,6 +6226,12 @@ Menetät salaiset keskustelusi.</value>
   <data name="GifsTab2" xml:space="preserve">
     <value>GIFit</value>
   </data>
+  <data name="GiftMonths_one" xml:space="preserve">
+    <value>{0} kuukaudeksi</value>
+  </data>
+  <data name="GiftMonths_other" xml:space="preserve">
+    <value>{0} kuukaudeksi</value>
+  </data>
   <data name="GiftPremium" xml:space="preserve">
     <value>Lahjoita Premium</value>
   </data>
@@ -6646,6 +6736,9 @@ Viestien päivämäärä asetetaan nykyhetkeksi, mutta ne sisältävät myös al
   </data>
   <data name="InstallGoogleMaps" xml:space="preserve">
     <value>Asennetaanko Google Maps?</value>
+  </data>
+  <data name="InstallHuaweiMaps" xml:space="preserve">
+    <value>Asennetaanko Petal-kartat?</value>
   </data>
   <data name="InstallOfficialApp" xml:space="preserve">
     <value>Asenna virallinen sovellus</value>
@@ -7386,6 +7479,9 @@ Pyydä häntä poistamaan yksi niistä tai siirtämään omistajuus toiselle.</v
   <data name="LoginAttemptsInfo" xml:space="preserve">
     <value>Yllä olevilla laitteilla ei ole pääsyä viesteihisi. Koodi on annettu oikein, mutta salasanaa ei.</value>
   </data>
+  <data name="LoginOrSingInWithGoogle" xml:space="preserve">
+    <value>tai</value>
+  </data>
   <data name="LoginPassword" xml:space="preserve">
     <value>Salasana</value>
   </data>
@@ -7663,6 +7759,15 @@ Nimen on oltava vähintään 5 merkkiä pitkä.</value>
   </data>
   <data name="MessageContainsEmojiPacks_other" xml:space="preserve">
     <value>Tässä viestissä on emojeita **{0} kokoelmasta**.</value>
+  </data>
+  <data name="MessageContainsEmojiPackSingle" xml:space="preserve">
+    <value>Tämä viesti sisältää emojeita kokoelmasta **{0}**.</value>
+  </data>
+  <data name="MessageContainsReactionsPack" xml:space="preserve">
+    <value>Kokoelman {0} emojeita käytettiin reaktioina.</value>
+  </data>
+  <data name="MessageContainsReactionsPacks_other" xml:space="preserve">
+    <value>**{0} kokoelman** emojeita käytettiin reaktioina.</value>
   </data>
   <data name="MessageCopied" xml:space="preserve">
     <value>Viesti kopioitiin leikepöydälle.</value>
@@ -8252,6 +8357,9 @@ Voit mukauttaa keskustelun ilmoitusasetuksia avaamalla sen profiilisivun ja vali
   </data>
   <data name="NoPopup" xml:space="preserve">
     <value>Ei ponnahdusta</value>
+  </data>
+  <data name="NoReactions" xml:space="preserve">
+    <value>Ei reaktioita</value>
   </data>
   <data name="NoRecent" xml:space="preserve">
     <value>Ei viimeaikaisia</value>
@@ -8983,6 +9091,9 @@ Telegram-tiimi</value>
   </data>
   <data name="OnlineCount_other" xml:space="preserve">
     <value>{0} paikalla</value>
+  </data>
+  <data name="OnlyAllowThisReactions" xml:space="preserve">
+    <value>Salli vain nämä reaktiot</value>
   </data>
   <data name="OnlyIfSilent" xml:space="preserve">
     <value>Vain äänettömällä</value>
@@ -9882,7 +9993,7 @@ Lisätietoja löytyy *usein kysyttyjen kysymysten* sivullamme.</value>
     <value>Maksutapa</value>
   </data>
   <data name="PaymentCheckoutMethodNewCard" xml:space="preserve">
-    <value>Lisää kortti</value>
+    <value>Lisää kortti...</value>
   </data>
   <data name="PaymentCheckoutName" xml:space="preserve">
     <value>Nimi</value>
@@ -10429,6 +10540,9 @@ Käsittelemme sijaintiasi vain valitsemasi pituuden ajan, ja voit myös lopettaa
   <data name="PollViewResults" xml:space="preserve">
     <value>NÄYTÄ TULOKSET</value>
   </data>
+  <data name="PopularReactions" xml:space="preserve">
+    <value>Suositut</value>
+  </data>
   <data name="PopupDisabled" xml:space="preserve">
     <value>Ei käytössä</value>
   </data>
@@ -10483,6 +10597,12 @@ Käsittelemme sijaintiasi vain valitsemasi pituuden ajan, ja voit myös lopettaa
   <data name="PremiumPreviewEmojiPack" xml:space="preserve">
     <value>Tämä emojikokoelma on saatavilla vain **Telegram Premium** -tilaajille.</value>
   </data>
+  <data name="PremiumPreviewEmojiStatus" xml:space="preserve">
+    <value>Emojitila</value>
+  </data>
+  <data name="PremiumPreviewEmojiStatusDescription" xml:space="preserve">
+    <value>Valitse yksi tuhansista emojeista näytettäväksi nimesi vieressä.</value>
+  </data>
   <data name="PremiumPreviewLimits" xml:space="preserve">
     <value>Korkeammat rajat</value>
   </data>
@@ -10506,6 +10626,12 @@ Käsittelemme sijaintiasi vain valitsemasi pituuden ajan, ja voit myös lopettaa
   </data>
   <data name="PremiumPreviewReactions" xml:space="preserve">
     <value>Ainutlaatuiset reaktiot</value>
+  </data>
+  <data name="PremiumPreviewReactions2" xml:space="preserve">
+    <value>Rajattomat reaktiot</value>
+  </data>
+  <data name="PremiumPreviewReactions2Description" xml:space="preserve">
+    <value>Reagoi tuhansilla eri emojeilla — vaikka useasti samaan viestiin.</value>
   </data>
   <data name="PremiumPreviewReactionsDescription" xml:space="preserve">
     <value>Premium-tilaajat voivat käyttää erityisiä animoituja reaktioita.</value>
@@ -10539,6 +10665,15 @@ Käsittelemme sijaintiasi vain valitsemasi pituuden ajan, ja voit myös lopettaa
   </data>
   <data name="PremiumStickerTooltip" xml:space="preserve">
     <value>Tämä kokoelma sisältää tämänlaisia Premium-tarroja.</value>
+  </data>
+  <data name="PremiumTierAnnual" xml:space="preserve">
+    <value>Kerran vuodessa</value>
+  </data>
+  <data name="PremiumTierMonthly" xml:space="preserve">
+    <value>Kuukausittain</value>
+  </data>
+  <data name="PremiumTierSemiannual" xml:space="preserve">
+    <value>Kahdesti vuodessa</value>
   </data>
   <data name="PreviewFeedback" xml:space="preserve">
     <value>Ilmoita viasta tässä esikatselussa</value>
@@ -10617,6 +10752,12 @@ Käsittelemme sijaintiasi vain valitsemasi pituuden ajan, ja voit myös lopettaa
   </data>
   <data name="PricePerMonth" xml:space="preserve">
     <value>{0} / kk</value>
+  </data>
+  <data name="PricePerMonthMe" xml:space="preserve">
+    <value>{0}/kk</value>
+  </data>
+  <data name="PricePerYear" xml:space="preserve">
+    <value>{0}/v</value>
   </data>
   <data name="PrimaryLinkHelp" xml:space="preserve">
     <value>Kuka tahansa Telegramin käyttäjä pystyy liittymään ryhmääsi avaamalla kutsulinkin.</value>
@@ -11098,19 +11239,25 @@ Lue lisää aloitteesta täältä: https://telegram.org/blog/coronavirus</value>
     <value>Arvioi litterointi</value>
   </data>
   <data name="Reacted_one" xml:space="preserve">
-    <value>{0} reagoi</value>
+    <value>{0} reaktio</value>
   </data>
   <data name="Reacted_other" xml:space="preserve">
-    <value>{0} reagoi</value>
+    <value>{0} reaktiota</value>
   </data>
   <data name="Reactions" xml:space="preserve">
     <value>Reaktiot</value>
+  </data>
+  <data name="ReactionsAll" xml:space="preserve">
+    <value>Kaikki</value>
   </data>
   <data name="ReactionsCount_one" xml:space="preserve">
     <value>{0} reaktio</value>
   </data>
   <data name="ReactionsCount_other" xml:space="preserve">
     <value>{0} reaktiota</value>
+  </data>
+  <data name="ReactionsLongtapHint" xml:space="preserve">
+    <value>Paina emojia pitkään lähettääksesi superreaktion</value>
   </data>
   <data name="ReactionsOff" xml:space="preserve">
     <value>Pois</value>
@@ -11132,6 +11279,9 @@ Lue lisää aloitteesta täältä: https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="RecentlyDownloaded" xml:space="preserve">
     <value>Äskettäin ladatut</value>
+  </data>
+  <data name="RecentlyUsed" xml:space="preserve">
+    <value>Äskettäin käytetty</value>
   </data>
   <data name="RecentlyViewed" xml:space="preserve">
     <value>Viimeksi katsotut</value>
@@ -11281,10 +11431,13 @@ Lue lisää aloitteesta täältä: https://telegram.org/blog/coronavirus</value>
     <value>Vastaa</value>
   </data>
   <data name="ReplyToGroup" xml:space="preserve">
-    <value>Vastaa ryhmään {0}</value>
+    <value>Vastaa</value>
   </data>
   <data name="ReplyToUser" xml:space="preserve">
-    <value>Vastaa käyttäjälle {0}</value>
+    <value>Vastaa</value>
+  </data>
+  <data name="ReportAlertReaction" xml:space="preserve">
+    <value>Haluatko ilmiantaa tämän käyttäjän reaktiot?</value>
   </data>
   <data name="ReportChat" xml:space="preserve">
     <value>Ilmianna</value>
@@ -11331,6 +11484,12 @@ Lue lisää aloitteesta täältä: https://telegram.org/blog/coronavirus</value>
   <data name="ReportMessagesCount" xml:space="preserve">
     <value>ILMIANNA {0}</value>
   </data>
+  <data name="ReportReaction" xml:space="preserve">
+    <value>Ilmianna reaktio</value>
+  </data>
+  <data name="ReportReactionAndBan" xml:space="preserve">
+    <value>Estä keskustelusta ja ilmianna</value>
+  </data>
   <data name="ReportSelectMessages" xml:space="preserve">
     <value>Valitse viestejä</value>
   </data>
@@ -11364,6 +11523,9 @@ Kiitos yhteystyöstäsi!</value>
   </data>
   <data name="ReportSpamUser" xml:space="preserve">
     <value>ESTÄ KÄYTTÄJÄ</value>
+  </data>
+  <data name="ReportSpamUserEmojiStatusHint" xml:space="preserve">
+    <value>Tällä tilillä on {0} käytössä tilana nimensä vieressä. Emojitilat on saatavilla {1} -tilaajille.</value>
   </data>
   <data name="ReportTitleChild" xml:space="preserve">
     <value>Ilmianna lasten hyväksikäytöstä</value>
@@ -11981,6 +12143,12 @@ Telegram tulee mahdollisesti käynnistää uudelleen, jotta asetus tulee voimaan
   <data name="SelectOtherChat" xml:space="preserve">
     <value>Valitse toinen keskustelu</value>
   </data>
+  <data name="SelectSendAsPeerPremiumHint" xml:space="preserve">
+    <value>Tilaa **Telegram Premium**, jos haluat kommentoida kanavinasi kaikissa ryhmäkeskusteluissa.</value>
+  </data>
+  <data name="SelectSendAsPeerPremiumOpen" xml:space="preserve">
+    <value>Avaa</value>
+  </data>
   <data name="SelectTheme" xml:space="preserve">
     <value>Valitse teema</value>
   </data>
@@ -12150,7 +12318,7 @@ Telegram tulee mahdollisesti käynnistää uudelleen, jotta asetus tulee voimaan
     <value>Tarkista Telegram-viestisi</value>
   </data>
   <data name="SentAppCodeWithPhone" xml:space="preserve">
-    <value>Lähetimme koodin numerolle {0} toisen laitteesi **Telegram**-sovellukseen</value>
+    <value>Lähetimme koodin numerolle {0} **Telegram-sovellukseen** toiselle laitteellesi.</value>
   </data>
   <data name="SentCallCode" xml:space="preserve">
     <value>Soitamme aktivointipuhelun puhelimeesi **{0}**.
@@ -12222,6 +12390,30 @@ Telegram tulee mahdollisesti käynnistää uudelleen, jotta asetus tulee voimaan
   </data>
   <data name="SetColor" xml:space="preserve">
     <value>Aseta väri</value>
+  </data>
+  <data name="SetEmojiStatus" xml:space="preserve">
+    <value>Aseta emojitila</value>
+  </data>
+  <data name="SetEmojiStatusUntil1Hour" xml:space="preserve">
+    <value>Aseta tunniksi</value>
+  </data>
+  <data name="SetEmojiStatusUntil2Days" xml:space="preserve">
+    <value>Aseta 2 päiväksi</value>
+  </data>
+  <data name="SetEmojiStatusUntil2Hours" xml:space="preserve">
+    <value>Aseta 2 tunniksi</value>
+  </data>
+  <data name="SetEmojiStatusUntil8Hours" xml:space="preserve">
+    <value>Aseta 8 tunniksi</value>
+  </data>
+  <data name="SetEmojiStatusUntilButton" xml:space="preserve">
+    <value>Aseta tila</value>
+  </data>
+  <data name="SetEmojiStatusUntilOther" xml:space="preserve">
+    <value>Muu…</value>
+  </data>
+  <data name="SetEmojiStatusUntilTitle" xml:space="preserve">
+    <value>Aseta tila tilapäisesti...</value>
   </data>
   <data name="SetNewPassword" xml:space="preserve">
     <value>Aseta uusi salasana</value>
@@ -12554,6 +12746,9 @@ Syötä oikea numero, jossa on maakoodi.</value>
   <data name="ShuffleList" xml:space="preserve">
     <value>Sekoita</value>
   </data>
+  <data name="SignInWithGoogle" xml:space="preserve">
+    <value>Kirjaudu Google-tilillä</value>
+  </data>
   <data name="SignUp" xml:space="preserve">
     <value>Luo tili</value>
   </data>
@@ -12628,6 +12823,9 @@ Hidas tila on käytössä. Voit lähettää vain yhden viestin kerrallaan.</valu
   </data>
   <data name="SoftUserLimitAlert" xml:space="preserve">
     <value>Voit lisätä lisää käyttäjiä, kun ryhmä on luotu.</value>
+  </data>
+  <data name="SomeReactions" xml:space="preserve">
+    <value>Jotkin reaktiot</value>
   </data>
   <data name="SortBy" xml:space="preserve">
     <value>Järjestä</value>
@@ -13096,6 +13294,9 @@ Jos &quot;**Synkronoi yhteystiedot**&quot; on päällä, ne haetaan uudelleen la
   <data name="TapForVideo" xml:space="preserve">
     <value>Lyhyt napautus ottaa kuvan, pitkä videota</value>
   </data>
+  <data name="TapHereEmoji" xml:space="preserve">
+    <value>Näe lisää emojeita napauttamalla {0}.</value>
+  </data>
   <data name="TapHereGifs" xml:space="preserve">
     <value>Napauta nähdäksesi tallennetut GIFit</value>
   </data>
@@ -13210,11 +13411,26 @@ Tässä vielä katsaus Premiumin antimista.</value>
   <data name="TelegramPremiumUserGiftedPremiumDialogTitle" xml:space="preserve">
     <value>**{0}** lahjoitti sinulle {1} kuukautta pitkän Telegram Premium -tilauksen.</value>
   </data>
+  <data name="TelegramPremiumUserGiftedPremiumDialogTitleWithPlural" xml:space="preserve">
+    <value>**{0}** antoi sinulle lahjaksi Telegram Premium -tilauksen {1}.</value>
+  </data>
   <data name="TelegramPremiumUserGiftedPremiumOutboundDialogSubtitle" xml:space="preserve">
     <value>**{0}** voi nyt käyttää Premiumin tarjoamia toiminnallisuuksia.</value>
   </data>
   <data name="TelegramPremiumUserGiftedPremiumOutboundDialogTitle" xml:space="preserve">
     <value>Lahjoitit käyttäjälle **{0}** {1} kuukautta pitkän Telegram Premium -tilauksen.</value>
+  </data>
+  <data name="TelegramPremiumUserGiftedPremiumOutboundDialogTitleWithPlural" xml:space="preserve">
+    <value>**{0}** sai sinulta lahjaksi Telegram Premium -tilauksen {1}.</value>
+  </data>
+  <data name="TelegramPremiumUserStatusDefaultDialogTitle" xml:space="preserve">
+    <value>Tämä on käyttäjän {0} tila.</value>
+  </data>
+  <data name="TelegramPremiumUserStatusDialogSubtitle" xml:space="preserve">
+    <value>Emojitila on **Telegram Premiumin** tarjoama lisäetu, kuten nämäkin:</value>
+  </data>
+  <data name="TelegramPremiumUserStatusDialogTitle" xml:space="preserve">
+    <value>{0} asetti emojin kokoelmasta **{1}** tilakseen.</value>
   </data>
   <data name="TelegramTones" xml:space="preserve">
     <value>Telegramin äänet</value>
@@ -13703,6 +13919,9 @@ Mikäli et ole tyytyväinen Telegramin vähäisiinkään edellytyksiin, emme voi
   <data name="UnlockPremiumEmojiPack" xml:space="preserve">
     <value>Avaa {0}</value>
   </data>
+  <data name="UnlockPremiumEmojiReaction" xml:space="preserve">
+    <value>Tilaa **Telegram Premium** käyttääksesi tätä reaktiota.</value>
+  </data>
   <data name="UnlockPremiumIcons" xml:space="preserve">
     <value>Ota Premium-kuvakkeet käyttöön</value>
   </data>
@@ -14086,6 +14305,9 @@ Voit käyttää merkkejä **a–z**, **0–9** ja alaviivoja. Nimen tulee olla v
   </data>
   <data name="VerificationCode" xml:space="preserve">
     <value>Vahvistuskoodi</value>
+  </data>
+  <data name="VerificationCodeSubtitle" xml:space="preserve">
+    <value>Syötä sähköpostiosoitteeseen {0} lähettämämme koodi (äläkä unohda tarkistaa roskapostikansiota).</value>
   </data>
   <data name="ViaBot" xml:space="preserve">
     <value>botilla</value>
@@ -15148,7 +15370,7 @@ Pääsykoodisi **ei vaikuta** aloitusnäytölle lisättyihin pienoisohjelmiin.</
     <value>nähty viikon sisällä</value>
   </data>
   <data name="WrongCode" xml:space="preserve">
-    <value>Väärä koodi syötetty. Yritä uudelleen.</value>
+    <value>Koodi on väärin. Yritä uudelleen.</value>
   </data>
   <data name="WrongCodeTitle" xml:space="preserve">
     <value>Väärä koodi</value>
@@ -15242,11 +15464,17 @@ Jos unohdat salasanasi, menetät kokonaan pääsyn Telegram-tilillesi. Palautusm
   <data name="YourLocatedChannelsTooMuch" xml:space="preserve">
     <value>Valitettavasti sinulla on jo liikaa sijaintikohtaisia ryhmiä, ja sinun tulee poistaa yksi aiemmista ensin.</value>
   </data>
+  <data name="YourLoginEmailChangedSuccess" xml:space="preserve">
+    <value>Sähköpostiosoitteesi vaihdettiin.</value>
+  </data>
   <data name="YourName" xml:space="preserve">
     <value>Nimesi</value>
   </data>
   <data name="YourNameChanged" xml:space="preserve">
     <value>Nimeä muutettiin.</value>
+  </data>
+  <data name="YourNewEmail" xml:space="preserve">
+    <value>Uusi sähköposti</value>
   </data>
   <data name="YourNumber" xml:space="preserve">
     <value>Puhelinnumerosi</value>

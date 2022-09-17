@@ -1005,6 +1005,9 @@ na: {1}</value>
   <data name="AddedToFavorites" xml:space="preserve">
     <value>Nálepka pridaná medzi obľúbené.</value>
   </data>
+  <data name="AddEmailTitle" xml:space="preserve">
+    <value>Pridať email</value>
+  </data>
   <data name="AddEmojiInstalled" xml:space="preserve">
     <value>Emoji pridané.</value>
   </data>
@@ -1214,6 +1217,9 @@ na: {1}</value>
   </data>
   <data name="AllPhotos" xml:space="preserve">
     <value>Všetky fotky</value>
+  </data>
+  <data name="AllReactions" xml:space="preserve">
+    <value>Všetky reakcie</value>
   </data>
   <data name="AllSessionsTerminated" xml:space="preserve">
     <value>Všetky ostatné relácie boli ukončené.</value>
@@ -2238,6 +2244,9 @@ Východ slnka: {1}</value>
   <data name="Bans_other" xml:space="preserve">
     <value>{0} zákazov</value>
   </data>
+  <data name="BanUser" xml:space="preserve">
+    <value>Zablokovať používateľa</value>
+  </data>
   <data name="BioCopied" xml:space="preserve">
     <value>Informácia o profile skopírovaná do schránky.</value>
   </data>
@@ -2786,6 +2795,9 @@ Ak ste to neboli vy, zadajte kód, ktorý sme vám práve poslali prostredníctv
   </data>
   <data name="ChangeColorToColor" xml:space="preserve">
     <value>Chcete použiť aktuálne vybrané pozadie alebo ho obnoviť na predvolené pre tento motív?</value>
+  </data>
+  <data name="ChangeEmail" xml:space="preserve">
+    <value>Zmeniť email</value>
   </data>
   <data name="ChangeLanguageLater" xml:space="preserve">
     <value>Jazyk môžete neskôr zmeniť v časti Nastavenia</value>
@@ -3544,6 +3556,12 @@ Minimálna dĺžka je 5 znakov.</value>
   <data name="CheckPhoneNumberYes" xml:space="preserve">
     <value>Áno</value>
   </data>
+  <data name="CheckYourEmail" xml:space="preserve">
+    <value>Skontrolujte váš email</value>
+  </data>
+  <data name="CheckYourEmailSubtitle" xml:space="preserve">
+    <value>Prosím zadajte kód, ktorý sme vám poslali na váš email {0}.</value>
+  </data>
   <data name="ChooseCountry" xml:space="preserve">
     <value>Vyberte krajinu</value>
   </data>
@@ -3617,7 +3635,7 @@ Minimálna dĺžka je 5 znakov.</value>
     <value>Vybrať čas</value>
   </data>
   <data name="ChooseYourLanguage" xml:space="preserve">
-    <value>Zvoľte váš jazyk</value>
+    <value>Vyberte si váš jazyk</value>
   </data>
   <data name="ChooseYourLanguageOther" xml:space="preserve">
     <value>Iný</value>
@@ -3696,6 +3714,9 @@ Minimálna dĺžka je 5 znakov.</value>
   </data>
   <data name="ClearRecentHistory" xml:space="preserve">
     <value>Vyčistiť históriu</value>
+  </data>
+  <data name="ClearRecentReactionsAlertTitle" xml:space="preserve">
+    <value>Vyčistiť nedávne emoji</value>
   </data>
   <data name="ClearRecentStickersAlertMessage" xml:space="preserve">
     <value>Chcete vymazať všetky vaše nedávne nálepky?</value>
@@ -4633,6 +4654,9 @@ Zostávajúce možnosti sú vyskúšať iné číslo alebo kontaktovať podporu 
   <data name="DisablePasscodeTurnOff" xml:space="preserve">
     <value>Vypnúť</value>
   </data>
+  <data name="DisableReactionsInfo" xml:space="preserve">
+    <value>Členovia skupiny nemôžu pridávať žiadne reakcie na správy.</value>
+  </data>
   <data name="DisappearingGif" xml:space="preserve">
     <value>Miznúci GIF</value>
   </data>
@@ -4999,6 +5023,9 @@ Ak nie je vybraný nikto, v tejto miniaplikácii sa zobrazia vaše najčastejši
   <data name="EmailCopied" xml:space="preserve">
     <value>E-mail bol skopírovaný do schránky.</value>
   </data>
+  <data name="EmailLogin" xml:space="preserve">
+    <value>Prihlasovací email</value>
+  </data>
   <data name="EmailPasswordConfirmText" xml:space="preserve">
     <value>Nasledujte, prosím, tieto kroky pre dokončenie nastavenia dvojstupňového overenia:
 
@@ -5117,6 +5144,9 @@ Ak nie je vybraný nikto, v tejto miniaplikácii sa zobrazia vaše najčastejši
   <data name="Enable" xml:space="preserve">
     <value>Povoliť</value>
   </data>
+  <data name="EnableAllReactionsInfo" xml:space="preserve">
+    <value>Členovia tejto skupiny môžu použiť akékoľvek emoji ako reakcie na správy.</value>
+  </data>
   <data name="EnableAllStreamingInfo" xml:space="preserve">
     <value>Ak je to možné, Telegram začne prehrávať videá a hudbu okamžite bez čakania na úplné stiahnutie súborov.</value>
   </data>
@@ -5223,6 +5253,9 @@ Viac informácií na telegram.org</value>
   </data>
   <data name="EnterListName" xml:space="preserve">
     <value>Zadajte názov vysielania</value>
+  </data>
+  <data name="EnterNewEmail" xml:space="preserve">
+    <value>Zadajte nový email</value>
   </data>
   <data name="EnterNewFirstPasscode" xml:space="preserve">
     <value>Zadajte prístupový kód</value>
@@ -7206,6 +7239,9 @@ Správy budú importované s dnešným dátumom, ale budú obsahovať pôvodné 
   <data name="JoinedViaInviteLinkApproved" xml:space="preserve">
     <value>un1 sa pripojil cez pozvánku un2, schválil un3</value>
   </data>
+  <data name="JoinedViaRequestApproved" xml:space="preserve">
+    <value>un1 sa pripojil, schválil un2</value>
+  </data>
   <data name="JoinGroup" xml:space="preserve">
     <value>PRIPOJIŤ SA KU SKUPINE</value>
   </data>
@@ -7721,6 +7757,9 @@ Táto operácia môže trvať niekoľko minút.</value>
   </data>
   <data name="LoginAttemptsInfo" xml:space="preserve">
     <value>Zariadenia vyššie nemajú prístup k vašim správam. Kód bol zadaný správne, ale nebolo zadané správne heslo.</value>
+  </data>
+  <data name="LoginOrSingInWithGoogle" xml:space="preserve">
+    <value>alebo</value>
   </data>
   <data name="LoginPassword" xml:space="preserve">
     <value>Heslo</value>
@@ -8711,6 +8750,9 @@ Môžete si prispôsobiť upozornenia pre konverzáciu otvorením jej profilu a 
   </data>
   <data name="NoPopup" xml:space="preserve">
     <value>Nezobrazovať</value>
+  </data>
+  <data name="NoReactions" xml:space="preserve">
+    <value>Žiadne reakcie</value>
   </data>
   <data name="NoRecent" xml:space="preserve">
     <value>Žiadne nedávne</value>
@@ -10363,7 +10405,7 @@ Navštívte naše *FAQ* pre viac informácií.</value>
     <value>Spôsob platby</value>
   </data>
   <data name="PaymentCheckoutMethodNewCard" xml:space="preserve">
-    <value>Nová karta</value>
+    <value>Pridať bankovú kartu...</value>
   </data>
   <data name="PaymentCheckoutName" xml:space="preserve">
     <value>Meno</value>
@@ -10958,6 +11000,9 @@ Toto môžete zmeniť v Nastavenia &gt; Súkromie a bezpečnosť &gt; Telefónne
   </data>
   <data name="PollViewResults" xml:space="preserve">
     <value>ZOBRAZIŤ VÝSLEDKY</value>
+  </data>
+  <data name="PopularReactions" xml:space="preserve">
+    <value>Populárne</value>
   </data>
   <data name="PopupDisabled" xml:space="preserve">
     <value>Vypnuté</value>
@@ -11714,6 +11759,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="Reactions" xml:space="preserve">
     <value>Reakcie</value>
   </data>
+  <data name="ReactionsAll" xml:space="preserve">
+    <value>Všetky</value>
+  </data>
   <data name="ReactionsCount_few" xml:space="preserve">
     <value>{0} reakcie</value>
   </data>
@@ -11746,6 +11794,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="RecentlyDownloaded" xml:space="preserve">
     <value>Nedávno stiahnuté</value>
+  </data>
+  <data name="RecentlyUsed" xml:space="preserve">
+    <value>Nedávno použité</value>
   </data>
   <data name="RecentlyViewed" xml:space="preserve">
     <value>Nedávno prezerané</value>
@@ -11974,6 +12025,12 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="ReportMessagesCount" xml:space="preserve">
     <value>NAHLÁSIŤ {0}</value>
+  </data>
+  <data name="ReportReaction" xml:space="preserve">
+    <value>Nahlásiť reakciu</value>
+  </data>
+  <data name="ReportReactionAndBan" xml:space="preserve">
+    <value>Zablokovať a nahlásiť</value>
   </data>
   <data name="ReportSelectMessages" xml:space="preserve">
     <value>Vybrať správy</value>
@@ -12217,7 +12274,7 @@ Tento proces môžete kedykoľvek zrušiť.</value>
     <value>RESETOVAŤ ÚČET</value>
   </data>
   <data name="RestorePasswordResetIn" xml:space="preserve">
-    <value>Vaše heslo môžete obnoviť o {0}</value>
+    <value>Vaše heslo môžete obnoviť o {0}.</value>
   </data>
   <data name="RestorePasswordResetPassword" xml:space="preserve">
     <value>OBNOVIŤ HESLO</value>
@@ -12642,6 +12699,9 @@ Pravdepodobne bude potrebné reštartovať Telegram, aby sa zmena prejavila.</va
   <data name="SelectOtherChat" xml:space="preserve">
     <value>Vybrať inú konverzáciu</value>
   </data>
+  <data name="SelectSendAsPeerPremiumOpen" xml:space="preserve">
+    <value>Otvoriť</value>
+  </data>
   <data name="SelectTheme" xml:space="preserve">
     <value>Vyberte motív</value>
   </data>
@@ -12883,6 +12943,15 @@ Neprijímajte hovor. Telegram všetko spracuje automaticky.</value>
   </data>
   <data name="SetColor" xml:space="preserve">
     <value>Nastaviť farbu</value>
+  </data>
+  <data name="SetEmojiStatusUntil1Hour" xml:space="preserve">
+    <value>Nastaviť na 1 hodinu</value>
+  </data>
+  <data name="SetEmojiStatusUntil2Days" xml:space="preserve">
+    <value>Nastaviť na 2 dni</value>
+  </data>
+  <data name="SetEmojiStatusUntilOther" xml:space="preserve">
+    <value>Iné</value>
   </data>
   <data name="SetNewPassword" xml:space="preserve">
     <value>Nastaviť nové heslo</value>
@@ -13304,6 +13373,9 @@ Pomalý režim je aktívny. Nemôžete odoslať viac ako jednu správu naraz.</v
   </data>
   <data name="SoftUserLimitAlert" xml:space="preserve">
     <value>Po vytvorení skupiny budete môcť pridať ďalších členov.</value>
+  </data>
+  <data name="SomeReactions" xml:space="preserve">
+    <value>Niektoré reakcie</value>
   </data>
   <data name="SortBy" xml:space="preserve">
     <value>Zoradiť podľa</value>
@@ -13915,6 +13987,9 @@ Tu je zoznam odomknutých funkcií.</value>
   <data name="TelegramPremiumUserGiftedPremiumOutboundDialogTitle" xml:space="preserve">
     <value>Používateľovi **{0}** ste darovali {1}-mesačné predplatné Telegram Prémium.</value>
   </data>
+  <data name="TelegramPremiumUserStatusDefaultDialogTitle" xml:space="preserve">
+    <value>Toto je aktuálny status používateľa {0}.</value>
+  </data>
   <data name="TelegramTones" xml:space="preserve">
     <value>TELEGRAMOVÉ TÓNY</value>
   </data>
@@ -14404,6 +14479,9 @@ Ak vám nevyhovujú skromné potreby služby Telegram, nebude možné, aby sme v
   </data>
   <data name="UnlockPremiumEmojiHint2" xml:space="preserve">
     <value>Vyskúšajte posielať tieto emoji v **Uložených správach** na skúšku.</value>
+  </data>
+  <data name="UnlockPremiumEmojiReaction" xml:space="preserve">
+    <value>Predplatením **Telegram Prémium** si odomknete tieto reakcie.</value>
   </data>
   <data name="UnlockPremiumIcons" xml:space="preserve">
     <value>Odomknúť prémiové ikony</value>
@@ -16025,6 +16103,9 @@ V prípade, že zabudnete svoje heslo, stratíte prístup do svojho účtu. Nie 
   </data>
   <data name="YourLocatedChannelsTooMuch" xml:space="preserve">
     <value>Prepáčte, už máte príliš veľa skupín založených na polohe. Najskôr jednu z nich odstráňte.</value>
+  </data>
+  <data name="YourLoginEmailChangedSuccess" xml:space="preserve">
+    <value>Váš email bol zmenený.</value>
   </data>
   <data name="YourName" xml:space="preserve">
     <value>Vaše meno</value>

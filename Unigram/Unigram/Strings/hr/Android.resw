@@ -187,6 +187,9 @@
   <data name="AccDescrContactSorting" xml:space="preserve">
     <value>Promjeni sortiranje</value>
   </data>
+  <data name="AccDescrCustomEmoji" xml:space="preserve">
+    <value>Prilagođeni emojiji</value>
+  </data>
   <data name="AccDescrDownloadProgress" xml:space="preserve">
     <value>Preuzeto {0} od {1}</value>
   </data>
@@ -1020,11 +1023,20 @@ sada: {1}</value>
   <data name="AddContactTitle" xml:space="preserve">
     <value>Dodaj kontakt</value>
   </data>
+  <data name="Added" xml:space="preserve">
+    <value>Dodano</value>
+  </data>
   <data name="AddedBy" xml:space="preserve">
     <value>dodan od {0} {1}</value>
   </data>
   <data name="AddedToFavorites" xml:space="preserve">
     <value>Naljepnica je dodana u omiljene.</value>
+  </data>
+  <data name="AddEmailSubtitle" xml:space="preserve">
+    <value>Unesite valjanu adresu e-pošte kako biste zaštitili svoj račun.</value>
+  </data>
+  <data name="AddEmailTitle" xml:space="preserve">
+    <value>Dodaj e-poštu</value>
   </data>
   <data name="AddEmojiInstalled" xml:space="preserve">
     <value>Emojiji su dodani</value>
@@ -1238,6 +1250,9 @@ sada: {1}</value>
   </data>
   <data name="AllPhotos" xml:space="preserve">
     <value>Sve slike</value>
+  </data>
+  <data name="AllReactions" xml:space="preserve">
+    <value>Sve reakcije</value>
   </data>
   <data name="AllSessionsTerminated" xml:space="preserve">
     <value>Sve ostale sesije su prekinute.</value>
@@ -2255,6 +2270,9 @@ Izlazak: {1}</value>
   <data name="Bans_other" xml:space="preserve">
     <value>{0} zabrana pristupa</value>
   </data>
+  <data name="BanUser" xml:space="preserve">
+    <value>Zabrani pristup</value>
+  </data>
   <data name="BioCopied" xml:space="preserve">
     <value>Opis je kopiran u međuspremnik</value>
   </data>
@@ -2654,7 +2672,7 @@ Omogućite pristup u Postavkama &gt; Dopuštenja &gt; Mikrofon.</value>
     <value>{0} ({1})</value>
   </data>
   <data name="CallNotAvailable" xml:space="preserve">
-    <value>Korisnik {0} ima podešene postavke privatnosti tako da ga ne možete zvati. Zamolite ga da izmijeni svoje postavke ili da on nazove vas.</value>
+    <value>Korisnik {0} ima podešene postavke privatnosti tako da ga ne možete zvati. Zamolite ga da promijeni svoje postavke ili da on nazove vas.</value>
   </data>
   <data name="CallReportHint" xml:space="preserve">
     <value>Što nije bilo dobro?</value>
@@ -2807,8 +2825,14 @@ Ako to niste bili vi, molimo unesite kod koji smo vam upravo poslali preko SMS-a
   <data name="ChangeColorToColor" xml:space="preserve">
     <value>Želite li koristiti trenutno odabranu pozadinu ili ju resetirati na zadanu za ovu temu?</value>
   </data>
+  <data name="ChangeEmail" xml:space="preserve">
+    <value>Promijeni e-poštu</value>
+  </data>
+  <data name="ChangeEmojiStatus" xml:space="preserve">
+    <value>Promijeni emoji status</value>
+  </data>
   <data name="ChangeLanguageLater" xml:space="preserve">
-    <value>Možete promijeniti jezik kasnije u postavkama.</value>
+    <value>Jezik možete promijeniti kasnije u postavkama.</value>
   </data>
   <data name="ChangePasscode" xml:space="preserve">
     <value>Promijeni lozinku</value>
@@ -3531,6 +3555,18 @@ Mora imati najmanje 5 znakova.</value>
   <data name="CheckPhoneNumberYes" xml:space="preserve">
     <value>Da</value>
   </data>
+  <data name="CheckYourEmail" xml:space="preserve">
+    <value>Provjerite svoju e-poštu</value>
+  </data>
+  <data name="CheckYourEmailSubtitle" xml:space="preserve">
+    <value>Unesite kod koji smo vam poslali na e-poštu {0}.</value>
+  </data>
+  <data name="CheckYourNewEmail" xml:space="preserve">
+    <value>Provjerite svoju novu e-poštu</value>
+  </data>
+  <data name="CheckYourNewEmailSubtitle" xml:space="preserve">
+    <value>Unesite kod koji smo vam poslali na novu e-poštu {0}.</value>
+  </data>
   <data name="ChooseCountry" xml:space="preserve">
     <value>Odaberite državu</value>
   </data>
@@ -3675,6 +3711,12 @@ Mora imati najmanje 5 znakova.</value>
   <data name="ClearRecentEmoji" xml:space="preserve">
     <value>Želite li očistiti nedavne emojije?</value>
   </data>
+  <data name="ClearRecentEmojiStatusesText" xml:space="preserve">
+    <value>Želite li očistiti svoje nedavne emoji statuse i resetirati prijedloge?</value>
+  </data>
+  <data name="ClearRecentEmojiStatusesTitle" xml:space="preserve">
+    <value>Očisti nedavne statuse</value>
+  </data>
   <data name="ClearRecentEmojiText" xml:space="preserve">
     <value>Želite li očistiti sve svoje nedavne emojije?</value>
   </data>
@@ -3683,6 +3725,12 @@ Mora imati najmanje 5 znakova.</value>
   </data>
   <data name="ClearRecentHistory" xml:space="preserve">
     <value>Očisti povijest</value>
+  </data>
+  <data name="ClearRecentReactionsAlertMessage" xml:space="preserve">
+    <value>Želite li očistiti svoje nedavne emojije iz prijedloga?</value>
+  </data>
+  <data name="ClearRecentReactionsAlertTitle" xml:space="preserve">
+    <value>Očisti nedavne emojije</value>
   </data>
   <data name="ClearRecentStickersAlertMessage" xml:space="preserve">
     <value>Želite li očistiti sve svoje nedavne naljepnice?</value>
@@ -4596,6 +4644,9 @@ Vaše preostale opcije su isprobati drugi broj ili kontaktirati podršku Telegra
   <data name="DisablePasscodeTurnOff" xml:space="preserve">
     <value>Isključi</value>
   </data>
+  <data name="DisableReactionsInfo" xml:space="preserve">
+    <value>Članovi grupe ne mogu dodavati nikakve reakcije na poruke.</value>
+  </data>
   <data name="DisappearingGif" xml:space="preserve">
     <value>Nestajući GIF</value>
   </data>
@@ -4956,8 +5007,20 @@ Ako sami ne odaberete razgovore, bit će prikazani vaši najnoviji razgovori.</v
 
 Ako sami ne odaberete razgovore, bit će prikazani vaši najčešći razgovori.</value>
   </data>
+  <data name="EmailAddressInvalid" xml:space="preserve">
+    <value>Nevažeća adresa e-pošte.</value>
+  </data>
   <data name="EmailCopied" xml:space="preserve">
     <value>E-pošta je kopirana u međuspremnik.</value>
+  </data>
+  <data name="EmailLogin" xml:space="preserve">
+    <value>E-pošta za prijavu</value>
+  </data>
+  <data name="EmailLoginChangeMessage" xml:space="preserve">
+    <value>Ova adresa e-pošte koristit će se svaki put kada se prijavite na svoj Telegram račun s novog uređaja.</value>
+  </data>
+  <data name="EmailNotAllowed" xml:space="preserve">
+    <value>Ova domena e-pošte nije dopuštena.</value>
   </data>
   <data name="EmailPasswordConfirmText" xml:space="preserve">
     <value>Slijedite korake za postavljanje potvrde u dva koraka:
@@ -4968,10 +5031,13 @@ Ako sami ne odaberete razgovore, bit će prikazani vaši najčešći razgovori.<
 2. Otvorite link za potvrdu.</value>
   </data>
   <data name="EmailPasswordConfirmText2" xml:space="preserve">
-    <value>Za postavljanje potvrde u dva koraka provjerite svoju e-poštu (ne zaboravite na neželjenu poštu) i upišite kod koji smo vam poslali.</value>
+    <value>Za postavljanje potvrde u dva koraka provjerite svoju e-poštu (ne zaboravite na neželjenu poštu) i upišite kod koji smo vam upravo poslali.</value>
   </data>
   <data name="EmailPasswordConfirmText3" xml:space="preserve">
-    <value>Da biste dovršili postavljenje e-pošte za oporavak, provjerite {0} (ne zaboravite na neželjenu poštu) i upišite kod koji smo vam poslali.</value>
+    <value>Da biste dovršili postavljenje e-pošte za oporavak, provjerite {0} (ne zaboravite na neželjenu poštu) i upišite kod koji smo vam upravo poslali.</value>
+  </data>
+  <data name="EmailTokenInvalid" xml:space="preserve">
+    <value>Nevažeći token e-pošte.</value>
   </data>
   <data name="Emoji" xml:space="preserve">
     <value>Emojiji</value>
@@ -5012,6 +5078,9 @@ Ako sami ne odaberete razgovore, bit će prikazani vaši najčešći razgovori.<
   <data name="EmojiBotInfo" xml:space="preserve">
     <value>Napravite vlastite pakete emojija pomoću @stickers bota.</value>
   </data>
+  <data name="EmojiCopied" xml:space="preserve">
+    <value>Emoji je kopiran u međuspremnik.</value>
+  </data>
   <data name="EmojiCount_few" xml:space="preserve">
     <value>paket od {0} emojija</value>
   </data>
@@ -5032,6 +5101,9 @@ Ako sami ne odaberete razgovore, bit će prikazani vaši najčešći razgovori.<
   </data>
   <data name="EmojiInteractionTapHint" xml:space="preserve">
     <value>Ako **{0}** ima otvoren ovaj razgovor, vidjet će ovu animaciju.</value>
+  </data>
+  <data name="EmojiLongtapHint" xml:space="preserve">
+    <value>Držite emoji i postavite timer</value>
   </data>
   <data name="EmojiPackCount_few" xml:space="preserve">
     <value>{0} paketa emojija</value>
@@ -5057,6 +5129,9 @@ Ako sami ne odaberete razgovore, bit će prikazani vaši najčešći razgovori.<
   <data name="EmojiRemovedMultipleInfo_other" xml:space="preserve">
     <value>{0} paketa je uklonjeno iz vaših emojija.</value>
   </data>
+  <data name="EmojiStatusExpireHint" xml:space="preserve">
+    <value>Vaš status istječe {0}</value>
+  </data>
   <data name="EmojiSuggestions" xml:space="preserve">
     <value>Prijedlog emojija</value>
   </data>
@@ -5077,6 +5152,9 @@ Ako sami ne odaberete razgovore, bit će prikazani vaši najčešći razgovori.<
   </data>
   <data name="Enable" xml:space="preserve">
     <value>Uključi</value>
+  </data>
+  <data name="EnableAllReactionsInfo" xml:space="preserve">
+    <value>Članovi grupe mogu koristiti bilo koje emojije kao reakcije na poruke.</value>
   </data>
   <data name="EnableAllStreamingInfo" xml:space="preserve">
     <value>Ako je to moguće, Telegram će odmah početi reproducirati videozapise i glazbu, bez čekanja da se datoteke u potpunosti preuzmu.</value>
@@ -5111,6 +5189,9 @@ Trebat ćete lozinku koju ste ovdje postavili za prijavu u vaš Telegram račun.
   </data>
   <data name="EnableReactionsGroupInfo" xml:space="preserve">
     <value>Dopustite članovima da reagiraju na poruke u grupi.</value>
+  </data>
+  <data name="EnableSomeReactionsInfo" xml:space="preserve">
+    <value>Članovi grupe mogu koristiti samo neke odobrene emojije kao reakcije na poruke.</value>
   </data>
   <data name="EnableStreaming" xml:space="preserve">
     <value>Emitiraj video i audio datoteke</value>
@@ -5184,6 +5265,9 @@ Saznajte više na telegram.org</value>
   </data>
   <data name="EnterListName" xml:space="preserve">
     <value>Upiši naziv liste</value>
+  </data>
+  <data name="EnterNewEmail" xml:space="preserve">
+    <value>Unesite novu e-poštu</value>
   </data>
   <data name="EnterNewFirstPasscode" xml:space="preserve">
     <value>Unesite lozinku</value>
@@ -5538,7 +5622,7 @@ Nema nedavnih radnji koje se poklapaju s vašim upitom.</value>
 Traje do: {1}</value>
   </data>
   <data name="EventLogSelectedEvents" xml:space="preserve">
-    <value>odabrane radnje</value>
+    <value>Odabrane radnje</value>
   </data>
   <data name="EventLogSendMessages" xml:space="preserve">
     <value>un1 šalje ovu poruku:</value>
@@ -6341,6 +6425,15 @@ Svi tajni razgovori će biti izgubljeni.</value>
   <data name="GifsTab2" xml:space="preserve">
     <value>GIF-ovi</value>
   </data>
+  <data name="GiftMonths_few" xml:space="preserve">
+    <value>{0}-mjesečnu</value>
+  </data>
+  <data name="GiftMonths_one" xml:space="preserve">
+    <value>{0}-mjesečnu</value>
+  </data>
+  <data name="GiftMonths_other" xml:space="preserve">
+    <value>{0}-mjesečnu</value>
+  </data>
   <data name="GiftPremium" xml:space="preserve">
     <value>Pokloni Premium</value>
   </data>
@@ -6858,6 +6951,9 @@ Poruke će biti uvezene na današnji dan, ali će sadržavati napomenu s origina
   <data name="InstallGoogleMaps" xml:space="preserve">
     <value>Instalirati Google karte?</value>
   </data>
+  <data name="InstallHuaweiMaps" xml:space="preserve">
+    <value>Instalirati Petal karte?</value>
+  </data>
   <data name="InstallOfficialApp" xml:space="preserve">
     <value>Instaliraj službenu aplikaciju</value>
   </data>
@@ -7190,7 +7286,7 @@ Možete promijeniti jezik u postavkama u bilo kojem trenutku.</value>
 
 Prevest će se cijelo sučelje aplikacije. Možete predložiti promjene u prijevodu koristeći [platformu za prevođenje].
 
-Možete promijeniti jezik u postavkama u bilo kojem trenutku.</value>
+Jezik možete promijeniti u postavkama u bilo kojem trenutku.</value>
   </data>
   <data name="LanguageName" xml:space="preserve">
     <value>hrvatski</value>
@@ -7624,6 +7720,9 @@ Ova radnja može potrajati nekoliko minuta.</value>
   <data name="LoginAttemptsInfo" xml:space="preserve">
     <value>Uređaji iznad nemaju pristup vašim porukama. Upisan je ispravan kod, ali nije upisana točna lozinka.</value>
   </data>
+  <data name="LoginOrSingInWithGoogle" xml:space="preserve">
+    <value>ili</value>
+  </data>
   <data name="LoginPassword" xml:space="preserve">
     <value>Lozinka</value>
   </data>
@@ -7935,6 +8034,21 @@ iz {0} paketa.</value>
     <value>Ova poruka sadrži emojije
 iz {0} paketa.</value>
   </data>
+  <data name="MessageContainsEmojiPackSingle" xml:space="preserve">
+    <value>Ova poruka sadrži emojije iz **{0}** paketa.</value>
+  </data>
+  <data name="MessageContainsReactionsPack" xml:space="preserve">
+    <value>Emoji iz {0} paketa je korišten kao reakcija.</value>
+  </data>
+  <data name="MessageContainsReactionsPacks_few" xml:space="preserve">
+    <value>Emojiji iz **{0} paketa** su korišteni kao reakcije.</value>
+  </data>
+  <data name="MessageContainsReactionsPacks_one" xml:space="preserve">
+    <value>Emojiji iz **{0} paketa** su korišteni kao reakcije.</value>
+  </data>
+  <data name="MessageContainsReactionsPacks_other" xml:space="preserve">
+    <value>Emojiji iz **{0} paketa** su korišteni kao reakcije.</value>
+  </data>
   <data name="MessageCopied" xml:space="preserve">
     <value>Poruka je kopirana u međuspremnik.</value>
   </data>
@@ -7969,13 +8083,13 @@ iz {0} paketa.</value>
     <value>Poruka je prikvačena.</value>
   </data>
   <data name="MessagePlayed_few" xml:space="preserve">
-    <value>Pokrenuli ({0})</value>
+    <value>Reproducirali ({0})</value>
   </data>
   <data name="MessagePlayed_one" xml:space="preserve">
-    <value>Pokrenuli ({0})</value>
+    <value>Reproducirali ({0})</value>
   </data>
   <data name="MessagePlayed_other" xml:space="preserve">
-    <value>Pokrenuli ({0})</value>
+    <value>Reproducirali ({0})</value>
   </data>
   <data name="MessagePreview" xml:space="preserve">
     <value>Prikaži pregled poruke</value>
@@ -8105,6 +8219,21 @@ iz {0} paketa.</value>
   </data>
   <data name="Mi" xml:space="preserve">
     <value>mi</value>
+  </data>
+  <data name="MicrophoneForVoiceMessages" xml:space="preserve">
+    <value>Mikrofon za glasovne poruke</value>
+  </data>
+  <data name="MicrophoneForVoiceMessagesBuiltIn" xml:space="preserve">
+    <value>Ugrađeni</value>
+  </data>
+  <data name="MicrophoneForVoiceMessagesSco" xml:space="preserve">
+    <value>Vanjski</value>
+  </data>
+  <data name="MicrophoneForVoiceMessagesScoHint" xml:space="preserve">
+    <value>Korištenje vanjskog mikrofona može smanjiti pozadinsku buku, ali će malo smanjiti kvalitetu zvuka.</value>
+  </data>
+  <data name="MicrophoneForVoiceMessagesScoIfConnected" xml:space="preserve">
+    <value>Vanjski mikrofon (ako je spojen)</value>
   </data>
   <data name="MigrateOldFolderButton" xml:space="preserve">
     <value>Premjesti sada</value>
@@ -8565,6 +8694,12 @@ Možete urediti obavijesti za razgovor otvaranjem profila i odaberite &apos;Obav
   </data>
   <data name="NoPopup" xml:space="preserve">
     <value>Bez skočnih</value>
+  </data>
+  <data name="NoReactions" xml:space="preserve">
+    <value>Bez reakcija</value>
+  </data>
+  <data name="NoReactionsFound" xml:space="preserve">
+    <value>Reakcije nisu pronađene</value>
   </data>
   <data name="NoRecent" xml:space="preserve">
     <value>Nema nedavnih</value>
@@ -9300,6 +9435,9 @@ Telegram tim</value>
   </data>
   <data name="OnlineCount_other" xml:space="preserve">
     <value>{0} na mreži</value>
+  </data>
+  <data name="OnlyAllowThisReactions" xml:space="preserve">
+    <value>Dopusti samo ove reakcije</value>
   </data>
   <data name="OnlyIfSilent" xml:space="preserve">
     <value>Samo kad je utišano</value>
@@ -10205,7 +10343,7 @@ Ako želite saznati više posjetite *Česta pitanja*.</value>
     <value>Vrsta plaćanja</value>
   </data>
   <data name="PaymentCheckoutMethodNewCard" xml:space="preserve">
-    <value>Nova kartica</value>
+    <value>Dodaj bankovnu karticu...</value>
   </data>
   <data name="PaymentCheckoutName" xml:space="preserve">
     <value>Ime</value>
@@ -10779,6 +10917,9 @@ Telegram će imat pristup lokaciji za vrijeme koje vi odredite i možete zaustav
   <data name="PollViewResults" xml:space="preserve">
     <value>REZULTATI</value>
   </data>
+  <data name="PopularReactions" xml:space="preserve">
+    <value>Popularne</value>
+  </data>
   <data name="PopupDisabled" xml:space="preserve">
     <value>Isključeno</value>
   </data>
@@ -10833,6 +10974,12 @@ Telegram će imat pristup lokaciji za vrijeme koje vi odredite i možete zaustav
   <data name="PremiumPreviewEmojiPack" xml:space="preserve">
     <value>Ovaj paket emojija je dostupan samo **Telegram Premium** pretplatnicima.</value>
   </data>
+  <data name="PremiumPreviewEmojiStatus" xml:space="preserve">
+    <value>Emoji status</value>
+  </data>
+  <data name="PremiumPreviewEmojiStatusDescription" xml:space="preserve">
+    <value>Odaberite bilo koji emoji i prikažite trenutnu aktivnost pored svojeg imena.</value>
+  </data>
   <data name="PremiumPreviewLimits" xml:space="preserve">
     <value>Duplo veći limiti</value>
   </data>
@@ -10856,6 +11003,12 @@ Telegram će imat pristup lokaciji za vrijeme koje vi odredite i možete zaustav
   </data>
   <data name="PremiumPreviewReactions" xml:space="preserve">
     <value>Posebne reakcije</value>
+  </data>
+  <data name="PremiumPreviewReactions2" xml:space="preserve">
+    <value>Neograničene reakcije</value>
+  </data>
+  <data name="PremiumPreviewReactions2Description" xml:space="preserve">
+    <value>Reagirajte s više reakcija po poruci koristeći tisuće emojija.</value>
   </data>
   <data name="PremiumPreviewReactionsDescription" xml:space="preserve">
     <value>Dodatne animirane reakcije na poruke, dostupne samo Premium pretplatnicima.</value>
@@ -10889,6 +11042,15 @@ Telegram će imat pristup lokaciji za vrijeme koje vi odredite i možete zaustav
   </data>
   <data name="PremiumStickerTooltip" xml:space="preserve">
     <value>Ovaj paket sadrži premium naljepnice kao što je ova.</value>
+  </data>
+  <data name="PremiumTierAnnual" xml:space="preserve">
+    <value>Godišnje</value>
+  </data>
+  <data name="PremiumTierMonthly" xml:space="preserve">
+    <value>Mjesečno</value>
+  </data>
+  <data name="PremiumTierSemiannual" xml:space="preserve">
+    <value>Polugodišnje</value>
   </data>
   <data name="PreviewFeedback" xml:space="preserve">
     <value>Prijavite pogrešku u pregledu</value>
@@ -11000,6 +11162,12 @@ Telegram će imat pristup lokaciji za vrijeme koje vi odredite i možete zaustav
   </data>
   <data name="PricePerMonth" xml:space="preserve">
     <value>{0} mjesečno</value>
+  </data>
+  <data name="PricePerMonthMe" xml:space="preserve">
+    <value>{0}/mjesečno</value>
+  </data>
+  <data name="PricePerYear" xml:space="preserve">
+    <value>{0}/godišnje</value>
   </data>
   <data name="PrimaryLinkHelp" xml:space="preserve">
     <value>Svatko tko koristi Telegram moći će se pridružiti vašoj grupi preko ovog linka.</value>
@@ -11493,6 +11661,9 @@ Telegram će imat pristup lokaciji za vrijeme koje vi odredite i možete zaustav
   <data name="Reactions" xml:space="preserve">
     <value>Reakcije</value>
   </data>
+  <data name="ReactionsAll" xml:space="preserve">
+    <value>Sve</value>
+  </data>
   <data name="ReactionsCount_few" xml:space="preserve">
     <value>{0} reakcije</value>
   </data>
@@ -11501,6 +11672,9 @@ Telegram će imat pristup lokaciji za vrijeme koje vi odredite i možete zaustav
   </data>
   <data name="ReactionsCount_other" xml:space="preserve">
     <value>{0} reakcija</value>
+  </data>
+  <data name="ReactionsLongtapHint" xml:space="preserve">
+    <value>Držite emoji za super reakciju</value>
   </data>
   <data name="ReactionsOff" xml:space="preserve">
     <value>Isključene</value>
@@ -11522,6 +11696,9 @@ Telegram će imat pristup lokaciji za vrijeme koje vi odredite i možete zaustav
   </data>
   <data name="RecentlyDownloaded" xml:space="preserve">
     <value>Nedavna preuzimanja</value>
+  </data>
+  <data name="RecentlyUsed" xml:space="preserve">
+    <value>Nedavno korištene</value>
   </data>
   <data name="RecentlyViewed" xml:space="preserve">
     <value>Nedavni posjet</value>
@@ -11686,10 +11863,13 @@ Telegram će imat pristup lokaciji za vrijeme koje vi odredite i možete zaustav
     <value>Odgovori</value>
   </data>
   <data name="ReplyToGroup" xml:space="preserve">
-    <value>Odgovori {0}</value>
+    <value>Odgovori</value>
   </data>
   <data name="ReplyToUser" xml:space="preserve">
-    <value>Odgovori {0}</value>
+    <value>Odgovori</value>
+  </data>
+  <data name="ReportAlertReaction" xml:space="preserve">
+    <value>Želite li prijaviti reakcije ovog korisnika?</value>
   </data>
   <data name="ReportChat" xml:space="preserve">
     <value>Prijavi</value>
@@ -11736,6 +11916,12 @@ Telegram će imat pristup lokaciji za vrijeme koje vi odredite i možete zaustav
   <data name="ReportMessagesCount" xml:space="preserve">
     <value>PRIJAVI {0}</value>
   </data>
+  <data name="ReportReaction" xml:space="preserve">
+    <value>Prijavi reakciju</value>
+  </data>
+  <data name="ReportReactionAndBan" xml:space="preserve">
+    <value>Zabrani pristup i prijavi</value>
+  </data>
   <data name="ReportSelectMessages" xml:space="preserve">
     <value>Označite poruke</value>
   </data>
@@ -11769,6 +11955,9 @@ Hvala na suradnji!</value>
   </data>
   <data name="ReportSpamUser" xml:space="preserve">
     <value>BLOKIRAJ KORISNIKA</value>
+  </data>
+  <data name="ReportSpamUserEmojiStatusHint" xml:space="preserve">
+    <value>Ovaj korisnik koristi {0} kao prilagođeni status pored svog imena. Takvi emoji statusi dostupni su svim {1} pretplatnicima.</value>
   </data>
   <data name="ReportTitleChild" xml:space="preserve">
     <value>Prijavi zlostavljanje djece</value>
@@ -12272,6 +12461,9 @@ Možda će biti potrebno da ponovno pokrenete aplikaciju.</value>
   <data name="SearchMusic" xml:space="preserve">
     <value>Pretražite glazbu</value>
   </data>
+  <data name="SearchReactionsHint" xml:space="preserve">
+    <value>Pretražite reakcije</value>
+  </data>
   <data name="SearchRecentFiles" xml:space="preserve">
     <value>Pretraži nedavne datoteke</value>
   </data>
@@ -12400,6 +12592,12 @@ Možda će biti potrebno da ponovno pokrenete aplikaciju.</value>
   </data>
   <data name="SelectOtherChat" xml:space="preserve">
     <value>Odaberi drugi razgovor</value>
+  </data>
+  <data name="SelectSendAsPeerPremiumHint" xml:space="preserve">
+    <value>Pretplatite se na **Telegram Premium** kako biste mogli komentirati u ime svojih kanala u bilo kojim grupama.</value>
+  </data>
+  <data name="SelectSendAsPeerPremiumOpen" xml:space="preserve">
+    <value>Otvori</value>
   </data>
   <data name="SelectTheme" xml:space="preserve">
     <value>Odaberite temu</value>
@@ -12570,7 +12768,7 @@ Možda će biti potrebno da ponovno pokrenete aplikaciju.</value>
     <value>Provjerite svoje Telegram poruke</value>
   </data>
   <data name="SentAppCodeWithPhone" xml:space="preserve">
-    <value>Poslali smo kod u **Telegram** aplikaciju na vašem drugom uređaju za vaš broj {0}.</value>
+    <value>Poslali smo kod u **Telegram aplikaciju**  na vašem drugom uređaju na broj {0}.</value>
   </data>
   <data name="SentCallCode" xml:space="preserve">
     <value>Zovemo vaš broj **{0}**.
@@ -12591,7 +12789,7 @@ Nemojte se javiti na poziv. Telegram će sve riješiti za vas.</value>
     <value>Rujan</value>
   </data>
   <data name="ServiceNotifications" xml:space="preserve">
-    <value>obavijesti</value>
+    <value>službene obavijesti</value>
   </data>
   <data name="SessionsInfo" xml:space="preserve">
     <value>Upravljajte svojim sesijama na svim uređajima.</value>
@@ -12643,6 +12841,30 @@ Nemojte se javiti na poziv. Telegram će sve riješiti za vas.</value>
   </data>
   <data name="SetColor" xml:space="preserve">
     <value>Postavi boju</value>
+  </data>
+  <data name="SetEmojiStatus" xml:space="preserve">
+    <value>Postavi emoji status</value>
+  </data>
+  <data name="SetEmojiStatusUntil1Hour" xml:space="preserve">
+    <value>Postavi na 1 sat</value>
+  </data>
+  <data name="SetEmojiStatusUntil2Days" xml:space="preserve">
+    <value>Postavi na 2 dana</value>
+  </data>
+  <data name="SetEmojiStatusUntil2Hours" xml:space="preserve">
+    <value>Postavi na 2 sata</value>
+  </data>
+  <data name="SetEmojiStatusUntil8Hours" xml:space="preserve">
+    <value>Postavi na 8 sati</value>
+  </data>
+  <data name="SetEmojiStatusUntilButton" xml:space="preserve">
+    <value>Postavi status</value>
+  </data>
+  <data name="SetEmojiStatusUntilOther" xml:space="preserve">
+    <value>Prilagodi...</value>
+  </data>
+  <data name="SetEmojiStatusUntilTitle" xml:space="preserve">
+    <value>Postavi status do...</value>
   </data>
   <data name="SetNewPassword" xml:space="preserve">
     <value>Postavi novu lozinku</value>
@@ -12984,6 +13206,9 @@ Unesite točan broj uključujući pozivni broj zemlje.</value>
   <data name="ShuffleList" xml:space="preserve">
     <value>Nasumično</value>
   </data>
+  <data name="SignInWithGoogle" xml:space="preserve">
+    <value>Prijavite se s Googleom</value>
+  </data>
   <data name="SignUp" xml:space="preserve">
     <value>Registracija</value>
   </data>
@@ -13057,6 +13282,9 @@ Uključen je spori način. Ne možete poslati više od jedne poruke odjednom.</v
   </data>
   <data name="SoftUserLimitAlert" xml:space="preserve">
     <value>Moći ćete dodati više korisnika nakon što napravite grupu.</value>
+  </data>
+  <data name="SomeReactions" xml:space="preserve">
+    <value>Neke reakcije</value>
   </data>
   <data name="SortBy" xml:space="preserve">
     <value>Sortiraj po</value>
@@ -13336,7 +13564,7 @@ unesite svoj broj telefona.</value>
     <value>Zaustavi anketu</value>
   </data>
   <data name="StopPollAlertText" xml:space="preserve">
-    <value>Ako zaustavite anketu nitko više neće moći dati odgovor. Ova anketa se neće moći ponovno pokrenuti.</value>
+    <value>Ako zaustavite ovu anketu više nitko neće moći glasati. Ova anketa se neće moći ponovno pokrenuti.</value>
   </data>
   <data name="StopPollAlertTitle" xml:space="preserve">
     <value>Zaustaviti anketu?</value>
@@ -13345,7 +13573,7 @@ unesite svoj broj telefona.</value>
     <value>Zaustavi kviz</value>
   </data>
   <data name="StopQuizAlertText" xml:space="preserve">
-    <value>Ako zaustavite kviz nitko više neće moći dati odgovor. Ovaj kviz se neće moći ponovno pokrenuti.</value>
+    <value>Ako zaustavite ovaj kviz više nitko neće moći dati odgovor. Ovaj kviz se neće moći ponovno pokrenuti.</value>
   </data>
   <data name="StopQuizAlertTitle" xml:space="preserve">
     <value>Zaustaviti kviz?</value>
@@ -13534,6 +13762,9 @@ Ako je uključena opcija &apos;**Sinkroniziraj kontakte**&apos;, kontakti će se
   <data name="TapForVideo" xml:space="preserve">
     <value>Dodirnite za slikanje, a držite za snimanje</value>
   </data>
+  <data name="TapHereEmoji" xml:space="preserve">
+    <value>Dodirnite {0} za više emojija.</value>
+  </data>
   <data name="TapHereGifs" xml:space="preserve">
     <value>Dotaknite ovdje za spremljene GIF-ove</value>
   </data>
@@ -13651,11 +13882,26 @@ Evo što je sada otključano.</value>
   <data name="TelegramPremiumUserGiftedPremiumDialogTitle" xml:space="preserve">
     <value>**{0}** vam poklanja {1}-mjesečnu Telegram Premium pretplatu.</value>
   </data>
+  <data name="TelegramPremiumUserGiftedPremiumDialogTitleWithPlural" xml:space="preserve">
+    <value>**{0}** vam poklanja {1} Telegram Premium pretplatu.</value>
+  </data>
   <data name="TelegramPremiumUserGiftedPremiumOutboundDialogSubtitle" xml:space="preserve">
     <value>**{0}** sada ima pristup dodatnim značajkama.</value>
   </data>
   <data name="TelegramPremiumUserGiftedPremiumOutboundDialogTitle" xml:space="preserve">
     <value>Poklonili ste {1}-mjesečnu Telegram Premium pretplatu korisniku **{0}**.</value>
+  </data>
+  <data name="TelegramPremiumUserGiftedPremiumOutboundDialogTitleWithPlural" xml:space="preserve">
+    <value>Poklonili ste {1} Telegram Premium pretplatu korisniku **{0}**.</value>
+  </data>
+  <data name="TelegramPremiumUserStatusDefaultDialogTitle" xml:space="preserve">
+    <value>Ovo je trenutni status od {0}.</value>
+  </data>
+  <data name="TelegramPremiumUserStatusDialogSubtitle" xml:space="preserve">
+    <value>Emoji status je premium značajka. Ostale **Telegram Premium** značajke:</value>
+  </data>
+  <data name="TelegramPremiumUserStatusDialogTitle" xml:space="preserve">
+    <value>{0} koristi emoji iz **{1}** kao svoj trenutni status.</value>
   </data>
   <data name="TelegramTones" xml:space="preserve">
     <value>Telegram zvukovi</value>
@@ -14150,6 +14396,9 @@ Ako niste zadovoljni načinom kako funkcionira Telegram nećemo vam moći pruži
   <data name="UnlockPremiumEmojiPack" xml:space="preserve">
     <value>Otključaj {0}</value>
   </data>
+  <data name="UnlockPremiumEmojiReaction" xml:space="preserve">
+    <value>Pretplatite se na **Telegram Premium** i otključajte ovu reakciju.</value>
+  </data>
   <data name="UnlockPremiumIcons" xml:space="preserve">
     <value>Otključajte premium ikone</value>
   </data>
@@ -14548,6 +14797,9 @@ Možete koristiti **a–z**, **0–9** i **_**. Mora imati najmanje **5** znakov
   </data>
   <data name="VerificationCode" xml:space="preserve">
     <value>Kod za potvrdu</value>
+  </data>
+  <data name="VerificationCodeSubtitle" xml:space="preserve">
+    <value>Provjerite svoju e-poštu {0} (ne zaboravite na neželjenu poštu) i upišite kod koji smo vam upravo poslali.</value>
   </data>
   <data name="ViaBot" xml:space="preserve">
     <value>preko</value>
@@ -15734,11 +15986,17 @@ Ako zaboravite svoju lozinku, izgubit ćete pristup vašem Telegram računu. Ne�
   <data name="YourLocatedChannelsTooMuch" xml:space="preserve">
     <value>Nažalost, vlasnik ste previše grupa na lokaciji. Najprije izbrišite jednu od svojih postojećih grupa.</value>
   </data>
+  <data name="YourLoginEmailChangedSuccess" xml:space="preserve">
+    <value>Vaš adresa e-pošte je promijenjena.</value>
+  </data>
   <data name="YourName" xml:space="preserve">
     <value>Vaše ime</value>
   </data>
   <data name="YourNameChanged" xml:space="preserve">
     <value>Ime je promijenjeno.</value>
+  </data>
+  <data name="YourNewEmail" xml:space="preserve">
+    <value>Vaša nova e-pošta</value>
   </data>
   <data name="YourNumber" xml:space="preserve">
     <value>Vaš broj telefona</value>

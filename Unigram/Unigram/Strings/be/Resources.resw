@@ -103,6 +103,9 @@
   <data name="AccActionOpenFile" xml:space="preserve">
     <value>Адкрыць файл</value>
   </data>
+  <data name="AccActionOpenForwardedOrigin" xml:space="preserve">
+    <value>Аб'ект без тэксту</value>
+  </data>
   <data name="AccActionOpenTranscription" xml:space="preserve">
     <value>Адкрыць распазнаванне голасу</value>
   </data>
@@ -183,6 +186,9 @@
   </data>
   <data name="AccDescrContactSorting" xml:space="preserve">
     <value>Змяніць сартаванне</value>
+  </data>
+  <data name="AccDescrCustomEmoji" xml:space="preserve">
+    <value>Карыстальніцкія эмодзі</value>
   </data>
   <data name="AccDescrDownloadProgress" xml:space="preserve">
     <value>Спампавана {0} з {1}</value>
@@ -1044,11 +1050,20 @@
   <data name="AddContactTitle" xml:space="preserve">
     <value>Дадаць кантакт</value>
   </data>
+  <data name="Added" xml:space="preserve">
+    <value>Дададзена</value>
+  </data>
   <data name="AddedBy" xml:space="preserve">
     <value>дадаў(-ла) {0} {1}</value>
   </data>
   <data name="AddedToFavorites" xml:space="preserve">
     <value>Стыкер дададзены ў абранае</value>
+  </data>
+  <data name="AddEmailSubtitle" xml:space="preserve">
+    <value>Увядзіце ваш сапраўдны адрас электроннай пошты, каб абараніць свой уліковы запіс.</value>
+  </data>
+  <data name="AddEmailTitle" xml:space="preserve">
+    <value>Дадайце электронную пошту</value>
   </data>
   <data name="AddEmojiInstalled" xml:space="preserve">
     <value>Эмодзі дададзены.</value>
@@ -1117,7 +1132,7 @@
     <value>Шукаць людзей паблізу</value>
   </data>
   <data name="AddPhoto" xml:space="preserve">
-    <value>Задаць новы аватар</value>
+    <value>Задаць новы аватар або відэа</value>
   </data>
   <data name="AddProxy" xml:space="preserve">
     <value>Дадаць проксі</value>
@@ -1132,7 +1147,7 @@
     <value>Дадаць стыкеры</value>
   </data>
   <data name="AddStickersCount" xml:space="preserve">
-    <value>ДАДАЦЬ {0}</value>
+    <value>Дадаць {0}</value>
   </data>
   <data name="AddStickersInstalled" xml:space="preserve">
     <value>Новыя стыкеры дададзены</value>
@@ -1271,6 +1286,9 @@
   </data>
   <data name="AllPhotos" xml:space="preserve">
     <value>Усе фота</value>
+  </data>
+  <data name="AllReactions" xml:space="preserve">
+    <value>Усе рэакцыі</value>
   </data>
   <data name="AllSessionsTerminated" xml:space="preserve">
     <value>Усе астатнія сеансы спынены.</value>
@@ -1667,9 +1685,9 @@
   <data name="AreYouSureLogout" xml:space="preserve">
     <value>Вы ўпэўнены, што хочаце выйсці?
 
-Звярніце ўвагу, што вы можаце лёгка карыстацца Telegram на ўсіх сваіх прыладах адначасова.
+Гэта выдаліць усе вашы сакрэтныя чаты.
 
-Памятайце, што выхад з уліковага запісу выдаляе ўсе вашы сакрэтныя чаты.</value>
+Звярніце ўвагу, што вы можаце лёгка карыстацца Telegram на ўсіх сваіх прыладах адначасова і ўваходзіць з некалькіх уліковых запісаў.</value>
   </data>
   <data name="AreYouSureRegistration" xml:space="preserve">
     <value>Вы ўпэўнены, што хочаце скасаваць рэгістрацыю?</value>
@@ -2075,7 +2093,7 @@
     <value>Пачынаць спампоўванне наступнага трэка пры праслухоўванні аўдыяфайла.</value>
   </data>
   <data name="AutoDownloadPreloadVideo" xml:space="preserve">
-    <value>Папярэдне загружаць большыя відэа</value>
+    <value>Папярэдне загружаць вялікія відэа</value>
   </data>
   <data name="AutoDownloadPreloadVideoInfo" xml:space="preserve">
     <value>Папярэдне загружаць першыя секунды (1-2 МБ) відэа для імгненнага прайгравання, якія большыя за {0}.</value>
@@ -2111,7 +2129,7 @@
     <value>Адключана</value>
   </data>
   <data name="AutoLockInfo" xml:space="preserve">
-    <value>Патрабаваць код доступу, калі пэўны час не было актыўнасці.</value>
+    <value>Патрабаваць код доступу пасля пэўнага перыяду неактыўнасці.</value>
   </data>
   <data name="AutoLockInTime" xml:space="preserve">
     <value>праз {0}</value>
@@ -2285,7 +2303,7 @@
     <value>Улічваць чаты без апавяшчэнняў</value>
   </data>
   <data name="BadgeNumberShow" xml:space="preserve">
-    <value>Уключаны</value>
+    <value>Паказваць лічыльнік</value>
   </data>
   <data name="BadgeNumberUnread" xml:space="preserve">
     <value>Лічыць паведамленні</value>
@@ -2307,6 +2325,9 @@
   </data>
   <data name="Bans_other" xml:space="preserve">
     <value>{0} блакіровак</value>
+  </data>
+  <data name="BanUser" xml:space="preserve">
+    <value>Заблакіраваць карыстальніка</value>
   </data>
   <data name="BioCopied" xml:space="preserve">
     <value>Біяграфія скапіявана ў буфер абмену.</value>
@@ -2387,13 +2408,13 @@
     <value>Размытасць у чаце</value>
   </data>
   <data name="BlurLinear" xml:space="preserve">
-    <value>Лінейнае</value>
+    <value>Лінейная</value>
   </data>
   <data name="BlurOff" xml:space="preserve">
     <value>Выкл.</value>
   </data>
   <data name="BlurRadial" xml:space="preserve">
-    <value>Радыяльнае</value>
+    <value>Радыяльная</value>
   </data>
   <data name="Bold" xml:space="preserve">
     <value>Тоўсты</value>
@@ -2710,7 +2731,7 @@
     <value>{0} ({1})</value>
   </data>
   <data name="CallNotAvailable" xml:space="preserve">
-    <value>На жаль, вы не можаце тэлефанаваць карыстальніку **{0}**, бо ён забараніў гэта сваімі наладамі прыватнасці.</value>
+    <value>На жаль, вы не можаце тэлефанаваць карыстальніку **{0}**, бо ён забараніў гэта сваімі наладамі прыватнасці. Вы можаце папрасіць яго або яе змяніць налады ці патэлефанаваць вам.</value>
   </data>
   <data name="CallReportHint" xml:space="preserve">
     <value>Што было не так?</value>
@@ -2866,6 +2887,12 @@
   <data name="ChangeColorToColor" xml:space="preserve">
     <value>Вы хочаце выкарыстоўваць выбраны вамі фон або скінуць яго на прадвызначаны для гэтай тэмы?</value>
   </data>
+  <data name="ChangeEmail" xml:space="preserve">
+    <value>Змяніць адрас</value>
+  </data>
+  <data name="ChangeEmojiStatus" xml:space="preserve">
+    <value>Змяніць статус</value>
+  </data>
   <data name="ChangeLanguageLater" xml:space="preserve">
     <value>Пазней вы можаце змяніць мову праз Налады.</value>
   </data>
@@ -2875,7 +2902,7 @@
   <data name="ChangePasscodeInfo" xml:space="preserve">
     <value>Калі вы задасце дадатковы код доступу, на старонцы вашых чатаў з’явіцца значок блакіроўкі. Націсніце на яго, каб заблакіраваць або разблакіраваць праграму.
 
-Звярніце ўвагу: калі вы забудзецеся на код, вам прыйдзецца выдаліць і пераўсталяваць праграму. Усе сакрэтныя чаты будуць страчаны.</value>
+Звярніце ўвагу: калі вы забудзецеся на код, вам прыйдзецца выйсці з уліковага запісу або пераўсталяваць праграму. Усе сакрэтныя чаты будуць страчаны.</value>
   </data>
   <data name="ChangePasscodeInfoShort" xml:space="preserve">
     <value>Калі вы задасце дадатковы код, над вашым спісам чатаў з’явіцца значок 
@@ -3021,7 +3048,7 @@
     <value>Выдаліць са спіса</value>
   </data>
   <data name="ChannelDeleteInfo" xml:space="preserve">
-    <value>Вы страціце доступ да ўсіх паведамленняў у гэтым канале.</value>
+    <value>Гэтае дзеянне выдаліць усе паведамленні ў канале для ўсіх падпісчыкаў.</value>
   </data>
   <data name="ChannelDeleteMenu" xml:space="preserve">
     <value>Выдаліць канал</value>
@@ -3254,10 +3281,10 @@
     <value>Назва канала абноўлена.</value>
   </data>
   <data name="ChannelTooMuch" xml:space="preserve">
-    <value>На жаль, вы з'яўляецеся ўдзельнікам занадта шмат суполак і каналаў. Выйдзіце з некаторых, каб ствараць новыя.</value>
+    <value>На жаль, вы з'яўляецеся ўдзельнікам максімальнай колькасці суполак і каналаў. Выйдзіце з некаторых, каб ствараць новыя.</value>
   </data>
   <data name="ChannelTooMuchJoin" xml:space="preserve">
-    <value>Вы з'яўляецеся ўдзельнікам занадта шмат суполак і каналаў. Выйдзіце з некаторых, каб далучацца да новых.</value>
+    <value>Вы з'яўляецеся ўдзельнікам максімальнай колькасці суполак і каналаў. Выйдзіце з некаторых, каб далучацца да новых.</value>
   </data>
   <data name="ChannelTooMuchTitle" xml:space="preserve">
     <value>Занадта шмат супольнасцей</value>
@@ -3460,7 +3487,7 @@
     <value>{0} чатаў</value>
   </data>
   <data name="ChatsLeaveAlert" xml:space="preserve">
-    <value>&lt;![CDATA[&gt;Вы ўпэўнены, што хочаце выйсці з выбраных чатаў?]]&gt;</value>
+    <value>&lt;![CDATA[Вы ўпэўнены, што хочаце выйсці з выбраных чатаў?]]&gt;</value>
   </data>
   <data name="ChatsMute" xml:space="preserve">
     <value>Не апавяшчаць</value>
@@ -3612,6 +3639,18 @@
   <data name="CheckPhoneNumberYes" xml:space="preserve">
     <value>Так</value>
   </data>
+  <data name="CheckYourEmail" xml:space="preserve">
+    <value>Праверце вашу эл. пошту</value>
+  </data>
+  <data name="CheckYourEmailSubtitle" xml:space="preserve">
+    <value>Увядзіце код, які мы адправілі на вашу электронную пошту {0}.</value>
+  </data>
+  <data name="CheckYourNewEmail" xml:space="preserve">
+    <value>Праверце вашу новую эл. пошту</value>
+  </data>
+  <data name="CheckYourNewEmailSubtitle" xml:space="preserve">
+    <value>Увядзіце код, які мы адправілі на вашу новую электронную пошту {0}.</value>
+  </data>
   <data name="ChooseCountry" xml:space="preserve">
     <value>Выберыце краіну</value>
   </data>
@@ -3756,6 +3795,12 @@
   <data name="ClearRecentEmoji" xml:space="preserve">
     <value>Скінуць нядаўнія эмодзі?</value>
   </data>
+  <data name="ClearRecentEmojiStatusesText" xml:space="preserve">
+    <value>Вы хочаце ачысціць свае нядаўнія эмодзі-статусы і скінуць прапановы?</value>
+  </data>
+  <data name="ClearRecentEmojiStatusesTitle" xml:space="preserve">
+    <value>Ачысціць нядаўнія статусы</value>
+  </data>
   <data name="ClearRecentEmojiText" xml:space="preserve">
     <value>Вы хочаце ачысціць усе свае нядаўнія эмодзі?</value>
   </data>
@@ -3764,6 +3809,12 @@
   </data>
   <data name="ClearRecentHistory" xml:space="preserve">
     <value>Ачысціць гісторыю</value>
+  </data>
+  <data name="ClearRecentReactionsAlertMessage" xml:space="preserve">
+    <value>Вы хочаце ачысціць свае нядаўнія рэакцыі і скінуць прапановы?</value>
+  </data>
+  <data name="ClearRecentReactionsAlertTitle" xml:space="preserve">
+    <value>Ачысціць нядаўнія эмодзі</value>
   </data>
   <data name="ClearRecentStickersAlertMessage" xml:space="preserve">
     <value>Вы хочаце ачысціць усе вашы нядаўнія стыкеры?</value>
@@ -4212,7 +4263,7 @@
     <value>Гэтыя карыстальнікі змогуць або не змогуць тэлефанаваць вам, незалежна ад налад зверху.</value>
   </data>
   <data name="CustomHelp" xml:space="preserve">
-    <value>Вы не зможаце бачыць час апошняй актыўнасці тых людзей, ад якіх вы яго схавалі. У іх будзе паказвацца прыблізны час апошняй актыўнасці (нядаўна, на гэтым тыдні, у гэтым месяцы).</value>
+    <value>Вы не зможаце бачыць час апошняй актыўнасці тых людзей, ад якіх вы яго схавалі. Будзе паказвацца прыблізны час апошняй актыўнасці (нядаўна, на гэтым тыдні, у гэтым месяцы).</value>
   </data>
   <data name="CustomNotifications" xml:space="preserve">
     <value>Наладжвальныя апавяшчэнні</value>
@@ -4233,7 +4284,7 @@
     <value>Карыстальніцкія тэмы</value>
   </data>
   <data name="DartInfo" xml:space="preserve">
-    <value>Адпраўце эмодзі **:darts:**, каб выпрабаваць сваю ўдачу.</value>
+    <value>Адпраўце эмодзі **:dart:**, каб выпрабаваць сваю ўдачу.</value>
   </data>
   <data name="DataSettings" xml:space="preserve">
     <value>Даныя і сховішча</value>
@@ -4413,7 +4464,7 @@
     <value>Перыяд неактыўнасці</value>
   </data>
   <data name="DeleteAccountTitle" xml:space="preserve">
-    <value>Самазнішчэнне ўліковага запісу</value>
+    <value>Самазнішчэнне пасля неактыўнасці</value>
   </data>
   <data name="DeleteAll" xml:space="preserve">
     <value>Выдаліць усе</value>
@@ -4509,7 +4560,7 @@
     <value>Выдаліць для ўсіх удзельнікаў</value>
   </data>
   <data name="DeleteForUser" xml:space="preserve">
-    <value>Выдаліць для {0}</value>
+    <value>Таксама выдаліць для {0}</value>
   </data>
   <data name="DeleteFromFavorites" xml:space="preserve">
     <value>Выдаліць з абранага</value>
@@ -4728,6 +4779,9 @@
   <data name="DisablePasscodeTurnOff" xml:space="preserve">
     <value>Адключыць</value>
   </data>
+  <data name="DisableReactionsInfo" xml:space="preserve">
+    <value>Удзельнікі суполкі не могуць дадаваць рэакцыі на паведамленні.</value>
+  </data>
   <data name="DisappearingGif" xml:space="preserve">
     <value>Самазнішчальная анімацыя</value>
   </data>
@@ -4814,7 +4868,7 @@
   <data name="DiscussionLinkGroupPublicPrivateAlert" xml:space="preserve">
     <value>Вы хочаце зрабіць **{0}** дошкай абмеркаванняў для **{1}**?
 
-Кожны, хто праглядае канал зможа бачыць паведамленні ў гэтай суполцы.</value>
+Кожны, хто праглядае канал, зможа бачыць паведамленні ў гэтай суполцы.</value>
   </data>
   <data name="DiscussionStarted" xml:space="preserve">
     <value>Абмеркаванне пачалося</value>
@@ -4871,7 +4925,7 @@
     <value>Больш не пытацца</value>
   </data>
   <data name="DoubledLimits" xml:space="preserve">
-    <value>Ліміты ўдвоены</value>
+    <value>Падвоеныя ліміты</value>
   </data>
   <data name="DoubleTapPreviewMessage" xml:space="preserve">
     <value>Спадзяюся, не толькі ў мяне сёння выдатны дзень.</value>
@@ -5002,7 +5056,7 @@
     <value>Што можа рабіць гэты кіраўнік?</value>
   </data>
   <data name="EditCantEditPermissions" xml:space="preserve">
-    <value>Вы не можаце змяніць гэта паўнамоцтва.</value>
+    <value>Вы не можаце змяніць гэтае паўнамоцтва.</value>
   </data>
   <data name="EditCantEditPermissionsPublic" xml:space="preserve">
     <value>Гэта паўнамоцтва недаступнае ў публічных суполках.</value>
@@ -5090,8 +5144,20 @@
 
 Калі нічога не выбрана, то віджэт будзе паказваць вашы апошнія актыўныя чаты.</value>
   </data>
+  <data name="EmailAddressInvalid" xml:space="preserve">
+    <value>Памылковы адрас электроннай пошты</value>
+  </data>
   <data name="EmailCopied" xml:space="preserve">
     <value>Эл. пошта скапіявана ў буфер абмену.</value>
+  </data>
+  <data name="EmailLogin" xml:space="preserve">
+    <value>Уваход праз эл. пошту</value>
+  </data>
+  <data name="EmailLoginChangeMessage" xml:space="preserve">
+    <value>Гэты адрас электроннай пошты будзе выкарыстоўвацца кожны раз, калі вы ўваходзіце ў свой уліковы запіс Telegram з новай прылады.</value>
+  </data>
+  <data name="EmailNotAllowed" xml:space="preserve">
+    <value>Гэты дамен электроннай пошты забаронены.</value>
   </data>
   <data name="EmailPasswordConfirmText" xml:space="preserve">
     <value>Зрабіце наступнае, каб завяршыць наладку двухэтапнай праверкі:
@@ -5106,6 +5172,9 @@
   </data>
   <data name="EmailPasswordConfirmText3" xml:space="preserve">
     <value>Каб завяршыць наладку двухэтапнай праверкі, праверце {0} (не забудзьцеся зазірнуць у папку са спамам) і ўвядзіце электронную пошту, на якую быў адпраўлены код, і сам код.</value>
+  </data>
+  <data name="EmailTokenInvalid" xml:space="preserve">
+    <value>Памылковы токен уваходу па эл. пошце.</value>
   </data>
   <data name="Emoji" xml:space="preserve">
     <value>Эмодзі</value>
@@ -5147,6 +5216,9 @@
   <data name="EmojiBotInfo" xml:space="preserve">
     <value>Мастакі могуць дадаваць свае ўласныя наборы эмодзі праз наш бот @stickers.</value>
   </data>
+  <data name="EmojiCopied" xml:space="preserve">
+    <value>Эмодзі скапіяваны.</value>
+  </data>
   <data name="EmojiCount_few" xml:space="preserve">
     <value>{0} эмодзі</value>
   </data>
@@ -5173,6 +5245,9 @@
   </data>
   <data name="EmojiInteractionTapHint" xml:space="preserve">
     <value>Калі **{0}** адкрые чат у гэты момант, то таксама ўбачыць анімацыю.</value>
+  </data>
+  <data name="EmojiLongtapHint" xml:space="preserve">
+    <value>Утрымлівайце эмодзі, каб задаць таймер</value>
   </data>
   <data name="EmojiPackCount_few" xml:space="preserve">
     <value>{0} наборы эмодзі</value>
@@ -5204,6 +5279,9 @@
   <data name="EmojiRemovedMultipleInfo_other" xml:space="preserve">
     <value>{0} набору выдалена з вашых эмодзі.</value>
   </data>
+  <data name="EmojiStatusExpireHint" xml:space="preserve">
+    <value>Ваш статус заканчваецца ў {0}</value>
+  </data>
   <data name="EmojiSuggestions" xml:space="preserve">
     <value>Прапановы эмодзі</value>
   </data>
@@ -5225,8 +5303,11 @@
   <data name="Enable" xml:space="preserve">
     <value>Уключыць</value>
   </data>
+  <data name="EnableAllReactionsInfo" xml:space="preserve">
+    <value>Удзельнікі суполкі могуць выкарыстоўваць любыя эмодзі для рэакцый на паведамленні.</value>
+  </data>
   <data name="EnableAllStreamingInfo" xml:space="preserve">
-    <value>Некаторыя відэа не могуць быць патокава прайграны. Напрыклад, якія адпраўляліся з Android Telegram версіі 4.7 і ранейшай.</value>
+    <value>Па магчымасці Telegram пачне прайграваць відэа і музыку адразу, не чакаючы поўнай загрузкі файла.</value>
   </data>
   <data name="EnableAnimations" xml:space="preserve">
     <value>Уключыць анімацыю</value>
@@ -5258,6 +5339,9 @@
   </data>
   <data name="EnableReactionsGroupInfo" xml:space="preserve">
     <value>Дазваляць удзельнікам пакідаць рэакцыі на паведамленні ў суполцы.</value>
+  </data>
+  <data name="EnableSomeReactionsInfo" xml:space="preserve">
+    <value>Удзельнікі суполкі могуць выкарыстоўваць толькі пэўныя ўхваленыя эмодзі для рэакцый на паведамленні.</value>
   </data>
   <data name="EnableStreaming" xml:space="preserve">
     <value>Трансліраваць відэа і аўдыя</value>
@@ -5331,6 +5415,9 @@
   </data>
   <data name="EnterListName" xml:space="preserve">
     <value>Увядзіце імя спіса</value>
+  </data>
+  <data name="EnterNewEmail" xml:space="preserve">
+    <value>Увядзіце новую электронную пошту</value>
   </data>
   <data name="EnterNewFirstPasscode" xml:space="preserve">
     <value>Увядзіце код доступу</value>
@@ -5845,7 +5932,7 @@
 {0} файлаў захаваны ў спампоўкі</value>
   </data>
   <data name="FilesSavedHint_one" xml:space="preserve">
-    <value>{0} файл захаваны ў спампоўкі</value>
+    <value>Файл захаваны ў спампоўкі</value>
   </data>
   <data name="FilesSavedHint_other" xml:space="preserve">
     <value>
@@ -6191,7 +6278,7 @@
     <value>Забыліся код доступу?</value>
   </data>
   <data name="ForgotPasscodeInfo" xml:space="preserve">
-    <value>Калі вы забудзецеся код доступу, вам прыйдзецца выдаліць і пераўсталяваць праграму.
+    <value>Калі вы не памятаеце свой код доступу, то, калі ласка, выдаліце і пераўсталюйце праграму.
 
 Усе сакрэтныя чаты будуць страчаны.</value>
   </data>
@@ -6549,6 +6636,18 @@
   <data name="GifsTab2" xml:space="preserve">
     <value>Анімацыі</value>
   </data>
+  <data name="GiftMonths_few" xml:space="preserve">
+    <value>{0} месяцы</value>
+  </data>
+  <data name="GiftMonths_many" xml:space="preserve">
+    <value>{0} месяцаў</value>
+  </data>
+  <data name="GiftMonths_one" xml:space="preserve">
+    <value>{0} месяц</value>
+  </data>
+  <data name="GiftMonths_other" xml:space="preserve">
+    <value>{0} месяца</value>
+  </data>
   <data name="GiftPremium" xml:space="preserve">
     <value>Падарыць Premium</value>
   </data>
@@ -6709,10 +6808,10 @@
     <value>{0} суполак</value>
   </data>
   <data name="GroupsAndChannels" xml:space="preserve">
-    <value>Суполкі</value>
+    <value>Суполкі і каналы</value>
   </data>
   <data name="GroupsAndChannelsHelp" xml:space="preserve">
-    <value>Прызначыць тых, хто можа дадаваць вас да суполак і каналаў.</value>
+    <value>Вы можаце вызначыць, хто можа дадаваць вас да суполак і каналаў.</value>
   </data>
   <data name="GroupsAndChannelsLimitSubtitle" xml:space="preserve">
     <value>Далучайцеся да {0} каналаў і вялікіх суполак</value>
@@ -6792,7 +6891,7 @@
     <value>Схаваць</value>
   </data>
   <data name="HideCaption" xml:space="preserve">
-    <value>Схаваць подпіс</value>
+    <value>Хаваць подпіс</value>
   </data>
   <data name="HideNewChatsAlertText" xml:space="preserve">
     <value>Вас часта дадаюць у чаты карыстальнікі, якія не знаходзяцца ў вашым спісе кантактаў. Ці хочаце, каб такія чаты **аўтаматычна дадаваліся ў архіў** з **адключанымі апавяшчэннямі**?</value>
@@ -7082,6 +7181,9 @@
   </data>
   <data name="InstallGoogleMaps" xml:space="preserve">
     <value>Усталяваць Google Maps?</value>
+  </data>
+  <data name="InstallHuaweiMaps" xml:space="preserve">
+    <value>Усталяваць Petal Maps?</value>
   </data>
   <data name="InstallOfficialApp" xml:space="preserve">
     <value>Усталяваць афіцыйную праграму</value>
@@ -7472,7 +7574,7 @@
     <value>Неафiцыйныя мовы</value>
   </data>
   <data name="LanguageUnsupportedError" xml:space="preserve">
-    <value>Такая мова адсутнiчае.</value>
+    <value>Мова не знойдзена.</value>
   </data>
   <data name="LargeEmoji" xml:space="preserve">
     <value>Вялікія эмодзі</value>
@@ -7674,7 +7776,7 @@
   </data>
   <data name="LinkCopiedPrivate" xml:space="preserve">
     <value>Спасылка скапіявана ў буфер абмену.
-Гэта спасылка будзе працаваць толькі для ўдзельнікаў гэтага чата.</value>
+Гэтая спасылка будзе працаваць толькі для ўдзельнікаў гэтага чата.</value>
   </data>
   <data name="LinkCopiedPrivateInfo" xml:space="preserve">
     <value>Гэта спасылка будзе працаваць толькі для ўдзельнікаў гэтага чата.</value>
@@ -7716,7 +7818,7 @@
     <value>Публічныя спасылкі павінны складацца як мінімум з 5 сімвалаў.</value>
   </data>
   <data name="LinkInvalidShortMega" xml:space="preserve">
-    <value>Назва суполкі павінна складацца як мінімум з 5 сімвалаў. </value>
+    <value>Публічная спасылка павінна складацца як мінімум з 5 сімвалаў. </value>
   </data>
   <data name="LinkInvalidStartNumber" xml:space="preserve">
     <value>Публічная спасылка не можа пачынацца з лічбы.</value>
@@ -7743,7 +7845,7 @@
     <value>Назва спасылкі (неабавязкова)</value>
   </data>
   <data name="LinkNotFound" xml:space="preserve">
-    <value>На жаль, у вас няма доступу да гэтага паведамлення. Вы не з'яўляецеся ўдзельнікам чата ў якім яно было размешчана.</value>
+    <value>На жаль, у вас няма доступу да гэтага паведамлення. Вы не з'яўляецеся ўдзельнікам чата, у якім яно было размешчана.</value>
   </data>
   <data name="LinkPreview" xml:space="preserve">
     <value>Перадпрагляд спасылкі</value>
@@ -7776,7 +7878,7 @@
     <value>Выберыце, як доўга ўдзельнікі чата будуць бачыць ваша дакладнае месцазнаходжанне.</value>
   </data>
   <data name="LiveLocationAlertPrivate" xml:space="preserve">
-    <value>Выберыце, як доўга {0} будзе бачыць ваша дакладнае месцазнаходжанне.</value>
+    <value>Выберыце, як доўга {0} будзе бачыць ваша дакладнае месцазнаходжанне, у тым ліку і пасля закрыцця праграмы.</value>
   </data>
   <data name="LiveLocationContext" xml:space="preserve">
     <value>Трансляцыя</value>
@@ -7803,7 +7905,7 @@
     <value>Іншыя файлы</value>
   </data>
   <data name="LocalDatabase" xml:space="preserve">
-    <value>Лакальная база даных</value>
+    <value>Ачысціць лакальную базу даных</value>
   </data>
   <data name="LocalDatabaseClear" xml:space="preserve">
     <value>Выдаліць кэшаваныя паведамленні?</value>
@@ -7875,6 +7977,9 @@
   </data>
   <data name="LoginAttemptsInfo" xml:space="preserve">
     <value>Гэтыя прылады больш не маюць доступ да вашага ўліковага запісу. Уведзены код быў правільны, але пароль не быў уведзены.</value>
+  </data>
+  <data name="LoginOrSingInWithGoogle" xml:space="preserve">
+    <value>або</value>
   </data>
   <data name="LoginPassword" xml:space="preserve">
     <value>Пароль</value>
@@ -7978,7 +8083,7 @@
     <value>Google</value>
   </data>
   <data name="MapPreviewProviderNobody" xml:space="preserve">
-    <value>Ніякі</value>
+    <value>Не карыстацца</value>
   </data>
   <data name="MapPreviewProviderTelegram" xml:space="preserve">
     <value>Telegram</value>
@@ -8055,7 +8160,7 @@
 {0} элементаў захаваны ў галерэю</value>
   </data>
   <data name="MediaSavedHint_one" xml:space="preserve">
-    <value>{0} элемент захаваны ў галерэю</value>
+    <value>Элемент захаваны ў галерэю</value>
   </data>
   <data name="MediaSavedHint_other" xml:space="preserve">
     <value>
@@ -8213,6 +8318,24 @@
   </data>
   <data name="MessageContainsEmojiPacks_other" xml:space="preserve">
     <value>Гэта паведамленне змяшчае эмодзі з **{0} набору**.</value>
+  </data>
+  <data name="MessageContainsEmojiPackSingle" xml:space="preserve">
+    <value>Гэта паведамленне змяшчае набор эмодзі **{0}**</value>
+  </data>
+  <data name="MessageContainsReactionsPack" xml:space="preserve">
+    <value>У якасці рэакцый выкарыстаны эмодзі з набору  {0}.</value>
+  </data>
+  <data name="MessageContainsReactionsPacks_few" xml:space="preserve">
+    <value>У якасці рэакцый выкарыстаны эмодзі з **{0} набораў**.</value>
+  </data>
+  <data name="MessageContainsReactionsPacks_many" xml:space="preserve">
+    <value>У якасці рэакцый выкарыстаны эмодзі з **{0} набораў**.</value>
+  </data>
+  <data name="MessageContainsReactionsPacks_one" xml:space="preserve">
+    <value>У якасці рэакцый выкарыстаны эмодзі з **{0} набору**.</value>
+  </data>
+  <data name="MessageContainsReactionsPacks_other" xml:space="preserve">
+    <value>У якасці рэакцый выкарыстаны эмодзі з **{0} набору**.</value>
   </data>
   <data name="MessageCopied" xml:space="preserve">
     <value>Паведамленне скапіявана ў буфер абмену.</value>
@@ -8831,7 +8954,7 @@
     <value>Абагульвайце фота і відэа ў гэтым чаце і майце доступ да іх з любой вашай прылады.</value>
   </data>
   <data name="NoMediaAutoDownload" xml:space="preserve">
-    <value>Няма медыя</value>
+    <value>Адключана</value>
   </data>
   <data name="NoMediaSecret" xml:space="preserve">
     <value>Фота і відэа з гэтага чата будуць паказвацца тут.</value>
@@ -8840,7 +8963,7 @@
     <value>Няма запытаў на далучэнне</value>
   </data>
   <data name="NoMemberRequestsDescription" xml:space="preserve">
-    <value>Няма запытаў на далучэнне да суполкі ў чаканні.</value>
+    <value>Няма запытаў на далучэнне ў чаканні.</value>
   </data>
   <data name="NoMessages" xml:space="preserve">
     <value>Пакуль тут няма паведамленняў...</value>
@@ -8886,6 +9009,9 @@
   </data>
   <data name="NoPopup" xml:space="preserve">
     <value>Не паказваць</value>
+  </data>
+  <data name="NoReactions" xml:space="preserve">
+    <value>Без рэакцый</value>
   </data>
   <data name="NoRecent" xml:space="preserve">
     <value>Няма нядаўніх</value>
@@ -8966,7 +9092,7 @@
     <value>Запытаў на далучэнне няма</value>
   </data>
   <data name="NoSubscribeRequestsDescription" xml:space="preserve">
-    <value>Няма запытаў на далучэнне да канала ў чаканні.</value>
+    <value>Няма запытаў на далучэнне ў чаканні.</value>
   </data>
   <data name="NotfificationsFrequencyTitle" xml:space="preserve">
     <value>Частата апавяшчэнняў</value>
@@ -9524,7 +9650,7 @@
     <value>Фонавае злучэнне</value>
   </data>
   <data name="NotificationsServiceConnectionInfo" xml:space="preserve">
-    <value>Пакінуць фонавае злучэнне з нізкім выкарыстаннем трафіка, каб дазволіць Telegram атрымліваць апавяшчэнні.</value>
+    <value>Пакінуць фонавае злучэнне з нізкім выкарыстаннем трафіка, каб дазволіць Telegram хутка паказваць апавяшчэнні.</value>
   </data>
   <data name="NotificationsServiceInfo" xml:space="preserve">
     <value>Перазапускае праграму, калі яна закрыта. Забяспечвае надзейнасць апавяшчэнняў.</value>
@@ -9623,6 +9749,9 @@
   </data>
   <data name="OnlineCount_other" xml:space="preserve">
     <value>{0} у сетцы</value>
+  </data>
+  <data name="OnlyAllowThisReactions" xml:space="preserve">
+    <value>Дазволіць толькі гэтыя рэакцыі</value>
   </data>
   <data name="OnlyIfSilent" xml:space="preserve">
     <value>Толькі ў бязгучным рэжыме</value>
@@ -9862,10 +9991,10 @@
     <value>PIN-код</value>
   </data>
   <data name="PasscodeReinstallNotice" xml:space="preserve">
-    <value>Калі вы забудзецеся код доступу, вам прыйдзецца **пераўсталяваць** праграму. Усе сакрэтныя чаты будуць страчаны.</value>
+    <value>Калі вы забудзецеся код доступу, вам прыйдзецца **выйсці з уліковага запісу** або **пераўсталяваць** праграму. Усе сакрэтныя чаты будуць страчаны.</value>
   </data>
   <data name="PasscodeScreenHint" xml:space="preserve">
-    <value>Націскаючы на значок блакіроўкі на старонцы чатаў можна блакіраваць праграму.</value>
+    <value>Націсніце на значок блакіроўкі над спісам чатаў, каб заблакіраваць праграму.</value>
   </data>
   <data name="PasscodesDoNotMatchTryAgain" xml:space="preserve">
     <value>Коды доступу не супадаюць. Паспрабуйце яшчэ раз.</value>
@@ -10532,7 +10661,7 @@
     <value>Спосаб аплаты</value>
   </data>
   <data name="PaymentCheckoutMethodNewCard" xml:space="preserve">
-    <value>Новая картка</value>
+    <value>Дадаць картку...</value>
   </data>
   <data name="PaymentCheckoutName" xml:space="preserve">
     <value>Імя</value>
@@ -10934,7 +11063,7 @@
     <value>{0} фота захаваны ў галерэю</value>
   </data>
   <data name="PhotosSavedHint_one" xml:space="preserve">
-    <value>{0} фота захавана ў галерэю</value>
+    <value>Фота захавана ў галерэю</value>
   </data>
   <data name="PhotosSavedHint_other" xml:space="preserve">
     <value>{0} фота захавана ў галерэю</value>
@@ -11036,7 +11165,7 @@
     <value>Замацаваць зверху</value>
   </data>
   <data name="PinToTopLimitReached" xml:space="preserve">
-    <value>На жаль, вы можаце замацаваць толькі {0} чатаў у сваім галоўным спісе. Калі вам патрэбна навесці парадак — у архіўнай папцы няма такога абмежавання.</value>
+    <value>На жаль, вы можаце замацаваць толькі {0} чатаў у сваім галоўным спісе. У сваіх папках і ў архіве вы можаце замацаваць неабмежаваную колькасць чатаў.</value>
   </data>
   <data name="PinToTopLimitReached2" xml:space="preserve">
     <value>На жаль, у галоўным спісе вы можаце замацоўваць толькі {0}. Больш чатаў можа быць замацавана ў папках чатаў і ў вашым архіве.</value>
@@ -11134,6 +11263,9 @@
   <data name="PollViewResults" xml:space="preserve">
     <value>ПАГЛЯДЗЕЦЬ ВЫНІКІ</value>
   </data>
+  <data name="PopularReactions" xml:space="preserve">
+    <value>Папулярныя</value>
+  </data>
   <data name="PopupDisabled" xml:space="preserve">
     <value>Адключаны</value>
   </data>
@@ -11168,7 +11300,7 @@
     <value>Дадатковыя значкі праграмы</value>
   </data>
   <data name="PremiumPreviewAppIconDescription" xml:space="preserve">
-    <value>Выберыце для галоўнага экрана адзін са значкоў праграмы Telegram.</value>
+    <value>Выбірайце адзін са значкоў праграмы Telegram для галоўнага экрана.</value>
   </data>
   <data name="PremiumPreviewAppIconDescription2" xml:space="preserve">
     <value>З падпіскай на Telegram Premium можна разблакіраваць яшчэ больш значкоў праграмы.</value>
@@ -11188,8 +11320,14 @@
   <data name="PremiumPreviewEmojiPack" xml:space="preserve">
     <value>Гэты набор эмодзі даступны толькі для падпісчыкаў **Telegram Premium.**</value>
   </data>
+  <data name="PremiumPreviewEmojiStatus" xml:space="preserve">
+    <value>Эмодзі-статус</value>
+  </data>
+  <data name="PremiumPreviewEmojiStatusDescription" xml:space="preserve">
+    <value>Расказвайце, чым вы займаецеся, з дапамогай аднаго з тысяч эмодзі, які будзе паказвацца побач з вашым імем.</value>
+  </data>
   <data name="PremiumPreviewLimits" xml:space="preserve">
-    <value>Двайныя ліміты</value>
+    <value>Падвоеныя ліміты</value>
   </data>
   <data name="PremiumPreviewLimitsDescription" xml:space="preserve">
     <value>Да {0} каналаў, {1} папак, {2} замацаваных чатаў, {3} публічных спасылак, {4} уліковых запісаў і шмат іншага.</value>
@@ -11212,6 +11350,12 @@
   <data name="PremiumPreviewReactions" xml:space="preserve">
     <value>Унікальныя рэакцыі</value>
   </data>
+  <data name="PremiumPreviewReactions2" xml:space="preserve">
+    <value>Бясконцыя рэакцыі</value>
+  </data>
+  <data name="PremiumPreviewReactions2Description" xml:space="preserve">
+    <value>Пакідайце па некалькі рэакцый на паведамленне, выбіраючы з тысяч эмодзі.</value>
+  </data>
   <data name="PremiumPreviewReactionsDescription" xml:space="preserve">
     <value>Дадатковыя анімаваныя рэакцыі на паведамленні, даступныя толькі падпісчыкам Premium.</value>
   </data>
@@ -11225,7 +11369,7 @@
     <value>Памер запамповак 4 ГБ</value>
   </data>
   <data name="PremiumPreviewUploadsDescription" xml:space="preserve">
-    <value>Павялічаны памер запамповак з 2 ГБ да 4ГБ на кожны дакумент, неабмежаванае агульнае сховішча.</value>
+    <value>Павялічаны памер запамповак з 2 ГБ да 4 ГБ на кожны дакумент, неабмежаванае агульнае сховішча.</value>
   </data>
   <data name="PremiumPreviewVoiceToText" xml:space="preserve">
     <value>Пераўтварэнне голасу ў тэкст</value>
@@ -11243,7 +11387,16 @@
     <value>Гэты набор змяшчае эксклюзіўныя стыкеры, падобныя на гэты.</value>
   </data>
   <data name="PremiumStickerTooltip" xml:space="preserve">
-    <value>Гэты набор змяшчае эксклюзіўныя стыкеры, падобныя на гэты.</value>
+    <value>Гэты набор змяшчае эксклюзіўныя стыкеры накшталт гэтага.</value>
+  </data>
+  <data name="PremiumTierAnnual" xml:space="preserve">
+    <value>Раз на год</value>
+  </data>
+  <data name="PremiumTierMonthly" xml:space="preserve">
+    <value>Штомесяц</value>
+  </data>
+  <data name="PremiumTierSemiannual" xml:space="preserve">
+    <value>Раз на паўгода</value>
   </data>
   <data name="PreviewFeedback" xml:space="preserve">
     <value>Паведаміць аб памылцы на гэтай старонцы</value>
@@ -11389,6 +11542,12 @@
   <data name="PricePerMonth" xml:space="preserve">
     <value>{0} / месяц</value>
   </data>
+  <data name="PricePerMonthMe" xml:space="preserve">
+    <value>{0}/месяц</value>
+  </data>
+  <data name="PricePerYear" xml:space="preserve">
+    <value>{0}/год</value>
+  </data>
   <data name="PrimaryLinkHelp" xml:space="preserve">
     <value>Кожны, у каго ўсталяваны Telegram, зможа далучыцца да вашай суполкі, калі пяройдзе па гэтай спасылцы.</value>
   </data>
@@ -11396,7 +11555,7 @@
     <value>Кожны, у каго ўсталяваны Telegram, зможа далучыцца да вашага канала, калі пяройдзе па гэтай спасылцы.</value>
   </data>
   <data name="PriorityInfo" xml:space="preserve">
-    <value>Апавяшчэнні з высокім прыярытэтам будуць працаваць нават тады, калі ваш тэлефон знаходзіцца ў рэжыме «Не турбаваць».</value>
+    <value>Апавяшчэнні з высокай важнасцю будуць працаваць нават тады, калі ваш тэлефон знаходзіцца ў рэжыме «Не турбаваць».</value>
   </data>
   <data name="PrivacyAddAnException" xml:space="preserve">
     <value>Дадаць карыстальнікаў або суполкі</value>
@@ -11429,7 +11588,7 @@
     <value>Выключэнні</value>
   </data>
   <data name="PrivacyFloodControlError" xml:space="preserve">
-    <value>На жаль, занадта шмат запытаў. Не ўдалося змяніць налады прыватнасці, паспрабуйце пазней.</value>
+    <value>Занадта шмат запытаў. Не ўдалося змяніць налады прыватнасці, паспрабуйце пазней.</value>
   </data>
   <data name="PrivacyForwards" xml:space="preserve">
     <value>Перасланыя паведамленні</value>
@@ -11525,7 +11684,7 @@
     <value>https://telegram.org/privacy</value>
   </data>
   <data name="PrivacyProfilePhoto" xml:space="preserve">
-    <value>Аватары профілю</value>
+    <value>Аватары і відэа профілю</value>
   </data>
   <data name="PrivacyProfilePhotoInfo" xml:space="preserve">
     <value>Вы можаце вызначыць, хто будзе мець магчымасць бачыць ваш аватар профілю.</value>
@@ -11892,6 +12051,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="Reactions" xml:space="preserve">
     <value>Рэакцыі</value>
   </data>
+  <data name="ReactionsAll" xml:space="preserve">
+    <value>Усе</value>
+  </data>
   <data name="ReactionsCount_few" xml:space="preserve">
     <value>{0} рэакцыі</value>
   </data>
@@ -11903,6 +12065,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="ReactionsCount_other" xml:space="preserve">
     <value>{0} рэакцыі</value>
+  </data>
+  <data name="ReactionsLongtapHint" xml:space="preserve">
+    <value>Утрымлівайце эмодзі, каб адправіць суперрэакцыю</value>
   </data>
   <data name="ReactionsOff" xml:space="preserve">
     <value>Адключаны</value>
@@ -11924,6 +12089,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="RecentlyDownloaded" xml:space="preserve">
     <value>Нядаўна спампаваныя</value>
+  </data>
+  <data name="RecentlyUsed" xml:space="preserve">
+    <value>Нядаўна ўжытыя</value>
   </data>
   <data name="RecentlyViewed" xml:space="preserve">
     <value>Нядаўна прагледжаныя</value>
@@ -11977,7 +12145,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>Увядзіце ваш новы код доступу яшчэ раз</value>
   </data>
   <data name="RegisterText" xml:space="preserve">
-    <value>Напішыце сваё імя і прозвішча</value>
+    <value>Увядзіце сваё імя і прозвішча</value>
   </data>
   <data name="RegisterText2" xml:space="preserve">
     <value>Увядзіце ваша імя і дадайце аватар профілю.</value>
@@ -12061,7 +12229,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>Выдаліць набор стыкераў суполкі</value>
   </data>
   <data name="RemoveStickersCount" xml:space="preserve">
-    <value>ВЫДАЛІЦЬ {0}</value>
+    <value>Выдаліць {0}</value>
   </data>
   <data name="RepeatDisabled" xml:space="preserve">
     <value>Выкл.</value>
@@ -12103,10 +12271,13 @@ https://telegram.org/blog/coronavirus</value>
     <value>Адказаць</value>
   </data>
   <data name="ReplyToGroup" xml:space="preserve">
-    <value>Адказаць у {0}</value>
+    <value>Адказаць</value>
   </data>
   <data name="ReplyToUser" xml:space="preserve">
-    <value>Адказаць {0}</value>
+    <value>Адказаць</value>
+  </data>
+  <data name="ReportAlertReaction" xml:space="preserve">
+    <value>Вы ўпэўнены, што хочаце паскардзіцца на рэакцыі ад гэтага карыстальніка?</value>
   </data>
   <data name="ReportChat" xml:space="preserve">
     <value>Паскардзіцца</value>
@@ -12153,6 +12324,12 @@ https://telegram.org/blog/coronavirus</value>
   <data name="ReportMessagesCount" xml:space="preserve">
     <value>ПАСКАРДЗІЦЦА НА {0}</value>
   </data>
+  <data name="ReportReaction" xml:space="preserve">
+    <value>Паскардзіцца на рэакцыю</value>
+  </data>
+  <data name="ReportReactionAndBan" xml:space="preserve">
+    <value>Заблакіраваць і паскардзіцца</value>
+  </data>
   <data name="ReportSelectMessages" xml:space="preserve">
     <value>Выбраць паведамленні</value>
   </data>
@@ -12185,6 +12362,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="ReportSpamUser" xml:space="preserve">
     <value>ЗАБЛАКІРАВАЦЬ </value>
+  </data>
+  <data name="ReportSpamUserEmojiStatusHint" xml:space="preserve">
+    <value>У гэтым уліковым запісе побач з яго імем выкарыстоўваецца карыстальніцкі статус {0}. Такія эмодзі-статусы даступныя для ўсіх падпісчыкаў {1}.</value>
   </data>
   <data name="ReportTitleChild" xml:space="preserve">
     <value>Паскардзіцца на агрэсію ў дачыненні да дзяцей</value>
@@ -12599,7 +12779,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>Змесціва праграмы ў пераключэнні задач</value>
   </data>
   <data name="ScreenCaptureInfo" xml:space="preserve">
-    <value>Калі гэты параметр адключаны, вы не зможаце рабіць здымкі экрана ў праграме, але змесціва чатаў будзе схавана падчас пераключэння паміж праграмамі.</value>
+    <value>Калі гэты параметр адключаны, змесціва чатаў будзе схавана падчас пераключэння паміж праграмамі, але вы не зможаце рабіць здымкі экрана ў праграме.</value>
   </data>
   <data name="ScreenCaptureShowContent" xml:space="preserve">
     <value>Паказваць змесціва</value>
@@ -12832,6 +13012,12 @@ https://telegram.org/blog/coronavirus</value>
   <data name="SelectOtherChat" xml:space="preserve">
     <value>Выберыце іншы чат</value>
   </data>
+  <data name="SelectSendAsPeerPremiumHint" xml:space="preserve">
+    <value>Падпішыцеся на **Telegram Premium**, каб мець магчымасць каментаваць ад імя вашых каналаў у любых суполках.</value>
+  </data>
+  <data name="SelectSendAsPeerPremiumOpen" xml:space="preserve">
+    <value>Адкрыць</value>
+  </data>
   <data name="SelectTheme" xml:space="preserve">
     <value>Выбраць тэму</value>
   </data>
@@ -13024,7 +13210,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>Службовыя апавяшчэнні</value>
   </data>
   <data name="SessionsInfo" xml:space="preserve">
-    <value>Кіруйце вашымі сеансамі на іншых прыладах.</value>
+    <value>Кіруйце вашымі сеансамі на ўсіх вашых прыладах.</value>
   </data>
   <data name="SessionsListInfo" xml:space="preserve">
     <value>Афіцыйная праграма Telegram даступная для iPhone, iPad, Android, macOS, Windows і Linux.</value>
@@ -13033,7 +13219,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>Аўтаматычна выходзіць праз</value>
   </data>
   <data name="SessionsTitle" xml:space="preserve">
-    <value>Актыўныя сеансы</value>
+    <value>Прылады</value>
   </data>
   <data name="Set" xml:space="preserve">
     <value>Задаць</value>
@@ -13042,7 +13228,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>Задаць дадатковы пароль</value>
   </data>
   <data name="SetAdditionalPasswordInfo" xml:space="preserve">
-    <value>Вы можаце задаць пароль, які будзе патрэбны, калі вы ўваходзіце з новай прылады, у дадатак да кода, які адпраўляецца праз SMS.</value>
+    <value>У дапаўненне да кода, які прыходзіць праз SMS, вы можаце задаць дадатковы пароль для ўваходу з новай прылады.</value>
   </data>
   <data name="SetAdmins" xml:space="preserve">
     <value>Дадаць кіраўнікоў</value>
@@ -13073,6 +13259,30 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="SetColor" xml:space="preserve">
     <value>Задаць колер</value>
+  </data>
+  <data name="SetEmojiStatus" xml:space="preserve">
+    <value>Задаць эмодзі-статус</value>
+  </data>
+  <data name="SetEmojiStatusUntil1Hour" xml:space="preserve">
+    <value>Задаць на 1 гадзіну</value>
+  </data>
+  <data name="SetEmojiStatusUntil2Days" xml:space="preserve">
+    <value>Задаць на 2 дні</value>
+  </data>
+  <data name="SetEmojiStatusUntil2Hours" xml:space="preserve">
+    <value>Задаць на 2 гадзіны</value>
+  </data>
+  <data name="SetEmojiStatusUntil8Hours" xml:space="preserve">
+    <value>Задаць на 8 гадзін</value>
+  </data>
+  <data name="SetEmojiStatusUntilButton" xml:space="preserve">
+    <value>Задаць статус</value>
+  </data>
+  <data name="SetEmojiStatusUntilOther" xml:space="preserve">
+    <value>Іншае…</value>
+  </data>
+  <data name="SetEmojiStatusUntilTitle" xml:space="preserve">
+    <value>Задаць статус да…</value>
   </data>
   <data name="SetNewPassword" xml:space="preserve">
     <value>Задаць новы пароль</value>
@@ -13417,6 +13627,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="ShuffleList" xml:space="preserve">
     <value>Перамяшаць спіс</value>
   </data>
+  <data name="SignInWithGoogle" xml:space="preserve">
+    <value>Увайсці праз Google</value>
+  </data>
   <data name="SignUp" xml:space="preserve">
     <value>Зарэгістравацца</value>
   </data>
@@ -13474,7 +13687,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>{0} за {1}</value>
   </data>
   <data name="SmartNotificationsDisabled" xml:space="preserve">
-    <value>Адключана</value>
+    <value>Адключыць</value>
   </data>
   <data name="SmartNotificationsInfo" xml:space="preserve">
     <value>{0} / {1}</value>
@@ -13490,6 +13703,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="SoftUserLimitAlert" xml:space="preserve">
     <value>Вы зможаце дадаць больш удзельнікаў пасля таго, як вы створыце суполку.</value>
+  </data>
+  <data name="SomeReactions" xml:space="preserve">
+    <value>Вызначаныя рэакцыі</value>
   </data>
   <data name="SortBy" xml:space="preserve">
     <value>Сартаваць па</value>
@@ -13732,7 +13948,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>Змяніць парадак</value>
   </data>
   <data name="StickersReorderHint" xml:space="preserve">
-    <value>Перамяшчайце стыкеры, каб змяніць парадак.</value>
+    <value>Перацягніце стыкеры, каб змяніць іх парадак.</value>
   </data>
   <data name="StickersShare" xml:space="preserve">
     <value>Абагуліць</value>
@@ -13978,6 +14194,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="TapForVideo" xml:space="preserve">
     <value>Націсніце для фота, утрымлівайце для відэа</value>
   </data>
+  <data name="TapHereEmoji" xml:space="preserve">
+    <value>Націсніце {0}, каб паказаць больш эмодзі.</value>
+  </data>
   <data name="TapHereGifs" xml:space="preserve">
     <value>Націсніце для доступу да захаваных анімацый</value>
   </data>
@@ -13997,7 +14216,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>націсніце, каб змяніць профіль</value>
   </data>
   <data name="TapToAddPhotoOrDescription" xml:space="preserve">
-    <value>Націсніце, каб дадаць фота або апісанне</value>
+    <value>націсніце, каб дадаць фота або апісанне</value>
   </data>
   <data name="TapToChange" xml:space="preserve">
     <value>Націсніце, каб змяніць</value>
@@ -14097,11 +14316,26 @@ https://telegram.org/blog/coronavirus</value>
   <data name="TelegramPremiumUserGiftedPremiumDialogTitle" xml:space="preserve">
     <value>**{0}** падарыў(-ла) вам {1}-месячную падпіску на Telegram Premium.</value>
   </data>
+  <data name="TelegramPremiumUserGiftedPremiumDialogTitleWithPlural" xml:space="preserve">
+    <value>**{0}** падарыў(-ла) вам падпіску Telegram Premium на {1}.</value>
+  </data>
   <data name="TelegramPremiumUserGiftedPremiumOutboundDialogSubtitle" xml:space="preserve">
     <value>**{0}** цяпер мае доступ да дадатковых функцый.</value>
   </data>
   <data name="TelegramPremiumUserGiftedPremiumOutboundDialogTitle" xml:space="preserve">
     <value>Вы падарылі карыстальніку **{0}**  {1}-месячную падпіску на Telegram Premium.</value>
+  </data>
+  <data name="TelegramPremiumUserGiftedPremiumOutboundDialogTitleWithPlural" xml:space="preserve">
+    <value>Вы падарылі карыстальніку **{0}** падпіску Telegram Premium на {1}.</value>
+  </data>
+  <data name="TelegramPremiumUserStatusDefaultDialogTitle" xml:space="preserve">
+    <value>Гэта бягучы статус карыстальніка {0}.</value>
+  </data>
+  <data name="TelegramPremiumUserStatusDialogSubtitle" xml:space="preserve">
+    <value>Эмодзі-статусы — гэта эксклюзіўная магчымасць для падпісчыкаў **Telegram Premium**. Іншыя магчымасці з падпіскай:</value>
+  </data>
+  <data name="TelegramPremiumUserStatusDialogTitle" xml:space="preserve">
+    <value>{0} задаў(-ла) гэты эмодзі з набору **{1}** як свой бягучы статус.</value>
   </data>
   <data name="TelegramTones" xml:space="preserve">
     <value>Тоны Telegram</value>
@@ -14397,13 +14631,13 @@ https://telegram.org/blog/coronavirus</value>
     <value>Занадта шмат супольнасцей</value>
   </data>
   <data name="TooManyCommunitiesHintCreate" xml:space="preserve">
-    <value>На жаль, вы з'яўляецеся ўдзельнікам занадта шмат суполак і каналаў. Выйдзіце з некаторых, каб ствараць новыя.</value>
+    <value>Вы з'яўляецеся ўдзельнікам максімальнай колькасці суполак і каналаў. Выйдзіце з некаторых, каб ствараць новыя.</value>
   </data>
   <data name="TooManyCommunitiesHintEdit" xml:space="preserve">
-    <value>Вы з'яўляецеся ўдзельнікам занадта шмат суполак і каналаў. Каб змяняць гэтую наладу, вам, па тэхнічных прычынах, трэба спачатку выйсці з некаторых суполак або каналаў.</value>
+    <value>Вы з'яўляецеся ўдзельнікам максімальнай колькасці суполак і каналаў. Каб змяняць гэтую наладу, вам, па тэхнічных прычынах, трэба спачатку выйсці з некаторых суполак або каналаў.</value>
   </data>
   <data name="TooManyCommunitiesHintJoin" xml:space="preserve">
-    <value>Вы з'яўляецеся ўдзельнікам занадта шмат суполак або каналаў. Выйдзіце з некаторых, каб далучацца да новых.</value>
+    <value>Вы з'яўляецеся ўдзельнікам максімальнай колькасці суполак або каналаў. Выйдзіце з некаторых, каб далучацца да новых.</value>
   </data>
   <data name="TooManyTries" xml:space="preserve">
     <value>Занадта шмат спроб.
@@ -14431,7 +14665,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>Праверка ўзросту</value>
   </data>
   <data name="TosDecline" xml:space="preserve">
-    <value>Нам вельмі шкада, але мы не можам ісці з вамі далей.
+    <value>Нам вельмі шкада, але гэта азначае, што вы не зможаце зарэгістравацца ў Telegram.
 
 У адрозненне ад іншых, мы не выкарыстоўваем вашы даныя для мэтавай рэкламы або для іншых камерцыйных мэт. Telegram захоўвае толькі інфармацыю, неабходную для функцыянавання, як бяспечны і багаты на функцыі воблачны сэрвіс. Вы можаце наладзіць даступнасць вашых даных нашым службам (напрыклад, выдаліць усе сінхранізаваныя кантакты ў наладах прыватнасці і бяспекі).
 
@@ -14517,10 +14751,10 @@ https://telegram.org/blog/coronavirus</value>
     <value>Двухэтапная праверка</value>
   </data>
   <data name="TypeLocationGroup" xml:space="preserve">
-    <value>Спасылка</value>
+    <value>Публічная спасылка</value>
   </data>
   <data name="TypeLocationGroupEdit" xml:space="preserve">
-    <value>Націсніце, каб дадаць пастаянную спасылку</value>
+    <value>Націсніце, каб дадаць публічную спасылку</value>
   </data>
   <data name="TypeMessage" xml:space="preserve">
     <value>Паведамленне</value>
@@ -14602,6 +14836,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="UnlockPremiumEmojiPack" xml:space="preserve">
     <value>Разблакіраваць {0}</value>
+  </data>
+  <data name="UnlockPremiumEmojiReaction" xml:space="preserve">
+    <value>Падпішыцеся на **Telegram Premium**, каб разблакіраваць гэту рэакцыю.</value>
   </data>
   <data name="UnlockPremiumIcons" xml:space="preserve">
     <value>Разблакіраваць значкі Premium</value>
@@ -15017,6 +15254,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="VerificationCode" xml:space="preserve">
     <value>Код праверкі</value>
   </data>
+  <data name="VerificationCodeSubtitle" xml:space="preserve">
+    <value>Праверце вашу электронную пошту {0} (не забудзьцеся зазірнуць у папку са спамам) і ўвядзіце код, які мы толькі што адправілі вам.</value>
+  </data>
   <data name="ViaBot" xml:space="preserve">
     <value>праз</value>
   </data>
@@ -15089,7 +15329,7 @@ https://telegram.org/blog/coronavirus</value>
 {0} відэа захаваны ў галерэю</value>
   </data>
   <data name="VideosSavedHint_one" xml:space="preserve">
-    <value>{0} відэа захавана ў галерэю</value>
+    <value>Відэа захавана ў галерэю</value>
   </data>
   <data name="VideosSavedHint_other" xml:space="preserve">
     <value>
@@ -15585,7 +15825,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>Выключыць мікрафон</value>
   </data>
   <data name="VoipGroupMutedForMe" xml:space="preserve">
-    <value>Гук адключаны для мяне</value>
+    <value>гук адключаны для вас</value>
   </data>
   <data name="VoipGroupMuteForMe" xml:space="preserve">
     <value>Адключыць гук для мяне</value>
@@ -15823,13 +16063,17 @@ https://telegram.org/blog/coronavirus</value>
 Перайдзіце ў «Налады &gt; Паўнамоцтвы», і ўключыце «Камера».</value>
   </data>
   <data name="VoipNeedMicCameraPermission" xml:space="preserve">
-    <value>Telegram патрэбны доступ да вашага мікрафона і камеры, каб вы маглі рабіць відэавыклікі.</value>
+    <value>Telegram патрэбны доступ да вашага мікрафона і камеры, каб вы маглі рабіць відэавыклікі.
+
+Націсніце «Налады &gt; Паўнамоцтвы» і ўключыце налады для мікрафона і камеры.</value>
   </data>
   <data name="VoipNeedMicCameraPermissionWithHint" xml:space="preserve">
     <value>**Telegram** патрэбны доступ да камеры і мікрафона, каб вы маглі рабіць відэавыклікі. Націсніце «Налады &gt; Паўнамоцтвы» і ўключыце **Мікрафон** і **Камера**.</value>
   </data>
   <data name="VoipNeedMicPermission" xml:space="preserve">
-    <value>Telegram патрэбны доступ да вашага мікрафона, каб вы маглі тэлефанаваць.</value>
+    <value>Telegram патрэбны доступ да вашага мікрафона, каб вы маглі тэлефанаваць.
+
+Націсніце «Налады &gt; Паўнамоцтвы» і ўключыце наладу для мікрафона.</value>
   </data>
   <data name="VoipNeedMicPermissionWithHint" xml:space="preserve">
     <value>**Telegram** патрэбны доступ да мікрафона, каб вы маглі рабіць выклікі. Націсніце «Налады &gt; Паўнамоцтвы» і ўключыце **Мікрафон**.</value>
@@ -15893,7 +16137,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>{0} выкарыстоўвае праграму, якая не падтрымлівае выклікі. Карыстальніку трэба абнавіць праграму, каб вы маглі тэлефанаваць яму.</value>
   </data>
   <data name="VoipPeerVideoOutdated" xml:space="preserve">
-    <value>На жаль, **{0}** выкарыстоўвае старую версію Telegram, якая не падтрымлівае відэавыклікі.</value>
+    <value>На жаль, **{0}** выкарыстоўвае старую версію Telegram, якая не падтрымлівае відэавыклікі. Каб прыняць выклік ад вас, яму або ёй спярша трэба абнавіць праграму.</value>
   </data>
   <data name="VoipPeerVideoOutdatedMakeVoice" xml:space="preserve">
     <value>Галасавы выклік</value>
@@ -16105,7 +16349,7 @@ https://telegram.org/blog/coronavirus</value>
 Увага: ваш код блакіроўкі **не ўплывае** на віджэты.</value>
   </data>
   <data name="WidgetPasscode2" xml:space="preserve">
-    <value>Увага: ваш код блакіроўкі **не ўплывае** на віджэты.</value>
+    <value>Увага: віджэты будуць паказваць усе нядаўнія паведамленні, але, каб адкрыць праграму і адказаць, вам трэба будзе ўвесці код.</value>
   </data>
   <data name="WidgetPasscodeEnable" xml:space="preserve">
     <value>
@@ -16233,11 +16477,17 @@ https://telegram.org/blog/coronavirus</value>
   <data name="YourLocatedChannelsTooMuch" xml:space="preserve">
     <value>На жаль, вы стварылі занадта шмат суполак з месцазнаходжаннем. Выдаліце адну з ужо існуючых такіх суполак.</value>
   </data>
+  <data name="YourLoginEmailChangedSuccess" xml:space="preserve">
+    <value>Ваша электронная пошта была зменена.</value>
+  </data>
   <data name="YourName" xml:space="preserve">
     <value>Ваша імя</value>
   </data>
   <data name="YourNameChanged" xml:space="preserve">
     <value>Імя абноўлена.</value>
+  </data>
+  <data name="YourNewEmail" xml:space="preserve">
+    <value>Ваша новая электронная пошта</value>
   </data>
   <data name="YourNumber" xml:space="preserve">
     <value>Ваш нумар тэлефона</value>

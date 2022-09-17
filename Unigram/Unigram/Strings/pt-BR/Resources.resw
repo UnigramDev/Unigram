@@ -187,6 +187,9 @@
   <data name="AccDescrContactSorting" xml:space="preserve">
     <value>Alterar classificação</value>
   </data>
+  <data name="AccDescrCustomEmoji" xml:space="preserve">
+    <value>Emoji personalizado</value>
+  </data>
   <data name="AccDescrDownloadProgress" xml:space="preserve">
     <value>Baixados {0} de {1}</value>
   </data>
@@ -993,11 +996,20 @@ para: {1}</value>
   <data name="AddContactTitle" xml:space="preserve">
     <value>Adicionar Contato</value>
   </data>
+  <data name="Added" xml:space="preserve">
+    <value>Adicionado</value>
+  </data>
   <data name="AddedBy" xml:space="preserve">
     <value>adicionado por {0} {1}</value>
   </data>
   <data name="AddedToFavorites" xml:space="preserve">
     <value>Sticker adicionado aos Favoritos.</value>
+  </data>
+  <data name="AddEmailSubtitle" xml:space="preserve">
+    <value>Digite seu endereço de e-mail válido para proteger sua conta.</value>
+  </data>
+  <data name="AddEmailTitle" xml:space="preserve">
+    <value>Adicionar E-mail</value>
   </data>
   <data name="AddEmojiInstalled" xml:space="preserve">
     <value>Emojis adicionados.</value>
@@ -1199,6 +1211,9 @@ para: {1}</value>
   </data>
   <data name="AllPhotos" xml:space="preserve">
     <value>Todas as fotos</value>
+  </data>
+  <data name="AllReactions" xml:space="preserve">
+    <value>Todas as reações</value>
   </data>
   <data name="AllSessionsTerminated" xml:space="preserve">
     <value>Todas as outras sessões foram encerradas.</value>
@@ -1830,7 +1845,7 @@ Para confirmar o login no Telegram, acesse Configurações &gt; Dispositivos &gt
     <value>Autoexcluir mensagens</value>
   </data>
   <data name="AutoDeleteAlertUserInfo" xml:space="preserve">
-    <value>Apaga automaticamente novas mensagens após um certo tempo para você e {0}.</value>
+    <value>Apaga automaticamente novas mensagens para você e {0} após um certo tempo.</value>
   </data>
   <data name="AutoDeleteConfirm" xml:space="preserve">
     <value>Confirmar</value>
@@ -2199,11 +2214,14 @@ Nascer do Sol: {1}</value>
   <data name="Bans_other" xml:space="preserve">
     <value>{0} bans</value>
   </data>
+  <data name="BanUser" xml:space="preserve">
+    <value>Banir pessoa</value>
+  </data>
   <data name="BioCopied" xml:space="preserve">
     <value>Bio copiada.</value>
   </data>
   <data name="BioLimitSubtitle" xml:space="preserve">
-    <value>Adicione mais símbolos e use links na sua bio.</value>
+    <value>Adicione mais caracteres e use links na sua bio.</value>
   </data>
   <data name="BioLimitTitle" xml:space="preserve">
     <value>Bio</value>
@@ -2745,6 +2763,12 @@ Se não foi você, digite o código que acabamos de enviar via SMS. Você també
   <data name="ChangeColorToColor" xml:space="preserve">
     <value>Deseja usar o papel de parede selecionado atualmente ou redefinir para o padrão deste tema?</value>
   </data>
+  <data name="ChangeEmail" xml:space="preserve">
+    <value>Trocar E-mail</value>
+  </data>
+  <data name="ChangeEmojiStatus" xml:space="preserve">
+    <value>Trocar Status</value>
+  </data>
   <data name="ChangeLanguageLater" xml:space="preserve">
     <value>Você pode alterar o idioma depois nas Configurações.</value>
   </data>
@@ -2757,7 +2781,7 @@ Se não foi você, digite o código que acabamos de enviar via SMS. Você també
 Nota: se você esquecer a senha, precisará sair ou reinstalar o aplicativo. Todos os chats secretos serão perdidos.</value>
   </data>
   <data name="ChangePasscodeInfoShort" xml:space="preserve">
-    <value>Quando uma senha é definida, o ícone de cadeado aparece na lista de chats. Toque nele para bloquear e desbloquear o app.</value>
+    <value>Quando uma senha é definida, o ícone de cadeado aparece acima da lista de chats. Toque nele para bloquear e desbloquear o app.</value>
   </data>
   <data name="ChangePassword" xml:space="preserve">
     <value>Alterar senha</value>
@@ -3448,11 +3472,23 @@ O tamanho mínimo é de 5 caracteres.</value>
   <data name="CheckPhoneNumberYes" xml:space="preserve">
     <value>Sim</value>
   </data>
+  <data name="CheckYourEmail" xml:space="preserve">
+    <value>Verifique Seu E-mail</value>
+  </data>
+  <data name="CheckYourEmailSubtitle" xml:space="preserve">
+    <value>Digite o código que enviamos para seu e-mail {0}.</value>
+  </data>
+  <data name="CheckYourNewEmail" xml:space="preserve">
+    <value>Verifique Seu Novo E-mail</value>
+  </data>
+  <data name="CheckYourNewEmailSubtitle" xml:space="preserve">
+    <value>Insira o código que enviamos para seu novo e-mail {0}.</value>
+  </data>
   <data name="ChooseCountry" xml:space="preserve">
     <value>Escolha um país</value>
   </data>
   <data name="ChooseCover" xml:space="preserve">
-    <value>Escolha a capa para o seu vídeo de perfil.</value>
+    <value>Escolha a capa do seu vídeo de perfil</value>
   </data>
   <data name="ChooseDate" xml:space="preserve">
     <value>Escolher data</value>
@@ -3503,7 +3539,7 @@ O tamanho mínimo é de 5 caracteres.</value>
     <value>Pacote de stickers não encontrado</value>
   </data>
   <data name="ChooseStickerSetNotFoundInfo" xml:space="preserve">
-    <value>Tente novamente ou escolha da lista abaixo</value>
+    <value>Tente de novo ou escolha da lista abaixo</value>
   </data>
   <data name="ChooseStickerSetPlaceholder" xml:space="preserve">
     <value>pacotedestickers</value>
@@ -3592,6 +3628,12 @@ O tamanho mínimo é de 5 caracteres.</value>
   <data name="ClearRecentEmoji" xml:space="preserve">
     <value>Limpar emojis recentes?</value>
   </data>
+  <data name="ClearRecentEmojiStatusesText" xml:space="preserve">
+    <value>Deseja limpar seus emojis de status recentes e redefinir as sugestões?</value>
+  </data>
+  <data name="ClearRecentEmojiStatusesTitle" xml:space="preserve">
+    <value>Limpar status recentes</value>
+  </data>
   <data name="ClearRecentEmojiText" xml:space="preserve">
     <value>Deseja limpar todos os seus emojis recentes?</value>
   </data>
@@ -3600,6 +3642,12 @@ O tamanho mínimo é de 5 caracteres.</value>
   </data>
   <data name="ClearRecentHistory" xml:space="preserve">
     <value>Limpar Histórico</value>
+  </data>
+  <data name="ClearRecentReactionsAlertMessage" xml:space="preserve">
+    <value>Deseja limpar seu emoji de reação recente das sugestões?</value>
+  </data>
+  <data name="ClearRecentReactionsAlertTitle" xml:space="preserve">
+    <value>Limpar emojis recentes</value>
   </data>
   <data name="ClearRecentStickersAlertMessage" xml:space="preserve">
     <value>Deseja limpar todos os seus stickers recentes?</value>
@@ -3938,7 +3986,7 @@ Para mais espaço e funções adicionais, converta em supergrupo:
     <value>Criar Novo Link</value>
   </data>
   <data name="CreateNewLinkHelp" xml:space="preserve">
-    <value>Você pode gerar links de convite que irão expirar depois de usados.</value>
+    <value>Você pode gerar links de convite que expiram depois de usados.</value>
   </data>
   <data name="CreateNewTheme" xml:space="preserve">
     <value>Criar Tema</value>
@@ -4468,6 +4516,9 @@ Você pode tentar com outro número ou falar com o Suporte do Telegram. Toque em
   <data name="DisablePasscodeTurnOff" xml:space="preserve">
     <value>Desativar</value>
   </data>
+  <data name="DisableReactionsInfo" xml:space="preserve">
+    <value>Os membros do grupo não podem adicionar reações às mensagens.</value>
+  </data>
   <data name="DisappearingGif" xml:space="preserve">
     <value>GIF Autodestrutivo</value>
   </data>
@@ -4731,7 +4782,7 @@ Qualquer pessoa do canal poderá ver mensagens neste grupo.</value>
     <value>**{0}** agora tem a posse do grupo.</value>
   </data>
   <data name="EditAdminTransferReadyAlertText" xml:space="preserve">
-    <value>Isso transferirá a **posse completamente** de **{0}** para **{1}**. A nova pessoa com a posse poderá remover qualquer um dos seus direitos de admin ou até banir você.</value>
+    <value>Isso transferirá todos os **direitos de dono** de {0} para {1}. O novo dono poderá remover qualquer um dos seus direitos de admin ou até banir você.</value>
   </data>
   <data name="EditAdminTransferSetPassword" xml:space="preserve">
     <value>Definir Senha</value>
@@ -4828,8 +4879,20 @@ Se nenhum chat for selecionado, seus chats mais recentes serão exibidos neste w
 
 Se ninguém for selecionado, seus contatos mais frequentes serão exibidos neste widget.</value>
   </data>
+  <data name="EmailAddressInvalid" xml:space="preserve">
+    <value>Endereço de e-mail inválido.</value>
+  </data>
   <data name="EmailCopied" xml:space="preserve">
     <value>Endereço de email copiado.</value>
+  </data>
+  <data name="EmailLogin" xml:space="preserve">
+    <value>Login com E-mail</value>
+  </data>
+  <data name="EmailLoginChangeMessage" xml:space="preserve">
+    <value>O endereço de e-mail será usado sempre que você fizer login na sua conta do Telegram a partir de um novo dispositivo.</value>
+  </data>
+  <data name="EmailNotAllowed" xml:space="preserve">
+    <value>Esse domínio de e-mail não é permitido.</value>
   </data>
   <data name="EmailPasswordConfirmText" xml:space="preserve">
     <value>Por favor, siga os seguintes passos para completar a configuração da autenticação em duas etapas:
@@ -4844,6 +4907,9 @@ Se ninguém for selecionado, seus contatos mais frequentes serão exibidos neste
   </data>
   <data name="EmailPasswordConfirmText3" xml:space="preserve">
     <value>Para completar a configuração do email de recuperação, verifique {0} (não se esqueça da pasta de spam) e digite o código que te enviamos.</value>
+  </data>
+  <data name="EmailTokenInvalid" xml:space="preserve">
+    <value>Código do e-mail inválido.</value>
   </data>
   <data name="Emoji" xml:space="preserve">
     <value>Emoji</value>
@@ -4884,6 +4950,9 @@ Se ninguém for selecionado, seus contatos mais frequentes serão exibidos neste
   <data name="EmojiBotInfo" xml:space="preserve">
     <value>Artistas podem adicionar seus próprios pacotes de emojis usando nosso bot @stickers.</value>
   </data>
+  <data name="EmojiCopied" xml:space="preserve">
+    <value>Emoji copiado.</value>
+  </data>
   <data name="EmojiCount_one" xml:space="preserve">
     <value>{0} emoji</value>
   </data>
@@ -4898,6 +4967,9 @@ Se ninguém for selecionado, seus contatos mais frequentes serão exibidos neste
   </data>
   <data name="EmojiInteractionTapHint" xml:space="preserve">
     <value>Se **{0}** estivesse com a conversa aberta agora, também poderia ver a animação.</value>
+  </data>
+  <data name="EmojiLongtapHint" xml:space="preserve">
+    <value>Segure para escolher a duração</value>
   </data>
   <data name="EmojiPackCount_one" xml:space="preserve">
     <value>{0} Pacote de Emojis</value>
@@ -4916,6 +4988,9 @@ Se ninguém for selecionado, seus contatos mais frequentes serão exibidos neste
   </data>
   <data name="EmojiRemovedMultipleInfo_other" xml:space="preserve">
     <value>{0} pacotes não estão mais nos seus emojis.</value>
+  </data>
+  <data name="EmojiStatusExpireHint" xml:space="preserve">
+    <value>Seu status expira {0}</value>
   </data>
   <data name="EmojiSuggestions" xml:space="preserve">
     <value>Sugestões de Emoji</value>
@@ -4937,6 +5012,9 @@ Se ninguém for selecionado, seus contatos mais frequentes serão exibidos neste
   </data>
   <data name="Enable" xml:space="preserve">
     <value>Ativar</value>
+  </data>
+  <data name="EnableAllReactionsInfo" xml:space="preserve">
+    <value>Os membros do grupo podem usar qualquer emoji como reação às mensagens.</value>
   </data>
   <data name="EnableAllStreamingInfo" xml:space="preserve">
     <value>Quando possível, o Telegram tocará vídeos e músicas imediatamente, sem esperar que os arquivos baixem completamente.</value>
@@ -4971,6 +5049,9 @@ Você precisará da senha que configurou aqui para fazer o login em sua conta do
   </data>
   <data name="EnableReactionsGroupInfo" xml:space="preserve">
     <value>Permitir que os membros reajam às mensagens do grupo.</value>
+  </data>
+  <data name="EnableSomeReactionsInfo" xml:space="preserve">
+    <value>Os membros do grupo podem usar apenas alguns emojis permitidos como reações às mensagens.</value>
   </data>
   <data name="EnableStreaming" xml:space="preserve">
     <value>Streaming de Música e Vídeo</value>
@@ -5043,6 +5124,9 @@ Se você vê o mesmo no dispositivo de **{1}**, a criptografia de ponta a ponta 
   <data name="EnterListName" xml:space="preserve">
     <value>Digite o nome da lista</value>
   </data>
+  <data name="EnterNewEmail" xml:space="preserve">
+    <value>Insira o Novo E-mail</value>
+  </data>
   <data name="EnterNewFirstPasscode" xml:space="preserve">
     <value>Insira uma senha</value>
   </data>
@@ -5091,7 +5175,7 @@ Por favor, digite o nome do tema:</value>
     <value>Admins do grupo restringiram você de enviar enquetes.</value>
   </data>
   <data name="ErrorSendRestrictedPollsAll" xml:space="preserve">
-    <value>Desculpe, o envio de enquetes não é permitido neste grupo.</value>
+    <value>Desculpe, não é permitido postar enquetes neste grupo.</value>
   </data>
   <data name="ErrorSendRestrictedPrivacyVideoMessages" xml:space="preserve">
     <value>Desculpe, você não pode enviar mensagens de vídeo para esta pessoa devido às configurações de privacidade dela.</value>
@@ -5800,7 +5884,7 @@ pasta no momento.</value>
     <value>Muitas tentativas. Por favor, tente depois.</value>
   </data>
   <data name="FloodWaitTime" xml:space="preserve">
-    <value>Muitas tentativas. Por favor, tente novamente em {0}.</value>
+    <value>Muitas tentativas. Por favor, tente de novo em {0}.</value>
   </data>
   <data name="Folder" xml:space="preserve">
     <value>Pasta</value>
@@ -6143,6 +6227,12 @@ Todos os Chats Secretos serão perdidos.</value>
   <data name="GifsTab2" xml:space="preserve">
     <value>GIFs</value>
   </data>
+  <data name="GiftMonths_one" xml:space="preserve">
+    <value>{0}-mês</value>
+  </data>
+  <data name="GiftMonths_other" xml:space="preserve">
+    <value>{0}-meses</value>
+  </data>
   <data name="GiftPremium" xml:space="preserve">
     <value>Presentear Premium</value>
   </data>
@@ -6153,7 +6243,7 @@ Todos os Chats Secretos serão perdidos.</value>
     <value>-{0}%</value>
   </data>
   <data name="GiftSubscriptionFor" xml:space="preserve">
-    <value>Presentear Premium por {0}</value>
+    <value>Presentear por {0}</value>
   </data>
   <data name="GiftTelegramPremiumDescription" xml:space="preserve">
     <value>Dê a **{0}** acesso a recursos exclusivos com o **Telegram Premium**.</value>
@@ -6214,7 +6304,7 @@ Esta ação **não pode** ser desfeita.</value>
     <value>Não é permitido enviar mídias neste grupo.</value>
   </data>
   <data name="GlobalAttachStickersRestricted" xml:space="preserve">
-    <value>Não é permitido enviar stickers neste grupo.</value>
+    <value>Stickers não são permitidos neste grupo.</value>
   </data>
   <data name="GlobalSearch" xml:space="preserve">
     <value>Busca global</value>
@@ -6344,9 +6434,9 @@ sobre o Telegram?</value>
     <value>Há muitos bots neste grupo. Remova alguns dos bots que você não está usando primeiro.</value>
   </data>
   <data name="GroupUserLeftError" xml:space="preserve">
-    <value>Se uma pessoa saiu do grupo no passado, você precisa estar nos contatos do Telegram dela para adicioná-la novamente.
+    <value>Se uma pessoa saiu do grupo no passado, você precisa estar nos contatos do Telegram dela para adicionar novamente.
 
-Ela ainda pode entrar via link de convite do grupo, desde que não esteja na lista de Usuários Removidos.</value>
+Ela ainda pode participar por meio de um link de convite, desde que não esteja na lista de Usuários Removidos.</value>
   </data>
   <data name="GrowthChartTitle" xml:space="preserve">
     <value>Crescimento</value>
@@ -6647,6 +6737,9 @@ As mensagens serão importadas para o dia de hoje mas também incluirão os cari
   </data>
   <data name="InstallGoogleMaps" xml:space="preserve">
     <value>Instalar Google Maps?</value>
+  </data>
+  <data name="InstallHuaweiMaps" xml:space="preserve">
+    <value>Instalar o Petal Maps?</value>
   </data>
   <data name="InstallOfficialApp" xml:space="preserve">
     <value>Instale o app oficial</value>
@@ -7387,6 +7480,9 @@ Essa operação pode demorar alguns minutos para ser concluída.</value>
   <data name="LoginAttemptsInfo" xml:space="preserve">
     <value>Os dispositivos acima não possuem acesso às suas mensagens. O código foi inserido corretamente, mas a senha não.</value>
   </data>
+  <data name="LoginOrSingInWithGoogle" xml:space="preserve">
+    <value>ou</value>
+  </data>
   <data name="LoginPassword" xml:space="preserve">
     <value>Senha</value>
   </data>
@@ -7668,6 +7764,15 @@ Tamanho mínimo de 5 caracteres.</value>
   <data name="MessageContainsEmojiPacks_other" xml:space="preserve">
     <value>Esta mensagem contém emojis de {0} pacotes.</value>
   </data>
+  <data name="MessageContainsEmojiPackSingle" xml:space="preserve">
+    <value>Esta mensagem contém **{0}** emoji.</value>
+  </data>
+  <data name="MessageContainsReactionsPack" xml:space="preserve">
+    <value>Emojis do pacote {0} foram usados como reações.</value>
+  </data>
+  <data name="MessageContainsReactionsPacks_other" xml:space="preserve">
+    <value>Emojis de **{0} pacotes** foram usados como reações.</value>
+  </data>
   <data name="MessageCopied" xml:space="preserve">
     <value>Mensagem copiada.</value>
   </data>
@@ -7708,7 +7813,7 @@ Tamanho mínimo de 5 caracteres.</value>
     <value>{0} Tocaram</value>
   </data>
   <data name="MessagePreview" xml:space="preserve">
-    <value>Mostar Prévias de Mensagens</value>
+    <value>Prévias de Mensagens</value>
   </data>
   <data name="messages_one" xml:space="preserve">
     <value>{0} mensagem</value>
@@ -7814,6 +7919,21 @@ Tamanho mínimo de 5 caracteres.</value>
   </data>
   <data name="Mi" xml:space="preserve">
     <value>mi</value>
+  </data>
+  <data name="MicrophoneForVoiceMessages" xml:space="preserve">
+    <value>Microfone para mensagens de voz</value>
+  </data>
+  <data name="MicrophoneForVoiceMessagesBuiltIn" xml:space="preserve">
+    <value>Integrado</value>
+  </data>
+  <data name="MicrophoneForVoiceMessagesSco" xml:space="preserve">
+    <value>Microfone do fone</value>
+  </data>
+  <data name="MicrophoneForVoiceMessagesScoHint" xml:space="preserve">
+    <value>Usar o microfone de um fone de ouvido pode reduzir o ruído, mas diminuirá um pouco a qualidade do áudio.</value>
+  </data>
+  <data name="MicrophoneForVoiceMessagesScoIfConnected" xml:space="preserve">
+    <value>Microfone do fone (se conectado)</value>
   </data>
   <data name="MigrateOldFolderButton" xml:space="preserve">
     <value>Mover Arquivos Agora</value>
@@ -8256,6 +8376,12 @@ Você pode personalizar notificações para um chat abrindo o perfil do mesmo e 
   </data>
   <data name="NoPopup" xml:space="preserve">
     <value>Sem pop-up</value>
+  </data>
+  <data name="NoReactions" xml:space="preserve">
+    <value>Nenhuma reação</value>
+  </data>
+  <data name="NoReactionsFound" xml:space="preserve">
+    <value>Nenhuma reação encontrada</value>
   </data>
   <data name="NoRecent" xml:space="preserve">
     <value>Nada recente</value>
@@ -8989,6 +9115,9 @@ Equipe do Telegram.</value>
   <data name="OnlineCount_other" xml:space="preserve">
     <value>{0} online</value>
   </data>
+  <data name="OnlyAllowThisReactions" xml:space="preserve">
+    <value>Permitir apenas estas reações</value>
+  </data>
   <data name="OnlyIfSilent" xml:space="preserve">
     <value>Somente no silencioso </value>
   </data>
@@ -9224,7 +9353,7 @@ em vários dispositivos.</value>
     <value>Toque no cadeado acima da sua lista de chats para bloquear o app.</value>
   </data>
   <data name="PasscodesDoNotMatchTryAgain" xml:space="preserve">
-    <value>As senhas não coincidem. Tente novamente.</value>
+    <value>Senhas diferentes. Tente de novo.</value>
   </data>
   <data name="PasscodeSwitchToPassword" xml:space="preserve">
     <value>Trocar para Senha</value>
@@ -9888,7 +10017,7 @@ Você pode visitar nossas *Perguntas Frequentes* para saber mais.</value>
     <value>Método de pagamento</value>
   </data>
   <data name="PaymentCheckoutMethodNewCard" xml:space="preserve">
-    <value>Novo cartão</value>
+    <value>Novo Cartão de Crédito...</value>
   </data>
   <data name="PaymentCheckoutName" xml:space="preserve">
     <value>Nome</value>
@@ -9912,7 +10041,7 @@ Você pode visitar nossas *Perguntas Frequentes* para saber mais.</value>
     <value>Escolher Outro Cartão</value>
   </data>
   <data name="PaymentConnectionFailed" xml:space="preserve">
-    <value>Não foi possível encontrar o servidor de pagamento. Verifique sua conexão e tente novamente.</value>
+    <value>Erro ao conectar com o servidor de pagamento. Verifique sua conexão e tente de novo.</value>
   </data>
   <data name="PaymentEmailToProvider" xml:space="preserve">
     <value>O endereço de email será passado ao {0} como informação de faturamento.</value>
@@ -10435,6 +10564,9 @@ O Telegram acessará a sua localização somente pela duração que você escolh
   <data name="PollViewResults" xml:space="preserve">
     <value>VER RESULTADOS</value>
   </data>
+  <data name="PopularReactions" xml:space="preserve">
+    <value>Populares</value>
+  </data>
   <data name="PopupDisabled" xml:space="preserve">
     <value>Desativado</value>
   </data>
@@ -10454,7 +10586,7 @@ O Telegram acessará a sua localização somente pela duração que você escolh
     <value>Gestão Avançada de Chats</value>
   </data>
   <data name="PremiumPreviewAdvancedChatManagementDescription" xml:space="preserve">
-    <value>Ferramentas para definir pasta padrão, autoarquivar e ocultar novos chats de desconhecidos.</value>
+    <value>Ferramentas para definir a pasta padrão, arquivar automaticamente e ocultar novos chats de não contatos.</value>
   </data>
   <data name="PremiumPreviewAnimatedProfiles" xml:space="preserve">
     <value>Fotos de Perfil Animadas</value>
@@ -10489,6 +10621,12 @@ O Telegram acessará a sua localização somente pela duração que você escolh
   <data name="PremiumPreviewEmojiPack" xml:space="preserve">
     <value>Este pacote de emojis está disponível apenas para os assinantes do **Telegram Premium**.</value>
   </data>
+  <data name="PremiumPreviewEmojiStatus" xml:space="preserve">
+    <value>Emoji de Status</value>
+  </data>
+  <data name="PremiumPreviewEmojiStatusDescription" xml:space="preserve">
+    <value>Milhares de emojis para você exibir sua atividade atual ao lado do nome.</value>
+  </data>
   <data name="PremiumPreviewLimits" xml:space="preserve">
     <value>Limites Dobrados</value>
   </data>
@@ -10512,6 +10650,12 @@ O Telegram acessará a sua localização somente pela duração que você escolh
   </data>
   <data name="PremiumPreviewReactions" xml:space="preserve">
     <value>Reações Únicas</value>
+  </data>
+  <data name="PremiumPreviewReactions2" xml:space="preserve">
+    <value>Reações Infinitas</value>
+  </data>
+  <data name="PremiumPreviewReactions2Description" xml:space="preserve">
+    <value>Reaja com milhares de emojis — usando várias reações por mensagem.</value>
   </data>
   <data name="PremiumPreviewReactionsDescription" xml:space="preserve">
     <value>Reações animadas adicionais nas mensagens, disponíveis apenas para assinantes Premium.</value>
@@ -10545,6 +10689,15 @@ O Telegram acessará a sua localização somente pela duração que você escolh
   </data>
   <data name="PremiumStickerTooltip" xml:space="preserve">
     <value>O pacote contém stickers premium como este.</value>
+  </data>
+  <data name="PremiumTierAnnual" xml:space="preserve">
+    <value>Anual</value>
+  </data>
+  <data name="PremiumTierMonthly" xml:space="preserve">
+    <value>Mensal</value>
+  </data>
+  <data name="PremiumTierSemiannual" xml:space="preserve">
+    <value>Semianual</value>
   </data>
   <data name="PreviewFeedback" xml:space="preserve">
     <value>Informar erro nesta prévia</value>
@@ -10623,6 +10776,12 @@ O Telegram acessará a sua localização somente pela duração que você escolh
   </data>
   <data name="PricePerMonth" xml:space="preserve">
     <value>{0} / mês</value>
+  </data>
+  <data name="PricePerMonthMe" xml:space="preserve">
+    <value>{0}/mês</value>
+  </data>
+  <data name="PricePerYear" xml:space="preserve">
+    <value>{0}/ano</value>
   </data>
   <data name="PrimaryLinkHelp" xml:space="preserve">
     <value>Qualquer pessoa no Telegram poderá entrar no seu grupo usando este link.</value>
@@ -11110,11 +11269,17 @@ O Telegram acessará a sua localização somente pela duração que você escolh
   <data name="Reactions" xml:space="preserve">
     <value>Reações</value>
   </data>
+  <data name="ReactionsAll" xml:space="preserve">
+    <value>Todas</value>
+  </data>
   <data name="ReactionsCount_one" xml:space="preserve">
     <value>{0} reação</value>
   </data>
   <data name="ReactionsCount_other" xml:space="preserve">
     <value>{0} reações</value>
+  </data>
+  <data name="ReactionsLongtapHint" xml:space="preserve">
+    <value>Fique segurando para enviar uma super-reação</value>
   </data>
   <data name="ReactionsOff" xml:space="preserve">
     <value>Desativado</value>
@@ -11136,6 +11301,9 @@ O Telegram acessará a sua localização somente pela duração que você escolh
   </data>
   <data name="RecentlyDownloaded" xml:space="preserve">
     <value>Baixados recentemente</value>
+  </data>
+  <data name="RecentlyUsed" xml:space="preserve">
+    <value>Usados Recentemente</value>
   </data>
   <data name="RecentlyViewed" xml:space="preserve">
     <value>Visualizado recentemente</value>
@@ -11285,10 +11453,13 @@ O Telegram acessará a sua localização somente pela duração que você escolh
     <value>Responder</value>
   </data>
   <data name="ReplyToGroup" xml:space="preserve">
-    <value>Responder em {0}</value>
+    <value>Responder</value>
   </data>
   <data name="ReplyToUser" xml:space="preserve">
-    <value>Responder {0}</value>
+    <value>Responder</value>
+  </data>
+  <data name="ReportAlertReaction" xml:space="preserve">
+    <value>Tem certeza de que deseja denunciar a reação dessa pessoa?</value>
   </data>
   <data name="ReportChat" xml:space="preserve">
     <value>Denunciar</value>
@@ -11335,6 +11506,12 @@ O Telegram acessará a sua localização somente pela duração que você escolh
   <data name="ReportMessagesCount" xml:space="preserve">
     <value>DENUNCIAR {0}</value>
   </data>
+  <data name="ReportReaction" xml:space="preserve">
+    <value>Denunciar reação</value>
+  </data>
+  <data name="ReportReactionAndBan" xml:space="preserve">
+    <value>Banir e Denunciar</value>
+  </data>
   <data name="ReportSelectMessages" xml:space="preserve">
     <value>Selecionar mensagens</value>
   </data>
@@ -11368,6 +11545,9 @@ Obrigado!</value>
   </data>
   <data name="ReportSpamUser" xml:space="preserve">
     <value>BLOQUEAR</value>
+  </data>
+  <data name="ReportSpamUserEmojiStatusHint" xml:space="preserve">
+    <value>Essa conta usa {0} como status personalizado ao lado do nome. Esses emojis de status estão disponíveis para todos os assinantes do {1}.</value>
   </data>
   <data name="ReportTitleChild" xml:space="preserve">
     <value>Denunciar Abuso Infantil</value>
@@ -11453,7 +11633,7 @@ Obrigado!</value>
     <value>APAGAR CONTA</value>
   </data>
   <data name="ResetAccountCancelledAlert" xml:space="preserve">
-    <value>As suas tentativas recentes de redefinir esta conta foram canceladas pelo usuário ativo. Por favor, tente novamente em 7 dias.</value>
+    <value>As suas tentativas recentes de redefinir esta conta foram canceladas pelo usuário ativo. Por favor, tente de novo em 7 dias.</value>
   </data>
   <data name="ResetAccountInfo" xml:space="preserve">
     <value>Como a conta {0} está ativa e protegida por uma senha, ela será apagada em 1 semana. Esse tempo é necessário por questões de segurança.
@@ -11865,6 +12045,9 @@ Pode ser necessário reiniciar o aplicativo para que isso entre em vigor.</value
   <data name="SearchMusic" xml:space="preserve">
     <value>Buscar música</value>
   </data>
+  <data name="SearchReactionsHint" xml:space="preserve">
+    <value>Buscar reações</value>
+  </data>
   <data name="SearchRecentFiles" xml:space="preserve">
     <value>Buscar Arquivos Recentes</value>
   </data>
@@ -11985,6 +12168,12 @@ Pode ser necessário reiniciar o aplicativo para que isso entre em vigor.</value
   <data name="SelectOtherChat" xml:space="preserve">
     <value>Selecionar outro chat</value>
   </data>
+  <data name="SelectSendAsPeerPremiumHint" xml:space="preserve">
+    <value>Assine o **Telegram Premium** para comentar em nome dos seus canais em qualquer grupo.</value>
+  </data>
+  <data name="SelectSendAsPeerPremiumOpen" xml:space="preserve">
+    <value>Abrir</value>
+  </data>
   <data name="SelectTheme" xml:space="preserve">
     <value>Selecionar tema</value>
   </data>
@@ -12103,7 +12292,7 @@ Pode ser necessário reiniciar o aplicativo para que isso entre em vigor.</value
     <value>Enviar Mensagem</value>
   </data>
   <data name="SendMessageRestricted" xml:space="preserve">
-    <value>Admins deste grupo restringiram você de escrever até {0}.</value>
+    <value>Admins do grupo restringiram você de escrever aqui até {0}.</value>
   </data>
   <data name="SendMessageRestrictedForever" xml:space="preserve">
     <value>Admins do grupo restringiram você de enviar mensagens.</value>
@@ -12154,7 +12343,7 @@ Pode ser necessário reiniciar o aplicativo para que isso entre em vigor.</value
     <value>Confira suas mensagens no Telegram</value>
   </data>
   <data name="SentAppCodeWithPhone" xml:space="preserve">
-    <value>Enviamos o código para o app do **Telegram** em {0} no seu outro dispositivo.</value>
+    <value>Enviamos o código para o **app do Telegram** de {0} no seu outro dispositivo.</value>
   </data>
   <data name="SentCallCode" xml:space="preserve">
     <value>Estamos ligando para o seu telefone **{0}**.
@@ -12226,6 +12415,30 @@ Não atenda. O Telegram processará tudo automaticamente.</value>
   </data>
   <data name="SetColor" xml:space="preserve">
     <value>Definir uma cor</value>
+  </data>
+  <data name="SetEmojiStatus" xml:space="preserve">
+    <value>Emoji de Status</value>
+  </data>
+  <data name="SetEmojiStatusUntil1Hour" xml:space="preserve">
+    <value>Usar por 1 hora</value>
+  </data>
+  <data name="SetEmojiStatusUntil2Days" xml:space="preserve">
+    <value>Usar por 2 dias</value>
+  </data>
+  <data name="SetEmojiStatusUntil2Hours" xml:space="preserve">
+    <value>Usar por 2 horas</value>
+  </data>
+  <data name="SetEmojiStatusUntil8Hours" xml:space="preserve">
+    <value>Usar por 8 horas</value>
+  </data>
+  <data name="SetEmojiStatusUntilButton" xml:space="preserve">
+    <value>Usar Status</value>
+  </data>
+  <data name="SetEmojiStatusUntilOther" xml:space="preserve">
+    <value>Outro...</value>
+  </data>
+  <data name="SetEmojiStatusUntilTitle" xml:space="preserve">
+    <value>Usar status até…</value>
   </data>
   <data name="SetNewPassword" xml:space="preserve">
     <value>Defina uma nova senha</value>
@@ -12558,6 +12771,9 @@ Por favor, insira o número correto com o código do país.</value>
   <data name="ShuffleList" xml:space="preserve">
     <value>Misturar Lista</value>
   </data>
+  <data name="SignInWithGoogle" xml:space="preserve">
+    <value>Login com o Google</value>
+  </data>
   <data name="SignUp" xml:space="preserve">
     <value>Inscrever-se</value>
   </data>
@@ -12632,6 +12848,9 @@ O Modo Lento está ativado. Você não pode enviar mais de uma mensagem por vez.
   </data>
   <data name="SoftUserLimitAlert" xml:space="preserve">
     <value>Você poderá adicionar mais membros depois de criar o grupo.</value>
+  </data>
+  <data name="SomeReactions" xml:space="preserve">
+    <value>Algumas reações</value>
   </data>
   <data name="SortBy" xml:space="preserve">
     <value>Listar Por</value>
@@ -13101,6 +13320,9 @@ Se a opção "**Sincronizar Contatos**" estiver ativada, os contatos atuais da s
   <data name="TapForVideo" xml:space="preserve">
     <value>Toque para foto, segure para vídeo</value>
   </data>
+  <data name="TapHereEmoji" xml:space="preserve">
+    <value>Toque {0} para acessar mais emojis.</value>
+  </data>
   <data name="TapHereGifs" xml:space="preserve">
     <value>Toque aqui para acessar os GIFs salvos</value>
   </data>
@@ -13216,11 +13438,26 @@ Telegram Premium.</value>
   <data name="TelegramPremiumUserGiftedPremiumDialogTitle" xml:space="preserve">
     <value>**{0}** presenteou você com uma assinatura de {1} meses do Telegram Premium.</value>
   </data>
+  <data name="TelegramPremiumUserGiftedPremiumDialogTitleWithPlural" xml:space="preserve">
+    <value>**{0}** presenteou você com uma assinatura de {1} do Telegram Premium.</value>
+  </data>
   <data name="TelegramPremiumUserGiftedPremiumOutboundDialogSubtitle" xml:space="preserve">
     <value>**{0}** agora tem acesso a recursos adicionais.</value>
   </data>
   <data name="TelegramPremiumUserGiftedPremiumOutboundDialogTitle" xml:space="preserve">
     <value>Você presenteou {0} com uma assinatura de {1} meses do Telegram Premium.</value>
+  </data>
+  <data name="TelegramPremiumUserGiftedPremiumOutboundDialogTitleWithPlural" xml:space="preserve">
+    <value>Você presenteou **{0}** com uma assinatura de {1} do Telegram Premium.</value>
+  </data>
+  <data name="TelegramPremiumUserStatusDefaultDialogTitle" xml:space="preserve">
+    <value>Esse é o status atual de {0}.</value>
+  </data>
+  <data name="TelegramPremiumUserStatusDialogSubtitle" xml:space="preserve">
+    <value>O emoji de status é um recurso premium. Outros recursos incluídos no **Telegram Premium**:</value>
+  </data>
+  <data name="TelegramPremiumUserStatusDialogTitle" xml:space="preserve">
+    <value>{0} está usando esse emoji de **{1}** como status atual.</value>
   </data>
   <data name="TelegramTones" xml:space="preserve">
     <value>Sons do Telegram</value>
@@ -13711,6 +13948,9 @@ Se você não se sentir confortável com as necessidades modestas do Telegram, n
   <data name="UnlockPremiumEmojiPack" xml:space="preserve">
     <value>Desbloquear {0}</value>
   </data>
+  <data name="UnlockPremiumEmojiReaction" xml:space="preserve">
+    <value>Assine o **Telegram Premium** para desbloquear esta reação.</value>
+  </data>
   <data name="UnlockPremiumIcons" xml:space="preserve">
     <value>Desbloquear Ícones Premium</value>
   </data>
@@ -13933,7 +14173,7 @@ Se você não se sentir confortável com as necessidades modestas do Telegram, n
   <data name="UsernameHelp" xml:space="preserve">
     <value>Você pode escolher um nome de usuário no **Telegram**. Se escolher, as pessoas poderão te encontrar pelo nome de usuário e entrar em contato sem precisar do seu número de telefone.
 
-Você pode usar **a–z**, **0–9** e underline.
+Você pode usar **a–z, 0–9** e underlines.
 O tamanho mínimo é de **5** caracteres.</value>
   </data>
   <data name="UsernameHelpLink" xml:space="preserve">
@@ -14095,6 +14335,9 @@ O tamanho mínimo é de **5** caracteres.</value>
   </data>
   <data name="VerificationCode" xml:space="preserve">
     <value>Código de Verificação</value>
+  </data>
+  <data name="VerificationCodeSubtitle" xml:space="preserve">
+    <value>Verifique seu e-mail {0} (não se esqueça da pasta de spam) e digite o código que acabamos de enviar.</value>
   </data>
   <data name="ViaBot" xml:space="preserve">
     <value>via</value>
@@ -15158,7 +15401,7 @@ Sua senha **não afetará** widgets adicionados na tela inicial.</value>
     <value>visto na última semana</value>
   </data>
   <data name="WrongCode" xml:space="preserve">
-    <value>Código incorreto. Por favor, tente novamente.</value>
+    <value>Código incorreto. Por favor, tente de novo.</value>
   </data>
   <data name="WrongCodeTitle" xml:space="preserve">
     <value>Código incorreto</value>
@@ -15252,11 +15495,17 @@ Se você esquecer a sua senha, perderá acesso à sua conta do Telegram. Não te
   <data name="YourLocatedChannelsTooMuch" xml:space="preserve">
     <value>Desculpe, você já tem muitos grupos com base em localização. Por favor, apague um dos seus grupos existentes primeiro.</value>
   </data>
+  <data name="YourLoginEmailChangedSuccess" xml:space="preserve">
+    <value>Seu e-mail foi alterado.</value>
+  </data>
   <data name="YourName" xml:space="preserve">
     <value>Seu Nome</value>
   </data>
   <data name="YourNameChanged" xml:space="preserve">
     <value>Nome atualizado.</value>
+  </data>
+  <data name="YourNewEmail" xml:space="preserve">
+    <value>Seu novo e-mail</value>
   </data>
   <data name="YourNumber" xml:space="preserve">
     <value>Seu número</value>

@@ -187,6 +187,9 @@
   <data name="AccDescrContactSorting" xml:space="preserve">
     <value>Canvia l&apos;ordenació</value>
   </data>
+  <data name="AccDescrCustomEmoji" xml:space="preserve">
+    <value>Emoji personalitzat</value>
+  </data>
   <data name="AccDescrDownloadProgress" xml:space="preserve">
     <value>Baixats {0} de {1}</value>
   </data>
@@ -994,11 +997,20 @@ a: {1}</value>
   <data name="AddContactTitle" xml:space="preserve">
     <value>Afegeix un contacte</value>
   </data>
+  <data name="Added" xml:space="preserve">
+    <value>Afegit</value>
+  </data>
   <data name="AddedBy" xml:space="preserve">
     <value>afegit per {0} {1}</value>
   </data>
   <data name="AddedToFavorites" xml:space="preserve">
     <value>S&apos;ha afegit l&apos;adhesiu als preferits.</value>
+  </data>
+  <data name="AddEmailSubtitle" xml:space="preserve">
+    <value>Introduïu una adreça de correu electrònic vàlida per a protegir el compte.</value>
+  </data>
+  <data name="AddEmailTitle" xml:space="preserve">
+    <value>Afegiu un correu</value>
   </data>
   <data name="AddEmojiInstalled" xml:space="preserve">
     <value>S&apos;ha afegit els emojis.</value>
@@ -1157,7 +1169,7 @@ a: {1}</value>
     <value>Els {0} fitxers</value>
   </data>
   <data name="AllNPhotos_other" xml:space="preserve">
-    <value>Totes les {0} fotos</value>
+    <value>Les {0} fotos</value>
   </data>
   <data name="Allow" xml:space="preserve">
     <value>Permet</value>
@@ -1197,6 +1209,9 @@ a: {1}</value>
   </data>
   <data name="AllPhotos" xml:space="preserve">
     <value>Totes les fotos</value>
+  </data>
+  <data name="AllReactions" xml:space="preserve">
+    <value>Totes les reaccions</value>
   </data>
   <data name="AllSessionsTerminated" xml:space="preserve">
     <value>S&apos;han tancat totes les altres sessions.</value>
@@ -1333,7 +1348,7 @@ a: {1}</value>
 • Correcció d&apos;errors i millores.</value>
   </data>
   <data name="AppUpdateDownloading" xml:space="preserve">
-    <value>S&apos;està baixant ({0}%)…</value>
+    <value>S&apos;està baixant… {0}%</value>
   </data>
   <data name="AppUpdateDownloadNow" xml:space="preserve">
     <value>Baixa ara</value>
@@ -2196,6 +2211,9 @@ Ocàs: {1}</value>
   <data name="Bans_other" xml:space="preserve">
     <value>{0} bandejos</value>
   </data>
+  <data name="BanUser" xml:space="preserve">
+    <value>Bandeja l&apos;usuari</value>
+  </data>
   <data name="BioCopied" xml:space="preserve">
     <value>S&apos;ha copiat la biografia.</value>
   </data>
@@ -2741,6 +2759,12 @@ Si no en sabeu res, introduïu el codi que us hem enviat per SMS. També ho pode
   </data>
   <data name="ChangeColorToColor" xml:space="preserve">
     <value>Voleu usar l&apos;últim fons seleccionat, o restablir el fons predefinit d&apos;aquest tema?</value>
+  </data>
+  <data name="ChangeEmail" xml:space="preserve">
+    <value>Canvia el correu</value>
+  </data>
+  <data name="ChangeEmojiStatus" xml:space="preserve">
+    <value>Canvia l&apos;estat</value>
   </data>
   <data name="ChangeLanguageLater" xml:space="preserve">
     <value>Podreu canviar la llengua a la Configuració.</value>
@@ -3444,6 +3468,18 @@ Longitud mínima: 5 caràcters.</value>
   <data name="CheckPhoneNumberYes" xml:space="preserve">
     <value>Sí</value>
   </data>
+  <data name="CheckYourEmail" xml:space="preserve">
+    <value>Reviseu el correu</value>
+  </data>
+  <data name="CheckYourEmailSubtitle" xml:space="preserve">
+    <value>Introduïu el codi que us hem enviat a l&apos;adreça {0}.</value>
+  </data>
+  <data name="CheckYourNewEmail" xml:space="preserve">
+    <value>Reviseu el correu nou</value>
+  </data>
+  <data name="CheckYourNewEmailSubtitle" xml:space="preserve">
+    <value>Introduïu el codi que us hem enviat a l&apos;adreça nova {0}.</value>
+  </data>
   <data name="ChooseCountry" xml:space="preserve">
     <value>Trieu un país</value>
   </data>
@@ -3588,6 +3624,12 @@ Longitud mínima: 5 caràcters.</value>
   <data name="ClearRecentEmoji" xml:space="preserve">
     <value>Voleu esborrar els emojis recents?</value>
   </data>
+  <data name="ClearRecentEmojiStatusesText" xml:space="preserve">
+    <value>Voleu esborrar els estats d&apos;emojis recents i restablir els suggeriments?</value>
+  </data>
+  <data name="ClearRecentEmojiStatusesTitle" xml:space="preserve">
+    <value>Esborrar els recents</value>
+  </data>
   <data name="ClearRecentEmojiText" xml:space="preserve">
     <value>Voleu esborrar tots els emojis recents?</value>
   </data>
@@ -3596,6 +3638,12 @@ Longitud mínima: 5 caràcters.</value>
   </data>
   <data name="ClearRecentHistory" xml:space="preserve">
     <value>Esborra l&apos;historial</value>
+  </data>
+  <data name="ClearRecentReactionsAlertMessage" xml:space="preserve">
+    <value>Voleu esborrar els emojis de reaccions recents dels suggeriments?</value>
+  </data>
+  <data name="ClearRecentReactionsAlertTitle" xml:space="preserve">
+    <value>Esborra els recents</value>
   </data>
   <data name="ClearRecentStickersAlertMessage" xml:space="preserve">
     <value>Voleu esborrar tots els adhesius recents?</value>
@@ -3768,7 +3816,7 @@ Quan {1} actualitzi el Telegram, les fotos amb autodestrucció d&apos;1 minut o 
     <value>S&apos;està connectant...</value>
   </data>
   <data name="ConnectingConnectProxy" xml:space="preserve">
-    <value>Connecta al servidor intermediari</value>
+    <value>Connecta al servidor</value>
   </data>
   <data name="ConnectingToProxy" xml:space="preserve">
     <value>S&apos;està connectant al servidor intermediari</value>
@@ -4464,6 +4512,9 @@ Les opcions disponibles són provar un altre número o parlar amb l&apos;assist�
   <data name="DisablePasscodeTurnOff" xml:space="preserve">
     <value>Desactiva</value>
   </data>
+  <data name="DisableReactionsInfo" xml:space="preserve">
+    <value>Els membres del grup no poden reaccionar a cap missatge.</value>
+  </data>
   <data name="DisappearingGif" xml:space="preserve">
     <value>GIF efímer</value>
   </data>
@@ -4824,8 +4875,20 @@ Si no se’n selecciona cap en concret, al giny es mostraran els xats més recen
 
 Si no seleccioneu ningú, es mostraran els vostres contactes més freqüents.</value>
   </data>
+  <data name="EmailAddressInvalid" xml:space="preserve">
+    <value>Correu electrònic no vàlid.</value>
+  </data>
   <data name="EmailCopied" xml:space="preserve">
     <value>S&apos;ha copiat l&apos;adreça electrònica al porta-retalls.</value>
+  </data>
+  <data name="EmailLogin" xml:space="preserve">
+    <value>Correu d&apos;inici de sessió</value>
+  </data>
+  <data name="EmailLoginChangeMessage" xml:space="preserve">
+    <value>Aquesta adreça de correu s&apos;usarà cada vegada que inicieu la sessió del Telegram en un dispositiu nou.</value>
+  </data>
+  <data name="EmailNotAllowed" xml:space="preserve">
+    <value>No es permet aquest domini de correu.</value>
   </data>
   <data name="EmailPasswordConfirmText" xml:space="preserve">
     <value>Seguiu aquests passos per a configurar la verificació en dos passos:
@@ -4841,8 +4904,11 @@ Si no seleccioneu ningú, es mostraran els vostres contactes més freqüents.</v
   <data name="EmailPasswordConfirmText3" xml:space="preserve">
     <value>Per a acabar de configurar l’adreça de recuperació, reviseu el {0} (no oblideu la safata de correu brossa) i introduïu el codi que us hem enviat.</value>
   </data>
+  <data name="EmailTokenInvalid" xml:space="preserve">
+    <value>L&apos;autorització del correu no és vàlida.</value>
+  </data>
   <data name="Emoji" xml:space="preserve">
-    <value>Emoji</value>
+    <value>Emojis</value>
   </data>
   <data name="Emoji1" xml:space="preserve">
     <value>Emojis i persones</value>
@@ -4880,6 +4946,9 @@ Si no seleccioneu ningú, es mostraran els vostres contactes més freqüents.</v
   <data name="EmojiBotInfo" xml:space="preserve">
     <value>Animem els artistes a afegir els seus propis paquets usant el bot @stickers.</value>
   </data>
+  <data name="EmojiCopied" xml:space="preserve">
+    <value>S&apos;ha copiat l&apos;emoji al porta-retalls.</value>
+  </data>
   <data name="EmojiCount_one" xml:space="preserve">
     <value>{0} emoji</value>
   </data>
@@ -4894,6 +4963,9 @@ Si no seleccioneu ningú, es mostraran els vostres contactes més freqüents.</v
   </data>
   <data name="EmojiInteractionTapHint" xml:space="preserve">
     <value>Si **{0}** tingués obert el xat ara mateix, també veuria l&apos;animació.</value>
+  </data>
+  <data name="EmojiLongtapHint" xml:space="preserve">
+    <value>Manteniu un emoji per a establir un temps</value>
   </data>
   <data name="EmojiPackCount_one" xml:space="preserve">
     <value>{0} paquet d&apos;emojis</value>
@@ -4912,6 +4984,9 @@ Si no seleccioneu ningú, es mostraran els vostres contactes més freqüents.</v
   </data>
   <data name="EmojiRemovedMultipleInfo_other" xml:space="preserve">
     <value>{0} paquets ja no són als vostres emojis.</value>
+  </data>
+  <data name="EmojiStatusExpireHint" xml:space="preserve">
+    <value>L&apos;estat caduca: {0}</value>
   </data>
   <data name="EmojiSuggestions" xml:space="preserve">
     <value>Suggeriments d&apos;emojis</value>
@@ -4933,6 +5008,9 @@ Si no seleccioneu ningú, es mostraran els vostres contactes més freqüents.</v
   </data>
   <data name="Enable" xml:space="preserve">
     <value>Activa</value>
+  </data>
+  <data name="EnableAllReactionsInfo" xml:space="preserve">
+    <value>Els membres del grup poden utilitzar qualsevol emoji com a reacció als missatges.</value>
   </data>
   <data name="EnableAllStreamingInfo" xml:space="preserve">
     <value>En ser possible, el Telegram començarà a reproduir música i vídeos immediatament, sense esperar que els fitxers es baixin del tot.</value>
@@ -4967,6 +5045,9 @@ Us caldrà la contrasenya que heu indicat aquí per a iniciar sessió al Telegra
   </data>
   <data name="EnableReactionsGroupInfo" xml:space="preserve">
     <value>Permet reaccionar als missatges del grup.</value>
+  </data>
+  <data name="EnableSomeReactionsInfo" xml:space="preserve">
+    <value>Els membres del grup poden utilitzar com a reacció només alguns emojis aprovats.</value>
   </data>
   <data name="EnableStreaming" xml:space="preserve">
     <value>Per a fitxers de música i vídeo</value>
@@ -5040,6 +5121,9 @@ Més informació a telegram.org</value>
   </data>
   <data name="EnterListName" xml:space="preserve">
     <value>Introduïu el nom de la llista</value>
+  </data>
+  <data name="EnterNewEmail" xml:space="preserve">
+    <value>Introduïu el correu nou</value>
   </data>
   <data name="EnterNewFirstPasscode" xml:space="preserve">
     <value>Introduïu un codi d&apos;accés</value>
@@ -6143,6 +6227,12 @@ Es perdran tots els xats secrets.</value>
   <data name="GifsTab2" xml:space="preserve">
     <value>GIF</value>
   </data>
+  <data name="GiftMonths_one" xml:space="preserve">
+    <value>{0} mes</value>
+  </data>
+  <data name="GiftMonths_other" xml:space="preserve">
+    <value>{0} mesos</value>
+  </data>
   <data name="GiftPremium" xml:space="preserve">
     <value>Regala el Premium</value>
   </data>
@@ -6600,7 +6690,7 @@ marques horàries originals. Tots els membres veuran els missatges.</value>
 Messages will be imported into the current day but will also include their original timestamps. Both sides will see the messages.</value>
   </data>
   <data name="ImportToUserNoTitle" xml:space="preserve">
-    <value>Voleu importar missatges al xat amb **{0}?**
+    <value>Voleu importar missatges al xat amb **{0}**?
 
 Els missatges s&apos;importaran amb la data actual, però també inclouran les marques horàries originals. Ambdós participants veuran els missatges.</value>
   </data>
@@ -6648,6 +6738,9 @@ Els missatges s&apos;importaran amb la data actual, però també inclouran les m
   </data>
   <data name="InstallGoogleMaps" xml:space="preserve">
     <value>Voleu instal·lar el Google Maps?</value>
+  </data>
+  <data name="InstallHuaweiMaps" xml:space="preserve">
+    <value>Voleu instal·lar Petal Maps?</value>
   </data>
   <data name="InstallOfficialApp" xml:space="preserve">
     <value>Instal·leu l&apos;aplicació oficial</value>
@@ -7388,6 +7481,9 @@ Això pot trigar uns minuts.</value>
   <data name="LoginAttemptsInfo" xml:space="preserve">
     <value>Aquests dispositius no tenen accés al vostre compte. El codi s&apos;ha introduït correctament, però no s&apos;ha facilitat una contrasenya correcta.</value>
   </data>
+  <data name="LoginOrSingInWithGoogle" xml:space="preserve">
+    <value>o</value>
+  </data>
   <data name="LoginPassword" xml:space="preserve">
     <value>Contrasenya</value>
   </data>
@@ -7508,7 +7604,7 @@ Ningú no veurà el vostre telèfon.</value>
     <value>Marca-ho tot com a llegit</value>
   </data>
   <data name="MarkAsRead" xml:space="preserve">
-    <value>Marca-ho com a llegit</value>
+    <value>Marca com a llegit</value>
   </data>
   <data name="MarkAsUnread" xml:space="preserve">
     <value>Marca-ho per llegir</value>
@@ -7667,7 +7763,16 @@ Longitud mínima: 5 caràcters.</value>
     <value>Aquest missatge conté emojis d&apos;**{0} paquet**.</value>
   </data>
   <data name="MessageContainsEmojiPacks_other" xml:space="preserve">
-    <value>Aquest missatge conté emojis de **{0} paquets**.</value>
+    <value>Aquest missatge conté emojis de: **{0} paquets**.</value>
+  </data>
+  <data name="MessageContainsEmojiPackSingle" xml:space="preserve">
+    <value>Aquest missatge conté emojis de: **{0}**</value>
+  </data>
+  <data name="MessageContainsReactionsPack" xml:space="preserve">
+    <value>S&apos;han usat emojis del paquet {0} com a reaccions.</value>
+  </data>
+  <data name="MessageContainsReactionsPacks_other" xml:space="preserve">
+    <value>S&apos;han usat com a reaccions emojis de: **{0} paquets**.</value>
   </data>
   <data name="MessageCopied" xml:space="preserve">
     <value>El missatge s&apos;ha copiat al porta-retalls.</value>
@@ -7815,6 +7920,21 @@ Longitud mínima: 5 caràcters.</value>
   </data>
   <data name="Mi" xml:space="preserve">
     <value>mi</value>
+  </data>
+  <data name="MicrophoneForVoiceMessages" xml:space="preserve">
+    <value>Micròfon dels missatges de veu</value>
+  </data>
+  <data name="MicrophoneForVoiceMessagesBuiltIn" xml:space="preserve">
+    <value>Integrat</value>
+  </data>
+  <data name="MicrophoneForVoiceMessagesSco" xml:space="preserve">
+    <value>Auriculars</value>
+  </data>
+  <data name="MicrophoneForVoiceMessagesScoHint" xml:space="preserve">
+    <value>L&apos;ús del micròfon d&apos;uns auriculars pot reduir el soroll de fons, però disminuirà lleugerament la qualitat de l&apos;àudio.</value>
+  </data>
+  <data name="MicrophoneForVoiceMessagesScoIfConnected" xml:space="preserve">
+    <value>Auriculars (si n&apos;hi ha)</value>
   </data>
   <data name="MigrateOldFolderButton" xml:space="preserve">
     <value>Mou els fitxers</value>
@@ -8158,7 +8278,7 @@ Això podria trigar uns minuts. Podeu continuar usant l&apos;aplicació mentre e
     <value>Trobeu gent a prop amb qui xerrar</value>
   </data>
   <data name="NoContactsYetLine3" xml:space="preserve">
-    <value>Cerqueu persones per nom d&apos;usuari</value>
+    <value>Cerqueu persones pel nom d&apos;usuari</value>
   </data>
   <data name="NoEmojiFound" xml:space="preserve">
     <value>No s&apos;ha trobat cap emoji</value>
@@ -8258,6 +8378,12 @@ d&apos;unió.</value>
   </data>
   <data name="NoPopup" xml:space="preserve">
     <value>Sense notificació emergent</value>
+  </data>
+  <data name="NoReactions" xml:space="preserve">
+    <value>Cap reacció</value>
+  </data>
+  <data name="NoReactionsFound" xml:space="preserve">
+    <value>No s&apos;han trobat reaccions</value>
   </data>
   <data name="NoRecent" xml:space="preserve">
     <value>No n&apos;hi ha de recents</value>
@@ -8989,6 +9115,9 @@ L&apos;equip del Telegram</value>
   </data>
   <data name="OnlineCount_other" xml:space="preserve">
     <value>{0} en línia</value>
+  </data>
+  <data name="OnlyAllowThisReactions" xml:space="preserve">
+    <value>Permet només aquestes reaccions</value>
   </data>
   <data name="OnlyIfSilent" xml:space="preserve">
     <value>Només en mode silenciós</value>
@@ -9885,7 +10014,7 @@ Podeu visitar les *PMF* per a més informació.</value>
     <value>Mètode de pagament</value>
   </data>
   <data name="PaymentCheckoutMethodNewCard" xml:space="preserve">
-    <value>Targeta nova</value>
+    <value>Afegeix una targeta…</value>
   </data>
   <data name="PaymentCheckoutName" xml:space="preserve">
     <value>Nom</value>
@@ -10432,6 +10561,9 @@ Hi accedirem només durant el temps que estipuleu, i ho podeu aturar en qualsevo
   <data name="PollViewResults" xml:space="preserve">
     <value>RESULTATS</value>
   </data>
+  <data name="PopularReactions" xml:space="preserve">
+    <value>Populars</value>
+  </data>
   <data name="PopupDisabled" xml:space="preserve">
     <value>Desactivat</value>
   </data>
@@ -10486,6 +10618,12 @@ Hi accedirem només durant el temps que estipuleu, i ho podeu aturar en qualsevo
   <data name="PremiumPreviewEmojiPack" xml:space="preserve">
     <value>Aquest paquet d&apos;emojis només està disponible per a subscriptors del **Telegram Premium**.</value>
   </data>
+  <data name="PremiumPreviewEmojiStatus" xml:space="preserve">
+    <value>Estats d&apos;emojis</value>
+  </data>
+  <data name="PremiumPreviewEmojiStatusDescription" xml:space="preserve">
+    <value>Trieu entre milers d&apos;emojis per a mostrar l&apos;activitat actual al costat del vostre nom.</value>
+  </data>
   <data name="PremiumPreviewLimits" xml:space="preserve">
     <value>Límits duplicats</value>
   </data>
@@ -10509,6 +10647,12 @@ Hi accedirem només durant el temps que estipuleu, i ho podeu aturar en qualsevo
   </data>
   <data name="PremiumPreviewReactions" xml:space="preserve">
     <value>Reaccions úniques</value>
+  </data>
+  <data name="PremiumPreviewReactions2" xml:space="preserve">
+    <value>Reaccions infinites</value>
+  </data>
+  <data name="PremiumPreviewReactions2Description" xml:space="preserve">
+    <value>Reaccioneu amb milers d&apos;emojis utilitzant múltiples reaccions per missatge.</value>
   </data>
   <data name="PremiumPreviewReactionsDescription" xml:space="preserve">
     <value>Reaccions animades extra als missatges, disponibles només per a subscriptors.</value>
@@ -10542,6 +10686,15 @@ Hi accedirem només durant el temps que estipuleu, i ho podeu aturar en qualsevo
   </data>
   <data name="PremiumStickerTooltip" xml:space="preserve">
     <value>El paquet conté adhesius prèmium com aquest.</value>
+  </data>
+  <data name="PremiumTierAnnual" xml:space="preserve">
+    <value>Anual</value>
+  </data>
+  <data name="PremiumTierMonthly" xml:space="preserve">
+    <value>Mensual</value>
+  </data>
+  <data name="PremiumTierSemiannual" xml:space="preserve">
+    <value>Semestral</value>
   </data>
   <data name="PreviewFeedback" xml:space="preserve">
     <value>Informeu d&apos;un error a la pàgina</value>
@@ -10620,6 +10773,12 @@ Hi accedirem només durant el temps que estipuleu, i ho podeu aturar en qualsevo
   </data>
   <data name="PricePerMonth" xml:space="preserve">
     <value>{0}/mes</value>
+  </data>
+  <data name="PricePerMonthMe" xml:space="preserve">
+    <value>{0}/mes</value>
+  </data>
+  <data name="PricePerYear" xml:space="preserve">
+    <value>{0}/any</value>
   </data>
   <data name="PrimaryLinkHelp" xml:space="preserve">
     <value>Qualsevol persona a Telegram podrà unir-se al grup amb aquest enllaç.</value>
@@ -11107,11 +11266,17 @@ Hi accedirem només durant el temps que estipuleu, i ho podeu aturar en qualsevo
   <data name="Reactions" xml:space="preserve">
     <value>Reaccions</value>
   </data>
+  <data name="ReactionsAll" xml:space="preserve">
+    <value>Totes</value>
+  </data>
   <data name="ReactionsCount_one" xml:space="preserve">
     <value>{0} reacció</value>
   </data>
   <data name="ReactionsCount_other" xml:space="preserve">
     <value>{0} reaccions</value>
+  </data>
+  <data name="ReactionsLongtapHint" xml:space="preserve">
+    <value>Manteniu un emoji per a enviar una superreacció</value>
   </data>
   <data name="ReactionsOff" xml:space="preserve">
     <value>Desactivades</value>
@@ -11133,6 +11298,9 @@ Hi accedirem només durant el temps que estipuleu, i ho podeu aturar en qualsevo
   </data>
   <data name="RecentlyDownloaded" xml:space="preserve">
     <value>Baixat fa poc</value>
+  </data>
+  <data name="RecentlyUsed" xml:space="preserve">
+    <value>Utilitzats fa poc</value>
   </data>
   <data name="RecentlyViewed" xml:space="preserve">
     <value>Vistos fa poc</value>
@@ -11282,10 +11450,13 @@ Hi accedirem només durant el temps que estipuleu, i ho podeu aturar en qualsevo
     <value>Respon</value>
   </data>
   <data name="ReplyToGroup" xml:space="preserve">
-    <value>Respon a {0}</value>
+    <value>Respon</value>
   </data>
   <data name="ReplyToUser" xml:space="preserve">
-    <value>Respon a {0}</value>
+    <value>Respon</value>
+  </data>
+  <data name="ReportAlertReaction" xml:space="preserve">
+    <value>Segur que voleu denunciar les reaccions d&apos;aquest usuari?</value>
   </data>
   <data name="ReportChat" xml:space="preserve">
     <value>Denuncia</value>
@@ -11332,6 +11503,12 @@ Hi accedirem només durant el temps que estipuleu, i ho podeu aturar en qualsevo
   <data name="ReportMessagesCount" xml:space="preserve">
     <value>DENUNCIA {0}</value>
   </data>
+  <data name="ReportReaction" xml:space="preserve">
+    <value>Denuncia la reacció</value>
+  </data>
+  <data name="ReportReactionAndBan" xml:space="preserve">
+    <value>Bandeja i denuncia</value>
+  </data>
   <data name="ReportSelectMessages" xml:space="preserve">
     <value>Seleccioneu missatges</value>
   </data>
@@ -11365,6 +11542,9 @@ Gràcies per cooperar!</value>
   </data>
   <data name="ReportSpamUser" xml:space="preserve">
     <value>BLOCA L&apos;USUARI</value>
+  </data>
+  <data name="ReportSpamUserEmojiStatusHint" xml:space="preserve">
+    <value>Aquest compte usa {0} com a estat personalitzat al costat del nom. Aquests estats d&apos;emojis estan disponibles per a tots els subscriptors del {1}.</value>
   </data>
   <data name="ReportTitleChild" xml:space="preserve">
     <value>Denuncia abús infantil</value>
@@ -11862,11 +12042,14 @@ Potse calgui reiniciar l&apos;aplicació per a aplicar-ho.</value>
   <data name="SearchMusic" xml:space="preserve">
     <value>Cerqueu música</value>
   </data>
+  <data name="SearchReactionsHint" xml:space="preserve">
+    <value>Cerqueu reaccions</value>
+  </data>
   <data name="SearchRecentFiles" xml:space="preserve">
     <value>Cerca fitxers recents</value>
   </data>
   <data name="SearchStickersHint" xml:space="preserve">
-    <value>Cerca paquets d&apos;adhesius</value>
+    <value>Cerqueu paquets d&apos;adhesius</value>
   </data>
   <data name="SearchTipToday" xml:space="preserve">
     <value>Avui</value>
@@ -11981,6 +12164,12 @@ Potse calgui reiniciar l&apos;aplicació per a aplicar-ho.</value>
   </data>
   <data name="SelectOtherChat" xml:space="preserve">
     <value>Selecciona un altre xat</value>
+  </data>
+  <data name="SelectSendAsPeerPremiumHint" xml:space="preserve">
+    <value>Subscriviu-vos al **Telegram Premium** per poder comentar en nom dels vostres canals en qualsevol grup.</value>
+  </data>
+  <data name="SelectSendAsPeerPremiumOpen" xml:space="preserve">
+    <value>Obre</value>
   </data>
   <data name="SelectTheme" xml:space="preserve">
     <value>Seleccioneu un tema</value>
@@ -12223,6 +12412,30 @@ No respongueu la trucada. El Telegram ho processarà tot automàticament.</value
   </data>
   <data name="SetColor" xml:space="preserve">
     <value>Estableix un color</value>
+  </data>
+  <data name="SetEmojiStatus" xml:space="preserve">
+    <value>Estableix un estat</value>
+  </data>
+  <data name="SetEmojiStatusUntil1Hour" xml:space="preserve">
+    <value>Estableix-lo 1 hora</value>
+  </data>
+  <data name="SetEmojiStatusUntil2Days" xml:space="preserve">
+    <value>Estableix-lo 2 dies</value>
+  </data>
+  <data name="SetEmojiStatusUntil2Hours" xml:space="preserve">
+    <value>Estableix-lo 2 hores</value>
+  </data>
+  <data name="SetEmojiStatusUntil8Hours" xml:space="preserve">
+    <value>Estableix-lo 8 hores</value>
+  </data>
+  <data name="SetEmojiStatusUntilButton" xml:space="preserve">
+    <value>Estableix l&apos;estat</value>
+  </data>
+  <data name="SetEmojiStatusUntilOther" xml:space="preserve">
+    <value>Altre…</value>
+  </data>
+  <data name="SetEmojiStatusUntilTitle" xml:space="preserve">
+    <value>Estableix l&apos;estat fins…</value>
   </data>
   <data name="SetNewPassword" xml:space="preserve">
     <value>Defineix una contrasenya nova</value>
@@ -12555,6 +12768,9 @@ Introduïu el número correcte incloent el codi de país.</value>
   <data name="ShuffleList" xml:space="preserve">
     <value>Mescla la llista</value>
   </data>
+  <data name="SignInWithGoogle" xml:space="preserve">
+    <value>Inicia sessió amb Google</value>
+  </data>
   <data name="SignUp" xml:space="preserve">
     <value>Registreu-vos</value>
   </data>
@@ -12629,6 +12845,9 @@ El mode lent està activat. No podeu enviar més d&apos;un missatge alhora.</val
   </data>
   <data name="SoftUserLimitAlert" xml:space="preserve">
     <value>Podreu afegir-hi més membres una vegada acabeu de crear el grup.</value>
+  </data>
+  <data name="SomeReactions" xml:space="preserve">
+    <value>Algunes reaccions</value>
   </data>
   <data name="SortBy" xml:space="preserve">
     <value>Ordena per</value>
@@ -13097,6 +13316,9 @@ Si activeu «**Sincronitza els contactes**», es tornarà a sincronitzar la llis
   <data name="TapForVideo" xml:space="preserve">
     <value>Toqueu per a foto, manteniu per a vídeo</value>
   </data>
+  <data name="TapHereEmoji" xml:space="preserve">
+    <value>Toqueu {0} i vegeu més emojis.</value>
+  </data>
   <data name="TapHereGifs" xml:space="preserve">
     <value>Toqueu per a accedir als GIF desats</value>
   </data>
@@ -13203,7 +13425,7 @@ Això és el que heu desblocat.</value>
     <value>Els propietaris de comptes del **Telegram Premium** tenen accés exclusiu a funcions extra.</value>
   </data>
   <data name="TelegramPremiumUserDialogTitle" xml:space="preserve">
-    <value>**{0}** és subscriptor del Telegram Premium.</value>
+    <value>**{0}** s&apos;ha subscrit al Telegram Premium.</value>
   </data>
   <data name="TelegramPremiumUserGiftedPremiumDialogSubtitle" xml:space="preserve">
     <value>Ara teniu accés a funcions extra.</value>
@@ -13211,11 +13433,26 @@ Això és el que heu desblocat.</value>
   <data name="TelegramPremiumUserGiftedPremiumDialogTitle" xml:space="preserve">
     <value>**{0}** us ha regalat subscripció per {1} mesos al Telegram Premium.</value>
   </data>
+  <data name="TelegramPremiumUserGiftedPremiumDialogTitleWithPlural" xml:space="preserve">
+    <value>**{0}** us ha regalat una subscripció per {1} del Telegram Premium.</value>
+  </data>
   <data name="TelegramPremiumUserGiftedPremiumOutboundDialogSubtitle" xml:space="preserve">
     <value>Ara **{0}** té accés a funcions extra.</value>
   </data>
   <data name="TelegramPremiumUserGiftedPremiumOutboundDialogTitle" xml:space="preserve">
     <value>Heu regalat a **{0}** una subscripció per {1} mesos al Telegram Premium.</value>
+  </data>
+  <data name="TelegramPremiumUserGiftedPremiumOutboundDialogTitleWithPlural" xml:space="preserve">
+    <value>Heu regalat a **{0}** una subscripció per {1} del Telegram Premium.</value>
+  </data>
+  <data name="TelegramPremiumUserStatusDefaultDialogTitle" xml:space="preserve">
+    <value>Aquest és l&apos;estat actual de: {0}.</value>
+  </data>
+  <data name="TelegramPremiumUserStatusDialogSubtitle" xml:space="preserve">
+    <value>Els estats d&apos;emojis són una funció prèmium. Altres funcions incloses en el **Telegram Premium**:</value>
+  </data>
+  <data name="TelegramPremiumUserStatusDialogTitle" xml:space="preserve">
+    <value>{0} ha establert aquest emoji de: **{1}** com a estat actual.</value>
   </data>
   <data name="TelegramTones" xml:space="preserve">
     <value>Tons del Telegram</value>
@@ -13703,6 +13940,9 @@ Si no esteu conforme amb les necessitats modestes del Telegram, no us podem ofer
   <data name="UnlockPremiumEmojiPack" xml:space="preserve">
     <value>Desbloca {0}</value>
   </data>
+  <data name="UnlockPremiumEmojiReaction" xml:space="preserve">
+    <value>Subscriviu-vos al **Telegram Premium** per a desblocar aquesta reacció.</value>
+  </data>
   <data name="UnlockPremiumIcons" xml:space="preserve">
     <value>Desbloca icones prèmium</value>
   </data>
@@ -14086,6 +14326,9 @@ Podeu usar **a–z**, **0–9** i guions baixos. Longitud mínima: **5** caràct
   </data>
   <data name="VerificationCode" xml:space="preserve">
     <value>Codi de verificació</value>
+  </data>
+  <data name="VerificationCodeSubtitle" xml:space="preserve">
+    <value>Comproveu el correu {0} (no oblideu la carpeta de correu brossa) i introduïu el codi que us hem enviat.</value>
   </data>
   <data name="ViaBot" xml:space="preserve">
     <value>via</value>
@@ -15205,7 +15448,7 @@ El vostre codi **no afectarà** els ginys de la pantalla d&apos;inici.</value>
     <value>Contactes</value>
   </data>
   <data name="YourEmail" xml:space="preserve">
-    <value>La vostra adreça electrònica</value>
+    <value>Correu electrònic</value>
   </data>
   <data name="YourEmailAlmostThere" xml:space="preserve">
     <value>Gairebé acabem!</value>
@@ -15242,11 +15485,17 @@ Si oblideu la contrasenya, perdreu l&apos;accés al vostre compte de Telegram. N
   <data name="YourLocatedChannelsTooMuch" xml:space="preserve">
     <value>Ja teniu massa grups basats en la ubicació. Elimineu-ne abans algun.</value>
   </data>
+  <data name="YourLoginEmailChangedSuccess" xml:space="preserve">
+    <value>S&apos;ha canviat el correu.</value>
+  </data>
   <data name="YourName" xml:space="preserve">
     <value>El vostre nom</value>
   </data>
   <data name="YourNameChanged" xml:space="preserve">
     <value>S&apos;ha actualitzat el nom.</value>
+  </data>
+  <data name="YourNewEmail" xml:space="preserve">
+    <value>Correu electrònic nou</value>
   </data>
   <data name="YourNumber" xml:space="preserve">
     <value>El vostre número</value>

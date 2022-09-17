@@ -980,6 +980,9 @@ un1 bewerkte uitnodigingslink un2</value>
   <data name="AllMedia" xml:space="preserve">
     <value>Alle media</value>
   </data>
+  <data name="AllNPhotos_other" xml:space="preserve">
+    <value>Alle {0} foto's</value>
+  </data>
   <data name="AllowCustomQuickReply" xml:space="preserve">
     <value>Aangepast toestaan</value>
   </data>
@@ -9419,6 +9422,9 @@ We gebruiken je locatie alleen voor de periode die jij instelt en je kunt het de
   <data name="PremiumPreviewDownloadSpeedDescription" xml:space="preserve">
     <value>Geen limieten meer op de snelheid waarmee media en documenten worden gedownload.</value>
   </data>
+  <data name="PremiumPreviewEmojiStatus" xml:space="preserve">
+    <value>Emojistatus</value>
+  </data>
   <data name="PremiumPreviewLimits" xml:space="preserve">
     <value>Verdubbelde limieten</value>
   </data>
@@ -10765,6 +10771,9 @@ Neem niet op, Telegram verwerkt alles automatisch.</value>
   <data name="SetColor" xml:space="preserve">
     <value>Stel een kleur in</value>
   </data>
+  <data name="SetEmojiStatus" xml:space="preserve">
+    <value>Emojistatus instellen</value>
+  </data>
   <data name="SetPasscode" xml:space="preserve">
     <value>Stel een toegangscode in</value>
   </data>
@@ -11865,6 +11874,9 @@ Minimale lengte 5 karakters.</value>
   </data>
   <data name="ThisIsYou" xml:space="preserve">
     <value>dit ben jij</value>
+  </data>
+  <data name="ThisPhoto" xml:space="preserve">
+    <value>Deze foto</value>
   </data>
   <data name="TimeLimitHelp" xml:space="preserve">
     <value>Je kunt de link laten verlopen na een bepaalde tijdsduur</value>

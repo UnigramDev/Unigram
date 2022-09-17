@@ -187,6 +187,9 @@
   <data name="AccDescrContactSorting" xml:space="preserve">
     <value>Изменить сортировку</value>
   </data>
+  <data name="AccDescrCustomEmoji" xml:space="preserve">
+    <value>Эмодзи из авторских наборов</value>
+  </data>
   <data name="AccDescrDownloadProgress" xml:space="preserve">
     <value>Загружено {0} из {1}</value>
   </data>
@@ -1048,11 +1051,20 @@
   <data name="AddContactTitle" xml:space="preserve">
     <value>Добавить контакт</value>
   </data>
+  <data name="Added" xml:space="preserve">
+    <value>Добавлены</value>
+  </data>
   <data name="AddedBy" xml:space="preserve">
     <value>принят(а) {0} {1}</value>
   </data>
   <data name="AddedToFavorites" xml:space="preserve">
     <value>Стикер добавлен в избранные.</value>
+  </data>
+  <data name="AddEmailSubtitle" xml:space="preserve">
+    <value>Введите настоящий адрес электронной почты, чтобы защитить свой акканут.</value>
+  </data>
+  <data name="AddEmailTitle" xml:space="preserve">
+    <value>Добавьте адрес почты</value>
   </data>
   <data name="AddEmojiInstalled" xml:space="preserve">
     <value>Эмодзи добавлены.</value>
@@ -1275,6 +1287,9 @@
   </data>
   <data name="AllPhotos" xml:space="preserve">
     <value>Все фотографии</value>
+  </data>
+  <data name="AllReactions" xml:space="preserve">
+    <value>Все реакции</value>
   </data>
   <data name="AllSessionsTerminated" xml:space="preserve">
     <value>Все сеансы, кроме этого, завершены.</value>
@@ -2311,6 +2326,9 @@
   <data name="Bans_other" xml:space="preserve">
     <value>{0} блокировки</value>
   </data>
+  <data name="BanUser" xml:space="preserve">
+    <value>Заблокировать пользователя</value>
+  </data>
   <data name="BioCopied" xml:space="preserve">
     <value>Текст скопирован в буфер обмена.</value>
   </data>
@@ -2804,7 +2822,7 @@
     <value>Вы точно хотите прервать настройку двухэтапной аутентификации?</value>
   </data>
   <data name="CancelPasswordReset" xml:space="preserve">
-    <value>Отменить сброс пароля? Если Вы запросите сброс пароля позже, процедура снова займет 7 дней.</value>
+    <value>Отменить сброс пароля? Если Вы запросите сброс пароля позже, процедура снова займёт 7 дней.</value>
   </data>
   <data name="CancelPasswordResetNo" xml:space="preserve">
     <value>НЕТ</value>
@@ -2868,6 +2886,12 @@
   </data>
   <data name="ChangeColorToColor" xml:space="preserve">
     <value>Использовать ранее выбранный фон или сбросить его на фон по умолчанию для этой темы?</value>
+  </data>
+  <data name="ChangeEmail" xml:space="preserve">
+    <value>Изменить</value>
+  </data>
+  <data name="ChangeEmojiStatus" xml:space="preserve">
+    <value>Сменить статус</value>
   </data>
   <data name="ChangeLanguageLater" xml:space="preserve">
     <value>Вы всегда можете изменить язык в настройках.</value>
@@ -3615,6 +3639,18 @@
   <data name="CheckPhoneNumberYes" xml:space="preserve">
     <value>Да</value>
   </data>
+  <data name="CheckYourEmail" xml:space="preserve">
+    <value>Проверьте почту</value>
+  </data>
+  <data name="CheckYourEmailSubtitle" xml:space="preserve">
+    <value>Введите код, который пришёл на электронную почту {0}.</value>
+  </data>
+  <data name="CheckYourNewEmail" xml:space="preserve">
+    <value>Проверьте новую почту</value>
+  </data>
+  <data name="CheckYourNewEmailSubtitle" xml:space="preserve">
+    <value>Введите код, который пришёл на указанный Вами адрес {0}.</value>
+  </data>
   <data name="ChooseCountry" xml:space="preserve">
     <value>Выберите страну</value>
   </data>
@@ -3759,6 +3795,12 @@
   <data name="ClearRecentEmoji" xml:space="preserve">
     <value>Удалить недавние эмодзи?</value>
   </data>
+  <data name="ClearRecentEmojiStatusesText" xml:space="preserve">
+    <value>Хотите очистить недавние эмодзи-статусы и вернуть предложенные по умолчанию?</value>
+  </data>
+  <data name="ClearRecentEmojiStatusesTitle" xml:space="preserve">
+    <value>Очистить недавние статусы</value>
+  </data>
   <data name="ClearRecentEmojiText" xml:space="preserve">
     <value>Вы точно хотите очистить недавние эмодзи?</value>
   </data>
@@ -3767,6 +3809,12 @@
   </data>
   <data name="ClearRecentHistory" xml:space="preserve">
     <value>Очистить историю</value>
+  </data>
+  <data name="ClearRecentReactionsAlertMessage" xml:space="preserve">
+    <value>Хотите убрать недавно использованные эмодзи из предложенных реакций?</value>
+  </data>
+  <data name="ClearRecentReactionsAlertTitle" xml:space="preserve">
+    <value>Очистить список недавних</value>
   </data>
   <data name="ClearRecentStickersAlertMessage" xml:space="preserve">
     <value>Вы точно хотите очистить список недавних стикеров?</value>
@@ -4725,6 +4773,9 @@
   <data name="DisablePasscodeTurnOff" xml:space="preserve">
     <value>Отключить</value>
   </data>
+  <data name="DisableReactionsInfo" xml:space="preserve">
+    <value>Участники группы не могут отправлять реакции на сообщения.</value>
+  </data>
   <data name="DisappearingGif" xml:space="preserve">
     <value>Секретный GIF</value>
   </data>
@@ -5085,8 +5136,20 @@
 
 Если ничего не выбрано, показываться будут последние активные чаты.</value>
   </data>
+  <data name="EmailAddressInvalid" xml:space="preserve">
+    <value>Некорректный адрес электронной почты.</value>
+  </data>
   <data name="EmailCopied" xml:space="preserve">
     <value>Email скопирован в буфер обмена.</value>
+  </data>
+  <data name="EmailLogin" xml:space="preserve">
+    <value>Почта для входа</value>
+  </data>
+  <data name="EmailLoginChangeMessage" xml:space="preserve">
+    <value>Этот адрес электронной почты будет использоваться при каждом входе в аккаунт Telegram с нового устройства.</value>
+  </data>
+  <data name="EmailNotAllowed" xml:space="preserve">
+    <value>Невозможно использовать адрес электронной почты с таким доменом.</value>
   </data>
   <data name="EmailPasswordConfirmText" xml:space="preserve">
     <value>Пожалуйста, выполните эти шаги, чтобы закончить настройку двухэтапной аутентификации:
@@ -5101,6 +5164,9 @@
   </data>
   <data name="EmailPasswordConfirmText3" xml:space="preserve">
     <value>Чтобы подтвердить почту для восстановления пароля, проверьте {0} (не забудьте о папке со спамом) и введите код, который получили в письме.</value>
+  </data>
+  <data name="EmailTokenInvalid" xml:space="preserve">
+    <value>Токен недействителен.</value>
   </data>
   <data name="Emoji" xml:space="preserve">
     <value>Эмодзи</value>
@@ -5141,6 +5207,9 @@
   <data name="EmojiBotInfo" xml:space="preserve">
     <value>Художники могут создавать собственные наборы с помощью бота @stickers.</value>
   </data>
+  <data name="EmojiCopied" xml:space="preserve">
+    <value>Эмодзи скопирован.</value>
+  </data>
   <data name="EmojiCount_few" xml:space="preserve">
     <value>{0} эмодзи</value>
   </data>
@@ -5167,6 +5236,9 @@
   </data>
   <data name="EmojiInteractionTapHint" xml:space="preserve">
     <value>Если бы у {0} был открыт чат, в нём тоже играла бы анимация.</value>
+  </data>
+  <data name="EmojiLongtapHint" xml:space="preserve">
+    <value>Зажмите, чтобы установить таймер</value>
   </data>
   <data name="EmojiPackCount_few" xml:space="preserve">
     <value>{0} набора эмодзи</value>
@@ -5198,6 +5270,9 @@
   <data name="EmojiRemovedMultipleInfo_other" xml:space="preserve">
     <value>{0} набора удалено из Ваших эмодзи.</value>
   </data>
+  <data name="EmojiStatusExpireHint" xml:space="preserve">
+    <value>Статус исчезнет {0}</value>
+  </data>
   <data name="EmojiSuggestions" xml:space="preserve">
     <value>Подсказки эмодзи</value>
   </data>
@@ -5218,6 +5293,9 @@
   </data>
   <data name="Enable" xml:space="preserve">
     <value>Включить</value>
+  </data>
+  <data name="EnableAllReactionsInfo" xml:space="preserve">
+    <value>Участники группы могут использовать любые эмодзи в качестве реакций на сообщения.</value>
   </data>
   <data name="EnableAllStreamingInfo" xml:space="preserve">
     <value>Когда это возможно, приложение будет воспроизводить видеозаписи и музыку, не дожидаясь завершения загрузки.</value>
@@ -5252,6 +5330,9 @@
   </data>
   <data name="EnableReactionsGroupInfo" xml:space="preserve">
     <value>Участники группы смогут отправлять реакции на сообщения.</value>
+  </data>
+  <data name="EnableSomeReactionsInfo" xml:space="preserve">
+    <value>Участники группы могут использовать в качестве реакций на сообщения только разрешённые эмодзи.</value>
   </data>
   <data name="EnableStreaming" xml:space="preserve">
     <value>Стриминг аудиофайлов и видео</value>
@@ -5325,6 +5406,9 @@
   </data>
   <data name="EnterListName" xml:space="preserve">
     <value>Введите имя списка</value>
+  </data>
+  <data name="EnterNewEmail" xml:space="preserve">
+    <value>Укажите новый адрес</value>
   </data>
   <data name="EnterNewFirstPasscode" xml:space="preserve">
     <value>Введите код-пароль</value>
@@ -6598,6 +6682,18 @@
   <data name="GifsTab2" xml:space="preserve">
     <value>GIF</value>
   </data>
+  <data name="GiftMonths_few" xml:space="preserve">
+    <value>{0} месяца</value>
+  </data>
+  <data name="GiftMonths_many" xml:space="preserve">
+    <value>{0} месяцев</value>
+  </data>
+  <data name="GiftMonths_one" xml:space="preserve">
+    <value>{0} месяц</value>
+  </data>
+  <data name="GiftMonths_other" xml:space="preserve">
+    <value>{0} месяца</value>
+  </data>
   <data name="GiftPremium" xml:space="preserve">
     <value>Подарить Premium</value>
   </data>
@@ -7124,6 +7220,9 @@
   </data>
   <data name="InstallGoogleMaps" xml:space="preserve">
     <value>Установить Google Maps?</value>
+  </data>
+  <data name="InstallHuaweiMaps" xml:space="preserve">
+    <value>Установить Petal Maps?</value>
   </data>
   <data name="InstallOfficialApp" xml:space="preserve">
     <value>Установить официальное приложение</value>
@@ -7652,7 +7751,7 @@
     <value>Можно сохранить не больше {0} GIF</value>
   </data>
   <data name="LimitReachedFavoriteGifsSubtitle" xml:space="preserve">
-    <value>Вы заменили один из GIF. [Лимит можно увеличить]() до {0} штук.</value>
+    <value>Вы заменили один из GIF. Лимит **можно увеличить** до {0} штук.</value>
   </data>
   <data name="LimitReachedFavoriteGifsSubtitlePremium" xml:space="preserve">
     <value>Один из ранее сохранённых GIF был удалён.</value>
@@ -7921,6 +8020,9 @@
   </data>
   <data name="LoginAttemptsInfo" xml:space="preserve">
     <value>С этих устройств нет доступа к Вашему аккаунту. Код для входа был введен верно, но правильный пароль указан не был.</value>
+  </data>
+  <data name="LoginOrSingInWithGoogle" xml:space="preserve">
+    <value>или</value>
   </data>
   <data name="LoginPassword" xml:space="preserve">
     <value>Пароль</value>
@@ -8255,6 +8357,24 @@
   </data>
   <data name="MessageContainsEmojiPacks_other" xml:space="preserve">
     <value>В этом сообщении эмодзи из **{0}** наборов.</value>
+  </data>
+  <data name="MessageContainsEmojiPackSingle" xml:space="preserve">
+    <value>В этом сообщении эмодзи из набора **{0}**</value>
+  </data>
+  <data name="MessageContainsReactionsPack" xml:space="preserve">
+    <value>В качестве реакции использованы эмодзи из набора {0}.</value>
+  </data>
+  <data name="MessageContainsReactionsPacks_few" xml:space="preserve">
+    <value>В качестве реакции использованы эмодзи из **{0} наборов**.</value>
+  </data>
+  <data name="MessageContainsReactionsPacks_many" xml:space="preserve">
+    <value>В качестве реакции использованы эмодзи из **{0} наборов**.</value>
+  </data>
+  <data name="MessageContainsReactionsPacks_one" xml:space="preserve">
+    <value>В качестве реакции использованы эмодзи из **{0} набора**.</value>
+  </data>
+  <data name="MessageContainsReactionsPacks_other" xml:space="preserve">
+    <value>В качестве реакции использованы эмодзи из **{0} наборов**.</value>
   </data>
   <data name="MessageCopied" xml:space="preserve">
     <value>Сообщение скопировано в буфер обмена.</value>
@@ -8929,6 +9049,9 @@
   </data>
   <data name="NoPopup" xml:space="preserve">
     <value>Не показывать</value>
+  </data>
+  <data name="NoReactions" xml:space="preserve">
+    <value>Без реакций</value>
   </data>
   <data name="NoRecent" xml:space="preserve">
     <value>Нет недавних</value>
@@ -9666,6 +9789,9 @@
   </data>
   <data name="OnlineCount_other" xml:space="preserve">
     <value>{0} в сети</value>
+  </data>
+  <data name="OnlyAllowThisReactions" xml:space="preserve">
+    <value>Включить только эти реакции</value>
   </data>
   <data name="OnlyIfSilent" xml:space="preserve">
     <value>Только в беззвучном</value>
@@ -10575,7 +10701,7 @@
     <value>Способ оплаты</value>
   </data>
   <data name="PaymentCheckoutMethodNewCard" xml:space="preserve">
-    <value>Новая карта</value>
+    <value>Добавить карту...</value>
   </data>
   <data name="PaymentCheckoutName" xml:space="preserve">
     <value>Имя</value>
@@ -11176,6 +11302,9 @@
   <data name="PollViewResults" xml:space="preserve">
     <value>РЕЗУЛЬТАТЫ</value>
   </data>
+  <data name="PopularReactions" xml:space="preserve">
+    <value>Популярные</value>
+  </data>
   <data name="PopupDisabled" xml:space="preserve">
     <value>Отключены</value>
   </data>
@@ -11228,7 +11357,13 @@
     <value>Отправка анимированных эмодзи из разных наборов в любые чаты.</value>
   </data>
   <data name="PremiumPreviewEmojiPack" xml:space="preserve">
-    <value>Этот набор эмодзи доступен только с подпиской **Telegram Premium**.</value>
+    <value>Набор доступен с подпиской **Telegram Premium**.</value>
+  </data>
+  <data name="PremiumPreviewEmojiStatus" xml:space="preserve">
+    <value>Эмодзи-статус</value>
+  </data>
+  <data name="PremiumPreviewEmojiStatusDescription" xml:space="preserve">
+    <value>Возможность установить рядом с именем один из тысяч эмодзи в качестве статуса.</value>
   </data>
   <data name="PremiumPreviewLimits" xml:space="preserve">
     <value>Удвоенные лимиты</value>
@@ -11253,6 +11388,12 @@
   </data>
   <data name="PremiumPreviewReactions" xml:space="preserve">
     <value>Уникальные реакции</value>
+  </data>
+  <data name="PremiumPreviewReactions2" xml:space="preserve">
+    <value>Реакции без границ</value>
+  </data>
+  <data name="PremiumPreviewReactions2Description" xml:space="preserve">
+    <value>Несколько реакций на сообщение и неограниченный выбор эмодзи.</value>
   </data>
   <data name="PremiumPreviewReactionsDescription" xml:space="preserve">
     <value>Дополнительные анимированные реакции на сообщения только для подписчиков.</value>
@@ -11286,6 +11427,15 @@
   </data>
   <data name="PremiumStickerTooltip" xml:space="preserve">
     <value>Premium-стикер из этого набора.</value>
+  </data>
+  <data name="PremiumTierAnnual" xml:space="preserve">
+    <value>Ежегодно</value>
+  </data>
+  <data name="PremiumTierMonthly" xml:space="preserve">
+    <value>Ежемесячно</value>
+  </data>
+  <data name="PremiumTierSemiannual" xml:space="preserve">
+    <value>Каждые полгода</value>
   </data>
   <data name="PreviewFeedback" xml:space="preserve">
     <value>Сообщить об ошибке в превью</value>
@@ -11430,6 +11580,12 @@
   </data>
   <data name="PricePerMonth" xml:space="preserve">
     <value>{0} в месяц</value>
+  </data>
+  <data name="PricePerMonthMe" xml:space="preserve">
+    <value>{0} в месяц</value>
+  </data>
+  <data name="PricePerYear" xml:space="preserve">
+    <value>{0} в год</value>
   </data>
   <data name="PrimaryLinkHelp" xml:space="preserve">
     <value>Пользователи Telegram смогут присоединиться к Вашей группе, перейдя по ссылке.</value>
@@ -11929,6 +12085,9 @@
   <data name="Reactions" xml:space="preserve">
     <value>Реакции</value>
   </data>
+  <data name="ReactionsAll" xml:space="preserve">
+    <value>Все</value>
+  </data>
   <data name="ReactionsCount_few" xml:space="preserve">
     <value>{0} реакции</value>
   </data>
@@ -11940,6 +12099,9 @@
   </data>
   <data name="ReactionsCount_other" xml:space="preserve">
     <value>{0} реакции</value>
+  </data>
+  <data name="ReactionsLongtapHint" xml:space="preserve">
+    <value>Зажмите эмодзи для добавления эффекта</value>
   </data>
   <data name="ReactionsOff" xml:space="preserve">
     <value>Нет</value>
@@ -11961,6 +12123,9 @@
   </data>
   <data name="RecentlyDownloaded" xml:space="preserve">
     <value>Недавние загрузки</value>
+  </data>
+  <data name="RecentlyUsed" xml:space="preserve">
+    <value>Недавние</value>
   </data>
   <data name="RecentlyViewed" xml:space="preserve">
     <value>Недавние</value>
@@ -12140,10 +12305,13 @@
     <value>Ответить</value>
   </data>
   <data name="ReplyToGroup" xml:space="preserve">
-    <value>Ответить {0}</value>
+    <value>Ответить</value>
   </data>
   <data name="ReplyToUser" xml:space="preserve">
-    <value>Ответить {0}</value>
+    <value>Ответить</value>
+  </data>
+  <data name="ReportAlertReaction" xml:space="preserve">
+    <value>Хотите сообщить, что реакции этого пользователя являются спамом?</value>
   </data>
   <data name="ReportChat" xml:space="preserve">
     <value>Пожаловаться</value>
@@ -12190,6 +12358,12 @@
   <data name="ReportMessagesCount" xml:space="preserve">
     <value>ПОЖАЛОВАТЬСЯ НА {0}</value>
   </data>
+  <data name="ReportReaction" xml:space="preserve">
+    <value>Сообщить о спам-реакциях</value>
+  </data>
+  <data name="ReportReactionAndBan" xml:space="preserve">
+    <value>Заблокировать и пожаловаться</value>
+  </data>
   <data name="ReportSelectMessages" xml:space="preserve">
     <value>Выберите сообщения</value>
   </data>
@@ -12223,6 +12397,9 @@
   </data>
   <data name="ReportSpamUser" xml:space="preserve">
     <value>ЗАБЛОКИРОВАТЬ</value>
+  </data>
+  <data name="ReportSpamUserEmojiStatusHint" xml:space="preserve">
+    <value>На этом аккаунте рядом с именем пользователя установлен статус {0}. Эмодзи-статусы доступны всем обладателям подписки {1}.</value>
   </data>
   <data name="ReportTitleChild" xml:space="preserve">
     <value>Детская порнография</value>
@@ -12870,6 +13047,12 @@
   <data name="SelectOtherChat" xml:space="preserve">
     <value>Выбрать другой чат</value>
   </data>
+  <data name="SelectSendAsPeerPremiumHint" xml:space="preserve">
+    <value>Оставляйте комментарии в группах от имени Ваших каналов, оформив подписку **Telegram Premium**.</value>
+  </data>
+  <data name="SelectSendAsPeerPremiumOpen" xml:space="preserve">
+    <value>Открыть</value>
+  </data>
   <data name="SelectTheme" xml:space="preserve">
     <value>Выбрать тему</value>
   </data>
@@ -13111,6 +13294,30 @@
   </data>
   <data name="SetColor" xml:space="preserve">
     <value>Задать цвет</value>
+  </data>
+  <data name="SetEmojiStatus" xml:space="preserve">
+    <value>Установить эмодзи-статус</value>
+  </data>
+  <data name="SetEmojiStatusUntil1Hour" xml:space="preserve">
+    <value>На 1 час</value>
+  </data>
+  <data name="SetEmojiStatusUntil2Days" xml:space="preserve">
+    <value>На 2 дня</value>
+  </data>
+  <data name="SetEmojiStatusUntil2Hours" xml:space="preserve">
+    <value>На 2 часа</value>
+  </data>
+  <data name="SetEmojiStatusUntil8Hours" xml:space="preserve">
+    <value>На 8 часов</value>
+  </data>
+  <data name="SetEmojiStatusUntilButton" xml:space="preserve">
+    <value>Установить статус</value>
+  </data>
+  <data name="SetEmojiStatusUntilOther" xml:space="preserve">
+    <value>Другой срок</value>
+  </data>
+  <data name="SetEmojiStatusUntilTitle" xml:space="preserve">
+    <value>Установить статус до...</value>
   </data>
   <data name="SetNewPassword" xml:space="preserve">
     <value>Задать новый пароль</value>
@@ -13461,6 +13668,9 @@
   <data name="ShuffleList" xml:space="preserve">
     <value>Случайный порядок</value>
   </data>
+  <data name="SignInWithGoogle" xml:space="preserve">
+    <value>Войдите, используя аккаунт Google</value>
+  </data>
   <data name="SignUp" xml:space="preserve">
     <value>Зарегистрироваться</value>
   </data>
@@ -13535,6 +13745,9 @@
   </data>
   <data name="SoftUserLimitAlert" xml:space="preserve">
     <value>Вы сможете добавить больше участников после создания группы.</value>
+  </data>
+  <data name="SomeReactions" xml:space="preserve">
+    <value>Только выбранные</value>
   </data>
   <data name="SortBy" xml:space="preserve">
     <value>Сортировать по</value>
@@ -13910,7 +14123,7 @@
     <value>Подсказка по эмодзи</value>
   </data>
   <data name="SuggestStickersAll" xml:space="preserve">
-    <value>Любые стикеры</value>
+    <value>Все</value>
   </data>
   <data name="SuggestStickersInstalled" xml:space="preserve">
     <value>Свои наборы</value>
@@ -14018,6 +14231,9 @@
   </data>
   <data name="TapForVideo" xml:space="preserve">
     <value>Нажмите для фото, удерживайте для видео</value>
+  </data>
+  <data name="TapHereEmoji" xml:space="preserve">
+    <value>Нажмите {0}, чтобы увидеть больше эмодзи.</value>
   </data>
   <data name="TapHereGifs" xml:space="preserve">
     <value>Нажмите для доступа к сохранённым GIF</value>
@@ -14139,11 +14355,28 @@ Telegram Premium.</value>
   <data name="TelegramPremiumUserGiftedPremiumDialogTitle" xml:space="preserve">
     <value>**{0}** подарил(а) Вам {1}-месячную подписку Telegram Premium.</value>
   </data>
+  <data name="TelegramPremiumUserGiftedPremiumDialogTitleWithPlural" xml:space="preserve">
+    <value>**{0}** подарил(а) Вам подписку Telegram Premium на {1}.</value>
+  </data>
   <data name="TelegramPremiumUserGiftedPremiumOutboundDialogSubtitle" xml:space="preserve">
     <value>**{0}** получил(а) доступ к дополнительным функциям.</value>
   </data>
   <data name="TelegramPremiumUserGiftedPremiumOutboundDialogTitle" xml:space="preserve">
     <value>Вы подарили пользователю **{0}** {1}-месячную подписку Telegram Premium.</value>
+  </data>
+  <data name="TelegramPremiumUserGiftedPremiumOutboundDialogTitleWithPlural" xml:space="preserve">
+    <value>Вы подарили пользователю **{0}** подписку
+Telegram Premium на {1}.
+</value>
+  </data>
+  <data name="TelegramPremiumUserStatusDefaultDialogTitle" xml:space="preserve">
+    <value>Это статус пользователя {0}.</value>
+  </data>
+  <data name="TelegramPremiumUserStatusDialogSubtitle" xml:space="preserve">
+    <value>Эмодзи-статусы доступны только c подпиской **Telegram Premium**. Другие преимущества подписки:</value>
+  </data>
+  <data name="TelegramPremiumUserStatusDialogTitle" xml:space="preserve">
+    <value>{0} установил(а) этот эмодзи из набора **{1}** в качестве статуса.</value>
   </data>
   <data name="TelegramTones" xml:space="preserve">
     <value>Звуки Telegram</value>
@@ -14647,6 +14880,9 @@ Telegram Premium.</value>
   <data name="UnlockPremiumEmojiPack" xml:space="preserve">
     <value>Получить {0}</value>
   </data>
+  <data name="UnlockPremiumEmojiReaction" xml:space="preserve">
+    <value>Используйте эту реакцию, оформив подписку **Telegram Premium**.</value>
+  </data>
   <data name="UnlockPremiumIcons" xml:space="preserve">
     <value>Получить эксклюзивные иконки</value>
   </data>
@@ -15072,6 +15308,9 @@ Telegram Premium.</value>
   </data>
   <data name="VerificationCode" xml:space="preserve">
     <value>Код подтверждения</value>
+  </data>
+  <data name="VerificationCodeSubtitle" xml:space="preserve">
+    <value>Проверьте почту {0} (не забудьте о папке со спамом) и введите код, который получили в письме.</value>
   </data>
   <data name="ViaBot" xml:space="preserve">
     <value>via</value>
@@ -16289,11 +16528,17 @@ Telegram до последней версии</value>
   <data name="YourLocatedChannelsTooMuch" xml:space="preserve">
     <value>Вы создали максимальное число групп с геопозицией. Пожалуйста, сперва удалите одну из уже созданных групп.</value>
   </data>
+  <data name="YourLoginEmailChangedSuccess" xml:space="preserve">
+    <value>Электронная почта изменена.</value>
+  </data>
   <data name="YourName" xml:space="preserve">
     <value>Ваше имя</value>
   </data>
   <data name="YourNameChanged" xml:space="preserve">
     <value>Имя обновлено.</value>
+  </data>
+  <data name="YourNewEmail" xml:space="preserve">
+    <value>Ваш новый адрес</value>
   </data>
   <data name="YourNumber" xml:space="preserve">
     <value>Номер телефона</value>

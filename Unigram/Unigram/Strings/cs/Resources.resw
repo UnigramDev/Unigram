@@ -85,6 +85,12 @@
   <data name="AccActionCancelDownload" xml:space="preserve">
     <value>Zrušit stahování</value>
   </data>
+  <data name="AccActionChatPreview" xml:space="preserve">
+    <value>Náhled konverzace</value>
+  </data>
+  <data name="AccActionCloseTranscription" xml:space="preserve">
+    <value>Zavřít přepis</value>
+  </data>
   <data name="AccActionDownload" xml:space="preserve">
     <value>Stáhnout</value>
   </data>
@@ -96,6 +102,12 @@
   </data>
   <data name="AccActionOpenFile" xml:space="preserve">
     <value>Otevřít soubor</value>
+  </data>
+  <data name="AccActionOpenForwardedOrigin" xml:space="preserve">
+    <value>Přeposlaný originál</value>
+  </data>
+  <data name="AccActionOpenTranscription" xml:space="preserve">
+    <value>Otevřít hlasový přepis</value>
   </data>
   <data name="AccActionPause" xml:space="preserve">
     <value>Pauza</value>
@@ -174,6 +186,9 @@
   </data>
   <data name="AccDescrContactSorting" xml:space="preserve">
     <value>Změnit řazení</value>
+  </data>
+  <data name="AccDescrCustomEmoji" xml:space="preserve">
+    <value>Vlastní emoji</value>
   </data>
   <data name="AccDescrDownloadProgress" xml:space="preserve">
     <value>Staženo {0} z {1}</value>
@@ -744,6 +759,21 @@
   <data name="ActionForwardsRestrictedGroup" xml:space="preserve">
     <value>un1 omezil/a přeposílání z této skupiny</value>
   </data>
+  <data name="ActionGiftInbound" xml:space="preserve">
+    <value>un1 vám poslal/a dárek za **un2**</value>
+  </data>
+  <data name="ActionGiftOutbound" xml:space="preserve">
+    <value>Poslal/a jste dárek za **un2**</value>
+  </data>
+  <data name="ActionGiftPremiumSubtitle" xml:space="preserve">
+    <value>na  {0}</value>
+  </data>
+  <data name="ActionGiftPremiumTitle" xml:space="preserve">
+    <value>Telegram Premium</value>
+  </data>
+  <data name="ActionGiftPremiumView" xml:space="preserve">
+    <value>Zobrazit</value>
+  </data>
   <data name="ActionGroupCallEnded" xml:space="preserve">
     <value>Videohovor skončil ({0})</value>
   </data>
@@ -1022,11 +1052,41 @@ na: {1}</value>
   <data name="AddContactTitle" xml:space="preserve">
     <value>Přidat kontakt</value>
   </data>
+  <data name="Added" xml:space="preserve">
+    <value>Přidán</value>
+  </data>
   <data name="AddedBy" xml:space="preserve">
     <value>přidal/a {0} {1}</value>
   </data>
   <data name="AddedToFavorites" xml:space="preserve">
     <value>Samolepka byla přidána do Oblíbených.</value>
+  </data>
+  <data name="AddEmailSubtitle" xml:space="preserve">
+    <value>Zadejte prosím svůj platná e-mail pro ochranu účtu..</value>
+  </data>
+  <data name="AddEmailTitle" xml:space="preserve">
+    <value>Přidejte e-mail</value>
+  </data>
+  <data name="AddEmojiInstalled" xml:space="preserve">
+    <value>Emoji přidány.</value>
+  </data>
+  <data name="AddEmojiInstalledInfo" xml:space="preserve">
+    <value>Balíček {0} byl přidán do vašich balíčků emoji.</value>
+  </data>
+  <data name="AddEmojiMultipleInstalledInfo_few" xml:space="preserve">
+    <value>{0} balíčky byly přidány k vašim emoji.</value>
+  </data>
+  <data name="AddEmojiMultipleInstalledInfo_many" xml:space="preserve">
+    <value>{0} balíčků bylo přidáno k vašim emoji.</value>
+  </data>
+  <data name="AddEmojiMultipleInstalledInfo_one" xml:space="preserve">
+    <value>{0}balíček byl přidán k vašim emoji.</value>
+  </data>
+  <data name="AddEmojiMultipleInstalledInfo_other" xml:space="preserve">
+    <value>{0} balíčků bylo přidáno k vašim emoji.</value>
+  </data>
+  <data name="AddEmojiNotFound" xml:space="preserve">
+    <value>Balíček emoji nebyl nalezen.</value>
   </data>
   <data name="AddExceptions" xml:space="preserve">
     <value>Přidat výjimky</value>
@@ -1059,7 +1119,7 @@ na: {1}</value>
     <value>Přidat {0}</value>
   </data>
   <data name="AddMembersForwardMessages" xml:space="preserve">
-    <value>Zobrazit posledních 100 zpráv pro nové členy</value>
+    <value>Zobraz posledních 100 zpráv novým členům</value>
   </data>
   <data name="AddMutual" xml:space="preserve">
     <value>Přidat uživatele do Vašeho kanálu</value>
@@ -1166,6 +1226,18 @@ na: {1}</value>
   <data name="AllMedia" xml:space="preserve">
     <value>Všechna média</value>
   </data>
+  <data name="AllNMedia_few" xml:space="preserve">
+    <value>Všechna {0} média</value>
+  </data>
+  <data name="AllNMedia_many" xml:space="preserve">
+    <value>Všech {0} médií</value>
+  </data>
+  <data name="AllNMedia_one" xml:space="preserve">
+    <value>{0} médium</value>
+  </data>
+  <data name="AllNMedia_other" xml:space="preserve">
+    <value>Všech {0} médií</value>
+  </data>
   <data name="AllNPhotos_few" xml:space="preserve">
     <value>Tyto {0} fotky</value>
   </data>
@@ -1216,6 +1288,9 @@ na: {1}</value>
   </data>
   <data name="AllPhotos" xml:space="preserve">
     <value>Všechny fotky</value>
+  </data>
+  <data name="AllReactions" xml:space="preserve">
+    <value>Všechny reakce</value>
   </data>
   <data name="AllSessionsTerminated" xml:space="preserve">
     <value>Ostatní relace byly ukončeny.</value>
@@ -1404,6 +1479,12 @@ na: {1}</value>
   </data>
   <data name="ArchivedChats" xml:space="preserve">
     <value>Archivované konverzace</value>
+  </data>
+  <data name="ArchivedEmojiPacks" xml:space="preserve">
+    <value>Archivované balíčky emoji</value>
+  </data>
+  <data name="ArchivedEmojiPacksEmpty" xml:space="preserve">
+    <value>Žádné archivované balíčky emoji</value>
   </data>
   <data name="ArchivedMasks" xml:space="preserve">
     <value>Archivované masky</value>
@@ -2244,6 +2325,9 @@ Východ slunce: {1}</value>
   <data name="Bans_other" xml:space="preserve">
     <value>{0} zablokovaných</value>
   </data>
+  <data name="BanUser" xml:space="preserve">
+    <value>Zablokovat uživatele</value>
+  </data>
   <data name="BioCopied" xml:space="preserve">
     <value>&quot;O mně&quot; zkopírováno do schránky.</value>
   </data>
@@ -2447,11 +2531,20 @@ Bude mít přístup k vaší **IP adrese** a základním informacím o zařízen
   <data name="BotUnblock" xml:space="preserve">
     <value>RESTART</value>
   </data>
+  <data name="BotWebViewChangesMayNotBeSaved" xml:space="preserve">
+    <value>Provedené změny se nemusí uložit.</value>
+  </data>
+  <data name="BotWebViewCloseAnyway" xml:space="preserve">
+    <value>Přesto zavřít</value>
+  </data>
   <data name="BotWebViewDeleteBot" xml:space="preserve">
-    <value>Smazat bota</value>
+    <value>Odebrat z menu</value>
   </data>
   <data name="BotWebViewFileChooserTitle" xml:space="preserve">
     <value>Vyberte soubor</value>
+  </data>
+  <data name="BotWebViewNotAvailablePlaceholder" xml:space="preserve">
+    <value>WebView není dostupný. Pro využití WebView botů jej prosím aktualizujte.</value>
   </data>
   <data name="BotWebViewOpenBot" xml:space="preserve">
     <value>Otevřít bota</value>
@@ -2779,7 +2872,7 @@ Pokud jste to nebyl/a Vy, zadejte prosím kód, který jsme Vám zaslali přes S
     <value>Titulky</value>
   </data>
   <data name="CardNumberCopied" xml:space="preserve">
-    <value>Číslo karty bylo zkopírované do schránky</value>
+    <value>Číslo karty bylo zkopírované do schránky.</value>
   </data>
   <data name="Change" xml:space="preserve">
     <value>Změnit</value>
@@ -2792,6 +2885,12 @@ Pokud jste to nebyl/a Vy, zadejte prosím kód, který jsme Vám zaslali přes S
   </data>
   <data name="ChangeColorToColor" xml:space="preserve">
     <value>Chcete použít Vaše současné pozadí, nebo chcete vrátit výchozí motiv?</value>
+  </data>
+  <data name="ChangeEmail" xml:space="preserve">
+    <value>Změnit e-mail</value>
+  </data>
+  <data name="ChangeEmojiStatus" xml:space="preserve">
+    <value>Změnit status</value>
   </data>
   <data name="ChangeLanguageLater" xml:space="preserve">
     <value>Jazyk můžete změnit později v Nastavení.</value>
@@ -2827,6 +2926,9 @@ Poznámka: Pokud zapomenete heslo, aplikaci bude potřeba odinstalovat a znovu n
   </data>
   <data name="ChangePhoneNumberOccupied" xml:space="preserve">
     <value>Číslo {0} je úspěšně přiřazeno k účtu na Telegramu. Prosím smažte tento účet před použitím tohoto číslo.</value>
+  </data>
+  <data name="ChangePhoneNumberSuccess" xml:space="preserve">
+    <value>Vaše telefonní číslo bylo úspěšně změněno.</value>
   </data>
   <data name="ChangePublicLimitReached" xml:space="preserve">
     <value>Je nám líto, zarezervovali jste příliš mnoho veřejných uživatelských jmen. Zrušte odkaz jedné ze starších skupin nebo kanálů, případně místo toho vytvořte soukromé.</value>
@@ -3505,7 +3607,7 @@ Minimální délka je 5 znaků.</value>
     <value>Kontrola hesla</value>
   </data>
   <data name="CheckPasswordBackToSettings" xml:space="preserve">
-    <value>Zprátky do nastavení</value>
+    <value>Zpátky do nastavení</value>
   </data>
   <data name="CheckPasswordInfo" xml:space="preserve">
     <value>Pamatujete si stále své heslo?</value>
@@ -3534,11 +3636,23 @@ Minimální délka je 5 znaků.</value>
   <data name="CheckPhoneNumberYes" xml:space="preserve">
     <value>Ano</value>
   </data>
+  <data name="CheckYourEmail" xml:space="preserve">
+    <value>Zkontrolujte svůj e-mail</value>
+  </data>
+  <data name="CheckYourEmailSubtitle" xml:space="preserve">
+    <value>Zadejte prosím kód, který jsme vám zaslali na váš e-mail {0}.</value>
+  </data>
+  <data name="CheckYourNewEmail" xml:space="preserve">
+    <value>Zkontrolujte svůj nový e-mail</value>
+  </data>
+  <data name="CheckYourNewEmailSubtitle" xml:space="preserve">
+    <value>Zadejte prosím kód, který jsme vám zaslali na váš nový e-mail {0}.</value>
+  </data>
   <data name="ChooseCountry" xml:space="preserve">
     <value>Vyberte zemi</value>
   </data>
   <data name="ChooseCover" xml:space="preserve">
-    <value>Zvolte styl profilové fotky.</value>
+    <value>Zvolte styl profilové fotky</value>
   </data>
   <data name="ChooseDate" xml:space="preserve">
     <value>Zvolte datum</value>
@@ -3566,6 +3680,9 @@ Minimální délka je 5 znaků.</value>
   </data>
   <data name="ChooseRecordVideo" xml:space="preserve">
     <value>Nahrát video</value>
+  </data>
+  <data name="ChooseStickerMyEmojiPacks" xml:space="preserve">
+    <value>Mé balíčky emoji</value>
   </data>
   <data name="ChooseStickerMyStickerSets" xml:space="preserve">
     <value>Mé sady samolepek</value>
@@ -3675,8 +3792,26 @@ Minimální délka je 5 znaků.</value>
   <data name="ClearRecentEmoji" xml:space="preserve">
     <value>Vyčistit seznam naposledy použitých emoji?</value>
   </data>
+  <data name="ClearRecentEmojiStatusesText" xml:space="preserve">
+    <value>Opravdu chcete vyčistit nedávné statusy a resetovat návrhy?</value>
+  </data>
+  <data name="ClearRecentEmojiStatusesTitle" xml:space="preserve">
+    <value>Vyčistit nedávné statusy</value>
+  </data>
+  <data name="ClearRecentEmojiText" xml:space="preserve">
+    <value>Chcete vyčistit všechny své nedávné emoji?</value>
+  </data>
+  <data name="ClearRecentEmojiTitle" xml:space="preserve">
+    <value>Vyčistit nedávné emoji</value>
+  </data>
   <data name="ClearRecentHistory" xml:space="preserve">
     <value>Vyčistit historii</value>
+  </data>
+  <data name="ClearRecentReactionsAlertMessage" xml:space="preserve">
+    <value>Chcete vymazat své nedávné reakce emoji z návrhů?</value>
+  </data>
+  <data name="ClearRecentReactionsAlertTitle" xml:space="preserve">
+    <value>Vymazat nedávné reakce</value>
   </data>
   <data name="ClearRecentStickersAlertMessage" xml:space="preserve">
     <value>Chcete vyčistit všechny své nedávné samolepky?</value>
@@ -4625,6 +4760,9 @@ Další možnosti jsou zkusit jiné číslo, nebo kontaktovat podporu Telegram. 
   <data name="DisablePasscodeTurnOff" xml:space="preserve">
     <value>Vypnout</value>
   </data>
+  <data name="DisableReactionsInfo" xml:space="preserve">
+    <value>Členové skupiny nemohou ke zprávám přidávat žádné reakce.</value>
+  </data>
   <data name="DisappearingGif" xml:space="preserve">
     <value>Samozničující GIF</value>
   </data>
@@ -4985,8 +5123,20 @@ Pokud nebude žádná vybraná, zobrazí se ve widgetu Vaše nedávné kovnerzac
 
 Pokud nevyberete nic, ve widgetu se zobrazí nejčastější kontakty.</value>
   </data>
+  <data name="EmailAddressInvalid" xml:space="preserve">
+    <value>Neplatný e-mail.</value>
+  </data>
   <data name="EmailCopied" xml:space="preserve">
-    <value>Email zkopírován do schránky</value>
+    <value>Email zkopírován do schránky.</value>
+  </data>
+  <data name="EmailLogin" xml:space="preserve">
+    <value>Přihlášení e-mailem</value>
+  </data>
+  <data name="EmailLoginChangeMessage" xml:space="preserve">
+    <value>Tento e-mail bude použit při každém přihlášení k účtu Telegram z nového zařízení.</value>
+  </data>
+  <data name="EmailNotAllowed" xml:space="preserve">
+    <value>Tato e-mailová doména není povolena.</value>
   </data>
   <data name="EmailPasswordConfirmText" xml:space="preserve">
     <value>Pro dokončení nastavení dvoufázového ověření je ještě zapotřebí:
@@ -5001,6 +5151,9 @@ Pokud nevyberete nic, ve widgetu se zobrazí nejčastější kontakty.</value>
   </data>
   <data name="EmailPasswordConfirmText3" xml:space="preserve">
     <value>Pro dokončení nastavení záchranného emailu prosím zkontrolujte {0} (nezapomeňte na SPAM složku) a zadejte kód, který jsme Vám zaslali.</value>
+  </data>
+  <data name="EmailTokenInvalid" xml:space="preserve">
+    <value>Neplatný token e-mailu.</value>
   </data>
   <data name="Emoji" xml:space="preserve">
     <value>Emoji</value>
@@ -5029,11 +5182,83 @@ Pokud nevyberete nic, ve widgetu se zobrazí nejčastější kontakty.</value>
   <data name="Emoji8" xml:space="preserve">
     <value>Vlajky</value>
   </data>
+  <data name="EmojiArchived" xml:space="preserve">
+    <value>Emoji archivovány.</value>
+  </data>
+  <data name="EmojiArchivedInfo" xml:space="preserve">
+    <value>Balíček {0} byl přesunut do Vašeho archivu.</value>
+  </data>
   <data name="EmojiBigSize" xml:space="preserve">
     <value>Vykreslovat velké emoji</value>
   </data>
+  <data name="EmojiBotInfo" xml:space="preserve">
+    <value>Umělci mohou přidávat své vlastní balíčky emoji pomocí našeho bota @stickers.</value>
+  </data>
+  <data name="EmojiCopied" xml:space="preserve">
+    <value>Emoji zkopírováno do schránky.</value>
+  </data>
+  <data name="EmojiCount_few" xml:space="preserve">
+    <value>{0} emoji</value>
+  </data>
+  <data name="EmojiCount_many" xml:space="preserve">
+    <value>{0} emoji</value>
+  </data>
+  <data name="EmojiCount_one" xml:space="preserve">
+    <value>{0} emoji</value>
+  </data>
+  <data name="EmojiCount_other" xml:space="preserve">
+    <value>{0} emoji</value>
+  </data>
+  <data name="EmojiCountButton_few" xml:space="preserve">
+    <value>{0} emoji</value>
+  </data>
+  <data name="EmojiCountButton_many" xml:space="preserve">
+    <value>{0} emoji</value>
+  </data>
+  <data name="EmojiCountButton_one" xml:space="preserve">
+    <value>{0} emoji</value>
+  </data>
+  <data name="EmojiCountButton_other" xml:space="preserve">
+    <value>{0} emoji</value>
+  </data>
   <data name="EmojiInteractionTapHint" xml:space="preserve">
-    <value>Pokud u **{0}** byla otevřená konverzace, animace se v ní přehrála</value>
+    <value>Pokud měl/a **{0}** právě tuto konverzaci otevřenou, animace se v ní přehrála</value>
+  </data>
+  <data name="EmojiLongtapHint" xml:space="preserve">
+    <value>Dlouhým stiskem nastavte časovač</value>
+  </data>
+  <data name="EmojiPackCount_few" xml:space="preserve">
+    <value>{0} balíčky emoji</value>
+  </data>
+  <data name="EmojiPackCount_many" xml:space="preserve">
+    <value>{0} balíčků emoji</value>
+  </data>
+  <data name="EmojiPackCount_one" xml:space="preserve">
+    <value>{0} balíček emoji</value>
+  </data>
+  <data name="EmojiPackCount_other" xml:space="preserve">
+    <value>{0} balíčků emoji</value>
+  </data>
+  <data name="EmojiRemoved" xml:space="preserve">
+    <value>Emoji odstraněny.</value>
+  </data>
+  <data name="EmojiRemovedInfo" xml:space="preserve">
+    <value>Balíček {0} již není ve vašich balíčcích emoji.</value>
+  </data>
+  <data name="EmojiRemovedMultipleInfo_few" xml:space="preserve">
+    <value>{0} balíčky již nejsou ve vašich emoji.</value>
+  </data>
+  <data name="EmojiRemovedMultipleInfo_many" xml:space="preserve">
+    <value>{0} balíčků již není ve vašich emoji.</value>
+  </data>
+  <data name="EmojiRemovedMultipleInfo_one" xml:space="preserve">
+    <value>{0} balíček již není ve vašich emoji.</value>
+  </data>
+  <data name="EmojiRemovedMultipleInfo_other" xml:space="preserve">
+    <value>{0} balíčků již není ve vašich emoji.</value>
+  </data>
+  <data name="EmojiStatusExpireHint" xml:space="preserve">
+    <value>Status vyprší {0}</value>
   </data>
   <data name="EmojiSuggestions" xml:space="preserve">
     <value>Návrhy emoji</value>
@@ -5055,6 +5280,9 @@ Pokud nevyberete nic, ve widgetu se zobrazí nejčastější kontakty.</value>
   </data>
   <data name="Enable" xml:space="preserve">
     <value>Povolit</value>
+  </data>
+  <data name="EnableAllReactionsInfo" xml:space="preserve">
+    <value>Členové skupiny mohou jako reakci na zprávy používat libovolné emoji.</value>
   </data>
   <data name="EnableAllStreamingInfo" xml:space="preserve">
     <value>Pokud je to možné, Telegram začne přehrávat videa a hudbu hned, bez čekání na kompletní stažení.</value>
@@ -5089,6 +5317,9 @@ Pro přihlášení na Telegram budete potřebovat zde nastavené heslo.</value>
   </data>
   <data name="EnableReactionsGroupInfo" xml:space="preserve">
     <value>Povolit členům reagovat na skupinové zprávy.</value>
+  </data>
+  <data name="EnableSomeReactionsInfo" xml:space="preserve">
+    <value>Členové skupiny mohou jako reakci na zprávy používat pouze určité schválené emoji.</value>
   </data>
   <data name="EnableStreaming" xml:space="preserve">
     <value>Přenos Videa a Audia</value>
@@ -5163,6 +5394,9 @@ Více na telegram.org</value>
   <data name="EnterListName" xml:space="preserve">
     <value>Název vysílání</value>
   </data>
+  <data name="EnterNewEmail" xml:space="preserve">
+    <value>Zadejte nový e-mail</value>
+  </data>
   <data name="EnterNewFirstPasscode" xml:space="preserve">
     <value>Zadejte heslo</value>
   </data>
@@ -5184,7 +5418,7 @@ Vložte jméno motivu:</value>
     <value>Zadejte Vaše heslo</value>
   </data>
   <data name="EnterYourPasscodeInfo" xml:space="preserve">
-    <value>Chcete-li tuto možnost spravovat, zadejte svůj aktuální přístupový kód telegramu.</value>
+    <value>Zadejte své Telegram heslo pro správu tohoto nastavení.</value>
   </data>
   <data name="EnterYourTelegramPasscode" xml:space="preserve">
     <value>Zadejte Váš kód</value>
@@ -5212,6 +5446,12 @@ Vložte jméno motivu:</value>
   </data>
   <data name="ErrorSendRestrictedPollsAll" xml:space="preserve">
     <value>Litujeme, zakládání hlasování není v této skupině povoleno.</value>
+  </data>
+  <data name="ErrorSendRestrictedPrivacyVideoMessages" xml:space="preserve">
+    <value>Je nám líto, ale tomuto uživateli nemůžete posílat videozprávy kvůli jeho nastavení soukromí.</value>
+  </data>
+  <data name="ErrorSendRestrictedPrivacyVoiceMessages" xml:space="preserve">
+    <value>Je nám líto, ale tomuto uživateli nemůžete posílat hlasové zprávy kvůli jeho nastavení soukromí.</value>
   </data>
   <data name="ErrorSendRestrictedStickers" xml:space="preserve">
     <value>Správci této skupiny Vám omezili odeslání samolepek.</value>
@@ -5625,6 +5865,9 @@ un1 povolil nově příchozím ve videohovoru mluvit</value>
   <data name="FavoriteStickersShort" xml:space="preserve">
     <value>Oblíbené</value>
   </data>
+  <data name="FeaturedEmojiPacks" xml:space="preserve">
+    <value>Oblíbené balíčky emoji</value>
+  </data>
   <data name="FeaturedGifs" xml:space="preserve">
     <value>Populární GIFy</value>
   </data>
@@ -5633,6 +5876,9 @@ un1 povolil nově příchozím ve videohovoru mluvit</value>
   </data>
   <data name="FeaturedStickersInfo" xml:space="preserve">
     <value>Tyto samolepky jsou v současné době oblíbené na Telegramu. Vlastní samolepky můžete přidat pomocí bota @stickers.</value>
+  </data>
+  <data name="FeaturedStickersPremium" xml:space="preserve">
+    <value>Populární prémiové samolepky</value>
   </data>
   <data name="FeaturedStickersShort" xml:space="preserve">
     <value>Populární</value>
@@ -5688,7 +5934,7 @@ un1 povolil nově příchozím ve videohovoru mluvit</value>
     <value>Přidané konverzace</value>
   </data>
   <data name="FilterAddingChatsInfo" xml:space="preserve">
-    <value>Vyčkejte prosím chvíli, než pro Vás složku naplníme.</value>
+    <value>Vyčkejte prosím chvíli, než pro Vás složku naplníme...</value>
   </data>
   <data name="FilterAddTo" xml:space="preserve">
     <value>Přidat do složky</value>
@@ -5724,19 +5970,20 @@ un1 povolil nově příchozím ve videohovoru mluvit</value>
     <value>Kanály</value>
   </data>
   <data name="FilterChatAddedToExisting" xml:space="preserve">
-    <value>**{0}** přidán/a **{1}**</value>
+    <value>**{0}** přidán/a **{1}**.</value>
   </data>
   <data name="FilterChatRemovedFrom" xml:space="preserve">
-    <value>**{0}** odebrán/a z **{1}**</value>
+    <value>**{0}** odebrán/a z **{1}**.</value>
   </data>
   <data name="FilterChats" xml:space="preserve">
     <value>Konverzace</value>
   </data>
   <data name="FilterChatsAddedToExisting" xml:space="preserve">
-    <value>**{0}** přidán/a do **{1}**</value>
+    <value>
+**{0}** přidán/a do **{1}**.</value>
   </data>
   <data name="FilterChatsRemovedFrom" xml:space="preserve">
-    <value>**{0}** odebrán/a z **{1}**</value>
+    <value>**{0}** odebrán/a z **{1}**.</value>
   </data>
   <data name="FilterChatTypes" xml:space="preserve">
     <value>Typy konverzací</value>
@@ -5910,10 +6157,10 @@ un1 povolil nově příchozím ve videohovoru mluvit</value>
     <value>Nepřečtené</value>
   </data>
   <data name="FilterUserAddedToExisting" xml:space="preserve">
-    <value>**{0}** přidán/a do **{1}**</value>
+    <value>**{0}** přidán/a do **{1}**.</value>
   </data>
   <data name="FilterUserRemovedFrom" xml:space="preserve">
-    <value>**{0}** odebrán/a z **{1}**</value>
+    <value>**{0}** odebrán/a z **{1}**.</value>
   </data>
   <data name="FinalResults" xml:space="preserve">
     <value>Konečné výsledky</value>
@@ -6262,6 +6509,9 @@ Všechny důvěrné konverzace budou ztraceny.</value>
   <data name="FreeOfTotal" xml:space="preserve">
     <value>Volných {0} z {1}</value>
   </data>
+  <data name="FreshChangePhoneForbidden" xml:space="preserve">
+    <value>Z bezpečnostních důvodů nelze změnit telefonní číslo ze zařízení, které jste právě připojili. Použijte dřívější připojení nebo počkejte několik hodin.</value>
+  </data>
   <data name="From" xml:space="preserve">
     <value>Od</value>
   </data>
@@ -6360,6 +6610,36 @@ Všechny důvěrné konverzace budou ztraceny.</value>
   </data>
   <data name="GifsTab2" xml:space="preserve">
     <value>GIFy</value>
+  </data>
+  <data name="GiftMonths_few" xml:space="preserve">
+    <value>{0}-měsíce</value>
+  </data>
+  <data name="GiftMonths_many" xml:space="preserve">
+    <value>{0}-měsíců</value>
+  </data>
+  <data name="GiftMonths_one" xml:space="preserve">
+    <value>{0}-měsíc</value>
+  </data>
+  <data name="GiftMonths_other" xml:space="preserve">
+    <value>{0}-měsíců</value>
+  </data>
+  <data name="GiftPremium" xml:space="preserve">
+    <value>Darovat Premium</value>
+  </data>
+  <data name="GiftPremiumListFeaturesAndTerms" xml:space="preserve">
+    <value>Seznam funkcí a podmínky používání Telegram Premium si můžete prohlédnout **zde**.</value>
+  </data>
+  <data name="GiftPremiumOptionDiscount" xml:space="preserve">
+    <value>-{0}%</value>
+  </data>
+  <data name="GiftSubscriptionFor" xml:space="preserve">
+    <value>Darovat předplatné za {0}</value>
+  </data>
+  <data name="GiftTelegramPremiumDescription" xml:space="preserve">
+    <value>Darujte uživateli **{0}** přístup k exkluzivním funkcím s **Telegram Premium**.</value>
+  </data>
+  <data name="GiftTelegramPremiumTitle" xml:space="preserve">
+    <value>Darovat Telegram Premium</value>
   </data>
   <data name="GigagroupAlertLearnMore" xml:space="preserve">
     <value>ZJISTIT VÍCE</value>
@@ -6539,7 +6819,7 @@ ohledně Telegramu?</value>
     <value>Typ skupiny</value>
   </data>
   <data name="GroupUserAddLimit" xml:space="preserve">
-    <value>Litujeme, tato skupina je plná.</value>
+    <value>Do této skupiny se nelze připojit, má příliš mnoho členů.</value>
   </data>
   <data name="GroupUserCantAdd" xml:space="preserve">
     <value>Litujeme, tohoto uživatele nemůžete přidávat do skupin.</value>
@@ -6580,7 +6860,7 @@ Stále se ale může vrátit zpět přes odkaz s pozvánkou, pokud nebude v sezn
     <value>Jména odesílatelů byla odstraněna</value>
   </data>
   <data name="HideAboveTheList" xml:space="preserve">
-    <value>Skrýt nad seznam</value>
+    <value>Skrýt ze seznamu konverzací</value>
   </data>
   <data name="HideAd" xml:space="preserve">
     <value>Skrýt</value>
@@ -6603,7 +6883,7 @@ Chcete podobné konverzace **automaticky ztlumit** a **archivovat**?</value>
     <value>SKRÝT PŘIPNUTÉ ZPRÁVY</value>
   </data>
   <data name="HideSenderNames" xml:space="preserve">
-    <value>Schovat jméno odesílatele</value>
+    <value>Skrýt jména odesílatelů</value>
   </data>
   <data name="HideSendersName" xml:space="preserve">
     <value>Skrýt jméno odesílatele</value>
@@ -6877,6 +7157,9 @@ Zprávy do dnešního dne budou importovány včetně označení času. Zprávy 
   </data>
   <data name="InstallGoogleMaps" xml:space="preserve">
     <value>Instalovat Google mapy?</value>
+  </data>
+  <data name="InstallHuaweiMaps" xml:space="preserve">
+    <value>Instalovat mapy Petal?</value>
   </data>
   <data name="InstallOfficialApp" xml:space="preserve">
     <value>Instalovat oficiální aplikaci</value>
@@ -7598,7 +7881,7 @@ Tento odkaz bude fungovat pouze pro členy této konverzace.</value>
     <value>Ostatní soubory</value>
   </data>
   <data name="LocalDatabase" xml:space="preserve">
-    <value>Lokální databáze</value>
+    <value>Vyčistit lokální databázi</value>
   </data>
   <data name="LocalDatabaseClear" xml:space="preserve">
     <value>Smazat textové zprávy v mezipaměti?</value>
@@ -7670,6 +7953,9 @@ Dokončení této operace může trvat několik minut.</value>
   </data>
   <data name="LoginAttemptsInfo" xml:space="preserve">
     <value>Zařízení výše nemají přístup k Vašim zprávám. Kód byl zadán správně, ale s nesprávným heslem.</value>
+  </data>
+  <data name="LoginOrSingInWithGoogle" xml:space="preserve">
+    <value>nebo</value>
   </data>
   <data name="LoginPassword" xml:space="preserve">
     <value>Heslo</value>
@@ -7993,6 +8279,39 @@ Minimální délka je 5 znaků.</value>
   <data name="Message" xml:space="preserve">
     <value>Zpráva</value>
   </data>
+  <data name="MessageContainsEmojiPack" xml:space="preserve">
+    <value>Tato zpráva obsahuje emoji z balíčku {0}.</value>
+  </data>
+  <data name="MessageContainsEmojiPacks_few" xml:space="preserve">
+    <value>Tato zpráva obsahuje emoji ze **{0} balíčků.</value>
+  </data>
+  <data name="MessageContainsEmojiPacks_many" xml:space="preserve">
+    <value>Tato zpráva obsahuje emoji z **{0} balíčků.</value>
+  </data>
+  <data name="MessageContainsEmojiPacks_one" xml:space="preserve">
+    <value>Tato zpráva obsahuje emoji z **{0} balíčku.</value>
+  </data>
+  <data name="MessageContainsEmojiPacks_other" xml:space="preserve">
+    <value>Tato zpráva obsahuje emoji z **{0} balíčků.</value>
+  </data>
+  <data name="MessageContainsEmojiPackSingle" xml:space="preserve">
+    <value>Tato zpráva obsahuje **{0}** emoji.</value>
+  </data>
+  <data name="MessageContainsReactionsPack" xml:space="preserve">
+    <value>Emoji ze sady {0} bude použito pro reakce.</value>
+  </data>
+  <data name="MessageContainsReactionsPacks_few" xml:space="preserve">
+    <value>Emoji z **{0} sad** bude použito pro reakce.</value>
+  </data>
+  <data name="MessageContainsReactionsPacks_many" xml:space="preserve">
+    <value>Emoji z **{0} sad** bude použito pro reakce.</value>
+  </data>
+  <data name="MessageContainsReactionsPacks_one" xml:space="preserve">
+    <value>Emoji z **{0} sady** bude použito pro reakce.</value>
+  </data>
+  <data name="MessageContainsReactionsPacks_other" xml:space="preserve">
+    <value>Emoji z **{0} sad** bude použito pro reakce.</value>
+  </data>
   <data name="MessageCopied" xml:space="preserve">
     <value>Zpráva zkopírována do schránky.</value>
   </data>
@@ -8179,6 +8498,21 @@ Minimální délka je 5 znaků.</value>
   </data>
   <data name="Mi" xml:space="preserve">
     <value>mi</value>
+  </data>
+  <data name="MicrophoneForVoiceMessages" xml:space="preserve">
+    <value>Mikrofon pro hlasové zprávy</value>
+  </data>
+  <data name="MicrophoneForVoiceMessagesBuiltIn" xml:space="preserve">
+    <value>Vestavěný</value>
+  </data>
+  <data name="MicrophoneForVoiceMessagesSco" xml:space="preserve">
+    <value>Náhlavní souprava</value>
+  </data>
+  <data name="MicrophoneForVoiceMessagesScoHint" xml:space="preserve">
+    <value>Použití mikrofonu náhlavní soupravy může snížit hluk na pozadí, ale mírně sníží kvalitu zvuku.</value>
+  </data>
+  <data name="MicrophoneForVoiceMessagesScoIfConnected" xml:space="preserve">
+    <value>Náhlavní souprava (pokud je připojena)</value>
   </data>
   <data name="MigrateOldFolderButton" xml:space="preserve">
     <value>Přesunout soubory nyní</value>
@@ -8616,8 +8950,7 @@ Můžete změnit upozornění pro jednotlivé konverzace otevřením jejich prof
     <value>Žádné žádosti o přidání</value>
   </data>
   <data name="NoMemberRequestsDescription" xml:space="preserve">
-    <value>Nejsou zde žádné nevyřízené žádosti
-o přidání do skupiny.</value>
+    <value>Žádné žádosti o přístup k vyřízení.</value>
   </data>
   <data name="NoMessages" xml:space="preserve">
     <value>Zatím zde nemáte žádné zprávy...</value>
@@ -8663,6 +8996,12 @@ o přidání do skupiny.</value>
   </data>
   <data name="NoPopup" xml:space="preserve">
     <value>Nezobrazovat</value>
+  </data>
+  <data name="NoReactions" xml:space="preserve">
+    <value>Žádné reakce</value>
+  </data>
+  <data name="NoReactionsFound" xml:space="preserve">
+    <value>Žádné reakce nenalezeny</value>
   </data>
   <data name="NoRecent" xml:space="preserve">
     <value>Žádné nedávné</value>
@@ -8742,8 +9081,7 @@ Ujistěte se prosím, že je zadána správná URL serveru, a je přítomný kl�
     <value>Žádné žádosti o přidání</value>
   </data>
   <data name="NoSubscribeRequestsDescription" xml:space="preserve">
-    <value>Nejsou zde žádné nevyřízené žádosti
-o přidání do kanálu.</value>
+    <value>Žádné žádosti o přístup k vyřízení.</value>
   </data>
   <data name="NotfificationsFrequencyTitle" xml:space="preserve">
     <value>Frekvence upozornění</value>
@@ -9345,7 +9683,7 @@ o přidání do kanálu.</value>
     <value>Oznámení zapnuta</value>
   </data>
   <data name="NotificationsUnmutedHint" xml:space="preserve">
-    <value>Oznámení povolena</value>
+    <value>Oznámení povolena.</value>
   </data>
   <data name="NotificationUnrecognizedDevice" xml:space="preserve">
     <value>Uživateli {0},
@@ -9415,8 +9753,11 @@ Tým Telegramu</value>
   <data name="OnlineCount_other" xml:space="preserve">
     <value>{0} online</value>
   </data>
+  <data name="OnlyAllowThisReactions" xml:space="preserve">
+    <value>Povolit pouze tyto reakce</value>
+  </data>
   <data name="OnlyIfSilent" xml:space="preserve">
-    <value>V tichém režimu</value>
+    <value>Tichý režim</value>
   </data>
   <data name="OnlyWhenScreenOff" xml:space="preserve">
     <value>Když je displej vypnutý</value>
@@ -10319,7 +10660,7 @@ Můžete navštívit *Časté otázky* pro více informací.</value>
     <value>Platební metoda</value>
   </data>
   <data name="PaymentCheckoutMethodNewCard" xml:space="preserve">
-    <value>Nová karta</value>
+    <value>Přidat bankovní kartu...</value>
   </data>
   <data name="PaymentCheckoutName" xml:space="preserve">
     <value>Jméno</value>
@@ -10340,7 +10681,7 @@ Můžete navštívit *Časté otázky* pro více informací.</value>
     <value>Vaše karta {0} je uložena. Chcete-li zaplatit pomocí této karty, zadejte prosím heslo Vašeho dvoufázového ověření.</value>
   </data>
   <data name="PaymentConfirmationNewCard" xml:space="preserve">
-    <value>Vyberte prosím jinou kartu</value>
+    <value>Vyberte jinou kartu</value>
   </data>
   <data name="PaymentConnectionFailed" xml:space="preserve">
     <value>Nelze se připojit k platebnímu serveru. Zkontrolujte prosím připojení k internetu a zkuste to znovu.</value>
@@ -10755,7 +11096,7 @@ K poloze budeme přistupovat pouze v rozmezí, které sami určíte, a můžete 
     <value>Ping: {0} ms</value>
   </data>
   <data name="PinInTheList" xml:space="preserve">
-    <value>Připnout k seznamu</value>
+    <value>Připnout k seznamu konverzací</value>
   </data>
   <data name="Pink" xml:space="preserve">
     <value>Růžová</value>
@@ -10924,6 +11265,9 @@ K poloze budeme přistupovat pouze v rozmezí, které sami určíte, a můžete 
   <data name="PollViewResults" xml:space="preserve">
     <value>ZOBRAZIT VÝSLEDKY</value>
   </data>
+  <data name="PopularReactions" xml:space="preserve">
+    <value>Oblíbené</value>
+  </data>
   <data name="PopupDisabled" xml:space="preserve">
     <value>Vypnuta</value>
   </data>
@@ -10935,6 +11279,9 @@ K poloze budeme přistupovat pouze v rozmezí, které sami určíte, a můžete 
   </data>
   <data name="PostingMembers" xml:space="preserve">
     <value>Přispívající členové</value>
+  </data>
+  <data name="PremiumMore" xml:space="preserve">
+    <value>Více</value>
   </data>
   <data name="PremiumPreviewAdvancedChatManagement" xml:space="preserve">
     <value>Pokročilá správa konverzací</value>
@@ -10966,6 +11313,21 @@ K poloze budeme přistupovat pouze v rozmezí, které sami určíte, a můžete 
   <data name="PremiumPreviewDownloadSpeedDescription" xml:space="preserve">
     <value>Rychlost stahování médií a dokumentů již není omezena.</value>
   </data>
+  <data name="PremiumPreviewEmoji" xml:space="preserve">
+    <value>Animované emoji</value>
+  </data>
+  <data name="PremiumPreviewEmojiDescription" xml:space="preserve">
+    <value>Do každé odeslané zprávy můžete zahrnout animované emoji z různých balíčků.</value>
+  </data>
+  <data name="PremiumPreviewEmojiPack" xml:space="preserve">
+    <value>Tento balíček emoji je k dispozici pouze pro předplatitele **Telegram Premium**.</value>
+  </data>
+  <data name="PremiumPreviewEmojiStatus" xml:space="preserve">
+    <value>Stav s emoji</value>
+  </data>
+  <data name="PremiumPreviewEmojiStatusDescription" xml:space="preserve">
+    <value>Vyberte si z tisíců emoji, které zobrazují aktuální aktivitu vedle vašeho jména.</value>
+  </data>
   <data name="PremiumPreviewLimits" xml:space="preserve">
     <value>Dvojnásobné limity</value>
   </data>
@@ -10989,6 +11351,12 @@ K poloze budeme přistupovat pouze v rozmezí, které sami určíte, a můžete 
   </data>
   <data name="PremiumPreviewReactions" xml:space="preserve">
     <value>Jedinečné reakce</value>
+  </data>
+  <data name="PremiumPreviewReactions2" xml:space="preserve">
+    <value>Nekonečné reakce</value>
+  </data>
+  <data name="PremiumPreviewReactions2Description" xml:space="preserve">
+    <value>Reagujte pomocí tisíců emoji — na jednu zprávu můžete použít více reakcí.</value>
   </data>
   <data name="PremiumPreviewReactionsDescription" xml:space="preserve">
     <value>Animované reakce na zprávy, které jsou k dostupné pouze předplatitelům Premium.</value>
@@ -11022,6 +11390,15 @@ K poloze budeme přistupovat pouze v rozmezí, které sami určíte, a můžete 
   </data>
   <data name="PremiumStickerTooltip" xml:space="preserve">
     <value>Tento balíček obsahuje prémiové samolepky, jako je tato.</value>
+  </data>
+  <data name="PremiumTierAnnual" xml:space="preserve">
+    <value>Roční</value>
+  </data>
+  <data name="PremiumTierMonthly" xml:space="preserve">
+    <value>Měsíční</value>
+  </data>
+  <data name="PremiumTierSemiannual" xml:space="preserve">
+    <value>Pololetní</value>
   </data>
   <data name="PreviewFeedback" xml:space="preserve">
     <value>Nahlásit chybu tohoto náhledu</value>
@@ -11158,6 +11535,15 @@ K poloze budeme přistupovat pouze v rozmezí, které sami určíte, a můžete 
   <data name="PreviousPinnedMessage" xml:space="preserve">
     <value>Předchozí zpráva</value>
   </data>
+  <data name="PricePerMonth" xml:space="preserve">
+    <value>{0} / měsíc</value>
+  </data>
+  <data name="PricePerMonthMe" xml:space="preserve">
+    <value>{0}/měsíc</value>
+  </data>
+  <data name="PricePerYear" xml:space="preserve">
+    <value>{0}/rok</value>
+  </data>
   <data name="PrimaryLinkHelp" xml:space="preserve">
     <value>Kdokoliv na Telegramu se může připojit do této skupiny kliknutím na tento odkaz.</value>
   </data>
@@ -11198,7 +11584,7 @@ K poloze budeme přistupovat pouze v rozmezí, které sami určíte, a můžete 
     <value>Výjimky</value>
   </data>
   <data name="PrivacyFloodControlError" xml:space="preserve">
-    <value>Je nám líto, bylo odesláno moc požadavnků v krátkém čase. Počkejte s dalším nastavováním.</value>
+    <value>Je nám líto, bylo odesláno moc požadavnků v krátkém čase. Počkejte s jejich dalším nastavováním.</value>
   </data>
   <data name="PrivacyForwards" xml:space="preserve">
     <value>Přeposlané zprávy</value>
@@ -11313,6 +11699,21 @@ K poloze budeme přistupovat pouze v rozmezí, které sami určíte, a můžete 
   </data>
   <data name="PrivacyTitle" xml:space="preserve">
     <value>Soukromí</value>
+  </data>
+  <data name="PrivacyVoiceMessages" xml:space="preserve">
+    <value>Hlasové zprávy</value>
+  </data>
+  <data name="PrivacyVoiceMessagesInfo" xml:space="preserve">
+    <value>Můžete přesně omezit, kdo vám může posílat hlasové nebo video zprávy.</value>
+  </data>
+  <data name="PrivacyVoiceMessagesInfo2" xml:space="preserve">
+    <value>Uživatele nebo celé skupiny můžete přidat jako výjimky, které přepíší výše uvedená nastavení.</value>
+  </data>
+  <data name="PrivacyVoiceMessagesPremiumOnly" xml:space="preserve">
+    <value>Pouze předplatitelé *Telegram Premium* mohou omezit přijímání hlasových zpráv.</value>
+  </data>
+  <data name="PrivacyVoiceMessagesTitle" xml:space="preserve">
+    <value>Kdo mě může posílat hlasové nebo video zprávy?</value>
   </data>
   <data name="PrivateShares" xml:space="preserve">
     <value>Soukromá sdílení</value>
@@ -11645,6 +12046,9 @@ K poloze budeme přistupovat pouze v rozmezí, které sami určíte, a můžete 
   <data name="Reactions" xml:space="preserve">
     <value>Reakce</value>
   </data>
+  <data name="ReactionsAll" xml:space="preserve">
+    <value>Všechny</value>
+  </data>
   <data name="ReactionsCount_few" xml:space="preserve">
     <value>{0} reakce</value>
   </data>
@@ -11656,6 +12060,9 @@ K poloze budeme přistupovat pouze v rozmezí, které sami určíte, a můžete 
   </data>
   <data name="ReactionsCount_other" xml:space="preserve">
     <value>{0} reakcí</value>
+  </data>
+  <data name="ReactionsLongtapHint" xml:space="preserve">
+    <value>Pro zaslání super reakce podržte na emoji déle</value>
   </data>
   <data name="ReactionsOff" xml:space="preserve">
     <value>Vypnuto</value>
@@ -11677,6 +12084,9 @@ K poloze budeme přistupovat pouze v rozmezí, které sami určíte, a můžete 
   </data>
   <data name="RecentlyDownloaded" xml:space="preserve">
     <value>Nedávno stažené</value>
+  </data>
+  <data name="RecentlyUsed" xml:space="preserve">
+    <value>Nedávno použité</value>
   </data>
   <data name="RecentlyViewed" xml:space="preserve">
     <value>Nedávno zobrazené</value>
@@ -11856,10 +12266,13 @@ K poloze budeme přistupovat pouze v rozmezí, které sami určíte, a můžete 
     <value>Odpovědět</value>
   </data>
   <data name="ReplyToGroup" xml:space="preserve">
-    <value>Odpovědět uživateli {0}</value>
+    <value>Odpovědět</value>
   </data>
   <data name="ReplyToUser" xml:space="preserve">
-    <value>{0} - odpovědět</value>
+    <value>Odpovědět</value>
+  </data>
+  <data name="ReportAlertReaction" xml:space="preserve">
+    <value>Opravdu chcete nahlásit reakce tohoto uživatele?</value>
   </data>
   <data name="ReportChat" xml:space="preserve">
     <value>Nahlásit</value>
@@ -11906,6 +12319,12 @@ K poloze budeme přistupovat pouze v rozmezí, které sami určíte, a můžete 
   <data name="ReportMessagesCount" xml:space="preserve">
     <value>NAHLÁSIT {0}</value>
   </data>
+  <data name="ReportReaction" xml:space="preserve">
+    <value>Nahlásit reakci</value>
+  </data>
+  <data name="ReportReactionAndBan" xml:space="preserve">
+    <value>Zablokovat a nahlásit</value>
+  </data>
   <data name="ReportSelectMessages" xml:space="preserve">
     <value>Vybrat zprávy</value>
   </data>
@@ -11939,6 +12358,9 @@ Děkujeme za spolupráci!</value>
   </data>
   <data name="ReportSpamUser" xml:space="preserve">
     <value>BLOKOVAT UŽIVATELE</value>
+  </data>
+  <data name="ReportSpamUserEmojiStatusHint" xml:space="preserve">
+    <value>Tento účet používá {0} jako vlastní stav vedle svého názvu. Tyto stavové emoji jsou k dispozici všem odběratelům {1}.</value>
   </data>
   <data name="ReportTitleChild" xml:space="preserve">
     <value>Nahlásit zneužívání dětí</value>
@@ -12109,6 +12531,9 @@ Vyčkejte prosím {0} před další žádostí o reset.</value>
   <data name="ResetStatisticsAlertTitle" xml:space="preserve">
     <value>Resetovat statistiky</value>
   </data>
+  <data name="Restore" xml:space="preserve">
+    <value>Obnovit</value>
+  </data>
   <data name="RestoreEmailNoAccess" xml:space="preserve">
     <value>Nemáte přístup k {0}?</value>
   </data>
@@ -12175,10 +12600,10 @@ Vyčkejte prosím {0} před další žádostí o reset.</value>
     <value>Omezit ukládání obsahu</value>
   </data>
   <data name="RestrictSavingContentInfoChannel" xml:space="preserve">
-    <value>Odběratelé nebudou moct kopírovat, ukládat a přeposílat obsah z tohoto kanálu.</value>
+    <value>Odběratelé nebudou moct kopírovat, ukládat nebo přeposílat obsah z tohoto kanálu.</value>
   </data>
   <data name="RestrictSavingContentInfoGroup" xml:space="preserve">
-    <value>Členové nebudou moci kopírovat, ukládat a přeposílat obsah z této skupiny.</value>
+    <value>Členové nebudou moci kopírovat, ukládat nebo přeposílat obsah z této skupiny.</value>
   </data>
   <data name="ResumeAll" xml:space="preserve">
     <value>Obnovit stahování</value>
@@ -12448,6 +12873,9 @@ Možná bude potřeba restartovat aplikaci pro aplikování změny.</value>
   <data name="SearchMusic" xml:space="preserve">
     <value>Vyhledejte hudbu</value>
   </data>
+  <data name="SearchReactionsHint" xml:space="preserve">
+    <value>Hledat reakce</value>
+  </data>
   <data name="SearchRecentFiles" xml:space="preserve">
     <value>Prohledat nedávné soubory</value>
   </data>
@@ -12588,6 +13016,12 @@ Možná bude potřeba restartovat aplikaci pro aplikování změny.</value>
   </data>
   <data name="SelectOtherChat" xml:space="preserve">
     <value>Zvolte jinou konverzaci</value>
+  </data>
+  <data name="SelectSendAsPeerPremiumHint" xml:space="preserve">
+    <value>Předplaťte si **Telegram Premium**, abyste mohli komentovat jménem svých kanálů v jakékoli skupinové konverzaci.</value>
+  </data>
+  <data name="SelectSendAsPeerPremiumOpen" xml:space="preserve">
+    <value>Otevřít</value>
   </data>
   <data name="SelectTheme" xml:space="preserve">
     <value>Vybrat motiv</value>
@@ -12830,6 +13264,30 @@ Nezvedejte ho, Telegram vše zařídí automaticky.</value>
   </data>
   <data name="SetColor" xml:space="preserve">
     <value>Nastavit barvu</value>
+  </data>
+  <data name="SetEmojiStatus" xml:space="preserve">
+    <value>Nastavit status</value>
+  </data>
+  <data name="SetEmojiStatusUntil1Hour" xml:space="preserve">
+    <value>Nastavit na 1 hodinu</value>
+  </data>
+  <data name="SetEmojiStatusUntil2Days" xml:space="preserve">
+    <value>Nastavit na 2 dny</value>
+  </data>
+  <data name="SetEmojiStatusUntil2Hours" xml:space="preserve">
+    <value>Nastavi na 2 hodiny</value>
+  </data>
+  <data name="SetEmojiStatusUntil8Hours" xml:space="preserve">
+    <value>Nastavit na 8 hodin</value>
+  </data>
+  <data name="SetEmojiStatusUntilButton" xml:space="preserve">
+    <value>Nastavit status</value>
+  </data>
+  <data name="SetEmojiStatusUntilOther" xml:space="preserve">
+    <value>Další…</value>
+  </data>
+  <data name="SetEmojiStatusUntilTitle" xml:space="preserve">
+    <value>Nastavit status do…</value>
   </data>
   <data name="SetNewPassword" xml:space="preserve">
     <value>Nastavte nové heslo</value>
@@ -13135,6 +13593,9 @@ Zadejte prosím správné číslo včetně kódu země.</value>
   <data name="ShowMore" xml:space="preserve">
     <value>Zobrazit více</value>
   </data>
+  <data name="ShowMoreEmojiPacks" xml:space="preserve">
+    <value>Zobrazit další emoji</value>
+  </data>
   <data name="ShowMoreStickers" xml:space="preserve">
     <value>Ukázat další samolepky</value>
   </data>
@@ -13148,7 +13609,7 @@ Zadejte prosím správné číslo včetně kódu země.</value>
     <value>Vypněte, pokud chcete dostávat oznámení pouze z účtu, který právě používáte.</value>
   </data>
   <data name="ShowSenderNames" xml:space="preserve">
-    <value>Zobrazit jméno odesílatele</value>
+    <value>Zobrazit jména odesílatelů</value>
   </data>
   <data name="ShowSendersName" xml:space="preserve">
     <value>Zobrazit jméno odesílatele</value>
@@ -13176,6 +13637,9 @@ Zadejte prosím správné číslo včetně kódu země.</value>
   </data>
   <data name="ShuffleList" xml:space="preserve">
     <value>Promíchat seznam</value>
+  </data>
+  <data name="SignInWithGoogle" xml:space="preserve">
+    <value>Přihlásit účtem Google</value>
   </data>
   <data name="SignUp" xml:space="preserve">
     <value>Registrovat se</value>
@@ -13250,6 +13714,9 @@ Je aktivován Pomalý mód. Nemůžete poslat více zpráv najednou.</value>
   </data>
   <data name="SoftUserLimitAlert" xml:space="preserve">
     <value>Přidat další členy budete moci poté, co dokončíte vytváření skupiny.</value>
+  </data>
+  <data name="SomeReactions" xml:space="preserve">
+    <value>Určité reakce</value>
   </data>
   <data name="SortBy" xml:space="preserve">
     <value>Řadit podle</value>
@@ -13598,6 +14065,12 @@ Online reklamy by už neměly být synonymem pro narušování uživatelského s
 
 Po předplacení budete moci využívat výhody služby Telegram Premium ve všech aplikacích, které ji podporují, včetně neoficiálních.</value>
   </data>
+  <data name="SuggestAnimatedEmoji" xml:space="preserve">
+    <value>Navrhovat animované emoji</value>
+  </data>
+  <data name="SuggestAnimatedEmojiInfo" xml:space="preserve">
+    <value>Při každém vložení emoji jej můžete nahradit animovaným emoji.</value>
+  </data>
   <data name="SuggestClearDatabaseMessage" xml:space="preserve">
     <value>Velikost vaší lokální databáze je {0}. Může to ovlivnit rychlost aplikace.</value>
   </data>
@@ -13729,6 +14202,9 @@ Pokud je povolena &apos;**Synchronizace kontaktů**&apos;, kontakty v telefonu b
   <data name="TapForVideo" xml:space="preserve">
     <value>Klepněte pro fotku, přidržte pro video</value>
   </data>
+  <data name="TapHereEmoji" xml:space="preserve">
+    <value>Pro přístup k emoji klepněte {0}.</value>
+  </data>
   <data name="TapHereGifs" xml:space="preserve">
     <value>Klepněte zde pro přístup k uloženým GIFům</value>
   </data>
@@ -13842,6 +14318,34 @@ Toto heslo bude vyžadováno, kdykoli se přihlásíte na Telegram z nového za�
   <data name="TelegramPremiumUserDialogTitle" xml:space="preserve">
     <value>**{0}** je předplatitel Telegramu Premium.</value>
   </data>
+  <data name="TelegramPremiumUserGiftedPremiumDialogSubtitle" xml:space="preserve">
+    <value>Nyní máte přístup k dalším funkcím.</value>
+  </data>
+  <data name="TelegramPremiumUserGiftedPremiumDialogTitle" xml:space="preserve">
+    <value>{0} vám daroval/a {1}měsíční předplatné Telegram Premium.</value>
+  </data>
+  <data name="TelegramPremiumUserGiftedPremiumDialogTitleWithPlural" xml:space="preserve">
+    <value>**{0}** Vám daroval/a {1} předplatné Telegram Premium.</value>
+  </data>
+  <data name="TelegramPremiumUserGiftedPremiumOutboundDialogSubtitle" xml:space="preserve">
+    <value>**{0}** má nyní přístup k dalším funkcím.</value>
+  </data>
+  <data name="TelegramPremiumUserGiftedPremiumOutboundDialogTitle" xml:space="preserve">
+    <value>Daroval/a jste uživateli **{0}** {1}měsíční předplatné Telegram Premium.</value>
+  </data>
+  <data name="TelegramPremiumUserGiftedPremiumOutboundDialogTitleWithPlural" xml:space="preserve">
+    <value>Daroval/a jste **{0}** **{1}** předplatné Telegram Premium.</value>
+  </data>
+  <data name="TelegramPremiumUserStatusDefaultDialogTitle" xml:space="preserve">
+    <value>Toto je aktuální stav uživatele  {0}.</value>
+  </data>
+  <data name="TelegramPremiumUserStatusDialogSubtitle" xml:space="preserve">
+    <value>Stavy s emoji jsou prémiovou funkcí.
+ Další funkce obsažené v **Telegram Premium**:</value>
+  </data>
+  <data name="TelegramPremiumUserStatusDialogTitle" xml:space="preserve">
+    <value>Toto je aktuální stav uživatele  {0} z **{1}**.</value>
+  </data>
   <data name="TelegramTones" xml:space="preserve">
     <value>Zvuk Telegramu</value>
   </data>
@@ -13898,7 +14402,7 @@ Toto heslo bude vyžadováno, kdykoli se přihlásíte na Telegram z nového za�
 souhlasíte s *Podmínkami služby*.</value>
   </data>
   <data name="TextCopied" xml:space="preserve">
-    <value>Text zkopírován do schránky</value>
+    <value>Text zkopírován do schránky.</value>
   </data>
   <data name="TextSelectionHit" xml:space="preserve">
     <value>Pro výběr a kopírování textu přidržte **slovo**, pak posuňte kurzor.</value>
@@ -14287,6 +14791,9 @@ Ale pokud nesouhlasíte s těmito potřebami, nemůžeme Vám tuto službu nabí
   <data name="Typing" xml:space="preserve">
     <value>píše...</value>
   </data>
+  <data name="UnableForward" xml:space="preserve">
+    <value>Nelze přeposlat</value>
+  </data>
   <data name="Unarchive" xml:space="preserve">
     <value>Obnovit z archivu</value>
   </data>
@@ -14320,8 +14827,26 @@ Ale pokud nesouhlasíte s těmito potřebami, nemůžeme Vám tuto službu nabí
   <data name="UnknownError" xml:space="preserve">
     <value>Nespecifikovaná chyba</value>
   </data>
+  <data name="Unlock" xml:space="preserve">
+    <value>Odemknout</value>
+  </data>
   <data name="UnlockFingerprint" xml:space="preserve">
     <value>Odemykat otiskem prstu.</value>
+  </data>
+  <data name="UnlockPremiumEmoji" xml:space="preserve">
+    <value>Odemknout prémiové emoji</value>
+  </data>
+  <data name="UnlockPremiumEmojiHint" xml:space="preserve">
+    <value>Pro odemknutí těchto emoji si předplaťte **Telegram Premium**.</value>
+  </data>
+  <data name="UnlockPremiumEmojiHint2" xml:space="preserve">
+    <value> Zdarma si vyzkoušejte odesílání těchto emoji v **Uložených zprávách** a otestujte je.</value>
+  </data>
+  <data name="UnlockPremiumEmojiPack" xml:space="preserve">
+    <value>Odemknout {0}</value>
+  </data>
+  <data name="UnlockPremiumEmojiReaction" xml:space="preserve">
+    <value>Pro odemknutí této reakce si předplaťte **Telegram Premium**.</value>
   </data>
   <data name="UnlockPremiumIcons" xml:space="preserve">
     <value>Odemknout prémiové ikony</value>
@@ -14585,7 +15110,7 @@ Můžete použit a-z, 0-9 a podtržítka. Minimální délka je 5 znaků.</value
     <value>Odebral/a {0}</value>
   </data>
   <data name="UserRemovedFromChatHint" xml:space="preserve">
-    <value>**{0}** byl odebrán/a z **{1}**</value>
+    <value>**{0}** byl odebrán/a z **{1}**.</value>
   </data>
   <data name="UserRestricted" xml:space="preserve">
     <value>Litujeme, k tomuto nemáte oprávnění.</value>
@@ -14594,7 +15119,7 @@ Můžete použit a-z, 0-9 a podtržítka. Minimální délka je 5 znaků.</value
     <value>Uživatelská oprávnění</value>
   </data>
   <data name="UserRestrictionsApplyChanges" xml:space="preserve">
-    <value>Použít změny?</value>
+    <value>Neuložené změny</value>
   </data>
   <data name="UserRestrictionsApplyChangesText" xml:space="preserve">
     <value>Práva tohoto uživatele byla v **{0}** upravena. Použít změny?</value>
@@ -14737,6 +15262,9 @@ Můžete použit a-z, 0-9 a podtržítka. Minimální délka je 5 znaků.</value
   <data name="VerificationCode" xml:space="preserve">
     <value>Ověřovací kód</value>
   </data>
+  <data name="VerificationCodeSubtitle" xml:space="preserve">
+    <value>Zkontrolujte prosím svůj e-mail {0} (případně i složku pro SPAM) a zadejte kód, který jsme Vám zaslali.</value>
+  </data>
   <data name="ViaBot" xml:space="preserve">
     <value>pomocí</value>
   </data>
@@ -14769,6 +15297,9 @@ Můžete použit a-z, 0-9 a podtržítka. Minimální délka je 5 znaků.</value
   </data>
   <data name="VideoMessagesAutodownload" xml:space="preserve">
     <value>Video zprávy</value>
+  </data>
+  <data name="VideoMessagesRestrictedByPrivacy" xml:space="preserve">
+    <value>**{0}** nepřijímá videozprávy.</value>
   </data>
   <data name="VideoPreview" xml:space="preserve">
     <value>Náhled videa</value>
@@ -14919,6 +15450,9 @@ Můžete použit a-z, 0-9 a podtržítka. Minimální délka je 5 znaků.</value
   </data>
   <data name="Voice_other" xml:space="preserve">
     <value>{0} hlasových zpráv</value>
+  </data>
+  <data name="VoiceMessagesRestrictedByPrivacy" xml:space="preserve">
+    <value>**{0}** nepřijímá hlasové zprávy.</value>
   </data>
   <data name="VoipAddBio" xml:space="preserve">
     <value>Přidat informaci o sobě</value>
@@ -15453,7 +15987,7 @@ Ostatní účastníci uvidí, že je koverzace nahrávána.</value>
     <value>**{0}** je ztlumen v této audiokonferenci.</value>
   </data>
   <data name="VoipGroupUserCantNowSpeakForYou" xml:space="preserve">
-    <value>**{0}** je nyní v konverzaci ztlumen/á.</value>
+    <value>**{0}** je nyní v konverzaci u Vás ztlumen/á.</value>
   </data>
   <data name="VoipGroupUserChanged" xml:space="preserve">
     <value>Účastníci tohoto videohovoru vás nyní uvidí jako **{0}**</value>
@@ -15945,11 +16479,17 @@ Když zapomente Vaše heslo, ztratíte přístup k Vašemu účtu. A nebude cest
   <data name="YourLocatedChannelsTooMuch" xml:space="preserve">
     <value>Litujeme, máte příliš mnoho místních skupin. Smažte prosím nejdříve nějakou z nich.</value>
   </data>
+  <data name="YourLoginEmailChangedSuccess" xml:space="preserve">
+    <value>Váš e-mail byl změněn.</value>
+  </data>
   <data name="YourName" xml:space="preserve">
     <value>Vaše jméno</value>
   </data>
   <data name="YourNameChanged" xml:space="preserve">
     <value>Jméno upraveno.</value>
+  </data>
+  <data name="YourNewEmail" xml:space="preserve">
+    <value>Váš nový e-mail</value>
   </data>
   <data name="YourNumber" xml:space="preserve">
     <value>Vaše telefonní číslo</value>
@@ -15989,10 +16529,10 @@ Opravdu si pamatujete své heslo?</value>
     <value>Vaše veřejné komunity</value>
   </data>
   <data name="YouSenderNameHidden" xml:space="preserve">
-    <value>Vy (jméno odesilatele je skryto)</value>
+    <value>Vy (odesílatel je skryt)</value>
   </data>
   <data name="YouSendersNameHidden" xml:space="preserve">
-    <value>Vy (jména odesilatelů jsou skryta)</value>
+    <value>Vy (odesílatelé skrytí)</value>
   </data>
   <data name="YouWereKicked" xml:space="preserve">
     <value>byli jste odebráni</value>

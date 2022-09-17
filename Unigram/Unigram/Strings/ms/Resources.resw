@@ -187,6 +187,9 @@
   <data name="AccDescrContactSorting" xml:space="preserve">
     <value>Tukar susunan</value>
   </data>
+  <data name="AccDescrCustomEmoji" xml:space="preserve">
+    <value>Emoji tersuai</value>
+  </data>
   <data name="AccDescrDownloadProgress" xml:space="preserve">
     <value>Dimuat tturun {0} dari {1}</value>
   </data>
@@ -596,7 +599,7 @@
     <value>Bil Utiliti</value>
   </data>
   <data name="ActionBotWebViewData" xml:space="preserve">
-    <value>Data dari butang «{0}» dipindah ke bot.</value>
+    <value>Data dari butang "{0}" dipindah ke bot.</value>
   </data>
   <data name="ActionChangedPhoto" xml:space="preserve">
     <value>un1 tukar foto grup</value>
@@ -966,11 +969,20 @@ ke: {1}</value>
   <data name="AddContactTitle" xml:space="preserve">
     <value>Tambah Kenalan</value>
   </data>
+  <data name="Added" xml:space="preserve">
+    <value>Tambah</value>
+  </data>
   <data name="AddedBy" xml:space="preserve">
     <value>dimasukkan oleh {0} {1}</value>
   </data>
   <data name="AddedToFavorites" xml:space="preserve">
     <value>Stiker ditambah ke Kegemaran.</value>
+  </data>
+  <data name="AddEmailSubtitle" xml:space="preserve">
+    <value>Sila masukkan alamat emel anda untuk lindungi akaun anda.</value>
+  </data>
+  <data name="AddEmailTitle" xml:space="preserve">
+    <value>Tambah Emel</value>
   </data>
   <data name="AddEmojiInstalled" xml:space="preserve">
     <value>Emoji ditambah.</value>
@@ -1166,6 +1178,9 @@ ke: {1}</value>
   </data>
   <data name="AllPhotos" xml:space="preserve">
     <value>Semua foto</value>
+  </data>
+  <data name="AllReactions" xml:space="preserve">
+    <value>Semua reaksi</value>
   </data>
   <data name="AllSessionsTerminated" xml:space="preserve">
     <value>Semua sesi ditamat.</value>
@@ -2144,6 +2159,9 @@ Matahari naik: {1}</value>
   <data name="Bans_other" xml:space="preserve">
     <value>{0} sekatan</value>
   </data>
+  <data name="BanUser" xml:space="preserve">
+    <value>Larang pengguna</value>
+  </data>
   <data name="BioCopied" xml:space="preserve">
     <value>Bio disalin ke papan klip.</value>
   </data>
@@ -2683,6 +2701,12 @@ Jika ini bukan anda, sila masukkan kod yang kami kirim melalui SMS. Anda boleh j
   </data>
   <data name="ChangeColorToColor" xml:space="preserve">
     <value>Anda ingin guna latar belakang yang anda pilih atau set semula ke paras asal untuk tema ini?</value>
+  </data>
+  <data name="ChangeEmail" xml:space="preserve">
+    <value>Tukar Emel</value>
+  </data>
+  <data name="ChangeEmojiStatus" xml:space="preserve">
+    <value>Tukar Status</value>
   </data>
   <data name="ChangeLanguageLater" xml:space="preserve">
     <value>Anda boleh tukar bahasa nanti dalam Aturan.</value>
@@ -3366,6 +3390,18 @@ Panjang minima adalah 5 aksara.</value>
   <data name="CheckPhoneNumberYes" xml:space="preserve">
     <value>Ya</value>
   </data>
+  <data name="CheckYourEmail" xml:space="preserve">
+    <value>Semak Emel Anda</value>
+  </data>
+  <data name="CheckYourEmailSubtitle" xml:space="preserve">
+    <value>Sila masukkan kod kami kirim ke emel anda {0}.</value>
+  </data>
+  <data name="CheckYourNewEmail" xml:space="preserve">
+    <value>Semak Emel Baru Anda</value>
+  </data>
+  <data name="CheckYourNewEmailSubtitle" xml:space="preserve">
+    <value>Sila masukkan kod kami kirim ke emel baru anda {0}.</value>
+  </data>
   <data name="ChooseCountry" xml:space="preserve">
     <value>Pilih negara</value>
   </data>
@@ -3510,6 +3546,12 @@ Panjang minima adalah 5 aksara.</value>
   <data name="ClearRecentEmoji" xml:space="preserve">
     <value>Padam emoji terakhir?</value>
   </data>
+  <data name="ClearRecentEmojiStatusesText" xml:space="preserve">
+    <value>Anda ingin padam status emoji terbaru anda dan set semula cadangan?</value>
+  </data>
+  <data name="ClearRecentEmojiStatusesTitle" xml:space="preserve">
+    <value>Padam status terbaru</value>
+  </data>
   <data name="ClearRecentEmojiText" xml:space="preserve">
     <value>Anda ingin hilangkan semua emoji terbaru anda?</value>
   </data>
@@ -3518,6 +3560,12 @@ Panjang minima adalah 5 aksara.</value>
   </data>
   <data name="ClearRecentHistory" xml:space="preserve">
     <value>Padam Sejarah</value>
+  </data>
+  <data name="ClearRecentReactionsAlertMessage" xml:space="preserve">
+    <value>Anda ingin padam reaksi emoji terbaru anda dari cadangan?</value>
+  </data>
+  <data name="ClearRecentReactionsAlertTitle" xml:space="preserve">
+    <value>Padam emoji terbaru</value>
   </data>
   <data name="ClearRecentStickersAlertMessage" xml:space="preserve">
     <value>Anda ingin padam semua stiker terbaru anda?</value>
@@ -4341,6 +4389,9 @@ Pilihan anda yang ada adalah untuk cuba nombor yang lain atau hubungi **Sokongan
   <data name="DisablePasscodeTurnOff" xml:space="preserve">
     <value>Padam</value>
   </data>
+  <data name="DisableReactionsInfo" xml:space="preserve">
+    <value>Ahli grup tak boleh tambah reaksi ke mesej.</value>
+  </data>
   <data name="DisappearingGif" xml:space="preserve">
     <value>GIF Menghilang</value>
   </data>
@@ -4702,8 +4753,20 @@ Jika tiada bual dipilih, bual terbaru anda akan dipapar di wijet ini.</value>
 
 Jika tiada bual dipilih, bual anda yang paling kerap diguna akan dipapar di wijet ini.</value>
   </data>
+  <data name="EmailAddressInvalid" xml:space="preserve">
+    <value>Alamat emel salah.</value>
+  </data>
   <data name="EmailCopied" xml:space="preserve">
     <value>Emel disalin ke papan klip.</value>
+  </data>
+  <data name="EmailLogin" xml:space="preserve">
+    <value>Emel Log Masuk</value>
+  </data>
+  <data name="EmailLoginChangeMessage" xml:space="preserve">
+    <value>Alamat emel ini akan diguna setiap kali anda log masuk ke akaun Telegram dari peranti baru.</value>
+  </data>
+  <data name="EmailNotAllowed" xml:space="preserve">
+    <value>Domain emel ini tak dibenarkan.</value>
   </data>
   <data name="EmailPasswordConfirmText" xml:space="preserve">
     <value>Sila ikut langkah berikut bagi menyiapkan Aturan Verifikasi 2-Langkah:
@@ -4718,6 +4781,9 @@ Jika tiada bual dipilih, bual anda yang paling kerap diguna akan dipapar di wije
   </data>
   <data name="EmailPasswordConfirmText3" xml:space="preserve">
     <value>Untuk siapkan aturan emel pemulihan, semak {0} (jangan lupa folder spam) dan masukkan kod yang kami baru hantar kepda anda.</value>
+  </data>
+  <data name="EmailTokenInvalid" xml:space="preserve">
+    <value>Token emel salah.</value>
   </data>
   <data name="Emoji" xml:space="preserve">
     <value>Emoji</value>
@@ -4758,6 +4824,9 @@ Jika tiada bual dipilih, bual anda yang paling kerap diguna akan dipapar di wije
   <data name="EmojiBotInfo" xml:space="preserve">
     <value>Artis dibolehkan tambah pek emoji mereka menggunakan bot @stickers kami.</value>
   </data>
+  <data name="EmojiCopied" xml:space="preserve">
+    <value>Emoji disalin ke papan klip.</value>
+  </data>
   <data name="EmojiCount_other" xml:space="preserve">
     <value>{0} emoji</value>
   </data>
@@ -4766,6 +4835,9 @@ Jika tiada bual dipilih, bual anda yang paling kerap diguna akan dipapar di wije
   </data>
   <data name="EmojiInteractionTapHint" xml:space="preserve">
     <value>Jika **{0}** melihat bual ini sekarang, mereka juga akan nampak animasi ini.</value>
+  </data>
+  <data name="EmojiLongtapHint" xml:space="preserve">
+    <value>Tekan lama emoji untuk set pemasa</value>
   </data>
   <data name="EmojiPackCount_other" xml:space="preserve">
     <value>{0} Pek Emoji</value>
@@ -4778,6 +4850,9 @@ Jika tiada bual dipilih, bual anda yang paling kerap diguna akan dipapar di wije
   </data>
   <data name="EmojiRemovedMultipleInfo_other" xml:space="preserve">
     <value>{0} pek emoji tiada lagi dalam emoji anda.</value>
+  </data>
+  <data name="EmojiStatusExpireHint" xml:space="preserve">
+    <value>Status anda tamat {0}</value>
   </data>
   <data name="EmojiSuggestions" xml:space="preserve">
     <value>Cadangan emoji</value>
@@ -4799,6 +4874,9 @@ Jika tiada bual dipilih, bual anda yang paling kerap diguna akan dipapar di wije
   </data>
   <data name="Enable" xml:space="preserve">
     <value>Dayakan</value>
+  </data>
+  <data name="EnableAllReactionsInfo" xml:space="preserve">
+    <value>Ahli grup boleh guna mana-mana emoji sebagai reaksi kepada mesej.</value>
   </data>
   <data name="EnableAllStreamingInfo" xml:space="preserve">
     <value>Di mana mungkin, Telegram akan mula putar video dan muzik serta merta, tanpa menunggu untuk fail di muat turun sepenuhnya.</value>
@@ -4833,6 +4911,9 @@ Anda perlukan kata laluan ini untuk log masuk ke akaun Telegram anda.</value>
   </data>
   <data name="EnableReactionsGroupInfo" xml:space="preserve">
     <value>Benarkan ahli untuk beri reaksi pada mesej di grup.</value>
+  </data>
+  <data name="EnableSomeReactionsInfo" xml:space="preserve">
+    <value>Ahli grup boleh guna hanya beberapa emoji yang dibenarkan sebagai reaksi kepada mesej.</value>
   </data>
   <data name="EnableStreaming" xml:space="preserve">
     <value>Strim Video dan Fail Audio</value>
@@ -4906,6 +4987,9 @@ Sila dapat maklumat lebih di telegram.org</value>
   </data>
   <data name="EnterListName" xml:space="preserve">
     <value>Masukkan senarai nama</value>
+  </data>
+  <data name="EnterNewEmail" xml:space="preserve">
+    <value>Masukkan Emel Baru</value>
   </data>
   <data name="EnterNewFirstPasscode" xml:space="preserve">
     <value>Masukan kod laluan</value>
@@ -5952,6 +6036,9 @@ Semua bual rahsia akan hilang.</value>
   <data name="GifsTab2" xml:space="preserve">
     <value>GIF</value>
   </data>
+  <data name="GiftMonths_other" xml:space="preserve">
+    <value>{0}-bulan</value>
+  </data>
   <data name="GiftPremium" xml:space="preserve">
     <value>Hadiah Premium</value>
   </data>
@@ -6444,6 +6531,9 @@ Mesej akan diimport ke hari semasa tetapi juga akan memaparkan cap waktu asal. K
   </data>
   <data name="InstallGoogleMaps" xml:space="preserve">
     <value>Pasang Peta Google?</value>
+  </data>
+  <data name="InstallHuaweiMaps" xml:space="preserve">
+    <value>Pasang Peta Petal?</value>
   </data>
   <data name="InstallOfficialApp" xml:space="preserve">
     <value>Pasang aplikasi rasmi</value>
@@ -7157,6 +7247,9 @@ Operasi ini akan mengambil masa beberapa minit.</value>
   <data name="LoginAttemptsInfo" xml:space="preserve">
     <value>Peranti ini tiada akses ke mesej anda. Kod dimasukkan secara betul tetapi tiada kata laluan yang betul diberi.</value>
   </data>
+  <data name="LoginOrSingInWithGoogle" xml:space="preserve">
+    <value>atau</value>
+  </data>
   <data name="LoginPassword" xml:space="preserve">
     <value>Kata laluan</value>
   </data>
@@ -7411,6 +7504,15 @@ Panjang minima adalah 5 aksara.</value>
   <data name="MessageContainsEmojiPacks_other" xml:space="preserve">
     <value>Mesej ini mengandungi emoji dari **{0} Pek**.</value>
   </data>
+  <data name="MessageContainsEmojiPackSingle" xml:space="preserve">
+    <value>Mesej ini mengandungi **{0}** emoji.</value>
+  </data>
+  <data name="MessageContainsReactionsPack" xml:space="preserve">
+    <value>Emoji dari pek {0} diguna sebagai reaksi.</value>
+  </data>
+  <data name="MessageContainsReactionsPacks_other" xml:space="preserve">
+    <value>Emoji dari **pek {0}** diguna sebagai reaksi.</value>
+  </data>
   <data name="MessageCopied" xml:space="preserve">
     <value>Mesej disalin ke papan klip</value>
   </data>
@@ -7533,6 +7635,21 @@ Panjang minima adalah 5 aksara.</value>
   </data>
   <data name="Mi" xml:space="preserve">
     <value>batu</value>
+  </data>
+  <data name="MicrophoneForVoiceMessages" xml:space="preserve">
+    <value>Mikrofon untuk mesej suara</value>
+  </data>
+  <data name="MicrophoneForVoiceMessagesBuiltIn" xml:space="preserve">
+    <value>Dalaman</value>
+  </data>
+  <data name="MicrophoneForVoiceMessagesSco" xml:space="preserve">
+    <value>Set kepala</value>
+  </data>
+  <data name="MicrophoneForVoiceMessagesScoHint" xml:space="preserve">
+    <value>Mengguna mikrofon set kepala mungkin akan kurangkan bising sekitar, tetapi akan sedikit menjejas kualiti audio.</value>
+  </data>
+  <data name="MicrophoneForVoiceMessagesScoIfConnected" xml:space="preserve">
+    <value>Set kepala (jika tersambung)</value>
   </data>
   <data name="MigrateOldFolderButton" xml:space="preserve">
     <value>Pindah Fail Sekarang</value>
@@ -7957,6 +8074,12 @@ Anda boleh sesuaikan notifikasi untuk bual dengan membuka profil dan pilih Notif
   </data>
   <data name="NoPopup" xml:space="preserve">
     <value>Tiada muncul</value>
+  </data>
+  <data name="NoReactions" xml:space="preserve">
+    <value>Tiada reaksi</value>
+  </data>
+  <data name="NoReactionsFound" xml:space="preserve">
+    <value>Tiada reaksi dijumpa</value>
   </data>
   <data name="NoRecent" xml:space="preserve">
     <value>Tiada yang baru</value>
@@ -8684,6 +8807,9 @@ Pasukan Telegram </value>
   </data>
   <data name="OnlineCount_other" xml:space="preserve">
     <value>{0} di talian </value>
+  </data>
+  <data name="OnlyAllowThisReactions" xml:space="preserve">
+    <value>Hanya benarkan reaksi ini</value>
   </data>
   <data name="OnlyIfSilent" xml:space="preserve">
     <value>Hanya jika senyap</value>
@@ -9576,7 +9702,7 @@ Anda boleh melawat *FAQ* kami untuk maklumat lanjut.</value>
     <value>Cara pembayaran</value>
   </data>
   <data name="PaymentCheckoutMethodNewCard" xml:space="preserve">
-    <value>Kad baru</value>
+    <value>Tambah Kad Bank...</value>
   </data>
   <data name="PaymentCheckoutName" xml:space="preserve">
     <value>Nama</value>
@@ -10096,6 +10222,9 @@ Kami akan akses lokasi anda hanya untuk masa yang anda pilih, dan anda boleh hen
   <data name="PollViewResults" xml:space="preserve">
     <value>LIHAT KEPUTUSAN</value>
   </data>
+  <data name="PopularReactions" xml:space="preserve">
+    <value>Popular</value>
+  </data>
   <data name="PopupDisabled" xml:space="preserve">
     <value>Nyahdaya</value>
   </data>
@@ -10150,6 +10279,12 @@ Kami akan akses lokasi anda hanya untuk masa yang anda pilih, dan anda boleh hen
   <data name="PremiumPreviewEmojiPack" xml:space="preserve">
     <value>Pek emoji ini hanya tersedia untuk pelanggan **Telegram Premium**.</value>
   </data>
+  <data name="PremiumPreviewEmojiStatus" xml:space="preserve">
+    <value>Status Emoji</value>
+  </data>
+  <data name="PremiumPreviewEmojiStatusDescription" xml:space="preserve">
+    <value>Pilih dari beribu emoji untuk paparkan aktiviti terkini di sebelah nama anda.</value>
+  </data>
   <data name="PremiumPreviewLimits" xml:space="preserve">
     <value>Had Dua Kali Ganda</value>
   </data>
@@ -10173,6 +10308,12 @@ Kami akan akses lokasi anda hanya untuk masa yang anda pilih, dan anda boleh hen
   </data>
   <data name="PremiumPreviewReactions" xml:space="preserve">
     <value>Reaksi Unik</value>
+  </data>
+  <data name="PremiumPreviewReactions2" xml:space="preserve">
+    <value>Reaksi Tanpa Batas</value>
+  </data>
+  <data name="PremiumPreviewReactions2Description" xml:space="preserve">
+    <value>Bereaksi dengan beribu emoji  — dengan beberapa reaksi pada setiap mesej.</value>
   </data>
   <data name="PremiumPreviewReactionsDescription" xml:space="preserve">
     <value>Reaksi beranimasi tambahan pada mesej, hanya tersedia untuk pelanggan Premium.</value>
@@ -10206,6 +10347,15 @@ Kami akan akses lokasi anda hanya untuk masa yang anda pilih, dan anda boleh hen
   </data>
   <data name="PremiumStickerTooltip" xml:space="preserve">
     <value>Set ini mengandungi stiker premium seperti ini.</value>
+  </data>
+  <data name="PremiumTierAnnual" xml:space="preserve">
+    <value>Tahunan</value>
+  </data>
+  <data name="PremiumTierMonthly" xml:space="preserve">
+    <value>Bulanan</value>
+  </data>
+  <data name="PremiumTierSemiannual" xml:space="preserve">
+    <value>Separuh tahunan</value>
   </data>
   <data name="PreviewFeedback" xml:space="preserve">
     <value>Repot kutu dengan pratonton ini</value>
@@ -10251,6 +10401,12 @@ Kami akan akses lokasi anda hanya untuk masa yang anda pilih, dan anda boleh hen
   </data>
   <data name="PricePerMonth" xml:space="preserve">
     <value>{0} / bulan</value>
+  </data>
+  <data name="PricePerMonthMe" xml:space="preserve">
+    <value>{0}/bulan</value>
+  </data>
+  <data name="PricePerYear" xml:space="preserve">
+    <value>{0}/tahun</value>
   </data>
   <data name="PrimaryLinkHelp" xml:space="preserve">
     <value>Sesiapa yang ada Telegram terpasang akan boleh sertai grup anda melalui link ini.</value>
@@ -10734,8 +10890,14 @@ https://telegram.org/blog/coronavirus</value>
   <data name="Reactions" xml:space="preserve">
     <value>Reaksi</value>
   </data>
+  <data name="ReactionsAll" xml:space="preserve">
+    <value>Semua</value>
+  </data>
   <data name="ReactionsCount_other" xml:space="preserve">
     <value>{0} reaksi</value>
+  </data>
+  <data name="ReactionsLongtapHint" xml:space="preserve">
+    <value>Tekan lama untuk kirim reaksi super</value>
   </data>
   <data name="ReactionsOff" xml:space="preserve">
     <value>PADAM</value>
@@ -10757,6 +10919,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="RecentlyDownloaded" xml:space="preserve">
     <value>Dimuat turun terbaru</value>
+  </data>
+  <data name="RecentlyUsed" xml:space="preserve">
+    <value>Terbaru Diguna</value>
   </data>
   <data name="RecentlyViewed" xml:space="preserve">
     <value>Terbaru dibaca</value>
@@ -10891,10 +11056,13 @@ https://telegram.org/blog/coronavirus</value>
     <value>Balas</value>
   </data>
   <data name="ReplyToGroup" xml:space="preserve">
-    <value>Balas ke {0} </value>
+    <value>Balas</value>
   </data>
   <data name="ReplyToUser" xml:space="preserve">
-    <value>Balas ke {0} </value>
+    <value>Balas</value>
+  </data>
+  <data name="ReportAlertReaction" xml:space="preserve">
+    <value>Anda pasti ingin lapur reaksi dari pengguna ini?</value>
   </data>
   <data name="ReportChat" xml:space="preserve">
     <value>Repot </value>
@@ -10941,6 +11109,12 @@ https://telegram.org/blog/coronavirus</value>
   <data name="ReportMessagesCount" xml:space="preserve">
     <value>LAPUR {0}</value>
   </data>
+  <data name="ReportReaction" xml:space="preserve">
+    <value>Lapur reaksi</value>
+  </data>
+  <data name="ReportReactionAndBan" xml:space="preserve">
+    <value>Larang dan Lapur</value>
+  </data>
   <data name="ReportSelectMessages" xml:space="preserve">
     <value>Pilih mesej</value>
   </data>
@@ -10974,6 +11148,9 @@ Terima kasih di atas kerjasama anda!</value>
   </data>
   <data name="ReportSpamUser" xml:space="preserve">
     <value>SEKAT PENGGUNA</value>
+  </data>
+  <data name="ReportSpamUserEmojiStatusHint" xml:space="preserve">
+    <value>Akaun ini guna {0} sebagai status tersuai sebelah namanya. Status emoji sedemikian tersedia untuk semua pelanggan {1}.</value>
   </data>
   <data name="ReportTitleChild" xml:space="preserve">
     <value>Lapur Penganiyaan Budak</value>
@@ -11073,7 +11250,7 @@ Anda boleh batalkan proses ini bila-bila masa.</value>
     <value>Set Semula Semua Notifikasi</value>
   </data>
   <data name="ResetAutomaticMediaDownload" xml:space="preserve">
-    <value>Set semula Aturan Muat Turun Automatik</value>
+    <value>Set Semula Muat Turun Auto</value>
   </data>
   <data name="ResetAutomaticMediaDownloadAlert" xml:space="preserve">
     <value>Anda pasti mahu set semula aturan muat turun automatik?</value>
@@ -11465,6 +11642,9 @@ Anda mungkin perlu mula semula aplikasi sebelum ianya berkuatkuasa.</value>
   <data name="SearchMusic" xml:space="preserve">
     <value>Cari muzik</value>
   </data>
+  <data name="SearchReactionsHint" xml:space="preserve">
+    <value>Cari reaksi</value>
+  </data>
   <data name="SearchRecentFiles" xml:space="preserve">
     <value>Cari Fail Terbaru</value>
   </data>
@@ -11575,6 +11755,12 @@ Anda mungkin perlu mula semula aplikasi sebelum ianya berkuatkuasa.</value>
   </data>
   <data name="SelectOtherChat" xml:space="preserve">
     <value>Pilih bual lain</value>
+  </data>
+  <data name="SelectSendAsPeerPremiumHint" xml:space="preserve">
+    <value>Langgani **Telegram Premium** untuk membolehkan anda komen bagi pihak saluran anda di mana-mana grup bual.</value>
+  </data>
+  <data name="SelectSendAsPeerPremiumOpen" xml:space="preserve">
+    <value>Buka</value>
   </data>
   <data name="SelectTheme" xml:space="preserve">
     <value>Pilih tema</value>
@@ -11745,7 +11931,7 @@ Anda mungkin perlu mula semula aplikasi sebelum ianya berkuatkuasa.</value>
     <value>Semak mesej Telegram anda</value>
   </data>
   <data name="SentAppCodeWithPhone" xml:space="preserve">
-    <value>Kami kirim kod ke aplikasi **Telegram** untuk {0} pada peranti anda yang lain..</value>
+    <value>Kami kirim kod ke **aplikasi Telegram** untuk {0} pada peranti anda yang lain.</value>
   </data>
   <data name="SentCallCode" xml:space="preserve">
     <value>Kita membuat panggilan ke fon anda **{0}**.
@@ -11817,6 +12003,30 @@ Jangan jawab, Telegram akan proses semuanya secara automatik. </value>
   </data>
   <data name="SetColor" xml:space="preserve">
     <value>Set warna</value>
+  </data>
+  <data name="SetEmojiStatus" xml:space="preserve">
+    <value>Set Status Emoji</value>
+  </data>
+  <data name="SetEmojiStatusUntil1Hour" xml:space="preserve">
+    <value>Set untuk 1 jam</value>
+  </data>
+  <data name="SetEmojiStatusUntil2Days" xml:space="preserve">
+    <value>Set untuk 2 hari</value>
+  </data>
+  <data name="SetEmojiStatusUntil2Hours" xml:space="preserve">
+    <value>Set untuk 2 jam</value>
+  </data>
+  <data name="SetEmojiStatusUntil8Hours" xml:space="preserve">
+    <value>Set untuk 8 jam</value>
+  </data>
+  <data name="SetEmojiStatusUntilButton" xml:space="preserve">
+    <value>Status Set</value>
+  </data>
+  <data name="SetEmojiStatusUntilOther" xml:space="preserve">
+    <value>Yang lain…</value>
+  </data>
+  <data name="SetEmojiStatusUntilTitle" xml:space="preserve">
+    <value>Status set sehingga…</value>
   </data>
   <data name="SetNewPassword" xml:space="preserve">
     <value>Set kata laluan baru</value>
@@ -12140,6 +12350,9 @@ Sila masukkan nombor yang betul termasuk kod negara anda.</value>
   <data name="ShuffleList" xml:space="preserve">
     <value>🔀 Senarai</value>
   </data>
+  <data name="SignInWithGoogle" xml:space="preserve">
+    <value>Log masuk dengan Google</value>
+  </data>
   <data name="SignUp" xml:space="preserve">
     <value>Daftar</value>
   </data>
@@ -12213,6 +12426,9 @@ Mod Perlahan didayakan. Anda tak boleh kirim lebih dari satu mesej pada masa yan
   </data>
   <data name="SoftUserLimitAlert" xml:space="preserve">
     <value>Anda boleh menambah lagu ahli selepas grup dcipta.</value>
+  </data>
+  <data name="SomeReactions" xml:space="preserve">
+    <value>Beberapa reaksi</value>
   </data>
   <data name="SortBy" xml:space="preserve">
     <value>Susun Ikut</value>
@@ -12670,6 +12886,9 @@ Jika '**Segerak Kenalan**' didayakan, buku fon anda akan disegerak semula.</valu
   <data name="TapForVideo" xml:space="preserve">
     <value>Tekan untuk foto, tekan lama untuk video</value>
   </data>
+  <data name="TapHereEmoji" xml:space="preserve">
+    <value>Tekan {0} untuk akses emoji lain.</value>
+  </data>
   <data name="TapHereGifs" xml:space="preserve">
     <value>Tekan di sini untuk akses GIF tersimpan</value>
   </data>
@@ -12781,11 +13000,26 @@ Lihat apa yang kini disediakan.</value>
   <data name="TelegramPremiumUserGiftedPremiumDialogTitle" xml:space="preserve">
     <value>**{0}** hadiahkan anda {1} bulan langganan Telegram Premium.</value>
   </data>
+  <data name="TelegramPremiumUserGiftedPremiumDialogTitleWithPlural" xml:space="preserve">
+    <value>**{0}** hadiahkan anda {1} langganan Telegram Premium.</value>
+  </data>
   <data name="TelegramPremiumUserGiftedPremiumOutboundDialogSubtitle" xml:space="preserve">
     <value>**{0}** kini ada akses ke ciri tambahan.</value>
   </data>
   <data name="TelegramPremiumUserGiftedPremiumOutboundDialogTitle" xml:space="preserve">
     <value>Anda hadiahkan **{0}** {1} bulan langganan untuk Telegram Premium.</value>
+  </data>
+  <data name="TelegramPremiumUserGiftedPremiumOutboundDialogTitleWithPlural" xml:space="preserve">
+    <value>Anda hadiahkan **{0}** {1} langganan Telegram Premium.</value>
+  </data>
+  <data name="TelegramPremiumUserStatusDefaultDialogTitle" xml:space="preserve">
+    <value>Ini adalah status terkini {0}.</value>
+  </data>
+  <data name="TelegramPremiumUserStatusDialogSubtitle" xml:space="preserve">
+    <value>Status emoji adalah ciri premium. Ciri-ciri lain tersedia di **Telegram Premium**:</value>
+  </data>
+  <data name="TelegramPremiumUserStatusDialogTitle" xml:space="preserve">
+    <value>{0} set emoji ini dari **{1}** sebagai status terkininya.</value>
   </data>
   <data name="TelegramTones" xml:space="preserve">
     <value>Nada Telegram</value>
@@ -13267,6 +13501,9 @@ Jika anda tidak selesa dengan keperluan kecil Telegram, kami tak akan dapat beri
   <data name="UnlockPremiumEmojiPack" xml:space="preserve">
     <value>Guna {0}</value>
   </data>
+  <data name="UnlockPremiumEmojiReaction" xml:space="preserve">
+    <value>Langgani **Telegram Premium** untuk guna reaksi ini.</value>
+  </data>
   <data name="UnlockPremiumIcons" xml:space="preserve">
     <value>Buka Ikon Premium</value>
   </data>
@@ -13635,6 +13872,9 @@ Anda boleh guna **a–z**, **0–9** dan _. Panjang minima adalah **5** abjad.</
   </data>
   <data name="VerificationCode" xml:space="preserve">
     <value>Kod Verifikasi</value>
+  </data>
+  <data name="VerificationCodeSubtitle" xml:space="preserve">
+    <value>Sila semak emel anda {0} (jangan lupa folder spam) dan masukkan kod kami baru kirim anda.</value>
   </data>
   <data name="ViaBot" xml:space="preserve">
     <value>melalui</value>
@@ -14762,11 +15002,17 @@ Sekiranya anda lupa kata laluan, akaun Telegram anda tidak lagi boleh diakses. T
   <data name="YourLocatedChannelsTooMuch" xml:space="preserve">
     <value>Maaf, anda telah mempunyai terlalu banyak grup berasaskan lokasi.Sila hapus mereka dahulu.</value>
   </data>
+  <data name="YourLoginEmailChangedSuccess" xml:space="preserve">
+    <value>Emel anda telah ditukar.</value>
+  </data>
   <data name="YourName" xml:space="preserve">
     <value>Nama Anda</value>
   </data>
   <data name="YourNameChanged" xml:space="preserve">
     <value>Nama dikemaskini.</value>
+  </data>
+  <data name="YourNewEmail" xml:space="preserve">
+    <value>Emel baru anda</value>
   </data>
   <data name="YourNumber" xml:space="preserve">
     <value>Nombor fon anda</value>
