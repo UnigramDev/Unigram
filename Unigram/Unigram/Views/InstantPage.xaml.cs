@@ -34,9 +34,9 @@ namespace Unigram.Views
     {
         public InstantViewModel ViewModel => DataContext as InstantViewModel;
 
-        public ISettingsService Settings => throw new NotImplementedException();
+        public ISettingsService Settings => ViewModel.Settings;
 
-        public IEventAggregator Aggregator => throw new NotImplementedException();
+        public IEventAggregator Aggregator => ViewModel.Aggregator;
 
         public IDictionary<long, MessageViewModel> SelectedItems => throw new NotImplementedException();
 
