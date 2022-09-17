@@ -102,6 +102,21 @@ namespace Unigram.ViewModels.Chats
                     OnSelectedItemChanged(_selectedItem);
                 }
             }
+
+            if (_firstItem is GalleryMessage first)
+            {
+                var response = await ClientService.SendAsync(new GetChatMessagePosition(first.ChatId, first.Id, _filter, _threadId));
+                if (response is Count count)
+                {
+                    _firstPosition = count.CountValue;
+                }
+                else
+                {
+                    _firstPosition = 0;
+                }
+
+                RaisePropertyChanged(nameof(Position));
+            }
         }
 
         protected override async void LoadPrevious()
@@ -178,7 +193,18 @@ namespace Unigram.ViewModels.Chats
             }
         }
 
-        public override int Position => _isMirrored ? base.Position : TotalItems - (Items.Count - base.Position);
+        private int _firstPosition;
+        public override int Position
+        {
+            get
+            {
+                var firstIndex = Items.IndexOf(_firstItem);
+                var currentIndex = Items.IndexOf(_selectedItem);
+
+                var position = _firstPosition + (firstIndex - currentIndex);
+                return _isMirrored ? position : TotalItems - position;
+            }
+        }
 
         public override MvxObservableCollection<GalleryContent> Group => _group;
     }
