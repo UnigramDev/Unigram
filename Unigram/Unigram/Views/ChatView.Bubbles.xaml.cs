@@ -9,6 +9,7 @@ using Unigram.Controls.Chats;
 using Unigram.Controls.Gallery;
 using Unigram.Controls.Messages;
 using Unigram.Converters;
+using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Chats;
 using Unigram.ViewModels.Gallery;
@@ -228,6 +229,7 @@ namespace Unigram.Views
             }
 
             _dateHeaderTimer.Stop();
+            _dateHeaderTimer.Start();
             ShowHideDateHeader(minDateValue > 0 && minDateIndex > 0, minDateValue > 0 && minDateIndex is > 0 and < int.MaxValue);
 
             // Read and play messages logic:
@@ -307,7 +309,6 @@ namespace Unigram.Views
                 if (show)
                 {
                     _dateHeaderCollapsed = false;
-                    _dateHeaderTimer.Start();
                 }
                 else
                 {
@@ -512,6 +513,11 @@ namespace Unigram.Views
 
                 if (args.ItemContainer.ContentTemplateRoot is MessageSelector selettore)
                 {
+                    if (_effectiveViewportHandler != null)
+                    {
+                        selettore.EffectiveViewportChanged -= _effectiveViewportHandler;
+                    }
+
                     selettore.Unload();
                 }
 
@@ -603,11 +609,68 @@ namespace Unigram.Views
             if (args.ItemContainer.ContentTemplateRoot is MessageSelector selector
                 && selector.Content is MessageBubble bubble)
             {
+                if (SettingsService.Current.Diagnostics.StickyPhotos)
+                {
+                    selector.EffectiveViewportChanged += _effectiveViewportHandler ??= new TypedEventHandler<FrameworkElement, EffectiveViewportChangedEventArgs>(Item_EffectiveViewportChanged);
+                }
+
                 bubble.RegisterEvents();
             }
         }
 
+        private void Item_EffectiveViewportChanged(FrameworkElement sender, EffectiveViewportChangedEventArgs args)
+        {
+            if (StickyPhoto == null)
+            {
+                FindName(nameof(StickyPhoto));
+            }
+
+            if (sender is MessageSelector selector && selector.Content is MessageBubble bubble)
+            {
+                var message = selector.Message;
+
+                if (args.EffectiveViewport.Bottom <= sender.ActualHeight && args.EffectiveViewport.Bottom >= 0)
+                {
+                    if (message.HasSenderPhoto)
+                    {
+                        if (args.EffectiveViewport.Bottom < 34 && message.IsFirst)
+                        {
+                            bubble.UpdatePhoto(message, true);
+                            bubble.ShowHidePhoto(true, VerticalAlignment.Top);
+
+                            StickyPhoto.Visibility = Visibility.Collapsed;
+                        }
+                        else
+                        {
+                            bubble.ShowHidePhoto(false);
+
+                            var source = bubble.PhotoSource;
+                            if (source?.Source == null)
+                            {
+                                StickyPhoto.SetMessage(message);
+                            }
+                            else
+                            {
+                                StickyPhoto.CloneSource(source);
+                            }
+
+                            StickyPhoto.Visibility = Visibility.Visible;
+                        }
+                    }
+                    else
+                    {
+                        StickyPhoto.Visibility = Visibility.Collapsed;
+                    }
+                }
+                else
+                {
+                    bubble.ShowHidePhoto(message.IsLast && args.EffectiveViewport.Bottom > 0);
+                }
+            }
+        }
+
         private TypedEventHandler<UIElement, ContextRequestedEventArgs> _contextRequestedHandler;
+        private TypedEventHandler<FrameworkElement, EffectiveViewportChangedEventArgs> _effectiveViewportHandler;
         private SizeChangedEventHandler _sizeChangedHandler;
 
         private SelectorItem CreateSelectorItem(string typeName)

@@ -37,6 +37,13 @@ namespace Unigram.Services.Settings
             set => AddOrUpdateValue(ref _allowRightToLeft, "AllowRightToLeft", value);
         }
 
+        private bool? _stickyPhotos;
+        public bool StickyPhotos
+        {
+            get => _stickyPhotos ??= GetValueOrDefault("StickyPhotos", false);
+            set => AddOrUpdateValue(ref _stickyPhotos, "StickyPhotos", value);
+        }
+
         private bool? _lowLatencyGC;
         public bool LowLatencyGC
         {

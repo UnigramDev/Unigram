@@ -479,11 +479,22 @@ namespace Unigram.Controls.Messages
             UpdatePhoto(message);
         }
 
-        private void UpdatePhoto(MessageViewModel message)
+        public void ShowHidePhoto(bool show, VerticalAlignment alignment = VerticalAlignment.Bottom)
+        {
+            if (Photo != null)
+            {
+                Photo.Opacity = show ? 1 : 0;
+                Photo.VerticalAlignment = alignment;
+            }
+        }
+
+        public ProfilePicture PhotoSource => Photo;
+
+        public void UpdatePhoto(MessageViewModel message, bool force = false)
         {
             if (message.HasSenderPhoto)
             {
-                if (message.IsLast)
+                if (message.IsLast || (message.IsFirst && force))
                 {
                     if (message.Id != _photoId || Photo == null || Photo.Visibility == Visibility.Collapsed)
                     {
@@ -491,36 +502,6 @@ namespace Unigram.Controls.Messages
                         {
                             Photo = GetTemplateChild(nameof(Photo)) as ProfilePicture;
                             Photo.Click += Photo_Click;
-                        }
-
-                            if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser && message.ClientService.TryGetUser(fromUser.SenderUserId, out User fromUserUser))
-                            {
-                                Photo.SetUser(message.ClientService, fromUserUser, 30);
-                            }
-                            else if (message.ForwardInfo?.Origin is MessageForwardOriginChat fromChat && message.ClientService.TryGetChat(fromChat.SenderChatId, out Chat fromChatChat))
-                            {
-                                Photo.SetChat(message.ClientService, fromChatChat, 30);
-                            }
-                            else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel && message.ClientService.TryGetChat(fromChannel.ChatId, out Chat fromChannelChat))
-                            {
-                                Photo.SetChat(message.ClientService, fromChannelChat, 30);
-                            }
-                            else if (message.ForwardInfo?.Origin is MessageForwardOriginMessageImport fromImport)
-                            {
-                                Photo.Source = PlaceholderHelper.GetNameForUser(fromImport.SenderName, 30);
-                            }
-                            else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser fromHiddenUser)
-                            {
-                                Photo.Source = PlaceholderHelper.GetNameForUser(fromHiddenUser.SenderName, 30);
-                            }
-                        }
-                        else if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
-                        {
-                            Photo.SetUser(message.ClientService, senderUser, 30);
-                        }
-                        else if (message.ClientService.TryGetChat(message.SenderId, out Chat senderChat))
-                        {
-                            Photo.SetChat(message.ClientService, senderChat, 30);
                         }
 
                         _photoId = message.Id;
