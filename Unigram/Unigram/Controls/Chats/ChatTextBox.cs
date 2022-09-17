@@ -470,7 +470,7 @@ namespace Unigram.Controls.Chats
                         return true;
                     }
 
-                    autocomplete = new SearchStickersCollection(ViewModel.ClientService, ViewModel.Settings, true, result, ViewModel.Chat.Id);
+                    autocomplete = new SearchStickersCollection(ViewModel.ClientService, ViewModel.Settings, true, result, ViewModel.Chat?.Id ?? 0);
                     return true;
                 }
                 else if (entity == AutocompleteEntity.Emoji && fromTextChanging)
