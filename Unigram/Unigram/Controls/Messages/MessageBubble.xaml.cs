@@ -1,7 +1,6 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using System.Text;
 using Telegram.Td;
@@ -39,8 +38,6 @@ namespace Unigram.Controls.Messages
         private long? _photoId;
 
         private bool _ignoreSizeChanged = true;
-        private bool _ignoreSpoilers = false;
-        private bool _ignoreLayoutUpdated = true;
 
         private DirectRectangleClip _cornerRadius;
 
@@ -61,7 +58,7 @@ namespace Unigram.Controls.Messages
         private Grid ContentPanel;
         private Grid Header;
         private MessageBubblePanel Panel;
-        private RichTextBlock Message;
+        private FormattedTextBlock Message;
         private Border Media;
         private MessageFooter Footer;
         private ReactionsPanel Reactions;
@@ -80,8 +77,6 @@ namespace Unigram.Controls.Messages
         private GlyphButton PsaInfo;
 
         private MessageReference Reply;
-
-        private CustomEmojiCanvas CustomEmoji;
 
         private HyperlinkButton Thread;
         private StackPanel RecentRepliers;
@@ -103,7 +98,7 @@ namespace Unigram.Controls.Messages
             Header = GetTemplateChild(nameof(Header)) as Grid;
             ForwardLabel = GetTemplateChild(nameof(ForwardLabel)) as TextBlock;
             Panel = GetTemplateChild(nameof(Panel)) as MessageBubblePanel;
-            Message = GetTemplateChild(nameof(Message)) as RichTextBlock;
+            Message = GetTemplateChild(nameof(Message)) as FormattedTextBlock;
             Media = GetTemplateChild(nameof(Media)) as Border;
             Footer = GetTemplateChild(nameof(Footer)) as MessageFooter;
             Reactions = GetTemplateChild(nameof(Reactions)) as ReactionsPanel;
@@ -112,6 +107,7 @@ namespace Unigram.Controls.Messages
             //ContentPanel.DragStarting += OnDragStarting;
             ContentPanel.SizeChanged += OnSizeChanged;
             Message.ContextMenuOpening += Message_ContextMenuOpening;
+            Message.TextEntityClick += Message_TextEntityClick;
             Footer.SizeChanged += Footer_SizeChanged;
 
             ElementCompositionPreview.SetIsTranslationEnabled(Header, true);
@@ -197,9 +193,9 @@ namespace Unigram.Controls.Messages
 
         public void UpdateMessage(MessageViewModel message)
         {
-            if (_message?.Id != message?.Id)
+            if (_message?.Id != message?.Id && Message != null)
             {
-                _ignoreSpoilers = false;
+                Message.IgnoreSpoilers = false;
             }
 
             _message = message;
@@ -233,11 +229,10 @@ namespace Unigram.Controls.Messages
             }
             else
             {
-                Message.Blocks.Clear();
+                Message.Clear();
                 Media.Child = null;
                 Reactions.UpdateMessageReactions(null);
 
-                UnloadObject(ref CustomEmoji);
                 UnloadObject(ref MediaReactions);
             }
 
@@ -1543,102 +1538,85 @@ namespace Unigram.Controls.Messages
             return null;
         }
 
-        public IPlayerView GetCustomEmoji() => CustomEmoji;
-
         private void UpdateMessageText(MessageViewModel message)
         {
-            Message.Blocks.Clear();
-
             var result = false;
-            var adjust = false;
             var cleanup = false;
 
             var content = message.GeneratedContent ?? message.Content;
             if (content is MessageText text)
             {
-                result = ReplaceEntities(message, Message, text.Text, out adjust);
+                result = ReplaceEntities(message, text.Text);
             }
             else if (content is MessageAlbum album)
             {
-                result = ReplaceEntities(message, Message, album.Caption, out adjust);
+                result = ReplaceEntities(message, album.Caption);
             }
             else if (content is MessageAnimation animation)
             {
-                result = ReplaceEntities(message, Message, animation.Caption, out adjust);
+                result = ReplaceEntities(message, animation.Caption);
             }
             else if (content is MessageAudio audio)
             {
-                result = ReplaceEntities(message, Message, audio.Caption, out adjust);
+                result = ReplaceEntities(message, audio.Caption);
             }
             else if (content is MessageDocument document)
             {
-                result = ReplaceEntities(message, Message, document.Caption, out adjust);
+                result = ReplaceEntities(message, document.Caption);
             }
             else if (content is MessagePhoto photo)
             {
-                result = ReplaceEntities(message, Message, photo.Caption, out adjust);
+                result = ReplaceEntities(message, photo.Caption);
             }
             else if (content is MessageVideo video)
             {
-                result = ReplaceEntities(message, Message, video.Caption, out adjust);
+                result = ReplaceEntities(message, video.Caption);
             }
             else if (content is MessageVoiceNote voiceNote)
             {
-                result = ReplaceEntities(message, Message, voiceNote.Caption, out adjust);
+                result = ReplaceEntities(message, voiceNote.Caption);
             }
             else if (content is MessageUnsupported)
             {
-                result = GetEntities(message, Message, Strings.Resources.UnsupportedMedia, out adjust);
+                result = GetEntities(message, Strings.Resources.UnsupportedMedia);
                 cleanup = true;
             }
             else if (content is MessageVenue venue)
             {
-                var paragraph = new Paragraph();
-                paragraph.Inlines.Add(CreateRun(venue.Venue.Title, FontWeights.SemiBold));
-                paragraph.Inlines.Add(new LineBreak());
-                paragraph.Inlines.Add(CreateRun(venue.Venue.Address));
+                var venueText = $"{venue.Venue.Title}{Environment.NewLine}{venue.Venue.Address}";
+                var venueEntities = new TextEntity[]
+                {
+                    new TextEntity(0, venue.Venue.Title.Length, new TextEntityTypeBold())
+                };
 
-                Message.Blocks.Add(paragraph);
-                result = true;
+                result = ReplaceEntities(message, venueText, venueEntities);
                 cleanup = true;
             }
             else if (content is MessageBigEmoji bigEmoji)
             {
-                var paragraph = new Paragraph();
-                paragraph.Inlines.Add(new Run { Text = bigEmoji.Text.Text, FontSize = 32 });
+                //var paragraph = new Paragraph();
+                //paragraph.Inlines.Add(new Run { Text = bigEmoji.Text.Text, FontSize = 32 });
 
-                Message.Blocks.Clear();
-                Message.Blocks.Add(paragraph);
-                //result = ReplaceEntities(message, Message, bigEmoji.Text, out adjust, 32);
-                result = true;
+                //Message.Blocks.Clear();
+                //Message.Blocks.Add(paragraph);
+                result = ReplaceEntities(message, bigEmoji.Text, 32);
                 cleanup = true;
             }
 
             Message.Visibility = result ? Visibility.Visible : Visibility.Collapsed;
             //Footer.HorizontalAlignment = adjust ? HorizontalAlignment.Left : HorizontalAlignment.Right;
 
-            if (adjust && Message.Blocks.Count > 0 && Message.Blocks[0] is Paragraph existing)
+            if (cleanup)
             {
-                existing.Inlines.Add(new LineBreak());
-            }
-
-            if (cleanup && CustomEmoji != null)
-            {
-                _positions.Clear();
-
-                _ignoreLayoutUpdated = true;
-                Message.LayoutUpdated -= OnLayoutUpdated;
-
-                UnloadObject(ref CustomEmoji);
+                Message.Cleanup();
             }
         }
 
-        private bool GetEntities(MessageViewModel message, RichTextBlock textBlock, string text, out bool adjust)
+        private bool GetEntities(MessageViewModel message, string text)
         {
             if (string.IsNullOrEmpty(text))
             {
                 //Message.Visibility = Visibility.Collapsed;
-                adjust = false;
                 return false;
             }
             else
@@ -1648,393 +1626,32 @@ namespace Unigram.Controls.Messages
                 var response = Client.Execute(new GetTextEntities(text));
                 if (response is TextEntities entities)
                 {
-                    return ReplaceEntities(message, textBlock, text, entities.Entities, out adjust);
+                    return ReplaceEntities(message, text, entities.Entities);
                 }
-
-                var paragraph = new Paragraph();
-                paragraph.Inlines.Add(CreateRun(text));
-
-                textBlock.Blocks.Add(paragraph);
-
-                adjust = false;
-                return true;
+                else
+                {
+                    return ReplaceEntities(message, text, new TextEntity[0]);
+                }
             }
         }
 
-        private bool ReplaceEntities(MessageViewModel message, RichTextBlock textBlock, FormattedText text, out bool adjust, double fontSize = 0)
+        private bool ReplaceEntities(MessageViewModel message, FormattedText text, double fontSize = 0)
         {
             if (text == null)
             {
-                adjust = false;
                 return false;
             }
 
-            return ReplaceEntities(message, textBlock, text.Text, text.Entities, out adjust, fontSize);
+            return ReplaceEntities(message, text.Text, text.Entities, fontSize);
         }
 
-        private bool ReplaceEntities(MessageViewModel message, RichTextBlock textBlock, string text, IList<TextEntity> entities, out bool adjust, double fontSize = 0)
+        private bool ReplaceEntities(MessageViewModel message, string text, IList<TextEntity> entities, double fontSize = 0)
         {
-            if (string.IsNullOrEmpty(text))
-            {
-                adjust = false;
-                return false;
-            }
-
-            _positions.Clear();
-            textBlock.TextHighlighters.Clear();
-            TextHighlighter spoiler = null;
-
-            var preformatted = false;
-
-            var runs = TextStyleRun.GetRuns(text, entities);
-            var previous = 0;
-
-            var shift = 1;
-            var close = false;
-
-            var direct = XamlDirect.GetDefault();
-            var paragraph = direct.CreateInstance(XamlTypeIndex.Paragraph);
-            var inlines = direct.GetXamlDirectObjectProperty(paragraph, XamlPropertyIndex.Paragraph_Inlines);
-
-            if (fontSize > 0)
-            {
-                direct.SetDoubleProperty(paragraph, XamlPropertyIndex.TextElement_FontSize, fontSize);
-            }
-
-            var emojis = new HashSet<long>();
-
-            foreach (var entity in runs)
-            {
-                if (entity.Offset > previous)
-                {
-                    direct.AddToCollection(inlines, CreateDirectRun(text.Substring(previous, entity.Offset - previous)));
-
-                    // Run
-                    shift++;
-                    shift += entity.Offset - previous;
-
-                    shift++;
-                }
-
-                if (entity.Length + entity.Offset > text.Length)
-                {
-                    previous = entity.Offset + entity.Length;
-                    continue;
-                }
-
-                if (entity.HasFlag(TextStyle.Monospace))
-                {
-                    var data = text.Substring(entity.Offset, entity.Length);
-
-                    if (message.Delegate.Settings.Diagnostics.CopyFormattedCode && entity.Type is TextEntityTypeCode)
-                    {
-                        var hyperlink = new Hyperlink();
-                        hyperlink.Click += (s, args) => Entity_Click(message, entity.Type, data);
-                        hyperlink.Foreground = Message.Foreground;
-                        hyperlink.UnderlineStyle = UnderlineStyle.None;
-
-                        hyperlink.Inlines.Add(CreateRun(data, fontFamily: new FontFamily("Consolas")));
-                        direct.AddToCollection(inlines, direct.GetXamlDirectObject(hyperlink));
-
-                        // Hyperlink
-                        shift++;
-                        close = true;
-
-                        // Run
-                        shift++;
-                        shift += entity.Length;
-                    }
-                    else
-                    {
-                        direct.AddToCollection(inlines, CreateDirectRun(data, fontFamily: new FontFamily("Consolas")));
-                        preformatted = entity.Type is TextEntityTypePre or TextEntityTypePreCode;
-
-                        // Run
-                        shift++;
-                        shift += entity.Length;
-                    }
-                }
-                else
-                {
-                    var local = inlines;
-
-                    if (_ignoreSpoilers is false && entity.HasFlag(TextStyle.Spoiler))
-                    {
-                        var hyperlink = new Hyperlink();
-                        hyperlink.Click += (s, args) => Entity_Click(message, new TextEntityTypeSpoiler(), null);
-                        hyperlink.Foreground = Message.Foreground;
-                        hyperlink.UnderlineStyle = UnderlineStyle.None;
-                        hyperlink.FontFamily = App.Current.Resources["SpoilerFontFamily"] as FontFamily;
-                        //hyperlink.Foreground = foreground;
-
-                        spoiler ??= new TextHighlighter();
-                        spoiler.Ranges.Add(new TextRange { StartIndex = entity.Offset, Length = entity.Length });
-
-                        var temp = direct.GetXamlDirectObject(hyperlink);
-
-                        direct.AddToCollection(inlines, temp);
-                        local = direct.GetXamlDirectObjectProperty(temp, XamlPropertyIndex.Span_Inlines);
-
-                        // Hyperlink
-                        shift++;
-                        close = true;
-                    }
-                    else if (entity.HasFlag(TextStyle.Mention) || entity.HasFlag(TextStyle.Url))
-                    {
-                        if (entity.Type is TextEntityTypeMentionName or TextEntityTypeTextUrl)
-                        {
-                            var hyperlink = new Hyperlink();
-                            object data;
-                            if (entity.Type is TextEntityTypeTextUrl textUrl)
-                            {
-                                data = textUrl.Url;
-                                MessageHelper.SetEntityData(hyperlink, textUrl.Url);
-                                MessageHelper.SetEntityType(hyperlink, entity.Type);
-
-                                ToolTipService.SetToolTip(hyperlink, textUrl.Url);
-                            }
-                            else if (entity.Type is TextEntityTypeMentionName mentionName)
-                            {
-                                data = mentionName.UserId;
-                            }
-
-                            hyperlink.Click += (s, args) => Entity_Click(message, entity.Type, null);
-                            hyperlink.Foreground = GetBrush("MessageForegroundLinkBrush");
-                            //hyperlink.Foreground = foreground;
-
-                            var temp = direct.GetXamlDirectObject(hyperlink);
-
-                            direct.AddToCollection(inlines, temp);
-                            local = direct.GetXamlDirectObjectProperty(temp, XamlPropertyIndex.Span_Inlines);
-                        }
-                        else
-                        {
-                            var hyperlink = new Hyperlink();
-                            var original = entities.FirstOrDefault(x => x.Offset <= entity.Offset && x.Offset + x.Length >= entity.End);
-
-                            var data = text.Substring(entity.Offset, entity.Length);
-
-                            if (original != null)
-                            {
-                                data = text.Substring(original.Offset, original.Length);
-                            }
-
-                            hyperlink.Click += (s, args) => Entity_Click(message, entity.Type, data);
-                            hyperlink.Foreground = GetBrush("MessageForegroundLinkBrush");
-                            //hyperlink.Foreground = foreground;
-
-                            //if (entity.Type is TextEntityTypeUrl || entity.Type is TextEntityTypeEmailAddress || entity.Type is TextEntityTypeBankCardNumber)
-                            {
-                                MessageHelper.SetEntityData(hyperlink, data);
-                                MessageHelper.SetEntityType(hyperlink, entity.Type);
-                            }
-
-                            var temp = direct.GetXamlDirectObject(hyperlink);
-
-                            direct.AddToCollection(inlines, temp);
-                            local = direct.GetXamlDirectObjectProperty(temp, XamlPropertyIndex.Span_Inlines);
-                        }
-
-                        // Hyperlink
-                        shift++;
-                        close = true;
-                    }
-
-                    if (entity.Type is TextEntityTypeCustomEmoji customEmoji)
-                    {
-                        // Run
-                        shift++;
-
-                        _positions.Add(new EmojiPosition { X = shift, CustomEmojiId = customEmoji.CustomEmojiId });
-
-                        direct.AddToCollection(inlines, CreateDirectRun(text.Substring(entity.Offset, entity.Length), fontFamily: App.Current.Resources["SpoilerFontFamily"] as FontFamily));
-                        emojis.Add(customEmoji.CustomEmojiId);
-
-                        shift += entity.Length;
-                    }
-                    else
-                    {
-                        var run = CreateDirectRun(text.Substring(entity.Offset, entity.Length));
-                        var decorations = TextDecorations.None;
-
-                        if (entity.HasFlag(TextStyle.Underline))
-                        {
-                            decorations |= TextDecorations.Underline;
-                        }
-                        if (entity.HasFlag(TextStyle.Strikethrough))
-                        {
-                            decorations |= TextDecorations.Strikethrough;
-                        }
-
-                        if (decorations != TextDecorations.None)
-                        {
-                            direct.SetEnumProperty(run, XamlPropertyIndex.TextElement_TextDecorations, (uint)decorations);
-                        }
-
-                        if (entity.HasFlag(TextStyle.Bold))
-                        {
-                            direct.SetObjectProperty(run, XamlPropertyIndex.TextElement_FontWeight, FontWeights.SemiBold);
-                        }
-                        if (entity.HasFlag(TextStyle.Italic))
-                        {
-                            direct.SetEnumProperty(run, XamlPropertyIndex.TextElement_FontStyle, (uint)FontStyle.Italic);
-                        }
-
-                        direct.AddToCollection(local, run);
-
-                        // Run
-                        shift++;
-                        shift += entity.Length;
-                    }
-                }
-
-                previous = entity.Offset + entity.Length;
-                shift++;
-
-                if (close)
-                {
-                    shift++;
-                    close = false;
-                }
-            }
-
-            ContentPanel.MaxWidth = preformatted ? double.PositiveInfinity : 432;
-
-            if (text.Length > previous)
-            {
-                direct.AddToCollection(inlines, CreateDirectRun(text.Substring(previous)));
-            }
-
-            if (string.IsNullOrWhiteSpace(_query))
-            {
-                Message.TextHighlighters.Clear();
-            }
-            else
-            {
-                var find = text.IndexOf(_query, StringComparison.OrdinalIgnoreCase);
-                if (find != -1)
-                {
-                    var highligher = new TextHighlighter();
-                    highligher.Foreground = new SolidColorBrush(Colors.White);
-                    highligher.Background = new SolidColorBrush(Colors.Orange);
-                    highligher.Ranges.Add(new TextRange { StartIndex = find, Length = _query.Length });
-
-                    Message.TextHighlighters.Add(highligher);
-                }
-                else
-                {
-                    Message.TextHighlighters.Clear();
-                }
-            }
-
-            if (spoiler?.Ranges.Count > 0)
-            {
-                spoiler.Foreground = new SolidColorBrush(Colors.Black);
-                spoiler.Background = new SolidColorBrush(Colors.Black);
-
-                Message.TextHighlighters.Add(spoiler);
-            }
-
-            direct.SetDoubleProperty(paragraph, XamlPropertyIndex.TextElement_FontSize, Theme.Current.MessageFontSize);
-
-            textBlock.Blocks.Clear();
-            textBlock.Blocks.Add(direct.GetObject(paragraph) as Paragraph);
-
-            if (LocaleService.Current.FlowDirection == FlowDirection.LeftToRight && MessageHelper.IsAnyCharacterRightToLeft(text))
-            {
-                Message.FlowDirection = FlowDirection.RightToLeft;
-                adjust = true;
-            }
-            else if (LocaleService.Current.FlowDirection == FlowDirection.RightToLeft && !MessageHelper.IsAnyCharacterRightToLeft(text))
-            {
-                Message.FlowDirection = FlowDirection.LeftToRight;
-                adjust = true;
-            }
-            else
-            {
-                Message.FlowDirection = LocaleService.Current.FlowDirection;
-                adjust = false;
-            }
-
-            Message.LayoutUpdated -= OnLayoutUpdated;
-
-            if (emojis.Count > 0)
-            {
-                LoadObject(ref CustomEmoji, nameof(CustomEmoji));
-                CustomEmoji.UpdateEntities(message.ClientService, emojis);
-
-                if (_playing)
-                {
-                    CustomEmoji.Play();
-                }
-
-                _ignoreLayoutUpdated = false;
-                Message.LayoutUpdated += OnLayoutUpdated;
-            }
-            else if (CustomEmoji != null)
-            {
-                UnloadObject(ref CustomEmoji);
-            }
-
-            return true;
-        }
-
-        private void OnLayoutUpdated(object sender, object e)
-        {
-            if (_ignoreLayoutUpdated)
-            {
-                return;
-            }
-
-            if (_positions.Count > 0)
-            {
-                _ignoreLayoutUpdated = true;
-                LoadCustomEmoji();
-            }
-            else
-            {
-                Message.LayoutUpdated -= OnLayoutUpdated;
-                UnloadObject(ref CustomEmoji);
-            }
-        }
-
-        private void LoadCustomEmoji()
-        {
-            var positions = new List<EmojiPosition>();
-
-            foreach (var item in _positions)
-            {
-                var pointer = Message.ContentStart.GetPositionAtOffset(item.X, LogicalDirection.Forward);
-                if (pointer == null)
-                {
-                    continue;
-                }
-
-                var rect = pointer.GetCharacterRect(LogicalDirection.Forward);
-
-                positions.Add(new EmojiPosition
-                {
-                    CustomEmojiId = item.CustomEmojiId,
-                    X = (int)rect.X,
-                    Y = (int)rect.Y
-                });
-            }
-
-            if (positions.Count < 1)
-            {
-                Message.LayoutUpdated -= OnLayoutUpdated;
-                UnloadObject(ref CustomEmoji);
-            }
-            else
-            {
-                LoadObject(ref CustomEmoji, nameof(CustomEmoji));
-                CustomEmoji.UpdatePositions(positions);
-
-                if (_playing)
-                {
-                    CustomEmoji.Play();
-                }
-            }
+            Message.SetQuery(_query);
+            Message.SetText(message.ClientService, text, entities, fontSize);
+            ContentPanel.MaxWidth = Message.IsPreformatted ? double.PositiveInfinity : 432;
+
+            return text.Length > 0;
         }
 
         private Run CreateRun(string text, FontWeight? fontWeight = null, FontFamily fontFamily = null)
@@ -2104,67 +1721,61 @@ namespace Unigram.Controls.Messages
             }
         }
 
-        private void Entity_Click(MessageViewModel message, TextEntityType type, object data)
+        
+        private void Message_TextEntityClick(object sender, TextEntityClickEventArgs e)
         {
-            foreach (Paragraph block in Message.Blocks)
+            if (_message is not MessageViewModel message)
             {
-                foreach (var element in block.Inlines)
-                {
-                    if (element is Hyperlink)
-                    {
-                        ToolTipService.SetToolTip(element, null);
-                    }
-                }
+                return;
             }
 
-            if (type is TextEntityTypeBotCommand && data is string command)
+            if (e.Type is TextEntityTypeBotCommand && e.Data is string command)
             {
                 message.Delegate.SendBotCommand(command);
             }
-            else if (type is TextEntityTypeEmailAddress)
+            else if (e.Type is TextEntityTypeEmailAddress)
             {
-                message.Delegate.OpenUrl("mailto:" + data, false);
+                message.Delegate.OpenUrl("mailto:" + e.Data, false);
             }
-            else if (type is TextEntityTypePhoneNumber)
+            else if (e.Type is TextEntityTypePhoneNumber)
             {
-                message.Delegate.OpenUrl("tel:" + data, false);
+                message.Delegate.OpenUrl("tel:" + e.Data, false);
             }
-            else if (type is TextEntityTypeHashtag or TextEntityTypeCashtag && data is string hashtag)
+            else if (e.Type is TextEntityTypeHashtag or TextEntityTypeCashtag && e.Data is string hashtag)
             {
                 message.Delegate.OpenHashtag(hashtag);
             }
-            else if (type is TextEntityTypeMention && data is string username)
+            else if (e.Type is TextEntityTypeMention && e.Data is string username)
             {
                 message.Delegate.OpenUsername(username);
             }
-            else if (type is TextEntityTypeMentionName mentionName)
+            else if (e.Type is TextEntityTypeMentionName mentionName)
             {
                 message.Delegate.OpenUser(mentionName.UserId);
             }
-            else if (type is TextEntityTypeTextUrl textUrl)
+            else if (e.Type is TextEntityTypeTextUrl textUrl)
             {
                 message.Delegate.OpenUrl(textUrl.Url, true);
             }
-            else if (type is TextEntityTypeUrl && data is string url)
+            else if (e.Type is TextEntityTypeUrl && e.Data is string url)
             {
                 message.Delegate.OpenUrl(url, false);
             }
-            else if (type is TextEntityTypeBankCardNumber && data is string cardNumber)
+            else if (e.Type is TextEntityTypeBankCardNumber && e.Data is string cardNumber)
             {
                 message.Delegate.OpenBankCardNumber(cardNumber);
             }
-            else if (type is TextEntityTypeMediaTimestamp mediaTimestamp && message.ReplyToMessage != null)
+            else if (e.Type is TextEntityTypeMediaTimestamp mediaTimestamp && message.ReplyToMessage != null)
             {
                 message.Delegate.OpenMedia(message.ReplyToMessage, null, mediaTimestamp.MediaTimestamp);
             }
-            else if (type is TextEntityTypeCode or TextEntityTypePre or TextEntityTypePreCode && data is string code)
+            else if (e.Type is TextEntityTypeCode or TextEntityTypePre or TextEntityTypePreCode && e.Data is string code)
             {
                 MessageHelper.CopyText(code);
             }
-            else if (type is TextEntityTypeSpoiler)
+            else if (e.Type is TextEntityTypeSpoiler)
             {
-                _ignoreSpoilers = true;
-                UpdateMessageText(message);
+                Message.IgnoreSpoilers = true;
             }
         }
 
@@ -2406,7 +2017,6 @@ namespace Unigram.Controls.Messages
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            _ignoreLayoutUpdated = false;
             UpdateClip();
 
             var message = _message;
@@ -2622,20 +2232,7 @@ namespace Unigram.Controls.Messages
             Grid.SetRow(Message, 2);
             Panel.Placeholder = true;
 
-            var paragraph = new Paragraph();
-            paragraph.Inlines.Add(CreateRun(message));
-
-            Message.Blocks.Clear();
-            Message.Blocks.Add(paragraph);
-
-            if (LocaleService.Current.FlowDirection == FlowDirection.LeftToRight && MessageHelper.IsAnyCharacterRightToLeft(message))
-            {
-                paragraph.Inlines.Add(new LineBreak());
-            }
-            else if (LocaleService.Current.FlowDirection == FlowDirection.RightToLeft && !MessageHelper.IsAnyCharacterRightToLeft(message))
-            {
-                paragraph.Inlines.Add(new LineBreak());
-            }
+            Message.SetText(null, message, new TextEntity[0]);
 
             UpdateMockup();
         }
@@ -2667,20 +2264,7 @@ namespace Unigram.Controls.Messages
             Grid.SetRow(Message, 2);
             Panel.Placeholder = true;
 
-            var paragraph = new Paragraph();
-            paragraph.Inlines.Add(CreateRun(message));
-
-            Message.Blocks.Clear();
-            Message.Blocks.Add(paragraph);
-
-            if (LocaleService.Current.FlowDirection == FlowDirection.LeftToRight && MessageHelper.IsAnyCharacterRightToLeft(message))
-            {
-                paragraph.Inlines.Add(new LineBreak());
-            }
-            else if (LocaleService.Current.FlowDirection == FlowDirection.RightToLeft && !MessageHelper.IsAnyCharacterRightToLeft(message))
-            {
-                paragraph.Inlines.Add(new LineBreak());
-            }
+            Message.SetText(null, message, new TextEntity[0]);
 
             HeaderLabel.Inlines.Add(new Run { Text = Strings.Resources.ForwardedMessage, FontWeight = FontWeights.Normal });
             HeaderLabel.Inlines.Add(new LineBreak());
@@ -2746,20 +2330,7 @@ namespace Unigram.Controls.Messages
             Grid.SetRow(Message, 2);
             Panel.Placeholder = true;
 
-            var paragraph = new Paragraph();
-            paragraph.Inlines.Add(CreateRun(message));
-
-            Message.Blocks.Clear();
-            Message.Blocks.Add(paragraph);
-
-            if (LocaleService.Current.FlowDirection == FlowDirection.LeftToRight && MessageHelper.IsAnyCharacterRightToLeft(message))
-            {
-                paragraph.Inlines.Add(new LineBreak());
-            }
-            else if (LocaleService.Current.FlowDirection == FlowDirection.RightToLeft && !MessageHelper.IsAnyCharacterRightToLeft(message))
-            {
-                paragraph.Inlines.Add(new LineBreak());
-            }
+            Message.SetText(null, message, new TextEntity[0]);
 
             UpdateMockup();
         }
@@ -2819,7 +2390,7 @@ namespace Unigram.Controls.Messages
                 Media.Child = presenter;
             }
 
-            Message.Blocks.Clear();
+            Message.Clear();
 
             UpdateMockup();
         }
@@ -2865,31 +2436,14 @@ namespace Unigram.Controls.Messages
                 Media.Child = presenter;
             }
 
-            var paragraph = new Paragraph();
-            paragraph.Inlines.Add(CreateRun(caption));
-
-            Message.Blocks.Clear();
-            Message.Blocks.Add(paragraph);
-
-            if (LocaleService.Current.FlowDirection == FlowDirection.LeftToRight && MessageHelper.IsAnyCharacterRightToLeft(caption))
-            {
-                paragraph.Inlines.Add(new LineBreak());
-            }
-            else if (LocaleService.Current.FlowDirection == FlowDirection.RightToLeft && !MessageHelper.IsAnyCharacterRightToLeft(caption))
-            {
-                paragraph.Inlines.Add(new LineBreak());
-            }
+            Message.SetText(null, caption, new TextEntity[0]);
 
             UpdateMockup();
         }
 
         public void UpdateMockup()
         {
-            if (Message.Blocks.Count > 0 && Message.Blocks[0] is Paragraph existing)
-            {
-                existing.FontSize = (double)Navigation.BootStrapper.Current.Resources["MessageFontSize"];
-            }
-
+            Message.SetFontSize((double)Navigation.BootStrapper.Current.Resources["MessageFontSize"]);
             ContentPanel.CornerRadius = new CornerRadius(SettingsService.Current.Appearance.BubbleRadius);
         }
 
@@ -3172,7 +2726,7 @@ namespace Unigram.Controls.Messages
 
         #region IPlayerView
 
-        public bool IsAnimatable => CustomEmoji != null || (Reply?.IsAnimatable ?? false);
+        public bool IsAnimatable => Message != null || (Reply?.IsAnimatable ?? false);
 
         public bool IsLoopingEnabled => true;
 
@@ -3180,7 +2734,7 @@ namespace Unigram.Controls.Messages
 
         public bool Play()
         {
-            CustomEmoji?.Play();
+            Message?.Play();
             Reply?.Play();
 
             _playing = true;
@@ -3189,7 +2743,7 @@ namespace Unigram.Controls.Messages
 
         public void Pause()
         {
-            CustomEmoji?.Pause();
+            Message?.Pause();
             Reply?.Pause();
 
             _playing = false;
@@ -3197,7 +2751,7 @@ namespace Unigram.Controls.Messages
 
         public void Unload()
         {
-            CustomEmoji?.Unload();
+            Message?.Unload();
             Reply?.Unload();
 
             _playing = false;

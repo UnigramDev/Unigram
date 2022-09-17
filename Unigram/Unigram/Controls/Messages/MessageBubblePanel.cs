@@ -40,19 +40,15 @@ namespace Unigram.Controls.Messages
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            var offset = Children.Count < 5 ? 0 : 1;
-
-            var emoji = Children.Count < 5 ? null : Children[1];
-            var text = Children[0] as RichTextBlock;
-            var media = Children[1 + offset] as FrameworkElement;
-            var footer = Children[3 + offset] as MessageFooter;
-            var reactions = Children[2 + offset] as ReactionsPanel;
+            var text = Children[0] as FormattedTextBlock;
+            var media = Children[1] as FrameworkElement;
+            var footer = Children[3] as MessageFooter;
+            var reactions = Children[2] as ReactionsPanel;
 
             var textRow = Grid.GetRow(text);
             var mediaRow = Grid.GetRow(media);
             var footerRow = Grid.GetRow(footer);
 
-            emoji?.Measure(availableSize);
             text.Measure(availableSize);
             media.Measure(availableSize);
             footer.Measure(availableSize);
@@ -93,20 +89,16 @@ namespace Unigram.Controls.Messages
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            var offset = Children.Count < 5 ? 0 : 1;
-
-            var emoji = Children.Count < 5 ? null : Children[1];
-            var text = Children[0] as RichTextBlock;
-            var media = Children[1 + offset] as FrameworkElement;
-            var footer = Children[3 + offset] as MessageFooter;
-            var reactions = Children[2 + offset] as ReactionsPanel;
+            var text = Children[0] as FormattedTextBlock;
+            var media = Children[1] as FrameworkElement;
+            var footer = Children[3] as MessageFooter;
+            var reactions = Children[2] as ReactionsPanel;
 
             var textRow = Grid.GetRow(text);
             var mediaRow = Grid.GetRow(media);
 
             if (textRow < mediaRow)
             {
-                emoji?.Arrange(new Rect(0, 0, finalSize.Width, text.DesiredSize.Height));
                 text.Arrange(new Rect(0, 0, finalSize.Width, text.DesiredSize.Height));
                 media.Arrange(new Rect(0, text.DesiredSize.Height, finalSize.Width, media.DesiredSize.Height));
             }
@@ -114,7 +106,6 @@ namespace Unigram.Controls.Messages
             {
                 media.Arrange(new Rect(0, 0, finalSize.Width, media.DesiredSize.Height));
                 text.Arrange(new Rect(0, media.DesiredSize.Height, finalSize.Width, text.DesiredSize.Height));
-                emoji?.Arrange(new Rect(0, media.DesiredSize.Height, finalSize.Width, text.DesiredSize.Height));
             }
 
             reactions.Arrange(new Rect(0, text.DesiredSize.Height + media.DesiredSize.Height, finalSize.Width, reactions.DesiredSize.Height));
@@ -132,10 +123,8 @@ namespace Unigram.Controls.Messages
 
         private Size Margins(double availableWidth)
         {
-            var offset = Children.Count < 5 ? 0 : 1;
-
-            var text = Children[0] as RichTextBlock;
-            var footer = Children[3 + offset] as MessageFooter;
+            var text = Children[0] as FormattedTextBlock;
+            var footer = Children[3] as MessageFooter;
 
             var marginLeft = 0d;
             var marginBottom = 0d;
@@ -180,7 +169,7 @@ namespace Unigram.Controls.Messages
 
             var formatted = FormatText(caption);
 
-            var text = Children[0] as RichTextBlock;
+            var text = Children[0] as FormattedTextBlock;
             var fontSize = Theme.Current.MessageFontSize * BootStrapper.Current.UISettings.TextScaleFactor;
             var width = availableWidth - text.Margin.Left - text.Margin.Right;
 

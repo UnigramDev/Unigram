@@ -322,6 +322,8 @@
     </Style>
 
     <Style TargetType="local:IdentityIcon">
+        <Setter Property="Foreground"
+                Value="{ThemeResource ChatVerifiedBadgeBrush}" />
         <Setter Property="IsTabStop"
                 Value="False" />
         <Setter Property="AutomationProperties.AccessibilityView"
@@ -340,7 +342,7 @@
                                   x:Load="False"
                                   Glyph="&#xE9B5;"
                                   FontFamily="{StaticResource TelegramThemeFontFamily}"
-                                  Foreground="{ThemeResource ChatVerifiedBadgeBrush}"
+                                  Foreground="{TemplateBinding Foreground}"
                                   VerticalAlignment="Bottom"
                                   FontSize="16"
                                   Grid.Column="1" />
@@ -709,6 +711,29 @@
                                AutomationProperties.AccessibilityView="Raw"
                                HorizontalAlignment="Stretch"
                                VerticalAlignment="Stretch" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:FormattedTextBlock">
+        <Setter Property="IsTabStop"
+                Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:FormattedTextBlock">
+                    <Grid x:Name="LayoutRoot">
+                        <RichTextBlock x:Name="TextBlock"
+                                       Foreground="{TemplateBinding Foreground}"
+                                       Style="{StaticResource BodyRichTextBlockStyle}"
+                                       FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                       TextReadingOrder="UseFlowDirection"
+                                       OpticalMarginAlignment="None" />
+                        <messages:CustomEmojiCanvas x:Name="CustomEmoji"
+                                                    x:Load="False"
+                                                    IsHitTestVisible="False"
+                                                    Margin="-2" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

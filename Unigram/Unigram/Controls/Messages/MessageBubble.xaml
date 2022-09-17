@@ -173,19 +173,12 @@
                             <local:MessageBubblePanel x:Name="Panel"
                                                       Grid.Column="1"
                                                       Grid.Row="1">
-                                <RichTextBlock x:Name="Message"
-                                               Style="{StaticResource BodyRichTextBlockStyle}"
-                                               Foreground="{ThemeResource MessageForegroundBrush}"
-                                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                               TextReadingOrder="UseFlowDirection"
-                                               OpticalMarginAlignment="None"
-                                               Margin="10,0,10,6"
-                                               Grid.Column="1"
-                                               Grid.Row="2" />
-                                <local:CustomEmojiCanvas x:Name="CustomEmoji"
-                                                         x:Load="False"
-                                                         IsHitTestVisible="False"
-                                                         Margin="8,-2,8,4" />
+                                <controls:FormattedTextBlock x:Name="Message"
+                                                             Foreground="{ThemeResource MessageForegroundBrush}"
+                                                             AdjustLineEnding="True"
+                                                             Margin="10,0,10,6"
+                                                             Grid.Column="1"
+                                                             Grid.Row="2" />
 
                                 <Border x:Name="Media"
                                         Grid.Column="1"

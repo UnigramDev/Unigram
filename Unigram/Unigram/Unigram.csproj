@@ -262,6 +262,7 @@
     <Compile Include="Common\ZoomableListHandler.cs" />
     <Compile Include="Constants.Secret.cs" />
     <Compile Include="Controls\AnimatedBitmapButton.cs" />
+    <Compile Include="Controls\AnimatedImage.cs" />
     <Compile Include="Controls\AnimatedControl.cs" />
     <Compile Include="Controls\AnimatedGlyphButton.cs" />
     <Compile Include="Controls\AnimatedGlyphToggleButton.cs" />
@@ -374,6 +375,7 @@
     </Compile>
     <Compile Include="Controls\FauxCheckBox.cs" />
     <Compile Include="Controls\FileButton.cs" />
+    <Compile Include="Controls\FormattedTextBlock.cs" />
     <Compile Include="Controls\FormattedTextBox.cs" />
     <Compile Include="Controls\FormattedTextFlyout.xaml.cs">
       <DependentUpon>FormattedTextFlyout.xaml</DependentUpon>
