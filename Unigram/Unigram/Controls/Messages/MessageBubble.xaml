@@ -53,7 +53,7 @@
                                                 Value="8,2,8,4" />
                                         <Setter Target="Header.(Grid.Row)"
                                                 Value="1" />
-                                        <Setter Target="HeaderLabel.Margin"
+                                        <Setter Target="HeaderPanel.Margin"
                                                 Value="0,2,0,2" />
                                         <Setter Target="HeaderLabel.Foreground"
                                                 Value="#FFFFFF" />
@@ -94,7 +94,7 @@
                                                 Value="8,2,8,4" />
                                         <Setter Target="Header.(Grid.Row)"
                                                 Value="1" />
-                                        <Setter Target="HeaderLabel.Margin"
+                                        <Setter Target="HeaderPanel.Margin"
                                                 Value="0,2,0,2" />
                                         <Setter Target="HeaderLabel.Foreground"
                                                 Value="#FFFFFF" />
@@ -217,23 +217,34 @@
                                     <ColumnDefinition />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock x:Name="HeaderLabel"
-                                           Margin="0,0,0,2"
-                                           Foreground="{ThemeResource MessageHeaderForegroundBrush}"
-                                           Style="{StaticResource CaptionTextBlockStyle}"
-                                           FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                           TextTrimming="CharacterEllipsis"
-                                           TextWrapping="NoWrap"
-                                           FontWeight="SemiBold"
-                                           Visibility="Collapsed" />
+                                <Grid x:Name="HeaderPanel"
+                                      Visibility="Collapsed"
+                                      HorizontalAlignment="Left"
+                                      Margin="0,0,0,2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock x:Name="HeaderLabel"
+                                               Foreground="{ThemeResource MessageHeaderForegroundBrush}"
+                                               Style="{StaticResource CaptionTextBlockStyle}"
+                                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                               TextTrimming="CharacterEllipsis"
+                                               TextWrapping="NoWrap"
+                                               FontWeight="SemiBold" />
+                                    <controls:IdentityIcon x:Name="Identity"
+                                                           VerticalAlignment="Bottom"
+                                                           Margin="4,0,0,0"
+                                                           Grid.Column="1" />
+                                </Grid>
 
                                 <TextBlock x:Name="AdminLabel"
+                                           x:Load="False"
                                            Text="{CustomResource ChatAdmin}"
                                            Foreground="{ThemeResource MessageSubtleLabelBrush}"
                                            Style="{StaticResource CaptionTextBlockStyle}"
                                            HorizontalAlignment="Right"
-                                           Visibility="Collapsed"
-                                           Margin="0,0,0,2"
+                                           Margin="4,0,0,2"
                                            Grid.Column="1" />
 
                                 <TextBlock x:Name="ForwardLabel"

@@ -60,7 +60,6 @@ namespace Unigram.Controls.Messages
 
         private Grid ContentPanel;
         private Grid Header;
-        private TextBlock AdminLabel;
         private MessageBubblePanel Panel;
         private RichTextBlock Message;
         private Border Media;
@@ -68,10 +67,6 @@ namespace Unigram.Controls.Messages
         private ReactionsPanel Reactions;
 
         // Lazy loaded
-        private TextBlock ForwardLabel;
-
-        private CustomEmojiCanvas CustomEmoji;
-
         private ProfilePicture Photo;
 
         private Border BackgroundPanel;
@@ -79,10 +74,14 @@ namespace Unigram.Controls.Messages
 
         private Grid HeaderPanel;
         private TextBlock HeaderLabel;
+        private TextBlock AdminLabel;
+        private TextBlock ForwardLabel;
         private IdentityIcon Identity;
         private GlyphButton PsaInfo;
 
         private MessageReference Reply;
+
+        private CustomEmojiCanvas CustomEmoji;
 
         private HyperlinkButton Thread;
         private StackPanel RecentRepliers;
@@ -103,7 +102,6 @@ namespace Unigram.Controls.Messages
             ContentPanel = GetTemplateChild(nameof(ContentPanel)) as Grid;
             Header = GetTemplateChild(nameof(Header)) as Grid;
             ForwardLabel = GetTemplateChild(nameof(ForwardLabel)) as TextBlock;
-            AdminLabel = GetTemplateChild(nameof(AdminLabel)) as TextBlock;
             Panel = GetTemplateChild(nameof(Panel)) as MessageBubblePanel;
             Message = GetTemplateChild(nameof(Message)) as RichTextBlock;
             Media = GetTemplateChild(nameof(Media)) as Border;
@@ -239,17 +237,8 @@ namespace Unigram.Controls.Messages
                 Media.Child = null;
                 Reactions.UpdateMessageReactions(null);
 
-                if (CustomEmoji != null)
-                {
-                    XamlMarkupHelper.UnloadObject(CustomEmoji);
-                    CustomEmoji = null;
-                }
-
-                if (MediaReactions != null)
-                {
-                    XamlMarkupHelper.UnloadObject(MediaReactions);
-                    MediaReactions = null;
-                }
+                UnloadObject(ref CustomEmoji);
+                UnloadObject(ref MediaReactions);
             }
 
             if (_highlight != null)
@@ -520,9 +509,7 @@ namespace Unigram.Controls.Messages
             else if (Photo != null)
             {
                 _photoId = null;
-
-                XamlMarkupHelper.UnloadObject(Photo);
-                Photo = null;
+                UnloadObject(ref Photo);
             }
         }
 
@@ -722,7 +709,6 @@ namespace Unigram.Controls.Messages
                 return;
             }
 
-
             HeaderLabel?.Inlines.Clear();
             ForwardLabel?.Inlines.Clear();
 
@@ -881,7 +867,7 @@ namespace Unigram.Controls.Messages
 
             if (message.ForwardInfo != null && !message.IsSaved)
             {
-                ForwardLabel ??= GetTemplateChild(nameof(ForwardLabel)) as TextBlock;
+                LoadObject(ref ForwardLabel, nameof(ForwardLabel));
 
                 if (message.ForwardInfo.PublicServiceAnnouncementType.Length > 0)
                 {
@@ -981,19 +967,19 @@ namespace Unigram.Controls.Messages
             if (HeaderLabel?.Inlines.Count > 0)
             {
                 var title = message.Delegate.GetAdminTitle(message);
-                if (AdminLabel != null && shown && !message.IsOutgoing && !string.IsNullOrEmpty(title))
+                if (shown && !message.IsOutgoing && !string.IsNullOrEmpty(title))
                 {
-                    AdminLabel.Visibility = Visibility.Visible;
+                    LoadObject(ref AdminLabel, nameof(AdminLabel));
                     AdminLabel.Text = title;
                 }
-                else if (AdminLabel != null && shown && !message.IsChannelPost && message.SenderId is MessageSenderChat && message.ForwardInfo != null)
+                else if (shown && !message.IsChannelPost && message.SenderId is MessageSenderChat && message.ForwardInfo != null)
                 {
-                    AdminLabel.Visibility = Visibility.Visible;
+                    LoadObject(ref AdminLabel, nameof(AdminLabel));
                     AdminLabel.Text = Strings.Resources.DiscussChannel;
                 }
                 else if (AdminLabel != null)
                 {
-                    AdminLabel.Visibility = Visibility.Collapsed;
+                    UnloadObject(ref AdminLabel);
                 }
 
                 HeaderPanel.Visibility = Visibility.Visible;
@@ -1003,10 +989,7 @@ namespace Unigram.Controls.Messages
             }
             else
             {
-                if (AdminLabel != null)
-                {
-                    AdminLabel.Visibility = Visibility.Collapsed;
-                }
+                UnloadObject(ref AdminLabel);
 
                 //if (HeaderPanel != null)
                 //{
@@ -1158,7 +1141,6 @@ namespace Unigram.Controls.Messages
                 return;
             }
 
-
             Footer.UpdateMessageInteractionInfo(message);
             UpdateMessageReactions(message, false);
 
@@ -1268,18 +1250,13 @@ namespace Unigram.Controls.Messages
             {
                 Reactions.UpdateMessageReactions(null);
 
-                MediaReactions ??= GetTemplateChild(nameof(MediaReactions)) as ReactionsPanel;
+                LoadObject(ref MediaReactions, nameof(MediaReactions));
                 MediaReactions.UpdateMessageReactions(message, animate);
             }
             else
             {
                 Reactions.UpdateMessageReactions(message, animate);
-
-                if (MediaReactions != null)
-                {
-                    XamlMarkupHelper.UnloadObject(MediaReactions);
-                    MediaReactions = null;
-                }
+                UnloadObject(ref MediaReactions);
             }
         }
 
@@ -1652,8 +1629,7 @@ namespace Unigram.Controls.Messages
                 _ignoreLayoutUpdated = true;
                 Message.LayoutUpdated -= OnLayoutUpdated;
 
-                XamlMarkupHelper.UnloadObject(CustomEmoji);
-                CustomEmoji = null;
+                UnloadObject(ref CustomEmoji);
             }
         }
 
@@ -1984,7 +1960,7 @@ namespace Unigram.Controls.Messages
 
             if (emojis.Count > 0)
             {
-                CustomEmoji ??= GetTemplateChild(nameof(CustomEmoji)) as CustomEmojiCanvas;
+                LoadObject(ref CustomEmoji, nameof(CustomEmoji));
                 CustomEmoji.UpdateEntities(message.ClientService, emojis);
 
                 if (_playing)
@@ -1997,8 +1973,7 @@ namespace Unigram.Controls.Messages
             }
             else if (CustomEmoji != null)
             {
-                XamlMarkupHelper.UnloadObject(CustomEmoji);
-                CustomEmoji = null;
+                UnloadObject(ref CustomEmoji);
             }
 
             return true;
@@ -2019,12 +1994,7 @@ namespace Unigram.Controls.Messages
             else
             {
                 Message.LayoutUpdated -= OnLayoutUpdated;
-
-                if (CustomEmoji != null)
-                {
-                    XamlMarkupHelper.UnloadObject(CustomEmoji);
-                    CustomEmoji = null;
-                }
+                UnloadObject(ref CustomEmoji);
             }
         }
 
@@ -2053,16 +2023,11 @@ namespace Unigram.Controls.Messages
             if (positions.Count < 1)
             {
                 Message.LayoutUpdated -= OnLayoutUpdated;
-
-                if (CustomEmoji != null)
-                {
-                    XamlMarkupHelper.UnloadObject(CustomEmoji);
-                    CustomEmoji = null;
-                }
+                UnloadObject(ref CustomEmoji);
             }
             else
             {
-                CustomEmoji ??= GetTemplateChild(nameof(CustomEmoji)) as CustomEmojiCanvas;
+                LoadObject(ref CustomEmoji, nameof(CustomEmoji));
                 CustomEmoji.UpdatePositions(positions);
 
                 if (_playing)
@@ -2752,8 +2717,6 @@ namespace Unigram.Controls.Messages
             UpdateMockup(outgoing, first, last);
 
             Header.Visibility = Visibility.Visible;
-            HeaderLabel.Visibility = Visibility.Collapsed;
-            AdminLabel.Visibility = Visibility.Collapsed;
 
             if (Reply == null)
             {
@@ -3238,6 +3201,26 @@ namespace Unigram.Controls.Messages
             Reply?.Unload();
 
             _playing = false;
+        }
+
+        #endregion
+
+        #region XamlMarkupHelper
+
+        private void LoadObject<T>(ref T element, /*[CallerArgumentExpression("element")]*/string name)
+            where T : DependencyObject
+        {
+            element ??= GetTemplateChild(name) as T;
+        }
+
+        private void UnloadObject<T>(ref T element)
+            where T : DependencyObject
+        {
+            if (element != null)
+            {
+                XamlMarkupHelper.UnloadObject(element);
+                element = null;
+            }
         }
 
         #endregion
