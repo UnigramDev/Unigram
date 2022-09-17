@@ -8,6 +8,7 @@ using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls.Drawers;
+using Unigram.Navigation;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Drawers;
@@ -63,11 +64,31 @@ namespace Unigram.Controls.Messages
             var transform = presenter.TransformToVisual(Window.Current.Content);
             var position = transform.TransformPoint(new Point());
 
-            var source = reactions.PopularReactions.Count > 0
-                ? reactions.PopularReactions
-                : reactions.TopReactions.Count > 0
-                ? reactions.TopReactions
-                : reactions.RecentReactions;
+            var source = reactions.TopReactions.ToList();
+            if (source.Count < 8)
+            {
+                var additional = reactions.RecentReactions.Count > 0
+                    ? reactions.RecentReactions
+                    : reactions.PopularReactions;
+
+                reactions.TopReactions
+                    .Select(x => x.Type)
+                    .Discern(out var emoji, out var customEmoji);
+
+                foreach (var item in additional)
+                {
+                    if (item.Type is ReactionTypeEmoji emojii && emoji.Contains(emojii.Emoji))
+                    {
+                        continue;
+                    }
+                    else if (item.Type is ReactionTypeCustomEmoji customEmojii && customEmoji.Contains(customEmojii.CustomEmojiId))
+                    {
+                        continue;
+                    }
+
+                    source.Add(item);
+                }
+            }
 
             var count = Math.Min(source.Count, 8);
 
@@ -89,7 +110,7 @@ namespace Unigram.Controls.Messages
             Pill.Height = Shadow.Height = 36 + 20;
             Pill.Margin = Shadow.Margin = new Thickness(0, 0, 0, -20);
 
-            Expand.Visibility = source.Count > 6 ? Visibility.Visible : Visibility.Collapsed;
+            Expand.Visibility = source.Count > 8 ? Visibility.Visible : Visibility.Collapsed;
 
             var yy = 20f;
 
@@ -116,7 +137,7 @@ namespace Unigram.Controls.Messages
 
             Pill.Data = data;
 
-            LayoutRoot.Padding = new Thickness(16, 36, 16, 32);
+            LayoutRoot.Padding = new Thickness(16, 40, 16, 32);
 
             var offset = 0;
             var visible = source.Count > 8 ? 7 : 8; //Math.Ceiling((width - 8) / 34);
@@ -125,7 +146,7 @@ namespace Unigram.Controls.Messages
 
             var device = CanvasDevice.GetSharedDevice();
             var rect1 = CanvasGeometry.CreateRectangle(device, Math.Min(width - actualWidth, 0), 0, Math.Max(width + 16 + 16 + Math.Max(0, padding), actualWidth), 860);
-            var elli1 = CanvasGeometry.CreateRoundedRectangle(device, width - actualWidth + 18 + 16, 36 + 36 + 4, presenter.ActualSize.X, 860, 8, 8);
+            var elli1 = CanvasGeometry.CreateRoundedRectangle(device, width - actualWidth + 18 + 16, 40 + 36 + 4, presenter.ActualSize.X, 860, 8, 8);
             var group1 = CanvasGeometry.CreateGroup(device, new[] { elli1, rect1 }, CanvasFilledRegionDetermination.Alternate);
 
             var rootVisual = ElementCompositionPreview.GetElementVisual(LayoutRoot);
@@ -146,12 +167,13 @@ namespace Unigram.Controls.Messages
             ElementCompositionPreview.SetElementChildVisual(Shadow, pillReceiver);
 
             var x = position.X - 18 + padding;
-            var y = position.Y - (36 + 4);
+            var y = position.Y - (40 + 4);
 
             _popup.Child = this;
             _popup.Margin = new Thickness(x - 16, y - 36, 0, 0);
-            _popup.ShouldConstrainToRootBounds = false;
             _popup.RequestedTheme = presenter.ActualTheme;
+            _popup.ShouldConstrainToRootBounds = false;
+            _popup.AllowFocusOnInteraction = false;
             _popup.IsOpen = true;
 
             var visualPill = ElementCompositionPreview.GetElementVisual(Pill);
@@ -265,11 +287,11 @@ namespace Unigram.Controls.Messages
                     DownloadFile(message, reaction.CenterAnimation?.StickerValue);
                     DownloadFile(message, reaction.AroundAnimation?.StickerValue);
 
-                    child = PopulateReaction(message, reaction.ActivateAnimation, itemSize, itemPadding);
+                    child = PopulateReaction(message, reaction.ActivateAnimation, itemSize);
                 }
                 else if (item.Type is ReactionTypeCustomEmoji customEmoji && assets != null && assets.TryGetValue(customEmoji.CustomEmojiId, out Sticker sticker))
                 {
-                    child = PopulateReaction(message, sticker, itemSize, itemPadding);
+                    child = PopulateReaction(message, sticker, itemSize);
                 }
 
                 if (child == null)
@@ -277,9 +299,19 @@ namespace Unigram.Controls.Messages
                     continue;
                 }
 
-                Grid.SetColumn(child, offset);
+                var button = new HyperlinkButton
+                {
+                    Tag = item.Type,
+                    Content = child,
+                    Margin = new Thickness(0, 0, itemPadding, 0),
+                    Style = BootStrapper.Current.Resources["EmptyHyperlinkButtonStyle"] as Style
+                };
 
-                Presenter.Children.Add(child);
+                button.Click += Reaction_Click;
+
+                Grid.SetColumn(button, offset);
+
+                Presenter.Children.Add(button);
                 Presenter.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
 
                 if (offset < visible)
@@ -300,7 +332,7 @@ namespace Unigram.Controls.Messages
             }
         }
 
-        private FrameworkElement PopulateReaction(MessageViewModel message, Sticker sticker, int itemSize, int itemPadding)
+        private FrameworkElement PopulateReaction(MessageViewModel message, Sticker sticker, int itemSize)
         {
             if (sticker.Format is StickerFormatTgs)
             {
@@ -311,7 +343,6 @@ namespace Unigram.Controls.Messages
                 view.DecodeFrameType = DecodePixelType.Logical;
                 view.Width = itemSize;
                 view.Height = itemSize;
-                view.Margin = new Thickness(0, 0, itemPadding, 0);
                 view.VerticalAlignment = VerticalAlignment.Top;
 
                 var file = sticker.StickerValue;
@@ -342,7 +373,6 @@ namespace Unigram.Controls.Messages
                 //view.DecodeFrameType = DecodePixelType.Logical;
                 view.Width = itemSize;
                 view.Height = itemSize;
-                view.Margin = new Thickness(0, 0, itemPadding, 0);
                 view.VerticalAlignment = VerticalAlignment.Top;
 
                 var file = sticker.StickerValue;
@@ -369,7 +399,6 @@ namespace Unigram.Controls.Messages
                 var view = new Image();
                 view.Width = itemSize;
                 view.Height = itemSize;
-                view.Margin = new Thickness(0, 0, itemPadding, 0);
                 view.VerticalAlignment = VerticalAlignment.Top;
 
                 var file = sticker.StickerValue;
@@ -400,16 +429,33 @@ namespace Unigram.Controls.Messages
             _popup.IsOpen = false;
         }
 
-        private async void Reaction_Click(object sender, RoutedEventArgs e)
+        private void Reaction_Click(object sender, RoutedEventArgs e)
         {
+            _flyout.Hide();
+
             if (sender is HyperlinkButton button && button.Tag is ReactionType reaction)
             {
-                _flyout.Hide();
+                ToggleReaction(reaction);
+            }
+        }
+
+        private async void ToggleReaction(ReactionType reaction)
+        {
+            if (_message.InteractionInfo != null && _message.InteractionInfo.Reactions.IsChosen(reaction))
+            {
+                _message.ClientService.Send(new RemoveMessageReaction(_message.ChatId, _message.Id, reaction));
+            }
+            else
+            {
                 await _message.ClientService.SendAsync(new AddMessageReaction(_message.ChatId, _message.Id, reaction, false, true));
 
-                if (_bubble != null)
+                if (_bubble != null && _bubble.IsLoaded)
                 {
+                    var unread = new UnreadReaction(reaction, null, false);
+
+                    _message.UnreadReactions.Add(unread);
                     _bubble.UpdateMessageReactions(_message, true);
+                    _message.UnreadReactions.Remove(unread);
                 }
             }
         }
@@ -450,6 +496,8 @@ namespace Unigram.Controls.Messages
             Shadow.Height = height;
             Pill.Height = height;
             Presenter.Height = Container.Height = height;
+
+            Expand.Visibility = Visibility.Collapsed;
 
             var figure = new PathFigure();
             figure.StartPoint = new Point(18, 0);
@@ -508,19 +556,6 @@ namespace Unigram.Controls.Messages
 
             clip.StartAnimation("Size", resize);
 
-            var offset = compositor.CreateVector3KeyFrameAnimation();
-            offset.InsertKeyFrame(0, Vector3.Zero);
-            offset.InsertKeyFrame(1, new Vector3(0, 36, 0));
-
-            var opacity = compositor.CreateScalarKeyFrameAnimation();
-            opacity.InsertKeyFrame(0, 1);
-            opacity.InsertKeyFrame(1, 0);
-
-            ElementCompositionPreview.SetIsTranslationEnabled(Expand, true);
-            var expand = ElementCompositionPreview.GetElementVisual(Expand);
-            expand.StartAnimation("Translation", offset);
-            expand.StartAnimation("Opacity", opacity);
-
             ElementCompositionPreview.SetIsTranslationEnabled(Presenter, true);
             var scrollingVisual = ElementCompositionPreview.GetElementVisual(Presenter);
 
@@ -538,9 +573,9 @@ namespace Unigram.Controls.Messages
             Container.Children.Add(view);
             _ = viewModel.UpdateReactions(_reactions);
 
-            offset = compositor.CreateVector3KeyFrameAnimation();
+            var offset = compositor.CreateVector3KeyFrameAnimation();
             offset.InsertKeyFrame(0, Vector3.Zero);
-            offset.InsertKeyFrame(1, new Vector3(0, -36, 0));
+            offset.InsertKeyFrame(1, new Vector3(0, -40, 0));
 
             ElementCompositionPreview.SetIsTranslationEnabled(view, true);
             ElementCompositionPreview.SetIsTranslationEnabled(Pill, true);
@@ -549,46 +584,30 @@ namespace Unigram.Controls.Messages
             pillReceiver.StartAnimation("Offset", offset);
             visualPill.StartAnimation("Translation", offset);
 
+            var clipDrawer = compositor.CreateRoundedRectangleGeometry();
+            clipDrawer.CornerRadius = new Vector2(36 / 2);
+
             var drawer = ElementCompositionPreview.GetElementVisual(view);
             drawer.CenterPoint = new Vector3(width - 36 / 2, 36 / 2, 0);
-            drawer.Clip = compositor.CreateGeometricClip(clip);
+            drawer.Clip = compositor.CreateGeometricClip(clipDrawer);
+
+            var offset2 = compositor.CreateVector2KeyFrameAnimation();
+            offset2.InsertKeyFrame(0, new Vector2(0, 40));
+            offset2.InsertKeyFrame(1, Vector2.Zero);
+
+            clipDrawer.StartAnimation("Offset", offset2);
+            clipDrawer.StartAnimation("Size", resize);
 
             batch.End();
         }
 
-        private async void OnItemClick(object sender, ItemClickEventArgs e)
+        private void OnItemClick(object sender, ItemClickEventArgs e)
         {
+            _flyout.Hide();
+
             if (e.ClickedItem is StickerViewModel sticker)
             {
-                _flyout.Hide();
-
-                ReactionType reaction;
-                if (sticker.CustomEmojiId != 0)
-                {
-                    reaction = new ReactionTypeCustomEmoji(sticker.CustomEmojiId);
-                }
-                else
-                {
-                    reaction = new ReactionTypeEmoji(sticker.Emoji);
-                }
-
-                if (_message.InteractionInfo != null && _message.InteractionInfo.Reactions.IsChosen(reaction))
-                {
-                    _message.ClientService.Send(new RemoveMessageReaction(_message.ChatId, _message.Id, reaction));
-                }
-                else
-                {
-                    await _message.ClientService.SendAsync(new AddMessageReaction(_message.ChatId, _message.Id, reaction, false, true));
-
-                    if (_bubble != null && _bubble.IsLoaded)
-                    {
-                        var unread = new UnreadReaction(reaction, null, false);
-
-                        _message.UnreadReactions.Add(unread);
-                        _bubble.UpdateMessageReactions(_message, true);
-                        _message.UnreadReactions.Remove(unread);
-                    }
-                }
+                ToggleReaction(sticker.ToReactionType());
             }
         }
 

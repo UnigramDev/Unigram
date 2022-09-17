@@ -638,6 +638,15 @@ namespace Unigram.ViewModels.Drawers
         public long SetId => _sticker?.SetId ?? _setId;
 
         public long CustomEmojiId => _sticker?.CustomEmojiId ?? 0;
+
+        public ReactionType ToReactionType()
+        {
+            return CustomEmojiId switch
+            {
+                0 => new ReactionTypeEmoji(Emoji),
+                _ => new ReactionTypeCustomEmoji(CustomEmojiId)
+            };
+        }
     }
 
     public class MoreStickerViewModel : StickerViewModel

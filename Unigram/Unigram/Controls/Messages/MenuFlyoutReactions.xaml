@@ -118,9 +118,9 @@
 
         <Grid x:Name="Container"
               VerticalAlignment="Top"
-              Margin="0,-36,0,0"
+              Margin="0,-40,0,0"
               Width="272"
-              Height="36"
+              Height="40"
               CornerRadius="18" />
 
         <Button x:Name="Expand"
