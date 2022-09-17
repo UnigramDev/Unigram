@@ -299,7 +299,7 @@
 
             <GridView x:Name="Toolbar2"
                       ItemsSource="{x:Bind ViewModel.InstalledSets}"
-                      Height="36"
+                      Height="40"
                       IsItemClickEnabled="True"
                       ItemClick="Toolbar_ItemClick"
                       ContainerContentChanging="Toolbar_ContainerContentChanging"
@@ -370,7 +370,7 @@
                                 Grid.Column="1" />
                         <GridView x:Name="Toolbar"
                                   ItemsSource="{x:Bind ViewModel.StandardSets}"
-                                  Height="{ThemeResource AppBarThemeCompactHeight}"
+                                  Height="32"
                                   IsItemClickEnabled="True"
                                   ItemClick="Toolbar_ItemClick"
                                   SelectionChanged="Toolbar_SelectionChanged"
@@ -391,7 +391,7 @@
                                 <Style TargetType="GridViewItem"
                                        BasedOn="{StaticResource DefaultGridViewItemStyle}">
                                     <Setter Property="Margin"
-                                            Value="0,4,0,4" />
+                                            Value="0,0,0,0" />
                                     <Setter Property="MinHeight"
                                             Value="0" />
                                     <Setter Property="MinWidth"

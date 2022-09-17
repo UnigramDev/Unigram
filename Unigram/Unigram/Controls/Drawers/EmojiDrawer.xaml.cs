@@ -49,7 +49,7 @@ namespace Unigram.Controls.Drawers
             ElementCompositionPreview.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
 
             var header = DropShadowEx.Attach(Separator);
-            header.Clip = header.Compositor.CreateInsetClip(0, 36, 0, -36);
+            header.Clip = header.Compositor.CreateInsetClip(0, 40, 0, -40);
 
             _handler = new AnimatedListHandler(List);
             _toolbarHandler = new AnimatedListHandler(Toolbar2);
@@ -248,7 +248,7 @@ namespace Unigram.Controls.Drawers
                                     continue;
                                 }
 
-                                UpdateContainerContent(sticker, container.ContentTemplateRoot as Grid, UpdateSticker);
+                                UpdateContainerContent(sticker, container.ContentTemplateRoot as Grid, false, UpdateSticker);
                             }
                         }
                     }
@@ -539,7 +539,7 @@ namespace Unigram.Controls.Drawers
                             continue;
                         }
 
-                        UpdateContainerContent(sticker, container.ContentTemplateRoot as Grid, UpdateSticker);
+                        UpdateContainerContent(sticker, container.ContentTemplateRoot as Grid, false, UpdateSticker);
                     }
                 }
             }
@@ -570,7 +570,7 @@ namespace Unigram.Controls.Drawers
                 }
                 else
                 {
-                    UpdateContainerContent(sticker, content, UpdateSticker, args);
+                    UpdateContainerContent(sticker, content, false, UpdateSticker, args);
                 }
 
                 args.Handled = true;
@@ -599,12 +599,18 @@ namespace Unigram.Controls.Drawers
             return null;
         }
 
-        private async void UpdateContainerContent(Sticker sticker, Grid content, UpdateHandler<File> handler, ContainerContentChangingEventArgs args = null)
+        private async void UpdateContainerContent(Sticker sticker, Grid content, bool toolbar, UpdateHandler<File> handler, ContainerContentChangingEventArgs args = null)
         {
             var file = sticker?.StickerValue;
             if (file == null)
             {
                 return;
+            }
+
+            if (toolbar || _mode != EmojiDrawerMode.Chat)
+            {
+                content.Width = 24;
+                content.Height = 24;
             }
 
             //if (toolbar)
@@ -637,6 +643,12 @@ namespace Unigram.Controls.Drawers
                 }
                 else if (content.Children[0] is LottieView lottie)
                 {
+                    if (_mode != EmojiDrawerMode.Chat)
+                    {
+                        lottie.FrameSize = new Windows.Foundation.Size(24, 24);
+                        lottie.DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical;
+                    }
+
                     lottie.ColorReplacements = GetColorReplacements(sticker.SetId);
                     lottie.Source = UriEx.ToLocal(file.Local.Path);
                 }
@@ -734,7 +746,7 @@ namespace Unigram.Controls.Drawers
                     return;
                 }
 
-                UpdateContainerContent(cover, content, UpdateStickerSet);
+                UpdateContainerContent(cover, content, true, UpdateStickerSet);
             }
         }
 

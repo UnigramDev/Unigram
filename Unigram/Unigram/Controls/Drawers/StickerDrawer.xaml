@@ -22,7 +22,9 @@
         <DataTemplate x:Key="AnimatedItemTemplate">
             <Grid>
                 <controls:LottieView30Fps x:Name="Player"
-                                          AutoPlay="False" />
+                                          AutoPlay="False"
+                                          FrameSize="68,68"
+                                          DecodeFrameType="Logical" />
 
                 <Border HorizontalAlignment="Center"
                         VerticalAlignment="Bottom"
@@ -171,7 +173,7 @@
 
             <GridView x:Name="Toolbar"
                       ItemsSource="{x:Bind ViewModel.SavedStickers}"
-                      Height="{ThemeResource AppBarThemeCompactHeight}"
+                      Height="40"
                       IsItemClickEnabled="True"
                       ItemClick="Toolbar_ItemClick"
                       ContainerContentChanging="Toolbar_ContainerContentChanging"
@@ -180,7 +182,7 @@
                       ScrollViewer.IsHorizontalScrollChainingEnabled="False"
                       ScrollViewer.VerticalScrollBarVisibility="Disabled"
                       ScrollViewer.VerticalScrollMode="Disabled"
-                      Padding="8,0,0,0"
+                      Padding="4,0,0,0"
                       Grid.Row="0">
                 <GridView.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -191,7 +193,7 @@
                     <Style TargetType="GridViewItem"
                            BasedOn="{StaticResource DefaultGridViewItemStyle}">
                         <Setter Property="Margin"
-                                Value="0,4,4,4" />
+                                Value="0,4,2,4" />
                         <Setter Property="MinHeight"
                                 Value="0" />
                         <Setter Property="MinWidth"

@@ -23,6 +23,8 @@
                     <Grid x:Name="LayoutRoot">
                         <controls:LottieView x:Name="Player"
                                              AutoPlay="False"
+                                             FrameSize="180,180"
+                                             DecodeFrameType="Logical"
                                              Width="180"
                                              Height="180" />
 

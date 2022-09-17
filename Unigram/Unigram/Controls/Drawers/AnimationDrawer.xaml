@@ -92,7 +92,7 @@
             <GridView x:Name="Toolbar"
                       ItemsSource="{x:Bind ViewModel.Sets}"
                       SelectedItem="{x:Bind ViewModel.SelectedSet, Mode=TwoWay}"
-                      Height="{ThemeResource AppBarThemeCompactHeight}"
+                      Height="40"
                       IsItemClickEnabled="True"
                       ScrollViewer.HorizontalScrollBarVisibility="Auto"
                       ScrollViewer.HorizontalScrollMode="Auto"
@@ -110,15 +110,15 @@
                     <Style TargetType="GridViewItem"
                            BasedOn="{StaticResource DefaultGridViewItemStyle}">
                         <Setter Property="Margin"
-                                Value="0,4,4,4" />
+                                Value="0,4,2,4" />
                         <Setter Property="MinHeight"
                                 Value="0" />
                         <Setter Property="MinWidth"
                                 Value="0" />
                         <Setter Property="Height"
-                                Value="40" />
+                                Value="32" />
                         <Setter Property="Width"
-                                Value="40" />
+                                Value="32" />
                     </Style>
                 </GridView.ItemContainerStyle>
                 <GridView.ItemTemplateSelector>
@@ -130,7 +130,7 @@
                                                FontFamily="{StaticResource EmojiThemeFontFamily}"
                                                TextAlignment="Center"
                                                VerticalAlignment="Center"
-                                               FontSize="18" />
+                                               FontSize="16" />
                                 </Grid>
                             </DataTemplate>
                         </selectors:StickerSetTemplateSelector.ItemTemplate>
@@ -149,7 +149,7 @@
                                 <Border AutomationProperties.Name="{x:Bind Title}"
                                         ToolTipService.ToolTip="{x:Bind Title}"
                                         Background="Transparent">
-                                    <FontIcon Glyph="&#xE60D;"
+                                    <FontIcon Glyph="&#xE989;"
                                               FontFamily="{StaticResource TelegramThemeFontFamily}" />
                                 </Border>
                             </DataTemplate>
