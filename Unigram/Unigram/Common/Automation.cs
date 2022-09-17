@@ -426,11 +426,11 @@ namespace Unigram.Common
             else if (message.SendingState is MessageSendingStatePending)
             {
             }
-            else if (message.Id <= maxId)
+            else if (message.Id <= maxId && message.IsOutgoing && !message.IsChannelPost)
             {
                 builder.Append(Strings.Resources.AccDescrMsgRead);
             }
-            else
+            else if (message.IsOutgoing && !message.IsChannelPost)
             {
                 builder.Append(Strings.Resources.AccDescrMsgUnread);
             }
