@@ -1005,11 +1005,6 @@ namespace Unigram.Controls.Cells
                             emoji.Add(customEmoji.CustomEmojiId);
                             shift += 2;
                         }
-                        else
-                        {
-                            BriefLabel.Inlines.Add(new Run { Text = clean.Substring(entity.Offset, entity.Length) });
-                            shift += 2;
-                        }
 
                         previous = entity.Offset + entity.Length;
                     }
