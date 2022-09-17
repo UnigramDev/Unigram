@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Unigram.Common;
 using Windows.Foundation;
 using Windows.Graphics;
 using Windows.Graphics.Display;
 using Windows.System;
-using Windows.System.Threading;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -53,7 +53,7 @@ namespace Unigram.Controls
         protected readonly bool _limitFps = true;
 
         protected readonly DispatcherQueue _dispatcher;
-        private ThreadPoolTimer _timer;
+        private LoopThread _timer;
 
         protected AnimatedImage(bool? limitFps, bool autoPause = true)
         {
@@ -268,6 +268,7 @@ namespace Unigram.Controls
                 ////_canvas.Source = new BitmapImage();
                 //_layoutRoot?.Children.Remove(_canvas);
                 //_canvas = null;
+                _canvas.Source = null;
             }
 
             await _nextFrameLock.WaitAsync();
@@ -382,7 +383,7 @@ namespace Unigram.Controls
             }
         }
 
-        private void PrepareNextFrame(ThreadPoolTimer sender)
+        private void PrepareNextFrame(object sender, object e)
         {
             if (_nextFrameLock.Wait(0))
             {
@@ -505,11 +506,15 @@ namespace Unigram.Controls
         {
             if (subscribe)
             {
-                _timer ??= ThreadPoolTimer.CreatePeriodicTimer(PrepareNextFrame, _interval);
+                if (_timer == null)
+                {
+                    _timer = LoopThreadPool.Get(_interval);
+                    _timer.Tick += PrepareNextFrame;
+                }
             }
             else if (_timer != null)
             {
-                _timer.Cancel();
+                _timer.Tick -= PrepareNextFrame;
                 _timer = null;
             }
         }

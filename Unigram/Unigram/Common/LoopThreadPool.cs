@@ -5,16 +5,16 @@ namespace Unigram.Common
 {
     public class LoopThreadPool
     {
-        private static readonly Dictionary<double, LoopThread> _specificFrameRate = new();
+        private static readonly Dictionary<TimeSpan, LoopThread> _specificFrameRate = new();
 
-        public static LoopThread Get(double frameRate)
+        public static LoopThread Get(TimeSpan frameRate)
         {
             if (_specificFrameRate.TryGetValue(frameRate, out LoopThread thread))
             {
                 return thread;
             }
 
-            thread = new LoopThread(TimeSpan.FromMilliseconds(1000 / Math.Min(60, frameRate)));
+            thread = new LoopThread(frameRate);
             _specificFrameRate[frameRate] = thread;
 
             return thread;
