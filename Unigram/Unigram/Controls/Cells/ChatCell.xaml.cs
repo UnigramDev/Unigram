@@ -372,6 +372,12 @@ namespace Unigram.Controls.Cells
                 builder.Append(", ");
             }
 
+            if (chat.UnreadMentionCount > 0)
+            {
+                builder.Append(Locale.Declension("AccDescrMentionCount", chat.UnreadCount));
+                builder.Append(", ");
+            }
+
             if (message == null)
             {
                 //AutomationProperties.SetName(this, builder.ToString());
@@ -991,22 +997,24 @@ namespace Unigram.Controls.Cells
                 {
                     foreach (var entity in message.Entities)
                     {
+                        if (entity.Type is not TextEntityTypeCustomEmoji customEmoji)
+                        {
+                            continue;
+                        }
+
                         if (entity.Offset > previous)
                         {
                             BriefLabel.Inlines.Add(new Run { Text = clean.Substring(previous, entity.Offset - previous) });
                             shift += 2;
                         }
 
-                        if (entity.Type is TextEntityTypeCustomEmoji customEmoji)
-                        {
-                            _positions.Add(new EmojiPosition { X = shift + entity.Offset + 1, CustomEmojiId = customEmoji.CustomEmojiId });
-                            BriefLabel.Inlines.Add(new Run { Text = clean.Substring(entity.Offset, entity.Length), FontFamily = App.Current.Resources["SpoilerFontFamily"] as FontFamily });
+                        _positions.Add(new EmojiPosition { X = shift + entity.Offset + 1, CustomEmojiId = customEmoji.CustomEmojiId });
+                        BriefLabel.Inlines.Add(new Run { Text = clean.Substring(entity.Offset, entity.Length), FontFamily = App.Current.Resources["SpoilerFontFamily"] as FontFamily });
 
-                            emoji.Add(customEmoji.CustomEmojiId);
-                            shift += 2;
+                        emoji.Add(customEmoji.CustomEmojiId);
+                        shift += 2;
 
-                            previous = entity.Offset + entity.Length;
-                        }
+                        previous = entity.Offset + entity.Length;
                     }
                 }
 
