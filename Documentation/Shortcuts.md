@@ -41,7 +41,7 @@
             <td class="column2 style1 s">Ctrl + F</td>
           </tr>
           <tr class="row9">
-            <td class="column0 style2 s style2" rowspan="11">Selected Text in typing area</td>
+            <td class="column0 style2 s style2" rowspan="12">Selected Text in typing area</td>
             <td class="column1 style1 s">Undo</td>
             <td class="column2 style1 s">Ctrl + Z</td>
           </tr>
@@ -82,84 +82,88 @@
             <td class="column2 style1 s">Ctrl + Shift + M</td>
           </tr>
           <tr class="row19">
+            <td class="column1 style1 s">Spoiler</td>
+            <td class="column2 style1 s">Ctrol + Shift + P</td>
+          </tr>
+          <tr class="row20">
             <td class="column1 style1 s">Null / Plain Text</td>
             <td class="column2 style1 s">Ctrl + Shift + N</td>
           </tr>
-          <tr class="row20">
+          <tr class="row21">
             <td class="column0 style2 s style2" rowspan="9">Folders</td>
             <td class="column1 style1 s">First folder (All chats)</td>
             <td class="column2 style1 s">Ctrl + 1</td>
           </tr>
-          <tr class="row21">
+          <tr class="row22">
             <td class="column1 style1 s">Second folder</td>
             <td class="column2 style1 s">Ctrl + 2</td>
           </tr>
-          <tr class="row22">
+          <tr class="row23">
             <td class="column1 style1 s">Third folder</td>
             <td class="column2 style1 s">Ctrl + 3</td>
           </tr>
-          <tr class="row23">
+          <tr class="row24">
             <td class="column1 style1 s">Forth folder</td>
             <td class="column2 style1 s">Ctrl + 4</td>
           </tr>
-          <tr class="row24">
+          <tr class="row25">
             <td class="column1 style1 s">Fifth folder</td>
             <td class="column2 style1 s">Ctrl + 5</td>
           </tr>
-          <tr class="row25">
+          <tr class="row26">
             <td class="column1 style1 s">Sixth folder</td>
             <td class="column2 style1 s">Ctrl + 6</td>
           </tr>
-          <tr class="row26">
+          <tr class="row27">
             <td class="column1 style1 s">Seventh folder</td>
             <td class="column2 style1 s">Ctrl + 7</td>
           </tr> 
-          <tr class="row27">
+          <tr class="row28">
             <td class="column1 style1 s">Eighth folder</td>
             <td class="column2 style1 s">Ctrl + 8</td>
           </tr>
-          <tr class="row28">
+          <tr class="row29">
             <td class="column1 style1 s">Archive</td>
             <td class="column2 style1 s">Ctrl + 9</td>
           </tr>
-          <tr class="row27">
+          <tr class="row30">
             <td class="column0 style2 s style2" rowspan="7">Other shortcuts</td>
             <td class="column1 style2 s style2" rowspan="2">Go back</td>
             <td class="column2 style1 s">ESC</td>
           </tr>
-          <tr class="row28">
+          <tr class="row31">
             <td class="column2 style1 s">Alt + Left Arrow</td>
           </tr>
-          <tr class="row29">
+          <tr class="row32">
             <td class="column1 style1 s">Go to saved messages</td>
             <td class="column2 style1 s">Ctrl + 0</td>
           </tr>
-          <tr class="row30">
+          <tr class="row33">
             <td class="column1 style1 s">Edit last sent message</td>
             <td class="column2 style1 s">Arrow up</td>
           </tr>
-          <tr class="row31">
+          <tr class="row34">
             <td class="column1 style1 s">Reply to last sent message</td>
             <td class="column2 style1 s">Ctrl + Arrow Up</td>
           </tr>
-          <tr class="row32">
+          <tr class="row35">
             <td class="column1 style1 s">Close Unigram (Main window only)</td>
             <td class="column2 style1 s">Ctrl + Q</td>
           </tr>
-          <tr class="row33">
+          <tr class="row36">
             <td class="column1 style1 s">Close current window</td>
             <td class="column2 style1 s">Ctrl + W</td>
           </tr>
-          <tr class="row34">
+          <tr class="row37">
             <td class="column0 style2 s style2" rowspan="3">Record Notes</td>
             <td class="column1 style2 s style2">Start Record</td>
             <td class="column2 style1 s">Ctrl + R</td>
           </tr>
-          <tr class="row35">
+          <tr class="row38">
               <td class="column1 style2 s style2">Send Recorded</td>
               <td class="column2 style1 s">Ctrl + R (again)</td>
           </tr>
-          <tr class="row36">
+          <tr class="row39">
             <td class="column1 style2 s style2">Stop Record</td>
             <td class="column2 style1 s">Ctrl + D</td>
           </tr>
