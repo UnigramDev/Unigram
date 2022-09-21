@@ -231,28 +231,31 @@ namespace Unigram.Services
 
         #region App version
 
-        public const ulong CurrentVersion = (8UL << 48) | (9UL << 32) | (0UL << 16);
-        public const string CurrentChangelog = @"ANIMATED EMOJI IN MESSAGES, NEW STICKER PANEL, PRIVACY SETTINGS FOR VOICE MESSAGES, AND GIFTING TELEGRAM PREMIUM
+        public const ulong CurrentVersion = (9UL << 48) | (0UL << 32) | (0UL << 16);
+        public const string CurrentChangelog = @"INFINITE REACTIONS, EMOJI STATUSES AND MUCH MORE
 
-**New Sticker Panel**
-• Switch between sticker, emoji and GIF tabs to quickly find what you're looking for.
-• Enjoy a more vibrant design with semi-transparency and improved scrolling performance on older devices.
-• When typing a message, the sticker button turns into an emoji button that opens the emoji panel.
+**Infinite Reactions**
+• A new expandable reaction menu was added in private chats and groups.
+• All users get access to dozens of new reactions, including reactions previously reserved for Premium users.
+• The reactions you use most frequently will always be displayed at the top.
+• Premium users can react to messages with thousands of custom emoji and add up to 3 reactions to each message.
 
-**Premium: Custom Emoji Packs**
-• Add animated emoji from 10 new custom packs – with countless more coming.
-• Get animated emoji suggestions from your packs when you enter any static emoji.
-• Press and hold on a message containing emoji to see which packs were used. 
-• Create your own custom emoji packs for Premium subscribers.
-• All Telegram users can see emoji from any pack — and try them out for free in the Saved Messages chat.
+**Reaction Management**
+• Group admins can control whether custom reactions are allowed in their groups.
+• We've added an option to report spam when opening a user's profile from a reaction. (Internet rule number N: if something exists, sooner or later, it will be used for spam).
 
-**Premium: Privacy Settings for Voice Messages**
-• Control who can send or forward you voice messages in Settings > Privacy and Security with Telegram Premium.
-• Create exceptions to add individual users or groups of users.
+**Premium: Emoji Statuses**
+• Premium users can add an animated emoji status next to their name to display their current activity.
+• To set a status, tap your Premium badge in the chat list or Settings.
+• Popular suggestions for working, sleeping, traveling and more will be shown at the top.
+• To set a status for a specific duration like 1 hour or 2 days, press and hold the emoji.
 
-**Gifting Telegram Premium**
-• Send a prepaid Premium subscription to any user from their profile page. 
-• Choose from a 3, 6 or 12 month duration – at a discounted price.";
+**New Username Links**
+• A new format was supported for username links, in addition to ""t.me/username."" You can now open Telegram accounts, groups or channels using links like ""username.t.me"" or ""https://username.t.me.""
+
+**Improved Login Flow**
+• We've improved the registration and login experience with slick animations and a smoother UI.
+• If you frequently re-login on Telegram, you can sign in faster using your email.";
 
         public int Session => _session;
 
