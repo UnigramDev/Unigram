@@ -68,7 +68,7 @@ namespace Unigram.Controls.Messages.Content
             {
                 Width = Player.Width = 180 * message.ClientService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
                 Height = Player.Height = 180 * message.ClientService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
-                Player.FitzModifier = (FitzModifier)animatedEmoji.AnimatedEmoji.FitzpatrickType;
+                Player.FitzModifier = (FitzModifier)(animatedEmoji.AnimatedEmoji.FitzpatrickType - 1);
                 Player.IsFlipped = false;
 
                 var sound = animatedEmoji.AnimatedEmoji.Sound;
