@@ -70,7 +70,8 @@
                     <ColumnDefinition />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
-                <controls:BadgeButton Content="{CustomResource VoipGroupOpenChat}"
+                <controls:BadgeButton x:Name="OpenChat"
+                                      Content="{CustomResource VoipGroupOpenChat}"
                                       Command="{x:Bind ViewModel.SendMessageCommand}"
                                       Style="{StaticResource GlyphGridBadgeButtonStyle}"
                                       Glyph="&#xE8BD;" />

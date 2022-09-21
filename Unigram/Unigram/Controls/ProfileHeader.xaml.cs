@@ -216,6 +216,8 @@ namespace Unigram.Controls
                 SecretHashKey.Visibility = Visibility.Collapsed;
             }
 
+            OpenChat.Content = Strings.Resources.VoipGroupOpenChat;
+
             // Unused:
             Location.Visibility = Visibility.Collapsed;
             Edit.Visibility = Visibility.Collapsed;
@@ -327,6 +329,8 @@ namespace Unigram.Controls
                 Join.Glyph = Icons.ArrowExit;
             }
 
+            OpenChat.Content = Strings.Resources.VoipGroupOpenGroup;
+
             // Unused:
             if (chat.VideoChat.GroupCallId != 0 || group.CanManageVideoChats())
             {
@@ -419,6 +423,10 @@ namespace Unigram.Controls
 
             Edit.Glyph = Icons.Edit;
             Edit.Content = Edit.Content = Strings.Resources.ChannelEdit; //group.IsChannel ? Strings.Resources.ManageChannelMenu : Strings.Resources.ManageGroupMenu;
+
+            OpenChat.Content = group.IsChannel
+                ? Strings.Resources.VoipGroupOpenChannel
+                : Strings.Resources.VoipGroupOpenGroup;
 
             // Unused:
             MiscPanel.Visibility = Visibility.Collapsed;
