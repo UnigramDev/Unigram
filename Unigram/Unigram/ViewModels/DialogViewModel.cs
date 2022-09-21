@@ -560,7 +560,7 @@ namespace Unigram.ViewModels
         public Stack<long> RepliesStack => _repliesStack;
 
         // Scrolling to top
-        public virtual async Task LoadNextSliceAsync(bool force = false, bool init = false)
+        public virtual async Task LoadNextSliceAsync(bool force = false)
         {
             if (_type is not DialogType.History and not DialogType.Thread and not DialogType.Pinned)
             {
@@ -575,16 +575,6 @@ namespace Unigram.ViewModels
 
             using (await _loadMoreLock.WaitAsync())
             {
-                try
-                {
-                    // We don't want to flood with requests when the chat gets initialized
-                    if (init && ListField?.ScrollingHost?.ScrollableHeight >= 200)
-                    {
-                        return;
-                    }
-                }
-                catch { }
-
                 if (_isLoadingNextSlice || _isLoadingPreviousSlice || (_chat?.Id != chat.Id && _migratedChat?.Id != chat.Id) || Items.Count < 1 || IsLastSliceLoaded == true)
                 {
                     return;
@@ -652,7 +642,7 @@ namespace Unigram.ViewModels
                             }
                         }
 
-                        SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, force);
+                        SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
                         Items.RawInsertRange(0, replied, true, out bool empty);
                     }
                     else
@@ -671,7 +661,7 @@ namespace Unigram.ViewModels
         }
 
         // Scrolling to bottom
-        public async Task LoadPreviousSliceAsync(bool force = false, bool init = false)
+        public async Task LoadPreviousSliceAsync(bool force = false)
         {
             if (_type is not DialogType.History and not DialogType.Thread and not DialogType.Pinned)
             {
@@ -686,33 +676,13 @@ namespace Unigram.ViewModels
 
             using (await _loadMoreLock.WaitAsync())
             {
-                try
-                {
-                    // We don't want to flood with requests when the chat gets initialized
-                    if (init && ListField?.ScrollingHost?.ScrollableHeight >= 200)
-                    {
-                        return;
-                    }
-                }
-                catch { }
-
                 if (_isLoadingNextSlice || _isLoadingPreviousSlice || _chat?.Id != chat.Id || Items.Count < 1)
                 {
                     return;
                 }
 
-
                 _isLoadingPreviousSlice = true;
                 IsLoading = true;
-
-                //if (last)
-                //{
-                //    UpdatingScrollMode = force ? UpdatingScrollMode.ForceKeepLastItemInView : UpdatingScrollMode.KeepLastItemInView;
-                //}
-                //else
-                //{
-                //    UpdatingScrollMode = force ? UpdatingScrollMode.ForceKeepItemsInView : UpdatingScrollMode.KeepItemsInView;
-                //}
 
                 System.Diagnostics.Debug.WriteLine("DialogViewModel: LoadPreviousSliceAsync");
 
@@ -724,14 +694,6 @@ namespace Unigram.ViewModels
 
                     return;
                 }
-
-                //for (int i = 0; i < Messages.Count; i++)
-                //{
-                //    if (Messages[i].Id != 0 && Messages[i].Id < maxId)
-                //    {
-                //        maxId = Messages[i].Id;
-                //    }
-                //}
 
                 Function func;
                 if (_threadId != 0)
@@ -1616,11 +1578,7 @@ namespace Unigram.ViewModels
                     continue;
                 }
 
-                if (updated == null)
-                {
-                    updated = new List<MessageViewModel>();
-                }
-
+                updated ??= new List<MessageViewModel>();
                 updated.Add(group.Item1);
 
                 Handle(new UpdateMessageContent(chat.Id, group.Item1.Id, group.Item1.Content));
@@ -3555,7 +3513,7 @@ namespace Unigram.ViewModels
 
             for (int i = 0; i < source.Count; i++)
             {
-                if (filter && _messages.Contains(source[i].Id))
+                if (filter && source[i].Id != 0 && _messages.Contains(source[i].Id))
                 {
                     continue;
                 }
@@ -3576,7 +3534,7 @@ namespace Unigram.ViewModels
 
             for (int i = source.Count - 1; i >= 0; i--)
             {
-                if (filter && _messages.Contains(source[i].Id))
+                if (filter && source[i].Id != 0 && _messages.Contains(source[i].Id))
                 {
                     continue;
                 }
@@ -3608,7 +3566,6 @@ namespace Unigram.ViewModels
             if (_suppressOperations)
             {
                 base.InsertItem(index, item);
-                return;
             }
             else if (_suppressNext)
             {

@@ -302,6 +302,11 @@ namespace Unigram.ViewModels
             _message = message;
         }
 
+        public override string ToString()
+        {
+            return _message.ToString();
+        }
+
         public IClientService ClientService => _clientService;
 
         public ReplyMarkup ReplyMarkup { get => _message.ReplyMarkup; set => _message.ReplyMarkup = value; }

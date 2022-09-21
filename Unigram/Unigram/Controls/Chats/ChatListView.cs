@@ -112,7 +112,7 @@ namespace Unigram.Controls.Chats
                     && lastSlice)
                 {
                     Logger.Debug(LogTarget.Chat, $"Going {direction}, loading history in the past");
-                    await ViewModel.LoadNextSliceAsync(true);
+                    await ViewModel.LoadNextSliceAsync(direction != PanelScrollingDirection.None);
                 }
                 else if (direction == PanelScrollingDirection.Forward
                     && ItemsStack.LastCacheIndex == ViewModel.Items.Count - 1)
@@ -124,7 +124,7 @@ namespace Unigram.Controls.Chats
                     if (lastSlice && ItemsStack.FirstVisibleIndex == 0)
                     {
                         Logger.Debug(LogTarget.Chat, $"Going {direction}, loading history in the past");
-                        await ViewModel.LoadNextSliceAsync(true);
+                        await ViewModel.LoadNextSliceAsync(direction != PanelScrollingDirection.None);
                     }
 
                     if (ItemsStack.LastCacheIndex == ViewModel.Items.Count - 1)
@@ -143,7 +143,7 @@ namespace Unigram.Controls.Chats
             if (firstSlice)
             {
                 Logger.Debug(LogTarget.Chat, $"Going {direction}, loading history in the future");
-                return ViewModel.LoadPreviousSliceAsync(true);
+                return ViewModel.LoadPreviousSliceAsync(direction != PanelScrollingDirection.None);
             }
 
             SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);

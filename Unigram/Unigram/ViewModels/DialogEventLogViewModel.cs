@@ -163,20 +163,10 @@ namespace Unigram.ViewModels
             }
         }
 
-        public override async Task LoadNextSliceAsync(bool force = false, bool init = false)
+        public override async Task LoadNextSliceAsync(bool force = false)
         {
             using (await _loadMoreLock.WaitAsync())
             {
-                try
-                {
-                    // We don't want to flood with requests when the chat gets initialized
-                    if (init && ListField?.ScrollingHost?.ScrollableHeight >= 200)
-                    {
-                        return;
-                    }
-                }
-                catch { }
-
                 var chat = _migratedChat ?? _chat;
                 if (chat == null)
                 {
