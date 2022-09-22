@@ -2059,10 +2059,15 @@ namespace Unigram.Views
             {
                 flyout.Opened += async (s, args) =>
                 {
-                    var response = await message.ClientService.GetAvailableReactionsAsync(message.Get());
-                    if (response.Count > 0 && flyout.IsOpen)
+                    var response = await message.ClientService.SendAsync(new GetMessageAvailableReactions(message.ChatId, message.Id, 8));
+                    if (response is AvailableReactions reactions && flyout.IsOpen)
                     {
-                        MenuFlyoutReactions.ShowAt(response, message, bubble, flyout);
+                        if (reactions.TopReactions.Count > 0
+                            || reactions.PopularReactions.Count > 0
+                            || reactions.RecentReactions.Count > 0)
+                        {
+                            MenuFlyoutReactions.ShowAt(reactions, message, bubble, flyout);
+                        }
                     }
                 };
             }
