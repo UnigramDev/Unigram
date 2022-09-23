@@ -1004,9 +1004,9 @@ namespace Unigram.Controls.Cells
 
                             emoji.Add(customEmoji.CustomEmojiId);
                             shift += 2;
-                        }
 
-                        previous = entity.Offset + entity.Length;
+                            previous = entity.Offset + entity.Length;
+                        }
                     }
                 }
 
