@@ -5,7 +5,6 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Numerics;
 using System.Threading.Tasks;
 using Unigram.Navigation;
 using Windows.ApplicationModel;
@@ -14,6 +13,7 @@ using Windows.Graphics;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Controls
@@ -389,6 +389,14 @@ namespace Unigram.Controls
         {
             ((LottieView)d)._flipped = (bool)e.NewValue;
 
+            ((LottieView)d).RenderTransformOrigin = new Point(0.5, 0.5);
+            ((LottieView)d).RenderTransform = new ScaleTransform
+            {
+                ScaleX = (bool)e.NewValue ? -1 : 1,
+                ScaleY = 1,
+                CenterX = 0.5,
+                CenterY = 0.5
+            };
             //var visual = ElementCompositionPreview.GetElementVisual((LottieView)d);
             //visual.Scale = new Vector3((bool)e.NewValue ? -1 : 1, 1, 1);
         }
