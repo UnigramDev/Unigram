@@ -125,6 +125,16 @@ namespace Unigram.Controls.Chats
             _dispatcher.TryEnqueue(Invalidate);
         }
 
+        protected override void OnSurfaceContentsLost()
+        {
+            if (_pattern != null)
+            {
+                _pattern.Dispose();
+                _pattern = null;
+                _patternPath = null;
+            }
+        }
+
         protected override void Dispose()
         {
             _additionalResourcesLock.Wait();

@@ -157,8 +157,14 @@ namespace Unigram.Controls
                 _bitmap?.Dispose();
                 _bitmap = null;
 
+                OnSurfaceContentsLost();
                 Changed();
             }
+        }
+
+        protected virtual void OnSurfaceContentsLost()
+        {
+
         }
 
         private void OnActivated(object sender, WindowActivatedEventArgs e)
@@ -432,6 +438,7 @@ namespace Unigram.Controls
                 _bitmap?.Dispose();
                 _bitmap = null;
 
+                OnSurfaceContentsLost();
                 Changed();
             }
             else
