@@ -1695,12 +1695,7 @@ namespace Unigram.Controls.Messages
         private Brush GetBrush(string key)
         {
             var message = _message;
-            if (message == null)
-            {
-                return null;
-            }
-
-            if (message.IsOutgoing && !message.IsChannelPost)
+            if (message != null && message.IsOutgoing && !message.IsChannelPost)
             {
                 if (ActualTheme == ElementTheme.Light)
                 {
@@ -2266,6 +2261,9 @@ namespace Unigram.Controls.Messages
 
             Message.SetText(null, message, new TextEntity[0]);
 
+            LoadObject(ref HeaderPanel, nameof(HeaderPanel));
+            LoadObject(ref HeaderLabel, nameof(HeaderLabel));
+
             HeaderLabel.Inlines.Add(new Run { Text = Strings.Resources.ForwardedMessage, FontWeight = FontWeights.Normal });
             HeaderLabel.Inlines.Add(new LineBreak());
             HeaderLabel.Inlines.Add(new Run { Text = Strings.Resources.From + " ", FontWeight = FontWeights.Normal });
@@ -2279,6 +2277,7 @@ namespace Unigram.Controls.Messages
             HeaderLabel.Inlines.Add(hyperlink);
 
             Header.Visibility = Visibility.Visible;
+            HeaderPanel.Visibility = Visibility.Visible;
             HeaderLabel.Visibility = Visibility.Visible;
 
             UpdateMockup();
