@@ -39,6 +39,8 @@ namespace Unigram.Controls.Chats
             set => _programmaticExternal = value;
         }
 
+        public PanelScrollingDirection ScrollingDirection { get; private set; }
+
         public ChatListView()
         {
             DefaultStyleKey = typeof(ListView);
@@ -77,6 +79,7 @@ namespace Unigram.Controls.Chats
         {
             ScrollingHost = (ScrollViewer)GetTemplateChild("ScrollViewer");
             ScrollingHost.ViewChanging += OnViewChanging;
+            ScrollingHost.ViewChanged += OnViewChanged;
 
             base.OnApplyTemplate();
         }
@@ -84,6 +87,16 @@ namespace Unigram.Controls.Chats
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
             ViewChanged();
+        }
+
+        private void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        {
+            if (e.IsIntermediate)
+            {
+                return;
+            }
+
+            ScrollingDirection = PanelScrollingDirection.None;
         }
 
         private void OnViewChanging(object sender, ScrollViewerViewChangingEventArgs e)
@@ -97,6 +110,8 @@ namespace Unigram.Controls.Chats
 
         private async void ViewChanged(PanelScrollingDirection direction = PanelScrollingDirection.None)
         {
+            ScrollingDirection = direction;
+
             if (ScrollingHost == null || ItemsStack == null || ViewModel == null)
             {
                 return;

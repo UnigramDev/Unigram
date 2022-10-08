@@ -721,7 +721,7 @@ namespace Unigram.Views
                     return;
                 }
 
-                var direction = Messages.ScrollMode == ItemsUpdatingScrollMode.KeepItemsInView ? -1 : 1;
+                var direction = Messages.ScrollingDirection == PanelScrollingDirection.Backward ? -1 : 1;
                 var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
 
                 var anim = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
