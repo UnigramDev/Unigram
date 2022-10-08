@@ -75,23 +75,29 @@
                              Padding="12,11,6,12" />
                 </controls:HeaderedControl>
 
-                <controls:HeaderedControl x:Name="ChatBasicPanel">
+                <controls:HeaderedControl x:Name="ChatBasicPanel"
+                                          Footer="{x:Bind ConvertHistory(ViewModel.IsAllHistoryAvailable), Mode=OneWay}">
                     <controls:BadgeButton x:Name="ChatType"
                                           Content="{CustomResource GroupType}"
                                           Command="{x:Bind ViewModel.EditTypeCommand}"
-                                          Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}" />
-
-                    <controls:BadgeButton x:Name="ChatHistory"
-                                          Content="{CustomResource ChatHistory}"
-                                          Badge="{x:Bind ConvertHistory(ViewModel.IsAllHistoryAvailable), Mode=OneWay}"
-                                          Command="{x:Bind ViewModel.EditHistoryCommand}"
-                                          Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
-                                          Glyph="&#xE8BD;" />
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          IsChevronVisible="True" />
 
                     <controls:BadgeButton x:Name="ChatLinked"
                                           Content="{CustomResource Discussion}"
                                           Command="{x:Bind ViewModel.EditLinkedChatCommand}"
                                           Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}" />
+
+                    <controls:BadgeButton x:Name="ChatHistory"
+                                          Content="{CustomResource ChatHistory}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xE8BD;">
+                        <controls:BadgeButton.Badge>
+                            <ComboBox ItemsSource="{x:Bind ViewModel.AllHistoryAvailableOptions}"
+                                      SelectedIndex="{x:Bind ViewModel.IsAllHistoryAvailable, Mode=TwoWay}"
+                                      DisplayMemberPath="Text" />
+                        </controls:BadgeButton.Badge>
+                    </controls:BadgeButton>
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl x:Name="InviteLinkPanel"

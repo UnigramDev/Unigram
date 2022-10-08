@@ -48,9 +48,11 @@ namespace Unigram.Views.Supergroups
 
         #region Binding
 
-        private string ConvertHistory(bool available)
+        private string ConvertHistory(int available)
         {
-            return available ? Strings.Resources.ChatHistoryVisible : Strings.Resources.ChatHistoryHidden;
+            return ViewModel.AllHistoryAvailableOptions[available].Value
+                ? Strings.Resources.ChatHistoryVisibleInfo
+                : Strings.Resources.ChatHistoryHiddenInfo;
         }
 
         #endregion
@@ -101,6 +103,7 @@ namespace Unigram.Views.Supergroups
             ViewModel.Title = chat.Title;
             ViewModel.IsSignatures = group.SignMessages;
 
+            ChatType.Glyph = group.IsChannel ? Icons.Megaphone : Icons.People;
 
             Photo.IsEnabled = group.CanChangeInfo();
             TitleLabel.IsReadOnly = !group.CanChangeInfo();
@@ -121,7 +124,6 @@ namespace Unigram.Views.Supergroups
                         ? Strings.Resources.TypePrivateGroupRestrictedForwards
                         : Strings.Resources.TypePrivateGroup;
 
-            ChatHistory.Badge = null;
             ChatHistory.Visibility = group.CanChangeInfo() && string.IsNullOrEmpty(group.Username) && !group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
 
             InviteLinkPanel.Visibility = group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
@@ -152,10 +154,9 @@ namespace Unigram.Views.Supergroups
 
 
             ViewModel.About = fullInfo.Description;
-            ViewModel.IsAllHistoryAvailable = fullInfo.IsAllHistoryAvailable;
+            ViewModel.IsAllHistoryAvailable = fullInfo.IsAllHistoryAvailable ? 0 : 1;
 
             ChatType.Visibility = fullInfo.CanSetUsername ? Visibility.Visible : Visibility.Collapsed;
-            ChatHistory.Badge = fullInfo.IsAllHistoryAvailable ? Strings.Resources.ChatHistoryVisible : Strings.Resources.ChatHistoryHidden;
 
             var linkedChat = ViewModel.ClientService.GetChat(fullInfo.LinkedChatId);
             if (linkedChat != null)
@@ -232,7 +233,7 @@ namespace Unigram.Views.Supergroups
 
             ViewModel.Title = chat.Title;
             ViewModel.IsSignatures = false;
-            ViewModel.IsAllHistoryAvailable = false;
+            ViewModel.IsAllHistoryAvailable = 1;
 
 
             //Photo.IsEnabled = group.CanChangeInfo();
@@ -243,7 +244,6 @@ namespace Unigram.Views.Supergroups
             ChatType.Badge = Strings.Resources.TypePrivateGroup;
             ChatType.Visibility = group.Status is ChatMemberStatusCreator ? Visibility.Visible : Visibility.Collapsed;
 
-            ChatHistory.Badge = Strings.Resources.ChatHistoryHidden;
             ChatHistory.Visibility = group.Status is ChatMemberStatusCreator ? Visibility.Visible : Visibility.Collapsed;
 
             InviteLinkPanel.Visibility = group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;

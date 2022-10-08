@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -32,7 +33,6 @@ namespace Unigram.ViewModels.Supergroups
             : base(clientService, settingsService, aggregator)
         {
             EditTypeCommand = new RelayCommand(EditTypeExecute);
-            EditHistoryCommand = new RelayCommand(EditHistoryExecute);
             EditLinkedChatCommand = new RelayCommand(EditLinkedChatExecute);
             EditStickerSetCommand = new RelayCommand(EditStickerSetExecute);
             EditPhotoCommand = new RelayCommand<StorageMedia>(EditPhotoExecute);
@@ -78,11 +78,30 @@ namespace Unigram.ViewModels.Supergroups
         }
 
         private bool _isAllHistoryAvailable;
-        public bool IsAllHistoryAvailable
+        public int IsAllHistoryAvailable
         {
-            get => _isAllHistoryAvailable;
-            set => Set(ref _isAllHistoryAvailable, value);
+            get => Array.IndexOf(_allHistoryAvailableIndexer, _isAllHistoryAvailable);
+            set
+            {
+                if (value >= 0 && value < _allHistoryAvailableIndexer.Length && _isAllHistoryAvailable != _allHistoryAvailableIndexer[value])
+                {
+                    _isAllHistoryAvailable = _allHistoryAvailableIndexer[value];
+                    RaisePropertyChanged();
+                }
+            }
         }
+
+        private readonly bool[] _allHistoryAvailableIndexer = new[]
+        {
+            true,
+            false,
+        };
+
+        public List<SettingsOptionItem<bool>> AllHistoryAvailableOptions => new List<SettingsOptionItem<bool>>
+        {
+            new SettingsOptionItem<bool>(true, Strings.Resources.ChatHistoryVisible),
+            new SettingsOptionItem<bool>(false, Strings.Resources.ChatHistoryHidden)
+        };
 
         #region Initialize
 
@@ -365,52 +384,6 @@ namespace Unigram.ViewModels.Supergroups
             }
 
             NavigationService.Navigate(typeof(SupergroupEditTypePage), chat.Id);
-        }
-
-        public RelayCommand EditHistoryCommand { get; }
-        private async void EditHistoryExecute()
-        {
-            var chat = _chat;
-            if (chat == null)
-            {
-                return;
-            }
-
-            var initialValue = false;
-
-            if (chat.Type is ChatTypeSupergroup)
-            {
-                var supergroup = ClientService.GetSupergroup(chat);
-                if (supergroup == null)
-                {
-                    return;
-                }
-
-                var full = ClientService.GetSupergroupFull(chat);
-                if (full == null)
-                {
-                    return;
-                }
-
-                initialValue = full.IsAllHistoryAvailable;
-            }
-
-            var items = new[]
-            {
-                new ChooseOptionItem(true, Strings.Resources.ChatHistoryVisible, initialValue) { Footer = Strings.Resources.ChatHistoryVisibleInfo },
-                new ChooseOptionItem(false, Strings.Resources.ChatHistoryHidden, !initialValue) { Footer = Strings.Resources.ChatHistoryHiddenInfo }
-            };
-
-            var dialog = new ChooseOptionPopup(items);
-            dialog.Title = Strings.Resources.ChatHistory;
-            dialog.PrimaryButtonText = Strings.Resources.OK;
-            dialog.SecondaryButtonText = Strings.Resources.Cancel;
-
-            var confirm = await dialog.ShowQueuedAsync();
-            if (confirm == ContentDialogResult.Primary && dialog.SelectedIndex is bool index)
-            {
-                IsAllHistoryAvailable = index;
-            }
         }
 
         public RelayCommand EditStickerSetCommand { get; }
