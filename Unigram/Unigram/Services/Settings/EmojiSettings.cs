@@ -45,6 +45,8 @@ namespace Unigram.Services.Settings
 
         public void AddRecentEmoji(string code)
         {
+            LoadRecentEmoji();
+
             foreach (var modifier in _modifiers)
             {
                 code = code.Replace(modifier, string.Empty);
