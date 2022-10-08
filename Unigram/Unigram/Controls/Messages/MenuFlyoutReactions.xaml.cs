@@ -2,13 +2,11 @@
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls.Drawers;
-using Unigram.Navigation;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Drawers;
@@ -20,7 +18,6 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 using Point = Windows.Foundation.Point;
 
 namespace Unigram.Controls.Messages
@@ -90,27 +87,51 @@ namespace Unigram.Controls.Messages
                 }
             }
 
+            var hasMore = source.Count > 7 || reactions.AllowCustomEmoji;
             var count = Math.Min(source.Count, 8);
+
+            while (source.Count > 7)
+            {
+                source.RemoveAt(source.Count - 1);
+            }
 
             var itemSize = 24;
             var itemPadding = 4;
 
             var itemTotal = itemSize + itemPadding;
 
+            var cols = count;
+            var rows = 8;
+
             var actualWidth = presenter.ActualSize.X + 18 + 12 + 18;
-            var width = 8 + 4 + (count * itemTotal);
+            var width = 8 + 4 + (cols * itemTotal);
+            var viewport = 8 + 4 + (cols * itemTotal);
+            var height = rows * itemTotal;
 
             var padding = actualWidth - width;
 
+            var viewModel = EmojiDrawerViewModel.GetForCurrentView(_message.ClientService.SessionId, EmojiDrawerMode.Reactions);
+            var view = new EmojiDrawer(EmojiDrawerMode.Reactions);
+            view.DataContext = viewModel;
+            view.VerticalAlignment = VerticalAlignment.Top;
+            view.Width = width;
+            view.Height = height;
+            view.Margin = new Thickness(0, -40, 0, 0);
+            view.IsShadowVisible = false;
+            view.ItemClick += OnItemClick;
+
+            Presenter.Children.Add(view);
+            _ = viewModel.UpdateReactions(_reactions, source);
+
             Shadow.Width = width;
             Pill.Width = width;
-            Presenter.Width = Container.Width = width;
+            Presenter.Width = width;
 
             Pill.VerticalAlignment = VerticalAlignment.Top;
             Pill.Height = Shadow.Height = 36 + 20;
             Pill.Margin = Shadow.Margin = new Thickness(0, 0, 0, -20);
 
-            Expand.Visibility = source.Count > 8 ? Visibility.Visible : Visibility.Collapsed;
+            Expand.Visibility = hasMore ? Visibility.Visible : Visibility.Collapsed;
 
             var yy = 20f;
 
@@ -140,9 +161,7 @@ namespace Unigram.Controls.Messages
             LayoutRoot.Padding = new Thickness(16, 40, 16, 32);
 
             var offset = 0;
-            var visible = source.Count > 8 ? 7 : 8; //Math.Ceiling((width - 8) / 34);
-
-            Populate(message, source, offset, visible);
+            var visible = hasMore ? 7 : 8; //Math.Ceiling((width - 8) / 34);
 
             var device = CanvasDevice.GetSharedDevice();
             var rect1 = CanvasGeometry.CreateRectangle(device, Math.Min(width - actualWidth, 0), 0, Math.Max(width + 16 + 16 + Math.Max(0, padding), actualWidth), 860);
@@ -188,13 +207,6 @@ namespace Unigram.Controls.Messages
 
             var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
 
-            var scaleMedium = compositor.CreateVector3KeyFrameAnimation();
-            scaleMedium.InsertKeyFrame(0, Vector3.Zero);
-            scaleMedium.InsertKeyFrame(1, Vector3.One);
-            scaleMedium.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
-            scaleMedium.DelayTime = TimeSpan.FromMilliseconds(100);
-            scaleMedium.Duration = TimeSpan.FromMilliseconds(150);
-
             var scalePill = compositor.CreateSpringVector3Animation();
             scalePill.InitialValue = Vector3.Zero;
             scalePill.FinalValue = Vector3.One;
@@ -213,9 +225,9 @@ namespace Unigram.Controls.Messages
             visualExpand.StartAnimation("Scale", scalePill);
 
             translation.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
-            translation.DelayTime = scaleMedium.Duration + TimeSpan.FromMilliseconds(100);
+            translation.DelayTime = TimeSpan.FromMilliseconds(150 + 100);
             opacity.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
-            opacity.DelayTime = scaleMedium.Duration + TimeSpan.FromMilliseconds(100);
+            opacity.DelayTime = TimeSpan.FromMilliseconds(150 + 100);
 
             pillShadow.StartAnimation("BlurRadius", translation);
             pillShadow.StartAnimation("Opacity", opacity);
@@ -228,200 +240,20 @@ namespace Unigram.Controls.Messages
             resize.Duration = TimeSpan.FromMilliseconds(150);
 
             var move = compositor.CreateVector2KeyFrameAnimation();
-            move.InsertKeyFrame(0, new Vector2(width - 36, 0));
-            move.InsertKeyFrame(1, new Vector2());
+            move.InsertKeyFrame(0, new Vector2(width - 36, 40));
+            move.InsertKeyFrame(1, new Vector2(0, 40));
             move.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
             move.DelayTime = TimeSpan.FromMilliseconds(100);
             move.Duration = TimeSpan.FromMilliseconds(150);
 
-            //visualPill.Clip = compositor.CreateGeometricClip(clip);
+            var viewVisual = ElementCompositionPreview.GetElementVisual(view);
+            viewVisual.Clip = compositor.CreateGeometricClip(clip);
             clip.StartAnimation("Size", resize);
             clip.StartAnimation("Offset", move);
 
             batch.End();
 
             presenter.Unloaded += Presenter_Unloaded;
-        }
-
-        private async void Populate(MessageViewModel message, IList<AvailableReaction> reactions, int offset, int visible)
-        {
-            static void DownloadFile(MessageViewModel message, File file)
-            {
-                if (file != null && file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
-                {
-                    message.ClientService.DownloadFile(file.Id, 31);
-                }
-            }
-
-            var itemSize = 24;
-            var itemPadding = 4;
-
-            reactions
-                .Select(x => x.Type)
-                .Discern(out _, out var missingEmoji);
-
-            IDictionary<long, Sticker> assets = null;
-            if (missingEmoji != null)
-            {
-                var response = await message.ClientService.SendAsync(new GetCustomEmojiStickers(missingEmoji.ToArray()));
-                if (response is not Stickers stickers)
-                {
-                    return;
-                }
-
-                assets = stickers.StickersValue.ToDictionary(x => x.CustomEmojiId);
-            }
-
-            foreach (var item in reactions.Take(visible))
-            {
-                FrameworkElement child = null;
-                if (item.Type is ReactionTypeEmoji emoji)
-                {
-                    var reaction = await message.ClientService.SendAsync(new GetEmojiReaction(emoji.Emoji)) as EmojiReaction;
-                    if (reaction is null)
-                    {
-                        continue;
-                    }
-
-                    // Pre-download additional assets
-                    DownloadFile(message, reaction.CenterAnimation?.StickerValue);
-                    DownloadFile(message, reaction.AroundAnimation?.StickerValue);
-
-                    child = PopulateReaction(message, reaction.ActivateAnimation, itemSize);
-                }
-                else if (item.Type is ReactionTypeCustomEmoji customEmoji && assets != null && assets.TryGetValue(customEmoji.CustomEmojiId, out Sticker sticker))
-                {
-                    child = PopulateReaction(message, sticker, itemSize);
-                }
-
-                if (child == null)
-                {
-                    continue;
-                }
-
-                var button = new HyperlinkButton
-                {
-                    Tag = item.Type,
-                    Content = child,
-                    Margin = new Thickness(0, 0, itemPadding, 0),
-                    Style = BootStrapper.Current.Resources["EmptyHyperlinkButtonStyle"] as Style
-                };
-
-                button.Click += Reaction_Click;
-
-                Grid.SetColumn(button, offset);
-
-                Presenter.Children.Add(button);
-                Presenter.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
-
-                if (offset < visible)
-                {
-                    var visual = ElementCompositionPreview.GetElementVisual(child);
-                    visual.CenterPoint = new Vector3(12, 12, 0);
-                    visual.Scale = Vector3.Zero;
-
-                    var scale = visual.Compositor.CreateVector3KeyFrameAnimation();
-                    scale.InsertKeyFrame(0, Vector3.Zero);
-                    scale.InsertKeyFrame(1, Vector3.One);
-                    scale.DelayTime = TimeSpan.FromMilliseconds(50 * (visible - Presenter.Children.Count));
-
-                    visual.StartAnimation("Scale", scale);
-                }
-
-                offset++;
-            }
-        }
-
-        private FrameworkElement PopulateReaction(MessageViewModel message, Sticker sticker, int itemSize)
-        {
-            if (sticker.Format is StickerFormatTgs)
-            {
-                var view = new LottieView();
-                view.AutoPlay = true;
-                view.IsLoopingEnabled = false;
-                view.FrameSize = new Size(itemSize, itemSize);
-                view.DecodeFrameType = DecodePixelType.Logical;
-                view.Width = itemSize;
-                view.Height = itemSize;
-                view.VerticalAlignment = VerticalAlignment.Top;
-
-                var file = sticker.StickerValue;
-                if (file.Local.IsDownloadingCompleted)
-                {
-                    view.Source = UriEx.ToLocal(file.Local.Path);
-                }
-                else
-                {
-                    view.Source = null;
-
-                    UpdateManager.Subscribe(view, message, file, /*UpdateReaction*/UpdateFile, true);
-
-                    if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-                    {
-                        message.ClientService.DownloadFile(file.Id, 32);
-                    }
-                }
-
-                return view;
-            }
-            else if (sticker.Format is StickerFormatWebm)
-            {
-                var view = new AnimationView();
-                view.AutoPlay = true;
-                view.IsLoopingEnabled = false;
-                //view.FrameSize = new Size(itemSize, itemSize);
-                //view.DecodeFrameType = DecodePixelType.Logical;
-                view.Width = itemSize;
-                view.Height = itemSize;
-                view.VerticalAlignment = VerticalAlignment.Top;
-
-                var file = sticker.StickerValue;
-                if (file.Local.IsDownloadingCompleted)
-                {
-                    view.Source = new LocalVideoSource(file);
-                }
-                else
-                {
-                    view.Source = null;
-
-                    UpdateManager.Subscribe(view, message, file, /*UpdateReaction*/UpdateFile, true);
-
-                    if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-                    {
-                        message.ClientService.DownloadFile(file.Id, 32);
-                    }
-                }
-
-                return view;
-            }
-            else if (sticker.Format is StickerFormatWebp)
-            {
-                var view = new Image();
-                view.Width = itemSize;
-                view.Height = itemSize;
-                view.VerticalAlignment = VerticalAlignment.Top;
-
-                var file = sticker.StickerValue;
-                if (file.Local.IsDownloadingCompleted)
-                {
-                    view.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path, 24);
-                }
-                else
-                {
-                    view.Source = null;
-
-                    UpdateManager.Subscribe(view, message, file, /*UpdateReaction*/UpdateFile, true);
-
-                    if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-                    {
-                        message.ClientService.DownloadFile(file.Id, 32);
-                    }
-                }
-
-                return view;
-            }
-
-            return null;
         }
 
         private void Presenter_Unloaded(object sender, RoutedEventArgs e)
@@ -495,7 +327,7 @@ namespace Unigram.Controls.Messages
 
             Shadow.Height = height;
             Pill.Height = height;
-            Presenter.Height = Container.Height = height;
+            Presenter.Height = height;
 
             Expand.Visibility = Visibility.Collapsed;
 
@@ -523,10 +355,6 @@ namespace Unigram.Controls.Messages
             var compositor = rootVisual.Compositor;
 
             var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-            batch.Completed += (s, args) =>
-            {
-                Presenter.Children.Clear();
-            };
 
             var pillShadow = compositor.CreateDropShadow();
             pillShadow.BlurRadius = 16;
@@ -557,46 +385,58 @@ namespace Unigram.Controls.Messages
             clip.StartAnimation("Size", resize);
 
             ElementCompositionPreview.SetIsTranslationEnabled(Presenter, true);
-            var scrollingVisual = ElementCompositionPreview.GetElementVisual(Presenter);
 
             // Animating this breaks the menu flyout when it comes back
             _presenter.Visibility = Visibility.Collapsed;
 
-            var viewModel = EmojiDrawerViewModel.GetForCurrentView(_message.ClientService.SessionId, EmojiDrawerMode.Reactions);
-            var view = new EmojiDrawer(EmojiDrawerMode.Reactions);
-            view.DataContext = viewModel;
-            view.VerticalAlignment = VerticalAlignment.Top;
-            view.Width = width;
-            view.Height = height;
-            view.ItemClick += OnItemClick;
+            //var viewModel = EmojiDrawerViewModel.GetForCurrentView(_message.ClientService.SessionId, EmojiDrawerMode.Reactions);
+            //var view = new EmojiDrawer(EmojiDrawerMode.Reactions);
+            //view.DataContext = viewModel;
+            //view.VerticalAlignment = VerticalAlignment.Top;
+            //view.Width = width;
+            //view.Height = height;
+            //view.ItemClick += OnItemClick;
 
-            Container.Children.Add(view);
-            _ = viewModel.UpdateReactions(_reactions);
+            //Container.Children.Add(view);
+            //_ = viewModel.UpdateReactions(_reactions);
+            var view = Presenter.Children[0] as EmojiDrawer;
+            var viewModel = view.ViewModel;
 
-            var offset = compositor.CreateVector3KeyFrameAnimation();
-            offset.InsertKeyFrame(0, Vector3.Zero);
-            offset.InsertKeyFrame(1, new Vector3(0, -40, 0));
+            var viewVisual = ElementCompositionPreview.GetElementVisual(view);
+            viewVisual.Clip = null;
 
-            ElementCompositionPreview.SetIsTranslationEnabled(view, true);
-            ElementCompositionPreview.SetIsTranslationEnabled(Pill, true);
-            scrollingVisual = ElementCompositionPreview.GetElementVisual(view);
-            //scrollingVisual.StartAnimation("Translation", offset);
-            pillReceiver.StartAnimation("Offset", offset);
-            visualPill.StartAnimation("Translation", offset);
+            view.IsShadowVisible = _reactions.AllowCustomEmoji;
+            view.Margin = new Thickness();
+            Presenter.Margin = new Thickness(0, -40, 0, 0);
+
+            _ = viewModel.UpdateAsync();
 
             var clipDrawer = compositor.CreateRoundedRectangleGeometry();
             clipDrawer.CornerRadius = new Vector2(36 / 2);
 
-            var drawer = ElementCompositionPreview.GetElementVisual(view);
+            var drawer = ElementCompositionPreview.GetElementVisual(Presenter);
             drawer.CenterPoint = new Vector3(width - 36 / 2, 36 / 2, 0);
             drawer.Clip = compositor.CreateGeometricClip(clipDrawer);
 
-            var offset2 = compositor.CreateVector2KeyFrameAnimation();
-            offset2.InsertKeyFrame(0, new Vector2(0, 40));
-            offset2.InsertKeyFrame(1, Vector2.Zero);
-
-            clipDrawer.StartAnimation("Offset", offset2);
             clipDrawer.StartAnimation("Size", resize);
+
+            if (_reactions.AllowCustomEmoji)
+            {
+                var offset = compositor.CreateVector3KeyFrameAnimation();
+                offset.InsertKeyFrame(0, Vector3.Zero);
+                offset.InsertKeyFrame(1, new Vector3(0, -40, 0));
+
+                ElementCompositionPreview.SetIsTranslationEnabled(view, true);
+                ElementCompositionPreview.SetIsTranslationEnabled(Pill, true);
+                //scrollingVisual.StartAnimation("Translation", offset);
+                pillReceiver.StartAnimation("Offset", offset);
+                visualPill.StartAnimation("Translation", offset);
+
+                var offset2 = compositor.CreateVector2KeyFrameAnimation();
+                offset2.InsertKeyFrame(0, new Vector2(0, 40));
+                offset2.InsertKeyFrame(1, Vector2.Zero);
+                clipDrawer.StartAnimation("Offset", offset2);
+            }
 
             batch.End();
         }
@@ -677,8 +517,7 @@ namespace Unigram.Controls.Messages
             view.Height = height;
             view.ItemClick += OnStatusClick;
 
-            Container.Margin = new Thickness();
-            Container.Children.Add(view);
+            Presenter.Children.Add(view);
 
             if (mode == EmojiDrawerMode.CustomEmojis)
             {
@@ -686,16 +525,16 @@ namespace Unigram.Controls.Messages
             }
             else if (mode == EmojiDrawerMode.Reactions)
             {
-                _ = viewModel.UpdateReactions(_reactions);
+                _ = viewModel.UpdateReactions(_reactions, null);
             }
 
             Shadow.Width = width;
             Pill.Width = width;
-            Presenter.Width = Container.Width = width;
+            Presenter.Width = width;
 
             Shadow.Height = height;
             Pill.Height = height + 20;
-            Presenter.Height = Container.Height = height;
+            Presenter.Height = height;
 
             var yy = 20f;
 

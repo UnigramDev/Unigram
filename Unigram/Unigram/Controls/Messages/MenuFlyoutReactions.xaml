@@ -111,16 +111,8 @@
               StrokeThickness="1" />
 
         <Grid x:Name="Presenter"
-              Padding="8,6,-2,6"
               Width="272"
               Height="36"
-              CornerRadius="18" />
-
-        <Grid x:Name="Container"
-              VerticalAlignment="Top"
-              Margin="0,-40,0,0"
-              Width="272"
-              Height="40"
               CornerRadius="18" />
 
         <Button x:Name="Expand"
