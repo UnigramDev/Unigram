@@ -295,12 +295,12 @@ namespace Unigram.Controls.Messages
             else
             {
                 var response = await _message.ClientService.SendAsync(new GetCustomEmojiReactionAnimations());
-                if (response is Files files)
+                if (response is Stickers stickers)
                 {
                     var random = new Random();
-                    var next = random.Next(0, files.FilesValue.Count);
+                    var next = random.Next(0, stickers.StickersValue.Count);
 
-                    var around = await _message.ClientService.DownloadFileAsync(files.FilesValue[next], 32);
+                    var around = await _message.ClientService.DownloadFileAsync(stickers.StickersValue[next].StickerValue, 32);
                     if (around.Local.IsDownloadingCompleted && IsLoaded)
                     {
                         Icon?.SetCustomEmoji(_message.ClientService, _sticker.CustomEmojiId);

@@ -237,7 +237,7 @@ namespace Unigram.Controls.Messages
 
             button = new ReactionButton();
             cache[key] = new WeakReference(button);
-            Children.Insert(index, button);
+            Children.Insert(Math.Min(index, Children.Count), button);
 
             return button;
         }

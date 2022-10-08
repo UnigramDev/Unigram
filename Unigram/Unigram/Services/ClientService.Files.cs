@@ -373,13 +373,6 @@ namespace Unigram.Services
                     ProcessFiles(fileDownload.Message);
                 }
             }
-            else if (target is Files files)
-            {
-                foreach (var item in files.FilesValue)
-                {
-                    ProcessFiles(item);
-                }
-            }
             else if (target is FoundFileDownloads foundFileDownloads)
             {
                 foreach (var item in foundFileDownloads.Files)
