@@ -29,19 +29,21 @@ namespace Unigram.Controls
 
             _interval = TimeSpan.FromMilliseconds(Math.Floor(1000d / 30));
             _emojiSize = GetDpiAwareSize(20);
+
+            EffectiveViewportChanged += OnEffectiveViewportChanged;
         }
 
-        protected override void OnAutoPlayChanged(bool newValue, bool oldValue)
-        {
-            if (newValue)
-            {
-                EffectiveViewportChanged += OnEffectiveViewportChanged;
-            }
-            else
-            {
-                EffectiveViewportChanged -= OnEffectiveViewportChanged;
-            }
-        }
+        //protected override void OnAutoPlayChanged(bool newValue, bool oldValue)
+        //{
+        //    if (newValue)
+        //    {
+        //        EffectiveViewportChanged += OnEffectiveViewportChanged;
+        //    }
+        //    else
+        //    {
+        //        EffectiveViewportChanged -= OnEffectiveViewportChanged;
+        //    }
+        //}
 
         private void OnEffectiveViewportChanged(FrameworkElement sender, EffectiveViewportChangedEventArgs args)
         {
@@ -177,6 +179,12 @@ namespace Unigram.Controls
             //var token = _loadEmojiToken = new CancellationTokenSource();
 
             _animation = new object();
+            _loopCount = -1;
+
+            if (_playing == false)
+            {
+                _playing = null;
+            }
 
             var request = new List<long>();
             var hash = GetHashCode();
@@ -213,13 +221,10 @@ namespace Unigram.Controls
                 EmojiRendererCache.MergeOrCreate(clientService, sticker, _emojiSize, hash, _subscribed);
             }
 
-            _loopCount = -1;
-            _playing = null;
-
             OnSourceChanged();
         }
 
-        public void SetReaction(IClientService clientService, Reaction reaction)
+        public void SetReaction(IClientService clientService, EmojiReaction reaction)
         {
             SetSticker(clientService, reaction.CenterAnimation);
         }
@@ -235,6 +240,12 @@ namespace Unigram.Controls
             //var token = _loadEmojiToken = new CancellationTokenSource();
 
             _animation = new object();
+            _loopCount = -1;
+
+            if (_playing == false)
+            {
+                _playing = null;
+            }
 
             var hash = GetHashCode();
             var id = sticker.CustomEmojiId == 0
@@ -255,10 +266,18 @@ namespace Unigram.Controls
             _cache = id;
             EmojiRendererCache.MergeOrCreate(clientService, sticker, _emojiSize, hash, _subscribed);
 
-            _loopCount = -1;
-            _playing = null;
-
             OnSourceChanged();
+        }
+
+        public async void SetSticker(IClientService clientService, string emoji)
+        {
+            var response = await clientService.SendAsync(new GetEmojiReaction(emoji));
+            if (response is not EmojiReaction reaction)
+            {
+                return;
+            }
+
+            SetReaction(clientService, reaction);
         }
     }
 }

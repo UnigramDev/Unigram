@@ -11,7 +11,6 @@ using Windows.Graphics;
 using Windows.Graphics.DirectX;
 using Windows.Graphics.Display;
 using Windows.System;
-using Windows.System.Threading;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -662,7 +661,7 @@ namespace Unigram.Controls
 
     public abstract class IndividualAnimatedControl<TAnimation> : AnimatedControl<TAnimation>
     {
-        private ThreadPoolTimer _timer;
+        private LoopThread _timer;
 
         protected IndividualAnimatedControl(bool? limitFps, bool autoPause = true)
             : base(limitFps, autoPause)
@@ -673,16 +672,20 @@ namespace Unigram.Controls
         {
             if (subscribe)
             {
-                _timer ??= ThreadPoolTimer.CreatePeriodicTimer(PrepareNextFrame, _interval);
+                if (_timer == null)
+                {
+                    _timer = LoopThreadPool.Get(_interval);
+                    _timer.Tick += PrepareNextFrame;
+                }
             }
             else if (_timer != null)
             {
-                _timer.Cancel();
+                _timer.Tick -= PrepareNextFrame;
                 _timer = null;
             }
         }
 
-        private void PrepareNextFrame(ThreadPoolTimer sender)
+        private void PrepareNextFrame(object sender, object e)
         {
             if (_nextFrameLock.Wait(0))
             {

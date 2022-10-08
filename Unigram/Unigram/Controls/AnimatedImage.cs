@@ -212,6 +212,7 @@ namespace Unigram.Controls
         {
             if (_unloaded && _layoutRoot != null && _layoutRoot.IsLoaded)
             {
+                _canvas.Source = _bitmap;
                 Changed();
 
                 _unloaded = false;
@@ -268,7 +269,10 @@ namespace Unigram.Controls
                 ////_canvas.Source = new BitmapImage();
                 //_layoutRoot?.Children.Remove(_canvas);
                 //_canvas = null;
-                _canvas.Source = null;
+                if (_canvas != null)
+                {
+                    _canvas.Source = null;
+                }
             }
 
             await _nextFrameLock.WaitAsync();

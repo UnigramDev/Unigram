@@ -282,33 +282,15 @@ namespace Unigram.Controls
 
         public bool Play(bool backward = false)
         {
-            _playing = true;
-            Load();
-
-            var animation = _animation;
-            if (animation == null)
-            {
-                return false;
-            }
-
             _backward = backward;
 
-            if (_canvas == null || _subscribed || !_active)
-            {
-                return false;
-            }
-
-            if (_index >= animation.TotalFrame - 2 && !_isLoopingEnabled && !_backward)
+            if (_animation != null && _index >= _animation.TotalFrame - 2 && !_isLoopingEnabled && !_backward)
             {
                 _index = 0;
             }
 
-            if (_canvas.IsLoaded || _layoutRoot.IsLoaded)
-            {
-                Subscribe(true);
-            }
 
-            return true;
+            return base.Play();
         }
 
         private string UriToPath(Uri uri)

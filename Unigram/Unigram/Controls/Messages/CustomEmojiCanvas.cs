@@ -90,8 +90,8 @@ namespace Unigram.Controls.Messages
             {
                 if (EmojiRendererCache.TryGet(item.CustomEmojiId, out EmojiRenderer animation))
                 {
-                    var x = (int)((2 + item.X - 1) * (_currentDpi / 96));
-                    var y = (int)((2 + item.Y - 1) * (_currentDpi / 96));
+                    var x = (int)((2 + item.X - 0) * (_currentDpi / 96));
+                    var y = (int)((2 + item.Y - 0) * (_currentDpi / 96));
 
                     var matches = _emojiSize * _emojiSize * 4 == animation.Buffer?.Length;
                     if (matches && animation.HasRenderedFirstFrame && x + _emojiSize <= _bitmap.Size.Width && y + _emojiSize <= _bitmap.Size.Height)
@@ -255,10 +255,6 @@ namespace Unigram.Controls.Messages
     {
         private static readonly ConcurrentDictionary<long, EmojiRenderer> _cache = new();
 
-        private static readonly SemaphoreSlim _nextFrameLock = new(1, 1);
-        private static readonly HashSet<long> _count = new();
-
-        private static ThreadPoolTimer _timer;
         private static TimeSpan _interval;
 
         private static readonly object _lock = new();
@@ -342,9 +338,7 @@ namespace Unigram.Controls.Messages
 
                 if (reference.IsAlive is false)
                 {
-                    _count.Remove(customEmojiId);
                     _cache.TryRemove(customEmojiId, out _);
-
                     reference.Dispose();
                 }
             }
@@ -366,12 +360,7 @@ namespace Unigram.Controls.Messages
 
                 if (renderer.IsAnimated && renderer.IsVisible)
                 {
-                    _count.Add(renderer.CustomEmojiId);
-                }
-
-                if (_count.Count > 0 && _timer == null)
-                {
-                    _timer = ThreadPoolTimer.CreatePeriodicTimer(PrepareNextFrame, _interval);
+                    renderer.Subscribe(true);
                 }
             }
         }
@@ -392,23 +381,8 @@ namespace Unigram.Controls.Messages
 
                 if (renderer.IsAnimated && !renderer.IsVisible)
                 {
-                    _count.Remove(renderer.CustomEmojiId);
+                    renderer.Subscribe(false);
                 }
-
-                if (_count.Count == 0 && _timer != null)
-                {
-                    _timer.Cancel();
-                    _timer = null;
-                }
-            }
-        }
-
-        private static void PrepareNextFrame(ThreadPoolTimer timer)
-        {
-            if (_nextFrameLock.Wait(0))
-            {
-                NextFrame();
-                _nextFrameLock.Release();
             }
         }
 
@@ -459,7 +433,6 @@ namespace Unigram.Controls.Messages
                     if (item.Buffer == null)
                     {
                         await item.CreateAsync();
-                        await Task.Delay(10);
                     }
                 }
             }, WorkItemPriority.Low);
@@ -480,6 +453,12 @@ namespace Unigram.Controls.Messages
         private double _animationFrameRate;
 
         private readonly bool _limitFps = true;
+
+        private TimeSpan _interval;
+        private LoopThread _timer;
+        private bool _subscribed;
+
+        private static readonly SemaphoreSlim _nextFrameLock = new(1, 1);
 
         private int _index;
         private double _step;
@@ -512,7 +491,7 @@ namespace Unigram.Controls.Messages
         public bool IsAlive => References.Count > 0;
         public bool IsVisible => HashCodes.Count > 0;
 
-        public bool IsAnimated => _sticker.Format is not StickerFormatWebp; 
+        public bool IsAnimated => _sticker.Format is not StickerFormatWebp;
 
         public bool IsLoading { get; set; }
 
@@ -561,11 +540,17 @@ namespace Unigram.Controls.Messages
                     var animation = LottieAnimation.LoadFromFile(file.Local.Path, new Windows.Graphics.SizeInt32 { Width = _size, Height = _size }, true, GetColorReplacements(_sticker.SetId));
                     if (animation != null)
                     {
+                        var frameRate = Math.Clamp(animation.FrameRate, 30, 30);
+
+                        _interval = TimeSpan.FromMilliseconds(Math.Floor(1000 / frameRate));
+
                         _animationTotalFrame = animation.TotalFrame;
                         _animationFrameRate = animation.FrameRate;
 
                         _buffer = BufferSurface.Create((uint)(_size * _size * 4));
                         _animation = animation;
+
+                        Subscribe(_subscribed);
                     }
                 }
                 else if (_sticker.Format is StickerFormatWebm)
@@ -573,10 +558,16 @@ namespace Unigram.Controls.Messages
                     var animation = CachedVideoAnimation.LoadFromFile(new LocalVideoSource(file), _size, _size, true);
                     if (animation != null)
                     {
+                        var frameRate = Math.Clamp(animation.FrameRate, 1, 30);
+
+                        _interval = TimeSpan.FromMilliseconds(1000d / frameRate);
+
                         _animationFrameRate = animation.FrameRate;
 
                         _buffer = BufferSurface.Create((uint)(_size * _size * 4));
                         _animation = animation;
+
+                        Subscribe(_subscribed);
                     }
                 }
                 else if (_sticker.Format is StickerFormatWebp)
@@ -636,22 +627,17 @@ namespace Unigram.Controls.Messages
                 return;
             }
 
-            //  This is just wrong
-            if (_step % 30d == 0)
-            {
-                animation.RenderSync(_buffer, _size, _size, out _, out bool completed);
+            animation.RenderSync(_buffer, _size, _size, out _, out bool completed);
 
-                if (completed)
+            if (completed)
+            {
+                var count = Interlocked.CompareExchange(ref _loopCount, 0, 1);
+                if (count == 0)
                 {
-                    var count = Interlocked.CompareExchange(ref _loopCount, 0, 1);
-                    if (count == 0)
-                    {
-                        Interlocked.Exchange(ref _loopCount, 1);
-                    }
+                    Interlocked.Exchange(ref _loopCount, 1);
                 }
             }
 
-            _step += _animationFrameRate;
             _hasRenderedFirstFrame = true;
         }
 
@@ -685,6 +671,35 @@ namespace Unigram.Controls.Messages
             }
 
             _buffer = null;
+            Subscribe(false);
+        }
+
+        public void Subscribe(bool subscribe)
+        {
+            if (subscribe)
+            {
+                if (_timer == null && _interval != TimeSpan.Zero)
+                {
+                    _timer = LoopThreadPool.Get(_interval);
+                    _timer.Tick += PrepareNextFrame;
+                }
+            }
+            else if (_timer != null)
+            {
+                _timer.Tick -= PrepareNextFrame;
+                _timer = null;
+            }
+
+            _subscribed = subscribe;
+        }
+
+        private void PrepareNextFrame(object sender, EventArgs e)
+        {
+            if (_nextFrameLock.Wait(0))
+            {
+                NextFrame();
+                _nextFrameLock.Release();
+            }
         }
     }
 
