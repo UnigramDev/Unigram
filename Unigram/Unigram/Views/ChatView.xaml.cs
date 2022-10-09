@@ -4666,7 +4666,7 @@ namespace Unigram.Views
             };
 
             var response = await ViewModel.ClientService.SendAsync(new GetChatAvailableMessageSenders(chat.Id));
-            if (response is MessageSenders senders)
+            if (response is ChatMessageSenders senders)
             {
                 foreach (var messageSender in senders.Senders)
                 {
@@ -4683,14 +4683,14 @@ namespace Unigram.Views
                     item.Icon = new FontIcon();
                     item.Tag = picture;
 
-                    if (ViewModel.ClientService.TryGetUser(messageSender, out User senderUser))
+                    if (ViewModel.ClientService.TryGetUser(messageSender.Sender, out User senderUser))
                     {
                         picture.SetUser(ViewModel.ClientService, senderUser, 36);
 
                         item.Text = senderUser.GetFullName();
                         item.Info = Strings.Resources.VoipGroupPersonalAccount;
                     }
-                    else if (ViewModel.ClientService.TryGetChat(messageSender, out Chat senderChat))
+                    else if (ViewModel.ClientService.TryGetChat(messageSender.Sender, out Chat senderChat))
                     {
                         picture.SetChat(ViewModel.ClientService, senderChat, 36);
 

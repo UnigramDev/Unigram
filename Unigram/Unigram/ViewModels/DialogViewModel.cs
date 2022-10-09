@@ -2517,8 +2517,8 @@ namespace Unigram.ViewModels
 
         #region Set default message sender
 
-        public RelayCommand<MessageSender> SetSenderCommand;
-        public void SetSenderExecute(MessageSender messageSender)
+        public RelayCommand<ChatMessageSender> SetSenderCommand;
+        public async void SetSenderExecute(ChatMessageSender messageSender)
         {
             var chat = _chat;
             if (chat == null)
@@ -2526,7 +2526,13 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            ClientService.Send(new SetChatMessageSender(chat.Id, messageSender));
+            if (messageSender.NeedsPremium && !IsPremium)
+            {
+                await MessagePopup.ShowAsync(Strings.Resources.SelectSendAsPeerPremiumHint, Strings.Resources.AppName, Strings.Resources.OK);
+                return;
+            }
+
+            ClientService.Send(new SetChatMessageSender(chat.Id, messageSender.Sender));
         }
 
         #endregion
