@@ -82,6 +82,12 @@ namespace Unigram.Controls.Drawers
             }
         }
 
+        public bool IsShadowVisible
+        {
+            get => Separator.Visibility == Visibility.Visible;
+            set => Separator.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
+        }
+
         public StickersTab Tab => StickersTab.Emoji;
 
         public void Activate(Chat chat)
