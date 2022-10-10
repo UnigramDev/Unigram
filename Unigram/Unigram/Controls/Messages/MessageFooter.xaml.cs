@@ -529,13 +529,14 @@ namespace Unigram.Controls.Messages
         {
             if (read == null)
             {
+                if (outgoing)
+                {
+                    InitializeTicks();
+                }
+
                 if (_container != null)
                 {
                     _container.IsVisible = false;
-                }
-                else if (outgoing)
-                {
-                    InitializeTicks();
                 }
             }
             else
