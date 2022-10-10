@@ -74,11 +74,15 @@ namespace Unigram.Controls.Messages
 
                 foreach (var item in additional)
                 {
-                    if (item.Type is ReactionTypeEmoji emojii && emoji.Contains(emojii.Emoji))
+                    if (item.Type is ReactionTypeEmoji emojii
+                        && emoji != null
+                        && emoji.Contains(emojii.Emoji))
                     {
                         continue;
                     }
-                    else if (item.Type is ReactionTypeCustomEmoji customEmojii && customEmoji.Contains(customEmojii.CustomEmojiId))
+                    else if (item.Type is ReactionTypeCustomEmoji customEmojii
+                        && customEmoji != null
+                        && customEmoji.Contains(customEmojii.CustomEmojiId))
                     {
                         continue;
                     }
