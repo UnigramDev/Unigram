@@ -224,6 +224,10 @@ namespace Unigram.Common
             {
                 NavigateToUsername(clientService, navigation, game.BotUsername, null, game.GameShortName);
             }
+            else if (internalLink is InternalLinkTypeInstantView instantView)
+            {
+                navigation.NavigateToInstant(instantView.Url);
+            }
             else if (internalLink is InternalLinkTypeInvoice invoice)
             {
                 NavigateToInvoice(navigation, invoice.InvoiceName);
