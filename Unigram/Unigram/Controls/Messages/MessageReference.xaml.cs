@@ -235,22 +235,24 @@ namespace Unigram.Controls.Messages
                     {
                         foreach (var entity in message.Entities)
                         {
+                            if (entity.Type is not TextEntityTypeCustomEmoji customEmoji)
+                            {
+                                continue;
+                            }
+
                             if (entity.Offset > previous)
                             {
                                 MessageLabel.Inlines.Add(new Run { Text = clean.Substring(previous, entity.Offset - previous) });
                                 shift += 2;
                             }
 
-                            if (entity.Type is TextEntityTypeCustomEmoji customEmoji)
-                            {
-                                _positions.Add(new EmojiPosition { X = shift + entity.Offset + 1, CustomEmojiId = customEmoji.CustomEmojiId });
-                                MessageLabel.Inlines.Add(new Run { Text = clean.Substring(entity.Offset, entity.Length), FontFamily = App.Current.Resources["SpoilerFontFamily"] as FontFamily });
+                            _positions.Add(new EmojiPosition { X = shift + entity.Offset + 1, CustomEmojiId = customEmoji.CustomEmojiId });
+                            MessageLabel.Inlines.Add(new Run { Text = clean.Substring(entity.Offset, entity.Length), FontFamily = App.Current.Resources["SpoilerFontFamily"] as FontFamily });
 
-                                emoji.Add(customEmoji.CustomEmojiId);
-                                shift += 2;
+                            emoji.Add(customEmoji.CustomEmojiId);
+                            shift += 2;
 
-                                previous = entity.Offset + entity.Length;
-                            }
+                            previous = entity.Offset + entity.Length;
                         }
                     }
 
