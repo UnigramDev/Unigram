@@ -83,7 +83,7 @@
           </tr>
           <tr class="row19">
             <td class="column1 style1 s">Spoiler</td>
-            <td class="column2 style1 s">Ctrol + Shift + P</td>
+            <td class="column2 style1 s">Ctrl + Shift + P</td>
           </tr>
           <tr class="row20">
             <td class="column1 style1 s">Null / Plain Text</td>
