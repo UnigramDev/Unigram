@@ -127,7 +127,7 @@
             <td class="column2 style1 s">Ctrl + 9</td>
           </tr>
           <tr class="row30">
-            <td class="column0 style2 s style2" rowspan="7">Other shortcuts</td>
+            <td class="column0 style2 s style2" rowspan="8">Other shortcuts</td>
             <td class="column1 style2 s style2" rowspan="2">Go back</td>
             <td class="column2 style1 s">ESC</td>
           </tr>
@@ -155,15 +155,19 @@
             <td class="column2 style1 s">Ctrl + W</td>
           </tr>
           <tr class="row37">
+            <td class="column1 style1 s">Change status</td>
+            <td class="column2 style1 s">Ctrl + Shift + Y</td>
+          </tr>
+          <tr class="row38">
             <td class="column0 style2 s style2" rowspan="3">Record Notes</td>
             <td class="column1 style2 s style2">Start Record</td>
             <td class="column2 style1 s">Ctrl + R</td>
           </tr>
-          <tr class="row38">
+          <tr class="row39">
               <td class="column1 style2 s style2">Send Recorded</td>
               <td class="column2 style1 s">Ctrl + R (again)</td>
           </tr>
-          <tr class="row39">
+          <tr class="row40">
             <td class="column1 style2 s style2">Stop Record</td>
             <td class="column2 style1 s">Ctrl + D</td>
           </tr>
