@@ -2,9 +2,9 @@
 <table>
     <tbody>
       <tr>
-        <td>Category</td>
-        <td>Action</td>
-        <td>Shortcut</td>
+        <th>Category</td>
+        <th>Action</td>
+        <th>Shortcut</td>
       </tr>
       <tr>
         <td rowspan="6">Move among chats</td>
