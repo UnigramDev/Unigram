@@ -239,7 +239,7 @@ namespace Unigram.Controls
                         _surface = new CanvasImageSource(device, newSize.X, newSize.Y, newDpi, CanvasAlphaMode.Premultiplied);
                         _canvas.Source = _surface;
 
-                        UpdateBitmap(device);
+                        CreateBitmap(true);
 
                         Invalidate();
                         OnSourceChanged();
@@ -401,7 +401,7 @@ namespace Unigram.Controls
                         return;
                     }
 
-                    UpdateBitmap(session.Device);
+                    CreateBitmap(false);
                     DrawFrame(_surface, session);
                 }
             }
@@ -411,11 +411,12 @@ namespace Unigram.Controls
             }
         }
 
-        private void UpdateBitmap(CanvasDevice device)
+        private void CreateBitmap(bool force)
         {
             try
             {
-                if (device != null)
+                var device = _surface?.Device;
+                if (device != null && (_bitmap == null || force))
                 {
                     _bitmap = CreateBitmap(device);
                 }
@@ -507,7 +508,7 @@ namespace Unigram.Controls
 
                 if (_playing == null && !_unloaded)
                 {
-                    UpdateBitmap(_surface?.Device);
+                    CreateBitmap(false);
 
                     // Invalidate to render the first frame
                     // Would be nice to move this to IndividualAnimatedControl
@@ -541,7 +542,7 @@ namespace Unigram.Controls
             {
                 if (tryLoad is false)
                 {
-                    UpdateBitmap(_surface?.Device);
+                    CreateBitmap(false);
                 }
 
                 Subscribe(true);
