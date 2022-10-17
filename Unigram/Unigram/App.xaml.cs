@@ -20,7 +20,6 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.DataTransfer.ShareTarget;
 using Windows.ApplicationModel.ExtendedExecution;
 using Windows.Foundation;
-using Windows.Media;
 using Windows.System.Profile;
 using Windows.UI.Core;
 using Windows.UI.Notifications;
@@ -44,7 +43,6 @@ namespace Unigram
         public static BackgroundTaskDeferral Deferral { get; private set; }
 
         private ExtendedExecutionSession _extendedSession;
-        private readonly MediaExtensionManager _mediaExtensionManager;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="App"/> class.
@@ -64,17 +62,6 @@ namespace Unigram
 
             RequestedTheme = SettingsService.Current.Appearance.GetCalculatedApplicationTheme();
             InitializeComponent();
-
-            try
-            {
-                //_mediaExtensionManager = new MediaExtensionManager();
-                //_mediaExtensionManager.RegisterByteStreamHandler("Unigram.Native.Media.OpusByteStreamHandler", ".ogg", "audio/ogg");
-                //_mediaExtensionManager.RegisterByteStreamHandler("Unigram.Native.Media.OpusByteStreamHandler", ".oga", "audio/ogg");
-            }
-            catch
-            {
-                // User won't be able to play and record voice messages, but it still better than not being able to use the app at all.
-            }
 
             InactivityHelper.Detected += Inactivity_Detected;
 

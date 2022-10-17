@@ -1,14 +1,16 @@
-﻿using System;
+﻿using FFmpegInteropX;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Navigation;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Media;
-using Windows.Media.Core;
 using Windows.Media.Playback;
 
 namespace Unigram.Services
@@ -60,7 +62,7 @@ namespace Unigram.Services
 
         private MediaPlayer _mediaPlayer;
 
-        private readonly Dictionary<string, PlaybackItem> _mapping;
+        private readonly ConditionalWeakTable<IMediaPlaybackSource, PlaybackItem> _mapping;
 
         private long _threadId;
 
@@ -81,7 +83,7 @@ namespace Unigram.Services
                 : _settingsService.Playback.RepeatMode == MediaPlaybackAutoRepeatMode.List;
             _playbackRate = _settingsService.Playback.PlaybackRate;
 
-            _mapping = new Dictionary<string, PlaybackItem>();
+            _mapping = new ConditionalWeakTable<IMediaPlaybackSource, PlaybackItem>();
         }
 
         #region SystemMediaTransportControls
@@ -131,7 +133,7 @@ namespace Unigram.Services
 
         private void OnSourceChanged(MediaPlayer sender, object args)
         {
-            if (sender.Source is MediaSource source && source.CustomProperties.TryGet("token", out string token) && _mapping.TryGetValue(token, out PlaybackItem item))
+            if (sender.Source != null && _mapping.TryGetValue(sender.Source, out PlaybackItem item))
             {
                 var message = item.Message;
                 var webPage = message.Content is MessageText text ? text.WebPage : null;
@@ -147,7 +149,7 @@ namespace Unigram.Services
 
         private void OnMediaEnded(MediaPlayer sender, object args)
         {
-            if (sender.Source is MediaSource source && source.CustomProperties.TryGet("token", out string token) && _mapping.TryGetValue(token, out PlaybackItem item))
+            if (sender.Source != null && _mapping.TryGetValue(sender.Source, out PlaybackItem item))
             {
                 if (item.Message.Content is MessageAudio && _isRepeatEnabled == null)
                 {
@@ -190,22 +192,19 @@ namespace Unigram.Services
                 sender.PlaybackRate = _playbackRate;
             }
 
-            Execute(player =>
+            switch (sender.PlaybackState)
             {
-                switch (sender.PlaybackState)
-                {
-                    case MediaPlaybackState.Playing:
-                        player.SystemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Playing;
-                        break;
-                    case MediaPlaybackState.Paused:
-                        player.SystemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Paused;
-                        break;
-                    case MediaPlaybackState.None:
-                        player.SystemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Stopped;
-                        PlaybackState = MediaPlaybackState.None;
-                        break;
-                }
-            });
+                case MediaPlaybackState.Playing:
+                    sender.MediaPlayer.SystemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Playing;
+                    break;
+                case MediaPlaybackState.Paused:
+                    sender.MediaPlayer.SystemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Paused;
+                    break;
+                case MediaPlaybackState.None:
+                    sender.MediaPlayer.SystemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Stopped;
+                    PlaybackState = MediaPlaybackState.None;
+                    break;
+            }
         }
 
         private void OnPositionChanged(MediaPlaybackSession sender, object args)
@@ -437,17 +436,6 @@ namespace Unigram.Services
         public void Seek(TimeSpan span)
         {
             Execute(player => player.PlaybackSession.Position = span);
-            //var index = _playlist.CurrentItemIndex;
-            //var playing = _mediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing;
-
-            //_mediaPlayer.Pause();
-            //_playlist.MoveTo(index);
-            //_mediaPlayer.PlaybackSession.Position = span;
-
-            //if (playing)
-            //{
-            //    _mediaPlayer.Play();
-            //}
         }
 
         public void MoveNext()
@@ -509,7 +497,7 @@ namespace Unigram.Services
             Dispose(true);
         }
 
-        public void Play(MessageWithOwner message, long threadId)
+        public async void Play(MessageWithOwner message, long threadId)
         {
             if (message == null)
             {
@@ -532,7 +520,7 @@ namespace Unigram.Services
             Dispose(false);
             Create();
 
-            var item = GetPlaybackItem(message);
+            var item = await GetPlaybackItem(message);
             var items = _items = new List<PlaybackItem>();
 
             _items.Add(item);
@@ -549,47 +537,49 @@ namespace Unigram.Services
             var offset = -49;
             var filter = message.Content is MessageAudio ? new SearchMessagesFilterAudio() : (SearchMessagesFilter)new SearchMessagesFilterVoiceAndVideoNote();
 
-            message.ClientService.Send(new SearchChatMessages(message.ChatId, string.Empty, null, message.Id, offset, 100, filter, _threadId), result =>
+            var response = await message.ClientService.SendAsync(new SearchChatMessages(message.ChatId, string.Empty, null, message.Id, offset, 100, filter, _threadId));
+            if (response is Messages messages)
             {
-                if (result is Messages messages)
+                foreach (var add in message.Content is MessageAudio ? messages.MessagesValue.OrderBy(x => x.Id) : messages.MessagesValue.OrderByDescending(x => x.Id))
                 {
-                    foreach (var add in message.Content is MessageAudio ? messages.MessagesValue.OrderBy(x => x.Id) : messages.MessagesValue.OrderByDescending(x => x.Id))
+                    if (add.Id > message.Id && add.Content is MessageAudio)
                     {
-                        if (add.Id > message.Id && add.Content is MessageAudio)
-                        {
-                            items.Insert(0, GetPlaybackItem(new MessageWithOwner(message.ClientService, add)));
-                        }
-                        else if (add.Id < message.Id && (add.Content is MessageVoiceNote || add.Content is MessageVideoNote))
-                        {
-                            items.Insert(0, GetPlaybackItem(new MessageWithOwner(message.ClientService, add)));
-                        }
+                        items.Insert(0, await GetPlaybackItem(new MessageWithOwner(message.ClientService, add)));
                     }
-
-                    foreach (var add in message.Content is MessageAudio ? messages.MessagesValue.OrderByDescending(x => x.Id) : messages.MessagesValue.OrderBy(x => x.Id))
+                    else if (add.Id < message.Id && (add.Content is MessageVoiceNote || add.Content is MessageVideoNote))
                     {
-                        if (add.Id < message.Id && add.Content is MessageAudio)
-                        {
-                            items.Add(GetPlaybackItem(new MessageWithOwner(message.ClientService, add)));
-                        }
-                        else if (add.Id > message.Id && (add.Content is MessageVoiceNote || add.Content is MessageVideoNote))
-                        {
-                            items.Add(GetPlaybackItem(new MessageWithOwner(message.ClientService, add)));
-                        }
+                        items.Insert(0, await GetPlaybackItem(new MessageWithOwner(message.ClientService, add)));
                     }
-
-                    UpdateTransport();
-                    PlaylistChanged?.Invoke(this, EventArgs.Empty);
                 }
-            });
+
+                foreach (var add in message.Content is MessageAudio ? messages.MessagesValue.OrderByDescending(x => x.Id) : messages.MessagesValue.OrderBy(x => x.Id))
+                {
+                    if (add.Id < message.Id && add.Content is MessageAudio)
+                    {
+                        items.Add(await GetPlaybackItem(new MessageWithOwner(message.ClientService, add)));
+                    }
+                    else if (add.Id > message.Id && (add.Content is MessageVoiceNote || add.Content is MessageVideoNote))
+                    {
+                        items.Add(await GetPlaybackItem(new MessageWithOwner(message.ClientService, add)));
+                    }
+                }
+
+                UpdateTransport();
+                PlaylistChanged?.Invoke(this, EventArgs.Empty);
+            }
         }
 
-        private PlaybackItem GetPlaybackItem(MessageWithOwner message)
+        private async Task<PlaybackItem> GetPlaybackItem(MessageWithOwner message)
         {
+            GetProperties(message, out int duration, out bool speed);
+
             var token = $"{message.ChatId}_{message.Id}";
             var file = message.GetFile();
 
-            var source = CreateMediaSource(message, file, out bool speed);
-            var item = new PlaybackItem(source)
+            var stream = new RemoteFileStream(message.ClientService, file, duration);
+            var media = await FFmpegMediaSource.CreateFromStreamAsync(stream);
+
+            var item = new PlaybackItem(media)
             {
                 File = file,
                 Message = message,
@@ -614,47 +604,27 @@ namespace Unigram.Services
                 }
             }
 
-            _mapping[token] = item;
-
+            _mapping.AddOrUpdate(item.Source, item);
             return item;
         }
 
-        private MediaSource CreateMediaSource(MessageWithOwner message, File file, out bool speed)
+        private void GetProperties(MessageWithOwner message, out int duration, out bool speed)
         {
-            GetProperties(message, out string mime, out int duration, out speed);
-
-            var stream = new RemoteFileStream(message.ClientService, file, duration);
-            var source = MediaSource.CreateFromStream(stream, mime);
-
-            source.CustomProperties["file"] = file.Id;
-            source.CustomProperties["message"] = message.Id;
-            source.CustomProperties["chat"] = message.ChatId;
-            source.CustomProperties["token"] = $"{message.ChatId}_{message.Id}";
-
-            return source;
-        }
-
-        private void GetProperties(MessageWithOwner message, out string mimeType, out int duration, out bool speed)
-        {
-            mimeType = null;
             duration = 0;
             speed = false;
 
             if (message.Content is MessageAudio audio)
             {
-                mimeType = audio.Audio.MimeType;
                 duration = audio.Audio.Duration;
                 speed = duration >= 10 * 60;
             }
             else if (message.Content is MessageVoiceNote voiceNote)
             {
-                mimeType = voiceNote.VoiceNote.MimeType;
                 duration = voiceNote.VoiceNote.Duration;
                 speed = true;
             }
             else if (message.Content is MessageVideoNote videoNote)
             {
-                mimeType = "video/mp4";
                 duration = videoNote.VideoNote.Duration;
                 speed = true;
             }
@@ -662,19 +632,16 @@ namespace Unigram.Services
             {
                 if (text.WebPage.Audio != null)
                 {
-                    mimeType = text.WebPage.Audio.MimeType;
                     duration = text.WebPage.Audio.Duration;
                     speed = duration >= 10 * 60;
                 }
                 else if (text.WebPage.VoiceNote != null)
                 {
-                    mimeType = text.WebPage.VoiceNote.MimeType;
                     duration = text.WebPage.VoiceNote.Duration;
                     speed = true;
                 }
                 else if (text.WebPage.VideoNote != null)
                 {
-                    mimeType = "video/mp4";
                     duration = text.WebPage.VideoNote.Duration;
                     speed = true;
                 }
@@ -749,7 +716,9 @@ namespace Unigram.Services
 
     public class PlaybackItem
     {
-        public MediaSource Source { get; set; }
+        public FFmpegMediaSource FFmpeg { get; set; }
+
+        public IMediaPlaybackSource Source { get; set; }
         public string Token { get; set; }
 
         public MessageWithOwner Message { get; set; }
@@ -761,9 +730,10 @@ namespace Unigram.Services
 
         public bool CanChangePlaybackRate { get; set; }
 
-        public PlaybackItem(MediaSource source)
+        public PlaybackItem(FFmpegMediaSource ffmpeg)
         {
-            Source = source;
+            FFmpeg = ffmpeg;
+            Source = ffmpeg.CreateMediaPlaybackItem();
         }
     }
 }
