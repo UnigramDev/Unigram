@@ -77,10 +77,7 @@ namespace winrt::Unigram::Native::implementation
 		HRESULT InternalDrawSvg(hstring data, _In_ Color foreground, _In_ IRandomAccessStream randomAccessStream, _Out_ Windows::Foundation::Size& size);
 		HRESULT InternalDrawQr(hstring data, _In_ Color foreground, _In_ Color background, double scale, _In_ IRandomAccessStream randomAccessStream);
 		HRESULT InternalDrawIdenticon(_In_ IVector<uint8_t> hash, _In_ int side, _In_ IRandomAccessStream randomAccessStream);
-		HRESULT InternalDrawGlyph(hstring glyph, Color top, _In_ Color bottom, IRandomAccessStream randomAccessStream);
-		HRESULT InternalDrawSavedMessages(Color top, _In_ Color bottom, IRandomAccessStream randomAccessStream);
-		HRESULT InternalDrawDeletedUser(Color top, _In_ Color bottom, IRandomAccessStream randomAccessStream);
-		HRESULT InternalDrawProfilePlaceholder(hstring text, Color top, _In_ Color bottom, _In_ IRandomAccessStream randomAccessStream);
+		HRESULT InternalDrawProfilePlaceholder(hstring glyph, Color top, Color bottom, float offset, IDWriteTextFormat* format, IRandomAccessStream randomAccessStream);
 		HRESULT InternalDrawThumbnailPlaceholder(hstring fileName, float blurAmount, _In_ IRandomAccessStream randomAccessStream);
 		HRESULT InternalDrawThumbnailPlaceholder(IVector<uint8_t> bytes, float blurAmount, _In_ IRandomAccessStream randomAccessStream);
 		HRESULT InternalDrawThumbnailPlaceholder(_In_ IWICBitmapSource* wicBitmapSource, float blurAmount, _In_ IRandomAccessStream randomAccessStream, bool minithumbnail);
