@@ -406,6 +406,8 @@ namespace Unigram.Controls
             Document.ApplyDisplayUpdates();
         }
 
+        public FrameworkElement CreateLinkTarget { get; set; }
+
         public async void CreateLink()
         {
             var range = Document.Selection.GetClone();
@@ -422,12 +424,26 @@ namespace Unigram.Controls
             var start = Math.Min(range.StartPosition, range.EndPosition);
             var end = Math.Max(range.StartPosition, range.EndPosition);
 
-            var dialog = new CreateLinkPopup();
-            dialog.Text = text;
-            dialog.Link = range.Link.Trim('"');
+            var popup = new CreateLinkPopup();
+            popup.Text = text;
+            popup.Link = range.Link.Trim('"');
 
-            var confirm = await dialog.ShowQueuedAsync();
-            if (confirm != ContentDialogResult.Primary)
+            if (CreateLinkTarget != null)
+            {
+                popup.Target = CreateLinkTarget;
+                popup.PreferredPlacement = Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode.TopRight;
+            }
+            else
+            {
+                popup.Target = this;
+                popup.PreferredPlacement = Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode.Top;
+            }
+
+            popup.Width = popup.MinWidth = popup.MaxWidth = 314;
+            popup.IsLightDismissEnabled = true;
+
+            var confirm = await popup.ShowQueuedAsync();
+            if (confirm != true)
             {
                 return;
             }
@@ -436,9 +452,9 @@ namespace Unigram.Controls
             range.SetRange(start, end);
             range.CharacterFormat = Document.GetDefaultCharacterFormat();
 
-            range.SetText(end > start ? TextSetOptions.Unlink : TextSetOptions.None, dialog.Text);
-            range.SetRange(start, start + dialog.Text.Length);
-            range.Link = $"\"{dialog.Link}\"";
+            range.SetText(end > start ? TextSetOptions.Unlink : TextSetOptions.None, popup.Text);
+            range.SetRange(start, start + popup.Text.Length);
+            range.Link = $"\"{popup.Link}\"";
 
             Document.Selection.SetRange(range.EndPosition, range.EndPosition);
             Document.ApplyDisplayUpdates();

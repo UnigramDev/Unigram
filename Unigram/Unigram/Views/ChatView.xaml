@@ -1117,6 +1117,7 @@
                                        Background="Transparent"
                                        Messages="{x:Bind Messages}"
                                        Autocomplete="{x:Bind ListAutocomplete}"
+                                       CreateLinkTarget="{x:Bind ButtonAttach}"
                                        IsMenuExpanded="{x:Bind ButtonMore.IsChecked, Mode=OneWay}"
                                        AcceptsReturn="False"
                                        BorderThickness="0"

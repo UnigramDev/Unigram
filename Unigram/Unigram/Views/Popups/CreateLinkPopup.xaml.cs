@@ -1,22 +1,20 @@
-﻿using Telegram.Td;
-using Telegram.Td.Api;
+﻿using Microsoft.UI.Xaml.Controls;
+using System.Threading.Tasks;
 using Unigram.Common;
-using Unigram.Controls;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
 namespace Unigram.Views.Popups
 {
-    public sealed partial class CreateLinkPopup : ContentPopup
+    public sealed partial class CreateLinkPopup : TeachingTip
     {
         public CreateLinkPopup()
         {
             InitializeComponent();
 
             Title = Strings.Resources.CreateLink;
-            PrimaryButtonText = Strings.Resources.OK;
-            SecondaryButtonText = Strings.Resources.Cancel;
+            ActionButtonContent = Strings.Resources.OK;
+            CloseButtonContent = Strings.Resources.Cancel;
         }
 
         public string Text
@@ -31,35 +29,29 @@ namespace Unigram.Views.Popups
             set => LinkField.Text = value;
         }
 
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        public bool IsValid { get; set; }
+
+        private void TeachingTip_ActionButtonClick(TeachingTip sender, object args)
         {
             if (string.IsNullOrWhiteSpace(Text))
             {
                 VisualUtilities.ShakeView(TextField);
-                args.Cancel = true;
                 return;
             }
 
             if (IsUrlInvalid(Link))
             {
                 VisualUtilities.ShakeView(LinkField);
-                args.Cancel = true;
+                return;
             }
+
+            IsValid = true;
+            IsOpen = false;
         }
 
         private bool IsUrlInvalid(string url)
         {
-            var response = Client.Execute(new GetTextEntities(url));
-            if (response is TextEntities entities)
-            {
-                return !(entities.Entities.Count == 1 && entities.Entities[0].Offset == 0 && entities.Entities[0].Length == url.Length && entities.Entities[0].Type is TextEntityTypeUrl);
-            }
-
-            return true;
-        }
-
-        private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
+            return !url.IsValidUrl();
         }
 
         private void TextField_KeyDown(object sender, KeyRoutedEventArgs e)
@@ -75,7 +67,7 @@ namespace Unigram.Views.Popups
         {
             if (e.Key == Windows.System.VirtualKey.Enter)
             {
-                Hide(ContentDialogResult.Primary);
+                TeachingTip_ActionButtonClick(null, null);
                 e.Handled = true;
             }
         }
@@ -90,6 +82,21 @@ namespace Unigram.Views.Popups
             {
                 LinkField.Focus(FocusState.Keyboard);
             }
+        }
+
+        public Task<bool> ShowQueuedAsync()
+        {
+            var tsc = new TaskCompletionSource<bool>();
+            void handler(TeachingTip sender, TeachingTipClosedEventArgs args)
+            {
+                Closed -= handler;
+                tsc.SetResult(IsValid);
+            }
+
+            Closed += handler;
+            IsOpen = true;
+
+            return tsc.Task;
         }
     }
 }
