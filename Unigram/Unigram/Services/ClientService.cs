@@ -532,7 +532,7 @@ namespace Unigram.Services
                         }
                     }
 
-                    Send(new AddLocalMessage(chat.Id, new MessageSenderUser(777000), 0, false, new InputMessageText(formattedText, false, false)));
+                    Send(new AddLocalMessage(chat.Id, new MessageSenderUser(777000), 0, false, new InputMessageText(formattedText, true, false)));
                 }
             }
 
@@ -694,6 +694,13 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 
         public async Task<StorageFile> GetFileAsync(File file, bool completed = true)
         {
+            // Extremely important to do this only for completed,
+            // as this method is being used by RemoteFileStream as well.
+            if (completed)
+            {
+                await SendAsync(new DownloadFile(file.Id, 16, 0, 0, false));
+            }
+
             if (file.Local.IsDownloadingCompleted || !completed)
             {
                 try
