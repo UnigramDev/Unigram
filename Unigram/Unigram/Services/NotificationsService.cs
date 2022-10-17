@@ -456,7 +456,7 @@ namespace Unigram.Services
             }
 
             var user = _clientService.GetUser(_clientService.Options.MyId);
-            var attribution = user?.GetFullName() ?? string.Empty;
+            var attribution = user?.FullName() ?? string.Empty;
 
             var showPreview = _settings.Notifications.GetShowPreview(chat);
 
@@ -508,7 +508,7 @@ namespace Unigram.Services
             }
 
             var user = _clientService.GetUser(_clientService.Options.MyId);
-            var attribution = user?.GetFullName() ?? string.Empty;
+            var attribution = user?.FullName() ?? string.Empty;
 
             var showPreview = _settings.Notifications.GetShowPreview(chat);
 
@@ -763,7 +763,7 @@ namespace Unigram.Services
         {
             try
             {
-                var displayName = user.GetFullName();
+                var displayName = user.FullName();
                 var launchArg = $"session={_sessionService.Id}&user_id={user.Id}";
                 var icon = new Uri("ms-appx:///Assets/Logos/Square44x44Logo.png");
 

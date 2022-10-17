@@ -31,7 +31,7 @@ namespace Unigram.Controls.Cells
 
         private string ConvertCount(TLCallGroup call)
         {
-            var title = call.Peer.GetFullName();
+            var title = call.Peer.FullName();
             if (call.Items.Count > 1)
             {
                 return $"{title} ({call.Items.Count})";

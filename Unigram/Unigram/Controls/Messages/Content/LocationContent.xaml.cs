@@ -123,7 +123,7 @@ namespace Unigram.Controls.Messages.Content
             {
                 if (_message.ClientService.TryGetUser(_message.SenderId, out User senderUser))
                 {
-                    _message.Delegate.OpenLocation(location.Location, senderUser.GetFullName());
+                    _message.Delegate.OpenLocation(location.Location, senderUser.FullName());
                 }
                 else if (_message.ClientService.TryGetChat(_message.SenderId, out Chat senderChat))
                 {

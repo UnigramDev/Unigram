@@ -49,7 +49,7 @@ namespace Unigram.Controls.Cells
 
         public void UpdateUser(IClientService clientService, User user, int photoSize, bool phoneNumber = false)
         {
-            TitleLabel.Text = user.GetFullName();
+            TitleLabel.Text = user.FullName();
 
             if (phoneNumber)
             {
@@ -83,7 +83,7 @@ namespace Unigram.Controls.Cells
         {
             if (args.Phase == 0)
             {
-                TitleLabel.Text = user.GetFullName();
+                TitleLabel.Text = user.FullName();
             }
             else if (args.Phase == 1)
             {
@@ -119,7 +119,7 @@ namespace Unigram.Controls.Cells
 
             if (args.Phase == 0)
             {
-                TitleLabel.Text = user.GetFullName();
+                TitleLabel.Text = user.FullName();
             }
             else if (args.Phase == 1)
             {
@@ -153,7 +153,7 @@ namespace Unigram.Controls.Cells
             {
                 if (messageSender is User user)
                 {
-                    TitleLabel.Text = user.GetFullName();
+                    TitleLabel.Text = user.FullName();
                 }
                 else if (messageSender is Chat chat)
                 {
@@ -210,7 +210,7 @@ namespace Unigram.Controls.Cells
                 }
                 else if (result.User != null)
                 {
-                    TitleLabel.Text = result.User.GetFullName();
+                    TitleLabel.Text = result.User.FullName();
                     Identity.SetStatus(clientService, result.User);
                 }
             }
@@ -327,7 +327,7 @@ namespace Unigram.Controls.Cells
 
             if (args.Phase == 0)
             {
-                TitleLabel.Text = user.GetFullName();
+                TitleLabel.Text = user.FullName();
             }
             else if (args.Phase == 1)
             {
@@ -423,7 +423,7 @@ namespace Unigram.Controls.Cells
             {
                 if (messageSender is User user)
                 {
-                    TitleLabel.Text = user.GetFullName();
+                    TitleLabel.Text = user.FullName();
                 }
                 else if (messageSender is Chat chat)
                 {

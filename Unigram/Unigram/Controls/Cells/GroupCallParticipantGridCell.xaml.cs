@@ -110,7 +110,7 @@ namespace Unigram.Controls.Cells
 
             if (clientService.TryGetUser(participant.ParticipantId, out User user))
             {
-                Title.Text = user.GetFullName();
+                Title.Text = user.FullName();
             }
             else if (clientService.TryGetChat(participant.ParticipantId, out Chat chat))
             {

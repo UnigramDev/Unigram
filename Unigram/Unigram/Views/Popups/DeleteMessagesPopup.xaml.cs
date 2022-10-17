@@ -46,7 +46,7 @@ namespace Unigram.Views.Popups
                 var sender = clientService.GetMessageSender(first.SenderId);
                 if (sender is User senderUser)
                 {
-                    DeleteAllCheck.Content = string.Format(Strings.Resources.DeleteAllFrom, senderUser.GetFullName());
+                    DeleteAllCheck.Content = string.Format(Strings.Resources.DeleteAllFrom, senderUser.FullName());
                 }
                 else if (sender is Chat senderChat)
                 {

@@ -172,10 +172,10 @@ namespace Unigram.ViewModels
         {
             if (Items.Count > 1)
             {
-                return string.Format("{0} ({1}) - {2}", Peer.GetFullName(), Items.Count, DisplayType);
+                return string.Format("{0} ({1}) - {2}", Peer.FullName(), Items.Count, DisplayType);
             }
 
-            return string.Format("{0} - {1}", Peer.GetFullName(), DisplayType);
+            return string.Format("{0} - {1}", Peer.FullName(), DisplayType);
         }
 
         private string _displayType;

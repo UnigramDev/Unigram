@@ -49,7 +49,7 @@ namespace Unigram.Views.Popups
             if (args.Phase == 0)
             {
                 var title = content.Children[1] as TextBlock;
-                title.Text = user.GetFullName();
+                title.Text = user.FullName();
 
                 var stack = content.Children[4] as StackPanel;
                 var primary = stack.Children[0] as Button;

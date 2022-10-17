@@ -398,7 +398,7 @@ namespace Unigram.Services
             try
             {
                 var user = _clientService.GetUser(_clientService.Options.MyId);
-                var displayName = user?.GetFullName() ?? "Unigram";
+                var displayName = user?.FullName() ?? "Unigram";
 
                 ContactList contactList = null;
                 if (_clientService.Options.TryGetValue("x_contact_list", out string id))

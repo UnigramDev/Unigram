@@ -258,7 +258,7 @@ namespace Unigram.ViewModels
 
                     if (ClientService.TryGetUser(message.SenderId, out Telegram.Td.Api.User senderUser))
                     {
-                        title = senderUser.GetFullName();
+                        title = senderUser.FullName();
                     }
                     else if (ClientService.TryGetChat(message.SenderId, out Chat senderChat))
                     {
@@ -284,7 +284,7 @@ namespace Unigram.ViewModels
                     {
                         var from = ClientService.GetUser(forwardedFromUser.SenderUserId);
                         builder.AppendLine($"[{Strings.Resources.ForwardedMessage}]");
-                        builder.AppendLine($"[{Strings.Resources.From} {from.GetFullName()}]");
+                        builder.AppendLine($"[{Strings.Resources.From} {from.FullName()}]");
                     }
                     else if (message.ForwardInfo?.Origin is MessageForwardOriginMessageImport forwardedFromImport)
                     {
@@ -301,7 +301,7 @@ namespace Unigram.ViewModels
                     {
                         if (ClientService.TryGetUser(message.ReplyToMessage.SenderId, out Telegram.Td.Api.User replyUser))
                         {
-                            builder.AppendLine($"[In reply to {replyUser.GetFullName()}]");
+                            builder.AppendLine($"[In reply to {replyUser.FullName()}]");
                         }
                         else if (ClientService.TryGetChat(message.ReplyToMessage.SenderId, out Chat replyChat))
                         {
@@ -1085,7 +1085,7 @@ namespace Unigram.ViewModels
                         var withUser = ClientService.GetUser(privata.UserId);
                         if (withUser != null)
                         {
-                            content = withUser.Type is UserTypeBot ? Strings.Resources.AreYouSureShareMyContactInfoBot : string.Format(Strings.Resources.AreYouSureShareMyContactInfoUser, PhoneNumber.Format(cached.PhoneNumber), withUser.GetFullName());
+                            content = withUser.Type is UserTypeBot ? Strings.Resources.AreYouSureShareMyContactInfoBot : string.Format(Strings.Resources.AreYouSureShareMyContactInfoUser, PhoneNumber.Format(cached.PhoneNumber), withUser.FullName());
                         }
                     }
 

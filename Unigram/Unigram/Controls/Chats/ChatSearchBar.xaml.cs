@@ -258,7 +258,7 @@ namespace Unigram.Controls.Chats
 
                 if (viewModel.ClientService.TryGetUser(from, out User user))
                 {
-                    Field.Header = user.GetFullName();
+                    Field.Header = user.FullName();
                 }
                 else if (viewModel.ClientService.TryGetChat(from, out Chat chat))
                 {

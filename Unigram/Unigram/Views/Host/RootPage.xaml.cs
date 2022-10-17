@@ -291,7 +291,7 @@ namespace Unigram.Views.Host
             }
 
             Photo.SetUser(clientService, user, 48);
-            NameLabel.Text = user.GetFullName();
+            NameLabel.Text = user.FullName();
 #if DEBUG
             PhoneLabel.Text = "+42 --- --- ----";
 #else
@@ -484,7 +484,7 @@ namespace Unigram.Views.Host
                 }
 
                 var title = content.FindName("TitleLabel") as TextBlock;
-                title.Text = user.GetFullName();
+                title.Text = user.FullName();
 
                 var photo = content.Children[0] as ProfilePicture;
                 photo.SetUser(session.ClientService, user, 28);
@@ -492,7 +492,7 @@ namespace Unigram.Views.Host
                 var identity = content.FindName("Identity") as IdentityIcon;
                 identity.SetStatus(session.ClientService, user);
 
-                AutomationProperties.SetName(container, user.GetFullName());
+                AutomationProperties.SetName(container, user.FullName());
             }
             else if (item is RootDestination destination && _navigationService.Content is MainPage page)
             {

@@ -23,7 +23,7 @@ namespace Unigram.Views.Popups
                 // ??
             }
 
-            TextBlockHelper.SetMarkdown(CheckLabel1, string.Format(Strings.Resources.OpenUrlOption1, requestConfirmation.Domain, self.GetFullName()));
+            TextBlockHelper.SetMarkdown(CheckLabel1, string.Format(Strings.Resources.OpenUrlOption1, requestConfirmation.Domain, self.FullName()));
 
             if (requestConfirmation.RequestWriteAccess)
             {
@@ -34,7 +34,7 @@ namespace Unigram.Views.Popups
                 }
 
                 CheckBox2.Visibility = Visibility.Visible;
-                TextBlockHelper.SetMarkdown(CheckLabel2, string.Format(Strings.Resources.OpenUrlOption2, bot.GetFullName()));
+                TextBlockHelper.SetMarkdown(CheckLabel2, string.Format(Strings.Resources.OpenUrlOption2, bot.FullName()));
             }
             else
             {

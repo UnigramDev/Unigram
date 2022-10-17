@@ -952,7 +952,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
         {
             if (info?.Origin is MessageForwardOriginUser fromUser)
             {
-                return GetUser(fromUser.SenderUserId)?.GetFullName();
+                return GetUser(fromUser.SenderUserId)?.FullName();
             }
             else if (info?.Origin is MessageForwardOriginChat fromChat)
             {

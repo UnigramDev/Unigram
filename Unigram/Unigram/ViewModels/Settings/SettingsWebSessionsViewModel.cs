@@ -95,7 +95,7 @@ namespace Unigram.ViewModels.Settings
             dialog.Message = string.Format(Strings.Resources.TerminateWebSessionQuestion, session.DomainName);
             dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.SecondaryButtonText = Strings.Resources.Cancel;
-            dialog.CheckBoxLabel = string.Format(Strings.Resources.TerminateWebSessionStop, bot.GetFullName());
+            dialog.CheckBoxLabel = string.Format(Strings.Resources.TerminateWebSessionStop, bot.FullName());
 
             var terminate = await dialog.ShowQueuedAsync();
             if (terminate == ContentDialogResult.Primary)

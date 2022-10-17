@@ -369,7 +369,7 @@ namespace Unigram.Common
             {
                 if (clientService.TryGetUser(message.SenderId, out User senderUser))
                 {
-                    title = senderUser.GetFullName();
+                    title = senderUser.FullName();
                 }
                 else if (clientService.TryGetChat(message.SenderId, out Chat senderChat))
                 {

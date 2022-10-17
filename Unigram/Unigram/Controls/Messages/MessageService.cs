@@ -1082,7 +1082,7 @@ namespace Unigram.Controls.Messages
         {
             if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
             {
-                return (string.Format(Strings.Resources.NotificationContactJoined, senderUser.GetFullName()), null);
+                return (string.Format(Strings.Resources.NotificationContactJoined, senderUser.FullName()), null);
             }
 
             return (string.Empty, null);
@@ -1566,7 +1566,7 @@ namespace Unigram.Controls.Messages
                 String id;
                 if (obj is User user)
                 {
-                    name = user.GetFullName();
+                    name = user.FullName();
                     id = "tg-user://" + user.Id;
                 }
                 else if (obj is Chat chat)
@@ -1625,7 +1625,7 @@ namespace Unigram.Controls.Messages
                     }
                     if (user != null)
                     {
-                        var name = user.GetFullName();
+                        var name = user.FullName();
                         if (names.Length != 0)
                         {
                             names.Append(", ");

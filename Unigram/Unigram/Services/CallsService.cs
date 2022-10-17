@@ -197,7 +197,7 @@ namespace Unigram.Services
                 var callUser = ClientService.GetUser(call.UserId);
                 if (callUser != null && callUser.Id != user.Id)
                 {
-                    var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.VoipOngoingAlert, callUser.GetFullName(), user.GetFullName()), Strings.Resources.VoipOngoingAlertTitle, Strings.Resources.OK, Strings.Resources.Cancel);
+                    var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.VoipOngoingAlert, callUser.FullName(), user.FullName()), Strings.Resources.VoipOngoingAlertTitle, Strings.Resources.OK, Strings.Resources.Cancel);
                     if (confirm == ContentDialogResult.Primary)
                     {
 
@@ -238,7 +238,7 @@ namespace Unigram.Services
                 }
                 else if (error.Code == 400 && error.Message.Equals("USER_PRIVACY_RESTRICTED"))
                 {
-                    await MessagePopup.ShowAsync(string.Format(Strings.Resources.CallNotAvailable, user.GetFullName()), Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(string.Format(Strings.Resources.CallNotAvailable, user.FullName()), Strings.Resources.AppName, Strings.Resources.OK);
                 }
             }
         }

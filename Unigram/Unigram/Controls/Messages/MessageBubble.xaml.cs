@@ -272,7 +272,7 @@ namespace Unigram.Controls.Messages
                 else if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
                 {
                     senderBot = senderUser.Type is UserTypeBot;
-                    title = senderUser.GetFullName();
+                    title = senderUser.FullName();
                 }
                 else if (message.ClientService.TryGetChat(message.SenderId, out Chat senderChat))
                 {
@@ -290,7 +290,7 @@ namespace Unigram.Controls.Messages
             {
                 if (message.ClientService.TryGetUser(message.ReplyToMessage.SenderId, out User replyUser))
                 {
-                    builder.AppendLine($"{Strings.Resources.AccDescrReplying} {replyUser.GetFullName()}. ");
+                    builder.AppendLine($"{Strings.Resources.AccDescrReplying} {replyUser.FullName()}. ");
                 }
                 else if (message.ClientService.TryGetChat(message.ReplyToMessage.SenderId, out Chat replyChat))
                 {
@@ -302,7 +302,7 @@ namespace Unigram.Controls.Messages
             {
                 if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
                 {
-                    title = message.ClientService.GetUser(fromUser.SenderUserId)?.GetFullName();
+                    title = message.ClientService.GetUser(fromUser.SenderUserId)?.FullName();
                     builder.AppendLine($"{Strings.Resources.AccDescrForwarding} {title}. ");
                 }
                 if (message.ForwardInfo?.Origin is MessageForwardOriginChat fromChat)
@@ -730,7 +730,7 @@ namespace Unigram.Controls.Messages
 
                     if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
                     {
-                        title = message.ClientService.GetUser(fromUser.SenderUserId)?.GetFullName();
+                        title = message.ClientService.GetUser(fromUser.SenderUserId)?.FullName();
                         foreground = PlaceholderHelper.GetBrush(fromUser.SenderUserId);
                     }
                     else if (message.ForwardInfo?.Origin is MessageForwardOriginChat fromChat)
@@ -770,7 +770,7 @@ namespace Unigram.Controls.Messages
                 else if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
                 {
                     var hyperlink = new Hyperlink();
-                    hyperlink.Inlines.Add(CreateRun(senderUser.GetFullName()));
+                    hyperlink.Inlines.Add(CreateRun(senderUser.FullName()));
                     hyperlink.UnderlineStyle = UnderlineStyle.None;
                     hyperlink.Foreground = PlaceholderHelper.GetBrush(senderUser.Id);
                     hyperlink.Click += From_Click;
@@ -821,7 +821,7 @@ namespace Unigram.Controls.Messages
 
                 if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
                 {
-                    title = message.ClientService.GetUser(fromUser.SenderUserId)?.GetFullName();
+                    title = message.ClientService.GetUser(fromUser.SenderUserId)?.FullName();
                     foreground = PlaceholderHelper.GetBrush(fromUser.SenderUserId);
                 }
                 else if (message.ForwardInfo?.Origin is MessageForwardOriginChat fromChat)
@@ -901,7 +901,7 @@ namespace Unigram.Controls.Messages
 
                 if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
                 {
-                    title = message.ClientService.GetUser(fromUser.SenderUserId)?.GetFullName();
+                    title = message.ClientService.GetUser(fromUser.SenderUserId)?.FullName();
                 }
                 else if (message.ForwardInfo?.Origin is MessageForwardOriginChat fromChat)
                 {

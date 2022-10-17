@@ -781,7 +781,7 @@ namespace Unigram.ViewModels
         {
             if (sender is User user)
             {
-                var name = user.GetFullName();
+                var name = user.FullName();
 
                 if (offset >= 0)
                 {

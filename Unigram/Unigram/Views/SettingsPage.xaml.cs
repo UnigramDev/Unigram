@@ -225,7 +225,7 @@ namespace Unigram.Views
 
         public void UpdateUser(Chat chat, User user, bool secret)
         {
-            Title.Text = user.GetFullName();
+            Title.Text = user.FullName();
             Photo.SetUser(ViewModel.ClientService, user, 48);
             Identity.SetStatus(ViewModel.ClientService, user);
         }

@@ -2215,7 +2215,7 @@ namespace Unigram.Views
                         picture.SetUser(message.ClientService, user, 24);
                         picture.Margin = new Thickness(-4, -2, 0, -2);
 
-                        var item = final.CreateFlyoutItem(ViewModel.OpenUserCommand, user.Id, user.GetFullName());
+                        var item = final.CreateFlyoutItem(ViewModel.OpenUserCommand, user.Id, user.FullName());
                         item.Style = App.Current.Resources["ProfilePictureMenuFlyoutItemStyle"] as Style;
                         item.Icon = new FontIcon();
                         item.Tag = picture;
@@ -2229,7 +2229,7 @@ namespace Unigram.Views
                 else if (profiles.Count > 0)
                 {
                     placeholder.Style = App.Current.Resources["MessageSeenMenuFlyoutItemStyle"] as Style;
-                    placeholder.Text = profiles[0].GetFullName();
+                    placeholder.Text = profiles[0].FullName();
                     placeholder.Tag = pictures;
                     placeholder.CommandParameter = profiles[0].Id;
                     placeholder.Command = ViewModel.OpenUserCommand;
@@ -3328,6 +3328,7 @@ namespace Unigram.Views
 
                 name.Text = user.GetFullName();
                 username.Text = string.IsNullOrEmpty(user.Username) ? string.Empty : $" @{user.Username}";
+                name.Text = user.FullName();
 
                 photo.SetUser(ViewModel.ClientService, user, 36);
             }
@@ -4689,7 +4690,7 @@ namespace Unigram.Views
                     {
                         picture.SetUser(ViewModel.ClientService, senderUser, 36);
 
-                        item.Text = senderUser.GetFullName();
+                        item.Text = senderUser.FullName();
                         item.Info = Strings.Resources.VoipGroupPersonalAccount;
                     }
                     else if (ViewModel.ClientService.TryGetChat(messageSender.Sender, out Chat senderChat))

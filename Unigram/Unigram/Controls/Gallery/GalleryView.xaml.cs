@@ -557,7 +557,7 @@ namespace Unigram.Controls.Gallery
         {
             if (with is User user)
             {
-                return user.GetFullName();
+                return user.FullName();
             }
             else if (with is Chat chat)
             {

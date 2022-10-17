@@ -51,7 +51,7 @@ namespace Unigram.Controls.Cells
             {
                 if (message.ClientService.TryGetUser(message.SenderId, out User user))
                 {
-                    Title.Text = user.GetFullName();
+                    Title.Text = user.FullName();
                 }
                 else if (message.ClientService.TryGetChat(message.SenderId, out Chat chat))
                 {

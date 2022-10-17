@@ -242,7 +242,7 @@ namespace Unigram.Views.Chats
                         stringBuilder.AppendFormat(Strings.Resources.CharactersPerMessage, Locale.Declension("Characters", senderInfo.AverageCharacterCount));
                     }
 
-                    title.Text = user.GetFullName();
+                    title.Text = user.FullName();
                     subtitle.Text = stringBuilder.ToString();
                     photo.SetUser(ViewModel.ClientService, user, 36);
 
@@ -283,7 +283,7 @@ namespace Unigram.Views.Chats
                         stringBuilder.Append(Locale.Declension("Restrictions", adminInfo.RestrictedUserCount));
                     }
 
-                    title.Text = user.GetFullName();
+                    title.Text = user.FullName();
                     subtitle.Text = stringBuilder.ToString();
                     photo.SetUser(ViewModel.ClientService, user, 36);
 
@@ -307,7 +307,7 @@ namespace Unigram.Views.Chats
                         subtitle.Text = string.Empty;
                     }
 
-                    title.Text = user.GetFullName();
+                    title.Text = user.FullName();
                     photo.SetUser(ViewModel.ClientService, user, 36);
 
                     button.CommandParameter = inviterInfo.UserId;

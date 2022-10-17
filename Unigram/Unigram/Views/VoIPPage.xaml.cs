@@ -447,7 +447,7 @@ namespace Unigram.Views
                 //    BackgroundPanel.Background = PlaceholderHelper.GetBrush(user.Id);
                 //}
 
-                FromLabel.Text = user.GetFullName();
+                FromLabel.Text = user.FullName();
                 DescriptionLabel.Text = string.Format(Strings.Resources.CallEmojiKeyTooltip, user.FirstName);
 
                 AudioOffText.Text = string.Format(Strings.Resources.VoipUserMicrophoneIsOff, user.FirstName);

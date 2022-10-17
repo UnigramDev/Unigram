@@ -127,7 +127,7 @@ namespace Unigram.Views.Chats
             if (phase == 0)
             {
                 var title = content.Children[1] as TextBlock;
-                title.Text = user.GetFullName();
+                title.Text = user.FullName();
             }
             else if (phase == 1)
             {
@@ -152,7 +152,7 @@ namespace Unigram.Views.Chats
             if (phase == 0)
             {
                 var title = content.Children[1] as TextBlock;
-                title.Text = user.GetFullName();
+                title.Text = user.FullName();
             }
             else if (phase == 1)
             {

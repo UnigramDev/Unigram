@@ -718,7 +718,7 @@ namespace Unigram.Controls.Messages
             }
             if (message.ClientService.TryGetUser(message.SenderId, out User user))
             {
-                return user.GetFullName();
+                return user.FullName();
             }
 
             return title ?? string.Empty;

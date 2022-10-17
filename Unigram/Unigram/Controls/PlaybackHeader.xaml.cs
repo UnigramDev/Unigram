@@ -176,7 +176,7 @@ namespace Unigram.Controls
 
                 if (_clientService.TryGetUser(message.SenderId, out Telegram.Td.Api.User senderUser))
                 {
-                    title = senderUser.Id == _clientService.Options.MyId ? Strings.Resources.ChatYourSelfName : senderUser.GetFullName();
+                    title = senderUser.Id == _clientService.Options.MyId ? Strings.Resources.ChatYourSelfName : senderUser.FullName();
                 }
                 else if (_clientService.TryGetChat(message.SenderId, out Chat senderChat))
                 {

@@ -1395,7 +1395,7 @@ namespace Unigram.Common
             return false;
         }
 
-        public static string GetFullName(this User user)
+        public static string FullName(this User user)
         {
             if (user == null || user.Type is UserTypeDeleted)
             {

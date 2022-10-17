@@ -344,7 +344,7 @@ namespace Unigram.Controls.Cells
                     }
                     else
                     {
-                        builder.Append(user.GetFullName());
+                        builder.Append(user.FullName());
                     }
 
                     builder.Append(", ");
@@ -397,7 +397,7 @@ namespace Unigram.Controls.Cells
                 }
                 else if (fromUser != null)
                 {
-                    builder.Append(fromUser.GetFullName());
+                    builder.Append(fromUser.FullName());
                     builder.Append(": ");
                 }
                 else if (fromChat != null && fromChat.Id != chat.Id)

@@ -392,7 +392,7 @@ namespace Unigram.ViewModels.Supergroups
             }
             else if (canTransfer is CanTransferOwnershipResultOk)
             {
-                var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.EditAdminTransferReadyAlertText, chat.Title, user.GetFullName()), supergroup.IsChannel ? Strings.Resources.EditAdminChannelTransfer : Strings.Resources.EditAdminGroupTransfer, Strings.Resources.EditAdminTransferChangeOwner, Strings.Resources.Cancel);
+                var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.EditAdminTransferReadyAlertText, chat.Title, user.FullName()), supergroup.IsChannel ? Strings.Resources.EditAdminChannelTransfer : Strings.Resources.EditAdminGroupTransfer, Strings.Resources.EditAdminTransferChangeOwner, Strings.Resources.Cancel);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;

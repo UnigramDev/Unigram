@@ -95,7 +95,7 @@ namespace Unigram.Views.Supergroups
             if (args.Phase == 0)
             {
                 var title = content.Children[1] as TextBlock;
-                title.Text = user.GetFullName();
+                title.Text = user.FullName();
             }
             else if (args.Phase == 1)
             {
@@ -144,7 +144,7 @@ namespace Unigram.Views.Supergroups
             if (args.Phase == 0)
             {
                 var title = content.Children[1] as TextBlock;
-                title.Text = user.GetFullName();
+                title.Text = user.FullName();
             }
             else if (args.Phase == 1)
             {

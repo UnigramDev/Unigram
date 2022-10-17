@@ -13,11 +13,11 @@ namespace Unigram.Converters
                 case ChatMemberStatusCreator:
                     return Strings.Resources.ChannelCreator;
                 case ChatMemberStatusAdministrator:
-                    return string.Format(Strings.Resources.EditAdminPromotedBy, clientService.GetUser(member.InviterUserId).GetFullName());
+                    return string.Format(Strings.Resources.EditAdminPromotedBy, clientService.GetUser(member.InviterUserId).FullName());
                 case ChatMemberStatusRestricted:
-                    return string.Format(Strings.Resources.UserRestrictionsBy, clientService.GetUser(member.InviterUserId).GetFullName());
+                    return string.Format(Strings.Resources.UserRestrictionsBy, clientService.GetUser(member.InviterUserId).FullName());
                 case ChatMemberStatusBanned:
-                    return string.Format(Strings.Resources.UserRestrictionsBy, clientService.GetUser(member.InviterUserId).GetFullName());
+                    return string.Format(Strings.Resources.UserRestrictionsBy, clientService.GetUser(member.InviterUserId).FullName());
                 default:
                     return LastSeenConverter.GetLabel(clientService.GetMessageSender(member.MemberId) as User, false);
             }

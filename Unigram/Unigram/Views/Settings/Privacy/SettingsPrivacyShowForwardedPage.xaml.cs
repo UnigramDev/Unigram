@@ -36,7 +36,7 @@ namespace Unigram.Views.Settings.Privacy
             var user = ViewModel.ClientService.GetUser(ViewModel.ClientService.Options.MyId);
             if (user != null)
             {
-                MessagePreview.Mockup(Strings.Resources.PrivacyForwardsMessageLine, user.GetFullName(), true, false, DateTime.Now);
+                MessagePreview.Mockup(Strings.Resources.PrivacyForwardsMessageLine, user.FullName(), true, false, DateTime.Now);
             }
 
             BackgroundPresenter.Update(ViewModel.SessionId, ViewModel.ClientService, ViewModel.Aggregator);

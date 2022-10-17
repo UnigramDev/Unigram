@@ -1773,7 +1773,7 @@ namespace Unigram.Views
             if (_clientService.TryGetUser(participant.ParticipantId, out User user))
             {
                 photo.SetUser(_clientService, user, 36);
-                title.Text = user.GetFullName();
+                title.Text = user.FullName();
             }
             else if (_clientService.TryGetChat(participant.ParticipantId, out Chat chat))
             {

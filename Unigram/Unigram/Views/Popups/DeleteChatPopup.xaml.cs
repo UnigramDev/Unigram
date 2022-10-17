@@ -61,7 +61,7 @@ namespace Unigram.Views.Popups
                 {
                     if (chat.Type is ChatTypeSecret)
                     {
-                        TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.Resources.AreYouSureClearHistoryWithSecretUser, user.GetFullName()));
+                        TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.Resources.AreYouSureClearHistoryWithSecretUser, user.FullName()));
                     }
                     else if (user.Id == clientService.Options.MyId)
                     {
@@ -69,7 +69,7 @@ namespace Unigram.Views.Popups
                     }
                     else
                     {
-                        TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.Resources.AreYouSureClearHistoryWithUser, user.GetFullName()));
+                        TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.Resources.AreYouSureClearHistoryWithUser, user.FullName()));
                     }
                 }
                 else if (basicGroup != null)
@@ -96,7 +96,7 @@ namespace Unigram.Views.Popups
             {
                 if (chat.Type is ChatTypeSecret)
                 {
-                    TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.Resources.AreYouSureDeleteThisChatWithSecretUser, user.GetFullName()));
+                    TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.Resources.AreYouSureDeleteThisChatWithSecretUser, user.FullName()));
                 }
                 else if (user.Id == clientService.Options.MyId)
                 {
@@ -104,7 +104,7 @@ namespace Unigram.Views.Popups
                 }
                 else
                 {
-                    TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.Resources.AreYouSureDeleteThisChatWithUser, user.GetFullName()));
+                    TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.Resources.AreYouSureDeleteThisChatWithUser, user.FullName()));
                 }
 
                 if (user.Type is UserTypeBot)

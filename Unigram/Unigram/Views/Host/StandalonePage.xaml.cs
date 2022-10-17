@@ -38,8 +38,8 @@ namespace Unigram.Views.Host
                 var user = service.ClientService.GetUser(service.ClientService.Options.MyId);
                 if (user != null)
                 {
-                    StatusLabel.Text = string.Format("{0} - {1}", user.GetFullName(), "Unigram");
-                    ApplicationView.GetForCurrentView().Title = user.GetFullName();
+                    StatusLabel.Text = string.Format("{0} - {1}", user.FullName(), "Unigram");
+                    ApplicationView.GetForCurrentView().Title = user.FullName();
                 }
             }
 
