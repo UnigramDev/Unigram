@@ -239,7 +239,7 @@ namespace Unigram.Controls
                         _surface = new CanvasImageSource(device, newSize.X, newSize.Y, newDpi, CanvasAlphaMode.Premultiplied);
                         _canvas.Source = _surface;
 
-                        _bitmap = CreateBitmap(_surface);
+                        UpdateBitmap(device);
 
                         Invalidate();
                         OnSourceChanged();
@@ -401,14 +401,8 @@ namespace Unigram.Controls
                         return;
                     }
 
-                    if (_bitmap == null)
-                    {
-                        _bitmap = CreateBitmap(session);
-                    }
-                    else
-                    {
-                        DrawFrame(_surface, session);
-                    }
+                    UpdateBitmap(session.Device);
+                    DrawFrame(_surface, session);
                 }
             }
             catch (Exception ex)
@@ -417,11 +411,14 @@ namespace Unigram.Controls
             }
         }
 
-        private void CreateBitmap()
+        private void UpdateBitmap(CanvasDevice device)
         {
             try
             {
-                _bitmap = CreateBitmap(CanvasDevice.GetSharedDevice());
+                if (device != null)
+                {
+                    _bitmap = CreateBitmap(device);
+                }
             }
             catch (Exception ex)
             {
@@ -447,12 +444,12 @@ namespace Unigram.Controls
             }
         }
 
-        protected abstract CanvasBitmap CreateBitmap(ICanvasResourceCreator sender);
+        protected abstract CanvasBitmap CreateBitmap(CanvasDevice device);
 
-        protected CanvasBitmap CreateBitmap(ICanvasResourceCreator sender, int width, int height, DirectXPixelFormat pixelFormat = DirectXPixelFormat.B8G8R8A8UIntNormalized, float dpi = 96)
+        protected CanvasBitmap CreateBitmap(CanvasDevice device, int width, int height, DirectXPixelFormat pixelFormat = DirectXPixelFormat.B8G8R8A8UIntNormalized, float dpi = 96)
         {
             var buffer = ArrayPool<byte>.Shared.Rent(width * height * 4);
-            var bitmap = CanvasBitmap.CreateFromBytes(sender, buffer, width, height, pixelFormat, dpi);
+            var bitmap = CanvasBitmap.CreateFromBytes(device, buffer, width, height, pixelFormat, dpi);
             ArrayPool<byte>.Shared.Return(buffer);
 
             return bitmap;
@@ -510,7 +507,7 @@ namespace Unigram.Controls
 
                 if (_playing == null && !_unloaded)
                 {
-                    CreateBitmap();
+                    UpdateBitmap(_surface?.Device);
 
                     // Invalidate to render the first frame
                     // Would be nice to move this to IndividualAnimatedControl
@@ -544,7 +541,7 @@ namespace Unigram.Controls
             {
                 if (tryLoad is false)
                 {
-                    CreateBitmap();
+                    UpdateBitmap(_surface?.Device);
                 }
 
                 Subscribe(true);

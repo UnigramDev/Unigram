@@ -39,12 +39,13 @@ namespace Unigram.Controls.Messages
             _emojiSize = GetDpiAwareSize(20);
         }
 
-        protected override CanvasBitmap CreateBitmap(ICanvasResourceCreator sender)
+        protected override CanvasBitmap CreateBitmap(CanvasDevice device)
         {
             var awareSize = GetDpiAwareSize(_currentSize.X, _currentSize.Y);
 
             bool needsCreate = _bitmap == null;
             needsCreate |= _bitmap?.Size.Width != awareSize.Width || _bitmap?.Size.Height != awareSize.Height;
+            needsCreate |= _bitmap?.Device != device;
             needsCreate &= _currentSize.X > 0 && _currentSize.Y > 0;
 
             if (needsCreate)
@@ -53,7 +54,7 @@ namespace Unigram.Controls.Messages
                 _bitmap = null;
 
                 _emojiSize = GetDpiAwareSize(20);
-                return CreateBitmap(sender, awareSize.Width, awareSize.Height);
+                return CreateBitmap(device, awareSize.Width, awareSize.Height);
             }
 
             return _bitmap;

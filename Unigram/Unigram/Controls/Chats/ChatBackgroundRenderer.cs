@@ -43,7 +43,7 @@ namespace Unigram.Controls.Chats
             };
         }
 
-        protected override CanvasBitmap CreateBitmap(ICanvasResourceCreator sender)
+        protected override CanvasBitmap CreateBitmap(CanvasDevice device)
         {
             double ratioX = 50 / _currentSize.X;
             double ratioY = 50 / _currentSize.Y;
@@ -52,10 +52,11 @@ namespace Unigram.Controls.Chats
             var width = (int)(_currentSize.X * ratio);
             var height = (int)(_currentSize.Y * ratio);
 
-            CreateAdditionalResources(sender);
+            CreateAdditionalResources(device);
 
             bool needsCreate = _bitmap == null;
             needsCreate |= _bitmap?.Size.Width != width || _bitmap?.Size.Height != height;
+            needsCreate |= _bitmap?.Device != device;
             needsCreate &= _currentSize.X > 0 && _currentSize.Y > 0;
 
             if (needsCreate)
@@ -63,7 +64,7 @@ namespace Unigram.Controls.Chats
                 _bitmap?.Dispose();
                 _bitmap = null;
 
-                var bitmap = CreateTarget(sender, width, height);
+                var bitmap = CreateTarget(device, width, height);
 
                 if (_backgroundFill is BackgroundFillGradient or BackgroundFillSolid)
                 {
@@ -85,12 +86,12 @@ namespace Unigram.Controls.Chats
             return _bitmap;
         }
 
-        private async void CreateAdditionalResources(ICanvasResourceCreator sender)
+        private async void CreateAdditionalResources(CanvasDevice device)
         {
             await _additionalResourcesLock.WaitAsync();
 
             bool needsCreate = _pattern == null;
-            needsCreate |= _pattern?.Device != sender.Device;
+            needsCreate |= _pattern?.Device != device;
             needsCreate |= _background == null || _background.Local.Path != _patternPath;
 
             if (needsCreate)
@@ -107,22 +108,25 @@ namespace Unigram.Controls.Chats
                     if (_vector)
                     {
                         _patternPath = _background.Local.Path;
-                        _pattern = await PlaceholderHelper.GetPatternBitmapAsync(sender, null, _background);
+                        _pattern = await PlaceholderHelper.GetPatternBitmapAsync(device, null, _background);
                     }
                     else
                     {
                         _patternPath = _background.Local.Path;
-                        _pattern = await CanvasBitmap.LoadAsync(sender, _background.Local.Path);
+                        _pattern = await CanvasBitmap.LoadAsync(device, _background.Local.Path);
                     }
                 }
             }
 
             _additionalResourcesLock.Release();
 
-            // Must happen asynchronously because the method
-            // might be called from within a drawing session
-            // causing an exception to be thrown by DirectX
-            _dispatcher.TryEnqueue(Invalidate);
+            if (needsCreate)
+            {
+                // Must happen asynchronously because the method
+                // might be called from within a drawing session
+                // causing an exception to be thrown by DirectX
+                _dispatcher.TryEnqueue(Invalidate);
+            }
         }
 
         protected override void OnSurfaceContentsLost()
@@ -427,7 +431,7 @@ namespace Unigram.Controls.Chats
 
             if (_surface != null)
             {
-                CreateAdditionalResources(_surface);
+                CreateAdditionalResources(_surface.Device);
             }
 
             this.BeginOnUIThread(OnSourceChanged);

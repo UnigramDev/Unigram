@@ -1,11 +1,14 @@
-﻿using Microsoft.Graphics.Canvas.UI.Xaml;
+﻿using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.UI.Xaml;
 using RLottie;
 using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
+using Unigram.Common;
 using Unigram.Navigation;
 using Windows.ApplicationModel;
 using Windows.Foundation;
@@ -13,7 +16,6 @@ using Windows.Graphics;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Controls
@@ -40,7 +42,7 @@ namespace Unigram.Controls
     }
 
     [TemplatePart(Name = "Canvas", Type = typeof(CanvasControl))]
-    public class LottieView : AnimatedImage<LottieAnimation>
+    public class LottieView : IndividualAnimatedControl<LottieAnimation>
     {
         private bool? _hideThumbnail;
 
@@ -89,34 +91,67 @@ namespace Unigram.Controls
             _animation = null;
         }
 
-        protected override WriteableBitmap CreateBitmap(float dpi)
+        protected override CanvasBitmap CreateBitmap(CanvasDevice device)
         {
             bool needsCreate = _bitmap == null;
-            needsCreate |= _bitmap?.PixelWidth != _frameSize.Width || _bitmap?.PixelHeight != _frameSize.Height;
+            needsCreate |= _bitmap?.Size.Width != _frameSize.Width || _bitmap?.Size.Height != _frameSize.Height;
+            needsCreate |= _bitmap?.Device != device;
 
             if (needsCreate)
             {
-                if (_animation != null)
-                {
-                    _bitmap = new WriteableBitmap(_frameSize.Width, _frameSize.Height);
-                    _animation.SetTarget(_bitmap);
-                    return _bitmap;
-                }
+                _bitmap?.Dispose();
+                _bitmap = null;
 
-                return null;
+                return CreateBitmap(device, _frameSize.Width, _frameSize.Height);
             }
 
             return _bitmap;
         }
 
-        protected override void DrawFrame(WriteableBitmap args)
+        protected override void DrawFrame(CanvasImageSource sender, CanvasDrawingSession args)
         {
             if (_bitmap == null || _animation == null || _unloaded)
             {
                 return;
             }
 
-            args.Invalidate();
+            if (_flipped)
+            {
+                args.Transform = Matrix3x2.CreateScale(-1, 1, sender.Size.ToVector2() / 2);
+            }
+
+            double width = _bitmap.Size.Width;
+            double height = _bitmap.Size.Height;
+
+            double ratioX = (double)sender.Size.Width / width;
+            double ratioY = (double)sender.Size.Height / height;
+
+            if (ratioX > ratioY)
+            {
+                width = sender.Size.Width;
+                height *= ratioX;
+            }
+            else
+            {
+                width *= ratioY;
+                height = sender.Size.Height;
+            }
+
+            var y = (sender.Size.Height - height) / 2;
+            var x = (sender.Size.Width - width) / 2;
+
+            if (sender.Size.Width >= _logicalSize.Width || sender.Size.Height >= _logicalSize.Height)
+            {
+                args.DrawImage(_bitmap,
+                    new Rect(x, y, width, height));
+            }
+            else
+            {
+                args.DrawImage(_bitmap,
+                    new Rect(x, y, width, height),
+                    new Rect(0, 0, _bitmap.Size.Width, _bitmap.Size.Height), 1,
+                    CanvasImageInterpolation.MultiSampleLinear);
+            }
 
             if (_hideThumbnail == true)
             {
@@ -138,7 +173,7 @@ namespace Unigram.Controls
             var index = _index;
             var framesPerUpdate = _limitFps ? _animationFrameRate < 60 ? 1 : 2 : 1;
 
-            animation.RenderSync(index);
+            animation.RenderSync(_bitmap, index);
 
             IndexChanged?.Invoke(this, index);
             PositionChanged?.Invoke(this, Math.Min(1, Math.Max(0, (double)index / (_animationTotalFrame - 1))));
@@ -244,9 +279,6 @@ namespace Unigram.Controls
 
             _animationFrameRate = animation.FrameRate;
             _animationTotalFrame = animation.TotalFrame;
-
-            _bitmap = new WriteableBitmap(_frameSize.Width, _frameSize.Height);
-            _animation.SetTarget(_bitmap);
 
             if (_backward)
             {
@@ -370,17 +402,6 @@ namespace Unigram.Controls
         private static void OnFlippedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((LottieView)d)._flipped = (bool)e.NewValue;
-
-            ((LottieView)d).RenderTransformOrigin = new Point(0.5, 0.5);
-            ((LottieView)d).RenderTransform = new ScaleTransform
-            {
-                ScaleX = (bool)e.NewValue ? -1 : 1,
-                ScaleY = 1,
-                CenterX = 0.5,
-                CenterY = 0.5
-            };
-            //var visual = ElementCompositionPreview.GetElementVisual((LottieView)d);
-            //visual.Scale = new Vector3((bool)e.NewValue ? -1 : 1, 1, 1);
         }
 
         #endregion
