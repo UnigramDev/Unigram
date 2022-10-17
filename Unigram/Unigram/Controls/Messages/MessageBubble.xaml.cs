@@ -32,8 +32,6 @@ namespace Unigram.Controls.Messages
     {
         private MessageViewModel _message;
 
-        private readonly List<EmojiPosition> _positions = new();
-
         private string _query;
         private long? _photoId;
 
@@ -49,6 +47,7 @@ namespace Unigram.Controls.Messages
         public void UpdateQuery(string text)
         {
             _query = text;
+            Message?.SetQuery(text);
         }
 
         #region InitializeComponent
@@ -1647,8 +1646,9 @@ namespace Unigram.Controls.Messages
 
         private bool ReplaceEntities(MessageViewModel message, string text, IList<TextEntity> entities, double fontSize = 0)
         {
-            Message.SetQuery(_query);
             Message.SetText(message.ClientService, text, entities, fontSize);
+            Message.SetQuery(_query);
+
             ContentPanel.MaxWidth = Message.IsPreformatted ? double.PositiveInfinity : 432;
 
             return text.Length > 0;
@@ -1671,25 +1671,6 @@ namespace Unigram.Controls.Messages
             }
 
             return direct.GetObject(run) as Run;
-        }
-
-        private IXamlDirectObject CreateDirectRun(string text, FontWeight? fontWeight = null, FontFamily fontFamily = null)
-        {
-            var direct = XamlDirect.GetDefault();
-            var run = direct.CreateInstance(XamlTypeIndex.Run);
-            direct.SetStringProperty(run, XamlPropertyIndex.Run_Text, text);
-
-            if (fontWeight != null)
-            {
-                direct.SetObjectProperty(run, XamlPropertyIndex.TextElement_FontWeight, fontWeight.Value);
-            }
-
-            if (fontFamily != null)
-            {
-                direct.SetObjectProperty(run, XamlPropertyIndex.TextElement_FontFamily, fontFamily);
-            }
-
-            return run;
         }
 
         private Brush GetBrush(string key)

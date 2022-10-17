@@ -26,7 +26,7 @@ namespace Unigram.Controls
         }
 
         public TextEntityType Type { get; }
-        
+
         public object Data { get; }
     }
 
@@ -41,7 +41,7 @@ namespace Unigram.Controls
         private bool _ignoreSpoilers = false;
         private bool _ignoreLayoutUpdated = true;
 
-        private string _query;
+        private TextHighlighter _spoiler;
 
         private RichTextBlock TextBlock;
         private CustomEmojiCanvas CustomEmoji;
@@ -106,7 +106,7 @@ namespace Unigram.Controls
             _clientService = null;
             _formattedText = null;
 
-            _query = null;
+            _spoiler = null;
 
             _positions.Clear();
 
@@ -172,7 +172,35 @@ namespace Unigram.Controls
 
         public void SetQuery(string query)
         {
-            _query = query;
+            if (TextBlock != null && TextBlock.IsLoaded && _formattedText != null)
+            {
+                if (string.IsNullOrWhiteSpace(query))
+                {
+                    TextBlock.TextHighlighters.Clear();
+                }
+                else
+                {
+                    var find = _formattedText.Text.IndexOf(query, StringComparison.OrdinalIgnoreCase);
+                    if (find != -1)
+                    {
+                        var highligher = new TextHighlighter();
+                        highligher.Foreground = new SolidColorBrush(Colors.White);
+                        highligher.Background = new SolidColorBrush(Colors.Orange);
+                        highligher.Ranges.Add(new TextRange { StartIndex = find, Length = query.Length });
+
+                        TextBlock.TextHighlighters.Add(highligher);
+                    }
+                    else
+                    {
+                        TextBlock.TextHighlighters.Clear();
+                    }
+                }
+
+                if (_spoiler != null)
+                {
+                    TextBlock.TextHighlighters.Add(_spoiler);
+                }
+            }
         }
 
         public void SetText(IClientService clientService, string text, IList<TextEntity> entities, double fontSize = 0)
@@ -187,7 +215,6 @@ namespace Unigram.Controls
             }
 
             _positions.Clear();
-            TextBlock.TextHighlighters.Clear();
             TextHighlighter spoiler = null;
 
             var preformatted = false;
@@ -407,34 +434,16 @@ namespace Unigram.Controls
                 direct.AddToCollection(inlines, CreateDirectRun(text.Substring(previous), fontSize: fontSize));
             }
 
-            if (string.IsNullOrWhiteSpace(_query))
-            {
-                TextBlock.TextHighlighters.Clear();
-            }
-            else
-            {
-                var find = text.IndexOf(_query, StringComparison.OrdinalIgnoreCase);
-                if (find != -1)
-                {
-                    var highligher = new TextHighlighter();
-                    highligher.Foreground = new SolidColorBrush(Colors.White);
-                    highligher.Background = new SolidColorBrush(Colors.Orange);
-                    highligher.Ranges.Add(new TextRange { StartIndex = find, Length = _query.Length });
-
-                    TextBlock.TextHighlighters.Add(highligher);
-                }
-                else
-                {
-                    TextBlock.TextHighlighters.Clear();
-                }
-            }
-
             if (spoiler?.Ranges.Count > 0)
             {
                 spoiler.Foreground = new SolidColorBrush(Colors.Black);
                 spoiler.Background = new SolidColorBrush(Colors.Black);
 
-                TextBlock.TextHighlighters.Add(spoiler);
+                _spoiler = spoiler;
+            }
+            else
+            {
+                _spoiler = null;
             }
 
             direct.SetDoubleProperty(paragraph, XamlPropertyIndex.TextElement_FontSize, Theme.Current.MessageFontSize);

@@ -306,6 +306,7 @@ namespace Unigram.ViewModels
             }
 
             Search = null;
+            UpdateQuery(string.Empty);
         }
 
         private string _accessToken;

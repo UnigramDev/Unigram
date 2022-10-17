@@ -1118,5 +1118,34 @@ namespace Unigram.ViewModels
 
             return position;
         }
+
+        public void UpdateQuery(string query)
+        {
+            HandleForCachedItems(bubble => bubble.UpdateQuery(query));
+        }
+
+        private void HandleForCachedItems(Action<MessageBubble> action)
+        {
+            var field = ListField?.ItemsStack;
+            if (field == null)
+            {
+                return;
+            }
+
+            for (int i = field.FirstCacheIndex; i <= field.LastCacheIndex; i++)
+            {
+                var container = ListField.ContainerFromIndex(i) as SelectorItem;
+                if (container == null)
+                {
+                    return;
+                }
+
+                var content = container.ContentTemplateRoot as FrameworkElement;
+                if (content is MessageSelector selector && selector.Content is MessageBubble bubble)
+                {
+                    action(bubble);
+                }
+            }
+        }
     }
 }
