@@ -7,8 +7,8 @@ namespace Unigram.Entities
 {
     public class StorageAudio : StorageMedia
     {
-        public StorageAudio(StorageFile file, MusicProperties props)
-            : base(file, null)
+        public StorageAudio(StorageFile file, BasicProperties basic, MusicProperties props)
+            : base(file, basic)
         {
             Title = props.Title;
             Performer = props.AlbumArtist;
@@ -33,7 +33,7 @@ namespace Unigram.Entities
                 var basic = await file.GetBasicPropertiesAsync();
                 var audio = await file.Properties.GetMusicPropertiesAsync();
 
-                return new StorageAudio(file, audio);
+                return new StorageAudio(file, basic, audio);
             }
             catch
             {
