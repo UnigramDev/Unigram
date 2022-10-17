@@ -285,7 +285,7 @@
                                                 Orientation="Horizontal"
                                                 Height="28" />
                                     <TextBlock x:Name="ThreadGlyph"
-                                               Text="&#xE8BD;"
+                                               Text="&#xE9BF;"
                                                FontFamily="{StaticResource SymbolThemeFontFamily}"
                                                FontSize="{StaticResource GlyphMediumFontSize}"
                                                VerticalAlignment="Center"

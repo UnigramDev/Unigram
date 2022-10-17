@@ -1965,7 +1965,7 @@ namespace Unigram.Views
                     flyout.Items.Add(edit);
                 }
 
-                flyout.CreateFlyoutItem(MessageThread_Loaded, ViewModel.MessageThreadCommand, message, message.InteractionInfo?.ReplyInfo?.ReplyCount > 0 ? Locale.Declension("ViewReplies", message.InteractionInfo.ReplyInfo.ReplyCount) : Strings.Resources.ViewThread, new FontIcon { Glyph = Icons.Thread, FontFamily = new FontFamily("ms-appx:///Assets/Fonts/Telegram.ttf#Telegram") });
+                flyout.CreateFlyoutItem(MessageThread_Loaded, ViewModel.MessageThreadCommand, message, message.InteractionInfo?.ReplyInfo?.ReplyCount > 0 ? Locale.Declension("ViewReplies", message.InteractionInfo.ReplyInfo.ReplyCount) : Strings.Resources.ViewThread, new FontIcon { Glyph = Icons.ChatMultiple });
 
                 flyout.CreateFlyoutSeparator();
 
@@ -3592,11 +3592,13 @@ namespace Unigram.Views
         {
             if (ViewModel.Type == DialogType.Thread)
             {
-                Photo.Source = PlaceholderHelper.GetGlyph(Icons.ArrowReply, 5, (int)Photo.Width);
+                Photo.Source = PlaceholderHelper.GetGlyph(Icons.ChatMultiple, 5, 36);
+                Photo.IsEnabled = false;
             }
             else
             {
-                Photo.SetChat(ViewModel.ClientService, chat, (int)Photo.Width);
+                Photo.SetChat(ViewModel.ClientService, chat, 36);
+                Photo.IsEnabled = true;
             }
         }
 

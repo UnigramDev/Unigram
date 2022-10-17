@@ -129,7 +129,7 @@ namespace Unigram.Controls
             }
             else if (clientService.IsRepliesChat(chat))
             {
-                return PlaceholderHelper.GetGlyph(Icons.ArrowReply, 5, side);
+                return PlaceholderHelper.GetGlyph(Icons.ChatMultiple, 5, side);
             }
 
             if (file != null)
@@ -331,6 +331,17 @@ namespace Unigram.Controls
             else if (message.ClientService.TryGetChat(message.SenderId, out Chat senderChat))
             {
                 SetChat(message.ClientService, senderChat, 30);
+            }
+        }
+
+        public void CloneSource(ProfilePicture photo)
+        {
+            if (_referenceId != photo._referenceId || _fileId != photo._fileId || Source == null)
+            {
+                _referenceId = photo._referenceId;
+                _fileId = photo._fileId;
+
+                Source = photo.Source;
             }
         }
     }
