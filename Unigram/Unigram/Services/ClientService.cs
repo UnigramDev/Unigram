@@ -387,6 +387,11 @@ namespace Unigram.Services
                     useMessageDatabase = false;
                 }
 
+                var deviceModel = SettingsService.Current.Diagnostics.DeviceName;
+                if (deviceModel.Length == 0)
+                {
+                    deviceModel = _deviceInfoService.DeviceModel;
+                }
 
                 InitializeDiagnostics();
                 InitializeFlush();
@@ -410,7 +415,7 @@ namespace Unigram.Services
                     ApplicationVersion = _deviceInfoService.ApplicationVersion,
                     SystemVersion = _deviceInfoService.SystemVersion,
                     SystemLanguageCode = _deviceInfoService.SystemLanguageCode,
-                    DeviceModel = _deviceInfoService.DeviceModel,
+                    DeviceModel = deviceModel,
                     UseTestDc = _settings.UseTestDC,
                 });
                 _client.Send(new GetApplicationConfig(), UpdateConfig);

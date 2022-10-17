@@ -23,7 +23,6 @@ namespace Unigram.ViewModels.Settings
             Items = new MvxObservableCollection<KeyedList<SessionsGroup, Session>>();
 
             TerminateCommand = new RelayCommand<Session>(TerminateExecute);
-            TerminateOthersCommand = new RelayCommand(TerminateOtherExecute);
         }
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -60,7 +59,6 @@ namespace Unigram.ViewModels.Settings
             new SettingsOptionItem<int>(90, Locale.Declension("Months", 3)),
             new SettingsOptionItem<int>(180, Locale.Declension("Months", 6)),
         };
-
 
         private async Task UpdateSessionsAsync()
         {
@@ -133,6 +131,50 @@ namespace Unigram.ViewModels.Settings
             set => Set(ref _current, value);
         }
 
+        public RelayCommand RenameCommand { get; }
+        public async void Rename()
+        {
+            if (_current is not Session session)
+            {
+                return;
+            }
+
+            var popup = new InputPopup();
+            popup.Title = Strings.Resources.lng_settings_rename_device_title;
+            popup.PlaceholderText = Strings.Resources.lng_settings_device_name;
+            popup.PrimaryButtonText = Strings.Resources.OK;
+            popup.SecondaryButtonText = Strings.Resources.Cancel;
+            popup.Text = session.DeviceModel;
+            popup.MaxLength = 32;
+
+            var confirm = await popup.ShowQueuedAsync();
+            if (confirm == ContentDialogResult.Primary && popup.Text != Settings.Diagnostics.DeviceName)
+            {
+                session.DeviceModel = popup.Text;
+                RaisePropertyChanged(nameof(Current));
+
+                Settings.Diagnostics.DeviceName = popup.Text;
+                ClientService.Close(true);
+            }
+        }
+
+        public async void TerminateOthers()
+        {
+            var terminate = await MessagePopup.ShowAsync(Strings.Resources.AreYouSureSessions, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            if (terminate == ContentDialogResult.Primary)
+            {
+                var response = await ClientService.SendAsync(new TerminateAllOtherSessions());
+                if (response is Ok)
+                {
+                    Items.Clear();
+                }
+                else if (response is Error error)
+                {
+                    Logs.Logger.Error(Logs.LogTarget.API, "auth.resetAuthotizations error " + error);
+                }
+            }
+        }
+
         public RelayCommand<Session> TerminateCommand { get; }
         private async void TerminateExecute(Session session)
         {
@@ -175,24 +217,6 @@ namespace Unigram.ViewModels.Settings
                 else if (response is Error error)
                 {
                     Logs.Logger.Error(Logs.LogTarget.API, "auth.resetAuthotization error " + error);
-                }
-            }
-        }
-
-        public RelayCommand TerminateOthersCommand { get; }
-        private async void TerminateOtherExecute()
-        {
-            var terminate = await MessagePopup.ShowAsync(Strings.Resources.AreYouSureSessions, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
-            if (terminate == ContentDialogResult.Primary)
-            {
-                var response = await ClientService.SendAsync(new TerminateAllOtherSessions());
-                if (response is Ok)
-                {
-                    Items.Clear();
-                }
-                else if (response is Error error)
-                {
-                    Logs.Logger.Error(Logs.LogTarget.API, "auth.resetAuthotizations error " + error);
                 }
             }
         }

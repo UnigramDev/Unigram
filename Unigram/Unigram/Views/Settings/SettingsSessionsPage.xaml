@@ -65,7 +65,7 @@
                 </GroupStyle>
             </ListView.GroupStyle>
             <ListView.Header>
-                <StackPanel>
+                <Grid>
                     <controls:HeaderedControl Header="{CustomResource CurrentSession}"
                                               Footer="{CustomResource ClearOtherSessionsHelp}">
                         <Button CommandParameter="{x:Bind ViewModel.Current, Mode=OneWay}"
@@ -77,9 +77,14 @@
 
                         <controls:BadgeButton Content="{CustomResource TerminateAllSessions}"
                                               Foreground="Red"
-                                              Command="{x:Bind ViewModel.TerminateOthersCommand}" />
+                                              Click="{x:Bind ViewModel.TerminateOthers}" />
                     </controls:HeaderedControl>
-                </StackPanel>
+                    <HyperlinkButton Content="{CustomResource lng_settings_rename_device}"
+                                     Click="{x:Bind ViewModel.Rename}"
+                                     VerticalAlignment="Top"
+                                     HorizontalAlignment="Right"
+                                     Margin="12,10" />
+                </Grid>
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate>

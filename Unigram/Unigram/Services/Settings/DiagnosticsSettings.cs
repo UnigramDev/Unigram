@@ -51,6 +51,13 @@ namespace Unigram.Services.Settings
             set => AddOrUpdateValue(ref _lowLatencyGC, "LowLatencyGC", value);
         }
 
+        private string? _deviceName;
+        public string DeviceName
+        {
+            get => _deviceName ??= GetValueOrDefault("DeviceName", string.Empty);
+            set => AddOrUpdateValue(ref _deviceName, "DeviceName", value);
+        }
+
         private string _lastErrorMessage;
         public string LastErrorMessage
         {
