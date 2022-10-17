@@ -115,7 +115,10 @@ namespace Unigram.Controls
 
         private void OnPositionChanged(IPlaybackService sender, object args)
         {
-            this.BeginOnUIThread(UpdatePosition);
+            var position = sender.Position;
+            var duration = sender.Duration;
+
+            this.BeginOnUIThread(() => UpdatePosition(position, duration));
         }
 
         private void OnPlaylistChanged(object sender, EventArgs e)
@@ -127,15 +130,15 @@ namespace Unigram.Controls
             });
         }
 
-        private void UpdatePosition()
+        private void UpdatePosition(TimeSpan position, TimeSpan duration)
         {
             if (_scrubbing)
             {
                 return;
             }
 
-            Slider.Maximum = _playbackService.Duration.TotalSeconds;
-            Slider.Value = _playbackService.Position.TotalSeconds;
+            Slider.Maximum = duration.TotalSeconds;
+            Slider.Value = position.TotalSeconds;
         }
 
         private void UpdateGlyph()

@@ -114,10 +114,13 @@ namespace Unigram.Controls.Cells
 
         private void OnPositionChanged(IPlaybackService sender, object args)
         {
-            this.BeginOnUIThread(UpdatePosition);
+            var position = sender.Position;
+            var duration = sender.Duration;
+
+            this.BeginOnUIThread(() => UpdatePosition(position, duration));
         }
 
-        private void UpdatePosition()
+        private void UpdatePosition(TimeSpan position, TimeSpan duration)
         {
             var message = _message;
             if (message == null)
@@ -127,7 +130,7 @@ namespace Unigram.Controls.Cells
 
             if (message.AreTheSame(_playbackService.CurrentItem) /*&& !_pressed*/)
             {
-                Subtitle.Text = FormatTime(_playbackService.Position) + " / " + FormatTime(_playbackService.Duration);
+                Subtitle.Text = FormatTime(position) + " / " + FormatTime(duration);
             }
         }
 
@@ -253,7 +256,7 @@ namespace Unigram.Controls.Cells
                     Button.SetGlyph(file.Id, MessageContentState.Pause);
                 }
 
-                UpdatePosition();
+                UpdatePosition(_playbackService.Position, _playbackService.Duration);
 
                 _playbackService.PlaybackStateChanged += OnPlaybackStateChanged;
                 _playbackService.PositionChanged += OnPositionChanged;
