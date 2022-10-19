@@ -149,7 +149,7 @@ namespace Unigram.Views.Popups
 
             if (FieldPanel != null)
             {
-                FieldPanel.Footer = TypeSocks.IsChecked == true
+                FieldPanel.Text = TypeSocks.IsChecked == true
                     ? Strings.Resources.UseProxyInfo
                     : TypeProto.IsChecked == true
                     ? Strings.Resources.UseProxyTelegramInfo + Environment.NewLine + Environment.NewLine + Strings.Resources.UseProxyTelegramInfo2

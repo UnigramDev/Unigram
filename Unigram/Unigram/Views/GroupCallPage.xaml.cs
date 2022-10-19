@@ -1635,7 +1635,7 @@ namespace Unigram.Views
             input.PlaceholderText = chat.Title;
             input.Text = call.Title;
             input.MaxLength = 64;
-            input.CanBeEmpty = true;
+            input.MinLength = 0;
 
             var confirm = await input.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)

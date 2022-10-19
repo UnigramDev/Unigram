@@ -24,12 +24,11 @@ namespace Unigram.Views.Popups
         public string PlaceholderText { get; set; } = string.Empty;
 
         public int MaxLength { get; set; } = int.MaxValue;
+        public int MinLength { get; set; } = 1;
         public double Maximum { get; set; } = double.MaxValue;
 
         public InputScopeNameValue InputScope { get; set; }
         public INumberFormatter2 Formatter { get; set; }
-
-        public bool CanBeEmpty { get; set; }
 
         public InputPopup(InputPopupType type = InputPopupType.Text)
         {
@@ -103,7 +102,7 @@ namespace Unigram.Views.Popups
         {
             if (Label != null)
             {
-                if (string.IsNullOrEmpty(Label.Text) && !CanBeEmpty)
+                if (Label.Text.Length < MinLength)
                 {
                     VisualUtilities.ShakeView(Label);
                     args.Cancel = true;
@@ -114,7 +113,7 @@ namespace Unigram.Views.Popups
             }
             else if (Password != null)
             {
-                if (string.IsNullOrEmpty(Password.Password) && !CanBeEmpty)
+                if (Password.Password.Length < MinLength)
                 {
                     VisualUtilities.ShakeView(Password);
                     args.Cancel = true;
@@ -152,12 +151,12 @@ namespace Unigram.Views.Popups
 
         private void Label_TextChanged(object sender, TextChangedEventArgs e)
         {
-            IsPrimaryButtonEnabled = CanBeEmpty || !string.IsNullOrEmpty(Label.Text);
+            IsPrimaryButtonEnabled = Label.Text.Length >= MinLength;
         }
 
         private void Label_PasswordChanged(object sender, RoutedEventArgs e)
         {
-            IsPrimaryButtonEnabled = CanBeEmpty || !string.IsNullOrEmpty(Password.Password);
+            IsPrimaryButtonEnabled = Password.Password.Length >= MinLength;
         }
 
         private void Number_ValueChanged(Microsoft.UI.Xaml.Controls.NumberBox sender, Microsoft.UI.Xaml.Controls.NumberBoxValueChangedEventArgs args)

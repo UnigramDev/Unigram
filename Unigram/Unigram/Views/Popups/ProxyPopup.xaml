@@ -31,57 +31,55 @@
         </Grid>
     </ContentDialog.Title>
 
-    <StackPanel Margin="-24,-12">
-        <controls:HeaderedControl>
-            <RadioButton x:Name="TypeSocks"
-                         Content="{CustomResource UseProxySocks5}"
-                         Checked="Type_Toggled"
-                         Unchecked="Type_Toggled"
-                         IsChecked="True"
-                         Style="{StaticResource SettingsRadioButtonStyle}" />
+    <StackPanel>
+        <RadioButton x:Name="TypeSocks"
+                     Content="{CustomResource UseProxySocks5}"
+                     Checked="Type_Toggled"
+                     Unchecked="Type_Toggled"
+                     IsChecked="True" />
 
-            <RadioButton x:Name="TypeHttp"
-                         Content="HTTP"
-                         Checked="Type_Toggled"
-                         Unchecked="Type_Toggled"
-                         Style="{StaticResource SettingsRadioButtonStyle}" />
+        <RadioButton x:Name="TypeHttp"
+                     Content="HTTP"
+                     Checked="Type_Toggled"
+                     Unchecked="Type_Toggled" />
 
-            <RadioButton x:Name="TypeProto"
-                         Content="{CustomResource UseProxyTelegram}"
-                         Checked="Type_Toggled"
-                         Unchecked="Type_Toggled"
-                         Style="{StaticResource SettingsRadioButtonStyle}" />
-        </controls:HeaderedControl>
+        <RadioButton x:Name="TypeProto"
+                     Content="{CustomResource UseProxyTelegram}"
+                     Checked="Type_Toggled"
+                     Unchecked="Type_Toggled" />
 
-        <controls:HeaderedControl x:Name="FieldPanel"
-                                  Footer="{CustomResource UseProxyInfo}">
-            <TextBox x:Name="FieldServer"
-                     PlaceholderText="{CustomResource UseProxyAddress}"
-                     Margin="12,12,12,12" />
-            <TextBox x:Name="FieldPort"
-                     PlaceholderText="{CustomResource UseProxyPort}"
-                     InputScope="Number"
-                     Margin="12,0,12,12" />
-            <StackPanel x:Name="TypeSocksPanel">
-                <TextBox x:Name="FieldUsername"
-                         PlaceholderText="{CustomResource UseProxyUsername}"
-                         Margin="12,0,12,12" />
-                <PasswordBox x:Name="FieldPassword"
-                             PlaceholderText="{CustomResource UseProxyPassword}"
-                             Margin="12,0,12,12" />
-            </StackPanel>
-            <StackPanel x:Name="TypeProtoPanel"
-                        Visibility="Collapsed">
-                <TextBox x:Name="FieldSecret"
-                         PlaceholderText="{CustomResource UseProxySecret}"
-                         Margin="12,0,12,12" />
-            </StackPanel>
-            <StackPanel x:Name="TypeHttpPanel"
-                        Visibility="Collapsed">
-                <CheckBox x:Name="FieldTransparent"
-                          Content="Transparent TCP connection"
-                          Margin="12,0,12,8" />
-            </StackPanel>
-        </controls:HeaderedControl>
+        <TextBox x:Name="FieldServer"
+                 PlaceholderText="{CustomResource UseProxyAddress}"
+                 Margin="0,8" />
+        <TextBox x:Name="FieldPort"
+                 PlaceholderText="{CustomResource UseProxyPort}"
+                 InputScope="Number"
+                 Margin="0,0,0,8" />
+        <StackPanel x:Name="TypeSocksPanel">
+            <TextBox x:Name="FieldUsername"
+                     PlaceholderText="{CustomResource UseProxyUsername}"
+                     Header="{CustomResource lng_proxy_credentials_optional}"
+                     Margin="0,4,0,8" />
+            <PasswordBox x:Name="FieldPassword"
+                         PlaceholderText="{CustomResource UseProxyPassword}"
+                         Margin="0,0,0,8" />
+        </StackPanel>
+        <StackPanel x:Name="TypeProtoPanel"
+                    Visibility="Collapsed">
+            <TextBox x:Name="FieldSecret"
+                     PlaceholderText="{CustomResource UseProxySecret}"
+                     Header="{CustomResource lng_proxy_credentials}"
+                     Margin="0,4,0,8" />
+        </StackPanel>
+        <StackPanel x:Name="TypeHttpPanel"
+                    Visibility="Collapsed">
+            <CheckBox x:Name="FieldTransparent"
+                      Content="Transparent TCP connection"
+                      Margin="0,0,0,8" />
+        </StackPanel>
+
+        <TextBlock x:Name="FieldPanel"
+                   Text="{CustomResource UseProxyInfo}"
+                   Style="{StaticResource InfoCaptionTextBlockStyle}" />
     </StackPanel>
 </controls:ContentPopup>

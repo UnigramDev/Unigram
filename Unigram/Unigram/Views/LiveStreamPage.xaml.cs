@@ -117,26 +117,6 @@ namespace Unigram.Views
             }
         }
 
-        private enum ButtonState
-        {
-            None,
-            SetReminder,
-            CancelReminder,
-            Start,
-            RaiseHand,
-            HandRaised,
-            Mute,
-            Unmute
-        }
-
-        private enum ButtonColors
-        {
-            None,
-            Disabled,
-            Unmute,
-            Mute
-        }
-
         private void OnTick(object sender, object e)
         {
             if (_service != null && _service.Call != null && _service.Call.ScheduledStartDate != 0)
@@ -541,7 +521,7 @@ namespace Unigram.Views
             input.PlaceholderText = chat.Title;
             input.Text = call.Title;
             input.MaxLength = 64;
-            input.CanBeEmpty = true;
+            input.MinLength = 0;
 
             var confirm = await input.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)

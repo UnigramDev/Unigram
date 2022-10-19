@@ -158,7 +158,7 @@ namespace Unigram.Views.Premium.Popups
 
         public string ConvertPurchase(bool premium, PremiumPaymentOption option)
         {
-            if (premium)
+            if (premium || option == null)
             {
                 return Strings.Resources.OK;
             }

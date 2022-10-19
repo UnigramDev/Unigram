@@ -97,15 +97,15 @@ namespace Unigram.Controls
 
         private void ApplicationView_VisibleBoundsChanged(ApplicationView sender, object args = null)
         {
-            if (Content is FrameworkElement element && !IsFullWindow)
+            if (Content is FrameworkElement && !IsFullWindow)
             {
                 if (VerticalContentAlignment == VerticalAlignment.Center)
                 {
-                    BackgroundElement.MaxHeight = sender.VisibleBounds.Height - 32 - 32 - 48 - 48 - 48;
+                    BackgroundElement.MaxHeight = Math.Min(sender.VisibleBounds.Height - 40 - 40, 640);
                 }
                 else
                 {
-                    BackgroundElement.MaxHeight = Math.Min(sender.VisibleBounds.Height - 32 - 32 - 48, ContentMaxHeight);
+                    BackgroundElement.MaxHeight = Math.Min(sender.VisibleBounds.Height - 40 - 40, ContentMaxHeight);
                 }
             }
         }

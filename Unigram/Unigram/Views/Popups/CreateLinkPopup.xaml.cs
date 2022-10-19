@@ -1,7 +1,9 @@
 ﻿using Microsoft.UI.Xaml.Controls;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using Unigram.Common;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 
 namespace Unigram.Views.Popups
@@ -91,6 +93,11 @@ namespace Unigram.Views.Popups
             {
                 Closed -= handler;
                 tsc.SetResult(IsValid);
+            }
+
+            if (Window.Current.Content is FrameworkElement element)
+            {
+                element.Resources["TeachingTip"] = this;
             }
 
             Closed += handler;
