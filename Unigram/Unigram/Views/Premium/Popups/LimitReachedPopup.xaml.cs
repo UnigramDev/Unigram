@@ -1,14 +1,17 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml.Controls;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
+using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Unigram.Views.Premium.Popups
 {
@@ -138,6 +141,36 @@ namespace Unigram.Views.Premium.Popups
                     PurchaseIcon.Visibility = Visibility.Collapsed;
                     PurchaseLabel.Text = Strings.Resources.OK;
                 }
+
+                if (type is PremiumLimitTypeCreatedPublicChatCount)
+                {
+                    LoadAdminedPublicChannels();
+                }
+            }
+        }
+
+        private async void LoadAdminedPublicChannels()
+        {
+            var response = await _clientService.SendAsync(new GetCreatedPublicChats());
+            if (response is Telegram.Td.Api.Chats chats)
+            {
+                var result = new List<Chat>();
+
+                foreach (var id in chats.ChatIds)
+                {
+                    var chat = _clientService.GetChat(id);
+                    if (chat != null)
+                    {
+                        result.Add(chat);
+                    }
+                }
+
+                Header.Visibility = Visibility.Visible;
+                ScrollingHost.ItemsSource = result;
+            }
+            else if (response is Error error)
+            {
+                Logs.Logger.Error(Logs.LogTarget.API, "channels.getAdminedPublicChannels error " + error);
             }
         }
 
@@ -200,6 +233,100 @@ namespace Unigram.Views.Premium.Popups
             {
                 _navigationService.ShowPromo(new PremiumSourceLimitExceeded());
             }
+        }
+
+        #region Recycle
+
+        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (args.InRecycleQueue)
+            {
+                return;
+            }
+
+            var content = args.ItemContainer.ContentTemplateRoot as Grid;
+            var chat = args.Item as Chat;
+
+            if (args.Phase == 0)
+            {
+                var title = content.Children[1] as TextBlock;
+                title.Text = _clientService.GetTitle(chat);
+            }
+            else if (args.Phase == 1)
+            {
+                if (chat.Type is ChatTypeSupergroup super)
+                {
+                    var supergroup = _clientService.GetSupergroup(super.SupergroupId);
+                    if (supergroup != null)
+                    {
+                        var subtitle = content.Children[2] as TextBlock;
+                        subtitle.Text = MeUrlPrefixConverter.Convert(_clientService, supergroup.ActiveUsername(), true);
+                    }
+                }
+            }
+            else if (args.Phase == 2)
+            {
+                var photo = content.Children[0] as ProfilePicture;
+                photo.SetChat(_clientService, chat, 36);
+            }
+
+            if (args.Phase < 2)
+            {
+                args.RegisterUpdateCallback(OnContainerContentChanging);
+            }
+
+            args.Handled = true;
+        }
+
+        #endregion
+
+        private void OnItemClick(object sender, ItemClickEventArgs e)
+        {
+            var container = ScrollingHost.ContainerFromItem(e.ClickedItem) as SelectorItem;
+            if (container == null || e.ClickedItem is not Chat chat)
+            {
+                return;
+            }
+
+            var supergroup = _clientService.GetSupergroup(chat);
+            if (supergroup == null)
+            {
+                return;
+            }
+
+            var popup = new TeachingTip();
+            popup.Title = Strings.Resources.AppName;
+            popup.Subtitle = string.Format(supergroup.IsChannel ? Strings.Resources.RevokeLinkAlertChannel : Strings.Resources.RevokeLinkAlert, MeUrlPrefixConverter.Convert(_clientService, supergroup.ActiveUsername(), true), chat.Title);
+            popup.ActionButtonContent = Strings.Resources.RevokeButton;
+            popup.ActionButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
+            popup.CloseButtonContent = Strings.Resources.Cancel;
+            popup.PreferredPlacement = TeachingTipPlacementMode.Top;
+            popup.Width = popup.MinWidth = popup.MaxWidth = 314;
+            popup.Target = /*badge ??*/ container;
+            popup.IsLightDismissEnabled = true;
+            popup.ShouldConstrainToRootBounds = true;
+
+            popup.ActionButtonClick += async (s, args) =>
+            {
+                popup.IsOpen = false;
+
+                var response = await _clientService.SendAsync(new SetSupergroupUsername(supergroup.Id, string.Empty));
+                if (response is Ok)
+                {
+                    Hide();
+                }
+            };
+
+            if (Window.Current.Content is FrameworkElement element)
+            {
+                element.Resources["TeachingTip"] = popup;
+            }
+            else
+            {
+                container.Resources["TeachingTip"] = popup;
+            }
+
+            popup.IsOpen = true;
         }
     }
 }
