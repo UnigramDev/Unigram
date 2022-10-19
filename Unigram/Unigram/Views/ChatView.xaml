@@ -167,6 +167,7 @@
                                           IsHorizontalScrollChainingEnabled="{TemplateBinding ScrollViewer.IsHorizontalScrollChainingEnabled}"
                                           VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}"
                                           VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
+                                          VerticalSnapPointsType="None"
                                           IsVerticalScrollChainingEnabled="{TemplateBinding ScrollViewer.IsVerticalScrollChainingEnabled}"
                                           IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}"
                                           IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}"
@@ -541,7 +542,7 @@
                                     HorizontalAlignment="Center">
                                 <messages:MessageService x:Name="DateHeader"
                                                          Click="Date_Click"
-                                                         BorderThickness="0,8,0,0">
+                                                         BorderThickness="0,4,0,0">
                                     <TextBlock x:Name="DateHeaderLabel"
                                                Text="31 dicembre 2017"
                                                Foreground="White"

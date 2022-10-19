@@ -778,6 +778,8 @@
     </Style>
 
     <Style TargetType="local:CustomEmojiIcon">
+        <Setter Property="AutoPlay"
+                Value="False" />
         <Setter Property="IsTabStop"
                 Value="False" />
         <Setter Property="Template">
@@ -826,7 +828,7 @@
                                         Stretch="Fill" />
                         </Grid.Background>
                         <Image x:Name="Canvas"
-                               Stretch="Fill"
+                               Stretch="{TemplateBinding Stretch}"
                                AutomationProperties.AccessibilityView="Raw"
                                HorizontalAlignment="Stretch"
                                VerticalAlignment="Stretch" />

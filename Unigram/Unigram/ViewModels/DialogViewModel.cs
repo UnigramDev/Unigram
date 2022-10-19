@@ -114,7 +114,7 @@ namespace Unigram.ViewModels
             SetTimerCommand = new RelayCommand<int?>(SetTimerExecute);
             SetThemeCommand = new RelayCommand(SetThemeExecute);
             OpenUserCommand = new RelayCommand<long>(OpenUser);
-            SetSenderCommand = new RelayCommand<MessageSender>(SetSenderExecute);
+            SetSenderCommand = new RelayCommand<ChatMessageSender>(SetSenderExecute);
 
             MessagesForwardCommand = new RelayCommand(MessagesForwardExecute, MessagesForwardCanExecute);
             MessagesDeleteCommand = new RelayCommand(MessagesDeleteExecute, MessagesDeleteCanExecute);
@@ -3477,6 +3477,9 @@ namespace Unigram.ViewModels
     {
         private readonly HashSet<long> _messages;
 
+        private long _first = long.MaxValue;
+        private long _last = long.MaxValue;
+
         private bool _suppressOperations = false;
         private bool _suppressPrev = false;
         private bool _suppressNext = false;
@@ -3520,9 +3523,16 @@ namespace Unigram.ViewModels
 
             for (int i = 0; i < source.Count; i++)
             {
-                if (filter && source[i].Id != 0 && _messages.Contains(source[i].Id))
+                if (filter)
                 {
-                    continue;
+                    if (source[i].Id != 0 && _messages.Contains(source[i].Id))
+                    {
+                        continue;
+                    }
+                    else if (source[i].Id < _last)
+                    {
+                        continue;
+                    }
                 }
 
                 _suppressOperations = i > 0;
@@ -3530,6 +3540,11 @@ namespace Unigram.ViewModels
 
                 Add(source[i]);
                 empty = false;
+
+                if (i == source.Count - 1)
+                {
+                    _last = source[i].Id;
+                }
             }
 
             _suppressOperations = false;
@@ -3541,9 +3556,16 @@ namespace Unigram.ViewModels
 
             for (int i = source.Count - 1; i >= 0; i--)
             {
-                if (filter && source[i].Id != 0 && _messages.Contains(source[i].Id))
+                if (filter)
                 {
-                    continue;
+                    if (source[i].Id != 0 && _messages.Contains(source[i].Id))
+                    {
+                        continue;
+                    }
+                    else if (source[i].Id > _first)
+                    {
+                        continue;
+                    }
                 }
 
                 _suppressOperations = i < source.Count - 1;
@@ -3551,6 +3573,11 @@ namespace Unigram.ViewModels
 
                 Insert(0, source[i]);
                 empty = false;
+
+                if (i == 0)
+                {
+                    _first = source[i].Id;
+                }
             }
 
             _suppressOperations = false;
@@ -3561,6 +3588,9 @@ namespace Unigram.ViewModels
             _messages.Clear();
             _suppressOperations = true;
 
+            _first = long.MaxValue;
+            _last = long.MinValue;
+
             ReplaceWith(source);
 
             _suppressOperations = false;
@@ -3569,6 +3599,12 @@ namespace Unigram.ViewModels
         protected override void InsertItem(int index, MessageViewModel item)
         {
             _messages?.Add(item.Id);
+
+            if (item.Id != 0)
+            {
+                _first = Math.Min(item.Id, _first);
+                _last = Math.Max(item.Id, _last);
+            }
 
             if (_suppressOperations)
             {
