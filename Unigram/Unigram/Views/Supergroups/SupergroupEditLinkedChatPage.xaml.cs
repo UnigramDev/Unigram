@@ -31,13 +31,13 @@ namespace Unigram.Views.Supergroups
             if (ViewModel.ClientService.TryGetSupergroup(chat, out Supergroup supergroup))
             {
                 var subtitle = content.Children[2] as TextBlock;
-                if (string.IsNullOrEmpty(supergroup.Username))
+                if (supergroup.HasActiveUsername(out string username))
                 {
-                    subtitle.Text = Locale.Declension(supergroup.IsChannel ? "Subscribers" : "Members", supergroup.MemberCount);
+                    subtitle.Text = $"@{username}";
                 }
                 else
                 {
-                    subtitle.Text = $"@{supergroup.Username}";
+                    subtitle.Text = Locale.Declension(supergroup.IsChannel ? "Subscribers" : "Members", supergroup.MemberCount);
                 }
             }
 

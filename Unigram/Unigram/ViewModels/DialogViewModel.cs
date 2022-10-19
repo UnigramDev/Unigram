@@ -2030,13 +2030,13 @@ namespace Unigram.ViewModels
                 state.Remove("switch_bot");
 
                 var bot = ClientService.GetUser(userId);
-                if (bot == null)
+                if (bot == null || !bot.HasActiveUsername(out string username))
                 {
                     return;
                 }
 
-                SetText(string.Format("@{0} {1}", bot.Username, query), focus: true);
-                ResolveInlineBot(bot.Username, query);
+                SetText(string.Format("@{0} {1}", username, query), focus: true);
+                ResolveInlineBot(username, query);
             }
         }
 

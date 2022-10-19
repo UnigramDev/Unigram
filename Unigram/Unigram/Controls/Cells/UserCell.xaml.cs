@@ -221,7 +221,7 @@ namespace Unigram.Controls.Cells
                     var user = result.User ?? clientService.GetUser(result.Chat);
                     if (result.IsPublic)
                     {
-                        SubtitleLabel.Text = $"@{user.Username}";
+                        SubtitleLabel.Text = $"@{user.ActiveUsername(result.Query)}";
                     }
                     else if (clientService.IsSavedMessages(user))
                     {
@@ -239,11 +239,11 @@ namespace Unigram.Controls.Cells
                     {
                         if (supergroup.MemberCount > 0)
                         {
-                            SubtitleLabel.Text = string.Format("@{0}, {1}", supergroup.Username, Locale.Declension(supergroup.IsChannel ? "Subscribers" : "Members", supergroup.MemberCount));
+                            SubtitleLabel.Text = string.Format("@{0}, {1}", supergroup.ActiveUsername(result.Query), Locale.Declension(supergroup.IsChannel ? "Subscribers" : "Members", supergroup.MemberCount));
                         }
                         else
                         {
-                            SubtitleLabel.Text = $"@{supergroup.Username}";
+                            SubtitleLabel.Text = $"@{supergroup.ActiveUsername(result.Query)}";
                         }
                     }
                     else if (supergroup.MemberCount > 0)

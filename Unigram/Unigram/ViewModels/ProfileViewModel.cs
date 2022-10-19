@@ -613,25 +613,25 @@ namespace Unigram.ViewModels
             if (chat.Type is ChatTypeSupergroup super)
             {
                 var supergroup = ClientService.GetSupergroup(super.SupergroupId);
-                if (supergroup == null)
+                if (supergroup == null || !supergroup.HasActiveUsername(out string username))
                 {
                     return;
                 }
 
                 var dataPackage = new DataPackage();
-                dataPackage.SetText($"@{supergroup.Username}");
+                dataPackage.SetText($"@{username}");
                 ClipboardEx.TrySetContent(dataPackage);
             }
             else
             {
                 var user = ClientService.GetUser(chat);
-                if (user == null)
+                if (user == null || !user.HasActiveUsername(out string username))
                 {
                     return;
                 }
 
                 var dataPackage = new DataPackage();
-                dataPackage.SetText($"@{user.Username}");
+                dataPackage.SetText($"@{username}");
                 ClipboardEx.TrySetContent(dataPackage);
             }
         }
@@ -648,25 +648,25 @@ namespace Unigram.ViewModels
             if (chat.Type is ChatTypeSupergroup super)
             {
                 var supergroup = ClientService.GetSupergroup(super.SupergroupId);
-                if (supergroup == null)
+                if (supergroup == null || !supergroup.HasActiveUsername(out string username))
                 {
                     return;
                 }
 
                 var dataPackage = new DataPackage();
-                dataPackage.SetText(MeUrlPrefixConverter.Convert(ClientService, supergroup.Username));
+                dataPackage.SetText(MeUrlPrefixConverter.Convert(ClientService, username));
                 ClipboardEx.TrySetContent(dataPackage);
             }
             else
             {
                 var user = ClientService.GetUser(chat);
-                if (user == null)
+                if (user == null || !user.HasActiveUsername(out string username))
                 {
                     return;
                 }
 
                 var dataPackage = new DataPackage();
-                dataPackage.SetText(MeUrlPrefixConverter.Convert(ClientService, user.Username));
+                dataPackage.SetText(MeUrlPrefixConverter.Convert(ClientService, username));
                 ClipboardEx.TrySetContent(dataPackage);
             }
         }

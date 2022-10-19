@@ -97,7 +97,14 @@ namespace Unigram.Views.Settings
             }
 #endif
 
-            Username.Badge = string.IsNullOrEmpty(user.Username) ? Strings.Resources.UsernameEmpty : $"@{user.Username}";
+            if (user.HasActiveUsername(out string username))
+            {
+                Username.Badge = username;
+            }
+            else
+            {
+                Username.Badge = Strings.Resources.UsernameEmpty;
+            }
         }
 
         public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret, bool accessToken)

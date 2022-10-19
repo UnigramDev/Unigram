@@ -117,7 +117,7 @@ namespace Unigram.Views.Supergroups
             ChatType.Content = group.IsChannel ? Strings.Resources.ChannelType : Strings.Resources.GroupType;
             ChatType.Glyph = group.IsChannel ? Icons.Megaphone : Icons.People;
             ChatType.Visibility = Visibility.Collapsed;
-            ChatType.Badge = group.Username.Length > 0
+            ChatType.Badge = group.HasActiveUsername()
                 ? group.IsChannel
                     ? Strings.Resources.TypePublic
                     : Strings.Resources.TypePublicGroup
@@ -129,7 +129,7 @@ namespace Unigram.Views.Supergroups
                         ? Strings.Resources.TypePrivateGroupRestrictedForwards
                         : Strings.Resources.TypePrivateGroup;
 
-            ChatHistory.Visibility = group.CanChangeInfo() && string.IsNullOrEmpty(group.Username) && !group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
+            ChatHistory.Visibility = group.CanChangeInfo() && !group.HasActiveUsername() && !group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
 
             InviteLinkPanel.Visibility = group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
             ChannelSignMessagesPanel.Visibility = group.CanChangeInfo() && group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
@@ -179,12 +179,13 @@ namespace Unigram.Views.Supergroups
 
             if (group.CanInviteUsers())
             {
-                if (fullInfo.InviteLink == null && string.IsNullOrEmpty(group.Username))
+                if (group.HasActiveUsername(out string username))
                 {
-                    InviteLinkPanel.Visibility = Visibility.Collapsed;
-                    ViewModel.ClientService.Send(new CreateChatInviteLink(chat.Id, string.Empty, 0, 0, false));
+                    InviteLink.Text = MeUrlPrefixConverter.Convert(ViewModel.ClientService, group.ActiveUsername());
+                    RevokeLink.Visibility = Visibility.Collapsed;
+                    InviteLinkPanel.Visibility = Visibility.Visible;
                 }
-                else if (string.IsNullOrEmpty(group.Username))
+                else if (fullInfo.InviteLink != null)
                 {
                     InviteLink.Text = fullInfo.InviteLink?.InviteLink;
                     RevokeLink.Visibility = Visibility.Visible;
@@ -192,9 +193,8 @@ namespace Unigram.Views.Supergroups
                 }
                 else
                 {
-                    InviteLink.Text = MeUrlPrefixConverter.Convert(ViewModel.ClientService, group.Username);
-                    RevokeLink.Visibility = Visibility.Collapsed;
-                    InviteLinkPanel.Visibility = Visibility.Visible;
+                    InviteLinkPanel.Visibility = Visibility.Collapsed;
+                    ViewModel.ClientService.Send(new CreateChatInviteLink(chat.Id, string.Empty, 0, 0, false));
                 }
             }
             else

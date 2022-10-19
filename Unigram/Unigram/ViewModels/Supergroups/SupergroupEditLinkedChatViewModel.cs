@@ -215,20 +215,20 @@ namespace Unigram.ViewModels.Supergroups
                         return;
                     }
 
-                    if (string.IsNullOrEmpty(linkedSupergroup.Username))
+                    if (linkedSupergroup.HasActiveUsername())
                     {
-                        message = string.Format(Strings.Resources.DiscussionLinkGroupPublicPrivateAlert, linkedChat.Title, chat.Title);
-                    }
-                    else
-                    {
-                        if (string.IsNullOrEmpty(supergroup.Username))
-                        {
-                            message = string.Format(Strings.Resources.DiscussionLinkGroupPrivateAlert, linkedChat.Title, chat.Title);
-                        }
-                        else
+                        if (supergroup.HasActiveUsername())
                         {
                             message = string.Format(Strings.Resources.DiscussionLinkGroupPublicAlert, linkedChat.Title, chat.Title);
                         }
+                        else
+                        {
+                            message = string.Format(Strings.Resources.DiscussionLinkGroupPrivateAlert, linkedChat.Title, chat.Title);
+                        }
+                    }
+                    else
+                    {
+                        message = string.Format(Strings.Resources.DiscussionLinkGroupPublicPrivateAlert, linkedChat.Title, chat.Title);
                     }
 
                     if (!linkedFullInfo.IsAllHistoryAvailable)

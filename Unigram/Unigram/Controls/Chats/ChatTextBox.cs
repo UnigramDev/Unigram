@@ -554,7 +554,7 @@ namespace Unigram.Controls.Chats
                             foreach (var id in chats.ChatIds)
                             {
                                 var user = _clientService.GetUser(_clientService.GetChat(id));
-                                if (user != null && user.Username.StartsWith(_query, StringComparison.OrdinalIgnoreCase))
+                                if (user != null && user.HasActiveUsername(_query, out _))
                                 {
                                     Add(user);
                                     count++;
@@ -829,34 +829,27 @@ namespace Unigram.Controls.Chats
                 text = text.Substring(0, text.Length - 1);
             }
 
-            if (ViewModel.CurrentInlineBot != null)
+            if (text.StartsWith('@'))
             {
-                var username = ViewModel.CurrentInlineBot.Username;
-                if (text != null && text.TrimStart().StartsWith("@" + username, StringComparison.OrdinalIgnoreCase))
-                {
-                    searchText = ReplaceFirst(text.TrimStart(), "@" + username, string.Empty);
-                    if (searchText.StartsWith(" "))
-                    {
-                        searchText = ReplaceFirst(searchText, " ", string.Empty);
-                        flag = true;
-                    }
+                text = text.Substring(1);
+            }
 
-                    if (!flag)
+            if (ViewModel.CurrentInlineBot != null && ViewModel.CurrentInlineBot.HasActiveUsername(text, out string username))
+            {
+                searchText = ReplaceFirst(text.TrimStart(), "@" + username, string.Empty);
+                if (searchText.StartsWith(" "))
+                {
+                    searchText = ReplaceFirst(searchText, " ", string.Empty);
+                    flag = true;
+                }
+
+                if (!flag)
+                {
+                    if (string.Equals(text.TrimStart(), "@" + username, StringComparison.OrdinalIgnoreCase))
                     {
-                        if (string.Equals(text.TrimStart(), "@" + username, StringComparison.OrdinalIgnoreCase))
-                        {
-                            ClearInlineBotResults();
-                        }
-                        else
-                        {
-                            var user = ViewModel.CurrentInlineBot;
-                            if (user != null && user.Type is UserTypeBot bot)
-                            {
-                                UpdateInlinePlaceholder(username, bot.InlineQueryPlaceholder);
-                            }
-                        }
+                        ClearInlineBotResults();
                     }
-                    else if (string.IsNullOrEmpty(searchText))
+                    else
                     {
                         var user = ViewModel.CurrentInlineBot;
                         if (user != null && user.Type is UserTypeBot bot)
@@ -864,15 +857,23 @@ namespace Unigram.Controls.Chats
                             UpdateInlinePlaceholder(username, bot.InlineQueryPlaceholder);
                         }
                     }
-                    else
+                }
+                else if (string.IsNullOrEmpty(searchText))
+                {
+                    var user = ViewModel.CurrentInlineBot;
+                    if (user != null && user.Type is UserTypeBot bot)
                     {
-                        UpdateInlinePlaceholder(null, null);
+                        UpdateInlinePlaceholder(username, bot.InlineQueryPlaceholder);
                     }
                 }
                 else
                 {
-                    ClearInlineBotResults();
+                    UpdateInlinePlaceholder(null, null);
                 }
+            }
+            else
+            {
+                ClearInlineBotResults();
             }
 
             return flag;

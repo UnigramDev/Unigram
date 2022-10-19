@@ -1674,7 +1674,7 @@ namespace Unigram.Views
                 flyout.CreateFlyoutItem(ViewModel.SetThemeCommand, Strings.Resources.ChangeColors, new FontIcon { Glyph = Icons.PaintBrush });
             }
 
-            if (supergroup != null && supergroup.Status is not ChatMemberStatusCreator && (supergroup.IsChannel || !string.IsNullOrEmpty(supergroup.Username)))
+            if (supergroup != null && supergroup.Status is not ChatMemberStatusCreator && (supergroup.IsChannel || supergroup.HasActiveUsername()))
             {
                 flyout.CreateFlyoutItem(ViewModel.ReportCommand, Strings.Resources.ReportChat, new FontIcon { Glyph = Icons.ShieldError });
             }
@@ -1694,7 +1694,7 @@ namespace Unigram.Views
             }
             if (ViewModel.IsSelectionEnabled is false)
             {
-                if (user != null || basicGroup != null || (supergroup != null && !supergroup.IsChannel && string.IsNullOrEmpty(supergroup.Username)))
+                if (user != null || basicGroup != null || (supergroup != null && !supergroup.IsChannel && !supergroup.HasActiveUsername()))
                 {
                     flyout.CreateFlyoutItem(ViewModel.ChatClearCommand, Strings.Resources.ClearHistory, new FontIcon { Glyph = Icons.Broom });
                 }
@@ -2967,20 +2967,23 @@ namespace Unigram.Views
 
             if (e.ClickedItem is User user && entity is AutocompleteEntity.Username)
             {
+                // TODO: find username
+                var username = user.ActiveUsername(result);
+
                 string insert;
-                if (string.IsNullOrEmpty(user.Username))
+                if (string.IsNullOrEmpty(username))
                 {
                     insert = string.IsNullOrEmpty(user.FirstName) ? user.LastName : user.FirstName;
                 }
                 else
                 {
-                    insert = $"@{user.Username}";
+                    insert = $"@{username}";
                 }
 
                 var range = TextField.Document.GetRange(index, TextField.Document.Selection.StartPosition);
                 range.SetText(TextSetOptions.None, insert);
 
-                if (string.IsNullOrEmpty(user.Username))
+                if (string.IsNullOrEmpty(username))
                 {
                     range.Link = $"\"tg-user://{user.Id}\"";
                 }
@@ -2990,7 +2993,7 @@ namespace Unigram.Views
 
                 if (index == 0 && user.Type is UserTypeBot bot && bot.IsInline)
                 {
-                    ViewModel.ResolveInlineBot(user.Username);
+                    ViewModel.ResolveInlineBot(username);
                 }
             }
             else if (e.ClickedItem is UserCommand command && entity is AutocompleteEntity.Command)
@@ -2999,9 +3002,9 @@ namespace Unigram.Views
                 if (chat.Type is ChatTypeSupergroup or ChatTypeBasicGroup)
                 {
                     var bot = ViewModel.ClientService.GetUser(command.UserId);
-                    if (bot != null && bot.Username.Length > 0)
+                    if (bot != null && bot.HasActiveUsername(out string username))
                     {
-                        insert += $"@{bot.Username}";
+                        insert += $"@{username}";
                     }
                 }
 
@@ -3328,6 +3331,15 @@ namespace Unigram.Views
 
                 name.Text = user.FullName();
                 username.Text = string.IsNullOrEmpty(user.Username) ? string.Empty : $" @{user.Username}";
+
+                if (user.HasActiveUsername(out string usernameValue))
+                {
+                    username.Text = $" @{usernameValue}";
+                }
+                else
+                {
+                    username.Text = string.Empty;
+                }
 
                 photo.SetUser(ViewModel.ClientService, user, 36);
             }
@@ -4423,7 +4435,7 @@ namespace Unigram.Views
             }
             else if (group.IsChannel || group.IsBroadcastGroup)
             {
-                if ((group.Status is ChatMemberStatusLeft && (group.Username.Length > 0 || ViewModel.ClientService.IsChatAccessible(chat))) || (group.Status is ChatMemberStatusCreator creator && !creator.IsMember))
+                if ((group.Status is ChatMemberStatusLeft && (group.HasActiveUsername() || ViewModel.ClientService.IsChatAccessible(chat))) || (group.Status is ChatMemberStatusCreator creator && !creator.IsMember))
                 {
                     ShowAction(Strings.Resources.ChannelJoin, true);
                 }
@@ -4442,7 +4454,7 @@ namespace Unigram.Views
             }
             else
             {
-                if ((group.Status is ChatMemberStatusLeft && (group.Username.Length > 0 || group.HasLocation || group.HasLinkedChat || ViewModel.ClientService.IsChatAccessible(chat))) || (group.Status is ChatMemberStatusCreator creator && !creator.IsMember))
+                if ((group.Status is ChatMemberStatusLeft && (group.IsPublic() || ViewModel.ClientService.IsChatAccessible(chat))) || (group.Status is ChatMemberStatusCreator creator && !creator.IsMember))
                 {
                     if (ViewModel.Type == DialogType.Thread)
                     {
@@ -4466,7 +4478,7 @@ namespace Unigram.Views
                 }
                 else if (group.Status is ChatMemberStatusRestricted restrictedSend)
                 {
-                    if (!restrictedSend.IsMember && group.Username.Length > 0)
+                    if (!restrictedSend.IsMember && group.HasActiveUsername())
                     {
                         ShowAction(Strings.Resources.ChannelJoin, true);
                     }

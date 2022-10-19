@@ -359,10 +359,10 @@ namespace Unigram.ViewModels
             }
 
             var user = ClientService.GetUser(viaBotUserId);
-            if (user != null)
+            if (user != null && user.HasActiveUsername(out string username))
             {
-                SetText($"@{user.Username} ");
-                ResolveInlineBot(user.Username);
+                SetText($"@{username} ");
+                ResolveInlineBot(username);
             }
         }
 

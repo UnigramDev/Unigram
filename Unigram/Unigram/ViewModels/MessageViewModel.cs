@@ -162,7 +162,7 @@ namespace Unigram.ViewModels
                     if (chat != null && chat.Type is ChatTypeSupergroup super && !super.IsChannel)
                     {
                         var supergroup = ClientService.GetSupergroup(super.SupergroupId);
-                        return supergroup != null && supergroup.Username.Length > 0 && Content is not MessageContact and not MessageLocation;
+                        return supergroup != null && supergroup.IsPublic() && Content is not MessageContact and not MessageLocation;
                     }
                 }
             }

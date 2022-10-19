@@ -208,23 +208,25 @@ namespace Unigram.Views.Popups
 
             if (e.ClickedItem is User user && entity == AutocompleteEntity.Username)
             {
+                // TODO: find username
                 var adjust = 0;
+                var username = user.ActiveUsername(result);
 
                 string insert;
-                if (string.IsNullOrEmpty(user.Username))
+                if (string.IsNullOrEmpty(username))
                 {
                     insert = string.IsNullOrEmpty(user.FirstName) ? user.LastName : user.FirstName;
                     adjust = 1;
                 }
                 else
                 {
-                    insert = user.Username;
+                    insert = username;
                 }
 
                 var range = CaptionInput.Document.GetRange(CaptionInput.Document.Selection.StartPosition - result.Length - adjust, CaptionInput.Document.Selection.StartPosition);
                 range.SetText(TextSetOptions.None, insert);
 
-                if (string.IsNullOrEmpty(user.Username))
+                if (string.IsNullOrEmpty(username))
                 {
                     range.Link = $"\"tg-user://{user.Id}\"";
                 }
@@ -275,7 +277,15 @@ namespace Unigram.Views.Popups
                 var username = title.Inlines[1] as Run;
 
                 name.Text = user.FullName();
-                username.Text = string.IsNullOrEmpty(user.Username) ? string.Empty : $" @{user.Username}";
+                
+                if (user.HasActiveUsername(out string usernameValue))
+                {
+                    username.Text = $" @{usernameValue}";
+                }
+                else
+                {
+                    username.Text = string.Empty;
+                }
 
                 photo.SetUser(ViewModel.ClientService, user, 36);
             }

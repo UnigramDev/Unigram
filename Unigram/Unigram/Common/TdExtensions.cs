@@ -31,6 +31,74 @@ namespace Unigram.Common
             return new Vector2((float)point.X * scale, (float)point.Y * scale);
         }
 
+        public static bool HasActiveUsername(this Supergroup supergroup)
+        {
+            return ActiveUsername(supergroup).Length > 0;
+        }
+
+        public static bool HasActiveUsername(this Supergroup supergroup, out string username)
+        {
+            username = ActiveUsername(supergroup);
+            return username.Length > 0;
+        }
+
+        public static string ActiveUsername(this Supergroup supergroup)
+        {
+            return supergroup?.Usernames?.ActiveUsernames.FirstOrDefault() ?? string.Empty;
+        }
+
+        public static string ActiveUsername(this Supergroup supergroup, string value)
+        {
+            return supergroup?.Usernames?.ActiveUsernames.FirstOrDefault(x => x.StartsWith(value)) ?? ActiveUsername(supergroup);
+        }
+
+        public static bool HasEditableUsername(this Supergroup supergroup)
+        {
+            return EditableUsername(supergroup).Length > 0;
+        }
+
+        public static string EditableUsername(this Supergroup supergroup)
+        {
+            return supergroup?.Usernames?.EditableUsername ?? string.Empty;
+        }
+
+        public static bool HasActiveUsername(this User user)
+        {
+            return ActiveUsername(user).Length > 0;
+        }
+
+        public static bool HasActiveUsername(this User user, out string username)
+        {
+            username = ActiveUsername(user);
+            return username.Length > 0;
+        }
+
+        public static bool HasActiveUsername(this User user, string value, out string username)
+        {
+            username = user?.Usernames?.ActiveUsernames.FirstOrDefault(x => x.StartsWith(value, StringComparison.OrdinalIgnoreCase)) ?? string.Empty;
+            return username.Length > 0;
+        }
+
+        public static string ActiveUsername(this User user)
+        {
+            return user?.Usernames?.ActiveUsernames.FirstOrDefault() ?? string.Empty;
+        }
+
+        public static string ActiveUsername(this User user, string value)
+        {
+            return user?.Usernames?.ActiveUsernames.FirstOrDefault(x => x.StartsWith(value, StringComparison.OrdinalIgnoreCase)) ?? ActiveUsername(user);
+        }
+
+        public static string EditableUsername(this User user)
+        {
+            return user?.Usernames?.EditableUsername ?? string.Empty;
+        }
+
+        public static bool HasEditableUsername(this User user)
+        {
+            return EditableUsername(user).Length > 0;
+        }
+
         public static bool IsValidState(this Call call)
         {
             if (call == null || call.State is CallStateDiscarded || call.State is CallStateError)
@@ -1886,18 +1954,30 @@ namespace Unigram.Common
             return basicGroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator or ChatMemberStatusMember;
         }
 
+        public static bool IsPublic(this Supergroup group)
+        {
+            if (group.IsChannel || group.IsBroadcastGroup)
+            {
+                return group.HasActiveUsername();
+            }
+
+            return group.HasActiveUsername()
+                || group.HasLocation
+                || group.HasLinkedChat;
+        }
+
         public static bool CanJoin(this Supergroup group)
         {
             if (group.IsChannel || group.IsBroadcastGroup)
             {
-                if ((group.Status is ChatMemberStatusLeft && (group.Username.Length > 0 /*|| ViewModel.ClientService.IsChatAccessible(chat)*/)) || (group.Status is ChatMemberStatusCreator creator && !creator.IsMember))
+                if ((group.Status is ChatMemberStatusLeft && (group.HasActiveUsername() /*|| ViewModel.ClientService.IsChatAccessible(chat)*/)) || (group.Status is ChatMemberStatusCreator creator && !creator.IsMember))
                 {
                     return true;
                 }
             }
             else
             {
-                if ((group.Status is ChatMemberStatusLeft && (group.Username.Length > 0 || group.HasLocation || group.HasLinkedChat /*|| ViewModel.ClientService.IsChatAccessible(chat)*/)) || (group.Status is ChatMemberStatusCreator creator && !creator.IsMember))
+                if ((group.Status is ChatMemberStatusLeft && (group.HasActiveUsername() || group.HasLocation || group.HasLinkedChat /*|| ViewModel.ClientService.IsChatAccessible(chat)*/)) || (group.Status is ChatMemberStatusCreator creator && !creator.IsMember))
                 {
                     return true;
                 }
@@ -1907,7 +1987,7 @@ namespace Unigram.Common
                 }
                 else if (group.Status is ChatMemberStatusRestricted restrictedSend)
                 {
-                    if (!restrictedSend.IsMember && group.Username.Length > 0)
+                    if (!restrictedSend.IsMember && group.HasActiveUsername())
                     {
                         return true;
                     }

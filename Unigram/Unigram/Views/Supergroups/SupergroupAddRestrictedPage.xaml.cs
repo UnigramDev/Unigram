@@ -151,7 +151,7 @@ namespace Unigram.Views.Supergroups
                 var subtitle = content.Children[2] as TextBlock;
                 if (result.IsPublic)
                 {
-                    subtitle.Text = $"@{user.Username}";
+                    subtitle.Text = $"@{user.ActiveUsername(result.Query)}";
                 }
                 else
                 {

@@ -1215,10 +1215,6 @@ namespace Unigram.Controls.Cells
                     {
                         result = string.Format(format, fromUser.LastName.Trim());
                     }
-                    else if (!string.IsNullOrEmpty(fromUser.Username))
-                    {
-                        result = string.Format(format, fromUser.Username.Trim());
-                    }
                     else if (fromUser.Type is UserTypeDeleted)
                     {
                         result = string.Format(format, Strings.Resources.HiddenName);

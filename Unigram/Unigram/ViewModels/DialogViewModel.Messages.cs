@@ -938,10 +938,10 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                if (switchInline.InCurrentChat)
+                if (switchInline.InCurrentChat && bot.HasActiveUsername(out string username))
                 {
-                    SetText(string.Format("@{0} {1}", bot.Username, switchInline.Query), focus: true);
-                    ResolveInlineBot(bot.Username, switchInline.Query);
+                    SetText(string.Format("@{0} {1}", username, switchInline.Query), focus: true);
+                    ResolveInlineBot(username, switchInline.Query);
                 }
                 else
                 {
@@ -1043,9 +1043,9 @@ namespace Unigram.ViewModels
                     bundle.Add("chat", message.ChatId);
 
                     var viaBot = message.GetViaBotUser();
-                    if (viaBot != null)
+                    if (viaBot != null && viaBot.HasActiveUsername(out string username))
                     {
-                        bundle.Add("username", viaBot.Username);
+                        bundle.Add("username", username);
                     }
 
                     ChatActionManager.SetTyping(new ChatActionStartPlayingGame());

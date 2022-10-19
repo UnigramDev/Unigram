@@ -1006,10 +1006,6 @@ namespace Unigram.Services
                 {
                     result = $"{from.LastName.Trim()}: ";
                 }
-                else if (!string.IsNullOrEmpty(from.Username))
-                {
-                    result = $"{from.Username.Trim()}: ";
-                }
                 else if (from.Type is UserTypeDeleted)
                 {
                     result = $"{Strings.Resources.HiddenName}: ";

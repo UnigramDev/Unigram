@@ -941,13 +941,13 @@ namespace Unigram.Controls.Messages
             }
 
             var viaBot = message.ClientService.GetUser(message.ViaBotUserId);
-            if (viaBot != null && viaBot.Type is UserTypeBot && !string.IsNullOrEmpty(viaBot.Username))
+            if (viaBot != null && viaBot.HasActiveUsername(out string viaBotUsername))
             {
                 LoadHeaderLabel();
 
                 var hyperlink = new Hyperlink();
                 hyperlink.Inlines.Add(CreateRun(HeaderLabel.Inlines.Count > 0 ? " via @" : "via @", FontWeights.Normal));
-                hyperlink.Inlines.Add(CreateRun(viaBot.Username));
+                hyperlink.Inlines.Add(CreateRun(viaBotUsername));
                 hyperlink.UnderlineStyle = UnderlineStyle.None;
                 hyperlink.Foreground = light ? new SolidColorBrush(Colors.White) : GetBrush("MessageHeaderForegroundBrush");
                 hyperlink.Click += ViaBot_Click;

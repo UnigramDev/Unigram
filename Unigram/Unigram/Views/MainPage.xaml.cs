@@ -3228,7 +3228,7 @@ namespace Unigram.Views
                 var supergroup = ViewModel.ClientService.GetSupergroup(super.SupergroupId);
                 if (supergroup != null)
                 {
-                    return string.IsNullOrEmpty(supergroup.Username) && !super.IsChannel;
+                    return !supergroup.HasActiveUsername() && !super.IsChannel;
                 }
             }
 
