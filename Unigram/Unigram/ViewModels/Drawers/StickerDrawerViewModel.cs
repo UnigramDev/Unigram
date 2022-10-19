@@ -42,25 +42,29 @@ namespace Unigram.ViewModels.Drawers
             _premiumSet = new StickerSetViewModel(ClientService, new StickerSetInfo
             {
                 Title = Strings.Resources.PremiumStickers,
-                Name = "tg/premiumStickers"
+                Name = "tg/premiumStickers",
+                IsInstalled = true
             });
 
             _favoriteSet = new StickerSetViewModel(ClientService, new StickerSetInfo
             {
                 Title = Strings.Resources.FavoriteStickers,
-                Name = "tg/favedStickers"
+                Name = "tg/favedStickers",
+                IsInstalled = true
             });
 
             _recentSet = new StickerSetViewModel(ClientService, new StickerSetInfo
             {
                 Title = Strings.Resources.RecentStickers,
-                Name = "tg/recentlyUsed"
+                Name = "tg/recentlyUsed",
+                IsInstalled = true
             });
 
             _groupSet = new SupergroupStickerSetViewModel(ClientService, new StickerSetInfo
             {
                 Title = Strings.Resources.GroupStickers,
-                Name = "tg/groupStickers"
+                Name = "tg/groupStickers",
+                IsInstalled = true
             });
 
             SavedStickers = new StickerSetCollection();
@@ -550,6 +554,8 @@ namespace Unigram.ViewModels.Drawers
 
         public virtual void Update(IEnumerable<Sticker> stickers, bool raise = false)
         {
+            stickers ??= Enumerable.Empty<Sticker>();
+
             if (raise)
             {
                 Stickers.ReplaceWith(stickers.Select(x => new StickerViewModel(_clientService, x)));

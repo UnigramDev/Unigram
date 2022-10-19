@@ -38,13 +38,13 @@
             <Setter Property="Glyph"
                     Value="&#xE700;" />
             <Setter Property="Height"
-                    Value="{ThemeResource AppBarThemeCompactHeight}" />
+                    Value="40" />
             <Setter Property="Width"
-                    Value="{ThemeResource AppBarThemeCompactHeight}" />
+                    Value="40" />
             <Setter Property="MinHeight"
-                    Value="{ThemeResource AppBarThemeCompactHeight}" />
+                    Value="40" />
             <Setter Property="MinWidth"
-                    Value="{ThemeResource AppBarThemeCompactHeight}" />
+                    Value="40" />
             <Setter Property="FontWeight"
                     Value="Normal" />
             <Setter Property="FontSize"
@@ -238,19 +238,12 @@
                     <Border x:Name="HeaderSeparator" />
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="{ThemeResource AppBarThemeCompactHeight}" />
                             <ColumnDefinition />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
-                            <ColumnDefinition Width="{ThemeResource AppBarThemeCompactHeight}" />
                         </Grid.ColumnDefinitions>
-                        <!--<controls:GlyphButton Glyph="&#xE721;"
-                                                FontSize="{StaticResource GlyphMediumFontSize}"
-                                                Width="{ThemeResource AppBarThemeCompactHeight}"
-                                                Height="{ThemeResource AppBarThemeCompactHeight}"/>-->
-
                         <controls:PivotRadioButton SelectedValue="{x:Bind Pivot.SelectedIndex, Mode=TwoWay}"
                                                    Index="0"
                                                    Glyph="&#xE76E;"
@@ -260,7 +253,9 @@
                                                    AutomationProperties.Name="{CustomResource Emoji}"
                                                    ToolTipService.ToolTip="{CustomResource Emoji}"
                                                    GroupName="StickersView"
-                                                   Grid.Column="2" />
+                                                   Width="40"
+                                                   Height="40"
+                                                   Grid.Column="1" />
 
                         <controls:PivotRadioButton SelectedValue="{x:Bind Pivot.SelectedIndex, Mode=TwoWay}"
                                                    Index="1"
@@ -271,7 +266,9 @@
                                                    AutomationProperties.Name="{CustomResource AccDescrGIFs}"
                                                    ToolTipService.ToolTip="{CustomResource AccDescrGIFs}"
                                                    GroupName="StickersView"
-                                                   Grid.Column="3" />
+                                                   Width="40"
+                                                   Height="40"
+                                                   Grid.Column="2" />
 
                         <controls:PivotRadioButton SelectedValue="{x:Bind Pivot.SelectedIndex, Mode=TwoWay}"
                                                    Index="2"
@@ -282,7 +279,9 @@
                                                    AutomationProperties.Name="{CustomResource AccDescrStickers}"
                                                    ToolTipService.ToolTip="{CustomResource AccDescrStickers}"
                                                    GroupName="StickersView"
-                                                   Grid.Column="4" />
+                                                   Width="40"
+                                                   Height="40"
+                                                   Grid.Column="3" />
                     </Grid>
                 </Grid>
             </Grid>

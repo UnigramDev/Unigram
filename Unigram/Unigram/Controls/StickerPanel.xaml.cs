@@ -7,7 +7,6 @@ using Unigram.Services;
 using Unigram.Services.Settings;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Drawers;
-using Unigram.Views;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -39,7 +38,7 @@ namespace Unigram.Controls
             var header = DropShadowEx.Attach(HeaderSeparator);
             var shadow = DropShadowEx.Attach(ShadowElement);
 
-            header.Clip = header.Compositor.CreateInsetClip(0, -48, 0, 48);
+            header.Clip = header.Compositor.CreateInsetClip(0, -40, 0, 40);
 
             switch (SettingsService.Current.Stickers.SelectedTab)
             {
