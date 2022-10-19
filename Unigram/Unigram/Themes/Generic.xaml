@@ -102,6 +102,7 @@
 
                             <local:GlyphButton x:Name="TogglePaneButton"
                                                Grid.Row="1"
+                                               Visibility="{TemplateBinding PaneToggleButtonVisibility}"
                                                Foreground="{ThemeResource PageHeaderForegroundBrush}"
                                                Width="56"
                                                Height="40"

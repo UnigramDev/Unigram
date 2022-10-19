@@ -20,7 +20,7 @@
 
     <Grid Background="Transparent">
         <Grid.RowDefinitions>
-            <RowDefinition common:TitleBar.IsAttached="True" />
+            <RowDefinition Height="40" />
             <RowDefinition />
         </Grid.RowDefinitions>
         <StackPanel x:Name="ContentPanel"
@@ -73,6 +73,7 @@
                     Margin="0,4,0,8" />
         </StackPanel>
 
-        <controls:BackButton Grid.Row="1" />
+        <Border x:Name="TitleBar"
+                Background="Transparent" />
     </Grid>
 </Page>

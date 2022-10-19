@@ -20,7 +20,7 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
-            <RowDefinition common:TitleBar.IsAttached="True" />
+            <RowDefinition Height="40" />
             <RowDefinition />
         </Grid.RowDefinitions>
         <Border Background="{ThemeResource PageTitleBackgroundBrush}" />
@@ -84,6 +84,7 @@
             </StackPanel>
         </Grid>
 
-        <controls:BackButton Grid.Row="1" />
+        <Border x:Name="TitleBar"
+                Background="Transparent" />
     </Grid>
 </Page>

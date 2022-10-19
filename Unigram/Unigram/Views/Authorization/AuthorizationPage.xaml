@@ -21,7 +21,7 @@
 
     <Grid Background="Transparent">
         <Grid.RowDefinitions>
-            <RowDefinition common:TitleBar.IsAttached="True" />
+            <RowDefinition Height="40" />
             <RowDefinition Height="{ThemeResource AppBarThemeCompactHeight}" />
             <RowDefinition />
         </Grid.RowDefinitions>
@@ -235,6 +235,7 @@
                          Margin="12,0"
                          Grid.Row="1" />
 
-        <controls:BackButton Grid.Row="1" />
+        <Border x:Name="TitleBar"
+                Background="Transparent" />
     </Grid>
 </Page>

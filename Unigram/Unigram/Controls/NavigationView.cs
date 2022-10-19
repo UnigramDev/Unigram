@@ -4,13 +4,6 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls
 {
-    public enum PaneToggleButtonVisibility
-    {
-        Visible,
-        Collapsed,
-        Back
-    }
-
     public class NavigationView : ContentControl
     {
         private GlyphButton TogglePaneButton;
@@ -93,36 +86,14 @@ namespace Unigram.Controls
 
         #region PaneToggleButtonVisibility
 
-        public PaneToggleButtonVisibility PaneToggleButtonVisibility
+        public Visibility PaneToggleButtonVisibility
         {
-            get => (PaneToggleButtonVisibility)GetValue(PaneToggleButtonVisibilityProperty);
+            get => (Visibility)GetValue(PaneToggleButtonVisibilityProperty);
             set => SetValue(PaneToggleButtonVisibilityProperty, value);
         }
 
         public static readonly DependencyProperty PaneToggleButtonVisibilityProperty =
-            DependencyProperty.Register("PaneToggleButtonVisibility", typeof(PaneToggleButtonVisibility), typeof(NavigationView), new PropertyMetadata(PaneToggleButtonVisibility.Visible, OnPaneToggleButtonVisibilityChanged));
-
-        private static void OnPaneToggleButtonVisibilityChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((NavigationView)d).OnPaneToggleButtonVisibilityChanged((PaneToggleButtonVisibility)e.NewValue, (PaneToggleButtonVisibility)e.OldValue);
-        }
-
-        private void OnPaneToggleButtonVisibilityChanged(PaneToggleButtonVisibility newValue, PaneToggleButtonVisibility oldValue)
-        {
-            if (TogglePaneButton == null)
-            {
-                return;
-            }
-
-            if (newValue != PaneToggleButtonVisibility.Back)
-            {
-                TogglePaneButton.Visibility = Visibility.Collapsed;
-            }
-            else
-            {
-                TogglePaneButton.Visibility = Visibility.Visible;
-            }
-        }
+            DependencyProperty.Register("PaneToggleButtonVisibility", typeof(Visibility), typeof(NavigationView), new PropertyMetadata(Visibility.Collapsed));
 
         #endregion
     }

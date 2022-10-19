@@ -1475,46 +1475,27 @@ namespace Unigram.Views
 
         private void UpdatePaneToggleButtonVisibility()
         {
+            var visible = rpMasterTitlebar.SelectedIndex != 0 || ViewModel.Chats.Items.ChatList is ChatListArchive || !_searchCollapsed || ChatsList.SelectionMode == ListViewSelectionMode.Multiple;
+
             if (MasterDetail.CurrentState == MasterDetailState.Minimal)
             {
-                if (MasterDetail.NavigationService.CurrentPageType == typeof(BlankPage))
-                {
-                    if (rpMasterTitlebar.SelectedIndex != 0 || ViewModel.Chats.Items.ChatList is ChatListArchive || !_searchCollapsed || ChatsList.SelectionMode == ListViewSelectionMode.Multiple)
-                    {
-                        SetPaneToggleButtonVisibility(PaneToggleButtonVisibility.Back);
-                    }
-                    else
-                    {
-                        SetPaneToggleButtonVisibility(PaneToggleButtonVisibility.Visible);
-                    }
-                }
-                else
-                {
-                    SetPaneToggleButtonVisibility(PaneToggleButtonVisibility.Collapsed);
-                }
+                visible &= MasterDetail.NavigationService.CurrentPageType == typeof(BlankPage);
             }
-            else if (rpMasterTitlebar.SelectedIndex != 0 || ViewModel.Chats.Items.ChatList is ChatListArchive || !_searchCollapsed || ChatsList.SelectionMode == ListViewSelectionMode.Multiple)
-            {
-                SetPaneToggleButtonVisibility(PaneToggleButtonVisibility.Back);
-            }
-            else
-            {
-                SetPaneToggleButtonVisibility(PaneToggleButtonVisibility.Visible);
-            }
+
+            SetPaneToggleButtonVisibility(visible);
         }
 
         private bool _visibility = false;
 
-        private void SetPaneToggleButtonVisibility(PaneToggleButtonVisibility visibility)
+        private void SetPaneToggleButtonVisibility(bool visible)
         {
             if (MasterDetail.NavigationService.CanGoBack)
             {
-                visibility = PaneToggleButtonVisibility.Back;
+                visible = true;
             }
 
-            Root?.SetPaneToggleButtonVisibility(visibility);
+            Root?.SetPaneToggleButtonVisibility(visible);
 
-            var visible = visibility == PaneToggleButtonVisibility.Back;
             if (visible != _visibility)
             {
                 var logo = ElementCompositionPreview.GetElementVisual(TitleBarLogo);
@@ -1524,8 +1505,8 @@ namespace Unigram.Views
                 ElementCompositionPreview.SetIsTranslationEnabled(StateLabel, true);
 
                 var anim = logo.Compositor.CreateVector3KeyFrameAnimation();
-                anim.InsertKeyFrame(visibility == PaneToggleButtonVisibility.Back ? 0 : 1, new Vector3(0, 0, 0));
-                anim.InsertKeyFrame(visibility == PaneToggleButtonVisibility.Back ? 1 : 0, new Vector3(36, 0, 0));
+                anim.InsertKeyFrame(visible ? 0 : 1, new Vector3(0, 0, 0));
+                anim.InsertKeyFrame(visible ? 1 : 0, new Vector3(36, 0, 0));
 
                 logo.StartAnimation("Translation", anim);
                 label.StartAnimation("Translation", anim);
@@ -1545,18 +1526,14 @@ namespace Unigram.Views
             }
         }
 
-        public PaneToggleButtonVisibility EvaluatePaneToggleButtonVisibility()
+        public bool EvaluatePaneToggleButtonVisibility()
         {
             if (MasterDetail.CurrentState == MasterDetailState.Minimal)
             {
-                return MasterDetail.NavigationService.CurrentPageType == typeof(BlankPage)
-                    ? PaneToggleButtonVisibility.Visible
-                    : PaneToggleButtonVisibility.Collapsed;
+                return MasterDetail.NavigationService.CurrentPageType == typeof(BlankPage);
             }
-            else
-            {
-                return PaneToggleButtonVisibility.Visible;
-            }
+
+            return true;
         }
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)

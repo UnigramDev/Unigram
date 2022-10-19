@@ -14,6 +14,7 @@ namespace Unigram.Views.Authorization
         public AuthorizationEmailAddressPage()
         {
             InitializeComponent();
+            Window.Current.SetTitleBar(TitleBar);
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)

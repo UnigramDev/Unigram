@@ -30,30 +30,19 @@ namespace Unigram.Common
                     break;
                 case AuthorizationStateWaitPhoneNumber:
                 case AuthorizationStateWaitOtherDeviceConfirmation:
-                    if (_lifetimeService.Items.Count > 1)
+                    if (Frame.Content is AuthorizationPage page && page.DataContext is AuthorizationViewModel viewModel)
                     {
-                        if (Frame.Content is AuthorizationPage page && page.DataContext is AuthorizationViewModel viewModel)
-                        {
-                            await viewModel.NavigatedToAsync(null, NavigationMode.Refresh, null);
-                        }
-                        else
-                        {
-                            Navigate(typeof(AuthorizationPage));
-                        }
-
-                        ClearBackStack();
-                        AddToBackStack(typeof(BlankPage));
+                        await viewModel.NavigatedToAsync(null, NavigationMode.Refresh, null);
                     }
                     else
                     {
-                        if (Frame.Content is AuthorizationPage page && page.DataContext is AuthorizationViewModel viewModel)
-                        {
-                            await viewModel.NavigatedToAsync(null, NavigationMode.Refresh, null);
-                        }
-                        else
-                        {
-                            Navigate(typeof(AuthorizationPage));
-                        }
+                        Navigate(typeof(AuthorizationPage));
+                    }
+
+                    if (_lifetimeService.Items.Count > 1)
+                    {
+                        ClearBackStack();
+                        AddToBackStack(typeof(BlankPage));
                     }
                     break;
                 case AuthorizationStateWaitCode:

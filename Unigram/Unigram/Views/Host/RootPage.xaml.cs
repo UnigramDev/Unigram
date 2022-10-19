@@ -35,6 +35,7 @@ namespace Unigram.Views.Host
     {
         private readonly ILifetimeService _lifetime;
         private NavigationService _navigationService;
+        private long? _canGoBackToken;
 
         private RootDestination _navigationViewSelected;
         private readonly MvxObservableCollection<object> _navigationViewItems;
@@ -73,6 +74,8 @@ namespace Unigram.Views.Host
 
             service.Frame.Navigating += OnNavigating;
             service.Frame.Navigated += OnNavigated;
+
+            _canGoBackToken = service.Frame.RegisterPropertyChangedCallback(Frame.CanGoBackProperty, OnCanGoBackChanged);
             _navigationService = service;
 
             InitializeNavigation(service.Frame);
@@ -162,6 +165,8 @@ namespace Unigram.Views.Host
                 service = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Attach, BootStrapper.ExistingContent.Exclude, new Frame(), session.Id, $"{session.Id}", true) as NavigationService;
                 service.Frame.Navigating += OnNavigating;
                 service.Frame.Navigated += OnNavigated;
+                
+                _canGoBackToken = service.Frame.RegisterPropertyChangedCallback(Frame.CanGoBackProperty, OnCanGoBackChanged);
 
                 switch (session.ClientService.GetAuthorizationState())
                 {
@@ -230,6 +235,12 @@ namespace Unigram.Views.Host
                 corpus.ClearCache();
             }
 
+            if (_canGoBackToken is long token)
+            {
+                _canGoBackToken = null;
+                master.Frame.UnregisterPropertyChangedCallback(Frame.CanGoBackProperty, token);
+            }
+
             master.Frame.Navigating -= OnNavigating;
             master.Frame.Navigated -= OnNavigated;
             master.Frame.Navigate(typeof(BlankPage));
@@ -252,12 +263,26 @@ namespace Unigram.Views.Host
             if (e.Content is IRootContentPage content)
             {
                 content.Root = this;
-                Navigation.PaneToggleButtonVisibility = content.EvaluatePaneToggleButtonVisibility();
+                Navigation.PaneToggleButtonVisibility = content.EvaluatePaneToggleButtonVisibility()
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
                 InitializeNavigation(sender as Frame);
             }
             else
             {
-                Navigation.PaneToggleButtonVisibility = PaneToggleButtonVisibility.Collapsed;
+                Navigation.PaneToggleButtonVisibility = _navigationService.CanGoBack
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            }
+        }
+
+        private void OnCanGoBackChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            if (_navigationService.Content is not IRootContentPage)
+            {
+                Navigation.PaneToggleButtonVisibility = _navigationService.CanGoBack
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
             }
         }
 
@@ -606,9 +631,11 @@ namespace Unigram.Views.Host
             InitializeSessions(SettingsService.Current.IsAccountsSelectorExpanded, _lifetime.Items);
         }
 
-        public void SetPaneToggleButtonVisibility(PaneToggleButtonVisibility value)
+        public void SetPaneToggleButtonVisibility(bool visible)
         {
-            Navigation.PaneToggleButtonVisibility = value;
+            Navigation.PaneToggleButtonVisibility = visible
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
 
         public void SetSelectedIndex(RootDestination value)
@@ -942,6 +969,10 @@ namespace Unigram.Views.Host
             {
                 content.BackRequested();
             }
+            else if (_navigationService != null && _navigationService.CanGoBack)
+            {
+                _navigationService.GoBack();
+            }
         }
 
         private void Photo_Click(object sender, RoutedEventArgs e)
@@ -956,7 +987,7 @@ namespace Unigram.Views.Host
 
         void NavigationView_ItemClick(RootDestination destination);
 
-        PaneToggleButtonVisibility EvaluatePaneToggleButtonVisibility();
+        bool EvaluatePaneToggleButtonVisibility();
 
         void BackRequested();
 

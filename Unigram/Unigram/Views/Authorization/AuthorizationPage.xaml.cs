@@ -21,6 +21,7 @@ namespace Unigram.Views.Authorization
         public AuthorizationPage()
         {
             InitializeComponent();
+            Window.Current.SetTitleBar(TitleBar);
 
             TokenPlaceholder.FrameSize = new Size(259, 259);
             TokenPlaceholder.DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical;

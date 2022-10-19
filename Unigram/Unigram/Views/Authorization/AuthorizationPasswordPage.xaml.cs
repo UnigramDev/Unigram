@@ -25,6 +25,7 @@ namespace Unigram.Views.Authorization
         public AuthorizationPasswordPage()
         {
             InitializeComponent();
+            Window.Current.SetTitleBar(TitleBar);
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)

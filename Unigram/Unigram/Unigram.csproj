@@ -239,7 +239,6 @@
     <Compile Include="Common\TdException.cs" />
     <Compile Include="Common\TextStyleRun.cs" />
     <Compile Include="Common\ThemeColorizer.cs" />
-    <Compile Include="Common\TitleBar.cs" />
     <Compile Include="Common\TLContainer.cs" />
     <Compile Include="Common\InactivityHelper.cs" />
     <Compile Include="Common\Locale.cs" />

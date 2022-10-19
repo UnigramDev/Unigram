@@ -13,6 +13,7 @@ namespace Unigram.Views.Authorization
         public AuthorizationRegistrationPage()
         {
             InitializeComponent();
+            Window.Current.SetTitleBar(TitleBar);
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
