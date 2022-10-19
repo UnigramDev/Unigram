@@ -235,6 +235,7 @@ namespace Unigram.ViewModels.Chats
                     SelectedItem = target;
 
                     await Dialog.LoadMessageSliceAsync(null, target.Id);
+                    Dialog.UpdateQuery(query);
                 }
                 else
                 {
