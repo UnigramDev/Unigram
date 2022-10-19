@@ -33,10 +33,10 @@ namespace Unigram.Collections
         {
             _factory = factory;
             _sender = sender;
-            _query = new PropertyDebouncer<string>(Constants.TypingTimeout, UpdateQuery);
+            _query = new DebouncedProperty<string>(Constants.TypingTimeout, UpdateQuery);
         }
 
-        private readonly PropertyDebouncer<string> _query;
+        private readonly DebouncedProperty<string> _query;
         public string Query
         {
             get => _query;
