@@ -68,8 +68,6 @@ namespace Unigram.Controls
             _playbackService = playbackService;
             _navigationService = navigationService;
 
-            _playbackService.MediaFailed -= OnMediaFailed;
-            _playbackService.MediaFailed += OnMediaFailed;
             _playbackService.PropertyChanged -= OnCurrentItemChanged;
             _playbackService.PropertyChanged += OnCurrentItemChanged;
             _playbackService.PlaybackStateChanged -= OnPlaybackStateChanged;
@@ -82,25 +80,6 @@ namespace Unigram.Controls
             Items.ItemsSource = _playbackService.Items;
 
             UpdateGlyph();
-        }
-
-        private void OnMediaFailed(IPlaybackService sender, MediaPlayerFailedEventArgs args)
-        {
-            if (args.Error != MediaPlayerError.SourceNotSupported)
-            {
-                return;
-            }
-
-            this.BeginOnUIThread(async () =>
-            {
-                var confirm = await MessagePopup.ShowAsync("In order to play voice messages you must install Web Media Extensions from the Microsoft Store.", Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
-                if (confirm != ContentDialogResult.Primary)
-                {
-                    return;
-                }
-
-                await Launcher.LaunchUriAsync(new Uri("ms-windows-store://pdp/?PFN=Microsoft.WebMediaExtensions_8wekyb3d8bbwe"));
-            });
         }
 
         private void OnCurrentItemChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
