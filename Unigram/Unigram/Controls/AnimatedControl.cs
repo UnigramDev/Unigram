@@ -136,7 +136,13 @@ namespace Unigram.Controls
             {
                 _currentDpi = sender.LogicalDpi;
                 Changed();
+                OnDpiChanged(sender.LogicalDpi);
             }
+        }
+
+        protected virtual void OnDpiChanged(float currentDpi)
+        {
+
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)

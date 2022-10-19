@@ -25,6 +25,9 @@ namespace Unigram.Controls.Messages
         private readonly HashSet<long> _cache = new();
         private readonly List<EmojiPosition> _positions = new();
 
+        private IClientService _clientService;
+
+        private EmojiRendererCache _pool;
         private int _emojiSize;
 
         private bool _dropState;
@@ -37,6 +40,27 @@ namespace Unigram.Controls.Messages
 
             _interval = TimeSpan.FromMilliseconds(Math.Floor(1000d / 30));
             _emojiSize = GetDpiAwareSize(20);
+            _pool = EmojiCache.MergeOrCreate(_emojiSize, GetHashCode());
+        }
+
+        protected override void OnDpiChanged(float currentDpi)
+        {
+            var hash = GetHashCode();
+
+            foreach (var customEmojiId in _cache)
+            {
+                _pool.Release(customEmojiId, hash);
+            }
+
+            EmojiCache.Release(_emojiSize, hash);
+
+            _emojiSize = GetDpiAwareSize(20);
+            _pool = EmojiCache.MergeOrCreate(_emojiSize, hash);
+
+            if (_clientService != null)
+            {
+                UpdateEntities(_clientService, _cache);
+            }
         }
 
         protected override CanvasBitmap CreateBitmap(CanvasDevice device)
@@ -66,7 +90,7 @@ namespace Unigram.Controls.Messages
 
             foreach (var customEmojiId in _cache)
             {
-                EmojiRendererCache.Release(customEmojiId, hash);
+                _pool.Release(customEmojiId, hash);
             }
 
             _cache.Clear();
@@ -89,7 +113,7 @@ namespace Unigram.Controls.Messages
 
             foreach (var item in _positions)
             {
-                if (EmojiRendererCache.TryGet(item.CustomEmojiId, out EmojiRenderer animation))
+                if (_pool.TryGet(item.CustomEmojiId, out EmojiRenderer animation))
                 {
                     var x = (int)((2 + item.X - 0) * (_currentDpi / 96));
                     var y = (int)((2 + item.Y - 0) * (_currentDpi / 96));
@@ -104,7 +128,7 @@ namespace Unigram.Controls.Messages
                     {
                         args.FillGeometry(animation.GetOutline(sender), item.X, item.Y, brush ??= new CanvasSolidColorBrush(sender, Color.FromArgb(0x33, 0x7A, 0x8A, 0x96)));
 
-                        if (_subscribed && !matches && !animation.IsLoading)
+                        if (_subscribed && !animation.IsLoading)
                         {
                             outdated ??= new HashSet<long>();
                             outdated.Add(item.CustomEmojiId);
@@ -122,7 +146,7 @@ namespace Unigram.Controls.Messages
 
             if (outdated != null)
             {
-                EmojiRendererCache.Reload(outdated, _emojiSize);
+                _pool.Reload(outdated);
             }
         }
 
@@ -147,11 +171,11 @@ namespace Unigram.Controls.Messages
             {
                 if (subscribe)
                 {
-                    EmojiRendererCache.Show(item, hash);
+                    _pool.Show(item, hash);
                 }
                 else
                 {
-                    EmojiRendererCache.Hide(item, hash);
+                    _pool.Hide(item, hash);
                 }
             }
         }
@@ -201,6 +225,7 @@ namespace Unigram.Controls.Messages
             //var tsc = _loadEmoji = new TaskCompletionSource<bool>();
             //var token = _loadEmojiToken = new CancellationTokenSource();
 
+            _clientService = clientService;
             _animation = new object();
 
             var request = new List<long>();
@@ -208,12 +233,12 @@ namespace Unigram.Controls.Messages
 
             foreach (var emoji in customEmoji)
             {
-                if (_cache.Contains(emoji))
-                {
-                    continue;
-                }
+                //if (_cache.Contains(emoji))
+                //{
+                //    continue;
+                //}
 
-                if (EmojiRendererCache.TryMerge(emoji, hash, _subscribed, out _))
+                if (_pool.TryMerge(clientService, emoji, hash, _subscribed, out _))
                 {
                     _cache.Add(emoji);
                     continue;
@@ -238,13 +263,13 @@ namespace Unigram.Controls.Messages
 
                 foreach (var sticker in stickers.StickersValue)
                 {
-                    if (_cache.Contains(sticker.CustomEmojiId))
-                    {
-                        continue;
-                    }
+                    //if (_cache.Contains(sticker.CustomEmojiId))
+                    //{
+                    //    continue;
+                    //}
 
                     _cache.Add(sticker.CustomEmojiId);
-                    EmojiRendererCache.MergeOrCreate(clientService, sticker, _emojiSize, hash, _subscribed);
+                    _pool.MergeOrCreate(clientService, sticker, hash, _subscribed);
                 }
             }
 
@@ -252,30 +277,104 @@ namespace Unigram.Controls.Messages
         }
     }
 
-    public static class EmojiRendererCache
+    public class EmojiCache
     {
-        private static readonly ConcurrentDictionary<long, EmojiRenderer> _cache = new();
+        private static readonly ConcurrentDictionary<long, Sticker> _stickers = new();
 
-        private static TimeSpan _interval;
-
+        private static readonly ConcurrentDictionary<int, EmojiRendererCache> _cache = new();
         private static readonly object _lock = new();
 
-        static EmojiRendererCache()
+        public static bool TryGet(long customEmojiId, out Sticker sticker)
         {
-            _interval = TimeSpan.FromMilliseconds(Math.Floor(1000d / 30));
+            return _stickers.TryGetValue(customEmojiId, out sticker);
         }
 
-        public static bool Contains(long customEmojiId)
+        public static void AddOrUpdate(Sticker sticker)
+        {
+            var id = sticker.CustomEmojiId == 0
+                ? sticker.StickerValue.Id
+                : sticker.CustomEmojiId;
+
+            _stickers[id] = sticker;
+        }
+
+        private static bool TryMerge(int size, int hash, out EmojiRendererCache renderer)
+        {
+            if (_cache.TryGetValue(size, out renderer))
+            {
+                lock (_lock)
+                {
+                    renderer.References.Add(hash);
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        public static EmojiRendererCache MergeOrCreate(int size, int hash)
+        {
+            if (TryMerge(size, hash, out EmojiRendererCache renderer))
+            {
+                return renderer;
+            }
+
+            _cache[size] = renderer = new EmojiRendererCache(size);
+
+            lock (_lock)
+            {
+                renderer.References.Add(hash);
+            }
+
+            return renderer;
+        }
+
+        public static void Release(int size, int hash)
+        {
+            if (_cache.TryGetValue(size, out EmojiRendererCache reference))
+            {
+                lock (_lock)
+                {
+                    reference.References.Remove(hash);
+                }
+
+                if (reference.IsAlive is false)
+                {
+                    _cache.TryRemove(size, out _);
+                    //reference.Dispose();
+                }
+            }
+        }
+    }
+
+    public class EmojiRendererCache
+    {
+        private readonly ConcurrentDictionary<long, EmojiRenderer> _cache = new();
+        private readonly object _lock = new();
+
+        private readonly int _size;
+
+        public EmojiRendererCache(int size)
+        {
+            _size = size;
+        }
+
+        public HashSet<int> References { get; } = new();
+
+        public bool IsAlive => References.Count > 0;
+
+        public bool Contains(long customEmojiId)
         {
             return _cache.ContainsKey(customEmojiId);
         }
 
-        public static bool TryGet(long customEmojiId, out EmojiRenderer renderer)
+        public bool TryGet(long customEmojiId, out EmojiRenderer renderer)
         {
             return _cache.TryGetValue(customEmojiId, out renderer);
         }
 
-        public static bool TryGetValue(long customEmojiId, out Sticker sticker)
+        public bool TryGetValue(long customEmojiId, out Sticker sticker)
         {
             if (_cache.TryGetValue(customEmojiId, out EmojiRenderer renderer))
             {
@@ -287,7 +386,7 @@ namespace Unigram.Controls.Messages
             return false;
         }
 
-        public static bool TryMerge(long customEmojiId, int hash, bool subscribe, out EmojiRenderer renderer)
+        public bool TryMerge(IClientService? clientService, long customEmojiId, int hash, bool subscribe, out EmojiRenderer renderer)
         {
             if (_cache.TryGetValue(customEmojiId, out renderer))
             {
@@ -303,18 +402,28 @@ namespace Unigram.Controls.Messages
 
                 return true;
             }
+            else if (clientService != null && EmojiCache.TryGet(customEmojiId, out Sticker sticker))
+            {
+                MergeOrCreate(clientService, sticker, hash, subscribe);
+                return true;
+            }
 
             return false;
         }
 
-        public static void MergeOrCreate(IClientService clientService, Sticker sticker, int size, int hash, bool subscribe)
+        public void MergeOrCreate(IClientService clientService, Sticker sticker, int hash, bool subscribe)
         {
-            if (TryMerge(sticker.CustomEmojiId, hash, subscribe, out EmojiRenderer renderer))
+            var id = sticker.CustomEmojiId == 0
+                ? sticker.StickerValue.Id
+                : sticker.CustomEmojiId;
+
+            if (TryMerge(null, id, hash, subscribe, out EmojiRenderer renderer))
             {
                 return;
             }
 
-            _cache[sticker.CustomEmojiId] = renderer = new EmojiRenderer(clientService, sticker, size);
+            _cache[id] = renderer = new EmojiRenderer(clientService, sticker, _size);
+            EmojiCache.AddOrUpdate(sticker);
 
             if (subscribe)
             {
@@ -327,7 +436,7 @@ namespace Unigram.Controls.Messages
             }
         }
 
-        public static void Release(long customEmojiId, int hash)
+        public void Release(long customEmojiId, int hash)
         {
             if (_cache.TryGetValue(customEmojiId, out EmojiRenderer reference))
             {
@@ -345,7 +454,7 @@ namespace Unigram.Controls.Messages
             }
         }
 
-        public static void Show(long customEmojiId, int hash)
+        public void Show(long customEmojiId, int hash)
         {
             if (TryGet(customEmojiId, out EmojiRenderer renderer))
             {
@@ -353,7 +462,7 @@ namespace Unigram.Controls.Messages
             }
         }
 
-        public static void Show(EmojiRenderer renderer, int hash)
+        public void Show(EmojiRenderer renderer, int hash)
         {
             lock (_lock)
             {
@@ -366,7 +475,7 @@ namespace Unigram.Controls.Messages
             }
         }
 
-        public static void Hide(long customEmojiId, int hash)
+        public void Hide(long customEmojiId, int hash)
         {
             if (TryGet(customEmojiId, out EmojiRenderer renderer))
             {
@@ -374,7 +483,7 @@ namespace Unigram.Controls.Messages
             }
         }
 
-        public static void Hide(EmojiRenderer renderer, int hash)
+        public void Hide(EmojiRenderer renderer, int hash)
         {
             lock (_lock)
             {
@@ -387,18 +496,7 @@ namespace Unigram.Controls.Messages
             }
         }
 
-        private static void NextFrame()
-        {
-            foreach (var item in _cache.Values)
-            {
-                if (item.IsVisible)
-                {
-                    item.NextFrame();
-                }
-            }
-        }
-
-        public static void Reload(ISet<long> emoji, int size)
+        public void Reload(ISet<long> emoji)
         {
             List<EmojiRenderer> renderers = null;
 
@@ -406,18 +504,7 @@ namespace Unigram.Controls.Messages
             {
                 if (_cache.TryGetValue(customEmojiId, out EmojiRenderer renderer))
                 {
-                    if (renderer.Size != size)
-                    {
-                        var clone = renderer.Clone(size);
-                        renderer.Dispose();
-
-                        _cache[customEmojiId] = clone;
-                        clone.IsLoading = true;
-
-                        renderers ??= new List<EmojiRenderer>();
-                        renderers.Add(clone);
-                    }
-                    else if (renderer.Buffer == null && !renderer.IsLoading)
+                    if (renderer.Buffer == null && !renderer.IsLoading)
                     {
                         renderer.IsLoading = true;
 

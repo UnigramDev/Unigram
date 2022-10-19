@@ -94,7 +94,7 @@ namespace Unigram.Controls.Messages
                     }
                     else if (oldItem.Type is ReactionTypeCustomEmoji customEmoji)
                     {
-                        var required = UpdateButton<long, Sticker>(_customReactions, customEmoji.CustomEmojiId, message, oldItem, EmojiRendererCache.TryGetValue, changed, index);
+                        var required = UpdateButton<long, Sticker>(_customReactions, customEmoji.CustomEmojiId, message, oldItem, EmojiCache.TryGet, changed, index);
                         if (required)
                         {
                             missingCustomEmoji ??= new List<long>();
@@ -144,6 +144,7 @@ namespace Unigram.Controls.Messages
                     {
                         foreach (var sticker in stickers.StickersValue)
                         {
+                            EmojiCache.AddOrUpdate(sticker);
                             UpdateButton<long, Sticker>(_customReactions, sticker.CustomEmojiId, message, sticker, Animate);
                         }
                     }

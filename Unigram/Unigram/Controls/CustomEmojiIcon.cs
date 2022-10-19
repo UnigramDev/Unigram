@@ -14,7 +14,12 @@ namespace Unigram.Controls
 {
     public class CustomEmojiIcon : AnimatedControl<object>
     {
+        private Sticker _sticker;
         private long? _cache;
+
+        private IClientService _clientService;
+
+        private EmojiRendererCache _pool;
         private int _emojiSize;
 
         private int _loopCount = -1;
@@ -29,6 +34,7 @@ namespace Unigram.Controls
 
             _interval = TimeSpan.FromMilliseconds(Math.Floor(1000d / 30));
             _emojiSize = GetDpiAwareSize(20);
+            _pool = EmojiCache.MergeOrCreate(_emojiSize, GetHashCode());
 
             EffectiveViewportChanged += OnEffectiveViewportChanged;
         }
@@ -60,6 +66,33 @@ namespace Unigram.Controls
             }
         }
 
+        protected override void OnDpiChanged(float currentDpi)
+        {
+            var hash = GetHashCode();
+
+            if (_cache is long customEmojiId)
+            {
+                _pool.Release(customEmojiId, hash);
+            }
+
+            EmojiCache.Release(_emojiSize, hash);
+
+            _emojiSize = GetDpiAwareSize(20);
+            _pool = EmojiCache.MergeOrCreate(_emojiSize, hash);
+
+            if (_clientService != null)
+            {
+                if (_sticker != null)
+                {
+                    SetSticker(_clientService, _sticker);
+                }
+                else if (_cache != null)
+                {
+                    SetCustomEmoji(_clientService, _cache.Value);
+                }
+            }
+        }
+
         protected override CanvasBitmap CreateBitmap(CanvasDevice device)
         {
             var awareSize = GetDpiAwareSize(20);
@@ -85,9 +118,10 @@ namespace Unigram.Controls
         {
             if (_cache is long customEmojiId)
             {
-                EmojiRendererCache.Release(customEmojiId, GetHashCode());
+                _pool.Release(customEmojiId, GetHashCode());
             }
 
+            _sticker = null;
             _cache = null;
         }
 
@@ -96,7 +130,7 @@ namespace Unigram.Controls
             ICanvasBrush brush = null;
             ISet<long> outdated = null;
 
-            if (_cache is long item && EmojiRendererCache.TryGet(item, out EmojiRenderer animation))
+            if (_cache is long item && _pool.TryGet(item, out EmojiRenderer animation))
             {
                 var matches = _emojiSize * _emojiSize * 4 == animation.Buffer?.Length;
                 if (matches && animation.HasRenderedFirstFrame && _emojiSize == _bitmap.Size.Width && _emojiSize == _bitmap.Size.Height)
@@ -116,7 +150,7 @@ namespace Unigram.Controls
                 {
                     args.FillGeometry(animation.GetOutline(sender), 0, 0, brush ??= new CanvasSolidColorBrush(sender, Color.FromArgb(0x33, 0x7A, 0x8A, 0x96)));
 
-                    if (_subscribed && !matches && !animation.IsLoading)
+                    if (_subscribed && !animation.IsLoading)
                     {
                         outdated ??= new HashSet<long>();
                         outdated.Add(item);
@@ -135,7 +169,7 @@ namespace Unigram.Controls
             }
             else if (outdated != null)
             {
-                EmojiRendererCache.Reload(outdated, _emojiSize);
+                _pool.Reload(outdated);
             }
         }
 
@@ -156,11 +190,11 @@ namespace Unigram.Controls
 
             if (subscribe && _loopCount < 2)
             {
-                EmojiRendererCache.Show(item, GetHashCode());
+                _pool.Show(item, GetHashCode());
             }
             else
             {
-                EmojiRendererCache.Hide(item, GetHashCode());
+                _pool.Hide(item, GetHashCode());
             }
         }
 
@@ -179,6 +213,7 @@ namespace Unigram.Controls
             //var tsc = _loadEmoji = new TaskCompletionSource<bool>();
             //var token = _loadEmojiToken = new CancellationTokenSource();
 
+            _clientService = clientService;
             _animation = new object();
             _loopCount = -1;
 
@@ -190,14 +225,10 @@ namespace Unigram.Controls
             var request = new List<long>();
             var hash = GetHashCode();
 
-            if (_cache == emoji)
-            {
-                return;
-            }
-
-            if (EmojiRendererCache.TryMerge(emoji, hash, _subscribed, out _))
+            if (_pool.TryMerge(clientService, emoji, hash, _subscribed, out _))
             {
                 _cache = emoji;
+                OnSourceChanged();
                 return;
             }
 
@@ -219,7 +250,7 @@ namespace Unigram.Controls
                 }
 
                 _cache = sticker.CustomEmojiId;
-                EmojiRendererCache.MergeOrCreate(clientService, sticker, _emojiSize, hash, _subscribed);
+                _pool.MergeOrCreate(clientService, sticker, hash, _subscribed);
             }
 
             OnSourceChanged();
@@ -240,6 +271,7 @@ namespace Unigram.Controls
             //var tsc = _loadEmoji = new TaskCompletionSource<bool>();
             //var token = _loadEmojiToken = new CancellationTokenSource();
 
+            _clientService = clientService;
             _animation = new object();
             _loopCount = -1;
 
@@ -253,19 +285,15 @@ namespace Unigram.Controls
                 ? sticker.StickerValue.Id
                 : sticker.CustomEmojiId;
 
-            if (_cache == id)
-            {
-                return;
-            }
-
-            if (EmojiRendererCache.TryMerge(id, hash, _subscribed, out _))
+            if (_pool.TryMerge(clientService, id, hash, _subscribed, out _))
             {
                 _cache = id;
+                OnSourceChanged();
                 return;
             }
 
             _cache = id;
-            EmojiRendererCache.MergeOrCreate(clientService, sticker, _emojiSize, hash, _subscribed);
+            _pool.MergeOrCreate(clientService, sticker, hash, _subscribed);
 
             OnSourceChanged();
         }
