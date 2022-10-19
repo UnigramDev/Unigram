@@ -425,7 +425,7 @@ namespace Unigram.ViewModels
             }
 
             var reply = GetReply(true);
-            var input = new InputMessageVoiceNote(await file.ToGeneratedAsync(), duration, new byte[0], caption);
+            var input = new InputMessageVoiceNote(await file.ToGeneratedAsync(ConversionType.Opus), duration, new byte[0], caption);
 
             await SendMessageAsync(chat, reply, input, options);
         }

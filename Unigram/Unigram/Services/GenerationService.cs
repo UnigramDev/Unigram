@@ -14,6 +14,7 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls.Chats;
 using Unigram.Entities;
+using Unigram.Native.Opus;
 using Windows.Foundation;
 using Windows.Graphics.DirectX;
 using Windows.Graphics.Imaging;
@@ -38,6 +39,7 @@ namespace Unigram.Services
     {
         Copy,
         Compress,
+        Opus,
         Transcode,
         TranscodeThumbnail,
         DocumentThumbnail,
@@ -80,6 +82,10 @@ namespace Unigram.Services
                 else if (conversion == ConversionType.Compress)
                 {
                     await CompressAsync(update, args);
+                }
+                else if (conversion == ConversionType.Opus)
+                {
+                    await TranscodeOpusAsync(update, args);
                 }
                 else if (conversion == ConversionType.Transcode)
                 {
@@ -259,6 +265,24 @@ namespace Unigram.Services
                 else
                 {
                     await ImageHelper.ScaleJpegAsync(file, temp, 90, 0.77);
+                }
+
+                _clientService.Send(new FinishFileGeneration(update.GenerationId, null));
+            }
+            catch (Exception ex)
+            {
+                _clientService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID " + ex.ToString())));
+            }
+        }
+
+        private async Task TranscodeOpusAsync(UpdateFileGenerationStart update, string[] args)
+        {
+            try
+            {
+                using (var opus = new OpusOutput(update.DestinationPath))
+                {
+                    var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(args[0]);
+                    await Task.Run(() => opus.Transcode(file.Path));
                 }
 
                 _clientService.Send(new FinishFileGeneration(update.GenerationId, null));

@@ -1,0 +1,10 @@
+namespace Unigram.Native.Opus
+{
+    [bindable]
+    [default_interface]
+    runtimeclass OpusOutput : Windows.Foundation.IClosable
+    {
+        OpusOutput(String fileName);
+        void Transcode(String fileName);
+    }
+}

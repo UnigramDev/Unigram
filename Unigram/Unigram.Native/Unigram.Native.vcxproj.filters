@@ -67,6 +67,9 @@
     <Filter Include="libqoi">
       <UniqueIdentifier>{4f7c13f1-0708-461c-a2f3-fb4a89199aee}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Opus">
+      <UniqueIdentifier>{c84427d8-aa86-4b0c-b833-1c0df91bb5a5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -707,5 +710,8 @@
     <Midl Include="CachedVideoAnimation.idl" />
     <Midl Include="TelegramWebviewProxy.idl" />
     <Midl Include="BufferSurface.idl" />
+    <Midl Include="Opus\OpusOutput.idl">
+      <Filter>Opus</Filter>
+    </Midl>
   </ItemGroup>
 </Project>

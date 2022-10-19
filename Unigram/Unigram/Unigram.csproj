@@ -2556,10 +2556,6 @@
       <Project>{fdd3c45d-4cff-4a90-8fef-16ca70ab00be}</Project>
       <Name>Unigram.Native.Calls</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Unigram.Native.Media\Unigram.Native.Media.vcxproj">
-      <Project>{3adbf08f-0550-4a1c-9794-fea30cf69e3a}</Project>
-      <Name>Unigram.Native.Media</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Unigram.Native\Unigram.Native.vcxproj">
       <Project>{1b521e77-46bd-4d60-89f6-d68e9bb9abff}</Project>
       <Name>Unigram.Native</Name>
@@ -2582,15 +2578,16 @@
     <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\rlottie\$(Platform)\RLottie.pri" />
     <!--<ReferenceCopyLocalPaths Condition=" '$(Configuration)' == 'Debug' " Include="$(ProjectDir)\..\Libraries\rlottie\$(Platform)\zlib1.dll" />-->
   </ItemGroup>
-  <ItemGroup />
-  <!--<ItemGroup>
-    <Reference Include="Unigram.Native.Calls">
-      <HintPath>$(SolutionDir)\Unigram.Native.Calls\$(Platform)\Unigram.Native.Calls.winmd</HintPath>
-      <Implementation>Unigram.Native.Calls.dll</Implementation>
+  <ItemGroup>
+    <Reference Include="FFmpegInteropX">
+      <HintPath>$(ProjectDir)\..\Libraries\ffmpeg\$(Platform)\FFmpegInteropX.winmd</HintPath>
+      <Implementation>FFmpegInteropX.dll</Implementation>
     </Reference>
-    <ReferenceCopyLocalPaths Include="$(SolutionDir)\Unigram.Native.Calls\$(Platform)\Unigram.Native.Calls.dll" />
-    <ReferenceCopyLocalPaths Include="$(SolutionDir)\Unigram.Native.Calls\$(Platform)\Unigram.Native.Calls.pri" />
-  </ItemGroup>-->
+    <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\ffmpeg\$(Platform)\FFmpegInteropX.dll" />
+    <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\ffmpeg\$(Platform)\FFmpegInteropX.pri" />
+    <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\ffmpeg\$(Platform)\avfilter-7.dll" />
+    <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\ffmpeg\$(Platform)\opus.dll" />
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

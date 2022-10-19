@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Logs;
-using Unigram.Native.Media;
 using Unigram.ViewModels;
 using Windows.Devices.Enumeration;
 using Windows.Foundation;
@@ -999,12 +998,9 @@ namespace Unigram.Controls.Chats
 
             internal sealed class OpusRecorder
             {
-                #region fields
-
                 private readonly bool m_isVideo;
 
                 private readonly StorageFile m_file;
-                private IMediaExtension m_opusSink;
                 private LowLagMediaRecording m_lowLag;
                 public MediaCapture m_mediaCapture;
                 public MediaCaptureInitializationSettings settings;
@@ -1016,18 +1012,10 @@ namespace Unigram.Controls.Chats
                 //// Rotation Helper to simplify handling rotation compensation for the camera streams
                 //public CameraRotationHelper _rotationHelper;
 
-                #endregion
-
-                #region properties
-
                 public StorageFile File
                 {
                     get { return m_file; }
                 }
-
-                #endregion
-
-                #region constructors
 
                 public OpusRecorder(StorageFile file, bool video)
                 {
@@ -1035,10 +1023,6 @@ namespace Unigram.Controls.Chats
                     m_isVideo = video;
                     InitializeSettings();
                 }
-
-                #endregion
-
-                #region methods
 
                 private void InitializeSettings()
                 {
@@ -1079,9 +1063,7 @@ namespace Unigram.Controls.Chats
                         wavEncodingProfile.Audio.SampleRate = 48000;
                         wavEncodingProfile.Audio.ChannelCount = 1;
 
-                        m_opusSink = await OpusCodec.CreateMediaSinkAsync(m_file);
-
-                        await m_mediaCapture.StartRecordToCustomSinkAsync(wavEncodingProfile, m_opusSink);
+                        await m_mediaCapture.StartRecordToStorageFileAsync(wavEncodingProfile, m_file);
                     }
                 }
 
@@ -1101,12 +1083,6 @@ namespace Unigram.Controls.Chats
 
                         m_mediaCapture.Dispose();
                         m_mediaCapture = null;
-
-                        if (m_opusSink is IDisposable disposable)
-                        {
-                            disposable.Dispose();
-                            m_opusSink = null;
-                        }
                     }
                     catch { }
                 }
@@ -1119,31 +1095,8 @@ namespace Unigram.Controls.Chats
 
                         m_mediaCapture.Dispose();
                         m_mediaCapture = null;
-
-                        if (m_opusSink is IDisposable disposable)
-                        {
-                            disposable.Dispose();
-                            m_opusSink = null;
-                        }
                     }
                     catch { }
-                }
-
-                #endregion
-
-                public async Task SetPreviewRotationAsync()
-                {
-                    //// Only need to update the orientation if the camera is mounted on the device
-                    //if (_externalCamera || _rotationHelper == null || m_mediaCapture == null)
-                    //{
-                    //    return;
-                    //}
-
-                    //// Add rotation metadata to the preview stream to make sure the aspect ratio / dimensions match when rendering and getting preview frames
-                    //var rotation = _rotationHelper.GetCameraPreviewOrientation();
-                    //var props = m_mediaCapture.VideoDeviceController.GetMediaStreamProperties(MediaStreamType.VideoPreview);
-                    //props.Properties.Add(new Guid("C380465D-2271-428C-9B83-ECEA3B4A85C1"), CameraRotationHelper.ConvertSimpleOrientationToClockwiseDegrees(rotation));
-                    //await m_mediaCapture.SetEncodingPropertiesAsync(MediaStreamType.VideoPreview, props, null);
                 }
             }
         }

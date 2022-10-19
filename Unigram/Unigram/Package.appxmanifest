@@ -90,14 +90,6 @@
       </Extensions>
     </Application>
   </Applications>
-  <Extensions>
-    <Extension Category="windows.activatableClass.inProcessServer">
-      <InProcessServer>
-        <Path>Unigram.Native.Media.dll</Path>
-        <ActivatableClass ActivatableClassId="Unigram.Native.Media.OpusByteStreamHandler" ThreadingModel="both" />
-      </InProcessServer>
-    </Extension>
-  </Extensions>
   <Capabilities>
     <Capability Name="internetClient" />
     <Capability Name="privateNetworkClientServer" />
