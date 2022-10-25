@@ -303,10 +303,10 @@ namespace Unigram.ViewModels
             if (search != null)
             {
                 search.Dispose();
+                UpdateQuery(string.Empty);
             }
 
             Search = null;
-            UpdateQuery(string.Empty);
         }
 
         private string _accessToken;
