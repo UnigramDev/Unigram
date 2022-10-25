@@ -396,6 +396,10 @@ namespace Unigram.ViewModels.Drawers
                 {
                     if (item.Type is ReactionTypeEmoji emoji && reactions.TryGetValue(emoji.Emoji, out EmojiReaction reaction))
                     {
+                        // Some times the sticker has a different emoji
+                        // and in that case reaction won't work
+                        reaction.ActivateAnimation.Emoji = emoji.Emoji;
+
                         target.Add(reaction.ActivateAnimation);
                     }
                     else if (item.Type is ReactionTypeCustomEmoji customEmoji && assets.TryGetValue(customEmoji.CustomEmojiId, out Sticker sticker))
