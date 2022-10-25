@@ -175,11 +175,9 @@ namespace Unigram.Controls
         {
             if (TextBlock != null && TextBlock.IsLoaded && _formattedText != null)
             {
-                if (string.IsNullOrWhiteSpace(query))
-                {
-                    TextBlock.TextHighlighters.Clear();
-                }
-                else
+                TextBlock.TextHighlighters.Clear();
+
+                if (query?.Length > 0)
                 {
                     var find = _formattedText.Text.IndexOf(query, StringComparison.OrdinalIgnoreCase);
                     if (find != -1)
