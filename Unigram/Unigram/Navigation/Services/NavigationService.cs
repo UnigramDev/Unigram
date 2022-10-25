@@ -98,6 +98,11 @@ namespace Unigram.Navigation.Services
         }
 
         public bool IsRoot { get; }
+
+        public override string ToString()
+        {
+            return Title;
+        }
     }
 
     // DOCS: https://github.com/Windows-XAML/Template10/wiki/Docs-%7C-NavigationService
