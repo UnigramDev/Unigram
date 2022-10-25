@@ -1,14 +1,24 @@
-﻿using Telegram.Td.Api;
+﻿using System.Numerics;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Services;
 using Unigram.ViewModels;
+using Windows.Foundation;
+using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls
 {
+    public enum ProfilePictureShape
+    {
+        Ellipse,
+        Superellipse
+    }
+
     public class ProfilePicture : HyperlinkButton
     {
         private string _fileToken;
@@ -17,10 +27,98 @@ namespace Unigram.Controls
 
         private object _parameters;
 
+        private readonly CompositionRoundedRectangleGeometry _clip;
+
         public ProfilePicture()
         {
             DefaultStyleKey = typeof(ProfilePicture);
+
+            var visual = ElementCompositionPreview.GetElementVisual(this);
+            var clip = visual.Compositor.CreateRoundedRectangleGeometry();
+            visual.Clip = visual.Compositor.CreateGeometricClip(clip);
+
+            _clip = clip;
         }
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            _clip.Size = finalSize.ToVector2();
+
+            if (Shape == ProfilePictureShape.Superellipse)
+            {
+                _clip.CornerRadius = new Vector2(_clip.Size.X / 4);
+            }
+            else
+            {
+                _clip.CornerRadius = new Vector2(_clip.Size.Y / 2);
+            }
+
+            return base.ArrangeOverride(finalSize);
+        }
+
+        #region Shape
+
+        public ProfilePictureShape Shape
+        {
+            get { return (ProfilePictureShape)GetValue(ShapeProperty); }
+            set { SetValue(ShapeProperty, value); }
+        }
+
+        public static readonly DependencyProperty ShapeProperty =
+            DependencyProperty.Register("Shape", typeof(ProfilePictureShape), typeof(ProfilePicture), new PropertyMetadata(ProfilePictureShape.Ellipse, OnShapeChanged));
+
+        private static void OnShapeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((ProfilePicture)d).OnShapeChanged((ProfilePictureShape)e.NewValue, (ProfilePictureShape)e.OldValue);
+        }
+
+        private void OnShapeChanged(ProfilePictureShape newValue, ProfilePictureShape oldValue)
+        {
+            if (newValue != oldValue)
+            {
+                if (IsAnimated && !double.IsNaN(ActualWidth))
+                {
+                    var visual = ElementCompositionPreview.GetElementVisual(this);
+
+                    var compositor = Window.Current.Compositor;
+                    var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+                    batch.Completed += (s, args) =>
+                    {
+                        InvalidateArrange();
+                    };
+
+                    var ellipse = newValue == ProfilePictureShape.Ellipse;
+
+                    var anim = compositor.CreateVector2KeyFrameAnimation();
+                    anim.InsertKeyFrame(0, new Vector2(ellipse ? ActualSize.X / 4 : ActualSize.X / 2));
+                    anim.InsertKeyFrame(1, new Vector2(ellipse ? ActualSize.X / 2 : ActualSize.X / 4));
+
+                    _clip.Size = ActualSize;
+                    _clip.StartAnimation("CornerRadius", anim);
+
+                    batch.End();
+                }
+                else
+                {
+                    InvalidateArrange();
+                }
+            }
+        }
+
+        #endregion
+
+        #region IsAnimated
+
+        public bool IsAnimated
+        {
+            get { return (bool)GetValue(IsAnimatedProperty); }
+            set { SetValue(IsAnimatedProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsAnimatedProperty =
+            DependencyProperty.Register("IsAnimated", typeof(bool), typeof(ProfilePicture), new PropertyMetadata(false));
+
+        #endregion
 
         public void Clear()
         {
@@ -117,12 +215,15 @@ namespace Unigram.Controls
                 _referenceId = chat.Id;
                 _fileId = file?.Id;
 
-                Source = GetChat(clientService, chat, file, side, download);
+                Source = GetChat(clientService, chat, file, side, out var shape, download);
+                Shape = shape;
             }
         }
 
-        private ImageSource GetChat(IClientService clientService, Chat chat, File file, int side, bool download = true)
+        private ImageSource GetChat(IClientService clientService, Chat chat, File file, int side, out ProfilePictureShape shape, bool download = true)
         {
+            shape = ProfilePictureShape.Ellipse;
+
             if (chat.Type is ChatTypePrivate privata && clientService.IsSavedMessages(chat))
             {
                 return PlaceholderHelper.GetSavedMessages(privata.UserId, side);
@@ -130,6 +231,11 @@ namespace Unigram.Controls
             else if (clientService.IsRepliesChat(chat))
             {
                 return PlaceholderHelper.GetGlyph(Icons.ChatMultiple, 5, side);
+            }
+            
+            if (clientService.IsForum(chat))
+            {
+                shape = ProfilePictureShape.Superellipse;
             }
 
             if (file != null)
@@ -199,6 +305,7 @@ namespace Unigram.Controls
                 _fileId = file?.Id;
 
                 Source = GetUser(clientService, user, file, side, download);
+                Shape = ProfilePictureShape.Ellipse;
             }
         }
 
@@ -267,6 +374,7 @@ namespace Unigram.Controls
             }
 
             Source = GetChat(clientService, chat, file, side, download);
+            Shape = ProfilePictureShape.Ellipse;
         }
 
         private ImageSource GetChat(IClientService clientService, ChatInviteLinkInfo chat, File file, int side, bool download = true)
@@ -318,10 +426,12 @@ namespace Unigram.Controls
                 else if (message.ForwardInfo?.Origin is MessageForwardOriginMessageImport fromImport)
                 {
                     Source = PlaceholderHelper.GetNameForUser(fromImport.SenderName, 30);
+                    Shape = ProfilePictureShape.Ellipse;
                 }
                 else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser fromHiddenUser)
                 {
                     Source = PlaceholderHelper.GetNameForUser(fromHiddenUser.SenderName, 30);
+                    Shape = ProfilePictureShape.Ellipse;
                 }
             }
             else if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
@@ -342,6 +452,7 @@ namespace Unigram.Controls
                 _fileId = photo._fileId;
 
                 Source = photo.Source;
+                Shape = photo.Shape;
             }
         }
     }

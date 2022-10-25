@@ -84,6 +84,7 @@ namespace Unigram.Services
         bool IsSavedMessages(Chat chat);
 
         bool IsRepliesChat(Chat chat);
+        bool IsForum(Chat chat);
 
         bool IsChatAccessible(Chat chat);
 
@@ -1048,6 +1049,16 @@ Read more about how to update your device [here](https://support.microsoft.com/h
         public bool IsRepliesChat(Chat chat)
         {
             return chat.Id == _options.RepliesBotChatId;
+        }
+
+        public bool IsForum(Chat chat)
+        {
+            if (TryGetSupergroup(chat, out Supergroup supergroup))
+            {
+                return supergroup.IsForum;
+            }
+
+            return false;
         }
 
         public bool IsChatAccessible(Chat chat)
