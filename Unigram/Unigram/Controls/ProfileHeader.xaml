@@ -185,7 +185,7 @@
 
             <controls:BadgeButton x:Name="Username"
                                   Visibility="Collapsed"
-                                  Content="{CustomResource Username}"
+                                  ContentTemplate="{x:Null}"
                                   Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
                                   Glyph="&#xE168;">
                 <Button.ContextFlyout>
@@ -206,7 +206,12 @@
                         </MenuFlyoutItem>
                     </MenuFlyout>
                 </Button.ContextFlyout>
+                <TextBlock x:Name="ActiveUsernames"
+                           Style="{StaticResource InfoCaptionTextBlockStyle}"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top" />
             </controls:BadgeButton>
+
 
             <controls:BadgeButton x:Name="Location"
                                   Visibility="Collapsed"

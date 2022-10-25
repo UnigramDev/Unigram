@@ -204,8 +204,17 @@ namespace Unigram.Controls
             UserPhone.Badge = PhoneNumber.Format(user.PhoneNumber);
             UserPhone.Visibility = string.IsNullOrEmpty(user.PhoneNumber) ? Visibility.Collapsed : Visibility.Visible;
 
-            Username.Badge = $"{user.Username}";
-            Username.Visibility = string.IsNullOrEmpty(user.Username) ? Visibility.Collapsed : Visibility.Visible;
+            if (user.HasActiveUsername(out string username))
+            {
+                Username.Badge = username;
+                Username.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                Username.Visibility = Visibility.Collapsed;
+            }
+
+            UpdateUsernames(user.Usernames);
 
             Description.Content = user.Type is UserTypeBot ? Strings.Resources.DescriptionPlaceholder : Strings.Resources.UserBio;
 
@@ -367,8 +376,17 @@ namespace Unigram.Controls
 
             Identity.SetStatus(group);
 
-            Username.Badge = $"{group.Username}";
-            Username.Visibility = string.IsNullOrEmpty(group.Username) ? Visibility.Collapsed : Visibility.Visible;
+            if (group.HasActiveUsername(out string username))
+            {
+                Username.Badge = username;
+                Username.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                Username.Visibility = Visibility.Collapsed;
+            }
+
+            UpdateUsernames(group.Usernames);
 
             Location.Visibility = group.HasLocation ? Visibility.Visible : Visibility.Collapsed;
 
@@ -455,6 +473,33 @@ namespace Unigram.Controls
 
             Members.Badge = fullInfo.MemberCount;
             //Members.Visibility = fullInfo.CanGetMembers && group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void UpdateUsernames(Usernames usernames)
+        {
+            if (usernames?.ActiveUsernames.Count > 1)
+            {
+                ActiveUsernames.Inlines.Clear();
+                ActiveUsernames.Inlines.Add(new Run { Text = string.Format(Strings.Resources.UsernameAlso, string.Empty) });
+
+                for (int i = 1; i < usernames.ActiveUsernames.Count; i++)
+                {
+                    if (i > 1)
+                    {
+                        ActiveUsernames.Inlines.Add(new Run { Text = ", " });
+                    }
+
+                    var hyperlink = new Hyperlink();
+                    hyperlink.Inlines.Add(new Run { Text = $"@{usernames.ActiveUsernames[i]}" });
+
+                    ActiveUsernames.Inlines.Add(hyperlink);
+                }
+            }
+            else
+            {
+                ActiveUsernames.Inlines.Clear();
+                ActiveUsernames.Inlines.Add(new Run { Text = Strings.Resources.Username });
+            }
         }
 
         #endregion

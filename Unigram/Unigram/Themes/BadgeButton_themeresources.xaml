@@ -96,36 +96,28 @@
                                    Text="{TemplateBinding Glyph}"
                                    FontFamily="{TemplateBinding FontFamily}" />
 
-                        <ContentPresenter x:Name="ContentPresenter"
-                                          FontSize="{ThemeResource ControlContentThemeFontSize}"
-                                          FontFamily="{ThemeResource ContentControlThemeFontFamily}"
-                                          AutomationProperties.AccessibilityView="Raw"
-                                          ContentTransitions="{TemplateBinding ContentTransitions}"
-                                          Content="{TemplateBinding Badge}"
-                                          ContentTemplate="{TemplateBinding BadgeTemplate}"
-                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                          Padding="0,11,12,12"
-                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                          Grid.Column="1" />
-
-                        <ContentControl x:Name="BadgePresenter"
+                        <ContentControl x:Name="ContentPresenter"
                                         FontSize="{ThemeResource ControlContentThemeFontSize}"
                                         FontFamily="{ThemeResource ContentControlThemeFontFamily}"
-                                        Content="{TemplateBinding Content}"
+                                        AutomationProperties.AccessibilityView="Raw"
+                                        ContentTransitions="{TemplateBinding ContentTransitions}"
+                                        Content="{TemplateBinding Badge}"
+                                        ContentTemplate="{TemplateBinding BadgeTemplate}"
                                         Visibility="{TemplateBinding BadgeVisibility}"
-                                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                        Padding="0,-12,12,12"
                                         IsTabStop="False"
-                                        Grid.Column="1"
-                                        Grid.Row="1">
-                            <ContentControl.ContentTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding}"
-                                               Style="{StaticResource CaptionTextBlockStyle}"
-                                               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
-                                </DataTemplate>
-                            </ContentControl.ContentTemplate>
-                        </ContentControl>
+                                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                        Padding="0,11,12,12"
+                                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                        Grid.Column="1" />
+
+                        <ContentPresenter x:Name="BadgePresenter"
+                                          FontSize="12"
+                                          FontFamily="{ThemeResource ContentControlThemeFontFamily}"
+                                          Content="{TemplateBinding Content}"
+                                          Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                          Padding="0,-12,12,12"
+                                          Grid.Column="1"
+                                          Grid.Row="1" />
 
                         <TextBlock x:Name="Chevron"
                                    x:Load="False"
