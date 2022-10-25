@@ -374,7 +374,7 @@ namespace Unigram.Controls.Cells
 
             if (chat.UnreadMentionCount > 0)
             {
-                builder.Append(Locale.Declension("AccDescrMentionCount", chat.UnreadCount));
+                builder.Append(Locale.Declension("AccDescrMentionCount", chat.UnreadMentionCount));
                 builder.Append(", ");
             }
 
