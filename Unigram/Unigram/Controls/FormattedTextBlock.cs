@@ -156,6 +156,7 @@ namespace Unigram.Controls
                 if (value)
                 {
                     SetText(_clientService, _formattedText?.Text, _formattedText?.Entities, _fontSize);
+                    SetQuery(string.Empty);
                 }
             }
         }
