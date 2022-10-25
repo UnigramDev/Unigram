@@ -519,7 +519,7 @@ namespace Unigram.Views.Popups
                     }
                     else if (result.User != null)
                     {
-                        title.Text = result.User.GetFullName();
+                        title.Text = result.User.FullName();
                     }
 
                     var verified = grid.Children[1] as FrameworkElement;

@@ -3326,9 +3326,8 @@ namespace Unigram.Views
                 var name = title.Inlines[0] as Run;
                 var username = title.Inlines[1] as Run;
 
-                name.Text = user.GetFullName();
-                username.Text = string.IsNullOrEmpty(user.Username) ? string.Empty : $" @{user.Username}";
                 name.Text = user.FullName();
+                username.Text = string.IsNullOrEmpty(user.Username) ? string.Empty : $" @{user.Username}";
 
                 photo.SetUser(ViewModel.ClientService, user, 36);
             }
