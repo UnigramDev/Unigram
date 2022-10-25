@@ -23,6 +23,8 @@ namespace Unigram.Controls
             var results = poll.IsClosed || poll.Options.Any(x => x.IsChosen);
             var correct = poll.Type is PollTypeQuiz quiz && quiz.CorrectOptionId == poll.Options.IndexOf(option);
 
+            var votes = Locale.Declension(poll.Type is PollTypeQuiz ? "Answer" : "Vote", option.VoterCount);
+
             IsThreeState = results;
             IsChecked = results ? null : new bool?(false);
             Tag = option;
@@ -34,7 +36,7 @@ namespace Unigram.Controls
             Percentage.Visibility = results ? Visibility.Visible : Visibility.Collapsed;
             Percentage.Text = $"{option.VotePercentage}%";
 
-            ToolTipService.SetToolTip(Percentage, results ? Locale.Declension(poll.Type is PollTypeQuiz ? "Answer" : "Vote", option.VoterCount) : null);
+            ToolTipService.SetToolTip(Percentage, results ? votes : null);
 
             Text.Text = option.Text;
 
@@ -56,7 +58,14 @@ namespace Unigram.Controls
                 VisualStateManager.GoToState(LayoutRoot, "Normal", false);
             }
 
-            AutomationProperties.SetName(this, option.Text);
+            if (results)
+            {
+                AutomationProperties.SetName(this, $"{option.Text}, {votes}, {option.VotePercentage}%");
+            }
+            else
+            {
+                AutomationProperties.SetName(this, option.Text);
+            }
         }
 
         protected override void OnToggle()

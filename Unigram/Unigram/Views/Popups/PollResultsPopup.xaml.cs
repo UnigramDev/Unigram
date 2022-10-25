@@ -8,6 +8,7 @@ using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Popups
@@ -56,6 +57,8 @@ namespace Unigram.Views.Popups
 
                 content.UpdateUser(_clientService, user, 36);
                 button.Click += User_Click;
+
+                AutomationProperties.SetName(button, user.FullName());
             }
             else if (item is PollResultViewModel option)
             {
