@@ -116,6 +116,9 @@ namespace Unigram.Services
 
             { "show_archive"      , ShortcutCommand.ShowArchive },
 
+            { "set_status"        , ShortcutCommand.SetStatus },
+            { "settings"          , ShortcutCommand.Settings },
+
 			// Shortcuts that have no default values.
 			{ "message"           , ShortcutCommand.JustSendMessage },
             { "message_silently"  , ShortcutCommand.SendSilentMessage },
@@ -158,6 +161,8 @@ namespace Unigram.Services
             { ShortcutCommand.ShowFolderLast , "last_folder" },
 
             { ShortcutCommand.ShowArchive    , "show_archive" },
+            { ShortcutCommand.SetStatus      , "set_status" },
+            { ShortcutCommand.Settings       , "settings" },
         };
 
         #endregion
@@ -429,6 +434,9 @@ namespace Unigram.Services
             Set("ctrl+0", ShortcutCommand.ChatSelf);
 
             Set("ctrl+9", ShortcutCommand.ShowArchive);
+
+            Set("ctrl+shift+y", ShortcutCommand.SetStatus);
+            Set("ctrl+,", ShortcutCommand.Settings);
         }
 
         private async void InitializeCustom()
@@ -733,6 +741,9 @@ namespace Unigram.Services
         JustSendMessage,
         SendSilentMessage,
         ScheduleMessage,
+
+        SetStatus,
+        Settings
 
         //SupportReloadTemplates,
         //SupportToggleMuted,
