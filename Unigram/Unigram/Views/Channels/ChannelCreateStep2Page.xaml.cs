@@ -29,7 +29,10 @@ namespace Unigram.Views.Channels
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            ViewModel.RevokeLinkCommand.Execute(e.ClickedItem);
+            if (e.ClickedItem is Chat chat)
+            {
+
+            }
         }
 
         #region Recycle
@@ -57,7 +60,7 @@ namespace Unigram.Views.Channels
                     if (supergroup != null)
                     {
                         var subtitle = content.Children[2] as TextBlock;
-                        subtitle.Text = MeUrlPrefixConverter.Convert(ViewModel.ClientService, supergroup.Username, true);
+                        subtitle.Text = MeUrlPrefixConverter.Convert(ViewModel.ClientService, supergroup.ActiveUsername(), true);
                     }
                 }
             }
@@ -81,9 +84,11 @@ namespace Unigram.Views.Channels
 
         public void UpdateSupergroup(Chat chat, Supergroup group)
         {
+            var username = group.EditableUsername();
+
             Title = group.IsChannel ? Strings.Resources.ChannelSettingsTitle : Strings.Resources.GroupSettingsTitle;
             Subheader.Header = group.IsChannel ? Strings.Resources.ChannelTypeHeader : Strings.Resources.GroupTypeHeader;
-            Subheader.Footer = group.Username.Length > 0 ? group.IsChannel ? Strings.Resources.ChannelPublicInfo : Strings.Resources.MegaPublicInfo : group.IsChannel ? Strings.Resources.ChannelPrivateInfo : Strings.Resources.MegaPrivateInfo;
+            Subheader.Footer = username.Length > 0 ? group.IsChannel ? Strings.Resources.ChannelPublicInfo : Strings.Resources.MegaPublicInfo : group.IsChannel ? Strings.Resources.ChannelPrivateInfo : Strings.Resources.MegaPrivateInfo;
 
             Public.Content = group.IsChannel ? Strings.Resources.ChannelPublic : Strings.Resources.MegaPublic;
             Private.Content = group.IsChannel ? Strings.Resources.ChannelPrivate : Strings.Resources.MegaPrivate;
@@ -93,15 +98,15 @@ namespace Unigram.Views.Channels
 
 
 
-            ViewModel.Username = group.Username;
-            ViewModel.IsPublic = !string.IsNullOrEmpty(group.Username);
+            ViewModel.Username = username;
+            ViewModel.IsPublic = username.Length > 0;
         }
 
         public void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo)
         {
             ViewModel.InviteLink = fullInfo.InviteLink?.InviteLink;
 
-            if (fullInfo.InviteLink == null && string.IsNullOrEmpty(group.Username))
+            if (fullInfo.InviteLink == null && !group.HasEditableUsername())
             {
                 ViewModel.ClientService.Send(new CreateChatInviteLink(chat.Id, string.Empty, 0, 0, false));
             }

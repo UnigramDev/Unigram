@@ -1,13 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using Rg.DiffUtils;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
-using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Converters;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
+using Unigram.ViewModels.Settings;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -16,20 +16,20 @@ namespace Unigram.ViewModels.Supergroups
     public abstract class SupergroupEditViewModelBase : TLViewModelBase
         , IDelegable<ISupergroupEditDelegate>
         , IHandle
-        //IHandle<UpdateSupergroup>,
-        //IHandle<UpdateSupergroupFullInfo>,
-        //IHandle<UpdateBasicGroup>,
-        //IHandle<UpdateBasicGroupFullInfo>
+    //IHandle<UpdateSupergroup>,
+    //IHandle<UpdateSupergroupFullInfo>,
+    //IHandle<UpdateBasicGroup>,
+    //IHandle<UpdateBasicGroupFullInfo>
     {
         public ISupergroupEditDelegate Delegate { get; set; }
 
         public SupergroupEditViewModelBase(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            AdminedPublicChannels = new MvxObservableCollection<Chat>();
+            _username = new DebouncedProperty<string>(Constants.TypingTimeout, CheckAvailability, UpdateIsValid);
+            Items = new DiffObservableCollection<UsernameInfo>(new UsernameInfoDiffHandler(), new DiffOptions { AllowBatching = false, DetectMoves = true });
 
             SendCommand = new RelayCommand(SendExecute);
-            RevokeLinkCommand = new RelayCommand<Chat>(RevokeLinkExecute);
         }
 
         protected Chat _chat;
@@ -43,14 +43,32 @@ namespace Unigram.ViewModels.Supergroups
         public bool IsPublic
         {
             get => _isPublic;
-            set => Set(ref _isPublic, value);
+            set => SetIsPublic(value);
         }
 
-        protected string _username;
+        private void SetIsPublic(bool value)
+        {
+            if (value && HasTooMuchUsernames)
+            {
+                NavigationService.ShowLimitReached(new PremiumLimitTypeCreatedPublicChatCount());
+                RaisePropertyChanged(nameof(IsPublic));
+            }
+            else
+            {
+                if (ClientService.TryGetSupergroup(_chat, out Supergroup supergroup))
+                {
+                    UpdateUsernames(supergroup.Usernames, Username);
+                }
+
+                Set(ref _isPublic, value, nameof(IsPublic));
+            }
+        }
+
+        private readonly DebouncedProperty<string> _username;
         public string Username
         {
             get => _username;
-            set => Set(ref _username, value);
+            set => _username.Set(value);
         }
 
         protected bool _hasTooMuchUsernames;
@@ -67,7 +85,7 @@ namespace Unigram.ViewModels.Supergroups
             set => Set(ref _inviteLink, value);
         }
 
-        public MvxObservableCollection<Chat> AdminedPublicChannels { get; private set; }
+        public DiffObservableCollection<UsernameInfo> Items { get; private set; }
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
@@ -88,7 +106,7 @@ namespace Unigram.ViewModels.Supergroups
                 var item = ClientService.GetSupergroup(super.SupergroupId);
                 var cache = ClientService.GetSupergroupFull(super.SupergroupId);
 
-                Delegate?.UpdateSupergroup(chat, item);
+                UpdateSupergroup(chat, item);
 
                 if (cache == null)
                 {
@@ -99,7 +117,7 @@ namespace Unigram.ViewModels.Supergroups
                     Delegate?.UpdateSupergroupFullInfo(chat, item, cache);
                 }
 
-                if (string.IsNullOrEmpty(item.Username))
+                if (!item.HasEditableUsername())
                 {
                     LoadUsername(chat.Id);
                 }
@@ -144,7 +162,80 @@ namespace Unigram.ViewModels.Supergroups
 
             if (chat.Type is ChatTypeSupergroup super && super.SupergroupId == update.Supergroup.Id)
             {
-                BeginOnUIThread(() => Delegate?.UpdateSupergroup(chat, update.Supergroup));
+                BeginOnUIThread(() => UpdateSupergroup(chat, update.Supergroup));
+            }
+        }
+
+        protected virtual void UpdateSupergroup(Chat chat, Supergroup supergroup)
+        {
+            Delegate?.UpdateSupergroup(chat, supergroup);
+            UpdateUsernames(supergroup.Usernames, Username);
+        }
+
+        private void UpdateUsernames(Usernames usernames, string editable = null)
+        {
+            if (IsPublic == false)
+            {
+                Items.Clear();
+                return;
+            }
+
+            if (editable != null)
+            {
+                static void ReplaceEditable(IList<string> usernames, string original, string editable)
+                {
+                    for (int i = 0; i < usernames.Count; i++)
+                    {
+                        if (usernames[i] == original)
+                        {
+                            usernames[i] = editable;
+                            break;
+                        }
+                    }
+                }
+
+                usernames ??= new Usernames();
+                ReplaceEditable(usernames.ActiveUsernames, usernames.EditableUsername, editable);
+                ReplaceEditable(usernames.DisabledUsernames, usernames.EditableUsername, editable);
+
+                usernames.EditableUsername = editable;
+            }
+
+            if (usernames?.ActiveUsernames.Count + usernames?.DisabledUsernames.Count > 1)
+            {
+                Items.ReplaceDiff(UsernameInfo.FromUsernames(ClientService, usernames, false));
+            }
+            else
+            {
+                Items.Clear();
+            }
+        }
+
+        public void ReorderUsernames(UsernameInfo username)
+        {
+            if (ClientService.TryGetSupergroup(_chat, out Supergroup supergroup))
+            {
+                var active = supergroup.Usernames?.ActiveUsernames;
+
+                var index = Items.IndexOf(username);
+                if (index >= active.Count)
+                {
+                    UpdateUsernames(supergroup.Usernames, Username);
+                }
+                else
+                {
+                    var order = new List<string>();
+
+                    foreach (var info in Items)
+                    {
+                        if (info.IsActive || info.IsEditable)
+                        {
+                            order.Add(info.Value);
+                        }
+                    }
+
+                    ClientService.Send(new ReorderSupergroupActiveUsernames(supergroup.Id, order));
+                }
             }
         }
 
@@ -213,76 +304,42 @@ namespace Unigram.ViewModels.Supergroups
         private async void LoadUsername(long chatId)
         {
             var response = await ClientService.SendAsync(new CheckChatUsername(chatId, "username"));
-            if (response is CheckChatUsernameResultPublicChatsTooMuch)
-            {
-                HasTooMuchUsernames = true;
-                LoadAdminedPublicChannels();
-            }
-            else
-            {
-                HasTooMuchUsernames = false;
-            }
-        }
-
-        protected async void LoadAdminedPublicChannels()
-        {
-            if (AdminedPublicChannels.Count > 0)
-            {
-                return;
-            }
-
-            var response = await ClientService.SendAsync(new GetCreatedPublicChats());
-            if (response is Telegram.Td.Api.Chats chats)
-            {
-                var result = new List<Chat>();
-
-                foreach (var id in chats.ChatIds)
-                {
-                    var chat = ClientService.GetChat(id);
-                    if (chat != null)
-                    {
-                        result.Add(chat);
-                    }
-                }
-
-                AdminedPublicChannels.ReplaceWith(result);
-            }
-            else if (response is Error error)
-            {
-                Logs.Logger.Error(Logs.LogTarget.API, "channels.getAdminedPublicChannels error " + error);
-            }
+            HasTooMuchUsernames = response is CheckChatUsernameResultPublicChatsTooMuch;
         }
 
         public RelayCommand SendCommand { get; }
         protected abstract void SendExecute();
 
-        public RelayCommand<Chat> RevokeLinkCommand { get; }
-        private async void RevokeLinkExecute(Chat chat)
+        public async void ToggleUsername(string username)
         {
-            if (chat.Type is ChatTypeSupergroup super)
+            if (_chat is not Chat chat || chat.Type is not ChatTypeSupergroup super)
             {
-                var supergroup = ClientService.GetSupergroup(super.SupergroupId);
-                if (supergroup == null)
-                {
-                    return;
-                }
+                return;
+            }
 
-                var dialog = new MessagePopup();
-                dialog.Title = Strings.Resources.AppName;
-                dialog.Message = string.Format(Strings.Resources.RevokeLinkAlert, MeUrlPrefixConverter.Convert(ClientService, supergroup.Username, true), chat.Title);
-                dialog.PrimaryButtonText = Strings.Resources.RevokeButton;
-                dialog.SecondaryButtonText = Strings.Resources.Cancel;
+            var supergroup = ClientService.GetSupergroup(super.SupergroupId);
+            if (supergroup == null)
+            {
+                return;
+            }
 
-                var confirm = await dialog.ShowQueuedAsync();
-                if (confirm == ContentDialogResult.Primary)
-                {
-                    var response = await ClientService.SendAsync(new SetSupergroupUsername(supergroup.Id, string.Empty));
-                    if (response is Ok)
-                    {
-                        HasTooMuchUsernames = false;
-                        AdminedPublicChannels.Clear();
-                    }
-                }
+            var active = supergroup.Usernames != null
+                && supergroup.Usernames.ActiveUsernames.Contains(username);
+
+            var dialog = new MessagePopup();
+            dialog.Title = active
+                ? Strings.Resources.UsernameDeactivateLink
+                : Strings.Resources.UsernameActivateLink;
+            dialog.Message = active
+                ? Strings.Resources.UsernameDeactivateLinkChannelMessage
+                : Strings.Resources.UsernameActivateLinkChannelMessage;
+            dialog.PrimaryButtonText = active ? Strings.Resources.Hide : Strings.Resources.Show;
+            dialog.SecondaryButtonText = Strings.Resources.Cancel;
+
+            var confirm = await dialog.ShowQueuedAsync();
+            if (confirm == ContentDialogResult.Primary)
+            {
+                ClientService.Send(new ToggleSupergroupUsernameIsActive(supergroup.Id, username, !active));
             }
         }
 
@@ -318,7 +375,7 @@ namespace Unigram.ViewModels.Supergroups
             }
 
             var supergroup = ClientService.GetSupergroup(chat);
-            if (supergroup != null && string.Equals(text, supergroup.Username))
+            if (supergroup != null && string.Equals(text, supergroup.EditableUsername()))
             {
                 IsLoading = false;
                 IsAvailable = false;
@@ -351,7 +408,7 @@ namespace Unigram.ViewModels.Supergroups
             else if (response is CheckChatUsernameResultPublicChatsTooMuch)
             {
                 HasTooMuchUsernames = true;
-                LoadAdminedPublicChannels();
+                NavigationService.ShowLimitReached(new PremiumLimitTypeCreatedPublicChatCount());
             }
             else if (response is Error error)
             {
@@ -359,6 +416,8 @@ namespace Unigram.ViewModels.Supergroups
                 IsAvailable = false;
                 ErrorMessage = error.Message;
             }
+
+            RaisePropertyChanged(nameof(Username));
         }
 
         public bool UpdateIsValid(string username)
@@ -373,13 +432,17 @@ namespace Unigram.ViewModels.Supergroups
                 {
                     ErrorMessage = null;
                 }
-                else if (_username.Length < 5)
+                else if (username.Length < 5)
                 {
                     ErrorMessage = Strings.Resources.UsernameInvalidShort;
                 }
-                else if (_username.Length > 32)
+                else if (username.Length > 32)
                 {
                     ErrorMessage = Strings.Resources.UsernameInvalidLong;
+                }
+                else if (username[0] is >= '0' and <= '9')
+                {
+                    ErrorMessage = Strings.Resources.UsernameInvalidStartNumber;
                 }
                 else
                 {
@@ -392,6 +455,12 @@ namespace Unigram.ViewModels.Supergroups
                 ErrorMessage = null;
             }
 
+            if (ClientService.TryGetSupergroup(_chat, out Supergroup supergroup))
+            {
+                UpdateUsernames(supergroup.Usernames, username);
+            }
+
+            //RaisePropertyChanged(nameof(IsVisible));
             return IsValid;
         }
 
@@ -414,7 +483,11 @@ namespace Unigram.ViewModels.Supergroups
 
             for (int i = 0; i < username.Length; i++)
             {
-                if (!MessageHelper.IsValidUsernameSymbol(username[i]))
+                if (i == 0 && char.IsDigit(username[0]))
+                {
+                    return false;
+                }
+                else if (!MessageHelper.IsValidUsernameSymbol(username[i]))
                 {
                     return false;
                 }

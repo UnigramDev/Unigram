@@ -2,8 +2,12 @@
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
+using Unigram.Navigation;
 using Unigram.ViewModels.Delegates;
+using Unigram.ViewModels.Settings;
 using Unigram.ViewModels.Supergroups;
+using Windows.ApplicationModel.DataTransfer;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Supergroups
@@ -16,20 +20,21 @@ namespace Unigram.Views.Supergroups
         {
             InitializeComponent();
             Title = Strings.Resources.ChannelSettings;
-
-            var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => Username.TextChanged += new TextChangedEventHandler(handler));
-            debouncer.Invoked += (s, args) =>
-            {
-                if (ViewModel.UpdateIsValid(Username.Value))
-                {
-                    ViewModel.CheckAvailability(Username.Value);
-                }
-            };
         }
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            ViewModel.RevokeLinkCommand.Execute(e.ClickedItem);
+            if (e.ClickedItem is string username)
+            {
+                if (ViewModel.Usernames?.EditableUsername == username)
+                {
+                    Username.Focus(FocusState.Keyboard);
+                }
+                else
+                {
+                    ViewModel.ToggleUsername(username);
+                }
+            }
         }
 
         #region Recycle
@@ -42,34 +47,56 @@ namespace Unigram.Views.Supergroups
             }
 
             var content = args.ItemContainer.ContentTemplateRoot as Grid;
-            var chat = args.Item as Chat;
+            
+            if (args.Item is string username)
+            {
+                var active = ViewModel.Usernames != null
+                    && ViewModel.Usernames.ActiveUsernames.Contains(username);
 
-            if (args.Phase == 0)
-            {
+                var badge = content.Children[0] as Border;
                 var title = content.Children[1] as TextBlock;
-                title.Text = ViewModel.ClientService.GetTitle(chat);
+                var subtitle = content.Children[2] as TextBlock;
+                var handle = content.Children[3] as TextBlock;
+
+                badge.Style = BootStrapper.Current.Resources[active ? "AccentCaptionBorderStyle" : "InfoCaptionBorderStyle"] as Style;
+                subtitle.Style = BootStrapper.Current.Resources[active ? "AccentCaptionTextBlockStyle" : "InfoCaptionTextBlockStyle"] as Style;
+
+                title.Text = MeUrlPrefixConverter.Convert(ViewModel.ClientService, username, true);
+                subtitle.Text = active
+                    ? Strings.Resources.UsernameLinkActive
+                    : Strings.Resources.UsernameLinkInactive;
+
+                handle.Visibility = active ? Visibility.Visible : Visibility.Collapsed;
             }
-            else if (args.Phase == 1)
+            else if (args.Item is Chat chat)
             {
-                if (chat.Type is ChatTypeSupergroup super)
+                if (args.Phase == 0)
                 {
-                    var supergroup = ViewModel.ClientService.GetSupergroup(super.SupergroupId);
-                    if (supergroup != null)
+                    var title = content.Children[1] as TextBlock;
+                    title.Text = ViewModel.ClientService.GetTitle(chat);
+                }
+                else if (args.Phase == 1)
+                {
+                    if (chat.Type is ChatTypeSupergroup super)
                     {
-                        var subtitle = content.Children[2] as TextBlock;
-                        subtitle.Text = MeUrlPrefixConverter.Convert(ViewModel.ClientService, supergroup.Username, true);
+                        var supergroup = ViewModel.ClientService.GetSupergroup(super.SupergroupId);
+                        if (supergroup != null)
+                        {
+                            var subtitle = content.Children[2] as TextBlock;
+                            subtitle.Text = MeUrlPrefixConverter.Convert(ViewModel.ClientService, supergroup.ActiveUsername(), true);
+                        }
                     }
                 }
-            }
-            else if (args.Phase == 2)
-            {
-                var photo = content.Children[0] as ProfilePicture;
-                photo.SetChat(ViewModel.ClientService, chat, 36);
-            }
+                else if (args.Phase == 2)
+                {
+                    var photo = content.Children[0] as ProfilePicture;
+                    photo.SetChat(ViewModel.ClientService, chat, 36);
+                }
 
-            if (args.Phase < 2)
-            {
-                args.RegisterUpdateCallback(OnContainerContentChanging);
+                if (args.Phase < 2)
+                {
+                    args.RegisterUpdateCallback(OnContainerContentChanging);
+                }
             }
 
             args.Handled = true;
@@ -83,7 +110,13 @@ namespace Unigram.Views.Supergroups
         {
             Title = group.IsChannel ? Strings.Resources.ChannelSettingsTitle : Strings.Resources.GroupSettingsTitle;
             Subheader.Header = group.IsChannel ? Strings.Resources.ChannelTypeHeader : Strings.Resources.GroupTypeHeader;
-            Subheader.Footer = group.Username.Length > 0 ? group.IsChannel ? Strings.Resources.ChannelPublicInfo : Strings.Resources.MegaPublicInfo : group.IsChannel ? Strings.Resources.ChannelPrivateInfo : Strings.Resources.MegaPrivateInfo;
+            Subheader.Footer = group.Usernames?.EditableUsername.Length > 0
+                ? group.IsChannel
+                ? Strings.Resources.ChannelPublicInfo
+                : Strings.Resources.MegaPublicInfo
+                : group.IsChannel
+                ? Strings.Resources.ChannelPrivateInfo
+                : Strings.Resources.MegaPrivateInfo;
 
             Public.Content = group.IsChannel ? Strings.Resources.ChannelPublic : Strings.Resources.MegaPublic;
             Private.Content = group.IsChannel ? Strings.Resources.ChannelPrivate : Strings.Resources.MegaPrivate;
@@ -91,17 +124,18 @@ namespace Unigram.Views.Supergroups
             UsernameHelp.Footer = group.IsChannel ? Strings.Resources.ChannelUsernameHelp : Strings.Resources.MegaUsernameHelp;
             PrivateLinkHelp.Footer = group.IsChannel ? Strings.Resources.ChannelPrivateLinkHelp : Strings.Resources.MegaPrivateLinkHelp;
 
+            JoinToSendMessages.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
             RestrictSavingContent.Footer = group.IsChannel ? Strings.Resources.RestrictSavingContentInfoChannel : Strings.Resources.RestrictSavingContentInfoGroup;
 
-            ViewModel.Username = group.Username;
-            ViewModel.IsPublic = !string.IsNullOrEmpty(group.Username);
+            ViewModel.Username = group.Usernames?.EditableUsername ?? string.Empty;
+            ViewModel.IsPublic = group.Usernames?.EditableUsername.Length > 0;
         }
 
         public void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo)
         {
             ViewModel.InviteLink = fullInfo.InviteLink?.InviteLink;
 
-            if (fullInfo.InviteLink == null && string.IsNullOrEmpty(group.Username))
+            if (fullInfo.InviteLink == null && string.IsNullOrEmpty(group.Usernames?.EditableUsername))
             {
                 ViewModel.ClientService.Send(new CreateChatInviteLink(chat.Id, string.Empty, 0, 0, false));
             }
@@ -119,7 +153,8 @@ namespace Unigram.Views.Supergroups
             UsernameHelp.Footer = Strings.Resources.MegaUsernameHelp;
             PrivateLinkHelp.Footer = Strings.Resources.MegaPrivateLinkHelp;
 
-
+            JoinToSendMessages.Visibility = Visibility.Visible;
+            RestrictSavingContent.Footer = Strings.Resources.RestrictSavingContentInfoGroup;
 
             ViewModel.Username = string.Empty;
             ViewModel.IsPublic = false;
@@ -147,6 +182,11 @@ namespace Unigram.Views.Supergroups
 
         #region Binding
 
+        private bool ConvertHeaderLoad(int count)
+        {
+            return count != 0;
+        }
+
         private string ConvertAvailable(string username)
         {
             return string.Format(Strings.Resources.LinkAvailable, username);
@@ -169,5 +209,28 @@ namespace Unigram.Views.Supergroups
 
         #endregion
 
+        private void OnDragItemsStarting(object sender, DragItemsStartingEventArgs e)
+        {
+            if (e.Items.Count == 1 && e.Items[0] is UsernameInfo username && (username.IsActive || username.IsEditable))
+            {
+                ScrollingHost.CanReorderItems = true;
+                e.Cancel = false;
+            }
+            else
+            {
+                ScrollingHost.CanReorderItems = false;
+                e.Cancel = true;
+            }
+        }
+
+        private void OnDragItemsCompleted(ListViewBase sender, DragItemsCompletedEventArgs args)
+        {
+            ScrollingHost.CanReorderItems = false;
+
+            if (args.DropResult == DataPackageOperation.Move && args.Items.Count == 1 && args.Items[0] is UsernameInfo username)
+            {
+                ViewModel.ReorderUsernames(username);
+            }
+        }
     }
 }

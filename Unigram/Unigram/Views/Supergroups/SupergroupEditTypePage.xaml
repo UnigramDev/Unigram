@@ -3,6 +3,8 @@
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:local="using:Unigram.Views"
                   xmlns:controls="using:Unigram.Controls"
+                  xmlns:cells="using:Unigram.Controls.Cells"
+                  xmlns:viewModels="using:Unigram.ViewModels.Settings"
                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                   mc:Ignorable="d">
@@ -22,134 +24,123 @@
     </local:HostedPage.Footer>
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
-        <controls:HeaderedControl x:Name="Subheader"
-                                  Header="{CustomResource ChannelTypeHeader}"
-                                  Footer="{x:Bind ConvertFooter(ViewModel.IsPublic), Mode=OneWay}">
-            <RadioButton x:Name="Public"
-                         Content="{CustomResource ChannelPublic}"
-                         IsChecked="{x:Bind ViewModel.IsPublic, Mode=TwoWay}"
-                         Style="{StaticResource SettingsRadioButtonStyle}" />
+        <controls:TableListView x:Name="ScrollingHost"
+                                ItemsSource="{x:Bind ViewModel.Items}"
+                                ItemClick="ListView_ItemClick"
+                                IsItemClickEnabled="True"
+                                SelectionMode="None"
+                                VerticalContentAlignment="Top"
+                                DragItemsStarting="OnDragItemsStarting"
+                                DragItemsCompleted="OnDragItemsCompleted"
+                                CanReorderItems="True"
+                                CanDragItems="True"
+                                AllowDrop="True">
+            <ListView.Header>
+                <StackPanel>
+                    <controls:HeaderedControl x:Name="Subheader"
+                                              Header="{CustomResource ChannelTypeHeader}"
+                                              Footer="{x:Bind ConvertFooter(ViewModel.IsPublic), Mode=OneWay}">
+                        <RadioButton x:Name="Public"
+                                     Content="{CustomResource ChannelPublic}"
+                                     IsChecked="{x:Bind ViewModel.IsPublic, Mode=TwoWay}"
+                                     Style="{StaticResource SettingsRadioButtonStyle}" />
 
-            <RadioButton x:Name="Private"
-                         Content="{CustomResource ChannelPrivate}"
-                         IsChecked="{x:Bind ViewModel.IsPublic, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
-                         Style="{StaticResource SettingsRadioButtonStyle}" />
-        </controls:HeaderedControl>
+                        <RadioButton x:Name="Private"
+                                     Content="{CustomResource ChannelPrivate}"
+                                     IsChecked="{x:Bind ViewModel.IsPublic, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
+                                     Style="{StaticResource SettingsRadioButtonStyle}" />
+                    </controls:HeaderedControl>
 
-        <Grid Visibility="{x:Bind ViewModel.IsPublic, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-              Grid.Row="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition />
-            </Grid.RowDefinitions>
-            <controls:HeaderedControl x:Name="UsernameHelp"
-                                      Header="{CustomResource ChannelLinkTitle}"
-                                      Footer="{CustomResource ChannelUsernameHelp}"
-                                      Visibility="{x:Bind ViewModel.HasTooMuchUsernames, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}">
-                <controls:PrefixTextBox x:Name="Username"
-                                        Value="{x:Bind ViewModel.Username, Mode=TwoWay}"
-                                        Margin="12,8,12,8" />
+                    <Grid Visibility="{x:Bind ViewModel.IsPublic, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                          Grid.Row="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <controls:HeaderedControl x:Name="UsernameHelp"
+                                                  Header="{CustomResource ChannelLinkTitle}"
+                                                  Footer="{CustomResource ChannelUsernameHelp}"
+                                                  Visibility="{x:Bind ViewModel.HasTooMuchUsernames, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}">
+                            <controls:PrefixTextBox x:Name="Username"
+                                                    Value="{x:Bind ViewModel.Username, Mode=TwoWay}"
+                                                    Padding="12,11,6,12" />
 
-                <TextBlock Visibility="{x:Bind ViewModel.IsAvailable, Mode=OneWay}"
-                           Text="{x:Bind ConvertAvailable(ViewModel.Username), Mode=OneWay}"
-                           Foreground="Green"
-                           Margin="12,0,0,8" />
-                <TextBlock Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
-                           Text="{CustomResource LinkChecking}"
-                           Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                           Margin="12,0,0,8" />
-                <TextBlock Visibility="{x:Bind ViewModel.ErrorMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}"
-                           Text="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}"
-                           Foreground="Red"
-                           Margin="12,0,0,8" />
-            </controls:HeaderedControl>
-
-            <controls:TableListView Visibility="{x:Bind ViewModel.HasTooMuchUsernames, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                    ItemsSource="{x:Bind ViewModel.AdminedPublicChannels}"
-                                    IsItemClickEnabled="True"
-                                    ItemClick="ListView_ItemClick"
-                                    ContainerContentChanging="OnContainerContentChanging"
-                                    SelectionMode="None"
-                                    Grid.Row="1">
-                <ListView.Header>
-                    <Border>
-                        <TextBlock Text="{CustomResource ChangePublicLimitReached}"
-                                   Foreground="#FF0000"
-                                   Margin="24,12,24,6"
-                                   Style="{StaticResource CaptionTextBlockStyle}" />
-                    </Border>
-                </ListView.Header>
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <Grid Background="{ThemeResource SettingsItemBackground}"
-                              BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                              Padding="12,6">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <controls:ProfilePicture Width="36"
-                                                     Height="36"
-                                                     Margin="0,0,12,0"
-                                                     IsHitTestVisible="False"
-                                                     Grid.RowSpan="2" />
-
-                            <TextBlock Grid.Column="1"
-                                       VerticalAlignment="Bottom"
-                                       Grid.Row="0" />
-                            <TextBlock Style="{StaticResource CaptionTextBlockStyle}"
+                            <TextBlock Visibility="{x:Bind ViewModel.IsAvailable, Mode=OneWay}"
+                                       Text="{x:Bind ConvertAvailable(ViewModel.Username), Mode=OneWay}"
+                                       Foreground="Green"
+                                       Margin="12,0,0,8" />
+                            <TextBlock Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
+                                       Text="{CustomResource LinkChecking}"
                                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                       VerticalAlignment="Top"
-                                       TextTrimming="CharacterEllipsis"
-                                       TextWrapping="NoWrap"
-                                       Grid.Column="1"
-                                       Grid.Row="1"
-                                       MaxLines="1" />
-                        </Grid>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </controls:TableListView>
-        </Grid>
+                                       Margin="12,0,0,8" />
+                            <TextBlock Visibility="{x:Bind ViewModel.ErrorMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}"
+                                       Text="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}"
+                                       Foreground="Red"
+                                       Margin="12,0,0,8" />
+                        </controls:HeaderedControl>
+                    </Grid>
 
-        <controls:HeaderedControl x:Name="PrivateLinkHelp"
-                                  Header="{CustomResource ChannelInviteLinkTitle}"
-                                  Footer="{CustomResource ChannelPrivateLinkHelp}"
-                                  Visibility="{x:Bind ViewModel.IsPublic, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
-                                  Grid.Row="1">
-            <TextBox Text="{x:Bind ViewModel.InviteLink, Mode=OneWay}"
-                     IsReadOnly="True"
-                     Margin="12,8,12,8" />
-        </controls:HeaderedControl>
+                    <controls:HeaderedControl x:Name="PrivateLinkHelp"
+                                              Header="{CustomResource ChannelInviteLinkTitle}"
+                                              Footer="{CustomResource ChannelPrivateLinkHelp}"
+                                              Visibility="{x:Bind ViewModel.IsPublic, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
+                                              Grid.Row="1">
+                        <TextBox Text="{x:Bind ViewModel.InviteLink, Mode=OneWay}"
+                                 IsReadOnly="True"
+                                 Padding="12,11,6,12" />
+                    </controls:HeaderedControl>
 
-        <controls:HeaderedControl x:Name="JoinToSendMessages"
-                                  Header="{CustomResource ChannelSettingsJoinTitle}"
-                                  Footer="{x:Bind ConvertJoinToSendMessages(ViewModel.JoinToSendMessages), Mode=OneWay}"
-                                  Grid.Row="2">
-            <CheckBox IsChecked="{x:Bind ViewModel.JoinToSendMessages, Mode=TwoWay}"
-                      Content="{CustomResource ChannelSettingsJoinToSend}"
-                      Style="{StaticResource SettingsCheckBoxStyle}" />
-            <CheckBox IsChecked="{x:Bind ViewModel.JoinByRequest, Mode=TwoWay}"
-                      Visibility="{x:Bind ViewModel.JoinToSendMessages, Mode=OneWay}"
-                      Content="{CustomResource ChannelSettingsJoinRequest}"
-                      Style="{StaticResource SettingsCheckBoxStyle}" />
-        </controls:HeaderedControl>
+                    <TextBlock x:Name="UsernamesHeader"
+                               x:Load="{x:Bind ConvertHeaderLoad(ViewModel.Items.Count), Mode=OneWay}"
+                               Text="{CustomResource UsernamesChannelHeader}"
+                               Style="{StaticResource BaseTextBlockStyle}"
+                               Margin="24,16,0,8" />
+                </StackPanel>
+            </ListView.Header>
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="viewModels:UsernameInfo">
+                    <cells:UsernameInfoCell Value="{x:Bind Value, Mode=OneWay}"
+                                            DisplayValue="{x:Bind DisplayValue, Mode=OneWay}"
+                                            IsActive="{x:Bind IsActive, Mode=OneWay}"
+                                            Padding="12,6"
+                                            Background="{ThemeResource SettingsItemBackground}"
+                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.Footer>
+                <StackPanel Margin="0,0,0,32">
+                    <TextBlock x:Name="UsernamesFooter"
+                               x:Load="{x:Bind ConvertHeaderLoad(ViewModel.Items.Count), Mode=OneWay}"
+                               Text="{CustomResource UsernamesChannelHelp}"
+                               Style="{StaticResource InfoCaptionTextBlockStyle}"
+                               Margin="24,8,16,8" />
 
-        <controls:HeaderedControl x:Name="RestrictSavingContent"
-                                  Header="{CustomResource SavingContentTitle}"
-                                  Grid.Row="3">
-            <CheckBox IsChecked="{x:Bind ViewModel.HasProtectedContent, Mode=TwoWay}"
-                      Content="{CustomResource RestrictSavingContent}"
-                      Style="{StaticResource SettingsCheckBoxStyle}" />
-        </controls:HeaderedControl>
+                    <controls:HeaderedControl x:Name="JoinToSendMessages"
+                                              Header="{CustomResource ChannelSettingsJoinTitle}"
+                                              Footer="{x:Bind ConvertJoinToSendMessages(ViewModel.JoinToSendMessages), Mode=OneWay}">
+                        <CheckBox IsChecked="{x:Bind ViewModel.JoinToSendMessages, Mode=TwoWay}"
+                                  Content="{CustomResource ChannelSettingsJoinToSend}"
+                                  Style="{StaticResource SettingsCheckBoxStyle}" />
+                        <CheckBox IsChecked="{x:Bind ViewModel.JoinByRequest, Mode=TwoWay}"
+                                  Visibility="{x:Bind ViewModel.JoinToSendMessages, Mode=OneWay}"
+                                  Content="{CustomResource ChannelSettingsJoinRequest}"
+                                  Style="{StaticResource SettingsCheckBoxStyle}" />
+                    </controls:HeaderedControl>
+
+                    <controls:HeaderedControl x:Name="RestrictSavingContent"
+                                              Header="{CustomResource SavingContentTitle}">
+                        <CheckBox IsChecked="{x:Bind ViewModel.HasProtectedContent, Mode=TwoWay}"
+                                  Content="{CustomResource RestrictSavingContent}"
+                                  Style="{StaticResource SettingsCheckBoxStyle}" />
+                    </controls:HeaderedControl>
+                </StackPanel>
+            </ListView.Footer>
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ItemsStackPanel VerticalAlignment="Top" />
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+
+        </controls:TableListView>
     </Grid>
 </local:HostedPage>

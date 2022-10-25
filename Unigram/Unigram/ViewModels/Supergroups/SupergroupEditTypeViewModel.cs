@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Telegram.Td.Api;
+using Unigram.Common;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Windows.UI.Xaml.Navigation;
@@ -34,6 +35,13 @@ namespace Unigram.ViewModels.Supergroups
             set => Set(ref _hasProtectedContent, value);
         }
 
+        private Usernames _usernames;
+        public Usernames Usernames
+        {
+            get => _usernames;
+            set => Set(ref _usernames, value);
+        }
+
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             await base.OnNavigatedToAsync(parameter, mode, state);
@@ -59,7 +67,7 @@ namespace Unigram.ViewModels.Supergroups
                 await ClientService.SendAsync(new ToggleChatHasProtectedContent(Chat.Id, HasProtectedContent));
             }
 
-            var username = _isPublic ? (_username?.Trim() ?? string.Empty) : string.Empty;
+            var username = _isPublic ? (Username?.Trim() ?? string.Empty) : string.Empty;
 
             // If we're editing a basic group and the user wants to set an username to it,
             // then we need to upgrade it to a supergroup first.
@@ -93,7 +101,7 @@ namespace Unigram.ViewModels.Supergroups
                     ClientService.Send(new ToggleSupergroupJoinByRequest(item.Id, _joinByRequest));
                 }
 
-                if (!string.Equals(username, item.Username))
+                if (!string.Equals(username, item.EditableUsername()))
                 {
                     var response = await ClientService.SendAsync(new SetSupergroupUsername(item.Id, username));
                     if (response is Error error)
@@ -101,7 +109,7 @@ namespace Unigram.ViewModels.Supergroups
                         if (error.TypeEquals(ErrorType.CHANNELS_ADMIN_PUBLIC_TOO_MUCH))
                         {
                             HasTooMuchUsernames = true;
-                            LoadAdminedPublicChannels();
+                            NavigationService.ShowLimitReached(new PremiumLimitTypeCreatedPublicChatCount());
                         }
                         // TODO:
 

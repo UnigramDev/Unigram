@@ -30,9 +30,9 @@ namespace Unigram.ViewModels.Channels
                     return;
                 }
 
-                var username = _isPublic ? _username?.Trim() ?? string.Empty : string.Empty;
+                var username = _isPublic ? Username?.Trim() ?? string.Empty : string.Empty;
 
-                if (!string.Equals(username, item.Username))
+                if (!string.Equals(username, item.EditableUsername()))
                 {
                     var response = await ClientService.SendAsync(new SetSupergroupUsername(item.Id, username));
                     if (response is Error error)
@@ -40,7 +40,7 @@ namespace Unigram.ViewModels.Channels
                         if (error.TypeEquals(ErrorType.CHANNELS_ADMIN_PUBLIC_TOO_MUCH))
                         {
                             HasTooMuchUsernames = true;
-                            LoadAdminedPublicChannels();
+                            NavigationService.ShowLimitReached(new PremiumLimitTypeCreatedPublicChatCount());
                         }
                         // TODO:
 

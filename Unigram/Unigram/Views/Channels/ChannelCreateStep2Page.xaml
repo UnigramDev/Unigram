@@ -68,60 +68,6 @@
                                Foreground="Red"
                                Margin="12,0,0,8" />
                 </controls:HeaderedControl>
-
-                <controls:TableListView Visibility="{x:Bind ViewModel.HasTooMuchUsernames, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                        ItemsSource="{x:Bind ViewModel.AdminedPublicChannels}"
-                                        IsItemClickEnabled="True"
-                                        ItemClick="ListView_ItemClick"
-                                        ContainerContentChanging="OnContainerContentChanging"
-                                        SelectionMode="None"
-                                        Grid.Row="1">
-                    <ListView.Header>
-                        <Border MaxWidth="640">
-                            <TextBlock Text="{CustomResource ChangePublicLimitReached}"
-                                       Foreground="#FF0000"
-                                       Margin="12,12,12,6"
-                                       Style="{StaticResource CaptionTextBlockStyle}" />
-                        </Border>
-                    </ListView.Header>
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Margin="0,6">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition />
-                                </Grid.ColumnDefinitions>
-                                <controls:ProfilePicture Width="36"
-                                                         Height="36"
-                                                         Margin="0,0,12,0"
-                                                         IsHitTestVisible="False"
-                                                         Grid.RowSpan="2" />
-
-                                <TextBlock Grid.Column="1"
-                                           VerticalAlignment="Bottom"
-                                           Grid.Row="0" />
-                                <TextBlock Style="{StaticResource CaptionTextBlockStyle}"
-                                           Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                           VerticalAlignment="Top"
-                                           TextTrimming="CharacterEllipsis"
-                                           TextWrapping="NoWrap"
-                                           Grid.Column="1"
-                                           Grid.Row="1"
-                                           MaxLines="1" />
-                            </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="HorizontalContentAlignment"
-                                    Value="Stretch" />
-                        </Style>
-                    </ListView.ItemContainerStyle>
-                </controls:TableListView>
             </Grid>
 
             <controls:HeaderedControl x:Name="PrivateLinkHelp"
