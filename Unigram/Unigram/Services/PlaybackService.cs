@@ -258,12 +258,12 @@ namespace Unigram.Services
                 }
                 catch
                 {
-                    SetProperties(item.Title, item.Artist);
+                    SetProperties(item.Title, item.Performer);
                 }
             }
             else
             {
-                SetProperties(item.Title, item.Artist);
+                SetProperties(item.Title, item.Performer);
             }
 
             transport.DisplayUpdater.Update();
@@ -589,18 +589,15 @@ namespace Unigram.Services
 
             if (message.Content is MessageAudio audio)
             {
-                var performer = string.IsNullOrEmpty(audio.Audio.Performer) ? null : audio.Audio.Performer;
-                var title = string.IsNullOrEmpty(audio.Audio.Title) ? null : audio.Audio.Title;
-
-                if (performer == null && title == null)
+                if (string.IsNullOrEmpty(audio.Audio.Performer) || string.IsNullOrEmpty(audio.Audio.Title))
                 {
                     item.Title = audio.Audio.FileName;
-                    item.Artist = string.Empty;
+                    item.Performer = string.Empty;
                 }
                 else
                 {
-                    item.Title = string.IsNullOrEmpty(audio.Audio.Title) ? Strings.Resources.AudioUnknownTitle : audio.Audio.Title;
-                    item.Artist = string.IsNullOrEmpty(audio.Audio.Performer) ? Strings.Resources.AudioUnknownArtist : audio.Audio.Performer;
+                    item.Title = audio.Audio.Title;
+                    item.Performer = audio.Audio.Performer;
                 }
             }
 
@@ -726,7 +723,7 @@ namespace Unigram.Services
         public File File { get; set; }
 
         public string Title { get; set; }
-        public string Artist { get; set; }
+        public string Performer { get; set; }
 
         public bool CanChangePlaybackRate { get; set; }
 
