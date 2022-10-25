@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using Unigram.Common;
-using Unigram.Native;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Services;
@@ -28,7 +27,6 @@ namespace Unigram.Controls
     public class OverlayPage : ContentControl, INavigablePage
     {
         private ApplicationView _applicationView;
-        private Rect? _displayRegion;
 
         private Popup _popupHost;
 
@@ -114,46 +112,9 @@ namespace Unigram.Controls
             TLWindowContext.Current.UpdateTitleBar();
         }
 
-        public bool IsOpen
-        {
-            get => _popupHost?.IsOpen ?? false;
-            set
-            {
-                if (value)
-                {
-                    ShowAsync();
-                }
-                else
-                {
-                    Hide();
-                }
-            }
-        }
-
         public bool IsConstrainedToRootBounds => _popupHost?.IsConstrainedToRootBounds ?? !CanUnconstrainFromRootBounds;
 
-        public bool CanUnconstrainFromRootBounds
-        {
-            get
-            {
-                if (SettingsService.Current.FullScreenGallery)
-                {
-                    if (_displayRegion != null)
-                    {
-                        return true;
-                    }
-
-                    var region = ScreenshotManager.GetWorkingArea();
-                    if (region.Width > 0 && region.Height > 0)
-                    {
-                        _displayRegion = region;
-                        return true;
-                    }
-                }
-
-                return false;
-            }
-        }
+        public bool CanUnconstrainFromRootBounds => SettingsService.Current.FullScreenGallery;
 
         public async Task<ContentDialogResult> ShowAsync()
         {
@@ -197,17 +158,10 @@ namespace Unigram.Controls
             //    await Task.Delay(200);
             //}
 
-            if (CanUnconstrainFromRootBounds && _displayRegion is Rect region)
-            {
-                DisplayRegion_Changed(region, null);
-            }
-            else
-            {
-                _applicationView = ApplicationView.GetForCurrentView();
-                OnVisibleBoundsChanged(_applicationView, null);
+            _applicationView = ApplicationView.GetForCurrentView();
+            OnVisibleBoundsChanged(_applicationView, null);
 
-                Padding = new Thickness(0, 40, 0, 0);
-            }
+            Padding = new Thickness(0, 40, 0, 0);
 
             _closing = false;
             _popupHost.IsOpen = true;

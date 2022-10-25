@@ -337,6 +337,12 @@ namespace Unigram.Controls.Gallery
                 var applicationView = ApplicationView.GetForCurrentView();
 
                 _wasFullScreen = applicationView.IsFullScreenMode;
+
+                if (CanUnconstrainFromRootBounds && !_wasFullScreen)
+                {
+                    applicationView.TryEnterFullScreenMode();
+                }
+
                 applicationView.VisibleBoundsChanged += OnVisibleBoundsChanged;
                 OnVisibleBoundsChanged(applicationView, null);
 
