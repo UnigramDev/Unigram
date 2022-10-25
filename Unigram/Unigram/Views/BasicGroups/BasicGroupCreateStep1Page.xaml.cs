@@ -1,5 +1,4 @@
-﻿using System;
-using Telegram.Td.Api;
+﻿using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.ViewModels.BasicGroups;
@@ -70,32 +69,21 @@ namespace Unigram.Views.BasicGroups
 
         #endregion
 
-        private void OnElementPrepared(Microsoft.UI.Xaml.Controls.ItemsRepeater sender, Microsoft.UI.Xaml.Controls.ItemsRepeaterElementPreparedEventArgs args)
+        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
-            var button = args.Element as Button;
-            var content = button.Content as Grid;
+            if (args.InRecycleQueue)
+            {
+                return;
+            }
 
-            var chat = button.DataContext as Chat;
+            var content = args.ItemContainer.ContentTemplateRoot as Grid;
+            var chat = args.Item as Chat;
 
             var title = content.Children[1] as TextBlock;
             title.Text = ViewModel.ClientService.GetTitle(chat);
 
-            //if (ViewModel.ClientService.TryGetSupergroup(chat, out Supergroup supergroup))
-            //{
-            //    var subtitle = content.Children[2] as TextBlock;
-            //    subtitle.Text = string.Format("{0}, {1}", BindConvert.Distance(nearby.Distance), Locale.Declension("Members", supergroup.MemberCount));
-            //}
-            //else
-            //{
-            //    var subtitle = content.Children[2] as TextBlock;
-            //    subtitle.Text = BindConvert.Distance(nearby.Distance);
-            //}
-
             var photo = content.Children[0] as ProfilePicture;
             photo.SetChat(ViewModel.ClientService, chat, 36);
-
-            //button.Command = ViewModel.OpenChatCommand;
-            //button.CommandParameter = nearby;
         }
     }
 }

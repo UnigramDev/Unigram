@@ -24,9 +24,10 @@
     </local:HostedPage.Footer>
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
-        <muxc:ItemsRepeaterScrollHost>
-            <ScrollViewer VerticalScrollBarVisibility="Auto"
-                          VerticalScrollMode="Auto">
+        <controls:TableListView ItemsSource="{x:Bind ViewModel.Items}"
+                                ContainerContentChanging="OnContainerContentChanging"
+                                SelectionMode="None">
+            <ListView.Header>
                 <StackPanel>
                     <controls:HeaderedControl>
                         <Grid Background="{ThemeResource SettingsItemBackground}"
@@ -77,36 +78,31 @@
                                               Command="{x:Bind ViewModel.AddCommand}"
                                               Style="{StaticResource GlyphBadgeButtonStyle}"
                                               Glyph="&#xE8FA;" />
-
-                        <muxc:ItemsRepeater Layout="{StaticResource ThreadStackLayout}"
-                                            ItemsSource="{x:Bind ViewModel.Items}"
-                                            ElementPrepared="OnElementPrepared">
-                            <muxc:ItemsRepeater.ItemTemplate>
-                                <DataTemplate>
-                                    <Button Style="{StaticResource EmptyButtonStyle}">
-                                        <Grid Margin="12,6">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition />
-                                            </Grid.ColumnDefinitions>
-                                            <controls:ProfilePicture IsHitTestVisible="False"
-                                                                     Width="36"
-                                                                     Height="36"
-                                                                     Margin="0,0,12,0" />
-                                            <TextBlock VerticalAlignment="Center"
-                                                       TextWrapping="NoWrap"
-                                                       TextTrimming="CharacterEllipsis"
-                                                       FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                                       Style="{StaticResource BodyTextBlockStyle}"
-                                                       Grid.Column="1" />
-                                        </Grid>
-                                    </Button>
-                                </DataTemplate>
-                            </muxc:ItemsRepeater.ItemTemplate>
-                        </muxc:ItemsRepeater>
                     </controls:HeaderedControl>
                 </StackPanel>
-            </ScrollViewer>
-        </muxc:ItemsRepeaterScrollHost>
+            </ListView.Header>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Background="{ThemeResource SettingsItemBackground}"
+                          BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                          Padding="12,6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <controls:ProfilePicture IsHitTestVisible="False"
+                                                 Width="36"
+                                                 Height="36"
+                                                 Margin="0,0,12,0" />
+                        <TextBlock VerticalAlignment="Center"
+                                   TextWrapping="NoWrap"
+                                   TextTrimming="CharacterEllipsis"
+                                   FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                   Style="{StaticResource BodyTextBlockStyle}"
+                                   Grid.Column="1" />
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </controls:TableListView>
     </Grid>
 </local:HostedPage>
