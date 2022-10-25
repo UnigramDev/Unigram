@@ -123,6 +123,18 @@ namespace Unigram.Controls.Messages
                     }
                     else if (step.Status == DiffStatus.Remove && step.OldStartIndex < Children.Count)
                     {
+                        if (step.Items[0].OldValue is MessageReaction oldReaction)
+                        {
+                            if (oldReaction.Type is ReactionTypeEmoji oldEmoji)
+                            {
+                                _reactions.Remove(oldEmoji.Emoji);
+                            }
+                            else if (oldReaction.Type is ReactionTypeCustomEmoji oldCustomEmoji)
+                            {
+                                _customReactions.Remove(oldCustomEmoji.CustomEmojiId);
+                            }
+                        }
+
                         Children.RemoveAt(step.OldStartIndex);
                     }
                 }
