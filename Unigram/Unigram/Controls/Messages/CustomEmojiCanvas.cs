@@ -436,7 +436,7 @@ namespace Unigram.Controls.Messages
             }
         }
 
-        public void Release(long customEmojiId, int hash)
+        public async void Release(long customEmojiId, int hash)
         {
             if (_cache.TryGetValue(customEmojiId, out EmojiRenderer reference))
             {
@@ -449,7 +449,7 @@ namespace Unigram.Controls.Messages
                 if (reference.IsAlive is false)
                 {
                     _cache.TryRemove(customEmojiId, out _);
-                    reference.Dispose();
+                    await reference.DisposeAsync();
                 }
             }
         }
@@ -751,14 +751,22 @@ namespace Unigram.Controls.Messages
             return null;
         }
 
-        public void Dispose()
+        public async Task DisposeAsync()
         {
+            await _nextFrameLock.WaitAsync();
+
             if (_animation is LottieAnimation lottie && !lottie.IsCaching)
             {
                 lottie.Dispose();
             }
+            else if (_animation is CachedVideoAnimation video && !video.IsCaching)
+            {
+                video.Dispose();
+            }
 
             _buffer = null;
+            _nextFrameLock.Release();
+
             Subscribe(false);
         }
 
