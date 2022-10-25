@@ -7,6 +7,9 @@ namespace Unigram.Converters
 {
     public class Icons
     {
+        public const string LinkSide = "\uE9F8";
+        public const string LinkSideBroken = "\uE9F7";
+
         public const string ArrowMinimize = "\uE965";
         public const string ArrowMaximize = "\uE966";
 

@@ -273,6 +273,18 @@
                         Value="{ThemeResource SystemControlForegroundAccentBrush}" />
             </Style>
 
+            <Style x:Key="InfoCaptionBorderStyle"
+                   TargetType="Border">
+                <Setter Property="Background"
+                        Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
+            </Style>
+
+            <Style x:Key="AccentCaptionBorderStyle"
+                   TargetType="Border">
+                <Setter Property="Background"
+                        Value="{ThemeResource SystemControlForegroundAccentBrush}" />
+            </Style>
+
             <Style x:Key="SiteNameTextBlockStyle"
                    TargetType="TextBlock"
                    BasedOn="{StaticResource BaseTextBlockStyle}">

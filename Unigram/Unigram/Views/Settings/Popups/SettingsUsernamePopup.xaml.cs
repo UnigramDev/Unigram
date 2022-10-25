@@ -1,9 +1,13 @@
-﻿using Unigram.Common;
+﻿using Microsoft.UI.Xaml.Controls;
+using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
+using Unigram.Navigation;
 using Unigram.ViewModels.Settings;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Unigram.Views.Settings.Popups
 {
@@ -35,11 +39,6 @@ namespace Unigram.Views.Settings.Popups
             Username.SelectionStart = Username.Text.Length;
         }
 
-        private void Copy_Click(Windows.UI.Xaml.Documents.Hyperlink sender, Windows.UI.Xaml.Documents.HyperlinkClickEventArgs args)
-        {
-            ViewModel.CopyCommand.Execute();
-        }
-
         #region Binding
 
         private string ConvertAvailable(string username)
@@ -69,6 +68,75 @@ namespace Unigram.Views.Settings.Popups
 
             args.Cancel = !confirm;
             deferral.Complete();
+        }
+
+        private void OnItemClick(object sender, ItemClickEventArgs e)
+        {
+            var container = ScrollingHost.ContainerFromItem(e.ClickedItem) as SelectorItem;
+            if (container == null || e.ClickedItem is not UsernameInfo username)
+            {
+                return;
+            }
+
+            //var content = container.ContentTemplateRoot as FrameworkElement;
+            //var badge = content?.FindName("Badge") as FrameworkElement;
+
+            var popup = new TeachingTip();
+            popup.Title = username.IsActive
+                ? Strings.Resources.UsernameDeactivateLink
+                : Strings.Resources.UsernameActivateLink;
+            popup.Subtitle = username.IsActive
+                ? Strings.Resources.UsernameDeactivateLinkProfileMessage
+                : Strings.Resources.UsernameActivateLinkProfileMessage;
+            popup.ActionButtonContent = username.IsActive ? Strings.Resources.Hide : Strings.Resources.Show;
+            popup.ActionButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
+            popup.CloseButtonContent = Strings.Resources.Cancel;
+            popup.PreferredPlacement = TeachingTipPlacementMode.Top;
+            popup.Width = popup.MinWidth = popup.MaxWidth = 314;
+            popup.Target = /*badge ??*/ container;
+            popup.IsLightDismissEnabled = true;
+            popup.ShouldConstrainToRootBounds = true;
+
+            popup.ActionButtonClick += (s, args) =>
+            {
+                popup.IsOpen = false;
+                ViewModel.ToggleUsername(username);
+            };
+
+            if (Window.Current.Content is FrameworkElement element)
+            {
+                element.Resources["TeachingTip"] = popup;
+            }
+            else
+            {
+                container.Resources["TeachingTip"] = popup;
+            }
+
+            popup.IsOpen = true;
+        }
+
+        private void OnDragItemsStarting(object sender, DragItemsStartingEventArgs e)
+        {
+            if (e.Items.Count == 1 && e.Items[0] is UsernameInfo username && (username.IsActive || username.IsEditable))
+            {
+                ScrollingHost.CanReorderItems = true;
+                e.Cancel = false;
+            }
+            else
+            {
+                ScrollingHost.CanReorderItems = false;
+                e.Cancel = true;
+            }
+        }
+
+        private void OnDragItemsCompleted(ListViewBase sender, DragItemsCompletedEventArgs args)
+        {
+            ScrollingHost.CanReorderItems = false;
+
+            if (args.DropResult == DataPackageOperation.Move && args.Items.Count == 1 && args.Items[0] is UsernameInfo username)
+            {
+                ViewModel.ReorderUsernames(username);
+            }
         }
     }
 }

@@ -1,9 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using Rg.DiffUtils;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Entities;
+using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Windows.ApplicationModel.DataTransfer;
@@ -11,12 +14,13 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsUsernameViewModel : TLViewModelBase
+    public class SettingsUsernameViewModel : TLViewModelBase, IHandle
     {
         public SettingsUsernameViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            CopyCommand = new RelayCommand(CopyExecute);
+            _username = new DebouncedProperty<string>(Constants.TypingTimeout, CheckAvailability, UpdateIsValid);
+            Items = new DiffObservableCollection<UsernameInfo>(new UsernameInfoDiffHandler(), new DiffOptions { AllowBatching = false, DetectMoves = true });
         }
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -27,21 +31,117 @@ namespace Unigram.ViewModels.Settings
 
             if (ClientService.TryGetUser(ClientService.Options.MyId, out User user))
             {
-                Set(ref _username, user.Username, nameof(Username));
+                _username.Value = user.EditableUsername();
+                RaisePropertyChanged(nameof(Username));
+
+                UpdateUsernames(user.Usernames);
             }
 
             return Task.CompletedTask;
         }
 
-        private string _username = string.Empty;
+        public override void Subscribe()
+        {
+            Aggregator.Subscribe<UpdateUser>(this, Handle);
+        }
+
+        public DiffObservableCollection<UsernameInfo> Items { get; private set; }
+
+        public void Handle(UpdateUser update)
+        {
+            if (update.User.Id == ClientService.Options.MyId)
+            {
+                BeginOnUIThread(() => UpdateUsernames(update.User.Usernames, Username));
+            }
+        }
+
+        private void UpdateUsernames(Usernames usernames, string editable = null)
+        {
+            if (editable != null)
+            {
+                static void ReplaceEditable(IList<string> usernames, string original, string editable)
+                {
+                    for (int i = 0; i < usernames.Count; i++)
+                    {
+                        if (usernames[i] == original)
+                        {
+                            usernames[i] = editable;
+                            break;
+                        }
+                    }
+                }
+
+                usernames ??= new Usernames();
+                ReplaceEditable(usernames.ActiveUsernames, usernames.EditableUsername, editable);
+                ReplaceEditable(usernames.DisabledUsernames, usernames.EditableUsername, editable);
+
+                usernames.EditableUsername = editable;
+            }
+
+            if (usernames?.ActiveUsernames.Count + usernames?.DisabledUsernames.Count > 1)
+            {
+                Items.ReplaceDiff(UsernameInfo.FromUsernames(ClientService, usernames, false));
+            }
+            else
+            {
+                Items.Clear();
+            }
+        }
+
+        public void ReorderUsernames(UsernameInfo username)
+        {
+            if (ClientService.TryGetUser(ClientService.Options.MyId, out User user))
+            {
+                var active = user.Usernames?.ActiveUsernames;
+
+                var index = Items.IndexOf(username);
+                if (index >= active.Count)
+                {
+                    UpdateUsernames(user.Usernames, Username);
+                }
+                else
+                {
+                    var order = new List<string>();
+
+                    foreach (var info in Items)
+                    {
+                        if (info.IsActive || info.IsEditable)
+                        {
+                            order.Add(info.Value);
+                        }
+                    }
+
+                    ClientService.Send(new ReorderActiveUsernames(order));
+                }
+            }
+        }
+
+        public void ToggleUsername(UsernameInfo username)
+        {
+            ClientService.Send(new ToggleUsernameIsActive(username.Value, !username.IsActive));
+        }
+
+        //private string _username = string.Empty;
+        //public string Username
+        //{
+        //    get => _username;
+        //    set
+        //    {
+        //        Set(ref _username, value);
+        //        UpdateIsValid(value);
+        //    }
+        //}
+
+        private readonly DebouncedProperty<string> _username;
         public string Username
         {
             get => _username;
-            set
-            {
-                Set(ref _username, value);
-                UpdateIsValid(value);
-            }
+            set => _username.Set(value);
+        }
+
+        public bool IsVisible
+        {
+            get => Items.Count < 2 && !string.IsNullOrWhiteSpace(_username);
         }
 
         private bool _isValid;
@@ -104,6 +204,8 @@ namespace Unigram.ViewModels.Settings
                     ErrorMessage = null;
                 }
             }
+
+            RaisePropertyChanged(nameof(Username));
         }
 
         public bool UpdateIsValid(string username)
@@ -118,13 +220,17 @@ namespace Unigram.ViewModels.Settings
                 {
                     ErrorMessage = null;
                 }
-                else if (_username.Length < 5)
+                else if (username.Length < 5)
                 {
                     ErrorMessage = Strings.Resources.UsernameInvalidShort;
                 }
-                else if (_username.Length > 32)
+                else if (username.Length > 32)
                 {
                     ErrorMessage = Strings.Resources.UsernameInvalidLong;
+                }
+                else if (username[0] is >= '0' and <= '9')
+                {
+                    ErrorMessage = Strings.Resources.UsernameInvalidStartNumber;
                 }
                 else
                 {
@@ -137,6 +243,12 @@ namespace Unigram.ViewModels.Settings
                 ErrorMessage = null;
             }
 
+            if (ClientService.TryGetUser(ClientService.Options.MyId, out User user))
+            {
+                UpdateUsernames(user.Usernames, username);
+            }
+
+            RaisePropertyChanged(nameof(IsVisible));
             return IsValid;
         }
 
@@ -159,7 +271,11 @@ namespace Unigram.ViewModels.Settings
 
             for (int i = 0; i < username.Length; i++)
             {
-                if (!MessageHelper.IsValidUsernameSymbol(username[i]))
+                if (i == 0 && char.IsDigit(username[0]))
+                {
+                    return false;
+                }
+                else if (!MessageHelper.IsValidUsernameSymbol(username[i]))
                 {
                     return false;
                 }
@@ -241,14 +357,96 @@ namespace Unigram.ViewModels.Settings
             return false;
         }
 
-        public RelayCommand CopyCommand { get; }
-        private async void CopyExecute()
+        public async void Copy()
         {
             var dataPackage = new DataPackage();
             dataPackage.SetText(MeUrlPrefixConverter.Convert(ClientService, _username));
             ClipboardEx.TrySetContent(dataPackage);
 
             await MessagePopup.ShowAsync(Strings.Resources.LinkCopied, Strings.Resources.AppName, Strings.Resources.OK);
+        }
+    }
+
+
+    public class UsernameInfo : BindableBase
+    {
+        private readonly IClientService _clientService;
+        private readonly bool _tme;
+
+        private UsernameInfo(IClientService clientService, string value, bool active, bool editable, bool tme)
+        {
+            _clientService = clientService;
+            _tme = tme;
+
+            Value = value;
+            IsActive = active;
+            IsEditable = editable;
+        }
+
+        public static IEnumerable<UsernameInfo> FromUsernames(IClientService clientService, User user)
+        {
+            return FromUsernames(clientService, user.Usernames, false);
+        }
+
+        public static IEnumerable<UsernameInfo> FromUsernames(IClientService clientService, Supergroup supergroup)
+        {
+            return FromUsernames(clientService, supergroup.Usernames, true);
+        }
+
+        public static IEnumerable<UsernameInfo> FromUsernames(IClientService clientService, Usernames usernames, bool tme)
+        {
+            if (usernames == null)
+            {
+                yield break;
+            }
+
+            foreach (var item in usernames.ActiveUsernames)
+            {
+                yield return new UsernameInfo(clientService, item, true, item == usernames.EditableUsername, tme);
+            }
+
+            foreach (var item in usernames.DisabledUsernames)
+            {
+                yield return new UsernameInfo(clientService, item, false, item == usernames.EditableUsername, tme);
+            }
+        }
+
+        private string _value;
+        public string Value
+        {
+            get => _value;
+            set
+            {
+                if (Set(ref _value, value))
+                {
+                    RaisePropertyChanged(nameof(DisplayValue));
+                }
+            }
+        }
+
+        public string DisplayValue => _tme? MeUrlPrefixConverter.Convert(_clientService, _value, true): $"@{_value}";
+
+        private bool _isActive;
+        public bool IsActive
+        {
+            get => _isActive;
+            set => Set(ref _isActive, value);
+        }
+
+        public bool IsEditable { get; }
+    }
+
+    public class UsernameInfoDiffHandler : IDiffHandler<UsernameInfo>
+    {
+        public bool CompareItems(UsernameInfo oldItem, UsernameInfo newItem)
+        {
+            return oldItem.Value == newItem.Value || (oldItem.IsEditable && newItem.IsEditable);
+        }
+
+        public void UpdateItem(UsernameInfo oldItem, UsernameInfo newItem)
+        {
+            oldItem.Value = newItem.Value;
+            oldItem.IsActive = newItem.IsActive;
         }
     }
 }

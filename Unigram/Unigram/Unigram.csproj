@@ -280,6 +280,9 @@
     <Compile Include="Controls\Cells\ChatCell.xaml.cs">
       <DependentUpon>ChatCell.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Cells\UsernameInfoCell.xaml.cs">
+      <DependentUpon>UsernameInfoCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Cells\VenueCell.xaml.cs">
       <DependentUpon>VenueCell.xaml</DependentUpon>
     </Compile>
@@ -1605,6 +1608,10 @@
     <Page Include="Controls\Cells\ChatCell.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Cells\UsernameInfoCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Cells\VenueCell.xaml">
       <Generator>MSBuild:Compile</Generator>

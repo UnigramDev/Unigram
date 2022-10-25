@@ -4,55 +4,98 @@
                        xmlns:local="using:Unigram.Views"
                        xmlns:common="using:Unigram.Common"
                        xmlns:controls="using:Unigram.Controls"
+                       xmlns:cells="using:Unigram.Controls.Cells"
+                       xmlns:viewModels="using:Unigram.ViewModels.Settings"
                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        Loaded="OnLoaded"
                        PrimaryButtonClick="ContentPopup_PrimaryButtonClick"
                        mc:Ignorable="d">
 
-    <StackPanel>
-        <TextBox x:Name="Username"
-                 Text="{x:Bind ViewModel.Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                 PlaceholderText="{CustomResource UsernamePlaceholder}" />
+    <ListView x:Name="ScrollingHost"
+              ItemsSource="{x:Bind ViewModel.Items}"
+              ItemClick="OnItemClick"
+              IsItemClickEnabled="True"
+              SelectionMode="None"
+              DragItemsStarting="OnDragItemsStarting"
+              DragItemsCompleted="OnDragItemsCompleted"
+              CanReorderItems="True"
+              CanDragItems="True"
+              AllowDrop="True"
+              Margin="-24,0">
+        <ListView.Header>
+            <StackPanel Margin="24,0">
+                <TextBox x:Name="Username"
+                         Text="{x:Bind ViewModel.Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         PlaceholderText="{CustomResource UsernamePlaceholder}" />
 
-        <Grid Margin="0,8,0,-12">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition MaxWidth="1000" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <TextBlock Text="{x:Bind ConvertAvailable(ViewModel.Username), Mode=OneWay}"
-                       Visibility="{x:Bind ViewModel.IsAvailable, Mode=OneWay}"
-                       Foreground="Green"
-                       Margin="0,0,0,12" />
-            <TextBlock Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
-                       Text="{CustomResource UsernameChecking}"
-                       Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                       Margin="0,0,0,12" />
-            <TextBlock Visibility="{x:Bind ViewModel.ErrorMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}"
-                       Text="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}"
-                       Foreground="Red"
-                       Margin="0,0,0,12" />
+                <Grid Margin="0,4,0,2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition MaxWidth="1000" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="{x:Bind ConvertAvailable(ViewModel.Username), Mode=OneWay}"
+                               Visibility="{x:Bind ViewModel.IsAvailable, Mode=OneWay}"
+                               Foreground="Green"
+                               Margin="0,0,0,12" />
+                    <TextBlock Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
+                               Text="{CustomResource UsernameChecking}"
+                               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                               Margin="0,0,0,12" />
+                    <TextBlock Visibility="{x:Bind ViewModel.ErrorMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}"
+                               Text="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}"
+                               Foreground="Red"
+                               Margin="0,0,0,12" />
 
-            <TextBlock common:TextBlockHelper.Markdown="{CustomResource UsernameHelp}"
-                       Style="{StaticResource BodyTextBlockStyle}"
-                       Margin="0,0,0,12"
-                       Grid.Row="1" />
+                    <TextBlock common:TextBlockHelper.Markdown="{CustomResource UsernameHelp}"
+                               Style="{StaticResource InfoCaptionTextBlockStyle}"
+                               Margin="0,0,0,12"
+                               Grid.Row="1" />
 
-            <TextBlock Visibility="{x:Bind ViewModel.Username, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}"
-                       Style="{StaticResource BodyTextBlockStyle}"
-                       Margin="0,0,0,12"
-                       Grid.Row="2">
-                    <Run Text="{x:Bind UsernameHelpLink}" />
-                    <LineBreak />
-                    <Hyperlink Click="Copy_Click">
-                        <Run Text="{x:Bind ConvertUsername(ViewModel.Username), Mode=OneWay}" />
-                    </Hyperlink>
-            </TextBlock>
-        </Grid>
-    </StackPanel>
+                    <TextBlock Visibility="{x:Bind ViewModel.IsVisible, Mode=OneWay}"
+                               Style="{StaticResource InfoCaptionTextBlockStyle}"
+                               Margin="0,0,0,12"
+                               Grid.Row="2">
+                        <Run Text="{x:Bind UsernameHelpLink}" />
+                        <LineBreak />
+                        <Hyperlink Click="{x:Bind ViewModel.Copy}">
+                            <Run Text="{x:Bind ConvertUsername(ViewModel.Username), Mode=OneWay}" />
+                        </Hyperlink>
+                    </TextBlock>
+
+                    <TextBlock Text="{CustomResource UsernamesProfileHeader}"
+                               Visibility="{x:Bind ViewModel.IsVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
+                               Style="{StaticResource BaseTextBlockStyle}"
+                               Margin="0,8,0,0"
+                               Grid.Row="2" />
+                </Grid>
+            </StackPanel>
+        </ListView.Header>
+        <ListView.ItemTemplate>
+            <DataTemplate x:DataType="viewModels:UsernameInfo">
+                <cells:UsernameInfoCell Value="{x:Bind Value, Mode=OneWay}"
+                                        DisplayValue="{x:Bind DisplayValue, Mode=OneWay}"
+                                        IsActive="{x:Bind IsActive, Mode=OneWay}"
+                                        Padding="12,6" />
+            </DataTemplate>
+        </ListView.ItemTemplate>
+        <ListView.ItemContainerStyle>
+            <Style TargetType="ListViewItem"
+                   BasedOn="{StaticResource DefaultListViewItemStyle}">
+                <Setter Property="Margin"
+                        Value="12,0" />
+            </Style>
+        </ListView.ItemContainerStyle>
+        <ListView.Footer>
+            <StackPanel Margin="24,8,24,0">
+                <TextBlock Text="{CustomResource UsernamesProfileHelp}"
+                           Style="{StaticResource InfoCaptionTextBlockStyle}" />
+            </StackPanel>
+        </ListView.Footer>
+    </ListView>
 </controls:ContentPopup>
