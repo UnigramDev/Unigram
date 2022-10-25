@@ -57,7 +57,7 @@
 
 <a name="contributing"></a>
 ## Contributing
-Before reporting bugs, doing features requests or embarking pull requests, be sure you have already read our [contributing guidelines](https://github.com/UnigramDev/Unigram/blob/develop/CONTRIBUTING.md).
+Before reporting bugs, doing features requests or embarking pull requests, be sure you have already read our [contributing guidelines](/CONTRIBUTING.md). Build instructions can be found [here](/Documentation/Build-instructions.md).
 
 <a name="changelog"></a>
 ## Changelog
@@ -83,7 +83,7 @@ If you are wishing to translate it to your language, you can do that [here](http
 
 <a name="doc"></a>
 ## Documentation
-You can find [here](https://github.com/UnigramDev/Unigram/tree/develop/Documentation) some documentation on how to build Unigram, grab TDLib logs and a list of all built-in keyboard shortcuts.
+You can find [here](/Documentation) some documentation on how to build Unigram, grab TDLib logs and a list of all built-in keyboard shortcuts.
 
 <a name="privacy"></a>
 ## Privacy policy
