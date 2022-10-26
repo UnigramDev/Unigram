@@ -31,6 +31,8 @@ namespace Unigram.Controls
 
         private readonly bool _autoPause;
 
+        protected volatile bool _disposed;
+
         protected CanvasImageSource _surface;
         protected CanvasBitmap _bitmap;
 
@@ -280,6 +282,7 @@ namespace Unigram.Controls
                 Changed();
 
                 _unloaded = false;
+                _disposed = false;
                 OnLoaded();
 
                 return true;
@@ -338,14 +341,16 @@ namespace Unigram.Controls
             }
 
             await _nextFrameLock.WaitAsync();
-            await Task.Run(PrepareDispose);
+            await PrepareDisposeAsync();
 
             _nextFrameLock.Release();
         }
 
-        private void PrepareDispose()
+        private async Task PrepareDisposeAsync()
         {
-            Dispose();
+            _disposed = true;
+
+            await Task.Run(Dispose);
 
             lock (_drawFrameLock)
             {
@@ -492,6 +497,11 @@ namespace Unigram.Controls
         {
             if (_nextFrameLock.Wait(0))
             {
+                if (_disposed)
+                {
+                    return;
+                }
+
                 NextFrame();
                 _nextFrameLock.Release();
             }
@@ -700,6 +710,11 @@ namespace Unigram.Controls
         {
             if (_nextFrameLock.Wait(0))
             {
+                if (_disposed)
+                {
+                    return;
+                }
+
                 NextFrame();
                 _nextFrameLock.Release();
             }
