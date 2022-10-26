@@ -1,4 +1,5 @@
-﻿using Microsoft.Graphics.Canvas;
+﻿using FFmpegInteropX;
+using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Collections.Generic;
@@ -10,8 +11,8 @@ using Unigram.Services;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Media.Core;
-using Windows.Media.Editing;
 using Windows.Storage;
+using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -92,39 +93,35 @@ namespace Unigram.Views.Popups
             Media.MediaPlayer.IsLoopingEnabled = true;
             Media.MediaPlayer.PlaybackSession.PositionChanged += MediaPlayer_PositionChanged;
 
-            var clip = await MediaClip.CreateFromFileAsync(file);
-            var composition = new MediaComposition();
-            composition.Clips.Add(clip);
+            using var stream = await file.OpenReadAsync();
+            using var grabber = await FrameGrabber.CreateFromStreamAsync(stream);
 
-            var props = clip.GetVideoEncodingProperties();
-
-            double ratioX = (double)40 / props.Width;
-            double ratioY = (double)40 / props.Height;
+            double ratioX = (double)40 / grabber.CurrentVideoStream.PixelWidth;
+            double ratioY = (double)40 / grabber.CurrentVideoStream.PixelHeight;
             double ratio = Math.Max(ratioY, ratioY);
 
-            var width = (int)(props.Width * ratio);
-            var height = (int)(props.Height * ratio);
+            var width = (int)(grabber.CurrentVideoStream.PixelWidth * ratio);
+            var height = (int)(grabber.CurrentVideoStream.PixelHeight * ratio);
 
             var count = Math.Ceiling(296d / width);
 
-            var times = new List<TimeSpan>();
-
-            for (int i = 0; i < count; i++)
-            {
-                times.Add(clip.OriginalDuration / count * i);
-            }
-
-            TrimRange.OriginalDuration = clip.OriginalDuration;
+            TrimRange.OriginalDuration = grabber.Duration;
             TrimThumbnails.Children.Clear();
+
+            grabber.DecodePixelWidth = width;
+            grabber.DecodePixelHeight = height;
 
             try
             {
-                var thumbnails = await composition.GetThumbnailsAsync(times, width, height, VideoFramePrecision.NearestKeyFrame);
-
-                foreach (var thumb in thumbnails)
+                for (int i = 0; i < count; i++)
                 {
+                    using var thumb = await grabber.ExtractVideoFrameAsync(grabber.Duration / count * i, false);
+                    using var encoded = new InMemoryRandomAccessStream();
+
+                    await thumb.EncodeAsPngAsync(encoded);
+
                     var bitmap = new BitmapImage();
-                    await bitmap.SetSourceAsync(thumb);
+                    await bitmap.SetSourceAsync(encoded);
 
                     var image = new Image();
                     image.Width = width;

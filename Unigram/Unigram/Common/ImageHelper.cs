@@ -1,4 +1,5 @@
-﻿using Microsoft.Graphics.Canvas;
+﻿using FFmpegInteropX;
+using Microsoft.Graphics.Canvas;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -8,7 +9,6 @@ using Unigram.Controls;
 using Unigram.Entities;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
-using Windows.Media.Editing;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI;
@@ -141,22 +141,20 @@ namespace Unigram.Common
         {
             try
             {
-                if (sourceFile.ContentType.Equals("video/mp4"))
+                if (sourceFile.FileType.Equals(".mp4"))
                 {
-                    var props = await sourceFile.Properties.GetVideoPropertiesAsync();
-                    var composition = new MediaComposition();
-                    var clip = await MediaClip.CreateFromFileAsync(sourceFile);
+                    using var videoStream = await sourceFile.OpenReadAsync();
+                    using var grabber = await FrameGrabber.CreateFromStreamAsync(videoStream);
+                    using var frame = await grabber.ExtractVideoFrameAsync(TimeSpan.Zero);
 
-                    composition.Clips.Add(clip);
+                    using var imageStream = new InMemoryRandomAccessStream();
 
-                    using (var imageStream = await composition.GetThumbnailAsync(TimeSpan.Zero, (int)props.GetWidth(), (int)props.GetHeight(), VideoFramePrecision.NearestKeyFrame))
-                    {
-                        return await GetPreviewBitmapAsync(imageStream, requestedMinSide);
-                    }
+                    await frame.EncodeAsPngAsync(imageStream);
+                    return await GetPreviewBitmapAsync(imageStream, requestedMinSide);
                 }
-
-                using (var imageStream = await sourceFile.OpenReadAsync())
+                else
                 {
+                    using var imageStream = await sourceFile.OpenReadAsync();
                     return await GetPreviewBitmapAsync(imageStream, requestedMinSide);
                 }
             }
@@ -384,22 +382,21 @@ namespace Unigram.Common
 
         public static async Task<ImageSource> CropAndPreviewAsync(StorageFile sourceFile, BitmapEditState editState)
         {
-            if (sourceFile.ContentType.Equals("video/mp4"))
+            if (sourceFile.FileType.Equals(".mp4"))
             {
-                var props = await sourceFile.Properties.GetVideoPropertiesAsync();
-                var composition = new MediaComposition();
-                var clip = await MediaClip.CreateFromFileAsync(sourceFile);
+                using var videoStream = await sourceFile.OpenReadAsync();
+                using var grabber = await FrameGrabber.CreateFromStreamAsync(videoStream);
+                using var frame = await grabber.ExtractVideoFrameAsync(TimeSpan.Zero);
 
-                composition.Clips.Add(clip);
+                using var imageStream = new InMemoryRandomAccessStream();
 
-                using (var imageStream = await composition.GetThumbnailAsync(TimeSpan.Zero, (int)props.GetWidth(), (int)props.GetHeight(), VideoFramePrecision.NearestKeyFrame))
-                {
-                    return await CropAndPreviewAsync(imageStream, editState);
-                }
+                await frame.EncodeAsPngAsync(imageStream);
+                return await CropAndPreviewAsync(imageStream, editState);
+
             }
-
-            using (var imageStream = await sourceFile.OpenReadAsync())
+            else
             {
+                using var imageStream = await sourceFile.OpenReadAsync();
                 return await CropAndPreviewAsync(imageStream, editState);
             }
         }
@@ -475,18 +472,21 @@ namespace Unigram.Common
 
         public static async Task<IRandomAccessStream> OpenReadAsync(StorageFile sourceFile)
         {
-            if (sourceFile.ContentType.Equals("video/mp4"))
+            if (sourceFile.FileType.Equals(".mp4"))
             {
-                var props = await sourceFile.Properties.GetVideoPropertiesAsync();
-                var composition = new MediaComposition();
-                var clip = await MediaClip.CreateFromFileAsync(sourceFile);
+                using var videoStream = await sourceFile.OpenReadAsync();
+                using var grabber = await FrameGrabber.CreateFromStreamAsync(videoStream);
+                using var frame = await grabber.ExtractVideoFrameAsync(TimeSpan.Zero);
 
-                composition.Clips.Add(clip);
+                var imageStream = new InMemoryRandomAccessStream();
 
-                return await composition.GetThumbnailAsync(TimeSpan.Zero, (int)props.GetWidth(), (int)props.GetHeight(), VideoFramePrecision.NearestKeyFrame);
+                await frame.EncodeAsPngAsync(imageStream);
+                return imageStream;
             }
-
-            return await sourceFile.OpenReadAsync();
+            else
+            {
+                return await sourceFile.OpenReadAsync();
+            }
         }
 
         public static BitmapTransform ComputeScalingTransformForSourceImage(BitmapDecoder sourceDecoder)
