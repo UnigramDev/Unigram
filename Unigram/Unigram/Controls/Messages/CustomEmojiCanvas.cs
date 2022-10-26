@@ -74,14 +74,11 @@ namespace Unigram.Controls.Messages
 
             if (needsCreate)
             {
-                _bitmap?.Dispose();
-                _bitmap = null;
-
                 _emojiSize = GetDpiAwareSize(20);
                 return CreateBitmap(device, awareSize.Width, awareSize.Height);
             }
 
-            return _bitmap;
+            return null;
         }
 
         protected override void Dispose()

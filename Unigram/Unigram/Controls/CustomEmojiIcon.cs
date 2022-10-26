@@ -3,6 +3,7 @@ using Microsoft.Graphics.Canvas.Brushes;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Controls.Messages;
 using Unigram.Services;
@@ -104,14 +105,11 @@ namespace Unigram.Controls
 
             if (needsCreate)
             {
-                _bitmap?.Dispose();
-                _bitmap = null;
-
                 _emojiSize = GetDpiAwareSize(20);
                 return CreateBitmap(device, awareSize, awareSize);
             }
 
-            return _bitmap;
+            return null;
         }
 
         protected override void Dispose()

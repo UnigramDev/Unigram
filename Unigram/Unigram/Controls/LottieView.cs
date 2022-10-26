@@ -99,13 +99,10 @@ namespace Unigram.Controls
 
             if (needsCreate)
             {
-                _bitmap?.Dispose();
-                _bitmap = null;
-
                 return CreateBitmap(device, _frameSize.Width, _frameSize.Height);
             }
 
-            return _bitmap;
+            return null;
         }
 
         protected override void DrawFrame(CanvasImageSource sender, CanvasDrawingSession args)

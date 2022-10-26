@@ -422,14 +422,26 @@ namespace Unigram.Controls
             }
         }
 
-        private void CreateBitmap(bool force)
+        private async void CreateBitmap(bool force)
         {
             try
             {
                 var device = _surface?.Device;
                 if (device != null && (_bitmap == null || force))
                 {
-                    _bitmap = CreateBitmap(device);
+                    var temp = CreateBitmap(device);
+                    if (temp != null)
+                    {
+                        var dispose = _bitmap;
+                        _bitmap = temp;
+
+                        if (dispose != null)
+                        {
+                            await _nextFrameLock.WaitAsync();
+                            dispose.Dispose();
+                            _nextFrameLock.Release();
+                        }
+                    }
                 }
             }
             catch (Exception ex)

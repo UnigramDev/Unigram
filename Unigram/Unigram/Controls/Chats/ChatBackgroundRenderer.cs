@@ -4,6 +4,7 @@ using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Numerics;
 using System.Threading;
+using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services;
@@ -61,9 +62,6 @@ namespace Unigram.Controls.Chats
 
             if (needsCreate)
             {
-                _bitmap?.Dispose();
-                _bitmap = null;
-
                 var bitmap = CreateTarget(device, width, height);
 
                 if (_backgroundFill is BackgroundFillGradient or BackgroundFillSolid)
@@ -83,7 +81,7 @@ namespace Unigram.Controls.Chats
                 return bitmap;
             }
 
-            return _bitmap;
+            return null;
         }
 
         private async void CreateAdditionalResources(CanvasDevice device)
