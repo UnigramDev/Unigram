@@ -432,25 +432,22 @@ namespace Unigram.Controls.Messages
             }
 
             var content = message.GeneratedContent ?? message.Content;
-            if (message.ReplyMarkup is ReplyMarkupInlineKeyboard)
+            if (content is MessageSticker or MessageDice or MessageVideoNote or MessageBigEmoji)
             {
-                if (content is MessageSticker or MessageDice or MessageVideoNote or MessageBigEmoji)
-                {
-                    _cornerRadius.Set(0);
-                }
-                else
-                {
-                    _cornerRadius.Set(topLeft, topRight, small, small);
-                }
+                _cornerRadius.Set(0);
+            }
+            else if (content is MessageInvoice invoice && invoice.ExtendedMedia is not MessageExtendedMediaUnsupported and not null)
+            {
+                _cornerRadius.Set(topLeft, topRight, bottomRight, bottomLeft);
+            }
+            else if (message.ReplyMarkup is ReplyMarkupInlineKeyboard)
+            {
+                _cornerRadius.Set(topLeft, topRight, small, small);
 
                 if (Markup != null)
                 {
                     Markup.CornerRadius = new CornerRadius(small, small, bottomRight, bottomLeft);
                 }
-            }
-            else if (content is MessageSticker or MessageDice or MessageVideoNote or MessageBigEmoji)
-            {
-                _cornerRadius.Set(0);
             }
             else
             {
@@ -1456,13 +1453,25 @@ namespace Unigram.Controls.Messages
                 }
                 else if (content is MessageInvoice invoice)
                 {
-                    if (invoice.Photo == null)
+                    if (invoice.ExtendedMedia is MessageExtendedMediaPhoto)
                     {
-                        Media.Child = new InvoiceContent(message);
+                        Media.Child = new PhotoContent(message);
+                    }
+                    else if (invoice.ExtendedMedia is MessageExtendedMediaVideo)
+                    {
+                        Media.Child = new VideoContent(message);
+                    }
+                    else if (invoice.ExtendedMedia is MessageExtendedMediaPreview)
+                    {
+                        Media.Child = new InvoicePreviewContent(message);
+                    }
+                    else if (invoice.Photo != null)
+                    {
+                        Media.Child = new InvoicePhotoContent(message);
                     }
                     else
                     {
-                        Media.Child = new InvoicePhotoContent(message);
+                        Media.Child = new InvoiceContent(message);
                     }
                 }
                 else if (content is MessageLocation)
@@ -1562,6 +1571,17 @@ namespace Unigram.Controls.Messages
             else if (content is MessageDocument document)
             {
                 result = ReplaceEntities(message, document.Caption);
+            }
+            else if (content is MessageInvoice invoice)
+            {
+                result = invoice.ExtendedMedia switch
+                {
+                    MessageExtendedMediaPreview preview => ReplaceEntities(message, preview.Caption),
+                    MessageExtendedMediaPhoto photo => ReplaceEntities(message, photo.Caption),
+                    MessageExtendedMediaVideo video => ReplaceEntities(message, video.Caption),
+                    MessageExtendedMediaUnsupported unsupported => ReplaceEntities(message, unsupported.Caption),
+                    _ => false
+                };
             }
             else if (content is MessagePhoto photo)
             {
@@ -1697,7 +1717,6 @@ namespace Unigram.Controls.Messages
             }
         }
 
-        
         private void Message_TextEntityClick(object sender, TextEntityClickEventArgs e)
         {
             if (_message is not MessageViewModel message)
@@ -2510,7 +2529,23 @@ namespace Unigram.Controls.Messages
             }
             else if (constraint is MessageInvoice invoiceMessage)
             {
-                constraint = invoiceMessage.Photo;
+                if (invoiceMessage.ExtendedMedia is MessageExtendedMediaPhoto extendedMediaPhoto)
+                {
+                    constraint = extendedMediaPhoto.Photo;
+                }
+                else if (invoiceMessage.ExtendedMedia is MessageExtendedMediaVideo extendedMediaVideo)
+                {
+                    constraint = extendedMediaVideo.Video;
+                }
+                else if (invoiceMessage.ExtendedMedia is MessageExtendedMediaPreview extendedMediaPreview)
+                {
+                    width = extendedMediaPreview.Width;
+                    height = extendedMediaPreview.Height;
+                }
+                else
+                {
+                    constraint = invoiceMessage.Photo;
+                }
             }
             else if (constraint is MessageLocation locationMessage)
             {
@@ -2565,6 +2600,11 @@ namespace Unigram.Controls.Messages
 
                     goto Calculate;
                 }
+            }
+            else if (constraint is MessageExtendedMediaPreview extendedMediaPreview)
+            {
+                width = extendedMediaPreview.Width;
+                height = extendedMediaPreview.Height;
             }
 
             if (constraint is Animation animation)
@@ -2698,7 +2738,8 @@ namespace Unigram.Controls.Messages
                 case MessageAlbum album:
                     return album.IsMedia;
                 case MessageInvoice invoice:
-                    return width && invoice.Photo != null;
+                    return invoice.ExtendedMedia is not MessageExtendedMediaUnsupported and not null
+                        || (width && invoice.Photo != null);
                 default:
                     return false;
             }

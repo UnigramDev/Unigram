@@ -90,6 +90,10 @@ namespace Unigram.ViewModels.Gallery
                 {
                     return game.Game.Animation != null;
                 }
+                else if (_message.Content is MessageInvoice invoice)
+                {
+                    return invoice.ExtendedMedia is MessageExtendedMediaVideo;
+                }
                 else if (_message.Content is MessageText text)
                 {
                     return text.WebPage?.Video != null
@@ -186,6 +190,13 @@ namespace Unigram.ViewModels.Gallery
                 {
                     return game.Game.Animation?.Duration ?? 0;
                 }
+                else if (_message.Content is MessageInvoice invoice)
+                {
+                    if (invoice.ExtendedMedia is MessageExtendedMediaVideo extendedVideo)
+                    {
+                        return extendedVideo.Video.Duration;
+                    }
+                }
                 else if (_message.Content is MessageText text)
                 {
                     if (text.WebPage?.Video != null)
@@ -225,6 +236,13 @@ namespace Unigram.ViewModels.Gallery
                 else if (_message.Content is MessageGame game)
                 {
                     return game.Game.Animation?.MimeType;
+                }
+                else if (_message.Content is MessageInvoice invoice)
+                {
+                    if (invoice.ExtendedMedia is MessageExtendedMediaVideo extendedVideo)
+                    {
+                        return extendedVideo.Video.MimeType;
+                    }
                 }
                 else if (_message.Content is MessageText text)
                 {

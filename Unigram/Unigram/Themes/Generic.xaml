@@ -26,6 +26,7 @@
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/GameContent.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/InvoiceContent.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/InvoicePhotoContent.xaml" />
+        <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/InvoicePreviewContent.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/LocationContent.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/PhotoContent.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/PollContent.xaml" />

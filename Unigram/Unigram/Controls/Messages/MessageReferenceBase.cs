@@ -387,11 +387,23 @@ namespace Unigram.Controls.Messages
 
             HideThumbnail();
 
-            SetText(message.ClientService,
-                outgoing ? null : message.SenderId,
-                GetFromLabel(message, title),
-                invoice.Title,
-                null);
+            var caption = message.GetCaption();
+            if (caption != null)
+            {
+                SetText(message.ClientService,
+                    outgoing ? null : message.SenderId,
+                    GetFromLabel(message, title),
+                    null,
+                    caption);
+            }
+            else
+            {
+                SetText(message.ClientService,
+                    outgoing ? null : message.SenderId,
+                    GetFromLabel(message, title),
+                    invoice.Title,
+                    null);
+            }
 
             return true;
         }

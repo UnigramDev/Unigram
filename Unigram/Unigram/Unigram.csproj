@@ -390,6 +390,9 @@
       <DependentUpon>GalleryView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\CustomEmojiIcon.cs" />
+    <Compile Include="Controls\Messages\Content\InvoicePreviewContent.xaml.cs">
+      <DependentUpon>InvoicePreviewContent.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ZoomViewer.cs" />
     <Compile Include="Controls\GroupCallActiveHeader.xaml.cs">
       <DependentUpon>GroupCallActiveHeader.xaml</DependentUpon>
@@ -1720,6 +1723,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\MessagePopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Messages\Content\InvoicePreviewContent.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

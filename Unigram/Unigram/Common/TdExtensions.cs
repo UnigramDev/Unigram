@@ -732,6 +732,13 @@ namespace Unigram.Common
                     return videoNote.VideoNote.Video;
                 case MessageVoiceNote voiceNote:
                     return voiceNote.VoiceNote.Voice;
+                case MessageInvoice invoice:
+                    return invoice.ExtendedMedia switch
+                    {
+                        MessageExtendedMediaPhoto photo => photo.Photo.GetBig()?.Photo,
+                        MessageExtendedMediaVideo video => video.Video.VideoValue,
+                        _ => invoice.Photo.GetBig()?.Photo
+                    };
             }
 
             return null;
@@ -792,6 +799,8 @@ namespace Unigram.Common
                 case MessageVideo:
                     // Videos are streamed
                     return true;
+                case MessageInvoice invoice:
+                    return invoice.ExtendedMedia is MessageExtendedMediaVideo;
                 default:
                     return false;
             }
@@ -970,6 +979,14 @@ namespace Unigram.Common
                 MessageBigEmoji bigEmoji => bigEmoji.Text,
                 MessageText text => text.Text,
                 MessageAnimatedEmoji animatedEmoji => new FormattedText(animatedEmoji.Emoji, new TextEntity[0]),
+                MessageInvoice invoice => invoice.ExtendedMedia switch
+                {
+                    MessageExtendedMediaPreview preview => preview.Caption,
+                    MessageExtendedMediaPhoto photo => photo.Caption,
+                    MessageExtendedMediaVideo video => video.Caption,
+                    MessageExtendedMediaUnsupported unsupported => unsupported.Caption,
+                    _ => null,
+                },
                 _ => null,
             };
         }
@@ -1561,6 +1578,19 @@ namespace Unigram.Common
                 return Locale.Declension("Days", (int)duration.TotalDays);
             }
             else if (duration.TotalHours >= 1)
+            {
+                return duration.ToString("h\\:mm\\:ss");
+            }
+            else
+            {
+                return duration.ToString("mm\\:ss");
+            }
+        }
+
+        public static string GetDuration(this MessageExtendedMediaPreview preview)
+        {
+            var duration = TimeSpan.FromSeconds(preview.Duration);
+            if (duration.TotalHours >= 1)
             {
                 return duration.ToString("h\\:mm\\:ss");
             }

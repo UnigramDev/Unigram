@@ -318,6 +318,10 @@ namespace Unigram.Controls.Messages.Content
             {
                 return text.WebPage.Video != null;
             }
+            else if (content is MessageInvoice invoice && invoice.ExtendedMedia is MessageExtendedMediaVideo)
+            {
+                return true;
+            }
 
             return false;
         }
@@ -331,6 +335,10 @@ namespace Unigram.Controls.Messages.Content
             else if (content is MessageText text && text.WebPage != null)
             {
                 return text.WebPage.Video;
+            }
+            else if (content is MessageInvoice invoice && invoice.ExtendedMedia is MessageExtendedMediaVideo extendedMedia)
+            {
+                return extendedMedia.Video;
             }
 
             return null;

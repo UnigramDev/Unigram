@@ -101,7 +101,23 @@ namespace Unigram.Controls
             }
             else if (constraint is MessageInvoice invoiceMessage)
             {
-                constraint = invoiceMessage.Photo;
+                if (invoiceMessage.ExtendedMedia is MessageExtendedMediaPhoto extendedMediaPhoto)
+                {
+                    constraint = extendedMediaPhoto.Photo;
+                }
+                else if (invoiceMessage.ExtendedMedia is MessageExtendedMediaVideo extendedMediaVideo)
+                {
+                    constraint = extendedMediaVideo.Video;
+                }
+                else if (invoiceMessage.ExtendedMedia is MessageExtendedMediaPreview extendedMediaPreview)
+                {
+                    width = extendedMediaPreview.Width;
+                    height = extendedMediaPreview.Height;
+                }
+                else
+                {
+                    constraint = invoiceMessage.Photo;
+                }
             }
             else if (constraint is MessageGame gameMessage)
             {
@@ -173,6 +189,11 @@ namespace Unigram.Controls
             else if (constraint is MessageChatChangePhoto chatChangePhoto)
             {
                 constraint = chatChangePhoto.Photo;
+            }
+            else if (constraint is MessageExtendedMediaPreview extendedMediaPreview)
+            {
+                width = extendedMediaPreview.Width;
+                height = extendedMediaPreview.Height;
             }
 
             #endregion

@@ -21,6 +21,7 @@ namespace Unigram.Controls
         Photo,
         Animation,
         Ttl,
+        Unlock,
         Play,
         Pause,
         Theme,
@@ -193,6 +194,9 @@ namespace Unigram.Controls
                     break;
                 case MessageContentState.Ttl:
                     OnGlyphChanged(Icons.Ttl, Glyph, _state != state && _state != MessageContentState.None, Strings.Resources.AccActionOpenFile);
+                    break;
+                case MessageContentState.Unlock:
+                    OnGlyphChanged(Icons.LockClosed, Glyph, _state != state && _state != MessageContentState.None, Strings.Resources.AccActionOpenFile);
                     break;
                 case MessageContentState.Theme:
                     OnGlyphChanged(Icons.Color, Glyph, _state != state && _state != MessageContentState.None, Strings.Resources.AccActionOpenFile);

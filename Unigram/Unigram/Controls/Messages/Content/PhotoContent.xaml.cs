@@ -330,6 +330,10 @@ namespace Unigram.Controls.Messages.Content
             {
                 return text.WebPage.IsPhoto();
             }
+            else if (content is MessageInvoice invoice && invoice.ExtendedMedia is MessageExtendedMediaPhoto)
+            {
+                return true;
+            }
 
             return false;
         }
@@ -347,6 +351,10 @@ namespace Unigram.Controls.Messages.Content
             else if (content is MessageText text && text.WebPage != null)
             {
                 return text.WebPage.Photo;
+            }
+            else if (content is MessageInvoice invoice && invoice.ExtendedMedia is MessageExtendedMediaPhoto extendedMediaPhoto)
+            {
+                return extendedMediaPhoto.Photo;
             }
 
             return null;

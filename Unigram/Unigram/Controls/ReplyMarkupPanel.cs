@@ -97,6 +97,11 @@ namespace Unigram.Controls
             if (message != null && message.Content is MessageInvoice invoice)
             {
                 receipt = invoice.ReceiptMessageId != 0;
+
+                if (invoice.ExtendedMedia is not MessageExtendedMediaUnsupported and not null)
+                {
+                    rows = null;
+                }
             }
 
             if (rows != null && ((inline && markup is ReplyMarkupInlineKeyboard) || (!inline && markup is ReplyMarkupShowKeyboard)))
