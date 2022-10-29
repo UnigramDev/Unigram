@@ -4586,18 +4586,6 @@ namespace Unigram.Views
             }
         }
 
-
-
-        public void UpdateFile(File file)
-        {
-            var header = ViewModel.ComposerHeader;
-            if (header?.EditingMessageFileId == file.Id)
-            {
-                var size = Math.Max(file.Size, file.ExpectedSize);
-                ComposerHeaderUpload.Value = (double)file.Remote.UploadedSize / size;
-            }
-        }
-
         private void UpdateSticker(object target, File file)
         {
             var content = target as Grid;

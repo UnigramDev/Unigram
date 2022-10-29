@@ -307,6 +307,8 @@ namespace Unigram.ViewModels
             return _message.ToString();
         }
 
+        public string CombinedId => $"{ChatId},{Id}";
+
         public IClientService ClientService => _clientService;
 
         public ReplyMarkup ReplyMarkup { get => _message.ReplyMarkup; set => _message.ReplyMarkup = value; }

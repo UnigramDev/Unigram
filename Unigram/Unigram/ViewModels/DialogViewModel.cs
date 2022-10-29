@@ -31,14 +31,15 @@ namespace Unigram.ViewModels
 {
     public partial class DialogViewModel : TLViewModelBase, IDelegable<IDialogDelegate>
     {
-        private readonly ConcurrentDictionary<long, MessageViewModel> _selectedItems = new ConcurrentDictionary<long, MessageViewModel>();
+        private readonly ConcurrentDictionary<long, MessageViewModel> _selectedItems = new();
         public IDictionary<long, MessageViewModel> SelectedItems => _selectedItems;
 
         public int SelectedCount => SelectedItems.Count;
 
-        protected readonly ConcurrentDictionary<long, MessageViewModel> _groupedMessages = new ConcurrentDictionary<long, MessageViewModel>();
+        protected readonly ConcurrentDictionary<long, MessageViewModel> _groupedMessages = new();
 
-        protected static readonly ConcurrentDictionary<long, IList<ChatAdministrator>> _admins = new ConcurrentDictionary<long, IList<ChatAdministrator>>();
+        protected static readonly Dictionary<long, IList<ChatAdministrator>> _admins = new();
+        protected static readonly Dictionary<string, MessageContent> _contentOverrides = new();
 
         protected readonly DisposableMutex _loadMoreLock = new DisposableMutex();
 
@@ -1476,6 +1477,11 @@ namespace Unigram.ViewModels
 
             foreach (var message in messages)
             {
+                if (_contentOverrides.TryGetValue(message.CombinedId, out MessageContent content))
+                {
+                    message.Content = content;
+                }
+
                 if (message.Content is MessageDice dice)
                 {
                     if (message.Id > chat.LastReadInboxMessageId)
@@ -2268,11 +2274,6 @@ namespace Unigram.ViewModels
             {
                 if (container.EditingMessage != null)
                 {
-                    if (container.EditingMessageFileId is int fileId)
-                    {
-                        ClientService.Send(new CancelPreliminaryUploadFile(fileId));
-                    }
-
                     var chat = _chat;
                     if (chat != null)
                     {
@@ -2405,31 +2406,20 @@ namespace Unigram.ViewModels
             if (header?.EditingMessage != null)
             {
                 var editing = header.EditingMessage;
+
                 var factory = header.EditingMessageMedia;
                 if (factory != null)
                 {
-                    var response = await ClientService.SendAsync(new PreliminaryUploadFile(factory.InputFile, factory.Type, 32));
-                    if (response is File file)
+                    var input = factory.Delegate(factory.InputFile, header.EditingMessageCaption);
+
+                    var response = await ClientService.SendAsync(new SendMessageAlbum(editing.ChatId, editing.MessageThreadId, editing.ReplyToMessageId, null, new[] { input }, true));
+                    if (response is Messages messages && messages.MessagesValue.Count == 1)
                     {
-                        if (file.Remote.IsUploadingCompleted)
-                        {
-                            ComposerHeader = null;
-                            ClientService.Send(new EditMessageMedia(chat.Id, header.EditingMessage.Id, null, factory.Delegate(new InputFileId(file.Id), header.EditingMessageCaption)));
-                        }
-                        else
-                        {
-                            ComposerHeader = new MessageComposerHeader
-                            {
-                                EditingMessage = editing,
-                                EditingMessageMedia = factory,
-                                EditingMessageCaption = formattedText,
-                                EditingMessageFileId = file.Id
-                            };
-                        }
-                    }
-                    else
-                    {
-                        // TODO: ...
+                        _contentOverrides[editing.CombinedId] = messages.MessagesValue[0].Content;
+                        Aggregator.Publish(new UpdateMessageContent(editing.ChatId, editing.Id, messages.MessagesValue[0].Content));
+
+                        ComposerHeader = null;
+                        ClientService.Send(new EditMessageMedia(editing.ChatId, editing.Id, null, input));
                     }
                 }
                 else
@@ -3994,7 +3984,6 @@ namespace Unigram.ViewModels
         public MessageViewModel ReplyToMessage { get; set; }
         public MessageViewModel EditingMessage { get; set; }
 
-        public int? EditingMessageFileId { get; set; }
         public InputMessageFactory EditingMessageMedia { get; set; }
         public FormattedText EditingMessageCaption { get; set; }
 
