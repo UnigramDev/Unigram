@@ -518,7 +518,6 @@ namespace Unigram.Services
             }
 
             Dispose(false);
-            Create();
 
             var item = await GetPlaybackItem(message);
             var items = _items = new List<PlaybackItem>();
@@ -526,7 +525,7 @@ namespace Unigram.Services
             _items.Add(item);
             _threadId = threadId;
 
-            _mediaPlayer.Source = item.Source;
+            Create(item.Source);
             Play();
 
             if (message.Content is MessageText)
@@ -571,10 +570,7 @@ namespace Unigram.Services
 
         private async Task<PlaybackItem> GetPlaybackItem(MessageWithOwner message)
         {
-            GetProperties(message, out int duration, out bool speed);
-
-            var token = $"{message.ChatId}_{message.Id}";
-            var file = message.GetFile();
+            GetProperties(message, out File file, out int duration, out bool speed);
 
             var stream = new RemoteFileStream(message.ClientService, file, duration);
             var media = await FFmpegMediaSource.CreateFromStreamAsync(stream);
@@ -583,7 +579,6 @@ namespace Unigram.Services
             {
                 File = file,
                 Message = message,
-                Token = token,
                 CanChangePlaybackRate = speed
             };
 
@@ -605,23 +600,27 @@ namespace Unigram.Services
             return item;
         }
 
-        private void GetProperties(MessageWithOwner message, out int duration, out bool speed)
+        private void GetProperties(MessageWithOwner message, out File file, out int duration, out bool speed)
         {
+            file = null;
             duration = 0;
             speed = false;
 
             if (message.Content is MessageAudio audio)
             {
+                file = audio.Audio.AudioValue;
                 duration = audio.Audio.Duration;
                 speed = duration >= 10 * 60;
             }
             else if (message.Content is MessageVoiceNote voiceNote)
             {
+                file = voiceNote.VoiceNote.Voice;
                 duration = voiceNote.VoiceNote.Duration;
                 speed = true;
             }
             else if (message.Content is MessageVideoNote videoNote)
             {
+                file = videoNote.VideoNote.Video;
                 duration = videoNote.VideoNote.Duration;
                 speed = true;
             }
@@ -629,16 +628,19 @@ namespace Unigram.Services
             {
                 if (text.WebPage.Audio != null)
                 {
+                    file = text.WebPage.Audio.AudioValue;
                     duration = text.WebPage.Audio.Duration;
                     speed = duration >= 10 * 60;
                 }
                 else if (text.WebPage.VoiceNote != null)
                 {
+                    file = text.WebPage.VoiceNote.Voice;
                     duration = text.WebPage.VoiceNote.Duration;
                     speed = true;
                 }
                 else if (text.WebPage.VideoNote != null)
                 {
+                    file = text.WebPage.VideoNote.Video;
                     duration = text.WebPage.VideoNote.Duration;
                     speed = true;
                 }
@@ -691,7 +693,7 @@ namespace Unigram.Services
             }
         }
 
-        private void Create()
+        private void Create(IMediaPlaybackSource source)
         {
             if (_mediaPlayer != null)
             {
@@ -708,15 +710,15 @@ namespace Unigram.Services
             _mediaPlayer.SourceChanged += OnSourceChanged;
             _mediaPlayer.CommandManager.IsEnabled = false;
             _mediaPlayer.Volume = _settingsService.VolumeLevel;
+
+            _mediaPlayer.Source = source;
         }
     }
 
     public class PlaybackItem
     {
         public FFmpegMediaSource FFmpeg { get; set; }
-
         public IMediaPlaybackSource Source { get; set; }
-        public string Token { get; set; }
 
         public MessageWithOwner Message { get; set; }
 
