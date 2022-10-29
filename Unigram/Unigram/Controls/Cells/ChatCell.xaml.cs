@@ -1132,6 +1132,14 @@ namespace Unigram.Controls.Cells
                 MessageText text => text.Text,
                 MessageAnimatedEmoji animatedEmoji => new FormattedText(animatedEmoji.Emoji, new TextEntity[0]),
                 MessageDice dice => new FormattedText(dice.Emoji, new TextEntity[0]),
+                MessageInvoice invoice => invoice.ExtendedMedia switch
+                {
+                    MessageExtendedMediaPreview preview => preview.Caption,
+                    MessageExtendedMediaPhoto photo => photo.Caption,
+                    MessageExtendedMediaVideo video => video.Caption,
+                    MessageExtendedMediaUnsupported unsupported => unsupported.Caption,
+                    _ => new FormattedText(string.Empty, new TextEntity[0])
+                },
                 _ => new FormattedText(string.Empty, new TextEntity[0]),
             };
         }
@@ -1294,6 +1302,11 @@ namespace Unigram.Controls.Cells
             }
             else if (message.Content is MessageInvoice invoice)
             {
+                if (invoice.ExtendedMedia != null && invoice.HasCaption())
+                {
+                    return result;
+                }
+
                 return result + invoice.Title;
             }
             else if (message.Content is MessageContact)

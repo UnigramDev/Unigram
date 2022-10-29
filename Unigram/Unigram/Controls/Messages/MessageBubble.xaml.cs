@@ -2541,6 +2541,8 @@ namespace Unigram.Controls.Messages
                 {
                     width = extendedMediaPreview.Width;
                     height = extendedMediaPreview.Height;
+
+                    goto Calculate;
                 }
                 else
                 {

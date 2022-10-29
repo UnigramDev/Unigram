@@ -564,11 +564,6 @@ namespace Unigram.Common
             return GetFileAndThumbnailAndName(message.Content);
         }
 
-        public static (File File, Thumbnail Thumbnail, string FileName) GetFileAndThumbnailAndName(this Message message)
-        {
-            return GetFileAndThumbnailAndName(message.Content);
-        }
-
         public static (File File, Thumbnail Thumbnail, string FileName) GetFileAndThumbnailAndName(this MessageContent content)
         {
             switch (content)
@@ -737,7 +732,7 @@ namespace Unigram.Common
                     {
                         MessageExtendedMediaPhoto photo => photo.Photo.GetBig()?.Photo,
                         MessageExtendedMediaVideo video => video.Video.VideoValue,
-                        _ => invoice.Photo.GetBig()?.Photo
+                        _ => invoice.Photo?.GetBig()?.Photo
                     };
             }
 

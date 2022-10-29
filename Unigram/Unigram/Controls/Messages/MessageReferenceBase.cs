@@ -388,7 +388,7 @@ namespace Unigram.Controls.Messages
             HideThumbnail();
 
             var caption = message.GetCaption();
-            if (caption != null)
+            if (caption != null && !string.IsNullOrEmpty(caption.Text))
             {
                 SetText(message.ClientService,
                     outgoing ? null : message.SenderId,
