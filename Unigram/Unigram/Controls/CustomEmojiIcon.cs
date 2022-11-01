@@ -141,7 +141,10 @@ namespace Unigram.Controls
                         _loopTrack = animation.LoopCount;
                     }
 
-                    args.DrawImage(_bitmap, new Rect(sender.Size.Width - animation.PixelWidth, sender.Size.Height - animation.PixelHeight, sender.Size.Width, sender.Size.Height));
+                    var offsetX = (sender.SizeInPixels.Width - animation.PixelWidth) * (sender.Size.Width / sender.SizeInPixels.Width);
+                    var offsetY = (sender.SizeInPixels.Height - animation.PixelHeight) * (sender.Size.Width / sender.SizeInPixels.Width);
+
+                    args.DrawImage(_bitmap, new Rect(offsetX, offsetY, sender.Size.Width, sender.Size.Height));
                 }
                 else
                 {
