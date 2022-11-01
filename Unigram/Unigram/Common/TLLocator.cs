@@ -180,8 +180,7 @@
                     _clientService,
                     _settingsService,
                     _eventAggregator,
-                    _locationService ??= new Unigram.Services.LocationService(
-                        _clientService));
+                    _locationService ??= new Unigram.Services.LocationService(_clientService));
             }
             else if (type == typeof(Unigram.ViewModels.DialogViewModel))
             {
@@ -189,8 +188,7 @@
                     _clientService,
                     _settingsService,
                     _eventAggregator,
-                    _locationService ??= new Unigram.Services.LocationService(
-                        _clientService),
+                    _locationService ??= new Unigram.Services.LocationService(_clientService),
                     _notificationsService,
                     _playbackService,
                     _voipService ??= new Unigram.Services.VoipService(
@@ -218,8 +216,7 @@
                     _clientService,
                     _settingsService,
                     _eventAggregator,
-                    _locationService ??= new Unigram.Services.LocationService(
-                        _clientService),
+                    _locationService ??= new Unigram.Services.LocationService(_clientService),
                     _notificationsService,
                     _playbackService,
                     _voipService ??= new Unigram.Services.VoipService(
@@ -247,8 +244,7 @@
                     _clientService,
                     _settingsService,
                     _eventAggregator,
-                    _locationService ??= new Unigram.Services.LocationService(
-                        _clientService),
+                    _locationService ??= new Unigram.Services.LocationService(_clientService),
                     _notificationsService,
                     _playbackService,
                     _voipService ??= new Unigram.Services.VoipService(
@@ -276,8 +272,7 @@
                     _clientService,
                     _settingsService,
                     _eventAggregator,
-                    _locationService ??= new Unigram.Services.LocationService(
-                        _clientService),
+                    _locationService ??= new Unigram.Services.LocationService(_clientService),
                     _notificationsService,
                     _playbackService,
                     _voipService ??= new Unigram.Services.VoipService(
@@ -305,8 +300,7 @@
                     _clientService,
                     _settingsService,
                     _eventAggregator,
-                    _locationService ??= new Unigram.Services.LocationService(
-                        _clientService),
+                    _locationService ??= new Unigram.Services.LocationService(_clientService),
                     _notificationsService,
                     _playbackService,
                     _voipService ??= new Unigram.Services.VoipService(
@@ -345,6 +339,13 @@
             else if (type == typeof(Unigram.ViewModels.Drawers.EmojiDrawerViewModel))
             {
                 return (T)(object)new Unigram.ViewModels.Drawers.EmojiDrawerViewModel(
+                    _clientService,
+                    _settingsService,
+                    _eventAggregator);
+            }
+            else if (type == typeof(Unigram.ViewModels.CreateChatPhotoViewModel))
+            {
+                return (T)(object)new Unigram.ViewModels.CreateChatPhotoViewModel(
                     _clientService,
                     _settingsService,
                     _eventAggregator);
@@ -902,8 +903,7 @@
                         _clientService,
                         _settingsService,
                         _eventAggregator),
-                    _locationService ??= new Unigram.Services.LocationService(
-                        _clientService));
+                    _locationService ??= new Unigram.Services.LocationService(_clientService));
             }
             else if (type == typeof(Unigram.ViewModels.Settings.SettingsBackgroundsViewModel))
             {
@@ -964,8 +964,7 @@
                     _clientService,
                     _settingsService,
                     _eventAggregator,
-                    _locationService ??= new Unigram.Services.LocationService(
-                        _clientService));
+                    _locationService ??= new Unigram.Services.LocationService(_clientService));
             }
             else if (type == typeof(Unigram.ViewModels.Folders.FoldersViewModel))
             {
@@ -1027,10 +1026,6 @@
             {
                 return (T)_generationService;
             }
-            else if (type == typeof(Unigram.Services.IClientService))
-            {
-                return (T)_clientService;
-            }
             else if (type == typeof(Unigram.Services.ISessionService))
             {
                 return (T)_sessionService;
@@ -1089,8 +1084,7 @@
             }
             else if (type == typeof(Unigram.Services.ILocationService))
             {
-                return (T)(_locationService ??= new Unigram.Services.LocationService(
-                    _clientService));
+                return (T)(_locationService ??= new Unigram.Services.LocationService(_clientService));
             }
             else if (type == typeof(Unigram.Services.IThemeService))
             {

@@ -71,7 +71,7 @@
             <TextBox x:Name="FieldStickers"
                      PlaceholderText="{CustomResource SearchStickersHint}"
                      TextChanged="FieldStickers_TextChanged"
-                     Margin="12,8" />
+                     Margin="12,8,12,0" />
         </Border>
 
         <GridView x:Name="List"

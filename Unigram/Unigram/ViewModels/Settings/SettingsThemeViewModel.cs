@@ -30,7 +30,7 @@ namespace Unigram.ViewModels.Settings
         {
             _themeService = themeService;
 
-            Items = new DiffObservableCollection<ThemeBrush>(new ThemeBrushDiffHandler(), new DiffOptions { AllowBatching = false, DetectMoves = false });
+            Items = new DiffObservableCollection<ThemeBrush>(new ThemeBrushDiffHandler(), Constants.DiffOptions);
 
             EditTitleCommand = new RelayCommand(EditTitleExecute);
             EditBrushCommand = new RelayCommand<ThemeBrush>(EditBrushExecute);

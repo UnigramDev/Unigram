@@ -14,6 +14,7 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls.Chats;
 using Unigram.Entities;
+using Unigram.Native;
 using Unigram.Native.Opus;
 using Windows.Foundation;
 using Windows.Graphics.DirectX;
@@ -487,7 +488,7 @@ namespace Unigram.Services
             {
                 var conversion = JsonConvert.DeserializeObject<ChatPhotoConversion>(args[2]);
 
-                var sticker = await _clientService.SendAsync(new GetFile(conversion.StickerFileId)) as Telegram.Td.Api.File;
+                var sticker = await _clientService.SendAsync(new DownloadFile(conversion.StickerFileId, 32, 0, 0, true)) as Telegram.Td.Api.File;
                 if (sticker == null || !sticker.Local.IsDownloadingCompleted)
                 {
                     _clientService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID No sticker found")));
@@ -509,15 +510,17 @@ namespace Unigram.Services
                         new BackgroundTypePattern(new BackgroundFillFreeformGradient(freeform), 50, false, false));
                 }
 
-                if (background == null || (background.Document != null && !background.Document.DocumentValue.Local.IsDownloadingCompleted))
+                var document = await _clientService.SendAsync(new DownloadFile(background.Document.DocumentValue.Id, 32, 0, 0, true)) as Telegram.Td.Api.File;
+                if (document == null || !document.Local.IsDownloadingCompleted)
                 {
                     _clientService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID No background found")));
                     return;
                 }
 
-                var device = CanvasDevice.GetSharedDevice();
-                var bitmaps = new List<CanvasBitmap>();
+                var width = (int)(512d * conversion.Scale);
+                var height = (int)(512d * conversion.Scale);
 
+                var device = CanvasDevice.GetSharedDevice();
                 var sfondo = new CanvasRenderTarget(device, 640, 640, 96, DirectXPixelFormat.B8G8R8A8UIntNormalized, CanvasAlphaMode.Premultiplied);
 
                 using (var session = sfondo.CreateDrawingSession())
@@ -536,7 +539,7 @@ namespace Unigram.Services
                             };
 
                             using (var gradient = CanvasBitmap.CreateFromBytes(device, ChatBackgroundFreeform.GenerateGradientData(50, 50, colors, positions), 50, 50, DirectXPixelFormat.B8G8R8A8UIntNormalized))
-                            using (var cache = await PlaceholderHelper.GetPatternBitmapAsync(device, null, background.Document.DocumentValue))
+                            using (var cache = await PlaceholderHelper.GetPatternBitmapAsync(device, null, document))
                             {
                                 using (var scale = new ScaleEffect { Source = gradient, BorderMode = EffectBorderMode.Hard, Scale = new Vector2(640f / 50f, 640f / 50f) })
                                 using (var colorize = new TintEffect { Source = cache, Color = Color.FromArgb(0x76, 00, 00, 00) })
@@ -548,42 +551,97 @@ namespace Unigram.Services
                             }
                         }
                     }
+
+                    if (conversion.StickerFileType == 0)
+                    {
+                        using (var stream = new InMemoryRandomAccessStream())
+                        {
+                            PlaceholderImageHelper.Current.DrawWebP(sticker.Local.Path, width, stream, out Size size);
+
+                            using (var webp = await CanvasBitmap.LoadAsync(device, stream, 96))
+                            {
+                                session.DrawImage(webp, new Rect(320 - size.Width / 2, 320 - size.Height / 2, size.Width, size.Height));
+                            }
+                        }
+                    }
                 }
 
-                bitmaps.Add(sfondo);
-
-                var width = (int)(512d * conversion.Scale);
-                var height = (int)(512d * conversion.Scale);
-
-                var animation = await Task.Run(() => LottieAnimation.LoadFromFile(sticker.Local.Path, new Windows.Graphics.SizeInt32 { Width = width, Height = height }, false, null));
-                if (animation == null)
+                if (conversion.StickerFileType == 0)
                 {
-                    _clientService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID Can't load Lottie animation")));
+                    await sfondo.SaveAsync(update.DestinationPath, CanvasBitmapFileFormat.Jpeg, 1);
+                    sfondo.Dispose();
+
+                    _clientService.Send(new FinishFileGeneration(update.GenerationId, null));
                     return;
                 }
 
+                var bitmaps = new List<CanvasBitmap>
+                {
+                    sfondo
+                };
+
                 var composition = new MediaComposition();
                 var layer = new MediaOverlayLayer();
+                var duration = TimeSpan.Zero;
 
                 var buffer = ArrayPool<byte>.Shared.Rent(width * height * 4);
 
-                var framesPerUpdate = animation.FrameRate < 60 ? 1 : 2;
-                var duration = TimeSpan.Zero;
-
-                for (int i = 0; i < animation.TotalFrame; i += framesPerUpdate)
+                if (conversion.StickerFileType == 1)
                 {
-                    var bitmap = CanvasBitmap.CreateFromBytes(device, buffer, width, height, DirectXPixelFormat.B8G8R8A8UIntNormalized);
-                    animation.RenderSync(bitmap, i);
+                    var animation = await Task.Run(() => LottieAnimation.LoadFromFile(sticker.Local.Path, new Windows.Graphics.SizeInt32 { Width = width, Height = height }, false, null));
+                    if (animation == null)
+                    {
+                        _clientService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID Can't load Lottie animation")));
+                        return;
+                    }
 
-                    var clip = MediaClip.CreateFromSurface(bitmap, TimeSpan.FromMilliseconds(1000d / 30d));
-                    var overlay = new MediaOverlay(clip, new Rect(320 - (width / 2d), 320 - (height / 2d), width, height), 1);
+                    var framesPerUpdate = animation.FrameRate < 60 ? 1 : 2;
 
-                    overlay.Delay = duration;
+                    for (int i = 0; i < animation.TotalFrame; i += framesPerUpdate)
+                    {
+                        var bitmap = CanvasBitmap.CreateFromBytes(device, buffer, width, height, DirectXPixelFormat.B8G8R8A8UIntNormalized);
+                        animation.RenderSync(bitmap, i);
 
-                    layer.Overlays.Add(overlay);
-                    duration += clip.OriginalDuration;
+                        var clip = MediaClip.CreateFromSurface(bitmap, TimeSpan.FromMilliseconds(1000d / 30d));
+                        var overlay = new MediaOverlay(clip, new Rect(320 - (width / 2d), 320 - (height / 2d), width, height), 1);
 
-                    bitmaps.Add(bitmap);
+                        overlay.Delay = duration;
+
+                        layer.Overlays.Add(overlay);
+                        duration += clip.OriginalDuration;
+
+                        bitmaps.Add(bitmap);
+                    }
+                }
+                else if (conversion.StickerFileType == 2)
+                {
+                    var animation = await Task.Run(() => CachedVideoAnimation.LoadFromFile(new LocalVideoSource(sticker), width, height, false));
+                    if (animation == null)
+                    {
+                        _clientService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID Can't load Lottie animation")));
+                        return;
+                    }
+
+                    while (true)
+                    {
+                        var bitmap = CanvasBitmap.CreateFromBytes(device, buffer, width, height, DirectXPixelFormat.B8G8R8A8UIntNormalized);
+                        animation.RenderSync(bitmap, out _, out bool completed);
+
+                        var clip = MediaClip.CreateFromSurface(bitmap, TimeSpan.FromMilliseconds(1000d / animation.FrameRate));
+                        var overlay = new MediaOverlay(clip, new Rect(320 - (width / 2d), 320 - (height / 2d), width, height), 1);
+
+                        overlay.Delay = duration;
+
+                        layer.Overlays.Add(overlay);
+                        duration += clip.OriginalDuration;
+
+                        bitmaps.Add(bitmap);
+
+                        if (completed)
+                        {
+                            break;
+                        }
+                    }
                 }
 
                 composition.OverlayLayers.Add(layer);
@@ -651,9 +709,15 @@ namespace Unigram.Services
         {
             public int StickerFileId { get; set; }
 
+            public int StickerFileType { get; set; }
+
             public string BackgroundUrl { get; set; }
 
-            public double Scale { get; set; }
+            public float Scale { get; set; } = 1;
+
+            public float OffsetX { get; set; } = 0;
+
+            public float OffsetY { get; set; } = 0;
         }
     }
 }

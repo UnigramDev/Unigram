@@ -75,6 +75,14 @@ namespace Unigram.Controls.Drawers
 
         public StickersTab Tab => StickersTab.Animations;
 
+        public Thickness ScrollingHostPadding
+        {
+            get => List.Padding;
+            set => List.Padding = new Thickness(2, value.Top, 0, value.Bottom);
+        }
+
+        public ListViewBase ScrollingHost => List;
+
         public void Activate(Chat chat)
         {
             _isActive = true;

@@ -15,9 +15,10 @@ using Unigram.ViewModels.Premium;
 using Unigram.ViewModels.Settings;
 using Unigram.ViewModels.Settings.Password;
 using Unigram.ViewModels.Settings.Privacy;
-using Unigram.ViewModels.SignIn;
+using Unigram.ViewModels.Authorization;
 using Unigram.ViewModels.Supergroups;
 using Unigram.ViewModels.Users;
+using System.Diagnostics;
 
 namespace Unigram
 {
@@ -28,6 +29,7 @@ namespace Unigram
         private static List<(Type Key, Type Value)> _lazySingletons;
         private static List<Type> _instances;
 
+        [Conditional("DEBUG")]
         public static void Generate()
         {
             _globals = new List<Type>
@@ -40,7 +42,6 @@ namespace Unigram
 
             _singletons = new List<(Type, Type)>
             {
-                ( typeof(ICacheService), typeof(ClientService) ),
                 ( typeof(IClientService), typeof(ClientService) ),
                 ( typeof(INotificationsService), typeof(NotificationsService) ),
                 ( typeof(IGenerationService), typeof(GenerationService) ),
@@ -70,11 +71,11 @@ namespace Unigram
 
             _instances = new List<Type>
             {
-                typeof(SignInViewModel),
-                typeof(SignUpViewModel),
-                typeof(SignInSentCodeViewModel),
-                typeof(SignInPasswordViewModel),
-                typeof(SignInRecoveryViewModel),
+                typeof(AuthorizationViewModel),
+                typeof(AuthorizationRegistrationViewModel),
+                typeof(AuthorizationCodeViewModel),
+                typeof(AuthorizationPasswordViewModel),
+                typeof(AuthorizationRecoveryViewModel),
                 typeof(AuthorizationEmailAddressViewModel),
                 typeof(AuthorizationEmailCodeViewModel),
                 typeof(MainViewModel),
@@ -88,6 +89,7 @@ namespace Unigram
                 typeof(AnimationDrawerViewModel),
                 typeof(StickerDrawerViewModel),
                 typeof(EmojiDrawerViewModel),
+                typeof(CreateChatPhotoViewModel),
                 typeof(ProfileViewModel),
                 typeof(UserCommonChatsViewModel),
                 typeof(UserCreateViewModel),

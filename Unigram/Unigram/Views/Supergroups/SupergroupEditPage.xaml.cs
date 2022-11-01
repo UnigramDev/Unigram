@@ -46,6 +46,11 @@ namespace Unigram.Views.Supergroups
             catch { }
         }
 
+        private async void CreatePhoto_Click(object sender, RoutedEventArgs e)
+        {
+            await ViewModel.NavigationService.ShowAsync(typeof(CreateChatPhotoPopup), ViewModel.Chat?.Id);
+        }
+
         #region Binding
 
         private string ConvertHistory(int available)

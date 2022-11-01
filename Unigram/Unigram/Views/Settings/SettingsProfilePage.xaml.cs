@@ -46,6 +46,11 @@ namespace Unigram.Views.Settings
             catch { }
         }
 
+        private async void CreatePhoto_Click(object sender, RoutedEventArgs e)
+        {
+            await ViewModel.NavigationService.ShowAsync(typeof(CreateChatPhotoPopup));
+        }
+
         private async void Phone_Click(object sender, RoutedEventArgs e)
         {
             var popup = new ChangePhoneNumberPopup();

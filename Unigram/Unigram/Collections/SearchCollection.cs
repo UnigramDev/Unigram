@@ -29,7 +29,7 @@ namespace Unigram.Collections
         }
 
         public SearchCollection(Func<object, string, TSource> factory, object sender, IDiffHandler<T> handler)
-            : base(handler, new DiffOptions { AllowBatching = false, DetectMoves = true })
+            : base(handler, Constants.DiffOptions)
         {
             _factory = factory;
             _sender = sender;

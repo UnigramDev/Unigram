@@ -177,7 +177,7 @@
             <TextBox x:Name="FieldEmoji"
                      PlaceholderText="{CustomResource SearchEmojiHint}"
                      TextChanged="FieldEmoji_TextChanged"
-                     Margin="12,8" />
+                     Margin="12,8,12,0" />
         </Border>
 
         <GridView x:Name="List"

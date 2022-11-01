@@ -43,8 +43,7 @@
                                     Height="96"
                                     Width="96" />
 
-                            <controls:GlyphButton Click="EditPhoto_Click"
-                                                  Glyph="&#xE722;"
+                            <controls:GlyphButton Glyph="&#xE722;"
                                                   AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"
                                                   Style="{StaticResource RoundGlyphButtonStyle}"
                                                   HorizontalAlignment="Center"
@@ -52,7 +51,26 @@
                                                   CornerRadius="48"
                                                   Height="96"
                                                   Width="96"
-                                                  FontSize="36" />
+                                                  FontSize="36">
+                                <Button.Flyout>
+                                    <MenuFlyout Placement="BottomEdgeAlignedLeft">
+                                        <MenuFlyoutItem Text="{CustomResource ChoosePhotoOrVideo}"
+                                                        Click="EditPhoto_Click">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Glyph="&#xEB9F;"
+                                                          Style="{StaticResource DefaultFontIconStyle}" />
+                                            </MenuFlyoutItem.Icon>
+                                        </MenuFlyoutItem>
+                                        <MenuFlyoutItem Text="{CustomResource StickersName}"
+                                                        Click="CreatePhoto_Click">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Glyph="&#xF4AA;"
+                                                          Style="{StaticResource DefaultFontIconStyle}" />
+                                            </MenuFlyoutItem.Icon>
+                                        </MenuFlyoutItem>
+                                    </MenuFlyout>
+                                </Button.Flyout>
+                            </controls:GlyphButton>
                         </Grid>
 
                         <TextBox Text="{x:Bind ViewModel.FirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"

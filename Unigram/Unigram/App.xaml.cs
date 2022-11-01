@@ -581,6 +581,7 @@ namespace Unigram
                 Unigram.Views.Settings.Popups.SettingsUsernamePopup => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.SettingsUsernameViewModel>(sessionId),
                 Unigram.Views.Settings.Popups.SettingsDataAutoPopup => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.SettingsDataAutoViewModel>(sessionId),
                 Unigram.Views.Popups.ChooseSoundPopup => TLContainer.Current.Resolve<Unigram.ViewModels.ChooseSoundViewModel>(sessionId),
+                Unigram.Views.Popups.CreateChatPhotoPopup => TLContainer.Current.Resolve<Unigram.ViewModels.CreateChatPhotoViewModel>(sessionId),
                 Unigram.Views.Premium.Popups.PromoPopup => TLContainer.Current.Resolve<Unigram.ViewModels.Premium.PromoViewModel>(sessionId),
                 _ => null
             };

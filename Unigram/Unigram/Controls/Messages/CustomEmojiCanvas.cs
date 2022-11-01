@@ -115,10 +115,14 @@ namespace Unigram.Controls.Messages
                     var x = (int)((2 + item.X - 0) * (_currentDpi / 96));
                     var y = (int)((2 + item.Y - 0) * (_currentDpi / 96));
 
-                    var matches = _emojiSize * _emojiSize * 4 == animation.Buffer?.Length;
+                    var matches = animation.PixelWidth * animation.PixelHeight * 4 == animation.Buffer?.Length;
                     if (matches && animation.HasRenderedFirstFrame && x + _emojiSize <= _bitmap.Size.Width && y + _emojiSize <= _bitmap.Size.Height)
                     {
-                        _bitmap.SetPixelBytes(animation.Buffer, x, y, _emojiSize, _emojiSize);
+                        _bitmap.SetPixelBytes(animation.Buffer,
+                            x + (_emojiSize - animation.PixelWidth),
+                            y + (_emojiSize - animation.PixelHeight),
+                            animation.PixelWidth,
+                            animation.PixelHeight);
                         animation.CloseOutline();
                     }
                     else
@@ -555,6 +559,9 @@ namespace Unigram.Controls.Messages
             _clientService = clientService;
             _sticker = sticker;
             _size = size;
+
+            PixelWidth = size;
+            PixelHeight = size;
         }
 
         public EmojiRenderer Clone(int size)
@@ -569,6 +576,9 @@ namespace Unigram.Controls.Messages
         public IBuffer Buffer => _buffer;
 
         public int Size => _size;
+
+        public int PixelWidth { get; private set; }
+        public int PixelHeight { get; private set; }
 
         public HashSet<int> References { get; } = new();
         public HashSet<int> HashCodes { get; } = new();
@@ -657,8 +667,11 @@ namespace Unigram.Controls.Messages
                 }
                 else if (_sticker.Format is StickerFormatWebp)
                 {
-                    _buffer = PlaceholderImageHelper.Current.DrawWebP(file.Local.Path, _size, out _);
+                    _buffer = PlaceholderImageHelper.Current.DrawWebP(file.Local.Path, _size, out Size size);
                     _hasRenderedFirstFrame = true;
+
+                    PixelWidth = (int)size.Width;
+                    PixelHeight = (int)size.Height;
                 }
             }
         }

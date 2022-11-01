@@ -781,6 +781,8 @@
     <Style TargetType="local:CustomEmojiIcon">
         <Setter Property="AutoPlay"
                 Value="False" />
+        <Setter Property="IsLoopingEnabled"
+                Value="False" />
         <Setter Property="IsTabStop"
                 Value="False" />
         <Setter Property="Template">

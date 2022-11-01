@@ -104,11 +104,7 @@ namespace Unigram.Controls.Messages
                 }
 
                 var prev = _prevValue ?? Array.Empty<MessageReaction>();
-                var diff = DiffUtil.CalculateDiff(prev, reactions, this, new DiffOptions
-                {
-                    AllowBatching = false,
-                    DetectMoves = true
-                });
+                var diff = DiffUtil.CalculateDiff(prev, reactions, this, Constants.DiffOptions);
 
                 foreach (var step in diff.Steps)
                 {

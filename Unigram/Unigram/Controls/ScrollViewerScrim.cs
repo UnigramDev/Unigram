@@ -39,51 +39,91 @@ namespace Unigram.Controls
         protected override void OnApplyTemplate()
         {
             _topScrim = GetTemplateChild("TopScrim") as Rectangle;
+            _topScrim.Height = _topInset;
+
             _bottomScrim = GetTemplateChild("BottomScrim") as Rectangle;
+            _bottomScrim.Height = _bottomInset;
 
             if (Background is SolidColorBrush brush && _topScrim != null && _bottomScrim != null)
             {
                 Scrim.SetGradient(_topScrim.Fill, new CubicBezierGradient(brush, 1, brush, 0));
                 Scrim.SetGradient(_bottomScrim.Fill, new CubicBezierGradient(brush, 0, brush, 1));
             }
+
+            if (_scrollingHost != null && _scrollViewer == null)
+            {
+                SetScrollingHost(_scrollingHost);
+            }
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            var scrollViewer = ScrollingHost as ScrollViewer;
-            if (scrollViewer == null && ScrollingHost != null)
+            if (_scrollingHost != null && _scrollViewer == null)
             {
-                scrollViewer = ScrollingHost.Descendants<ScrollViewer>().FirstOrDefault();
+                SetScrollingHost(_scrollingHost);
+            }
+        }
+
+        private FrameworkElement _scrollingHost;
+        public FrameworkElement ScrollingHost
+        {
+            get => _scrollingHost;
+            set => SetScrollingHost(value);
+        }
+
+        private void SetScrollingHost(FrameworkElement value)
+        {
+            if (_scrollViewer?.Content is FrameworkElement oldElement)
+            {
+                oldElement.SizeChanged -= OnSizeChanged;
             }
 
-            if (scrollViewer == null || _topScrim == null || _bottomScrim == null)
+            _scrollingHost = value;
+
+            if (_topScrim == null || _bottomScrim == null)
             {
                 return;
+            }
+
+            var scrollViewer = value as ScrollViewer;
+            if (scrollViewer == null && value != null)
+            {
+                if (value.IsLoaded)
+                {
+                    scrollViewer = ScrollingHost.Descendants<ScrollViewer>().FirstOrDefault();
+                }
+                else
+                {
+                    value.Loaded += OnLoaded;
+                    return;
+                }
             }
 
             _scrollViewer = scrollViewer;
             _propertySet = Window.Current.Compositor.CreatePropertySet();
             _propertySet.InsertScalar("ScrollableHeight", (float)scrollViewer.ScrollableHeight);
+            _propertySet.InsertScalar("TopInset", _topInset);
+            _propertySet.InsertScalar("BottomInset", _bottomInset);
 
             var top = ElementCompositionPreview.GetElementVisual(_topScrim);
             var bottom = ElementCompositionPreview.GetElementVisual(_bottomScrim);
             var props = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(scrollViewer);
 
-            var topAnimation = Window.Current.Compositor.CreateExpressionAnimation("Min(-(Scroll.Translation.Y / 32), 1)");
+            var topAnimation = Window.Current.Compositor.CreateExpressionAnimation("Min(-(Scroll.Translation.Y / Props.TopInset), 1)");
             topAnimation.SetReferenceParameter("Scroll", props);
             topAnimation.SetReferenceParameter("Props", _propertySet);
 
-            var bottomAnimation = Window.Current.Compositor.CreateExpressionAnimation("Min((Props.ScrollableHeight + Scroll.Translation.Y) / 32, 1)");
+            var bottomAnimation = Window.Current.Compositor.CreateExpressionAnimation("Min((Props.ScrollableHeight + Scroll.Translation.Y) / Props.BottomInset, 1)");
             bottomAnimation.SetReferenceParameter("Scroll", props);
             bottomAnimation.SetReferenceParameter("Props", _propertySet);
 
             top.StartAnimation("Scale.Y", topAnimation);
             bottom.StartAnimation("Scale.Y", bottomAnimation);
-            bottom.CenterPoint = new Vector3(0, 32, 0);
+            bottom.CenterPoint = new Vector3(0, _bottomInset, 0);
 
-            if (scrollViewer.Content is FrameworkElement element)
+            if (scrollViewer.Content is FrameworkElement newElement)
             {
-                element.SizeChanged += OnSizeChanged;
+                newElement.SizeChanged += OnSizeChanged;
             }
         }
 
@@ -95,6 +135,39 @@ namespace Unigram.Controls
             }
         }
 
-        public FrameworkElement ScrollingHost { get; set; }
+        private float _topInset = 32;
+        public double TopInset
+        {
+            get => _topInset;
+            set
+            {
+                _topInset = (float)value;
+                _propertySet?.InsertScalar("TopInset", _topInset);
+
+                if (_topScrim != null)
+                {
+                    _topScrim.Height = _topInset;
+                }
+            }
+        }
+
+        private float _bottomInset = 32;
+        public double BottomInset
+        {
+            get => _bottomInset;
+            set
+            {
+                _bottomInset = (float)value;
+                _propertySet?.InsertScalar("BottomInset", _bottomInset);
+
+                if (_bottomScrim != null)
+                {
+                    _bottomScrim.Height = _bottomInset;
+
+                    var bottom = ElementCompositionPreview.GetElementVisual(_bottomScrim);
+                    bottom.CenterPoint = new Vector3(0, _bottomInset, 0);
+                }
+            }
+        }
     }
 }

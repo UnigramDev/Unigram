@@ -609,6 +609,7 @@
     <Compile Include="ViewModels\Authorization\AuthorizationViewModel.cs" />
     <Compile Include="ViewModels\ChatListViewModel.cs" />
     <Compile Include="ViewModels\ChooseSoundViewModel.cs" />
+    <Compile Include="ViewModels\CreateChatPhotoViewModel.cs" />
     <Compile Include="ViewModels\Delegates\IChatListDelegate.cs" />
     <Compile Include="ViewModels\Delegates\IGroupCallDelegate.cs" />
     <Compile Include="ViewModels\DialogEventLogViewModel.cs" />
@@ -716,6 +717,9 @@
     </Compile>
     <Compile Include="Views\Popups\ChooseSoundPopup.xaml.cs">
       <DependentUpon>ChooseSoundPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Popups\CreateChatPhotoPopup.xaml.cs">
+      <DependentUpon>CreateChatPhotoPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\DoNotTranslatePopup.xaml.cs">
       <DependentUpon>DoNotTranslatePopup.xaml</DependentUpon>
@@ -2011,6 +2015,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Popups\ChooseSoundPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Popups\CreateChatPhotoPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

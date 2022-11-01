@@ -90,16 +90,21 @@ namespace Unigram.Controls.Drawers
 
         public StickersTab Tab => StickersTab.Emoji;
 
+        public Thickness ScrollingHostPadding
+        {
+            get => List.Padding;
+            set => List.Padding = new Thickness(0, value.Top, 0, value.Bottom);
+        }
+
+        public ListViewBase ScrollingHost => List;
+
         public void Activate(Chat chat)
         {
             _isActive = true;
             _handler.ThrottleVisibleItems();
             _toolbarHandler.ThrottleVisibleItems();
 
-            if (chat != null)
-            {
-                ViewModel.Update();
-            }
+            ViewModel.Update();
         }
 
         public void Deactivate()

@@ -77,16 +77,21 @@ namespace Unigram.Controls.Drawers
 
         public Services.Settings.StickersTab Tab => Services.Settings.StickersTab.Stickers;
 
+        public Thickness ScrollingHostPadding
+        {
+            get => List.Padding;
+            set => List.Padding = new Thickness(2, value.Top, 2, value.Bottom);
+        }
+
+        public ListViewBase ScrollingHost => List;
+
         public void Activate(Chat chat)
         {
             _isActive = true;
             _handler.ThrottleVisibleItems();
             _toolbarHandler.ThrottleVisibleItems();
 
-            if (chat != null)
-            {
-                ViewModel.Update(chat);
-            }
+            ViewModel.Update(chat);
         }
 
         public void Deactivate()

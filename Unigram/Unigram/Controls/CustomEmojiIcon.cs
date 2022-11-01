@@ -3,7 +3,6 @@ using Microsoft.Graphics.Canvas.Brushes;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Controls.Messages;
 using Unigram.Services;
@@ -34,7 +33,7 @@ namespace Unigram.Controls
             DefaultStyleKey = typeof(CustomEmojiIcon);
 
             _interval = TimeSpan.FromMilliseconds(Math.Floor(1000d / 30));
-            _emojiSize = GetDpiAwareSize(20);
+            _emojiSize = GetDpiAwareSize(_frameSize);
             _pool = EmojiCache.MergeOrCreate(_emojiSize, GetHashCode());
 
             EffectiveViewportChanged += OnEffectiveViewportChanged;
@@ -78,7 +77,7 @@ namespace Unigram.Controls
 
             EmojiCache.Release(_emojiSize, hash);
 
-            _emojiSize = GetDpiAwareSize(20);
+            _emojiSize = GetDpiAwareSize(_frameSize);
             _pool = EmojiCache.MergeOrCreate(_emojiSize, hash);
 
             if (_clientService != null)
@@ -96,7 +95,7 @@ namespace Unigram.Controls
 
         protected override CanvasBitmap CreateBitmap(CanvasDevice device)
         {
-            var awareSize = GetDpiAwareSize(20);
+            var awareSize = GetDpiAwareSize(_frameSize);
 
             bool needsCreate = _bitmap == null;
             needsCreate |= _bitmap?.Size.Width != awareSize || _bitmap?.Size.Height != awareSize;
@@ -105,7 +104,7 @@ namespace Unigram.Controls
 
             if (needsCreate)
             {
-                _emojiSize = GetDpiAwareSize(20);
+                _emojiSize = GetDpiAwareSize(_frameSize);
                 return CreateBitmap(device, awareSize, awareSize);
             }
 
@@ -130,10 +129,10 @@ namespace Unigram.Controls
 
             if (_cache is long item && _pool.TryGet(item, out EmojiRenderer animation))
             {
-                var matches = _emojiSize * _emojiSize * 4 == animation.Buffer?.Length;
+                var matches = animation.PixelWidth * animation.PixelHeight * 4 == animation.Buffer?.Length;
                 if (matches && animation.HasRenderedFirstFrame && _emojiSize == _bitmap.Size.Width && _emojiSize == _bitmap.Size.Height)
                 {
-                    _bitmap.SetPixelBytes(animation.Buffer, 0, 0, _emojiSize, _emojiSize);
+                    _bitmap.SetPixelBytes(animation.Buffer, 0, 0, animation.PixelWidth, animation.PixelHeight);
                     animation.CloseOutline();
 
                     if (animation.LoopCount != _loopTrack)
@@ -142,7 +141,7 @@ namespace Unigram.Controls
                         _loopTrack = animation.LoopCount;
                     }
 
-                    args.DrawImage(_bitmap, new Rect(0, 0, sender.Size.Width, sender.Size.Height));
+                    args.DrawImage(_bitmap, new Rect(sender.Size.Width - animation.PixelWidth, sender.Size.Height - animation.PixelHeight, sender.Size.Width, sender.Size.Height));
                 }
                 else
                 {
@@ -161,7 +160,7 @@ namespace Unigram.Controls
                 brush.Dispose();
             }
 
-            if (_loopCount == 2)
+            if (_loopCount == 2 && !_isLoopingEnabled)
             {
                 Pause();
             }
@@ -186,7 +185,7 @@ namespace Unigram.Controls
                 return;
             }
 
-            if (subscribe && _loopCount < 2)
+            if (subscribe && (_loopCount < 2 || _isLoopingEnabled))
             {
                 _pool.Show(item, GetHashCode());
             }
@@ -305,6 +304,20 @@ namespace Unigram.Controls
             }
 
             SetReaction(clientService, reaction);
+        }
+
+        private int _frameSize = 20;
+        public int FrameSize
+        {
+            get => _frameSize;
+            set
+            {
+                if (_frameSize != value)
+                {
+                    _frameSize = value;
+                    OnDpiChanged(_currentDpi);
+                }
+            }
         }
     }
 }

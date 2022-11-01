@@ -1,4 +1,6 @@
-﻿namespace Unigram
+﻿using Rg.DiffUtils;
+
+namespace Unigram
 {
     public static partial class Constants
     {
@@ -36,6 +38,12 @@
             "t.me",
             "telegra.ph"
             /*"telesco.pe"*/
+        };
+
+        public static DiffOptions DiffOptions = new DiffOptions
+        {
+            AllowBatching = false,
+            DetectMoves = true
         };
     }
 }
