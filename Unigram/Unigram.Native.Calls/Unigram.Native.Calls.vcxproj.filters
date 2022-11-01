@@ -156,6 +156,30 @@
     <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2\InstanceV2ReferenceImpl.cpp">
       <Filter>tgcalls\v2</Filter>
     </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2\ExternalSignalingConnection.cpp">
+      <Filter>tgcalls\v2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2\ReflectorPort.cpp">
+      <Filter>tgcalls\v2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2\ReflectorRelayPortFactory.cpp">
+      <Filter>tgcalls\v2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2\SignalingConnection.cpp">
+      <Filter>tgcalls\v2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2\SignalingSctpConnection.cpp">
+      <Filter>tgcalls\v2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\utils\gzip.cpp">
+      <Filter>tgcalls\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\FieldTrialsConfig.cpp">
+      <Filter>tgcalls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\ChannelManager.cpp">
+      <Filter>tgcalls</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -350,6 +374,30 @@
     <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\InstanceV2ReferenceImpl.h">
       <Filter>tgcalls\v2</Filter>
     </ClInclude>
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\ExternalSignalingConnection.h">
+      <Filter>tgcalls\v2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\ReflectorPort.h">
+      <Filter>tgcalls\v2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\ReflectorRelayPortFactory.h">
+      <Filter>tgcalls\v2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\SignalingConnection.h">
+      <Filter>tgcalls\v2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\SignalingSctpConnection.h">
+      <Filter>tgcalls\v2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\utils\gzip.h">
+      <Filter>tgcalls\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\FieldTrialsConfig.h">
+      <Filter>tgcalls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\ChannelManager.h">
+      <Filter>tgcalls</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="VoipManager.rc" />
@@ -408,6 +456,9 @@
     </Filter>
     <Filter Include="tgcalls\v2_4_0_0">
       <UniqueIdentifier>{8fe4c556-271d-41ba-b65a-116fc80b1ed8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tgcalls\utils">
+      <UniqueIdentifier>{ac972e92-c547-4d44-9376-7044e6f1a914}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
