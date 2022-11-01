@@ -54,6 +54,8 @@ Unigram uses WebRTC for calls and video chats. Since WebRTC doesn't currently su
 3. Execute `.\acquire-m107.cmd`. This will clone WebRTC source code to `C:\webrtc`, and it will take a while (~1.5h)
 4. Execute `.\build-m107.cmd "$arch$" "$config$"`. Replace `$arch$` with either `x64`, `x86` or `arm64` depending on your build target. `$config$` can be set to either `release` or `debug`.
 
+⚠️ Note that WebRTC build instructions are based on [WinRTC](https://github.com/microsoft/winrtc/tree/master/patches_for_WebRTC_org/m84).
+
 ### Building without WebRTC
 Since compiling WebRTC is time and resources consuming, it is possible to build the app without calls support:
 - Locate Unigram > References and remove `Unigram.Native.Calls` from the list.
