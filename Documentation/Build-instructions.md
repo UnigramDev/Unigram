@@ -42,13 +42,17 @@ Now that vcpkg is ready, you must customize the **ffmpeg** port to be built with
 ```
 Now that everything is properly configured go back to the terminal and enter the following:
 ```
-> ./vcpkg.exe install ffmpeg[opus,vpx]:arch-uwp lz4:arch-uwp openssl:arch-uwp zlib:arch-uwp
+> ./vcpkg.exe install ffmpeg[opus,vpx]:$arch$-uwp lz4:$arch$-uwp openssl:$arch$-uwp zlib:$arch$-uwp
 > ./vcpkg.exe integrate install
 ```
-Make sure to replace `arch` with either `x64`, `x86` or `arm64` depending on your build target.
+Make sure to replace `$arch$` with either `x64`, `x86` or `arm64` depending on your build target.
 
 ### WebRTC
-Unigram uses WebRTC for calls and video chats. Since WebRTC doesn't currently support UWP, you must use our fork to build it. [Instructions to follow]
+Unigram uses WebRTC for calls and video chats. Since WebRTC doesn't currently support UWP, you must use our fork to build it.
+1. Click on Start Menu → Visual Studio 2019 → x64 Native Tools Command Prompt for VS 2022.
+2. Navigate to .\Unigram\Libraries\webrtc
+3. Execute `.\acquire-m107.cmd`. This will clone WebRTC source code to `C:\webrtc`, and it will take a while (~1.5h)
+4. Execute `.\build-m107.cmd "$arch$" "$config$"`. Replace `$arch$` with either `x64`, `x86` or `arm64` depending on your build target. `$config$` can be set to either `release` or `debug`.
 
 ### Building without WebRTC
 Since compiling WebRTC is time and resources consuming, it is possible to build the app without calls support:
