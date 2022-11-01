@@ -802,7 +802,7 @@ namespace Unigram.ViewModels
             public void Handle(long chatId, IList<ChatPosition> positions, bool lastMessage = false)
             {
                 var chat = GetChat(chatId);
-                var order = chat.GetOrder(_chatList);
+                var order = positions.GetOrder(_chatList);
 
                 Handle(chat, order, lastMessage);
             }

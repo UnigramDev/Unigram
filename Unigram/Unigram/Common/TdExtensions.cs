@@ -1303,6 +1303,19 @@ namespace Unigram.Common
             return 0;
         }
 
+        public static long GetOrder(this IList<ChatPosition> positions, ChatList chatList)
+        {
+            for (int i = 0; i < positions.Count; i++)
+            {
+                if (positions[i].List.ListEquals(chatList))
+                {
+                    return positions[i].Order;
+                }
+            }
+
+            return 0;
+        }
+
         public static TdNetworkType GetNetworkType(this NetworkStatisticsEntry entry)
         {
             return TdNetworkType.WiFi;
