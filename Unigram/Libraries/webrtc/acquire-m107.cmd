@@ -61,10 +61,10 @@ echo.
 echo Adding forked Telegram+UWP upstream
 call git remote add upstream https://github.com/FrayxRulez/webrtc-uwp.git
 call git checkout m107
-call git apply "build/M107.patch" --directory="C:\webrtc\src\build"
-call git apply "third_party/M107.patch" --directory="C:\webrtc\src\third_party"
-call git apply "third_party/libyuv/M107.patch" --directory="C:\webrtc\src\third_party\libyuv"
-
+call git apply "build/m107.patch" --directory="C:\webrtc\src\build"
+call git apply "third_party/m107.patch" --directory="C:\webrtc\src\third_party"
+call git apply "third_party/libyuv/m107.patch" --directory="C:\webrtc\src\third_party\libyuv"
+call git apply "third_party/libvpx/source/libvpx/m107.patch" --directory="C:\webrtc\src\third_party\libvpx\source\libvpx"
 goto :exit
 
 :error
