@@ -239,8 +239,7 @@ namespace Unigram.Controls.Gallery
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 Transport.Visibility = source ? Visibility.Collapsed : Visibility.Visible;
-                //Details.Visibility = _mediaPlayer == null || _mediaPlayer.Source == null ? Visibility.Visible : Visibility.Collapsed;
-                //Caption.Visibility = _mediaPlayer == null || _mediaPlayer.Source == null ? Visibility.Visible : Visibility.Collapsed;
+
                 Element0.IsHitTestVisible = source;
                 Element1.IsHitTestVisible = source;
                 Element2.IsHitTestVisible = source;
