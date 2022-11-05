@@ -19,6 +19,7 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -44,6 +45,13 @@
                            TextTrimming="CharacterEllipsis"
                            Grid.Column="1"
                            Grid.Row="1" />
+
+                <TextBlock Text="&#xE9F6;"
+                           VerticalAlignment="Center"
+                           FontFamily="{StaticResource SymbolThemeFontFamily}"
+                           FontSize="16"
+                           Grid.Column="2"
+                           Grid.RowSpan="2" />
             </Grid>
         </DataTemplate>
 
@@ -54,6 +62,7 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -80,6 +89,13 @@
                            TextTrimming="CharacterEllipsis"
                            Grid.Column="1"
                            Grid.Row="1" />
+
+                <TextBlock Text="&#xE9F6;"
+                           VerticalAlignment="Center"
+                           FontFamily="{StaticResource SymbolThemeFontFamily}"
+                           FontSize="16"
+                           Grid.Column="2"
+                           Grid.RowSpan="2" />
             </Grid>
         </DataTemplate>
 
@@ -90,6 +106,7 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -113,6 +130,13 @@
                            TextTrimming="CharacterEllipsis"
                            Grid.Column="1"
                            Grid.Row="1" />
+
+                <TextBlock Text="&#xE9F6;"
+                           VerticalAlignment="Center"
+                           FontFamily="{StaticResource SymbolThemeFontFamily}"
+                           FontSize="16"
+                           Grid.Column="2"
+                           Grid.RowSpan="2" />
             </Grid>
         </DataTemplate>
     </Page.Resources>
