@@ -67,16 +67,20 @@ namespace winrt::Unigram::Native::Opus::implementation
             Dispose(true);
         }
 
+        bool IsValid() {
+            return _fileOs != INVALID_HANDLE_VALUE;
+        }
+
         void Transcode(hstring fileName) {
-            FILE* file = _wfopen(fileName.data(), L"rb");
-            if (file == NULL) {
+            HANDLE file = CreateFileFromAppW(fileName.data(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+            if (file == INVALID_HANDLE_VALUE) {
                 return;
             }
 
-            fseek(file, 0, SEEK_END);
-            size_t length = ftell(file);
-            size_t dataLength = length - WAV_HEADER_FIXED;
-            fseek(file, WAV_HEADER_FIXED, SEEK_SET);
+            FILE_STANDARD_INFO info;
+            GetFileInformationByHandleEx(file, FileStandardInfo, &info, sizeof(info));
+            size_t dataLength = info.EndOfFile.QuadPart - WAV_HEADER_FIXED;
+            SetFilePointer(file, WAV_HEADER_FIXED, NULL, FILE_BEGIN);
 
             const int frameLength = TG_OPUS_FRAME_SIZE * sizeof(int16_t);
             uint32_t partsCount = dataLength / frameLength;
@@ -85,11 +89,11 @@ namespace winrt::Unigram::Native::Opus::implementation
             for (int i = 0; i < partsCount; i++)
             {
                 unsigned int count = frameLength * (i + 1) > dataLength ? dataLength - frameLength * i : frameLength;
-                fread(buffer, 1, count, file);
+                ReadFile(file, buffer, count, NULL, NULL);
                 WriteFrame(buffer, count);
             }
 
-            fclose(file);
+            CloseHandle(file);
         }
 
         void WriteFrame(AudioFrame frame) {
@@ -127,7 +131,7 @@ namespace winrt::Unigram::Native::Opus::implementation
         OpusEncoder* _encoder = 0;
         uint8_t* _packet = 0;
         ogg_stream_state os;
-        FILE* _fileOs = 0;
+        HANDLE _fileOs = INVALID_HANDLE_VALUE;
         OpusHeader header;
         opus_int32 min_bytes;
         int max_frame_bytes;

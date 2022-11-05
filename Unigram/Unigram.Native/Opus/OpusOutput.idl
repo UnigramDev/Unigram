@@ -5,6 +5,7 @@ namespace Unigram.Native.Opus
     runtimeclass OpusOutput : Windows.Foundation.IClosable
     {
         OpusOutput(String fileName);
+        Boolean IsValid{ get; };
         void Transcode(String fileName);
     }
 }

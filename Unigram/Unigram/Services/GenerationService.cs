@@ -282,8 +282,16 @@ namespace Unigram.Services
             {
                 using (var opus = new OpusOutput(update.DestinationPath))
                 {
-                    var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(args[0]);
-                    await Task.Run(() => opus.Transcode(file.Path));
+                    if (opus.IsValid)
+                    {
+                        var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(args[0]);
+                        await Task.Run(() => opus.Transcode(file.Path));
+                    }
+                    else
+                    {
+                        _clientService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID can't access the file")));
+                        return;
+                    }
                 }
 
                 _clientService.Send(new FinishFileGeneration(update.GenerationId, null));

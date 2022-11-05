@@ -139,10 +139,13 @@ buf[base] = (val) & 0xff; \
         }
     }
 
-    static int writeOggPage(ogg_page* page, FILE* os) {
-        int written = fwrite(page->header, sizeof(unsigned char), page->header_len, os);
-        written += fwrite(page->body, sizeof(unsigned char), page->body_len, os);
-        return written;
+    static int writeOggPage(ogg_page* page, HANDLE os)
+    {
+        DWORD writtenHeader;
+        DWORD writtenBody;
+        WriteFile(os, page->header, page->header_len * sizeof(unsigned char), &writtenHeader, NULL);
+        WriteFile(os, page->body, page->body_len * sizeof(unsigned char), &writtenBody, NULL);
+        return writtenHeader + writtenBody;
     }
 
     bool OpusOutput::Initialize(const wchar_t* path)
@@ -153,8 +156,8 @@ buf[base] = (val) & 0xff; \
             return false;
         }
 
-        _fileOs = _wfopen(path, L"wb");
-        if (!_fileOs) {
+        _fileOs = CreateFileFromAppW(path, GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+        if (_fileOs == INVALID_HANDLE_VALUE) {
             return false;
         }
 
@@ -337,9 +340,9 @@ buf[base] = (val) & 0xff; \
                 _packet = 0;
             }
 
-            if (_fileOs) {
-                fclose(_fileOs);
-                _fileOs = 0;
+            if (_fileOs != INVALID_HANDLE_VALUE) {
+                CloseHandle(_fileOs);
+                _fileOs = INVALID_HANDLE_VALUE;
             }
 
             disposed = true;
