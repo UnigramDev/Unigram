@@ -1,4 +1,5 @@
-﻿using Telegram.Td.Api;
+﻿using Microsoft.UI.Xaml.Controls;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
@@ -9,6 +10,7 @@ using Unigram.ViewModels.Supergroups;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Unigram.Views.Supergroups
 {
@@ -24,17 +26,50 @@ namespace Unigram.Views.Supergroups
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (e.ClickedItem is string username)
+            var container = ScrollingHost.ContainerFromItem(e.ClickedItem) as SelectorItem;
+            if (container == null || e.ClickedItem is not UsernameInfo username)
             {
-                if (ViewModel.Usernames?.EditableUsername == username)
-                {
-                    Username.Focus(FocusState.Keyboard);
-                }
-                else
-                {
-                    ViewModel.ToggleUsername(username);
-                }
+                return;
             }
+
+            if (username.Value == ViewModel.Username)
+            {
+                Username.Focus(FocusState.Keyboard);
+                return;
+            }
+
+            var popup = new TeachingTip();
+            popup.Title = username.IsActive
+                ? Strings.Resources.UsernameDeactivateLink
+                : Strings.Resources.UsernameActivateLink;
+            popup.Subtitle = username.IsActive
+                ? Strings.Resources.UsernameDeactivateLinkProfileMessage
+                : Strings.Resources.UsernameActivateLinkProfileMessage;
+            popup.ActionButtonContent = username.IsActive ? Strings.Resources.Hide : Strings.Resources.Show;
+            popup.ActionButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
+            popup.CloseButtonContent = Strings.Resources.Cancel;
+            popup.PreferredPlacement = TeachingTipPlacementMode.Top;
+            popup.Width = popup.MinWidth = popup.MaxWidth = 314;
+            popup.Target = /*badge ??*/ container;
+            popup.IsLightDismissEnabled = true;
+            popup.ShouldConstrainToRootBounds = true;
+
+            popup.ActionButtonClick += (s, args) =>
+            {
+                popup.IsOpen = false;
+                ViewModel.ToggleUsername(username);
+            };
+
+            if (Window.Current.Content is FrameworkElement element)
+            {
+                element.Resources["TeachingTip"] = popup;
+            }
+            else
+            {
+                container.Resources["TeachingTip"] = popup;
+            }
+
+            popup.IsOpen = true;
         }
 
         #region Recycle

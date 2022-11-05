@@ -78,8 +78,11 @@ namespace Unigram.Views.Settings.Popups
                 return;
             }
 
-            //var content = container.ContentTemplateRoot as FrameworkElement;
-            //var badge = content?.FindName("Badge") as FrameworkElement;
+            if (username.Value == ViewModel.Username)
+            {
+                Username.Focus(FocusState.Keyboard);
+                return;
+            }
 
             var popup = new TeachingTip();
             popup.Title = username.IsActive

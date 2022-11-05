@@ -3330,7 +3330,6 @@ namespace Unigram.Views
                 var username = title.Inlines[1] as Run;
 
                 name.Text = user.FullName();
-                username.Text = string.IsNullOrEmpty(user.Username) ? string.Empty : $" @{user.Username}";
 
                 if (user.HasActiveUsername(out string usernameValue))
                 {

@@ -260,7 +260,7 @@ namespace Unigram.Views.Premium.Popups
                     if (supergroup != null)
                     {
                         var subtitle = content.Children[2] as TextBlock;
-                        subtitle.Text = MeUrlPrefixConverter.Convert(_clientService, supergroup.Username, true);
+                        subtitle.Text = MeUrlPrefixConverter.Convert(_clientService, supergroup.ActiveUsername(), true);
                     }
                 }
             }
@@ -296,7 +296,7 @@ namespace Unigram.Views.Premium.Popups
 
             var popup = new TeachingTip();
             popup.Title = Strings.Resources.AppName;
-            popup.Subtitle = string.Format(supergroup.IsChannel ? Strings.Resources.RevokeLinkAlertChannel : Strings.Resources.RevokeLinkAlert, MeUrlPrefixConverter.Convert(_clientService, supergroup.Username, true), chat.Title);
+            popup.Subtitle = string.Format(supergroup.IsChannel ? Strings.Resources.RevokeLinkAlertChannel : Strings.Resources.RevokeLinkAlert, MeUrlPrefixConverter.Convert(_clientService, supergroup.ActiveUsername(), true), chat.Title);
             popup.ActionButtonContent = Strings.Resources.RevokeButton;
             popup.ActionButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
             popup.CloseButtonContent = Strings.Resources.Cancel;
