@@ -709,7 +709,7 @@
                 <ControlTemplate TargetType="local:LottieView">
                     <Grid x:Name="LayoutRoot">
                         <Image x:Name="Canvas"
-                               Stretch="Fill"
+                               Stretch="UniformToFill"
                                AutomationProperties.AccessibilityView="Raw"
                                HorizontalAlignment="Stretch"
                                VerticalAlignment="Stretch" />
@@ -722,14 +722,19 @@
     <Style TargetType="local:FormattedTextBlock">
         <Setter Property="IsTabStop"
                 Value="False" />
+        <Setter Property="TextStyle"
+                Value="{StaticResource BodyRichTextBlockStyle}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:FormattedTextBlock">
                     <Grid x:Name="LayoutRoot">
                         <RichTextBlock x:Name="TextBlock"
                                        Foreground="{TemplateBinding Foreground}"
-                                       Style="{StaticResource BodyRichTextBlockStyle}"
+                                       Style="{TemplateBinding TextStyle}"
+                                       Padding="{TemplateBinding Padding}"
+                                       IsTextSelectionEnabled="{TemplateBinding IsTextSelectionEnabled}"
                                        FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                       TextAlignment="{TemplateBinding TextAlignment}"
                                        TextReadingOrder="UseFlowDirection"
                                        OpticalMarginAlignment="None" />
                         <messages:CustomEmojiCanvas x:Name="CustomEmoji"
@@ -766,13 +771,13 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="messages:CustomEmojiCanvas">
-                    <Canvas x:Name="LayoutRoot">
+                    <Grid x:Name="LayoutRoot">
                         <Image x:Name="Canvas"
-                               Stretch="Fill"
+                               Stretch="UniformToFill"
                                AutomationProperties.AccessibilityView="Raw"
                                HorizontalAlignment="Stretch"
                                VerticalAlignment="Stretch" />
-                    </Canvas>
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -3201,14 +3206,9 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ProfilePicture">
-                    <Ellipse FlowDirection="LeftToRight">
-                        <Ellipse.Fill>
-                            <ImageBrush ImageSource="{Binding Source, RelativeSource={RelativeSource Mode=TemplatedParent}}"
-                                        AlignmentY="Center"
-                                        AlignmentX="Center"
-                                        Stretch="UniformToFill" />
-                        </Ellipse.Fill>
-                    </Ellipse>
+                    <Image Source="{TemplateBinding Source}"
+                           Stretch="UniformToFill"
+                           AutomationProperties.AccessibilityView="Raw" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

@@ -26,7 +26,7 @@ namespace Unigram.Controls.Messages
         {
             Tag = message;
 
-            var content = Content as TextBlock;
+            var content = Content as FormattedTextBlock;
             if (content == null)
             {
                 return;
@@ -35,11 +35,7 @@ namespace Unigram.Controls.Messages
             var entities = GetEntities(message, true);
             if (entities.Text != null)
             {
-                var span = new Span();
-                content.Inlines.Clear();
-                content.Inlines.Add(span);
-
-                ReplaceEntities(message, span, entities.Text, entities.Entities);
+                content.SetText(message.ClientService, entities.Text, entities.Entities);
             }
         }
 
@@ -50,130 +46,81 @@ namespace Unigram.Controls.Messages
 
         private static (string Text, IList<TextEntity> Entities) GetEntities(MessageViewModel message, bool active)
         {
-            switch (message.Content)
+            return message.Content switch
             {
-                case MessageBasicGroupChatCreate basicGroupChatCreate:
-                    return UpdateBasicGroupChatCreate(message, basicGroupChatCreate, active);
-                case MessageChatAddMembers chatAddMembers:
-                    return UpdateChatAddMembers(message, chatAddMembers, active);
-                case MessageChatChangePhoto chatChangePhoto:
-                    return UpdateChatChangePhoto(message, chatChangePhoto, active);
-                case MessageChatChangeTitle chatChangeTitle:
-                    return UpdateChatChangeTitle(message, chatChangeTitle, active);
-                case MessageChatSetTheme chatSetTheme:
-                    return UpdateChatSetTheme(message, chatSetTheme, active);
-                case MessageChatDeleteMember chatDeleteMember:
-                    return UpdateChatDeleteMember(message, chatDeleteMember, active);
-                case MessageChatDeletePhoto chatDeletePhoto:
-                    return UpdateChatDeletePhoto(message, chatDeletePhoto, active);
-                case MessageChatJoinByLink chatJoinByLink:
-                    return UpdateChatJoinByLink(message, chatJoinByLink, active);
-                case MessageChatJoinByRequest chatJoinByRequest:
-                    return UpdateChatJoinByRequest(message, chatJoinByRequest, active);
-                case MessageChatSetTtl chatSetTtl:
-                    return UpdateChatSetTtl(message, chatSetTtl, active);
-                case MessageChatUpgradeFrom chatUpgradeFrom:
-                    return UpdateChatUpgradeFrom(message, chatUpgradeFrom, active);
-                case MessageChatUpgradeTo chatUpgradeTo:
-                    return UpdateChatUpgradeTo(message, chatUpgradeTo, active);
-                case MessageContactRegistered contactRegistered:
-                    return UpdateContactRegistered(message, contactRegistered, active);
-                case MessageCustomServiceAction customServiceAction:
-                    return UpdateCustomServiceAction(message, customServiceAction, active);
-                case MessageGameScore gameScore:
-                    return UpdateGameScore(message, gameScore, active);
-                case MessageGiftedPremium giftedPremium:
-                    return UpdateGiftedPremium(message, giftedPremium, active);
-                case MessageInviteVideoChatParticipants inviteVideoChatParticipants:
-                    return UpdateInviteVideoChatParticipants(message, inviteVideoChatParticipants, active);
-                case MessageProximityAlertTriggered proximityAlertTriggered:
-                    return UpdateProximityAlertTriggered(message, proximityAlertTriggered, active);
-                case MessagePassportDataSent passportDataSent:
-                    return UpdatePassportDataSent(message, passportDataSent, active);
-                case MessagePaymentSuccessful paymentSuccessful:
-                    return UpdatePaymentSuccessful(message, paymentSuccessful, active);
-                case MessagePinMessage pinMessage:
-                    return UpdatePinMessage(message, pinMessage, active);
-                case MessageScreenshotTaken screenshotTaken:
-                    return UpdateScreenshotTaken(message, screenshotTaken, active);
-                case MessageSupergroupChatCreate supergroupChatCreate:
-                    return UpdateSupergroupChatCreate(message, supergroupChatCreate, active);
-                case MessageVideoChatEnded videoChatEnded:
-                    return UpdateVideoChatEnded(message, videoChatEnded, active);
-                case MessageVideoChatScheduled videoChatScheduled:
-                    return UpdateVideoChatScheduled(message, videoChatScheduled, active);
-                case MessageVideoChatStarted videoChatStarted:
-                    return UpdateVideoChatStarted(message, videoChatStarted, active);
-                case MessageWebsiteConnected websiteConnected:
-                    return UpdateWebsiteConnected(message, websiteConnected, active);
-                case MessageWebAppDataSent webAppDataSent:
-                    return UpdateWebAppDataSent(message, webAppDataSent, active);
-                case MessageExpiredPhoto expiredPhoto:
-                    return UpdateExpiredPhoto(message, expiredPhoto, active);
-                case MessageExpiredVideo expiredVideo:
-                    return UpdateExpiredVideo(message, expiredVideo, active);
+                MessageBasicGroupChatCreate basicGroupChatCreate => UpdateBasicGroupChatCreate(message, basicGroupChatCreate, active),
+                MessageChatAddMembers chatAddMembers => UpdateChatAddMembers(message, chatAddMembers, active),
+                MessageChatChangePhoto chatChangePhoto => UpdateChatChangePhoto(message, chatChangePhoto, active),
+                MessageChatChangeTitle chatChangeTitle => UpdateChatChangeTitle(message, chatChangeTitle, active),
+                MessageChatSetTheme chatSetTheme => UpdateChatSetTheme(message, chatSetTheme, active),
+                MessageChatDeleteMember chatDeleteMember => UpdateChatDeleteMember(message, chatDeleteMember, active),
+                MessageChatDeletePhoto chatDeletePhoto => UpdateChatDeletePhoto(message, chatDeletePhoto, active),
+                MessageChatJoinByLink chatJoinByLink => UpdateChatJoinByLink(message, chatJoinByLink, active),
+                MessageChatJoinByRequest chatJoinByRequest => UpdateChatJoinByRequest(message, chatJoinByRequest, active),
+                MessageChatSetTtl chatSetTtl => UpdateChatSetTtl(message, chatSetTtl, active),
+                MessageChatUpgradeFrom chatUpgradeFrom => UpdateChatUpgradeFrom(message, chatUpgradeFrom, active),
+                MessageChatUpgradeTo chatUpgradeTo => UpdateChatUpgradeTo(message, chatUpgradeTo, active),
+                MessageContactRegistered contactRegistered => UpdateContactRegistered(message, contactRegistered, active),
+                MessageCustomServiceAction customServiceAction => UpdateCustomServiceAction(message, customServiceAction, active),
+                MessageForumTopicCreated forumTopicCreated => UpdateForumTopicCreated(message, forumTopicCreated, active),
+                MessageForumTopicEdited forumTopicEdited => UpdateForumTopicEdited(message, forumTopicEdited, active),
+                MessageForumTopicIsClosedToggled forumTopicIsClosedToggled => UpdateForumTopicIsClosedToggled(message, forumTopicIsClosedToggled, active),
+                MessageGameScore gameScore => UpdateGameScore(message, gameScore, active),
+                MessageGiftedPremium giftedPremium => UpdateGiftedPremium(message, giftedPremium, active),
+                MessageInviteVideoChatParticipants inviteVideoChatParticipants => UpdateInviteVideoChatParticipants(message, inviteVideoChatParticipants, active),
+                MessageProximityAlertTriggered proximityAlertTriggered => UpdateProximityAlertTriggered(message, proximityAlertTriggered, active),
+                MessagePassportDataSent passportDataSent => UpdatePassportDataSent(message, passportDataSent, active),
+                MessagePaymentSuccessful paymentSuccessful => UpdatePaymentSuccessful(message, paymentSuccessful, active),
+                MessagePinMessage pinMessage => UpdatePinMessage(message, pinMessage, active),
+                MessageScreenshotTaken screenshotTaken => UpdateScreenshotTaken(message, screenshotTaken, active),
+                MessageSupergroupChatCreate supergroupChatCreate => UpdateSupergroupChatCreate(message, supergroupChatCreate, active),
+                MessageVideoChatEnded videoChatEnded => UpdateVideoChatEnded(message, videoChatEnded, active),
+                MessageVideoChatScheduled videoChatScheduled => UpdateVideoChatScheduled(message, videoChatScheduled, active),
+                MessageVideoChatStarted videoChatStarted => UpdateVideoChatStarted(message, videoChatStarted, active),
+                MessageWebsiteConnected websiteConnected => UpdateWebsiteConnected(message, websiteConnected, active),
+                MessageWebAppDataSent webAppDataSent => UpdateWebAppDataSent(message, webAppDataSent, active),
+                MessageExpiredPhoto expiredPhoto => UpdateExpiredPhoto(message, expiredPhoto, active),
+                MessageExpiredVideo expiredVideo => UpdateExpiredVideo(message, expiredVideo, active),
                 // Local types:
-                case MessageChatEvent chatEvent:
-                    switch (chatEvent.Action)
-                    {
-                        case ChatEventAvailableReactionsChanged availableReactionsChanged:
-                            return UpdateAvailableReactionsChanged(message, availableReactionsChanged, active);
-                        case ChatEventHasProtectedContentToggled hasProtectedContentToggled:
-                            return UpdateHasProtectedContentToggled(message, hasProtectedContentToggled, active);
-                        case ChatEventSignMessagesToggled signMessagesToggled:
-                            return UpdateSignMessagesToggled(message, signMessagesToggled, active);
-                        case ChatEventStickerSetChanged stickerSetChanged:
-                            return UpdateStickerSetChanged(message, stickerSetChanged, active);
-                        case ChatEventInvitesToggled invitesToggled:
-                            return UpdateInvitesToggled(message, invitesToggled, active);
-                        case ChatEventIsAllHistoryAvailableToggled isAllHistoryAvailableToggled:
-                            return UpdateIsAllHistoryAvailableToggled(message, isAllHistoryAvailableToggled, active);
-                        case ChatEventLinkedChatChanged linkedChatChanged:
-                            return UpdateLinkedChatChanged(message, linkedChatChanged, active);
-                        case ChatEventLocationChanged locationChanged:
-                            return UpdateLocationChanged(message, locationChanged, active);
-                        case ChatEventMessageUnpinned messageUnpinned:
-                            return UpdateMessageUnpinned(message, messageUnpinned, active);
-                        case ChatEventMessageDeleted messageDeleted:
-                            return UpdateMessageDeleted(message, messageDeleted, active);
-                        case ChatEventMessageEdited messageEdited:
-                            return UpdateMessageEdited(message, messageEdited, active);
-                        case ChatEventMessageTtlChanged messageTtlChanged:
-                            return UpdateMessageTtlChanged(message, messageTtlChanged, active);
-                        case ChatEventDescriptionChanged descriptionChanged:
-                            return UpdateDescriptionChanged(message, descriptionChanged, active);
-                        case ChatEventInviteLinkDeleted inviteLinkDeleted:
-                            return UpdateInviteLinkDeleted(message, inviteLinkDeleted, active);
-                        case ChatEventInviteLinkEdited inviteLinkEdited:
-                            return UpdateInviteLinkEdited(message, inviteLinkEdited, active);
-                        case ChatEventInviteLinkRevoked inviteLinkRevoked:
-                            return UpdateInviteLinkRevoked(message, inviteLinkRevoked, active);
-                        case ChatEventMessagePinned messagePinned:
-                            return UpdateMessagePinned(message, messagePinned, active);
-                        case ChatEventUsernameChanged usernameChanged:
-                            return UpdateUsernameChanged(message, usernameChanged, active);
-                        case ChatEventPollStopped pollStopped:
-                            return UpdatePollStopped(message, pollStopped, active);
-                        case ChatEventSlowModeDelayChanged slowModeDelayChanged:
-                            return UpdateSlowModeDelayChanged(message, slowModeDelayChanged, active);
-                        case ChatEventVideoChatCreated videoChatCreated:
-                            return UpdateVideoChatCreated(message, videoChatCreated, active);
-                        case ChatEventVideoChatEnded videoChatEnded:
-                            return UpdateVideoChatEnded(message, videoChatEnded, active);
-                        case ChatEventVideoChatMuteNewParticipantsToggled videoChatMuteNewParticipantsToggled:
-                            return UpdateVideoChatMuteNewParticipantsToggled(message, videoChatMuteNewParticipantsToggled, active);
-                        case ChatEventVideoChatParticipantIsMutedToggled videoChatParticipantIsMutedToggled:
-                            return UpdateVideoChatParticipantIsMutedToggled(message, videoChatParticipantIsMutedToggled, active);
-                        case ChatEventVideoChatParticipantVolumeLevelChanged videoChatParticipantVolumeLevelChanged:
-                            return UpdateVideoChatParticipantVolumeLevelChanged(message, videoChatParticipantVolumeLevelChanged, active);
-                        default:
-                            return (string.Empty, null);
-                    }
-                case MessageHeaderDate headerDate:
-                    return UpdateHeaderDate(message, headerDate, active);
-                default:
-                    return (string.Empty, null);
-            }
+                MessageChatEvent chatEvent => chatEvent.Action switch
+                {
+                    ChatEventAvailableReactionsChanged availableReactionsChanged => UpdateAvailableReactionsChanged(message, availableReactionsChanged, active),
+                    ChatEventHasProtectedContentToggled hasProtectedContentToggled => UpdateHasProtectedContentToggled(message, hasProtectedContentToggled, active),
+                    ChatEventSignMessagesToggled signMessagesToggled => UpdateSignMessagesToggled(message, signMessagesToggled, active),
+                    ChatEventStickerSetChanged stickerSetChanged => UpdateStickerSetChanged(message, stickerSetChanged, active),
+                    ChatEventInvitesToggled invitesToggled => UpdateInvitesToggled(message, invitesToggled, active),
+                    ChatEventIsAllHistoryAvailableToggled isAllHistoryAvailableToggled => UpdateIsAllHistoryAvailableToggled(message, isAllHistoryAvailableToggled, active),
+                    ChatEventLinkedChatChanged linkedChatChanged => UpdateLinkedChatChanged(message, linkedChatChanged, active),
+                    ChatEventLocationChanged locationChanged => UpdateLocationChanged(message, locationChanged, active),
+                    ChatEventMessageUnpinned messageUnpinned => UpdateMessageUnpinned(message, messageUnpinned, active),
+                    ChatEventMessageDeleted messageDeleted => UpdateMessageDeleted(message, messageDeleted, active),
+                    ChatEventMessageEdited messageEdited => UpdateMessageEdited(message, messageEdited, active),
+                    ChatEventMessageTtlChanged messageTtlChanged => UpdateMessageTtlChanged(message, messageTtlChanged, active),
+                    ChatEventDescriptionChanged descriptionChanged => UpdateDescriptionChanged(message, descriptionChanged, active),
+                    ChatEventInviteLinkDeleted inviteLinkDeleted => UpdateInviteLinkDeleted(message, inviteLinkDeleted, active),
+                    ChatEventInviteLinkEdited inviteLinkEdited => UpdateInviteLinkEdited(message, inviteLinkEdited, active),
+                    ChatEventInviteLinkRevoked inviteLinkRevoked => UpdateInviteLinkRevoked(message, inviteLinkRevoked, active),
+                    ChatEventMessagePinned messagePinned => UpdateMessagePinned(message, messagePinned, active),
+                    ChatEventUsernameChanged usernameChanged => UpdateUsernameChanged(message, usernameChanged, active),
+                    ChatEventPollStopped pollStopped => UpdatePollStopped(message, pollStopped, active),
+                    ChatEventSlowModeDelayChanged slowModeDelayChanged => UpdateSlowModeDelayChanged(message, slowModeDelayChanged, active),
+                    ChatEventVideoChatCreated videoChatCreated => UpdateVideoChatCreated(message, videoChatCreated, active),
+                    ChatEventVideoChatEnded videoChatEnded => UpdateVideoChatEnded(message, videoChatEnded, active),
+                    ChatEventVideoChatMuteNewParticipantsToggled videoChatMuteNewParticipantsToggled => UpdateVideoChatMuteNewParticipantsToggled(message, videoChatMuteNewParticipantsToggled, active),
+                    ChatEventVideoChatParticipantIsMutedToggled videoChatParticipantIsMutedToggled => UpdateVideoChatParticipantIsMutedToggled(message, videoChatParticipantIsMutedToggled, active),
+                    ChatEventVideoChatParticipantVolumeLevelChanged videoChatParticipantVolumeLevelChanged => UpdateVideoChatParticipantVolumeLevelChanged(message, videoChatParticipantVolumeLevelChanged, active),
+                    ChatEventIsForumToggled isForumToggled => UpdateChatEventIsForumToggled(message, isForumToggled, active),
+                    ChatEventForumTopicCreated forumTopicCreated => UpdateChatEventForumTopicCreated(message, forumTopicCreated, active),
+                    ChatEventForumTopicDeleted forumTopicDeleted => UpdateChatEventForumTopicDeleted(message, forumTopicDeleted, active),
+                    ChatEventForumTopicEdited forumTopicEdited => UpdateChatEventForumTopicEdited(message, forumTopicEdited, active),
+                    ChatEventForumTopicPinned forumTopicPinned => UpdateChatEventForumTopicPinned(message, forumTopicPinned, active),
+                    ChatEventForumTopicToggleIsClosed forumTopicToggleIsClosed => UpdateChatEventForumTopicToggleIsClosed(message, forumTopicToggleIsClosed, active),
+                    //ChatEventActiveUsernamesChanged activeUsernamesChanged => UpdateChatEventActiveUsernames(message, activeUsernamesChanged, active),
+                    _ => (string.Empty, null)
+                },
+                MessageHeaderDate headerDate => UpdateHeaderDate(message, headerDate, active),
+                _ => (string.Empty, null)
+            };
         }
 
         #region Local
@@ -677,6 +624,107 @@ namespace Unigram.Controls.Messages
             return (content, entities);
         }
 
+        private static (string, IList<TextEntity>) UpdateChatEventIsForumToggled(MessageViewModel message, ChatEventIsForumToggled isForumToggled, bool active)
+        {
+            // EventLogSwitchToForum, EventLogSwitchToGroup
+
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            var fromUser = message.GetSender();
+
+            content = ReplaceWithLink(isForumToggled.IsForum
+                ? Strings.Resources.EventLogSwitchToForum
+                : Strings.Resources.EventLogSwitchToGroup, "un1", fromUser, ref entities);
+
+            return (content, entities);
+        }
+
+        private static (string, IList<TextEntity>) UpdateChatEventForumTopicCreated(MessageViewModel message, ChatEventForumTopicCreated forumTopicCreated, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            var fromUser = message.GetSender();
+
+            content = ReplaceWithLink(Strings.Resources.EventLogCreateTopic, "un1", fromUser, ref entities);
+            content = ReplaceWithLink(content, "un2", forumTopicCreated.TopicInfo, ref entities);
+
+            return (content, entities);
+        }
+
+        private static (string, IList<TextEntity>) UpdateChatEventForumTopicDeleted(MessageViewModel message, ChatEventForumTopicDeleted forumTopicDeleted, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            var fromUser = message.GetSender();
+
+            content = ReplaceWithLink(Strings.Resources.EventLogDeleteTopic, "un1", fromUser, ref entities);
+            content = ReplaceWithLink(content, "un2", forumTopicDeleted.TopicInfo, ref entities);
+
+            return (content, entities);
+        }
+
+        private static (string, IList<TextEntity>) UpdateChatEventForumTopicEdited(MessageViewModel message, ChatEventForumTopicEdited forumTopicEdited, bool active)
+        {
+            // EventLogEditTopic
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            var fromUser = message.GetSender();
+
+            content = ReplaceWithLink(Strings.Resources.EventLogEditTopic, "un1", fromUser, ref entities);
+            content = ReplaceWithLink(content, "un2", forumTopicEdited.OldTopicInfo, ref entities);
+            content = ReplaceWithLink(content, "un3", forumTopicEdited.NewTopicInfo, ref entities);
+
+            return (content, entities);
+        }
+
+        private static (string, IList<TextEntity>) UpdateChatEventForumTopicPinned(MessageViewModel message, ChatEventForumTopicPinned forumTopicPinned, bool active)
+        {
+            // EventLogPinTopic, EventLogUnpinTopic
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            var fromUser = message.GetSender();
+
+            if (forumTopicPinned.NewTopicInfo != null)
+            {
+                content = ReplaceWithLink(Strings.Resources.EventLogPinTopic, "un1", fromUser, ref entities);
+                content = ReplaceWithLink(content, "un2", forumTopicPinned.NewTopicInfo, ref entities);
+            }
+            else if (forumTopicPinned.OldTopicInfo != null)
+            {
+                content = ReplaceWithLink(Strings.Resources.EventLogUnpinTopic, "un1", fromUser, ref entities);
+                content = ReplaceWithLink(content, "un2", forumTopicPinned.OldTopicInfo, ref entities);
+            }
+
+            return (content, entities);
+        }
+
+        private static (string, IList<TextEntity>) UpdateChatEventForumTopicToggleIsClosed(MessageViewModel message, ChatEventForumTopicToggleIsClosed forumTopicToggleIsClosed, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            return (content, entities);
+        }
+
+        //private static (string, IList<TextEntity>) UpdateChatEventActiveUsernames(MessageViewModel message, ChatEventActiveUsernamesChanged activeUsernamesChanged, bool active)
+        //{
+        //    //var content = string.Empty;
+        //    //var entities = active ? new List<TextEntity>() : null;
+
+        //    //var fromUser = message.GetSender();
+
+        //    //content = ReplaceWithLink(isForumToggled.IsForum
+        //    //    ? Strings.Resources.EventLogSwitchToForum
+        //    //    : Strings.Resources.EventLogSwitchToGroup, "un1", fromUser, ref entities);
+
+        //    //return (content, entities);
+        //}
+
         #endregion
 
         private static (string, IList<TextEntity>) UpdateBasicGroupChatCreate(MessageViewModel message, MessageBasicGroupChatCreate basicGroupChatCreate, bool active)
@@ -1091,6 +1139,84 @@ namespace Unigram.Controls.Messages
         private static (string, IList<TextEntity>) UpdateCustomServiceAction(MessageViewModel message, MessageCustomServiceAction customServiceAction, bool active)
         {
             return (customServiceAction.Text, null);
+        }
+
+        private static (string, IList<TextEntity>) UpdateForumTopicCreated(MessageViewModel message, MessageForumTopicCreated forumTopicCreated, bool active)
+        {
+            // TopicWasCreatedAction
+            // TopicCreated
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            if (true)
+            {
+                content = string.Format(Strings.Resources.TopicWasCreatedAction, $"\U0001F4C3 {forumTopicCreated.Name}");
+                entities?.Add(new TextEntity(0, 2, new TextEntityTypeCustomEmoji(forumTopicCreated.Icon.CustomEmojiId)));
+            }
+            else
+            {
+                content = Strings.Resources.TopicCreated;
+            }
+
+            return (content, entities);
+        }
+
+        private static (string, IList<TextEntity>) UpdateForumTopicEdited(MessageViewModel message, MessageForumTopicEdited forumTopicEdited, bool active)
+        {
+            // TopicWasIconChangedToAction, TopicWasRenamedToAction TopicWasRenamedToAction2
+            // TopicIconChangedToAction, TopicRenamedToAction
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            var fromUser = message.GetSender();
+
+            if (true)
+            {
+                if (forumTopicEdited.EditIconCustomEmojiId && forumTopicEdited.Name.Length > 0)
+                {
+                    content = string.Format(Strings.Resources.TopicWasRenamedToAction2, "un1", $"\U0001F4C3 {forumTopicEdited.Name}");
+                    content = ReplaceWithLink(content, "un1", fromUser, ref entities);
+                }
+                else if (forumTopicEdited.EditIconCustomEmojiId)
+                {
+                    content = string.Format(Strings.Resources.TopicWasIconChangedToAction, "un1", "\U0001F4C3");
+                    content = ReplaceWithLink(content, "un1", fromUser, ref entities);
+                }
+                else
+                {
+                    content = string.Format(Strings.Resources.TopicWasRenamedToAction, "un1", forumTopicEdited.Name);
+                    content = ReplaceWithLink(content, "un1", fromUser, ref entities);
+                }
+            }
+
+            var index = content.IndexOf("\U0001F4C3");
+            if (index != -1 && entities != null)
+            {
+                entities.Add(new TextEntity(index, 2, new TextEntityTypeCustomEmoji(forumTopicEdited.IconCustomEmojiId)));
+            }
+
+            return (content, entities);
+        }
+
+        private static (string, IList<TextEntity>) UpdateForumTopicIsClosedToggled(MessageViewModel message, MessageForumTopicIsClosedToggled forumTopicIsClosedToggled, bool active)
+        {
+            // TopicWasClosedAction, TopicWasReopenedAction
+            // TopicClosed2, TopicRestarted2
+
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            var fromUser = message.GetSender();
+
+            if (true)
+            {
+                content = string.Format(forumTopicIsClosedToggled.IsClosed
+                    ? Strings.Resources.TopicClosed2
+                    : Strings.Resources.TopicRestarted2, "un1");
+                content = ReplaceWithLink(content, "un1", fromUser, ref entities);
+            }
+
+            return (content, entities);
         }
 
         private static (string, IList<TextEntity>) UpdateGameScore(MessageViewModel message, MessageGameScore gameScore, bool active)
@@ -1584,6 +1710,11 @@ namespace Unigram.Controls.Messages
                     name = Locale.FormatCurrency(giftedPremium.Amount, giftedPremium.Currency);
                     id = "tg-premium://";
                 }
+                else if (obj is ForumTopicInfo forumTopicInfo)
+                {
+                    name = $"\U0001F4C3 {forumTopicInfo.Name}";
+                    id = "tg-topic://";
+                }
                 else
                 {
                     name = "";
@@ -1598,6 +1729,11 @@ namespace Unigram.Controls.Messages
                     if (obj is User mention)
                     {
                         entities.Add(new TextEntity(start, name.Length, new TextEntityTypeMentionName(mention.Id)));
+                    }
+                    else if (obj is ForumTopicInfo forumTopicInfo)
+                    {
+                        entities.Add(new TextEntity(start, 2, new TextEntityTypeCustomEmoji(forumTopicInfo.Icon.CustomEmojiId)));
+                        entities.Add(new TextEntity(start + 3, name.Length - 3, new TextEntityTypeTextUrl(id)));
                     }
                     else
                     {

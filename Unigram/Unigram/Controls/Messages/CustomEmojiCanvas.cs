@@ -75,7 +75,7 @@ namespace Unigram.Controls.Messages
             if (needsCreate)
             {
                 _emojiSize = GetDpiAwareSize(20);
-                return CreateBitmap(device, awareSize.Width, awareSize.Height);
+                return CreateBitmap(device, awareSize.Width, awareSize.Height, dpi: _currentDpi);
             }
 
             return null;
@@ -116,7 +116,7 @@ namespace Unigram.Controls.Messages
                     var y = (int)((2 + item.Y - 0) * (_currentDpi / 96));
 
                     var matches = animation.PixelWidth * animation.PixelHeight * 4 == animation.Buffer?.Length;
-                    if (matches && animation.HasRenderedFirstFrame && x + _emojiSize <= _bitmap.Size.Width && y + _emojiSize <= _bitmap.Size.Height)
+                    if (matches && animation.HasRenderedFirstFrame && x + _emojiSize <= _bitmap.SizeInPixels.Width && y + _emojiSize <= _bitmap.SizeInPixels.Height)
                     {
                         _bitmap.SetPixelBytes(animation.Buffer,
                             x + (_emojiSize - animation.PixelWidth),
@@ -188,23 +188,18 @@ namespace Unigram.Controls.Messages
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            _layoutRoot?.Measure(new Size(availableSize.Width, availableSize.Height));
-            _canvas?.Measure(new Size(availableSize.Width, availableSize.Height));
-
             return new Size(0, 0);
         }
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            _layoutRoot?.Arrange(new Rect(0, 0, finalSize.Width, finalSize.Height));
-            _canvas?.Arrange(new Rect(0, 0, finalSize.Width, finalSize.Height));
-
-            if (_canvas != null)
+            if (_layoutRoot != null)
             {
-                _canvas.MaxWidth = finalSize.Width;
-                _canvas.MaxHeight = finalSize.Height;
+                _layoutRoot.MaxWidth = finalSize.Width;
+                _layoutRoot.MaxHeight = finalSize.Height;
             }
 
+            _layoutRoot?.Arrange(new Rect(0, 0, finalSize.Width, finalSize.Height));
             return finalSize;
         }
 

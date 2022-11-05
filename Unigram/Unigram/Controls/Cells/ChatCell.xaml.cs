@@ -113,7 +113,6 @@ namespace Unigram.Controls.Cells
         private Border PinnedIcon;
         private Border UnreadMentionsBadge;
         private InfoBadge UnreadBadge;
-        private Border FailedBadge;
         private Rectangle DropVisual;
         private TextBlock FailedLabel;
         private TextBlock UnreadMentionsLabel;
@@ -147,7 +146,6 @@ namespace Unigram.Controls.Cells
             PinnedIcon = GetTemplateChild(nameof(PinnedIcon)) as Border;
             UnreadMentionsBadge = GetTemplateChild(nameof(UnreadMentionsBadge)) as Border;
             UnreadBadge = GetTemplateChild(nameof(UnreadBadge)) as InfoBadge;
-            FailedBadge = GetTemplateChild(nameof(FailedBadge)) as Border;
             DropVisual = GetTemplateChild(nameof(DropVisual)) as Rectangle;
             FailedLabel = GetTemplateChild(nameof(FailedLabel)) as TextBlock;
             UnreadMentionsLabel = GetTemplateChild(nameof(UnreadMentionsLabel)) as TextBlock;
@@ -256,7 +254,6 @@ namespace Unigram.Controls.Cells
                 DraftLabel.Text = string.Empty;
                 TimeLabel.Text = string.Empty;
                 StateIcon.Glyph = string.Empty;
-                FailedBadge.Visibility = Visibility.Collapsed;
 
                 MutedIcon.Visibility = Visibility.Collapsed;
 
@@ -444,7 +441,6 @@ namespace Unigram.Controls.Cells
             FromLabel.Text = UpdateFromLabel(chat, position);
             TimeLabel.Text = UpdateTimeLabel(chat, position);
             StateIcon.Glyph = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, chat.DraftMessage, chat.LastMessage, chat.LastMessage?.SendingState);
-            FailedBadge.Visibility = chat.LastMessage?.SendingState is MessageSendingStateFailed ? Visibility.Visible : Visibility.Collapsed;
 
             UpdateBriefLabel(UpdateBriefLabel(chat, position));
             UpdateMinithumbnail(chat, chat.DraftMessage == null ? chat.LastMessage : null);
@@ -1390,7 +1386,7 @@ namespace Unigram.Controls.Cells
                     if (message.SendingState is MessageSendingStateFailed)
                     {
                         // TODO: 
-                        return "\uE599"; // Failed
+                        return "failed"; // Failed
                     }
                     else if (message.SendingState is MessageSendingStatePending)
                     {
@@ -1410,7 +1406,7 @@ namespace Unigram.Controls.Cells
                     _ticksState = MessageTicksState.Failed;
 
                     // TODO: 
-                    return "\uE599"; // Failed
+                    return "failed"; // Failed
                 }
                 else if (message.SendingState is MessageSendingStatePending)
                 {
@@ -2135,7 +2131,6 @@ namespace Unigram.Controls.Cells
             var PinnedIcon = Children[11 + shift];
             var UnreadMentionsBadge = Children[12 + shift];
             var UnreadBadge = Children[13 + shift];
-            var FailedBadge = Children[14 + shift];
 
             PhotoPanel.Measure(availableSize);
 
@@ -2159,9 +2154,8 @@ namespace Unigram.Controls.Cells
             PinnedIcon.Measure(availableSize);
             UnreadBadge.Measure(availableSize);
             UnreadMentionsBadge.Measure(availableSize);
-            FailedBadge.Measure(availableSize);
 
-            var line2RightPadding = Math.Max(Math.Max(PinnedIcon.DesiredSize.Width, UnreadBadge.DesiredSize.Width), FailedBadge.DesiredSize.Width);
+            var line2RightPadding = Math.Max(PinnedIcon.DesiredSize.Width, UnreadBadge.DesiredSize.Width);
 
             var line2Left = 8 + PhotoPanel.DesiredSize.Width + 12 + MinithumbnailPanel.DesiredSize.Width;
             var line2Right = availableSize.Width - 8 - line2RightPadding - UnreadMentionsBadge.DesiredSize.Width;
@@ -2210,7 +2204,6 @@ namespace Unigram.Controls.Cells
             var PinnedIcon = Children[11 + shift];
             var UnreadMentionsBadge = Children[12 + shift];
             var UnreadBadge = Children[13 + shift];
-            var FailedBadge = Children[14 + shift];
 
             var rect = new Rect();
             var min = 8 + PhotoPanel.DesiredSize.Width + 12;
@@ -2296,13 +2289,7 @@ namespace Unigram.Controls.Cells
             rect.Height = UnreadMentionsBadge.DesiredSize.Height;
             UnreadMentionsBadge.Arrange(rect);
 
-            rect.X = Math.Max(min, finalSize.Width - 8 - FailedBadge.DesiredSize.Width);
-            rect.Y = 36;
-            rect.Width = FailedBadge.DesiredSize.Width;
-            rect.Height = FailedBadge.DesiredSize.Height;
-            FailedBadge.Arrange(rect);
-
-            var line2RightPadding = Math.Max(Math.Max(PinnedIcon.DesiredSize.Width, UnreadBadge.DesiredSize.Width), FailedBadge.DesiredSize.Width);
+            var line2RightPadding = Math.Max(PinnedIcon.DesiredSize.Width, UnreadBadge.DesiredSize.Width);
 
             var line2Left = min + MinithumbnailPanel.DesiredSize.Width;
             var line2Right = finalSize.Width - 8 - line2RightPadding - UnreadMentionsBadge.DesiredSize.Width;

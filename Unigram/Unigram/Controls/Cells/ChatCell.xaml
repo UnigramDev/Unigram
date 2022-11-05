@@ -227,27 +227,6 @@
                                         Grid.Column="5"
                                         Grid.Row="1" />
 
-
-                        <Border x:Name="FailedBadge"
-                                Background="{ThemeResource ChatFailedBadgeBrush}"
-                                MinWidth="20"
-                                Height="20"
-                                CornerRadius="10"
-                                VerticalAlignment="Bottom"
-                                HorizontalAlignment="Right"
-                                Margin="8,0,0,0"
-                                Visibility="Collapsed"
-                                Grid.Column="5"
-                                Grid.Row="1">
-                            <TextBlock x:Name="FailedLabel"
-                                       Text="&#xE171;"
-                                       FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                       Style="{StaticResource CaptionTextBlockStyle}"
-                                       Foreground="{ThemeResource ChatFailedLabelBrush}"
-                                       VerticalAlignment="Center"
-                                       TextAlignment="Center" />
-                        </Border>
-
                         <Rectangle x:Name="DropVisual"
                                    x:Load="False"
                                    Stroke="{ThemeResource SystemControlForegroundBaseHighBrush}"

@@ -27,7 +27,7 @@ namespace Unigram.ViewModels
 
         private long _minEventId = long.MaxValue;
 
-        private ChatEventLogFilters _filters = new ChatEventLogFilters(true, true, true, true, true, true, true, true, true, true, true, true);
+        private ChatEventLogFilters _filters = new ChatEventLogFilters(true, true, true, true, true, true, true, true, true, true, true, true, true);
         public ChatEventLogFilters Filters
         {
             get => _filters;
@@ -45,17 +45,20 @@ namespace Unigram.ViewModels
         {
             get
             {
-                if (_filters.InfoChanges &&
-                    _filters.MemberInvites &&
-                    _filters.MemberJoins &&
-                    _filters.MemberLeaves &&
-                    _filters.MemberPromotions &&
-                    _filters.MemberRestrictions &&
-                    _filters.MessageDeletions &&
-                    _filters.MessageEdits &&
-                    _filters.MessagePins &&
-                    _filters.SettingChanges &&
-                    _userIds.IsEmpty())
+                if (_filters.ForumChanges
+                    && _filters.VideoChatChanges
+                    && _filters.InviteLinkChanges
+                    && _filters.SettingChanges
+                    && _filters.InfoChanges
+                    && _filters.MemberRestrictions
+                    && _filters.MemberPromotions
+                    && _filters.MemberInvites
+                    && _filters.MemberLeaves
+                    && _filters.MemberJoins
+                    && _filters.MessagePins
+                    && _filters.MessageDeletions
+                    && _filters.MessageEdits
+                    && _userIds.IsEmpty())
                 {
                     return Strings.Resources.EventLogAllEvents;
                 }
@@ -234,7 +237,7 @@ namespace Unigram.ViewModels
                 }
             }
 
-            return new Message(chatEvent.Id, sender, chatId, null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, isChannel, false, chatEvent.Date, 0, null, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, null, null);
+            return new Message(chatEvent.Id, sender, chatId, null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, isChannel, false, false, chatEvent.Date, 0, null, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, null, null);
         }
 
         private MessageViewModel GetMessage(long chatId, bool isChannel, ChatEvent chatEvent, bool child = false)
@@ -295,6 +298,11 @@ namespace Unigram.ViewModels
                     case ChatEventInviteLinkDeleted:
                     case ChatEventInviteLinkEdited:
                     case ChatEventInviteLinkRevoked:
+                    case ChatEventForumTopicCreated:
+                    case ChatEventForumTopicDeleted:
+                    case ChatEventForumTopicEdited:
+                    case ChatEventForumTopicPinned:
+                    case ChatEventForumTopicToggleIsClosed:
                         message = GetMessage(_chat.Id, channel, item);
                         message.Content = new MessageChatEvent(item);
                         break;
@@ -460,11 +468,11 @@ namespace Unigram.ViewModels
                 }
                 else if (memberRestricted.OldStatus is ChatMemberStatusBanned oldBanned)
                 {
-                    o = new ChatMemberStatusRestricted(false, oldBanned.BannedUntilDate, new ChatPermissions(false, false, false, false, false, false, false, false));
+                    o = new ChatMemberStatusRestricted(false, oldBanned.BannedUntilDate, new ChatPermissions(false, false, false, false, false, false, false, false, false));
                 }
                 else if (memberRestricted.OldStatus is ChatMemberStatusMember)
                 {
-                    o = new ChatMemberStatusRestricted(true, 0, new ChatPermissions(true, true, true, true, true, true, true, true));
+                    o = new ChatMemberStatusRestricted(true, 0, new ChatPermissions(true, true, true, true, true, true, true, true, true));
                 }
 
                 if (memberRestricted.NewStatus is ChatMemberStatusRestricted newRestricted)
@@ -473,11 +481,11 @@ namespace Unigram.ViewModels
                 }
                 else if (memberRestricted.NewStatus is ChatMemberStatusBanned newBanned)
                 {
-                    n = new ChatMemberStatusRestricted(false, newBanned.BannedUntilDate, new ChatPermissions(false, false, false, false, false, false, false, false));
+                    n = new ChatMemberStatusRestricted(false, newBanned.BannedUntilDate, new ChatPermissions(false, false, false, false, false, false, false, false, false));
                 }
                 else if (memberRestricted.NewStatus is ChatMemberStatusMember)
                 {
-                    n = new ChatMemberStatusRestricted(true, 0, new ChatPermissions(true, true, true, true, true, true, true, true));
+                    n = new ChatMemberStatusRestricted(true, 0, new ChatPermissions(true, true, true, true, true, true, true, true, true));
                 }
 
                 string text;
@@ -546,11 +554,11 @@ namespace Unigram.ViewModels
                     var added = false;
                     if (o == null)
                     {
-                        o = new ChatMemberStatusRestricted(true, 0, new ChatPermissions(true, true, true, true, true, true, true, true));
+                        o = new ChatMemberStatusRestricted(true, 0, new ChatPermissions(true, true, true, true, true, true, true, true, true));
                     }
                     if (n == null)
                     {
-                        n = new ChatMemberStatusRestricted(true, 0, new ChatPermissions(true, true, true, true, true, true, true, true));
+                        n = new ChatMemberStatusRestricted(true, 0, new ChatPermissions(true, true, true, true, true, true, true, true, true));
                     }
 
                     void AppendChange(bool value, string label)
@@ -788,17 +796,18 @@ namespace Unigram.ViewModels
                     entities.Add(new TextEntity(offset, name.Length, new TextEntityTypeMentionName(user.Id)));
                 }
 
-                if (string.IsNullOrEmpty(user.Username))
+                var username = user.Usernames?.ActiveUsernames[0];
+                if (string.IsNullOrEmpty(username))
                 {
                     return name;
                 }
 
                 if (offset >= 0)
                 {
-                    entities.Add(new TextEntity(name.Length + offset + 2, user.Username.Length + 1, new TextEntityTypeMentionName(user.Id)));
+                    entities.Add(new TextEntity(name.Length + offset + 2, username.Length + 1, new TextEntityTypeMentionName(user.Id)));
                 }
 
-                return string.Format("{0} (@{1})", name, user.Username);
+                return string.Format("{0} (@{1})", name, username);
             }
             else if (sender is Chat chat)
             {

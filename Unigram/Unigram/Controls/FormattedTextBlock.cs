@@ -204,6 +204,8 @@ namespace Unigram.Controls
 
         public void SetText(IClientService clientService, string text, IList<TextEntity> entities, double fontSize = 0)
         {
+            entities ??= Array.Empty<TextEntity>();
+
             _clientService = clientService;
             _formattedText = new FormattedText(text, entities);
             _fontSize = fontSize;
@@ -249,7 +251,7 @@ namespace Unigram.Controls
                     continue;
                 }
 
-                if (entity.HasFlag(TextStyle.Monospace))
+                if (entity.HasFlag(Common.TextStyle.Monospace))
                 {
                     var data = text.Substring(entity.Offset, entity.Length);
 
@@ -285,7 +287,7 @@ namespace Unigram.Controls
                 {
                     var local = inlines;
 
-                    if (_ignoreSpoilers is false && entity.HasFlag(TextStyle.Spoiler))
+                    if (_ignoreSpoilers is false && entity.HasFlag(Common.TextStyle.Spoiler))
                     {
                         var hyperlink = new Hyperlink();
                         hyperlink.Click += (s, args) => Entity_Click(new TextEntityTypeSpoiler(), null);
@@ -306,7 +308,7 @@ namespace Unigram.Controls
                         shift++;
                         close = true;
                     }
-                    else if (entity.HasFlag(TextStyle.Mention) || entity.HasFlag(TextStyle.Url))
+                    else if (entity.HasFlag(Common.TextStyle.Mention) || entity.HasFlag(Common.TextStyle.Url))
                     {
                         if (entity.Type is TextEntityTypeMentionName or TextEntityTypeTextUrl)
                         {
@@ -326,8 +328,9 @@ namespace Unigram.Controls
                             }
 
                             hyperlink.Click += (s, args) => Entity_Click(entity.Type, null);
-                            hyperlink.Foreground = GetBrush("MessageForegroundLinkBrush");
-                            //hyperlink.Foreground = foreground;
+                            hyperlink.Foreground = HyperlinkForeground ?? GetBrush("MessageForegroundLinkBrush");
+                            hyperlink.UnderlineStyle = HyperlinkStyle;
+                            hyperlink.FontWeight = HyperlinkFontWeight;
 
                             var temp = direct.GetXamlDirectObject(hyperlink);
 
@@ -347,8 +350,9 @@ namespace Unigram.Controls
                             }
 
                             hyperlink.Click += (s, args) => Entity_Click(entity.Type, data);
-                            hyperlink.Foreground = GetBrush("MessageForegroundLinkBrush");
-                            //hyperlink.Foreground = foreground;
+                            hyperlink.Foreground = HyperlinkForeground ?? GetBrush("MessageForegroundLinkBrush");
+                            hyperlink.UnderlineStyle = HyperlinkStyle;
+                            hyperlink.FontWeight = HyperlinkFontWeight;
 
                             //if (entity.Type is TextEntityTypeUrl || entity.Type is TextEntityTypeEmailAddress || entity.Type is TextEntityTypeBankCardNumber)
                             {
@@ -384,11 +388,11 @@ namespace Unigram.Controls
                         var run = CreateDirectRun(text.Substring(entity.Offset, entity.Length), fontSize: fontSize);
                         var decorations = TextDecorations.None;
 
-                        if (entity.HasFlag(TextStyle.Underline))
+                        if (entity.HasFlag(Common.TextStyle.Underline))
                         {
                             decorations |= TextDecorations.Underline;
                         }
-                        if (entity.HasFlag(TextStyle.Strikethrough))
+                        if (entity.HasFlag(Common.TextStyle.Strikethrough))
                         {
                             decorations |= TextDecorations.Strikethrough;
                         }
@@ -398,11 +402,11 @@ namespace Unigram.Controls
                             direct.SetEnumProperty(run, XamlPropertyIndex.TextElement_TextDecorations, (uint)decorations);
                         }
 
-                        if (entity.HasFlag(TextStyle.Bold))
+                        if (entity.HasFlag(Common.TextStyle.Bold))
                         {
                             direct.SetObjectProperty(run, XamlPropertyIndex.TextElement_FontWeight, FontWeights.SemiBold);
                         }
-                        if (entity.HasFlag(TextStyle.Italic))
+                        if (entity.HasFlag(Common.TextStyle.Italic))
                         {
                             direct.SetEnumProperty(run, XamlPropertyIndex.TextElement_FontStyle, (uint)FontStyle.Italic);
                         }
@@ -445,7 +449,10 @@ namespace Unigram.Controls
                 _spoiler = null;
             }
 
-            direct.SetDoubleProperty(paragraph, XamlPropertyIndex.TextElement_FontSize, Theme.Current.MessageFontSize);
+            if (AutoFontSize)
+            {
+                direct.SetDoubleProperty(paragraph, XamlPropertyIndex.TextElement_FontSize, Theme.Current.MessageFontSize);
+            }
 
             TextBlock.Blocks.Clear();
             TextBlock.Blocks.Add(direct.GetObject(paragraph) as Paragraph);
@@ -688,6 +695,106 @@ namespace Unigram.Controls
                 element = null;
             }
         }
+
+        #endregion
+
+        #region TextAlignment
+
+        public TextAlignment TextAlignment
+        {
+            get { return (TextAlignment)GetValue(TextAlignmentProperty); }
+            set { SetValue(TextAlignmentProperty, value); }
+        }
+
+        public static readonly DependencyProperty TextAlignmentProperty =
+            DependencyProperty.Register("TextAlignment", typeof(TextAlignment), typeof(FormattedTextBlock), new PropertyMetadata(TextAlignment.Left));
+
+        #endregion
+
+        #region TextStyle
+
+        public Style TextStyle
+        {
+            get { return (Style)GetValue(TextStyleProperty); }
+            set { SetValue(TextStyleProperty, value); }
+        }
+
+        public static readonly DependencyProperty TextStyleProperty =
+            DependencyProperty.Register("TextStyle", typeof(Style), typeof(FormattedTextBlock), new PropertyMetadata(null));
+
+        #endregion
+
+        #region AutoPlay
+
+
+        public bool AutoPlay
+        {
+            get { return (bool)GetValue(AutoPlayProperty); }
+            set { SetValue(AutoPlayProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for AutoPlay.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty AutoPlayProperty =
+            DependencyProperty.Register("AutoPlay", typeof(bool), typeof(FormattedTextBlock), new PropertyMetadata(false, OnAutoPlayChanged));
+
+        private static void OnAutoPlayChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((FormattedTextBlock)d).OnAutoPlayChanged((bool)e.OldValue, (bool)e.NewValue);
+        }
+
+        private void OnAutoPlayChanged(bool oldValue, bool newValue)
+        {
+            if (newValue)
+            {
+                EffectiveViewportChanged += OnEffectiveViewportChanged;
+            }
+            else
+            {
+                EffectiveViewportChanged -= OnEffectiveViewportChanged;
+            }
+        }
+
+        private bool _withinViewport;
+
+        private void OnEffectiveViewportChanged(FrameworkElement sender, EffectiveViewportChangedEventArgs args)
+        {
+            var within = args.BringIntoViewDistanceX == 0 || args.BringIntoViewDistanceY == 0;
+            if (within && !_withinViewport)
+            {
+                _withinViewport = true;
+                Play();
+            }
+            else if (_withinViewport && !within)
+            {
+                _withinViewport = false;
+                Pause();
+            }
+        }
+
+        #endregion
+
+        #region IsTextSelectionEnabled
+
+        public bool IsTextSelectionEnabled
+        {
+            get { return (bool)GetValue(IsTextSelectionEnabledProperty); }
+            set { SetValue(IsTextSelectionEnabledProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsTextSelectionEnabledProperty =
+            DependencyProperty.Register("IsTextSelectionEnabled", typeof(bool), typeof(FormattedTextBlock), new PropertyMetadata(true));
+
+        #endregion
+
+        #region Hyperlink
+
+        public bool AutoFontSize { get; set; } = true;
+
+        public UnderlineStyle HyperlinkStyle { get; set; } = UnderlineStyle.Single;
+
+        public SolidColorBrush HyperlinkForeground { get; set; }
+
+        public FontWeight HyperlinkFontWeight { get; set; } = FontWeights.Normal;
 
         #endregion
     }

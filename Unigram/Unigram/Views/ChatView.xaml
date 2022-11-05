@@ -197,11 +197,18 @@
         <DataTemplate x:Key="ServiceMessagePhotoTemplate">
             <StackPanel Margin="0,4,0,0">
                 <messages:MessageService x:Name="Service"
-                                         Click="ServiceMessage_Click">
-                    <TextBlock Foreground="White"
-                               TextAlignment="Center"
-                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                               Style="{StaticResource CaptionTextBlockStyle}" />
+                                         Click="ServiceMessage_Click"
+                                         Padding="12,2,12,0">
+                    <controls:FormattedTextBlock Foreground="White"
+                                                 TextAlignment="Center"
+                                                 TextStyle="{StaticResource CaptionRichTextBlockStyle}"
+                                                 AutoFontSize="False"
+                                                 AutoPlay="True"
+                                                 IsTextSelectionEnabled="False"
+                                                 HyperlinkStyle="None"
+                                                 HyperlinkForeground="#FFFFFF"
+                                                 HyperlinkFontWeight="SemiBold"
+                                                 Padding="0,0,0,4" />
                 </messages:MessageService>
 
                 <Border Width="120"
@@ -218,25 +225,34 @@
 
         <DataTemplate x:Key="ServiceMessageTemplate">
             <messages:MessageService Click="ServiceMessage_Click"
-                                     Margin="0,4,0,0">
-                <TextBlock Foreground="White"
-                           TextAlignment="Center"
-                           FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                           Style="{StaticResource CaptionTextBlockStyle}" />
+                                     Margin="0,4,0,0"
+                                     Padding="12,2,12,0">
+                <controls:FormattedTextBlock Foreground="#FFFFFF"
+                                             TextAlignment="Center"
+                                             TextStyle="{StaticResource CaptionRichTextBlockStyle}"
+                                             AutoFontSize="False"
+                                             AutoPlay="True"
+                                             IsTextSelectionEnabled="False"
+                                             HyperlinkStyle="None"
+                                             HyperlinkForeground="#FFFFFF"
+                                             HyperlinkFontWeight="SemiBold"
+                                             Padding="0,0,0,4" />
             </messages:MessageService>
         </DataTemplate>
 
         <DataTemplate x:Key="ServiceMessageUnreadTemplate">
             <Grid AutomationProperties.Name="{CustomResource UnreadMessages}"
                   Margin="-12,4,-12,0"
-                  Background="{ThemeResource MessageBackgroundBrush}">
+                  Background="{ThemeResource MessageServiceBackgroundBrush}">
                 <TextBlock Text="{CustomResource UnreadMessages}"
+                           Foreground="#FFFFFF"
                            Padding="0"
                            Margin="0,4"
                            TextAlignment="Center"
                            Style="{StaticResource SettingsGroupTextBlockStyle}" />
 
                 <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}"
+                          Foreground="#FFFFFF"
                           Glyph="&#xE0E5;"
                           FontSize="16"
                           HorizontalAlignment="Right"

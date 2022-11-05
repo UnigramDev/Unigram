@@ -303,6 +303,9 @@ namespace Unigram.Controls.Messages
                 case MessageChatUpgradeTo:
                 case MessageContactRegistered:
                 case MessageCustomServiceAction:
+                case MessageForumTopicCreated:
+                case MessageForumTopicEdited:
+                case MessageForumTopicIsClosedToggled:
                 case MessageGameScore:
                 case MessageGiftedPremium:
                 case MessageInviteVideoChatParticipants:

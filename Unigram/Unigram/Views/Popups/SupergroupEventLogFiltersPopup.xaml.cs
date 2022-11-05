@@ -30,10 +30,7 @@ namespace Unigram.Views.Popups
         {
             _clientService = clientService;
 
-            if (filters == null)
-            {
-                filters = new ChatEventLogFilters(true, true, true, true, true, true, true, true, true, true, true, true);
-            }
+            filters ??= new ChatEventLogFilters(true, true, true, true, true, true, true, true, true, true, true, true, true);
 
             MemberRestrictions.IsChecked = filters.MemberRestrictions;
             MemberPromotions.IsChecked = filters.MemberPromotions;
@@ -45,6 +42,7 @@ namespace Unigram.Views.Popups
             MessagePins.IsChecked = filters.MessagePins;
             MemberLeaves.IsChecked = filters.MemberLeaves;
             VideoChatChanges.IsChecked = filters.VideoChatChanges;
+            ForumChanges.IsChecked = filters.ForumChanges;
 
             Event_Toggled(null, null);
 
@@ -161,6 +159,7 @@ namespace Unigram.Views.Popups
                 MessagePins = MessagePins.IsChecked == true,
                 MemberLeaves = MemberLeaves.IsChecked == true,
                 VideoChatChanges = VideoChatChanges.IsChecked == true,
+                ForumChanges = ForumChanges.IsChecked == true
             };
 
             var areAllAdministratorsSelected = List.Items.All(x => List.SelectedItems.Contains(x));
