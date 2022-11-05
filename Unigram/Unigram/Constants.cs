@@ -25,6 +25,7 @@ namespace Unigram
         public const string WallpaperColorFileName = "wallpaper.color.jpg";
         public const string WallpaperDefaultFileName = "wallpaper.default.jpg";
         public const int WallpaperLocalId = -1;
+        public const int WallpaperColorId = -2;
 
         public const int ChatListMain = 0;
         public const int ChatListArchive = 1;

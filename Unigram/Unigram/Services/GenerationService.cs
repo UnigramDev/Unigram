@@ -50,8 +50,8 @@ namespace Unigram.Services
     }
 
     public class GenerationService : IGenerationService
-        //, IHandle<UpdateFileGenerationStart>
-        //, IHandle<UpdateFileGenerationStop>
+    //, IHandle<UpdateFileGenerationStart>
+    //, IHandle<UpdateFileGenerationStop>
     {
         private readonly IClientService _clientService;
         private readonly IEventAggregator _aggregator;
@@ -538,16 +538,40 @@ namespace Unigram.Services
                                 new Vector2(0.65f, 0.75f),
                             };
 
-                            using (var gradient = CanvasBitmap.CreateFromBytes(device, ChatBackgroundFreeform.GenerateGradientData(50, 50, colors, positions), 50, 50, DirectXPixelFormat.B8G8R8A8UIntNormalized))
-                            using (var cache = await PlaceholderHelper.GetPatternBitmapAsync(device, null, document))
+                            if (pattern.IsInverted)
                             {
-                                using (var scale = new ScaleEffect { Source = gradient, BorderMode = EffectBorderMode.Hard, Scale = new Vector2(640f / 50f, 640f / 50f) })
-                                using (var colorize = new TintEffect { Source = cache, Color = Color.FromArgb(0x76, 00, 00, 00) })
-                                using (var tile = new BorderEffect { Source = colorize, ExtendX = CanvasEdgeBehavior.Wrap, ExtendY = CanvasEdgeBehavior.Wrap })
-                                using (var effect = new BlendEffect { Foreground = tile, Background = scale, Mode = BlendEffectMode.Overlay })
+                                using var gradient = CanvasBitmap.CreateFromBytes(device, ChatBackgroundFreeform.GenerateGradientData(50, 50, colors, positions), 50, 50, DirectXPixelFormat.B8G8R8A8UIntNormalized);
+                                using var cache = await PlaceholderHelper.GetPatternBitmapAsync(device, document);
+                                using var colorize = new TintEffect { Source = cache, Color = Color.FromArgb((byte)(255 * (pattern.Intensity / 100d)), 00, 00, 00) };
+                                using var border = new BorderEffect { Source = colorize, ExtendX = CanvasEdgeBehavior.Wrap, ExtendY = CanvasEdgeBehavior.Wrap };
+                                using var effect = new ColorMatrixEffect
                                 {
-                                    session.DrawImage(effect, new Rect(0, 0, 640, 640), new Rect(0, 0, 640, 640));
-                                }
+                                    Source = border,
+                                    ColorMatrix = new Matrix5x4
+                                    {
+#pragma warning disable format
+                                        M11 = 1, M12 = 0, M13 = 0, M14 = 0,
+                                        M21 = 0, M22 = 1, M23 = 0, M24 = 0,
+                                        M31 = 0, M32 = 0, M33 = 1, M34 = 0,
+                                        M41 = 0, M42 = 0, M43 = 0, M44 =-1,
+                                        M51 = 0, M52 = 0, M53 = 0, M54 = 1
+#pragma warning restore format
+                                    }
+                                };
+
+                                session.DrawImage(gradient, new Rect(0, 0, 640, 640), new Rect(0, 0, 640, 640));
+                                session.DrawImage(effect, new Rect(0, 0, 640, 640), new Rect(0, 0, 640, 640));
+                            }
+                            else
+                            {
+                                using var gradient = CanvasBitmap.CreateFromBytes(device, ChatBackgroundFreeform.GenerateGradientData(50, 50, colors, positions), 50, 50, DirectXPixelFormat.B8G8R8A8UIntNormalized);
+                                using var scale = new ScaleEffect { Source = gradient, BorderMode = EffectBorderMode.Hard, Scale = new Vector2(640f / 50f, 640f / 50f) };
+                                using var cache = await PlaceholderHelper.GetPatternBitmapAsync(device, document);
+                                using var tint = new TintEffect { Source = cache, Color = Color.FromArgb((byte)(255 * (pattern.Intensity / 100d)), 00, 00, 00) };
+                                using var border = new BorderEffect { Source = tint, ExtendX = CanvasEdgeBehavior.Wrap, ExtendY = CanvasEdgeBehavior.Wrap };
+                                using var effect = new BlendEffect { Foreground = border, Background = scale, Mode = BlendEffectMode.SoftLight };
+
+                                session.DrawImage(effect, new Rect(0, 0, 640, 640), new Rect(0, 0, 640, 640));
                             }
                         }
                     }

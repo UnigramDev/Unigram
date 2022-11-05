@@ -12,10 +12,10 @@
                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        mc:Ignorable="d"
-                       Loaded="OnLoaded"
-                       Unloaded="OnUnloaded"
                        Background="Black"
-                       PrimaryButtonCommand="{x:Bind ViewModel.DoneCommand}">
+                       PrimaryButtonCommand="{x:Bind ViewModel.DoneCommand}"
+                       VerticalContentAlignment="Stretch"
+                       ContentMaxHeight="720">
 
     <ContentDialog.Resources>
         <ResourceDictionary>
@@ -596,17 +596,20 @@
     </local:HostedPage.Header>-->
 
     <Grid x:Name="LayoutRoot"
-          Height="520"
           Margin="-24,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
+        <chats:ChatBackgroundRenderer x:Name="Preview"
+                                      Tag="{x:Bind ConvertBackground(ViewModel.Item), Mode=OneWay}"
+                                      Margin="0,-64,0,-80"
+                                      Grid.RowSpan="3" />
         <Border Background="{ThemeResource PopupAcrylicBackground}"
                 Margin="0,-64,0,0" />
         <Border Background="{ThemeResource PopupAcrylicBackground}"
-                Margin="0,0,0,-70"
+                Margin="0,0,0,-80"
                 Grid.Row="2" />
 
         <Grid x:Name="ContentPanel"
@@ -623,19 +626,8 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="0" />
             </Grid.RowDefinitions>
-            <Grid Grid.RowSpan="4">
-                <Rectangle x:Name="Preview"
-                           Tag="{x:Bind ConvertBackground(ViewModel.Color1, ViewModel.Color2, ViewModel.Color3, ViewModel.Color4, ViewModel.Rotation), Mode=OneWay}" />
-
-                <Rectangle x:Name="Presenter"
-                           Opacity="{x:Bind ConvertIntensity(ViewModel.Intensity), Mode=OneWay}" />
-            </Grid>
 
             <Grid Grid.Row="1">
-                <Border x:Name="BlurPanel"
-                        Background="Transparent"
-                        SizeChanged="BlurPanel_SizeChanged" />
-
                 <StackPanel Padding="0,2"
                             VerticalAlignment="Bottom">
                     <messages:MessageService Margin="0,8,0,4">
@@ -685,9 +677,7 @@
                             <CheckBox x:Name="BlurToggle"
                                       IsChecked="{x:Bind ViewModel.IsBlurEnabled, Mode=TwoWay}"
                                       Content="{CustomResource BackgroundBlurred}"
-                                      RequestedTheme="Dark"
-                                      Checked="Blur_Click"
-                                      Unchecked="Blur_Click" />
+                                      RequestedTheme="Dark" />
                         </Border>
                         <Border Visibility="{x:Bind ConvertColor2Visibility(ViewModel.Color2, ViewModel.Color3), Mode=OneWay}"
                                 Background="{ThemeResource MessageServiceBackgroundBrush}"
@@ -866,10 +856,8 @@
                           Grid.Row="1">
                     <GridView.ItemTemplate>
                         <DataTemplate>
-                            <Grid Width="72"
-                                  Height="72">
-                                <Image Stretch="UniformToFill" />
-                            </Grid>
+                            <chats:ChatBackgroundRenderer Width="72"
+                                                          Height="72" />
                         </DataTemplate>
                     </GridView.ItemTemplate>
                     <GridView.ItemsPanel>

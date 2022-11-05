@@ -28,8 +28,7 @@ namespace Unigram.ViewModels
             var dark = Settings.Appearance.IsDarkTheme();
             var freeform = dark ? new[] { 0x1B2836, 0x121A22, 0x1B2836, 0x121A22 } : new[] { 0xDBDDBB, 0x6BA587, 0xD5D88D, 0x88B884 };
 
-            var background = ClientService.SelectedBackground;
-            var predefined = new Background(Constants.WallpaperLocalId, true, dark, string.Empty,
+            var predefined = new Background(Constants.WallpaperColorId, true, dark, string.Empty,
                 new Document(string.Empty, "application/x-tgwallpattern", null, null, TdExtensions.GetLocalFile("Assets\\Background.tgv", "Background")),
                 new BackgroundTypePattern(new BackgroundFillFreeformGradient(freeform), dark ? 100 : 50, dark, false));
 
@@ -45,35 +44,6 @@ namespace Unigram.ViewModels
             if (response is Backgrounds wallpapers)
             {
                 items.AddRange(wallpapers.BackgroundsValue.Where(x => x.Type is BackgroundTypePattern));
-
-                var selected = items.FirstOrDefault(x => x.Id == background?.Id);
-                if (selected != null)
-                {
-                    items.Remove(selected);
-                }
-
-                if (background != null)
-                {
-                    items.Insert(0, background);
-                }
-
-                selected = background ?? predefined;
-
-                SelectedBackground = selected;
-                Items.ReplaceDiff(items);
-            }
-            else
-            {
-                if (background != null)
-                {
-                    items.Add(background);
-                    SelectedBackground = background;
-                }
-                else
-                {
-                    SelectedBackground = predefined;
-                }
-
                 Items.ReplaceDiff(items);
             }
 

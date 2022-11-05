@@ -257,112 +257,52 @@ namespace Unigram.Common
 
         private static readonly DisposableMutex _patternSurfaceLock = new DisposableMutex();
 
-        public static async Task<LoadedImageSurface> GetPatternSurfaceAsync(IClientService clientService, File file)
+        public static async Task<CanvasBitmap> GetPatternBitmapAsync(ICanvasResourceCreator resourceCreator, File file)
         {
             using var locked = await _patternSurfaceLock.WaitAsync();
 
-            if (file.Local.IsDownloadingCompleted)
+            var bitmap = default(CanvasBitmap);
+
+            var cache = $"{file.Remote.UniqueId}.cache.png";
+            var relative = System.IO.Path.Combine("wallpapers", cache);
+
+            var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(relative) as StorageFile;
+            if (item == null)
             {
-                var bitmap = default(LoadedImageSurface);
+                item = await ApplicationData.Current.LocalFolder.CreateFileAsync(relative, CreationCollisionOption.ReplaceExisting);
 
-                var cache = $"{file.Remote.UniqueId}.cache.png";
-                var relative = System.IO.Path.Combine("wallpapers", cache);
-
-                var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(relative) as StorageFile;
-                if (item == null)
+                using (var stream = await item.OpenAsync(FileAccessMode.ReadWrite))
                 {
-                    item = await ApplicationData.Current.LocalFolder.CreateFileAsync(relative, CreationCollisionOption.ReplaceExisting);
-
-                    using (var stream = await item.OpenAsync(FileAccessMode.ReadWrite))
+                    try
                     {
-                        try
-                        {
-                            var text = await GetSvgXml(file);
-                            await PlaceholderImageHelper.Current.DrawSvgAsync(text, Colors.White, stream);
-                        }
-                        catch { }
+                        var text = await GetSvgXml(file.Local.Path);
+                        await PlaceholderImageHelper.Current.DrawSvgAsync(text, Colors.White, stream);
                     }
+                    catch { }
                 }
-
-                if (item != null)
-                {
-                    using (var stream = await item.OpenReadAsync())
-                    {
-                        try
-                        {
-                            var props = await item.Properties.GetImagePropertiesAsync();
-                            bitmap = LoadedImageSurface.StartLoadFromStream(stream, new Size(props.Width / 2d, props.Height / 2d));
-                        }
-                        catch { }
-                    }
-                }
-
-                return bitmap;
-            }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && clientService != null)
-            {
-                clientService.DownloadFile(file.Id, 1);
             }
 
-            return null;
+            if (item != null)
+            {
+                using (var stream = await item.OpenReadAsync())
+                {
+                    try
+                    {
+                        bitmap = await CanvasBitmap.LoadAsync(resourceCreator, stream);
+                    }
+                    catch { }
+                }
+            }
+
+            return bitmap;
         }
 
-        public static async Task<CanvasBitmap> GetPatternBitmapAsync(ICanvasResourceCreator resourceCreator, IClientService clientService, File file)
-        {
-            using var locked = await _patternSurfaceLock.WaitAsync();
-
-            if (file.Local.IsDownloadingCompleted)
-            {
-                var bitmap = default(CanvasBitmap);
-
-                var cache = $"{file.Remote.UniqueId}.cache.png";
-                var relative = System.IO.Path.Combine("wallpapers", cache);
-
-                var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(relative) as StorageFile;
-                if (item == null)
-                {
-                    item = await ApplicationData.Current.LocalFolder.CreateFileAsync(relative, CreationCollisionOption.ReplaceExisting);
-
-                    using (var stream = await item.OpenAsync(FileAccessMode.ReadWrite))
-                    {
-                        try
-                        {
-                            var text = await GetSvgXml(file);
-                            await PlaceholderImageHelper.Current.DrawSvgAsync(text, Colors.White, stream);
-                        }
-                        catch { }
-                    }
-                }
-
-                if (item != null)
-                {
-                    using (var stream = await item.OpenReadAsync())
-                    {
-                        try
-                        {
-                            bitmap = await CanvasBitmap.LoadAsync(resourceCreator, stream);
-                        }
-                        catch { }
-                    }
-                }
-
-                return bitmap;
-            }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && clientService != null)
-            {
-                clientService.DownloadFile(file.Id, 1);
-            }
-
-            return null;
-        }
-
-
-        private static async Task<string> GetSvgXml(File file)
+        private static async Task<string> GetSvgXml(string filePath)
         {
             var styles = new Dictionary<string, string>();
             var text = string.Empty;
 
-            using (var source = System.IO.File.OpenRead(file.Local.Path))
+            using (var source = System.IO.File.OpenRead(filePath))
             using (var decompress = new GZipStream(source, CompressionMode.Decompress))
             using (var reader = new System.IO.StreamReader(decompress))
             {

@@ -10,7 +10,7 @@ using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views;
 using Unigram.Views.Popups;
-using Windows.Storage.AccessCache;
+using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -38,7 +38,7 @@ namespace Unigram.ViewModels.Settings
             var freeform = dark ? new[] { 0x1B2836, 0x121A22, 0x1B2836, 0x121A22 } : new[] { 0xDBDDBB, 0x6BA587, 0xD5D88D, 0x88B884 };
 
             var background = ClientService.SelectedBackground;
-            var predefined = new Background(Constants.WallpaperLocalId, true, dark, string.Empty,
+            var predefined = new Background(Constants.WallpaperColorId, true, dark, string.Empty,
                 new Document(string.Empty, "application/x-tgwallpattern", null, null, TdExtensions.GetLocalFile("Assets\\Background.tgv", "Background")),
                 new BackgroundTypePattern(new BackgroundFillFreeformGradient(freeform), dark ? 100 : 50, dark, false));
 
@@ -50,7 +50,7 @@ namespace Unigram.ViewModels.Settings
             var response = await ClientService.SendAsync(new GetBackgrounds(dark));
             if (response is Backgrounds wallpapers)
             {
-                items.AddRange(wallpapers.BackgroundsValue);
+                items.AddRange(wallpapers.BackgroundsValue.Where(x => x.Type is not BackgroundTypePattern || x.Type is BackgroundTypePattern pattern && (pattern.IsInverted == dark || dark)));
 
                 var selected = items.FirstOrDefault(x => x.Id == background?.Id);
                 if (selected != null)
@@ -106,8 +106,8 @@ namespace Unigram.ViewModels.Settings
                 var file = await picker.PickSingleFileAsync();
                 if (file != null)
                 {
-                    var token = StorageApplicationPermissions.FutureAccessList.Enqueue(file);
-                    await new BackgroundPopup(Constants.WallpaperLocalFileName + $"#{token}").ShowQueuedAsync();
+                    await file.CopyAsync(ApplicationData.Current.TemporaryFolder, Constants.WallpaperLocalFileName, NameCollisionOption.ReplaceExisting);
+                    await new BackgroundPopup(Constants.WallpaperLocalFileName).ShowQueuedAsync();
                 }
             }
             catch { }

@@ -9,7 +9,7 @@ using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.Views.Popups;
-using Windows.Storage.AccessCache;
+using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Xaml.Navigation;
 
@@ -19,10 +19,12 @@ namespace Unigram.ViewModels
     {
         public IBackgroundDelegate Delegate { get; set; }
 
+        private bool _batchUpdate;
+
         public BackgroundViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            Patterns = new MvxObservableCollection<Background>();
+            Patterns = new MvxObservableCollection<Document>();
 
             ChangeRotationCommand = new RelayCommand(ChangeRotationExecute);
 
@@ -37,13 +39,16 @@ namespace Unigram.ViewModels
             if (parameter is string data)
             {
                 var split = data.Split('#');
-                if (split[0] == Constants.WallpaperLocalFileName && split.Length == 2)
+                if (split[0] == Constants.WallpaperLocalFileName)
                 {
-                    background = new Background(Constants.WallpaperLocalId, false, false, split[1], null, new BackgroundTypeWallpaper(false, false));
+                    var local = TdExtensions.GetLocalFile(System.IO.Path.Combine(ApplicationData.Current.TemporaryFolder.Path, Constants.WallpaperLocalFileName));
+                    var document = new Document(Constants.WallpaperLocalFileName, "image/jpeg", null, null, local);
+
+                    background = new Background(Constants.WallpaperLocalId, false, false, Constants.WallpaperLocalFileName, document, new BackgroundTypeWallpaper(false, false));
                 }
                 else if (split[0] == Constants.WallpaperColorFileName)
                 {
-                    background = new Background(Constants.WallpaperLocalId, false, false, Constants.WallpaperColorFileName, null, new BackgroundTypeFill(new BackgroundFillSolid(0xdfe4e8)));
+                    background = new Background(Constants.WallpaperColorId, false, false, Constants.WallpaperColorFileName, null, new BackgroundTypeFill(new BackgroundFillSolid(0xdfe4e8)));
                 }
                 else if (Uri.TryCreate("tg://bg/" + parameter, UriKind.Absolute, out Uri uri))
                 {
@@ -74,6 +79,8 @@ namespace Unigram.ViewModels
             }
 
             Item = background;
+
+            _batchUpdate = true;
 
             BackgroundFill fill = null;
             if (background.Type is BackgroundTypeFill typeFill)
@@ -119,6 +126,7 @@ namespace Unigram.ViewModels
                 }
             }
 
+            _batchUpdate = false;
             Delegate?.UpdateBackground(_item);
 
             if (_item.Type is BackgroundTypePattern or BackgroundTypeFill)
@@ -133,31 +141,16 @@ namespace Unigram.ViewModels
                                                                }, obj =>
                                                                {
                                                                    return obj.Document.DocumentValue.Id;
-                                                               }));
+                                                               }))
+                                                               .Select(x => x.Document);
 
-                    Patterns.ReplaceWith(new[] { new Background(0, true, false, string.Empty, null, new BackgroundTypeFill(new BackgroundFillSolid())) }.Union(patterns));
-                    SelectedPattern = patterns.FirstOrDefault(x => x.Document?.DocumentValue.Id == background.Document?.DocumentValue.Id);
+                    Patterns.ReplaceWith(new Document[] { null }.Union(patterns));
+                    SelectedPattern = patterns.FirstOrDefault(x => x?.DocumentValue.Id == background.Document?.DocumentValue.Id);
                 }
             }
-
-            //if (parameter is string name)
-            //{
-            //    if (name == Constants.WallpaperLocalFileName)
-            //    {
-            //        //Item = new Background(Constants.WallpaperLocalId, new PhotoSize[0], 0);
-            //    }
-            //    else
-            //    {
-            //        var response = await ClientService.SendAsync(new SearchBackground(name));
-            //        if (response is Background background)
-            //        {
-            //        }
-            //    }
-
-            //}
         }
 
-        public MvxObservableCollection<Background> Patterns { get; private set; }
+        public MvxObservableCollection<Document> Patterns { get; private set; }
 
         private Background _item;
         public Background Item
@@ -170,44 +163,54 @@ namespace Unigram.ViewModels
         public bool IsBlurEnabled
         {
             get => _isBlurEnabled;
-            set => Set(ref _isBlurEnabled, value);
+            set => SetComponent(ref _isBlurEnabled, value);
         }
 
         private BackgroundColor _color1 = BackgroundColor.Empty;
         public BackgroundColor Color1
         {
             get => _color1;
-            set => SetColor(ref _color1, value);
+            set => SetComponent(ref _color1, value);
         }
 
         private BackgroundColor _color2 = BackgroundColor.Empty;
         public BackgroundColor Color2
         {
             get => _color2;
-            set => SetColor(ref _color2, value);
+            set => SetComponent(ref _color2, value);
         }
 
         private BackgroundColor _color3 = BackgroundColor.Empty;
         public BackgroundColor Color3
         {
             get => _color3;
-            set => SetColor(ref _color3, value);
+            set => SetComponent(ref _color3, value);
         }
 
         private BackgroundColor _color4 = BackgroundColor.Empty;
         public BackgroundColor Color4
         {
             get => _color4;
-            set => SetColor(ref _color4, value);
+            set => SetComponent(ref _color4, value);
         }
 
-        private void SetColor(ref BackgroundColor storage, BackgroundColor value, [CallerMemberName] string propertyName = null)
+        private void SetComponent<T>(ref T storage, T value, [CallerMemberName] string propertyName = null)
         {
-            Set(ref storage, value, propertyName);
-
-            if (_item?.Type is BackgroundTypePattern)
+            if (_batchUpdate)
             {
-                //RaisePropertyChanged(() => Item);
+                Set(ref storage, value, propertyName);
+                return;
+            }
+
+            if (Set(ref storage, value, propertyName))
+            {
+                Item = new Background(Item.Id, false, Item.IsDark, Item.Name, Item.Document, Item.Type switch
+                {
+                    BackgroundTypeFill => new BackgroundTypeFill(GetFill()),
+                    BackgroundTypePattern => new BackgroundTypePattern(GetFill(), _intensity < 0 ? 100 + _intensity : _intensity, _intensity < 0, false),
+                    BackgroundTypeWallpaper => new BackgroundTypeWallpaper(_isBlurEnabled, false),
+                    _ => null
+                });
             }
         }
 
@@ -293,30 +296,48 @@ namespace Unigram.ViewModels
         public int Rotation
         {
             get => _rotation;
-            set => Set(ref _rotation, value);
+            set => SetComponent(ref _rotation, value);
         }
 
         private int _intensity;
         public int Intensity
         {
             get => _intensity;
-            set => Set(ref _intensity, value);
+            set => SetComponent(ref _intensity, value);
         }
 
-        private Background _selectedPattern;
-        public Background SelectedPattern
+        private Document _selectedPattern;
+        public Document SelectedPattern
         {
             get => _selectedPattern;
             set
             {
                 Set(ref _selectedPattern, value);
 
-                if (value != _item && ((value != null && _item?.Type is BackgroundTypeFill) || _item?.Type is BackgroundTypePattern))
+                if (value?.DocumentValue.Id != _item.Document?.DocumentValue.Id && ((value != null && _item?.Type is BackgroundTypeFill) || _item?.Type is BackgroundTypePattern))
                 {
-                    Set(ref _item, value, nameof(Item));
-                    Delegate?.UpdateBackground(value);
+                    if (value == null)
+                    {
+                        Item = new Background(Item.Id, false, Item.IsDark, Item.Name, null, new BackgroundTypeFill(GetFill()));
+                    }
+                    else
+                    {
+                        Item = new Background(Item.Id, false, Item.IsDark, Item.Name, value, new BackgroundTypePattern(GetFill(), _intensity < 0 ? 100 + _intensity : _intensity, _intensity < 0, false));
+                    }
+
+                    Delegate?.UpdateBackground(Item);
                 }
             }
+        }
+
+        public Background GetPattern(Document value)
+        {
+            if (value == null)
+            {
+                return new Background(Item.Id, false, Item.IsDark, Item.Name, null, new BackgroundTypeFill(GetFill()));
+            }
+
+            return new Background(Item.Id, false, Item.IsDark, Item.Name, value, new BackgroundTypePattern(GetFill(), 50, _intensity < 0, false));
         }
 
         public void RemoveColor(int index)
@@ -388,8 +409,8 @@ namespace Unigram.ViewModels
         public RelayCommand DoneCommand { get; }
         private async void DoneExecute()
         {
-            var wallpaper = _item;
-            if (wallpaper == null)
+            var background = _item;
+            if (background == null)
             {
                 return;
             }
@@ -399,9 +420,9 @@ namespace Unigram.ViewModels
 
             // This is a new background and it has to be uploaded to Telegram servers
             Task<BaseObject> task;
-            if (wallpaper.Id == Constants.WallpaperLocalId && StorageApplicationPermissions.FutureAccessList.ContainsItem(wallpaper.Name))
+            if (background.Id == Constants.WallpaperLocalId)
             {
-                var item = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(wallpaper.Name);
+                var item = await ApplicationData.Current.TemporaryFolder.GetFileAsync(Constants.WallpaperLocalFileName);
                 var generated = await item.ToGeneratedAsync(ConversionType.Copy, forceCopy: true);
 
                 task = ClientService.SendAsync(new SetBackground(new InputBackgroundLocal(generated), new BackgroundTypeWallpaper(_isBlurEnabled, false), dark));
@@ -409,22 +430,22 @@ namespace Unigram.ViewModels
             else
             {
                 var fill = GetFill();
-                if (wallpaper.Type is BackgroundTypeFill && fill is BackgroundFillFreeformGradient fillFreeform && fillFreeform.Colors.SequenceEqual(freeform))
+                if (background.Type is BackgroundTypeFill && fill is BackgroundFillFreeformGradient fillFreeform && fillFreeform.Colors.SequenceEqual(freeform))
                 {
                     task = ClientService.SendAsync(new SetBackground(null, null, dark));
                 }
                 else
                 {
                     BackgroundType type = null;
-                    if (wallpaper.Type is BackgroundTypeFill)
+                    if (background.Type is BackgroundTypeFill)
                     {
                         type = new BackgroundTypeFill(fill);
                     }
-                    else if (wallpaper.Type is BackgroundTypePattern)
+                    else if (background.Type is BackgroundTypePattern)
                     {
                         type = new BackgroundTypePattern(fill, _intensity < 0 ? 100 + _intensity : _intensity, _intensity < 0, false);
                     }
-                    else if (wallpaper.Type is BackgroundTypeWallpaper)
+                    else if (background.Type is BackgroundTypeWallpaper)
                     {
                         type = new BackgroundTypeWallpaper(_isBlurEnabled, false);
                     }
@@ -434,9 +455,9 @@ namespace Unigram.ViewModels
                         return;
                     }
 
-                    var input = wallpaper.Id == Constants.WallpaperLocalId
+                    var input = background.Id == Constants.WallpaperLocalId
                         ? null
-                        : new InputBackgroundRemote(wallpaper.Id);
+                        : new InputBackgroundRemote(background.Id);
 
                     task = ClientService.SendAsync(new SetBackground(input, type, dark));
                 }
