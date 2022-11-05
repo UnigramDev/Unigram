@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using Windows.System.Threading;
 using Windows.UI.Xaml.Media;
 
 namespace Unigram.Common
@@ -9,15 +10,15 @@ namespace Unigram.Common
         private TimeSpan _interval;
         private TimeSpan _elapsed;
 
-        private readonly Timer _timerTick;
+        private ThreadPoolTimer _timer;
 
-        private bool _dropTick;
+        private readonly SemaphoreSlim _tickSemaphore;
         private bool _dropInvalidate;
 
         public LoopThread(TimeSpan interval)
         {
             _interval = interval;
-            _timerTick = new Timer(OnTick, null, Timeout.Infinite, Timeout.Infinite);
+            _tickSemaphore = new SemaphoreSlim(1, 1);
         }
 
         [ThreadStatic]
@@ -32,16 +33,13 @@ namespace Unigram.Common
         private static LoopThread _chats;
         public static LoopThread Chats => _chats ??= new LoopThread(TimeSpan.FromMilliseconds(1000 / 60));
 
-        private void OnTick(object state)
+        private void OnTick(ThreadPoolTimer timer)
         {
-            if (_dropTick)
+            if (_tickSemaphore.Wait(0))
             {
-                return;
+                _tick?.Invoke(this, EventArgs.Empty);
+                _tickSemaphore.Release();
             }
-
-            _dropTick = true;
-            _tick?.Invoke(state, EventArgs.Empty);
-            _dropTick = false;
         }
 
         private void OnInvalidate(object sender, object e)
@@ -66,20 +64,17 @@ namespace Unigram.Common
         {
             add
             {
-                if (_tick == null)
-                {
-                    _timerTick.Change(TimeSpan.Zero, _interval);
-                }
-
+                _timer ??= ThreadPoolTimer.CreatePeriodicTimer(OnTick, _interval);
                 _tick += value;
             }
             remove
             {
                 _tick -= value;
 
-                if (_tick == null)
+                if (_tick == null && _timer != null)
                 {
-                    _timerTick.Change(Timeout.Infinite, Timeout.Infinite);
+                    _timer.Cancel();
+                    _timer = null;
                 }
             }
         }
