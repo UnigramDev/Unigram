@@ -801,6 +801,11 @@ namespace Unigram.Views.Host
         {
             UpdateNavigation();
 
+            if (_navigationService?.Content is MainPage main)
+            {
+                InitializeUser(main.ViewModel.ClientService);
+            }
+
             Theme.Visibility = Visibility.Visible;
             Accounts.Visibility = Visibility.Visible;
 
