@@ -362,19 +362,26 @@
         <controls:ContentPageHeader x:Name="Header"
                                     Background="Transparent"
                                     Canvas.ZIndex="3">
-            <Grid x:Name="InfoPanel"
-                  Margin="12,0,0,0">
+            <Grid x:Name="InfoPanel">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="60" />
                     <ColumnDefinition />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <controls:ProfilePicture x:Name="Photo"
                                          Click="Photo_Click"
+                                         IsAnimated="True"
                                          AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"
-                                         Width="{ThemeResource ChatPhotoSize}"
-                                         Height="{ThemeResource ChatPhotoSize}"
-                                         Margin="0,0,12,0" />
+                                         Width="36"
+                                         Height="36"
+                                         HorizontalAlignment="Center" />
+                <controls:CustomEmojiIcon x:Name="Icon"
+                                          x:Load="False"
+                                          AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"
+                                          Width="32"
+                                          Height="32"
+                                          FrameSize="32"
+                                          HorizontalAlignment="Center" />
 
                 <HyperlinkButton x:Name="Profile"
                                  Click="Profile_Click"

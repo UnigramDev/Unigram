@@ -1488,7 +1488,14 @@ namespace Unigram.Views
                 return;
             }
 
-            ViewModel.NavigationService.Navigate(typeof(ProfilePage), chat.Id, infoOverride: new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
+            if (ViewModel.Topic != null)
+            {
+                ViewModel.NavigationService.Navigate(typeof(ProfilePage), $"{chat.Id};{ViewModel.ThreadId}", infoOverride: new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
+            }
+            else
+            {
+                ViewModel.NavigationService.Navigate(typeof(ProfilePage), chat.Id, infoOverride: new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
+            }
         }
 
         private void Attach_Click(object sender, RoutedEventArgs e)
@@ -3565,21 +3572,28 @@ namespace Unigram.Views
         {
             if (ViewModel.Type == DialogType.Thread)
             {
-                var message = ViewModel.Thread?.Messages.LastOrDefault();
-                if (message == null || message.InteractionInfo?.ReplyInfo == null)
+                if (ViewModel.Topic != null)
                 {
-                    return;
+                    Title.Text = ViewModel.Topic.Name;
                 }
-
-                if (message.SenderId is MessageSenderUser)
+                else
                 {
-                    Title.Text = Locale.Declension("Replies", message.InteractionInfo.ReplyInfo.ReplyCount);
-                }
-                else if (ViewModel.ClientService.TryGetChat(message.SenderId, out Chat senderChat))
-                {
-                    if (senderChat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
+                    var message = ViewModel.Thread?.Messages.LastOrDefault();
+                    if (message == null || message.InteractionInfo?.ReplyInfo == null)
                     {
-                        Title.Text = Locale.Declension("Comments", message.InteractionInfo.ReplyInfo.ReplyCount);
+                        return;
+                    }
+
+                    if (ViewModel.ClientService.TryGetChat(message.SenderId, out Chat senderChat))
+                    {
+                        if (senderChat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
+                        {
+                            Title.Text = Locale.Declension("Comments", message.InteractionInfo.ReplyInfo.ReplyCount);
+                        }
+                        else
+                        {
+                            Title.Text = Locale.Declension("Replies", message.InteractionInfo.ReplyInfo.ReplyCount);
+                        }
                     }
                     else
                     {
@@ -3603,11 +3617,22 @@ namespace Unigram.Views
         {
             if (ViewModel.Type == DialogType.Thread)
             {
-                Photo.Source = PlaceholderHelper.GetGlyph(Icons.ChatMultiple, 5, 36);
-                Photo.IsEnabled = false;
+                if (ViewModel.Topic != null)
+                {
+                    LoadObject(ref Icon, nameof(Icon));
+                    Icon.SetCustomEmoji(ViewModel.ClientService, ViewModel.Topic.Icon.CustomEmojiId);
+                    Photo.Clear();
+                }
+                else
+                {
+                    UnloadObject(Icon);
+                    Photo.Source = PlaceholderHelper.GetGlyph(Icons.ChatMultiple, 5, 36);
+                    Photo.IsEnabled = false;
+                }
             }
             else
             {
+                UnloadObject(Icon);
                 Photo.SetChat(ViewModel.ClientService, chat, 36);
                 Photo.IsEnabled = true;
             }
@@ -4720,6 +4745,20 @@ namespace Unigram.Views
                 ListInline.UpdateChatPermissions(chat);
             }
         }
+
+        #region XamlMarkupHelper
+
+        private void LoadObject<T>(ref T element, /*[CallerArgumentExpression("element")]*/string name)
+            where T : DependencyObject
+        {
+            if (element == null)
+            {
+                FindName(name);
+            }
+        }
+
+        #endregion
+
     }
 
     public enum StickersPanelMode
