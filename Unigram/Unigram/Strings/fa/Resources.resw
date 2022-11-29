@@ -293,10 +293,10 @@
     <value>⁨{0}⁩ پاسخ دارد</value>
   </data>
   <data name="AccDescrNumberOfViews_one" xml:space="preserve">
-    <value>⁨{0}⁩ بار بازدید شده</value>
+    <value>⁨{0}⁩ بار مشاهده شد</value>
   </data>
   <data name="AccDescrNumberOfViews_other" xml:space="preserve">
-    <value>⁨{0}⁩ بار بازدید شده</value>
+    <value>⁨{0}⁩ بار مشاهده شد</value>
   </data>
   <data name="AccDescrOpenChat" xml:space="preserve">
     <value>باز کردن گفتگو</value>
@@ -305,7 +305,7 @@
     <value>باز کردن در نمایشگر عکس</value>
   </data>
   <data name="AccDescrOpenMenu" xml:space="preserve">
-    <value>باز کردن منوی مسیریابی</value>
+    <value>باز کردن منوی جابجایی</value>
   </data>
   <data name="AccDescrOpenMenu2" xml:space="preserve">
     <value>باز کردن منو</value>
@@ -332,7 +332,7 @@
     <value>ویرایشگر عکس</value>
   </data>
   <data name="AccDescrPhotoViewer" xml:space="preserve">
-    <value>نمایشگر تصویر</value>
+    <value>نمایشگر عکس</value>
   </data>
   <data name="AccDescrPipMode" xml:space="preserve">
     <value>حالت تصویر در تصویر</value>
@@ -348,6 +348,9 @@
   </data>
   <data name="AccDescrPremium" xml:space="preserve">
     <value>حساب کاربری پرمیوم</value>
+  </data>
+  <data name="AccDescrPremiumSpeed" xml:space="preserve">
+    <value>افزایش سرعت</value>
   </data>
   <data name="AccDescrPrevious" xml:space="preserve">
     <value>قبلی</value>
@@ -1003,6 +1006,18 @@
   <data name="AddedBy" xml:space="preserve">
     <value>اضافه شده توسط ⁨{0}⁩ ⁨{1}⁩</value>
   </data>
+  <data name="AddedMembersToGroup_one" xml:space="preserve">
+    <value>**⁨{0}⁩ عضو** به گروه اضافه شد</value>
+  </data>
+  <data name="AddedMembersToGroup_other" xml:space="preserve">
+    <value>**⁨{0}⁩ عضو** به گروه اضافه شدند</value>
+  </data>
+  <data name="AddedSubscribersToChannel_one" xml:space="preserve">
+    <value>**⁨{0}⁩ مشترک** به کانال اضافه شد</value>
+  </data>
+  <data name="AddedSubscribersToChannel_other" xml:space="preserve">
+    <value>**⁨{0}⁩ مشترک** به کانال اضافه شدند</value>
+  </data>
   <data name="AddedToFavorites" xml:space="preserve">
     <value>استیکر به مورد علاقه‌ها اضافه شد.</value>
   </data>
@@ -1153,6 +1168,9 @@
   <data name="Agree" xml:space="preserve">
     <value>موافقت</value>
   </data>
+  <data name="Album" xml:space="preserve">
+    <value>آلبوم</value>
+  </data>
   <data name="Alert" xml:space="preserve">
     <value>نمایش اعلان‌ها</value>
   </data>
@@ -1161,6 +1179,9 @@
   </data>
   <data name="AllAccounts" xml:space="preserve">
     <value>تمامی حساب‌های کاربری</value>
+  </data>
+  <data name="AllChats" xml:space="preserve">
+    <value>تمامی گفتگوها</value>
   </data>
   <data name="AllMedia" xml:space="preserve">
     <value>تمامی رسانه‌ها</value>
@@ -1222,11 +1243,20 @@
   <data name="AllWebSessionsTerminated" xml:space="preserve">
     <value>اتصال تمامی وبسایت‌ها قطع شد.</value>
   </data>
+  <data name="AlmostDone" xml:space="preserve">
+    <value>تفریباً انجام شد</value>
+  </data>
   <data name="ALongTimeAgo" xml:space="preserve">
     <value>آخرین بازدید خیلی وقت پیش</value>
   </data>
   <data name="AlternativeOptions" xml:space="preserve">
     <value>گزینه‌های دیگر</value>
+  </data>
+  <data name="AltNavigationDisable" xml:space="preserve">
+    <value>غیرفعال کردن جابجایی جایگزین</value>
+  </data>
+  <data name="AltNavigationEnable" xml:space="preserve">
+    <value>فعال کردن جابجایی جایگزین</value>
   </data>
   <data name="AlwaysAllow" xml:space="preserve">
     <value>همیشه اجازه داده شود</value>
@@ -1381,7 +1411,7 @@
     <value>بسته‌های اموجی بایگانی شده</value>
   </data>
   <data name="ArchivedEmojiPacksEmpty" xml:space="preserve">
-    <value>بسته اموجی بایگانی شده‌ای موجود نیست</value>
+    <value>بسته اموجی بایگانی شده‌ای وجود ندارد</value>
   </data>
   <data name="ArchivedMasks" xml:space="preserve">
     <value>ماسک‌های بایگانی شده</value>
@@ -1393,7 +1423,7 @@
     <value>ماسک‌های بایگانی شده</value>
   </data>
   <data name="ArchivedMasksEmpty" xml:space="preserve">
-    <value>ماسک بایگانی شده‌ای موجود نیست</value>
+    <value>ماسک بایگانی شده‌ای وجود ندارد</value>
   </data>
   <data name="ArchivedMasksInfo" xml:space="preserve">
     <value>شما می‌توانید تا سقف 200 بسته ماسک اضافه کنید.
@@ -1409,7 +1439,7 @@
     <value>استیکرهای بایگانی شده</value>
   </data>
   <data name="ArchivedStickersEmpty" xml:space="preserve">
-    <value>استیکر بایگانی شده‌ای موجود نیست</value>
+    <value>استیکر بایگانی شده‌ای وجود ندارد</value>
   </data>
   <data name="ArchivedStickersInfo" xml:space="preserve">
     <value>شما می‌توانید 200 بسته استیکر فعال داشته باشید.
@@ -1571,7 +1601,7 @@
     <value>آیا از حذف گفتگوی محرمانه خود با **⁨{0}⁩** اطمینان دارید؟</value>
   </data>
   <data name="AreYouSureDeleteThisChatWithUser" xml:space="preserve">
-    <value>آیا از حذف گفتگو با **⁨{0}⁩** اطمینان دارید؟</value>
+    <value>گفتگو با **⁨{0}⁩** برای همیشه حذف شود؟</value>
   </data>
   <data name="AreYouSureDeleteVideo" xml:space="preserve">
     <value>آیا از حذف این ویدیو اطمینان دارید؟</value>
@@ -2353,16 +2383,16 @@
     <value>باز کردن صفحه</value>
   </data>
   <data name="BotOwnershipTransfer" xml:space="preserve">
-    <value>انتقال مالکیت ربات</value>
+    <value>تأیید دو مرحله‌ای</value>
   </data>
   <data name="BotOwnershipTransferAlertText" xml:space="preserve">
-    <value>شما فقط در صورت داشتن موارد زیر می‌توانید این ربات را انتقال دهید:</value>
+    <value>شما فقط در صورت داشتن موارد زیر می‌توانید این عملیات را کامل کنید:</value>
   </data>
   <data name="BotOwnershipTransferChangeOwner" xml:space="preserve">
-    <value>تغییر مالک</value>
+    <value> تأیید</value>
   </data>
   <data name="BotOwnershipTransferReadyAlertText" xml:space="preserve">
-    <value>این کار اختیارات **مالکیت کامل** ربات را به کاربر انتخاب شده انتقال می‌دهد.</value>
+    <value>لطفاً جهت تأیید این عملیات، گذرواژه خود را وارد کنید.</value>
   </data>
   <data name="BotPermissionGameAlert" xml:space="preserve">
     <value>آیا به ⁨{0}⁩ اجازه می‌دهید تا نام و شناسه تلگرام شما (نه شماره تلفنتان) را به صفحه‌هایی که توسط این ربات باز می‌کنید، ارسال کند؟</value>
@@ -2901,6 +2931,12 @@
   <data name="ChannelCantSendMessage" xml:space="preserve">
     <value>متأسفانه شما نمی‌توانید به این کانال پیامی ارسال کنید.</value>
   </data>
+  <data name="ChannelCaptionLimitPremiumPromo_one" xml:space="preserve">
+    <value>عنوان را کوتاه‌تر کنید یا با خرید اشتراک **تلگرام پرمیوم**، این محدودیت را به **⁨{0}⁩** کاراکتر تغییر دهید.</value>
+  </data>
+  <data name="ChannelCaptionLimitPremiumPromo_other" xml:space="preserve">
+    <value>عنوان را کوتاه‌تر کنید یا با خرید اشتراک **تلگرام پرمیوم**، این محدودیت را به **⁨{0}⁩** کاراکتر تغییر دهید.</value>
+  </data>
   <data name="ChannelContacts" xml:space="preserve">
     <value>مخاطبین در این کانال</value>
   </data>
@@ -3155,6 +3191,18 @@
   <data name="ChannelTooMuchTitle" xml:space="preserve">
     <value>گروه‌ها و کانال‌های بیش از حد</value>
   </data>
+  <data name="ChannelTopics" xml:space="preserve">
+    <value>موضوع‌ها</value>
+  </data>
+  <data name="ChannelTopicsDiscussionForbidden" xml:space="preserve">
+    <value>موضوع‌ها هنوز در گروه‌های بحث مربوط به کانال‌ها امکان‌پذیر نیستند.</value>
+  </data>
+  <data name="ChannelTopicsForbidden_one" xml:space="preserve">
+    <value>فقط گروه‌هایی که بیش از **⁨{0}⁩ عضو** داشته باشند می‌توانند موضوع‌ها را فعال کنند.</value>
+  </data>
+  <data name="ChannelTopicsForbidden_other" xml:space="preserve">
+    <value>فقط گروه‌هایی که بیش از **⁨{0}⁩ عضو** داشته باشند می‌توانند موضوع‌ها را فعال کنند.</value>
+  </data>
   <data name="ChannelType" xml:space="preserve">
     <value>نوع کانال</value>
   </data>
@@ -3265,6 +3313,9 @@
   <data name="ChatHistoryHiddenInfo2" xml:space="preserve">
     <value>اعضای جدید بیش از 100 پیام قبلی را نخواهند دید.</value>
   </data>
+  <data name="ChatHistoryShort" xml:space="preserve">
+    <value>تاریخچه گفتگو</value>
+  </data>
   <data name="ChatHistoryVisible" xml:space="preserve">
     <value>قابل مشاهده</value>
   </data>
@@ -3272,7 +3323,7 @@
     <value>اعضای جدید پیام‌هایی که پیش از پیوستن آن‌ها ارسال شده‌اند را خواهند دید.</value>
   </data>
   <data name="ChatList" xml:space="preserve">
-    <value>ظاهر فهرست گفتگوها</value>
+    <value>نمای فهرست گفتگوها</value>
   </data>
   <data name="ChatListDefault" xml:space="preserve">
     <value>دو خطی</value>
@@ -3691,6 +3742,12 @@
   <data name="CloseEditor" xml:space="preserve">
     <value>بستن ویرایشگر</value>
   </data>
+  <data name="CloseTopic" xml:space="preserve">
+    <value>بستن موضوع</value>
+  </data>
+  <data name="CloseTopics" xml:space="preserve">
+    <value>بستن موضوع‌ها</value>
+  </data>
   <data name="CloseTranslation" xml:space="preserve">
     <value>بستن ترجمه</value>
   </data>
@@ -4018,6 +4075,15 @@
   <data name="CreateTheme" xml:space="preserve">
     <value>ایجاد پوسته</value>
   </data>
+  <data name="CreateTopic" xml:space="preserve">
+    <value>ایجاد موضوع</value>
+  </data>
+  <data name="CreateTopicsPermission" xml:space="preserve">
+    <value>ایجاد موضوع</value>
+  </data>
+  <data name="CreateTopicTitle" xml:space="preserve">
+    <value>نام و آیکون موضوع را انتخاب کنید</value>
+  </data>
   <data name="Crop" xml:space="preserve">
     <value>بریدن</value>
   </data>
@@ -4111,8 +4177,17 @@
   <data name="Deactivate" xml:space="preserve">
     <value>حذف همین الان</value>
   </data>
+  <data name="DebugAltNavigationToggleControls" xml:space="preserve">
+    <value>فعال/غیرفعال کردن کنترل‌های سختی جابجایی</value>
+  </data>
+  <data name="DebugClearLocalDatabaseSuccess" xml:space="preserve">
+    <value>پایگاه داده محلی پاک شد.</value>
+  </data>
   <data name="DebugClearLogs" xml:space="preserve">
     <value>پاک کردن گزارشات</value>
+  </data>
+  <data name="DebugClearSendMessageAsPeers" xml:space="preserve">
+    <value>پاک کردن پیش‌فرض‌های ارسال پیام به عنوان...</value>
   </data>
   <data name="DebugDrawSnowInChat" xml:space="preserve">
     <value>بارش برف در گفتگو</value>
@@ -4194,6 +4269,21 @@
   </data>
   <data name="DebugSendLogs" xml:space="preserve">
     <value>ارسال گزارشات</value>
+  </data>
+  <data name="DebugShareAlertDialogsModeLess" xml:space="preserve">
+    <value>کمتر</value>
+  </data>
+  <data name="DebugShareAlertDialogsModeMore" xml:space="preserve">
+    <value>بیشتر</value>
+  </data>
+  <data name="DebugShareAlertDialogsModeNormal" xml:space="preserve">
+    <value>عادی</value>
+  </data>
+  <data name="DebugShareAlertSwitchDialogsMode" xml:space="preserve">
+    <value>تغییر حالت پیام‌های هشدار به اشتراک گذاری (⁨{0}⁩)</value>
+  </data>
+  <data name="DebugShareAlertTopicsSlowMotion" xml:space="preserve">
+    <value>فعال/غیرفعال کردن حرکت آهسته هشدار به اشتراک گذاری موضوع‌ها</value>
   </data>
   <data name="December" xml:space="preserve">
     <value>دسامبر</value>
@@ -4387,6 +4477,12 @@
   <data name="DeleteSelectedCallsText" xml:space="preserve">
     <value>آیا می‌خواهید تماس‌های انتخاب شده را از تماس‌های اخیر حذف کنید؟</value>
   </data>
+  <data name="DeleteSelectedTopic" xml:space="preserve">
+    <value>آیا از حذف ⁨{0}⁩ اطمینان دارید؟</value>
+  </data>
+  <data name="DeleteSelectedTopics" xml:space="preserve">
+    <value>آیا از حذف این موضوع‌ها اطمینان دارید؟</value>
+  </data>
   <data name="DeleteSingleMessagesTitle" xml:space="preserve">
     <value>حذف پیام</value>
   </data>
@@ -4432,6 +4528,12 @@
   <data name="DeleteTonesMessage_other" xml:space="preserve">
     <value>آیا می‌خواهید **⁨{0}⁩ زنگ اعلان** را حذف کنید؟</value>
   </data>
+  <data name="DeleteTopics_one" xml:space="preserve">
+    <value>حذف موضوع</value>
+  </data>
+  <data name="DeleteTopics_other" xml:space="preserve">
+    <value>حذف موضوع‌ها</value>
+  </data>
   <data name="Deletions_one" xml:space="preserve">
     <value>⁨{0}⁩ حذف</value>
   </data>
@@ -4455,6 +4557,9 @@
   </data>
   <data name="DeviceStorage" xml:space="preserve">
     <value>فضای ذخیره‌سازی دستگاه</value>
+  </data>
+  <data name="DialogNotAvailable" xml:space="preserve">
+    <value>امکان‌پذیر نیست</value>
   </data>
   <data name="DialogPin" xml:space="preserve">
     <value>سنجاق کردن</value>
@@ -4526,6 +4631,9 @@
   <data name="DisappearingVideo" xml:space="preserve">
     <value>ویدیوی ناپدید شونده</value>
   </data>
+  <data name="Discard" xml:space="preserve">
+    <value>حذف</value>
+  </data>
   <data name="DiscardChanges" xml:space="preserve">
     <value>تغییرات حذف شوند؟</value>
   </data>
@@ -4534,6 +4642,14 @@
   </data>
   <data name="DiscardSelectionAlertTitle" xml:space="preserve">
     <value>انتخاب لغو شود؟</value>
+  </data>
+  <data name="DiscardTopic" xml:space="preserve">
+    <value>حذف موضوع</value>
+  </data>
+  <data name="DiscardTopicMessage" xml:space="preserve">
+    <value>موضوع تا زمانی که پیامی ارسال نکنید، ایجاد نخواهد شد.
+
+آیا می‌خواهید این موضوع را حذف کنید؟</value>
   </data>
   <data name="DiscardVideoMessageDescription" xml:space="preserve">
     <value>آیا از متوقف کردن ضبط و حذف پیام ویدیویی خود اطمینان دارید؟</value>
@@ -4572,7 +4688,7 @@
     <value>هر چیزی که در کانال ارسال کنید، به این گروه هدایت خواهد شد.</value>
   </data>
   <data name="DiscussionChannelHelp3" xml:space="preserve">
-    <value>گروهی را به عنوان میزبان دیدگاه‌های کانالتان انتخاب کنید.</value>
+    <value>یک گفتگوی گروهی را به عنوان میزبان دیدگاه‌های کانالتان انتخاب کنید.</value>
   </data>
   <data name="DiscussionCreateGroup" xml:space="preserve">
     <value>ایجاد گروه جدید</value>
@@ -4585,6 +4701,9 @@
   </data>
   <data name="DiscussionInfo" xml:space="preserve">
     <value>یک گفتگوی گروهی را برای نظرات اضافه کنید</value>
+  </data>
+  <data name="DiscussionInfoShort" xml:space="preserve">
+    <value>افزودن</value>
   </data>
   <data name="DiscussionLinkGroup" xml:space="preserve">
     <value>اتصال گروه</value>
@@ -4863,6 +4982,9 @@
   </data>
   <data name="EditThemeTitle" xml:space="preserve">
     <value>ویرایش پوسته</value>
+  </data>
+  <data name="EditTopic" xml:space="preserve">
+    <value>ویرایش موضوع</value>
   </data>
   <data name="EditWidget" xml:space="preserve">
     <value>ویرایش ویجت</value>
@@ -5145,6 +5267,9 @@
 
 لطفاً نام پوسته را وارد کنید:</value>
   </data>
+  <data name="EnterTopicName" xml:space="preserve">
+    <value>می‌خواهید درباره چه چیزی بحث کنید؟</value>
+  </data>
   <data name="EnterYourPasscode" xml:space="preserve">
     <value>گذرواژه خود را وارد کنید</value>
   </data>
@@ -5193,6 +5318,9 @@
   <data name="EventLog" xml:space="preserve">
     <value>فعالیت‌های اخیر</value>
   </data>
+  <data name="EventLogActivatedUsername" xml:space="preserve">
+    <value>⁨un1⁩ نام کاربری ⁨{0}⁩ را فعال کرد</value>
+  </data>
   <data name="EventLogAdded" xml:space="preserve">
     <value>⁨un1⁩ ⁨un2⁩ را اضافه کرد</value>
   </data>
@@ -5223,6 +5351,9 @@
   <data name="EventLogChangedStickersSet" xml:space="preserve">
     <value>⁨un1⁩ بسته استیکر گروه را تغییر داد</value>
   </data>
+  <data name="EventLogChangeUsernames" xml:space="preserve">
+    <value>⁨un1⁩ نام کاربری گروه را از ⁨{0}⁩ به ⁨{1}⁩ تغییر داد</value>
+  </data>
   <data name="EventLogChannelJoined" xml:space="preserve">
     <value>⁨un1⁩ به کانال پیوست</value>
   </data>
@@ -5232,11 +5363,20 @@
   <data name="EventLogChannelUnrestricted" xml:space="preserve">
     <value>محرومیت ⁨{0}⁩ رفع شد</value>
   </data>
+  <data name="EventLogCreateTopic" xml:space="preserve">
+    <value>⁨un1⁩ موضوع ⁨un2⁩ را ایجاد کرد</value>
+  </data>
+  <data name="EventLogDeactivatedUsername" xml:space="preserve">
+    <value>⁨un1⁩ نام کاربری ⁨{0}⁩ را غیرفعال کرد</value>
+  </data>
   <data name="EventLogDefaultPermissions" xml:space="preserve">
     <value>اختیارات پیش‌فرض تغییر یافت</value>
   </data>
   <data name="EventLogDeletedMessages" xml:space="preserve">
     <value>⁨un1⁩ این پیام را حذف کرد:</value>
+  </data>
+  <data name="EventLogDeleteTopic" xml:space="preserve">
+    <value>⁨un1⁩ موضوع ⁨un2⁩ را حذف کرد</value>
   </data>
   <data name="EventLogEditedCaption" xml:space="preserve">
     <value>⁨un1⁩ عنوان را ویرایش کرد:</value>
@@ -5279,6 +5419,9 @@
   </data>
   <data name="EventLogEditedMessages" xml:space="preserve">
     <value>⁨un1⁩ این پیام را ویرایش کرد:</value>
+  </data>
+  <data name="EventLogEditTopic" xml:space="preserve">
+    <value>⁨un1⁩ نام موضوع را از ⁨un2⁩ به ⁨un3⁩ تغییر داد</value>
   </data>
   <data name="EventLogEmpty" xml:space="preserve">
     <value>**فعالیتی اخیری وجود ندارد**
@@ -5372,6 +5515,9 @@
   </data>
   <data name="EventLogPinnedMessages" xml:space="preserve">
     <value>⁨un1⁩ این پیام را سنجاق کرد:</value>
+  </data>
+  <data name="EventLogPinTopic" xml:space="preserve">
+    <value>⁨un1⁩ موضوع ⁨un2⁩ را سنجاق کرد</value>
   </data>
   <data name="EventLogPreviousGroupDescription" xml:space="preserve">
     <value>توضیحات قبلی</value>
@@ -5501,6 +5647,12 @@
   <data name="EventLogStopQuiz" xml:space="preserve">
     <value>⁨un1⁩ آزمون را متوقف کرد:</value>
   </data>
+  <data name="EventLogSwitchToForum" xml:space="preserve">
+    <value>⁨un1⁩ موضوع‌ها را فعال کرد</value>
+  </data>
+  <data name="EventLogSwitchToGroup" xml:space="preserve">
+    <value>⁨un1⁩ موضوع‌ها را غیرفعال کرد</value>
+  </data>
   <data name="EventLogToggledInvitesHistoryOff" xml:space="preserve">
     <value>⁨un1⁩ تاریخچه گروه را برای اعضای جدید پنهان کرد</value>
   </data>
@@ -5527,6 +5679,9 @@
   </data>
   <data name="EventLogUnpinnedMessages" xml:space="preserve">
     <value>⁨un1⁩ سنجاق یک پیام را برداشت</value>
+  </data>
+  <data name="EventLogUnpinTopic" xml:space="preserve">
+    <value>⁨un1⁩ سنجاق موضوع ⁨un2⁩ را برداشت</value>
   </data>
   <data name="EventLogVoiceChatAllowedToSpeak" xml:space="preserve">
     <value>⁨un1⁩ به شرکت کنندگان جدید گفتگوی ویدیویی اجازه صحبت داد</value>
@@ -5782,7 +5937,7 @@
     <value>پوشه جدید</value>
   </data>
   <data name="FilterNoChats" xml:space="preserve">
-    <value>گفتگویی موجود نیست</value>
+    <value>گفتگویی وجود ندارد</value>
   </data>
   <data name="FilterNoChatsToDisplay" xml:space="preserve">
     <value>پوشه خالی است</value>
@@ -5882,6 +6037,12 @@
   </data>
   <data name="FirstNameSmall" xml:space="preserve">
     <value>نام</value>
+  </data>
+  <data name="FloatingDebugDisable" xml:space="preserve">
+    <value>غیرفعال کردن رفع اشکال شناور</value>
+  </data>
+  <data name="FloatingDebugEnable" xml:space="preserve">
+    <value>فعال کردن رفع اشکال شناور</value>
   </data>
   <data name="FloodWait" xml:space="preserve">
     <value>بیش از حد مجاز امتحان کردید، لطفاً بعداً تلاش کنید.</value>
@@ -6016,6 +6177,12 @@
   </data>
   <data name="formatterYearMax" xml:space="preserve">
     <value>dd.MM.yyyy</value>
+  </data>
+  <data name="ForumReplyToMessagesInTopic" xml:space="preserve">
+    <value>بر روی یک پیام به سمت چپ بکشید تا به آن پاسخ دهید</value>
+  </data>
+  <data name="ForumToggleDescription" xml:space="preserve">
+    <value>گفتگوی گروهی به موضوع‌هایی که توسط مدیران یا کاربران ایجاد می‌شوند، تقسیم خواهد شد.</value>
   </data>
   <data name="Forward" xml:space="preserve">
     <value>هدایت</value>
@@ -6465,6 +6632,9 @@
   </data>
   <data name="HiddenSendersNameDescription" xml:space="preserve">
     <value>نام ارسال کننده حذف شد</value>
+  </data>
+  <data name="Hide" xml:space="preserve">
+    <value>پنهان کردن</value>
   </data>
   <data name="HideAboveTheList" xml:space="preserve">
     <value>پنهان کردن از فهرست گفتگوها</value>
@@ -7262,6 +7432,9 @@
   <data name="LimitReachedPinDialogsPremium" xml:space="preserve">
     <value>متأسفانه نمی‌توانید بیش از ⁨{0}⁩ گفتگو را به بالای صفحه سنجاق کنید. سنجاق تعدادی از گفتگوهای فعلی را بردارید.</value>
   </data>
+  <data name="LimitReachedPinnedTopics" xml:space="preserve">
+    <value>متأسفانه نمی‌توانید بیش از ⁨{0}⁩ موضوع را به بالای صفحه سنجاق کنید.</value>
+  </data>
   <data name="LimitReachedPublicLinks" xml:space="preserve">
     <value>شما لینک‌های عمومی زیادی را رزرو کرده‌اید. می‌توانید لینکی را از یک گروه یا کانال قدیمی‌تر باطل کرده یا با خرید اشتراک **تلگرام پرمیوم**، این محدودیت را به **⁨{1}⁩** لینک عمومی تغییر دهید.</value>
   </data>
@@ -7270,6 +7443,9 @@
   </data>
   <data name="LimitReachedPublicLinksPremium" xml:space="preserve">
     <value>شما لینک‌های عمومی زیادی را رزرو کرده‌اید. می‌توانید لینکی را از یک گروه یا کانال قدیمی‌تر باطل کنید.</value>
+  </data>
+  <data name="LimitReachedReorderFolder" xml:space="preserve">
+    <value>با خرید اشتراک **تلگرام پرمیوم**، پوشه «⁨{0}⁩» را جابجا کنید.</value>
   </data>
   <data name="LinkActionCopy" xml:space="preserve">
     <value>کپی</value>
@@ -7558,6 +7734,12 @@
   <data name="MakeMyselfVisibleTitle" xml:space="preserve">
     <value>پروفایل شما نمایش داده شود؟</value>
   </data>
+  <data name="ManageAllFilesRational" xml:space="preserve">
+    <value>برای باز کردن مرورگر فایل درون‌برنامه، لطفاً به تلگرام اجازه دهید تمامی فایل‌ها را مدیریت کند</value>
+  </data>
+  <data name="ManageAllFilesRational2" xml:space="preserve">
+    <value>تلگرام برای انتقال فایل‌های موقت قدیمی به حافظه اختصاصی، باید اجازه مدیریت تمامی فایل‌ها را داشته باشد</value>
+  </data>
   <data name="ManageChannel" xml:space="preserve">
     <value>مدیریت کانال</value>
   </data>
@@ -7578,6 +7760,9 @@
   </data>
   <data name="ManageLinksInfoHelp" xml:space="preserve">
     <value>شما می‌توانید لینک‌های دعوت اضافه‌ای ایجاد کنید که دارای محدودیت زمانی یا محدودیت تعداد اعضا باشند.</value>
+  </data>
+  <data name="ManageTopicsPermission" xml:space="preserve">
+    <value>مدیریت موضوع‌ها</value>
   </data>
   <data name="Map" xml:space="preserve">
     <value>نقشه</value>
@@ -7931,8 +8116,14 @@
   <data name="MicrophoneForVoiceMessagesSco" xml:space="preserve">
     <value>هدفون</value>
   </data>
+  <data name="MicrophoneForVoiceMessagesScoHint" xml:space="preserve">
+    <value>استفاده از میکروفن هدفون ممکن است نویز پس‌زمینه را کمتر کند، اما کیفیت صدا را کمی کاهش می‌دهد.</value>
+  </data>
   <data name="MicrophoneForVoiceMessagesScoIfConnected" xml:space="preserve">
     <value>هدفون (در صورت اتصال)</value>
+  </data>
+  <data name="MigrateOldFolder" xml:space="preserve">
+    <value>پوشه قدیمی را به حافظه اختصاصی انتقال دهید</value>
   </data>
   <data name="MigrateOldFolderButton" xml:space="preserve">
     <value>انتقال فایل‌ها همین الان</value>
@@ -8197,6 +8388,9 @@
   <data name="NewThemeTitle" xml:space="preserve">
     <value>پوسته جدید</value>
   </data>
+  <data name="NewTopic" xml:space="preserve">
+    <value>موضوع جدید</value>
+  </data>
   <data name="Next" xml:space="preserve">
     <value>بعدی</value>
   </data>
@@ -8204,7 +8398,7 @@
     <value>فایل‌هایی را به فهرست موزیک‌های دستگاه خود اضافه کنید تا آن‌ها را در این قسمت مشاهده کنید.</value>
   </data>
   <data name="NoAudioFiles" xml:space="preserve">
-    <value>فایل صدایی موجود نیست</value>
+    <value>فایل صدایی وجود ندارد</value>
   </data>
   <data name="NoAudioFilesInfo" xml:space="preserve">
     <value>فهرست موزیک‌‌های شما خالی است.</value>
@@ -8219,7 +8413,7 @@
     <value>نتیجه‌ای مطابق با **⁨{0}⁩** وجود ندارد.</value>
   </data>
   <data name="NoBlocked" xml:space="preserve">
-    <value>هنوز کاربر مسدودی موجود نیست</value>
+    <value>هنوز کاربر مسدودی وجود ندارد</value>
   </data>
   <data name="NoBlockedChannel" xml:space="preserve">
     <value>کاربران محروم از کانال حذف می‌شوند و تنها با اضافه شدن توسط مدیر می‌توانند به کانال بازگردند. لینک‌های دعوت برای این افراد کار نمی‌کند.</value>
@@ -8234,7 +8428,7 @@
     <value>کاربرانی که توسط مدیران از گروه حذف شوند، نمی‌توانند از طریق لینک‌های دعوت مجدداً به آن بپیوندند.</value>
   </data>
   <data name="NoBlockedUsers" xml:space="preserve">
-    <value>کاربر حذف شده‌ای موجود نیست</value>
+    <value>کاربر حذف شده‌ای وجود ندارد</value>
   </data>
   <data name="NobodyLikesSpam1" xml:space="preserve">
     <value>متأسفانه شما در حال حاضر فقط می‌توانید به مخاطبین مشترک پیام ارسال کنید.</value>
@@ -8249,7 +8443,7 @@
     <value>کسی ندیده است</value>
   </data>
   <data name="NoCallLog" xml:space="preserve">
-    <value>هنوز تماسی در اینجا موجود نیست...</value>
+    <value>هنوز تماسی در اینجا وجود ندارد...</value>
   </data>
   <data name="NoChats" xml:space="preserve">
     <value>به تلگرام خوش آمدید</value>
@@ -8264,7 +8458,7 @@
     <value>هنوز دیدگاهی در اینجا ارسال نشده است...</value>
   </data>
   <data name="NoContacts" xml:space="preserve">
-    <value>هنوز مخاطبی موجود نیست</value>
+    <value>هنوز مخاطبی وجود ندارد</value>
   </data>
   <data name="NoContactsYet" xml:space="preserve">
     <value>هنوز مخاطبی در تلگرام ندارید</value>
@@ -8296,16 +8490,19 @@
     <value>این پوشه خالی است.</value>
   </data>
   <data name="NoGIFs" xml:space="preserve">
-    <value>گیفی موجود نیست</value>
+    <value>گیفی وجود ندارد</value>
   </data>
   <data name="NoGIFsFound" xml:space="preserve">
     <value>گیفی پیدا نشد</value>
   </data>
   <data name="NoGroupsInCommon" xml:space="preserve">
-    <value>گروه مشترکی موجود نیست</value>
+    <value>گروه مشترکی وجود ندارد</value>
   </data>
   <data name="NoHandleAppInstalled" xml:space="preserve">
     <value>شما هیچ برنامه‌ای جهت باز کردن نوع فایل «⁨{0}⁩» ندارید، لطفاً جهت ادامه چنین برنامه‌ای را نصب کنید</value>
+  </data>
+  <data name="NoIconsFound" xml:space="preserve">
+    <value>آیکونی پیدا نشد</value>
   </data>
   <data name="NoLimit" xml:space="preserve">
     <value>نامحدود</value>
@@ -8314,7 +8511,7 @@
     <value>لطفاً ایمیلی به reports@stel.com ارسال کرده و مشکلتان را مطرح کنید</value>
   </data>
   <data name="NoMasks" xml:space="preserve">
-    <value>هنوز ماسکی موجود نیست</value>
+    <value>هنوز ماسکی وجود ندارد</value>
   </data>
   <data name="NoMedia" xml:space="preserve">
     <value>عکس‌ها و ویدیوها را در این گفتگو به اشتراک بگذارید و بر روی هر دستگاه خود به آن‌ها دسترسی داشته باشید.</value>
@@ -8332,7 +8529,7 @@
     <value>درخواست عضویت معلقی وجود ندارد.</value>
   </data>
   <data name="NoMessages" xml:space="preserve">
-    <value>هنوز پیامی در اینجا موجود نیست...</value>
+    <value>هنوز پیامی در اینجا وجود ندارد...</value>
   </data>
   <data name="NoMessagesForThisDay" xml:space="preserve">
     <value>هیچ پیامی برای این روز وجود ندارد</value>
@@ -8347,13 +8544,13 @@
     <value>هنوز کسی نپیوسته است</value>
   </data>
   <data name="NoOtherSessions" xml:space="preserve">
-    <value>نشست فعال دیگری موجود نیست</value>
+    <value>نشست فعال دیگری وجود ندارد</value>
   </data>
   <data name="NoOtherSessionsInfo" xml:space="preserve">
     <value>شما می‌توانید در تلفن همراه، تبلت یا رایانه‌های دیگر با استفاده از یک شماره تلفن یکسان وارد حساب کاربری تلگرام شوید. تمامی داده‌های شما بلافاصله همگام‌سازی خواهند شد.</value>
   </data>
   <data name="NoOtherWebSessions" xml:space="preserve">
-    <value>ورود فعالی موجود نیست.</value>
+    <value>ورود به حساب کاربری فعالی وجود ندارد.</value>
   </data>
   <data name="NoOtherWebSessionsInfo" xml:space="preserve">
     <value>شما می‌توانید به وبسایت‌هایی که از ورود با حساب کاربری تلگرام پشتیبانی می‌کنند وارد شوید.</value>
@@ -8362,7 +8559,7 @@
     <value>حساب کاربری تلگرامی با این شماره تلفن وجود ندارد.</value>
   </data>
   <data name="NoPhotos" xml:space="preserve">
-    <value>هنوز عکسی موجود نیست</value>
+    <value>هنوز عکسی وجود ندارد</value>
   </data>
   <data name="NoPlacesFound" xml:space="preserve">
     <value>مکانی پیدا نشد</value>
@@ -8383,7 +8580,7 @@
     <value>واکنشی پیدا نشد</value>
   </data>
   <data name="NoRecent" xml:space="preserve">
-    <value>مورد اخیری موجود نیست</value>
+    <value>مورد اخیری وجود ندارد</value>
   </data>
   <data name="NoRecentCalls" xml:space="preserve">
     <value>تماس اخیری وجود ندارد</value>
@@ -8393,13 +8590,13 @@
 در اینجا نمایش داده خواهند شد.</value>
   </data>
   <data name="NoRecentGIFs" xml:space="preserve">
-    <value>گیف اخیری موجود نیست</value>
+    <value>گیف اخیری وجود ندارد</value>
   </data>
   <data name="NoRecentPhotos" xml:space="preserve">
-    <value>عکس اخیری موجود نیست</value>
+    <value>عکس اخیری وجود ندارد</value>
   </data>
   <data name="NoRecentSearches" xml:space="preserve">
-    <value>جستجوی اخیری موجود نیست</value>
+    <value>جستجوی اخیری وجود ندارد</value>
   </data>
   <data name="NoReplies" xml:space="preserve">
     <value>هنوز پاسخی داده نشده است...</value>
@@ -8421,7 +8618,7 @@
     <value> ⁨{0}⁩ در حال حاضر داده‌های پخش زنده را به تلگرام منتشر نمی‌کند.</value>
   </data>
   <data name="NoScheduledMessages" xml:space="preserve">
-    <value>هنوز پیام زمان‌بندی شده‌ای در اینجا موجود نیست...</value>
+    <value>هنوز پیام زمان‌بندی شده‌ای در اینجا وجود ندارد...</value>
   </data>
   <data name="NoSharedAudio" xml:space="preserve">
     <value>موزیک‌ها را در این گفتگو به اشتراک بگذارید و از هر دستگاه خود به آن‌ دسترسی داشته باشید.</value>
@@ -8454,7 +8651,7 @@
     <value>بدون صدا</value>
   </data>
   <data name="NoStickers" xml:space="preserve">
-    <value>هنوز استیکری موجود نیست</value>
+    <value>هنوز استیکری وجود ندارد</value>
   </data>
   <data name="NoStickersFound" xml:space="preserve">
     <value>استیکری پیدا نشد</value>
@@ -9054,6 +9251,12 @@
   <data name="NotificationsUnmutedHint" xml:space="preserve">
     <value>اعلان‌ها صدادار شدند.</value>
   </data>
+  <data name="NotificationTopicExceptionsDesctription_one" xml:space="preserve">
+    <value>⁨{0}⁩، ⁨{0}⁩ استثنا</value>
+  </data>
+  <data name="NotificationTopicExceptionsDesctription_other" xml:space="preserve">
+    <value>⁨{0}⁩، ⁨{0}⁩ استثنا</value>
+  </data>
   <data name="NotificationUnrecognizedDevice" xml:space="preserve">
     <value>⁨{0}⁩،
 شخصی در تاریخ ⁨{1}⁩ از یک دستگاه جدید وارد حساب کاربری شما شده است.
@@ -9070,6 +9273,13 @@
   </data>
   <data name="NotMounted" xml:space="preserve">
     <value>فضای ذخیره‌سازی نصب نشده است</value>
+  </data>
+  <data name="NoTopics" xml:space="preserve">
+    <value>هنوز موضوعی در اینجا وجود ندارد</value>
+  </data>
+  <data name="NoTopicsDescription" xml:space="preserve">
+    <value>شما می‌توانید اولین موضوع خود را آغاز کرده یا بر روی
+آیکون ⁨{0}⁩ بزنید تا به فهرست پیام‌ها بروید.</value>
   </data>
   <data name="NoUsernameFound" xml:space="preserve">
     <value>نام کاربری پیدا نشد.</value>
@@ -9130,6 +9340,9 @@
   </data>
   <data name="Open" xml:space="preserve">
     <value>باز کردن</value>
+  </data>
+  <data name="OpenAllTopics" xml:space="preserve">
+    <value>تمامی موضوع‌ها</value>
   </data>
   <data name="OpenBackground" xml:space="preserve">
     <value>مشاهده پس‌زمینه</value>
@@ -9973,6 +10186,9 @@
   <data name="PauseAll" xml:space="preserve">
     <value>مکث همه</value>
   </data>
+  <data name="PaymentAppNotFoundForDeeplink" xml:space="preserve">
+    <value>برنامه‌ای برای مدیریت این لینک عمیق پیدا نشد.</value>
+  </data>
   <data name="PaymentBillingAddress" xml:space="preserve">
     <value>آدرس صدور قبض</value>
   </data>
@@ -10148,10 +10364,10 @@
     <value>شما با موفقیت مبلغ ⁨{0}⁩ را به ⁨{1}⁩ انتقال دادید</value>
   </data>
   <data name="PaymentSuccessfullyPaidNoItemRecurrent" xml:space="preserve">
-    <value>شما با موفقیت مبلغ ⁨{0}⁩ را به ⁨{1}⁩ انتقال دادید و پرداخت‌های تکرارشونده آینده را مجاز نمودید</value>
+    <value>شما با موفقیت مبلغ ⁨{0}⁩ را به ⁨{1}⁩ انتقال دادید و پرداخت‌های تکرار شونده آینده را مجاز نمودید</value>
   </data>
   <data name="PaymentSuccessfullyPaidRecurrent" xml:space="preserve">
-    <value>شما با موفقیت مبلغ ⁨{0}⁩ را به ⁨{1}⁩ برای ⁨{2}⁩ انتقال داید و پرداخت‌های تکرارشونده آینده را مجاز نمودید</value>
+    <value>شما با موفقیت مبلغ ⁨{0}⁩ را به ⁨{1}⁩ برای ⁨{2}⁩ انتقال داید و پرداخت‌های تکرار شونده آینده را مجاز نمودید</value>
   </data>
   <data name="PaymentTestInvoice" xml:space="preserve">
     <value>صورت‌حساب آزمایشی</value>
@@ -10434,6 +10650,9 @@
   <data name="PinMessageAlertTitle" xml:space="preserve">
     <value>سنجاق کردن پیام</value>
   </data>
+  <data name="PinMessageInTopicAlert" xml:space="preserve">
+    <value>این پیام در موضوع سنجاق شود؟</value>
+  </data>
   <data name="PinnedDialogsCount_one" xml:space="preserve">
     <value>گفتگو سنجاق شد</value>
   </data>
@@ -10587,11 +10806,14 @@
   <data name="PremiumPreviewAdvancedChatManagementDescription" xml:space="preserve">
     <value>ابزارهایی برای تنظیم پوشه پیش‌فرض، بایگانی خودکار و پنهان کردن گفتگوهای جدید از طرف افراد غیرمخاطب.</value>
   </data>
+  <data name="PremiumPreviewAdvancedChatManagementDescription2" xml:space="preserve">
+    <value>مشترکین تلگرام پرمیوم می‌توانند پوشه پیش‌فرض را تنظیم کنند، به صورت خودکار بایگانی انجام دهند و گفتگوهای جدید از طرف غیرمخاطبین را پنهان کنند.</value>
+  </data>
   <data name="PremiumPreviewAnimatedProfiles" xml:space="preserve">
     <value>عکس‌های پروفایل متحرک</value>
   </data>
   <data name="PremiumPreviewAnimatedProfilesDescription" xml:space="preserve">
-    <value>ویدیوهای پروفایل متحرک در گفتگوها و فهرست گفتگوها که قدرت بیان بیشتری را می‌دهند.</value>
+    <value>آواتارهای ویدیویی متحرک در گفتگوها و فهرست گفتگوها که قدرت بیان بیشتری را می‌دهند.</value>
   </data>
   <data name="PremiumPreviewAppIcon" xml:space="preserve">
     <value>آیکون‌های برنامه پرمیوم</value>
@@ -10610,6 +10832,9 @@
   </data>
   <data name="PremiumPreviewDownloadSpeedDescription" xml:space="preserve">
     <value>دیگر محدودیتی در سرعت دانلود رسانه‌ها و سندها وجود ندارد.</value>
+  </data>
+  <data name="PremiumPreviewDownloadSpeedDescription2" xml:space="preserve">
+    <value>با خرید اشتراک تلگرام پرمیوم، رسانه‌ها و فایل‌ها را با بیشترین سرعت ممکن دانلود کنید.</value>
   </data>
   <data name="PremiumPreviewEmoji" xml:space="preserve">
     <value>اموجی متحرک</value>
@@ -10676,6 +10901,12 @@
   </data>
   <data name="PremiumPreviewVoiceToTextDescription" xml:space="preserve">
     <value>امکان مشاهده متن هر پیام صوتی دریافتی.</value>
+  </data>
+  <data name="PremiumPreviewVoiceToTextDescription2" xml:space="preserve">
+    <value>با خرید اشتراک تلگرام پرمیوم، می‌توانید پیام‌های صوتی و ویدیویی را به متن تبدیل کنید.</value>
+  </data>
+  <data name="PremiumSpeedPromo" xml:space="preserve">
+    <value>افزایش سرعت</value>
   </data>
   <data name="PremiumStickers" xml:space="preserve">
     <value>استیکرهای پرمیوم</value>
@@ -10954,7 +11185,7 @@
     <value>چه کسی می‌تواند برای من پیام‌های صوتی یا ویدیویی ارسال کند؟</value>
   </data>
   <data name="PrivateShares" xml:space="preserve">
-    <value>به اشتراک گذاری‌های خصوصی</value>
+    <value>به اشتراک گذاری خصوصی</value>
   </data>
   <data name="ProfileJoinChannel" xml:space="preserve">
     <value>پیوستن به کانال</value>
@@ -11064,7 +11295,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>متأسفانه نظرسنجی‌ها با رأی‌های قابل مشاهده نمی‌توانند به کانال‌ها هدایت شوند.</value>
   </data>
   <data name="PublicShares" xml:space="preserve">
-    <value>به اشتراک گذاری‌های عمومی</value>
+    <value>به اشتراک گذاری عمومی</value>
   </data>
   <data name="PublicSharesCount_one" xml:space="preserve">
     <value>⁨{0}⁩ به اشتراک گذاری عمومی</value>
@@ -11266,6 +11497,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="Reacted_other" xml:space="preserve">
     <value>⁨{0}⁩ واکنش</value>
+  </data>
+  <data name="ReactionInDialog" xml:space="preserve">
+    <value>برای پیام شما واکنش ⁨{0}⁩ گذاشت</value>
   </data>
   <data name="Reactions" xml:space="preserve">
     <value>واکنش‌ها</value>
@@ -11716,6 +11950,12 @@ https://telegram.org/blog/coronavirus</value>
   <data name="ResetStatisticsAlertTitle" xml:space="preserve">
     <value>بازنشانی آمار</value>
   </data>
+  <data name="RestartTopic" xml:space="preserve">
+    <value>باز کردن مجدد موضوع</value>
+  </data>
+  <data name="RestartTopics" xml:space="preserve">
+    <value>باز کردن مجدد موضوع‌ها</value>
+  </data>
   <data name="Restore" xml:space="preserve">
     <value>بازگردانی</value>
   </data>
@@ -11975,7 +12215,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>جستجوی اموجی</value>
   </data>
   <data name="SearchEmptyViewDownloads" xml:space="preserve">
-    <value>دانلود اخیری موجود نیست</value>
+    <value>دانلود اخیری وجود ندارد</value>
   </data>
   <data name="SearchEmptyViewFilteredSubtitle2" xml:space="preserve">
     <value>جستجوی دیگری انجام دهید.</value>
@@ -12021,6 +12261,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="SearchGifsTitle" xml:space="preserve">
     <value>جستجوی گیف‌ها</value>
+  </data>
+  <data name="SearchIconsHint" xml:space="preserve">
+    <value>جستجوی آیکون‌ها</value>
   </data>
   <data name="SearchImages" xml:space="preserve">
     <value>جستجوی تصاویر</value>
@@ -12180,6 +12423,12 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="SelectThisDay" xml:space="preserve">
     <value>انتخاب این روز</value>
+  </data>
+  <data name="SelectTopic" xml:space="preserve">
+    <value>انتخاب موضوع</value>
+  </data>
+  <data name="SelectTopicIconHint" xml:space="preserve">
+    <value>آیکون موضوع را انتخاب کنید</value>
   </data>
   <data name="Send" xml:space="preserve">
     <value>ارسال</value>
@@ -12481,7 +12730,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>راهنما</value>
   </data>
   <data name="SettingsNoRecent" xml:space="preserve">
-    <value>جستجوی اخیری موجود نیست</value>
+    <value>جستجوی اخیری وجود ندارد</value>
   </data>
   <data name="SettingsNoResults" xml:space="preserve">
     <value>نتیجه‌ای پیدا نشد</value>
@@ -12521,6 +12770,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="SetUrlPlaceholder" xml:space="preserve">
     <value>لینک</value>
+  </data>
+  <data name="SetUsernameHeader" xml:space="preserve">
+    <value>تنظیم نام کاربری</value>
   </data>
   <data name="Shadows" xml:space="preserve">
     <value>سایه‌ها</value>
@@ -12649,7 +12901,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>ارسال به... </value>
   </data>
   <data name="SharesPerPost" xml:space="preserve">
-    <value>به اشتراک گذاری‌ها به ازای پست</value>
+    <value>به اشتراک گذاری به ازای پست</value>
   </data>
   <data name="ShareTelegram" xml:space="preserve">
     <value>به اشتراک گذاشتن تلگرام...</value>
@@ -12699,6 +12951,9 @@ https://telegram.org/blog/coronavirus</value>
 **⁨{1}⁩**
 
 لطفاً شماره درست را به همراه کد کشورتان وارد کنید.</value>
+  </data>
+  <data name="Show" xml:space="preserve">
+    <value>نمایش دادن</value>
   </data>
   <data name="ShowAllFiles" xml:space="preserve">
     <value>نمایش تمامی فایل‌ها</value>
@@ -12958,6 +13213,9 @@ https://telegram.org/blog/coronavirus</value>
 
 تبلیغات آنلاین دیگر نباید به معنی سوء استفاده از حریم خصوصی کاربر باشند. بیایید با هم دوباره تعریف کنیم که یک شرکت فناوری باید چگونه فعالیت کند.</value>
   </data>
+  <data name="SponsoredMessageRecommended" xml:space="preserve">
+    <value>پیشنهاد شده</value>
+  </data>
   <data name="Start" xml:space="preserve">
     <value>شروع</value>
   </data>
@@ -13032,7 +13290,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>مشاهده پیام‌ها</value>
   </data>
   <data name="StatisticViews" xml:space="preserve">
-    <value>بازدیدها</value>
+    <value>بازدید</value>
   </data>
   <data name="Stickers_one" xml:space="preserve">
     <value>⁨{0}⁩ استیکر</value>
@@ -13270,6 +13528,12 @@ https://telegram.org/blog/coronavirus</value>
   <data name="SwipeToGoNextFolder" xml:space="preserve">
     <value>برای رفتن به پوشه خوانده نشده بعدی، به سمت بالا بکشید</value>
   </data>
+  <data name="SwipeToReplyHint" xml:space="preserve">
+    <value>برای پاسخ، بکشید</value>
+  </data>
+  <data name="SwipeToReplyHintMessage" xml:space="preserve">
+    <value>بر روی هر پیامی به سمت چپ بکشید تا به آن پاسخ دهید.</value>
+  </data>
   <data name="SwipeUnmute" xml:space="preserve">
     <value>صدادار کردن</value>
   </data>
@@ -13349,6 +13613,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="TapToChangePhone" xml:space="preserve">
     <value>برای تغییر شماره تلفن ضربه بزنید</value>
+  </data>
+  <data name="TapToCreateTopicHint" xml:space="preserve">
+    <value>برای ایجاد یک موضوع، ضربه بزنید</value>
   </data>
   <data name="TapToDownload" xml:space="preserve">
     <value>برای دانلود ضربه بزنید</value>
@@ -13758,7 +14025,100 @@ https://telegram.org/blog/coronavirus</value>
     <value>روزهای برتر هفته</value>
   </data>
   <data name="TopHoursChartTitle" xml:space="preserve">
-    <value>بازدیدها بر اساس ساعت (UTC)</value>
+    <value>تعداد بازدیدها بر اساس ساعت (UTC)</value>
+  </data>
+  <data name="TopicChangeIconAndTitleTo" xml:space="preserve">
+    <value>⁨{0}⁩ نام و آیکون موضوع را به ⁨{1}⁩ تغییر داد</value>
+  </data>
+  <data name="TopicChangeIconAndTitleToInReply" xml:space="preserve">
+    <value>نام و آیکون موضوع را به ⁨{0}⁩ تغییر داد</value>
+  </data>
+  <data name="TopicClosed" xml:space="preserve">
+    <value>موضوع بسته شد</value>
+  </data>
+  <data name="TopicClosed2" xml:space="preserve">
+    <value>⁨{0}⁩ موضوع را بست</value>
+  </data>
+  <data name="TopicClosedByAdmin" xml:space="preserve">
+    <value>موضوع بسته شده است</value>
+  </data>
+  <data name="TopicContainsEmojiPackSingle" xml:space="preserve">
+    <value>این موضوع حاوی **⁨{0}⁩** است</value>
+  </data>
+  <data name="TopicCreated" xml:space="preserve">
+    <value>موضوع ایجاد شد</value>
+  </data>
+  <data name="TopicCreator" xml:space="preserve">
+    <value>ایجاد کننده موضوع</value>
+  </data>
+  <data name="TopicEmptyViewDescription" xml:space="preserve">
+    <value>برای آغاز موضوع، پیامی ارسال کنید.</value>
+  </data>
+  <data name="TopicIconChanged" xml:space="preserve">
+    <value>آیکون موضوع تغییر یافت</value>
+  </data>
+  <data name="TopicIconChangedTo" xml:space="preserve">
+    <value>⁨{0}⁩ آیکون موضوع را به ⁨{1}⁩ تغییر داد</value>
+  </data>
+  <data name="TopicIconChangedToInReply" xml:space="preserve">
+    <value>آیکون موضوع را به ⁨{0}⁩ تغییر داد</value>
+  </data>
+  <data name="TopicNotificationsExceptions_one" xml:space="preserve">
+    <value>**⁨{0}⁩ موضوع** به عنوان استثنا فهرست شده است.</value>
+  </data>
+  <data name="TopicNotificationsExceptions_other" xml:space="preserve">
+    <value>**⁨{0}⁩ موضوع** به عنوان استثنا فهرست شده‌اند.</value>
+  </data>
+  <data name="TopicProfileStatus" xml:space="preserve">
+    <value>در ⁨{0}⁩</value>
+  </data>
+  <data name="TopicRenamed" xml:space="preserve">
+    <value>نام موضوع تغییر یافت</value>
+  </data>
+  <data name="TopicRenamedTo" xml:space="preserve">
+    <value>⁨{0}⁩ نام موضوع به ⁨{1}⁩ تغییر داد</value>
+  </data>
+  <data name="TopicRenamedToInReply" xml:space="preserve">
+    <value>نام موضوع را به ⁨{0}⁩ تغییر داد</value>
+  </data>
+  <data name="TopicRestarted" xml:space="preserve">
+    <value>موضوع مجدداً باز شد</value>
+  </data>
+  <data name="TopicRestarted2" xml:space="preserve">
+    <value>⁨{0}⁩ مجدداً موضوع را باز کرد</value>
+  </data>
+  <data name="Topics" xml:space="preserve">
+    <value>موضوع‌ها</value>
+  </data>
+  <data name="TopicsDeleted_one" xml:space="preserve">
+    <value>موضوع حذف شد</value>
+  </data>
+  <data name="TopicsDeleted_other" xml:space="preserve">
+    <value>موضوع‌ها حذف شدند</value>
+  </data>
+  <data name="TopicViewAsMessages" xml:space="preserve">
+    <value>مشاهده در قالب پیام‌ها</value>
+  </data>
+  <data name="TopicViewAsTopics" xml:space="preserve">
+    <value>مشاهده در قالب موضوع‌ها</value>
+  </data>
+  <data name="TopicWasClosedAction" xml:space="preserve">
+    <value>⁨{0}⁩، ⁨{1}⁩ را بست</value>
+  </data>
+  <data name="TopicWasCreatedAction" xml:space="preserve">
+    <value>⁨{0}⁩ ایجاد شد</value>
+  </data>
+  <data name="TopicWasIconChangedToAction" xml:space="preserve">
+    <value>⁨{0}⁩ آیکون موضوع را به ⁨{1}⁩ تغییر داد</value>
+  </data>
+  <data name="TopicWasRenamedToAction" xml:space="preserve">
+    <value>⁨{0}⁩، نام موضوع را به ⁨{1}⁩ تغییر داد</value>
+  </data>
+  <data name="TopicWasRenamedToAction2" xml:space="preserve">
+    <value>⁨{0}⁩ نام و آیکون موضوع را به ⁨{1}⁩ تغییر داد</value>
+  </data>
+  <data name="TopicWasReopenedAction" xml:space="preserve">
+    <value>⁨{0}⁩ مجدداً ⁨{1}⁩ را باز کرد</value>
   </data>
   <data name="TopInviters" xml:space="preserve">
     <value>دعوت کنندگان برتر</value>
@@ -13963,6 +14323,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="UnlockPremiumStickersDescription" xml:space="preserve">
     <value>با خرید اشتراک تلگرام پرمیوم، به این استیکر و استیکرهای بیشتر دسترسی پیدا کنید.</value>
   </data>
+  <data name="UnlockPremiumTranscriptionHint" xml:space="preserve">
+    <value>با خرید اشتراک **تلگرام پرمیوم**، صدا را به متن تبدیل کنید.</value>
+  </data>
   <data name="Unmute" xml:space="preserve">
     <value>صدادار</value>
   </data>
@@ -14155,6 +14518,24 @@ https://telegram.org/blog/coronavirus</value>
   <data name="Username" xml:space="preserve">
     <value>نام کاربری</value>
   </data>
+  <data name="UsernameActivateErrorMessage" xml:space="preserve">
+    <value>متأسفانه شما لینک‌های عمومی فعال بسیار زیادی دارید. لطفاً ابتدا یکی از لینک‌های عمومی فعال خود را پنهان کنید.</value>
+  </data>
+  <data name="UsernameActivateErrorTitle" xml:space="preserve">
+    <value>لینک‌های فعال بیش از حد</value>
+  </data>
+  <data name="UsernameActivateLink" xml:space="preserve">
+    <value>فعال کردن لینک</value>
+  </data>
+  <data name="UsernameActivateLinkChannelMessage" xml:space="preserve">
+    <value>آیا می‌خواهید این لینک را در صفحه اطلاعات کانال نمایش دهید؟</value>
+  </data>
+  <data name="UsernameActivateLinkProfileMessage" xml:space="preserve">
+    <value>آیا می‌خواهید این لینک را در صفحه اطلاعات خود نمایش دهید؟</value>
+  </data>
+  <data name="UsernameAlso" xml:space="preserve">
+    <value>همچنین ⁨{0}⁩</value>
+  </data>
   <data name="UsernameAvailable" xml:space="preserve">
     <value>⁨{0}⁩ در دسترس است.</value>
   </data>
@@ -14163,6 +14544,15 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="UsernameCopied" xml:space="preserve">
     <value>نام کاربری در حافظه کپی شد.</value>
+  </data>
+  <data name="UsernameDeactivateLink" xml:space="preserve">
+    <value>غیرفعال کردن لینک</value>
+  </data>
+  <data name="UsernameDeactivateLinkChannelMessage" xml:space="preserve">
+    <value>آیا می‌خواهید این لینک را در صفحه اطلاعات کانال پنهان کنید؟</value>
+  </data>
+  <data name="UsernameDeactivateLinkProfileMessage" xml:space="preserve">
+    <value>آیا می‌خواهید این لینک را در صفحه اطلاعات خود پنهان کنید؟</value>
   </data>
   <data name="UsernameEmpty" xml:space="preserve">
     <value>خالی</value>
@@ -14179,6 +14569,10 @@ https://telegram.org/blog/coronavirus</value>
   <data name="UsernameInUse" xml:space="preserve">
     <value>این نام کاربری قبلاً انتخاب شده است.</value>
   </data>
+  <data name="UsernameInUsePurchase" xml:space="preserve">
+    <value>این نام کاربری در حال حاضر انتخاب شده است.
+با این حال، برای خرید در دسترس است. **بیشتر بدانید…**</value>
+  </data>
   <data name="UsernameInvalid" xml:space="preserve">
     <value>این نام کاربری نامعتبر است.</value>
   </data>
@@ -14188,11 +14582,48 @@ https://telegram.org/blog/coronavirus</value>
   <data name="UsernameInvalidShort" xml:space="preserve">
     <value>نام‌های کاربری باید حداقل دارای 5 کاراکتر باشند.</value>
   </data>
+  <data name="UsernameInvalidShortPurchase" xml:space="preserve">
+    <value>نام کاربری باید حداقل 5 کاراکتر داشته باشد.
+با این حال، برای خرید در دسترس است. **بیشتر بدانید…**</value>
+  </data>
   <data name="UsernameInvalidStartNumber" xml:space="preserve">
     <value>نام‌های کاربری نمی‌توانند با عدد شروع شوند.</value>
   </data>
+  <data name="UsernameLinkActive" xml:space="preserve">
+    <value>فعال</value>
+  </data>
+  <data name="UsernameLinkEditable" xml:space="preserve">
+    <value>برای ویرایش، ضربه بزنید</value>
+  </data>
+  <data name="UsernameLinkInactive" xml:space="preserve">
+    <value>غیرفعال</value>
+  </data>
+  <data name="UsernameLinkPlaceholder" xml:space="preserve">
+    <value>نام کاربری</value>
+  </data>
   <data name="UsernamePlaceholder" xml:space="preserve">
     <value>نام کاربری شما </value>
+  </data>
+  <data name="UsernameProfileLinkActive" xml:space="preserve">
+    <value>فعال</value>
+  </data>
+  <data name="UsernameProfileLinkEditable" xml:space="preserve">
+    <value>برای ویرایش ضربه بزنید</value>
+  </data>
+  <data name="UsernameProfileLinkInactive" xml:space="preserve">
+    <value>غیرفعال</value>
+  </data>
+  <data name="UsernamesChannelHeader" xml:space="preserve">
+    <value>ترتیب لینک‌ها</value>
+  </data>
+  <data name="UsernamesChannelHelp" xml:space="preserve">
+    <value>لینک‌ها را بکشید و رها کنید تا ترتیب نمایش آن‌ها را در صفحه اطلاعات کانال تغییر دهید.</value>
+  </data>
+  <data name="UsernamesProfileHeader" xml:space="preserve">
+    <value>ترتیب نام‌های کاربری</value>
+  </data>
+  <data name="UsernamesProfileHelp" xml:space="preserve">
+    <value>لینک‌ها را بکشید و رها کنید تا ترتیب نمایش آن‌ها را در صفحه اطلاعات خود تغییر دهید.</value>
   </data>
   <data name="UserRemovedBy" xml:space="preserve">
     <value>حذف شده توسط ⁨{0}⁩</value>
@@ -14437,6 +14868,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="ViewingMembers" xml:space="preserve">
     <value>اعضای بازدید کننده</value>
   </data>
+  <data name="ViewInTopic" xml:space="preserve">
+    <value>مشاهده در موضوع</value>
+  </data>
   <data name="ViewMessage" xml:space="preserve">
     <value>باز کردن پیام</value>
   </data>
@@ -14459,7 +14893,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>⁨{0}⁩ بازدید</value>
   </data>
   <data name="ViewsBySourceChartTitle" xml:space="preserve">
-    <value>بازدیدها بر اساس منبع</value>
+    <value>تعداد بازدیدها بر اساس منبع</value>
   </data>
   <data name="ViewsPerPost" xml:space="preserve">
     <value>بازدید به ازای پست</value>
@@ -14468,7 +14902,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>مشاهده آمار</value>
   </data>
   <data name="ViewThread" xml:space="preserve">
-    <value>مشاهده رشته</value>
+    <value>مشاهده رشته پیام‌ها</value>
   </data>
   <data name="Vignette" xml:space="preserve">
     <value>حاشیه‌</value>

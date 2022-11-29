@@ -373,6 +373,9 @@
   <data name="AccDescrPremium" xml:space="preserve">
     <value>Акаунт Premium</value>
   </data>
+  <data name="AccDescrPremiumSpeed" xml:space="preserve">
+    <value>Збільште швидкість</value>
+  </data>
   <data name="AccDescrPrevious" xml:space="preserve">
     <value>Попередній елемент</value>
   </data>
@@ -686,7 +689,7 @@
     <value>un1 змінює фото групи</value>
   </data>
   <data name="ActionChangedTitle" xml:space="preserve">
-    <value>un1 змінює назву групи на un2</value>
+    <value>un1 перейменовує групу на un2</value>
   </data>
   <data name="ActionChangedVideo" xml:space="preserve">
     <value>un1 змінює відео групи</value>
@@ -863,7 +866,7 @@
     <value>un1 прикріплює наліпку</value>
   </data>
   <data name="ActionPinnedText" xml:space="preserve">
-    <value>un1 прикріплює &quot;{0}&quot;</value>
+    <value>un1 прикріплює «{0}»</value>
   </data>
   <data name="ActionPinnedVideo" xml:space="preserve">
     <value>un1 прикріплює відео</value>
@@ -1056,6 +1059,30 @@
   <data name="AddedBy" xml:space="preserve">
     <value>додано {0} {1}</value>
   </data>
+  <data name="AddedMembersToGroup_few" xml:space="preserve">
+    <value>**{0} учасники** додано до каналу</value>
+  </data>
+  <data name="AddedMembersToGroup_many" xml:space="preserve">
+    <value>**{0} учасників** додано до каналу</value>
+  </data>
+  <data name="AddedMembersToGroup_one" xml:space="preserve">
+    <value>**{0} учасника** додано до каналу</value>
+  </data>
+  <data name="AddedMembersToGroup_other" xml:space="preserve">
+    <value>**{0} учасників** додано до каналу</value>
+  </data>
+  <data name="AddedSubscribersToChannel_few" xml:space="preserve">
+    <value>**{0} підписники** додано до каналу</value>
+  </data>
+  <data name="AddedSubscribersToChannel_many" xml:space="preserve">
+    <value>**{0} підписників** додано до каналу</value>
+  </data>
+  <data name="AddedSubscribersToChannel_one" xml:space="preserve">
+    <value>**{0} підписника** додано до каналу</value>
+  </data>
+  <data name="AddedSubscribersToChannel_other" xml:space="preserve">
+    <value>**{0} підписників** додано до каналу</value>
+  </data>
   <data name="AddedToFavorites" xml:space="preserve">
     <value>Наліпку додано до улюблених.</value>
   </data>
@@ -1212,6 +1239,9 @@
   <data name="Agree" xml:space="preserve">
     <value>Погоджуюсь</value>
   </data>
+  <data name="Album" xml:space="preserve">
+    <value>Альбом</value>
+  </data>
   <data name="Alert" xml:space="preserve">
     <value>Показувати сповіщення</value>
   </data>
@@ -1220,6 +1250,9 @@
   </data>
   <data name="AllAccounts" xml:space="preserve">
     <value>Усі акаунти</value>
+  </data>
+  <data name="AllChats" xml:space="preserve">
+    <value>Усі чати</value>
   </data>
   <data name="AllMedia" xml:space="preserve">
     <value>Усі медіа</value>
@@ -1287,11 +1320,20 @@
   <data name="AllWebSessionsTerminated" xml:space="preserve">
     <value>Усі сайти відʼєднано.</value>
   </data>
+  <data name="AlmostDone" xml:space="preserve">
+    <value>Майже готово</value>
+  </data>
   <data name="ALongTimeAgo" xml:space="preserve">
     <value>відвідини – дуже давно</value>
   </data>
   <data name="AlternativeOptions" xml:space="preserve">
     <value>Інші варіанти</value>
+  </data>
+  <data name="AltNavigationDisable" xml:space="preserve">
+    <value>Вимкнути альтернативну навігацію</value>
+  </data>
+  <data name="AltNavigationEnable" xml:space="preserve">
+    <value>Увімкнути альтернативну навігацію</value>
   </data>
   <data name="AlwaysAllow" xml:space="preserve">
     <value>Дозволяти</value>
@@ -1411,7 +1453,7 @@
     <value>Застосувати файл перекладу</value>
   </data>
   <data name="ApplyTheme" xml:space="preserve">
-    <value>ЗАСТОСУВАТИ</value>
+    <value>Застосувати</value>
   </data>
   <data name="ApplyThemeFile" xml:space="preserve">
     <value>Застосувати файл теми</value>
@@ -1658,7 +1700,7 @@
     <value>Ви дійсно хочете видалити секретний чат із **{0}**?</value>
   </data>
   <data name="AreYouSureDeleteThisChatWithUser" xml:space="preserve">
-    <value>Ви дійсно хочете видалити чат із **{0}**?</value>
+    <value>Ви дійсно хочете назавжди видалити чат із **{0}**?</value>
   </data>
   <data name="AreYouSureDeleteVideo" xml:space="preserve">
     <value>Ви дійсно хочете видалити це відео?</value>
@@ -2458,16 +2500,16 @@ Telegram можна користуватися з декількох прист�
     <value>Відкрити сторінку</value>
   </data>
   <data name="BotOwnershipTransfer" xml:space="preserve">
-    <value>Передавання прав на бота</value>
+    <value>Двоетапна перевірка</value>
   </data>
   <data name="BotOwnershipTransferAlertText" xml:space="preserve">
-    <value>Ви зможете передати права на бота, якщо:</value>
+    <value>Ви можете завершити цю дію, лише якщо:</value>
   </data>
   <data name="BotOwnershipTransferChangeOwner" xml:space="preserve">
-    <value>Змінити власника</value>
+    <value>Підтвердити</value>
   </data>
   <data name="BotOwnershipTransferReadyAlertText" xml:space="preserve">
-    <value>У цьому випадку **права** на бота повністю перейдуть до вибраного користувача.</value>
+    <value>Будь ласка, введіть ваш пароль, щоб підтвердити цю дію.</value>
   </data>
   <data name="BotPermissionGameAlert" xml:space="preserve">
     <value>Дозволити боту {0} передавати ваше імʼя та ID у Telegram (не номер телефону) на сторінки, які ви відкриваєте ним?</value>
@@ -3012,6 +3054,18 @@ Telegram можна користуватися з декількох прист�
   <data name="ChannelCantSendMessage" xml:space="preserve">
     <value>Ви не можете надсилати повідомлень у цей канал.</value>
   </data>
+  <data name="ChannelCaptionLimitPremiumPromo_few" xml:space="preserve">
+    <value>Зробить підпис коротшим або підпишіться на *Telegram Premium*, щоб подвоїти ліміт в **{0}** символи.</value>
+  </data>
+  <data name="ChannelCaptionLimitPremiumPromo_many" xml:space="preserve">
+    <value>Зробить підпис коротшим або підпишіться на *Telegram Premium*, щоб подвоїти ліміт в **{0}** символів.</value>
+  </data>
+  <data name="ChannelCaptionLimitPremiumPromo_one" xml:space="preserve">
+    <value>Зробить підпис коротшим або підпишіться на *Telegram Premium*, щоб подвоїти ліміт в **{0}** символ.</value>
+  </data>
+  <data name="ChannelCaptionLimitPremiumPromo_other" xml:space="preserve">
+    <value>Зробить підпис коротшим або підпишіться на *Telegram Premium*, щоб подвоїти ліміт в **{0}** символів.</value>
+  </data>
   <data name="ChannelContacts" xml:space="preserve">
     <value>Ваші контакти в каналі</value>
   </data>
@@ -3068,7 +3122,7 @@ Telegram можна користуватися з декількох прист�
     <value>ЗАПИТ НА ПРИЄДНАННЯ НАДІСЛАНО</value>
   </data>
   <data name="ChannelJoinTo" xml:space="preserve">
-    <value>Ви хочете приєднатися до каналу &quot;{0}&quot;?</value>
+    <value>Ви хочете приєднатися до каналу «{0}»?</value>
   </data>
   <data name="ChannelLeaveAlert" xml:space="preserve">
     <value>Ви дійсно хочете покинути цей канал?</value>
@@ -3134,7 +3188,7 @@ Telegram можна користуватися з декількох прист�
     <value>{0} публікує опитування {1}</value>
   </data>
   <data name="ChannelMessageQuiz2" xml:space="preserve">
-    <value>{0} публікує вікторину &quot;{1}&quot;</value>
+    <value>{0} публікує вікторину «{1}»</value>
   </data>
   <data name="ChannelMessageRound" xml:space="preserve">
     <value>{0} публікує відеоповідомлення</value>
@@ -3238,7 +3292,7 @@ Telegram можна користуватися з декількох прист�
     <value>Якщо увімкнено, нові учасники зможуть приєднатися лише після схвалення адміністратором.</value>
   </data>
   <data name="ChannelSettingsJoinTitle" xml:space="preserve">
-    <value>Хто може надсилати повдіомлення?</value>
+    <value>Хто може надсилати повідомлення?</value>
   </data>
   <data name="ChannelSettingsJoinToSend" xml:space="preserve">
     <value>Лише учасники</value>
@@ -3272,6 +3326,24 @@ Telegram можна користуватися з декількох прист�
   </data>
   <data name="ChannelTooMuchTitle" xml:space="preserve">
     <value>Забагато спільнот</value>
+  </data>
+  <data name="ChannelTopics" xml:space="preserve">
+    <value>Гілки</value>
+  </data>
+  <data name="ChannelTopicsDiscussionForbidden" xml:space="preserve">
+    <value>Функція гілок наразі не доступна в групах, що привʼязані до каналів.</value>
+  </data>
+  <data name="ChannelTopicsForbidden_few" xml:space="preserve">
+    <value>Гілки можуть увімкнути тільки групи з більш ніж **{0} учасниками**.</value>
+  </data>
+  <data name="ChannelTopicsForbidden_many" xml:space="preserve">
+    <value>Гілки можуть увімкнути тільки групи з більш ніж **{0} учасниками**.</value>
+  </data>
+  <data name="ChannelTopicsForbidden_one" xml:space="preserve">
+    <value>Гілки можуть увімкнути тільки групи з більш ніж **{0} учасником**.</value>
+  </data>
+  <data name="ChannelTopicsForbidden_other" xml:space="preserve">
+    <value>Гілки можуть увімкнути тільки групи з більш ніж **{0} учасниками**.</value>
   </data>
   <data name="ChannelType" xml:space="preserve">
     <value>Тип каналу</value>
@@ -3388,6 +3460,9 @@ Telegram можна користуватися з декількох прист�
   </data>
   <data name="ChatHistoryHiddenInfo2" xml:space="preserve">
     <value>Нові учасники бачитимуть лише 100 попередніх повідомлень.</value>
+  </data>
+  <data name="ChatHistoryShort" xml:space="preserve">
+    <value>Історія чату</value>
   </data>
   <data name="ChatHistoryVisible" xml:space="preserve">
     <value>Видима</value>
@@ -3675,7 +3750,7 @@ Telegram можна користуватися з декількох прист�
     <value>Мої пакунки наліпок</value>
   </data>
   <data name="ChooseStickerNoResultsFound" xml:space="preserve">
-    <value>Не знайдено результатів для &quot;{0}&quot;</value>
+    <value>За запитом «{0}» нічого не знайдено</value>
   </data>
   <data name="ChooseStickerSet" xml:space="preserve">
     <value>ВИБЕРІТЬ ПАКУНОК НАЛІПОК</value>
@@ -3837,10 +3912,10 @@ Telegram можна користуватися з декількох прист�
     <value>Історія пошуку</value>
   </data>
   <data name="ClearSearchSingleChatAlertText" xml:space="preserve">
-    <value>Ви хочете видалити &quot;{0}&quot; зі своєї історії пошуку?</value>
+    <value>Ви хочете видалити «{0}» зі своєї історії пошуку?</value>
   </data>
   <data name="ClearSearchSingleUserAlertText" xml:space="preserve">
-    <value>Ви хочете видалити &quot;{0}&quot; зі своєї історії пошуку?</value>
+    <value>Ви хочете видалити «{0}» зі своєї історії пошуку?</value>
   </data>
   <data name="ClearTelegramCache" xml:space="preserve">
     <value>Очистити кеш Telegram</value>
@@ -3850,6 +3925,12 @@ Telegram можна користуватися з декількох прист�
   </data>
   <data name="CloseEditor" xml:space="preserve">
     <value>ЗАКРИТИ РЕДАКТОР</value>
+  </data>
+  <data name="CloseTopic" xml:space="preserve">
+    <value>Закрити гілку</value>
+  </data>
+  <data name="CloseTopics" xml:space="preserve">
+    <value>Закрити гілки</value>
   </data>
   <data name="CloseTranslation" xml:space="preserve">
     <value>Закрити переклад</value>
@@ -3977,7 +4058,7 @@ Telegram можна користуватися з декількох прист�
   <data name="CompatibilityChat" xml:space="preserve">
     <value>{0} користується ранішою версією Telegram, тому фото будуть відображатися в режимі сумісності.
 
-Щойно {1} оновить Telegram, фото з таймером на 1 хвилину і менше відображатимуться в режимі &quot;Утримуйте для перегляду&quot; і вас буде сповіщено, коли інша сторона робитиме знімок екрана.</value>
+Щойно {1} оновить Telegram, фото з таймером на 1 хвилину і менше відображатимуться в режимі «Утримуйте для перегляду» і вас буде сповіщено, коли інша сторона робитиме знімок екрана.</value>
   </data>
   <data name="ConfirmCorrectNumber" xml:space="preserve">
     <value>Це ваш номер телефону?</value>
@@ -4058,10 +4139,10 @@ Telegram можна користуватися з декількох прист�
     <value>**Telegram** потрібен доступ до ваших контактів, щоб ви могли звʼязатися з друзями з будь-якого пристрою. Контакти синхронізуватимуться із серверами Telegram і зберігатимуться на них надійно зашифрованими.</value>
   </data>
   <data name="ContactsPermissionAlertContinue" xml:space="preserve">
-    <value>ПРОДОВЖИТИ</value>
+    <value>Продовжити</value>
   </data>
   <data name="ContactsPermissionAlertNotNow" xml:space="preserve">
-    <value>НЕ ЗАРАЗ</value>
+    <value>Не зараз</value>
   </data>
   <data name="ContactSupport" xml:space="preserve">
     <value>Звʼязатися з підтримкою</value>
@@ -4205,7 +4286,16 @@ Telegram можна користуватися з декількох прист�
     <value>Створити пароль</value>
   </data>
   <data name="CreateTheme" xml:space="preserve">
-    <value>СТВОРИТИ ТЕМУ</value>
+    <value>Створити тему</value>
+  </data>
+  <data name="CreateTopic" xml:space="preserve">
+    <value>Створити гілку</value>
+  </data>
+  <data name="CreateTopicsPermission" xml:space="preserve">
+    <value>Створювати гілки</value>
+  </data>
+  <data name="CreateTopicTitle" xml:space="preserve">
+    <value>Придумайте назву і виберіть іконку гілки</value>
   </data>
   <data name="Crop" xml:space="preserve">
     <value>ОБРІЗАТИ</value>
@@ -4324,8 +4414,17 @@ Telegram можна користуватися з декількох прист�
   <data name="Deactivate" xml:space="preserve">
     <value>ВИДАЛИТИ ЗАРАЗ</value>
   </data>
+  <data name="DebugAltNavigationToggleControls" xml:space="preserve">
+    <value>Перемкнути керування жорсткістю навігації</value>
+  </data>
+  <data name="DebugClearLocalDatabaseSuccess" xml:space="preserve">
+    <value>Очищено локальну базу даних.</value>
+  </data>
   <data name="DebugClearLogs" xml:space="preserve">
     <value>Очистити логи</value>
+  </data>
+  <data name="DebugClearSendMessageAsPeers" xml:space="preserve">
+    <value>Очистити історію «Надіслати від імені…»</value>
   </data>
   <data name="DebugDrawSnowInChat" xml:space="preserve">
     <value>Сніг у чатах</value>
@@ -4407,6 +4506,21 @@ Telegram можна користуватися з декількох прист�
   </data>
   <data name="DebugSendLogs" xml:space="preserve">
     <value>Надіслати логи</value>
+  </data>
+  <data name="DebugShareAlertDialogsModeLess" xml:space="preserve">
+    <value>Менше</value>
+  </data>
+  <data name="DebugShareAlertDialogsModeMore" xml:space="preserve">
+    <value>Більше</value>
+  </data>
+  <data name="DebugShareAlertDialogsModeNormal" xml:space="preserve">
+    <value>Типово</value>
+  </data>
+  <data name="DebugShareAlertSwitchDialogsMode" xml:space="preserve">
+    <value>Switch sharing alert dialogs mode ({0})</value>
+  </data>
+  <data name="DebugShareAlertTopicsSlowMotion" xml:space="preserve">
+    <value>Toggle sharing alert topics slow motion</value>
   </data>
   <data name="December" xml:space="preserve">
     <value>Грудень</value>
@@ -4612,6 +4726,12 @@ Telegram можна користуватися з декількох прист�
   <data name="DeleteSelectedCallsText" xml:space="preserve">
     <value>Видалити вибрані дзвінки з недавніх?</value>
   </data>
+  <data name="DeleteSelectedTopic" xml:space="preserve">
+    <value>Ви впевнені, що хочете видалити {0}?</value>
+  </data>
+  <data name="DeleteSelectedTopics" xml:space="preserve">
+    <value>Ви впевнені, що хочете видалити ці гілки?</value>
+  </data>
   <data name="DeleteSingleMessagesTitle" xml:space="preserve">
     <value>Видалити повідомлення</value>
   </data>
@@ -4669,6 +4789,18 @@ Telegram можна користуватися з декількох прист�
   <data name="DeleteTonesMessage_other" xml:space="preserve">
     <value>Ви хочете видалити {0} звук сповіщень?</value>
   </data>
+  <data name="DeleteTopics_few" xml:space="preserve">
+    <value>Видалити гілки</value>
+  </data>
+  <data name="DeleteTopics_many" xml:space="preserve">
+    <value>Видалити гілки</value>
+  </data>
+  <data name="DeleteTopics_one" xml:space="preserve">
+    <value>Видалити гілку</value>
+  </data>
+  <data name="DeleteTopics_other" xml:space="preserve">
+    <value>Видалити гілки</value>
+  </data>
   <data name="Deletions_few" xml:space="preserve">
     <value>{0} видалення</value>
   </data>
@@ -4698,6 +4830,9 @@ Telegram можна користуватися з декількох прист�
   </data>
   <data name="DeviceStorage" xml:space="preserve">
     <value>Памʼять пристрою</value>
+  </data>
+  <data name="DialogNotAvailable" xml:space="preserve">
+    <value>Недоступно</value>
   </data>
   <data name="DialogPin" xml:space="preserve">
     <value>Прикріпити</value>
@@ -4769,6 +4904,9 @@ Telegram можна користуватися з декількох прист�
   <data name="DisappearingVideo" xml:space="preserve">
     <value>Зникаюче відео</value>
   </data>
+  <data name="Discard" xml:space="preserve">
+    <value>Відхилити</value>
+  </data>
   <data name="DiscardChanges" xml:space="preserve">
     <value>Відхилити зміни?</value>
   </data>
@@ -4777,6 +4915,14 @@ Telegram можна користуватися з декількох прист�
   </data>
   <data name="DiscardSelectionAlertTitle" xml:space="preserve">
     <value>Відхилити вибір?</value>
+  </data>
+  <data name="DiscardTopic" xml:space="preserve">
+    <value>Відхилити створення гілки</value>
+  </data>
+  <data name="DiscardTopicMessage" xml:space="preserve">
+    <value>Гілку не буде створено, допоки ви не надішлете повідомлення.
+
+Відхилити створення цієї гілки?</value>
   </data>
   <data name="DiscardVideoMessageDescription" xml:space="preserve">
     <value>Ви дійсно хочете зупинити записування та відхилити своє відеоповідомлення?</value>
@@ -4829,11 +4975,14 @@ Telegram можна користуватися з декількох прист�
   <data name="DiscussionInfo" xml:space="preserve">
     <value>Додати групу для обговорення публікацій</value>
   </data>
+  <data name="DiscussionInfoShort" xml:space="preserve">
+    <value>Додати</value>
+  </data>
   <data name="DiscussionLinkGroup" xml:space="preserve">
-    <value>ПРИВʼЯЗАТИ ГРУПУ</value>
+    <value>Привʼязати групу</value>
   </data>
   <data name="DiscussionLinkGroupAlertHistory" xml:space="preserve">
-    <value>«Історія чату для нових учасників» стане Видимою.</value>
+    <value>«Історія чату для нових учасників» стане «Видимою».</value>
   </data>
   <data name="DiscussionLinkGroupPrivateAlert" xml:space="preserve">
     <value>Зробити **{0}** обговоренням каналу **{1}**?
@@ -5106,6 +5255,9 @@ Telegram можна користуватися з декількох прист�
   </data>
   <data name="EditThemeTitle" xml:space="preserve">
     <value>Редагувати тему</value>
+  </data>
+  <data name="EditTopic" xml:space="preserve">
+    <value>Редагувати гілку</value>
   </data>
   <data name="EditWidget" xml:space="preserve">
     <value>Редагувати віджет</value>
@@ -5411,6 +5563,9 @@ Telegram можна користуватися з декількох прист�
 
 Введіть назву теми:</value>
   </data>
+  <data name="EnterTopicName" xml:space="preserve">
+    <value>Що ви будете обговорювати?</value>
+  </data>
   <data name="EnterYourPasscode" xml:space="preserve">
     <value>Введіть код блокування</value>
   </data>
@@ -5430,7 +5585,7 @@ Telegram можна користуватися з декількох прист�
     <value>Підтримуються формати MP3 та Ogg.</value>
   </data>
   <data name="ErrorRingtoneSizeTooBig" xml:space="preserve">
-    <value>Максимальний розмір — {0} кБ.</value>
+    <value>Максимальний розмір — {0} КБ.</value>
   </data>
   <data name="ErrorSendRestrictedMedia" xml:space="preserve">
     <value>Адміністратори цієї групи заборонили вам надсилати медіа.</value>
@@ -5459,6 +5614,9 @@ Telegram можна користуватися з декількох прист�
   <data name="EventLog" xml:space="preserve">
     <value>Недавні дії</value>
   </data>
+  <data name="EventLogActivatedUsername" xml:space="preserve">
+    <value>un1 активує псевдонім {0}</value>
+  </data>
   <data name="EventLogAdded" xml:space="preserve">
     <value>un1 додає un2</value>
   </data>
@@ -5481,13 +5639,16 @@ Telegram можна користуватися з декількох прист�
     <value>un1 робить un2 групою обговорення цього каналу.</value>
   </data>
   <data name="EventLogChangedLocation" xml:space="preserve">
-    <value>un1 змінює розташування групи на &quot;{0}&quot;</value>
+    <value>un1 змінює розташування групи на «{0}»</value>
   </data>
   <data name="EventLogChangedOwnership" xml:space="preserve">
     <value>передає права користувачу {0}</value>
   </data>
   <data name="EventLogChangedStickersSet" xml:space="preserve">
     <value>un1 змінює пакунок наліпок групи</value>
+  </data>
+  <data name="EventLogChangeUsernames" xml:space="preserve">
+    <value>un1 змінює псевдонім групи з {0} на {1}</value>
   </data>
   <data name="EventLogChannelJoined" xml:space="preserve">
     <value>un1 приєднується до каналу</value>
@@ -5498,11 +5659,20 @@ Telegram можна користуватися з декількох прист�
   <data name="EventLogChannelUnrestricted" xml:space="preserve">
     <value>розблоковує {0}</value>
   </data>
+  <data name="EventLogCreateTopic" xml:space="preserve">
+    <value>un1 створює гілку un2</value>
+  </data>
+  <data name="EventLogDeactivatedUsername" xml:space="preserve">
+    <value>un1 деактивує псевдонім {0}</value>
+  </data>
   <data name="EventLogDefaultPermissions" xml:space="preserve">
     <value>змінює загальні дозволи</value>
   </data>
   <data name="EventLogDeletedMessages" xml:space="preserve">
     <value>un1 видаляє повідомлення:</value>
+  </data>
+  <data name="EventLogDeleteTopic" xml:space="preserve">
+    <value>un1 видаляє гілку un2</value>
   </data>
   <data name="EventLogEditedCaption" xml:space="preserve">
     <value>un1 редагує опис:</value>
@@ -5517,7 +5687,7 @@ Telegram можна користуватися з декількох прист�
     <value>un1 змінює тему каналу:</value>
   </data>
   <data name="EventLogEditedChannelTitle" xml:space="preserve">
-    <value>un1 перейменовує канал &quot;{0}&quot;</value>
+    <value>un1 перейменовує канал на «{0}»</value>
   </data>
   <data name="EventLogEditedChannelVideo" xml:space="preserve">
     <value>un1 встановлює нове відео каналу</value>
@@ -5532,7 +5702,7 @@ Telegram можна користуватися з декількох прист�
     <value>un1 змінює тему групи:</value>
   </data>
   <data name="EventLogEditedGroupTitle" xml:space="preserve">
-    <value>un1 перейменовує групу &quot;{0}&quot;</value>
+    <value>un1 перейменовує групу «{0}»</value>
   </data>
   <data name="EventLogEditedGroupVideo" xml:space="preserve">
     <value>un1 встановлює нове відео групи</value>
@@ -5545,6 +5715,9 @@ Telegram можна користуватися з декількох прист�
   </data>
   <data name="EventLogEditedMessages" xml:space="preserve">
     <value>un1 редагує повідомлення:</value>
+  </data>
+  <data name="EventLogEditTopic" xml:space="preserve">
+    <value>un1 перейменовує гілку з un2 на un3</value>
   </data>
   <data name="EventLogEmpty" xml:space="preserve">
     <value>**Недавніх дій немає**
@@ -5566,7 +5739,7 @@ Telegram можна користуватися з декількох прист�
 Не знайдено останніх дій, які б відповідали вашому запиту.</value>
   </data>
   <data name="EventLogEmptyTextSearch" xml:space="preserve">
-    <value>Не знайдено останніх дій, що містять &quot;**{0}**&quot;.</value>
+    <value>Не знайдено останніх дій, що містять «**{0}**».</value>
   </data>
   <data name="EventLogEndedLiveStream" xml:space="preserve">
     <value>un1 закінчує трансляцію</value>
@@ -5639,6 +5812,9 @@ Telegram можна користуватися з декількох прист�
   </data>
   <data name="EventLogPinnedMessages" xml:space="preserve">
     <value>un1 прикріплює повідомлення:</value>
+  </data>
+  <data name="EventLogPinTopic" xml:space="preserve">
+    <value>un1 прикріплює гілку un2</value>
   </data>
   <data name="EventLogPreviousGroupDescription" xml:space="preserve">
     <value>Попередній опис</value>
@@ -5768,6 +5944,12 @@ Telegram можна користуватися з декількох прист�
   <data name="EventLogStopQuiz" xml:space="preserve">
     <value>un1 закриває вікторину:</value>
   </data>
+  <data name="EventLogSwitchToForum" xml:space="preserve">
+    <value>un1 вмикає гілки</value>
+  </data>
+  <data name="EventLogSwitchToGroup" xml:space="preserve">
+    <value>un1 вимикає гілки</value>
+  </data>
   <data name="EventLogToggledInvitesHistoryOff" xml:space="preserve">
     <value>un1 робить історію групи прихованою для нових учасників</value>
   </data>
@@ -5794,6 +5976,9 @@ Telegram можна користуватися з декількох прист�
   </data>
   <data name="EventLogUnpinnedMessages" xml:space="preserve">
     <value>un1 відкріплює повідомлення</value>
+  </data>
+  <data name="EventLogUnpinTopic" xml:space="preserve">
+    <value>un1 відкріплює гілку un2</value>
   </data>
   <data name="EventLogVoiceChatAllowedToSpeak" xml:space="preserve">
     <value>un1 дозволяє говорити майбутнім присутнім у відеочатах</value>
@@ -6173,6 +6358,12 @@ Telegram можна користуватися з декількох прист�
   <data name="FirstNameSmall" xml:space="preserve">
     <value>Імʼя</value>
   </data>
+  <data name="FloatingDebugDisable" xml:space="preserve">
+    <value>Вимкнути сповіщення про відлагодження</value>
+  </data>
+  <data name="FloatingDebugEnable" xml:space="preserve">
+    <value>Увімкнути сповіщення про відлагодження</value>
+  </data>
   <data name="FloodWait" xml:space="preserve">
     <value>Забагато спроб, спробуйте пізніше.</value>
   </data>
@@ -6318,6 +6509,12 @@ Telegram можна користуватися з декількох прист�
   </data>
   <data name="formatterYearMax" xml:space="preserve">
     <value>dd.MM.yyyy</value>
+  </data>
+  <data name="ForumReplyToMessagesInTopic" xml:space="preserve">
+    <value>Проведіть вліво на повідомленні для відповіді.</value>
+  </data>
+  <data name="ForumToggleDescription" xml:space="preserve">
+    <value>Групу буде розділено на гілки, які зможуть створювати адміністратори або учасники.</value>
   </data>
   <data name="Forward" xml:space="preserve">
     <value>Переслати</value>
@@ -6652,7 +6849,7 @@ Telegram можна користуватися з декількох прист�
     <value>Досягнуто обмеження</value>
   </data>
   <data name="GigagroupConvertAlertConver" xml:space="preserve">
-    <value>ПЕРЕТВОРИТИ</value>
+    <value>Перетворити</value>
   </data>
   <data name="GigagroupConvertAlertText" xml:space="preserve">
     <value>Звичайні учасники групи (не адміністратори) **незворотньо** втратять право надсилати повідомлення у групі.
@@ -6856,6 +7053,9 @@ Telegram можна користуватися з декількох прист�
   </data>
   <data name="HiddenSendersNameDescription" xml:space="preserve">
     <value>Імена відправників прибрано</value>
+  </data>
+  <data name="Hide" xml:space="preserve">
+    <value>Приховати</value>
   </data>
   <data name="HideAboveTheList" xml:space="preserve">
     <value>Приховати зі списку</value>
@@ -7719,6 +7919,9 @@ Telegram можна користуватися з декількох прист�
   <data name="LimitReachedPinDialogsPremium" xml:space="preserve">
     <value>Ви можете прикріпити до {0} чатів. Відкріпіть якийсь із уже прикріплених.</value>
   </data>
+  <data name="LimitReachedPinnedTopics" xml:space="preserve">
+    <value>На жаль, прикріпити можна до {0} гілок.</value>
+  </data>
   <data name="LimitReachedPublicLinks" xml:space="preserve">
     <value>Ви зайняли максимальну кількість публічних посилань. Звільніть одне зі своїх публічних посилань або підпишіться на **Telegram Premium** і подвойте ліміт до **{1}** публічних посилань.</value>
   </data>
@@ -7727,6 +7930,9 @@ Telegram можна користуватися з декількох прист�
   </data>
   <data name="LimitReachedPublicLinksPremium" xml:space="preserve">
     <value>Ви зайняли максимальну кількість публічних посилань. Щоб продовжити, звільніть одне з них.</value>
+  </data>
+  <data name="LimitReachedReorderFolder" xml:space="preserve">
+    <value>Пересунути папку «{0}» можна з **Telegram Premium**.</value>
   </data>
   <data name="LinkActionCopy" xml:space="preserve">
     <value>Копіювати</value>
@@ -7747,7 +7953,7 @@ Telegram можна користуватися з декількох прист�
     <value>Посилання скопійовано. Воно працюватиме лише для учасників цього чату.</value>
   </data>
   <data name="LinkCopiedPrivateInfo" xml:space="preserve">
-    <value>Це посилання працюватиме лише в учасників цього чату.</value>
+    <value>Це посилання працюватиме лише для учасників цього чату.</value>
   </data>
   <data name="LinkCreatedeBy" xml:space="preserve">
     <value>Посилання створено</value>
@@ -8021,6 +8227,12 @@ Telegram можна користуватися з декількох прист�
   <data name="MakeMyselfVisibleTitle" xml:space="preserve">
     <value>Показувати ваш профіль?</value>
   </data>
+  <data name="ManageAllFilesRational" xml:space="preserve">
+    <value>Надайте **Telegram** доступ до всіх файлів, аби відкрити вбудований файловий менеджер</value>
+  </data>
+  <data name="ManageAllFilesRational2" xml:space="preserve">
+    <value>Telegram потрібен доступ до всіх файлів, щоб перенести старий кеш до обмеженого сховища</value>
+  </data>
   <data name="ManageChannel" xml:space="preserve">
     <value>Керування каналом</value>
   </data>
@@ -8041,6 +8253,9 @@ Telegram можна користуватися з декількох прист�
   </data>
   <data name="ManageLinksInfoHelp" xml:space="preserve">
     <value>Можна створити додаткові запрошувальні посилання, що мають обмежений час або кількість користувачів.</value>
+  </data>
+  <data name="ManageTopicsPermission" xml:space="preserve">
+    <value>Керувати гілками</value>
   </data>
   <data name="Map" xml:space="preserve">
     <value>Мапа</value>
@@ -8169,7 +8384,7 @@ Telegram можна користуватися з декількох прист�
     <value>Ви втратите всі повідомлення в цій групі.</value>
   </data>
   <data name="MegaLeaveAlert" xml:space="preserve">
-    <value>Ви хочете покинути групу?</value>
+    <value>Ви хочете покинути цю групу?</value>
   </data>
   <data name="MegaLeaveAlertWithName" xml:space="preserve">
     <value>Ви хочете покинути **{0}**?</value>
@@ -8271,19 +8486,19 @@ Telegram можна користуватися з декількох прист�
     <value>Повідомлення</value>
   </data>
   <data name="MessageContainsEmojiPack" xml:space="preserve">
-    <value>Повідомлення містить емодзі з пакунка {0}.</value>
+    <value>Це повідомлення містить емодзі з пакунка {0}.</value>
   </data>
   <data name="MessageContainsEmojiPacks_few" xml:space="preserve">
-    <value>Повідомлення містить емодзі з **{0} пакунків**.</value>
+    <value>Це повідомлення містить емодзі з **{0} пакунків**.</value>
   </data>
   <data name="MessageContainsEmojiPacks_many" xml:space="preserve">
-    <value>Повідомлення містить емодзі з **{0} пакунків**.</value>
+    <value>Це повідомлення містить емодзі з **{0} пакунків**.</value>
   </data>
   <data name="MessageContainsEmojiPacks_one" xml:space="preserve">
-    <value>Повідомлення містить емодзі з **{0} пакунка**.</value>
+    <value>Це повідомлення містить емодзі з **{0} пакунку**.</value>
   </data>
   <data name="MessageContainsEmojiPacks_other" xml:space="preserve">
-    <value>Повідомлення містить емодзі з **{0} пакунків**.</value>
+    <value>Це повідомлення містить емодзі з **{0} пакунків**.</value>
   </data>
   <data name="MessageContainsEmojiPackSingle" xml:space="preserve">
     <value>Це повідомлення містить емодзі з пакунка **{0}**.</value>
@@ -8328,16 +8543,16 @@ Telegram можна користуватися з декількох прист�
     <value>Повідомлення прикріплено.</value>
   </data>
   <data name="MessagePlayed_few" xml:space="preserve">
-    <value>{0} відтворили</value>
+    <value>{0} відтворення</value>
   </data>
   <data name="MessagePlayed_many" xml:space="preserve">
-    <value>{0} відтворили</value>
+    <value>{0} відтворень</value>
   </data>
   <data name="MessagePlayed_one" xml:space="preserve">
-    <value>1 відтворив</value>
+    <value>{0} відтворення</value>
   </data>
   <data name="MessagePlayed_other" xml:space="preserve">
-    <value>{0} відтворили</value>
+    <value>{0} відтворень</value>
   </data>
   <data name="MessagePreview" xml:space="preserve">
     <value>Показувати текст</value>
@@ -8433,7 +8648,7 @@ Telegram можна користуватися з декількох прист�
     <value>{0} переглядів</value>
   </data>
   <data name="MessageSeen_one" xml:space="preserve">
-    <value>1 перегляд</value>
+    <value>{0} перегляд</value>
   </data>
   <data name="MessageSeen_other" xml:space="preserve">
     <value>{0} переглядів</value>
@@ -8503,6 +8718,9 @@ Telegram можна користуватися з декількох прист�
   </data>
   <data name="MicrophoneForVoiceMessagesScoIfConnected" xml:space="preserve">
     <value>Гарнітура (якщо підʼєднано)</value>
+  </data>
+  <data name="MigrateOldFolder" xml:space="preserve">
+    <value>Перенести стару теку до обмеженого сховища</value>
   </data>
   <data name="MigrateOldFolderButton" xml:space="preserve">
     <value>Перенести зараз</value>
@@ -8803,6 +9021,9 @@ Telegram можна користуватися з декількох прист�
   <data name="NewThemeTitle" xml:space="preserve">
     <value>Нова тема</value>
   </data>
+  <data name="NewTopic" xml:space="preserve">
+    <value>Нова гілка</value>
+  </data>
   <data name="Next" xml:space="preserve">
     <value>Далі</value>
   </data>
@@ -8911,7 +9132,10 @@ Telegram можна користуватися з декількох прист�
     <value>Спільних груп немає</value>
   </data>
   <data name="NoHandleAppInstalled" xml:space="preserve">
-    <value>У вас немає застосунків, які можуть обробляти файли типу &quot;{0}&quot;, встановіть один для продовження.</value>
+    <value>Не знайдено програми для обробки файлу типу «{0}». Встановіть відповідний застосунок, щоб продовжити.</value>
+  </data>
+  <data name="NoIconsFound" xml:space="preserve">
+    <value>Іконок не знайдено</value>
   </data>
   <data name="NoLimit" xml:space="preserve">
     <value>Необмежений</value>
@@ -9014,7 +9238,7 @@ Telegram можна користуватися з декількох прист�
     <value>Немає результатів</value>
   </data>
   <data name="NoResultFoundFor" xml:space="preserve">
-    <value>Не знайдено результатів для &quot;{0}&quot;.</value>
+    <value>За запитом «{0}» нічого не знайдено.</value>
   </data>
   <data name="NoRtmpStreamFromAppOwner" xml:space="preserve">
     <value>Telegram не «бачить» потоку трансляції.
@@ -9193,10 +9417,10 @@ Telegram можна користуватися з декількох прист�
     <value>{0} прикріплює опитування {1}</value>
   </data>
   <data name="NotificationActionPinnedQuiz2" xml:space="preserve">
-    <value>{0} прикріплює вікторину &quot;{2}&quot; у групі {1}</value>
+    <value>{0} прикріплює вікторину «{2}» у групі {1}</value>
   </data>
   <data name="NotificationActionPinnedQuizChannel2" xml:space="preserve">
-    <value>{0} прикріплює вікторину &quot;{1}&quot;</value>
+    <value>{0} прикріплює вікторину «{1}»</value>
   </data>
   <data name="NotificationActionPinnedQuizUser" xml:space="preserve">
     <value>{0} прикріплює вікторину {1}</value>
@@ -9229,13 +9453,13 @@ Telegram можна користуватися з декількох прист�
     <value>{0} прикріплює наліпку</value>
   </data>
   <data name="NotificationActionPinnedText" xml:space="preserve">
-    <value>{0} прикріплює &quot;{1}&quot; у групі {2}</value>
+    <value>{0} прикріплює «{1}» у групі {2}</value>
   </data>
   <data name="NotificationActionPinnedTextChannel" xml:space="preserve">
-    <value>{0} прикріплює &quot;{1}&quot;</value>
+    <value>{0} прикріплює «{1}»</value>
   </data>
   <data name="NotificationActionPinnedTextUser" xml:space="preserve">
-    <value>{0} прикріплює &quot;{1}&quot;</value>
+    <value>{0} прикріплює «{1}»</value>
   </data>
   <data name="NotificationActionPinnedVideo" xml:space="preserve">
     <value>{0} прикріплює відео у групі {1}</value>
@@ -9403,7 +9627,7 @@ Telegram можна користуватися з декількох прист�
     <value>{0} надсилає опитування {2} групі {1}</value>
   </data>
   <data name="NotificationMessageGroupQuiz2" xml:space="preserve">
-    <value>{0} надсилає вікторину &quot;{2}&quot; до групи {1}</value>
+    <value>{0} надсилає вікторину «{2}» до групи {1}</value>
   </data>
   <data name="NotificationMessageGroupRound" xml:space="preserve">
     <value>{0} надсилає відеоповідомлення групі {1}</value>
@@ -9445,7 +9669,7 @@ Telegram можна користуватися з декількох прист�
     <value>{0} надсилає вам опитування {1}</value>
   </data>
   <data name="NotificationMessageQuiz2" xml:space="preserve">
-    <value>{0} надсилає вам вікторину &quot;{1}&quot;</value>
+    <value>{0} надсилає вам вікторину «{1}»</value>
   </data>
   <data name="NotificationMessageRecurringPay" xml:space="preserve">
     <value>{0}: платіж на суму {1}</value>
@@ -9657,6 +9881,18 @@ Telegram можна користуватися з декількох прист�
   <data name="NotificationsUnmutedHint" xml:space="preserve">
     <value>Сповіщення увімкнено.</value>
   </data>
+  <data name="NotificationTopicExceptionsDesctription_few" xml:space="preserve">
+    <value>{0}, {0} винятки</value>
+  </data>
+  <data name="NotificationTopicExceptionsDesctription_many" xml:space="preserve">
+    <value>{0}, {0} винятків</value>
+  </data>
+  <data name="NotificationTopicExceptionsDesctription_one" xml:space="preserve">
+    <value>{0}, {0} виняток</value>
+  </data>
+  <data name="NotificationTopicExceptionsDesctription_other" xml:space="preserve">
+    <value>{0}, {0} винятків</value>
+  </data>
   <data name="NotificationUnrecognizedDevice" xml:space="preserve">
     <value>{0},
 Ми виявили вхід до вашого акаунта з нового пристрою {1}
@@ -9673,6 +9909,13 @@ Telegram можна користуватися з декількох прист�
   </data>
   <data name="NotMounted" xml:space="preserve">
     <value>Сховище не підключено</value>
+  </data>
+  <data name="NoTopics" xml:space="preserve">
+    <value>Тут ще немає гілок</value>
+  </data>
+  <data name="NoTopicsDescription" xml:space="preserve">
+    <value>Створіть першу гілку або натисніть іконку {0},
+щоб перемкнутися на список повідомлень.</value>
   </data>
   <data name="NoUsernameFound" xml:space="preserve">
     <value>Псевдонім не знайдено.</value>
@@ -9739,6 +9982,9 @@ Telegram можна користуватися з декількох прист�
   </data>
   <data name="Open" xml:space="preserve">
     <value>Відкрити</value>
+  </data>
+  <data name="OpenAllTopics" xml:space="preserve">
+    <value>Усі гілки</value>
   </data>
   <data name="OpenBackground" xml:space="preserve">
     <value>ПЕРЕГЛЯНУТИ ФОН</value>
@@ -9971,7 +10217,7 @@ Telegram можна користуватися з декількох прист�
     <value>Якщо ви забудете код блокування, необхідно буде **перевстановити** застосунок. При цьому всі секретні чати буде втрачено.</value>
   </data>
   <data name="PasscodeScreenHint" xml:space="preserve">
-    <value>У списку чатів є іконка замка, що блокує застосунок.</value>
+    <value>У списку чатів є значок замка, що блокує застосунок.</value>
   </data>
   <data name="PasscodesDoNotMatchTryAgain" xml:space="preserve">
     <value>Коди не збігаються. Спробуйте ще раз.</value>
@@ -10595,6 +10841,9 @@ Telegram можна користуватися з декількох прист�
   <data name="PauseAll" xml:space="preserve">
     <value>Призупинити всі</value>
   </data>
+  <data name="PaymentAppNotFoundForDeeplink" xml:space="preserve">
+    <value>Не знайдено програми для обробки цього посилання.</value>
+  </data>
   <data name="PaymentBillingAddress" xml:space="preserve">
     <value>Платіжна адреса</value>
   </data>
@@ -10770,10 +11019,10 @@ Telegram можна користуватися з декількох прист�
     <value>Ви успішно переказали {0} до {1}</value>
   </data>
   <data name="PaymentSuccessfullyPaidNoItemRecurrent" xml:space="preserve">
-    <value>Ви успішно передали {0} до {1} і дозволяєте регулярний платіж</value>
+    <value>Ви успішно переказали {0} до {1} і дозволили регулярні платежі</value>
   </data>
   <data name="PaymentSuccessfullyPaidRecurrent" xml:space="preserve">
-    <value>Ви успішно надіслали {0} до {1} на {2} і дозволили регулярний платіж</value>
+    <value>Ви успішно переказали {0} до {1} за {2} і дозволили регулярні платежі</value>
   </data>
   <data name="PaymentTestInvoice" xml:space="preserve">
     <value>ТЕСТОВИЙ РАХУНОК</value>
@@ -10947,7 +11196,7 @@ Telegram можна користуватися з декількох прист�
     <value>**Telegram** потрібен доступ до сховища, щоб ви могли додавати фото та відео профілю. Відкрийте Налаштування &gt; Дозволи та увімкніть **Памʼять**.</value>
   </data>
   <data name="PermissionOpenSettings" xml:space="preserve">
-    <value>НАЛАШТУВАННЯ</value>
+    <value>Налаштування</value>
   </data>
   <data name="PermissionStorage" xml:space="preserve">
     <value>Telegram потрібен доступ до сховища, щоб ви могли надсилати й зберігати фото, відео, музику та інші медіафайли.</value>
@@ -11092,6 +11341,9 @@ Telegram можна користуватися з декількох прист�
   </data>
   <data name="PinMessageAlertTitle" xml:space="preserve">
     <value>Прикріпити повідомлення</value>
+  </data>
+  <data name="PinMessageInTopicAlert" xml:space="preserve">
+    <value>Прикріпити це повідомлення у цій гілці?</value>
   </data>
   <data name="PinnedDialogsCount_few" xml:space="preserve">
     <value>{0} чати прикріплено</value>
@@ -11264,6 +11516,9 @@ Telegram можна користуватися з декількох прист�
   <data name="PremiumPreviewAdvancedChatManagementDescription" xml:space="preserve">
     <value>Функції для вибору типової папки, автоархівування й приховування нових чатів від неконтактів.</value>
   </data>
+  <data name="PremiumPreviewAdvancedChatManagementDescription2" xml:space="preserve">
+    <value>З Telegram Premium можна змінювати типову папку та автоматично архівувати нові чати від неконтактів.</value>
+  </data>
   <data name="PremiumPreviewAnimatedProfiles" xml:space="preserve">
     <value>Анімовані аватари</value>
   </data>
@@ -11287,6 +11542,9 @@ Telegram можна користуватися з декількох прист�
   </data>
   <data name="PremiumPreviewDownloadSpeedDescription" xml:space="preserve">
     <value>Жодних обмежень швидкості завантаження медіафайлів і документів.</value>
+  </data>
+  <data name="PremiumPreviewDownloadSpeedDescription2" xml:space="preserve">
+    <value>З Telegram Premium документи й медіафайли завантажуватимуться з максимальною швидкістю.</value>
   </data>
   <data name="PremiumPreviewEmoji" xml:space="preserve">
     <value>Анімовані емодзі</value>
@@ -11353,6 +11611,12 @@ Telegram можна користуватися з декількох прист�
   </data>
   <data name="PremiumPreviewVoiceToTextDescription" xml:space="preserve">
     <value>Можливість прочитати текст будь-якого вхідного голосового повідомлення.</value>
+  </data>
+  <data name="PremiumPreviewVoiceToTextDescription2" xml:space="preserve">
+    <value>Текстова розшифровка голосових і відеоповідомлень доступна для підписників Telegram Premium.</value>
+  </data>
+  <data name="PremiumSpeedPromo" xml:space="preserve">
+    <value>Пришвидшити</value>
   </data>
   <data name="PremiumStickers" xml:space="preserve">
     <value>Наліпки Premium</value>
@@ -12022,6 +12286,9 @@ Telegram можна користуватися з декількох прист�
   <data name="Reacted_other" xml:space="preserve">
     <value>{0} реакцій</value>
   </data>
+  <data name="ReactionInDialog" xml:space="preserve">
+    <value>Ставить {0} вашому повідомленню</value>
+  </data>
   <data name="Reactions" xml:space="preserve">
     <value>Реакції</value>
   </data>
@@ -12041,7 +12308,7 @@ Telegram можна користуватися з декількох прист�
     <value>{0} реакцій</value>
   </data>
   <data name="ReactionsLongtapHint" xml:space="preserve">
-    <value>Утримуйте емодзі, щоб надіслати суперреакцію</value>
+    <value>Утримуйте, щоб надіслати суперреакцію</value>
   </data>
   <data name="ReactionsOff" xml:space="preserve">
     <value>Вимкнено</value>
@@ -12430,7 +12697,7 @@ Telegram можна користуватися з декількох прист�
   <data name="ResetAccountInfo" xml:space="preserve">
     <value>Акаунт **{0}** активний та захищений паролем, тому з міркувань безпеки ми видалимо його лише через тиждень.
 
-Ви можете скасувати процес будь-коли. </value>
+Ви можете скасувати цей процес будь-коли. </value>
   </data>
   <data name="ResetAccountStatus" xml:space="preserve">
     <value>Ви зможете скинути акаунт через:</value>
@@ -12481,7 +12748,7 @@ Telegram можна користуватися з декількох прист�
     <value>Скинути акаунт</value>
   </data>
   <data name="ResetMyAccountWarningText" xml:space="preserve">
-    <value>Це незворотня дія. Ви втратите всі чати, повідомлення, фото, відео й файли в Telegram, якщо ви продовжите скидання акаунта.</value>
+    <value>Це незворотня дія. Ви втратите всі чати, повідомлення, фото, відео й файли в Telegram, якщо продовжите скидання акаунта.</value>
   </data>
   <data name="ResetNotificationsAlert" xml:space="preserve">
     <value>Ви дійсно хочете скинути всі налаштування сповіщень на типові?</value>
@@ -12506,6 +12773,12 @@ Telegram можна користуватися з декількох прист�
   </data>
   <data name="ResetStatisticsAlertTitle" xml:space="preserve">
     <value>Скинути статистику</value>
+  </data>
+  <data name="RestartTopic" xml:space="preserve">
+    <value>Відкрити гілку</value>
+  </data>
+  <data name="RestartTopics" xml:space="preserve">
+    <value>Відкрити гілки</value>
   </data>
   <data name="Restore" xml:space="preserve">
     <value>Відновити</value>
@@ -12591,7 +12864,7 @@ Telegram можна користуватися з декількох прист�
     <value>Повторити</value>
   </data>
   <data name="ReturnToCall" xml:space="preserve">
-    <value>ПОВЕРНУТИСЯ ДО ВИКЛИКУ</value>
+    <value>НАЗАД ДО ВИКЛИКУ</value>
   </data>
   <data name="ReverseOrder" xml:space="preserve">
     <value>Зворотний порядок</value>
@@ -12620,12 +12893,12 @@ Telegram можна користуватися з декількох прист�
   <data name="RevokeLinkAlert" xml:space="preserve">
     <value>Ви дійсно хочете відкликати посилання **{0}**?
 
-Група &quot;**{1}**&quot; стане приватною.</value>
+Група «**{1}**» стане приватною.</value>
   </data>
   <data name="RevokeLinkAlertChannel" xml:space="preserve">
     <value>Ви дійсно хочете відкликати посилання **{0}**?
 
-Канал &quot;**{1}**&quot; стане приватним.</value>
+Канал «**{1}**» стане приватним.</value>
   </data>
   <data name="RevokeLinks_few" xml:space="preserve">
     <value>Відкликати {0} посилання</value>
@@ -12825,6 +13098,9 @@ Telegram можна користуватися з декількох прист�
   <data name="SearchGifsTitle" xml:space="preserve">
     <value>Пошук GIF</value>
   </data>
+  <data name="SearchIconsHint" xml:space="preserve">
+    <value>Пошук іконок</value>
+  </data>
   <data name="SearchImages" xml:space="preserve">
     <value>ПОШУК ЗОБРАЖЕНЬ</value>
   </data>
@@ -12991,7 +13267,7 @@ Telegram можна користуватися з декількох прист�
     <value>Вибрати інший чат</value>
   </data>
   <data name="SelectSendAsPeerPremiumHint" xml:space="preserve">
-    <value>Залишайте коментарі від імені своїх каналів у будь-якому груповому чаті з підпискою на **Telegram Premium**.</value>
+    <value>Підпишіться на **Telegram Premium**, щоб коментувати в групах від імені своїх каналів.</value>
   </data>
   <data name="SelectSendAsPeerPremiumOpen" xml:space="preserve">
     <value>Відкрити</value>
@@ -13001,6 +13277,12 @@ Telegram можна користуватися з декількох прист�
   </data>
   <data name="SelectThisDay" xml:space="preserve">
     <value>Вибрати цей день</value>
+  </data>
+  <data name="SelectTopic" xml:space="preserve">
+    <value>Виберіть гілку</value>
+  </data>
+  <data name="SelectTopicIconHint" xml:space="preserve">
+    <value>Виберіть іконку гілки</value>
   </data>
   <data name="Send" xml:space="preserve">
     <value>Надіслати</value>
@@ -13343,6 +13625,9 @@ Telegram можна користуватися з декількох прист�
   <data name="SetUrlPlaceholder" xml:space="preserve">
     <value>Посилання</value>
   </data>
+  <data name="SetUsernameHeader" xml:space="preserve">
+    <value>Встановити псевдонім</value>
+  </data>
   <data name="Shadows" xml:space="preserve">
     <value>Тіні</value>
   </data>
@@ -13532,6 +13817,9 @@ Telegram можна користуватися з декількох прист�
 **{1}**
 
 Введіть номер телефону повністю, разом із кодом країни.</value>
+  </data>
+  <data name="Show" xml:space="preserve">
+    <value>Показати</value>
   </data>
   <data name="ShowAllFiles" xml:space="preserve">
     <value>Показати всі файли</value>
@@ -13783,18 +14071,21 @@ Telegram можна користуватися з декількох прист�
     <value>Про спонсоровані повідомлення</value>
   </data>
   <data name="SponsoredMessageInfoDescription1" xml:space="preserve">
-    <value>На відміну від інших застосунків, Telegram не використовує особистих даних користувачів для показу цільової реклами. Спонсоровані повідомлення в Telegram відповідають виключно темам каналів, у яких вони розміщуються. Це означає, що жодних даних не збирається чи аналізується для показу оголошень і рекламні оголошення є спільними для всіх користувачів.</value>
+    <value>На відміну від інших застосунків, Telegram не використовує особистих даних користувачів для показу цільової реклами. Спонсоровані повідомлення в Telegram відповідають виключно темам каналів, у яких вони розміщуються. Це означає, що жодних даних не збирається та не аналізується для показу оголошень, і рекламні оголошення є спільними для всіх користувачів.</value>
   </data>
   <data name="SponsoredMessageInfoDescription2" xml:space="preserve">
-    <value>На відміну від інших застосунків, Telegram не відстежує взаємодій зі спонсорованими повідомленнями і не формує портретів користувачів на основі їхньої активності. Також у спонсорованих повідомленнях не дозволено посилання на зовнішні сайти, аби сторонні особи не могли стежити за діями користувачів. Ми вважаємо, що кожен має право на приватність і технологічні платформи повинні його поважати.</value>
+    <value>На відміну від інших застосунків, Telegram не відстежує взаємодій зі спонсорованими повідомленнями та не формує портретів користувачів на основі їхньої активності. Також у спонсорованих повідомленнях не дозволено посилання на зовнішні сайти, аби сторонні особи не могли стежити за діями користувачів. Ми вважаємо, що кожен має право на приватність і технологічні платформи повинні його поважати.</value>
   </data>
   <data name="SponsoredMessageInfoDescription3" xml:space="preserve">
-    <value>Аби надавати безплатний та необмежений сервіс сотням мільйонам користувачів, Telegram витрачає чимало коштів на сервери та трафік. Щоб залишатися незалежним і вірним своїм цінностям, Telegram створив платний інструмент для просування повідомлень, що цінує конфідеційність користувачів. Розміщення реклами:</value>
+    <value>Аби надавати безплатний та необмежений сервіс сотням мільйонам користувачів, Telegram витрачає чимало коштів на сервери та трафік. Щоб залишатися незалежним і вірним своїм цінностям, Telegram створив платний інструмент для просування повідомлень, що цінує конфіденційність користувачів. Розміщення реклами:</value>
   </data>
   <data name="SponsoredMessageInfoDescription4" xml:space="preserve">
     <value>Наразі рекламна платформа працює в тестовому режимі. Щойно відбудеться повноцінний запуск і Telegram почне покривати базові витрати, ми почнемо ділитися прибутком від реклами з власниками каналів, у яких вона розміщена.
 
 Реклама більше не повинна асоціюватися зі зловживанням конфіденційністю користувачів. Разом ми можемо дати приклад іншим технологічним компаніям.</value>
+  </data>
+  <data name="SponsoredMessageRecommended" xml:space="preserve">
+    <value>рекомендоване</value>
   </data>
   <data name="Start" xml:space="preserve">
     <value>Почати</value>
@@ -14126,6 +14417,12 @@ Telegram можна користуватися з декількох прист�
   <data name="SwipeToGoNextFolder" xml:space="preserve">
     <value>Потягніть, щоб перейти до наступної папки</value>
   </data>
+  <data name="SwipeToReplyHint" xml:space="preserve">
+    <value>Проведіть, щоб відповісти</value>
+  </data>
+  <data name="SwipeToReplyHintMessage" xml:space="preserve">
+    <value>Проведіть на повідомленні вліво, щоб відповісти.</value>
+  </data>
   <data name="SwipeUnmute" xml:space="preserve">
     <value>Увімк. сповіщ.</value>
   </data>
@@ -14147,7 +14444,7 @@ Telegram можна користуватися з декількох прист�
   <data name="SyncContactsDeleteText" xml:space="preserve">
     <value>Це видалить ваші контакти із серверів Telegram.
 
-Якщо &quot;**Синхронізувати контакти**&quot; увімкнено, контакти синхронізуються знову.</value>
+Якщо «**Синхронізувати контакти**» увімкнено, контакти синхронізуються знову.</value>
   </data>
   <data name="SyncContactsDeleteTitle" xml:space="preserve">
     <value>Видалити контакти</value>
@@ -14205,6 +14502,9 @@ Telegram можна користуватися з декількох прист�
   </data>
   <data name="TapToChangePhone" xml:space="preserve">
     <value>Натисніть, щоб змінити номер телефону</value>
+  </data>
+  <data name="TapToCreateTopicHint" xml:space="preserve">
+    <value>Натисніть, щоб створити гілку</value>
   </data>
   <data name="TapToDownload" xml:space="preserve">
     <value>Натисніть, щоб завантажити</value>
@@ -14636,6 +14936,111 @@ Telegram можна користуватися з декількох прист�
   <data name="TopHoursChartTitle" xml:space="preserve">
     <value>Перегляди погодинно (UTC)</value>
   </data>
+  <data name="TopicChangeIconAndTitleTo" xml:space="preserve">
+    <value>{0} змінює назву гілки та іконку на {1}</value>
+  </data>
+  <data name="TopicChangeIconAndTitleToInReply" xml:space="preserve">
+    <value>змінює назву гілки та іконку на {0}</value>
+  </data>
+  <data name="TopicClosed" xml:space="preserve">
+    <value>Гілку закрито</value>
+  </data>
+  <data name="TopicClosed2" xml:space="preserve">
+    <value>{0} закриває гілку</value>
+  </data>
+  <data name="TopicClosedByAdmin" xml:space="preserve">
+    <value>Гілку закрито</value>
+  </data>
+  <data name="TopicContainsEmojiPackSingle" xml:space="preserve">
+    <value>Ця гілка містить **{0}**</value>
+  </data>
+  <data name="TopicCreated" xml:space="preserve">
+    <value>Гілку створено</value>
+  </data>
+  <data name="TopicCreator" xml:space="preserve">
+    <value>автор гілки</value>
+  </data>
+  <data name="TopicEmptyViewDescription" xml:space="preserve">
+    <value>Надішліть повідомлення, щоб розпочати гілку.</value>
+  </data>
+  <data name="TopicIconChanged" xml:space="preserve">
+    <value>Іконку гілки змінено</value>
+  </data>
+  <data name="TopicIconChangedTo" xml:space="preserve">
+    <value>{0} змінює іконку гілки на {1}</value>
+  </data>
+  <data name="TopicIconChangedToInReply" xml:space="preserve">
+    <value>змінює іконку гілки на {0}</value>
+  </data>
+  <data name="TopicNotificationsExceptions_few" xml:space="preserve">
+    <value>**{0} гілки** зазначені як вийняток.</value>
+  </data>
+  <data name="TopicNotificationsExceptions_many" xml:space="preserve">
+    <value>**{0} гілок** зазначені як вийняток.</value>
+  </data>
+  <data name="TopicNotificationsExceptions_one" xml:space="preserve">
+    <value>**{0} гілка** зазначена як вийняток.</value>
+  </data>
+  <data name="TopicNotificationsExceptions_other" xml:space="preserve">
+    <value>**{0} гілок** зазначені як вийняток.</value>
+  </data>
+  <data name="TopicProfileStatus" xml:space="preserve">
+    <value>У {0}</value>
+  </data>
+  <data name="TopicRenamed" xml:space="preserve">
+    <value>Гілку перейменовано</value>
+  </data>
+  <data name="TopicRenamedTo" xml:space="preserve">
+    <value>{0} перейменовує гілку на «{1}»</value>
+  </data>
+  <data name="TopicRenamedToInReply" xml:space="preserve">
+    <value>перейменовує гілку на {0}</value>
+  </data>
+  <data name="TopicRestarted" xml:space="preserve">
+    <value>Гілку відкрито</value>
+  </data>
+  <data name="TopicRestarted2" xml:space="preserve">
+    <value>{0} відкриває гілку</value>
+  </data>
+  <data name="Topics" xml:space="preserve">
+    <value>Гілки</value>
+  </data>
+  <data name="TopicsDeleted_few" xml:space="preserve">
+    <value>Гілки видалено.</value>
+  </data>
+  <data name="TopicsDeleted_many" xml:space="preserve">
+    <value>Гілки видалено.</value>
+  </data>
+  <data name="TopicsDeleted_one" xml:space="preserve">
+    <value>Гілку видалено.</value>
+  </data>
+  <data name="TopicsDeleted_other" xml:space="preserve">
+    <value>Гілки видалено.</value>
+  </data>
+  <data name="TopicViewAsMessages" xml:space="preserve">
+    <value>Усі повідомлення</value>
+  </data>
+  <data name="TopicViewAsTopics" xml:space="preserve">
+    <value>Гілки</value>
+  </data>
+  <data name="TopicWasClosedAction" xml:space="preserve">
+    <value>{0} закриває гілку {1}</value>
+  </data>
+  <data name="TopicWasCreatedAction" xml:space="preserve">
+    <value>Створено гілку «{0}»</value>
+  </data>
+  <data name="TopicWasIconChangedToAction" xml:space="preserve">
+    <value>{0} змінює іконку гілки на {1}</value>
+  </data>
+  <data name="TopicWasRenamedToAction" xml:space="preserve">
+    <value>{0} перейменовує гілку на «{1}»</value>
+  </data>
+  <data name="TopicWasRenamedToAction2" xml:space="preserve">
+    <value>{0} змінює назву та іконку гілки на {1}</value>
+  </data>
+  <data name="TopicWasReopenedAction" xml:space="preserve">
+    <value>{0} відкриває гілку {1}</value>
+  </data>
   <data name="TopInviters" xml:space="preserve">
     <value>Топ запрошувачів</value>
   </data>
@@ -14839,6 +15244,9 @@ Telegram можна користуватися з декількох прист�
   <data name="UnlockPremiumStickersDescription" xml:space="preserve">
     <value>Ця наліпка та багато іншого доступні з підпискою на Telegram Premium.</value>
   </data>
+  <data name="UnlockPremiumTranscriptionHint" xml:space="preserve">
+    <value>Перетворювати голос на текст можна тільки з підпискою **Telegram Premium**.</value>
+  </data>
   <data name="Unmute" xml:space="preserve">
     <value>Сповіщати</value>
   </data>
@@ -14898,7 +15306,7 @@ http://telegram.org/update</value>
     <value>Ваша версія Telegram застаріла і не може обробити цей запит. Оновіть Telegram.</value>
   </data>
   <data name="UpdateContactsMessage" xml:space="preserve">
-    <value>Telegram виявив багато несинхронізованих контактів, синхронізувати їх? Виберіть &quot;Гаразд&quot;, якщо ви використовуєте власний пристрій, SIM-картку та акаунт Google.</value>
+    <value>Telegram виявив багато несинхронізованих контактів, синхронізувати їх? Виберіть «Гаразд», якщо ви використовуєте власний пристрій, SIM-картку та акаунт Google.</value>
   </data>
   <data name="UpdateContactsTitle" xml:space="preserve">
     <value>Оновити контакти?</value>
@@ -15044,6 +15452,24 @@ http://telegram.org/update</value>
   <data name="Username" xml:space="preserve">
     <value>Псевдонім</value>
   </data>
+  <data name="UsernameActivateErrorMessage" xml:space="preserve">
+    <value>Вибачте, ви маєте вже занадто багато активних публічних посилань. Будь ласка, спочатку приховайте одне з них.</value>
+  </data>
+  <data name="UsernameActivateErrorTitle" xml:space="preserve">
+    <value>Забагато активних посилань</value>
+  </data>
+  <data name="UsernameActivateLink" xml:space="preserve">
+    <value>Активувати посилання</value>
+  </data>
+  <data name="UsernameActivateLinkChannelMessage" xml:space="preserve">
+    <value>Ви хочете, щоб це посилання показувалося у профілі каналу?</value>
+  </data>
+  <data name="UsernameActivateLinkProfileMessage" xml:space="preserve">
+    <value>Ви хочете, щоб це посилання показувалося у вашому профілі?</value>
+  </data>
+  <data name="UsernameAlso" xml:space="preserve">
+    <value>також {0}</value>
+  </data>
   <data name="UsernameAvailable" xml:space="preserve">
     <value>{0} доступний.</value>
   </data>
@@ -15052,6 +15478,15 @@ http://telegram.org/update</value>
   </data>
   <data name="UsernameCopied" xml:space="preserve">
     <value>Псевдонім скопійовано.</value>
+  </data>
+  <data name="UsernameDeactivateLink" xml:space="preserve">
+    <value>Деактивувати посилання</value>
+  </data>
+  <data name="UsernameDeactivateLinkChannelMessage" xml:space="preserve">
+    <value>Ви хочете приховати це посилання з профілю каналу?</value>
+  </data>
+  <data name="UsernameDeactivateLinkProfileMessage" xml:space="preserve">
+    <value>Ви хочете приховати це посилання з вашого профілю?</value>
   </data>
   <data name="UsernameEmpty" xml:space="preserve">
     <value>Немає</value>
@@ -15068,6 +15503,10 @@ http://telegram.org/update</value>
   <data name="UsernameInUse" xml:space="preserve">
     <value>Цей псевдонім вже зайнятий.</value>
   </data>
+  <data name="UsernameInUsePurchase" xml:space="preserve">
+    <value>Це посилання вже зайняте.
+Проте наразі його можна придбати. **Дізнатися більше…**</value>
+  </data>
   <data name="UsernameInvalid" xml:space="preserve">
     <value>Цей псевдонім недопустимий.</value>
   </data>
@@ -15077,11 +15516,48 @@ http://telegram.org/update</value>
   <data name="UsernameInvalidShort" xml:space="preserve">
     <value>Псевдонім має містити принаймні 5 символів.</value>
   </data>
+  <data name="UsernameInvalidShortPurchase" xml:space="preserve">
+    <value>Псевдонім має містити щонайменше 5 символів.
+Проте цей та інші короткі колекційні псевдоніми доступні для купівлі. **Детальніше…**</value>
+  </data>
   <data name="UsernameInvalidStartNumber" xml:space="preserve">
     <value>Псевдонім не може починатися з цифри.</value>
   </data>
+  <data name="UsernameLinkActive" xml:space="preserve">
+    <value>активне</value>
+  </data>
+  <data name="UsernameLinkEditable" xml:space="preserve">
+    <value>натисніть, щоб змінити</value>
+  </data>
+  <data name="UsernameLinkInactive" xml:space="preserve">
+    <value>неактивне</value>
+  </data>
+  <data name="UsernameLinkPlaceholder" xml:space="preserve">
+    <value>псевдонім</value>
+  </data>
   <data name="UsernamePlaceholder" xml:space="preserve">
     <value>Ваш псевдонім</value>
+  </data>
+  <data name="UsernameProfileLinkActive" xml:space="preserve">
+    <value>активний</value>
+  </data>
+  <data name="UsernameProfileLinkEditable" xml:space="preserve">
+    <value>натисніть, щоб змінити</value>
+  </data>
+  <data name="UsernameProfileLinkInactive" xml:space="preserve">
+    <value>неактивний</value>
+  </data>
+  <data name="UsernamesChannelHeader" xml:space="preserve">
+    <value>Порядок посилань</value>
+  </data>
+  <data name="UsernamesChannelHelp" xml:space="preserve">
+    <value>Перетягуйте посилання, щоб змінити порядок, у якому вони будуть показуватися у профілі каналу.</value>
+  </data>
+  <data name="UsernamesProfileHeader" xml:space="preserve">
+    <value>Порядок псевдонімів</value>
+  </data>
+  <data name="UsernamesProfileHelp" xml:space="preserve">
+    <value>Перетягуйте посилання, щоб змінити порядок, у якому вони будуть показуватися у вашому профілі.</value>
   </data>
   <data name="UserRemovedBy" xml:space="preserve">
     <value>Вилучив користувач {0}</value>
@@ -15362,6 +15838,9 @@ http://telegram.org/update</value>
   <data name="ViewingMembers" xml:space="preserve">
     <value>Переглядають</value>
   </data>
+  <data name="ViewInTopic" xml:space="preserve">
+    <value>Переглянути у гілці</value>
+  </data>
   <data name="ViewMessage" xml:space="preserve">
     <value>Відкрити повідомлення</value>
   </data>
@@ -15507,7 +15986,7 @@ http://telegram.org/update</value>
     <value>Закінчити трансляцію</value>
   </data>
   <data name="VoipChannelLeaveAlertText" xml:space="preserve">
-    <value>Ви хочете вийти з цієї трансляції?</value>
+    <value>Ви хочете покинути цю трансляцію?</value>
   </data>
   <data name="VoipChannelLeaveAlertTitle" xml:space="preserve">
     <value>Вийти з трансляції</value>
@@ -16084,7 +16563,7 @@ http://telegram.org/update</value>
     <value>Завершити виклик із **{0}** та почати новий із **{1}**?</value>
   </data>
   <data name="VoipOngoingAlert2" xml:space="preserve">
-    <value>Завершити виклик із **{0}** та почати відеочат у групі **{1}**?</value>
+    <value>Завершити виклик із **{0}** та почати відеочат у **{1}**?</value>
   </data>
   <data name="VoipOngoingAlertTitle" xml:space="preserve">
     <value>Триває інший виклик</value>

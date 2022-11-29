@@ -361,6 +361,9 @@
   <data name="AccDescrPremium" xml:space="preserve">
     <value>Премијум налог</value>
   </data>
+  <data name="AccDescrPremiumSpeed" xml:space="preserve">
+    <value>Повећај брзину</value>
+  </data>
   <data name="AccDescrPrevious" xml:space="preserve">
     <value>Претходно</value>
   </data>
@@ -1029,6 +1032,24 @@
   <data name="AddedBy" xml:space="preserve">
     <value>додао/ла {0} {1}</value>
   </data>
+  <data name="AddedMembersToGroup_few" xml:space="preserve">
+    <value>Додата су **{0} члана** у групу</value>
+  </data>
+  <data name="AddedMembersToGroup_one" xml:space="preserve">
+    <value>Додат је **{0} члан** у групу</value>
+  </data>
+  <data name="AddedMembersToGroup_other" xml:space="preserve">
+    <value>Додато је **{0} чланова** у групу</value>
+  </data>
+  <data name="AddedSubscribersToChannel_few" xml:space="preserve">
+    <value>Додата су **{0} пратиоца** на канал</value>
+  </data>
+  <data name="AddedSubscribersToChannel_one" xml:space="preserve">
+    <value>Додат је **{0} пратилац** на канал</value>
+  </data>
+  <data name="AddedSubscribersToChannel_other" xml:space="preserve">
+    <value>Додато је **{0} пратилаца** на канал</value>
+  </data>
   <data name="AddedToFavorites" xml:space="preserve">
     <value>Налепнице су додате у омиљене.</value>
   </data>
@@ -1182,6 +1203,9 @@
   <data name="Agree" xml:space="preserve">
     <value>Слажем се</value>
   </data>
+  <data name="Album" xml:space="preserve">
+    <value>Албум</value>
+  </data>
   <data name="Alert" xml:space="preserve">
     <value>Прикажи обавештења</value>
   </data>
@@ -1190,6 +1214,9 @@
   </data>
   <data name="AllAccounts" xml:space="preserve">
     <value>Сви налози</value>
+  </data>
+  <data name="AllChats" xml:space="preserve">
+    <value>Сва ћаскања</value>
   </data>
   <data name="AllMedia" xml:space="preserve">
     <value>Сви медији</value>
@@ -1263,11 +1290,20 @@
   <data name="AllWebSessionsTerminated" xml:space="preserve">
     <value>Прекинута је веза са свим веб-сајтовима.</value>
   </data>
+  <data name="AlmostDone" xml:space="preserve">
+    <value>Скоро готово</value>
+  </data>
   <data name="ALongTimeAgo" xml:space="preserve">
     <value>виђен/а давно</value>
   </data>
   <data name="AlternativeOptions" xml:space="preserve">
     <value>Алтернативне опције</value>
+  </data>
+  <data name="AltNavigationDisable" xml:space="preserve">
+    <value>Oнемогући алтернативну навигацију</value>
+  </data>
+  <data name="AltNavigationEnable" xml:space="preserve">
+    <value>Омогући алтернативну навигацију</value>
   </data>
   <data name="AlwaysAllow" xml:space="preserve">
     <value>Увек дозволи</value>
@@ -1375,7 +1411,7 @@
     <value>Примени датотеку са преводом</value>
   </data>
   <data name="ApplyTheme" xml:space="preserve">
-    <value>ПРИМЕНИ</value>
+    <value>Примени</value>
   </data>
   <data name="ApplyThemeFile" xml:space="preserve">
     <value>Примени датотеку теме</value>
@@ -1387,7 +1423,7 @@
     <value>Telegram</value>
   </data>
   <data name="ApproveNewMembers" xml:space="preserve">
-    <value>Захтева одобрење администратора</value>
+    <value>Одобри нове чланове</value>
   </data>
   <data name="ApproveNewMembersDescription" xml:space="preserve">
     <value>Укључите ако желите да се корисници придруже тек након што их одобри администратор.</value>
@@ -1509,10 +1545,10 @@
     <value>Архивирај {0}</value>
   </data>
   <data name="AreTyping" xml:space="preserve">
-    <value>пишу...</value>
+    <value>пишу</value>
   </data>
   <data name="AreTypingGroup" xml:space="preserve">
-    <value>{0} пишу...</value>
+    <value>{0} пишу</value>
   </data>
   <data name="AreYouSure" xml:space="preserve">
     <value>Јесте ли сигурни?</value>
@@ -1623,7 +1659,7 @@
     <value>Желите ли да избришете тајно ћаскање са **{0}**?</value>
   </data>
   <data name="AreYouSureDeleteThisChatWithUser" xml:space="preserve">
-    <value>Желите ли да избришете ћаскање са **{0}**?</value>
+    <value>Трајно избрисати ћаскање са **{0}**?</value>
   </data>
   <data name="AreYouSureDeleteVideo" xml:space="preserve">
     <value>Желите ли да избришете овај видео?</value>
@@ -2414,16 +2450,16 @@
     <value>Отвори страницу</value>
   </data>
   <data name="BotOwnershipTransfer" xml:space="preserve">
-    <value>Пренеси власништво над ботом</value>
+    <value>Верификација у два корака</value>
   </data>
   <data name="BotOwnershipTransferAlertText" xml:space="preserve">
-    <value>Овог бота можете пренети само ако имате:</value>
+    <value>Ову радњу можете да завршите само ако имате:</value>
   </data>
   <data name="BotOwnershipTransferChangeOwner" xml:space="preserve">
-    <value>Промени власника</value>
+    <value>Потврди</value>
   </data>
   <data name="BotOwnershipTransferReadyAlertText" xml:space="preserve">
-    <value>Ово ће пренети **сва власничка права** над ботом на изабраног корисника.</value>
+    <value>Унесите своју лозинку да бисте потврдили ову радњу.</value>
   </data>
   <data name="BotPermissionGameAlert" xml:space="preserve">
     <value>Дозволити да {0} проследи ваше Telegram име и ID (не ваш број телефона) страницама које отварате помоћу овог бота?</value>
@@ -2965,6 +3001,15 @@
   <data name="ChannelCantSendMessage" xml:space="preserve">
     <value>Не можете да прослеђујете поруке на овај канал јер нисте власник или администратор канала.</value>
   </data>
+  <data name="ChannelCaptionLimitPremiumPromo_few" xml:space="preserve">
+    <value>Скратите наслов или се претплатите на *Telegram Premium* да бисте удвостручили ограничење на **{0}** знака.</value>
+  </data>
+  <data name="ChannelCaptionLimitPremiumPromo_one" xml:space="preserve">
+    <value>Скратите наслов или се претплатите на *Telegram Premium* да бисте удвостручили ограничење на **{0}** знак.</value>
+  </data>
+  <data name="ChannelCaptionLimitPremiumPromo_other" xml:space="preserve">
+    <value>Скратите наслов или се претплатите на *Telegram Premium* да бисте удвостручили ограничење на **{0}** знакова.</value>
+  </data>
   <data name="ChannelContacts" xml:space="preserve">
     <value>Контакти на овом каналу</value>
   </data>
@@ -3222,6 +3267,21 @@
   <data name="ChannelTooMuchTitle" xml:space="preserve">
     <value>Превише заједница</value>
   </data>
+  <data name="ChannelTopics" xml:space="preserve">
+    <value>Теме</value>
+  </data>
+  <data name="ChannelTopicsDiscussionForbidden" xml:space="preserve">
+    <value>Теме још нису доступне у групама за дискусију на каналима.</value>
+  </data>
+  <data name="ChannelTopicsForbidden_few" xml:space="preserve">
+    <value>Теме се могу омогућити само у групама са више од **{0} члана**.</value>
+  </data>
+  <data name="ChannelTopicsForbidden_one" xml:space="preserve">
+    <value>Теме се могу омогућити само у групама са више од **{0} члана**.</value>
+  </data>
+  <data name="ChannelTopicsForbidden_other" xml:space="preserve">
+    <value>Теме се могу омогућити само у групама са више од **{0} чланова**.</value>
+  </data>
   <data name="ChannelType" xml:space="preserve">
     <value>Тип канала</value>
   </data>
@@ -3334,6 +3394,9 @@
   </data>
   <data name="ChatHistoryHiddenInfo2" xml:space="preserve">
     <value>Нови чланови неће видети више од 100 претходних порука.</value>
+  </data>
+  <data name="ChatHistoryShort" xml:space="preserve">
+    <value>Историја ћаскања</value>
   </data>
   <data name="ChatHistoryVisible" xml:space="preserve">
     <value>Видљива</value>
@@ -3779,6 +3842,12 @@
   <data name="CloseEditor" xml:space="preserve">
     <value>ЗАТВОРИ УРЕЂИВАЧ</value>
   </data>
+  <data name="CloseTopic" xml:space="preserve">
+    <value>Затвори тему</value>
+  </data>
+  <data name="CloseTopics" xml:space="preserve">
+    <value>Затвори теме</value>
+  </data>
   <data name="CloseTranslation" xml:space="preserve">
     <value>Затвори превод</value>
   </data>
@@ -3974,10 +4043,10 @@
     <value>**Telegram**-у је потребан приступ вашим контактима да бисте се могли повезати са пријатељима на свим својим уређајима. Ваши контакти ће бити континуирано синхронизовани са Telegram-овим јако шифрованим серверима у облаку.</value>
   </data>
   <data name="ContactsPermissionAlertContinue" xml:space="preserve">
-    <value>НАСТАВИ</value>
+    <value>Настави</value>
   </data>
   <data name="ContactsPermissionAlertNotNow" xml:space="preserve">
-    <value>КАСНИЈЕ</value>
+    <value>Касније</value>
   </data>
   <data name="ContactSupport" xml:space="preserve">
     <value>Контактирајте подршку</value>
@@ -4118,7 +4187,16 @@
     <value>Направи лозинку</value>
   </data>
   <data name="CreateTheme" xml:space="preserve">
-    <value>НАПРАВИ ТЕМУ</value>
+    <value>Направи тему</value>
+  </data>
+  <data name="CreateTopic" xml:space="preserve">
+    <value>Отвори тему</value>
+  </data>
+  <data name="CreateTopicsPermission" xml:space="preserve">
+    <value>Отварање тема</value>
+  </data>
+  <data name="CreateTopicTitle" xml:space="preserve">
+    <value>Изаберите икону и назив теме</value>
   </data>
   <data name="Crop" xml:space="preserve">
     <value>ИСЕЦИ</value>
@@ -4133,7 +4211,7 @@
     <value>Ресетуј</value>
   </data>
   <data name="CropSquare" xml:space="preserve">
-    <value>Квадрат</value>
+    <value>1:1</value>
   </data>
   <data name="CurrentGroupStickers" xml:space="preserve">
     <value>Налепнице групе</value>
@@ -4225,8 +4303,17 @@
   <data name="Deactivate" xml:space="preserve">
     <value>ИЗБРИШИ САДА</value>
   </data>
+  <data name="DebugAltNavigationToggleControls" xml:space="preserve">
+    <value>Укључи/искључи контроле навигације</value>
+  </data>
+  <data name="DebugClearLocalDatabaseSuccess" xml:space="preserve">
+    <value>Локална база података је обрисана.</value>
+  </data>
   <data name="DebugClearLogs" xml:space="preserve">
     <value>Обриши евиденције</value>
+  </data>
+  <data name="DebugClearSendMessageAsPeers" xml:space="preserve">
+    <value>Обриши листу „Пошаљите поруку као...”</value>
   </data>
   <data name="DebugDrawSnowInChat" xml:space="preserve">
     <value>Снег у ћаскању</value>
@@ -4308,6 +4395,21 @@
   </data>
   <data name="DebugSendLogs" xml:space="preserve">
     <value>Пошаљи евиденције</value>
+  </data>
+  <data name="DebugShareAlertDialogsModeLess" xml:space="preserve">
+    <value>Мање</value>
+  </data>
+  <data name="DebugShareAlertDialogsModeMore" xml:space="preserve">
+    <value>Више</value>
+  </data>
+  <data name="DebugShareAlertDialogsModeNormal" xml:space="preserve">
+    <value>Нормално</value>
+  </data>
+  <data name="DebugShareAlertSwitchDialogsMode" xml:space="preserve">
+    <value>Начин приказа менија за дељење ({0})</value>
+  </data>
+  <data name="DebugShareAlertTopicsSlowMotion" xml:space="preserve">
+    <value>Укључи/искључи успорени мени за дељење</value>
   </data>
   <data name="December" xml:space="preserve">
     <value>децембар</value>
@@ -4507,6 +4609,12 @@
   <data name="DeleteSelectedCallsText" xml:space="preserve">
     <value>Желите ли да избришете изабране позиве из недавних?</value>
   </data>
+  <data name="DeleteSelectedTopic" xml:space="preserve">
+    <value>Желите ли да избришете {0}?</value>
+  </data>
+  <data name="DeleteSelectedTopics" xml:space="preserve">
+    <value>Желите ли да избришете ове теме?</value>
+  </data>
   <data name="DeleteSingleMessagesTitle" xml:space="preserve">
     <value>Брисање поруке</value>
   </data>
@@ -4558,6 +4666,15 @@
   <data name="DeleteTonesMessage_other" xml:space="preserve">
     <value>Желите ли да избришете **{0}** звукова обавештења?</value>
   </data>
+  <data name="DeleteTopics_few" xml:space="preserve">
+    <value>Избриши теме</value>
+  </data>
+  <data name="DeleteTopics_one" xml:space="preserve">
+    <value>Избриши тему</value>
+  </data>
+  <data name="DeleteTopics_other" xml:space="preserve">
+    <value>Избриши теме</value>
+  </data>
   <data name="Deletions_few" xml:space="preserve">
     <value>{0} брисања</value>
   </data>
@@ -4584,6 +4701,9 @@
   </data>
   <data name="DeviceStorage" xml:space="preserve">
     <value>Меморија уређаја</value>
+  </data>
+  <data name="DialogNotAvailable" xml:space="preserve">
+    <value>Није доступно</value>
   </data>
   <data name="DialogPin" xml:space="preserve">
     <value>Закачи</value>
@@ -4655,6 +4775,9 @@
   <data name="DisappearingVideo" xml:space="preserve">
     <value>Нестајући видео</value>
   </data>
+  <data name="Discard" xml:space="preserve">
+    <value>Одбаци</value>
+  </data>
   <data name="DiscardChanges" xml:space="preserve">
     <value>Одбацити промене?</value>
   </data>
@@ -4663,6 +4786,14 @@
   </data>
   <data name="DiscardSelectionAlertTitle" xml:space="preserve">
     <value>Одбацивање избора</value>
+  </data>
+  <data name="DiscardTopic" xml:space="preserve">
+    <value>Одбаци тему</value>
+  </data>
+  <data name="DiscardTopicMessage" xml:space="preserve">
+    <value>Тема неће бити отворена док не пошаљете поруку.
+
+Желите ли да одбаците ову тему?</value>
   </data>
   <data name="DiscardVideoMessageDescription" xml:space="preserve">
     <value>Желите ли да зауставите снимање и одбаците своју видео-поруку?</value>
@@ -4715,8 +4846,11 @@
   <data name="DiscussionInfo" xml:space="preserve">
     <value>Додајте групу за коментарисање</value>
   </data>
+  <data name="DiscussionInfoShort" xml:space="preserve">
+    <value>Додај</value>
+  </data>
   <data name="DiscussionLinkGroup" xml:space="preserve">
-    <value>ПОВЕЖИ ГРУПУ</value>
+    <value>Повежи групу</value>
   </data>
   <data name="DiscussionLinkGroupAlertHistory" xml:space="preserve">
     <value>„Историја ћаскања за нове чланове” ће бити пребачена на Видљива.</value>
@@ -4991,6 +5125,9 @@
     <value>Уреди боје</value>
   </data>
   <data name="EditThemeTitle" xml:space="preserve">
+    <value>Уреди тему</value>
+  </data>
+  <data name="EditTopic" xml:space="preserve">
     <value>Уреди тему</value>
   </data>
   <data name="EditWidget" xml:space="preserve">
@@ -5285,6 +5422,9 @@
 
 Унесите назив теме:</value>
   </data>
+  <data name="EnterTopicName" xml:space="preserve">
+    <value>О чему желите да дискутујете?</value>
+  </data>
   <data name="EnterYourPasscode" xml:space="preserve">
     <value>Унесите кôд</value>
   </data>
@@ -5333,6 +5473,9 @@
   <data name="EventLog" xml:space="preserve">
     <value>Недавне радње</value>
   </data>
+  <data name="EventLogActivatedUsername" xml:space="preserve">
+    <value>un1 је активирао/ла корисничко име {0}</value>
+  </data>
   <data name="EventLogAdded" xml:space="preserve">
     <value>un1 је додао/ла un2</value>
   </data>
@@ -5363,6 +5506,9 @@
   <data name="EventLogChangedStickersSet" xml:space="preserve">
     <value>un1 је променио/ла пакет налепница групе</value>
   </data>
+  <data name="EventLogChangeUsernames" xml:space="preserve">
+    <value>un1 је променио/ла корисничко име групе из {0} у {1}</value>
+  </data>
   <data name="EventLogChannelJoined" xml:space="preserve">
     <value>un1 се придружио/ла каналу</value>
   </data>
@@ -5372,11 +5518,20 @@
   <data name="EventLogChannelUnrestricted" xml:space="preserve">
     <value>уклоњена је забрана за {0}</value>
   </data>
+  <data name="EventLogCreateTopic" xml:space="preserve">
+    <value>un1 је отворио/ла тему un2</value>
+  </data>
+  <data name="EventLogDeactivatedUsername" xml:space="preserve">
+    <value>un1 је деактивирао/ла корисничко име {0}</value>
+  </data>
   <data name="EventLogDefaultPermissions" xml:space="preserve">
     <value>промењене су подразумеване дозволе</value>
   </data>
   <data name="EventLogDeletedMessages" xml:space="preserve">
     <value>un1 је избрисао/ла ову поруку:</value>
+  </data>
+  <data name="EventLogDeleteTopic" xml:space="preserve">
+    <value>un1 је избрисао/ла тему un2</value>
   </data>
   <data name="EventLogEditedCaption" xml:space="preserve">
     <value>un1 је уредио/ла опис:</value>
@@ -5419,6 +5574,9 @@
   </data>
   <data name="EventLogEditedMessages" xml:space="preserve">
     <value>un1 је уредио/ла ову поруку:</value>
+  </data>
+  <data name="EventLogEditTopic" xml:space="preserve">
+    <value>un1 је променио/ла назив теме из un2 у un3</value>
   </data>
   <data name="EventLogEmpty" xml:space="preserve">
     <value>**Нема недавних радњи**
@@ -5513,6 +5671,9 @@
   </data>
   <data name="EventLogPinnedMessages" xml:space="preserve">
     <value>un1 је закачио/ла ову поруку:</value>
+  </data>
+  <data name="EventLogPinTopic" xml:space="preserve">
+    <value>un1 је закачио/ла тему un2</value>
   </data>
   <data name="EventLogPreviousGroupDescription" xml:space="preserve">
     <value>Претходни опис</value>
@@ -5642,6 +5803,12 @@
   <data name="EventLogStopQuiz" xml:space="preserve">
     <value>un1 је зауставио/ла квиз:</value>
   </data>
+  <data name="EventLogSwitchToForum" xml:space="preserve">
+    <value>un1 је омогућио/ла теме</value>
+  </data>
+  <data name="EventLogSwitchToGroup" xml:space="preserve">
+    <value>un1 је онемогућио/ла теме</value>
+  </data>
   <data name="EventLogToggledInvitesHistoryOff" xml:space="preserve">
     <value>un1 је сакрио/ла историју групе за нове чланове</value>
   </data>
@@ -5668,6 +5835,9 @@
   </data>
   <data name="EventLogUnpinnedMessages" xml:space="preserve">
     <value>un1 је откачио/ла поруку</value>
+  </data>
+  <data name="EventLogUnpinTopic" xml:space="preserve">
+    <value>un1 је откачио/ла тему un2</value>
   </data>
   <data name="EventLogVoiceChatAllowedToSpeak" xml:space="preserve">
     <value>un1 је дозволио/ла новим учесницима видео-ћаскања да говоре</value>
@@ -6036,6 +6206,12 @@
   <data name="FirstNameSmall" xml:space="preserve">
     <value>Име</value>
   </data>
+  <data name="FloatingDebugDisable" xml:space="preserve">
+    <value>Онемогући плутајући мени</value>
+  </data>
+  <data name="FloatingDebugEnable" xml:space="preserve">
+    <value>Омогући плутајуће мени</value>
+  </data>
   <data name="FloodWait" xml:space="preserve">
     <value>Превише покушаја, покушајте поново касније.</value>
   </data>
@@ -6175,6 +6351,12 @@
   </data>
   <data name="formatterYearMax" xml:space="preserve">
     <value>d. M. yyyy.</value>
+  </data>
+  <data name="ForumReplyToMessagesInTopic" xml:space="preserve">
+    <value>Превуците налево преко поруке да одговорите</value>
+  </data>
+  <data name="ForumToggleDescription" xml:space="preserve">
+    <value>Групно ћаскање ће бити подељено на теме које праве администратори или корисници.</value>
   </data>
   <data name="Forward" xml:space="preserve">
     <value>Проследи</value>
@@ -6467,7 +6649,7 @@
     <value>Достигнуто је ограничење</value>
   </data>
   <data name="GigagroupConvertAlertConver" xml:space="preserve">
-    <value>ПРЕТВОРИ</value>
+    <value>Претвори</value>
   </data>
   <data name="GigagroupConvertAlertText" xml:space="preserve">
     <value>Обични чланови групе (који нису администратори) ће **трајно** изгубити право да шаљу поруке у групи.
@@ -6668,6 +6850,9 @@
   </data>
   <data name="HiddenSendersNameDescription" xml:space="preserve">
     <value>Имена пошиљалаца су уклоњена</value>
+  </data>
+  <data name="Hide" xml:space="preserve">
+    <value>Сакриј</value>
   </data>
   <data name="HideAboveTheList" xml:space="preserve">
     <value>Сакриј са листе ћаскања</value>
@@ -7149,10 +7334,10 @@
     <value>{0} шаље видео...</value>
   </data>
   <data name="IsTyping" xml:space="preserve">
-    <value>пише...</value>
+    <value>пише</value>
   </data>
   <data name="IsTypingGroup" xml:space="preserve">
-    <value>{0} пише...</value>
+    <value>{0} пише</value>
   </data>
   <data name="Italic" xml:space="preserve">
     <value>Курзив</value>
@@ -7497,6 +7682,9 @@
   <data name="LimitReachedPinDialogsPremium" xml:space="preserve">
     <value>Не можете да закачите више од {0} ћаскања на врх. Откачите нека која су тренутно закачена.</value>
   </data>
+  <data name="LimitReachedPinnedTopics" xml:space="preserve">
+    <value>Не можете закачити на врх више од {0} тема.</value>
+  </data>
   <data name="LimitReachedPublicLinks" xml:space="preserve">
     <value>Резервисали сте превише јавних линкова. Покушајте да опозовете линк неке старије групе или канала или се претплатите на **Telegram Premium** да бисте удвостручили ограничење на **{1}** јавних линкова.</value>
   </data>
@@ -7505,6 +7693,9 @@
   </data>
   <data name="LimitReachedPublicLinksPremium" xml:space="preserve">
     <value>Резервисали сте превише јавних линкова. Покушајте да опозовете линк неке старије групе или канала.</value>
+  </data>
+  <data name="LimitReachedReorderFolder" xml:space="preserve">
+    <value>Претплатите се на **Telegram Premium** да бисте преместили фасциклу „{0}”.</value>
   </data>
   <data name="LinkActionCopy" xml:space="preserve">
     <value>Копирај</value>
@@ -7796,6 +7987,12 @@
   <data name="MakeMyselfVisibleTitle" xml:space="preserve">
     <value>Приказати профил?</value>
   </data>
+  <data name="ManageAllFilesRational" xml:space="preserve">
+    <value>Дозволите **Telegram**-у да управља свим датотекама да би отворио прегледач датотека у апликацији</value>
+  </data>
+  <data name="ManageAllFilesRational2" xml:space="preserve">
+    <value>Telegram-у је потребна дозвола за управљање свим датотекама да би пребацио старе кеширане датотеке у посебно складиште</value>
+  </data>
   <data name="ManageChannel" xml:space="preserve">
     <value>Управљај каналом</value>
   </data>
@@ -7816,6 +8013,9 @@
   </data>
   <data name="ManageLinksInfoHelp" xml:space="preserve">
     <value>Можете направити додатне позивнице које имају ограничено време или број корисника.</value>
+  </data>
+  <data name="ManageTopicsPermission" xml:space="preserve">
+    <value>Управљање темама</value>
   </data>
   <data name="Map" xml:space="preserve">
     <value>Мапа</value>
@@ -8234,6 +8434,9 @@
   <data name="MicrophoneForVoiceMessagesScoIfConnected" xml:space="preserve">
     <value>Слушалице (ако су повезане)</value>
   </data>
+  <data name="MigrateOldFolder" xml:space="preserve">
+    <value>Пребаци стару фасциклу у посебно складиште</value>
+  </data>
   <data name="MigrateOldFolderButton" xml:space="preserve">
     <value>Премести датотеке сада</value>
   </data>
@@ -8515,6 +8718,9 @@
   <data name="NewThemeTitle" xml:space="preserve">
     <value>Нова тема</value>
   </data>
+  <data name="NewTopic" xml:space="preserve">
+    <value>Нова тема</value>
+  </data>
   <data name="Next" xml:space="preserve">
     <value>Даље</value>
   </data>
@@ -8624,6 +8830,9 @@
   </data>
   <data name="NoHandleAppInstalled" xml:space="preserve">
     <value>Немате апликацију која отвара „{0}” датотеку. Инсталирајте неку да бисте наставили.</value>
+  </data>
+  <data name="NoIconsFound" xml:space="preserve">
+    <value>Није пронађена ниједна икона</value>
   </data>
   <data name="NoLimit" xml:space="preserve">
     <value>∞</value>
@@ -9367,6 +9576,15 @@
   <data name="NotificationsUnmutedHint" xml:space="preserve">
     <value>Обавештења су укључена.</value>
   </data>
+  <data name="NotificationTopicExceptionsDesctription_few" xml:space="preserve">
+    <value>{0}, {0} изузетка</value>
+  </data>
+  <data name="NotificationTopicExceptionsDesctription_one" xml:space="preserve">
+    <value>{0}, {0} изузетак</value>
+  </data>
+  <data name="NotificationTopicExceptionsDesctription_other" xml:space="preserve">
+    <value>{0}, {0} изузетака</value>
+  </data>
   <data name="NotificationUnrecognizedDevice" xml:space="preserve">
     <value>{0},
 Открили смо пријаву на ваш налог са новог уређаја {1}
@@ -9383,6 +9601,13 @@ Telegram тим</value>
   </data>
   <data name="NotMounted" xml:space="preserve">
     <value>Меморија није постављена</value>
+  </data>
+  <data name="NoTopics" xml:space="preserve">
+    <value>Овде још нема тема</value>
+  </data>
+  <data name="NoTopicsDescription" xml:space="preserve">
+    <value>Отворите своју прву тему или додирните
+мени {0} да прикажете листу порука.</value>
   </data>
   <data name="NoUsernameFound" xml:space="preserve">
     <value>Корисничко име није пронађено.</value>
@@ -9446,6 +9671,9 @@ Telegram тим</value>
   </data>
   <data name="Open" xml:space="preserve">
     <value>Отвори</value>
+  </data>
+  <data name="OpenAllTopics" xml:space="preserve">
+    <value>Све теме</value>
   </data>
   <data name="OpenBackground" xml:space="preserve">
     <value>ПРИКАЖИ ПОЗАДИНУ</value>
@@ -10295,6 +10523,9 @@ Telegram тим</value>
   <data name="PauseAll" xml:space="preserve">
     <value>Паузирај све</value>
   </data>
+  <data name="PaymentAppNotFoundForDeeplink" xml:space="preserve">
+    <value>Није пронађена ниједна апликација која би обрадила овај дубоки линк.</value>
+  </data>
   <data name="PaymentBillingAddress" xml:space="preserve">
     <value>Адреса плаћања</value>
   </data>
@@ -10637,7 +10868,7 @@ Telegram тим</value>
     <value>**Telegram**-у је потребан приступ складишту да бисте могли да отпремите профилне фотографије или видео. Додирните Подешавања &gt; Дозволе и укључите **Датотеке и медији**.</value>
   </data>
   <data name="PermissionOpenSettings" xml:space="preserve">
-    <value>ПОДЕШАВАЊА</value>
+    <value>Подешавања</value>
   </data>
   <data name="PermissionStorage" xml:space="preserve">
     <value>Telegram-у је потребан приступ меморији да бисте могли слати и чувати фотографије, видео, музику и друге документе.</value>
@@ -10774,6 +11005,9 @@ Telegram тим</value>
   <data name="PinMessageAlertTitle" xml:space="preserve">
     <value>Закачи поруку</value>
   </data>
+  <data name="PinMessageInTopicAlert" xml:space="preserve">
+    <value>Закачити ову поруку у теми?</value>
+  </data>
   <data name="PinnedDialogsCount_few" xml:space="preserve">
     <value>{0} ћаскања су закачена</value>
   </data>
@@ -10832,7 +11066,7 @@ Telegram тим</value>
     <value>Унесите лозинку</value>
   </data>
   <data name="PleaseEnterCurrentPasswordTransfer" xml:space="preserve">
-    <value>Унесите лозинку да бисте завршили пренос.</value>
+    <value>Унесите своју лозинку да бисте завршили пренос.</value>
   </data>
   <data name="PleaseEnterFirstPassword" xml:space="preserve">
     <value>Унесите лозинку</value>
@@ -10936,6 +11170,9 @@ Telegram тим</value>
   <data name="PremiumPreviewAdvancedChatManagementDescription" xml:space="preserve">
     <value>Подразумевана фасцикла, архивирање и сакривање нових ћаскања од непознатих.</value>
   </data>
+  <data name="PremiumPreviewAdvancedChatManagementDescription2" xml:space="preserve">
+    <value>Претплатници на Telegram Premium могу подесити подразумевану фасциклу, аутоматски архивирати и сакрити нова ћаскања од свих који нису контакт.</value>
+  </data>
   <data name="PremiumPreviewAnimatedProfiles" xml:space="preserve">
     <value>Анимиране профилне слике</value>
   </data>
@@ -10959,6 +11196,9 @@ Telegram тим</value>
   </data>
   <data name="PremiumPreviewDownloadSpeedDescription" xml:space="preserve">
     <value>Нема више ограничења брзине преузимања медија и датотека.</value>
+  </data>
+  <data name="PremiumPreviewDownloadSpeedDescription2" xml:space="preserve">
+    <value>Претплатите се на Telegram Premium да бисте преузимали медије и датотеке највећом могућом брзином.</value>
   </data>
   <data name="PremiumPreviewEmoji" xml:space="preserve">
     <value>Анимирани емоџији</value>
@@ -11025,6 +11265,12 @@ Telegram тим</value>
   </data>
   <data name="PremiumPreviewVoiceToTextDescription" xml:space="preserve">
     <value>Могућност читања транскрипције било које долазне гласовне поруке.</value>
+  </data>
+  <data name="PremiumPreviewVoiceToTextDescription2" xml:space="preserve">
+    <value>Претплатите се на Telegram Premium да бисте могли претварати гласовне и видео поруке у текст.</value>
+  </data>
+  <data name="PremiumSpeedPromo" xml:space="preserve">
+    <value>Повећај брзину</value>
   </data>
   <data name="PremiumStickers" xml:space="preserve">
     <value>Премијум налепнице</value>
@@ -11653,6 +11899,9 @@ Telegram тим</value>
   <data name="Reacted_other" xml:space="preserve">
     <value>{0} реаговало</value>
   </data>
+  <data name="ReactionInDialog" xml:space="preserve">
+    <value>Реакција са {0} на вашу поруку</value>
+  </data>
   <data name="Reactions" xml:space="preserve">
     <value>Реакције</value>
   </data>
@@ -11876,7 +12125,7 @@ Telegram тим</value>
     <value>Опис</value>
   </data>
   <data name="ReportChatFakeAccount" xml:space="preserve">
-    <value>Лажан налог</value>
+    <value>Лажни налог</value>
   </data>
   <data name="ReportChatIllegalDrugs" xml:space="preserve">
     <value>Дроге</value>
@@ -12118,6 +12367,12 @@ Telegram тим</value>
   </data>
   <data name="ResetStatisticsAlertTitle" xml:space="preserve">
     <value>Ресетовање статистике</value>
+  </data>
+  <data name="RestartTopic" xml:space="preserve">
+    <value>Поново отвори тему</value>
+  </data>
+  <data name="RestartTopics" xml:space="preserve">
+    <value>Поново отвори теме</value>
   </data>
   <data name="Restore" xml:space="preserve">
     <value>Врати</value>
@@ -12431,6 +12686,9 @@ Telegram тим</value>
   <data name="SearchGifsTitle" xml:space="preserve">
     <value>Претражите GIF-ове</value>
   </data>
+  <data name="SearchIconsHint" xml:space="preserve">
+    <value>Претражите иконе</value>
+  </data>
   <data name="SearchImages" xml:space="preserve">
     <value>ПРОНАЂИ СЛИКЕ</value>
   </data>
@@ -12598,6 +12856,12 @@ Telegram тим</value>
   </data>
   <data name="SelectThisDay" xml:space="preserve">
     <value>Изабери овај дан</value>
+  </data>
+  <data name="SelectTopic" xml:space="preserve">
+    <value>Изаберите тему</value>
+  </data>
+  <data name="SelectTopicIconHint" xml:space="preserve">
+    <value>Изаберите икону теме</value>
   </data>
   <data name="Send" xml:space="preserve">
     <value>Пошаљи</value>
@@ -12940,6 +13204,9 @@ Telegram тим</value>
   <data name="SetUrlPlaceholder" xml:space="preserve">
     <value>Линк</value>
   </data>
+  <data name="SetUsernameHeader" xml:space="preserve">
+    <value>Подешавање корисничког имена</value>
+  </data>
   <data name="Shadows" xml:space="preserve">
     <value>Сенке</value>
   </data>
@@ -13124,6 +13391,9 @@ Telegram тим</value>
 
 Унесите тачан број укључујући позивни број земље.</value>
   </data>
+  <data name="Show" xml:space="preserve">
+    <value>Прикажи</value>
+  </data>
   <data name="ShowAllFiles" xml:space="preserve">
     <value>Прикажи све датотеке</value>
   </data>
@@ -13206,7 +13476,7 @@ Telegram тим</value>
     <value>Регистрација</value>
   </data>
   <data name="SinglePhotosHelp" xml:space="preserve">
-    <value>Прикажи медије као одвојене поруке.</value>
+    <value>Прикажи медије као одвојене поруке</value>
   </data>
   <data name="SlideToCancel" xml:space="preserve">
     <value>ПРЕВУЦИТЕ ДА ОТКАЖЕТЕ</value>
@@ -13383,6 +13653,9 @@ Telegram тим</value>
     <value>Спонзорисане поруке су тренутно у режиму тестирања. Када буду у потпуности покренуте и омогуће Telegram-у да покрије своје основне трошкове, почећемо да делимо приход од огласа са власницима јавних канала на којима се приказују спонзорисане поруке.
 
 Огласи на мрежи више не би требало да буду синоним за злоупотребу приватности корисника. Хајде да редефинишемо како технолошка компанија треба да функционише – заједно.</value>
+  </data>
+  <data name="SponsoredMessageRecommended" xml:space="preserve">
+    <value>препоручено</value>
   </data>
   <data name="Start" xml:space="preserve">
     <value>Започни</value>
@@ -13705,6 +13978,12 @@ Telegram тим</value>
   <data name="SwipeToGoNextFolder" xml:space="preserve">
     <value>Повуците још за следећу непрочитану фасциклу</value>
   </data>
+  <data name="SwipeToReplyHint" xml:space="preserve">
+    <value>Превуците да одговорите</value>
+  </data>
+  <data name="SwipeToReplyHintMessage" xml:space="preserve">
+    <value>Превуците налево преко поруке да одговорите.</value>
+  </data>
   <data name="SwipeUnmute" xml:space="preserve">
     <value>Укључи</value>
   </data>
@@ -13784,6 +14063,9 @@ Telegram тим</value>
   </data>
   <data name="TapToChangePhone" xml:space="preserve">
     <value>Додирните да бисте променили број телефона</value>
+  </data>
+  <data name="TapToCreateTopicHint" xml:space="preserve">
+    <value>Додирните да отворите тему</value>
   </data>
   <data name="TapToDownload" xml:space="preserve">
     <value>Додирните да бисте преузели</value>
@@ -14204,6 +14486,105 @@ Telegram Premium.</value>
   <data name="TopHoursChartTitle" xml:space="preserve">
     <value>Прегледи по сатима (UTC)</value>
   </data>
+  <data name="TopicChangeIconAndTitleTo" xml:space="preserve">
+    <value>{0} је променио/ла назив и икону теме у {1}</value>
+  </data>
+  <data name="TopicChangeIconAndTitleToInReply" xml:space="preserve">
+    <value>је променио/ла назив и икону теме у {0}</value>
+  </data>
+  <data name="TopicClosed" xml:space="preserve">
+    <value>Тема је затворена</value>
+  </data>
+  <data name="TopicClosed2" xml:space="preserve">
+    <value>{0} је затворио/ла тему</value>
+  </data>
+  <data name="TopicClosedByAdmin" xml:space="preserve">
+    <value>Тема је затворена</value>
+  </data>
+  <data name="TopicContainsEmojiPackSingle" xml:space="preserve">
+    <value>Ова тема садржи **{0}**</value>
+  </data>
+  <data name="TopicCreated" xml:space="preserve">
+    <value>Тема је отворена</value>
+  </data>
+  <data name="TopicCreator" xml:space="preserve">
+    <value>аутор теме</value>
+  </data>
+  <data name="TopicEmptyViewDescription" xml:space="preserve">
+    <value>Пошаљите поруку да бисте започели тему.</value>
+  </data>
+  <data name="TopicIconChanged" xml:space="preserve">
+    <value>Икона теме је промењена</value>
+  </data>
+  <data name="TopicIconChangedTo" xml:space="preserve">
+    <value>{0} је променио/ла икону теме у {1}</value>
+  </data>
+  <data name="TopicIconChangedToInReply" xml:space="preserve">
+    <value>је променио/ла икону теме у {0}</value>
+  </data>
+  <data name="TopicNotificationsExceptions_few" xml:space="preserve">
+    <value>**{0} теме** су наведене као изузетак.</value>
+  </data>
+  <data name="TopicNotificationsExceptions_one" xml:space="preserve">
+    <value>**{0} тема** је наведена као изузетак.</value>
+  </data>
+  <data name="TopicNotificationsExceptions_other" xml:space="preserve">
+    <value>**{0} тема** је наведено као изузетак.</value>
+  </data>
+  <data name="TopicProfileStatus" xml:space="preserve">
+    <value> {0}</value>
+  </data>
+  <data name="TopicRenamed" xml:space="preserve">
+    <value>Тема је преименована</value>
+  </data>
+  <data name="TopicRenamedTo" xml:space="preserve">
+    <value>{0} је преименовао/ла тему у {1}</value>
+  </data>
+  <data name="TopicRenamedToInReply" xml:space="preserve">
+    <value>је преименовао/ла тему у {0}</value>
+  </data>
+  <data name="TopicRestarted" xml:space="preserve">
+    <value>Тема је поново отворена</value>
+  </data>
+  <data name="TopicRestarted2" xml:space="preserve">
+    <value>{0} је поново отворио/ла тему</value>
+  </data>
+  <data name="Topics" xml:space="preserve">
+    <value>Теме</value>
+  </data>
+  <data name="TopicsDeleted_few" xml:space="preserve">
+    <value>Теме су избрисане</value>
+  </data>
+  <data name="TopicsDeleted_one" xml:space="preserve">
+    <value>Тема је избрисана.</value>
+  </data>
+  <data name="TopicsDeleted_other" xml:space="preserve">
+    <value>Теме су избрисане</value>
+  </data>
+  <data name="TopicViewAsMessages" xml:space="preserve">
+    <value>Прикажи као поруке</value>
+  </data>
+  <data name="TopicViewAsTopics" xml:space="preserve">
+    <value>Прикажи као теме</value>
+  </data>
+  <data name="TopicWasClosedAction" xml:space="preserve">
+    <value>{0} је затворио/ла {1}</value>
+  </data>
+  <data name="TopicWasCreatedAction" xml:space="preserve">
+    <value>Тема {0} је отворена</value>
+  </data>
+  <data name="TopicWasIconChangedToAction" xml:space="preserve">
+    <value>{0} је променио/ла икону теме у {1}</value>
+  </data>
+  <data name="TopicWasRenamedToAction" xml:space="preserve">
+    <value>{0} је преименовао/ла тему у {1}</value>
+  </data>
+  <data name="TopicWasRenamedToAction2" xml:space="preserve">
+    <value>{0} је променио/ла назив и икону теме у {1}</value>
+  </data>
+  <data name="TopicWasReopenedAction" xml:space="preserve">
+    <value>{0} је поново отворио/ла {1}</value>
+  </data>
   <data name="TopInviters" xml:space="preserve">
     <value>Најактивнији позиваоци</value>
   </data>
@@ -14333,7 +14714,7 @@ Telegram Premium.</value>
     <value>Закажи поруку</value>
   </data>
   <data name="Typing" xml:space="preserve">
-    <value>пише...</value>
+    <value>пише</value>
   </data>
   <data name="UnableForward" xml:space="preserve">
     <value>Прослеђивање није могуће</value>
@@ -14406,6 +14787,9 @@ Telegram Premium.</value>
   </data>
   <data name="UnlockPremiumStickersDescription" xml:space="preserve">
     <value>Откључајте ову и многе друге налепнице претплатом на Telegram Premium.</value>
+  </data>
+  <data name="UnlockPremiumTranscriptionHint" xml:space="preserve">
+    <value>Претплатите се на **Telegram Premium** да бисте претворили глас у текст.</value>
   </data>
   <data name="Unmute" xml:space="preserve">
     <value>Укључи</value>
@@ -14605,6 +14989,24 @@ Telegram Premium.</value>
   <data name="Username" xml:space="preserve">
     <value>Корисничко име</value>
   </data>
+  <data name="UsernameActivateErrorMessage" xml:space="preserve">
+    <value>Већ имате превише активних јавних линкова. Прво сакријте неки од својих активних јавних линкова.</value>
+  </data>
+  <data name="UsernameActivateErrorTitle" xml:space="preserve">
+    <value>Превише активних линкова</value>
+  </data>
+  <data name="UsernameActivateLink" xml:space="preserve">
+    <value>Активирај линк</value>
+  </data>
+  <data name="UsernameActivateLinkChannelMessage" xml:space="preserve">
+    <value>Желите ли да прикажете овај линк на страни „Подаци о каналу”?</value>
+  </data>
+  <data name="UsernameActivateLinkProfileMessage" xml:space="preserve">
+    <value>Желите ли да прикажете овај линк на својој профилној страни?</value>
+  </data>
+  <data name="UsernameAlso" xml:space="preserve">
+    <value>као и {0}</value>
+  </data>
   <data name="UsernameAvailable" xml:space="preserve">
     <value>{0} је доступно.</value>
   </data>
@@ -14613,6 +15015,15 @@ Telegram Premium.</value>
   </data>
   <data name="UsernameCopied" xml:space="preserve">
     <value>Корисничко име је копирано.</value>
+  </data>
+  <data name="UsernameDeactivateLink" xml:space="preserve">
+    <value>Деактивирај линк</value>
+  </data>
+  <data name="UsernameDeactivateLinkChannelMessage" xml:space="preserve">
+    <value>Желите ли да сакријете овај линк са странице „Подаци о каналу”?</value>
+  </data>
+  <data name="UsernameDeactivateLinkProfileMessage" xml:space="preserve">
+    <value>Желите ли да сакријете овај линк са своје профилне стране?</value>
   </data>
   <data name="UsernameEmpty" xml:space="preserve">
     <value>Нема</value>
@@ -14629,6 +15040,10 @@ Telegram Premium.</value>
   <data name="UsernameInUse" xml:space="preserve">
     <value>Ово корисничко име је већ заузето.</value>
   </data>
+  <data name="UsernameInUsePurchase" xml:space="preserve">
+    <value>Овај линк је већ заузет.
+Међутим, тренутно је доступан за куповину. **Сазнај више...**</value>
+  </data>
   <data name="UsernameInvalid" xml:space="preserve">
     <value>Ово корисничко име није важеће.</value>
   </data>
@@ -14638,11 +15053,48 @@ Telegram Premium.</value>
   <data name="UsernameInvalidShort" xml:space="preserve">
     <value>Корисничко име мора имати најмање 5 знакова.</value>
   </data>
+  <data name="UsernameInvalidShortPurchase" xml:space="preserve">
+    <value>Основно корисничко име мора имати најмање 5 знакова.
+Међутим, кратка колекционарска корисничка имена, укључујући и ово, су доступна за куповину. **Сазнај више...**</value>
+  </data>
   <data name="UsernameInvalidStartNumber" xml:space="preserve">
     <value>Корисничка имена не могу почињати бројем.</value>
   </data>
+  <data name="UsernameLinkActive" xml:space="preserve">
+    <value>активан</value>
+  </data>
+  <data name="UsernameLinkEditable" xml:space="preserve">
+    <value>уреди</value>
+  </data>
+  <data name="UsernameLinkInactive" xml:space="preserve">
+    <value>неактиван</value>
+  </data>
+  <data name="UsernameLinkPlaceholder" xml:space="preserve">
+    <value>корисничко име</value>
+  </data>
   <data name="UsernamePlaceholder" xml:space="preserve">
     <value>Ваше корисничко име</value>
+  </data>
+  <data name="UsernameProfileLinkActive" xml:space="preserve">
+    <value>активан</value>
+  </data>
+  <data name="UsernameProfileLinkEditable" xml:space="preserve">
+    <value>уреди</value>
+  </data>
+  <data name="UsernameProfileLinkInactive" xml:space="preserve">
+    <value>неактиван</value>
+  </data>
+  <data name="UsernamesChannelHeader" xml:space="preserve">
+    <value>Редослед линкова</value>
+  </data>
+  <data name="UsernamesChannelHelp" xml:space="preserve">
+    <value>Превуците и отпустите линкове да бисте променили њихов редослед на страни „Подаци о каналу”.</value>
+  </data>
+  <data name="UsernamesProfileHeader" xml:space="preserve">
+    <value>Редослед корисничких имена</value>
+  </data>
+  <data name="UsernamesProfileHelp" xml:space="preserve">
+    <value>Превуците и отпустите линкове да бисте променили њихов редослед на својој профилној страни.</value>
   </data>
   <data name="UserRemovedBy" xml:space="preserve">
     <value>Уклонио/ла {0}</value>
@@ -14907,6 +15359,9 @@ Telegram Premium.</value>
   </data>
   <data name="ViewingMembers" xml:space="preserve">
     <value>Чланови који гледају</value>
+  </data>
+  <data name="ViewInTopic" xml:space="preserve">
+    <value>Прикажи у теми</value>
   </data>
   <data name="ViewMessage" xml:space="preserve">
     <value>Отвори поруку</value>

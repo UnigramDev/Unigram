@@ -373,6 +373,9 @@
   <data name="AccDescrPremium" xml:space="preserve">
     <value>Premium-аккаунт</value>
   </data>
+  <data name="AccDescrPremiumSpeed" xml:space="preserve">
+    <value>Ускорить загрузку</value>
+  </data>
   <data name="AccDescrPrevious" xml:space="preserve">
     <value>Назад</value>
   </data>
@@ -1057,6 +1060,30 @@
   <data name="AddedBy" xml:space="preserve">
     <value>принят(а) {0} {1}</value>
   </data>
+  <data name="AddedMembersToGroup_few" xml:space="preserve">
+    <value>**{0} участника** приняты в группу</value>
+  </data>
+  <data name="AddedMembersToGroup_many" xml:space="preserve">
+    <value>**{0} участников** приняты в группу</value>
+  </data>
+  <data name="AddedMembersToGroup_one" xml:space="preserve">
+    <value>**{0} участник** принят в группу</value>
+  </data>
+  <data name="AddedMembersToGroup_other" xml:space="preserve">
+    <value>**{0} участника** принято в группу</value>
+  </data>
+  <data name="AddedSubscribersToChannel_few" xml:space="preserve">
+    <value>**{0} подписчика** добавлены в канал</value>
+  </data>
+  <data name="AddedSubscribersToChannel_many" xml:space="preserve">
+    <value>**{0} подписчиков** добавлены в канал</value>
+  </data>
+  <data name="AddedSubscribersToChannel_one" xml:space="preserve">
+    <value>**{0} подписчик** добавлен в канал</value>
+  </data>
+  <data name="AddedSubscribersToChannel_other" xml:space="preserve">
+    <value>**{0} подписчика** добавлено в канал</value>
+  </data>
   <data name="AddedToFavorites" xml:space="preserve">
     <value>Стикер добавлен в избранные.</value>
   </data>
@@ -1213,6 +1240,9 @@
   <data name="Agree" xml:space="preserve">
     <value>Принять</value>
   </data>
+  <data name="Album" xml:space="preserve">
+    <value>Альбом</value>
+  </data>
   <data name="Alert" xml:space="preserve">
     <value>Показывать уведомления</value>
   </data>
@@ -1221,6 +1251,9 @@
   </data>
   <data name="AllAccounts" xml:space="preserve">
     <value>Всех аккаунтов</value>
+  </data>
+  <data name="AllChats" xml:space="preserve">
+    <value>Все чаты</value>
   </data>
   <data name="AllMedia" xml:space="preserve">
     <value>Все медиа</value>
@@ -1303,11 +1336,20 @@
   <data name="AllWebSessionsTerminated" xml:space="preserve">
     <value>Все сайты отключены.</value>
   </data>
+  <data name="AlmostDone" xml:space="preserve">
+    <value>Почти готово</value>
+  </data>
   <data name="ALongTimeAgo" xml:space="preserve">
     <value>был(а) давно</value>
   </data>
   <data name="AlternativeOptions" xml:space="preserve">
     <value>Другие возможности</value>
+  </data>
+  <data name="AltNavigationDisable" xml:space="preserve">
+    <value>Откл. альтернативную навигацию</value>
+  </data>
+  <data name="AltNavigationEnable" xml:space="preserve">
+    <value>Вкл. альтернативную навигацию</value>
   </data>
   <data name="AlwaysAllow" xml:space="preserve">
     <value>Всегда разрешать</value>
@@ -1427,7 +1469,7 @@
     <value>Применить локализацию</value>
   </data>
   <data name="ApplyTheme" xml:space="preserve">
-    <value>ПРИМЕНИТЬ</value>
+    <value>Применить</value>
   </data>
   <data name="ApplyThemeFile" xml:space="preserve">
     <value>Применить файл темы</value>
@@ -1673,7 +1715,7 @@
     <value>Вы точно хотите удалить секретный чат с **{0}**?</value>
   </data>
   <data name="AreYouSureDeleteThisChatWithUser" xml:space="preserve">
-    <value>Вы точно хотите удалить чат с **{0}**?</value>
+    <value>Удалить чат с **{0}** без возможности восстановления?</value>
   </data>
   <data name="AreYouSureDeleteVideo" xml:space="preserve">
     <value>Вы точно хотите удалить это видео?</value>
@@ -2473,16 +2515,16 @@
     <value>Открыть страницу?</value>
   </data>
   <data name="BotOwnershipTransfer" xml:space="preserve">
-    <value>Передача прав на бота</value>
+    <value>Проверка безопасности</value>
   </data>
   <data name="BotOwnershipTransferAlertText" xml:space="preserve">
-    <value>Вы сможете передать права на бота, если:</value>
+    <value>Вы сможете подтвердить это действие, если:</value>
   </data>
   <data name="BotOwnershipTransferChangeOwner" xml:space="preserve">
-    <value>Сменить владельца</value>
+    <value>Подтвердить</value>
   </data>
   <data name="BotOwnershipTransferReadyAlertText" xml:space="preserve">
-    <value>В этом случае **права** на бота будут полностью переданы выбранному пользователю.</value>
+    <value>Чтобы подтвердить это действие, введите пароль от двухэтапной аутентификации.</value>
   </data>
   <data name="BotPermissionGameAlert" xml:space="preserve">
     <value>Разрешить боту {0} передавать Ваше имя и id в Telegram (не номер телефона) сайтам, которые Вы откроете с его помощью?</value>
@@ -3027,6 +3069,18 @@
   <data name="ChannelCantSendMessage" xml:space="preserve">
     <value>К сожалению, Вы не можете отправлять сообщения в этот канал.</value>
   </data>
+  <data name="ChannelCaptionLimitPremiumPromo_few" xml:space="preserve">
+    <value>Вы можете укоротить подпись или увеличить максимальную длину до **{0}** знаков, оформив подписку *Telegram Premium*.</value>
+  </data>
+  <data name="ChannelCaptionLimitPremiumPromo_many" xml:space="preserve">
+    <value>Вы можете укоротить подпись или увеличить максимальную длину до **{0}** знаков, оформив подписку *Telegram Premium*.</value>
+  </data>
+  <data name="ChannelCaptionLimitPremiumPromo_one" xml:space="preserve">
+    <value>Вы можете укоротить подпись или увеличить максимальную длину до **{0}** знака, оформив подписку *Telegram Premium*.</value>
+  </data>
+  <data name="ChannelCaptionLimitPremiumPromo_other" xml:space="preserve">
+    <value>Вы можете укоротить подпись или увеличить максимальную длину до **{0}** знака, оформив подписку *Telegram Premium*.</value>
+  </data>
   <data name="ChannelContacts" xml:space="preserve">
     <value>Контакты в этом канале</value>
   </data>
@@ -3290,6 +3344,24 @@
   <data name="ChannelTooMuchTitle" xml:space="preserve">
     <value>Достигнут лимит</value>
   </data>
+  <data name="ChannelTopics" xml:space="preserve">
+    <value>Темы</value>
+  </data>
+  <data name="ChannelTopicsDiscussionForbidden" xml:space="preserve">
+    <value>Темы пока недоступны в группах, привязанных к каналам.</value>
+  </data>
+  <data name="ChannelTopicsForbidden_few" xml:space="preserve">
+    <value>Темы можно включить, только если в группе больше **{0} участников**.</value>
+  </data>
+  <data name="ChannelTopicsForbidden_many" xml:space="preserve">
+    <value>Темы можно включить, только если в группе больше **{0} участников**.</value>
+  </data>
+  <data name="ChannelTopicsForbidden_one" xml:space="preserve">
+    <value>Темы можно включить, только если в группе больше **{0} участника**.</value>
+  </data>
+  <data name="ChannelTopicsForbidden_other" xml:space="preserve">
+    <value>Темы можно включить, только если в группе больше **{0} участника**.</value>
+  </data>
   <data name="ChannelType" xml:space="preserve">
     <value>Тип канала</value>
   </data>
@@ -3404,6 +3476,9 @@
   </data>
   <data name="ChatHistoryHiddenInfo2" xml:space="preserve">
     <value>Новые участники будут видеть не больше 100 последних сообщений.</value>
+  </data>
+  <data name="ChatHistoryShort" xml:space="preserve">
+    <value>История чата</value>
   </data>
   <data name="ChatHistoryVisible" xml:space="preserve">
     <value>Видна</value>
@@ -3867,6 +3942,12 @@
   <data name="CloseEditor" xml:space="preserve">
     <value>ЗАКРЫТЬ РЕДАКТОР</value>
   </data>
+  <data name="CloseTopic" xml:space="preserve">
+    <value>Закрыть тему</value>
+  </data>
+  <data name="CloseTopics" xml:space="preserve">
+    <value>Закрытие тем</value>
+  </data>
   <data name="CloseTranslation" xml:space="preserve">
     <value>Закрыть перевод</value>
   </data>
@@ -4074,10 +4155,10 @@
     <value>**Telegram** требуется доступ к Вашим контактам, чтобы Вы могли оставаться на связи с друзьями с любого устройства. Актуальная информация о Ваших контактах будет храниться зашифрованной в облаке Telegram.</value>
   </data>
   <data name="ContactsPermissionAlertContinue" xml:space="preserve">
-    <value>ПРОДОЛЖИТЬ</value>
+    <value>Продолжить</value>
   </data>
   <data name="ContactsPermissionAlertNotNow" xml:space="preserve">
-    <value>НЕ СЕЙЧАС</value>
+    <value>Не сейчас</value>
   </data>
   <data name="ContactSupport" xml:space="preserve">
     <value>Обратиться в поддержку</value>
@@ -4221,7 +4302,16 @@
     <value>Создание пароля</value>
   </data>
   <data name="CreateTheme" xml:space="preserve">
-    <value>СОЗДАТЬ ТЕМУ</value>
+    <value>Создать тему</value>
+  </data>
+  <data name="CreateTopic" xml:space="preserve">
+    <value>Создать тему</value>
+  </data>
+  <data name="CreateTopicsPermission" xml:space="preserve">
+    <value>Создание тем</value>
+  </data>
+  <data name="CreateTopicTitle" xml:space="preserve">
+    <value>Придумайте название и выберите значок темы</value>
   </data>
   <data name="Crop" xml:space="preserve">
     <value>КАДРИРОВАТЬ</value>
@@ -4340,8 +4430,17 @@
   <data name="Deactivate" xml:space="preserve">
     <value>Удалить сейчас</value>
   </data>
+  <data name="DebugAltNavigationToggleControls" xml:space="preserve">
+    <value>Настройки ограничения навигации</value>
+  </data>
+  <data name="DebugClearLocalDatabaseSuccess" xml:space="preserve">
+    <value>Локальная база данных очищена.</value>
+  </data>
   <data name="DebugClearLogs" xml:space="preserve">
     <value>Очистить лог</value>
+  </data>
+  <data name="DebugClearSendMessageAsPeers" xml:space="preserve">
+    <value>Очистить «Написать от имени...»</value>
   </data>
   <data name="DebugDrawSnowInChat" xml:space="preserve">
     <value>Снег в чате</value>
@@ -4365,7 +4464,7 @@
     <value>Выключить встроенную камеру</value>
   </data>
   <data name="DebugMenuDisableForceRtmpStreamFlag" xml:space="preserve">
-    <value>Необязательное использование RTMP для трансляций</value>
+    <value>Трансляции не всегда с RTMP</value>
   </data>
   <data name="DebugMenuDisableLogs" xml:space="preserve">
     <value>Выключить логирование</value>
@@ -4383,7 +4482,7 @@
     <value>Включить встроенную камеру</value>
   </data>
   <data name="DebugMenuEnableForceRtmpStreamFlag" xml:space="preserve">
-    <value>Обязательное использование RTMP для трансляций</value>
+    <value>Трансляции всегда с RTMP</value>
   </data>
   <data name="DebugMenuEnableLogs" xml:space="preserve">
     <value>Включить логирование</value>
@@ -4628,6 +4727,12 @@
   <data name="DeleteSelectedCallsText" xml:space="preserve">
     <value>Удалить выбранные звонки из списка недавних?</value>
   </data>
+  <data name="DeleteSelectedTopic" xml:space="preserve">
+    <value>Вы точно хотите удалить {0}?</value>
+  </data>
+  <data name="DeleteSelectedTopics" xml:space="preserve">
+    <value>Вы точно хотите удалить эти темы?</value>
+  </data>
   <data name="DeleteSingleMessagesTitle" xml:space="preserve">
     <value>Удалить сообщение</value>
   </data>
@@ -4685,6 +4790,18 @@
   <data name="DeleteTonesMessage_other" xml:space="preserve">
     <value>Удалить **{0} звука для уведомлений**?</value>
   </data>
+  <data name="DeleteTopics_few" xml:space="preserve">
+    <value>Удалить темы</value>
+  </data>
+  <data name="DeleteTopics_many" xml:space="preserve">
+    <value>Удалить темы</value>
+  </data>
+  <data name="DeleteTopics_one" xml:space="preserve">
+    <value>Удалить тему</value>
+  </data>
+  <data name="DeleteTopics_other" xml:space="preserve">
+    <value>Удалить темы</value>
+  </data>
   <data name="Deletions_few" xml:space="preserve">
     <value>{0} удаления</value>
   </data>
@@ -4714,6 +4831,9 @@
   </data>
   <data name="DeviceStorage" xml:space="preserve">
     <value>Память устройства</value>
+  </data>
+  <data name="DialogNotAvailable" xml:space="preserve">
+    <value>Недоступен</value>
   </data>
   <data name="DialogPin" xml:space="preserve">
     <value>Закрепить</value>
@@ -4785,6 +4905,9 @@
   <data name="DisappearingVideo" xml:space="preserve">
     <value>Исчезающее видео</value>
   </data>
+  <data name="Discard" xml:space="preserve">
+    <value>Прервать</value>
+  </data>
   <data name="DiscardChanges" xml:space="preserve">
     <value>Отменить изменения?</value>
   </data>
@@ -4793,6 +4916,14 @@
   </data>
   <data name="DiscardSelectionAlertTitle" xml:space="preserve">
     <value>Сбросить выбор?</value>
+  </data>
+  <data name="DiscardTopic" xml:space="preserve">
+    <value>Прервать создание темы</value>
+  </data>
+  <data name="DiscardTopicMessage" xml:space="preserve">
+    <value>Тема будет создана, только если Вы опубликуете в ней сообщение.
+
+Прервать создание темы?</value>
   </data>
   <data name="DiscardVideoMessageDescription" xml:space="preserve">
     <value>Вы точно хотите прекратить запись и сбросить записанное сообщение?</value>
@@ -4845,8 +4976,11 @@
   <data name="DiscussionInfo" xml:space="preserve">
     <value>Добавить группу для комментариев.</value>
   </data>
+  <data name="DiscussionInfoShort" xml:space="preserve">
+    <value>Добавить</value>
+  </data>
   <data name="DiscussionLinkGroup" xml:space="preserve">
-    <value>ПРИВЯЗАТЬ ГРУППУ</value>
+    <value>Привязать группу</value>
   </data>
   <data name="DiscussionLinkGroupAlertHistory" xml:space="preserve">
     <value>Новые участники группы будут видеть всю историю чата.</value>
@@ -5121,6 +5255,9 @@
     <value>Изменить цвета</value>
   </data>
   <data name="EditThemeTitle" xml:space="preserve">
+    <value>Изменить тему</value>
+  </data>
+  <data name="EditTopic" xml:space="preserve">
     <value>Изменить тему</value>
   </data>
   <data name="EditWidget" xml:space="preserve">
@@ -5427,6 +5564,9 @@
 
 Выберите название для темы:</value>
   </data>
+  <data name="EnterTopicName" xml:space="preserve">
+    <value>Что Вы хотите обсудить?</value>
+  </data>
   <data name="EnterYourPasscode" xml:space="preserve">
     <value>Введите код-пароль</value>
   </data>
@@ -5475,6 +5615,9 @@
   <data name="EventLog" xml:space="preserve">
     <value>Недавние действия</value>
   </data>
+  <data name="EventLogActivatedUsername" xml:space="preserve">
+    <value>un1 активировал(а) публичную ссылку {0}</value>
+  </data>
   <data name="EventLogAdded" xml:space="preserve">
     <value>un1 добавил(а) un2</value>
   </data>
@@ -5505,6 +5648,9 @@
   <data name="EventLogChangedStickersSet" xml:space="preserve">
     <value>un1 изменил(а) набор стикеров группы</value>
   </data>
+  <data name="EventLogChangeUsernames" xml:space="preserve">
+    <value>un1 изменил(а) публичную ссылку группы {0} на {1}</value>
+  </data>
   <data name="EventLogChannelJoined" xml:space="preserve">
     <value>un1 теперь подписан(а) на канал</value>
   </data>
@@ -5514,11 +5660,20 @@
   <data name="EventLogChannelUnrestricted" xml:space="preserve">
     <value>разблокировал(а) {0}</value>
   </data>
+  <data name="EventLogCreateTopic" xml:space="preserve">
+    <value>un1 создал(а) тему un2</value>
+  </data>
+  <data name="EventLogDeactivatedUsername" xml:space="preserve">
+    <value>un1 деактивировал(а) публичную ссылку {0}</value>
+  </data>
   <data name="EventLogDefaultPermissions" xml:space="preserve">
     <value>изменены разрешения по умолчанию</value>
   </data>
   <data name="EventLogDeletedMessages" xml:space="preserve">
     <value>un1 удалил(а) сообщение:</value>
+  </data>
+  <data name="EventLogDeleteTopic" xml:space="preserve">
+    <value>un1 удалил(а) тему un2</value>
   </data>
   <data name="EventLogEditedCaption" xml:space="preserve">
     <value>un1 отредактировал(а) подпись:</value>
@@ -5573,6 +5728,9 @@
   </data>
   <data name="EventLogEditedYouGroupTitle" xml:space="preserve">
     <value>Вы переименовали группу в «{0}»</value>
+  </data>
+  <data name="EventLogEditTopic" xml:space="preserve">
+    <value>un1 переименовал(а) тему un2 в un3</value>
   </data>
   <data name="EventLogEmpty" xml:space="preserve">
     <value>**Событий нет**
@@ -5673,6 +5831,9 @@
   </data>
   <data name="EventLogPinnedMessages" xml:space="preserve">
     <value>un1 закрепил(а) сообщение:</value>
+  </data>
+  <data name="EventLogPinTopic" xml:space="preserve">
+    <value>un1 закрепил(а) тему un2</value>
   </data>
   <data name="EventLogPreviousChannelLink" xml:space="preserve">
     <value>Прежняя ссылка канала</value>
@@ -5823,6 +5984,12 @@
   <data name="EventLogStopQuiz" xml:space="preserve">
     <value>un1 остановил(а) опрос:</value>
   </data>
+  <data name="EventLogSwitchToForum" xml:space="preserve">
+    <value>un1 включил(а) темы</value>
+  </data>
+  <data name="EventLogSwitchToGroup" xml:space="preserve">
+    <value>un1 отключил(а) темы</value>
+  </data>
   <data name="EventLogToggledInvitesHistoryOff" xml:space="preserve">
     <value>un1 скрыл(а) историю группы от новых участников</value>
   </data>
@@ -5849,6 +6016,9 @@
   </data>
   <data name="EventLogUnpinnedMessages" xml:space="preserve">
     <value>un1 открепил(а) сообщение</value>
+  </data>
+  <data name="EventLogUnpinTopic" xml:space="preserve">
+    <value>un1 открепил(а) тему un2</value>
   </data>
   <data name="EventLogVoiceChatAllowedToSpeak" xml:space="preserve">
     <value>un1 разрешил(а) микрофон для новых участников</value>
@@ -6243,6 +6413,12 @@
   <data name="FirstNameSmall" xml:space="preserve">
     <value>Имя</value>
   </data>
+  <data name="FloatingDebugDisable" xml:space="preserve">
+    <value>Откл. плавающее меню отладки</value>
+  </data>
+  <data name="FloatingDebugEnable" xml:space="preserve">
+    <value>Вкл. плавающее меню отладки</value>
+  </data>
   <data name="FloodWait" xml:space="preserve">
     <value>Слишком много попыток. Повторите позже.</value>
   </data>
@@ -6388,6 +6564,12 @@
   </data>
   <data name="formatterYearMax" xml:space="preserve">
     <value>dd.MM.yyyy</value>
+  </data>
+  <data name="ForumReplyToMessagesInTopic" xml:space="preserve">
+    <value>Смахните влево, чтобы ответить на сообщение</value>
+  </data>
+  <data name="ForumToggleDescription" xml:space="preserve">
+    <value>Чат группы будет разделён на темы, созданные администраторами или пользователями.</value>
   </data>
   <data name="Forward" xml:space="preserve">
     <value>Переслать</value>
@@ -6927,6 +7109,9 @@
   </data>
   <data name="HiddenSendersNameDescription" xml:space="preserve">
     <value>Имена отправителей скрыты</value>
+  </data>
+  <data name="Hide" xml:space="preserve">
+    <value>Скрыть</value>
   </data>
   <data name="HideAboveTheList" xml:space="preserve">
     <value>Скрыть из списка чатов</value>
@@ -7793,6 +7978,9 @@
   <data name="LimitReachedPinDialogsPremium" xml:space="preserve">
     <value>К сожалению, закрепить можно не больше **{0}** чатов. Сначала открепите ненужные.</value>
   </data>
+  <data name="LimitReachedPinnedTopics" xml:space="preserve">
+    <value>У Вас закреплено максимальное число тем: {0}.</value>
+  </data>
   <data name="LimitReachedPublicLinks" xml:space="preserve">
     <value>Вы используете слишком много публичных ссылок. Вы можете сбросить одну из уже занятых ссылок на свои группы или каналы или увеличить максимальное количество до **{1}**, оформив подписку **Telegram Premium**.</value>
   </data>
@@ -7801,6 +7989,9 @@
   </data>
   <data name="LimitReachedPublicLinksPremium" xml:space="preserve">
     <value>Вы используете слишком много публичных ссылок. Сперва сбросьте одну из уже занятых ссылок на свои группы или каналы.</value>
+  </data>
+  <data name="LimitReachedReorderFolder" xml:space="preserve">
+    <value>Переместить папку «{0}» можно только с подпиской **Telegram Premium**.</value>
   </data>
   <data name="LinkActionCopy" xml:space="preserve">
     <value>Скопировать</value>
@@ -8095,6 +8286,12 @@
   <data name="MakeMyselfVisibleTitle" xml:space="preserve">
     <value>Показывать профиль</value>
   </data>
+  <data name="ManageAllFilesRational" xml:space="preserve">
+    <value>Чтобы использовать встроенный файловый менеджер, пожалуйста, разрешите **Telegram** доступ к управлению всеми файлами</value>
+  </data>
+  <data name="ManageAllFilesRational2" xml:space="preserve">
+    <value>Чтобы перенести старые файлы кэша в изолированное хранилище, Telegram требуется разрешение на управление всеми файлами.</value>
+  </data>
   <data name="ManageChannel" xml:space="preserve">
     <value>Управление каналом</value>
   </data>
@@ -8115,6 +8312,9 @@
   </data>
   <data name="ManageLinksInfoHelp" xml:space="preserve">
     <value>Вы можете создать дополнительные ссылки и задать для них срок действия или ограничение на число пользователей.</value>
+  </data>
+  <data name="ManageTopicsPermission" xml:space="preserve">
+    <value>Управление темами</value>
   </data>
   <data name="Map" xml:space="preserve">
     <value>Карта</value>
@@ -8571,6 +8771,24 @@
   <data name="Mi" xml:space="preserve">
     <value>мл</value>
   </data>
+  <data name="MicrophoneForVoiceMessages" xml:space="preserve">
+    <value>Микрофон</value>
+  </data>
+  <data name="MicrophoneForVoiceMessagesBuiltIn" xml:space="preserve">
+    <value>Встроенный</value>
+  </data>
+  <data name="MicrophoneForVoiceMessagesSco" xml:space="preserve">
+    <value>Гарнитура</value>
+  </data>
+  <data name="MicrophoneForVoiceMessagesScoHint" xml:space="preserve">
+    <value>Использование гарнитуры для записи голосовых сообщений может уменьшить фоновые шумы, но качество аудио будет немного ниже.</value>
+  </data>
+  <data name="MicrophoneForVoiceMessagesScoIfConnected" xml:space="preserve">
+    <value>Гарнитура (если подключена)</value>
+  </data>
+  <data name="MigrateOldFolder" xml:space="preserve">
+    <value>Перенос старой папки в изолированное хранилище</value>
+  </data>
   <data name="MigrateOldFolderButton" xml:space="preserve">
     <value>Перенести файлы</value>
   </data>
@@ -8870,6 +9088,9 @@
   <data name="NewThemeTitle" xml:space="preserve">
     <value>Новая тема</value>
   </data>
+  <data name="NewTopic" xml:space="preserve">
+    <value>Новая тема</value>
+  </data>
   <data name="Next" xml:space="preserve">
     <value>Далее</value>
   </data>
@@ -8980,6 +9201,9 @@
   <data name="NoHandleAppInstalled" xml:space="preserve">
     <value>У вас нет приложения для работы с файлами типа «{0}», пожалуйста, установите его, чтобы продолжить</value>
   </data>
+  <data name="NoIconsFound" xml:space="preserve">
+    <value>Значки не найдены</value>
+  </data>
   <data name="NoLimit" xml:space="preserve">
     <value>∞</value>
   </data>
@@ -9052,6 +9276,9 @@
   </data>
   <data name="NoReactions" xml:space="preserve">
     <value>Без реакций</value>
+  </data>
+  <data name="NoReactionsFound" xml:space="preserve">
+    <value>Реакции не найдены</value>
   </data>
   <data name="NoRecent" xml:space="preserve">
     <value>Нет недавних</value>
@@ -9723,6 +9950,18 @@
   <data name="NotificationsUnmutedHint" xml:space="preserve">
     <value>Уведомления включены.</value>
   </data>
+  <data name="NotificationTopicExceptionsDesctription_few" xml:space="preserve">
+    <value>{0}, {0} исключения</value>
+  </data>
+  <data name="NotificationTopicExceptionsDesctription_many" xml:space="preserve">
+    <value>{0}, {0} исключений</value>
+  </data>
+  <data name="NotificationTopicExceptionsDesctription_one" xml:space="preserve">
+    <value>{0}, {0} исключение</value>
+  </data>
+  <data name="NotificationTopicExceptionsDesctription_other" xml:space="preserve">
+    <value>{0}, {0} исключения</value>
+  </data>
   <data name="NotificationUnrecognizedDevice" xml:space="preserve">
     <value>{0},
 в Ваш аккаунт выполнен вход с нового устройства {1}
@@ -9738,6 +9977,12 @@
   </data>
   <data name="NotMounted" xml:space="preserve">
     <value>Нет подключения к хранилищу</value>
+  </data>
+  <data name="NoTopics" xml:space="preserve">
+    <value>Здесь пока нет тем</value>
+  </data>
+  <data name="NoTopicsDescription" xml:space="preserve">
+    <value>Создайте свою первую тему или нажмите\nна значок {0}, чтобы переключиться в режим сообщений.</value>
   </data>
   <data name="NoUsernameFound" xml:space="preserve">
     <value>Нет аккаунта с таким именем пользователя.</value>
@@ -9804,6 +10049,9 @@
   </data>
   <data name="Open" xml:space="preserve">
     <value>Открыть</value>
+  </data>
+  <data name="OpenAllTopics" xml:space="preserve">
+    <value>Все темы</value>
   </data>
   <data name="OpenBackground" xml:space="preserve">
     <value>ПРОСМОТР ФОНА</value>
@@ -10658,6 +10906,9 @@
   <data name="PauseAll" xml:space="preserve">
     <value>Остановить все</value>
   </data>
+  <data name="PaymentAppNotFoundForDeeplink" xml:space="preserve">
+    <value>Приложение для открытия этой ссылки не найдено.</value>
+  </data>
   <data name="PaymentBillingAddress" xml:space="preserve">
     <value>Платёжный адрес</value>
   </data>
@@ -11009,7 +11260,7 @@
     <value>Telegram требуется доступ к Хранилищу, чтобы Вы могли загружать фотографии или видеозаписи профиля. Для этого включите **Файлы и медиа** в настройках телефона &gt; Разрешения.</value>
   </data>
   <data name="PermissionOpenSettings" xml:space="preserve">
-    <value>НАСТРОЙКИ</value>
+    <value>Настройки</value>
   </data>
   <data name="PermissionStorage" xml:space="preserve">
     <value>Telegram требуется доступ к хранилищу, чтобы Вы могли отправлять и сохранять фото, видео, музыку и файлы.</value>
@@ -11154,6 +11405,9 @@
   </data>
   <data name="PinMessageAlertTitle" xml:space="preserve">
     <value>Закрепить сообщение</value>
+  </data>
+  <data name="PinMessageInTopicAlert" xml:space="preserve">
+    <value>Закрепить это сообщение в теме?</value>
   </data>
   <data name="PinnedDialogsCount_few" xml:space="preserve">
     <value>{0} чата закреплены</value>
@@ -11326,6 +11580,9 @@
   <data name="PremiumPreviewAdvancedChatManagementDescription" xml:space="preserve">
     <value>Папка по умолчанию. Автоархивирование и скрытие новых чатов с неконтактами.</value>
   </data>
+  <data name="PremiumPreviewAdvancedChatManagementDescription2" xml:space="preserve">
+    <value>С подпиской Telegram Premium можно выбрать папку по умолчанию, настроить автоархивирование и включить скрытие новых чатов с неконтактами.</value>
+  </data>
   <data name="PremiumPreviewAnimatedProfiles" xml:space="preserve">
     <value>Активные видеоаватары</value>
   </data>
@@ -11349,6 +11606,9 @@
   </data>
   <data name="PremiumPreviewDownloadSpeedDescription" xml:space="preserve">
     <value>Скачивание фото, видео и других файлов без ограничения скорости.</value>
+  </data>
+  <data name="PremiumPreviewDownloadSpeedDescription2" xml:space="preserve">
+    <value>Скачивайте медиа и файлы на максимальной скорости с подпиской **Telegram Premium**.</value>
   </data>
   <data name="PremiumPreviewEmoji" xml:space="preserve">
     <value>Анимированные эмодзи</value>
@@ -11415,6 +11675,12 @@
   </data>
   <data name="PremiumPreviewVoiceToTextDescription" xml:space="preserve">
     <value>Мгновенная расшифровка входящих голосовых сообщений.</value>
+  </data>
+  <data name="PremiumPreviewVoiceToTextDescription2" xml:space="preserve">
+    <value>Текстовая расшифровка голосовых и видеосообщений доступна только с подпиской Telegram Premium.</value>
+  </data>
+  <data name="PremiumSpeedPromo" xml:space="preserve">
+    <value>Ускорить загрузку</value>
   </data>
   <data name="PremiumStickers" xml:space="preserve">
     <value>Premium-стикеры</value>
@@ -12082,6 +12348,9 @@
   <data name="Reacted_other" xml:space="preserve">
     <value>{0} реакции</value>
   </data>
+  <data name="ReactionInDialog" xml:space="preserve">
+    <value>Отправил(а) реакцию {0} на Ваше сообщение</value>
+  </data>
   <data name="Reactions" xml:space="preserve">
     <value>Реакции</value>
   </data>
@@ -12567,6 +12836,12 @@
   <data name="ResetStatisticsAlertTitle" xml:space="preserve">
     <value>Сбросить статистику</value>
   </data>
+  <data name="RestartTopic" xml:space="preserve">
+    <value>Возобновить тему</value>
+  </data>
+  <data name="RestartTopics" xml:space="preserve">
+    <value>Возобновление тем</value>
+  </data>
   <data name="Restore" xml:space="preserve">
     <value>Восстановить</value>
   </data>
@@ -12574,7 +12849,7 @@
     <value>Нет доступа к {0}?</value>
   </data>
   <data name="RestoreEmailSent" xml:space="preserve">
-    <value>Мы отправили код восстановления на указанный вами адрес электронной почты:
+    <value>Мы отправили код восстановления на указанный Вами адрес электронной почты:
 
 {0}</value>
   </data>
@@ -12885,6 +13160,9 @@
   <data name="SearchGifsTitle" xml:space="preserve">
     <value>Поиск GIF</value>
   </data>
+  <data name="SearchIconsHint" xml:space="preserve">
+    <value>Поиск значков</value>
+  </data>
   <data name="SearchImages" xml:space="preserve">
     <value>НАЙТИ ИЗОБРАЖЕНИЯ</value>
   </data>
@@ -12908,6 +13186,9 @@
   </data>
   <data name="SearchMusic" xml:space="preserve">
     <value>Поиск музыки</value>
+  </data>
+  <data name="SearchReactionsHint" xml:space="preserve">
+    <value>Поиск реакций</value>
   </data>
   <data name="SearchRecentFiles" xml:space="preserve">
     <value>Поиск по недавним файлам</value>
@@ -13058,6 +13339,12 @@
   </data>
   <data name="SelectThisDay" xml:space="preserve">
     <value>Выбрать этот день</value>
+  </data>
+  <data name="SelectTopic" xml:space="preserve">
+    <value>Выбрать тему</value>
+  </data>
+  <data name="SelectTopicIconHint" xml:space="preserve">
+    <value>Выберите значок темы</value>
   </data>
   <data name="Send" xml:space="preserve">
     <value>Отправить</value>
@@ -13400,6 +13687,9 @@
   <data name="SetUrlPlaceholder" xml:space="preserve">
     <value>Ссылка</value>
   </data>
+  <data name="SetUsernameHeader" xml:space="preserve">
+    <value>Задать имя пользователя</value>
+  </data>
   <data name="Shadows" xml:space="preserve">
     <value>Тени</value>
   </data>
@@ -13589,6 +13879,9 @@
 **{1}**
 
 Убедитесь, что правильно указываете номер. Он должен начинаться с кода страны.</value>
+  </data>
+  <data name="Show" xml:space="preserve">
+    <value>Показать</value>
   </data>
   <data name="ShowAllFiles" xml:space="preserve">
     <value>Все файлы</value>
@@ -13852,6 +14145,9 @@
     <value>Рекламные сообщения в настоящее время работают в тестовом режиме. Как только они будут полностью запущены и позволят Telegram покрывать основные расходы, мы начнем делиться доходами от рекламы с владельцами публичных каналов, в которых выводятся рекламные сообщения.
 
 Реклама в интернете должна перестать быть синонимом нарушения конфиденциальности пользователей. Давайте вместе изменим то, как функционируют технологические компании.</value>
+  </data>
+  <data name="SponsoredMessageRecommended" xml:space="preserve">
+    <value>объявление</value>
   </data>
   <data name="Start" xml:space="preserve">
     <value>Начать</value>
@@ -14182,6 +14478,12 @@
   <data name="SwipeToGoNextFolder" xml:space="preserve">
     <value>Потяните вверх для перехода к новой папке</value>
   </data>
+  <data name="SwipeToReplyHint" xml:space="preserve">
+    <value>Проведите пальцем, чтобы ответить</value>
+  </data>
+  <data name="SwipeToReplyHintMessage" xml:space="preserve">
+    <value>Проведите по сообщению влево, чтобы ответить на него.</value>
+  </data>
   <data name="SwipeUnmute" xml:space="preserve">
     <value>Вкл. звук</value>
   </data>
@@ -14262,6 +14564,9 @@
   <data name="TapToChangePhone" xml:space="preserve">
     <value>Нажмите, чтобы изменить номер телефона</value>
   </data>
+  <data name="TapToCreateTopicHint" xml:space="preserve">
+    <value>Нажмите, чтобы создать тему</value>
+  </data>
   <data name="TapToDownload" xml:space="preserve">
     <value>Нажмите для загрузки</value>
   </data>
@@ -14275,7 +14580,7 @@
     <value>Нажмите для отправки геопозиции</value>
   </data>
   <data name="TapToTurnCamera" xml:space="preserve">
-    <value>Нажмите здесь, чтобы включить камеру</value>
+    <value>Чтобы включить камеру, нажмите сюда</value>
   </data>
   <data name="TapToViewAsList" xml:space="preserve">
     <value>Перейти к списку</value>
@@ -14695,6 +15000,111 @@ Telegram Premium на {1}.
   <data name="TopHoursChartTitle" xml:space="preserve">
     <value>Просмотры по часам (UTC)</value>
   </data>
+  <data name="TopicChangeIconAndTitleTo" xml:space="preserve">
+    <value>{0} изменил(а) название и значок темы на {1}</value>
+  </data>
+  <data name="TopicChangeIconAndTitleToInReply" xml:space="preserve">
+    <value>изменил(а) название и значок темы на {0}</value>
+  </data>
+  <data name="TopicClosed" xml:space="preserve">
+    <value>Тема закрыта</value>
+  </data>
+  <data name="TopicClosed2" xml:space="preserve">
+    <value>{0} закрыл(а) тему</value>
+  </data>
+  <data name="TopicClosedByAdmin" xml:space="preserve">
+    <value>Тема закрыта</value>
+  </data>
+  <data name="TopicContainsEmojiPackSingle" xml:space="preserve">
+    <value>В этой теме используются **{0}**</value>
+  </data>
+  <data name="TopicCreated" xml:space="preserve">
+    <value>Тема создана</value>
+  </data>
+  <data name="TopicCreator" xml:space="preserve">
+    <value>автор темы</value>
+  </data>
+  <data name="TopicEmptyViewDescription" xml:space="preserve">
+    <value>Начните обсуждать тему — отправьте первое сообщение.</value>
+  </data>
+  <data name="TopicIconChanged" xml:space="preserve">
+    <value>Значок темы изменён</value>
+  </data>
+  <data name="TopicIconChangedTo" xml:space="preserve">
+    <value>{0} изменил(а) значок темы на {1}</value>
+  </data>
+  <data name="TopicIconChangedToInReply" xml:space="preserve">
+    <value>изменил(а) значок темы на {0}</value>
+  </data>
+  <data name="TopicNotificationsExceptions_few" xml:space="preserve">
+    <value>В списке исключений **{0} темы**.</value>
+  </data>
+  <data name="TopicNotificationsExceptions_many" xml:space="preserve">
+    <value>В списке исключений **{0} тем**.</value>
+  </data>
+  <data name="TopicNotificationsExceptions_one" xml:space="preserve">
+    <value>В списке исключений **{0} тема**.</value>
+  </data>
+  <data name="TopicNotificationsExceptions_other" xml:space="preserve">
+    <value>В списке исключений **{0} темы**.</value>
+  </data>
+  <data name="TopicProfileStatus" xml:space="preserve">
+    <value>В {0}</value>
+  </data>
+  <data name="TopicRenamed" xml:space="preserve">
+    <value>Тема переименована</value>
+  </data>
+  <data name="TopicRenamedTo" xml:space="preserve">
+    <value>{0} переименовал(а) тему в {1}</value>
+  </data>
+  <data name="TopicRenamedToInReply" xml:space="preserve">
+    <value>переименовал(а) тему в  {0}</value>
+  </data>
+  <data name="TopicRestarted" xml:space="preserve">
+    <value>Тема снова активна</value>
+  </data>
+  <data name="TopicRestarted2" xml:space="preserve">
+    <value>{0} возобновил(а) тему</value>
+  </data>
+  <data name="Topics" xml:space="preserve">
+    <value>Темы</value>
+  </data>
+  <data name="TopicsDeleted_few" xml:space="preserve">
+    <value>Темы удалены.</value>
+  </data>
+  <data name="TopicsDeleted_many" xml:space="preserve">
+    <value>Темы удалены.</value>
+  </data>
+  <data name="TopicsDeleted_one" xml:space="preserve">
+    <value>Тема удалена.</value>
+  </data>
+  <data name="TopicsDeleted_other" xml:space="preserve">
+    <value>Темы удалены.</value>
+  </data>
+  <data name="TopicViewAsMessages" xml:space="preserve">
+    <value>Единый чат</value>
+  </data>
+  <data name="TopicViewAsTopics" xml:space="preserve">
+    <value>Просмотр по темам</value>
+  </data>
+  <data name="TopicWasClosedAction" xml:space="preserve">
+    <value>{0} закрыл(а) {1}</value>
+  </data>
+  <data name="TopicWasCreatedAction" xml:space="preserve">
+    <value>{0} создана</value>
+  </data>
+  <data name="TopicWasIconChangedToAction" xml:space="preserve">
+    <value>{0} изменил(а) значок темы на {1}</value>
+  </data>
+  <data name="TopicWasRenamedToAction" xml:space="preserve">
+    <value>{0} переименовал(а) тему в {1}</value>
+  </data>
+  <data name="TopicWasRenamedToAction2" xml:space="preserve">
+    <value>{0} изменил(а) название и значок темы на {1}</value>
+  </data>
+  <data name="TopicWasReopenedAction" xml:space="preserve">
+    <value>{0} возобновил(а) {1}</value>
+  </data>
   <data name="TopInviters" xml:space="preserve">
     <value>Приглашения</value>
   </data>
@@ -14897,6 +15307,9 @@ Telegram Premium на {1}.
   </data>
   <data name="UnlockPremiumStickersDescription" xml:space="preserve">
     <value>Получите этот стикер и многие другие, оформив подписку Telegram Premium.</value>
+  </data>
+  <data name="UnlockPremiumTranscriptionHint" xml:space="preserve">
+    <value>Текстовая расшифровка доступна только с подпиской **Telegram Premium**.</value>
   </data>
   <data name="Unmute" xml:space="preserve">
     <value>Вкл. уведомления</value>
@@ -15102,6 +15515,24 @@ Telegram Premium на {1}.
   <data name="Username" xml:space="preserve">
     <value>Имя пользователя</value>
   </data>
+  <data name="UsernameActivateErrorMessage" xml:space="preserve">
+    <value>Превышен лимит активных публичных ссылок. Скройте одну из них, прежде чем добавить новую.</value>
+  </data>
+  <data name="UsernameActivateErrorTitle" xml:space="preserve">
+    <value>Превышен лимит активных ссылок</value>
+  </data>
+  <data name="UsernameActivateLink" xml:space="preserve">
+    <value>Активировать ссылку</value>
+  </data>
+  <data name="UsernameActivateLinkChannelMessage" xml:space="preserve">
+    <value>Хотите, чтобы ссылка отображалась в профиле канала?</value>
+  </data>
+  <data name="UsernameActivateLinkProfileMessage" xml:space="preserve">
+    <value>Хотите, чтобы ссылка отображалась в Вашем профиле?</value>
+  </data>
+  <data name="UsernameAlso" xml:space="preserve">
+    <value>а также {0}</value>
+  </data>
   <data name="UsernameAvailable" xml:space="preserve">
     <value>Имя пользователя {0} свободно.</value>
   </data>
@@ -15110,6 +15541,15 @@ Telegram Premium на {1}.
   </data>
   <data name="UsernameCopied" xml:space="preserve">
     <value>Текст скопирован в буфер обмена.</value>
+  </data>
+  <data name="UsernameDeactivateLink" xml:space="preserve">
+    <value>Деактивировать ссылку</value>
+  </data>
+  <data name="UsernameDeactivateLinkChannelMessage" xml:space="preserve">
+    <value>Хотите скрыть эту ссылку, чтобы она не отображалась в профиле канала?</value>
+  </data>
+  <data name="UsernameDeactivateLinkProfileMessage" xml:space="preserve">
+    <value>Хотите скрыть эту ссылку, чтобы она не отображалась в Вашем профиле?</value>
   </data>
   <data name="UsernameEmpty" xml:space="preserve">
     <value>Не задано</value>
@@ -15126,6 +15566,10 @@ Telegram Premium на {1}.
   <data name="UsernameInUse" xml:space="preserve">
     <value>Это имя пользователя уже занято.</value>
   </data>
+  <data name="UsernameInUsePurchase" xml:space="preserve">
+    <value>Это имя уже занято.
+В данный момент оно выставлено на продажу и Вы можете его купить. **Подробнее...**</value>
+  </data>
   <data name="UsernameInvalid" xml:space="preserve">
     <value>Такое имя пользователя недоступно.</value>
   </data>
@@ -15135,11 +15579,48 @@ Telegram Premium на {1}.
   <data name="UsernameInvalidShort" xml:space="preserve">
     <value>Имя пользователя должно содержать не меньше 5 символов.</value>
   </data>
+  <data name="UsernameInvalidShortPurchase" xml:space="preserve">
+    <value>Стандартное имя пользователя должно содержать не меньше 5 символов.
+Короткие коллекционные имена, включая введённое Вами, можно купить на аукционе. **Подробнее...**</value>
+  </data>
   <data name="UsernameInvalidStartNumber" xml:space="preserve">
     <value>Имя пользователя не может начинаться с цифры.</value>
   </data>
+  <data name="UsernameLinkActive" xml:space="preserve">
+    <value>используется</value>
+  </data>
+  <data name="UsernameLinkEditable" xml:space="preserve">
+    <value>нажмите, чтобы изменить</value>
+  </data>
+  <data name="UsernameLinkInactive" xml:space="preserve">
+    <value>не используется</value>
+  </data>
+  <data name="UsernameLinkPlaceholder" xml:space="preserve">
+    <value>имя пользователя</value>
+  </data>
   <data name="UsernamePlaceholder" xml:space="preserve">
     <value>Ваше имя пользователя</value>
+  </data>
+  <data name="UsernameProfileLinkActive" xml:space="preserve">
+    <value>используется</value>
+  </data>
+  <data name="UsernameProfileLinkEditable" xml:space="preserve">
+    <value>нажмите, чтобы изменить</value>
+  </data>
+  <data name="UsernameProfileLinkInactive" xml:space="preserve">
+    <value>не используется</value>
+  </data>
+  <data name="UsernamesChannelHeader" xml:space="preserve">
+    <value>Порядок ссылок</value>
+  </data>
+  <data name="UsernamesChannelHelp" xml:space="preserve">
+    <value>Перетаскивайте ссылки, чтобы изменить порядок их отображения в профиле канала.</value>
+  </data>
+  <data name="UsernamesProfileHeader" xml:space="preserve">
+    <value>Порядок имён пользователя</value>
+  </data>
+  <data name="UsernamesProfileHelp" xml:space="preserve">
+    <value>Перетаскивайте ссылки, чтобы изменить порядок их отображения в Вашем профиле.</value>
   </data>
   <data name="UserRemovedBy" xml:space="preserve">
     <value>Исключил(а) {0}</value>
@@ -15437,6 +15918,9 @@ Telegram Premium на {1}.
   </data>
   <data name="ViewingMembers" xml:space="preserve">
     <value>Читают</value>
+  </data>
+  <data name="ViewInTopic" xml:space="preserve">
+    <value>Просмотреть в теме</value>
   </data>
   <data name="ViewMessage" xml:space="preserve">
     <value>Открыть сообщение</value>
