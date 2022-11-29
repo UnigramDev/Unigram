@@ -834,7 +834,8 @@ namespace Unigram.Controls.Chats
                 text = text.Substring(1);
             }
 
-            if (ViewModel.CurrentInlineBot != null && ViewModel.CurrentInlineBot.HasActiveUsername(text.Trim(), out string username))
+            var split = text.Split(' ');
+            if (split.Length >= 1 && ViewModel.CurrentInlineBot != null && ViewModel.CurrentInlineBot.HasActiveUsername(split[0], out string username))
             {
                 searchText = ReplaceFirst(text.TrimStart(), username, string.Empty);
                 if (searchText.StartsWith(" "))
