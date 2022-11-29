@@ -29,15 +29,22 @@ namespace Unigram.Controls
 
         private readonly CompositionRoundedRectangleGeometry _clip;
 
+        private Image LayoutRoot;
+
         public ProfilePicture()
         {
+            _clip = Window.Current.Compositor.CreateRoundedRectangleGeometry();
             DefaultStyleKey = typeof(ProfilePicture);
+        }
 
-            var visual = ElementCompositionPreview.GetElementVisual(this);
-            var clip = visual.Compositor.CreateRoundedRectangleGeometry();
-            visual.Clip = visual.Compositor.CreateGeometricClip(clip);
+        protected override void OnApplyTemplate()
+        {
+            LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as Image;
 
-            _clip = clip;
+            var visual = ElementCompositionPreview.GetElementVisual(LayoutRoot);
+            visual.Clip = visual.Compositor.CreateGeometricClip(_clip);
+
+            base.OnApplyTemplate();
         }
 
         protected override Size ArrangeOverride(Size finalSize)

@@ -590,7 +590,7 @@ namespace Unigram.Controls.Messages
         {
             if (_outline == null || _outline.Device != sender.Device)
             {
-                var scale = 20f / _sticker.Width;
+                var scale = _size / _sticker.Width;
                 var outline = CompositionPathParser.Parse(sender, _sticker.Outline, scale);
 
                 _outline = outline;

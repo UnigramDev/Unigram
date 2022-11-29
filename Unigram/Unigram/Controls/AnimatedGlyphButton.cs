@@ -23,8 +23,18 @@ namespace Unigram.Controls
             DefaultStyleKey = typeof(AnimatedGlyphButton);
         }
 
+        protected virtual bool IsRuntimeCompatible()
+        {
+            return false;
+        }
+
         protected override void OnApplyTemplate()
         {
+            if (IsRuntimeCompatible())
+            {
+                return;
+            }
+
             _label1 = _label = GetTemplateChild("ContentPresenter1") as TextBlock;
             _label2 = GetTemplateChild("ContentPresenter2") as TextBlock;
 

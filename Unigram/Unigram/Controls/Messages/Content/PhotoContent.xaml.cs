@@ -94,6 +94,10 @@ namespace Unigram.Controls.Messages.Content
             {
                 UpdateThumbnail(message, small, photo.Minithumbnail, true);
             }
+            else
+            {
+                UpdateThumbnail(message, null, photo.Minithumbnail, false);
+            }
 
             UpdateManager.Subscribe(this, message, big.Photo, ref _fileToken, UpdateFile);
             UpdateFile(message, big.Photo);

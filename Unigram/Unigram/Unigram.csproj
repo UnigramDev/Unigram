@@ -136,6 +136,7 @@
     <Compile Include="Assets\Icons\Folders.cs" />
     <Compile Include="Assets\Icons\GifToEmoji.cs" />
     <Compile Include="Assets\Icons\GifToSticker.cs" />
+    <Compile Include="Assets\Icons\Fragment.cs" />
     <Compile Include="Assets\Icons\Info.cs" />
     <Compile Include="Assets\Icons\Language.cs" />
     <Compile Include="Assets\Icons\Location.cs" />
@@ -261,6 +262,7 @@
     <Compile Include="Common\ZoomableListHandler.cs" />
     <Compile Include="Constants.Secret.cs" />
     <Compile Include="Controls\AnimatedBitmapButton.cs" />
+    <Compile Include="Controls\AnimatedIconButton.cs" />
     <Compile Include="Controls\AnimatedImage.cs" />
     <Compile Include="Controls\AnimatedControl.cs" />
     <Compile Include="Controls\AnimatedGlyphButton.cs" />
@@ -1459,6 +1461,7 @@
     <Content Include="Assets\Animations\AuthorizationStateWaitEmailCode.tgs" />
     <Content Include="Assets\Animations\AuthorizationStateWaitCode.tgs" />
     <Content Include="Assets\Animations\AuthorizationStateWaitRegistration.tgs" />
+    <Content Include="Assets\Animations\AuthorizationStateWaitFragment.tgs" />
     <None Include="Assets\i420.hlsl" />
     <Content Include="Assets\Images\BoxArt.png" />
     <Content Include="Assets\Images\Reply.scale-100.png" />
@@ -1547,7 +1550,9 @@
     <Content Include="Assets\Animations\VoiceUnmuteToRaiseHand.tgs" />
     <Content Include="Assets\i420.bin" />
     <None Include=".editorconfig" />
-    <PRIResource Include="Strings\sk\Resources.resw" />
+    <PRIResource Include="Strings\sk\Resources.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
     <PRIResource Include="Strings\hu\Resources.resw" />
     <PRIResource Include="Strings\fi\Resources.resw" />
     <PRIResource Include="Strings\cs\Resources.resw" />
@@ -2611,7 +2616,6 @@
     <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\ffmpeg\$(Platform)\FFmpegInteropX.dll" />
     <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\ffmpeg\$(Platform)\FFmpegInteropX.pri" />
     <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\ffmpeg\$(Platform)\avfilter-7.dll" />
-    <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\ffmpeg\$(Platform)\opus.dll" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

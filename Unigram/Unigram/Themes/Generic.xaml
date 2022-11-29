@@ -457,14 +457,6 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <Grid.Resources>
-                            <Style x:Key="CountTextBlockStyle"
-                                   TargetType="TextBlock"
-                                   BasedOn="{StaticResource CaptionTextBlockStyle}">
-                                <Setter Property="TextLineBounds"
-                                        Value="Tight" />
-                            </Style>
-                        </Grid.Resources>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
@@ -487,11 +479,11 @@
                         <local:NumericTextBlock x:Name="Count"
                                                 x:Load="False"
                                                 Foreground="{ThemeResource MessageReactionForegroundBrush}"
-                                                TextStyle="{StaticResource CountTextBlockStyle}"
+                                                TextStyle="{StaticResource CaptionTextBlockStyle}"
                                                 VerticalAlignment="Center"
                                                 AutomationProperties.AccessibilityView="Raw"
                                                 IsTabStop="False"
-                                                Margin="0,0,8,2"
+                                                Margin="0,1,8,2"
                                                 Grid.Column="1" />
 
                         <local:RecentUserHeads x:Name="RecentChoosers"
@@ -3206,7 +3198,8 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ProfilePicture">
-                    <Image Source="{TemplateBinding Source}"
+                    <Image x:Name="LayoutRoot"
+                           Source="{TemplateBinding Source}"
                            Stretch="UniformToFill"
                            AutomationProperties.AccessibilityView="Raw" />
                 </ControlTemplate>
@@ -4266,6 +4259,109 @@
                                     <VisualState.Setters>
                                         <Setter Target="Icon.(muxc:AnimatedIcon.State)"
                                                 Value="Checked" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Grid x:Name="RootGrid">
+                            <TextBlock x:Name="ContentPresenter1"
+                                       Margin="{TemplateBinding Padding}"
+                                       HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                       VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                       AutomationProperties.AccessibilityView="Raw" />
+                            <TextBlock x:Name="ContentPresenter2"
+                                       Margin="{TemplateBinding Padding}"
+                                       HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                       VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                       AutomationProperties.AccessibilityView="Raw" />
+
+                            <muxc:AnimatedIcon x:Name="Icon"
+                                               Source="{TemplateBinding Source}"
+                                               muxc:AnimatedIcon.State="Normal"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               AutomationProperties.AccessibilityView="Raw"
+                                               Width="24"
+                                               Height="24" />
+                        </Grid>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:AnimatedIconButton">
+        <Setter Property="Background"
+                Value="Transparent" />
+        <Setter Property="BorderBrush"
+                Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+        <Setter Property="BorderThickness"
+                Value="0" />
+        <Setter Property="Padding"
+                Value="0" />
+        <Setter Property="HorizontalAlignment"
+                Value="Left" />
+        <Setter Property="HorizontalContentAlignment"
+                Value="Center" />
+        <Setter Property="VerticalAlignment"
+                Value="Top" />
+        <Setter Property="VerticalContentAlignment"
+                Value="Center" />
+        <Setter Property="FontFamily"
+                Value="{StaticResource SymbolThemeFontFamily}" />
+        <Setter Property="FontSize"
+                Value="{StaticResource GlyphLargeFontSize}" />
+        <Setter Property="FontWeight"
+                Value="Normal" />
+        <Setter Property="Height"
+                Value="48" />
+        <Setter Property="Width"
+                Value="48" />
+        <Setter Property="UseSystemFocusVisuals"
+                Value="True" />
+        <Setter Property="FocusVisualMargin"
+                Value="-3" />
+        <Setter Property="CornerRadius"
+                Value="{StaticResource GlyphButtonCornerRadius}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:AnimatedIconButton">
+                    <Grid Background="{TemplateBinding Background}"
+                          CornerRadius="{TemplateBinding CornerRadius}"
+                          Margin="{StaticResource GlyphButtonPadding}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
+                                                                       Storyboard.TargetName="RootGrid">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource NavigationViewItemBackgroundPointerOver}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                    <VisualState.Setters>
+                                        <Setter Target="Icon.(muxc:AnimatedIcon.State)"
+                                                Value="PointerOver" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
+                                                                       Storyboard.TargetName="RootGrid">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource NavigationViewItemBackgroundPressed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                    <VisualState.Setters>
+                                        <Setter Target="Icon.(muxc:AnimatedIcon.State)"
+                                                Value="Pressed" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <VisualState.Setters>
+                                        <Setter Target="Icon.(muxc:AnimatedIcon.State)"
+                                                Value="Normal" />
                                     </VisualState.Setters>
                                 </VisualState>
                             </VisualStateGroup>
