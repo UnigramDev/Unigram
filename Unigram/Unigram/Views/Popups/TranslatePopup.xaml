@@ -58,27 +58,9 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <Grid Margin="0,-12,0,0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-            <Grid.ChildrenTransitions>
-                <TransitionCollection>
-                    <RepositionThemeTransition />
-                </TransitionCollection>
-            </Grid.ChildrenTransitions>
-            <controls:LoadingTextBlock x:Name="SubtitleFrom"
-                                       Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                       PlaceholderBrush="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                       HorizontalAlignment="Left"
-                                       Padding="8"
-                                       Margin="-8"/>
-
-            <TextBlock x:Name="Subtitle"
-                       Style="{StaticResource InfoBodyTextBlockStyle}"
-                       Grid.Column="1" />
-        </Grid>
+        <TextBlock x:Name="Subtitle"
+                   Style="{StaticResource InfoBodyTextBlockStyle}"
+                   Margin="0,-12,0,0" />
 
         <ScrollViewer VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"

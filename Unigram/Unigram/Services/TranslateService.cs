@@ -8,19 +8,6 @@ using Windows.Data.Json;
 
 namespace Unigram.Services
 {
-    public class Translation
-    {
-        public Translation(string translated, string sourceLanguage)
-        {
-            Text = translated;
-            SourceLanguage = sourceLanguage;
-        }
-
-        public string Text { get; private set; }
-
-        public string SourceLanguage { get; private set; }
-    }
-
     public interface ITranslateService
     {
         IList<string> Tokenize(string full, int maxBlockSize);
@@ -104,7 +91,7 @@ namespace Unigram.Services
 
         public async Task<object> TranslateAsync(string text, string fromLanguage, string toLanguage)
         {
-            //var test = await _clientService.SendAsync(new TranslateText(text, fromLanguage, toLanguage));
+            return await _clientService.SendAsync(new TranslateText(text, fromLanguage, toLanguage));
 
             Random random = new Random();
             try
@@ -159,7 +146,7 @@ namespace Unigram.Services
                         if (text.Length > 0 && text[0] == '\n')
                             result = "\n" + result;
 
-                        return new Translation(result, sourceLanguage);
+                        return new Text(result);
                     }
                     else
                     {

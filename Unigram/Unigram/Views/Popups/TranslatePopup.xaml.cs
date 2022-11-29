@@ -4,10 +4,8 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Controls;
 using Unigram.Services;
-using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Views.Popups
 {
@@ -32,7 +30,8 @@ namespace Unigram.Views.Popups
             _toLanguage = toLanguage;
 
             Title = Strings.Resources.AutomaticTranslation;
-            PrimaryButtonText = Strings.Resources.CloseTranslation;
+            PrimaryButtonText = Strings.Resources.Close;
+            //SecondaryButtonText = Strings.Resources.Language;
 
             var tokenizedText = translateService.Tokenize(text, 1024);
 
@@ -41,15 +40,12 @@ namespace Unigram.Views.Popups
 
             if (string.IsNullOrEmpty(fromName))
             {
-                SubtitleFrom.PlaceholderBrush = new SolidColorBrush(Colors.Transparent);
-                SubtitleFrom.PlaceholderText = toName;
+                Subtitle.Text = string.Format("Auto \u2192 {0}", toName);
             }
             else
             {
-                SubtitleFrom.PlaceholderText = fromName;
+                Subtitle.Text = string.Format("{0} \u2192 {1}", fromName, toName);
             }
-
-            Subtitle.Text = string.Format(" \u2192 {0}", toName);
 
             foreach (var token in tokenizedText)
             {
@@ -106,7 +102,7 @@ namespace Unigram.Views.Popups
             var ticks = Environment.TickCount;
 
             var response = await _translateService.TranslateAsync(block.PlaceholderText, _fromLanguage, _toLanguage);
-            if (response is Translation translation)
+            if (response is Text translation)
             {
                 var diff = Environment.TickCount - ticks;
                 if (diff < 1000)
@@ -114,20 +110,17 @@ namespace Unigram.Views.Popups
                     await Task.Delay(1000 - diff);
                 }
 
-                block.Text = translation.Text;
-                SubtitleFrom.Text = LanguageName(translation.SourceLanguage, out _);
+                block.Text = translation.TextValue;
             }
             else if (response is Error error)
             {
                 if (error.Code == 429)
                 {
                     block.Text = Strings.Resources.TranslationFailedAlert1;
-                    SubtitleFrom.Text = LanguageName(_fromLanguage == LANG_AUTO ? _toLanguage : _fromLanguage, out _);
                 }
                 else
                 {
                     block.Text = Strings.Resources.TranslationFailedAlert2;
-                    SubtitleFrom.Text = LanguageName(_fromLanguage == LANG_AUTO ? _toLanguage : _fromLanguage, out _);
                 }
             }
 
