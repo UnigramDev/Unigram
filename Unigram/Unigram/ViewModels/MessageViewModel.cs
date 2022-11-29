@@ -55,6 +55,8 @@ namespace Unigram.ViewModels
         // Used only by animated emojis
         public Sticker Interaction { get; set; }
 
+        // Used only in recent actions
+        public ChatEvent Event { get; set; }
 
         public Photo GetPhoto() => _message.GetPhoto();
 

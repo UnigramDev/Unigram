@@ -162,6 +162,20 @@ namespace Unigram.Common
                     await MessagePopup.ShowAsync(user.RestrictionReason, Strings.Resources.AppName, Strings.Resources.OK);
                     return;
                 }
+                else if (user.Id == _clientService.Options.AggressiveAntiSpamUserId)
+                {
+                    var groupInfo = Strings.Resources.EventLogFilterGroupInfo;
+                    var administrators = Strings.Resources.ChannelAdministrators;
+                    var path = $"{groupInfo} > {administrators}";
+
+                    var text = string.Format(Strings.Resources.ChannelAntiSpamInfo2, path);
+                    var index = Strings.Resources.ChannelAntiSpamInfo2.IndexOf("{0}");
+
+                    var formatted = new FormattedText(text, new[] { new TextEntity(index, path.Length, new TextEntityTypeTextUrl("tg://")) });
+
+                    await MessagePopup.ShowAsync(formatted, Strings.Resources.AppName, Strings.Resources.OK);
+                    return;
+                }
             }
             else if (chat.Type is ChatTypeSupergroup super)
             {

@@ -237,12 +237,13 @@ namespace Unigram.ViewModels
                 }
             }
 
-            return new Message(chatEvent.Id, sender, chatId, null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, isChannel, false, false, chatEvent.Date, 0, null, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, null, null);
+            return new Message(chatEvent.Id, sender, chatId, null, null, false, false, false, false, true, false, false, false, false, false, false, false, false, false, isChannel, false, false, chatEvent.Date, 0, null, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, null, null);
         }
 
         private MessageViewModel GetMessage(long chatId, bool isChannel, ChatEvent chatEvent, bool child = false)
         {
             var message = _messageFactory.Create(this, CreateMessage(chatId, isChannel, chatEvent, child));
+            message.Event = chatEvent;
             message.IsFirst = true;
             message.IsLast = true;
 
@@ -456,175 +457,187 @@ namespace Unigram.ViewModels
             }
             else if (item.Action is ChatEventMemberRestricted memberRestricted)
             {
-                var entities = new List<TextEntity>();
+                string text;
 
                 var whoUser = ClientService.GetMessageSender(memberRestricted.MemberId);
-                ChatMemberStatusRestricted o = null;
-                ChatMemberStatusRestricted n = null;
+                var entities = new List<TextEntity>();
 
-                if (memberRestricted.OldStatus is ChatMemberStatusRestricted oldRestricted)
+                if (memberRestricted.NewStatus is ChatMemberStatusBanned)
                 {
-                    o = oldRestricted;
+                    text = string.Format(Strings.Resources.EventLogChannelRestricted, GetUserName(whoUser, entities, Strings.Resources.EventLogChannelRestricted.IndexOf("{0}")));
                 }
-                else if (memberRestricted.OldStatus is ChatMemberStatusBanned oldBanned)
+                else if (memberRestricted.NewStatus is ChatMemberStatusMember && memberRestricted.OldStatus is ChatMemberStatusBanned)
                 {
-                    o = new ChatMemberStatusRestricted(false, oldBanned.BannedUntilDate, new ChatPermissions(false, false, false, false, false, false, false, false, false));
+                    text = string.Format(Strings.Resources.EventLogChannelUnrestricted, GetUserName(whoUser, entities, Strings.Resources.EventLogChannelUnrestricted.IndexOf("{0}")));
                 }
-                else if (memberRestricted.OldStatus is ChatMemberStatusMember)
+                else
                 {
-                    o = new ChatMemberStatusRestricted(true, 0, new ChatPermissions(true, true, true, true, true, true, true, true, true));
-                }
+                    ChatMemberStatusRestricted o = null;
+                    ChatMemberStatusRestricted n = null;
 
-                if (memberRestricted.NewStatus is ChatMemberStatusRestricted newRestricted)
-                {
-                    n = newRestricted;
-                }
-                else if (memberRestricted.NewStatus is ChatMemberStatusBanned newBanned)
-                {
-                    n = new ChatMemberStatusRestricted(false, newBanned.BannedUntilDate, new ChatPermissions(false, false, false, false, false, false, false, false, false));
-                }
-                else if (memberRestricted.NewStatus is ChatMemberStatusMember)
-                {
-                    n = new ChatMemberStatusRestricted(true, 0, new ChatPermissions(true, true, true, true, true, true, true, true, true));
-                }
-
-                string text;
-                if (!channel && (n == null || n != null && o != null /*&& n.RestrictedUntilDate != o.RestrictedUntilDate*/))
-                {
-                    StringBuilder rights;
-                    string bannedDuration;
-                    if (n != null && !n.IsForever())
+                    if (memberRestricted.OldStatus is ChatMemberStatusRestricted oldRestricted)
                     {
-                        bannedDuration = "";
-                        int duration = n.RestrictedUntilDate - item.Date;
-                        int days = duration / 60 / 60 / 24;
-                        duration -= days * 60 * 60 * 24;
-                        int hours = duration / 60 / 60;
-                        duration -= hours * 60 * 60;
-                        int minutes = duration / 60;
-                        int count = 0;
-                        for (int a = 0; a < 3; a++)
-                        {
-                            string addStr = null;
-                            if (a == 0)
-                            {
-                                if (days != 0)
-                                {
-                                    addStr = Locale.Declension("Days", days);
-                                    count++;
-                                }
-                            }
-                            else if (a == 1)
-                            {
-                                if (hours != 0)
-                                {
-                                    addStr = Locale.Declension("Hours", hours);
-                                    count++;
-                                }
-                            }
-                            else
-                            {
-                                if (minutes != 0)
-                                {
-                                    addStr = Locale.Declension("Minutes", minutes);
-                                    count++;
-                                }
-                            }
-                            if (addStr != null)
-                            {
-                                if (bannedDuration.Length > 0)
-                                {
-                                    bannedDuration += ", ";
-                                }
-                                bannedDuration += addStr;
-                            }
-                            if (count == 2)
-                            {
-                                break;
-                            }
-                        }
+                        o = oldRestricted;
                     }
-                    else
+                    else if (memberRestricted.OldStatus is ChatMemberStatusBanned oldBanned)
                     {
-                        bannedDuration = Strings.Resources.UserRestrictionsUntilForever;
+                        o = new ChatMemberStatusRestricted(false, oldBanned.BannedUntilDate, new ChatPermissions(false, false, false, false, false, false, false, false, false));
                     }
-
-                    var str = Strings.Resources.EventLogRestrictedUntil;
-                    rights = new StringBuilder(string.Format(str, GetUserName(whoUser, entities, str.IndexOf("{0}")), bannedDuration));
-                    var added = false;
-                    if (o == null)
+                    else if (memberRestricted.OldStatus is ChatMemberStatusMember)
                     {
                         o = new ChatMemberStatusRestricted(true, 0, new ChatPermissions(true, true, true, true, true, true, true, true, true));
                     }
-                    if (n == null)
+
+                    if (memberRestricted.NewStatus is ChatMemberStatusRestricted newRestricted)
+                    {
+                        n = newRestricted;
+                    }
+                    else if (memberRestricted.NewStatus is ChatMemberStatusBanned newBanned)
+                    {
+                        n = new ChatMemberStatusRestricted(false, newBanned.BannedUntilDate, new ChatPermissions(false, false, false, false, false, false, false, false, false));
+                    }
+                    else if (memberRestricted.NewStatus is ChatMemberStatusMember)
                     {
                         n = new ChatMemberStatusRestricted(true, 0, new ChatPermissions(true, true, true, true, true, true, true, true, true));
                     }
 
-                    void AppendChange(bool value, string label)
+                    if (!channel && (n != null && o != null /*&& n.RestrictedUntilDate != o.RestrictedUntilDate*/))
                     {
-                        if (!added)
+                        StringBuilder rights;
+                        string bannedDuration;
+                        if (n != null && !n.IsForever())
                         {
-                            rights.Append('\n');
-                            added = true;
+                            bannedDuration = "";
+                            int duration = n.RestrictedUntilDate - item.Date;
+                            int days = duration / 60 / 60 / 24;
+                            duration -= days * 60 * 60 * 24;
+                            int hours = duration / 60 / 60;
+                            duration -= hours * 60 * 60;
+                            int minutes = duration / 60;
+                            int count = 0;
+                            for (int a = 0; a < 3; a++)
+                            {
+                                string addStr = null;
+                                if (a == 0)
+                                {
+                                    if (days != 0)
+                                    {
+                                        addStr = Locale.Declension("Days", days);
+                                        count++;
+                                    }
+                                }
+                                else if (a == 1)
+                                {
+                                    if (hours != 0)
+                                    {
+                                        addStr = Locale.Declension("Hours", hours);
+                                        count++;
+                                    }
+                                }
+                                else
+                                {
+                                    if (minutes != 0)
+                                    {
+                                        addStr = Locale.Declension("Minutes", minutes);
+                                        count++;
+                                    }
+                                }
+                                if (addStr != null)
+                                {
+                                    if (bannedDuration.Length > 0)
+                                    {
+                                        bannedDuration += ", ";
+                                    }
+                                    bannedDuration += addStr;
+                                }
+                                if (count == 2)
+                                {
+                                    break;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            bannedDuration = Strings.Resources.UserRestrictionsUntilForever;
                         }
 
-                        rights.Append('\n').Append(value ? '+' : '-').Append(' ');
-                        rights.Append(label);
-                    }
+                        var str = Strings.Resources.EventLogRestrictedUntil;
+                        rights = new StringBuilder(string.Format(str, GetUserName(whoUser, entities, str.IndexOf("{0}")), bannedDuration));
+                        var added = false;
+                        if (o == null)
+                        {
+                            o = new ChatMemberStatusRestricted(true, 0, new ChatPermissions(true, true, true, true, true, true, true, true, true));
+                        }
+                        if (n == null)
+                        {
+                            n = new ChatMemberStatusRestricted(true, 0, new ChatPermissions(true, true, true, true, true, true, true, true, true));
+                        }
 
-                    //if (o.IsViewMessages != n.IsViewMessages)
-                    //{
-                    //    AppendChange(n.IsViewMessages, Strings.Resources.EventLogRestrictedReadMessages);
-                    //}
-                    if (o.Permissions.CanSendMessages != n.Permissions.CanSendMessages)
-                    {
-                        AppendChange(n.Permissions.CanSendMessages, Strings.Resources.EventLogRestrictedSendMessages);
-                    }
-                    if (o.Permissions.CanSendOtherMessages != n.Permissions.CanSendOtherMessages)
-                    {
-                        AppendChange(n.Permissions.CanSendOtherMessages, Strings.Resources.EventLogRestrictedSendStickers);
-                    }
-                    if (o.Permissions.CanSendMediaMessages != n.Permissions.CanSendMediaMessages)
-                    {
-                        AppendChange(n.Permissions.CanSendMediaMessages, Strings.Resources.EventLogRestrictedSendMedia);
-                    }
-                    if (o.Permissions.CanSendPolls != n.Permissions.CanSendPolls)
-                    {
-                        AppendChange(n.Permissions.CanSendPolls, Strings.Resources.EventLogRestrictedSendPolls);
-                    }
-                    if (o.Permissions.CanAddWebPagePreviews != n.Permissions.CanAddWebPagePreviews)
-                    {
-                        AppendChange(n.Permissions.CanAddWebPagePreviews, Strings.Resources.EventLogRestrictedSendEmbed);
-                    }
-                    if (o.Permissions.CanChangeInfo != n.Permissions.CanChangeInfo)
-                    {
-                        AppendChange(n.Permissions.CanChangeInfo, Strings.Resources.EventLogRestrictedChangeInfo);
-                    }
-                    if (o.Permissions.CanInviteUsers != n.Permissions.CanInviteUsers)
-                    {
-                        AppendChange(n.Permissions.CanInviteUsers, Strings.Resources.EventLogRestrictedSendEmbed);
-                    }
-                    if (o.Permissions.CanPinMessages != n.Permissions.CanPinMessages)
-                    {
-                        AppendChange(n.Permissions.CanPinMessages, Strings.Resources.EventLogRestrictedPinMessages);
-                    }
+                        void AppendChange(bool value, string label)
+                        {
+                            if (!added)
+                            {
+                                rights.Append('\n');
+                                added = true;
+                            }
 
-                    text = rights.ToString();
-                }
-                else
-                {
-                    string str;
-                    if (o == null || memberRestricted.NewStatus is ChatMemberStatusBanned)
-                    {
-                        str = Strings.Resources.EventLogChannelRestricted;
+                            rights.Append('\n').Append(value ? '+' : '-').Append(' ');
+                            rights.Append(label);
+                        }
+
+                        //if (o.IsViewMessages != n.IsViewMessages)
+                        //{
+                        //    AppendChange(n.IsViewMessages, Strings.Resources.EventLogRestrictedReadMessages);
+                        //}
+                        if (o.Permissions.CanSendMessages != n.Permissions.CanSendMessages)
+                        {
+                            AppendChange(n.Permissions.CanSendMessages, Strings.Resources.EventLogRestrictedSendMessages);
+                        }
+                        if (o.Permissions.CanSendOtherMessages != n.Permissions.CanSendOtherMessages)
+                        {
+                            AppendChange(n.Permissions.CanSendOtherMessages, Strings.Resources.EventLogRestrictedSendStickers);
+                        }
+                        if (o.Permissions.CanSendMediaMessages != n.Permissions.CanSendMediaMessages)
+                        {
+                            AppendChange(n.Permissions.CanSendMediaMessages, Strings.Resources.EventLogRestrictedSendMedia);
+                        }
+                        if (o.Permissions.CanSendPolls != n.Permissions.CanSendPolls)
+                        {
+                            AppendChange(n.Permissions.CanSendPolls, Strings.Resources.EventLogRestrictedSendPolls);
+                        }
+                        if (o.Permissions.CanAddWebPagePreviews != n.Permissions.CanAddWebPagePreviews)
+                        {
+                            AppendChange(n.Permissions.CanAddWebPagePreviews, Strings.Resources.EventLogRestrictedSendEmbed);
+                        }
+                        if (o.Permissions.CanChangeInfo != n.Permissions.CanChangeInfo)
+                        {
+                            AppendChange(n.Permissions.CanChangeInfo, Strings.Resources.EventLogRestrictedChangeInfo);
+                        }
+                        if (o.Permissions.CanInviteUsers != n.Permissions.CanInviteUsers)
+                        {
+                            AppendChange(n.Permissions.CanInviteUsers, Strings.Resources.EventLogRestrictedSendEmbed);
+                        }
+                        if (o.Permissions.CanPinMessages != n.Permissions.CanPinMessages)
+                        {
+                            AppendChange(n.Permissions.CanPinMessages, Strings.Resources.EventLogRestrictedPinMessages);
+                        }
+
+                        text = rights.ToString();
                     }
                     else
                     {
-                        str = Strings.Resources.EventLogChannelUnrestricted;
-                    }
+                        string str;
+                        if (o == null || memberRestricted.NewStatus is ChatMemberStatusBanned)
+                        {
+                            str = Strings.Resources.EventLogChannelRestricted;
+                        }
+                        else
+                        {
+                            str = Strings.Resources.EventLogChannelUnrestricted;
+                        }
 
-                    text = string.Format(str, GetUserName(whoUser, entities, str.IndexOf("{0}")));
+                        text = string.Format(str, GetUserName(whoUser, entities, str.IndexOf("{0}")));
+                    }
                 }
 
                 return new MessageText(new FormattedText(text, entities), null);

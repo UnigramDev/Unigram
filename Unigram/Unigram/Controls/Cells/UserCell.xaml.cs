@@ -139,6 +139,39 @@ namespace Unigram.Controls.Cells
             args.Handled = true;
         }
 
+        public void UpdateSupergroupAdminFilter(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        {
+            UpdateStyleNoSubtitle();
+
+            args.ItemContainer.Tag = args.Item;
+            Tag = args.Item;
+
+            var member = args.Item as ChatMember;
+
+            var user = clientService.GetMessageSender(member.MemberId) as User;
+            if (user == null)
+            {
+                return;
+            }
+
+            if (args.Phase == 0)
+            {
+                TitleLabel.Text = user.FullName();
+            }
+            else if (args.Phase == 2)
+            {
+                Photo.SetUser(clientService, user, 36);
+                Identity.SetStatus(clientService, user);
+            }
+
+            if (args.Phase < 2)
+            {
+                args.RegisterUpdateCallback(callback);
+            }
+
+            args.Handled = true;
+        }
+
         public void UpdateSupergroupBanned(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
         {
             var member = args.Item as ChatMember;

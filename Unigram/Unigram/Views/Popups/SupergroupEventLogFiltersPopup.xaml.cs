@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Controls.Cells;
 using Unigram.Services;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -53,6 +54,19 @@ namespace Unigram.Views.Popups
                     this.BeginOnUIThread(() =>
                     {
                         List.Items.Clear();
+
+                        if (clientService.Options.AggressiveAntiSpamUserId != 0)
+                        {
+                            var antiSpamSender = new MessageSenderUser(clientService.Options.AggressiveAntiSpamUserId);
+                            var antiSpam = new ChatMember(antiSpamSender, 0, 0, new ChatMemberStatusAdministrator());
+
+                            List.Items.Add(antiSpam);
+
+                            if (userIds.Contains(antiSpamSender.UserId))
+                            {
+                                List.SelectedItems.Add(antiSpam);
+                            }
+                        }
 
                         foreach (var item in members.Members)
                         {
@@ -178,33 +192,10 @@ namespace Unigram.Views.Popups
             {
                 return;
             }
-
-            var content = args.ItemContainer.ContentTemplateRoot as Grid;
-            var member = args.Item as ChatMember;
-
-            var user = _clientService.GetMessageSender(member.MemberId) as User;
-            if (user == null)
+            else if (args.ItemContainer.ContentTemplateRoot is UserCell content)
             {
-                return;
+                content.UpdateSupergroupAdminFilter(_clientService, args, OnContainerContentChanging);
             }
-
-            if (args.Phase == 0)
-            {
-                var title = content.Children[1] as TextBlock;
-                title.Text = user.FullName();
-            }
-            else if (args.Phase == 2)
-            {
-                var photo = content.Children[0] as ProfilePicture;
-                photo.SetUser(_clientService, user, 32);
-            }
-
-            if (args.Phase < 2)
-            {
-                args.RegisterUpdateCallback(OnContainerContentChanging);
-            }
-
-            args.Handled = true;
         }
 
         #endregion

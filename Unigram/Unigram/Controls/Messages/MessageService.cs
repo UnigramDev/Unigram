@@ -9,6 +9,7 @@ using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.UI;
 using Windows.UI.Text;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
@@ -17,13 +18,54 @@ namespace Unigram.Controls.Messages
 {
     public class MessageService : Button
     {
+        private MessageViewModel _message;
+
         public MessageService()
         {
             DefaultStyleKey = typeof(MessageService);
         }
 
+        protected override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+
+            var content = Content as FormattedTextBlock;
+            if (content == null)
+            {
+                return;
+            }
+
+            content.TextEntityClick += Message_TextEntityClick;
+        }
+
+        private void Message_TextEntityClick(object sender, TextEntityClickEventArgs e)
+        {
+            if (_message is not MessageViewModel message)
+            {
+                return;
+            }
+
+            if (e.Type is TextEntityTypeMention && e.Data is string username)
+            {
+                message.Delegate.OpenUsername(username);
+            }
+            else if (e.Type is TextEntityTypeMentionName mentionName)
+            {
+                message.Delegate.OpenUser(mentionName.UserId);
+            }
+            else if (e.Type is TextEntityTypeTextUrl textUrl)
+            {
+                message.Delegate.OpenUrl(textUrl.Url, true);
+            }
+            else if (e.Type is TextEntityTypeUrl && e.Data is string url)
+            {
+                message.Delegate.OpenUrl(url, false);
+            }
+        }
+
         public void UpdateMessage(MessageViewModel message)
         {
+            _message = message;
             Tag = message;
 
             var content = Content as FormattedTextBlock;
@@ -36,6 +78,7 @@ namespace Unigram.Controls.Messages
             if (entities.Text != null)
             {
                 content.SetText(message.ClientService, entities.Text, entities.Entities);
+                AutomationProperties.SetName(this, entities.Text);
             }
         }
 
