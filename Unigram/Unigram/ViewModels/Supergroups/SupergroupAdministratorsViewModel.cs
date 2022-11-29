@@ -1,5 +1,6 @@
 ﻿using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Services;
 using Unigram.Views;
 using Unigram.Views.Supergroups;
@@ -14,6 +15,24 @@ namespace Unigram.ViewModels.Supergroups
             EventLogCommand = new RelayCommand(EventLogExecute);
             AddCommand = new RelayCommand(AddExecute);
             ParticipantDismissCommand = new RelayCommand<ChatMember>(ParticipantDismissExecute);
+        }
+
+        public async void ToggleAntiSpam()
+        {
+            if (ClientService.TryGetSupergroupFull(Chat, out SupergroupFullInfo supergroupFull))
+            {
+                var supergroupFullAggressiveAntiSpamEnabled = _isAntiSpamEnabled;
+
+                if (supergroupFull.MemberCount >= ClientService.Options.AggressiveAntiSpamSupergroupMemberCountMin || supergroupFullAggressiveAntiSpamEnabled)
+                {
+                    // TODO: ClientService.Send...
+                }
+                else
+                {
+                    var message = Locale.Declension("ChannelAntiSpamForbidden", ClientService.Options.AggressiveAntiSpamSupergroupMemberCountMin);
+                    await MessagePopup.ShowAsync(message, Strings.Resources.AppName, Strings.Resources.OK);
+                }
+            }
         }
 
         public RelayCommand EventLogCommand { get; }

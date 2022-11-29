@@ -26,6 +26,7 @@
                                 SelectionMode="None">
             <ListView.Header>
                 <controls:HeaderedControl x:Name="HeaderPanel"
+                                          Footer="{CustomResource ChannelAntiSpamInfo}"
                                           Margin="0,0,0,16">
                     <controls:BadgeButton x:Name="EventLog"
                                           Content="{CustomResource EventLog}"
@@ -39,6 +40,11 @@
                                           Command="{x:Bind ViewModel.AddCommand}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Glyph="&#xE734;" />
+
+                    <controls:FauxCheckBox x:Name="AntiSpam"
+                                           Content="{CustomResource ChannelAntiSpam}"
+                                           Click="{x:Bind ViewModel.ToggleAntiSpam}"
+                                           Style="{StaticResource SettingsCheckBoxStyle}" />
                 </controls:HeaderedControl>
             </ListView.Header>
             <ListView.ItemTemplate>
@@ -49,8 +55,8 @@
             </ListView.ItemTemplate>
             <ListView.Footer>
                 <TextBlock x:Name="Footer"
-                            Style="{StaticResource InfoCaptionTextBlockStyle}"
-                            Margin="24,8,24,32" />
+                           Style="{StaticResource InfoCaptionTextBlockStyle}"
+                           Margin="24,8,24,32" />
             </ListView.Footer>
         </controls:TableListView>
     </Grid>

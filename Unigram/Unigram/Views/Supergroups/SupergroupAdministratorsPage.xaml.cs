@@ -84,6 +84,9 @@ namespace Unigram.Views.Supergroups
 
         public void UpdateSupergroup(Chat chat, Supergroup group)
         {
+            HeaderPanel.Footer = group.CanDeleteMessages() && !group.IsChannel ? Strings.Resources.ChannelAntiSpamInfo : string.Empty;
+            AntiSpam.Visibility = group.CanDeleteMessages() && !group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
+
             EventLog.Visibility = Visibility.Visible;
             AddNew.Visibility = group.CanPromoteMembers() ? Visibility.Visible : Visibility.Collapsed;
             Footer.Visibility = group.CanPromoteMembers() ? Visibility.Visible : Visibility.Collapsed;
@@ -96,6 +99,9 @@ namespace Unigram.Views.Supergroups
 
         public void UpdateBasicGroup(Chat chat, BasicGroup group)
         {
+            HeaderPanel.Footer = string.Empty;
+            AntiSpam.Visibility = Visibility.Collapsed;
+
             EventLog.Visibility = Visibility.Collapsed;
             AddNew.Visibility = group.CanPromoteMembers() ? Visibility.Visible : Visibility.Collapsed;
             Footer.Visibility = group.CanPromoteMembers() ? Visibility.Visible : Visibility.Collapsed;
