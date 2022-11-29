@@ -402,6 +402,7 @@ namespace Unigram.ViewModels.Supergroups
                 {
                     Title = Strings.Resources.TwoStepVerification,
                     Header = Strings.Resources.PleaseEnterCurrentPasswordTransfer,
+                    PlaceholderText = Strings.Resources.LoginPassword,
                     PrimaryButtonText = Strings.Resources.OK,
                     SecondaryButtonText = Strings.Resources.Cancel
                 };

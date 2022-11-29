@@ -13,6 +13,7 @@ using Unigram.Services;
 using Unigram.Views;
 using Unigram.Views.Chats;
 using Unigram.Views.Popups;
+using Unigram.Views.Settings;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage.Streams;
 using Windows.System;
@@ -1022,6 +1023,57 @@ namespace Unigram.ViewModels
                                 await Launcher.LaunchUriAsync(uri);
                             }
                         }
+                    }
+                }
+            }
+            else if (inline.Type is InlineKeyboardButtonTypeCallbackWithPassword callbackWithPassword)
+            {
+                var popup = new InputPopup(InputPopupType.Password)
+                {
+                    Title = Strings.Resources.BotOwnershipTransfer,
+                    Header = Strings.Resources.BotOwnershipTransferReadyAlertText,
+                    PlaceholderText = Strings.Resources.LoginPassword,
+                    PrimaryButtonText = Strings.Resources.BotOwnershipTransferChangeOwner,
+                    SecondaryButtonText = Strings.Resources.Cancel
+                };
+
+                var result = await popup.ShowQueuedAsync();
+                if (result != ContentDialogResult.Primary)
+                {
+                    return;
+                }
+
+                var response = await ClientService.SendAsync(new GetCallbackQueryAnswer(chat.Id, message.Id, new CallbackQueryPayloadDataWithPassword(popup.Text, callbackWithPassword.Data)));
+                if (response is Error error)
+                {
+                    if (error.Message.Equals("PASSWORD_MISSING") || error.Message.StartsWith("PASSWORD_TOO_FRESH_") || error.Message.StartsWith("SESSION_TOO_FRESH_"))
+                    {
+                        var primary = Strings.Resources.OK;
+
+                        var builder = new StringBuilder();
+                        builder.AppendLine(Strings.Resources.BotOwnershipTransferAlertText);
+                        builder.AppendLine($"\u2022 {Strings.Resources.EditAdminTransferAlertText1}");
+                        builder.AppendLine($"\u2022 {Strings.Resources.EditAdminTransferAlertText2}");
+
+                        if (error.Message.Equals("PASSWORD_MISSING"))
+                        {
+                            primary = Strings.Resources.EditAdminTransferSetPassword;
+                        }
+                        else
+                        {
+                            builder.AppendLine();
+                            builder.AppendLine(Strings.Resources.EditAdminTransferAlertText3);
+                        }
+
+                        var confirm = await MessagePopup.ShowAsync(builder.ToString(), Strings.Resources.EditAdminTransferAlertTitle, primary, Strings.Resources.Cancel);
+                        if (confirm == ContentDialogResult.Primary && !error.Message.Equals("PASSWORD_MISSING"))
+                        {
+                            NavigationService.Navigate(typeof(SettingsPasswordPage));
+                        }
+                    }
+                    else if (error.Message.Equals("PASSWORD_HASH_INVALID"))
+                    {
+                        KeyboardButtonInline(message, inline);
                     }
                 }
             }
