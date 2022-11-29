@@ -11,6 +11,7 @@ using Unigram.Navigation;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Media;
+using Windows.Media.Core;
 using Windows.Media.Playback;
 
 namespace Unigram.Services
@@ -162,8 +163,7 @@ namespace Unigram.Services
                     {
                         if (item.Message.Content is MessageAudio && _isRepeatEnabled == true)
                         {
-                            sender.Source = _items[_isReversed ? _items.Count - 1 : 0].Source;
-                            Play();
+                            SetSource(_items[_isReversed ? _items.Count - 1 : 0], true);
                         }
                         else
                         {
@@ -172,8 +172,7 @@ namespace Unigram.Services
                     }
                     else
                     {
-                        sender.Source = _items[_isReversed ? index - 1 : index + 1].Source;
-                        Play();
+                        SetSource(_items[_isReversed ? index - 1 : index + 1], true);
                     }
                 }
             }
@@ -223,7 +222,7 @@ namespace Unigram.Services
             var items = _items;
             var item = CurrentPlayback;
 
-            if (items == null || item?.File == null)
+            if (items == null || item?.Stream?.File == null)
             {
                 transport.IsEnabled = false;
                 transport.DisplayUpdater.ClearAll();
@@ -249,11 +248,11 @@ namespace Unigram.Services
                 catch { }
             }
 
-            if (item.File.Local.IsDownloadingCompleted)
+            if (item.Stream.File.Local.IsDownloadingCompleted)
             {
                 try
                 {
-                    var file = await item.Message.ClientService.GetFileAsync(item.File);
+                    var file = await item.Message.ClientService.GetFileAsync(item.Stream.File);
                     await transport.DisplayUpdater.CopyFromFileAsync(MediaPlaybackType.Music, file);
                 }
                 catch
@@ -484,8 +483,26 @@ namespace Unigram.Services
         {
             if (index >= 0 && index <= items.Count - 1)
             {
-                Execute(player => player.Source = items[index].Source);
+                SetSource(items[index]);
             }
+        }
+
+        private void SetSource(PlaybackItem item, bool play = false)
+        {
+            Execute(async player =>
+            {
+                var source = await item.GetSourceAsync();
+                if (source != null)
+                {
+                    _mapping.AddOrUpdate(source, item);
+                    player.Source = source;
+
+                    if (play)
+                    {
+                        Play();
+                    }
+                }
+            });
         }
 
         public void Clear()
@@ -510,22 +527,20 @@ namespace Unigram.Services
                 var already = previous.FirstOrDefault(x => x.Message.Id == message.Id && x.Message.ChatId == message.ChatId);
                 if (already != null)
                 {
-                    Execute(player => player.Source = already.Source);
-                    Play();
-
+                    SetSource(already, true);
                     return;
                 }
             }
 
             Dispose(false);
 
-            var item = await GetPlaybackItem(message);
+            var item = GetPlaybackItem(message);
             var items = _items = new List<PlaybackItem>();
 
             _items.Add(item);
             _threadId = threadId;
 
-            Create(item.Source);
+            Create(item, await item.GetSourceAsync());
             Play();
 
             if (message.Content is MessageText)
@@ -534,7 +549,7 @@ namespace Unigram.Services
             }
 
             var offset = -49;
-            var filter = message.Content is MessageAudio ? new SearchMessagesFilterAudio() : (SearchMessagesFilter)new SearchMessagesFilterVoiceAndVideoNote();
+            var filter = message.Content is MessageAudio ? new SearchMessagesFilterAudio() : (SearchMessagesFilter)new SearchMessagesFilterVoiceNote();
 
             var response = await message.ClientService.SendAsync(new SearchChatMessages(message.ChatId, string.Empty, null, message.Id, offset, 100, filter, _threadId));
             if (response is Messages messages)
@@ -543,11 +558,11 @@ namespace Unigram.Services
                 {
                     if (add.Id > message.Id && add.Content is MessageAudio)
                     {
-                        items.Insert(0, await GetPlaybackItem(new MessageWithOwner(message.ClientService, add)));
+                        items.Insert(0, GetPlaybackItem(new MessageWithOwner(message.ClientService, add)));
                     }
                     else if (add.Id < message.Id && (add.Content is MessageVoiceNote || add.Content is MessageVideoNote))
                     {
-                        items.Insert(0, await GetPlaybackItem(new MessageWithOwner(message.ClientService, add)));
+                        items.Insert(0, GetPlaybackItem(new MessageWithOwner(message.ClientService, add)));
                     }
                 }
 
@@ -555,11 +570,11 @@ namespace Unigram.Services
                 {
                     if (add.Id < message.Id && add.Content is MessageAudio)
                     {
-                        items.Add(await GetPlaybackItem(new MessageWithOwner(message.ClientService, add)));
+                        items.Add(GetPlaybackItem(new MessageWithOwner(message.ClientService, add)));
                     }
                     else if (add.Id > message.Id && (add.Content is MessageVoiceNote || add.Content is MessageVideoNote))
                     {
-                        items.Add(await GetPlaybackItem(new MessageWithOwner(message.ClientService, add)));
+                        items.Add(GetPlaybackItem(new MessageWithOwner(message.ClientService, add)));
                     }
                 }
 
@@ -568,16 +583,13 @@ namespace Unigram.Services
             }
         }
 
-        private async Task<PlaybackItem> GetPlaybackItem(MessageWithOwner message)
+        private PlaybackItem GetPlaybackItem(MessageWithOwner message)
         {
             GetProperties(message, out File file, out int duration, out bool speed);
 
             var stream = new RemoteFileStream(message.ClientService, file, duration);
-            var media = await FFmpegMediaSource.CreateFromStreamAsync(stream);
-
-            var item = new PlaybackItem(media)
+            var item = new PlaybackItem(stream)
             {
-                File = file,
                 Message = message,
                 CanChangePlaybackRate = speed
             };
@@ -596,7 +608,6 @@ namespace Unigram.Services
                 }
             }
 
-            _mapping.AddOrUpdate(item.Source, item);
             return item;
         }
 
@@ -693,7 +704,7 @@ namespace Unigram.Services
             }
         }
 
-        private void Create(IMediaPlaybackSource source)
+        private void Create(PlaybackItem item, IMediaPlaybackSource source)
         {
             if (_mediaPlayer != null)
             {
@@ -711,28 +722,46 @@ namespace Unigram.Services
             _mediaPlayer.CommandManager.IsEnabled = false;
             _mediaPlayer.Volume = _settingsService.VolumeLevel;
 
+            _mapping.AddOrUpdate(source, item);
             _mediaPlayer.Source = source;
         }
     }
 
     public class PlaybackItem
     {
-        public FFmpegMediaSource FFmpeg { get; set; }
-        public IMediaPlaybackSource Source { get; set; }
+        private FFmpegMediaSource _ffmpeg;
+        private IMediaPlaybackSource _source;
 
         public MessageWithOwner Message { get; set; }
 
-        public File File { get; set; }
+        public RemoteFileStream Stream { get; set; }
 
         public string Title { get; set; }
         public string Performer { get; set; }
 
         public bool CanChangePlaybackRate { get; set; }
 
-        public PlaybackItem(FFmpegMediaSource ffmpeg)
+        public PlaybackItem(RemoteFileStream stream)
         {
-            FFmpeg = ffmpeg;
-            Source = ffmpeg.CreateMediaPlaybackItem();
+            Stream = stream;
+        }
+
+        public async Task<IMediaPlaybackSource> GetSourceAsync()
+        {
+            try
+            {
+                if (_source == null)
+                {
+                    _ffmpeg = await FFmpegMediaSource.CreateFromStreamAsync(Stream);
+                    _source = _ffmpeg.CreateMediaPlaybackItem();
+                }
+
+                return _source;
+            }
+            catch
+            {
+                return _source = MediaSource.CreateFromStream(Stream, "audio");
+            }
         }
     }
 }
