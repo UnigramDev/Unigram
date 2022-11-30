@@ -71,7 +71,7 @@ namespace Unigram.ViewModels.Settings
             5 * 60 * 60
         };
 
-        public List<SettingsOptionItem<int>> AutolockTimeoutOptions => new List<SettingsOptionItem<int>>
+        public List<SettingsOptionItem<int>> AutolockTimeoutOptions { get; } = new()
         {
                 new SettingsOptionItem<int>(0,           Locale.FormatAutoLock(0)),
                 new SettingsOptionItem<int>(1 * 60,      Locale.FormatAutoLock(1 * 60)),

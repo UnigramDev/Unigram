@@ -97,7 +97,7 @@ namespace Unigram.ViewModels.Supergroups
             false,
         };
 
-        public List<SettingsOptionItem<bool>> AllHistoryAvailableOptions => new List<SettingsOptionItem<bool>>
+        public List<SettingsOptionItem<bool>> AllHistoryAvailableOptions { get; } = new()
         {
             new SettingsOptionItem<bool>(true, Strings.Resources.ChatHistoryVisible),
             new SettingsOptionItem<bool>(false, Strings.Resources.ChatHistoryHidden)

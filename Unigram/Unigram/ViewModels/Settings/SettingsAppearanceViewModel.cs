@@ -271,7 +271,7 @@ namespace Unigram.ViewModels.Settings
             DistanceUnits.Miles
         };
 
-        public List<SettingsOptionItem<DistanceUnits>> DistanceUnitOptions => new List<SettingsOptionItem<DistanceUnits>>
+        public List<SettingsOptionItem<DistanceUnits>> DistanceUnitOptions { get; } = new()
         {
             new SettingsOptionItem<DistanceUnits>(DistanceUnits.Automatic, Strings.Resources.DistanceUnitsAutomatic),
             new SettingsOptionItem<DistanceUnits>(DistanceUnits.Kilometers, Strings.Resources.DistanceUnitsKilometers),

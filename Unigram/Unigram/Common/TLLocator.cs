@@ -777,6 +777,13 @@
                     _settingsService,
                     _eventAggregator);
             }
+            else if (type == typeof(Unigram.ViewModels.Settings.SettingsAutoDeleteViewModel))
+            {
+                return (T)(object)new Unigram.ViewModels.Settings.SettingsAutoDeleteViewModel(
+                    _clientService,
+                    _settingsService,
+                    _eventAggregator);
+            }
             else if (type == typeof(Unigram.ViewModels.Settings.SettingsProfileViewModel))
             {
                 return (T)(object)new Unigram.ViewModels.Settings.SettingsProfileViewModel(

@@ -276,7 +276,7 @@ namespace Unigram.ViewModels.Settings
             StickersSuggestionMode.None
         };
 
-        public List<SettingsOptionItem<StickersSuggestionMode>> SuggestStickersOptions => new List<SettingsOptionItem<StickersSuggestionMode>>
+        public List<SettingsOptionItem<StickersSuggestionMode>> SuggestStickersOptions { get; } = new()
         {
             new SettingsOptionItem<StickersSuggestionMode>(StickersSuggestionMode.All, Strings.Resources.SuggestStickersAll),
             new SettingsOptionItem<StickersSuggestionMode>(StickersSuggestionMode.Installed, Strings.Resources.SuggestStickersInstalled),

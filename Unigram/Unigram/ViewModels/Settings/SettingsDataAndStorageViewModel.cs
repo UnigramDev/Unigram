@@ -44,7 +44,7 @@ namespace Unigram.ViewModels.Settings
             VoipDataSaving.Always
         };
 
-        public List<SettingsOptionItem<VoipDataSaving>> UseLessDataOptions => new List<SettingsOptionItem<VoipDataSaving>>
+        public List<SettingsOptionItem<VoipDataSaving>> UseLessDataOptions { get; } = new()
         {
             new SettingsOptionItem<VoipDataSaving>(VoipDataSaving.Never, Strings.Resources.UseLessDataNever),
             new SettingsOptionItem<VoipDataSaving>(VoipDataSaving.Mobile, Strings.Resources.UseLessDataOnMobile),

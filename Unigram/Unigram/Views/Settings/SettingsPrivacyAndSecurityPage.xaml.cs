@@ -1,8 +1,6 @@
-﻿using Telegram.Td.Api;
-using Unigram.Common;
+﻿using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
-using Unigram.Navigation.Services;
 using Unigram.ViewModels.Settings;
 using Unigram.Views.Settings.Privacy;
 using Windows.UI.Xaml;
@@ -123,7 +121,7 @@ namespace Unigram.Views.Settings
                 return Locale.Declension("Years", days / 365);
             }
 
-            return Locale.Declension("Months", days / 30);
+            return Locale.FormatTtl(days);
         }
 
         #endregion

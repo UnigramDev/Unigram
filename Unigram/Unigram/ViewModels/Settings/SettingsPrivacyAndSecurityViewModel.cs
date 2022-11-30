@@ -165,7 +165,7 @@ namespace Unigram.ViewModels.Settings
             365
         };
 
-        public List<SettingsOptionItem<int>> AccountTtlOptions => new List<SettingsOptionItem<int>>
+        public List<SettingsOptionItem<int>> AccountTtlOptions { get; } = new()
         {
             new SettingsOptionItem<int>(30, Locale.Declension("Months", 1)),
             new SettingsOptionItem<int>(90, Locale.Declension("Months", 3)),
@@ -310,6 +310,11 @@ namespace Unigram.ViewModels.Settings
                     NavigationService.Navigate(typeof(SettingsPasswordIntroPage));
                 }
             }
+        }
+
+        public void OpenAutoDelete()
+        {
+            NavigationService.Navigate(typeof(SettingsAutoDeletePage));
         }
 
         public RelayCommand ChangeEmailCommand { get; }

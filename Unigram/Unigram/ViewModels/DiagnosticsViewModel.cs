@@ -242,7 +242,7 @@ namespace Unigram.ViewModels
             5,
         };
 
-        public List<SettingsOptionItem<int>> VerbosityOptions => new List<SettingsOptionItem<int>>
+        public List<SettingsOptionItem<int>> VerbosityOptions { get; } = new()
         {
             new SettingsOptionItem<int>(0, nameof(VerbosityLevel.Assert)),
             new SettingsOptionItem<int>(1, nameof(VerbosityLevel.Error)),

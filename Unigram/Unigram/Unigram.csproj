@@ -377,6 +377,7 @@
     <Compile Include="Controls\Drawers\StickerDrawer.xaml.cs">
       <DependentUpon>StickerDrawer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\FauxRadioButton.cs" />
     <Compile Include="Controls\FauxCheckBox.cs" />
     <Compile Include="Controls\FileButton.cs" />
     <Compile Include="Controls\FormattedTextBlock.cs" />
@@ -629,6 +630,7 @@
     <Compile Include="ViewModels\Premium\PromoViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsBlockedChatsViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsAutoDeleteViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsProfileViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsQuickReactionViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsStickersViewModel.cs" />
@@ -767,7 +769,6 @@
     </Compile>
     <Compile Include="Converters\BooleanNegationConverter.cs" />
     <Compile Include="Converters\ChannelParticipantToTypeConverter.cs" />
-    <Compile Include="Converters\ChatTtlConverter.cs" />
     <Compile Include="Converters\FileTypeToStringConverter.cs" />
     <Compile Include="Converters\MessageTtlConverter.cs" />
     <Compile Include="Converters\MeUrlPrefixConverter.cs" />
@@ -1191,6 +1192,9 @@
     <Compile Include="Views\Settings\SettingsNotificationsExceptionsPage.xaml.cs">
       <DependentUpon>SettingsNotificationsExceptionsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\SettingsAutoDeletePage.xaml.cs">
+      <DependentUpon>SettingsAutoDeletePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings\SettingsPasscodePage.xaml.cs">
       <DependentUpon>SettingsPasscodePage.xaml</DependentUpon>
     </Compile>
@@ -1462,6 +1466,7 @@
     <Content Include="Assets\Animations\AuthorizationStateWaitCode.tgs" />
     <Content Include="Assets\Animations\AuthorizationStateWaitRegistration.tgs" />
     <Content Include="Assets\Animations\AuthorizationStateWaitFragment.tgs" />
+    <Content Include="Assets\Animations\AutoDelete.tgs" />
     <None Include="Assets\i420.hlsl" />
     <Content Include="Assets\Images\BoxArt.png" />
     <Content Include="Assets\Images\Reply.scale-100.png" />
@@ -2417,6 +2422,10 @@
     <Page Include="Views\Settings\SettingsNotificationsExceptionsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\SettingsAutoDeletePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Settings\SettingsPasscodePage.xaml">
       <Generator>MSBuild:Compile</Generator>

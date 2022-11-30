@@ -1,0 +1,72 @@
+<local:HostedPage x:Class="Unigram.Views.Settings.SettingsAutoDeletePage"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:local="using:Unigram.Views"
+                  xmlns:controls="using:Unigram.Controls"
+                  xmlns:popups="using:Unigram.Views.Popups"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  mc:Ignorable="d">
+
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <SlideNavigationTransitionInfo Effect="FromRight" />
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
+    <Grid Background="{ThemeResource SettingsPageBackground}">
+        <ScrollViewer x:Name="ScrollingHost"
+                      VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto">
+            <StackPanel Spacing="16"
+                        Margin="0,0,0,32">
+                <Grid Margin="24,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition MaxWidth="1000" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <controls:LottieView Source="ms-appx:///Assets/Animations/AutoDelete.tgs"
+                                         IsLoopingEnabled="True"
+                                         IsCachingEnabled="False"
+                                         Width="140"
+                                         Height="140"
+                                         Margin="0,16,0,0" />
+                </Grid>
+
+                <controls:HeaderedControl Header="{CustomResource MessageLifetime}"
+                                          Footer="{CustomResource GlobalAutoDeleteInfo}">
+                    <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="0,0,0,1">
+                        <controls:HeaderedControl ItemsSource="{x:Bind ViewModel.Items}"
+                                                  BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+                            <ItemsControl.Template>
+                                <ControlTemplate>
+                                    <ItemsPresenter />
+                                </ControlTemplate>
+                            </ItemsControl.Template>
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <controls:HeaderedControlPanel />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="popups:SettingsOptionItem">
+                                    <controls:FauxRadioButton Content="{x:Bind Text}"
+                                                              IsChecked="{x:Bind IsChecked, Mode=OneWay}"
+                                                              Click="OnChecked"
+                                                              Style="{StaticResource SettingsRadioButtonStyle}" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </controls:HeaderedControl>
+                    </Border>
+                    <controls:BadgeButton Click="{x:Bind ViewModel.SetCustomTime}"
+                                          Content="{CustomResource SetCustomTime}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xE916;" />
+                </controls:HeaderedControl>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</local:HostedPage>

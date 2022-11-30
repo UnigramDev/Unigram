@@ -37,6 +37,13 @@
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           IsChevronVisible="True" />
 
+                    <controls:BadgeButton Content="{CustomResource AutoDeleteMessages}"
+                                          Badge="{x:Bind ConvertOnOff(ViewModel.HasPassword), Mode=OneWay}"
+                                          Glyph="&#xE916;"
+                                          Click="{x:Bind ViewModel.OpenAutoDelete}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          IsChevronVisible="True" />
+
                     <controls:BadgeButton x:Name="ChangeEmail"
                                           x:Load="{x:Bind ViewModel.HasEmailAddress, Mode=OneWay}"
                                           Content="{CustomResource EmailLogin}"

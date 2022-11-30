@@ -52,7 +52,7 @@ namespace Unigram.ViewModels.Settings
             365
         };
 
-        public List<SettingsOptionItem<int>> SessionTtlOptions => new List<SettingsOptionItem<int>>
+        public List<SettingsOptionItem<int>> SessionTtlOptions { get; } = new()
         {
             new SettingsOptionItem<int>(7, Locale.Declension("Weeks", 1)),
             new SettingsOptionItem<int>(30, Locale.Declension("Months", 1)),

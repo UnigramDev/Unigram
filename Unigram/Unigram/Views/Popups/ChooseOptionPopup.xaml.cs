@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Unigram.Controls;
+using Unigram.Navigation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -64,15 +65,31 @@ namespace Unigram.Views.Popups
         public string Footer { get; set; }
     }
 
-    public class SettingsOptionItem<T>
+    public class SettingsOptionItem : BindableBase
     {
-        public SettingsOptionItem(T value, string text)
+        public SettingsOptionItem(string text)
         {
-            Value = value;
             Text = text;
         }
 
-        public T Value { get; set; }
         public string Text { get; set; }
+
+        private bool _isChecked;
+        public bool IsChecked
+        {
+            get => _isChecked;
+            set => Set(ref _isChecked, value);
+        }
+    }
+
+    public class SettingsOptionItem<T> : SettingsOptionItem
+    {
+        public SettingsOptionItem(T value, string text)
+            : base(text)
+        {
+            Value = value;
+        }
+
+        public T Value { get; set; }
     }
 }

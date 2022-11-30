@@ -539,6 +539,7 @@ namespace Unigram
                 //
                 Unigram.Views.Settings.SettingsAdvancedPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.SettingsAdvancedViewModel>(sessionId),
                 Unigram.Views.Settings.SettingsAppearancePage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.SettingsAppearanceViewModel>(sessionId),
+                Unigram.Views.Settings.SettingsAutoDeletePage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.SettingsAutoDeleteViewModel>(sessionId),
                 Unigram.Views.Settings.SettingsBackgroundsPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.SettingsBackgroundsViewModel>(sessionId),
                 Unigram.Views.Settings.SettingsDataAndStoragePage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.SettingsDataAndStorageViewModel>(sessionId),
                 Unigram.Views.Settings.SettingsLanguagePage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.SettingsLanguageViewModel>(sessionId),

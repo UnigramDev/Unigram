@@ -77,12 +77,12 @@ namespace Unigram.Common
             return _loader.GetString(key);
         }
 
-        public static string Declension(string key, int count)
+        public static string Declension(string key, long count)
         {
             return Declension(key, count, true);
         }
 
-        public static string Declension(string key, int count, bool format)
+        public static string Declension(string key, long count, bool format)
         {
             if (_currentRules == null)
             {
@@ -260,9 +260,13 @@ namespace Unigram.Common
                     return string.Format("{0} {1}", Declension("Weeks", days / 7), Declension("Days", days % 7));
                 }
             }
-            else
+            else if (ttl < 60 * 60 * 24 * 365)
             {
                 return Declension("Months", ttl / 60 / 60 / 24 / 31);
+            }
+            else
+            {
+                return Declension("Years", ttl / 60 / 60 / 24 / 365);
             }
         }
 
@@ -937,12 +941,12 @@ namespace Unigram.Common
 
         private abstract class PluralRules
         {
-            public abstract int QuantityForNumber(int n);
+            public abstract int QuantityForNumber(long n);
         }
 
         private class PluralRules_Zero : PluralRules
         {
-            public override int QuantityForNumber(int count)
+            public override int QuantityForNumber(long count)
             {
                 if (count is 0 or 1)
                 {
@@ -957,7 +961,7 @@ namespace Unigram.Common
 
         private class PluralRules_Welsh : PluralRules
         {
-            public override int QuantityForNumber(int count)
+            public override int QuantityForNumber(long count)
             {
                 if (count == 0)
                 {
@@ -988,7 +992,7 @@ namespace Unigram.Common
 
         private class PluralRules_Two : PluralRules
         {
-            public override int QuantityForNumber(int count)
+            public override int QuantityForNumber(long count)
             {
                 if (count == 1)
                 {
@@ -1007,7 +1011,7 @@ namespace Unigram.Common
 
         private class PluralRules_Tachelhit : PluralRules
         {
-            public override int QuantityForNumber(int count)
+            public override int QuantityForNumber(long count)
             {
                 if (count is >= 0 and <= 1)
                 {
@@ -1026,9 +1030,9 @@ namespace Unigram.Common
 
         private class PluralRules_Slovenian : PluralRules
         {
-            public override int QuantityForNumber(int count)
+            public override int QuantityForNumber(long count)
             {
-                int rem100 = count % 100;
+                long rem100 = count % 100;
                 if (rem100 == 1)
                 {
                     return QUANTITY_ONE;
@@ -1050,9 +1054,9 @@ namespace Unigram.Common
 
         private class PluralRules_Romanian : PluralRules
         {
-            public override int QuantityForNumber(int count)
+            public override int QuantityForNumber(long count)
             {
-                int rem100 = count % 100;
+                long rem100 = count % 100;
                 if (count == 1)
                 {
                     return QUANTITY_ONE;
@@ -1070,10 +1074,10 @@ namespace Unigram.Common
 
         private class PluralRules_Polish : PluralRules
         {
-            public override int QuantityForNumber(int count)
+            public override int QuantityForNumber(long count)
             {
-                int rem100 = count % 100;
-                int rem10 = count % 10;
+                long rem100 = count % 100;
+                long rem10 = count % 10;
                 if (count == 1)
                 {
                     return QUANTITY_ONE;
@@ -1095,7 +1099,7 @@ namespace Unigram.Common
 
         private class PluralRules_One : PluralRules
         {
-            public override int QuantityForNumber(int count)
+            public override int QuantityForNumber(long count)
             {
                 return count == 1 ? QUANTITY_ONE : QUANTITY_OTHER;
             }
@@ -1103,7 +1107,7 @@ namespace Unigram.Common
 
         private class PluralRules_None : PluralRules
         {
-            public override int QuantityForNumber(int count)
+            public override int QuantityForNumber(long count)
             {
                 return QUANTITY_OTHER;
             }
@@ -1111,9 +1115,9 @@ namespace Unigram.Common
 
         private class PluralRules_Maltese : PluralRules
         {
-            public override int QuantityForNumber(int count)
+            public override int QuantityForNumber(long count)
             {
-                int rem100 = count % 100;
+                long rem100 = count % 100;
                 if (count == 1)
                 {
                     return QUANTITY_ONE;
@@ -1135,7 +1139,7 @@ namespace Unigram.Common
 
         private class PluralRules_Macedonian : PluralRules
         {
-            public override int QuantityForNumber(int count)
+            public override int QuantityForNumber(long count)
             {
                 if (count % 10 == 1 && count != 11)
                 {
@@ -1150,10 +1154,10 @@ namespace Unigram.Common
 
         private class PluralRules_Lithuanian : PluralRules
         {
-            public override int QuantityForNumber(int count)
+            public override int QuantityForNumber(long count)
             {
-                int rem100 = count % 100;
-                int rem10 = count % 10;
+                long rem100 = count % 100;
+                long rem10 = count % 10;
                 if (rem10 == 1 && !(rem100 >= 11 && rem100 <= 19))
                 {
                     return QUANTITY_ONE;
@@ -1171,7 +1175,7 @@ namespace Unigram.Common
 
         private class PluralRules_Latvian : PluralRules
         {
-            public override int QuantityForNumber(int count)
+            public override int QuantityForNumber(long count)
             {
                 if (count == 0)
                 {
@@ -1190,7 +1194,7 @@ namespace Unigram.Common
 
         private class PluralRules_Langi : PluralRules
         {
-            public override int QuantityForNumber(int count)
+            public override int QuantityForNumber(long count)
             {
                 if (count == 0)
                 {
@@ -1209,7 +1213,7 @@ namespace Unigram.Common
 
         private class PluralRules_French : PluralRules
         {
-            public override int QuantityForNumber(int count)
+            public override int QuantityForNumber(long count)
             {
                 if (count is >= 0 and < 2)
                 {
@@ -1224,7 +1228,7 @@ namespace Unigram.Common
 
         private class PluralRules_Czech : PluralRules
         {
-            public override int QuantityForNumber(int count)
+            public override int QuantityForNumber(long count)
             {
                 if (count == 1)
                 {
@@ -1243,7 +1247,7 @@ namespace Unigram.Common
 
         private class PluralRules_Breton : PluralRules
         {
-            public override int QuantityForNumber(int count)
+            public override int QuantityForNumber(long count)
             {
                 if (count == 0)
                 {
@@ -1274,10 +1278,10 @@ namespace Unigram.Common
 
         private class PluralRules_Balkan : PluralRules
         {
-            public override int QuantityForNumber(int count)
+            public override int QuantityForNumber(long count)
             {
-                int rem100 = count % 100;
-                int rem10 = count % 10;
+                long rem100 = count % 100;
+                long rem10 = count % 10;
                 if (rem10 == 1 && rem100 != 11)
                 {
                     return QUANTITY_ONE;
@@ -1299,10 +1303,10 @@ namespace Unigram.Common
 
         private class PluralRules_Serbian : PluralRules
         {
-            public override int QuantityForNumber(int count)
+            public override int QuantityForNumber(long count)
             {
-                int rem100 = count % 100;
-                int rem10 = count % 10;
+                long rem100 = count % 100;
+                long rem10 = count % 10;
                 if (rem10 == 1 && rem100 != 11)
                 {
                     return QUANTITY_ONE;
@@ -1320,9 +1324,9 @@ namespace Unigram.Common
 
         private class PluralRules_Arabic : PluralRules
         {
-            public override int QuantityForNumber(int count)
+            public override int QuantityForNumber(long count)
             {
-                int rem100 = count % 100;
+                long rem100 = count % 100;
                 if (count == 0)
                 {
                     return QUANTITY_ZERO;

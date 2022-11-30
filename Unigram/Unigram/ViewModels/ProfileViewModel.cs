@@ -1079,7 +1079,7 @@ namespace Unigram.ViewModels
             }
             else
             {
-                var dialog = new ChatTtlPopup(chat.Type is ChatTypeSecret);
+                var dialog = new ChatTtlPopup(chat.Type is ChatTypeSecret ? ChatTtlType.Secret : ChatTtlType.Normal);
                 dialog.Value = chat.MessageTtl;
 
                 var confirm = await dialog.ShowQueuedAsync();
