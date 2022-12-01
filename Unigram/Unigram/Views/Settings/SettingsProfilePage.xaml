@@ -81,7 +81,7 @@
                                  Margin="0,0,0,2"
                                  Grid.Column="1" />
                         <TextBox Text="{x:Bind ViewModel.LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                 PlaceholderText="{CustomResource FirstNameSmall}"
+                                 PlaceholderText="{CustomResource LastNameSmall}"
                                  FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                  MaxLength="{StaticResource ChannelTitleMaxLength}"
                                  VerticalAlignment="Top"
