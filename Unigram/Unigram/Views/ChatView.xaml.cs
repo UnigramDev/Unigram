@@ -1982,6 +1982,7 @@ namespace Unigram.Views
 
                 flyout.CreateFlyoutItem(MessageForward_Loaded, ViewModel.MessageForwardCommand, message, Strings.Resources.Forward, new FontIcon { Glyph = Icons.Share });
                 flyout.CreateFlyoutItem(MessageReport_Loaded, ViewModel.MessageReportCommand, message, Strings.Resources.ReportChat, new FontIcon { Glyph = Icons.ShieldError });
+                flyout.CreateFlyoutItem(MessageReportFalsePositive_Loaded, ViewModel.MessageReportFalsePositiveCommand, message, Strings.Resources.ReportFalsePositive, new FontIcon { Glyph = Icons.ShieldError });
                 flyout.CreateFlyoutItem(MessageDelete_Loaded, ViewModel.MessageDeleteCommand, message, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
                 flyout.CreateFlyoutItem(MessageSelect_Loaded, ViewModel.MessageSelectCommand, message, Strings.Resources.lng_context_select_msg, new FontIcon { Glyph = Icons.CheckmarkCircle });
 
@@ -2041,7 +2042,7 @@ namespace Unigram.Views
                     LoadMessageEmojis(message, emoji, flyout);
                 }
 
-                if (message.CanBeSaved is false && flyout.Items.Count > 0)
+                if (message.CanBeSaved is false && flyout.Items.Count > 0 && ViewModel.Chat.HasProtectedContent)
                 {
                     flyout.CreateFlyoutSeparator();
                     flyout.Items.Add(new MenuFlyoutLabel
@@ -2406,23 +2407,34 @@ namespace Unigram.Views
         private bool MessageReport_Loaded(MessageViewModel message)
         {
             var chat = ViewModel.Chat;
-            if (chat == null || !chat.CanBeReported)
+            if (chat == null || !chat.CanBeReported || message.Event != null || message.IsService())
             {
                 return false;
             }
 
-            if (message.IsService())
-            {
-                return false;
-            }
-
-            var myId = ViewModel.ClientService.Options.MyId;
             if (message.SenderId is MessageSenderUser senderUser)
             {
-                return senderUser.UserId != myId;
+                return senderUser.UserId != ViewModel.ClientService.Options.MyId;
             }
 
             return true;
+        }
+
+
+        private bool MessageReportFalsePositive_Loaded(MessageViewModel message)
+        {
+            var chat = ViewModel.Chat;
+            if (chat == null || message.IsService())
+            {
+                return false;
+            }
+
+            if (message.Event?.Action is ChatEventMessageDeleted messageDeleted)
+            {
+                return messageDeleted.CanReportAntiSpamFalsePositive;
+            }
+
+            return false;
         }
 
         private bool MessageRetry_Loaded(MessageViewModel message)

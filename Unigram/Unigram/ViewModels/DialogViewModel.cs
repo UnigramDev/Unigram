@@ -137,6 +137,7 @@ namespace Unigram.ViewModels
             MessageThreadCommand = new RelayCommand<MessageViewModel>(MessageThreadExecute);
             MessagePinCommand = new RelayCommand<MessageViewModel>(MessagePinExecute);
             MessageReportCommand = new RelayCommand<MessageViewModel>(MessageReportExecute);
+            MessageReportFalsePositiveCommand = new RelayCommand<MessageViewModel>(MessageReportFalsePositiveExecute);
             MessageAddStickerCommand = new RelayCommand<MessageViewModel>(MessageAddStickerExecute);
             MessageFaveStickerCommand = new RelayCommand<MessageViewModel>(MessageFaveStickerExecute);
             MessageUnfaveStickerCommand = new RelayCommand<MessageViewModel>(MessageUnfaveStickerExecute);

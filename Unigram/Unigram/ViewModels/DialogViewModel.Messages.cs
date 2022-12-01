@@ -827,6 +827,20 @@ namespace Unigram.ViewModels
 
         #endregion
 
+        #region Report false positive
+
+        public RelayCommand<MessageViewModel> MessageReportFalsePositiveCommand { get; }
+        private async void MessageReportFalsePositiveExecute(MessageViewModel message)
+        {
+            if (_chat?.Type is ChatTypeSupergroup supergroup)
+            {
+                ClientService.Send(new ReportSupergroupAntiSpamFalsePositive(supergroup.SupergroupId, message.Id));
+                await MessagePopup.ShowAsync(Strings.Resources.ChannelAntiSpamFalsePositiveReported);
+            }
+        }
+
+        #endregion
+
         #region Send now
 
         public RelayCommand<MessageViewModel> MessageSendNowCommand { get; }
