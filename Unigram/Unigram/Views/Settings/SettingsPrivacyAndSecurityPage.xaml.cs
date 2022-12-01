@@ -116,9 +116,9 @@ namespace Unigram.Views.Settings
 
         private string ConvertTtl(int days)
         {
-            if (days >= 365)
+            if (days == 0)
             {
-                return Locale.Declension("Years", days / 365);
+                return Strings.Resources.NotificationsOff;
             }
 
             return Locale.FormatTtl(days);

@@ -1,21 +1,32 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views.Popups;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
     public class SettingsAutoDeleteViewModel : TLViewModelBase
-        , IHandle
-    //, IHandle<UpdatePasscodeLock>
     {
         public SettingsAutoDeleteViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
             Items[0].IsChecked = true;
+        }
+
+        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        {
+            var response = await ClientService.SendAsync(new GetDefaultMessageTtl());
+            if (response is MessageTtl messageTtl)
+            {
+                UpdateSelection(messageTtl.Ttl, false);
+            }
         }
 
         public ObservableCollection<SettingsOptionItem<int>> Items { get; } = new()
@@ -74,7 +85,7 @@ namespace Unigram.ViewModels.Settings
                 Items.Add(new SettingsOptionItem<int>(value, Locale.FormatTtl(value)) { IsChecked = true });
             }
 
-            // TODO: API call
+            ClientService.Send(new SetDefaultMessageTtl(new MessageTtl(value)));
         }
     }
 }

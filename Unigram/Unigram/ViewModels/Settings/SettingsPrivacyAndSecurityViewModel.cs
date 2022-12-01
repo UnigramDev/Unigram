@@ -116,6 +116,14 @@ namespace Unigram.ViewModels.Settings
                 }
             });
 
+            ClientService.Send(new GetDefaultMessageTtl(), result =>
+            {
+                if (result is MessageTtl messageTtl)
+                {
+                    BeginOnUIThread(() => DefaultTtl = messageTtl.Ttl);
+                }
+            });
+
             if (ApiInfo.IsPackagedRelease && ClientService.Options.CanIgnoreSensitiveContentRestrictions)
             {
                 ClientService.Send(new GetOption("ignore_sensitive_content_restrictions"), result =>
@@ -199,6 +207,13 @@ namespace Unigram.ViewModels.Settings
         {
             get => _hasPasscode;
             set => Set(ref _hasPasscode, value);
+        }
+
+        private int _defaultTtl;
+        public int DefaultTtl
+        {
+            get => _defaultTtl;
+            set => Set(ref _defaultTtl, value);
         }
 
         public bool IsContactsSyncEnabled

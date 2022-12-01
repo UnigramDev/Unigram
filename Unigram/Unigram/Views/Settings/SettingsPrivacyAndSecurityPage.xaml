@@ -38,7 +38,7 @@
                                           IsChevronVisible="True" />
 
                     <controls:BadgeButton Content="{CustomResource AutoDeleteMessages}"
-                                          Badge="{x:Bind ConvertOnOff(ViewModel.HasPassword), Mode=OneWay}"
+                                          Badge="{x:Bind ConvertTtl(ViewModel.DefaultTtl), Mode=OneWay}"
                                           Glyph="&#xE916;"
                                           Click="{x:Bind ViewModel.OpenAutoDelete}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
