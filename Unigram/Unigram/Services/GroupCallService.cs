@@ -912,7 +912,7 @@ namespace Unigram.Services
             get => _manager.IsMuted;
             set
             {
-                if (_manager != null && _manager.IsMuted != value)
+                if (_manager != null && _currentUser != null && _manager.IsMuted != value)
                 {
                     _manager.IsMuted = value;
                     ClientService.Send(new ToggleGroupCallParticipantIsMuted(_call.Id, _currentUser.ParticipantId, value));

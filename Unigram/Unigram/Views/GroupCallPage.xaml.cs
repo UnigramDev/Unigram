@@ -20,6 +20,7 @@ using Unigram.Views.Popups;
 using Windows.Devices.Enumeration;
 using Windows.Foundation;
 using Windows.Graphics.Capture;
+using Windows.System;
 using Windows.System.Display;
 using Windows.UI;
 using Windows.UI.ViewManagement;
@@ -57,6 +58,8 @@ namespace Unigram.Views
 
         private readonly DisplayRequest _displayRequest = new();
 
+        private readonly DispatcherQueue _dispatcherQueue;
+
         private ParticipantsGridMode _mode = ParticipantsGridMode.Compact;
         private bool _docked = true;
 
@@ -66,6 +69,8 @@ namespace Unigram.Views
 
             _clientService = clientService;
             _aggregator = aggregator;
+
+            _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
             _scheduledTimer = new DispatcherTimer();
             _scheduledTimer.Interval = TimeSpan.FromSeconds(1);
@@ -1519,19 +1524,22 @@ namespace Unigram.Views
                 video.Text = "Webcam";
                 video.Icon = new FontIcon { Glyph = Icons.Camera, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
 
-                var videoDevices = await DeviceInformation.FindAllAsync(DeviceClass.VideoCapture);
-                foreach (var device in videoDevices)
+                _dispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, async () =>
                 {
-                    var deviceItem = new ToggleMenuFlyoutItem();
-                    deviceItem.Text = device.Name;
-                    deviceItem.IsChecked = videoId == device.Id;
-                    deviceItem.Click += (s, args) =>
+                    var videoDevices = await DeviceInformation.FindAllAsync(DeviceClass.VideoCapture);
+                    foreach (var device in videoDevices)
                     {
-                        _service.CurrentVideoInput = device.Id;
-                    };
+                        var deviceItem = new ToggleMenuFlyoutItem();
+                        deviceItem.Text = device.Name;
+                        deviceItem.IsChecked = videoId == device.Id;
+                        deviceItem.Click += (s, args) =>
+                        {
+                            _service.CurrentVideoInput = device.Id;
+                        };
 
-                    video.Items.Add(deviceItem);
-                }
+                        video.Items.Add(deviceItem);
+                    }
+                });
 
                 var defaultInput = new ToggleMenuFlyoutItem();
                 defaultInput.Text = Strings.Resources.Default;
@@ -1546,19 +1554,22 @@ namespace Unigram.Views
                 input.Icon = new FontIcon { Glyph = Icons.MicOn, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
                 input.Items.Add(defaultInput);
 
-                var inputDevices = await DeviceInformation.FindAllAsync(DeviceClass.AudioCapture);
-                foreach (var device in inputDevices)
+                _dispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, async () =>
                 {
-                    var deviceItem = new ToggleMenuFlyoutItem();
-                    deviceItem.Text = device.Name;
-                    deviceItem.IsChecked = inputId == device.Id;
-                    deviceItem.Click += (s, args) =>
+                    var inputDevices = await DeviceInformation.FindAllAsync(DeviceClass.AudioCapture);
+                    foreach (var device in inputDevices)
                     {
-                        _service.CurrentAudioInput = device.Id;
-                    };
+                        var deviceItem = new ToggleMenuFlyoutItem();
+                        deviceItem.Text = device.Name;
+                        deviceItem.IsChecked = inputId == device.Id;
+                        deviceItem.Click += (s, args) =>
+                        {
+                            _service.CurrentAudioInput = device.Id;
+                        };
 
-                    input.Items.Add(deviceItem);
-                }
+                        input.Items.Add(deviceItem);
+                    }
+                });
 
                 var defaultOutput = new ToggleMenuFlyoutItem();
                 defaultOutput.Text = Strings.Resources.Default;
@@ -1573,19 +1584,22 @@ namespace Unigram.Views
                 output.Icon = new FontIcon { Glyph = Icons.Speaker, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
                 output.Items.Add(defaultOutput);
 
-                var outputDevices = await DeviceInformation.FindAllAsync(DeviceClass.AudioRender);
-                foreach (var device in outputDevices)
+                _dispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, async () =>
                 {
-                    var deviceItem = new ToggleMenuFlyoutItem();
-                    deviceItem.Text = device.Name;
-                    deviceItem.IsChecked = outputId == device.Id;
-                    deviceItem.Click += (s, args) =>
+                    var outputDevices = await DeviceInformation.FindAllAsync(DeviceClass.AudioRender);
+                    foreach (var device in outputDevices)
                     {
-                        _service.CurrentAudioOutput = device.Id;
-                    };
+                        var deviceItem = new ToggleMenuFlyoutItem();
+                        deviceItem.Text = device.Name;
+                        deviceItem.IsChecked = outputId == device.Id;
+                        deviceItem.Click += (s, args) =>
+                        {
+                            _service.CurrentAudioOutput = device.Id;
+                        };
 
-                    output.Items.Add(deviceItem);
-                }
+                        output.Items.Add(deviceItem);
+                    }
+                });
 
                 flyout.Items.Add(video);
                 flyout.Items.Add(input);
@@ -1770,7 +1784,7 @@ namespace Unigram.Views
                 element.Scale = new Vector3(0.9f);
             }
 
-            if (_clientService.TryGetUser(participant.ParticipantId, out User user))
+            if (_clientService.TryGetUser(participant.ParticipantId, out Telegram.Td.Api.User user))
             {
                 photo.SetUser(_clientService, user, 36);
                 title.Text = user.FullName();

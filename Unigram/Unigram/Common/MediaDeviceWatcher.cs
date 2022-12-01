@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Unigram.Controls;
 using Unigram.Services;
@@ -114,9 +113,12 @@ namespace Unigram.Common
 
         private async Task<string> GetDeviceAsync(string deviceId)
         {
-            var devices = await DeviceInformation.FindAllAsync(_class);
+            if (string.IsNullOrEmpty(deviceId))
+            {
+                return GetDefault();
+            }
 
-            var selected = devices.FirstOrDefault(x => x.IsEnabled && x.Id == deviceId);
+            var selected = await DeviceInformation.CreateFromIdAsync(deviceId);
             if (selected == null)
             {
                 return GetDefault();
