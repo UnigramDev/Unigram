@@ -225,6 +225,9 @@ namespace Unigram.Controls
                 SecretHashKey.Visibility = Visibility.Collapsed;
             }
 
+            AnonymousNumber.Visibility = user.HasVirtualPhoneNumber ? Visibility.Visible : Visibility.Collapsed;
+            AnonymousNumberSeparator.Visibility = user.HasVirtualPhoneNumber ? Visibility.Visible : Visibility.Collapsed;
+
             OpenChat.Content = Strings.Resources.VoipGroupOpenChat;
 
             // Unused:
@@ -358,6 +361,9 @@ namespace Unigram.Controls
             }
 
             VideoCall.Visibility = Visibility.Collapsed;
+
+            AnonymousNumber.Visibility = Visibility.Collapsed;
+            AnonymousNumberSeparator.Visibility = Visibility.Collapsed;
         }
 
         public void UpdateBasicGroupFullInfo(Chat chat, BasicGroup group, BasicGroupFullInfo fullInfo)
@@ -452,6 +458,9 @@ namespace Unigram.Controls
             //UserCommonChats.Visibility = Visibility.Collapsed;
             SecretLifetime.Visibility = Visibility.Collapsed;
             SecretHashKey.Visibility = Visibility.Collapsed;
+
+            AnonymousNumber.Visibility = Visibility.Collapsed;
+            AnonymousNumberSeparator.Visibility = Visibility.Collapsed;
         }
 
         public void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo)

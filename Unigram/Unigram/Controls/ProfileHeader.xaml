@@ -179,6 +179,13 @@
                                           Style="{StaticResource DefaultFontIconStyle}" />
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
+                        <MenuFlyoutSeparator x:Name="AnonymousNumberSeparator"
+                                             Visibility="Collapsed" />
+                        <controls:MenuFlyoutLabel x:Name="AnonymousNumber"
+                                                  Visibility="Collapsed"
+                                                  Text="{CustomResource AnonymousNumberNotice}"
+                                                  MaxWidth="180"
+                                                  Padding="12,4" />
                     </MenuFlyout>
                 </Button.ContextFlyout>
             </controls:BadgeButton>
