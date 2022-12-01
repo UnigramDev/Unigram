@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Controls;
 using Unigram.Converters;
@@ -300,6 +301,10 @@ namespace Unigram.Common
             {
                 NavigateToPhoneNumber(clientService, navigation, phoneNumber.PhoneNumber);
             }
+            else if (internalLink is InternalLinkTypeUserToken userToken)
+            {
+                NavigateToUserToken(clientService, navigation, userToken.Token);
+            }
             else if (internalLink is InternalLinkTypeVideoChat videoChat)
             {
                 NavigateToUsername(clientService, navigation, videoChat.ChatUsername, videoChat.InviteHash, null);
@@ -574,7 +579,17 @@ namespace Unigram.Common
 
         public static async void NavigateToPhoneNumber(IClientService clientService, INavigationService navigation, string phoneNumber)
         {
-            var response = await clientService.SendAsync(new SearchUserByPhoneNumber(phoneNumber));
+            await NavigateToUserByResponse(clientService, navigation, new SearchUserByPhoneNumber(phoneNumber));
+        }
+
+        public static async void NavigateToUserToken(IClientService clientService, INavigationService navigation, string userToken)
+        {
+            await NavigateToUserByResponse(clientService, navigation, new SearchUserByToken(userToken));
+        }
+
+        private static async Task NavigateToUserByResponse(IClientService clientService, INavigationService navigation, Function request)
+        {
+            var response = await clientService.SendAsync(request);
             if (response is User user)
             {
                 var chat = await clientService.SendAsync(new CreatePrivateChat(user.Id, false)) as Chat;
