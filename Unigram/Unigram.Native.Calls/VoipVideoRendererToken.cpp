@@ -32,6 +32,14 @@ namespace winrt::Unigram::Native::Calls::implementation
 		m_sink->m_stretch = value;
 	}
 
+	bool VoipVideoRendererToken::IsMirrored() {
+		return m_sink->m_flip;
+	}
+
+	void VoipVideoRendererToken::IsMirrored(bool value) {
+		m_sink->m_flip = value;
+	}
+
 	bool VoipVideoRendererToken::IsMatch(hstring endpointId, CanvasControl canvasControl)
 	{
 		return m_endpointId == endpointId && *m_canvasControl == canvasControl;

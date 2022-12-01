@@ -24,6 +24,9 @@ namespace winrt::Unigram::Native::Calls::implementation
 		winrt::Windows::UI::Xaml::Media::Stretch Stretch();
 		void Stretch(winrt::Windows::UI::Xaml::Media::Stretch value);
 
+		bool IsMirrored();
+		void IsMirrored(bool value);
+
 		bool IsMatch(hstring endpointId, CanvasControl canvasControl);
 
 		void Stop();
