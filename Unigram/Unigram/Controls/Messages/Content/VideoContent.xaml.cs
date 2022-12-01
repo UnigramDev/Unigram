@@ -248,7 +248,14 @@ namespace Unigram.Controls.Messages.Content
             {
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    source = new BitmapImage(UriEx.ToLocal(file.Local.Path));
+                    if (message.IsSecret())
+                    {
+                        source = await PlaceholderHelper.GetBlurredAsync(file.Local.Path, 15);
+                    }
+                    else
+                    {
+                        source = new BitmapImage(UriEx.ToLocal(file.Local.Path));
+                    }
                 }
                 else if (download)
                 {
@@ -275,7 +282,7 @@ namespace Unigram.Controls.Messages.Content
 
         private void UpdateSource(MessageViewModel message, File file, int duration)
         {
-            if (message == null || file == null || !message.Delegate.Settings.IsAutoPlayVideosEnabled)
+            if (message?.Delegate == null || file == null || !message.Delegate.Settings.IsAutoPlayVideosEnabled)
             {
                 Player.Source = _source = null;
             }

@@ -320,6 +320,8 @@ namespace Unigram.Controls.Gallery
 
             parameter.Items.CollectionChanged -= OnCollectionChanged;
             parameter.Items.CollectionChanged += OnCollectionChanged;
+            parameter.Aggregator.Subscribe<UpdateDeleteMessages>(this, Handle)
+                .Subscribe<UpdateMessageContent>(Handle);
 
             Load(parameter);
 
