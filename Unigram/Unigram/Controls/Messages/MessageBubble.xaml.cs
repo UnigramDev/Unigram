@@ -924,6 +924,8 @@ namespace Unigram.Controls.Messages
                 hyperlink.Foreground = light ? new SolidColorBrush(Colors.White) : GetBrush("MessageHeaderForegroundBrush");
                 hyperlink.Click += FwdFrom_Click;
 
+                ForwardLabel.Foreground = hyperlink.Foreground;
+
                 ForwardLabel.Inlines.Add(hyperlink);
                 ForwardLabel.Visibility = Visibility.Visible;
             }

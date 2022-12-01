@@ -33,7 +33,7 @@
                           Margin="{TemplateBinding Padding}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup>
-                                <VisualState x:Name="NormalState" />
+                                <VisualState x:Name="TintedState" />
                                 <VisualState x:Name="LightState">
                                     <VisualState.Setters>
                                         <Setter Target="Label.Foreground"
@@ -49,6 +49,21 @@
                                                 Value="0,4,0,2" />
                                         <Setter Target="LayoutRoot.BorderBrush"
                                                 Value="#FFFFFF" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="NormalState">
+                                    <VisualState.Setters>
+                                        <Setter Target="Label.Foreground"
+                                                Value="{ThemeResource MessageForegroundBrush}" />
+                                        <Setter Target="TitleLabel.Foreground"
+                                                Value="{ThemeResource MessageHeaderForegroundBrush}" />
+                                        <Setter Target="ServiceLabel.Foreground"
+                                                Value="{ThemeResource MessageSubtleForegroundBrush}" />
+                                        <Setter Target="MessageLabel.Foreground"
+                                                Value="{ThemeResource MessageForegroundBrush}" />
+
+                                        <Setter Target="LayoutRoot.BorderBrush"
+                                                Value="{ThemeResource MessageHeaderBorderBrush}" />
                                     </VisualState.Setters>
                                 </VisualState>
                             </VisualStateGroup>

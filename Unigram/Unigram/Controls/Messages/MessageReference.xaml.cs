@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.UI.Xaml;
@@ -145,6 +144,7 @@ namespace Unigram.Controls.Messages
         }
 
         private bool _light;
+        private bool _tinted;
 
         public void ToLightState()
         {
@@ -155,7 +155,7 @@ namespace Unigram.Controls.Messages
         public void ToNormalState()
         {
             _light = false;
-            VisualStateManager.GoToState(this, "NormalState", false);
+            VisualStateManager.GoToState(this, _tinted ? "TintedState" : "NormalState", false);
         }
 
         #region Overrides
@@ -192,48 +192,57 @@ namespace Unigram.Controls.Messages
             }
         }
 
-        protected override void SetText(IClientService clientService, MessageSender sender, string title, string service, FormattedText message)
+        protected override void SetText(MessageViewModel message, MessageSender sender, string title, string service, FormattedText text)
         {
             if (TitleLabel != null)
             {
                 TitleLabel.Text = title ?? string.Empty;
                 ServiceLabel.Text = service ?? string.Empty;
 
-                if (!string.IsNullOrEmpty(message?.Text) && !string.IsNullOrEmpty(service))
+                if (!string.IsNullOrEmpty(text?.Text) && !string.IsNullOrEmpty(service))
                 {
                     ServiceLabel.Text += ", ";
                 }
 
-                if (sender is MessageSenderUser user)
+                if (_light || sender is null)
                 {
-                    BorderBrush = PlaceholderHelper.GetBrush(user.UserId);
-                    TitleLabel.Foreground = PlaceholderHelper.GetBrush(user.UserId);
+                    ClearValue(BorderBrushProperty);
+                    TitleLabel.ClearValue(TextElement.ForegroundProperty);
+
+                    _tinted = false;
+                    VisualStateManager.GoToState(this, _light ? "LightState" : "NormalState", false);
                 }
-                else if (sender is MessageSenderChat chat)
+                else
                 {
-                    BorderBrush = PlaceholderHelper.GetBrush(chat.ChatId);
-                    TitleLabel.Foreground = PlaceholderHelper.GetBrush(chat.ChatId);
+                    _tinted = true;
+                    VisualStateManager.GoToState(this, "TintedState", false);
+
+                    if (sender is MessageSenderUser user)
+                    {
+                        BorderBrush = PlaceholderHelper.GetBrush(user.UserId);
+                        TitleLabel.Foreground = PlaceholderHelper.GetBrush(user.UserId);
+                    }
+                    else if (sender is MessageSenderChat chat)
+                    {
+                        BorderBrush = PlaceholderHelper.GetBrush(chat.ChatId);
+                        TitleLabel.Foreground = PlaceholderHelper.GetBrush(chat.ChatId);
+                    }
                 }
-                //else
-                //{
-                //    ClearValue(BorderBrushProperty);
-                //    TitleLabel.ClearValue(TextElement.ForegroundProperty);
-                //}
 
                 _positions.Clear();
                 MessageLabel.Inlines.Clear();
 
-                if (message != null)
+                if (text != null)
                 {
-                    var clean = message.ReplaceSpoilers();
+                    var clean = text.ReplaceSpoilers();
                     var previous = 0;
 
                     var emoji = new HashSet<long>();
                     var shift = 0;
 
-                    if (message.Entities != null)
+                    if (text.Entities != null)
                     {
-                        foreach (var entity in message.Entities)
+                        foreach (var entity in text.Entities)
                         {
                             if (entity.Type is not TextEntityTypeCustomEmoji customEmoji)
                             {
@@ -266,7 +275,7 @@ namespace Unigram.Controls.Messages
                     if (emoji.Count > 0)
                     {
                         CustomEmoji ??= GetTemplateChild(nameof(CustomEmoji)) as CustomEmojiCanvas;
-                        CustomEmoji.UpdateEntities(clientService, emoji);
+                        CustomEmoji.UpdateEntities(message.ClientService, emoji);
 
                         if (_playing)
                         {

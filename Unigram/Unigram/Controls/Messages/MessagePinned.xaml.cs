@@ -296,20 +296,20 @@ namespace Unigram.Controls.Messages
             }
         }
 
-        protected override void SetText(IClientService clientService, MessageSender sender, string title, string service, FormattedText message)
+        protected override void SetText(MessageViewModel message, MessageSender sender, string title, string service, FormattedText text)
         {
             TitleLabel.Text = title;
 
             var serviceShow = _textVisual == _textVisual1 ? ServiceLabel2 : ServiceLabel1;
             serviceShow.Text = service;
 
-            if (!string.IsNullOrEmpty(message?.Text) && !string.IsNullOrEmpty(service))
+            if (!string.IsNullOrEmpty(text?.Text) && !string.IsNullOrEmpty(service))
             {
                 serviceShow.Text += ", ";
             }
 
             var messageShow = _textVisual == _textVisual1 ? MessageLabel2 : MessageLabel1;
-            messageShow.Text = message?.Text.Replace('\n', ' ') ?? string.Empty;
+            messageShow.Text = text?.Text.Replace('\n', ' ') ?? string.Empty;
         }
 
         #endregion
