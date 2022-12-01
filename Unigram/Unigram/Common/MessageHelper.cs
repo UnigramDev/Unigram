@@ -191,9 +191,13 @@ namespace Unigram.Common
             {
                 navigation.Navigate(typeof(SettingsSessionsPage));
             }
-            else if (internalLink is InternalLinkTypeAuthenticationCode)
+            else if (internalLink is InternalLinkTypeAuthenticationCode authenticationCode)
             {
-
+                var state = clientService.GetAuthorizationState();
+                if (state is AuthorizationStateWaitCode)
+                {
+                    clientService.Send(new CheckAuthenticationCode(authenticationCode.Code));
+                }
             }
             else if (internalLink is InternalLinkTypeBackground background)
             {
@@ -333,7 +337,7 @@ namespace Unigram.Common
             {
                 if (info.Message != null)
                 {
-                    if (info.ForComment)
+                    if (info.MessageThreadId != 0)
                     {
                         navigation.NavigateToThread(info.ChatId, info.Message.Id, message: info.Message.Id);
                     }
