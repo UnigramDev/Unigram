@@ -95,7 +95,10 @@ namespace Unigram.Views.Supergroups
             HeaderPanel.Visibility = Visibility.Visible;
         }
 
-        public void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo) { }
+        public void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo)
+        {
+            AntiSpam.IsChecked = fullInfo.IsAggressiveAntiSpamEnabled;
+        }
 
         public void UpdateBasicGroup(Chat chat, BasicGroup group)
         {

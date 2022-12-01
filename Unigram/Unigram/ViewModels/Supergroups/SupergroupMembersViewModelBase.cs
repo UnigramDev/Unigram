@@ -78,6 +78,20 @@ namespace Unigram.ViewModels.Supergroups
             return Task.CompletedTask;
         }
 
+        public void Handle(UpdateSupergroupFullInfo update)
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            if (chat.Type is ChatTypeSupergroup super && super.SupergroupId == update.SupergroupId)
+            {
+                BeginOnUIThread(() => Delegate?.UpdateSupergroupFullInfo(chat, ClientService.GetSupergroup(update.SupergroupId), update.SupergroupFullInfo));
+            }
+        }
+
         public SearchCollection<ChatMember, ChatMemberCollection> Members { get; private set; }
 
         private ChatMemberCollection SetItems(object sender, string query)

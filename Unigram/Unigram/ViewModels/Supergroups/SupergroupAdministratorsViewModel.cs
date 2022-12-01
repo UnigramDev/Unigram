@@ -7,7 +7,7 @@ using Unigram.Views.Supergroups;
 
 namespace Unigram.ViewModels.Supergroups
 {
-    public class SupergroupAdministratorsViewModel : SupergroupMembersViewModelBase
+    public class SupergroupAdministratorsViewModel : SupergroupMembersViewModelBase, IHandle
     {
         public SupergroupAdministratorsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator, new SupergroupMembersFilterAdministrators(), query => new SupergroupMembersFilterAdministrators())
@@ -17,15 +17,18 @@ namespace Unigram.ViewModels.Supergroups
             ParticipantDismissCommand = new RelayCommand<ChatMember>(ParticipantDismissExecute);
         }
 
+        public override void Subscribe()
+        {
+            Aggregator.Subscribe<UpdateSupergroupFullInfo>(this, Handle);
+        }
+
         public async void ToggleAntiSpam()
         {
-            if (ClientService.TryGetSupergroupFull(Chat, out SupergroupFullInfo supergroupFull))
+            if (Chat.Type is ChatTypeSupergroup supergroup && ClientService.TryGetSupergroupFull(Chat, out SupergroupFullInfo supergroupFull))
             {
-                var supergroupFullAggressiveAntiSpamEnabled = _isAntiSpamEnabled;
-
-                if (supergroupFull.MemberCount >= ClientService.Options.AggressiveAntiSpamSupergroupMemberCountMin || supergroupFullAggressiveAntiSpamEnabled)
+                if (supergroupFull.MemberCount >= ClientService.Options.AggressiveAntiSpamSupergroupMemberCountMin || supergroupFull.IsAggressiveAntiSpamEnabled)
                 {
-                    // TODO: ClientService.Send...
+                    ClientService.Send(new ToggleSupergroupIsAggressiveAntiSpamEnabled(supergroup.SupergroupId, !supergroupFull.IsAggressiveAntiSpamEnabled));
                 }
                 else
                 {
