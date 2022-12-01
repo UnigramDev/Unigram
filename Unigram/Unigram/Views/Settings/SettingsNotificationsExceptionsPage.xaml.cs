@@ -1,8 +1,12 @@
 ﻿using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Controls.Cells;
+using Unigram.Converters;
 using Unigram.ViewModels.Settings;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 
 namespace Unigram.Views.Settings
 {
@@ -23,6 +27,21 @@ namespace Unigram.Views.Settings
             }
         }
 
+        #region Recycle
+
+        private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+        {
+            if (args.ItemContainer == null)
+            {
+                args.ItemContainer = new TableListViewItem();
+                args.ItemContainer.Style = sender.ItemContainerStyle;
+                args.ItemContainer.ContentTemplate = sender.ItemTemplate;
+                args.ItemContainer.ContextRequested += Exception_ContextRequested;
+            }
+
+            args.IsContainerPrepared = true;
+        }
+
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             if (args.InRecycleQueue)
@@ -34,5 +53,27 @@ namespace Unigram.Views.Settings
                 content.UpdateNotificationException(ViewModel.ClientService, args, OnContainerContentChanging);
             }
         }
+
+        #endregion
+
+        #region Context menu
+
+        private void Exception_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+            var flyout = new MenuFlyout();
+            var element = sender as FrameworkElement;
+
+            var exception = List.ItemFromContainer(element) as Chat;
+            if (exception is null)
+            {
+                return;
+            }
+
+            flyout.CreateFlyoutItem(ViewModel.RemoveCommand, exception, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
+
+            args.ShowAt(flyout, element);
+        }
+
+        #endregion
     }
 }

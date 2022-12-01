@@ -20,6 +20,7 @@ namespace Unigram.ViewModels.Settings
             : base(clientService, settingsService, aggregator)
         {
             ChooseSoundCommand = new RelayCommand(ChooseSound);
+            RemoveCommand = new RelayCommand<Chat>(RemoveExecute);
         }
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -113,6 +114,21 @@ namespace Unigram.ViewModels.Settings
                 Scope.SoundId = sound.Id;
                 Scope.SendExecute();
             }
+        }
+
+        public RelayCommand<Chat> RemoveCommand { get; }
+        private void RemoveExecute(Chat chat)
+        {
+            Items.Remove(chat);
+
+            ClientService.Send(new SetChatNotificationSettings(chat.Id, new ChatNotificationSettings
+            {
+                UseDefaultMuteFor = true,
+                UseDefaultSound = true,
+                UseDefaultShowPreview = true,
+                UseDefaultDisableMentionNotifications = true,
+                UseDefaultDisablePinnedMessageNotifications = true,
+            }));
         }
     }
 
