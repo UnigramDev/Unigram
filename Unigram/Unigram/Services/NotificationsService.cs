@@ -433,13 +433,13 @@ namespace Unigram.Services
 
             var caption = GetCaption(chat);
             var content = GetContent(chat, message);
-            var sound = silent ? "silent" : string.Empty;
+            var sound = silent || soundId == 0 ? "silent" : string.Empty;
             var launch = GetLaunch(chat, message);
             var picture = GetPhoto(chat);
             var dateTime = Converter.DateTime(date).ToUniversalTime().ToString("s") + "Z";
             var canReply = !(chat.Type is ChatTypeSupergroup super && super.IsChannel);
 
-            if (soundId != 0 && !silent)
+            if (soundId != -1 && soundId != 0 && !silent)
             {
                 var response = await _clientService.SendAsync(new GetSavedNotificationSound(soundId));
                 if (response is NotificationSound notificationSound)
@@ -485,13 +485,13 @@ namespace Unigram.Services
 
             var caption = GetCaption(chat);
             var content = GetContent(chat, message);
-            var sound = silent ? "silent" : string.Empty;
+            var sound = silent || soundId == 0 ? "silent" : string.Empty;
             var launch = GetLaunch(chat, message);
             var picture = GetPhoto(chat);
             var dateTime = Converter.DateTime(date).ToUniversalTime().ToString("s") + "Z";
             var canReply = !(chat.Type is ChatTypeSupergroup super && super.IsChannel);
 
-            if (soundId != 0 && !silent)
+            if (soundId != -1 && soundId != 0 && !silent)
             {
                 var response = await _clientService.SendAsync(new GetSavedNotificationSound(soundId));
                 if (response is NotificationSound notificationSound)
