@@ -93,7 +93,7 @@ namespace Unigram.Views.Popups
             else if (args.ItemContainer.ContentTemplateRoot is ChatShareCell content)
             {
                 content.UpdateState(false, false);
-                content.UpdateChat(_clientService, args, OnContainerContentChanging);
+                content.UpdateMessageSender(_clientService, args, OnContainerContentChanging);
             }
         }
 

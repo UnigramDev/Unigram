@@ -2,6 +2,7 @@
 using System;
 using System.Numerics;
 using Telegram.Td.Api;
+using Unigram.Common;
 using Unigram.Services;
 using Windows.Foundation;
 using Windows.UI;
@@ -78,6 +79,51 @@ namespace Unigram.Controls.Cells
             {
                 Photo.SetChat(clientService, chat, 36);
                 Identity.SetStatus(clientService, chat);
+            }
+
+            if (args.Phase < 2)
+            {
+                args.RegisterUpdateCallback(callback);
+            }
+
+            args.Handled = true;
+        }
+
+
+        public void UpdateMessageSender(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        {
+            var messageSender = args.Item as MessageSender;
+            if (messageSender == null)
+            {
+                return;
+            }
+
+            args.ItemContainer.Tag = args.Item;
+            Tag = args.Item;
+
+            if (args.Phase == 0)
+            {
+                if (clientService.TryGetUser(messageSender, out User user))
+                {
+                    TitleLabel.Text = user.FullName();
+                }
+                else if (clientService.TryGetChat(messageSender, out Chat chat))
+                {
+                    TitleLabel.Text = clientService.GetTitle(chat);
+                }
+            }
+            else if (args.Phase == 2)
+            {
+                if (clientService.TryGetUser(messageSender, out User user))
+                {
+                    Photo.SetUser(clientService, user, 36);
+                    Identity.SetStatus(clientService, user);
+                }
+                else if (clientService.TryGetChat(messageSender, out Chat chat))
+                {
+                    Photo.SetChat(clientService, chat, 36);
+                    Identity.SetStatus(clientService, chat);
+                }
             }
 
             if (args.Phase < 2)
