@@ -5,7 +5,6 @@ using Unigram.Common;
 using Unigram.Controls.Cells;
 using Unigram.Converters;
 using Unigram.ViewModels;
-using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -474,8 +473,6 @@ namespace Unigram.Controls.Messages
             visual1.Shapes.Add(shape11);
             visual1.Size = new Vector2(width, height);
             visual1.CenterPoint = new Vector3(width, height / 2f, 0);
-            //visual1.RelativeOffsetAdjustment = Vector3.One;
-            //visual1.AnchorPoint = Vector2.One;
 
 
             var line21 = Window.Current.Compositor.CreateLineGeometry();
@@ -501,17 +498,15 @@ namespace Unigram.Controls.Messages
             visual2.Shapes.Add(shape22);
             visual2.Shapes.Add(shape21);
             visual2.Size = new Vector2(width, height);
-            //visual2.RelativeOffsetAdjustment = Vector3.One;
-            //visual2.AnchorPoint = Vector2.One;
 
 
             var container = Window.Current.Compositor.CreateSpriteVisual();
             container.Children.InsertAtTop(visual2);
             container.Children.InsertAtTop(visual1);
             container.Size = new Vector2(width, height);
-            //container.RelativeSizeAdjustment = Vector2.One;
-            //container.AnchorPoint = Vector2.One;
-            //container.CenterPoint = new Vector3(width, height, 0);
+            container.AnchorPoint = new Vector2(1, 0);
+            container.Offset = new Vector3(0, 4, 0);
+            container.RelativeOffsetAdjustment = new Vector3(1, 0, 0);
 
             ElementCompositionPreview.SetElementChildVisual(Label, container);
 
@@ -637,16 +632,6 @@ namespace Unigram.Controls.Messages
                 _line22.StartAnimation("TrimEnd", anim12);
                 _visual2.StartAnimation("Scale", anim22);
             }
-        }
-
-        protected override Size ArrangeOverride(Size finalSize)
-        {
-            if (_container != null)
-            {
-                _container.Offset = new Vector3((float)Label.DesiredSize.Width - 18, 4, 0);
-            }
-
-            return base.ArrangeOverride(finalSize);
         }
 
         #endregion
