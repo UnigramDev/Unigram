@@ -201,7 +201,7 @@ namespace Unigram.Controls.Gallery
                 var viewModel = ViewModel;
                 if (viewModel != null && viewModel.SelectedItem is GalleryMessage message && message.ChatId == update.ChatId && update.MessageIds.Any(x => x == message.Id))
                 {
-                    Hide();
+                    OnBackRequestedOverride(this, new HandledEventArgs());
                 }
             });
         }
@@ -213,7 +213,7 @@ namespace Unigram.Controls.Gallery
                 var viewModel = ViewModel;
                 if (viewModel != null && viewModel.SelectedItem is GalleryMessage message && message.Id == update.MessageId && message.ChatId == update.ChatId && (update.NewContent is MessageExpiredPhoto || update.NewContent is MessageExpiredVideo))
                 {
-                    Hide();
+                    OnBackRequestedOverride(this, new HandledEventArgs());
                 }
             });
         }
