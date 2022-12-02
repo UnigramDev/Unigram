@@ -321,7 +321,7 @@ namespace Unigram
                 if (sessionId != TLContainer.Current.Lifetime.ActiveItem.Id)
                 {
                     var root = Window.Current.Content as RootPage;
-                    root.Switch(lifetime.ActiveItem);
+                    root?.Switch(lifetime.ActiveItem);
                 }
             }
 
@@ -345,9 +345,12 @@ namespace Unigram
             Task.Run(() => OnStartSync());
             //return Task.CompletedTask;
 
-            var view = ApplicationView.GetForCurrentView();
-            await ApplicationViewSwitcher.TryShowAsStandaloneAsync(view.Id);
-            view.TryResizeView(WindowContext.Current.Size);
+            if (startKind == StartKind.Activate)
+            {
+                var view = ApplicationView.GetForCurrentView();
+                await ApplicationViewSwitcher.TryShowAsStandaloneAsync(view.Id);
+                view.TryResizeView(WindowContext.Current.Size);
+            }
         }
 
         public override UIElement CreateRootElement(IActivatedEventArgs e)
