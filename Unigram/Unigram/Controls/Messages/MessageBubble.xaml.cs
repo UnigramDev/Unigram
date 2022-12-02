@@ -284,6 +284,12 @@ namespace Unigram.Controls.Messages
             if (title?.Length > 0)
             {
                 builder.AppendLine($"{title}. ");
+
+                var admin = message.Delegate.GetAdminTitle(message);
+                if (!string.IsNullOrEmpty(title))
+                {
+                    builder.AppendLine($"{admin}. ");
+                }
             }
 
             if (message.ReplyToMessage != null)
