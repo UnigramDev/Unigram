@@ -46,6 +46,8 @@ namespace Unigram.Navigation
 
         public UIElement Content => Window.Content;
 
+        public Size Size { get; set; }
+
         public ElementTheme ActualTheme => Window.Content is FrameworkElement element
             ? element.ActualTheme
             : ElementTheme.Default;
@@ -111,6 +113,7 @@ namespace Unigram.Navigation
             var displayInformation = DisplayInformation.GetForCurrentView();
             displayInformation.DpiChanged += OnDpiChanged;
 
+            Size = new Size(window.Bounds.Width, window.Bounds.Height);
             RasterizationScale = displayInformation.LogicalDpi / 96d;
         }
 
@@ -132,6 +135,8 @@ namespace Unigram.Navigation
 
         private void OnResizeCompleted(CoreWindow sender, object args)
         {
+            Size = new Size(sender.Bounds.Width, sender.Bounds.Height);
+
             if (Window.Content is FrameworkElement element)
             {
                 element.Width = double.NaN;

@@ -300,7 +300,7 @@ namespace Unigram
             }
         }
 
-        public override void OnStart(StartKind startKind, IActivatedEventArgs args)
+        public override async void OnStart(StartKind startKind, IActivatedEventArgs args)
         {
             if (TLContainer.Current.Passcode.IsLockscreenRequired)
             {
@@ -344,6 +344,10 @@ namespace Unigram
 
             Task.Run(() => OnStartSync());
             //return Task.CompletedTask;
+
+            var view = ApplicationView.GetForCurrentView();
+            await ApplicationViewSwitcher.TryShowAsStandaloneAsync(view.Id);
+            view.TryResizeView(WindowContext.Current.Size);
         }
 
         public override UIElement CreateRootElement(IActivatedEventArgs e)
