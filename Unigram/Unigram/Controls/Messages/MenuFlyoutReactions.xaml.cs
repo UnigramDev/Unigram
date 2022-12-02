@@ -108,8 +108,8 @@ namespace Unigram.Controls.Messages
             var rows = 8;
 
             var actualWidth = presenter.ActualSize.X + 18 + 12 + 18;
-            var width = 8 + 4 + (cols * itemTotal);
-            var viewport = 8 + 4 + (cols * itemTotal);
+            var width = Math.Max(36 + 14, 8 + 4 + (cols * itemTotal));
+            var viewport = Math.Max(36 + 14, 8 + 4 + (cols * itemTotal));
             var height = rows * itemTotal;
 
             var padding = actualWidth - width;
@@ -120,7 +120,7 @@ namespace Unigram.Controls.Messages
             view.VerticalAlignment = VerticalAlignment.Top;
             view.Width = width;
             view.Height = height;
-            view.Margin = new Thickness(0, -40, 0, 0);
+            view.Margin = new Thickness(itemTotal == 1 ? 5 : 0, -40, 0, 0);
             view.IsShadowVisible = false;
             view.ItemClick += OnItemClick;
 
