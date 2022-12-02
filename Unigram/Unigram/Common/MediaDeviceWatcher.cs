@@ -118,13 +118,15 @@ namespace Unigram.Common
                 return GetDefault();
             }
 
-            var selected = await DeviceInformation.CreateFromIdAsync(deviceId);
-            if (selected == null)
+            try
+            {
+                var selected = await DeviceInformation.CreateFromIdAsync(deviceId);
+                return selected.Id;
+            }
+            catch
             {
                 return GetDefault();
             }
-
-            return selected.Id;
         }
 
         private string GetDefault()
