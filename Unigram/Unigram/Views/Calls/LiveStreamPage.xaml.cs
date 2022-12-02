@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Views
+namespace Unigram.Views.Calls
 {
     public sealed partial class LiveStreamPage : Page
     {

@@ -8,7 +8,7 @@ using Unigram.Native.Calls;
 using Unigram.Services.Updates;
 using Unigram.Services.ViewService;
 using Unigram.ViewModels;
-using Unigram.Views;
+using Unigram.Views.Calls;
 using Unigram.Views.Popups;
 using Windows.Devices.Enumeration;
 using Windows.Graphics.Capture;

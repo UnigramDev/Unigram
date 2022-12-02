@@ -1,4 +1,4 @@
-﻿<Page x:Class="Unigram.Views.GroupCallPage"
+﻿<Page x:Class="Unigram.Views.Calls.LiveStreamPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:local="using:Unigram.Views"
@@ -121,7 +121,7 @@
         </Style>
     </Page.Resources>
 
-    <Grid Background="#FF171717"
+    <Grid Background="#FF000000"
           PointerMoved="Viewport_PointerEntered"
           PointerExited="Viewport_PointerExited"
           RequestedTheme="Dark">
@@ -131,6 +131,54 @@
             <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
+
+        <TextBlock x:Name="NoStream"
+                   TextWrapping="Wrap"
+                   TextAlignment="Center"
+                   VerticalAlignment="Center"
+                   Margin="12,0"
+                   Grid.Row="2" />
+
+        <Grid x:Name="ParticipantsPanel"
+              Grid.Row="0"
+              Grid.RowSpan="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <xaml:CanvasControl x:Name="Viewport" />
+
+            <Rectangle x:Name="BottomShadow"
+                       Height="72"
+                       VerticalAlignment="Bottom"
+                       Canvas.ZIndex="2">
+                <Rectangle.Fill>
+                    <LinearGradientBrush StartPoint="0,0"
+                                         EndPoint="0,1">
+                        <common:Scrim.Gradient>
+                            <common:CubicBezierGradient TopColor="#00171717"
+                                                        BottomColor="#FF171717" />
+                        </common:Scrim.Gradient>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+        </Grid>
+        <Rectangle x:Name="TopShadow"
+                   VerticalAlignment="Top"
+                   Height="72"
+                   Grid.RowSpan="4">
+            <Rectangle.Fill>
+                <LinearGradientBrush StartPoint="0,1"
+                                     EndPoint="0,0">
+                    <common:Scrim.Gradient>
+                        <common:CubicBezierGradient TopColor="#00171717"
+                                                    BottomColor="#FF171717" />
+                    </common:Scrim.Gradient>
+                </LinearGradientBrush>
+            </Rectangle.Fill>
+        </Rectangle>
+
+
         <Border x:Name="TitleArea"
                 Background="Transparent" />
 
@@ -194,128 +242,6 @@
                 Grid.Row="2"
                 Grid.RowSpan="2" />
 
-        <Grid x:Name="ParticipantsPanel"
-              Margin="0,0,0,-56"
-              Grid.Row="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <controls:TableListView x:Name="List"
-                                    Loaded="List_Loaded"
-                                    SelectionMode="None"
-                                    ChoosingItemContainer="OnChoosingItemContainer"
-                                    ContainerContentChanging="OnContainerContentChanging"
-                                    Canvas.ZIndex="1"
-                                    Padding="12,0,12,72">
-                <ListView.Header>
-                    <StackPanel x:Name="ListHeader">
-                        <Grid x:Name="ViewportAspect"
-                              Margin="-2,-2,-2,0"
-                              Grid.ColumnSpan="2">
-                            <local:ParticipantsGrid x:Name="Viewport"
-                                                    SizeChanged="OnViewportSizeChanged" />
-                        </Grid>
-                        <StackPanel x:Name="ListViewport"
-                                    Margin="-2,-2,-2,0" />
-                    </StackPanel>
-                </ListView.Header>
-                <ListView.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <ItemsStackPanel Background="#FF1F1F1F"
-                                         VerticalAlignment="Top" />
-                    </ItemsPanelTemplate>
-                </ListView.ItemsPanel>
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <Grid Padding="12,6">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <Border Background="#33c659"
-                                    Width="36"
-                                    Height="36"
-                                    CornerRadius="18"
-                                    Margin="0,0,12,0"
-                                    Grid.RowSpan="2" />
-                            <controls:ProfilePicture IsEnabled="False"
-                                                     Width="36"
-                                                     Height="36"
-                                                     Margin="0,0,12,0"
-                                                     Grid.RowSpan="2" />
-
-                            <TextBlock FontFamily="{StaticResource EmojiThemeFontFamily}"
-                                       TextWrapping="NoWrap"
-                                       TextTrimming="CharacterEllipsis"
-                                       VerticalAlignment="Bottom"
-                                       Grid.Column="1" />
-                            <Grid VerticalAlignment="Top"
-                                  Grid.Column="1"
-                                  Grid.Row="1">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock VerticalAlignment="Top"
-                                           FontSize="16"
-                                           Style="{StaticResource CaptionTextBlockStyle}"
-                                           FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                           Foreground="#33c659"
-                                           TextTrimming="CharacterEllipsis"
-                                           TextWrapping="NoWrap"
-                                           MaxLines="1" />
-                                <TextBlock VerticalAlignment="Top"
-                                           Style="{StaticResource CaptionTextBlockStyle}"
-                                           Foreground="#33c659"
-                                           TextTrimming="CharacterEllipsis"
-                                           TextWrapping="NoWrap"
-                                           Grid.Column="1"
-                                           MaxLines="1" />
-                            </Grid>
-
-                            <TextBlock VerticalAlignment="Center"
-                                       FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                       Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                       FontSize="20"
-                                       Grid.Column="2"
-                                       Grid.RowSpan="2" />
-                        </Grid>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-                        <Setter Property="HorizontalContentAlignment"
-                                Value="Stretch" />
-                        <Setter Property="MinHeight"
-                                Value="0" />
-                        <Setter Property="Padding"
-                                Value="0" />
-                    </Style>
-                </ListView.ItemContainerStyle>
-            </controls:TableListView>
-
-            <Rectangle x:Name="BottomShadow"
-                       Height="72"
-                       VerticalAlignment="Bottom"
-                       Canvas.ZIndex="2">
-                <Rectangle.Fill>
-                    <LinearGradientBrush StartPoint="0,0"
-                                         EndPoint="0,1">
-                        <common:Scrim.Gradient>
-                            <common:CubicBezierGradient TopColor="#00171717"
-                                                        BottomColor="#FF171717" />
-                        </common:Scrim.Gradient>
-                    </LinearGradientBrush>
-                </Rectangle.Fill>
-            </Rectangle>
-        </Grid>
-
         <StackPanel x:Name="ScheduledPanel"
                     x:Load="False"
                     VerticalAlignment="Center"
@@ -353,108 +279,6 @@
                     <RowDefinition />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <Border x:Name="BottomBackground"
-                        CornerRadius="8"
-                        Margin="-4,-8"
-                        Grid.ColumnSpan="5"
-                        Grid.RowSpan="4" />
-
-                <controls:GlyphButton x:Name="Settings"
-                                      Click="Menu_ContextRequested"
-                                      Glyph="&#xE9E9;"
-                                      Background="#663e3f41"
-                                      Foreground="#FFFFFF"
-                                      Content="{CustomResource Settings}"
-                                      Style="{StaticResource CallGlyphButtonStyle}"
-                                      Grid.Row="1" />
-                <TextBlock x:Name="SettingsInfo"
-                           Text="{CustomResource Settings}"
-                           Style="{StaticResource CaptionTextBlockStyle}"
-                           TextAlignment="Center"
-                           VerticalAlignment="Top"
-                           Margin="0,4,0,0"
-                           Grid.Row="2" />
-
-                <controls:GlyphButton x:Name="Video"
-                                      Click="Video_Click"
-                                      Glyph="&#xE963;"
-                                      Background="#663e3f41"
-                                      Foreground="#FFFFFF"
-                                      Content="{CustomResource ChatVideo}"
-                                      Style="{StaticResource CallGlyphButtonStyle}"
-                                      Grid.Row="1" />
-                <TextBlock x:Name="VideoInfo"
-                           Text="{CustomResource ChatVideo}"
-                           Style="{StaticResource CaptionTextBlockStyle}"
-                           TextAlignment="Center"
-                           VerticalAlignment="Top"
-                           Margin="0,4,0,0"
-                           Grid.Row="2" />
-
-                <controls:GlyphButton x:Name="Screen"
-                                      Visibility="Collapsed"
-                                      Click="Screen_Click"
-                                      Glyph="&#xE956;"
-                                      Background="#663e3f41"
-                                      Foreground="#FFFFFF"
-                                      Content="{CustomResource VoipChatShare}"
-                                      Style="{StaticResource CallGlyphButtonStyle}"
-                                      Grid.Row="1" />
-                <TextBlock x:Name="ScreenInfo"
-                           Visibility="Collapsed"
-                           Text="{CustomResource VoipChatShare}"
-                           Style="{StaticResource CaptionTextBlockStyle}"
-                           TextAlignment="Center"
-                           VerticalAlignment="Top"
-                           Margin="0,4,0,0"
-                           Grid.Row="2" />
-
-                <xaml:CanvasControl x:Name="AudioCanvas"
-                                    Draw="AudioCanvas_Draw"
-                                    Width="300"
-                                    Height="300"
-                                    Margin="-102,-102,-102,-102"
-                                    VerticalAlignment="Top"
-                                    IsHitTestVisible="False"
-                                    Canvas.ZIndex="1"
-                                    Grid.Column="1"
-                                    Grid.RowSpan="3" />
-
-                <controls:GlyphButton x:Name="Audio"
-                                      Click="Audio_Click"
-                                      Glyph="&#xE720;"
-                                      Content="{CustomResource VoipUnmute}"
-                                      VerticalAlignment="Top"
-                                      Width="96"
-                                      Height="96"
-                                      CornerRadius="48"
-                                      Margin="48,0,48,0"
-                                      Canvas.ZIndex="2"
-                                      Grid.Column="1"
-                                      Grid.RowSpan="3"
-                                      Opacity="0" />
-                <controls:LottieView x:Name="Lottie"
-                                     Width="96"
-                                     Height="96"
-                                     VerticalAlignment="Top"
-                                     Margin="48,0,48,0"
-                                     IsHitTestVisible="False"
-                                     IsLoopingEnabled="False"
-                                     IsCachingEnabled="False"
-                                     AutoPlay="False"
-                                     Grid.Column="1"
-                                     Grid.RowSpan="3"
-                                     Canvas.ZIndex="3" />
-
-                <TextBlock x:Name="AudioInfo"
-                           Text="{CustomResource VoipGroupLeave}"
-                           Style="{StaticResource CaptionTextBlockStyle}"
-                           TextAlignment="Center"
-                           VerticalAlignment="Top"
-                           Margin="0,8,0,24"
-                           Grid.Column="1"
-                           Grid.Row="3"
-                           Canvas.ZIndex="3" />
 
                 <controls:GlyphButton x:Name="Leave"
                                       Click="Leave_Click"
@@ -463,16 +287,9 @@
                                       Foreground="#FFFFFF"
                                       Content="{CustomResource VoipGroupLeave}"
                                       Style="{StaticResource CallGlyphButtonStyle}"
+                                      Margin="0,0,0,8"
                                       Grid.Column="4"
                                       Grid.Row="1" />
-                <TextBlock x:Name="LeaveInfo"
-                           Text="{CustomResource VoipGroupLeave}"
-                           Style="{StaticResource CaptionTextBlockStyle}"
-                           TextAlignment="Center"
-                           VerticalAlignment="Top"
-                           Margin="0,4,0,0"
-                           Grid.Column="4"
-                           Grid.Row="2" />
 
             </Grid>
         </StackPanel>

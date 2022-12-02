@@ -31,7 +31,7 @@ using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 using Point = Windows.Foundation.Point;
 
-namespace Unigram.Views
+namespace Unigram.Views.Calls
 {
     public sealed partial class GroupCallPage : Page, IGroupCallDelegate
     {

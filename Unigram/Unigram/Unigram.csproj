@@ -658,6 +658,15 @@
     <Compile Include="Views\Authorization\AuthorizationRegistrationPage.xaml.cs">
       <DependentUpon>AuthorizationRegistrationPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Calls\CallPage.xaml.cs">
+      <DependentUpon>CallPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Calls\GroupCallPage.xaml.cs">
+      <DependentUpon>GroupCallPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Calls\LiveStreamPage.xaml.cs">
+      <DependentUpon>LiveStreamPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ChatEventLogPage.xaml.cs">
       <DependentUpon>ChatEventLogPage.xaml</DependentUpon>
     </Compile>
@@ -691,12 +700,6 @@
     </Compile>
     <Compile Include="Views\Chats\MessageStatisticsPage.xaml.cs">
       <DependentUpon>MessageStatisticsPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\LiveStreamPage.xaml.cs">
-      <DependentUpon>LiveStreamPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\GroupCallPage.xaml.cs">
-      <DependentUpon>GroupCallPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Payments\PaymentAddressPopup.xaml.cs">
       <DependentUpon>PaymentAddressPopup.xaml</DependentUpon>
@@ -1266,9 +1269,6 @@
     </Compile>
     <Compile Include="Views\Users\UserCommonChatsPage.xaml.cs">
       <DependentUpon>UserCommonChatsPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\VoIPPage.xaml.cs">
-      <DependentUpon>VoIPPage.xaml</DependentUpon>
     </Compile>
     <Content Include="Assets\Audio\sent.mp3" />
     <Content Include="Assets\Audio\voicechat_join.mp3" />
@@ -1947,6 +1947,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Calls\CallPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Calls\GroupCallPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Calls\LiveStreamPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\ChatEventLogPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1988,14 +2000,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Chats\MessageStatisticsPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\LiveStreamPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\GroupCallPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -2556,10 +2560,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Users\UserCreatePage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\VoIPPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

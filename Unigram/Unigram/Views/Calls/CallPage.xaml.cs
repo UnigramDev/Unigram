@@ -22,7 +22,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Shapes;
 using Point = Windows.Foundation.Point;
 
-namespace Unigram.Views
+namespace Unigram.Views.Calls
 {
     public sealed partial class VoIPPage : Page, IDisposable
     {
