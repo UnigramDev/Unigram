@@ -49,9 +49,9 @@ namespace winrt::Unigram::Native::Calls::implementation
 		hstring AudioOutputId();
 		void AudioOutputId(hstring value);
 
-		VoipVideoCapture m_videoCapture{ nullptr };
-		VoipVideoCapture VideoCapture();
-		void VideoCapture(VoipVideoCapture value);
+		VoipCaptureBase m_videoCapture{ nullptr };
+		VoipCaptureBase VideoCapture();
+		void VideoCapture(VoipCaptureBase value);
 	};
 } // namespace winrt::Unigram::Native::Calls::implementation
 

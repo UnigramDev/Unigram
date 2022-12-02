@@ -22,11 +22,11 @@ namespace winrt::Unigram::Native::Calls::implementation
 		m_audioOutputId = value;
 	}
 
-	VoipVideoCapture VoipGroupDescriptor::VideoCapture() {
+	VoipCaptureBase VoipGroupDescriptor::VideoCapture() {
 		return m_videoCapture;
 	}
 
-	void VoipGroupDescriptor::VideoCapture(VoipVideoCapture value) {
+	void VoipGroupDescriptor::VideoCapture(VoipCaptureBase value) {
 		m_videoCapture = value;
 	}
 

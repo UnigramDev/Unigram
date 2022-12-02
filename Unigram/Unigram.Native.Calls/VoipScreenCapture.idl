@@ -2,7 +2,7 @@ import "VoipVideoCapture.idl";
 
 namespace Unigram.Native.Calls
 {
-    runtimeclass VoipScreenCapture : VoipVideoCapture
+    runtimeclass VoipScreenCapture : VoipCaptureBase, Windows.Foundation.IClosable
     {
         VoipScreenCapture(Windows.Graphics.Capture.GraphicsCaptureItem item);
 

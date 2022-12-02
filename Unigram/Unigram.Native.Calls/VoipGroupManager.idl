@@ -30,7 +30,7 @@ namespace Unigram.Native.Calls
 
         void SetAudioOutputDevice(String id);
         void SetAudioInputDevice(String id);
-        void SetVideoCapture(VoipVideoCapture videoCapture);
+        void SetVideoCapture(VoipCaptureBase videoCapture);
 
         void SetVolume(Int32 ssrc, Double volume);
         void SetRequestedVideoChannels(Windows.Foundation.Collections.IVector<VoipVideoChannelInfo> descriptions);

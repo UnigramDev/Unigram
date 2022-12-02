@@ -17,8 +17,8 @@ namespace winrt::Unigram::Native::Calls::implementation
 		VoipVideoContentType VideoContentType();
 		void VideoContentType(VoipVideoContentType value);
 
-		VoipVideoCapture VideoCapture();
-		void VideoCapture(VoipVideoCapture value);
+		VoipCaptureBase VideoCapture();
+		void VideoCapture(VoipCaptureBase value);
 
 		bool IsNoiseSuppressionEnabled();
 		void IsNoiseSuppressionEnabled(bool value);
@@ -27,7 +27,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 		hstring m_audioInputId{ L"" };
 		hstring m_audioOutputId{ L"" };
 		VoipVideoContentType m_videoContentType{ VoipVideoContentType::Generic };
-		VoipVideoCapture m_videoCapture{ nullptr };
+		VoipCaptureBase m_videoCapture{ nullptr };
 		bool m_isNoiseSuppressionEnabled{ true };
 	};
 }

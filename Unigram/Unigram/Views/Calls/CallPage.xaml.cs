@@ -1,6 +1,7 @@
 ﻿using Microsoft.Graphics.Canvas.Effects;
 using System;
 using System.Numerics;
+using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
@@ -24,7 +25,7 @@ using Point = Windows.Foundation.Point;
 
 namespace Unigram.Views.Calls
 {
-    public sealed partial class VoIPPage : Page, IDisposable
+    public sealed partial class CallPage : Page, IDisposable
     {
         private readonly Visual _descriptionVisual;
         private readonly Visual _largeVisual;
@@ -59,7 +60,7 @@ namespace Unigram.Views.Calls
 
         public OverlayPage Dialog { get; set; }
 
-        public VoIPPage(IClientService clientService, IEventAggregator aggregator, IVoipService voipService)
+        public CallPage(IClientService clientService, IEventAggregator aggregator, IVoipService voipService)
         {
             InitializeComponent();
 
@@ -342,7 +343,7 @@ namespace Unigram.Views.Calls
 
         private bool _capturerWasNull = true;
 
-        public void Connect(VoipVideoCapture capturer)
+        public void Connect(VoipCaptureBase capturer)
         {
             if (_disposed)
             {
@@ -353,7 +354,8 @@ namespace Unigram.Views.Calls
             {
                 _capturerWasNull = false;
 
-                Video.IsChecked = true;
+                Screen.IsChecked = capturer is VoipScreenCapture;
+                Video.IsChecked = capturer is VoipVideoCapture;
                 ViewfinderPanel.Visibility = Visibility.Visible;
 
                 capturer.SetOutput(Viewfinder, false);
@@ -362,6 +364,7 @@ namespace Unigram.Views.Calls
             {
                 _capturerWasNull = true;
 
+                Screen.IsChecked = false;
                 Video.IsChecked = false;
                 ViewfinderPanel.Visibility = Visibility.Collapsed;
             }
@@ -763,11 +766,21 @@ namespace Unigram.Views.Calls
             _clientService.Send(new DiscardCall(call.Id, false, (int)duration.TotalSeconds, _service.Capturer != null, relay));
         }
 
+        private async void Screen_Click(object sender, RoutedEventArgs e)
+        {
+            await ToggleCapturingAsync(VoipCaptureType.Screencast);
+        }
+
         private async void Video_Click(object sender, RoutedEventArgs e)
         {
-            var capturer = await _service.ToggleCapturingAsync(_service.CaptureType == VoipCaptureType.Video
+            await ToggleCapturingAsync(VoipCaptureType.Video);
+        }
+
+        private async Task ToggleCapturingAsync(VoipCaptureType type)
+        {
+            var capturer = await _service.ToggleCapturingAsync(_service.CaptureType == type
                 ? VoipCaptureType.None
-                : VoipCaptureType.Video);
+                : type);
 
             if (capturer != null)
             {

@@ -12,7 +12,7 @@ using namespace winrt::Windows::Graphics::Capture;
 
 namespace winrt::Unigram::Native::Calls::implementation
 {
-	struct VoipVideoCapture : VoipVideoCaptureT<VoipVideoCapture>
+	struct VoipVideoCapture : VoipVideoCaptureT<VoipVideoCapture, winrt::Unigram::Native::Calls::VoipCaptureBase>
 	{
 		VoipVideoCapture(hstring id);
 		VoipVideoCapture() = default;

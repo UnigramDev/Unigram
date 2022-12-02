@@ -212,7 +212,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 		}
 	}
 
-	void VoipGroupManager::SetVideoCapture(Unigram::Native::Calls::VoipVideoCapture videoCapture) {
+	void VoipGroupManager::SetVideoCapture(Unigram::Native::Calls::VoipCaptureBase videoCapture) {
 		if (m_impl) {
 			if (videoCapture) {
 				if (auto screen = videoCapture.try_as<winrt::default_interface<VoipScreenCapture>>()) {
