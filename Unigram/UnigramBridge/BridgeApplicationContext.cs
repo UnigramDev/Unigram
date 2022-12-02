@@ -214,7 +214,7 @@ namespace UnigramBridge
 
         private static void AddLocalhostExemption()
         {
-            var packageId = Package.Current.Id.FamilyName;
+            var familyName = Package.Current.Id.FamilyName;
             var info = new ProcessStartInfo
             {
                 RedirectStandardOutput = true,
@@ -224,7 +224,7 @@ namespace UnigramBridge
                 UseShellExecute = false,
                 FileName = "CheckNetIsolation.exe",
                 WindowStyle = ProcessWindowStyle.Hidden,
-                Arguments = "loopbackexempt -a -p=" + packageId
+                Arguments = "LoopbackExempt -a -n=" + familyName
             };
 
             try
