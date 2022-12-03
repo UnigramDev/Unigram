@@ -13,6 +13,7 @@ using Unigram.Services.ViewService;
 using Unigram.ViewModels;
 using Unigram.Views.Calls;
 using Unigram.Views.Popups;
+using Windows.ApplicationModel.Calls;
 using Windows.ApplicationModel.Core;
 using Windows.Data.Json;
 using Windows.Devices.Enumeration;
@@ -119,6 +120,10 @@ namespace Unigram.Services
         private VoipScreenCapture _screenCapturer;
         private EventDebouncer<bool> _screenDebouncer;
         private int _screenSource;
+
+        private VoipCallCoordinator _coordinator;
+        private VoipPhoneCall _systemCall;
+
 #endif
 
         private bool _isScheduled;
@@ -128,9 +133,6 @@ namespace Unigram.Services
         private ViewLifetimeControl _lifetime;
 
         private DisplayRequest _request;
-
-        //private VoipCallCoordinator _coordinator;
-        //private VoipPhoneCall _systemCall;
 
         private int _availableStreamsCount = 0;
 
@@ -349,18 +351,37 @@ namespace Unigram.Services
                 _isScheduled = groupCall.ScheduledStartDate > 0;
 
 #if ENABLE_CALLS
-                //var coordinator = VoipCallCoordinator.GetDefault();
-                //if (coordinator != null)
-                //{
-                //    var result = await coordinator.ReserveCallResourcesAsync();
-                //    if (result == VoipPhoneCallResourceReservationStatus.Success)
-                //    {
-                //        _coordinator = coordinator;
-                //        _systemCall = coordinator.RequestNewAppInitiatedCall("test", "Test", "test", "Telegram", VoipPhoneCallMedia.Audio | VoipPhoneCallMedia.Video);
+                if (ApiInfo.IsVoipSupported)
+                {
+                    var coordinator = VoipCallCoordinator.GetDefault();
+                    var status = VoipPhoneCallResourceReservationStatus.ResourcesNotAvailable;
 
-                //        coordinator.MuteStateChanged += OnMuteStateChanged;
-                //    }
-                //}
+                    try
+                    {
+                        status = await coordinator.ReserveCallResourcesAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        if (ex.HResult == -2147024713)
+                        {
+                            // CPU and memory resources have already been reserved for the app.
+                            // Ignore the return value from your call to ReserveCallResourcesAsync,
+                            // and proceed to handle a new VoIP call.
+                            status = VoipPhoneCallResourceReservationStatus.Success;
+                        }
+                    }
+
+                    if (status == VoipPhoneCallResourceReservationStatus.Success)
+                    {
+                        _coordinator = coordinator;
+                        _coordinator.MuteStateChanged += OnMuteStateChanged;
+
+                        // I'm not sure if RequestNewOutgoingCall is the right method to call, but it seem to work.
+                        _systemCall = _coordinator.RequestNewOutgoingCall($"{chat.Id}", chat.Title, Strings.Resources.AppName, VoipPhoneCallMedia.Audio | VoipPhoneCallMedia.Video);
+                        _systemCall.NotifyCallActive();
+                        _systemCall.EndRequested += OnEndRequested;
+                    }
+                }
 
                 var descriptor = new VoipGroupDescriptor
                 {
@@ -378,14 +399,7 @@ namespace Unigram.Services
                 _manager.BroadcastTimeRequested += OnBroadcastTimeRequested;
                 _manager.BroadcastPartRequested += OnBroadcastPartRequested;
 
-                //if (_manager.IsMuted)
-                //{
-                //    coordinator?.NotifyMuted();
-                //}
-                //else
-                //{
-                //    coordinator?.NotifyUnmuted();
-                //}
+                _coordinator?.NotifyMutedChanged(_manager.IsMuted);
 #endif
 
                 // This must be set before, as updates might come
@@ -406,10 +420,15 @@ namespace Unigram.Services
             }
         }
 
-        //private void OnMuteStateChanged(VoipCallCoordinator sender, MuteChangeEventArgs args)
-        //{
-        //    IsMuted = args.Muted;
-        //}
+        private void OnMuteStateChanged(VoipCallCoordinator sender, MuteChangeEventArgs args)
+        {
+            IsMuted = args.Muted;
+        }
+
+        private async void OnEndRequested(VoipPhoneCall sender, CallStateChangeEventArgs args)
+        {
+            await LeaveAsync();
+        }
 
         public async Task RejoinAsync()
         {
@@ -866,21 +885,26 @@ namespace Unigram.Services
 
                 EndScreenSharing();
 
-                //if (_coordinator != null)
-                //{
-                //    _coordinator.MuteStateChanged -= OnMuteStateChanged;
-                //    _coordinator = null;
-                //}
+                try
+                {
+                    if (_coordinator != null)
+                    {
+                        _coordinator.MuteStateChanged -= OnMuteStateChanged;
+                        _coordinator = null;
+                    }
 
-                //if (_systemCall != null)
-                //{
-                //    try
-                //    {
-                //        _systemCall.NotifyCallEnded();
-                //        _systemCall = null;
-                //    }
-                //    catch { }
-                //}
+                    if (_systemCall != null)
+                    {
+                        _systemCall.NotifyCallEnded();
+                        _systemCall.EndRequested -= OnEndRequested;
+                        _systemCall = null;
+                    }
+                }
+                catch
+                {
+                    _coordinator = null;
+                    _systemCall = null;
+                }
             });
 #else
             return Task.CompletedTask;
@@ -918,18 +942,11 @@ namespace Unigram.Services
                     ClientService.Send(new ToggleGroupCallParticipantIsMuted(_call.Id, _currentUser.ParticipantId, value));
                     MutedChanged?.Invoke(_manager, EventArgs.Empty);
 
-                    //if (value)
-                    //{
-                    //    _coordinator?.NotifyMuted();
-                    //}
-                    //else
-                    //{
-                    //    _coordinator?.NotifyUnmuted();
-                    //}
+                    _coordinator?.NotifyMutedChanged(value);
                 }
                 else
                 {
-                    //_coordinator?.NotifyMuted();
+                    _coordinator?.NotifyMutedChanged(true);
                 }
             }
         }

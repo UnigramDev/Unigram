@@ -1,5 +1,6 @@
 ﻿using Unigram.Native;
 using Windows.ApplicationModel;
+using Windows.Foundation.Metadata;
 using Windows.System.Profile;
 
 namespace Unigram.Common
@@ -13,6 +14,9 @@ namespace Unigram.Common
 
         private static bool? _isMediaSupported;
         public static bool IsMediaSupported => _isMediaSupported ??= NativeUtils.IsMediaSupported();
+
+        private static bool? _isVoipSupported;
+        public static bool IsVoipSupported => _isVoipSupported ??= ApiInformation.IsApiContractPresent("Windows.ApplicationModel.Calls.CallsVoipContract", 1);
 
         private static bool? _isWindows11;
         public static bool IsWindows11 => _isWindows11 ??= IsBuildOrGreater(22000);

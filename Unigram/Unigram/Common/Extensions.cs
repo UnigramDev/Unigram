@@ -13,6 +13,7 @@ using Unigram.Entities;
 using Unigram.Native;
 using Unigram.Services;
 using Windows.ApplicationModel;
+using Windows.ApplicationModel.Calls;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Storage;
@@ -81,6 +82,18 @@ namespace Unigram.Common
         public static Version ToVersion(this PackageVersion version)
         {
             return new Version(version.Major, version.Minor, version.Build, version.Revision);
+        }
+
+        public static void NotifyMutedChanged(this VoipCallCoordinator coordinator, bool muted)
+        {
+            if (muted)
+            {
+                coordinator?.NotifyMuted();
+            }
+            else
+            {
+                coordinator?.NotifyUnmuted();
+            }
         }
 
         public static string ToQuery(this Dictionary<string, string> dictionary)

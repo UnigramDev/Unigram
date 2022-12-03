@@ -100,6 +100,7 @@
     <uap3:Capability Name="backgroundMediaPlayback" />
     <uap6:Capability Name="graphicsCapture" />
     <rescap:Capability Name="runFullTrust" />
+    <rescap:Capability Name="oneProcessVoIP" />
     <DeviceCapability Name="location" />
     <DeviceCapability Name="microphone" />
     <DeviceCapability Name="webcam" />
