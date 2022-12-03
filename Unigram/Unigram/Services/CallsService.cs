@@ -537,6 +537,13 @@ namespace Unigram.Services
 
         private void Dispose()
         {
+            if (_capturer != null)
+            {
+                _capturer.SetOutput(null);
+                _capturer.Dispose();
+                _capturer = null;
+            }
+
             if (_manager != null)
             {
                 _manager.StateUpdated -= OnStateUpdated;
@@ -547,13 +554,6 @@ namespace Unigram.Services
 
                 _manager.Dispose();
                 _manager = null;
-            }
-
-            if (_capturer != null)
-            {
-                _capturer.SetOutput(null);
-                _capturer.Dispose();
-                _capturer = null;
             }
 
             try
