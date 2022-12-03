@@ -45,16 +45,13 @@ namespace Unigram.ViewModels.Authorization
             {
                 Set(ref _code, value);
 
-                var length = 5;
-
-                if (_codeInfo != null && _codeInfo.Type is AuthenticationCodeTypeTelegramMessage appType)
+                var length = _codeInfo?.Type switch
                 {
-                    length = appType.Length;
-                }
-                else if (_codeInfo != null && _codeInfo.Type is AuthenticationCodeTypeSms smsType)
-                {
-                    length = smsType.Length;
-                }
+                    AuthenticationCodeTypeTelegramMessage telegramType => telegramType.Length,
+                    AuthenticationCodeTypeFragment fragmentType => fragmentType.Length,
+                    AuthenticationCodeTypeSms smsType => smsType.Length,
+                    _ => 5,
+                };
 
                 if (_code.Length == length)
                 {
@@ -76,7 +73,15 @@ namespace Unigram.ViewModels.Authorization
 
             if (string.IsNullOrEmpty(_code))
             {
-                RaisePropertyChanged("SENT_CODE_INVALID");
+                if (_codeInfo.Type is AuthenticationCodeTypeFragment fragment)
+                {
+                    MessageHelper.OpenUrl(ClientService, NavigationService, fragment.Url, false);
+                }
+                else
+                {
+                    RaisePropertyChanged("SENT_CODE_INVALID");
+                }
+
                 return;
             }
 

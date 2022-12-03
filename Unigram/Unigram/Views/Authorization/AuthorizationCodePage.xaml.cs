@@ -1,4 +1,5 @@
-﻿using Telegram.Td.Api;
+﻿using System;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.ViewModels.Authorization;
 using Windows.UI.Xaml;
@@ -44,22 +45,38 @@ namespace Unigram.Views.Authorization
 
         #region Binding
 
+        private Uri ConvertAnimation(AuthenticationCodeInfo codeInfo)
+        {
+            return codeInfo?.Type switch
+            {
+                AuthenticationCodeTypeFragment => new Uri("ms-appx:///Assets/Animations/AuthorizationStateWaitFragment.tgs"),
+                _ => new Uri("ms-appx:///Assets/Animations/AuthorizationStateWaitCode.tgs")
+            };
+        }
+
         private string ConvertType(AuthenticationCodeInfo codeInfo)
         {
-            if (codeInfo == null)
+            return codeInfo?.Type switch
             {
-                return null;
+                AuthenticationCodeTypeTelegramMessage => Strings.Resources.SentAppCode,
+                AuthenticationCodeTypeFragment => string.Format(Strings.Resources.SentFragmentCode, PhoneNumber.Format(codeInfo.PhoneNumber)),
+                AuthenticationCodeTypeSms => string.Format(Strings.Resources.SentSmsCode, PhoneNumber.Format(codeInfo.PhoneNumber)),
+                _ => string.Empty
+            };
+        }
+
+        private string ConvertNext(AuthenticationCodeInfo codeInfo, string code)
+        {
+            if (string.IsNullOrWhiteSpace(code))
+            {
+                return codeInfo?.Type switch
+                {
+                    AuthenticationCodeTypeFragment => Strings.Resources.OpenFragment,
+                    _ => Strings.Resources.OK
+                };
             }
 
-            switch (codeInfo.Type)
-            {
-                case AuthenticationCodeTypeTelegramMessage:
-                    return Strings.Resources.SentAppCode;
-                case AuthenticationCodeTypeSms:
-                    return string.Format(Strings.Resources.SentSmsCode, PhoneNumber.Format(codeInfo.PhoneNumber));
-            }
-
-            return null;
+            return Strings.Resources.OK;
         }
 
         #endregion

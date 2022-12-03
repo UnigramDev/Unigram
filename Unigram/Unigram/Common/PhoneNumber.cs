@@ -126,6 +126,16 @@ namespace Unigram.Common
                                     {
                                         switch (number[2])
                                         {
+                                            case '8':
+                                                if (len > 3)
+                                                {
+                                                    switch (number[3])
+                                                    {
+                                                        case '8': return new int[3] { 3, 1, 3 };
+                                                    }
+                                                }
+
+                                                return new int[3] { 3, 4, 4 };
                                             case '6': return new int[1] { 3 };
                                             case '0': return new int[1] { 3 };
                                         }

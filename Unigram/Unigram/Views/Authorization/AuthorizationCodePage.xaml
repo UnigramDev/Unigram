@@ -31,7 +31,7 @@
                     Grid.Row="1">
             <controls:LottieView FrameSize="160,160"
                                  DecodeFrameType="Logical"
-                                 Source="ms-appx:///Assets/Animations/AuthorizationStateWaitCode.tgs"
+                                 Source="{x:Bind ConvertAnimation(ViewModel.CodeInfo), FallbackValue=''}"
                                  AutoPlay="True"
                                  IsLoopingEnabled="False"
                                  IsCachingEnabled="False"
@@ -58,7 +58,7 @@
                                    Background="Transparent" />
 
             <Button x:Name="NextButton"
-                    Content="{CustomResource OK}"
+                    Content="{x:Bind ConvertNext(ViewModel.CodeInfo, ViewModel.Code), FallbackValue=''}"
                     Command="{x:Bind ViewModel.SendCommand}"
                     Style="{StaticResource AccentButtonStyle}"
                     HorizontalAlignment="Stretch"
