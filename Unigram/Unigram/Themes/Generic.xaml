@@ -5311,7 +5311,7 @@
         <Setter Property="FocusVisualMargin"
                 Value="-3" />
         <Setter Property="Width"
-                Value="60" />
+                Value="48" />
         <Setter Property="Height"
                 Value="Auto" />
         <Setter Property="Template">
@@ -5432,9 +5432,9 @@
                         </Grid.RowDefinitions>
                         <Border x:Name="RootGrid"
                                 Background="{TemplateBinding Background}"
-                                Width="60"
-                                Height="60"
-                                CornerRadius="30">
+                                Width="48"
+                                Height="48"
+                                CornerRadius="24">
                             <Border x:Name="ContentBorder">
                                 <TextBlock x:Name="ContentPresenter"
                                            Margin="{TemplateBinding Padding}"
@@ -5449,7 +5449,7 @@
                         <ContentPresenter x:Name="ContentPresenter1"
                                           Foreground="{ThemeResource CallHangupButtonForegroundPointerOverBrush}"
                                           FontFamily="{ThemeResource ContentControlThemeFontFamily}"
-                                          FontSize="{ThemeResource ControlContentThemeFontSize}"
+                                          FontSize="12"
                                           Margin="-8,4,-8,8"
                                           HorizontalAlignment="Center"
                                           VerticalAlignment="Center"
@@ -5458,7 +5458,7 @@
                         <ContentPresenter x:Name="ContentPresenter2"
                                           Foreground="{ThemeResource CallHangupButtonForegroundPointerOverBrush}"
                                           FontFamily="{ThemeResource ContentControlThemeFontFamily}"
-                                          FontSize="{ThemeResource ControlContentThemeFontSize}"
+                                          FontSize="12"
                                           Margin="-8,4,-8,8"
                                           HorizontalAlignment="Center"
                                           VerticalAlignment="Center"
@@ -5510,7 +5510,7 @@
         <Setter Property="FocusVisualMargin"
                 Value="-3" />
         <Setter Property="Width"
-                Value="60" />
+                Value="48" />
         <Setter Property="Height"
                 Value="Auto" />
         <Setter Property="Template">
@@ -5611,9 +5611,9 @@
                         </Grid.RowDefinitions>
                         <Grid x:Name="RootGrid"
                               Background="{TemplateBinding Background}"
-                              Width="60"
-                              Height="60"
-                              CornerRadius="30">
+                              Width="48"
+                              Height="48"
+                              CornerRadius="24">
                             <TextBlock x:Name="ContentPresenter"
                                        Margin="{TemplateBinding Padding}"
                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
@@ -5643,7 +5643,7 @@
                         <ContentPresenter x:Name="ContentPresenter1"
                                           Foreground="{ThemeResource CallToggleButtonForegroundPointerOverBrush}"
                                           FontFamily="{ThemeResource ContentControlThemeFontFamily}"
-                                          FontSize="{ThemeResource ControlContentThemeFontSize}"
+                                          FontSize="12"
                                           Margin="-8,4,-8,8"
                                           HorizontalAlignment="Center"
                                           VerticalAlignment="Center"
@@ -5652,7 +5652,7 @@
                         <ContentPresenter x:Name="ContentPresenter2"
                                           Foreground="{ThemeResource CallToggleButtonForegroundPointerOverBrush}"
                                           FontFamily="{ThemeResource ContentControlThemeFontFamily}"
-                                          FontSize="{ThemeResource ControlContentThemeFontSize}"
+                                          FontSize="12"
                                           Margin="-8,4,-8,8"
                                           HorizontalAlignment="Center"
                                           VerticalAlignment="Center"

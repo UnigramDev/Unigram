@@ -63,7 +63,8 @@ namespace winrt::Unigram::Native::Calls::implementation
 		void Start();
 
 		//void SetNetworkType(NetworkType networkType);
-		void SetMuteMicrophone(bool muteMicrophone);
+		bool IsMuted();
+		void IsMuted(bool value);
 		void SetAudioOutputGainControlEnabled(bool enabled);
 		void SetEchoCancellationStrength(int strength);
 
@@ -127,6 +128,8 @@ namespace winrt::Unigram::Native::Calls::implementation
 		void SignalingDataEmitted(winrt::event_token const& token);
 
 	private:
+		bool m_isMuted = false;
+
 		std::shared_ptr<VoipVideoRenderer> m_renderer = nullptr;
 
 		winrt::event<Windows::Foundation::TypedEventHandler<

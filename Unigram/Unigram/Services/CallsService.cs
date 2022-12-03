@@ -10,6 +10,7 @@ using Unigram.Services.ViewService;
 using Unigram.ViewModels;
 using Unigram.Views.Calls;
 using Unigram.Views.Popups;
+using Windows.ApplicationModel.Calls;
 using Windows.Devices.Enumeration;
 using Windows.Graphics.Capture;
 using Windows.Storage;
@@ -31,6 +32,9 @@ namespace Unigram.Services
         string CurrentVideoInput { get; set; }
 
 #if ENABLE_CALLS
+        bool IsMuted { get; set; }
+        event EventHandler MutedChanged;
+
         VoipManager Manager { get; }
         VoipCaptureBase Capturer { get; set; }
 
@@ -72,6 +76,9 @@ namespace Unigram.Services
         private VoipCaptureBase _capturer;
 
         private CallPage _callPage;
+
+        private VoipCallCoordinator _coordinator;
+        private VoipPhoneCall _systemCall;
 #endif
 
         private ViewLifetimeControl _callLifetime;
@@ -97,6 +104,27 @@ namespace Unigram.Services
         }
 
 #if ENABLE_CALLS
+
+        public bool IsMuted
+        {
+            get => _manager.IsMuted;
+            set
+            {
+                if (_manager != null && _manager.IsMuted != value)
+                {
+                    _manager.IsMuted = value;
+                    MutedChanged?.Invoke(_manager, EventArgs.Empty);
+
+                    _coordinator?.NotifyMutedChanged(value);
+                }
+                else
+                {
+                    _coordinator?.NotifyMutedChanged(true);
+                }
+            }
+        }
+
+        public event EventHandler MutedChanged;
 
         private void SetVideoInputDevice(string id)
         {
@@ -271,6 +299,51 @@ namespace Unigram.Services
             }
         }
 
+        private async Task InitializeSystemCallAsync(User user)
+        {
+            if (ApiInfo.IsVoipSupported)
+            {
+                var coordinator = VoipCallCoordinator.GetDefault();
+                var status = VoipPhoneCallResourceReservationStatus.ResourcesNotAvailable;
+
+                try
+                {
+                    status = await coordinator.ReserveCallResourcesAsync();
+                }
+                catch (Exception ex)
+                {
+                    if (ex.HResult == -2147024713)
+                    {
+                        // CPU and memory resources have already been reserved for the app.
+                        // Ignore the return value from your call to ReserveCallResourcesAsync,
+                        // and proceed to handle a new VoIP call.
+                        status = VoipPhoneCallResourceReservationStatus.Success;
+                    }
+                }
+
+                if (status == VoipPhoneCallResourceReservationStatus.Success)
+                {
+                    _coordinator = coordinator;
+                    _coordinator.MuteStateChanged += OnMuteStateChanged;
+
+                    // I'm not sure if RequestNewOutgoingCall is the right method to call, but it seem to work.
+                    _systemCall = _coordinator.RequestNewOutgoingCall($"{user.Id}", user.FullName(), Strings.Resources.AppName, VoipPhoneCallMedia.Audio | VoipPhoneCallMedia.Video);
+                    _systemCall.NotifyCallActive();
+                    _systemCall.EndRequested += OnEndRequested;
+                }
+            }
+        }
+
+        private void OnMuteStateChanged(VoipCallCoordinator sender, MuteChangeEventArgs args)
+        {
+            IsMuted = args.Muted;
+        }
+
+        private void OnEndRequested(VoipPhoneCall sender, CallStateChangeEventArgs args)
+        {
+            Aggregator.Publish(new UpdateCall(new Call { State = new CallStateDiscarded { Reason = new CallDiscardReasonEmpty() } }));
+        }
+
         public string CurrentVideoInput
         {
             get => _videoWatcher.Get();
@@ -292,10 +365,7 @@ namespace Unigram.Services
         public void Handle(UpdateNewCallSignalingData update)
         {
 #if ENABLE_CALLS
-            if (_manager != null)
-            {
-                _manager.ReceiveSignalingData(update.Data);
-            }
+            _manager?.ReceiveSignalingData(update.Data);
 #endif
         }
 
@@ -336,6 +406,8 @@ namespace Unigram.Services
 
                     //VoIPControllerWrapper.UpdateServerConfig(ready.Config);
 
+                    await InitializeSystemCallAsync(user);
+
                     var logFile = Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{SessionId}", $"voip{update.Call.Id}.txt");
                     var statsDumpFile = Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{SessionId}", "tgvoip.statsDump.txt");
 
@@ -371,6 +443,7 @@ namespace Unigram.Services
                     _manager.SignalingDataEmitted += OnSignalingDataEmitted;
 
                     _manager.Start();
+                    _coordinator?.NotifyMutedChanged(_manager.IsMuted);
 
                     await ShowAsync(update.Call, _manager, _capturer, _callStarted);
                 }
@@ -386,24 +459,7 @@ namespace Unigram.Services
                         BeginOnUIThread(async () => await SendRatingAsync(update.Call.Id));
                     }
 
-
-                    if (_manager != null)
-                    {
-                        _manager.StateUpdated -= OnStateUpdated;
-                        _manager.SignalingDataEmitted -= OnSignalingDataEmitted;
-
-                        _manager.SetIncomingVideoOutput(null);
-                        _manager.Dispose();
-                        _manager = null;
-                    }
-
-                    if (_capturer != null)
-                    {
-                        _capturer.SetOutput(null);
-                        _capturer.Dispose();
-                        _capturer = null;
-                    }
-
+                    Dispose();
 
                     _call = null;
                 }
@@ -474,26 +530,52 @@ namespace Unigram.Services
             }
             else
             {
-                if (_manager != null)
-                {
-                    _manager.StateUpdated -= OnStateUpdated;
-                    _manager.SignalingDataEmitted -= OnSignalingDataEmitted;
-
-                    _manager.SetIncomingVideoOutput(null);
-                    _manager.SetVideoCapture(null);
-
-                    _manager.Dispose();
-                    _manager = null;
-                }
-
-                if (_capturer != null)
-                {
-                    _capturer.SetOutput(null);
-                    _capturer.Dispose();
-                    _capturer = null;
-                }
+                Dispose();
             }
 #endif
+        }
+
+        private void Dispose()
+        {
+            if (_manager != null)
+            {
+                _manager.StateUpdated -= OnStateUpdated;
+                _manager.SignalingDataEmitted -= OnSignalingDataEmitted;
+
+                _manager.SetIncomingVideoOutput(null);
+                _manager.SetVideoCapture(null);
+
+                _manager.Dispose();
+                _manager = null;
+            }
+
+            if (_capturer != null)
+            {
+                _capturer.SetOutput(null);
+                _capturer.Dispose();
+                _capturer = null;
+            }
+
+            try
+            {
+                if (_coordinator != null)
+                {
+                    _coordinator.MuteStateChanged -= OnMuteStateChanged;
+                    _coordinator = null;
+                }
+
+                if (_systemCall != null)
+                {
+                    _systemCall.NotifyCallEnded();
+                    _systemCall.EndRequested -= OnEndRequested;
+                    _systemCall = null;
+                }
+            }
+            catch
+            {
+                _coordinator = null;
+                _systemCall = null;
+            }
         }
 
         private async Task SendRatingAsync(int callId)

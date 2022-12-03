@@ -123,7 +123,6 @@ namespace Unigram.Services
 
         private VoipCallCoordinator _coordinator;
         private VoipPhoneCall _systemCall;
-
 #endif
 
         private bool _isScheduled;
@@ -351,37 +350,7 @@ namespace Unigram.Services
                 _isScheduled = groupCall.ScheduledStartDate > 0;
 
 #if ENABLE_CALLS
-                if (ApiInfo.IsVoipSupported)
-                {
-                    var coordinator = VoipCallCoordinator.GetDefault();
-                    var status = VoipPhoneCallResourceReservationStatus.ResourcesNotAvailable;
-
-                    try
-                    {
-                        status = await coordinator.ReserveCallResourcesAsync();
-                    }
-                    catch (Exception ex)
-                    {
-                        if (ex.HResult == -2147024713)
-                        {
-                            // CPU and memory resources have already been reserved for the app.
-                            // Ignore the return value from your call to ReserveCallResourcesAsync,
-                            // and proceed to handle a new VoIP call.
-                            status = VoipPhoneCallResourceReservationStatus.Success;
-                        }
-                    }
-
-                    if (status == VoipPhoneCallResourceReservationStatus.Success)
-                    {
-                        _coordinator = coordinator;
-                        _coordinator.MuteStateChanged += OnMuteStateChanged;
-
-                        // I'm not sure if RequestNewOutgoingCall is the right method to call, but it seem to work.
-                        _systemCall = _coordinator.RequestNewOutgoingCall($"{chat.Id}", chat.Title, Strings.Resources.AppName, VoipPhoneCallMedia.Audio | VoipPhoneCallMedia.Video);
-                        _systemCall.NotifyCallActive();
-                        _systemCall.EndRequested += OnEndRequested;
-                    }
-                }
+                await InitializeSystemCallAsync(chat);
 
                 var descriptor = new VoipGroupDescriptor
                 {
@@ -416,6 +385,41 @@ namespace Unigram.Services
                 {
                     RequestActive();
                     Rejoin(groupCall, alias);
+                }
+            }
+        }
+
+        private async Task InitializeSystemCallAsync(Chat chat)
+        {
+            if (ApiInfo.IsVoipSupported)
+            {
+                var coordinator = VoipCallCoordinator.GetDefault();
+                var status = VoipPhoneCallResourceReservationStatus.ResourcesNotAvailable;
+
+                try
+                {
+                    status = await coordinator.ReserveCallResourcesAsync();
+                }
+                catch (Exception ex)
+                {
+                    if (ex.HResult == -2147024713)
+                    {
+                        // CPU and memory resources have already been reserved for the app.
+                        // Ignore the return value from your call to ReserveCallResourcesAsync,
+                        // and proceed to handle a new VoIP call.
+                        status = VoipPhoneCallResourceReservationStatus.Success;
+                    }
+                }
+
+                if (status == VoipPhoneCallResourceReservationStatus.Success)
+                {
+                    _coordinator = coordinator;
+                    _coordinator.MuteStateChanged += OnMuteStateChanged;
+
+                    // I'm not sure if RequestNewOutgoingCall is the right method to call, but it seem to work.
+                    _systemCall = _coordinator.RequestNewOutgoingCall($"{chat.Id}", chat.Title, Strings.Resources.AppName, VoipPhoneCallMedia.Audio | VoipPhoneCallMedia.Video);
+                    _systemCall.NotifyCallActive();
+                    _systemCall.EndRequested += OnEndRequested;
                 }
             }
         }

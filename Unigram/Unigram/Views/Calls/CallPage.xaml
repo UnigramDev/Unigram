@@ -123,37 +123,37 @@
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
           Padding="0,32,0,0"
           RequestedTheme="Dark">
-        <controls:ProfilePicture x:Name="Image"
-                                 Width="144"
-                                 Height="144"
-                                 HorizontalAlignment="Center"
-                                 VerticalAlignment="Center" />
-        <xaml:CanvasControl x:Name="BackgroundPanel"
-                            Background="Transparent" />
 
-        <Grid Padding="12,8"
-              VerticalAlignment="Top">
+        <Grid VerticalAlignment="Center"
+              Margin="0,0,0,48">
             <Grid.RowDefinitions>
-                <RowDefinition />
                 <RowDefinition Height="Auto" />
-                <RowDefinition MinHeight="72" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
+            <controls:ProfilePicture x:Name="Image"
+                                     Width="144"
+                                     Height="144"
+                                     HorizontalAlignment="Center"
+                                     VerticalAlignment="Center" />
+
             <!--<TextBlock x:Name="FromLabel" Tapped="DebugString_Tapped" Text="Fela Ameghino" TextAlignment="Center" Style="{StaticResource SubheaderTextBlockStyle}" VerticalAlignment="Bottom"/>-->
             <TextBlock x:Name="FromLabel"
                        Tapped="DebugString_Tapped"
                        TextAlignment="Center"
                        TextWrapping="NoWrap"
                        TextTrimming="CharacterEllipsis"
-                       Style="{StaticResource TitleTextBlockStyle}"
-                       VerticalAlignment="Bottom" />
+                       Style="{StaticResource SubtitleTextBlockStyle}"
+                       Margin="0,16,0,0"
+                       Grid.Row="1" />
             <TextBlock x:Name="DurationLabel"
                        Opacity="0"
                        Text="00:00"
                        TextAlignment="Center"
                        Style="{StaticResource BodyTextBlockStyle}"
-                       Grid.Row="1" />
+                       Grid.Row="2" />
 
-            <Grid Grid.Row="1">
+            <Grid Grid.Row="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
                     <ColumnDefinition Width="Auto" />
@@ -224,7 +224,11 @@
                     </ContentControl.Clip>
                 </ContentControl>
             </Grid>
+
         </Grid>
+
+        <xaml:CanvasControl x:Name="BackgroundPanel"
+                            Background="Transparent" />
 
         <Border x:Name="SmallEmojiLabel"
                 Background="Transparent"
@@ -391,21 +395,21 @@
                                            CheckedContent="{CustomResource VoipMute}"
                                            HorizontalAlignment="Right"
                                            Margin="0,0,16,0"
-                                           Grid.Column="2" />
+                                           Grid.Column="3" />
 
                 <Border x:Name="Close"
                         Visibility="Collapsed"
                         Background="#FFFFFF"
                         VerticalAlignment="Top"
-                        CornerRadius="30"
-                        Grid.Column="3">
+                        CornerRadius="24"
+                        Grid.Column="2">
                     <controls:GlyphButton Click="Close_Click"
                                           Glyph="&#xE711;"
                                           Foreground="#777777"
                                           RequestedTheme="Light"
-                                          CornerRadius="30"
-                                          Width="60"
-                                          Height="60"
+                                          CornerRadius="24"
+                                          Width="48"
+                                          Height="48"
                                           AutomationProperties.Name="{CustomResource Close}"
                                           ToolTipService.ToolTip="{CustomResource Close}"
                                           Style="{StaticResource CallGlyphButtonStyle}" />

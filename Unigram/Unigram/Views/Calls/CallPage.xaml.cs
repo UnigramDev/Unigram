@@ -10,6 +10,7 @@ using Unigram.Native.Calls;
 using Unigram.Navigation;
 using Unigram.Services;
 using Windows.Devices.Enumeration;
+using Windows.System;
 using Windows.System.Display;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -41,6 +42,8 @@ namespace Unigram.Views.Calls
         private readonly IVoipService _service;
         private VoipManager _manager;
 
+        private readonly DispatcherQueue _dispatcherQueue;
+
         private VoipState _state;
 
         private int _debugTapped;
@@ -68,6 +71,9 @@ namespace Unigram.Views.Calls
             _aggregator = aggregator;
 
             _service = voipService;
+            _service.MutedChanged += OnMutedChanged;
+
+            _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
             _durationTimer = new DispatcherTimer();
             _durationTimer.Interval = TimeSpan.FromMilliseconds(500);
@@ -287,6 +293,8 @@ namespace Unigram.Views.Calls
             _debugTimer.Stop();
             _durationTimer.Stop();
 
+            _service.MutedChanged -= OnMutedChanged;
+
             if (_manager != null)
             {
                 _manager.StateUpdated -= OnStateUpdated;
@@ -302,6 +310,11 @@ namespace Unigram.Views.Calls
             {
                 capturer.SetOutput(null);
             }
+        }
+
+        private void OnMutedChanged(object sender, EventArgs e)
+        {
+            _dispatcherQueue.TryEnqueue(() => Audio.IsChecked = !_service.IsMuted);
         }
 
         public void Connect(VoipManager controller)
@@ -798,9 +811,9 @@ namespace Unigram.Views.Calls
 
         private void Audio_Click(object sender, RoutedEventArgs e)
         {
-            if (_service.Manager != null)
+            if (_service != null)
             {
-                _service.Manager.SetMuteMicrophone(Audio.IsChecked == false);
+                _service.IsMuted = Audio.IsChecked == false;
             }
         }
 
@@ -816,19 +829,22 @@ namespace Unigram.Views.Calls
             video.Text = "Webcam";
             video.Icon = new FontIcon { Glyph = Icons.Camera, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
 
-            var videoDevices = await DeviceInformation.FindAllAsync(DeviceClass.VideoCapture);
-            foreach (var device in videoDevices)
+            _dispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, async () =>
             {
-                var deviceItem = new ToggleMenuFlyoutItem();
-                deviceItem.Text = device.Name;
-                deviceItem.IsChecked = videoId == device.Id;
-                deviceItem.Click += (s, args) =>
+                var videoDevices = await DeviceInformation.FindAllAsync(DeviceClass.VideoCapture);
+                foreach (var device in videoDevices)
                 {
-                    _service.CurrentVideoInput = device.Id;
-                };
+                    var deviceItem = new ToggleMenuFlyoutItem();
+                    deviceItem.Text = device.Name;
+                    deviceItem.IsChecked = videoId == device.Id;
+                    deviceItem.Click += (s, args) =>
+                    {
+                        _service.CurrentVideoInput = device.Id;
+                    };
 
-                video.Items.Add(deviceItem);
-            }
+                    video.Items.Add(deviceItem);
+                }
+            });
 
             var defaultInput = new ToggleMenuFlyoutItem();
             defaultInput.Text = Strings.Resources.Default;
@@ -843,19 +859,22 @@ namespace Unigram.Views.Calls
             input.Icon = new FontIcon { Glyph = Icons.MicOn, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
             input.Items.Add(defaultInput);
 
-            var inputDevices = await DeviceInformation.FindAllAsync(DeviceClass.AudioCapture);
-            foreach (var device in inputDevices)
+            _dispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, async () =>
             {
-                var deviceItem = new ToggleMenuFlyoutItem();
-                deviceItem.Text = device.Name;
-                deviceItem.IsChecked = inputId == device.Id;
-                deviceItem.Click += (s, args) =>
+                var inputDevices = await DeviceInformation.FindAllAsync(DeviceClass.AudioCapture);
+                foreach (var device in inputDevices)
                 {
-                    _service.CurrentAudioInput = device.Id;
-                };
+                    var deviceItem = new ToggleMenuFlyoutItem();
+                    deviceItem.Text = device.Name;
+                    deviceItem.IsChecked = inputId == device.Id;
+                    deviceItem.Click += (s, args) =>
+                    {
+                        _service.CurrentAudioInput = device.Id;
+                    };
 
-                input.Items.Add(deviceItem);
-            }
+                    input.Items.Add(deviceItem);
+                }
+            });
 
             var defaultOutput = new ToggleMenuFlyoutItem();
             defaultOutput.Text = Strings.Resources.Default;
@@ -870,27 +889,26 @@ namespace Unigram.Views.Calls
             output.Icon = new FontIcon { Glyph = Icons.Speaker, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
             output.Items.Add(defaultOutput);
 
-            var outputDevices = await DeviceInformation.FindAllAsync(DeviceClass.AudioRender);
-            foreach (var device in outputDevices)
+            _dispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, async () =>
             {
-                var deviceItem = new ToggleMenuFlyoutItem();
-                deviceItem.Text = device.Name;
-                deviceItem.IsChecked = outputId == device.Id;
-                deviceItem.Click += (s, args) =>
+                var outputDevices = await DeviceInformation.FindAllAsync(DeviceClass.AudioRender);
+                foreach (var device in outputDevices)
                 {
-                    _service.CurrentAudioOutput = device.Id;
-                };
+                    var deviceItem = new ToggleMenuFlyoutItem();
+                    deviceItem.Text = device.Name;
+                    deviceItem.IsChecked = outputId == device.Id;
+                    deviceItem.Click += (s, args) =>
+                    {
+                        _service.CurrentAudioOutput = device.Id;
+                    };
 
-                output.Items.Add(deviceItem);
-            }
+                    output.Items.Add(deviceItem);
+                }
+            });
 
+            flyout.Items.Add(video);
             flyout.Items.Add(input);
             flyout.Items.Add(output);
-
-            if (video.Items.Count > 0)
-            {
-                flyout.Items.Add(video);
-            }
 
             if (flyout.Items.Count > 0)
             {

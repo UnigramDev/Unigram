@@ -16,7 +16,7 @@ namespace Unigram.Native.Calls
 
 
         //void SetNetworkType(NetworkType networkType);
-        void SetMuteMicrophone(Boolean muteMicrophone);
+        Boolean IsMuted;
         void SetAudioOutputGainControlEnabled(Boolean enabled);
         void SetEchoCancellationStrength(Int32 strength);
 

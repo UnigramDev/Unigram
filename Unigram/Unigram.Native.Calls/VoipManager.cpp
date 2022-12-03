@@ -181,9 +181,13 @@ namespace winrt::Unigram::Native::Calls::implementation
 
 	//void VoipManager::SetNetworkType(NetworkType networkType);
 
-	void VoipManager::SetMuteMicrophone(bool muteMicrophone) {
+	bool VoipManager::IsMuted() {
+		return m_isMuted;
+	}
+
+	void VoipManager::IsMuted(bool muteMicrophone) {
 		if (m_impl) {
-			m_impl->setMuteMicrophone(muteMicrophone);
+			m_impl->setMuteMicrophone(m_isMuted = muteMicrophone);
 		}
 	}
 
