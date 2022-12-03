@@ -28,6 +28,7 @@
         <uap:SplashScreen uap5:Optional="true" Image="Assets\Logos\SplashScreen.png" BackgroundColor="transparent" />
       </uap:VisualElements>
       <Extensions>
+        <uap:Extension Category="windows.voipCall" />
         <uap3:Extension Category="windows.appUriHandler">
           <uap3:AppUriHandler>
             <uap3:Host Name="t.me" />
