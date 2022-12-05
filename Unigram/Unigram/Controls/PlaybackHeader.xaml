@@ -339,7 +339,8 @@
                 <TextBlock x:Name="Label1"
                            TextTrimming="CharacterEllipsis"
                            TextWrapping="NoWrap"
-                           Style="{StaticResource BodyTextBlockStyle}">
+                           Style="{StaticResource BodyTextBlockStyle}"
+                           FontFamily="{ThemeResource EmojiThemeFontFamily}">
                     <Run x:Name="TitleLabel1"
                          FontWeight="SemiBold" />
                     <Run x:Name="SubtitleLabel1" />
@@ -348,7 +349,8 @@
                 <TextBlock x:Name="Label2"
                            TextTrimming="CharacterEllipsis"
                            TextWrapping="NoWrap"
-                           Style="{StaticResource BodyTextBlockStyle}">
+                           Style="{StaticResource BodyTextBlockStyle}"
+                           FontFamily="{ThemeResource EmojiThemeFontFamily}">
                     <Run x:Name="TitleLabel2"
                          FontWeight="SemiBold" />
                     <Run x:Name="SubtitleLabel2" />
