@@ -9,6 +9,7 @@ using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.Composition.Interactions;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
@@ -436,9 +437,16 @@ namespace Unigram.Controls.Chats
             {
                 return child.GetAutomationName() ?? base.GetNameCore();
             }
-            else if (_owner.Content is Message message && _clientService != null)
+            else if (_owner.ContentTemplateRoot is MessageService service)
             {
-                return Automation.GetDescription(_clientService, message);
+                return AutomationProperties.GetName(service);
+            }
+            else if (_owner.ContentTemplateRoot is StackPanel panel && panel.Children.Count > 0)
+            {
+                if (panel.Children[0] is MessageService sservice)
+                {
+                    return AutomationProperties.GetName(sservice);
+                }
             }
 
             return base.GetNameCore();
