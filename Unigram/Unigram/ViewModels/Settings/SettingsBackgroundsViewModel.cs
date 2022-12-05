@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Rg.DiffUtils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
-using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Navigation.Services;
@@ -22,7 +22,7 @@ namespace Unigram.ViewModels.Settings
         public SettingsBackgroundsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            Items = new MvxObservableCollection<Background>();
+            Items = new DiffObservableCollection<Background>(new BackgroundDiffHandler(), Constants.DiffOptions);
 
             LocalCommand = new RelayCommand(LocalExecute);
             ColorCommand = new RelayCommand(ColorExecute);
@@ -66,7 +66,7 @@ namespace Unigram.ViewModels.Settings
                 selected = background ?? predefined;
 
                 SelectedItem = selected;
-                Items.ReplaceWith(items);
+                Items.ReplaceDiff(items);
             }
             else
             {
@@ -80,7 +80,7 @@ namespace Unigram.ViewModels.Settings
                     SelectedItem = predefined;
                 }
 
-                Items.ReplaceWith(items);
+                Items.ReplaceDiff(items);
             }
         }
 
@@ -91,7 +91,7 @@ namespace Unigram.ViewModels.Settings
             set => Set(ref _selectedItem, value);
         }
 
-        public MvxObservableCollection<Background> Items { get; private set; }
+        public DiffObservableCollection<Background> Items { get; private set; }
 
         public RelayCommand LocalCommand { get; }
         private async void LocalExecute()
@@ -181,6 +181,19 @@ namespace Unigram.ViewModels.Settings
             {
 
             }
+        }
+    }
+
+    public class BackgroundDiffHandler : IDiffHandler<Background>
+    {
+        public bool CompareItems(Background oldItem, Background newItem)
+        {
+            return oldItem.Id == newItem.Id;
+        }
+
+        public void UpdateItem(Background oldItem, Background newItem)
+        {
+
         }
     }
 }

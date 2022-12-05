@@ -455,7 +455,7 @@ namespace Unigram.ViewModels
                         return;
                     }
 
-                    var input = background.Id == Constants.WallpaperLocalId
+                    var input = background.Id == Constants.WallpaperLocalId || background.Id == Constants.WallpaperColorId
                         ? null
                         : new InputBackgroundRemote(background.Id);
 
