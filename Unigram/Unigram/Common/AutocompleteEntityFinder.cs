@@ -151,7 +151,7 @@ namespace Unigram.Common
                     found = false;
                     break;
                 }
-                else if (IsValidSymbol(text.Character))
+                else if (text.StartPosition > 0 && IsValidSymbol(text.Character))
                 {
                     Move();
                 }

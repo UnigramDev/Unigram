@@ -3015,7 +3015,7 @@ namespace Unigram.Views
                     ViewModel.ResolveInlineBot(username);
                 }
             }
-            else if (e.ClickedItem is UserCommand command && entity is AutocompleteEntity.Command)
+            else if (e.ClickedItem is UserCommand command)
             {
                 var insert = $"/{command.Item.Command}";
                 if (chat.Type is ChatTypeSupergroup or ChatTypeBasicGroup)
@@ -3028,7 +3028,7 @@ namespace Unigram.Views
                 }
 
                 var complete = Window.Current.CoreWindow.IsKeyDown(Windows.System.VirtualKey.Tab);
-                if (complete)
+                if (complete && entity is AutocompleteEntity.Command)
                 {
                     InsertText($"{insert} ");
                 }
