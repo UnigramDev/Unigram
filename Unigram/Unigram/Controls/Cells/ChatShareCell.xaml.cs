@@ -73,6 +73,17 @@ namespace Unigram.Controls.Cells
 
             if (args.Phase == 0)
             {
+                if (chat.Type is ChatTypeSecret)
+                {
+                    TitleLabel.Foreground = TypeIcon.Foreground;
+                    TypeIcon.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    TitleLabel.ClearValue(TextBlock.ForegroundProperty);
+                    TypeIcon.Visibility = Visibility.Collapsed;
+                }
+
                 TitleLabel.Text = clientService.GetTitle(chat);
             }
             else if (args.Phase == 2)
