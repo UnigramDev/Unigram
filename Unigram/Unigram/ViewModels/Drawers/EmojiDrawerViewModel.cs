@@ -224,8 +224,8 @@ namespace Unigram.ViewModels.Drawers
 
             if (_mode == EmojiDrawerMode.Chat)
             {
-                var recents = Emoji.GetRecents(EmojiSkinTone.Default);
-                var emojiGroups = Emoji.Get(EmojiSkinTone.Default, true);
+                var recents = Emoji.GetRecents(SettingsService.Current.Stickers.SkinTone);
+                var emojiGroups = Emoji.Get(SettingsService.Current.Stickers.SkinTone, true);
 
                 var source = new List<object>();
                 var customEmoji = new List<long>();
