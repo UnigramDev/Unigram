@@ -1,14 +1,13 @@
 ﻿using Rg.DiffUtils;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Settings;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Supergroups
@@ -194,7 +193,13 @@ namespace Unigram.ViewModels.Supergroups
                     }
                 }
 
-                usernames ??= new Usernames();
+                usernames ??= new Usernames
+                {
+                    ActiveUsernames = Array.Empty<string>(),
+                    DisabledUsernames = Array.Empty<string>(),
+                    EditableUsername = string.Empty
+                };
+
                 ReplaceEditable(usernames.ActiveUsernames, usernames.EditableUsername, editable);
                 ReplaceEditable(usernames.DisabledUsernames, usernames.EditableUsername, editable);
 
@@ -205,7 +210,7 @@ namespace Unigram.ViewModels.Supergroups
             {
                 Items.ReplaceDiff(UsernameInfo.FromUsernames(ClientService, usernames, false));
             }
-            else
+            else if (Items.Count > 0)
             {
                 Items.Clear();
             }
@@ -304,43 +309,15 @@ namespace Unigram.ViewModels.Supergroups
         private async void LoadUsername(long chatId)
         {
             var response = await ClientService.SendAsync(new CheckChatUsername(chatId, "username"));
-            HasTooMuchUsernames = response is CheckChatUsernameResultPublicChatsTooMuch;
+            HasTooMuchUsernames = response is CheckChatUsernameResultPublicChatsTooMany;
         }
 
         public RelayCommand SendCommand { get; }
         protected abstract void SendExecute();
 
-        public async void ToggleUsername(string username)
+        public void ToggleUsername(UsernameInfo username)
         {
-            if (_chat is not Chat chat || chat.Type is not ChatTypeSupergroup super)
-            {
-                return;
-            }
-
-            var supergroup = ClientService.GetSupergroup(super.SupergroupId);
-            if (supergroup == null)
-            {
-                return;
-            }
-
-            var active = supergroup.Usernames != null
-                && supergroup.Usernames.ActiveUsernames.Contains(username);
-
-            var dialog = new MessagePopup();
-            dialog.Title = active
-                ? Strings.Resources.UsernameDeactivateLink
-                : Strings.Resources.UsernameActivateLink;
-            dialog.Message = active
-                ? Strings.Resources.UsernameDeactivateLinkChannelMessage
-                : Strings.Resources.UsernameActivateLinkChannelMessage;
-            dialog.PrimaryButtonText = active ? Strings.Resources.Hide : Strings.Resources.Show;
-            dialog.SecondaryButtonText = Strings.Resources.Cancel;
-
-            var confirm = await dialog.ShowQueuedAsync();
-            if (confirm == ContentDialogResult.Primary)
-            {
-                ClientService.Send(new ToggleSupergroupUsernameIsActive(supergroup.Id, username, !active));
-            }
+            ClientService.Send(new ToggleUsernameIsActive(username.Value, !username.IsActive));
         }
 
         #region Username
@@ -405,7 +382,13 @@ namespace Unigram.ViewModels.Supergroups
                 IsAvailable = false;
                 ErrorMessage = Strings.Resources.UsernameInUse;
             }
-            else if (response is CheckChatUsernameResultPublicChatsTooMuch)
+            else if (response is CheckChatUsernameResultUsernamePurchasable)
+            {
+                IsLoading = false;
+                IsAvailable = false;
+                ErrorMessage = Strings.Resources.UsernameInUsePurchase;
+            }
+            else if (response is CheckChatUsernameResultPublicChatsTooMany)
             {
                 HasTooMuchUsernames = true;
                 NavigationService.ShowLimitReached(new PremiumLimitTypeCreatedPublicChatCount());

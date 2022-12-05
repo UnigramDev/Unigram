@@ -1,4 +1,5 @@
 ﻿using Rg.DiffUtils;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
@@ -71,7 +72,13 @@ namespace Unigram.ViewModels.Settings
                     }
                 }
 
-                usernames ??= new Usernames();
+                usernames ??= new Usernames
+                {
+                    ActiveUsernames = Array.Empty<string>(),
+                    DisabledUsernames = Array.Empty<string>(),
+                    EditableUsername = string.Empty
+                };
+
                 ReplaceEditable(usernames.ActiveUsernames, usernames.EditableUsername, editable);
                 ReplaceEditable(usernames.DisabledUsernames, usernames.EditableUsername, editable);
 
@@ -82,7 +89,7 @@ namespace Unigram.ViewModels.Settings
             {
                 Items.ReplaceDiff(UsernameInfo.FromUsernames(ClientService, usernames, false));
             }
-            else
+            else if (Items.Count > 0)
             {
                 Items.Clear();
             }
