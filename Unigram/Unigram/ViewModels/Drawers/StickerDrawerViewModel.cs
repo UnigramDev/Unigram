@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
@@ -29,12 +29,13 @@ namespace Unigram.ViewModels.Drawers
         private readonly StickerSetViewModel _premiumSet;
         private readonly SupergroupStickerSetViewModel _groupSet;
 
+        private List<StickerSetViewModel> _installedSets;
+
         private long _groupSetId;
         private long _groupSetChatId;
 
         private bool _updated;
         private bool _updating;
-        private long _updatedHash;
 
         public StickerDrawerViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
@@ -67,7 +68,7 @@ namespace Unigram.ViewModels.Drawers
                 IsInstalled = true
             });
 
-            SavedStickers = new StickerSetCollection();
+            SavedStickers = new MvxObservableCollection<StickerSetViewModel>();
 
             Subscribe();
         }
@@ -214,22 +215,11 @@ namespace Unigram.ViewModels.Drawers
                 return;
             }
 
-            long hash = 0;
-            foreach (var elem in update.StickerSetIds)
-            {
-                hash = ((hash * 20261) + 0x80000000L + elem) % 0x80000000L;
-            }
-
-            if (_updatedHash == hash)
-            {
-                return;
-            }
-
             _updated = false;
             BeginOnUIThread(() => Update(null));
         }
 
-        public StickerSetCollection SavedStickers { get; private set; }
+        public MvxObservableCollection<StickerSetViewModel> SavedStickers { get; private set; }
 
         private SearchStickerSetsCollection _searchStickers;
         public SearchStickerSetsCollection SearchStickers
@@ -326,9 +316,9 @@ namespace Unigram.ViewModels.Drawers
             var result1 = await ClientService.SendAsync(new GetFavoriteStickers());
             var result2 = await ClientService.SendAsync(new GetRecentStickers());
             var result3 = await ClientService.SendAsync(new GetPremiumStickers(60));
-            var result4 = await ClientService.SendAsync(new GetInstalledStickerSets(new StickerTypeRegular()));
+            var result4 = await GetInstalledSets();
 
-            if (result1 is Stickers favorite && result2 is Stickers recent && result3 is Stickers premium && result4 is StickerSets sets)
+            if (result1 is Stickers favorite && result2 is Stickers recent && result3 is Stickers premium)
             {
                 for (int i = 0; i < favorite.StickersValue.Count; i++)
                 {
@@ -372,50 +362,88 @@ namespace Unigram.ViewModels.Drawers
                     stickers.Add(_groupSet);
                 }
 
-                long hash = 0;
-                foreach (var elem in sets.Sets)
+                if (result4.Count > 0)
                 {
-                    hash = ((hash * 20261) + 0x80000000L + elem.Id) % 0x80000000L;
-                }
+                    if (result4[0].IsLoaded is false)
+                    {
+                        result4[0].IsLoaded = true;
 
-                _updatedHash = hash;
+                        var response = await ClientService.SendAsync(new GetStickerSet(result4[0].Id));
+                        if (response is StickerSet full)
+                        {
+                            result4[0].Update(full, false);
+                        }
+                    }
 
-                if (sets.Sets.Count > 0)
-                {
-                    var result5 = await ClientService.SendAsync(new GetStickerSet(sets.Sets[0].Id));
+                    stickers.AddRange(result4);
 
+                    if (_premiumSet.Stickers.Count > 0 && IsPremiumAvailable && !IsPremium)
+                    {
+                        stickers.Add(_premiumSet);
+                    }
+
+                    SavedStickers.ReplaceWith(stickers);
                     _updating = false;
-
-                    if (result5 is StickerSet set)
-                    {
-                        stickers.Add(new StickerSetViewModel(ClientService, sets.Sets[0], set));
-                        stickers.AddRange(sets.Sets.Skip(1).Select(x => new StickerSetViewModel(ClientService, x)));
-
-                        if (_premiumSet.Stickers.Count > 0 && IsPremiumAvailable && !IsPremium)
-                        {
-                            stickers.Add(_premiumSet);
-                        }
-
-                        SavedStickers.ReplaceWith(stickers);
-                    }
-                    else
-                    {
-                        stickers.AddRange(sets.Sets.Select(x => new StickerSetViewModel(ClientService, x)));
-
-                        if (_premiumSet.Stickers.Count > 0 && IsPremiumAvailable && !IsPremium)
-                        {
-                            stickers.Add(_premiumSet);
-                        }
-
-                        SavedStickers.ReplaceWith(stickers);
-                    }
                 }
                 else
                 {
+                    SavedStickers.ReplaceWith(stickers);
                     _updating = false;
-                    SavedStickers.ReplaceWith(stickers.Union(sets.Sets.Select(x => new StickerSetViewModel(ClientService, x))));
                 }
             }
+        }
+
+        private async Task<IList<StickerSetViewModel>> GetInstalledSets()
+        {
+            if (_installedSets != null)
+            {
+                return _installedSets;
+            }
+
+            var result1 = await ClientService.SendAsync(new GetInstalledStickerSets(new StickerTypeRegular()));
+            //var result2 = await ClientService.SendAsync(new GetTrendingStickerSets(new StickerTypeRegular(), 0, 100));
+
+            if (result1 is StickerSets sets /*&& result2 is TrendingStickerSets trending*/)
+            {
+                var stickers = new List<object>();
+
+                var installedSets = new List<StickerSetViewModel>();
+
+                if (sets.Sets.Count > 0)
+                {
+                    var result3 = await ClientService.SendAsync(new GetStickerSet(sets.Sets[0].Id));
+                    if (result3 is StickerSet set)
+                    {
+                        installedSets.Add(new StickerSetViewModel(ClientService, sets.Sets[0], set));
+                        installedSets.AddRange(sets.Sets.Skip(1).Select(x => new StickerSetViewModel(ClientService, x)));
+                    }
+                    else
+                    {
+                        installedSets.AddRange(sets.Sets.Select(x => new StickerSetViewModel(ClientService, x)));
+                    }
+
+                    //var existing = installedSets.Select(x => x.Id).ToArray();
+
+                    //foreach (var item in trending.Sets)
+                    //{
+                    //    if (existing.Contains(item.Id))
+                    //    {
+                    //        continue;
+                    //    }
+
+                    //    installedSets.Add(new StickerSetViewModel(ClientService, item));
+                    //}
+                }
+                //else if (trending.Sets.Count > 0)
+                //{
+                //    installedSets.AddRange(trending.Sets.Select(x => new StickerSetViewModel(ClientService, x)));
+                //}
+
+                _installedSets = installedSets;
+                return installedSets;
+            }
+
+            return Array.Empty<StickerSetViewModel>();
         }
 
         private int _featuredUnreadCount;
@@ -664,60 +692,6 @@ namespace Unigram.ViewModels.Drawers
         }
 
         public int TotalCount { get; set; }
-    }
-
-    public class StickerSetCollection : MvxObservableCollection<StickerSetViewModel>
-    {
-        private readonly Dictionary<string, int> _indexer = new Dictionary<string, int>
-        {
-            { "tg/favedStickers", 0 },
-            { "tg/recentlyUsed", 1 },
-            { "tg/premiumStickers", 2 },
-            { "tg/groupStickers", 3 }
-        };
-
-        private readonly Dictionary<int, string> _mapper = new Dictionary<int, string>
-        {
-            { 0, "tg/favedStickers" },
-            { 1, "tg/recentlyUsed" },
-            { 2, "tg/premiumStickers" },
-            { 3, "tg/groupStickers" }
-        };
-
-        protected override void InsertItem(int index, StickerSetViewModel item)
-        {
-            if (_indexer.TryGetValue(item.Name, out int want))
-            {
-                index = 0;
-
-                for (int i = 0; i < 3; i++)
-                {
-                    if (Count > i && _mapper[i] == this[i].Name && i < want)
-                    {
-                        index++;
-                    }
-                }
-
-                var already = IndexOf(item);
-                if (already != index)
-                {
-                    if (already > -1)
-                    {
-                        base.RemoveItem(already);
-                    }
-
-                    base.InsertItem(index, item);
-                }
-                else
-                {
-                    OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Move, item, index, index));
-                }
-            }
-            else
-            {
-                base.InsertItem(index, item);
-            }
-        }
     }
 
     public class SearchStickerSetsCollection : MvxObservableCollection<StickerSetViewModel>, ISupportIncrementalLoading
