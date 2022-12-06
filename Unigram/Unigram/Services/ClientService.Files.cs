@@ -373,6 +373,13 @@ namespace Unigram.Services
                     ProcessFiles(fileDownload.Message);
                 }
             }
+            else if (target is ForumTopic forumTopic)
+            {
+                if (forumTopic.LastMessage != null)
+                {
+                    ProcessFiles(forumTopic.LastMessage);
+                }
+            }
             else if (target is FoundFileDownloads foundFileDownloads)
             {
                 foreach (var item in foundFileDownloads.Files)
@@ -575,6 +582,20 @@ namespace Unigram.Services
                     ProcessFiles(messageDocument.Document);
                 }
             }
+            else if (target is MessageExtendedMediaPhoto messageExtendedMediaPhoto)
+            {
+                if (messageExtendedMediaPhoto.Photo != null)
+                {
+                    ProcessFiles(messageExtendedMediaPhoto.Photo);
+                }
+            }
+            else if (target is MessageExtendedMediaVideo messageExtendedMediaVideo)
+            {
+                if (messageExtendedMediaVideo.Video != null)
+                {
+                    ProcessFiles(messageExtendedMediaVideo.Video);
+                }
+            }
             else if (target is MessageGame messageGame)
             {
                 if (messageGame.Game != null)
@@ -591,6 +612,10 @@ namespace Unigram.Services
             }
             else if (target is MessageInvoice messageInvoice)
             {
+                if (messageInvoice.ExtendedMedia != null)
+                {
+                    ProcessFiles(messageInvoice.ExtendedMedia);
+                }
                 if (messageInvoice.Photo != null)
                 {
                     ProcessFiles(messageInvoice.Photo);
@@ -1296,6 +1321,13 @@ namespace Unigram.Services
                 if (sponsoredMessage.SponsorChatInfo != null)
                 {
                     ProcessFiles(sponsoredMessage.SponsorChatInfo);
+                }
+            }
+            else if (target is SponsoredMessages sponsoredMessages)
+            {
+                foreach (var item in sponsoredMessages.Messages)
+                {
+                    ProcessFiles(item);
                 }
             }
             else if (target is Sticker sticker)

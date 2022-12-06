@@ -45,7 +45,8 @@ namespace Unigram
                 ( typeof(IClientService), typeof(ClientService) ),
                 ( typeof(INotificationsService), typeof(NotificationsService) ),
                 ( typeof(IGenerationService), typeof(GenerationService) ),
-                ( typeof(INetworkService), typeof(NetworkService) )
+                ( typeof(INetworkService), typeof(NetworkService) ),
+                ( typeof(IVoipService), typeof(VoipService) ),
             };
 
             _lazySingletons = new List<(Type, Type)>
@@ -55,7 +56,6 @@ namespace Unigram
                 ( typeof(IEmojiSetService), typeof(EmojiSetService) ),
                 ( typeof(ICloudUpdateService), typeof(CloudUpdateService) ),
                 ( typeof(IShortcutsService), typeof(ShortcutsService) ),
-                ( typeof(IVoipService), typeof(VoipService) ),
                 ( typeof(IGroupCallService), typeof(GroupCallService) ),
                 ( typeof(IDeviceInfoService), typeof(DeviceInfoService) ),
                 ( typeof(IEventAggregator), typeof(EventAggregator) ),
@@ -143,6 +143,7 @@ namespace Unigram
                 typeof(SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesViewModel),
                 typeof(SettingsPrivacyShowPhotoViewModel),
                 typeof(SettingsPrivacyShowStatusViewModel),
+                typeof(SettingsAutoDeleteViewModel),
                 typeof(SettingsProfileViewModel),
                 typeof(SettingsPasswordViewModel),
                 typeof(SettingsPasswordIntroViewModel),

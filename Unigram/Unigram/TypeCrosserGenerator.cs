@@ -80,11 +80,6 @@ namespace Unigram
 
             foreach (var type in typesToCrossMap.OrderBy(x => x.Key.Name))
             {
-                if (type.Key == typeof(Telegram.Td.Api.ChatTheme))
-                {
-                    System.Diagnostics.Debugger.Break();
-                }
-
                 var key = type.Key.Name;
                 var name = type.Key.Name.CamelCase();
 

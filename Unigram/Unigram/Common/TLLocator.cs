@@ -17,18 +17,18 @@
         private readonly Unigram.Services.IGenerationService _generationService;
         private readonly Unigram.Services.ISessionService _sessionService;
         private readonly Unigram.Services.INotificationsService _notificationsService;
+        private readonly Unigram.Services.ViewService.IViewService _viewService;
+        private readonly Unigram.Services.IVoipService _voipService;
 
         private Unigram.Services.ISettingsSearchService _settingsSearchService;
         private Unigram.Services.IEmojiSetService _emojiSetService;
         private Unigram.Services.ICloudUpdateService _cloudUpdateService;
         private Unigram.Services.IShortcutsService _shortcutsService;
-        private Unigram.Services.IVoipService _voipService;
         private Unigram.Services.IGroupCallService _groupCallService;
         private Unigram.Services.IContactsService _contactsService;
         private Unigram.Services.ILocationService _locationService;
         private Unigram.Services.IThemeService _themeService;
         private Unigram.Services.Factories.IMessageFactory _messageFactory;
-        private Unigram.Services.ViewService.IViewService _viewService;
         private Unigram.Services.IStorageService _storageService;
         private Unigram.Services.ITranslateService _translateService;
 
@@ -70,6 +70,12 @@
                 _settingsService,
                 _sessionService,
                 _eventAggregator);
+            _viewService = new Unigram.Services.ViewService.ViewService();
+            _voipService = new Unigram.Services.VoipService(
+                _clientService,
+                _settingsService,
+                _eventAggregator,
+                _viewService);
         }
 
         public T Resolve<T>()
@@ -97,7 +103,8 @@
                 return (T)(object)new Unigram.ViewModels.Authorization.AuthorizationCodeViewModel(
                     _clientService,
                     _settingsService,
-                    _eventAggregator);
+                    _eventAggregator,
+                    _sessionService);
             }
             else if (type == typeof(Unigram.ViewModels.Authorization.AuthorizationPasswordViewModel))
             {
@@ -142,16 +149,12 @@
                     _passcodeService,
                     _lifetimeService,
                     _sessionService,
-                    _voipService ??= new Unigram.Services.VoipService(
-                        _clientService,
-                        _settingsService,
-                        _eventAggregator,
-                        _viewService ??= new Unigram.Services.ViewService.ViewService()),
+                    _voipService,
                     _groupCallService ??= new Unigram.Services.GroupCallService(
                         _clientService,
                         _settingsService,
                         _eventAggregator,
-                        _viewService ??= new Unigram.Services.ViewService.ViewService()),
+                        _viewService),
                     _settingsSearchService ??= new Unigram.Services.SettingsSearchService(_clientService),
                     _emojiSetService ??= new Unigram.Services.EmojiSetService(
                         _clientService,
@@ -191,16 +194,12 @@
                     _locationService ??= new Unigram.Services.LocationService(_clientService),
                     _notificationsService,
                     _playbackService,
-                    _voipService ??= new Unigram.Services.VoipService(
-                        _clientService,
-                        _settingsService,
-                        _eventAggregator,
-                        _viewService ??= new Unigram.Services.ViewService.ViewService()),
+                    _voipService,
                     _groupCallService ??= new Unigram.Services.GroupCallService(
                         _clientService,
                         _settingsService,
                         _eventAggregator,
-                        _viewService ??= new Unigram.Services.ViewService.ViewService()),
+                        _viewService),
                     _networkService,
                     _storageService ??= new Unigram.Services.StorageService(_clientService),
                     _translateService ??= new Unigram.Services.TranslateService(
@@ -219,16 +218,12 @@
                     _locationService ??= new Unigram.Services.LocationService(_clientService),
                     _notificationsService,
                     _playbackService,
-                    _voipService ??= new Unigram.Services.VoipService(
-                        _clientService,
-                        _settingsService,
-                        _eventAggregator,
-                        _viewService ??= new Unigram.Services.ViewService.ViewService()),
+                    _voipService,
                     _groupCallService ??= new Unigram.Services.GroupCallService(
                         _clientService,
                         _settingsService,
                         _eventAggregator,
-                        _viewService ??= new Unigram.Services.ViewService.ViewService()),
+                        _viewService),
                     _networkService,
                     _storageService ??= new Unigram.Services.StorageService(_clientService),
                     _translateService ??= new Unigram.Services.TranslateService(
@@ -247,16 +242,12 @@
                     _locationService ??= new Unigram.Services.LocationService(_clientService),
                     _notificationsService,
                     _playbackService,
-                    _voipService ??= new Unigram.Services.VoipService(
-                        _clientService,
-                        _settingsService,
-                        _eventAggregator,
-                        _viewService ??= new Unigram.Services.ViewService.ViewService()),
+                    _voipService,
                     _groupCallService ??= new Unigram.Services.GroupCallService(
                         _clientService,
                         _settingsService,
                         _eventAggregator,
-                        _viewService ??= new Unigram.Services.ViewService.ViewService()),
+                        _viewService),
                     _networkService,
                     _storageService ??= new Unigram.Services.StorageService(_clientService),
                     _translateService ??= new Unigram.Services.TranslateService(
@@ -275,16 +266,12 @@
                     _locationService ??= new Unigram.Services.LocationService(_clientService),
                     _notificationsService,
                     _playbackService,
-                    _voipService ??= new Unigram.Services.VoipService(
-                        _clientService,
-                        _settingsService,
-                        _eventAggregator,
-                        _viewService ??= new Unigram.Services.ViewService.ViewService()),
+                    _voipService,
                     _groupCallService ??= new Unigram.Services.GroupCallService(
                         _clientService,
                         _settingsService,
                         _eventAggregator,
-                        _viewService ??= new Unigram.Services.ViewService.ViewService()),
+                        _viewService),
                     _networkService,
                     _storageService ??= new Unigram.Services.StorageService(_clientService),
                     _translateService ??= new Unigram.Services.TranslateService(
@@ -303,16 +290,12 @@
                     _locationService ??= new Unigram.Services.LocationService(_clientService),
                     _notificationsService,
                     _playbackService,
-                    _voipService ??= new Unigram.Services.VoipService(
-                        _clientService,
-                        _settingsService,
-                        _eventAggregator,
-                        _viewService ??= new Unigram.Services.ViewService.ViewService()),
+                    _voipService,
                     _groupCallService ??= new Unigram.Services.GroupCallService(
                         _clientService,
                         _settingsService,
                         _eventAggregator,
-                        _viewService ??= new Unigram.Services.ViewService.ViewService()),
+                        _viewService),
                     _networkService,
                     _storageService ??= new Unigram.Services.StorageService(_clientService),
                     _translateService ??= new Unigram.Services.TranslateService(
@@ -357,16 +340,12 @@
                     _settingsService,
                     _eventAggregator,
                     _playbackService,
-                    _voipService ??= new Unigram.Services.VoipService(
-                        _clientService,
-                        _settingsService,
-                        _eventAggregator,
-                        _viewService ??= new Unigram.Services.ViewService.ViewService()),
+                    _voipService,
                     _groupCallService ??= new Unigram.Services.GroupCallService(
                         _clientService,
                         _settingsService,
                         _eventAggregator,
-                        _viewService ??= new Unigram.Services.ViewService.ViewService()),
+                        _viewService),
                     _notificationsService,
                     _storageService ??= new Unigram.Services.StorageService(_clientService),
                     _translateService ??= new Unigram.Services.TranslateService(
@@ -1041,6 +1020,14 @@
             {
                 return (T)_notificationsService;
             }
+            else if (type == typeof(Unigram.Services.ViewService.IViewService))
+            {
+                return (T)_viewService;
+            }
+            else if (type == typeof(Unigram.Services.IVoipService))
+            {
+                return (T)_voipService;
+            }
             else if (type == typeof(Unigram.Services.ISettingsSearchService))
             {
                 return (T)(_settingsSearchService ??= new Unigram.Services.SettingsSearchService(_clientService));
@@ -1066,21 +1053,13 @@
                     _settingsService,
                     _eventAggregator));
             }
-            else if (type == typeof(Unigram.Services.IVoipService))
-            {
-                return (T)(_voipService ??= new Unigram.Services.VoipService(
-                    _clientService,
-                    _settingsService,
-                    _eventAggregator,
-                    _viewService ??= new Unigram.Services.ViewService.ViewService()));
-            }
             else if (type == typeof(Unigram.Services.IGroupCallService))
             {
                 return (T)(_groupCallService ??= new Unigram.Services.GroupCallService(
                     _clientService,
                     _settingsService,
                     _eventAggregator,
-                    _viewService ??= new Unigram.Services.ViewService.ViewService()));
+                    _viewService));
             }
             else if (type == typeof(Unigram.Services.IContactsService))
             {
@@ -1105,10 +1084,6 @@
                 return (T)(_messageFactory ??= new Unigram.Services.Factories.MessageFactory(
                     _clientService,
                     _playbackService));
-            }
-            else if (type == typeof(Unigram.Services.ViewService.IViewService))
-            {
-                return (T)(_viewService ??= new Unigram.Services.ViewService.ViewService());
             }
             else if (type == typeof(Unigram.Services.IStorageService))
             {
