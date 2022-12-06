@@ -433,13 +433,13 @@ namespace Unigram.Controls.Drawers
                     return;
                 }
 
-                var content = args.ItemContainer.ContentTemplateRoot as ProfilePicture;
-                if (content == null)
+                var content = args.ItemContainer.ContentTemplateRoot as Border;
+                if (content?.Child is not ProfilePicture photo)
                 {
                     return;
                 }
 
-                content.SetChat(ViewModel.ClientService, chat, 36);
+                photo.SetChat(ViewModel.ClientService, chat, 36);
             }
             else if (args.Item is StickerSetViewModel sticker)
             {
