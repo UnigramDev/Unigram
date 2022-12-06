@@ -91,8 +91,8 @@ namespace Unigram.ViewModels
             _stickers = StickerDrawerViewModel.GetForCurrentView(clientService.SessionId);
             _animations = AnimationDrawerViewModel.GetForCurrentView(clientService.SessionId);
 
-            _mentions = new DialogUnreadMessagesViewModel<SearchMessagesFilterUnreadMention>(this);
-            _reactions = new DialogUnreadMessagesViewModel<SearchMessagesFilterUnreadReaction>(this);
+            _mentions = new DialogUnreadMessagesViewModel<SearchMessagesFilterUnreadMention>(this, true);
+            _reactions = new DialogUnreadMessagesViewModel<SearchMessagesFilterUnreadReaction>(this, false);
 
             ToggleMuteCommand = new RelayCommand<bool>(ToggleMuteExecute);
             MuteCommand = new RelayCommand(() => ToggleMuteExecute(false));
@@ -3915,13 +3915,17 @@ namespace Unigram.ViewModels
         private readonly DialogViewModel _viewModel;
         private readonly SearchMessagesFilter _filter;
 
+        private readonly bool _oldToNew;
+
         private List<long> _messages = new List<long>();
         private long _lastMessage;
 
-        public DialogUnreadMessagesViewModel(DialogViewModel viewModel)
+        public DialogUnreadMessagesViewModel(DialogViewModel viewModel, bool oldToNew)
         {
             _viewModel = viewModel;
             _filter = Activator.CreateInstance<T>();
+
+            _oldToNew = oldToNew;
         }
 
         public void SetLastViewedMessage(long messageId)
@@ -3970,9 +3974,20 @@ namespace Unigram.ViewModels
                 if (response is Messages messages)
                 {
                     var stack = new List<long>();
-                    foreach (var message in messages.MessagesValue)
+
+                    if (_oldToNew)
                     {
-                        stack.Add(message.Id);
+                        foreach (var message in messages.MessagesValue.Reverse())
+                        {
+                            stack.Add(message.Id);
+                        }
+                    }
+                    else
+                    {
+                        foreach (var message in messages.MessagesValue)
+                        {
+                            stack.Add(message.Id);
+                        }
                     }
 
                     if (stack.Count > 0)
