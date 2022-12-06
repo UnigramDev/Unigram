@@ -94,7 +94,7 @@ namespace Unigram.Views.Popups
 
         private void Items_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            if (MAXIMUM_OPTIONS - Items.Count <= 0)
+            if (MAXIMUM_OPTIONS - Items.Count - 1 <= 0)
             {
                 AddAnOption.Visibility = Visibility.Collapsed;
                 AddInfo.Text = Strings.Resources.AddAnOptionInfoMax;
@@ -102,7 +102,7 @@ namespace Unigram.Views.Popups
             else
             {
                 AddAnOption.Visibility = Visibility.Visible;
-                AddInfo.Text = string.Format(Strings.Resources.AddAnOptionInfo, Locale.Declension("Option", MAXIMUM_OPTIONS - Items.Count));
+                AddInfo.Text = string.Format(Strings.Resources.AddAnOptionInfo, Locale.Declension("Option", MAXIMUM_OPTIONS - Items.Count - 1));
             }
 
             UpdatePrimaryButton();
@@ -183,10 +183,36 @@ namespace Unigram.Views.Popups
             }
         }
 
+        private void Option_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == Windows.System.VirtualKey.Back && sender is TextBox text && text.DataContext is PollOptionViewModel option && string.IsNullOrEmpty(text.Text))
+            {
+                e.Handled = true;
+
+                var index = Items.IndexOf(option);
+                if (index > 0)
+                {
+                    Focus(index - 1);
+                }
+                else if (index < Items.Count - 1)
+                {
+                    Focus(1);
+                }
+                else
+                {
+                    AddAnOption.Focus(FocusState.Keyboard);
+                }
+
+                Items.Remove(option);
+            }
+        }
+
         private void Option_KeyDown(object sender, KeyRoutedEventArgs e)
         {
             if (e.Key == Windows.System.VirtualKey.Enter && sender is TextBox text && text.DataContext is PollOptionViewModel option)
             {
+                e.Handled = true;
+
                 var index = Items.IndexOf(option);
                 if (index < Items.Count - 1)
                 {
@@ -243,6 +269,8 @@ namespace Unigram.Views.Popups
                 item.IsChecked = false;
                 item.IsQuiz = Quiz.IsChecked == true;
             }
+
+            AddAnOption.Margin = new Thickness(Quiz.IsChecked == true ? 28 + 24 : 24, 8, 24, 0);
 
             UpdatePrimaryButton();
         }

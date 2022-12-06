@@ -129,6 +129,7 @@
                                          PlaceholderText="{CustomResource OptionHint}"
                                          MaxLength="100"
                                          Loaded="Option_Loaded"
+                                         PreviewKeyDown="Option_PreviewKeyDown"
                                          KeyDown="Option_KeyDown"
                                          TextChanged="Question_TextChanged"
                                          GotFocus="Question_GotFocus"
