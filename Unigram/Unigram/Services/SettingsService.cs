@@ -231,31 +231,27 @@ namespace Unigram.Services
 
         #region App version
 
-        public const ulong CurrentVersion = (9UL << 48) | (0UL << 32) | (0UL << 16);
-        public const string CurrentChangelog = @"INFINITE REACTIONS, EMOJI STATUSES AND MUCH MORE
+        public const ulong CurrentVersion = (9UL << 48) | (2UL << 32) | (0UL << 16);
+        public const string CurrentChangelog = @"GLOBAL AUTO-DELETE, TOPICS 2.0 AND MUCH MORE
 
-**Infinite Reactions**
-• A new expandable reaction menu was added in private chats and groups.
-• All users get access to dozens of new reactions, including reactions previously reserved for Premium users.
-• The reactions you use most frequently will always be displayed at the top.
-• Premium users can react to messages with thousands of custom emoji and add up to 3 reactions to each message.
+**Global Auto-Delete**
+• You can set a Global Auto-Delete Timer for all new chats and groups you create.
+• New messages will be deleted after 1 day, week, month – or a custom duration you choose.
+• The new menu in Settings > Privacy & Security > Auto-Delete Messages also lets you set up Auto-Delete for any of your existing chats faster.
 
-**Reaction Management**
-• Group admins can control whether custom reactions are allowed in their groups.
-• We've added an option to report spam when opening a user's profile from a reaction. (Internet rule number N: if something exists, sooner or later, it will be used for spam).
+**Aggressive Anti-Spam for Groups**
+• Large groups can enable 'Aggressive Filtering' in Group Info > Administrators to remove more spam with automated algorithms.
+• Admins help improve filtering by reporting any false positives in 'Recent Actions'.
 
-**Premium: Emoji Statuses**
-• Premium users can add an animated emoji status next to their name to display their current activity.
-• To set a status, tap your Premium badge in the chat list or Settings.
-• Popular suggestions for working, sleeping, traveling and more will be shown at the top.
-• To set a status for a specific duration like 1 hour or 2 days, press and hold the emoji.
+**Temporary QR Codes**
+• The QR Code page in Settings can now generate a temporary code for users who don’t have a username and hide their phone number from everyone.
+• Show this code to others if you want them to add you as a contact without sharing any details.
 
-**New Username Links**
-• A new format was supported for username links, in addition to ""t.me/username."" You can now open Telegram accounts, groups or channels using links like ""username.t.me"" or ""https://username.t.me.""
-
-**Improved Login Flow**
-• We've improved the registration and login experience with slick animations and a smoother UI.
-• If you frequently re-login on Telegram, you can sign in faster using your email.";
+**Improved Emoji and Sticker Search**
+• You can search for basic and custom emoji in the Emoji tab of the Sticker Panel using hundreds of keywords like ‘smile’, ‘heart’ or 'hypnotoad'.
+• More keywords can be suggested via translations.telegram.org/en/emoji
+• Sticker search will also show stickers that match these keywords.
+• Tapping on custom emoji in any message now shows you which emoji pack they came from.";
 
         public int Session => _session;
 
