@@ -4,15 +4,21 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Navigation.Services;
 using Unigram.Services;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Authorization
 {
     public class AuthorizationCodeViewModel : TLViewModelBase
     {
-        public AuthorizationCodeViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+        private readonly ISessionService _sessionService;
+        private bool _confirmedGoBack;
+
+        public AuthorizationCodeViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, ISessionService sessionService)
             : base(clientService, settingsService, aggregator)
         {
+            _sessionService = sessionService;
+
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
             ResendCommand = new RelayCommand(ResendExecute, () => !IsLoading);
         }
@@ -28,6 +34,25 @@ namespace Unigram.ViewModels.Authorization
             }
 
             return Task.CompletedTask;
+        }
+
+        public override async void NavigatingFrom(NavigatingEventArgs args)
+        {
+            var authState = ClientService.GetAuthorizationState();
+            if (authState is AuthorizationStateWaitCode waitCode && !_confirmedGoBack)
+            {
+                args.Cancel = true;
+
+                var message = string.Format(Strings.Resources.EditNumberInfo, Common.PhoneNumber.Format(waitCode.CodeInfo.PhoneNumber));
+                var title = Strings.Resources.EditNumber;
+
+                var confirm = await MessagePopup.ShowAsync(message, title, Strings.Resources.Edit, Strings.Resources.Close);
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    _confirmedGoBack = true;
+                    NavigationService.GoBack();
+                }
+            }
         }
 
         private AuthenticationCodeInfo _codeInfo;

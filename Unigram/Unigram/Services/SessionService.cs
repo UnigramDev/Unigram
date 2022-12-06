@@ -133,13 +133,15 @@ namespace Unigram.Services
         #region Lifecycle
 
         private bool _loggingOut;
-        private SetAuthenticationPhoneNumber _continueOnLogOut;
+        private bool _continueOnLogOut;
+        private SetAuthenticationPhoneNumber _continueOnLogOutAction;
         private TaskCompletionSource<BaseObject> _continueResult;
 
         public Task<BaseObject> SetAuthenticationPhoneNumberAsync(SetAuthenticationPhoneNumber function)
         {
             _loggingOut = false;
-            _continueOnLogOut = function;
+            _continueOnLogOut = true;
+            _continueOnLogOutAction = function;
             _continueResult = new TaskCompletionSource<BaseObject>();
 
             ClientService.Send(new LogOut());
@@ -149,7 +151,7 @@ namespace Unigram.Services
 
         private async void ContinueOnLogOut()
         {
-            var function = _continueOnLogOut;
+            var function = _continueOnLogOutAction;
             if (function == null)
             {
                 return;
@@ -161,7 +163,9 @@ namespace Unigram.Services
                 return;
             }
 
-            _continueOnLogOut = null;
+            _continueOnLogOut = false;
+            _continueOnLogOutAction = null;
+            _continueResult = null;
 
             var response = await ClientService.SendAsync(function);
             source.SetResult(response);
@@ -169,7 +173,7 @@ namespace Unigram.Services
 
         public void Handle(UpdateAuthorizationState update)
         {
-            if (update.AuthorizationState is AuthorizationStateLoggingOut && _continueOnLogOut == null)
+            if (update.AuthorizationState is AuthorizationStateLoggingOut && !_continueOnLogOut)
             {
                 _loggingOut = true;
             }
@@ -180,12 +184,12 @@ namespace Unigram.Services
                     _loggingOut = false;
                     _lifetimeService.Destroy(this);
                 }
-                else if (_continueOnLogOut != null)
+                else if (_continueOnLogOut)
                 {
                     ClientService.TryInitialize();
                 }
             }
-            else if (update.AuthorizationState is AuthorizationStateWaitPhoneNumber && _continueOnLogOut != null)
+            else if (update.AuthorizationState is AuthorizationStateWaitPhoneNumber && _continueOnLogOut)
             {
                 ContinueOnLogOut();
             }

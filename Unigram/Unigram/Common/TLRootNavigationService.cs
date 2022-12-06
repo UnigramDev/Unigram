@@ -21,9 +21,14 @@ namespace Unigram.Common
             _lifetimeService = TLContainer.Current.Lifetime;
         }
 
-        public async void Handle(UpdateAuthorizationState update)
+        public void Handle(UpdateAuthorizationState update)
         {
-            switch (update.AuthorizationState)
+            Handle(update.AuthorizationState);
+        }
+
+        public async void Handle(AuthorizationState state)
+        {
+            switch (state)
             {
                 case AuthorizationStateReady:
                     Navigate(typeof(MainPage));
