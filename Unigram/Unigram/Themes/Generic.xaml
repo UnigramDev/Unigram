@@ -1265,6 +1265,10 @@
                 Value="0,16,0,0" />
         <Setter Property="IsTabStop"
                 Value="False" />
+        <Setter Property="BorderBrush"
+                Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+        <Setter Property="BorderThickness"
+                Value="1" />
         <Setter Property="ItemsPanel">
             <Setter.Value>
                 <ItemsPanelTemplate>
@@ -1310,8 +1314,8 @@
                                 Grid.Row="1">-->
                         <Border x:Name="ContentPanel"
                                 Background="{TemplateBinding Background}"
-                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                BorderThickness="1"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
                                 CornerRadius="{TemplateBinding CornerRadius}"
                                 Grid.Row="1">
                             <ItemsPresenter x:Name="Presenter" />

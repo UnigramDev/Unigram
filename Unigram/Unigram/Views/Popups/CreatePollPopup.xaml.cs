@@ -27,7 +27,7 @@ namespace Unigram.Views.Popups
 
             Items = new ObservableCollection<PollOptionViewModel>();
             Items.CollectionChanged += Items_CollectionChanged;
-            Items.Add(new PollOptionViewModel(forceQuiz, false, option => Remove_Click(option)));
+            Items.Add(new PollOptionViewModel(string.Empty, forceQuiz, false, option => Remove_Click(option)));
 
             if (forceQuiz)
             {
@@ -96,12 +96,12 @@ namespace Unigram.Views.Popups
         {
             if (MAXIMUM_OPTIONS - Items.Count <= 0)
             {
-                Add.Visibility = Visibility.Collapsed;
+                AddAnOption.Visibility = Visibility.Collapsed;
                 AddInfo.Text = Strings.Resources.AddAnOptionInfoMax;
             }
             else
             {
-                Add.Visibility = Visibility.Visible;
+                AddAnOption.Visibility = Visibility.Visible;
                 AddInfo.Text = string.Format(Strings.Resources.AddAnOptionInfo, Locale.Declension("Option", MAXIMUM_OPTIONS - Items.Count));
             }
 
@@ -132,12 +132,15 @@ namespace Unigram.Views.Popups
         {
         }
 
-        private void Add_Click(object sender, RoutedEventArgs e)
+        private void AddAnOption_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (Items.Count < MAXIMUM_OPTIONS)
+            if (Items.Count < MAXIMUM_OPTIONS && !string.IsNullOrEmpty(AddAnOption.Text))
             {
-                Items.Add(new PollOptionViewModel(Quiz.IsChecked == true, true, option => Remove_Click(option)));
+                Items.Add(new PollOptionViewModel(AddAnOption.Text, Quiz.IsChecked == true, true, option => Remove_Click(option)));
             }
+
+            AddAnOption.IsReadOnly = true;
+            AddAnOption.Text = string.Empty;
         }
 
         private void Remove_Click(PollOptionViewModel option)
@@ -174,6 +177,8 @@ namespace Unigram.Views.Popups
             if (sender is TextBox text && text.DataContext is PollOptionViewModel option && option.FocusOnLoaded)
             {
                 option.FocusOnLoaded = false;
+
+                text.SelectionStart = text.Text.Length;
                 text.Focus(FocusState.Keyboard);
             }
         }
@@ -189,9 +194,14 @@ namespace Unigram.Views.Popups
                 }
                 else
                 {
-                    Add_Click(null, null);
+                    AddAnOption.Focus(FocusState.Keyboard);
                 }
             }
+        }
+
+        private void Question_GotFocus(object sender, RoutedEventArgs e)
+        {
+            AddAnOption.IsReadOnly = false;
         }
 
         private void Focus(int option)
@@ -242,8 +252,9 @@ namespace Unigram.Views.Popups
     {
         private readonly Action<PollOptionViewModel> _remove;
 
-        public PollOptionViewModel(bool quiz, bool focus, Action<PollOptionViewModel> remove)
+        public PollOptionViewModel(string text, bool quiz, bool focus, Action<PollOptionViewModel> remove)
         {
+            _text = text;
             _isQuiz = quiz;
             _focusOnLoaded = focus;
             _remove = remove;

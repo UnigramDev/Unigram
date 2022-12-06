@@ -131,6 +131,7 @@
                                          Loaded="Option_Loaded"
                                          KeyDown="Option_KeyDown"
                                          TextChanged="Question_TextChanged"
+                                         GotFocus="Question_GotFocus"
                                          Grid.Column="1" />
 
                                 <Button Style="{StaticResource DeleteButtonStyle}"
@@ -145,41 +146,43 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
 
-                <HyperlinkButton x:Name="Add"
-                                 Content="{CustomResource AddAnOption}"
-                                 Click="Add_Click"
-                                 Margin="12,4,12,0"/>
+                <TextBox x:Name="AddAnOption"
+                         PlaceholderText="{CustomResource AddAnOption}"
+                         TextChanged="AddAnOption_TextChanged"
+                         Margin="24,8,24,0" />
 
                 <TextBlock x:Name="AddInfo"
                            Style="{StaticResource InfoCaptionTextBlockStyle}"
-                           Margin="24,0,24,8"/>
+                           Margin="24,8" />
 
                 <controls:HeaderedControl x:Name="Settings"
-                                          Footer="{CustomResource QuizInfo}">
-                    <CheckBox x:Name="Anonymous"
-                              Content="{CustomResource EditAdminSendAnonymously}"
-                              Style="{StaticResource SettingsCheckBoxStyle}" />
+                                          Footer="{CustomResource QuizInfo}"
+                                          BorderThickness="0">
+                    <StackPanel>
+                        <CheckBox x:Name="Anonymous"
+                                  Content="{CustomResource EditAdminSendAnonymously}" />
 
-                    <CheckBox x:Name="Multiple"
-                              Checked="Multiple_Toggled"
-                              Unchecked="Multiple_Toggled"
-                              Content="{CustomResource PollMultiple}"
-                              Style="{StaticResource SettingsCheckBoxStyle}" />
+                        <CheckBox x:Name="Multiple"
+                                  Checked="Multiple_Toggled"
+                                  Unchecked="Multiple_Toggled"
+                                  Content="{CustomResource PollMultiple}"/>
 
-                    <CheckBox x:Name="Quiz"
-                              Checked="Quiz_Toggled"
-                              Unchecked="Quiz_Toggled"
-                              Content="{CustomResource PollQuiz}"
-                              Style="{StaticResource SettingsCheckBoxStyle}" />
+                        <CheckBox x:Name="Quiz"
+                                  Checked="Quiz_Toggled"
+                                  Unchecked="Quiz_Toggled"
+                                  Content="{CustomResource PollQuiz}" />
+                    </StackPanel>
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl x:Name="QuizSettings"
                                           Header="{CustomResource AddAnExplanation}"
                                           Footer="{CustomResource AddAnExplanationInfo}"
+                                          BorderThickness="0"
                                           Visibility="Collapsed">
-                    <controls:FormattedTextBox x:Name="QuizExplanation"
-                                               PlaceholderText="{CustomResource AddAnExplanation}"
-                                               Margin="12,8,12,8" />
+                    <Border>
+                        <controls:FormattedTextBox x:Name="QuizExplanation"
+                                                   PlaceholderText="{CustomResource AddAnExplanation}" />
+                    </Border>
                 </controls:HeaderedControl>
             </StackPanel>
         </ScrollViewer>
