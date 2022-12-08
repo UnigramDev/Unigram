@@ -514,6 +514,9 @@
   <data name="AccDescrTakeMorePics" xml:space="preserve">
     <value>Сделать ещё один снимок</value>
   </data>
+  <data name="AccDescrTopic" xml:space="preserve">
+    <value>Тема</value>
+  </data>
   <data name="AccDescrUnreadCount_few" xml:space="preserve">
     <value>{0} непрочитанных чата</value>
   </data>
@@ -614,8 +617,14 @@
   <data name="AccReleaseForArchive" xml:space="preserve">
     <value>Отпустите для вывода архива</value>
   </data>
+  <data name="AccReleaseForGeneral" xml:space="preserve">
+    <value>Отпустите для вывода #общих вопросов</value>
+  </data>
   <data name="AccSwipeForArchive" xml:space="preserve">
     <value>Тяните для вывода архива</value>
+  </data>
+  <data name="AccSwipeForGeneral" xml:space="preserve">
+    <value>Тяните для вывода #общих вопросов</value>
   </data>
   <data name="AccSwitchToFullscreen" xml:space="preserve">
     <value>Перейти в полноэкранный режим</value>
@@ -1123,6 +1132,66 @@
   <data name="AdditionalReactionsDescription" xml:space="preserve">
     <value>Получите расширенный набор реакций на сообщения, оформив подписку Telegram Premium.</value>
   </data>
+  <data name="AddManyEmojiCount_few" xml:space="preserve">
+    <value>Добавить {0} эмодзи</value>
+  </data>
+  <data name="AddManyEmojiCount_many" xml:space="preserve">
+    <value>Добавить {0} эмодзи</value>
+  </data>
+  <data name="AddManyEmojiCount_one" xml:space="preserve">
+    <value>Добавить {0} эмодзи</value>
+  </data>
+  <data name="AddManyEmojiCount_other" xml:space="preserve">
+    <value>Добавить {0} эмодзи</value>
+  </data>
+  <data name="AddManyMasksCount_few" xml:space="preserve">
+    <value>Добавить {0} маски</value>
+  </data>
+  <data name="AddManyMasksCount_many" xml:space="preserve">
+    <value>Добавить {0} масок</value>
+  </data>
+  <data name="AddManyMasksCount_one" xml:space="preserve">
+    <value>Добавить {0} маску</value>
+  </data>
+  <data name="AddManyMasksCount_other" xml:space="preserve">
+    <value>Добавить {0} маски</value>
+  </data>
+  <data name="AddManyMembersAlertNamesText_few" xml:space="preserve">
+    <value>Вы уверены? В **{1}** будут добавлены {0} участника.</value>
+  </data>
+  <data name="AddManyMembersAlertNamesText_many" xml:space="preserve">
+    <value>Вы уверены? В **{1}** будут добавлены {0} участников.</value>
+  </data>
+  <data name="AddManyMembersAlertNamesText_one" xml:space="preserve">
+    <value>Вы уверены? В **{1}** будет добавлен {0} участник.</value>
+  </data>
+  <data name="AddManyMembersAlertNamesText_other" xml:space="preserve">
+    <value>Вы уверены? В **{1}** будут добавлены {0} участника.</value>
+  </data>
+  <data name="AddManyMembersAlertTitle_few" xml:space="preserve">
+    <value>Добавить {0} участников</value>
+  </data>
+  <data name="AddManyMembersAlertTitle_many" xml:space="preserve">
+    <value>Добавить {0} участников</value>
+  </data>
+  <data name="AddManyMembersAlertTitle_one" xml:space="preserve">
+    <value>Добавить {0} участника</value>
+  </data>
+  <data name="AddManyMembersAlertTitle_other" xml:space="preserve">
+    <value>Добавить {0} участника</value>
+  </data>
+  <data name="AddManyStickersCount_few" xml:space="preserve">
+    <value>Добавить {0} стикера</value>
+  </data>
+  <data name="AddManyStickersCount_many" xml:space="preserve">
+    <value>Добавить {0} стикеров</value>
+  </data>
+  <data name="AddManyStickersCount_one" xml:space="preserve">
+    <value>Добавить {0} стикер</value>
+  </data>
+  <data name="AddManyStickersCount_other" xml:space="preserve">
+    <value>Добавить {0} стикера</value>
+  </data>
   <data name="AddMasks" xml:space="preserve">
     <value>Добавить маски</value>
   </data>
@@ -1187,7 +1256,7 @@
     <value>Стикеры не найдены</value>
   </data>
   <data name="AddSubscriber" xml:space="preserve">
-    <value>Добавить подписчика</value>
+    <value>Добавить подписчиков</value>
   </data>
   <data name="AddToChannel" xml:space="preserve">
     <value>Принять в канал</value>
@@ -1407,6 +1476,12 @@
   </data>
   <data name="AnimatedStickers" xml:space="preserve">
     <value>Анимированные стикеры</value>
+  </data>
+  <data name="AnonymousNumber" xml:space="preserve">
+    <value>Анонимный номер</value>
+  </data>
+  <data name="AnonymousNumberNotice" xml:space="preserve">
+    <value>Этот номер не привязан к сим-карте. Он был приобретён на платформе *Fragment*.</value>
   </data>
   <data name="AnonymousPoll" xml:space="preserve">
     <value>Анонимный опрос</value>
@@ -1980,6 +2055,21 @@
   <data name="AutoDeleteAfter" xml:space="preserve">
     <value>Автоудаление через {0}</value>
   </data>
+  <data name="AutoDeleteAfter1Day" xml:space="preserve">
+    <value>1 день</value>
+  </data>
+  <data name="AutoDeleteAfter1Month" xml:space="preserve">
+    <value>1 месяц</value>
+  </data>
+  <data name="AutoDeleteAfter1Week" xml:space="preserve">
+    <value>1 неделя</value>
+  </data>
+  <data name="AutoDeleteAfter3Weeks" xml:space="preserve">
+    <value>3 недели</value>
+  </data>
+  <data name="AutoDeleteAfterShort" xml:space="preserve">
+    <value>{0}</value>
+  </data>
   <data name="AutoDeleteAfteTitle" xml:space="preserve">
     <value>Автоудаление через...</value>
   </data>
@@ -1998,11 +2088,35 @@
   <data name="AutoDeleteConfirm" xml:space="preserve">
     <value>Подтвердить</value>
   </data>
+  <data name="AutoDeleteConfirmMessage" xml:space="preserve">
+    <value>Вы точно хотите, чтобы все сообщения из новых личных чатов и созданных Вами новых групп автоматически удалялись для всех участников через 
+{0} после отправки?</value>
+  </data>
   <data name="AutoDeleteCustom" xml:space="preserve">
     <value>Настроить</value>
   </data>
+  <data name="AutoDeleteCustom2" xml:space="preserve">
+    <value>Выбрать другой срок</value>
+  </data>
   <data name="AutoDeleteDisable" xml:space="preserve">
     <value>Выключить</value>
+  </data>
+  <data name="AutoDeleteDisabled" xml:space="preserve">
+    <value>автоудаление отключено</value>
+  </data>
+  <data name="AutoDeleteGlobalAction" xml:space="preserve">
+    <value>un1 включил(а) автоудаление по таймеру во всех своих чатах.
+Все новые сообщения в этом чате будут удаляться через {0} после отправки.</value>
+  </data>
+  <data name="AutoDeleteGlobalActionFromYou" xml:space="preserve">
+    <value>Вы включили автоудаление по таймеру во всех своих чатах.
+Все новые сообщения в этом чате будут удаляться через {0} после отправки.</value>
+  </data>
+  <data name="AutoDeleteGlobalTimerDisabled" xml:space="preserve">
+    <value>Автоудаление сообщений отключено во всех новых чатах.</value>
+  </data>
+  <data name="AutoDeleteGlobalTimerEnabled" xml:space="preserve">
+    <value>Сообщения во всех новых чатах будут удаляться через **{0}**.</value>
   </data>
   <data name="AutoDeleteHeader" xml:space="preserve">
     <value>Автоудаление сообщений в этом чате</value>
@@ -2019,11 +2133,17 @@
   <data name="AutoDeleteInfo" xml:space="preserve">
     <value>Новые сообщения в чате будут автоматически удалены через выбранное время.</value>
   </data>
+  <data name="AutoDeleteMessages" xml:space="preserve">
+    <value>Автоудаление сообщений</value>
+  </data>
   <data name="AutoDeleteNever" xml:space="preserve">
     <value>Нет</value>
   </data>
   <data name="AutoDeletePopupDescription" xml:space="preserve">
     <value>Сообщения, отправленные в этот чат, будут удалены через выбранное Вами время.</value>
+  </data>
+  <data name="AutoDeletePopupDescription2" xml:space="preserve">
+    <value>Вы также можете включить общий **таймер автоудаления** для всех чатов в Настройках.</value>
   </data>
   <data name="AutoDeletePopupTitle" xml:space="preserve">
     <value>Автоудаление</value>
@@ -2037,6 +2157,15 @@
   </data>
   <data name="AutoDeleteSetTimer" xml:space="preserve">
     <value>Удаление по таймеру</value>
+  </data>
+  <data name="AutoDeleteSettingsInfo" xml:space="preserve">
+    <value>Автоматически удалять сообщения спустя указанное время у всех участников во всех чатах, созданных после включения настройки.</value>
+  </data>
+  <data name="AutodeleteTimerDisabledForChats" xml:space="preserve">
+    <value>Автоудаление сообщений отключено в {0}.</value>
+  </data>
+  <data name="AutodeleteTimerEnabledForChats" xml:space="preserve">
+    <value>Включено автоудаление по таймеру через {1}: **{0}**.</value>
   </data>
   <data name="AutoDownloadAudioInfo" xml:space="preserve">
     <value>Голосовые сообщения имеют небольшой размер и всегда загружаются автоматически.</value>
@@ -2682,6 +2811,9 @@
   <data name="CacheEmpty" xml:space="preserve">
     <value>Пусто</value>
   </data>
+  <data name="CacheOtherChats" xml:space="preserve">
+    <value>Другие чаты</value>
+  </data>
   <data name="CacheWasCleared" xml:space="preserve">
     <value>{0} освободилось</value>
   </data>
@@ -2973,6 +3105,9 @@
   <data name="ChangePhoneNumberSuccess" xml:space="preserve">
     <value>Вы изменили свой номер телефона.</value>
   </data>
+  <data name="ChangePhoneNumberSuccessWithPhone" xml:space="preserve">
+    <value>Вы изменили свой номер телефона на {0}.</value>
+  </data>
   <data name="ChangePublicLimitReached" xml:space="preserve">
     <value>Вы уже используете слишком много публичных ссылок. Вы можете сбросить одну из уже занятых ссылок на свои группы или каналы или не создавать новую публичную ссылку.</value>
   </data>
@@ -3035,6 +3170,33 @@
   </data>
   <data name="ChannelAlertTitle" xml:space="preserve">
     <value>Что такое канал?</value>
+  </data>
+  <data name="ChannelAntiSpam" xml:space="preserve">
+    <value>Активный антиспам-фильтр</value>
+  </data>
+  <data name="ChannelAntiSpamFalsePositiveReported" xml:space="preserve">
+    <value>Вашу жалобу проверят модераторы. Спасибо!</value>
+  </data>
+  <data name="ChannelAntiSpamForbidden_few" xml:space="preserve">
+    <value>Активная защита от спама доступна в группах от **{0} участников**.</value>
+  </data>
+  <data name="ChannelAntiSpamForbidden_many" xml:space="preserve">
+    <value>Активная защита от спама доступна в группах от **{0} участников**.</value>
+  </data>
+  <data name="ChannelAntiSpamForbidden_one" xml:space="preserve">
+    <value>Активная защита от спама доступна в группах от **{0} участников**.</value>
+  </data>
+  <data name="ChannelAntiSpamForbidden_other" xml:space="preserve">
+    <value>Активная защита от спама доступна в группах от **{0} участников**.</value>
+  </data>
+  <data name="ChannelAntiSpamInfo" xml:space="preserve">
+    <value>Алгоритмы Telegram будут отсеивать больше спама, но иногда фильтр может срабатывать и на обычные сообщения. Об ошибочных срабатываниях можно сообщать в «Недавних действиях».</value>
+  </data>
+  <data name="ChannelAntiSpamInfo2" xml:space="preserve">
+    <value>Настройки антиспам-фильтра находятся в меню {0}</value>
+  </data>
+  <data name="ChannelAntiSpamUser" xml:space="preserve">
+    <value>Антиспам-фильтр Telegram</value>
   </data>
   <data name="ChannelBlacklist" xml:space="preserve">
     <value>Чёрный список</value>
@@ -3825,6 +3987,9 @@
   <data name="ClearCacheFewChatsTitle" xml:space="preserve">
     <value>Очистить кэш для {0}</value>
   </data>
+  <data name="ClearCacheForChats" xml:space="preserve">
+    <value>Удалить из кэша сообщения и материалы выбранных чатов?</value>
+  </data>
   <data name="ClearCacheInfo" xml:space="preserve">
     <value>Освободите память устройства; файлы останутся в облаке.</value>
   </data>
@@ -4245,6 +4410,9 @@
   <data name="CreateEncryptedChatError" xml:space="preserve">
     <value>Произошла ошибка.</value>
   </data>
+  <data name="CreateGeneralTopicTitle" xml:space="preserve">
+    <value>Придумайте название темы</value>
+  </data>
   <data name="CreateGroupError" xml:space="preserve">
     <value>Вы не можете создать группу с этими пользователями из-за их настроек приватности.</value>
   </data>
@@ -4379,6 +4547,9 @@
   <data name="DataUsage" xml:space="preserve">
     <value>Использование сети и кэша</value>
   </data>
+  <data name="DataUsageByChats" xml:space="preserve">
+    <value>Использование памяти чатами</value>
+  </data>
   <data name="Days_few" xml:space="preserve">
     <value>{0} дня</value>
   </data>
@@ -4429,6 +4600,9 @@
   </data>
   <data name="Deactivate" xml:space="preserve">
     <value>Удалить сейчас</value>
+  </data>
+  <data name="DebugAltNavigation" xml:space="preserve">
+    <value>Альтернативная навигация</value>
   </data>
   <data name="DebugAltNavigationToggleControls" xml:space="preserve">
     <value>Настройки ограничения навигации</value>
@@ -4517,11 +4691,23 @@
   <data name="DebugMenuWebViewDebugEnabled" xml:space="preserve">
     <value>Отладка включена</value>
   </data>
+  <data name="DebugMessageSkeletons" xml:space="preserve">
+    <value>«Скелеты» сообщений</value>
+  </data>
+  <data name="DebugMessageSkeletonsSaturation" xml:space="preserve">
+    <value>Насыщенность</value>
+  </data>
   <data name="DebugSendLastLogs" xml:space="preserve">
     <value>Отправить свежие логи</value>
   </data>
   <data name="DebugSendLogs" xml:space="preserve">
     <value>Отправить лог</value>
+  </data>
+  <data name="DebugShareAlertDialogsModeMore" xml:space="preserve">
+    <value>Ещё</value>
+  </data>
+  <data name="DebugTestBackend" xml:space="preserve">
+    <value>Тестировать backend</value>
   </data>
   <data name="December" xml:space="preserve">
     <value>Декабрь</value>
@@ -5260,6 +5446,12 @@
   <data name="EditTopic" xml:space="preserve">
     <value>Изменить тему</value>
   </data>
+  <data name="EditTopicHide" xml:space="preserve">
+    <value>Показывать в списке тем</value>
+  </data>
+  <data name="EditTopicHideInfo" xml:space="preserve">
+    <value>Участники группы могут увидеть скрытую тему для общих вопросов, потянув список тем вниз.</value>
+  </data>
   <data name="EditWidget" xml:space="preserve">
     <value>Редактировать виджет</value>
   </data>
@@ -5675,6 +5867,9 @@
   <data name="EventLogDeleteTopic" xml:space="preserve">
     <value>un1 удалил(а) тему un2</value>
   </data>
+  <data name="EventLogDisabledAntiSpam" xml:space="preserve">
+    <value>un1 отключил(а) антиспам-фильтр</value>
+  </data>
   <data name="EventLogEditedCaption" xml:space="preserve">
     <value>un1 отредактировал(а) подпись:</value>
   </data>
@@ -5753,6 +5948,9 @@
   </data>
   <data name="EventLogEmptyTextSearch" xml:space="preserve">
     <value>Не удалось найти недавние действия, содержащие '**{0}**'.</value>
+  </data>
+  <data name="EventLogEnabledAntiSpam" xml:space="preserve">
+    <value>un1 включил(а) антиспам-фильтр</value>
   </data>
   <data name="EventLogEndedLiveStream" xml:space="preserve">
     <value>un1 завершил(а) трансляцию</value>
@@ -6796,6 +6994,18 @@
   <data name="FwdMessagesToGroup" xml:space="preserve">
     <value>Сообщения пересланы в **{0}**.</value>
   </data>
+  <data name="FwdMessagesToManyChats_few" xml:space="preserve">
+    <value>Сообщения пересланы в **{0} чата**.</value>
+  </data>
+  <data name="FwdMessagesToManyChats_many" xml:space="preserve">
+    <value>Сообщения пересланы в **{0} чатов**.</value>
+  </data>
+  <data name="FwdMessagesToManyChats_one" xml:space="preserve">
+    <value>Сообщения пересланы в **{0} чат**.</value>
+  </data>
+  <data name="FwdMessagesToManyChats_other" xml:space="preserve">
+    <value>Сообщения пересланы в **{0} чата**.</value>
+  </data>
   <data name="FwdMessagesToSavedMessages" xml:space="preserve">
     <value>Сообщения пересланы в **Избранное**.</value>
   </data>
@@ -6807,6 +7017,18 @@
   </data>
   <data name="FwdMessageToGroup" xml:space="preserve">
     <value>Сообщение переслано в **{0}**.</value>
+  </data>
+  <data name="FwdMessageToManyChats_few" xml:space="preserve">
+    <value>Сообщение переслано в **{0} чата**.</value>
+  </data>
+  <data name="FwdMessageToManyChats_many" xml:space="preserve">
+    <value>Сообщение переслано в **{0} чатов**.</value>
+  </data>
+  <data name="FwdMessageToManyChats_one" xml:space="preserve">
+    <value>Сообщение переслано в **{0} чат**.</value>
+  </data>
+  <data name="FwdMessageToManyChats_other" xml:space="preserve">
+    <value>Сообщение переслано в **{0} чата**.</value>
   </data>
   <data name="FwdMessageToSavedMessages" xml:space="preserve">
     <value>Сообщение переслано в **Избранное**.</value>
@@ -6828,6 +7050,9 @@
   </data>
   <data name="General" xml:space="preserve">
     <value>Основные</value>
+  </data>
+  <data name="GetDirections" xml:space="preserve">
+    <value>Схема проезда</value>
   </data>
   <data name="GetQRCode" xml:space="preserve">
     <value>Получить QR-код</value>
@@ -6906,7 +7131,7 @@
     <value>Достигнут лимит</value>
   </data>
   <data name="GigagroupConvertAlertConver" xml:space="preserve">
-    <value>ДА</value>
+    <value>Да</value>
   </data>
   <data name="GigagroupConvertAlertText" xml:space="preserve">
     <value>Обычные участники (не администраторы) **навсегда** потеряют возможность писать сообщения в группе.
@@ -6949,6 +7174,9 @@
   <data name="GlobalAttachStickersRestricted" xml:space="preserve">
     <value>В этой группе запрещено отправлять стикеры.</value>
   </data>
+  <data name="GlobalAutoDeleteInfo" xml:space="preserve">
+    <value>Включите, чтобы все новые сообщения в Ваших чатах, созданных после изменения настройки, автоматически удалялись для всех участников спустя выбранное время. Эту настройку также можно **применить к ранее созданным чатам**.</value>
+  </data>
   <data name="GlobalSearch" xml:space="preserve">
     <value>Глобальный поиск</value>
   </data>
@@ -6984,6 +7212,9 @@
   </data>
   <data name="GroupContacts" xml:space="preserve">
     <value>Контакты в этой группе</value>
+  </data>
+  <data name="GroupCreateAutodeleteDescription" xml:space="preserve">
+    <value>Автоматически удалять сообщения в этой группе у всех участников спустя указанное время.</value>
   </data>
   <data name="GroupDeletedUndo" xml:space="preserve">
     <value>Группа удалена</value>
@@ -8962,6 +9193,9 @@
   <data name="NearbyVenue" xml:space="preserve">
     <value>Или выберите место</value>
   </data>
+  <data name="NeedAdminRightForSetAutoDeleteTimer" xml:space="preserve">
+    <value>Включить удаление по таймеру в этой группе могут только администраторы.</value>
+  </data>
   <data name="NetworkUsage" xml:space="preserve">
     <value>Использование трафика</value>
   </data>
@@ -9137,7 +9371,7 @@
     <value>Вы можете добавлять в группы только тех, кто добавил ваш номер в контакты.</value>
   </data>
   <data name="NobodyLikesSpam3" xml:space="preserve">
-    <value>К сожалению, в данный момент Вы не можете отправлять сообщения в публичные группы.</value>
+    <value>К сожалению, в данный момент Вы не можете отправлять сообщения в эту группу.</value>
   </data>
   <data name="NobodyViewed" xml:space="preserve">
     <value>Нет просмотров</value>
@@ -9984,6 +10218,9 @@
   <data name="NoTopicsDescription" xml:space="preserve">
     <value>Создайте свою первую тему или нажмите\nна значок {0}, чтобы переключиться в режим сообщений.</value>
   </data>
+  <data name="NoTopicsDescriptionUser" xml:space="preserve">
+    <value>Старые сообщения из этой группы теперь находятся в теме **«{0}»**.</value>
+  </data>
   <data name="NoUsernameFound" xml:space="preserve">
     <value>Нет аккаунта с таким именем пользователя.</value>
   </data>
@@ -10070,6 +10307,9 @@
   </data>
   <data name="OpenFile" xml:space="preserve">
     <value>ОТКРЫТЬ ФАЙЛ</value>
+  </data>
+  <data name="OpenFragment" xml:space="preserve">
+    <value>Перейти к Fragment</value>
   </data>
   <data name="OpenGroup" xml:space="preserve">
     <value>ПЕРЕЙТИ В ГРУППУ</value>
@@ -12531,6 +12771,54 @@
   <data name="RemoveGroupStickerSet" xml:space="preserve">
     <value>Удалить набор стикеров группы</value>
   </data>
+  <data name="RemoveManyEmojiCount_few" xml:space="preserve">
+    <value>Удалить {0} эмодзи</value>
+  </data>
+  <data name="RemoveManyEmojiCount_many" xml:space="preserve">
+    <value>Удалить {0} эмодзи</value>
+  </data>
+  <data name="RemoveManyEmojiCount_one" xml:space="preserve">
+    <value>Удалить {0} эмодзи</value>
+  </data>
+  <data name="RemoveManyEmojiCount_other" xml:space="preserve">
+    <value>Удалить {0} эмодзи</value>
+  </data>
+  <data name="RemoveManyEmojiPacksCount_few" xml:space="preserve">
+    <value>Удалить {0} набора эмодзи</value>
+  </data>
+  <data name="RemoveManyEmojiPacksCount_many" xml:space="preserve">
+    <value>Удалить {0} наборов эмодзи</value>
+  </data>
+  <data name="RemoveManyEmojiPacksCount_one" xml:space="preserve">
+    <value>Удалить {0} набор эмодзи</value>
+  </data>
+  <data name="RemoveManyEmojiPacksCount_other" xml:space="preserve">
+    <value>Удалить {0} набора эмодзи</value>
+  </data>
+  <data name="RemoveManyMasksCount_few" xml:space="preserve">
+    <value>Удалить {0} маски</value>
+  </data>
+  <data name="RemoveManyMasksCount_many" xml:space="preserve">
+    <value>Удалить {0} масок</value>
+  </data>
+  <data name="RemoveManyMasksCount_one" xml:space="preserve">
+    <value>Удалить {0} маску</value>
+  </data>
+  <data name="RemoveManyMasksCount_other" xml:space="preserve">
+    <value>Удалить {0} маски</value>
+  </data>
+  <data name="RemoveManyStickersCount_few" xml:space="preserve">
+    <value>Удалить {0} стикера</value>
+  </data>
+  <data name="RemoveManyStickersCount_many" xml:space="preserve">
+    <value>Удалить {0} стикеров</value>
+  </data>
+  <data name="RemoveManyStickersCount_one" xml:space="preserve">
+    <value>Удалить {0} стикер</value>
+  </data>
+  <data name="RemoveManyStickersCount_other" xml:space="preserve">
+    <value>Удалить {0} стикера</value>
+  </data>
   <data name="RemoveStickersCount" xml:space="preserve">
     <value>Удалить {0}</value>
   </data>
@@ -12614,6 +12902,9 @@
   </data>
   <data name="ReportChatViolence" xml:space="preserve">
     <value>Насилие</value>
+  </data>
+  <data name="ReportFalsePositive" xml:space="preserve">
+    <value>Сообщить о ложном срабатывании</value>
   </data>
   <data name="ReportHint" xml:space="preserve">
     <value>Комментарий...</value>
@@ -13184,6 +13475,9 @@
   <data name="SearchMessages" xml:space="preserve">
     <value>Сообщения</value>
   </data>
+  <data name="SearchMessagesIn" xml:space="preserve">
+    <value>Сообщения в {0}</value>
+  </data>
   <data name="SearchMusic" xml:space="preserve">
     <value>Поиск музыки</value>
   </data>
@@ -13291,6 +13585,18 @@
   </data>
   <data name="SelectChats" xml:space="preserve">
     <value>Выберите чаты</value>
+  </data>
+  <data name="SelectChatsForAutoDelete" xml:space="preserve">
+    <value>где будет включено удаление по таймеру</value>
+  </data>
+  <data name="SelectChatsForAutoDelete2" xml:space="preserve">
+    <value>с удалением по таймеру</value>
+  </data>
+  <data name="SelectChatsForDisableAutoDelete" xml:space="preserve">
+    <value>где будет отключено удаление по таймеру</value>
+  </data>
+  <data name="SelectChatsForDisableAutoDelete2" xml:space="preserve">
+    <value>без удаления по таймеру</value>
   </data>
   <data name="SelectColor" xml:space="preserve">
     <value>Выберите цвет</value>
@@ -13519,6 +13825,9 @@
   <data name="SentCallOnly" xml:space="preserve">
     <value>Мы звоним Вам по номеру **{0}**, чтобы продиктовать код.</value>
   </data>
+  <data name="SentFragmentCode" xml:space="preserve">
+    <value>Получите код для {0} в разделе Anonymous Numbers платформы Fragment.</value>
+  </data>
   <data name="SentSmsCode" xml:space="preserve">
     <value>Мы отправили SMS с кодом проверки на Ваш телефон **{0}**.</value>
   </data>
@@ -13576,11 +13885,17 @@
   <data name="SetAsMain" xml:space="preserve">
     <value>Сделать основной</value>
   </data>
+  <data name="SetAutoDeleteTimer" xml:space="preserve">
+    <value>Включить удаление по таймеру</value>
+  </data>
   <data name="SetBackground" xml:space="preserve">
     <value>УСТАНОВИТЬ ФОН</value>
   </data>
   <data name="SetColor" xml:space="preserve">
     <value>Задать цвет</value>
+  </data>
+  <data name="SetCustomTime" xml:space="preserve">
+    <value>Выбрать другой срок</value>
   </data>
   <data name="SetEmojiStatus" xml:space="preserve">
     <value>Установить эмодзи-статус</value>
@@ -15027,6 +15342,12 @@ Telegram Premium на {1}.
   <data name="TopicEmptyViewDescription" xml:space="preserve">
     <value>Начните обсуждать тему — отправьте первое сообщение.</value>
   </data>
+  <data name="TopicHidden" xml:space="preserve">
+    <value>Тема для общих вопросов скрыта</value>
+  </data>
+  <data name="TopicHidden2" xml:space="preserve">
+    <value>{0} скрыл(а) тему для общих вопросов</value>
+  </data>
   <data name="TopicIconChanged" xml:space="preserve">
     <value>Значок темы изменён</value>
   </data>
@@ -15058,7 +15379,7 @@ Telegram Premium на {1}.
     <value>{0} переименовал(а) тему в {1}</value>
   </data>
   <data name="TopicRenamedToInReply" xml:space="preserve">
-    <value>переименовал(а) тему в  {0}</value>
+    <value>переименовал(а) тему в {0}</value>
   </data>
   <data name="TopicRestarted" xml:space="preserve">
     <value>Тема снова активна</value>
@@ -15081,6 +15402,12 @@ Telegram Premium на {1}.
   <data name="TopicsDeleted_other" xml:space="preserve">
     <value>Темы удалены.</value>
   </data>
+  <data name="TopicShown" xml:space="preserve">
+    <value>Тема для общих вопросов возвращена</value>
+  </data>
+  <data name="TopicShown2" xml:space="preserve">
+    <value>{0} вернул(а) тему для общих вопросов в список</value>
+  </data>
   <data name="TopicViewAsMessages" xml:space="preserve">
     <value>Единый чат</value>
   </data>
@@ -15091,7 +15418,7 @@ Telegram Premium на {1}.
     <value>{0} закрыл(а) {1}</value>
   </data>
   <data name="TopicWasCreatedAction" xml:space="preserve">
-    <value>{0} создана</value>
+    <value>Тема {0} создана</value>
   </data>
   <data name="TopicWasIconChangedToAction" xml:space="preserve">
     <value>{0} изменил(а) значок темы на {1}</value>
@@ -15265,6 +15592,9 @@ Telegram Premium на {1}.
   </data>
   <data name="UndoAllCustom" xml:space="preserve">
     <value>Сбросить все особые настройки уведомлений для отдельных контактов, групп и каналов.</value>
+  </data>
+  <data name="Unhide" xml:space="preserve">
+    <value>Вернуть</value>
   </data>
   <data name="UnhideFromTop" xml:space="preserve">
     <value>Закрепить</value>
@@ -17067,6 +17397,21 @@ Telegram до последней версии</value>
   <data name="YouSendersNameHidden" xml:space="preserve">
     <value>Вы (имена отправителей скрыты)</value>
   </data>
+  <data name="YouTubeVideoErrorHTML" xml:space="preserve">
+    <value>При попытке воспроизведения видео произошла ошибка.</value>
+  </data>
+  <data name="YouTubeVideoErrorInvalid" xml:space="preserve">
+    <value>Ссылка на видео некорректна.</value>
+  </data>
+  <data name="YouTubeVideoErrorNotAvailableInApp" xml:space="preserve">
+    <value>Просмотр этого видео в приложении недоступен.</value>
+  </data>
+  <data name="YouTubeVideoErrorNotFound" xml:space="preserve">
+    <value>Видео не найдено.</value>
+  </data>
+  <data name="YouTubeVideoErrorOpenExternal" xml:space="preserve">
+    <value>Смотреть на YouTube</value>
+  </data>
   <data name="YouWereKicked" xml:space="preserve">
     <value>Вы больше не в группе</value>
   </data>
@@ -17076,14 +17421,8 @@ Telegram до последней версии</value>
   <data name="cloud_lng_about_psa_covid" xml:space="preserve">
     <value>Это экстренная новость о пандемии COVID-19. Чтобы скрыть её из списка чатов, нажмите на сообщение правой кнопкой и выберите **Скрыть**.</value>
   </data>
-  <data name="cloud_lng_badge_psa_covid" xml:space="preserve">
-    <value>COVID-19</value>
-  </data>
   <data name="cloud_lng_forwarded_psa_covid" xml:space="preserve">
     <value>Новость о COVID-19 из {channel}</value>
-  </data>
-  <data name="cloud_lng_tooltip_psa_covid" xml:space="preserve">
-    <value>Это экстренная новость о пандемии COVID-19. Подробнее об этой инициативе: https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_about_psa_default" xml:space="preserve">
     <value>Это экстренное оповещение. Чтобы скрыть его из списка чатов, нажмите на него правой кнопкой и нажмите **Скрыть**.</value>
@@ -17143,9 +17482,6 @@ Telegram до последней версии</value>
   </data>
   <data name="lng_action_changed_photo" xml:space="preserve">
     <value>{from} изменил(а) фотографию группы</value>
-  </data>
-  <data name="lng_action_changed_photo_channel" xml:space="preserve">
-    <value>Фотография канала обновлена</value>
   </data>
   <data name="lng_action_changed_title" xml:space="preserve">
     <value>{from} изменил(а) название группы на «{title}»</value>
@@ -17321,17 +17657,11 @@ Telegram до последней версии</value>
   <data name="lng_admin_log_about_text" xml:space="preserve">
     <value>Это список всех служебных действий, совершённых администраторами группы за последние 48 часов.</value>
   </data>
-  <data name="lng_admin_log_about_text_channel" xml:space="preserve">
-    <value>Это список всех служебных действий, совершённых администраторами канала за последние 48 часов.</value>
-  </data>
   <data name="lng_admin_log_admin_add_admins" xml:space="preserve">
     <value>Добавление администраторов</value>
   </data>
   <data name="lng_admin_log_admin_invite_link" xml:space="preserve">
     <value>Пригласительные ссылки</value>
-  </data>
-  <data name="lng_admin_log_admin_manage_calls" xml:space="preserve">
-    <value>Управление видеочатами</value>
   </data>
   <data name="lng_admin_log_admin_manage_calls_channel" xml:space="preserve">
     <value>Управление трансляциями</value>
@@ -17419,6 +17749,9 @@ Telegram до последней версии</value>
   </data>
   <data name="lng_admin_log_filter_all_admins" xml:space="preserve">
     <value>Все участники и администраторы</value>
+  </data>
+  <data name="lng_admin_log_filter_members_removed" xml:space="preserve">
+    <value>Выход участников</value>
   </data>
   <data name="lng_admin_log_filter_restrictions" xml:space="preserve">
     <value>Новые ограничения</value>
@@ -17611,6 +17944,9 @@ Telegram до последней версии</value>
   <data name="lng_admin_log_stopped_poll" xml:space="preserve">
     <value>{from} остановил(а) опрос:</value>
   </data>
+  <data name="lng_admin_log_title_selected" xml:space="preserve">
+    <value>Выбранные действия</value>
+  </data>
   <data name="lng_admin_log_transferred" xml:space="preserve">
     <value>права переданы {user}</value>
   </data>
@@ -17651,6 +17987,9 @@ Telegram до последней версии</value>
   <data name="lng_attach_failed" xml:space="preserve">
     <value>Ошибка</value>
   </data>
+  <data name="lng_audio_player_reverse" xml:space="preserve">
+    <value>Обратный порядок</value>
+  </data>
   <data name="lng_background_bad_link" xml:space="preserve">
     <value>Некорректная ссылка на фон</value>
   </data>
@@ -17660,11 +17999,11 @@ Telegram до последней версии</value>
   <data name="lng_background_header" xml:space="preserve">
     <value>Предпросмотр фона</value>
   </data>
+  <data name="lng_background_link_copied" xml:space="preserve">
+    <value>Ссылка скопирована в буфер обмена</value>
+  </data>
   <data name="lng_background_sure_delete" xml:space="preserve">
     <value>Вы уверены, что хотите удалить этот фон? </value>
-  </data>
-  <data name="lng_background_text2" xml:space="preserve">
-    <value>Это же очевидно!</value>
   </data>
   <data name="lng_backgrounds_header" xml:space="preserve">
     <value>Выберите фон для чатов</value>
@@ -17696,9 +18035,6 @@ Telegram до последней версии</value>
   <data name="lng_bio_title" xml:space="preserve">
     <value>Редактирование информации</value>
   </data>
-  <data name="lng_blocked_list_about" xml:space="preserve">
-    <value>Заблокированные пользователи не могут писать Вам и приглашать Вас в группы. Они также не видят Вашу фотографию и время последней активности.</value>
-  </data>
   <data name="lng_blocked_list_add_title" xml:space="preserve">
     <value>Выбор пользователя для блокировки</value>
   </data>
@@ -17723,11 +18059,17 @@ Telegram до последней версии</value>
   <data name="lng_blocked_list_title" xml:space="preserve">
     <value>Заблокированные пользователи</value>
   </data>
+  <data name="lng_blocked_list_unblock" xml:space="preserve">
+    <value>Разблокировать</value>
+  </data>
   <data name="lng_blocked_list_unknown_phone" xml:space="preserve">
     <value>неизвестный номер</value>
   </data>
   <data name="lng_bot_already_in_group" xml:space="preserve">
     <value>Этот бот уже является участником группы.</value>
+  </data>
+  <data name="lng_bot_chats_not_found" xml:space="preserve">
+    <value>Чаты не найдены</value>
   </data>
   <data name="lng_bot_choose_chat" xml:space="preserve">
     <value>Выберите чат</value>
@@ -17788,9 +18130,6 @@ Telegram до последней версии</value>
   </data>
   <data name="lng_call_box_about" xml:space="preserve">
     <value>Вы пока никому не звонили.</value>
-  </data>
-  <data name="lng_call_box_clear_all" xml:space="preserve">
-    <value>Очистить всё</value>
   </data>
   <data name="lng_call_box_clear_sure" xml:space="preserve">
     <value>Вы точно хотите полностью очистить журнал звонков?</value>
@@ -17924,15 +18263,15 @@ Telegram до последней версии</value>
   <data name="lng_cant_invite_banned" xml:space="preserve">
     <value>Этого пользователя может добавить только администратор.</value>
   </data>
-  <data name="lng_cant_invite_bot_to_channel" xml:space="preserve">
-    <value>Ботов можно добавлять в каналы только как администраторов.</value>
-  </data>
   <data name="lng_cant_invite_make_admin" xml:space="preserve">
     <value>Назначить</value>
   </data>
   <data name="lng_cant_invite_not_contact" xml:space="preserve">
     <value>К сожалению, пока что Вы можете добавлять в группы только тех, кто добавил Ваш номер в контакты.
 {more_info}</value>
+  </data>
+  <data name="lng_cant_invite_offer_admin" xml:space="preserve">
+    <value>Бота можно добавить только как администратора.</value>
   </data>
   <data name="lng_cant_invite_privacy" xml:space="preserve">
     <value>Вы не можете приглашать этого пользователя в группы из-за его настроек приватности.</value>
@@ -18008,18 +18347,11 @@ Telegram до последней версии</value>
   <data name="lng_channel_not_accessible" xml:space="preserve">
     <value>Канал недоступен.</value>
   </data>
-  <data name="lng_channel_public_link_copied" xml:space="preserve">
-    <value>Ссылка скопирована в буфер обмена.</value>
-  </data>
   <data name="lng_channel_removed_list_about" xml:space="preserve">
     <value>Пользователи, которых исключили администраторы канала, не смогут присоединиться снова с помощью ссылки-приглашения.</value>
   </data>
   <data name="lng_channels_too_much_located_other" xml:space="preserve">
     <value>У этого пользователя максимальное число групп с геопозицией. Пожалуйста, предложите ему сперва удалить или передать кому-либо одну из его групп.</value>
-  </data>
-  <data name="lng_channels_too_much_public_about" xml:space="preserve">
-    <value>Вы используете слишком много публичных ссылок.
-Вы можете сбросить одну из уже занятых ссылок на свои группы или каналы.</value>
   </data>
   <data name="lng_channels_too_much_public_revoke_confirm_channel" xml:space="preserve">
     <value>Вы точно хотите сбросить ссылку {link}? 
@@ -18045,9 +18377,6 @@ Telegram до последней версии</value>
   </data>
   <data name="lng_chat_theme_cant_voice" xml:space="preserve">
     <value>Вы не можете изменить тему чата, пока у Вас есть неотправленное голосовое сообщение.</value>
-  </data>
-  <data name="lng_chat_theme_dont" xml:space="preserve">
-    <value>Не менять тему</value>
   </data>
   <data name="lng_chat_theme_none" xml:space="preserve">
     <value>Без
@@ -18108,6 +18437,9 @@ Telegram до последней версии</value>
   </data>
   <data name="lng_cloud_password_removed" xml:space="preserve">
     <value>Двухэтапная аутентификация отключена.</value>
+  </data>
+  <data name="lng_cloud_password_resend" xml:space="preserve">
+    <value>Отправить ещё раз</value>
   </data>
   <data name="lng_cloud_password_resent" xml:space="preserve">
     <value>Код был отправлен повторно.</value>
@@ -18396,14 +18728,14 @@ Telegram до последней версии</value>
   <data name="lng_create_channel_crop" xml:space="preserve">
     <value>Выберите область для фотографии профиля</value>
   </data>
-  <data name="lng_create_channel_link_about" xml:space="preserve">
-    <value>Можно использовать латиницу (a-z), цифры (0-9) и подчёркивание. Минимальная длина — 5 символов.</value>
-  </data>
   <data name="lng_create_channel_link_available" xml:space="preserve">
     <value>Такая ссылка доступна</value>
   </data>
   <data name="lng_create_channel_link_bad_symbols" xml:space="preserve">
     <value>Допускаются символы 0-9, a-z и _.</value>
+  </data>
+  <data name="lng_create_channel_link_copied" xml:space="preserve">
+    <value>Ссылка скопирована</value>
   </data>
   <data name="lng_create_channel_link_invalid" xml:space="preserve">
     <value>Ссылка некорректна</value>
@@ -18425,6 +18757,9 @@ Telegram до последней версии</value>
   </data>
   <data name="lng_create_invite_link_title" xml:space="preserve">
     <value>Ссылка-приглашение</value>
+  </data>
+  <data name="lng_create_permanent_link_title" xml:space="preserve">
+    <value>Постоянная ссылка</value>
   </data>
   <data name="lng_create_private_channel_about" xml:space="preserve">
     <value>Подписаться можно только по ссылке-приглашению</value>
@@ -18775,6 +19110,9 @@ Telegram до последней версии</value>
   <data name="lng_edit_privacy_profile_photo_never_empty" xml:space="preserve">
     <value>Всегда запрещать</value>
   </data>
+  <data name="lng_edit_privacy_profile_photo_title" xml:space="preserve">
+    <value>Фотография профиля</value>
+  </data>
   <data name="lng_edit_self_title" xml:space="preserve">
     <value>Редактирование имени</value>
   </data>
@@ -19088,17 +19426,14 @@ Telegram до последней версии</value>
   <data name="lng_filters_empty" xml:space="preserve">
     <value>Необходимо выбрать хотя бы один чат для папки.</value>
   </data>
-  <data name="lng_filters_error_pinned_max" xml:space="preserve">
-    <value>У Вас закреплено максимальное число чатов.</value>
-  </data>
   <data name="lng_filters_exclude_about" xml:space="preserve">
     <value>Выберите чаты или типы чатов, которые не нужно показывать в этой папке.</value>
   </data>
   <data name="lng_filters_icon_header" xml:space="preserve">
     <value>Выберите иконку</value>
   </data>
-  <data name="lng_filters_include_non_contacts" xml:space="preserve">
-    <value>Не контакты</value>
+  <data name="lng_filters_include_about" xml:space="preserve">
+    <value>Выберите чаты или типы чатов, которые нужно показывать в этой папке.</value>
   </data>
   <data name="lng_filters_limit" xml:space="preserve">
     <value>Вы создали максимальное число папок.</value>
@@ -19121,9 +19456,6 @@ Telegram до последней версии</value>
   <data name="lng_filters_subtitle" xml:space="preserve">
     <value>Мои папки</value>
   </data>
-  <data name="lng_filters_type_non_contacts" xml:space="preserve">
-    <value>Не контакты</value>
-  </data>
   <data name="lng_flood_error" xml:space="preserve">
     <value>Слишком много попыток. Пожалуйста, повторите позже.</value>
   </data>
@@ -19139,6 +19471,9 @@ Telegram до последней версии</value>
   <data name="lng_forward_cant" xml:space="preserve">
     <value>Увы, пересылка сюда невозможна.</value>
   </data>
+  <data name="lng_forward_change_recipient" xml:space="preserve">
+    <value>Изменить получателя</value>
+  </data>
   <data name="lng_forward_choose" xml:space="preserve">
     <value>Выберите получателя...</value>
   </data>
@@ -19153,6 +19488,9 @@ Telegram до последней версии</value>
   </data>
   <data name="lng_forward_share_contact" xml:space="preserve">
     <value>Поделиться контактом с {recipient}?</value>
+  </data>
+  <data name="lng_forward_show_caption" xml:space="preserve">
+    <value>Показать подпись</value>
   </data>
   <data name="lng_forward_show_captions" xml:space="preserve">
     <value>Показать подписи</value>
@@ -19199,12 +19537,6 @@ Telegram до последней версии</value>
   <data name="lng_from_request_body" xml:space="preserve">
     <value>Вы получили это сообщение, потому что подали заявку в {name} {date}</value>
   </data>
-  <data name="lng_from_request_title_channel" xml:space="preserve">
-    <value>Ответ на заявку</value>
-  </data>
-  <data name="lng_from_request_title_group" xml:space="preserve">
-    <value>Ответ на заявку</value>
-  </data>
   <data name="lng_full_name" xml:space="preserve">
     <value>{first_name} {last_name}</value>
   </data>
@@ -19213,9 +19545,6 @@ Telegram до последней версии</value>
   </data>
   <data name="lng_gifs_no_saved" xml:space="preserve">
     <value>У Вас пока нет сохранённых GIF.</value>
-  </data>
-  <data name="lng_gigagroup_convert_feature3" xml:space="preserve">
-    <value>Нельзя сделать обычной группой.</value>
   </data>
   <data name="lng_gigagroup_convert_sure" xml:space="preserve">
     <value>Да</value>
@@ -19254,9 +19583,6 @@ Telegram до последней версии</value>
   </data>
   <data name="lng_group_call_also_cancel_channel" xml:space="preserve">
     <value>Удалить трансляцию</value>
-  </data>
-  <data name="lng_group_call_also_end" xml:space="preserve">
-    <value>Завершить видеочат</value>
   </data>
   <data name="lng_group_call_can_speak" xml:space="preserve">
     <value>Вы можете говорить в {chat}.</value>
@@ -19297,17 +19623,11 @@ Telegram до последней версии</value>
   <data name="lng_group_call_copy_speaker_link" xml:space="preserve">
     <value>Ссылка для спикеров</value>
   </data>
-  <data name="lng_group_call_create_sure" xml:space="preserve">
-    <value>Начать видеочат в этой группе?</value>
-  </data>
   <data name="lng_group_call_create_sure_channel" xml:space="preserve">
     <value>Войти в видеочат в этом канале от своего имени?</value>
   </data>
   <data name="lng_group_call_edit_title" xml:space="preserve">
     <value>Изменить название чата</value>
-  </data>
-  <data name="lng_group_call_edit_title_header" xml:space="preserve">
-    <value>Название видеочата</value>
   </data>
   <data name="lng_group_call_end" xml:space="preserve">
     <value>Завершить видеочат</value>
@@ -19348,9 +19668,6 @@ Telegram до последней версии</value>
   <data name="lng_group_call_join_as_changed_channel" xml:space="preserve">
     <value>Теперь участники трансляции видят Вас как {name}</value>
   </data>
-  <data name="lng_group_call_join_as_header" xml:space="preserve">
-    <value>Войти в видеочат как...</value>
-  </data>
   <data name="lng_group_call_join_confirm" xml:space="preserve">
     <value>Присоединиться к видеочату {chat}?</value>
   </data>
@@ -19371,9 +19688,6 @@ Telegram до последней версии</value>
   </data>
   <data name="lng_group_call_leave_sure_channel" xml:space="preserve">
     <value>Вы точно хотите покинуть трансляцию?</value>
-  </data>
-  <data name="lng_group_call_leave_title" xml:space="preserve">
-    <value>Выход из чата</value>
   </data>
   <data name="lng_group_call_leave_to_other_sure" xml:space="preserve">
     <value>Выйти из текущего голосового чата и присоединиться к новому видеочату?</value>
@@ -19415,9 +19729,6 @@ Telegram до последней версии</value>
   </data>
   <data name="lng_group_call_new_muted" xml:space="preserve">
     <value>Новые участники не говорят</value>
-  </data>
-  <data name="lng_group_call_no_anonymous" xml:space="preserve">
-    <value>Анонимные администраторы не могут участвовать в видеочатах.</value>
   </data>
   <data name="lng_group_call_no_members" xml:space="preserve">
     <value>Нажмите для участия</value>
@@ -19473,11 +19784,6 @@ Telegram до последней версии</value>
   <data name="lng_group_call_recording_start_checkbox" xml:space="preserve">
     <value>Также записать видео</value>
   </data>
-  <data name="lng_group_call_recording_start_sure" xml:space="preserve">
-    <value>Начать запись этого голосового чата и сохранить результат как аудиофайл?
-
-Другие участники увидят, что чат записывается.</value>
-  </data>
   <data name="lng_group_call_recording_start_title" xml:space="preserve">
     <value>Укажите название</value>
   </data>
@@ -19495,9 +19801,6 @@ Telegram до последней версии</value>
   </data>
   <data name="lng_group_call_recording_stop" xml:space="preserve">
     <value>Остановить запись</value>
-  </data>
-  <data name="lng_group_call_recording_stop_sure" xml:space="preserve">
-    <value>Остановить запись этого чата?</value>
   </data>
   <data name="lng_group_call_recording_stopped" xml:space="preserve">
     <value>Запись видеочата остановлена.</value>
@@ -19522,12 +19825,6 @@ Telegram до последней версии</value>
   </data>
   <data name="lng_group_call_schedule_notified_group" xml:space="preserve">
     <value>Участники группы получат уведомление, что видеочат начнётся через {duration}.</value>
-  </data>
-  <data name="lng_group_call_schedule_title" xml:space="preserve">
-    <value>Выбрать время</value>
-  </data>
-  <data name="lng_group_call_scheduled_title" xml:space="preserve">
-    <value>Запланирован видеочат</value>
   </data>
   <data name="lng_group_call_screen_share_audio" xml:space="preserve">
     <value>Транслировать звук</value>
@@ -19590,9 +19887,6 @@ Telegram до последней версии</value>
   <data name="lng_group_call_switch_done" xml:space="preserve">
     <value>Теперь участники видеочата видят Вас как **{user}**</value>
   </data>
-  <data name="lng_group_call_title" xml:space="preserve">
-    <value>Видеочат</value>
-  </data>
   <data name="lng_group_call_title_changed" xml:space="preserve">
     <value>Название видеочата изменено на {title}</value>
   </data>
@@ -19638,6 +19932,9 @@ Telegram до последней версии</value>
   <data name="lng_group_call_you_are_live" xml:space="preserve">
     <value>Вы в эфире</value>
   </data>
+  <data name="lng_group_full" xml:space="preserve">
+    <value>Увы, в группе максимальное число участников.</value>
+  </data>
   <data name="lng_group_invite_about" xml:space="preserve">
     <value>По этой ссылке пользователи Telegram
 смогут присоединиться к Вашей группе.</value>
@@ -19682,9 +19979,6 @@ Telegram до последней версии</value>
   <data name="lng_group_invite_expires_at" xml:space="preserve">
     <value>Эта ссылка истекает {when}.</value>
   </data>
-  <data name="lng_group_invite_label_about" xml:space="preserve">
-    <value>Название будут видеть только администраторы.</value>
-  </data>
   <data name="lng_group_invite_label_header" xml:space="preserve">
     <value>Название (необязательно)</value>
   </data>
@@ -19697,8 +19991,8 @@ Telegram до последней версии</value>
   <data name="lng_group_invite_other_list" xml:space="preserve">
     <value>Ссылки, созданные администратором</value>
   </data>
-  <data name="lng_group_invite_other_title" xml:space="preserve">
-    <value>Ссылки других администраторов</value>
+  <data name="lng_group_invite_permanent" xml:space="preserve">
+    <value>Постоянная ссылка</value>
   </data>
   <data name="lng_group_invite_permanent_other" xml:space="preserve">
     <value>Постоянная ссылка этого администратора</value>
@@ -19718,11 +20012,20 @@ Telegram до последней версии</value>
   <data name="lng_group_invite_revoked_title" xml:space="preserve">
     <value>Неактивные ссылки</value>
   </data>
+  <data name="lng_group_invite_usage_about" xml:space="preserve">
+    <value>Вы можете выбрать, сколько пользователей смогут присоединиться к группе по этой ссылке.</value>
+  </data>
+  <data name="lng_group_invite_usage_title" xml:space="preserve">
+    <value>Число вступлений</value>
+  </data>
   <data name="lng_group_not_accessible" xml:space="preserve">
     <value>Группа недоступна.</value>
   </data>
   <data name="lng_group_removed_list_about" xml:space="preserve">
     <value>Пользователи, которых исключили администраторы группы, не смогут присоединиться снова с помощью ссылки-приглашения.</value>
+  </data>
+  <data name="lng_group_request_sent" xml:space="preserve">
+    <value>Вы будете добавлены в группу, как только администраторы одобрят заявку.</value>
   </data>
   <data name="lng_group_request_to_join" xml:space="preserve">
     <value>Подать заявку</value>
@@ -20031,17 +20334,14 @@ Telegram до последней версии</value>
   <data name="lng_manage_group_info" xml:space="preserve">
     <value>Информация о группе</value>
   </data>
-  <data name="lng_manage_history_visibility_hidden_about" xml:space="preserve">
-    <value>Новые участники не будут видеть более ранних сообщений.</value>
-  </data>
-  <data name="lng_manage_history_visibility_hidden_legacy" xml:space="preserve">
-    <value>Новые участники будут видеть не больше 100 последних сообщений.</value>
-  </data>
   <data name="lng_manage_linked_channel" xml:space="preserve">
     <value>Привязанный канал</value>
   </data>
   <data name="lng_manage_linked_channel_about" xml:space="preserve">
     <value>Группа привязана к {channel} как площадка для обсуждения публикаций.</value>
+  </data>
+  <data name="lng_manage_linked_channel_posted" xml:space="preserve">
+    <value>Все публикации в этом канале автоматически пересылаются в группу.</value>
   </data>
   <data name="lng_manage_linked_channel_private" xml:space="preserve">
     <value>Все участники группы смогут видеть сообщения в канале.</value>
@@ -20064,6 +20364,9 @@ Telegram до последней версии</value>
   <data name="lng_manage_peer_link_invite" xml:space="preserve">
     <value>Ссылка-приглашение</value>
   </data>
+  <data name="lng_manage_peer_link_permanent" xml:space="preserve">
+    <value>Постоянная ссылка</value>
+  </data>
   <data name="lng_manage_peer_link_type" xml:space="preserve">
     <value>Тип ссылки</value>
   </data>
@@ -20073,17 +20376,11 @@ Telegram до последней версии</value>
   <data name="lng_manage_peer_no_forwards_about_channel" xml:space="preserve">
     <value>Подписчики не смогут пересылать сообщения и сохранять медиафайлы из этого канала.</value>
   </data>
-  <data name="lng_manage_peer_reactions_about" xml:space="preserve">
-    <value>Участники группы смогут отправлять реакции на сообщения.</value>
+  <data name="lng_manage_peer_no_forwards_title" xml:space="preserve">
+    <value>Сохранение контента</value>
   </data>
   <data name="lng_manage_peer_recent_actions" xml:space="preserve">
     <value>Недавние действия</value>
-  </data>
-  <data name="lng_manage_peer_requests" xml:space="preserve">
-    <value>Заявки на вступление</value>
-  </data>
-  <data name="lng_manage_peer_requests_channel" xml:space="preserve">
-    <value>Заявки на вступление</value>
   </data>
   <data name="lng_masks_archive_pack" xml:space="preserve">
     <value>Архивировать маски</value>
@@ -20204,6 +20501,9 @@ Telegram до последней версии</value>
   </data>
   <data name="lng_mediaview_playback_speed" xml:space="preserve">
     <value>Скорость: {speed}</value>
+  </data>
+  <data name="lng_mediaview_profile_photo" xml:space="preserve">
+    <value>Фото профиля</value>
   </data>
   <data name="lng_mediaview_rotate_video" xml:space="preserve">
     <value>Повернуть видео</value>
@@ -20441,14 +20741,11 @@ Telegram до последней версии</value>
   <data name="lng_passcode_enter" xml:space="preserve">
     <value>Введите код-пароль</value>
   </data>
-  <data name="lng_passcode_enter_new" xml:space="preserve">
-    <value>Введите новый код-пароль</value>
-  </data>
-  <data name="lng_passcode_enter_old" xml:space="preserve">
-    <value>Введите текущий код-пароль</value>
-  </data>
   <data name="lng_passcode_is_same" xml:space="preserve">
     <value>Код-пароль не изменён</value>
+  </data>
+  <data name="lng_passcode_logout" xml:space="preserve">
+    <value>Выйти</value>
   </data>
   <data name="lng_passcode_need_unblock" xml:space="preserve">
     <value>Сначала необходимо разблокировать приложение.</value>
@@ -20512,9 +20809,6 @@ Telegram до последней версии</value>
   </data>
   <data name="lng_passport_allow" xml:space="preserve">
     <value>Вы разрешаете {bot} отправлять Вам сообщения.</value>
-  </data>
-  <data name="lng_passport_app_out_of_date" xml:space="preserve">
-    <value>К сожалению, Ваша версия приложения устарела и не может обработать этот запрос. Пожалуйста, обновите Telegram.</value>
   </data>
   <data name="lng_passport_authorize" xml:space="preserve">
     <value>Авторизоваться</value>
@@ -20622,9 +20916,6 @@ Telegram до последней версии</value>
   </data>
   <data name="lng_passport_identity_license" xml:space="preserve">
     <value>Водительские права</value>
-  </data>
-  <data name="lng_passport_identity_license_upload" xml:space="preserve">
-    <value>Загрузите скан водительских прав</value>
   </data>
   <data name="lng_passport_identity_selfie" xml:space="preserve">
     <value>Сделайте селфи со своим документом</value>
@@ -20929,9 +21220,6 @@ Telegram до последней версии</value>
   <data name="lng_pinned_pin_sure" xml:space="preserve">
     <value>Закрепить это сообщение?</value>
   </data>
-  <data name="lng_pinned_pin_sure_group" xml:space="preserve">
-    <value>Закрепить сообщение в группе?</value>
-  </data>
   <data name="lng_pinned_previous" xml:space="preserve">
     <value>Предыдущее сообщение</value>
   </data>
@@ -21010,9 +21298,6 @@ Telegram до последней версии</value>
   <data name="lng_polls_view_results" xml:space="preserve">
     <value>Результаты</value>
   </data>
-  <data name="lng_profile_add_more_after_create" xml:space="preserve">
-    <value>Вы сможете добавить больше участников после того, как создадите группу.</value>
-  </data>
   <data name="lng_profile_bio" xml:space="preserve">
     <value>О себе:</value>
   </data>
@@ -21030,6 +21315,9 @@ Telegram до последней версии</value>
   </data>
   <data name="lng_profile_clear_and_exit" xml:space="preserve">
     <value>Удалить и выйти</value>
+  </data>
+  <data name="lng_profile_clear_history" xml:space="preserve">
+    <value>Очистить историю</value>
   </data>
   <data name="lng_profile_convert_confirm" xml:space="preserve">
     <value>Преобразовать</value>
@@ -21103,6 +21391,12 @@ Telegram до последней версии</value>
   <data name="lng_profile_recent_actions" xml:space="preserve">
     <value>Недавние действия</value>
   </data>
+  <data name="lng_profile_restart_bot" xml:space="preserve">
+    <value>Перезапустить бота</value>
+  </data>
+  <data name="lng_profile_search_members" xml:space="preserve">
+    <value>Поиск участников</value>
+  </data>
   <data name="lng_profile_search_messages" xml:space="preserve">
     <value>Найти сообщения</value>
   </data>
@@ -21127,14 +21421,14 @@ Telegram до последней версии</value>
   <data name="lng_profile_unblock_bot" xml:space="preserve">
     <value>Разблокировать</value>
   </data>
-  <data name="lng_profile_unblock_user" xml:space="preserve">
-    <value>Разблокировать</value>
-  </data>
   <data name="lng_profile_username" xml:space="preserve">
     <value>Имя пользователя:</value>
   </data>
   <data name="lng_profile_view_channel" xml:space="preserve">
     <value>Открыть канал</value>
+  </data>
+  <data name="lng_profile_view_discussion" xml:space="preserve">
+    <value>Просмотреть обсуждение</value>
   </data>
   <data name="lng_proxy_about" xml:space="preserve">
     <value>Использование прокси-сервера может помочь, если Telegram не удаётся установить соединение в Вашем регионе.</value>
@@ -21180,10 +21474,6 @@ Telegram до последней версии</value>
 Чтобы убрать канал из списка Ваших чатов, 
 отключите прокси в настройках Telegram.</value>
   </data>
-  <data name="lng_proxy_sponsor_warning" xml:space="preserve">
-    <value>Этот прокси-сервер может показывать канал спонсора в списке Ваших чатов. 
-Это не раскрывает Ваш трафик.</value>
-  </data>
   <data name="lng_proxy_unavailable" xml:space="preserve">
     <value>недоступен</value>
   </data>
@@ -21196,6 +21486,9 @@ Telegram до последней версии</value>
   <data name="lng_proxy_use_custom" xml:space="preserve">
     <value>Использовать собственный прокси</value>
   </data>
+  <data name="lng_proxy_use_for_calls" xml:space="preserve">
+    <value>Использовать прокси для звонков</value>
+  </data>
   <data name="lng_proxy_use_system_settings" xml:space="preserve">
     <value>Использовать системные настройки прокси</value>
   </data>
@@ -21204,9 +21497,6 @@ Telegram до последней версии</value>
   </data>
   <data name="lng_recent_stickers" xml:space="preserve">
     <value>Недавно использовались</value>
-  </data>
-  <data name="lng_recent_stickers_remove" xml:space="preserve">
-    <value>Удалить из недавних</value>
   </data>
   <data name="lng_reconnecting_try_now" xml:space="preserve">
     <value>Попробовать снова</value>
@@ -21225,6 +21515,9 @@ Telegram до последней версии</value>
   </data>
   <data name="lng_remind_title" xml:space="preserve">
     <value>Время напоминания</value>
+  </data>
+  <data name="lng_reminder_message" xml:space="preserve">
+    <value>Задать напоминание</value>
   </data>
   <data name="lng_reply_cant" xml:space="preserve">
     <value>На это сообщение нельзя ответить, так как его отправили раньше, чем группа стала супергруппой.
@@ -21324,6 +21617,9 @@ Telegram до последней версии</value>
   <data name="lng_restricted_send_public_polls" xml:space="preserve">
     <value>Опросы с открытым списком результатов нельзя пересылать в каналы.</value>
   </data>
+  <data name="lng_restricted_send_stickers" xml:space="preserve">
+    <value>Администраторы группы запретили Вам публиковать здесь стикеры.</value>
+  </data>
   <data name="lng_restricted_send_stickers_all" xml:space="preserve">
     <value>В этой группе запрещено отправлять стикеры.</value>
   </data>
@@ -21335,6 +21631,9 @@ Telegram до последней версии</value>
   </data>
   <data name="lng_rights_about_add_admins_yes" xml:space="preserve">
     <value>Этот администратор сможет добавлять других администраторов с такими же или более ограниченными правами.</value>
+  </data>
+  <data name="lng_rights_about_admin_cant_edit" xml:space="preserve">
+    <value>Вы не можете изменять права этого администратора.</value>
   </data>
   <data name="lng_rights_about_restriction_cant_edit" xml:space="preserve">
     <value>Вы не можете редактировать ограничения этого пользователя.</value>
@@ -21372,8 +21671,8 @@ Telegram до последней версии</value>
   <data name="lng_rights_group_invite_link" xml:space="preserve">
     <value>Пригласительные ссылки</value>
   </data>
-  <data name="lng_rights_group_manage_calls" xml:space="preserve">
-    <value>Управление видеочатами</value>
+  <data name="lng_rights_permission_cant_edit" xml:space="preserve">
+    <value>Вы не можете менять это разрешение.</value>
   </data>
   <data name="lng_rights_permission_for_all" xml:space="preserve">
     <value>Это действие включено для всех участников в настройках группы.</value>
@@ -21566,8 +21865,14 @@ Telegram до последней версии</value>
   <data name="lng_send_separate_photos_videos" xml:space="preserve">
     <value>Не группировать медиафайлы</value>
   </data>
+  <data name="lng_send_silent_message" xml:space="preserve">
+    <value>Отправить без звука</value>
+  </data>
   <data name="lng_sent_date" xml:space="preserve">
     <value>Отправлено: {date}</value>
+  </data>
+  <data name="lng_sessions_header" xml:space="preserve">
+    <value>Текущий сеанс</value>
   </data>
   <data name="lng_sessions_location_about" xml:space="preserve">
     <value>Данные о геопозиции основаны на IP-адресе и могут быть неточными.</value>
@@ -21660,6 +21965,9 @@ Telegram до последней версии</value>
   </data>
   <data name="lng_settings_bg_show_all" xml:space="preserve">
     <value>Показать все темы</value>
+  </data>
+  <data name="lng_settings_bg_theme_create" xml:space="preserve">
+    <value>Создать тему</value>
   </data>
   <data name="lng_settings_bg_theme_edit" xml:space="preserve">
     <value>Изменить тему</value>
@@ -21802,6 +22110,9 @@ Telegram до последней версии</value>
   <data name="lng_settings_forwards_privacy" xml:space="preserve">
     <value>Пересылка сообщений</value>
   </data>
+  <data name="lng_settings_group_privacy_about" xml:space="preserve">
+    <value>Выберите, кто может добавлять Вас в группы и каналы.</value>
+  </data>
   <data name="lng_settings_groups_invite" xml:space="preserve">
     <value>Группы и каналы</value>
   </data>
@@ -21828,6 +22139,9 @@ Telegram до последней версии</value>
   </data>
   <data name="lng_settings_latest_installed" xml:space="preserve">
     <value>Установлена последняя версия</value>
+  </data>
+  <data name="lng_settings_logout" xml:space="preserve">
+    <value>Выйти</value>
   </data>
   <data name="lng_settings_loop_stickers" xml:space="preserve">
     <value>Зациклить анимацию</value>
@@ -21868,9 +22182,6 @@ Telegram до последней версии</value>
   <data name="lng_settings_notify_all" xml:space="preserve">
     <value>Всех аккаунтов</value>
   </data>
-  <data name="lng_settings_notify_all_about" xml:space="preserve">
-    <value>Отключите, если хотите получать только уведомления активного аккаунта.</value>
-  </data>
   <data name="lng_settings_open_system_settings" xml:space="preserve">
     <value>Перейти в настройки</value>
   </data>
@@ -21888,9 +22199,6 @@ Telegram до последней версии</value>
   </data>
   <data name="lng_settings_password_title" xml:space="preserve">
     <value>Двухэтапная аутентификация</value>
-  </data>
-  <data name="lng_settings_peer_to_peer_about" xml:space="preserve">
-    <value>Если выключить peer-to-peer, все звонки будут идти через серверы Telegram. Собеседник не сможет узнать Ваш IP-адрес, но качество звука может немного ухудшиться.</value>
   </data>
   <data name="lng_settings_performance" xml:space="preserve">
     <value>Производительность</value>
@@ -21940,9 +22248,6 @@ Telegram до последней версии</value>
   <data name="lng_settings_send_ctrlenter" xml:space="preserve">
     <value>Отправка по Ctrl+Enter</value>
   </data>
-  <data name="lng_settings_send_enter" xml:space="preserve">
-    <value>Отправка по Enter</value>
-  </data>
   <data name="lng_settings_sensitive_about" xml:space="preserve">
     <value>Отображать материалы деликатного характера в публичных каналах на всех устройствах.</value>
   </data>
@@ -21952,14 +22257,11 @@ Telegram до последней версии</value>
   <data name="lng_settings_sensitive_title" xml:space="preserve">
     <value>Материалы деликатного характера</value>
   </data>
-  <data name="lng_settings_show_from" xml:space="preserve">
-    <value>Показывать уведомления</value>
+  <data name="lng_settings_sessions_about" xml:space="preserve">
+    <value>Управление сеансами на других устройствах.</value>
   </data>
   <data name="lng_settings_show_name" xml:space="preserve">
     <value>Показывать имя отправителя</value>
-  </data>
-  <data name="lng_settings_show_preview" xml:space="preserve">
-    <value>Предпросмотр сообщений</value>
   </data>
   <data name="lng_settings_show_sessions" xml:space="preserve">
     <value>Показать все сеансы</value>
@@ -22087,9 +22389,6 @@ Telegram до последней версии</value>
   <data name="lng_signin_hint" xml:space="preserve">
     <value>Подсказка: {password_hint}</value>
   </data>
-  <data name="lng_signin_no_email_forgot" xml:space="preserve">
-    <value>Поскольку Вы не указали резервный адрес электронной почты, Вам остаётся либо вспомнить пароль, либо сбросить аккаунт и начать с чистого листа.</value>
-  </data>
   <data name="lng_signin_password" xml:space="preserve">
     <value>Облачный пароль</value>
   </data>
@@ -22108,6 +22407,9 @@ Telegram до последней версии</value>
   </data>
   <data name="lng_signin_reset_account" xml:space="preserve">
     <value>СБРОСИТЬ АККАУНТ</value>
+  </data>
+  <data name="lng_signin_reset_cancelled" xml:space="preserve">
+    <value>Ваша недавняя попытка сбросить аккаунт была отменена его активным пользователем. Пожалуйста, попробуйте снова через 7 дней.</value>
   </data>
   <data name="lng_signin_reset_in_days" xml:space="preserve">
     <value>{days_count} {hours_count} {minutes_count}</value>
@@ -22174,11 +22476,6 @@ Telegram до последней версии</value>
 
 Telegram предлагает бесплатный и неограниченный сервис сотням миллионов пользователей, что влечет за собой значительные расходы на оборудование и датацентры. Чтобы оставаться независимым и оставаться верным своим ценностям, Telegram разработал платный инструмент для продвижения каналов и сообщений с учетом заботы о конфиденциальности пользователей. Мы приветствуем ответственных рекламодателей по адресу:</value>
   </data>
-  <data name="lng_sponsored_info_description2" xml:space="preserve">
-    <value>Рекламные сообщения в настоящее время работают в тестовом режиме. Как только они будут полностью запущены и позволят Telegram покрывать основные расходы, мы начнем делиться доходами от рекламы с владельцами публичных каналов, в которых выводятся рекламные сообщения.
-
-Реклама в интернете должна перестать быть синонимом нарушения конфиденциальности пользователей. Давайте вместе изменим то, как функционируют технологические компании.</value>
-  </data>
   <data name="lng_sponsored_title" xml:space="preserve">
     <value>Как работают рекламные сообщения?</value>
   </data>
@@ -22217,9 +22514,6 @@ Telegram предлагает бесплатный и неограниченны
   </data>
   <data name="lng_stickers_attached_sets" xml:space="preserve">
     <value>Наборы прикреплённых стикеров</value>
-  </data>
-  <data name="lng_stickers_copied" xml:space="preserve">
-    <value>Ссылка на набор стикеров скопирована.</value>
   </data>
   <data name="lng_stickers_default_set" xml:space="preserve">
     <value>Великие умы</value>
@@ -22502,9 +22796,6 @@ Telegram предлагает бесплатный и неограниченны
   <data name="lng_theme_sure_keep" xml:space="preserve">
     <value>Использовать эту цветовую тему?</value>
   </data>
-  <data name="lng_tooltip_psa_default" xml:space="preserve">
-    <value>Это экстренное оповещение.</value>
-  </data>
   <data name="lng_tray_icon_text" xml:space="preserve">
     <value>Telegram продолжает работать,
 Вы можете изменить это в настройках.
@@ -22523,9 +22814,6 @@ Telegram предлагает бесплатный и неограниченны
   <data name="lng_ttl_edit_about" xml:space="preserve">
     <value>Новые сообщения будут автоматически удалены для Вас и {user} через выбранное время.</value>
   </data>
-  <data name="lng_ttl_edit_about_channel" xml:space="preserve">
-    <value>Сообщения, отправленные в этот канал, будут удалены через выбранное Вами время.</value>
-  </data>
   <data name="lng_ttl_photo_received" xml:space="preserve">
     <value>{from} отправил(а) Вам самоуничтожающееся фото. Посмотрите его на своём мобильном устройстве.</value>
   </data>
@@ -22540,6 +22828,9 @@ Telegram предлагает бесплатный и неограниченны
   </data>
   <data name="lng_typing" xml:space="preserve">
     <value>печатает</value>
+  </data>
+  <data name="lng_unblock_button" xml:space="preserve">
+    <value>Разблокировать</value>
   </data>
   <data name="lng_unread_bar_some" xml:space="preserve">
     <value>Непрочитанные сообщения</value>
@@ -22602,12 +22893,6 @@ Telegram предлагает бесплатный и неограниченны
   </data>
   <data name="lng_username_choose" xml:space="preserve">
     <value>Выберите имя пользователя</value>
-  </data>
-  <data name="lng_username_copied" xml:space="preserve">
-    <value>Ссылка скопирована</value>
-  </data>
-  <data name="lng_username_invalid" xml:space="preserve">
-    <value>Некорректное имя пользователя.</value>
   </data>
   <data name="lng_username_link" xml:space="preserve">
     <value>По этой ссылке открывается чат с Вами:</value>

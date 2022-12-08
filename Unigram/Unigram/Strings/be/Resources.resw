@@ -14997,7 +14997,10 @@ https://telegram.org/blog/coronavirus</value>
     <value>Тэмы выдалены.</value>
   </data>
   <data name="TopicViewAsMessages" xml:space="preserve">
-    <value>Праглядзець як паведамленні</value>
+    <value>Спіс паведамленняў</value>
+  </data>
+  <data name="TopicViewAsTopics" xml:space="preserve">
+    <value>Спіс тэм</value>
   </data>
   <data name="TopicWasClosedAction" xml:space="preserve">
     <value>{0} закрыў(-ла) тэму {1}</value>
@@ -16971,15 +16974,8 @@ https://telegram.org/blog/coronavirus</value>
   <data name="cloud_lng_about_psa_covid" xml:space="preserve">
     <value>Гэта паведамленне падаецца вам службай саціяльнай рэкламы ў сувязі пандэміяй COVID-19, якая працягваецца. Каб выдаліць яго з вашага спіса чатаў, націсніце правай кнопкай і выберыце **Схаваць**.</value>
   </data>
-  <data name="cloud_lng_badge_psa_covid" xml:space="preserve">
-    <value>COVID-19</value>
-  </data>
   <data name="cloud_lng_forwarded_psa_covid" xml:space="preserve">
     <value>Апавяшчэнне пра COVID-19 ад {channel}</value>
-  </data>
-  <data name="cloud_lng_tooltip_psa_covid" xml:space="preserve">
-    <value>Гэта паведамленне падаецца вам службай саціяльнай рэкламы. Даведайцеся больш аб гэтай ініцыятыве па спасылцы 
-https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_about_psa_default" xml:space="preserve">
     <value>Гэта паведамленне падаецца вам службай саціяльнай рэкламы. Каб выдаліць яго з вашага спіса чатаў, націсніце правай кнопкай і выберыце **Схаваць**.</value>
@@ -17038,9 +17034,6 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_action_changed_photo" xml:space="preserve">
     <value>{from} абнавіў(-ла) аватар суполкі</value>
-  </data>
-  <data name="lng_action_changed_photo_channel" xml:space="preserve">
-    <value>Аватар канала абноўлены</value>
   </data>
   <data name="lng_action_changed_title" xml:space="preserve">
     <value>{from} змяніў(-ла) назву суполкі на «{title}»</value>
@@ -17216,17 +17209,11 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_admin_log_about_text" xml:space="preserve">
     <value>Гэта спіс значных дзеянняў удзельнікаў і кіраўнікоў за апошнія 48 гадзін.</value>
   </data>
-  <data name="lng_admin_log_about_text_channel" xml:space="preserve">
-    <value>Гэта спіс усіх службовых дзеянняў кіраўнікоў канала за апошнія 48 гадзін.</value>
-  </data>
   <data name="lng_admin_log_admin_add_admins" xml:space="preserve">
     <value>Дадаваць новых кіраўнікоў</value>
   </data>
   <data name="lng_admin_log_admin_invite_link" xml:space="preserve">
     <value>Запрашаць праз спасылку</value>
-  </data>
-  <data name="lng_admin_log_admin_manage_calls" xml:space="preserve">
-    <value>Кіраваць відэачатамі</value>
   </data>
   <data name="lng_admin_log_admin_manage_calls_channel" xml:space="preserve">
     <value>Кіраванне жывымі эфірамі</value>
@@ -17314,6 +17301,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_admin_log_filter_all_admins" xml:space="preserve">
     <value>Усе ўдзельнікі і кіраўнікі</value>
+  </data>
+  <data name="lng_admin_log_filter_members_removed" xml:space="preserve">
+    <value>Удзельнікі, якія выйшлі</value>
   </data>
   <data name="lng_admin_log_filter_restrictions" xml:space="preserve">
     <value>Новыя абмежаванні</value>
@@ -17508,6 +17498,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_admin_log_stopped_poll" xml:space="preserve">
     <value>{from} спыніў(-ла) апытанне:</value>
   </data>
+  <data name="lng_admin_log_title_selected" xml:space="preserve">
+    <value>Выбраныя дзеянні</value>
+  </data>
   <data name="lng_admin_log_transferred" xml:space="preserve">
     <value>права валодання перададзена да {user}</value>
   </data>
@@ -17548,6 +17541,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_attach_failed" xml:space="preserve">
     <value>Не ўдалося</value>
   </data>
+  <data name="lng_audio_player_reverse" xml:space="preserve">
+    <value>У зваротным парадку</value>
+  </data>
   <data name="lng_background_bad_link" xml:space="preserve">
     <value>Гэта спасылка на фон з'яўляецца памылковай.</value>
   </data>
@@ -17557,11 +17553,11 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_background_header" xml:space="preserve">
     <value>Перадпрагляд фона</value>
   </data>
+  <data name="lng_background_link_copied" xml:space="preserve">
+    <value>Спасылка скапіявана ў буфер абмену</value>
+  </data>
   <data name="lng_background_sure_delete" xml:space="preserve">
     <value>Вы ўпэўнены, што хочаце выдаліць гэты фон?</value>
-  </data>
-  <data name="lng_background_text2" xml:space="preserve">
-    <value>Гэта сур'ёзна зараз было?</value>
   </data>
   <data name="lng_backgrounds_header" xml:space="preserve">
     <value>Выберыце ваш новы фон чатаў</value>
@@ -17593,9 +17589,6 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_bio_title" xml:space="preserve">
     <value>Рэдагаваць звесткі</value>
   </data>
-  <data name="lng_blocked_list_about" xml:space="preserve">
-    <value>Заблакіраваныя карыстальнікі не могуць адпраўляць вам паведамленні або запрашаць вас у суполкі. Яны таксама не могуць бачыць вашы аватар профілю, статус прысутнасці і апошнюю актыўнасць.</value>
-  </data>
   <data name="lng_blocked_list_add_title" xml:space="preserve">
     <value>Выберыце карыстальніка, каб заблакіраваць</value>
   </data>
@@ -17620,11 +17613,17 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_blocked_list_title" xml:space="preserve">
     <value>Заблакіраваныя карыстальнікі</value>
   </data>
+  <data name="lng_blocked_list_unblock" xml:space="preserve">
+    <value>Разблакіраваць</value>
+  </data>
   <data name="lng_blocked_list_unknown_phone" xml:space="preserve">
     <value>невядомы нумар тэлефона</value>
   </data>
   <data name="lng_bot_already_in_group" xml:space="preserve">
     <value>Гэты бот ужо з'яўляецца ўдзельнікам гэтай суполкі.</value>
+  </data>
+  <data name="lng_bot_chats_not_found" xml:space="preserve">
+    <value>Не знойдзена чатаў</value>
   </data>
   <data name="lng_bot_choose_chat" xml:space="preserve">
     <value>Выберыце чат</value>
@@ -17685,9 +17684,6 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_call_box_about" xml:space="preserve">
     <value>Вы пакуль што не рабілі выклікаў.</value>
-  </data>
-  <data name="lng_call_box_clear_all" xml:space="preserve">
-    <value>Ачысціць усе</value>
   </data>
   <data name="lng_call_box_clear_sure" xml:space="preserve">
     <value>Вы сапраўды хочаце цалкам ачысць ваш журнал выклікаў?</value>
@@ -17821,9 +17817,6 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_cant_invite_banned" xml:space="preserve">
     <value>На жаль, толькі кіраўнік можа дадаць гэтага карыстальніка.</value>
   </data>
-  <data name="lng_cant_invite_bot_to_channel" xml:space="preserve">
-    <value>Ботаў можна дадаваць у канал толькі ў якасці кіраўнікоў.</value>
-  </data>
   <data name="lng_cant_invite_make_admin" xml:space="preserve">
     <value>Прызначыць кіраўніком</value>
   </data>
@@ -17831,6 +17824,9 @@ https://telegram.org/blog/coronavirus</value>
     <value>На жаль, зараз вы можаце дадаваць 
 у суполкі толькі ўзаемныя кантакты. 
 {more_info}</value>
+  </data>
+  <data name="lng_cant_invite_offer_admin" xml:space="preserve">
+    <value>Ботаў можна дадаваць толькі ў якасці кіраўнікоў.</value>
   </data>
   <data name="lng_cant_invite_privacy" xml:space="preserve">
     <value>На жаль, вы не можаце дадаваць гэтага карыстальніка ў суполкі, бо ён(яна) забараніў(-ла) гэта сваімі наладамі прыватнасці. </value>
@@ -17908,17 +17904,11 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_channel_not_accessible" xml:space="preserve">
     <value>На жаль, у вас няма доступу да гэтага канала.</value>
   </data>
-  <data name="lng_channel_public_link_copied" xml:space="preserve">
-    <value>Спасылка скапіявана ў буфер абмену.</value>
-  </data>
   <data name="lng_channel_removed_list_about" xml:space="preserve">
     <value>Карыстальнікі, выдаленыя кіраўнікамі з канала, не могуць вярнуцца праз запрашальныя спасылкі.</value>
   </data>
   <data name="lng_channels_too_much_located_other" xml:space="preserve">
     <value>На жаль, у гэтага карыстальніка ўжо занадта шмат суполак з месцазнаходжаннем. Папрасіце яго выдаліць адну з ужо існуючых такіх суполак.</value>
-  </data>
-  <data name="lng_channels_too_much_public_about" xml:space="preserve">
-    <value>Вы занялі занадта шмат публічных спасылак. Паспрабуйце адклікаць адну з іх з вашых старых суполак або каналаў, або стварыце прыватную замест.</value>
   </data>
   <data name="lng_channels_too_much_public_revoke_confirm_channel" xml:space="preserve">
     <value>Вы ўпэўнены, што хочаце адклікаць спасылку {link}?
@@ -17944,9 +17934,6 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_chat_theme_cant_voice" xml:space="preserve">
     <value>На жаль, вы не можаце змяніць тэму чата, пакуль у вас ёсць неадпраўленае галасавое паведамленне.</value>
-  </data>
-  <data name="lng_chat_theme_dont" xml:space="preserve">
-    <value>Не прызначаць тэму</value>
   </data>
   <data name="lng_chat_theme_none" xml:space="preserve">
     <value>Без
@@ -18010,6 +17997,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_cloud_password_removed" xml:space="preserve">
     <value>Двухэтапная праверка адключана.</value>
+  </data>
+  <data name="lng_cloud_password_resend" xml:space="preserve">
+    <value>Адправіць код паўторна</value>
   </data>
   <data name="lng_cloud_password_resent" xml:space="preserve">
     <value>Код быў адпраўлены зноў.</value>
@@ -18304,15 +18294,14 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_create_channel_crop" xml:space="preserve">
     <value>Вылучыце вобласць для аватара профілю</value>
   </data>
-  <data name="lng_create_channel_link_about" xml:space="preserve">
-    <value>Выкарыстоўвайце a-z, 0-9 і сімвалы падкрэслівання. 
-Мінімальная даўжыня — 5 сімвалаў.</value>
-  </data>
   <data name="lng_create_channel_link_available" xml:space="preserve">
     <value>Гэта спасылка даступная</value>
   </data>
   <data name="lng_create_channel_link_bad_symbols" xml:space="preserve">
     <value>Дазволены толькі a-z, 0-9, і сімвалы падкрэслівання.</value>
+  </data>
+  <data name="lng_create_channel_link_copied" xml:space="preserve">
+    <value>Спасылка скапіявана ў буфер абмену</value>
   </data>
   <data name="lng_create_channel_link_invalid" xml:space="preserve">
     <value>Гэта спасылка памылковая</value>
@@ -18334,6 +18323,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_create_invite_link_title" xml:space="preserve">
     <value>Запрашальная спасылка</value>
+  </data>
+  <data name="lng_create_permanent_link_title" xml:space="preserve">
+    <value>Пастаянная спасылка</value>
   </data>
   <data name="lng_create_private_channel_about" xml:space="preserve">
     <value>Далучыцца да канала можна толькі праз запрашальную спасылку</value>
@@ -18684,6 +18676,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_edit_privacy_profile_photo_never_empty" xml:space="preserve">
     <value>Заўсёды забараняць</value>
   </data>
+  <data name="lng_edit_privacy_profile_photo_title" xml:space="preserve">
+    <value>Прыватнасць аватара профілю</value>
+  </data>
   <data name="lng_edit_self_title" xml:space="preserve">
     <value>Рэдагаваць уласнае імя</value>
   </data>
@@ -18996,17 +18991,14 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_filters_empty" xml:space="preserve">
     <value>Выберыце як мінімум адзін чат для гэтай папкі.</value>
   </data>
-  <data name="lng_filters_error_pinned_max" xml:space="preserve">
-    <value>На жаль, вы не можаце замацаваць больш чатаў.</value>
-  </data>
   <data name="lng_filters_exclude_about" xml:space="preserve">
     <value>Выберыце чаты і тыпы чатаў, якія не будуць уключацца ў гэту папку.</value>
   </data>
   <data name="lng_filters_icon_header" xml:space="preserve">
     <value>Выбраць значок</value>
   </data>
-  <data name="lng_filters_include_non_contacts" xml:space="preserve">
-    <value>Не ў кантактах</value>
+  <data name="lng_filters_include_about" xml:space="preserve">
+    <value>Выберыце чаты і тыпы чатаў, якія будуць адлюстроўвацца ў гэтай папцы.</value>
   </data>
   <data name="lng_filters_limit" xml:space="preserve">
     <value>На жаль, вы не можаце стварыць больш папак.</value>
@@ -19029,9 +19021,6 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_filters_subtitle" xml:space="preserve">
     <value>Мае папкі</value>
   </data>
-  <data name="lng_filters_type_non_contacts" xml:space="preserve">
-    <value>Не ў кантактах</value>
-  </data>
   <data name="lng_flood_error" xml:space="preserve">
     <value>Занадта шмат спроб. Паспрабуйце пазней.</value>
   </data>
@@ -19047,6 +19036,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_forward_cant" xml:space="preserve">
     <value>На жаль, сюды нельга перасылаць :(</value>
   </data>
+  <data name="lng_forward_change_recipient" xml:space="preserve">
+    <value>Змяніць атрымальніка</value>
+  </data>
   <data name="lng_forward_choose" xml:space="preserve">
     <value>Выбраць атрымальніка...</value>
   </data>
@@ -19061,6 +19053,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_forward_share_contact" xml:space="preserve">
     <value>Абагуліць кантакт для {recipient}?</value>
+  </data>
+  <data name="lng_forward_show_caption" xml:space="preserve">
+    <value>Паказваць подпіс</value>
   </data>
   <data name="lng_forward_show_captions" xml:space="preserve">
     <value>Паказваць подпісы</value>
@@ -19107,12 +19102,6 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_from_request_body" xml:space="preserve">
     <value>Вы атрымалі гэта паведамленне, таму што падалі запыт на далучэнне да {name} {date}.</value>
   </data>
-  <data name="lng_from_request_title_channel" xml:space="preserve">
-    <value>Адказ на ваш запыт на далучэнне</value>
-  </data>
-  <data name="lng_from_request_title_group" xml:space="preserve">
-    <value>Адказ на ваш запыт на далучэнне</value>
-  </data>
   <data name="lng_full_name" xml:space="preserve">
     <value>{first_name} {last_name}</value>
   </data>
@@ -19121,9 +19110,6 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_gifs_no_saved" xml:space="preserve">
     <value>У вас пакуль няма захаваных анімацый.</value>
-  </data>
-  <data name="lng_gigagroup_convert_feature3" xml:space="preserve">
-    <value>Немагчыма вярнуць назад у звычайную суполку.</value>
   </data>
   <data name="lng_gigagroup_convert_sure" xml:space="preserve">
     <value>Пераўтварыць</value>
@@ -19161,9 +19147,6 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_group_call_also_cancel_channel" xml:space="preserve">
     <value>Скасаваць жывы эфір</value>
-  </data>
-  <data name="lng_group_call_also_end" xml:space="preserve">
-    <value>Завяршыць відэачат</value>
   </data>
   <data name="lng_group_call_can_speak" xml:space="preserve">
     <value>Вы цяпер можаце гаварыць у {chat}.</value>
@@ -19204,17 +19187,11 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_group_call_copy_speaker_link" xml:space="preserve">
     <value>Капіяваць спасылку для прамоўцаў</value>
   </data>
-  <data name="lng_group_call_create_sure" xml:space="preserve">
-    <value>Пачаць відэачат у гэтай суполцы?</value>
-  </data>
   <data name="lng_group_call_create_sure_channel" xml:space="preserve">
     <value>Вы сапраўды хочаце пачаць відэачат у гэтым канале ад імя свайго ўліковага запісу?</value>
   </data>
   <data name="lng_group_call_edit_title" xml:space="preserve">
     <value>Рэдагаваць назву відэачата</value>
-  </data>
-  <data name="lng_group_call_edit_title_header" xml:space="preserve">
-    <value>Назва відэачата</value>
   </data>
   <data name="lng_group_call_end" xml:space="preserve">
     <value>Завяршыць відэачат</value>
@@ -19255,9 +19232,6 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_group_call_join_as_changed_channel" xml:space="preserve">
     <value>Удзельнікі жывога эфіру зараз будуць бачыць вас як {name}</value>
   </data>
-  <data name="lng_group_call_join_as_header" xml:space="preserve">
-    <value>Далучыцца да відэачата як…</value>
-  </data>
   <data name="lng_group_call_join_confirm" xml:space="preserve">
     <value>Далучыцца да відэачата {chat}?</value>
   </data>
@@ -19278,9 +19252,6 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_group_call_leave_sure_channel" xml:space="preserve">
     <value>Вы ўпэўнены, што хочаце выйсці з гэтага жывога эфіру?</value>
-  </data>
-  <data name="lng_group_call_leave_title" xml:space="preserve">
-    <value>Выйсці з відэачата</value>
   </data>
   <data name="lng_group_call_leave_to_other_sure" xml:space="preserve">
     <value>Выйсці з вашага актыўнага відэачата і далучыцца да гэтага відэачата?</value>
@@ -19322,9 +19293,6 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_group_call_new_muted" xml:space="preserve">
     <value>Новыя ўдзельнікі не гавораць</value>
-  </data>
-  <data name="lng_group_call_no_anonymous" xml:space="preserve">
-    <value>На жаль, вы не можаце далучыцца да відэачата як ананімны кіраўнік.</value>
   </data>
   <data name="lng_group_call_no_members" xml:space="preserve">
     <value>Націсніце, каб далучыцца</value>
@@ -19380,11 +19348,6 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_group_call_recording_start_checkbox" xml:space="preserve">
     <value>Таксама запісаць відэа</value>
   </data>
-  <data name="lng_group_call_recording_start_sure" xml:space="preserve">
-    <value>Запісаць гэты чат і захаваць вынік як аўдыяфайл?
-
-Удзельнікі будуць бачыць, што чат запісваецца.</value>
-  </data>
   <data name="lng_group_call_recording_start_title" xml:space="preserve">
     <value>Дадаць назву</value>
   </data>
@@ -19402,9 +19365,6 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_group_call_recording_stop" xml:space="preserve">
     <value>Спыніць запіс</value>
-  </data>
-  <data name="lng_group_call_recording_stop_sure" xml:space="preserve">
-    <value>Хочаце спыніць запіс гэтага відэачата?</value>
   </data>
   <data name="lng_group_call_recording_stopped" xml:space="preserve">
     <value>Запіс відэачата спынены.</value>
@@ -19429,12 +19389,6 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_group_call_schedule_notified_group" xml:space="preserve">
     <value>Удзельнікі суполкі будуць апавешчаны, што відэачат пачнецца праз {duration}.</value>
-  </data>
-  <data name="lng_group_call_schedule_title" xml:space="preserve">
-    <value>Запланаваць відэачат</value>
-  </data>
-  <data name="lng_group_call_scheduled_title" xml:space="preserve">
-    <value>Запланаваны відэачат</value>
   </data>
   <data name="lng_group_call_screen_share_audio" xml:space="preserve">
     <value>Трансліраваць сістэмнае аўдыя</value>
@@ -19496,9 +19450,6 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_group_call_switch_done" xml:space="preserve">
     <value>Удзельнікі відэачата зараз будуць бачыць вас як **{user}**</value>
   </data>
-  <data name="lng_group_call_title" xml:space="preserve">
-    <value>Відэачат</value>
-  </data>
   <data name="lng_group_call_title_changed" xml:space="preserve">
     <value>Назва відэачата зменена на {title}</value>
   </data>
@@ -19544,6 +19495,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_group_call_you_are_live" xml:space="preserve">
     <value>Вы ў прамым эфіры</value>
   </data>
+  <data name="lng_group_full" xml:space="preserve">
+    <value>На жаль, гэта суполка ўжо поўная.</value>
+  </data>
   <data name="lng_group_invite_about" xml:space="preserve">
     <value>Карыстальнікі Telegram будуць мець
 магчымасць далучыцца да вашай суполкі, калі пяройдуць па гэтай спасылцы.</value>
@@ -19588,9 +19542,6 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_group_invite_expires_at" xml:space="preserve">
     <value>Гэта спасылка дзейнічае да {when}.</value>
   </data>
-  <data name="lng_group_invite_label_about" xml:space="preserve">
-    <value>Толькі кіраўнікі будуць бачыць гэту назву.</value>
-  </data>
   <data name="lng_group_invite_label_header" xml:space="preserve">
     <value>Назва спасылкі (неабавязкова)</value>
   </data>
@@ -19603,8 +19554,8 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_group_invite_other_list" xml:space="preserve">
     <value>Спасылкі створаныя гэтым кіраўніком</value>
   </data>
-  <data name="lng_group_invite_other_title" xml:space="preserve">
-    <value>Спасылкі, створаныя іншымі кіраўнікамі</value>
+  <data name="lng_group_invite_permanent" xml:space="preserve">
+    <value>Пастаянная спасылка</value>
   </data>
   <data name="lng_group_invite_permanent_other" xml:space="preserve">
     <value>Пастаянная спасылка гэтага кіраўніка</value>
@@ -19624,11 +19575,20 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_group_invite_revoked_title" xml:space="preserve">
     <value>Адкліканыя спасылкі</value>
   </data>
+  <data name="lng_group_invite_usage_about" xml:space="preserve">
+    <value>Вы можаце стварыць спасылку з абмежаванай колькасцю выкарыстанняў.</value>
+  </data>
+  <data name="lng_group_invite_usage_title" xml:space="preserve">
+    <value>Абмежаванне колькасці выкарыстанняў</value>
+  </data>
   <data name="lng_group_not_accessible" xml:space="preserve">
     <value>На жаль, гэта суполка недаступная.</value>
   </data>
   <data name="lng_group_removed_list_about" xml:space="preserve">
     <value>Карыстальнікі, выдаленыя кіраўнікамі з суполкі, не могуць вярнуцца праз запрашальныя спасылкі.</value>
+  </data>
+  <data name="lng_group_request_sent" xml:space="preserve">
+    <value>Вы будзеце дададзены ў суполку, як толькі яе кіраўнікі ўхваляць ваш запыт.</value>
   </data>
   <data name="lng_group_request_to_join" xml:space="preserve">
     <value>Запыт на далучэнне</value>
@@ -19936,17 +19896,14 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_manage_group_info" xml:space="preserve">
     <value>Звесткі аб суполцы</value>
   </data>
-  <data name="lng_manage_history_visibility_hidden_about" xml:space="preserve">
-    <value>Новыя ўдзельнікі не будуць бачыць ранейшыя паведамленні.</value>
-  </data>
-  <data name="lng_manage_history_visibility_hidden_legacy" xml:space="preserve">
-    <value>Новыя ўдзельнікі не ўбачаць больш за 100 папярэдніх паведамленняў.</value>
-  </data>
   <data name="lng_manage_linked_channel" xml:space="preserve">
     <value>Прывязаны канал</value>
   </data>
   <data name="lng_manage_linked_channel_about" xml:space="preserve">
     <value>Гэта суполка прывязана ў якасці дошкі абмеркаванняў для {channel}.</value>
+  </data>
+  <data name="lng_manage_linked_channel_posted" xml:space="preserve">
+    <value>Усе новыя паведамленні, размешчаныя ў гэтым канале, перасылаюцца ў суполку.</value>
   </data>
   <data name="lng_manage_linked_channel_private" xml:space="preserve">
     <value>Кожны ўдзельнік гэтай суполкі зможа бачыць паведамленні канала.</value>
@@ -19969,6 +19926,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_manage_peer_link_invite" xml:space="preserve">
     <value>Запрашальная спасылка</value>
   </data>
+  <data name="lng_manage_peer_link_permanent" xml:space="preserve">
+    <value>Пастаянная спасылка</value>
+  </data>
   <data name="lng_manage_peer_link_type" xml:space="preserve">
     <value>Тып спасылкі</value>
   </data>
@@ -19978,17 +19938,11 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_manage_peer_no_forwards_about_channel" xml:space="preserve">
     <value>Падпісчыкі не змогуць перасылаць паведамленні з гэтага канала або захоўваць медыяфайлы.</value>
   </data>
-  <data name="lng_manage_peer_reactions_about" xml:space="preserve">
-    <value>Дазваляць удзельнікам пакідаць рэакцыі на паведамленні ў суполцы.</value>
+  <data name="lng_manage_peer_no_forwards_title" xml:space="preserve">
+    <value>Захаванне змесціва</value>
   </data>
   <data name="lng_manage_peer_recent_actions" xml:space="preserve">
     <value>Нядаўнія дзеянні</value>
-  </data>
-  <data name="lng_manage_peer_requests" xml:space="preserve">
-    <value>Запыты на далучэнне</value>
-  </data>
-  <data name="lng_manage_peer_requests_channel" xml:space="preserve">
-    <value>Запыты на далучэнне</value>
   </data>
   <data name="lng_masks_archive_pack" xml:space="preserve">
     <value>Архіваваць маскі</value>
@@ -20109,6 +20063,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_mediaview_playback_speed" xml:space="preserve">
     <value>Хуткасць прайгравання: {speed}</value>
+  </data>
+  <data name="lng_mediaview_profile_photo" xml:space="preserve">
+    <value>Аватар профілю</value>
   </data>
   <data name="lng_mediaview_rotate_video" xml:space="preserve">
     <value>Павярнуць відэа</value>
@@ -20347,14 +20304,11 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_passcode_enter" xml:space="preserve">
     <value>Увядзіце ваш код доступу</value>
   </data>
-  <data name="lng_passcode_enter_new" xml:space="preserve">
-    <value>Увядзіце новы код доступу</value>
-  </data>
-  <data name="lng_passcode_enter_old" xml:space="preserve">
-    <value>Увядзіце бягучы код доступу</value>
-  </data>
   <data name="lng_passcode_is_same" xml:space="preserve">
     <value>Код доступу не быў зменены</value>
+  </data>
+  <data name="lng_passcode_logout" xml:space="preserve">
+    <value>Выйсці</value>
   </data>
   <data name="lng_passcode_need_unblock" xml:space="preserve">
     <value>Спачатку вам трэба мяне разблакіраваць.</value>
@@ -20419,9 +20373,6 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_passport_allow" xml:space="preserve">
     <value>Вы дазваляеце {bot} адпраўляць вам паведамленні.</value>
-  </data>
-  <data name="lng_passport_app_out_of_date" xml:space="preserve">
-    <value>На жаль, версія Telegram састарэла і таму апрацаваць гэты запыт немагчыма. Абнавіце Telegram.</value>
   </data>
   <data name="lng_passport_authorize" xml:space="preserve">
     <value>Аўтарызаваць</value>
@@ -20529,9 +20480,6 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_passport_identity_license" xml:space="preserve">
     <value>Вадзіцельскае пасведчанне</value>
-  </data>
-  <data name="lng_passport_identity_license_upload" xml:space="preserve">
-    <value>Запампуйце ваша сканаванае вадзіцельскае пасведчанне</value>
   </data>
   <data name="lng_passport_identity_selfie" xml:space="preserve">
     <value>Запампуйце ваша сэлфі з гэтым дакументам</value>
@@ -20838,9 +20786,6 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_pinned_pin_sure" xml:space="preserve">
     <value>Вы хочаце замацаваць гэта паведамленне?</value>
   </data>
-  <data name="lng_pinned_pin_sure_group" xml:space="preserve">
-    <value>Замацаваць гэта паведамленне ў суполцы?</value>
-  </data>
   <data name="lng_pinned_previous" xml:space="preserve">
     <value>Папярэдняе паведамленне</value>
   </data>
@@ -20919,9 +20864,6 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_polls_view_results" xml:space="preserve">
     <value>Паглядзець вынікі</value>
   </data>
-  <data name="lng_profile_add_more_after_create" xml:space="preserve">
-    <value>Вы зможаце дадаць больш удзельнікаў пасля таго, як вы створыце суполку.</value>
-  </data>
   <data name="lng_profile_bio" xml:space="preserve">
     <value>Пра сябе:</value>
   </data>
@@ -20939,6 +20881,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_profile_clear_and_exit" xml:space="preserve">
     <value>Выдаліць і выйсці</value>
+  </data>
+  <data name="lng_profile_clear_history" xml:space="preserve">
+    <value>Ачысціць гісторыю</value>
   </data>
   <data name="lng_profile_convert_confirm" xml:space="preserve">
     <value>Абнавіцца</value>
@@ -21012,6 +20957,12 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_profile_recent_actions" xml:space="preserve">
     <value>Нядаўнія дзеянні</value>
   </data>
+  <data name="lng_profile_restart_bot" xml:space="preserve">
+    <value>Перазапуск бота</value>
+  </data>
+  <data name="lng_profile_search_members" xml:space="preserve">
+    <value>Шукаць удзельнікаў</value>
+  </data>
   <data name="lng_profile_search_messages" xml:space="preserve">
     <value>Шукаць паведамленні</value>
   </data>
@@ -21036,14 +20987,14 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_profile_unblock_bot" xml:space="preserve">
     <value>Разблакіраваць бота</value>
   </data>
-  <data name="lng_profile_unblock_user" xml:space="preserve">
-    <value>Разблакіраваць карыстальніка</value>
-  </data>
   <data name="lng_profile_username" xml:space="preserve">
     <value>Імя карыстальніка:</value>
   </data>
   <data name="lng_profile_view_channel" xml:space="preserve">
     <value>Адкрыць канал</value>
+  </data>
+  <data name="lng_profile_view_discussion" xml:space="preserve">
+    <value>Праглядзець абмеркаванне</value>
   </data>
   <data name="lng_proxy_about" xml:space="preserve">
     <value>Проксі-серверы дапамогуць увайсці ў Telegram, калі ў вашай краіне доступ да яго абмяжоўваецца.</value>
@@ -21089,9 +21040,6 @@ https://telegram.org/blog/coronavirus</value>
 Каб выдаліць гэты канал са спіса чатаў, 
 адключыце проксі праз Налады.</value>
   </data>
-  <data name="lng_proxy_sponsor_warning" xml:space="preserve">
-    <value>Гэты проксі можа паказваць канал спонсара ў вашым спісе чатаў. Гэта ніяк не ўплывае на ваш трафік.</value>
-  </data>
   <data name="lng_proxy_unavailable" xml:space="preserve">
     <value>недаступна</value>
   </data>
@@ -21104,6 +21052,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_proxy_use_custom" xml:space="preserve">
     <value>Выкарыстоўваць карыстальніцкі проксі</value>
   </data>
+  <data name="lng_proxy_use_for_calls" xml:space="preserve">
+    <value>Выкарыстоўваць проксі для выклікаў</value>
+  </data>
   <data name="lng_proxy_use_system_settings" xml:space="preserve">
     <value>Выкарыстоўваць сістэмныя налады проксі</value>
   </data>
@@ -21112,9 +21063,6 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_recent_stickers" xml:space="preserve">
     <value>Нядаўна ўжытыя</value>
-  </data>
-  <data name="lng_recent_stickers_remove" xml:space="preserve">
-    <value>Выдаліць з нядаўніх</value>
   </data>
   <data name="lng_reconnecting_try_now" xml:space="preserve">
     <value>Паспрабаваць зараз</value>
@@ -21133,6 +21081,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_remind_title" xml:space="preserve">
     <value>Напомніць а...</value>
+  </data>
+  <data name="lng_reminder_message" xml:space="preserve">
+    <value>Задаць напамін</value>
   </data>
   <data name="lng_reply_cant" xml:space="preserve">
     <value>Вы не можаце адказваць на паведамленні, якія былі апублікаваны перад абнаўленнем суполкі да суперсуполкі.
@@ -21232,6 +21183,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_restricted_send_public_polls" xml:space="preserve">
     <value>На жаль, апытанні з бачнымі галасамі не могуць быць перасланы ў каналы.</value>
   </data>
+  <data name="lng_restricted_send_stickers" xml:space="preserve">
+    <value>Кіраўнікі суполкі забаранілі вам адпраўляць сюды стыкеры.</value>
+  </data>
   <data name="lng_restricted_send_stickers_all" xml:space="preserve">
     <value>У гэтай суполцы забаронена размяшчаць стыкеры.</value>
   </data>
@@ -21243,6 +21197,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_rights_about_add_admins_yes" xml:space="preserve">
     <value>Гэты кіраўнік зможа дадаць новых кіраўнікоў з такімі ж (ці больш абмежаванымі) паўнамоцтвамі.</value>
+  </data>
+  <data name="lng_rights_about_admin_cant_edit" xml:space="preserve">
+    <value>Вы не можаце змяняць паўнамоцтвы гэтага кіраўніка.</value>
   </data>
   <data name="lng_rights_about_restriction_cant_edit" xml:space="preserve">
     <value>Вы не можаце змяняць абмежаванні для гэтага карыстальніка.</value>
@@ -21280,8 +21237,8 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_rights_group_invite_link" xml:space="preserve">
     <value>Запрашаць праз спасылку</value>
   </data>
-  <data name="lng_rights_group_manage_calls" xml:space="preserve">
-    <value>Кіраваць відэачатамі</value>
+  <data name="lng_rights_permission_cant_edit" xml:space="preserve">
+    <value>Вы не можаце змяніць гэта паўнамоцтва.</value>
   </data>
   <data name="lng_rights_permission_for_all" xml:space="preserve">
     <value>Гэты параметр уключаны для ўсіх удзельнікаў у паўнамоцтвах суполкі.</value>
@@ -21474,8 +21431,14 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_send_separate_photos_videos" xml:space="preserve">
     <value>Адправіць як асобныя медыя</value>
   </data>
+  <data name="lng_send_silent_message" xml:space="preserve">
+    <value>Адправіць без гуку</value>
+  </data>
   <data name="lng_sent_date" xml:space="preserve">
     <value>Адпраўлена: {date}</value>
+  </data>
+  <data name="lng_sessions_header" xml:space="preserve">
+    <value>Бягучы сеанс</value>
   </data>
   <data name="lng_sessions_location_about" xml:space="preserve">
     <value>Месцазнаходжанне вызначаецца толькі IP-адрасам і можа быць недакладным.</value>
@@ -21567,6 +21530,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_settings_bg_show_all" xml:space="preserve">
     <value>Паказаць усе тэмы</value>
+  </data>
+  <data name="lng_settings_bg_theme_create" xml:space="preserve">
+    <value>Стварыць новую тэму</value>
   </data>
   <data name="lng_settings_bg_theme_edit" xml:space="preserve">
     <value>Рэдагаваць тэму</value>
@@ -21709,6 +21675,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_settings_forwards_privacy" xml:space="preserve">
     <value>Перасланыя паведамленні</value>
   </data>
+  <data name="lng_settings_group_privacy_about" xml:space="preserve">
+    <value>Прызначыць тых, хто можа дадаваць вас да суполак і каналаў.</value>
+  </data>
   <data name="lng_settings_groups_invite" xml:space="preserve">
     <value>Суполкі і каналы</value>
   </data>
@@ -21735,6 +21704,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_settings_latest_installed" xml:space="preserve">
     <value>У вас усталявана актуальная версія</value>
+  </data>
+  <data name="lng_settings_logout" xml:space="preserve">
+    <value>Выйсці</value>
   </data>
   <data name="lng_settings_loop_stickers" xml:space="preserve">
     <value>Зацыкліваць анімаваныя стыкеры</value>
@@ -21775,9 +21747,6 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_settings_notify_all" xml:space="preserve">
     <value>Усе ўліковыя запісы</value>
   </data>
-  <data name="lng_settings_notify_all_about" xml:space="preserve">
-    <value>Выключыце, калі вы хочаце атрымліваць апавяшчэнні толькі з уліковага запісу, якім вы зараз карыстаецеся.</value>
-  </data>
   <data name="lng_settings_open_system_settings" xml:space="preserve">
     <value>Адкрыць налады</value>
   </data>
@@ -21795,9 +21764,6 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_settings_password_title" xml:space="preserve">
     <value>Двухэтапная праверка</value>
-  </data>
-  <data name="lng_settings_peer_to_peer_about" xml:space="preserve">
-    <value>Калі вы адключыце P2P, то ўсе выклікі будуць праходзіць праз серверы Telegram. Гэта схавае ваш IP-адрас, але крыху знізіць якасць гуку і відэа.</value>
   </data>
   <data name="lng_settings_performance" xml:space="preserve">
     <value>Прадукцыйнасць</value>
@@ -21848,9 +21814,6 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_settings_send_ctrlenter" xml:space="preserve">
     <value>Адпраўляць па націсканні на Ctrl+Enter</value>
   </data>
-  <data name="lng_settings_send_enter" xml:space="preserve">
-    <value>Адпраўляць па націсканні на Enter</value>
-  </data>
   <data name="lng_settings_sensitive_about" xml:space="preserve">
     <value>Паказваць канфідэнцыяльныя медыя ў публічных каналах на ўсіх сваіх Telegram прыладах.</value>
   </data>
@@ -21860,14 +21823,11 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_settings_sensitive_title" xml:space="preserve">
     <value>Сакрэтнае змесціва</value>
   </data>
-  <data name="lng_settings_show_from" xml:space="preserve">
-    <value>Паказваць апавяшчэнні ад</value>
+  <data name="lng_settings_sessions_about" xml:space="preserve">
+    <value>Кіруйце вашымі сеансамі на іншых прыладах.</value>
   </data>
   <data name="lng_settings_show_name" xml:space="preserve">
     <value>Адлюстроўваць імя адпраўніка</value>
-  </data>
-  <data name="lng_settings_show_preview" xml:space="preserve">
-    <value>Перадпрагляд паведамлення</value>
   </data>
   <data name="lng_settings_show_sessions" xml:space="preserve">
     <value>Паказаць усе сеансы</value>
@@ -21995,9 +21955,6 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_signin_hint" xml:space="preserve">
     <value>Падказка: {password_hint}</value>
   </data>
-  <data name="lng_signin_no_email_forgot" xml:space="preserve">
-    <value>Праз тое, што вы не пакінулі электронную пошту для аднаўлення, калі задавалі пароль, вам застаецца ўспомніць яго або скінуць уліковы запіс.</value>
-  </data>
   <data name="lng_signin_password" xml:space="preserve">
     <value>Ваш воблачны пароль</value>
   </data>
@@ -22017,6 +21974,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_signin_reset_account" xml:space="preserve">
     <value>Скінуць ваш уліковы запіс</value>
+  </data>
+  <data name="lng_signin_reset_cancelled" xml:space="preserve">
+    <value>Ваша нядаўняя спроба скінуць гэты ўліковы запіс была скасавана яго актыўным карыстальнікам. Вы можаце паспрабаваць яшчэ раз праз 7 дзён.</value>
   </data>
   <data name="lng_signin_reset_in_days" xml:space="preserve">
     <value>{days_count} {hours_count} {minutes_count}</value>
@@ -22084,11 +22044,6 @@ https://telegram.org/blog/coronavirus</value>
 
 Telegram прапануе бясплатны і неабмежаваны сэрвіс для соцень мільёнаў карыстальнікаў, які ўключае значныя выдаткі на сервер і трафік. Каб заставацца незалежным і заставацца верным сваім каштоўнасцям, Telegram распрацаваў платны інструмент для прасоўвання паведамленняў з улікам прыватнасці карыстальнікаў. Мы вітаем адказных рэкламадаўцаў па спасылцы:</value>
   </data>
-  <data name="lng_sponsored_info_description2" xml:space="preserve">
-    <value>Паведамленні ад спонсара пакуль знаходзяцца ў тэставым рэжыме. Пасля таго, як яны будуць цалкам запушчаны і дазволяць Telegram пакрыць свае асноўныя выдаткі, мы пачнём дзяліцца даходам ад рэкламы з уладальнікамі публічных каналаў, у якіх паказваюцца паведамленні ад спонсара.
-
-Рэклама ў інтэрнэце больш не павінна быць сінонімам злоўжывання прыватнасцю карыстальнікаў. Давайце разам вызначым, як павінна працаваць тэхналагічная кампанія.</value>
-  </data>
   <data name="lng_sponsored_title" xml:space="preserve">
     <value>Што значыць «паведамленні ад спонсара»?</value>
   </data>
@@ -22127,9 +22082,6 @@ Telegram прапануе бясплатны і неабмежаваны сэр�
   </data>
   <data name="lng_stickers_attached_sets" xml:space="preserve">
     <value>Набор далучаных стыкераў</value>
-  </data>
-  <data name="lng_stickers_copied" xml:space="preserve">
-    <value>Набор стыкераў скапіяваны ў буфер абмену.</value>
   </data>
   <data name="lng_stickers_default_set" xml:space="preserve">
     <value>Вялікія Геніі</value>
@@ -22413,9 +22365,6 @@ Telegram прапануе бясплатны і неабмежаваны сэр�
   <data name="lng_theme_sure_keep" xml:space="preserve">
     <value>Захаваць гэту тэму?</value>
   </data>
-  <data name="lng_tooltip_psa_default" xml:space="preserve">
-    <value>Гэта паведамленне падаецца вам службай саціяльнай рэкламы.</value>
-  </data>
   <data name="lng_tray_icon_text" xml:space="preserve">
     <value>Telegram усё яшчэ запушчаны.
 Вы можаце выключыць яго ў Наладах.
@@ -22434,9 +22383,6 @@ Telegram прапануе бясплатны і неабмежаваны сэр�
   <data name="lng_ttl_edit_about" xml:space="preserve">
     <value>Аўтаматычна выдаляць новыя паведамленні для вас і {user} праз пэўны перыяд часу.</value>
   </data>
-  <data name="lng_ttl_edit_about_channel" xml:space="preserve">
-    <value>Аўтаматычна выдаляць новыя паведамленні ў гэтым канале праз пэўны перыяд часу.</value>
-  </data>
   <data name="lng_ttl_photo_received" xml:space="preserve">
     <value>{from} адправіў(-ла) вам самазнішчальнае фота. Праглядзіце яго на сваёй мабільнай прыладзе.</value>
   </data>
@@ -22451,6 +22397,9 @@ Telegram прапануе бясплатны і неабмежаваны сэр�
   </data>
   <data name="lng_typing" xml:space="preserve">
     <value>піша</value>
+  </data>
+  <data name="lng_unblock_button" xml:space="preserve">
+    <value>Разблакіраваць</value>
   </data>
   <data name="lng_unread_bar_some" xml:space="preserve">
     <value>Непрачытаныя паведамленні</value>
@@ -22513,12 +22462,6 @@ Telegram прапануе бясплатны і неабмежаваны сэр�
   </data>
   <data name="lng_username_choose" xml:space="preserve">
     <value>Выберыце імя карыстальніка.</value>
-  </data>
-  <data name="lng_username_copied" xml:space="preserve">
-    <value>Спасылка скапіявана ў буфер абмену.</value>
-  </data>
-  <data name="lng_username_invalid" xml:space="preserve">
-    <value>Гэта імя карыстальніка недапушчальнае.</value>
   </data>
   <data name="lng_username_link" xml:space="preserve">
     <value>Гэта спасылка адкрые чат з вамі:</value>

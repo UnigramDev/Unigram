@@ -169,6 +169,9 @@
   <data name="AccDescrContactSorting" xml:space="preserve">
     <value>Zmeniť triedenie</value>
   </data>
+  <data name="AccDescrCustomEmoji" xml:space="preserve">
+    <value>Vlastné emoji</value>
+  </data>
   <data name="AccDescrDownloadProgress" xml:space="preserve">
     <value>Stiahnuté {0} z {1}</value>
   </data>
@@ -565,8 +568,14 @@
   <data name="AccReleaseForArchive" xml:space="preserve">
     <value>Pustením archivujete</value>
   </data>
+  <data name="AccReleaseForGeneral" xml:space="preserve">
+    <value>Pustením zobrazíte #vseobecne</value>
+  </data>
   <data name="AccSwipeForArchive" xml:space="preserve">
     <value>Potiahnutím nadol archivujete</value>
+  </data>
+  <data name="AccSwipeForGeneral" xml:space="preserve">
+    <value>Potiahnutím nadol zobrazíte #vseobecne</value>
   </data>
   <data name="AccSwitchToFullscreen" xml:space="preserve">
     <value>Prepnúť na celú obrazovku</value>
@@ -1012,7 +1021,7 @@ na: {1}</value>
     <value>Nálepka pridaná medzi obľúbené.</value>
   </data>
   <data name="AddEmailSubtitle" xml:space="preserve">
-    <value>Zadajte svoju platnú e-mailovú adresu, aby ste ochránili svoje konto.</value>
+    <value>Zadajte vašu platnú e-mailovú adresu, aby ste ochránili svoje konto.</value>
   </data>
   <data name="AddEmailTitle" xml:space="preserve">
     <value>Pridať email</value>
@@ -1043,6 +1052,51 @@ na: {1}</value>
   </data>
   <data name="AdditionalReactionsDescription" xml:space="preserve">
     <value>Odomknite si širší rozsah reakcií na správy predplatením Telegram Prémium.</value>
+  </data>
+  <data name="AddManyEmojiCount_few" xml:space="preserve">
+    <value>Pridať {0} emoji</value>
+  </data>
+  <data name="AddManyEmojiCount_one" xml:space="preserve">
+    <value>Pridať emoji</value>
+  </data>
+  <data name="AddManyEmojiCount_other" xml:space="preserve">
+    <value>Pridať {0} emoji</value>
+  </data>
+  <data name="AddManyMasksCount_few" xml:space="preserve">
+    <value>Pridať {0} masky</value>
+  </data>
+  <data name="AddManyMasksCount_one" xml:space="preserve">
+    <value>Pridať masku</value>
+  </data>
+  <data name="AddManyMasksCount_other" xml:space="preserve">
+    <value>Pridať {0} masiek</value>
+  </data>
+  <data name="AddManyMembersAlertNamesText_few" xml:space="preserve">
+    <value>Naozaj chcete pridať {0} členov do **{1}**?</value>
+  </data>
+  <data name="AddManyMembersAlertNamesText_one" xml:space="preserve">
+    <value>Naozaj chcete pridať člena do **{1}**?</value>
+  </data>
+  <data name="AddManyMembersAlertNamesText_other" xml:space="preserve">
+    <value>Naozaj chcete pridať {0} členov do **{1}**?</value>
+  </data>
+  <data name="AddManyMembersAlertTitle_few" xml:space="preserve">
+    <value>Pridať {0} členov</value>
+  </data>
+  <data name="AddManyMembersAlertTitle_one" xml:space="preserve">
+    <value>Pridať člena</value>
+  </data>
+  <data name="AddManyMembersAlertTitle_other" xml:space="preserve">
+    <value>Pridať {0} členov</value>
+  </data>
+  <data name="AddManyStickersCount_few" xml:space="preserve">
+    <value>Pridať {0} nálepky</value>
+  </data>
+  <data name="AddManyStickersCount_one" xml:space="preserve">
+    <value>Pridať nálepku</value>
+  </data>
+  <data name="AddManyStickersCount_other" xml:space="preserve">
+    <value>Pridať {0} nálepiek</value>
   </data>
   <data name="AddMasks" xml:space="preserve">
     <value>Pridať masky</value>
@@ -1108,7 +1162,7 @@ na: {1}</value>
     <value>Nálepky neboli nájdené</value>
   </data>
   <data name="AddSubscriber" xml:space="preserve">
-    <value>Pridať odberateľa</value>
+    <value>Pridať odberateľov</value>
   </data>
   <data name="AddToChannel" xml:space="preserve">
     <value>Pridať na kanál</value>
@@ -1169,6 +1223,9 @@ na: {1}</value>
   </data>
   <data name="AllAccounts" xml:space="preserve">
     <value>Všetky účty</value>
+  </data>
+  <data name="AllChats" xml:space="preserve">
+    <value>Všetky konverzácie</value>
   </data>
   <data name="AllMedia" xml:space="preserve">
     <value>Všetky médiá</value>
@@ -1301,6 +1358,12 @@ na: {1}</value>
   </data>
   <data name="AnimatedStickers" xml:space="preserve">
     <value>Animované nálepky</value>
+  </data>
+  <data name="AnonymousNumber" xml:space="preserve">
+    <value>Anonymné číslo</value>
+  </data>
+  <data name="AnonymousNumberNotice" xml:space="preserve">
+    <value>Toto číslo nie je viazané na kartu SIM a bolo získané na *Fragmente*.</value>
   </data>
   <data name="AnonymousPoll" xml:space="preserve">
     <value>Anonymné hlasovanie</value>
@@ -1868,6 +1931,15 @@ Ak chcete potvrdiť prihlásenie do Telegramu, prejdite do časti Nastavenia&gt;
   <data name="AutoDeleteAfter" xml:space="preserve">
     <value>Automaticky odstrániť po {0}</value>
   </data>
+  <data name="AutoDeleteAfter1Day" xml:space="preserve">
+    <value>Po 1 dni</value>
+  </data>
+  <data name="AutoDeleteAfter1Month" xml:space="preserve">
+    <value>Po 1 mesiaci</value>
+  </data>
+  <data name="AutoDeleteAfter1Week" xml:space="preserve">
+    <value>Po 1 týždni</value>
+  </data>
   <data name="AutoDeleteAfteTitle" xml:space="preserve">
     <value>Automatické mazanie od...</value>
   </data>
@@ -1886,11 +1958,26 @@ Ak chcete potvrdiť prihlásenie do Telegramu, prejdite do časti Nastavenia&gt;
   <data name="AutoDeleteConfirm" xml:space="preserve">
     <value>Potvrdiť</value>
   </data>
+  <data name="AutoDeleteConfirmMessage" xml:space="preserve">
+    <value>Naozaj chcete, aby sa všetky správy v nových súkromných konverzáciách a v nových skupinách, ktoré ste vytvorili, automaticky odstránili pre všetkých {0} po ich odoslaní?</value>
+  </data>
   <data name="AutoDeleteCustom" xml:space="preserve">
     <value>Vlastné</value>
   </data>
   <data name="AutoDeleteDisable" xml:space="preserve">
     <value>Vypnúť</value>
+  </data>
+  <data name="AutoDeleteDisabled" xml:space="preserve">
+    <value>automatické odstránenie vypnuté</value>
+  </data>
+  <data name="AutoDeleteGlobalAction" xml:space="preserve">
+    <value>un1 používa časovač samozničenia pre všetky konverzácie. Všetky nové správy v tejto konverzácii budú automaticky odstránené {0} po ich odoslaní.</value>
+  </data>
+  <data name="AutoDeleteGlobalActionFromYou" xml:space="preserve">
+    <value>Nastavíte časovač samozničenia pre všetky konverzácie. Všetky nové správy v tejto konverzácii budú automaticky odstránené {0} po ich odoslaní.</value>
+  </data>
+  <data name="AutoDeleteGlobalTimerEnabled" xml:space="preserve">
+    <value>Správy vo všetkých nových konverzáciách, ktoré začnete, sa po **{0}** automaticky odstránia.</value>
   </data>
   <data name="AutoDeleteHeader" xml:space="preserve">
     <value>Automaticky mazať správy v tejto konverzácií</value>
@@ -1899,7 +1986,7 @@ Ak chcete potvrdiť prihlásenie do Telegramu, prejdite do časti Nastavenia&gt;
     <value>Automatické mazanie je teraz vypnuté.</value>
   </data>
   <data name="AutoDeleteHintOnText" xml:space="preserve">
-    <value>Nové správy budu v tejto konverzácii automaticky odstránené po {0}.</value>
+    <value>Nové správy budú v tejto konverzácii automaticky odstránené po {0}.</value>
   </data>
   <data name="AutoDeleteIn" xml:space="preserve">
     <value>Automatické odstránenie o {0}</value>
@@ -1907,11 +1994,17 @@ Ak chcete potvrdiť prihlásenie do Telegramu, prejdite do časti Nastavenia&gt;
   <data name="AutoDeleteInfo" xml:space="preserve">
     <value>Po určitom čase automaticky mazať nové správy odoslané v tejto konverzácií.</value>
   </data>
+  <data name="AutoDeleteMessages" xml:space="preserve">
+    <value>Automatické odstraňovanie správ</value>
+  </data>
   <data name="AutoDeleteNever" xml:space="preserve">
     <value>Vypnúť</value>
   </data>
   <data name="AutoDeletePopupDescription" xml:space="preserve">
     <value>Automaticky odstráni nové správy odoslané v tejto konverzácii po určitom čase.</value>
+  </data>
+  <data name="AutoDeletePopupDescription2" xml:space="preserve">
+    <value>V Nastaveniach môžete nastaviť aj predvolený časovač **samozničenia** pre všetky konverzácie.</value>
   </data>
   <data name="AutoDeletePopupTitle" xml:space="preserve">
     <value>Automatické odstránenie</value>
@@ -1925,6 +2018,15 @@ odstránené {0} po ich odoslaní.</value>
   </data>
   <data name="AutoDeleteSetTimer" xml:space="preserve">
     <value>Nastaviť časovač automatického mazania</value>
+  </data>
+  <data name="AutoDeleteSettingsInfo" xml:space="preserve">
+    <value>Automaticky odstrániť správy pre všetkých po určitom čase vo všetkých nových konverzáciách, ktoré začnete.</value>
+  </data>
+  <data name="AutodeleteTimerDisabledForChats" xml:space="preserve">
+    <value>Časovač samozničenia bol vypnutý v {0}.</value>
+  </data>
+  <data name="AutodeleteTimerEnabledForChats" xml:space="preserve">
+    <value>Časovač samozničenia na **{0}** bol povolený v {1}.</value>
   </data>
   <data name="AutoDownloadAudioInfo" xml:space="preserve">
     <value>Hlasové správy sú malé, takže sú vždy sťahované automaticky.</value>
@@ -2406,7 +2508,7 @@ Bude mať prístup k vašej **IP adrese** a základným informáciám o zariaden
     <value>Potvrdiť</value>
   </data>
   <data name="BotOwnershipTransferReadyAlertText" xml:space="preserve">
-    <value>Na potvrdenie tejto akcie zadajte heslo.</value>
+    <value>Prosím, zadajte heslo na potvrdenie tejto akcie.</value>
   </data>
   <data name="BotPermissionGameAlert" xml:space="preserve">
     <value>Povoliť {0} prístup k Vášmu menu a identite na Telegrame (nie k Vášmu telefónnemu číslu) pri otváraní stránok prostredníctvom tohto bota?</value>
@@ -2915,6 +3017,21 @@ Poznámka: ak zabudnete prístupový kód, budete sa musieť odhlásiť alebo pr
   <data name="ChannelAlertTitle" xml:space="preserve">
     <value>Čo je to kanál?</value>
   </data>
+  <data name="ChannelAntiSpam" xml:space="preserve">
+    <value>Agresívny antispam</value>
+  </data>
+  <data name="ChannelAntiSpamForbidden_few" xml:space="preserve">
+    <value>Agresívne filtrovanie je možné povoliť len v skupinách s viac ako **{0} členmi**.</value>
+  </data>
+  <data name="ChannelAntiSpamForbidden_one" xml:space="preserve">
+    <value>Agresívne filtrovanie je možné povoliť len v skupinách s viac ako **{0} členom**.</value>
+  </data>
+  <data name="ChannelAntiSpamForbidden_other" xml:space="preserve">
+    <value>Agresívne filtrovanie je možné povoliť len v skupinách s viac ako **{0} členmi**.</value>
+  </data>
+  <data name="ChannelAntiSpamInfo" xml:space="preserve">
+    <value>Telegram bude filtrovať viac spamu, ale občas môže ovplyvniť aj bežné správy. Falošne pozitívne správy môžete nahlásiť v sekcii Nedávne akcie.</value>
+  </data>
   <data name="ChannelBlacklist" xml:space="preserve">
     <value>Odstránení používatelia</value>
   </data>
@@ -2947,6 +3064,15 @@ Poznámka: ak zabudnete prístupový kód, budete sa musieť odhlásiť alebo pr
   </data>
   <data name="ChannelCantSendMessage" xml:space="preserve">
     <value>Prepáčte, nemôžete posielať správy do tohto kanála.</value>
+  </data>
+  <data name="ChannelCaptionLimitPremiumPromo_few" xml:space="preserve">
+    <value>Skráťte popis alebo si predplaťte *Telegram Prémium*, aby ste zdvojnásobili limit na **{0}** znakov.</value>
+  </data>
+  <data name="ChannelCaptionLimitPremiumPromo_one" xml:space="preserve">
+    <value>Skráťte popis alebo si predplaťte *Telegram Prémium*, aby ste zdvojnásobili limit na **{0}** znakov.</value>
+  </data>
+  <data name="ChannelCaptionLimitPremiumPromo_other" xml:space="preserve">
+    <value>Skráťte popis alebo si predplaťte *Telegram Prémium*, aby ste zdvojnásobili limit na **{0}** znakov.</value>
   </data>
   <data name="ChannelContacts" xml:space="preserve">
     <value>Kontakty v tomto kanáli</value>
@@ -3342,6 +3468,9 @@ Minimálna dĺžka je 5 znakov.</value>
   <data name="ChatHistoryHiddenInfo2" xml:space="preserve">
     <value>Noví členovia neuvidia viac ako 100 predošlých správ.</value>
   </data>
+  <data name="ChatHistoryShort" xml:space="preserve">
+    <value>História konverzácie</value>
+  </data>
   <data name="ChatHistoryVisible" xml:space="preserve">
     <value>Viditeľná</value>
   </data>
@@ -3697,6 +3826,9 @@ Minimálna dĺžka je 5 znakov.</value>
   <data name="ClearCacheFewChatsTitle" xml:space="preserve">
     <value>Vymazať vyr. pamäť pre {0}</value>
   </data>
+  <data name="ClearCacheForChats" xml:space="preserve">
+    <value>Naozaj chcete odstrániť údaje z vyrovnávacej pamäte pre vybrané konverzácie?</value>
+  </data>
   <data name="ClearCacheInfo" xml:space="preserve">
     <value>Uvoľnite pamäť vášho zariadenia; médiá zostanú v cloude.</value>
   </data>
@@ -3801,6 +3933,12 @@ Minimálna dĺžka je 5 znakov.</value>
   </data>
   <data name="CloseEditor" xml:space="preserve">
     <value>ZAVRIEŤ EDITOR</value>
+  </data>
+  <data name="CloseTopic" xml:space="preserve">
+    <value>Zatvoriť tému</value>
+  </data>
+  <data name="CloseTopics" xml:space="preserve">
+    <value>Zatvoriť témy</value>
   </data>
   <data name="CloseTranslation" xml:space="preserve">
     <value>Zatvoriť preklad</value>
@@ -4096,6 +4234,9 @@ Pre prekročenie limitu a získanie dodatočných funkcií povýšte túto skupi
   <data name="CreateEncryptedChatError" xml:space="preserve">
     <value>Došlo k chybe.</value>
   </data>
+  <data name="CreateGeneralTopicTitle" xml:space="preserve">
+    <value>Zvoľte názov témy</value>
+  </data>
   <data name="CreateGroupError" xml:space="preserve">
     <value>Prepáčte, nemôžte vytvoriť skupinu s týmito používateľmi pre ich nastavenia súkromia.</value>
   </data>
@@ -4153,7 +4294,7 @@ Tu vždy môžete vrátiť späť predvolený motív Telegramu.</value>
     <value>Vytvoriť heslo</value>
   </data>
   <data name="CreateTheme" xml:space="preserve">
-    <value>VYTVORIŤ MOTÍV</value>
+    <value>Vytvoriť motív</value>
   </data>
   <data name="CreateTopic" xml:space="preserve">
     <value>Vytvoriť tému</value>
@@ -4229,6 +4370,9 @@ Tu vždy môžete vrátiť späť predvolený motív Telegramu.</value>
   </data>
   <data name="DataUsage" xml:space="preserve">
     <value>Spotreba úložiska a siete</value>
+  </data>
+  <data name="DataUsageByChats" xml:space="preserve">
+    <value>Využitie úložiska podľa konverzácií</value>
   </data>
   <data name="Days_few" xml:space="preserve">
     <value>{0} dni</value>
@@ -4364,6 +4508,12 @@ Tu vždy môžete vrátiť späť predvolený motív Telegramu.</value>
   </data>
   <data name="DebugSendLogs" xml:space="preserve">
     <value>Odoslať logy</value>
+  </data>
+  <data name="DebugShareAlertDialogsModeLess" xml:space="preserve">
+    <value>Menej</value>
+  </data>
+  <data name="DebugShareAlertDialogsModeMore" xml:space="preserve">
+    <value>Viac</value>
   </data>
   <data name="December" xml:space="preserve">
     <value>December</value>
@@ -4620,6 +4770,18 @@ Tu vždy môžete vrátiť späť predvolený motív Telegramu.</value>
   <data name="DeleteTonesMessage_other" xml:space="preserve">
     <value>Chcete odstrániť **{0} zvukov upozornení**?</value>
   </data>
+  <data name="DeleteTopics_few" xml:space="preserve">
+    <value>Vymazať témy</value>
+  </data>
+  <data name="DeleteTopics_many" xml:space="preserve">
+    <value>Vymazať tém</value>
+  </data>
+  <data name="DeleteTopics_one" xml:space="preserve">
+    <value>Vymazať tému</value>
+  </data>
+  <data name="DeleteTopics_other" xml:space="preserve">
+    <value>Vymazať tém</value>
+  </data>
   <data name="Deletions_few" xml:space="preserve">
     <value>{0} odstránenia</value>
   </data>
@@ -4784,6 +4946,9 @@ v spodnom paneli.</value>
   <data name="DiscussionInfo" xml:space="preserve">
     <value>Pridajte skupinovú konverzáciu pre komentáre.</value>
   </data>
+  <data name="DiscussionInfoShort" xml:space="preserve">
+    <value>Pridať</value>
+  </data>
   <data name="DiscussionLinkGroup" xml:space="preserve">
     <value>Prepojiť skupinu</value>
   </data>
@@ -4858,7 +5023,7 @@ Ktokoľvek z kanála bude môcť vidieť správy v tejto skupine.</value>
     <value>Nepýtať sa znovu</value>
   </data>
   <data name="DoubledLimits" xml:space="preserve">
-    <value>Dvojité limity</value>
+    <value>Dvojnásobné limity</value>
   </data>
   <data name="DoubleTapPreviewMessage" xml:space="preserve">
     <value>Dúfam, že si užívate svoj deň rovnako ako ja.</value>
@@ -5067,6 +5232,12 @@ Ak je vyššie uvedené číslo správne, počkajte na overovací kód.</value>
   <data name="EditTopic" xml:space="preserve">
     <value>Upraviť tému</value>
   </data>
+  <data name="EditTopicHide" xml:space="preserve">
+    <value>Zobraziť v témach</value>
+  </data>
+  <data name="EditTopicHideInfo" xml:space="preserve">
+    <value>Ak je téma &quot;Všeobecné&quot; skrytá, členovia skupiny ju môžu zobraziť stiahnutím v zozname tém.</value>
+  </data>
   <data name="EditWidget" xml:space="preserve">
     <value>Upraviť Widget</value>
   </data>
@@ -5235,7 +5406,7 @@ Ak nie je vybraný nikto, v tejto miniaplikácii sa zobrazia vaše najčastejši
     <value>Povoliť animácie</value>
   </data>
   <data name="EnableAutoDelete" xml:space="preserve">
-    <value>Zapnúť automatické mazanie</value>
+    <value>Zapnúť automatické odstraňovanie</value>
   </data>
   <data name="EnabledNotifications" xml:space="preserve">
     <value>Zapnuté upozornenia</value>
@@ -5454,6 +5625,12 @@ Zadajte názov motívu:</value>
   <data name="EventLogDeletedMessages" xml:space="preserve">
     <value>un1 odstránil/a túto správu:</value>
   </data>
+  <data name="EventLogDeleteTopic" xml:space="preserve">
+    <value>un1 odstránil tému un2</value>
+  </data>
+  <data name="EventLogDisabledAntiSpam" xml:space="preserve">
+    <value>un1 vypol antispam</value>
+  </data>
   <data name="EventLogEditedCaption" xml:space="preserve">
     <value>Používateľ un1 upravil titulok:</value>
   </data>
@@ -5516,6 +5693,9 @@ ktoré zodpovedajú vášmu dopytu.</value>
   </data>
   <data name="EventLogEmptyTextSearch" xml:space="preserve">
     <value>Nenašli sa žiadne akcie obsahujúce &apos;**{0}**&apos;.</value>
+  </data>
+  <data name="EventLogEnabledAntiSpam" xml:space="preserve">
+    <value>un1 zapol antispam</value>
   </data>
   <data name="EventLogEndedLiveStream" xml:space="preserve">
     <value>un1 ukončil priamy prenos</value>
@@ -5588,6 +5768,9 @@ ktoré zodpovedajú vášmu dopytu.</value>
   </data>
   <data name="EventLogPinnedMessages" xml:space="preserve">
     <value>un1 pripol túto správu:</value>
+  </data>
+  <data name="EventLogPinTopic" xml:space="preserve">
+    <value>un1 pripol tému un2</value>
   </data>
   <data name="EventLogPreviousGroupDescription" xml:space="preserve">
     <value>Predchádzajúci popis</value>
@@ -5717,6 +5900,12 @@ Na obdobie: {1}</value>
   <data name="EventLogStopQuiz" xml:space="preserve">
     <value>un1 zastavil kvíz:</value>
   </data>
+  <data name="EventLogSwitchToForum" xml:space="preserve">
+    <value>un1 zapol témy</value>
+  </data>
+  <data name="EventLogSwitchToGroup" xml:space="preserve">
+    <value>un1 vypol témy</value>
+  </data>
   <data name="EventLogToggledInvitesHistoryOff" xml:space="preserve">
     <value>un1 skryl históriu skupiny pred novými členmi</value>
   </data>
@@ -5743,6 +5932,9 @@ Na obdobie: {1}</value>
   </data>
   <data name="EventLogUnpinnedMessages" xml:space="preserve">
     <value>Používateľ un1 odopol správu</value>
+  </data>
+  <data name="EventLogUnpinTopic" xml:space="preserve">
+    <value>un1 odopol tému un2</value>
   </data>
   <data name="EventLogVoiceChatAllowedToSpeak" xml:space="preserve">
     <value>un1 povolil novým účastníkom videohovoru rozprávať</value>
@@ -6454,10 +6646,10 @@ Všetky tajné konverzácie sa stratia.</value>
     <value>Kopírovanie a preposielanie nie je z tohto bota povolené.</value>
   </data>
   <data name="ForwardsRestrictedInfoChannel" xml:space="preserve">
-    <value>Kopírovanie a preposielanie nie je povolene v tomto kanáli.</value>
+    <value>Kopírovanie a preposielanie nie je povolené v tomto kanáli.</value>
   </data>
   <data name="ForwardsRestrictedInfoGroup" xml:space="preserve">
-    <value>Kopírovanie a preposielanie nie je povolene v tejto skupine.</value>
+    <value>Kopírovanie a preposielanie nie je povolené v tejto skupine.</value>
   </data>
   <data name="ForwardTo" xml:space="preserve">
     <value>Preposlať…</value>
@@ -6498,6 +6690,15 @@ Všetky tajné konverzácie sa stratia.</value>
   <data name="FwdMessagesToGroup" xml:space="preserve">
     <value>Správy preposlané **{0}**.</value>
   </data>
+  <data name="FwdMessagesToManyChats_few" xml:space="preserve">
+    <value>Správy boli preposlané do **{0} konverzácií**.</value>
+  </data>
+  <data name="FwdMessagesToManyChats_one" xml:space="preserve">
+    <value>Správy boli preposlané do **{0} konverzácie**.</value>
+  </data>
+  <data name="FwdMessagesToManyChats_other" xml:space="preserve">
+    <value>Správy boli preposlané do **{0} konverzácií**.</value>
+  </data>
   <data name="FwdMessagesToSavedMessages" xml:space="preserve">
     <value>Správy preposlané do **Uložených správ**.</value>
   </data>
@@ -6509,6 +6710,15 @@ Všetky tajné konverzácie sa stratia.</value>
   </data>
   <data name="FwdMessageToGroup" xml:space="preserve">
     <value>Správa preposlaná **{0}**.</value>
+  </data>
+  <data name="FwdMessageToManyChats_few" xml:space="preserve">
+    <value>Správa bola preposlaná do **{0} konverzácií**.</value>
+  </data>
+  <data name="FwdMessageToManyChats_one" xml:space="preserve">
+    <value>Správa bola preposlaná do **{0} konverzácie**.</value>
+  </data>
+  <data name="FwdMessageToManyChats_other" xml:space="preserve">
+    <value>Správa bola preposlaná do **{0} konverzácií**.</value>
   </data>
   <data name="FwdMessageToSavedMessages" xml:space="preserve">
     <value>Správa preposlaná do **Uložených správ**.</value>
@@ -6561,6 +6771,18 @@ Všetky tajné konverzácie sa stratia.</value>
   <data name="GifsTab2" xml:space="preserve">
     <value>GIF-y</value>
   </data>
+  <data name="GiftMonths_few" xml:space="preserve">
+    <value>{0}-mesačné</value>
+  </data>
+  <data name="GiftMonths_many" xml:space="preserve">
+    <value>{0}-mesačné</value>
+  </data>
+  <data name="GiftMonths_one" xml:space="preserve">
+    <value>{0}-mesačné</value>
+  </data>
+  <data name="GiftMonths_other" xml:space="preserve">
+    <value>{0}-mesačné</value>
+  </data>
   <data name="GiftPremium" xml:space="preserve">
     <value>Darovať prémium</value>
   </data>
@@ -6591,7 +6813,7 @@ Tento limit môžete zvýšiť konverziou skupiny na **vysielaciu skupinu**, do 
     <value>Limit dosiahnutý</value>
   </data>
   <data name="GigagroupConvertAlertConver" xml:space="preserve">
-    <value>KONVERTOVAŤ</value>
+    <value>Konvertovať</value>
   </data>
   <data name="GigagroupConvertAlertText" xml:space="preserve">
     <value>Obyčajní členovia skupiny (ne-správcovia) **nenávratne** stratia právo odosielať správy v skupine.
@@ -6623,7 +6845,7 @@ Táto akcia sa **nedá** vrátiť späť.</value>
     <value>Vysielacie skupiny</value>
   </data>
   <data name="GlobalAttachGifRestricted" xml:space="preserve">
-    <value>V tejto skupine nie je povolené odosielanie obrázkov GIF.</value>
+    <value>Odosielanie GIF obrázkov nie je povolené v tejto skupine.</value>
   </data>
   <data name="GlobalAttachInlineRestricted" xml:space="preserve">
     <value>Posielanie vnoreného obsahu nie je v tejto skupine povolené.</value>
@@ -6633,6 +6855,9 @@ Táto akcia sa **nedá** vrátiť späť.</value>
   </data>
   <data name="GlobalAttachStickersRestricted" xml:space="preserve">
     <value>Nálepky nie sú v tejto skupine povolené.</value>
+  </data>
+  <data name="GlobalAutoDeleteInfo" xml:space="preserve">
+    <value>Ak je táto funkcia zapnutá, všetky nové správy v začatých konverzáciách sa po ich odoslaní automaticky odstránia pre všetkých. Toto nastavenie môžete **použiť aj pre existujúce konverzácie**.</value>
   </data>
   <data name="GlobalSearch" xml:space="preserve">
     <value>Globálne vyhľadávanie</value>
@@ -6670,6 +6895,9 @@ ohľadom Telegramu?</value>
   </data>
   <data name="GroupContacts" xml:space="preserve">
     <value>Kontakty v tejto skupine</value>
+  </data>
+  <data name="GroupCreateAutodeleteDescription" xml:space="preserve">
+    <value>Automaticky odstrániť správy v tejto skupine pre každého po zadanej dobe.</value>
   </data>
   <data name="GroupDeletedUndo" xml:space="preserve">
     <value>Skupina odstránená</value>
@@ -6798,6 +7026,9 @@ Stále sa môžu pripojiť prostredníctvom odkazu na pozvánku, pokiaľ nie je 
   <data name="HiddenSendersNameDescription" xml:space="preserve">
     <value>Mená odosielateľov odstránené</value>
   </data>
+  <data name="Hide" xml:space="preserve">
+    <value>Skryť</value>
+  </data>
   <data name="HideAboveTheList" xml:space="preserve">
     <value>Skryť v zozname</value>
   </data>
@@ -6808,7 +7039,7 @@ Stále sa môžu pripojiť prostredníctvom odkazu na pozvánku, pokiaľ nie je 
     <value>Skryť titulok</value>
   </data>
   <data name="HideNewChatsAlertText" xml:space="preserve">
-    <value>Dostávate veľa nových konverzácii od používateľov, ktorí nie sú vo vašom zozname kontaktov. Chcete mať takéto konverzácie **automaticky stíšené** a **archivované**?</value>
+    <value>Dostávate veľa nových konverzácií od používateľov, ktorí nie sú vo vašom zozname kontaktov. Chcete mať takéto konverzácie **automaticky stíšené** a **archivované**?</value>
   </data>
   <data name="HideNewChatsAlertTitle" xml:space="preserve">
     <value>Skryť nové konverzácie?</value>
@@ -7636,11 +7867,17 @@ Jazyk môžete kedykoľvek zmeniť späť v Nastaveniach.</value>
   <data name="LimitReachedPinDialogsPremium" xml:space="preserve">
     <value>Ľutujeme, na vrch nemôžete pripnúť viac ako {0} konverzácii. Najprv odopnite už pripnuté.</value>
   </data>
+  <data name="LimitReachedPinnedTopics" xml:space="preserve">
+    <value>Prepáčte, ale na vrch nemôžete pripnúť viac ako {0} tém.</value>
+  </data>
   <data name="LimitReachedPublicLinks" xml:space="preserve">
     <value>Rezervovali ste priveľa verejných odkazov. Skúste zrušiť prepojenie zo staršej skupiny alebo kanála alebo si predplaťte **Telegram Premium**, čím zdvojnásobíte limit na **{1}** verejných prepojení.</value>
   </data>
   <data name="LimitReachedPublicLinksLocked" xml:space="preserve">
     <value>Rezervovali ste priveľa verejných odkazov. Skúste zrušiť odkaz zo staršej skupiny alebo kanála. V budúcnosti by sme mohli tento limit zvýšiť.</value>
+  </data>
+  <data name="LimitReachedReorderFolder" xml:space="preserve">
+    <value>Predplaťte si **Telegram Prémium** pre presunutie priečinka &quot;{0}&quot;.</value>
   </data>
   <data name="LinkActionCopy" xml:space="preserve">
     <value>Kopírovať </value>
@@ -8191,6 +8428,9 @@ Minimálna dĺžka je 5 znakov.</value>
   <data name="MessageContainsEmojiPacks_few" xml:space="preserve">
     <value>Táto správa obsahuje emoji z **{0} balíčkov**.</value>
   </data>
+  <data name="MessageContainsEmojiPacks_many" xml:space="preserve">
+    <value>Táto správa obsahuje emoji z **{0} balíčkov**.</value>
+  </data>
   <data name="MessageContainsEmojiPacks_one" xml:space="preserve">
     <value>Táto správa obsahuje emoji z **{0} balíčka**.</value>
   </data>
@@ -8198,7 +8438,7 @@ Minimálna dĺžka je 5 znakov.</value>
     <value>Táto správa obsahuje emoji z **{0} balíčkov**.</value>
   </data>
   <data name="MessageContainsEmojiPackSingle" xml:space="preserve">
-    <value>Tato správa obsahuje **{0}** emoji.</value>
+    <value>Táto správa obsahuje **{0}** emoji.</value>
   </data>
   <data name="MessageContainsReactionsPack" xml:space="preserve">
     <value>Ako reakcie boli použité emoji z balíčka {0}.</value>
@@ -8584,6 +8824,9 @@ Môže to chvíľu trvať. Počas presunu súborov môžete pokračovať v použ
   <data name="NearbyVenue" xml:space="preserve">
     <value>Alebo si vyberte miesto konania</value>
   </data>
+  <data name="NeedAdminRightForSetAutoDeleteTimer" xml:space="preserve">
+    <value>Na povolenie automatického odstraňovania musíte byť v tejto skupine správca.</value>
+  </data>
   <data name="NetworkUsage" xml:space="preserve">
     <value>Využitie dát</value>
   </data>
@@ -8759,7 +9002,7 @@ Môže to chvíľu trvať. Počas presunu súborov môžete pokračovať v použ
     <value>Prepáčte, momentálne môžete do skupín pridávať iba vzájomné kontakty.</value>
   </data>
   <data name="NobodyLikesSpam3" xml:space="preserve">
-    <value>Prepáčte, momentálne máte zakázané odosielanie do verejných skupín.</value>
+    <value>Prepáčte, momentálne máte zakázané odosielanie v tejto skupine.</value>
   </data>
   <data name="NobodyViewed" xml:space="preserve">
     <value>Nikto nevidel</value>
@@ -8822,6 +9065,9 @@ Môžete si prispôsobiť upozornenia pre konverzáciu otvorením jej profilu a 
   </data>
   <data name="NoHandleAppInstalled" xml:space="preserve">
     <value>Nemáte aplikáciu pre prácu so súbormi typu &apos;{0}&apos;, pre zobrazenie si ju, prosím, nainštalujte</value>
+  </data>
+  <data name="NoIconsFound" xml:space="preserve">
+    <value>Nenašli sa žiadne ikony</value>
   </data>
   <data name="NoLimit" xml:space="preserve">
     <value>Bez obmedzenia</value>
@@ -9589,7 +9835,10 @@ Tím Telegramu</value>
   </data>
   <data name="NoTopicsDescription" xml:space="preserve">
     <value>Môžete začať prvú tému alebo ťuknúť na
-{0} a prepnete sa do zoznamu správ.</value>
+{0} zobrazíte skupinu ako správy.</value>
+  </data>
+  <data name="NoTopicsDescriptionUser" xml:space="preserve">
+    <value>Staršie správy z tejto skupiny boli presunuté do témy **{0}**.</value>
   </data>
   <data name="NoUsernameFound" xml:space="preserve">
     <value>Používateľské meno nebolo nájdené.</value>
@@ -9657,6 +9906,9 @@ Tím Telegramu</value>
   <data name="Open" xml:space="preserve">
     <value>Otvoriť</value>
   </data>
+  <data name="OpenAllTopics" xml:space="preserve">
+    <value>Všetky témy</value>
+  </data>
   <data name="OpenBackground" xml:space="preserve">
     <value>ZOBRAZIŤ POZADIE</value>
   </data>
@@ -9674,6 +9926,9 @@ Tím Telegramu</value>
   </data>
   <data name="OpenFile" xml:space="preserve">
     <value>OTVORIŤ SÚBOR</value>
+  </data>
+  <data name="OpenFragment" xml:space="preserve">
+    <value>Otvoriť Fragment</value>
   </data>
   <data name="OpenGroup" xml:space="preserve">
     <value>ZOBRAZIŤ SKUPINU</value>
@@ -11011,6 +11266,9 @@ Toto môžete zmeniť v Nastavenia &gt; Súkromie a bezpečnosť &gt; Telefónne
   <data name="PinMessageAlertTitle" xml:space="preserve">
     <value>Pripnúť správu</value>
   </data>
+  <data name="PinMessageInTopicAlert" xml:space="preserve">
+    <value>Pripnúť tuto správu v téme?</value>
+  </data>
   <data name="PinnedDialogsCount_few" xml:space="preserve">
     <value>Pripnuté {0} konverzácie</value>
   </data>
@@ -11177,13 +11435,16 @@ Toto môžete zmeniť v Nastavenia &gt; Súkromie a bezpečnosť &gt; Telefónne
     <value>Pokročilá správa konverzácie</value>
   </data>
   <data name="PremiumPreviewAdvancedChatManagementDescription" xml:space="preserve">
-    <value>Nástroje na nastavenie predvoleného priečinka, automatickú archiváciu a skrytie nových konverzácii od ľudí mimo kontaktov.</value>
+    <value>Nástroje na nastavenie predvoleného priečinka, automatickú archiváciu a skrytie nových konverzácií od ľudí mimo kontaktov.</value>
+  </data>
+  <data name="PremiumPreviewAdvancedChatManagementDescription2" xml:space="preserve">
+    <value>Predplatitelia Telegram Prémium môžu nastaviť predvolený priečinok, automatické archivovanie a skrývanie konverzácií od ľudí, ktorí nie sú vo vašich kontaktoch.</value>
   </data>
   <data name="PremiumPreviewAnimatedProfiles" xml:space="preserve">
     <value>Animované profilové obrázky</value>
   </data>
   <data name="PremiumPreviewAnimatedProfilesDescription" xml:space="preserve">
-    <value>Animované videoavatary v zoznamoch konverzácii a konverzácie umožňujúce ďalšie sebavyjadrenie.</value>
+    <value>Animované videoavatary v zoznamoch konverzácií a konverzácie umožňujúce ďalšie sebavyjadrenie.</value>
   </data>
   <data name="PremiumPreviewAppIcon" xml:space="preserve">
     <value>Ikony prémiovej aplikácie</value>
@@ -11203,6 +11464,9 @@ Toto môžete zmeniť v Nastavenia &gt; Súkromie a bezpečnosť &gt; Telefónne
   <data name="PremiumPreviewDownloadSpeedDescription" xml:space="preserve">
     <value>Už žiadne obmedzenia rýchlosti sťahovania médií a dokumentov.</value>
   </data>
+  <data name="PremiumPreviewDownloadSpeedDescription2" xml:space="preserve">
+    <value>Predplatiť Telegram Prémium na sťahovanie médií a súborov najrýchlejšou možnou rýchlosťou.</value>
+  </data>
   <data name="PremiumPreviewEmoji" xml:space="preserve">
     <value>Animované emoji</value>
   </data>
@@ -11219,7 +11483,7 @@ Toto môžete zmeniť v Nastavenia &gt; Súkromie a bezpečnosť &gt; Telefónne
     <value>Vyberte si z tisícov emoji na zobrazenie aktuálnej aktivity vedľa vášho mena.</value>
   </data>
   <data name="PremiumPreviewLimits" xml:space="preserve">
-    <value>Dvojité limity</value>
+    <value>Dvojnásobné limity</value>
   </data>
   <data name="PremiumPreviewLimitsDescription" xml:space="preserve">
     <value>Až {0} kanálov, {1} priečinkov, {2} pripnutí, {3} verejných odkazov, {4} účty a ďalšie.</value>
@@ -11269,8 +11533,11 @@ Toto môžete zmeniť v Nastavenia &gt; Súkromie a bezpečnosť &gt; Telefónne
   <data name="PremiumPreviewVoiceToTextDescription" xml:space="preserve">
     <value>Možnosť prečítať prepis akejkoľvek prichádzajúcej hlasovej správy.</value>
   </data>
+  <data name="PremiumPreviewVoiceToTextDescription2" xml:space="preserve">
+    <value>Predplaťte si Telegram Prémium, aby ste mohli konvertovať hlasové a videosprávy na text.</value>
+  </data>
   <data name="PremiumSpeedPromo" xml:space="preserve">
-    <value>Zvýšenie rýchlosti</value>
+    <value>Zvýšiť rýchlosť</value>
   </data>
   <data name="PremiumStickers" xml:space="preserve">
     <value>Prémiové nálepky</value>
@@ -12123,6 +12390,33 @@ https://telegram.org/blog/coronavirus</value>
   <data name="RemoveGroupStickerSet" xml:space="preserve">
     <value>Odstrániť skupinovú sadu nálepiek</value>
   </data>
+  <data name="RemoveManyEmojiCount_few" xml:space="preserve">
+    <value>Odstrániť {0} emoji</value>
+  </data>
+  <data name="RemoveManyEmojiCount_one" xml:space="preserve">
+    <value>Odstrániť emoji</value>
+  </data>
+  <data name="RemoveManyEmojiCount_other" xml:space="preserve">
+    <value>Odstrániť {0} emoji</value>
+  </data>
+  <data name="RemoveManyMasksCount_few" xml:space="preserve">
+    <value>Odstrániť {0} masky</value>
+  </data>
+  <data name="RemoveManyMasksCount_one" xml:space="preserve">
+    <value>Odstrániť masku</value>
+  </data>
+  <data name="RemoveManyMasksCount_other" xml:space="preserve">
+    <value>Odstrániť {0} masiek</value>
+  </data>
+  <data name="RemoveManyStickersCount_few" xml:space="preserve">
+    <value>Odstrániť {0} nálepky</value>
+  </data>
+  <data name="RemoveManyStickersCount_one" xml:space="preserve">
+    <value>Odstrániť nálepku</value>
+  </data>
+  <data name="RemoveManyStickersCount_other" xml:space="preserve">
+    <value>Odstrániť {0} nálepiek</value>
+  </data>
   <data name="RemoveStickersCount" xml:space="preserve">
     <value>Odstrániť {0}</value>
   </data>
@@ -12431,6 +12725,9 @@ Tento proces môžete kedykoľvek zrušiť.</value>
   <data name="RestartTopic" xml:space="preserve">
     <value>Znovu otvoriť tému</value>
   </data>
+  <data name="RestartTopics" xml:space="preserve">
+    <value>Znovu otvoriť témy</value>
+  </data>
   <data name="Restore" xml:space="preserve">
     <value>Obnoviť</value>
   </data>
@@ -12458,13 +12755,13 @@ Tento proces môžete kedykoľvek zrušiť.</value>
     <value>Ak si nedokážete obnoviť prístup do vašej e-mailovej schránky, zostávajúce možnosti sú: spomenutie si na heslo alebo obnova svojho účtu.</value>
   </data>
   <data name="RestoreEmailTroubleText2" xml:space="preserve">
-    <value>Ak nemáte prístup k e-mailovej adrese na obnovenie účtu, máte na výber, či si chcete heslo zapamätať, alebo počkať 7 dní, kým sa heslo obnoví.</value>
+    <value>Ak nemáte prístup k e-mailovej adrese na obnovenie účtu, máte na výber, či si chcete na heslo spomenúť, alebo počkať 7 dní, kým sa heslo obnoví.</value>
   </data>
   <data name="RestorePasswordNoEmailText" xml:space="preserve">
     <value>Vzhľadom na to, že ste pri zadávaní hesla neuviedli email na obnovenie, vaše zostávajúce možnosti pre prihlásenie sú buď spomenúť si na svoje heslo alebo resetovať svoj účet.</value>
   </data>
   <data name="RestorePasswordNoEmailText2" xml:space="preserve">
-    <value>Pretože ste pri nastavovaní hesla neposkytli e-mail na obnovenie, zostáva vám buď si ho zapamätať, alebo počkať 7 dní, kým sa heslo neobnoví.</value>
+    <value>Pretože ste pri nastavovaní hesla neposkytli e-mail na obnovenie, zostáva vám buď si na heslo spomenúť, alebo počkať 7 dní, kým sa heslo neobnoví.</value>
   </data>
   <data name="RestorePasswordNoEmailTitle" xml:space="preserve">
     <value>Prepáčte</value>
@@ -12763,6 +13060,9 @@ Pravdepodobne bude potrebné reštartovať Telegram, aby sa zmena prejavila.</va
   <data name="SearchMessages" xml:space="preserve">
     <value>Správy</value>
   </data>
+  <data name="SearchMessagesIn" xml:space="preserve">
+    <value>Správy v {0}</value>
+  </data>
   <data name="SearchMusic" xml:space="preserve">
     <value>Hľadať hudbu</value>
   </data>
@@ -12871,6 +13171,18 @@ Pravdepodobne bude potrebné reštartovať Telegram, aby sa zmena prejavila.</va
   <data name="SelectChats" xml:space="preserve">
     <value>Vybrať konverzácie</value>
   </data>
+  <data name="SelectChatsForAutoDelete" xml:space="preserve">
+    <value>na zapnutie časovača samozničenia</value>
+  </data>
+  <data name="SelectChatsForAutoDelete2" xml:space="preserve">
+    <value>bude mať časovač samozničenia</value>
+  </data>
+  <data name="SelectChatsForDisableAutoDelete" xml:space="preserve">
+    <value>na vypnutie časovača samozničenia</value>
+  </data>
+  <data name="SelectChatsForDisableAutoDelete2" xml:space="preserve">
+    <value>vypne časovač samozničenia</value>
+  </data>
   <data name="SelectColor" xml:space="preserve">
     <value>Vybrať farbu</value>
   </data>
@@ -12918,6 +13230,9 @@ Pravdepodobne bude potrebné reštartovať Telegram, aby sa zmena prejavila.</va
   </data>
   <data name="SelectThisDay" xml:space="preserve">
     <value>Vybrať tento deň</value>
+  </data>
+  <data name="SelectTopic" xml:space="preserve">
+    <value>Vybrať tému</value>
   </data>
   <data name="SelectTopicIconHint" xml:space="preserve">
     <value>Vyberte ikonu témy</value>
@@ -13095,6 +13410,9 @@ Neprijímajte hovor. Telegram všetko spracuje automaticky.</value>
   <data name="SentCallOnly" xml:space="preserve">
     <value>Voláme na vaše číslo **{0}**, z dôvodu nadiktovania overovacieho kódu.</value>
   </data>
+  <data name="SentFragmentCode" xml:space="preserve">
+    <value>Kód pre {0} nájdete v časti Anonymous Numbers na Fragmente.</value>
+  </data>
   <data name="SentSmsCode" xml:space="preserve">
     <value>Odoslali sme vám SMS s aktivačným kódom na vaše číslo **{0}**.</value>
   </data>
@@ -13152,11 +13470,17 @@ Neprijímajte hovor. Telegram všetko spracuje automaticky.</value>
   <data name="SetAsMain" xml:space="preserve">
     <value>Nastaviť ako hlavné</value>
   </data>
+  <data name="SetAutoDeleteTimer" xml:space="preserve">
+    <value>Nastaviť automatické odstraňovanie</value>
+  </data>
   <data name="SetBackground" xml:space="preserve">
     <value>NASTAVIŤ POZADIE</value>
   </data>
   <data name="SetColor" xml:space="preserve">
     <value>Nastaviť farbu</value>
+  </data>
+  <data name="SetCustomTime" xml:space="preserve">
+    <value>Nastaviť vlastný čas...</value>
   </data>
   <data name="SetEmojiStatus" xml:space="preserve">
     <value>Nastaviť emoji ako status</value>
@@ -13262,6 +13586,9 @@ Neprijímajte hovor. Telegram všetko spracuje automaticky.</value>
   </data>
   <data name="SetUrlPlaceholder" xml:space="preserve">
     <value>Odkaz</value>
+  </data>
+  <data name="SetUsernameHeader" xml:space="preserve">
+    <value>Nastaviť používateľské meno</value>
   </data>
   <data name="Shadows" xml:space="preserve">
     <value>Tiene</value>
@@ -13449,6 +13776,9 @@ Neprijímajte hovor. Telegram všetko spracuje automaticky.</value>
 **{1}**
 
 Zadajte správne číslo vrátane kódu krajiny.</value>
+  </data>
+  <data name="Show" xml:space="preserve">
+    <value>Zobraziť</value>
   </data>
   <data name="ShowAllFiles" xml:space="preserve">
     <value>Zobraziť všetky súbory</value>
@@ -13713,6 +14043,9 @@ správy?</value>
     <value>Sponzorované správy sú momentálne v testovacom režime. Hneď ako budú úplne spustené a umožnia spoločnosti Telegram pokryť základné náklady, začneme zdieľať výnosy z reklamy s vlastníkmi verejných kanálov, v ktorých sa zobrazujú sponzorované správy.
 
 Online reklamy by už nemali byť synonymom zneužívania súkromia používateľov. Predefinujme, ako by mala technologická spoločnosť fungovať - spoločne.</value>
+  </data>
+  <data name="SponsoredMessageRecommended" xml:space="preserve">
+    <value>odporúčaná</value>
   </data>
   <data name="Start" xml:space="preserve">
     <value>Začať</value>
@@ -14029,7 +14362,7 @@ Po predplatení budete môcť využívať výhody Telegram Prémium vo všetkýc
     <value>Pripnúť</value>
   </data>
   <data name="SwipeSettingsRead" xml:space="preserve">
-    <value>Prečítať</value>
+    <value>Prečítané</value>
   </data>
   <data name="SwipeToGoNextArchive" xml:space="preserve">
     <value>Potiahnutím nahor prejdete na archivované kanály</value>
@@ -14470,7 +14803,7 @@ Minimálna dĺžka je 5 znakov.</value>
     <value>Toto médium</value>
   </data>
   <data name="ThisPhoto" xml:space="preserve">
-    <value>Tato fotka</value>
+    <value>Táto fotka</value>
   </data>
   <data name="TimeLimitHelp" xml:space="preserve">
     <value>Platnosť pozvánky môžete nastaviť na určitú dobu.</value>
@@ -14546,13 +14879,25 @@ Skúste to, prosím, o {0}.</value>
     <value>{0} zatvoril tému</value>
   </data>
   <data name="TopicClosedByAdmin" xml:space="preserve">
-    <value>Tato téma je uzavretá</value>
+    <value>Táto téma je uzavretá</value>
   </data>
   <data name="TopicContainsEmojiPackSingle" xml:space="preserve">
     <value>Táto téma obsahuje **{0}**</value>
   </data>
+  <data name="TopicCreated" xml:space="preserve">
+    <value>Téma bola vytvorená</value>
+  </data>
+  <data name="TopicCreator" xml:space="preserve">
+    <value>autor témy</value>
+  </data>
   <data name="TopicEmptyViewDescription" xml:space="preserve">
     <value>Odoslaním správy začnete tému.</value>
+  </data>
+  <data name="TopicHidden" xml:space="preserve">
+    <value>Téma Všeobecné skrytá</value>
+  </data>
+  <data name="TopicHidden2" xml:space="preserve">
+    <value>{0} skryl tému Všeobecné</value>
   </data>
   <data name="TopicIconChanged" xml:space="preserve">
     <value>Ikona témy bola zmenená</value>
@@ -14560,14 +14905,29 @@ Skúste to, prosím, o {0}.</value>
   <data name="TopicIconChangedTo" xml:space="preserve">
     <value>{0} zmenil ikonu témy na {1}</value>
   </data>
+  <data name="TopicIconChangedToInReply" xml:space="preserve">
+    <value>zmenil ikonu témy na {0}</value>
+  </data>
   <data name="TopicRenamedTo" xml:space="preserve">
     <value>{0} premenoval tému na {1}</value>
+  </data>
+  <data name="TopicRenamedToInReply" xml:space="preserve">
+    <value>premenoval tému na {0}</value>
   </data>
   <data name="TopicRestarted" xml:space="preserve">
     <value>Téma znovu otvorená</value>
   </data>
   <data name="TopicRestarted2" xml:space="preserve">
     <value>{0} znovu otvoril tému</value>
+  </data>
+  <data name="Topics" xml:space="preserve">
+    <value>Témy</value>
+  </data>
+  <data name="TopicShown" xml:space="preserve">
+    <value>Téma Všeobecné bola odokrytá</value>
+  </data>
+  <data name="TopicShown2" xml:space="preserve">
+    <value>{0} odkryl tému Všeobecné</value>
   </data>
   <data name="TopicViewAsMessages" xml:space="preserve">
     <value>Zobraziť ako správy</value>
@@ -14994,6 +15354,9 @@ Ak vám nevyhovujú skromné potreby služby Telegram, nebude možné, aby sme v
   <data name="Username" xml:space="preserve">
     <value>Používateľské meno</value>
   </data>
+  <data name="UsernameActivateErrorTitle" xml:space="preserve">
+    <value>Príliš veľa aktívnych odkazov</value>
+  </data>
   <data name="UsernameAlso" xml:space="preserve">
     <value>taktiež {0}</value>
   </data>
@@ -15020,6 +15383,10 @@ Použiť môžete znaky **a–z**, **0–9** a podčiarkovníky. Minimálna dĺ�
   <data name="UsernameInUse" xml:space="preserve">
     <value>Toto používateľské meno sa už používa.</value>
   </data>
+  <data name="UsernameInUsePurchase" xml:space="preserve">
+    <value>Tento odkaz je už obsadený.
+Momentálne je však možné si ho zakúpiť. **Viac informácií…**</value>
+  </data>
   <data name="UsernameInvalid" xml:space="preserve">
     <value>Toto používateľské meno je neplatné.</value>
   </data>
@@ -15029,11 +15396,17 @@ Použiť môžete znaky **a–z**, **0–9** a podčiarkovníky. Minimálna dĺ�
   <data name="UsernameInvalidShort" xml:space="preserve">
     <value>Používateľské mená musia mať aspoň 5 znakov.</value>
   </data>
+  <data name="UsernameInvalidShortPurchase" xml:space="preserve">
+    <value>Základné používateľské meno musí mať aspoň 5 znakov. Krátke zberateľské používateľské mená vrátane tohto si môžete zakúpiť. **Viac informácií...**</value>
+  </data>
   <data name="UsernameInvalidStartNumber" xml:space="preserve">
     <value>Používateľské mená nemôžu začínať číslom.</value>
   </data>
   <data name="UsernameLinkEditable" xml:space="preserve">
     <value>klepnutím upravte</value>
+  </data>
+  <data name="UsernameLinkPlaceholder" xml:space="preserve">
+    <value>používateľské meno</value>
   </data>
   <data name="UsernamePlaceholder" xml:space="preserve">
     <value>Vaše používateľské meno</value>

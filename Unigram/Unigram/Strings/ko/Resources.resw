@@ -442,6 +442,9 @@
   <data name="AccDescrTakeMorePics" xml:space="preserve">
     <value>사진 한 장 더 찍기</value>
   </data>
+  <data name="AccDescrTopic" xml:space="preserve">
+    <value>주제</value>
+  </data>
   <data name="AccDescrUnreadCount_other" xml:space="preserve">
     <value>안 읽은 대화 {0}개</value>
   </data>
@@ -532,8 +535,14 @@
   <data name="AccReleaseForArchive" xml:space="preserve">
     <value>놓아서 보관함 보기</value>
   </data>
+  <data name="AccReleaseForGeneral" xml:space="preserve">
+    <value>놓고 #기본 보기</value>
+  </data>
   <data name="AccSwipeForArchive" xml:space="preserve">
     <value>쓸어내려서 보관함 보기</value>
+  </data>
+  <data name="AccSwipeForGeneral" xml:space="preserve">
+    <value>쓸어내려서 #기본 보기</value>
   </data>
   <data name="AccSwitchToFullscreen" xml:space="preserve">
     <value>전체화면 전환</value>
@@ -1014,6 +1023,21 @@
   <data name="AdditionalReactionsDescription" xml:space="preserve">
     <value>텔레그램 프리미엄에 구독하여 더 다양한 반응을 잠금 해제해보세요.</value>
   </data>
+  <data name="AddManyEmojiCount_other" xml:space="preserve">
+    <value>이모지 {0}개 추가</value>
+  </data>
+  <data name="AddManyMasksCount_other" xml:space="preserve">
+    <value>마스크 {0}개 추가</value>
+  </data>
+  <data name="AddManyMembersAlertNamesText_other" xml:space="preserve">
+    <value>정말 참가자 {1}명을 **{0}**으로 추가하겠습니까?</value>
+  </data>
+  <data name="AddManyMembersAlertTitle_other" xml:space="preserve">
+    <value>참가자 {0}명 추가</value>
+  </data>
+  <data name="AddManyStickersCount_other" xml:space="preserve">
+    <value>{0}개 스티커 추가</value>
+  </data>
   <data name="AddMasks" xml:space="preserve">
     <value>마스크 추가</value>
   </data>
@@ -1253,6 +1277,12 @@
   </data>
   <data name="AnimatedStickers" xml:space="preserve">
     <value>움직이는 스티커</value>
+  </data>
+  <data name="AnonymousNumber" xml:space="preserve">
+    <value>익명 번호</value>
+  </data>
+  <data name="AnonymousNumberNotice" xml:space="preserve">
+    <value>이 전화번호는 SIM 카드와 연동이 안되어져 있으며, *Fragment*에서 획득했습니다.</value>
   </data>
   <data name="AnonymousPoll" xml:space="preserve">
     <value>익명 설문</value>
@@ -1812,6 +1842,21 @@
   <data name="AutoDeleteAfter" xml:space="preserve">
     <value>{0} 후 자동 삭제</value>
   </data>
+  <data name="AutoDeleteAfter1Day" xml:space="preserve">
+    <value>1일 후</value>
+  </data>
+  <data name="AutoDeleteAfter1Month" xml:space="preserve">
+    <value>1달 후</value>
+  </data>
+  <data name="AutoDeleteAfter1Week" xml:space="preserve">
+    <value>1주일 후</value>
+  </data>
+  <data name="AutoDeleteAfter3Weeks" xml:space="preserve">
+    <value>3주 후</value>
+  </data>
+  <data name="AutoDeleteAfterShort" xml:space="preserve">
+    <value>{0} 이후</value>
+  </data>
   <data name="AutoDeleteAfteTitle" xml:space="preserve">
     <value>이 기간 이후 자동 삭제...</value>
   </data>
@@ -1830,11 +1875,34 @@
   <data name="AutoDeleteConfirm" xml:space="preserve">
     <value>확인</value>
   </data>
+  <data name="AutoDeleteConfirmMessage" xml:space="preserve">
+    <value>정말 새로운 개인대화와 그룹의 모든 메시지를 전송한지 {0} 이후에 모두에게 자동으로 삭제하시겠습니까?</value>
+  </data>
   <data name="AutoDeleteCustom" xml:space="preserve">
     <value>맞춤</value>
   </data>
+  <data name="AutoDeleteCustom2" xml:space="preserve">
+    <value>맞춤 시간 설정</value>
+  </data>
   <data name="AutoDeleteDisable" xml:space="preserve">
     <value>비활성화</value>
+  </data>
+  <data name="AutoDeleteDisabled" xml:space="preserve">
+    <value>자동삭제 비활성화됨</value>
+  </data>
+  <data name="AutoDeleteGlobalAction" xml:space="preserve">
+    <value>un1님이 모든 대화에 자동삭제를 사용하고 있습니다.
+대화에 있는 모든 새로운 메시지는 전송 {0} 후에 자동으로 삭제됩니다.</value>
+  </data>
+  <data name="AutoDeleteGlobalActionFromYou" xml:space="preserve">
+    <value>모든 대화에 자동삭제 타이머를 설정합니다.
+대화에 있는 모든 새로운 메시지는 전송 {0} 후에 자동으로 삭제됩니다.</value>
+  </data>
+  <data name="AutoDeleteGlobalTimerDisabled" xml:space="preserve">
+    <value>모든 새로운 대화의 자동삭제가 비활성화 되었습니다.</value>
+  </data>
+  <data name="AutoDeleteGlobalTimerEnabled" xml:space="preserve">
+    <value>시작하는 새로운 대화의 메시지들은 **{0}** 이후에 자동으로 삭제됩니다.</value>
   </data>
   <data name="AutoDeleteHeader" xml:space="preserve">
     <value>이 대화에 메시지 자동삭제하기</value>
@@ -1851,11 +1919,17 @@
   <data name="AutoDeleteInfo" xml:space="preserve">
     <value>이 대화에서 보낸 메시지가 일정 시간 이후에 자동으로 삭제됩니다.</value>
   </data>
+  <data name="AutoDeleteMessages" xml:space="preserve">
+    <value>메시지 자동삭제</value>
+  </data>
   <data name="AutoDeleteNever" xml:space="preserve">
     <value>안 함</value>
   </data>
   <data name="AutoDeletePopupDescription" xml:space="preserve">
     <value>일정 시간 이후에 대화로 보낸 메시지를 자동 삭제합니다.</value>
+  </data>
+  <data name="AutoDeletePopupDescription2" xml:space="preserve">
+    <value>설정에서 모든 대화에 대한 기본 **자동삭제 타이머**를 설정할 수 있습니다.</value>
   </data>
   <data name="AutoDeletePopupTitle" xml:space="preserve">
     <value>자동 삭제</value>
@@ -1868,6 +1942,15 @@
   </data>
   <data name="AutoDeleteSetTimer" xml:space="preserve">
     <value>자동삭제 타이머 설정</value>
+  </data>
+  <data name="AutoDeleteSettingsInfo" xml:space="preserve">
+    <value>모든 새 대화에서 일정 시간이 지나면 모든 사람의 메시지를 자동으로 삭제합니다.</value>
+  </data>
+  <data name="AutodeleteTimerDisabledForChats" xml:space="preserve">
+    <value>{0}개의 대화에서 자동삭제 타이머가 비활성화됨</value>
+  </data>
+  <data name="AutodeleteTimerEnabledForChats" xml:space="preserve">
+    <value>{1}에 자동삭제 타이머 **{0}**이 적용되었습니다.</value>
   </data>
   <data name="AutoDownloadAudioInfo" xml:space="preserve">
     <value>음성 메시지는 용량이 적어 항상 자동으로 다운로드됩니다.</value>
@@ -2495,6 +2578,9 @@
   <data name="CacheEmpty" xml:space="preserve">
     <value>비어 있음</value>
   </data>
+  <data name="CacheOtherChats" xml:space="preserve">
+    <value>다른 대화</value>
+  </data>
   <data name="CacheWasCleared" xml:space="preserve">
     <value>{0}를 회원님 기기에 확보했습니다!</value>
   </data>
@@ -2778,6 +2864,9 @@
   <data name="ChangePhoneNumberSuccess" xml:space="preserve">
     <value>회원님의 전화번호가 성공적으로 변경되었습니다.</value>
   </data>
+  <data name="ChangePhoneNumberSuccessWithPhone" xml:space="preserve">
+    <value>전화번호가 성공적으로 {0}으로 변경되었습니다.</value>
+  </data>
   <data name="ChangePublicLimitReached" xml:space="preserve">
     <value>죄송하지만, 공개 링크가 너무 많습니다. 옛 그룹이나 채널의 링크를 폐기하거나 비공개로 생성해주세요.</value>
   </data>
@@ -2840,6 +2929,24 @@
   </data>
   <data name="ChannelAlertTitle" xml:space="preserve">
     <value>채널이란 무엇인가요?</value>
+  </data>
+  <data name="ChannelAntiSpam" xml:space="preserve">
+    <value>강력한 스팸방지</value>
+  </data>
+  <data name="ChannelAntiSpamFalsePositiveReported" xml:space="preserve">
+    <value>텔레그램 모더레이터가 신고내역을 검토할 예정입니다. 감사합니다!</value>
+  </data>
+  <data name="ChannelAntiSpamForbidden_other" xml:space="preserve">
+    <value>강력한 필터링은 **{0}명의 참가자** 이상 있는 그룹에서만 활성화 할 수 있습니다.</value>
+  </data>
+  <data name="ChannelAntiSpamInfo" xml:space="preserve">
+    <value>텔레그램은 더 많은 스팸을 필터링하지만 때때로 일반 메시지에 영향을 줄 수 있습니다. 최근 작업에서 오탐지를 보고할 수 있습니다.</value>
+  </data>
+  <data name="ChannelAntiSpamInfo2" xml:space="preserve">
+    <value>스팸 방지 설정은 {0} 에서 관리 할 수 있습니다.</value>
+  </data>
+  <data name="ChannelAntiSpamUser" xml:space="preserve">
+    <value>텔레그램 스팸방지</value>
   </data>
   <data name="ChannelBlacklist" xml:space="preserve">
     <value>추방된 사용자</value>
@@ -3547,6 +3654,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="ClearCacheFewChatsTitle" xml:space="preserve">
     <value>{0}에서 캐시 비우기</value>
   </data>
+  <data name="ClearCacheForChats" xml:space="preserve">
+    <value>정말 선택한 대화에 캐시된 데이터를 삭제하겠습니까?</value>
+  </data>
   <data name="ClearCacheInfo" xml:space="preserve">
     <value>기기의 저장 공간을 확보하세요. 미디어는 클라우드에 보존됩니다.</value>
   </data>
@@ -3912,6 +4022,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="CreateEncryptedChatError" xml:space="preserve">
     <value>오류가 발생했습니다.</value>
   </data>
+  <data name="CreateGeneralTopicTitle" xml:space="preserve">
+    <value>주제 이름 선택</value>
+  </data>
   <data name="CreateGroupError" xml:space="preserve">
     <value>죄송합니다. 이 사용자의 개인 정보 설정으로 인해 함께 그룹을 만드실 수 없습니다.</value>
   </data>
@@ -4047,6 +4160,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="DataUsage" xml:space="preserve">
     <value>디스크 및 네트워크 사용량</value>
   </data>
+  <data name="DataUsageByChats" xml:space="preserve">
+    <value>대화별 저장 공간 사용량</value>
+  </data>
   <data name="Days_other" xml:space="preserve">
     <value>{0}일</value>
   </data>
@@ -4062,6 +4178,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="Deactivate" xml:space="preserve">
     <value>지금 삭제</value>
   </data>
+  <data name="DebugAltNavigation" xml:space="preserve">
+    <value>Alternative navigation</value>
+  </data>
   <data name="DebugAltNavigationToggleControls" xml:space="preserve">
     <value>네비게이션 강도 제어 토글</value>
   </data>
@@ -4074,8 +4193,14 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="DebugClearSendMessageAsPeers" xml:space="preserve">
     <value>다음... 피어로 보내기 비우기</value>
   </data>
+  <data name="DebugDialogsActivity" xml:space="preserve">
+    <value>대화 활동</value>
+  </data>
   <data name="DebugDrawSnowInChat" xml:space="preserve">
     <value>대화에 눈 내리기</value>
+  </data>
+  <data name="DebugGeneral" xml:space="preserve">
+    <value>General</value>
   </data>
   <data name="DebugMenu" xml:space="preserve">
     <value>디버그 메뉴</value>
@@ -4149,11 +4274,23 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="DebugMenuWebViewDebugEnabled" xml:space="preserve">
     <value>디버그가 켜졌습니다!</value>
   </data>
+  <data name="DebugMessageSkeletons" xml:space="preserve">
+    <value>Message Skeletons</value>
+  </data>
+  <data name="DebugMessageSkeletonsLightOverlayAlpha" xml:space="preserve">
+    <value>Light overlay alpha</value>
+  </data>
+  <data name="DebugMessageSkeletonsSaturation" xml:space="preserve">
+    <value>Saturation</value>
+  </data>
   <data name="DebugSendLastLogs" xml:space="preserve">
     <value>최신 로그 전송</value>
   </data>
   <data name="DebugSendLogs" xml:space="preserve">
     <value>로그 보내기</value>
+  </data>
+  <data name="DebugShareAlert" xml:space="preserve">
+    <value>Share Alert</value>
   </data>
   <data name="DebugShareAlertDialogsModeLess" xml:space="preserve">
     <value>닫기</value>
@@ -4169,6 +4306,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   </data>
   <data name="DebugShareAlertTopicsSlowMotion" xml:space="preserve">
     <value>주제 공유 알림 느린 모드 토글</value>
+  </data>
+  <data name="DebugTestBackend" xml:space="preserve">
+    <value>Test Backend</value>
   </data>
   <data name="December" xml:space="preserve">
     <value>12월</value>
@@ -4857,6 +4997,12 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="EditTopic" xml:space="preserve">
     <value>주제 수정</value>
   </data>
+  <data name="EditTopicHide" xml:space="preserve">
+    <value>주제에 표시</value>
+  </data>
+  <data name="EditTopicHideInfo" xml:space="preserve">
+    <value>'기본' 주제가 숨겨졌을 경우, 그룹 참가자들은 주제 목록에서 아래로 쓸어 확인할 수 있습니다.</value>
+  </data>
   <data name="EditWidget" xml:space="preserve">
     <value>위젯 편집</value>
   </data>
@@ -5237,6 +5383,9 @@ telegram.org에서 자세히 알아보세요.</value>
   <data name="EventLogDeleteTopic" xml:space="preserve">
     <value>un1님이 un2 주제를 삭제함</value>
   </data>
+  <data name="EventLogDisabledAntiSpam" xml:space="preserve">
+    <value>un1 님이 스팸방지를 비활성화함</value>
+  </data>
   <data name="EventLogEditedCaption" xml:space="preserve">
     <value>un1 님이 설명을 수정했습니다:</value>
   </data>
@@ -5303,6 +5452,10 @@ telegram.org에서 자세히 알아보세요.</value>
   </data>
   <data name="EventLogEmptyTextSearch" xml:space="preserve">
     <value>'**{0}**'에 관한 최근 활동을 찾지 못했습니다.</value>
+  </data>
+  <data name="EventLogEnabledAntiSpam" xml:space="preserve">
+    <value>
+un1 님이 스팸방지를 활성화함</value>
   </data>
   <data name="EventLogEndedLiveStream" xml:space="preserve">
     <value>un1 님이 실시간 방송을 종료</value>
@@ -6142,6 +6295,9 @@ telegram.org에서 자세히 알아보세요.</value>
   <data name="FwdMessagesToGroup" xml:space="preserve">
     <value>**{0}**에 메시지를 전달했습니다.</value>
   </data>
+  <data name="FwdMessagesToManyChats_other" xml:space="preserve">
+    <value>**{0} 대화**에 메시지를 전달했습니다.</value>
+  </data>
   <data name="FwdMessagesToSavedMessages" xml:space="preserve">
     <value>**저장한 메시지**로 메시지를 전달했습니다.</value>
   </data>
@@ -6153,6 +6309,9 @@ telegram.org에서 자세히 알아보세요.</value>
   </data>
   <data name="FwdMessageToGroup" xml:space="preserve">
     <value>**{0}**에 메시지를 전달했습니다.</value>
+  </data>
+  <data name="FwdMessageToManyChats_other" xml:space="preserve">
+    <value>**{0} 대화**에 메시지를 전달했습니다.</value>
   </data>
   <data name="FwdMessageToSavedMessages" xml:space="preserve">
     <value>**저장한 메시지**로 메시지를 전달했습니다.</value>
@@ -6174,6 +6333,9 @@ telegram.org에서 자세히 알아보세요.</value>
   </data>
   <data name="General" xml:space="preserve">
     <value>일반</value>
+  </data>
+  <data name="GetDirections" xml:space="preserve">
+    <value>길 찾기</value>
   </data>
   <data name="GetQRCode" xml:space="preserve">
     <value>QR 코드 생성</value>
@@ -6275,6 +6437,9 @@ telegram.org에서 자세히 알아보세요.</value>
   <data name="GlobalAttachStickersRestricted" xml:space="preserve">
     <value>그룹에서 스티커를 금지합니다.</value>
   </data>
+  <data name="GlobalAutoDeleteInfo" xml:space="preserve">
+    <value>활성화시, 대화의 모든 새로운 대화는 전송 후 일정 시간 이후에 자동으로 삭제가 됩니다. 또한, **기존 대화에도 이 설정을 적용**할 수도 있습니다.</value>
+  </data>
   <data name="GlobalSearch" xml:space="preserve">
     <value>전체 검색</value>
   </data>
@@ -6311,6 +6476,9 @@ telegram.org에서 자세히 알아보세요.</value>
   </data>
   <data name="GroupContacts" xml:space="preserve">
     <value>연락처에 등록된 그룹 참가자</value>
+  </data>
+  <data name="GroupCreateAutodeleteDescription" xml:space="preserve">
+    <value>그룹에 있는 모두에게 일정 시간 이후 메시지가 자동으로 삭제됩니다.</value>
   </data>
   <data name="GroupDeletedUndo" xml:space="preserve">
     <value>그룹 삭제됨</value>
@@ -7965,6 +8133,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="NearbyVenue" xml:space="preserve">
     <value>아니면 장소 선택</value>
   </data>
+  <data name="NeedAdminRightForSetAutoDeleteTimer" xml:space="preserve">
+    <value>자동삭제를 활성화 하려면 그룹의 관리자이어야지만 합니다.</value>
+  </data>
   <data name="NetworkUsage" xml:space="preserve">
     <value>데이터 사용량</value>
   </data>
@@ -8131,7 +8302,7 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
     <value>죄송합니다. 연락처를 교환한 상대만 그룹에 초대하실 수 있습니다.</value>
   </data>
   <data name="NobodyLikesSpam3" xml:space="preserve">
-    <value>죄송합니다. 현재 회원님은 공개 그룹에 게시하실 수 없습니다.</value>
+    <value>죄송합니다. 현재 회원님은 이 그룹에 게시하실 수 없습니다.</value>
   </data>
   <data name="NobodyViewed" xml:space="preserve">
     <value>아무도 안 읽음</value>
@@ -8972,6 +9143,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="NoTopicsDescription" xml:space="preserve">
     <value>첫 주제를 시작하거나 {0} 아이콘을 탭하여 메시지 목록으로 전환할 수 있습니다.</value>
   </data>
+  <data name="NoTopicsDescriptionUser" xml:space="preserve">
+    <value>그룹의 이전 메시지는 **'{0}'** 주제로 이전되었습니다.</value>
+  </data>
   <data name="NoUsernameFound" xml:space="preserve">
     <value>사용자명을 찾지 못했습니다.</value>
   </data>
@@ -9049,6 +9223,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   </data>
   <data name="OpenFile" xml:space="preserve">
     <value>파일 열기</value>
+  </data>
+  <data name="OpenFragment" xml:space="preserve">
+    <value>Fragment 열기</value>
   </data>
   <data name="OpenGroup" xml:space="preserve">
     <value>그룹 보기</value>
@@ -11256,6 +11433,18 @@ https://telegram.org/blog/coronavirus</value>
   <data name="RemoveGroupStickerSet" xml:space="preserve">
     <value>그룹 스티커 묶음 제거</value>
   </data>
+  <data name="RemoveManyEmojiCount_other" xml:space="preserve">
+    <value>이모지 {0}개 삭제</value>
+  </data>
+  <data name="RemoveManyEmojiPacksCount_other" xml:space="preserve">
+    <value>이모지 묶음 {0}개 제거</value>
+  </data>
+  <data name="RemoveManyMasksCount_other" xml:space="preserve">
+    <value>마스크 {0}개 삭제</value>
+  </data>
+  <data name="RemoveManyStickersCount_other" xml:space="preserve">
+    <value>{0}개 스티커 삭제</value>
+  </data>
   <data name="RemoveStickersCount" xml:space="preserve">
     <value>{0} 제거</value>
   </data>
@@ -11330,6 +11519,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="ReportChatViolence" xml:space="preserve">
     <value>폭력성</value>
+  </data>
+  <data name="ReportFalsePositive" xml:space="preserve">
+    <value>오탐지 신고</value>
   </data>
   <data name="ReportHint" xml:space="preserve">
     <value>추가 정보...</value>
@@ -11882,6 +12074,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="SearchMessages" xml:space="preserve">
     <value>메시지</value>
   </data>
+  <data name="SearchMessagesIn" xml:space="preserve">
+    <value>{0}에 있는 메시지</value>
+  </data>
   <data name="SearchMusic" xml:space="preserve">
     <value>음악 검색</value>
   </data>
@@ -11962,6 +12157,18 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="SelectChats" xml:space="preserve">
     <value>대화 선택</value>
+  </data>
+  <data name="SelectChatsForAutoDelete" xml:space="preserve">
+    <value>자동삭제 타이머 적용</value>
+  </data>
+  <data name="SelectChatsForAutoDelete2" xml:space="preserve">
+    <value>자동삭제 타이머가 적용됩니다</value>
+  </data>
+  <data name="SelectChatsForDisableAutoDelete" xml:space="preserve">
+    <value>자동삭제 타이머 비활성</value>
+  </data>
+  <data name="SelectChatsForDisableAutoDelete2" xml:space="preserve">
+    <value>자동삭제 타이머를 비활성화합니다</value>
   </data>
   <data name="SelectColor" xml:space="preserve">
     <value>색 선택</value>
@@ -12190,6 +12397,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="SentCallOnly" xml:space="preserve">
     <value>코드를 말씀해 드리기 위해 **{0}** 번호로 전화합니다.</value>
   </data>
+  <data name="SentFragmentCode" xml:space="preserve">
+    <value>Fragment에서 익명 번호 영역의 {0}를 위한 코드 받으세요.</value>
+  </data>
   <data name="SentSmsCode" xml:space="preserve">
     <value>**{0}** 번호로 인증 코드가 담긴 SMS를 보냈습니다.</value>
   </data>
@@ -12247,11 +12457,17 @@ https://telegram.org/blog/coronavirus</value>
   <data name="SetAsMain" xml:space="preserve">
     <value>메인으로 설정하기</value>
   </data>
+  <data name="SetAutoDeleteTimer" xml:space="preserve">
+    <value>자동삭제 설정</value>
+  </data>
   <data name="SetBackground" xml:space="preserve">
     <value>배경으로 설정</value>
   </data>
   <data name="SetColor" xml:space="preserve">
     <value>색 설정하기</value>
+  </data>
+  <data name="SetCustomTime" xml:space="preserve">
+    <value>맞춤 시간 설정</value>
   </data>
   <data name="SetEmojiStatus" xml:space="preserve">
     <value>이모지 상태 설정</value>
@@ -13614,6 +13830,12 @@ https://telegram.org/blog/coronavirus</value>
   <data name="TopicEmptyViewDescription" xml:space="preserve">
     <value>메시지를 보내어 주제를 시작해보세요.</value>
   </data>
+  <data name="TopicHidden" xml:space="preserve">
+    <value>기본 주제가 숨겨짐</value>
+  </data>
+  <data name="TopicHidden2" xml:space="preserve">
+    <value>{0}님이 기본 주제를 숨김</value>
+  </data>
   <data name="TopicIconChanged" xml:space="preserve">
     <value>주제 아이콘 변경됨</value>
   </data>
@@ -13650,6 +13872,12 @@ https://telegram.org/blog/coronavirus</value>
   <data name="TopicsDeleted_other" xml:space="preserve">
     <value>주제가 삭제되었습니다.</value>
   </data>
+  <data name="TopicShown" xml:space="preserve">
+    <value>기본 주제가 다시 노출됨</value>
+  </data>
+  <data name="TopicShown2" xml:space="preserve">
+    <value>{0}님이 기본을 숨김해제</value>
+  </data>
   <data name="TopicViewAsMessages" xml:space="preserve">
     <value>메시지로 보기</value>
   </data>
@@ -13660,7 +13888,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>{0}님이 {1}(을)를 닫음</value>
   </data>
   <data name="TopicWasCreatedAction" xml:space="preserve">
-    <value>{0} 생성됨</value>
+    <value>주제 {0} 생성됨</value>
   </data>
   <data name="TopicWasIconChangedToAction" xml:space="preserve">
     <value>{0}님이 주제 아이콘을 {1}으로 변경함</value>
@@ -13834,6 +14062,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="UndoAllCustom" xml:space="preserve">
     <value>연락처와 그룹에 대한 모든 맞춤 알림 설정을 처음 상태로 되돌립니다.</value>
+  </data>
+  <data name="Unhide" xml:space="preserve">
+    <value>숨김 해제</value>
   </data>
   <data name="UnhideFromTop" xml:space="preserve">
     <value>고정</value>
@@ -15492,6 +15723,21 @@ https://telegram.org/blog/coronavirus</value>
   <data name="YouSendersNameHidden" xml:space="preserve">
     <value>나 (발신자 이름 숨김)</value>
   </data>
+  <data name="YouTubeVideoErrorHTML" xml:space="preserve">
+    <value>이 영상을 재생하려다 문제가 발생했습니다.</value>
+  </data>
+  <data name="YouTubeVideoErrorInvalid" xml:space="preserve">
+    <value>영상 URL이 올바르지 않습니다.</value>
+  </data>
+  <data name="YouTubeVideoErrorNotAvailableInApp" xml:space="preserve">
+    <value>이 영상은 이 앱내에서 재생을 할 수 없습니다.</value>
+  </data>
+  <data name="YouTubeVideoErrorNotFound" xml:space="preserve">
+    <value>영상을 찾을 수 없음</value>
+  </data>
+  <data name="YouTubeVideoErrorOpenExternal" xml:space="preserve">
+    <value>유튜브에서 보기 </value>
+  </data>
   <data name="YouWereKicked" xml:space="preserve">
     <value>그룹에서 추방되셨습니다</value>
   </data>
@@ -15501,15 +15747,8 @@ https://telegram.org/blog/coronavirus</value>
   <data name="cloud_lng_about_psa_covid" xml:space="preserve">
     <value>이 메시지는 세계적 유행 중인 코로나19 감염 질환에 관한 공공 서비스 발표를 제공해드립니다. 대화 목록에서 제거하려면, 오른쪽 클릭을 하시고 **숨기기**를 선택해주세요.</value>
   </data>
-  <data name="cloud_lng_badge_psa_covid" xml:space="preserve">
-    <value>COVID-19</value>
-  </data>
   <data name="cloud_lng_forwarded_psa_covid" xml:space="preserve">
     <value>{channel}로 부터의 코로나19 알림</value>
-  </data>
-  <data name="cloud_lng_tooltip_psa_covid" xml:space="preserve">
-    <value>이 메시지는 세계적 유행 중인 코로나19 감염 질환에 관한 공공 서비스 발표를 제공드립니다. 아래 링크에서 이 계획에 대해 더 알아보세요.
-https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_about_psa_default" xml:space="preserve">
     <value>이 메시지는 공공 서비스 발표를 제공해드립니다. 대화 목록에서 제거하려면, 오른쪽 클릭을 하시고 **숨기기**를 선택해주세요.</value>
@@ -15566,9 +15805,6 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_action_changed_photo" xml:space="preserve">
     <value>{from} 님이 그룹 사진을 업데이트했습니다</value>
-  </data>
-  <data name="lng_action_changed_photo_channel" xml:space="preserve">
-    <value>채널 사진이 업데이트되었습니다</value>
   </data>
   <data name="lng_action_changed_title" xml:space="preserve">
     <value>{from} 님이 그룹이름을 «{title}» 로 바꾸셨습니다.</value>
@@ -15744,17 +15980,11 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_admin_log_about_text" xml:space="preserve">
     <value>지난 48시간 사이에 이루어진 채널 참가자와 관리자의 모든 유의미한 활동 기록입니다.</value>
   </data>
-  <data name="lng_admin_log_about_text_channel" xml:space="preserve">
-    <value>지난 48시간 사이에 이루어진 채널 관리자의 모든 서비스 활동 기록입니다.</value>
-  </data>
   <data name="lng_admin_log_admin_add_admins" xml:space="preserve">
     <value>새 관리자 추가</value>
   </data>
   <data name="lng_admin_log_admin_invite_link" xml:space="preserve">
     <value>링크를 통하여 사용자 초대</value>
-  </data>
-  <data name="lng_admin_log_admin_manage_calls" xml:space="preserve">
-    <value>영상 대화 관리</value>
   </data>
   <data name="lng_admin_log_admin_manage_calls_channel" xml:space="preserve">
     <value>실시간 방송들 관리</value>
@@ -15842,6 +16072,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_admin_log_filter_all_admins" xml:space="preserve">
     <value>모든 사용자 및 관리자</value>
+  </data>
+  <data name="lng_admin_log_filter_members_removed" xml:space="preserve">
+    <value>나간 참가자</value>
   </data>
   <data name="lng_admin_log_filter_restrictions" xml:space="preserve">
     <value>새로운 제한</value>
@@ -16036,6 +16269,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_admin_log_stopped_poll" xml:space="preserve">
     <value>{from} 님이 설문을 마감했습니다:</value>
   </data>
+  <data name="lng_admin_log_title_selected" xml:space="preserve">
+    <value>선택한 활동</value>
+  </data>
   <data name="lng_admin_log_transferred" xml:space="preserve">
     <value>{user} 님에게 소유권을 넘겼습니다</value>
   </data>
@@ -16076,6 +16312,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_attach_failed" xml:space="preserve">
     <value>실패</value>
   </data>
+  <data name="lng_audio_player_reverse" xml:space="preserve">
+    <value>역순</value>
+  </data>
   <data name="lng_background_bad_link" xml:space="preserve">
     <value>올바르지 않은 배경 링크입니다.</value>
   </data>
@@ -16085,11 +16324,11 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_background_header" xml:space="preserve">
     <value>배경 미리보기</value>
   </data>
+  <data name="lng_background_link_copied" xml:space="preserve">
+    <value>링크가 클립보드에 복사되었습니다</value>
+  </data>
   <data name="lng_background_sure_delete" xml:space="preserve">
     <value>정말 배경을 삭제하시겠습니까?</value>
-  </data>
-  <data name="lng_background_text2" xml:space="preserve">
-    <value>이게 진심으로 하는 말이라니. 아으!</value>
   </data>
   <data name="lng_backgrounds_header" xml:space="preserve">
     <value>새 대화방 배경화면 선택</value>
@@ -16121,9 +16360,6 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_bio_title" xml:space="preserve">
     <value>자기소개 수정</value>
   </data>
-  <data name="lng_blocked_list_about" xml:space="preserve">
-    <value>차단된 사용자는 회원님에게 메시지를 보내거나 회원님을 그룹에 추가할 수 없습니다. 또한 회원님의 프로필 사진, 온라인 상태와 마지막 접속 시간을 볼 수 없습니다.</value>
-  </data>
   <data name="lng_blocked_list_add_title" xml:space="preserve">
     <value>차단할 사용자 선택</value>
   </data>
@@ -16148,11 +16384,17 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_blocked_list_title" xml:space="preserve">
     <value>차단된 사용자</value>
   </data>
+  <data name="lng_blocked_list_unblock" xml:space="preserve">
+    <value>차단 해제</value>
+  </data>
   <data name="lng_blocked_list_unknown_phone" xml:space="preserve">
     <value>알 수 없는 번호</value>
   </data>
   <data name="lng_bot_already_in_group" xml:space="preserve">
     <value>봇이 이 그룹에 이미 참가하고 있습니다.</value>
+  </data>
+  <data name="lng_bot_chats_not_found" xml:space="preserve">
+    <value>대화방을 찾지 못했습니다</value>
   </data>
   <data name="lng_bot_choose_chat" xml:space="preserve">
     <value>대화방 선택</value>
@@ -16213,9 +16455,6 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_call_box_about" xml:space="preserve">
     <value>텔레그램 전화를 사용한 적이 없습니다.</value>
-  </data>
-  <data name="lng_call_box_clear_all" xml:space="preserve">
-    <value>모두 지우기</value>
   </data>
   <data name="lng_call_box_clear_sure" xml:space="preserve">
     <value>정말 통화 내역을 완전히 삭제하시겠습니까?</value>
@@ -16349,15 +16588,15 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_cant_invite_banned" xml:space="preserve">
     <value>죄송합니다. 관리자만 이 사용자를 추가할 수 있습니다.</value>
   </data>
-  <data name="lng_cant_invite_bot_to_channel" xml:space="preserve">
-    <value>관리자만 채널에 봇을 추가할 수 있습니다.</value>
-  </data>
   <data name="lng_cant_invite_make_admin" xml:space="preserve">
     <value>관리자로 세우기</value>
   </data>
   <data name="lng_cant_invite_not_contact" xml:space="preserve">
     <value>죄송하지만, 현재 그룹에 서로 연락처가 추가된 
 회원들끼리만 추가 가능합니다. {more_info}</value>
+  </data>
+  <data name="lng_cant_invite_offer_admin" xml:space="preserve">
+    <value>봇은 관리자로서만 추가될 수 있습니다.</value>
   </data>
   <data name="lng_cant_invite_privacy" xml:space="preserve">
     <value>죄송합니다. 이 사용자의 개인 정보 설정으로 인해 사용자를 그룹에 추가하실 수 없습니다.</value>
@@ -16434,17 +16673,11 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_channel_not_accessible" xml:space="preserve">
     <value>죄송합니다. 이 채널에 접근하실 수 없습니다.</value>
   </data>
-  <data name="lng_channel_public_link_copied" xml:space="preserve">
-    <value>링크를 클립보드에 복사했습니다.</value>
-  </data>
   <data name="lng_channel_removed_list_about" xml:space="preserve">
     <value>관리자가 채널에서 추방시킨 사용자는 초대 링크를 통해 다시 들어올 수 없습니다.</value>
   </data>
   <data name="lng_channels_too_much_located_other" xml:space="preserve">
     <value>죄송합니다. 해당 사용자가 위치 기반 그룹을 너무 많이 소유하고 있습니다. 먼저 기존 그룹 하나를 삭제하거나 소유권을 넘기도록 요청해 주세요.</value>
-  </data>
-  <data name="lng_channels_too_much_public_about" xml:space="preserve">
-    <value>죄송하지만, 공개 링크가 너무 많습니다. 옛 그룹이나 채널의 링크를 폐기하거나 비공개로 생성해주세요.</value>
   </data>
   <data name="lng_channels_too_much_public_revoke_confirm_channel" xml:space="preserve">
     <value>이 링크 {link}를 폐기하시겠습니까?
@@ -16470,9 +16703,6 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_chat_theme_cant_voice" xml:space="preserve">
     <value>죄송합니다. 보내지지 않은 음성 메시지가 있는 동안에는 대화방 테마를 변경하실 수 없습니다.</value>
-  </data>
-  <data name="lng_chat_theme_dont" xml:space="preserve">
-    <value>테마 설정하지 않기</value>
   </data>
   <data name="lng_chat_theme_none" xml:space="preserve">
     <value>테마
@@ -16534,6 +16764,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_cloud_password_removed" xml:space="preserve">
     <value>2단계 인증이 비활성화되었습니다.</value>
+  </data>
+  <data name="lng_cloud_password_resend" xml:space="preserve">
+    <value>코드 다시 보내기</value>
   </data>
   <data name="lng_cloud_password_resent" xml:space="preserve">
     <value>코드를 다시 보냈습니다.</value>
@@ -16832,15 +17065,14 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_create_channel_crop" xml:space="preserve">
     <value>프로필 사진이 될 영역을 지정하세요</value>
   </data>
-  <data name="lng_create_channel_link_about" xml:space="preserve">
-    <value>a부터 z, 0부터 9와 밑줄을 사용하실 수 있습니다.
-최소 길이는 다섯 자입니다.</value>
-  </data>
   <data name="lng_create_channel_link_available" xml:space="preserve">
     <value>사용할 수 있는 링크입니다</value>
   </data>
   <data name="lng_create_channel_link_bad_symbols" xml:space="preserve">
     <value>0-9, a-z, 언더바만 사용할 수 있습니다.</value>
+  </data>
+  <data name="lng_create_channel_link_copied" xml:space="preserve">
+    <value>링크를 클립보드에 복사했습니다</value>
   </data>
   <data name="lng_create_channel_link_invalid" xml:space="preserve">
     <value>올바르지 않은 링크입니다</value>
@@ -16862,6 +17094,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_create_invite_link_title" xml:space="preserve">
     <value>초대 링크</value>
+  </data>
+  <data name="lng_create_permanent_link_title" xml:space="preserve">
+    <value>영구 링크</value>
   </data>
   <data name="lng_create_private_channel_about" xml:space="preserve">
     <value>사람들이 특수한 초대 링크를 통해서만 들어올 수 있습니다</value>
@@ -17212,6 +17447,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_edit_privacy_profile_photo_never_empty" xml:space="preserve">
     <value>항상 거부</value>
   </data>
+  <data name="lng_edit_privacy_profile_photo_title" xml:space="preserve">
+    <value>프로필 사진</value>
+  </data>
   <data name="lng_edit_self_title" xml:space="preserve">
     <value>이름 수정</value>
   </data>
@@ -17522,17 +17760,14 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_filters_empty" xml:space="preserve">
     <value>이 폴더에 추가할 대화방을 적어도 하나는 선택해 주세요.</value>
   </data>
-  <data name="lng_filters_error_pinned_max" xml:space="preserve">
-    <value>죄송합니다. 더 이상 위쪽에 대화방을 고정하실 수 없습니다.</value>
-  </data>
   <data name="lng_filters_exclude_about" xml:space="preserve">
     <value>폴더에 표시하지 않을 대화방과 대화방 유형을 정하세요.</value>
   </data>
   <data name="lng_filters_icon_header" xml:space="preserve">
     <value>아이콘 선택</value>
   </data>
-  <data name="lng_filters_include_non_contacts" xml:space="preserve">
-    <value>비연락처</value>
+  <data name="lng_filters_include_about" xml:space="preserve">
+    <value>폴더에 표시할 대화방과 대화방 유형을 정하세요.</value>
   </data>
   <data name="lng_filters_limit" xml:space="preserve">
     <value>죄송합니다. 폴더를 더 만드실 수 없습니다.</value>
@@ -17555,9 +17790,6 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_filters_subtitle" xml:space="preserve">
     <value>내 폴더</value>
   </data>
-  <data name="lng_filters_type_non_contacts" xml:space="preserve">
-    <value>비연락처</value>
-  </data>
   <data name="lng_flood_error" xml:space="preserve">
     <value>너무 많이 시도하셨습니다. 나중에 다시 시도해주세요.</value>
   </data>
@@ -17573,6 +17805,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_forward_cant" xml:space="preserve">
     <value>이쪽으로 전달 할 수 없습니다 :(</value>
   </data>
+  <data name="lng_forward_change_recipient" xml:space="preserve">
+    <value>수신자 변경</value>
+  </data>
   <data name="lng_forward_choose" xml:space="preserve">
     <value>수신자 선택...</value>
   </data>
@@ -17587,6 +17822,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_forward_share_contact" xml:space="preserve">
     <value>{recipient} 님에게 연락처를 공유하시겠습니까?</value>
+  </data>
+  <data name="lng_forward_show_caption" xml:space="preserve">
+    <value>설명 표시</value>
   </data>
   <data name="lng_forward_show_captions" xml:space="preserve">
     <value>설명 표시</value>
@@ -17633,12 +17871,6 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_from_request_body" xml:space="preserve">
     <value>{date}에 {name} 입장을 요청하였기 때문에 이 메시지를 받게 되었습니다.</value>
   </data>
-  <data name="lng_from_request_title_channel" xml:space="preserve">
-    <value>입장요청에 대한 답변</value>
-  </data>
-  <data name="lng_from_request_title_group" xml:space="preserve">
-    <value>입장요청에 대한 답변</value>
-  </data>
   <data name="lng_full_name" xml:space="preserve">
     <value>{last_name} {first_name}</value>
   </data>
@@ -17647,9 +17879,6 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_gifs_no_saved" xml:space="preserve">
     <value>저장하신 GIF가 없습니다.</value>
-  </data>
-  <data name="lng_gigagroup_convert_feature3" xml:space="preserve">
-    <value>일반 그룹으로 다시 돌릴 수 없게 됩니다.</value>
   </data>
   <data name="lng_gigagroup_convert_sure" xml:space="preserve">
     <value>전환하기</value>
@@ -17687,9 +17916,6 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_group_call_also_cancel_channel" xml:space="preserve">
     <value>실시간 방송 취소</value>
-  </data>
-  <data name="lng_group_call_also_end" xml:space="preserve">
-    <value>영상 대화 종료</value>
   </data>
   <data name="lng_group_call_can_speak" xml:space="preserve">
     <value>이제 {chat}에서 발언 할 수 있습니다.</value>
@@ -17730,17 +17956,11 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_group_call_copy_speaker_link" xml:space="preserve">
     <value>발언자 링크 복사</value>
   </data>
-  <data name="lng_group_call_create_sure" xml:space="preserve">
-    <value>이 그룹에서 영상 대화를 시작하겠습니까?</value>
-  </data>
   <data name="lng_group_call_create_sure_channel" xml:space="preserve">
     <value>정말로 개인 계정으로 영상 대화에 참여하시겠습니까?</value>
   </data>
   <data name="lng_group_call_edit_title" xml:space="preserve">
     <value>영상 대화 제목 수정</value>
-  </data>
-  <data name="lng_group_call_edit_title_header" xml:space="preserve">
-    <value>영상 대화 제목</value>
   </data>
   <data name="lng_group_call_end" xml:space="preserve">
     <value>영상 대화 종료</value>
@@ -17781,9 +18001,6 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_group_call_join_as_changed_channel" xml:space="preserve">
     <value>이 실시간 방송의 참가자들에게 {name} 으로 표시됩니다</value>
   </data>
-  <data name="lng_group_call_join_as_header" xml:space="preserve">
-    <value>영상 대화를 다음으로 참가...</value>
-  </data>
   <data name="lng_group_call_join_confirm" xml:space="preserve">
     <value>{chat} 영상 대화에 참여하시겠습니까?</value>
   </data>
@@ -17804,9 +18021,6 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_group_call_leave_sure_channel" xml:space="preserve">
     <value>정말 실시간 방송을 나가겠습니까?</value>
-  </data>
-  <data name="lng_group_call_leave_title" xml:space="preserve">
-    <value>영상 대화 나가기</value>
   </data>
   <data name="lng_group_call_leave_to_other_sure" xml:space="preserve">
     <value>현재 활성화된 영상 대화를 나가고, 이 영상 대화에 입장하겠습니까?</value>
@@ -17847,9 +18061,6 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_group_call_new_muted" xml:space="preserve">
     <value>새로운 참가자 음소거</value>
-  </data>
-  <data name="lng_group_call_no_anonymous" xml:space="preserve">
-    <value>죄송하지만, 익명 관리자로 영상 대화에 참여할 수 없습니다.</value>
   </data>
   <data name="lng_group_call_no_members" xml:space="preserve">
     <value>클릭하여 입장</value>
@@ -17905,11 +18116,6 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_group_call_recording_start_checkbox" xml:space="preserve">
     <value>영상도 녹화</value>
   </data>
-  <data name="lng_group_call_recording_start_sure" xml:space="preserve">
-    <value>이 대화 녹음을 시작하고 결과를 음성 파일로 저장 하고 싶으신가요?
-
-참가자들은 이 대화가 녹음되는지 알게 됩니다.</value>
-  </data>
   <data name="lng_group_call_recording_start_title" xml:space="preserve">
     <value>제목 추가</value>
   </data>
@@ -17927,9 +18133,6 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_group_call_recording_stop" xml:space="preserve">
     <value>녹음 중단</value>
-  </data>
-  <data name="lng_group_call_recording_stop_sure" xml:space="preserve">
-    <value>영상 대화 녹화을 중단하시겠습니까?</value>
   </data>
   <data name="lng_group_call_recording_stopped" xml:space="preserve">
     <value>녹화가 중단되었습니다.</value>
@@ -17954,12 +18157,6 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_group_call_schedule_notified_group" xml:space="preserve">
     <value>그룹 참가자들은  {duration} 이후 영상 대화가 시작된다는 알림을 받게 됩니다.</value>
-  </data>
-  <data name="lng_group_call_schedule_title" xml:space="preserve">
-    <value>영상 대화 예약</value>
-  </data>
-  <data name="lng_group_call_scheduled_title" xml:space="preserve">
-    <value>예약된 영상 대화</value>
   </data>
   <data name="lng_group_call_screen_share_audio" xml:space="preserve">
     <value>시스템 오디오 공유</value>
@@ -18021,9 +18218,6 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_group_call_switch_done" xml:space="preserve">
     <value>이제 영상 대화의 참가자들은 회원님을 **{user}**로 보여지게 됩니다.</value>
   </data>
-  <data name="lng_group_call_title" xml:space="preserve">
-    <value>영상 대화</value>
-  </data>
   <data name="lng_group_call_title_changed" xml:space="preserve">
     <value>영상 대화 제목이 {title}으로 수정 됨</value>
   </data>
@@ -18069,6 +18263,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_group_call_you_are_live" xml:space="preserve">
     <value>실시간 대화 중</value>
   </data>
+  <data name="lng_group_full" xml:space="preserve">
+    <value>죄송합니다. 이 그룹은 가득 찼습니다.</value>
+  </data>
   <data name="lng_group_invite_about" xml:space="preserve">
     <value>텔레그램 사용자가 이 링크를 통하여
 회원님의 그룹에 들어올 수 있습니다.</value>
@@ -18113,9 +18310,6 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_group_invite_expires_at" xml:space="preserve">
     <value>{when}에 링크가 폐기됨.</value>
   </data>
-  <data name="lng_group_invite_label_about" xml:space="preserve">
-    <value>관리자에게만 이름이 표시됩니다.</value>
-  </data>
   <data name="lng_group_invite_label_header" xml:space="preserve">
     <value>링크 이름 (선택)</value>
   </data>
@@ -18128,8 +18322,8 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_group_invite_other_list" xml:space="preserve">
     <value>이 관리자가 생성한 초대링크</value>
   </data>
-  <data name="lng_group_invite_other_title" xml:space="preserve">
-    <value>다른 관리자가 만든 초대 링크</value>
+  <data name="lng_group_invite_permanent" xml:space="preserve">
+    <value>영구 링크</value>
   </data>
   <data name="lng_group_invite_permanent_other" xml:space="preserve">
     <value>이 관리자의 영구 링크</value>
@@ -18149,11 +18343,20 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_group_invite_revoked_title" xml:space="preserve">
     <value>폐기된 링크</value>
   </data>
+  <data name="lng_group_invite_usage_about" xml:space="preserve">
+    <value>일정 횟수 이상 사용이 된 링크를 만료시킬 수 있습니다.</value>
+  </data>
+  <data name="lng_group_invite_usage_title" xml:space="preserve">
+    <value>사용 횟수 제한</value>
+  </data>
   <data name="lng_group_not_accessible" xml:space="preserve">
     <value>죄송합니다. 그룹에 접근 할 수 없습니다.</value>
   </data>
   <data name="lng_group_removed_list_about" xml:space="preserve">
     <value>관리자가 그룹에서 추방시킨 사용자는 초대 링크를 통해 다시 들어올 수 없습니다.</value>
+  </data>
+  <data name="lng_group_request_sent" xml:space="preserve">
+    <value>관리자가 요청 승인한 후에 그룹에 추가가 됩니다.</value>
   </data>
   <data name="lng_group_request_to_join" xml:space="preserve">
     <value>입장 요청</value>
@@ -18463,17 +18666,14 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_manage_group_info" xml:space="preserve">
     <value>그룹 정보</value>
   </data>
-  <data name="lng_manage_history_visibility_hidden_about" xml:space="preserve">
-    <value>새로운 참가자는 이전 메시지를 볼 수 없습니다.</value>
-  </data>
-  <data name="lng_manage_history_visibility_hidden_legacy" xml:space="preserve">
-    <value>새로운 참가자는 100개 이전의 메시지를 볼 수 없습니다.</value>
-  </data>
   <data name="lng_manage_linked_channel" xml:space="preserve">
     <value>이어진 채널</value>
   </data>
   <data name="lng_manage_linked_channel_about" xml:space="preserve">
     <value>이 그룹은 {channel}의 토론 게시판으로 연결 되어 있습니다.</value>
+  </data>
+  <data name="lng_manage_linked_channel_posted" xml:space="preserve">
+    <value>이 채널에 새로 게시되는 메시지가 모두 그룹으로 전달됩니다.</value>
   </data>
   <data name="lng_manage_linked_channel_private" xml:space="preserve">
     <value>그룹의 어느 참가자든 채널에 올라오는 메시지를 볼 수 있습니다.</value>
@@ -18496,6 +18696,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_manage_peer_link_invite" xml:space="preserve">
     <value>초대 링크</value>
   </data>
+  <data name="lng_manage_peer_link_permanent" xml:space="preserve">
+    <value>영구 링크</value>
+  </data>
   <data name="lng_manage_peer_link_type" xml:space="preserve">
     <value>링크 종류</value>
   </data>
@@ -18505,17 +18708,11 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_manage_peer_no_forwards_about_channel" xml:space="preserve">
     <value>이 채널의 구독자들은 컨텐츠 저장 및 전달을 할 수 없게 됩니다.</value>
   </data>
-  <data name="lng_manage_peer_reactions_about" xml:space="preserve">
-    <value>참가자들이 그룹 메시지에 반응하도록 허용합니다.</value>
+  <data name="lng_manage_peer_no_forwards_title" xml:space="preserve">
+    <value>컨텐츠 저장</value>
   </data>
   <data name="lng_manage_peer_recent_actions" xml:space="preserve">
     <value>최근 활동</value>
-  </data>
-  <data name="lng_manage_peer_requests" xml:space="preserve">
-    <value>입장 요청</value>
-  </data>
-  <data name="lng_manage_peer_requests_channel" xml:space="preserve">
-    <value>입장 요청</value>
   </data>
   <data name="lng_masks_archive_pack" xml:space="preserve">
     <value>보관된 마스크</value>
@@ -18636,6 +18833,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_mediaview_playback_speed" xml:space="preserve">
     <value>재생 속도: {speed}</value>
+  </data>
+  <data name="lng_mediaview_profile_photo" xml:space="preserve">
+    <value>프로필 사진</value>
   </data>
   <data name="lng_mediaview_rotate_video" xml:space="preserve">
     <value>비디오 회전</value>
@@ -18874,14 +19074,11 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_passcode_enter" xml:space="preserve">
     <value>암호 입력</value>
   </data>
-  <data name="lng_passcode_enter_new" xml:space="preserve">
-    <value>새로운 암호 입력</value>
-  </data>
-  <data name="lng_passcode_enter_old" xml:space="preserve">
-    <value>현재 암호 입력</value>
-  </data>
   <data name="lng_passcode_is_same" xml:space="preserve">
     <value>암호가 변경되지 않았습니다.</value>
+  </data>
+  <data name="lng_passcode_logout" xml:space="preserve">
+    <value>로그아웃</value>
   </data>
   <data name="lng_passcode_need_unblock" xml:space="preserve">
     <value>먼저 잠금을 해제하셔야 합니다.</value>
@@ -18945,9 +19142,6 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_passport_allow" xml:space="preserve">
     <value>{bot} 봇에서 메시지를 보내도록 허용하셨습니다.</value>
-  </data>
-  <data name="lng_passport_app_out_of_date" xml:space="preserve">
-    <value>죄송합니다. 텔레그램 앱이 최신 버전이 아니기에 이 요청을 받을 수 없습니다. 텔레그램을 업데이트해 주세요.</value>
   </data>
   <data name="lng_passport_authorize" xml:space="preserve">
     <value>승인</value>
@@ -19054,9 +19248,6 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_passport_identity_license" xml:space="preserve">
     <value>운전면허</value>
-  </data>
-  <data name="lng_passport_identity_license_upload" xml:space="preserve">
-    <value>회원님의 운전면허증을 스캔하여 올리세요</value>
   </data>
   <data name="lng_passport_identity_selfie" xml:space="preserve">
     <value>서류가 드러나도록 본인 사진을 찍으세요</value>
@@ -19364,9 +19555,6 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_pinned_pin_sure" xml:space="preserve">
     <value>메시지를 고정 하시겠습니까?</value>
   </data>
-  <data name="lng_pinned_pin_sure_group" xml:space="preserve">
-    <value>그룹에 메시지를 고정하겠습니까?</value>
-  </data>
   <data name="lng_pinned_previous" xml:space="preserve">
     <value>이전 메시지</value>
   </data>
@@ -19445,9 +19633,6 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_polls_view_results" xml:space="preserve">
     <value>결과 보기</value>
   </data>
-  <data name="lng_profile_add_more_after_create" xml:space="preserve">
-    <value>그룹을 만들고 나서 참가자를 더 추가하실 수 있습니다.</value>
-  </data>
   <data name="lng_profile_bio" xml:space="preserve">
     <value>자기소개:</value>
   </data>
@@ -19465,6 +19650,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_profile_clear_and_exit" xml:space="preserve">
     <value>삭제하고 나가기</value>
+  </data>
+  <data name="lng_profile_clear_history" xml:space="preserve">
+    <value>대화 내용 비우기</value>
   </data>
   <data name="lng_profile_convert_confirm" xml:space="preserve">
     <value>변환</value>
@@ -19538,6 +19726,12 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_profile_recent_actions" xml:space="preserve">
     <value>최근 활동</value>
   </data>
+  <data name="lng_profile_restart_bot" xml:space="preserve">
+    <value>봇 다시 시작</value>
+  </data>
+  <data name="lng_profile_search_members" xml:space="preserve">
+    <value>참가자 검색</value>
+  </data>
   <data name="lng_profile_search_messages" xml:space="preserve">
     <value>메시지 검색</value>
   </data>
@@ -19562,14 +19756,14 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_profile_unblock_bot" xml:space="preserve">
     <value>봇 차단해제</value>
   </data>
-  <data name="lng_profile_unblock_user" xml:space="preserve">
-    <value>사용자 차단 해제</value>
-  </data>
   <data name="lng_profile_username" xml:space="preserve">
     <value>사용자명:</value>
   </data>
   <data name="lng_profile_view_channel" xml:space="preserve">
     <value>채널 보기</value>
+  </data>
+  <data name="lng_profile_view_discussion" xml:space="preserve">
+    <value>토론 보기</value>
   </data>
   <data name="lng_proxy_about" xml:space="preserve">
     <value>프록시 서버는 특정 지역에 연결이 안 될 경우 텔레그램에 접속하시는 데 도움이 될 수 있습니다.</value>
@@ -19615,9 +19809,6 @@ https://telegram.org/blog/coronavirus</value>
 대화방 목록에서 이 채널을 제거하려면, 
 텔레그램 설정에서 프록시 사용을 해제하세요.</value>
   </data>
-  <data name="lng_proxy_sponsor_warning" xml:space="preserve">
-    <value>이 프록시를 사용하시면 후원 받는 채널이 대화방 목록에 표시될 수 있습니다. 이는 회원님의 텔레그램 트래픽을 공개하지 않습니다.</value>
-  </data>
   <data name="lng_proxy_unavailable" xml:space="preserve">
     <value>이용할 수 없음</value>
   </data>
@@ -19630,6 +19821,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_proxy_use_custom" xml:space="preserve">
     <value>맞춤 프록시 사용</value>
   </data>
+  <data name="lng_proxy_use_for_calls" xml:space="preserve">
+    <value>전화에 프록시 사용</value>
+  </data>
   <data name="lng_proxy_use_system_settings" xml:space="preserve">
     <value>시스템 프록시 설정 사용</value>
   </data>
@@ -19638,9 +19832,6 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_recent_stickers" xml:space="preserve">
     <value>최근 사용</value>
-  </data>
-  <data name="lng_recent_stickers_remove" xml:space="preserve">
-    <value>최근 목록에서 삭제</value>
   </data>
   <data name="lng_reconnecting_try_now" xml:space="preserve">
     <value>다시 시도</value>
@@ -19659,6 +19850,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_remind_title" xml:space="preserve">
     <value>다음 시간에 리마인드하기...</value>
+  </data>
+  <data name="lng_reminder_message" xml:space="preserve">
+    <value>알림 설정하기</value>
   </data>
   <data name="lng_reply_cant" xml:space="preserve">
     <value>슈퍼그룹 업그레이드하기 전에 작성 된 메시지에 답장을 할 수 없습니다.
@@ -19758,6 +19952,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_restricted_send_public_polls" xml:space="preserve">
     <value>죄송합니다. 공개 투표 설문은 채널로 전달하실 수 없습니다.</value>
   </data>
+  <data name="lng_restricted_send_stickers" xml:space="preserve">
+    <value>그룹 관리자의 제한으로 스티커를 보내실 수 없습니다.</value>
+  </data>
   <data name="lng_restricted_send_stickers_all" xml:space="preserve">
     <value>이 그룹에서는 스티커가 금지됩니다.</value>
   </data>
@@ -19769,6 +19966,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_rights_about_add_admins_yes" xml:space="preserve">
     <value>이 관리자는 동일한(또는 보다 제한된) 권한을 가진 새로운 관리자를 추가할 수 있습니다.</value>
+  </data>
+  <data name="lng_rights_about_admin_cant_edit" xml:space="preserve">
+    <value>이 관리자의 권한을 수정하실 수 없습니다.</value>
   </data>
   <data name="lng_rights_about_restriction_cant_edit" xml:space="preserve">
     <value>이 사용자에 대한 제한을 수정하실 수 없습니다.</value>
@@ -19806,8 +20006,8 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_rights_group_invite_link" xml:space="preserve">
     <value>링크를 통하여 사용자 초대</value>
   </data>
-  <data name="lng_rights_group_manage_calls" xml:space="preserve">
-    <value>영상 대화 관리</value>
+  <data name="lng_rights_permission_cant_edit" xml:space="preserve">
+    <value>이 권한을 수정하실 수 없습니다.</value>
   </data>
   <data name="lng_rights_permission_for_all" xml:space="preserve">
     <value>이 설정은 그룹 권한을 가진 참가자 모두에게서 켜져 있습니다.</value>
@@ -20000,8 +20200,14 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_send_separate_photos_videos" xml:space="preserve">
     <value>미디어 낱개로 보내기</value>
   </data>
+  <data name="lng_send_silent_message" xml:space="preserve">
+    <value>소리 없이 보내기</value>
+  </data>
   <data name="lng_sent_date" xml:space="preserve">
     <value>보낸날자: {date}</value>
+  </data>
+  <data name="lng_sessions_header" xml:space="preserve">
+    <value>현재 세션</value>
   </data>
   <data name="lng_sessions_location_about" xml:space="preserve">
     <value>이 위치는 IP 주소를 기반한 추정이며 항상 정확하지 않을 수 있습니다.</value>
@@ -20094,6 +20300,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_settings_bg_show_all" xml:space="preserve">
     <value>모든 테마 보기</value>
+  </data>
+  <data name="lng_settings_bg_theme_create" xml:space="preserve">
+    <value>새로운 테마 만들기</value>
   </data>
   <data name="lng_settings_bg_theme_edit" xml:space="preserve">
     <value>테마 수정</value>
@@ -20236,6 +20445,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_settings_forwards_privacy" xml:space="preserve">
     <value>전달된 메시지</value>
   </data>
+  <data name="lng_settings_group_privacy_about" xml:space="preserve">
+    <value>회원님을 그룹과 채널에 추가할 수 있는 사람을 정하세요.</value>
+  </data>
   <data name="lng_settings_groups_invite" xml:space="preserve">
     <value>그룹 및 채널</value>
   </data>
@@ -20262,6 +20474,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_settings_latest_installed" xml:space="preserve">
     <value>최신 버전이 설치되어 있습니다.</value>
+  </data>
+  <data name="lng_settings_logout" xml:space="preserve">
+    <value>로그아웃</value>
   </data>
   <data name="lng_settings_loop_stickers" xml:space="preserve">
     <value>움직이는 스티커 반복 재생</value>
@@ -20302,9 +20517,6 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_settings_notify_all" xml:space="preserve">
     <value>모든 계정</value>
   </data>
-  <data name="lng_settings_notify_all_about" xml:space="preserve">
-    <value>현재 이용하고 계신 계정에만 알림을 받고 싶다면 이 설정을 끄세요.</value>
-  </data>
   <data name="lng_settings_open_system_settings" xml:space="preserve">
     <value>설정 열기</value>
   </data>
@@ -20322,9 +20534,6 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_settings_password_title" xml:space="preserve">
     <value>2단계 인증</value>
-  </data>
-  <data name="lng_settings_peer_to_peer_about" xml:space="preserve">
-    <value>단대단을 끄시면, 회원님의 IP 주소를 노출시키지 않도록 모든 전화가 텔레그램 서버를 통해 전달됩니다. 다만 음성 품질이 약간 저하될 수 있습니다.</value>
   </data>
   <data name="lng_settings_performance" xml:space="preserve">
     <value>성능</value>
@@ -20374,9 +20583,6 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_settings_send_ctrlenter" xml:space="preserve">
     <value> Ctrl+Enter 키로 보내기</value>
   </data>
-  <data name="lng_settings_send_enter" xml:space="preserve">
-    <value>Enter 키로 보내기</value>
-  </data>
   <data name="lng_settings_sensitive_about" xml:space="preserve">
     <value>회원님의 모든 텔레그램 기기의 공개 채널에 민감한 미디어를 표시합니다.</value>
   </data>
@@ -20386,14 +20592,11 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_settings_sensitive_title" xml:space="preserve">
     <value>민감한 컨텐츠</value>
   </data>
-  <data name="lng_settings_show_from" xml:space="preserve">
-    <value>알림 보이기</value>
+  <data name="lng_settings_sessions_about" xml:space="preserve">
+    <value>다른 기기의 세션을 제어하세요.</value>
   </data>
   <data name="lng_settings_show_name" xml:space="preserve">
     <value>발신인 표시</value>
-  </data>
-  <data name="lng_settings_show_preview" xml:space="preserve">
-    <value>메시지 미리보기</value>
   </data>
   <data name="lng_settings_show_sessions" xml:space="preserve">
     <value>모든 세션 보기</value>
@@ -20521,9 +20724,6 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_signin_hint" xml:space="preserve">
     <value>힌트: {password_hint}</value>
   </data>
-  <data name="lng_signin_no_email_forgot" xml:space="preserve">
-    <value>비밀번호를 설정할 때 복구 이메일을 등록하지 않았기에, 비밀번호를 기억해내거나 계정을 초기화하시는 수밖에 없습니다.</value>
-  </data>
   <data name="lng_signin_password" xml:space="preserve">
     <value>클라우드 비밀번호</value>
   </data>
@@ -20543,6 +20743,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_signin_reset_account" xml:space="preserve">
     <value>계정 초기화</value>
+  </data>
+  <data name="lng_signin_reset_cancelled" xml:space="preserve">
+    <value>계정을 사용 중인 사용자가 계정 초기화 시도를 취소하였습니다. 7일 뒤에 다시 시도해 주세요.</value>
   </data>
   <data name="lng_signin_reset_in_days" xml:space="preserve">
     <value>{days_count} {hours_count} {minutes_count}</value>
@@ -20609,11 +20812,6 @@ https://telegram.org/blog/coronavirus</value>
 
 텔레그램은 수억 명의 사용자에게 무료이면서 무제한 서비스를 제공하기 위해 상당한 서버 및 트래픽 비용이 발생합니다. 독립성을 유지함과 동시에 본연의 가치를 지키기 위해 텔레그램은 개인 정보 보호를 고려한 유료 홍보 메시지 툴을 개발하였습니다. 책임감 있는 광고주들은 언제든지 다음으로의 연락을 환영합니다:</value>
   </data>
-  <data name="lng_sponsored_info_description2" xml:space="preserve">
-    <value>현재 스폰서 메시지는 테스트 중에 있습니다. 정식 출시가 되고 텔레그램의 기본 비용을 충당할 수 있게 되면, 스폰서 메시지가 표시되고 있는 공개 채널 소유자들에게 수익을 공유하기 시작할 것입니다.
-
-온라인 광고가 더 이상 사용자 개인 정보 침해와 동일시 되는 일은 없어져야 합니다. 테크회사가 어떻게 운영을 해야 하는지 모두 함께 재정의 해나갑시다.</value>
-  </data>
   <data name="lng_sponsored_title" xml:space="preserve">
     <value>스폰서 메시지가
 뭔가요?</value>
@@ -20653,9 +20851,6 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_stickers_attached_sets" xml:space="preserve">
     <value>부착된 스티커 묶음</value>
-  </data>
-  <data name="lng_stickers_copied" xml:space="preserve">
-    <value>링크를 클립보드에 복사했습니다.</value>
   </data>
   <data name="lng_stickers_default_set" xml:space="preserve">
     <value>Great Minds</value>
@@ -20936,9 +21131,6 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_theme_sure_keep" xml:space="preserve">
     <value>이 테마를 유지하시겠습니까?</value>
   </data>
-  <data name="lng_tooltip_psa_default" xml:space="preserve">
-    <value>이 메시지는 공공 서비스 발표를 제공해드립니다.</value>
-  </data>
   <data name="lng_tray_icon_text" xml:space="preserve">
     <value>텔레그램이 아직 실행되고 있습니다.
 설정 페이지에서 이 동작을 바꿀 수 있습니다.
@@ -20957,9 +21149,6 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_ttl_edit_about" xml:space="preserve">
     <value>새로 보낸 메시지가 나와 {user} 에게 일정 시간 이후 자동으로 삭제됩니다.</value>
   </data>
-  <data name="lng_ttl_edit_about_channel" xml:space="preserve">
-    <value>이 채널에서 새로 보낸 메시지가 일정 시간 이후 자동으로 삭제됩니다.</value>
-  </data>
   <data name="lng_ttl_photo_received" xml:space="preserve">
     <value>{from} 님이 자동 삭제되는 사진을 보냈습니다. 모바일 기기에서 확인해 주세요.</value>
   </data>
@@ -20974,6 +21163,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_typing" xml:space="preserve">
     <value>입력 중</value>
+  </data>
+  <data name="lng_unblock_button" xml:space="preserve">
+    <value>차단해제</value>
   </data>
   <data name="lng_unread_bar_some" xml:space="preserve">
     <value>읽지 않은 메시지</value>
@@ -21040,12 +21232,6 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을
   </data>
   <data name="lng_username_choose" xml:space="preserve">
     <value>사용자명을 정하세요.</value>
-  </data>
-  <data name="lng_username_copied" xml:space="preserve">
-    <value>링크를 클립보드에 복사했습니다.</value>
-  </data>
-  <data name="lng_username_invalid" xml:space="preserve">
-    <value>올바르지 않은 사용자명입니다.</value>
   </data>
   <data name="lng_username_link" xml:space="preserve">
     <value>아래 링크로 회원님과의 대화방이 열립니다:</value>

@@ -490,6 +490,9 @@
   <data name="AccDescrTakeMorePics" xml:space="preserve">
     <value>Snimi još jednu sliku</value>
   </data>
+  <data name="AccDescrTopic" xml:space="preserve">
+    <value>Tema</value>
+  </data>
   <data name="AccDescrUnreadCount_few" xml:space="preserve">
     <value>{0} nepročitana razgovora</value>
   </data>
@@ -586,8 +589,14 @@
   <data name="AccReleaseForArchive" xml:space="preserve">
     <value>Pustite za arhivu</value>
   </data>
+  <data name="AccReleaseForGeneral" xml:space="preserve">
+    <value>Pustite za temu #općenito</value>
+  </data>
   <data name="AccSwipeForArchive" xml:space="preserve">
     <value>Povucite dolje za arhivu</value>
+  </data>
+  <data name="AccSwipeForGeneral" xml:space="preserve">
+    <value>Povucite dolje za temu #općenito</value>
   </data>
   <data name="AccSwitchToFullscreen" xml:space="preserve">
     <value>Prebaci na cijeli zaslon</value>
@@ -946,7 +955,7 @@ sada: {1}</value>
     <value>Dodaj</value>
   </data>
   <data name="AddAccount" xml:space="preserve">
-    <value>Dodaj račun</value>
+    <value>Dodajte račun</value>
   </data>
   <data name="AddAdminErrorBlacklisted" xml:space="preserve">
     <value>Nažalost, ne možete dodati ovog korisnika kao administratora jer je na listi uklonjenih korisnika, a vi nemate dopuštenje da uklonite zabranu pristupa.</value>
@@ -1086,6 +1095,51 @@ sada: {1}</value>
   <data name="AdditionalReactionsDescription" xml:space="preserve">
     <value>Pretplatite se na Telegram Premium i otključajte veći izbor reakcija na poruke.</value>
   </data>
+  <data name="AddManyEmojiCount_few" xml:space="preserve">
+    <value>Dodaj {0} emojija</value>
+  </data>
+  <data name="AddManyEmojiCount_one" xml:space="preserve">
+    <value>Dodaj {0} emoji</value>
+  </data>
+  <data name="AddManyEmojiCount_other" xml:space="preserve">
+    <value>Dodaj {0} emojija</value>
+  </data>
+  <data name="AddManyMasksCount_few" xml:space="preserve">
+    <value>Dodaj {0} maske</value>
+  </data>
+  <data name="AddManyMasksCount_one" xml:space="preserve">
+    <value>Dodaj {0} masku</value>
+  </data>
+  <data name="AddManyMasksCount_other" xml:space="preserve">
+    <value>Dodaj {0} maski</value>
+  </data>
+  <data name="AddManyMembersAlertNamesText_few" xml:space="preserve">
+    <value>Želite li dodati {0} člana u **{1}**?</value>
+  </data>
+  <data name="AddManyMembersAlertNamesText_one" xml:space="preserve">
+    <value>Želite li dodati {0} člana u **{1}**?</value>
+  </data>
+  <data name="AddManyMembersAlertNamesText_other" xml:space="preserve">
+    <value>Želite li dodati {0} članova u **{1}**?</value>
+  </data>
+  <data name="AddManyMembersAlertTitle_few" xml:space="preserve">
+    <value>Dodaj {0} člana</value>
+  </data>
+  <data name="AddManyMembersAlertTitle_one" xml:space="preserve">
+    <value>Dodaj {0} člana</value>
+  </data>
+  <data name="AddManyMembersAlertTitle_other" xml:space="preserve">
+    <value>Dodaj {0} članova</value>
+  </data>
+  <data name="AddManyStickersCount_few" xml:space="preserve">
+    <value>Dodaj {0} naljepnice</value>
+  </data>
+  <data name="AddManyStickersCount_one" xml:space="preserve">
+    <value>Dodaj {0} naljepnicu</value>
+  </data>
+  <data name="AddManyStickersCount_other" xml:space="preserve">
+    <value>Dodaj {0} naljepnica</value>
+  </data>
   <data name="AddMasks" xml:space="preserve">
     <value>Dodaj maske</value>
   </data>
@@ -1222,22 +1276,22 @@ sada: {1}</value>
     <value>Svi mediji</value>
   </data>
   <data name="AllNMedia_few" xml:space="preserve">
-    <value>{0} medija</value>
+    <value>Sve medije ({0})</value>
   </data>
   <data name="AllNMedia_one" xml:space="preserve">
-    <value>{0} medij</value>
+    <value>Sve medije ({0})</value>
   </data>
   <data name="AllNMedia_other" xml:space="preserve">
-    <value>{0} medija</value>
+    <value>Sve medije ({0})</value>
   </data>
   <data name="AllNPhotos_few" xml:space="preserve">
-    <value>{0} slike</value>
+    <value>Sve slike ({0})</value>
   </data>
   <data name="AllNPhotos_one" xml:space="preserve">
-    <value>{0} sliku</value>
+    <value>Sve slike ({0})</value>
   </data>
   <data name="AllNPhotos_other" xml:space="preserve">
-    <value>{0} slika</value>
+    <value>Sve slike ({0})</value>
   </data>
   <data name="Allow" xml:space="preserve">
     <value>Dopusti</value>
@@ -1352,6 +1406,12 @@ sada: {1}</value>
   </data>
   <data name="AnimatedStickers" xml:space="preserve">
     <value>Animirane naljepnice</value>
+  </data>
+  <data name="AnonymousNumber" xml:space="preserve">
+    <value>Anonimni broj</value>
+  </data>
+  <data name="AnonymousNumberNotice" xml:space="preserve">
+    <value>Ovaj broj je kupljen preko *Fragmenta* i nije vezan za SIM karticu.</value>
   </data>
   <data name="AnonymousPoll" xml:space="preserve">
     <value>Anonimna anketa</value>
@@ -1679,7 +1739,7 @@ Poništit će se svi vaši tajni razgovori.
 Telegram možete istovremeno koristiti na svim vašim uređajima i koristiti više računa u istoj aplikaciji.</value>
   </data>
   <data name="AreYouSureRegistration" xml:space="preserve">
-    <value>Želite li otkazati proces registracije?</value>
+    <value>Želite li zaustaviti proces registracije?</value>
   </data>
   <data name="AreYouSureSecretChat" xml:space="preserve">
     <value>Želite li pokrenuti tajni razgovor?</value>
@@ -1738,10 +1798,10 @@ Najprije pogledajte &lt;![CDATA[&lt;a href=&quot;https://telegram.org/faq#genera
     <value>Kontakti</value>
   </data>
   <data name="AttachDestructingPhoto" xml:space="preserve">
-    <value>Nestajuća slika</value>
+    <value>Samouništavajuća slika</value>
   </data>
   <data name="AttachDestructingVideo" xml:space="preserve">
-    <value>Nestajući video</value>
+    <value>Samouništavajući video</value>
   </data>
   <data name="AttachDocument" xml:space="preserve">
     <value>Datoteka</value>
@@ -1920,7 +1980,22 @@ Za potvrdu prijave idite na Postavke &gt; Uređaji &gt; Skenirajte QR kod.</valu
     <value>1 tjedan</value>
   </data>
   <data name="AutoDeleteAfter" xml:space="preserve">
-    <value>Automatsko brisanje nakon {0}</value>
+    <value>automatski se briše nakon {0}</value>
+  </data>
+  <data name="AutoDeleteAfter1Day" xml:space="preserve">
+    <value>Nakon 1 dana</value>
+  </data>
+  <data name="AutoDeleteAfter1Month" xml:space="preserve">
+    <value>Nakon 1 mjeseca</value>
+  </data>
+  <data name="AutoDeleteAfter1Week" xml:space="preserve">
+    <value>Nakon 1 tjedna</value>
+  </data>
+  <data name="AutoDeleteAfter3Weeks" xml:space="preserve">
+    <value>Nakon 3 tjedna</value>
+  </data>
+  <data name="AutoDeleteAfterShort" xml:space="preserve">
+    <value>Nakon {0}</value>
   </data>
   <data name="AutoDeleteAfteTitle" xml:space="preserve">
     <value>Automatski izbriši nakon...</value>
@@ -1940,11 +2015,34 @@ Za potvrdu prijave idite na Postavke &gt; Uređaji &gt; Skenirajte QR kod.</valu
   <data name="AutoDeleteConfirm" xml:space="preserve">
     <value>Potvrdi</value>
   </data>
+  <data name="AutoDeleteConfirmMessage" xml:space="preserve">
+    <value>Želite li da se sve poruke u vašim novim razgovorima koje pokrenete automatski svima izbrišu {0} nakon što su poslane?</value>
+  </data>
   <data name="AutoDeleteCustom" xml:space="preserve">
     <value>Prilagodi</value>
   </data>
+  <data name="AutoDeleteCustom2" xml:space="preserve">
+    <value>Prilagođeno vrijeme</value>
+  </data>
   <data name="AutoDeleteDisable" xml:space="preserve">
     <value>Isključi</value>
+  </data>
+  <data name="AutoDeleteDisabled" xml:space="preserve">
+    <value>automatsko brisanje je isključeno</value>
+  </data>
+  <data name="AutoDeleteGlobalAction" xml:space="preserve">
+    <value>un1 koristi timer za samouništenje u svim razgovorima.
+Sve nove poruke u ovom razgovoru bit će automatski izbrisane {0} nakon slanja.</value>
+  </data>
+  <data name="AutoDeleteGlobalActionFromYou" xml:space="preserve">
+    <value>Uključili ste timer za samouništenje  u svim razgovorima.
+Sve nove poruke u ovom razgovoru bit će automatski izbrisane {0} nakon slanja.</value>
+  </data>
+  <data name="AutoDeleteGlobalTimerDisabled" xml:space="preserve">
+    <value>timer za samouništenje je isključen za sve nove razgovore.</value>
+  </data>
+  <data name="AutoDeleteGlobalTimerEnabled" xml:space="preserve">
+    <value>Poruke u novim razgovorima koje pokrenete automatski će se izbrisati nakon **{0}**.</value>
   </data>
   <data name="AutoDeleteHeader" xml:space="preserve">
     <value>Automatsko brisanje poruka</value>
@@ -1961,11 +2059,17 @@ Za potvrdu prijave idite na Postavke &gt; Uređaji &gt; Skenirajte QR kod.</valu
   <data name="AutoDeleteInfo" xml:space="preserve">
     <value>Automatski briše nove poruke nakon određenog vremenskog perioda.</value>
   </data>
+  <data name="AutoDeleteMessages" xml:space="preserve">
+    <value>Automatsko brisanje</value>
+  </data>
   <data name="AutoDeleteNever" xml:space="preserve">
     <value>Isključeno</value>
   </data>
   <data name="AutoDeletePopupDescription" xml:space="preserve">
     <value>Automatski briše nove poruke nakon određenog vremenskog perioda.</value>
+  </data>
+  <data name="AutoDeletePopupDescription2" xml:space="preserve">
+    <value>Svoj zadani **timer za samouništenje** možete podesiti za sve razgovore u postavkama.</value>
   </data>
   <data name="AutoDeletePopupTitle" xml:space="preserve">
     <value>Automatsko brisanje</value>
@@ -1978,6 +2082,15 @@ Za potvrdu prijave idite na Postavke &gt; Uređaji &gt; Skenirajte QR kod.</valu
   </data>
   <data name="AutoDeleteSetTimer" xml:space="preserve">
     <value>Automatsko brisanje</value>
+  </data>
+  <data name="AutoDeleteSettingsInfo" xml:space="preserve">
+    <value>Poruke će se svima izbrisati nakon određenog vremenskog perioda u novim razgovorima koje pokrenete.</value>
+  </data>
+  <data name="AutodeleteTimerDisabledForChats" xml:space="preserve">
+    <value>Timer za samouništenje je isključen u {0}.</value>
+  </data>
+  <data name="AutodeleteTimerEnabledForChats" xml:space="preserve">
+    <value>U {1} poruke će automatski biti obrisane nakon **{0}**.</value>
   </data>
   <data name="AutoDownloadAudioInfo" xml:space="preserve">
     <value>Glasovne poruke nisu velike pa se uvijek automatski preuzimaju.</value>
@@ -2202,7 +2315,7 @@ Izlazak: {1}</value>
     <value>Čekanje da {0} dođe na mrežu...</value>
   </data>
   <data name="AwayTo" xml:space="preserve">
-    <value>{0}</value>
+    <value>{0} od vas</value>
   </data>
   <data name="Back" xml:space="preserve">
     <value>Natrag</value>
@@ -2617,6 +2730,9 @@ Omogućite pristup u Postavkama &gt; Dopuštenja &gt; Mikrofon.</value>
   <data name="CacheEmpty" xml:space="preserve">
     <value>Prazno</value>
   </data>
+  <data name="CacheOtherChats" xml:space="preserve">
+    <value>Ostali razgovori</value>
+  </data>
   <data name="CacheWasCleared" xml:space="preserve">
     <value>{0} je oslobođeno na vašem uređaju!</value>
   </data>
@@ -2905,6 +3021,9 @@ Napomena: ako zaboravite lozinku, trebat ćete se odjaviti ili ponovno instalira
   <data name="ChangePhoneNumberSuccess" xml:space="preserve">
     <value>Vaš broj telefona je uspješno promijenjen.</value>
   </data>
+  <data name="ChangePhoneNumberSuccessWithPhone" xml:space="preserve">
+    <value>Vaš broj telefona je uspješno promijenjen u {0}. </value>
+  </data>
   <data name="ChangePublicLimitReached" xml:space="preserve">
     <value>Rezervirali ste previše javnih linkova. Pokušajte opozvati link od neke starije grupe ili kanala ili umjesto toga napravite privatnu grupu ili kanal.</value>
   </data>
@@ -2967,6 +3086,30 @@ Napomena: ako zaboravite lozinku, trebat ćete se odjaviti ili ponovno instalira
   </data>
   <data name="ChannelAlertTitle" xml:space="preserve">
     <value>Što je kanal?</value>
+  </data>
+  <data name="ChannelAntiSpam" xml:space="preserve">
+    <value>Napredno filtriranje</value>
+  </data>
+  <data name="ChannelAntiSpamFalsePositiveReported" xml:space="preserve">
+    <value>Moderatori Telegrama će pregledati prijavu. Hvala!</value>
+  </data>
+  <data name="ChannelAntiSpamForbidden_few" xml:space="preserve">
+    <value>Napredno filtriranje može se uključiti samo u grupama s više od **{0} člana**.</value>
+  </data>
+  <data name="ChannelAntiSpamForbidden_one" xml:space="preserve">
+    <value>Napredno filtriranje može se uključiti samo u grupama s više od **{0} člana**.</value>
+  </data>
+  <data name="ChannelAntiSpamForbidden_other" xml:space="preserve">
+    <value>Napredno filtriranje može se uključiti samo u grupama s više od **{0} članova**.</value>
+  </data>
+  <data name="ChannelAntiSpamInfo" xml:space="preserve">
+    <value>Telegram će filtrirati neželjene poruke, ali povremeno može utjecati i na obične poruke. Pogrešne akcije možete prijaviti u nedavnim radnjama.</value>
+  </data>
+  <data name="ChannelAntiSpamInfo2" xml:space="preserve">
+    <value>Postavkama filtriranja možete upravljati u {0}</value>
+  </data>
+  <data name="ChannelAntiSpamUser" xml:space="preserve">
+    <value>Telegram filtriranje</value>
   </data>
   <data name="ChannelBlacklist" xml:space="preserve">
     <value>Uklonjeni korisnici</value>
@@ -3729,6 +3872,9 @@ Mora imati najmanje 5 znakova.</value>
   <data name="ClearCacheFewChatsTitle" xml:space="preserve">
     <value>Očisti predmemoriju za {0}</value>
   </data>
+  <data name="ClearCacheForChats" xml:space="preserve">
+    <value>Želite li izbrisati predmemoriju u odabranim razgovorima?</value>
+  </data>
   <data name="ClearCacheInfo" xml:space="preserve">
     <value>Oslobodite prostor na svom disku, a vaši mediji će ostati u oblaku.</value>
   </data>
@@ -4131,6 +4277,9 @@ Da biste uklonili limiti i dobili dodatne značajke, pretvorite u supergrupu:
   <data name="CreateEncryptedChatError" xml:space="preserve">
     <value>Došlo je do pogreške.</value>
   </data>
+  <data name="CreateGeneralTopicTitle" xml:space="preserve">
+    <value>Odaberite naziv teme</value>
+  </data>
   <data name="CreateGroupError" xml:space="preserve">
     <value>Nažalost, ne možete napraviti grupu s ovim korisnicima zbog njihovih postavki privatnosti.</value>
   </data>
@@ -4265,6 +4414,9 @@ Uvijek se možete vratiti na Telegramovu zadanu temu.</value>
   <data name="DataUsage" xml:space="preserve">
     <value>Pohrana i korištenje podataka</value>
   </data>
+  <data name="DataUsageByChats" xml:space="preserve">
+    <value>Korištenje pohrane po razgovorima</value>
+  </data>
   <data name="Days_few" xml:space="preserve">
     <value>{0} dana</value>
   </data>
@@ -4304,6 +4456,9 @@ Uvijek se možete vratiti na Telegramovu zadanu temu.</value>
   <data name="Deactivate" xml:space="preserve">
     <value>IZBRIŠI SADA</value>
   </data>
+  <data name="DebugAltNavigation" xml:space="preserve">
+    <value>Alternative navigation</value>
+  </data>
   <data name="DebugAltNavigationToggleControls" xml:space="preserve">
     <value>Toggle navigation stiffness controls</value>
   </data>
@@ -4316,8 +4471,14 @@ Uvijek se možete vratiti na Telegramovu zadanu temu.</value>
   <data name="DebugClearSendMessageAsPeers" xml:space="preserve">
     <value>Clear Send Message As... peers</value>
   </data>
+  <data name="DebugDialogsActivity" xml:space="preserve">
+    <value>Chat Activity</value>
+  </data>
   <data name="DebugDrawSnowInChat" xml:space="preserve">
     <value>Snijeg u razgovorima</value>
+  </data>
+  <data name="DebugGeneral" xml:space="preserve">
+    <value>General</value>
   </data>
   <data name="DebugMenu" xml:space="preserve">
     <value>Otklanjanje problema</value>
@@ -4391,11 +4552,23 @@ Uvijek se možete vratiti na Telegramovu zadanu temu.</value>
   <data name="DebugMenuWebViewDebugEnabled" xml:space="preserve">
     <value>Otklanjanje problema je uključeno!</value>
   </data>
+  <data name="DebugMessageSkeletons" xml:space="preserve">
+    <value>Message Skeletons</value>
+  </data>
+  <data name="DebugMessageSkeletonsLightOverlayAlpha" xml:space="preserve">
+    <value>Light overlay alpha</value>
+  </data>
+  <data name="DebugMessageSkeletonsSaturation" xml:space="preserve">
+    <value>Saturation</value>
+  </data>
   <data name="DebugSendLastLogs" xml:space="preserve">
     <value>Pošalji posljednje log datoteke</value>
   </data>
   <data name="DebugSendLogs" xml:space="preserve">
     <value>Pošalji log datoteke</value>
+  </data>
+  <data name="DebugShareAlert" xml:space="preserve">
+    <value>Share Alert</value>
   </data>
   <data name="DebugShareAlertDialogsModeLess" xml:space="preserve">
     <value>Less</value>
@@ -4411,6 +4584,9 @@ Uvijek se možete vratiti na Telegramovu zadanu temu.</value>
   </data>
   <data name="DebugShareAlertTopicsSlowMotion" xml:space="preserve">
     <value>Toggle sharing alert topics slow motion</value>
+  </data>
+  <data name="DebugTestBackend" xml:space="preserve">
+    <value>Test Backend</value>
   </data>
   <data name="December" xml:space="preserve">
     <value>Prosinac</value>
@@ -4768,13 +4944,13 @@ Vaše preostale opcije su isprobati drugi broj ili kontaktirati podršku Telegra
     <value>Članovi grupe ne mogu dodavati nikakve reakcije na poruke.</value>
   </data>
   <data name="DisappearingGif" xml:space="preserve">
-    <value>Nestajući GIF</value>
+    <value>Samouništavajući GIF</value>
   </data>
   <data name="DisappearingPhoto" xml:space="preserve">
-    <value>Nestajuća slika</value>
+    <value>Samouništavajuća slika</value>
   </data>
   <data name="DisappearingVideo" xml:space="preserve">
-    <value>Nestajući videozapis</value>
+    <value>Samouništavajući videozapis</value>
   </data>
   <data name="Discard" xml:space="preserve">
     <value>Odbaci</value>
@@ -5131,6 +5307,12 @@ Ako je gornji broj točan, pričekajte kod za potvrdu.</value>
   <data name="EditTopic" xml:space="preserve">
     <value>Uredi temu</value>
   </data>
+  <data name="EditTopicHide" xml:space="preserve">
+    <value>Prikaži na listi tema</value>
+  </data>
+  <data name="EditTopicHideInfo" xml:space="preserve">
+    <value>Ako je tema &apos;Općenito&apos; skrivena, članovi grupe mogu povući popis tema prema dolje kako bi je vidjeli.</value>
+  </data>
   <data name="EditWidget" xml:space="preserve">
     <value>Uredi widget</value>
   </data>
@@ -5219,22 +5401,22 @@ Ako sami ne odaberete razgovore, bit će prikazani vaši najčešći razgovori.<
     <value>Emoji je kopiran u međuspremnik.</value>
   </data>
   <data name="EmojiCount_few" xml:space="preserve">
-    <value>paket od {0} emojija</value>
+    <value>{0} emojija</value>
   </data>
   <data name="EmojiCount_one" xml:space="preserve">
-    <value>paket od {0} emojija</value>
+    <value>{0} emoji</value>
   </data>
   <data name="EmojiCount_other" xml:space="preserve">
-    <value>paket od {0} emojija</value>
+    <value>{0} emojija</value>
   </data>
   <data name="EmojiCountButton_few" xml:space="preserve">
-    <value>paket od {0} emojija</value>
+    <value>{0} emojija</value>
   </data>
   <data name="EmojiCountButton_one" xml:space="preserve">
-    <value>paket od {0} emojija</value>
+    <value>{0} emoji</value>
   </data>
   <data name="EmojiCountButton_other" xml:space="preserve">
-    <value>paket od {0} emojija</value>
+    <value>{0} emojija</value>
   </data>
   <data name="EmojiInteractionTapHint" xml:space="preserve">
     <value>Ako **{0}** ima otvoren ovaj razgovor, vidjet će ovu animaciju.</value>
@@ -5346,7 +5528,7 @@ Trebat ćete lozinku koju ste ovdje postavili za prijavu u vaš Telegram račun.
     <value>Ne ostavljaju trag na serveru</value>
   </data>
   <data name="EncryptedDescription3" xml:space="preserve">
-    <value>Imaju mogućnost nestajanja poruka</value>
+    <value>Imaju samouništavajuće poruke</value>
   </data>
   <data name="EncryptedDescription4" xml:space="preserve">
     <value>Ne dopuštaju prosljeđivanje</value>
@@ -5534,6 +5716,9 @@ Unesite naziv teme:</value>
   <data name="EventLogDeleteTopic" xml:space="preserve">
     <value>un1 briše temu un2</value>
   </data>
+  <data name="EventLogDisabledAntiSpam" xml:space="preserve">
+    <value>un1 isključuje filtriranje neželjenih poruka</value>
+  </data>
   <data name="EventLogEditedCaption" xml:space="preserve">
     <value>un1 mijenja opis medija:</value>
   </data>
@@ -5596,6 +5781,9 @@ Nema nedavnih radnji koje se poklapaju s vašim upitom.</value>
   </data>
   <data name="EventLogEmptyTextSearch" xml:space="preserve">
     <value>Nema nedavnih radnji koje sadrže &apos;**{0}**&apos;.</value>
+  </data>
+  <data name="EventLogEnabledAntiSpam" xml:space="preserve">
+    <value>un1 uključuje filtriranje neželjenih poruka</value>
   </data>
   <data name="EventLogEndedLiveStream" xml:space="preserve">
     <value>un1 isključuje prijenos uživo</value>
@@ -6544,6 +6732,15 @@ Svi tajni razgovori će biti izgubljeni.</value>
   <data name="FwdMessagesToGroup" xml:space="preserve">
     <value>Poruke su proslijeđene: **{0}**.</value>
   </data>
+  <data name="FwdMessagesToManyChats_few" xml:space="preserve">
+    <value>Poruke su proslijeđene u **{0} razgovora**.</value>
+  </data>
+  <data name="FwdMessagesToManyChats_one" xml:space="preserve">
+    <value>Poruke su proslijeđene u **{0} razgovor**.</value>
+  </data>
+  <data name="FwdMessagesToManyChats_other" xml:space="preserve">
+    <value>Poruke su proslijeđene u **{0} razgovora**.</value>
+  </data>
   <data name="FwdMessagesToSavedMessages" xml:space="preserve">
     <value>Poruke su proslijeđene u **Spremljene poruke**.</value>
   </data>
@@ -6555,6 +6752,15 @@ Svi tajni razgovori će biti izgubljeni.</value>
   </data>
   <data name="FwdMessageToGroup" xml:space="preserve">
     <value>Poruka je proslijeđena: **{0}**.</value>
+  </data>
+  <data name="FwdMessageToManyChats_few" xml:space="preserve">
+    <value>Poruka je proslijeđena u **{0} razgovora**.</value>
+  </data>
+  <data name="FwdMessageToManyChats_one" xml:space="preserve">
+    <value>Poruka je proslijeđena u **{0} razgovor**.</value>
+  </data>
+  <data name="FwdMessageToManyChats_other" xml:space="preserve">
+    <value>Poruka je proslijeđena u **{0} razgovora**.</value>
   </data>
   <data name="FwdMessageToSavedMessages" xml:space="preserve">
     <value>Poruka je proslijeđena u **Spremljene poruke**.</value>
@@ -6576,6 +6782,9 @@ Svi tajni razgovori će biti izgubljeni.</value>
   </data>
   <data name="General" xml:space="preserve">
     <value>Općenito</value>
+  </data>
+  <data name="GetDirections" xml:space="preserve">
+    <value>Preuzmi upute</value>
   </data>
   <data name="GetQRCode" xml:space="preserve">
     <value>QR kod</value>
@@ -6690,6 +6899,9 @@ Ova radnja se **ne može** poništiti.</value>
   <data name="GlobalAttachStickersRestricted" xml:space="preserve">
     <value>U ovoj grupi nije dopušteno slanje naljepnica.</value>
   </data>
+  <data name="GlobalAutoDeleteInfo" xml:space="preserve">
+    <value>Ako je uključeno, sve nove poruke u razgovorima koje pokrenete bit će automatski svima izbrisane u nekom trenutku nakon što su poslane. Ovu postavku možete **primijeniti i na svoje postojeće razgovore.**</value>
+  </data>
   <data name="GlobalSearch" xml:space="preserve">
     <value>Globalno pretraživanje</value>
   </data>
@@ -6726,6 +6938,9 @@ o Telegramu?</value>
   </data>
   <data name="GroupContacts" xml:space="preserve">
     <value>Kontakti u ovoj grupi</value>
+  </data>
+  <data name="GroupCreateAutodeleteDescription" xml:space="preserve">
+    <value>Poruke u ovoj grupi će se automatski izbrisati nakon određenog vremenskog perioda.</value>
   </data>
   <data name="GroupDeletedUndo" xml:space="preserve">
     <value>Grupa je izbrisana.</value>
@@ -8253,25 +8468,25 @@ iz {0} paketa.</value>
     <value>Poruka je kopirana u međuspremnik.</value>
   </data>
   <data name="MessageLifetime" xml:space="preserve">
-    <value>Timer nestajanja</value>
+    <value>Timer za samouništenje</value>
   </data>
   <data name="MessageLifetimeChanged" xml:space="preserve">
-    <value>{0} postavlja nestajanje na {1}</value>
+    <value>{0} postavlja timer za samouništenje na {1}</value>
   </data>
   <data name="MessageLifetimeChangedOutgoing" xml:space="preserve">
-    <value>Postavili ste nestajanje na {0}</value>
+    <value>Postavili ste timer za samouništenje na {0}</value>
   </data>
   <data name="MessageLifetimePhoto" xml:space="preserve">
-    <value>Ako uključite nestajanje, slika će se sama izbrisati nakon što bude pregledana.</value>
+    <value>Ako uključite samouništenje, slika će se sama izbrisati nakon što bude pregledana.</value>
   </data>
   <data name="MessageLifetimeRemoved" xml:space="preserve">
-    <value>{0} isključuje nestajanje</value>
+    <value>{0} isključuje timer za samouništenje</value>
   </data>
   <data name="MessageLifetimeVideo" xml:space="preserve">
-    <value>Ako uključite nestajanje, video će se sam izbrisati nakon što bude pregledan.</value>
+    <value>Ako uključite samouništenje, video će se sam izbrisati nakon što bude pregledan.</value>
   </data>
   <data name="MessageLifetimeYouRemoved" xml:space="preserve">
-    <value>Isključili ste nestajanje</value>
+    <value>Isključili ste timer za samouništenje</value>
   </data>
   <data name="MessageNotFound" xml:space="preserve">
     <value>Poruka ne postoji</value>
@@ -8596,6 +8811,9 @@ To može potrajati, ali možete nastaviti koristiti aplikaciju dok se datoteke p
   <data name="NearbyVenue" xml:space="preserve">
     <value>Ili odaberite mjesto</value>
   </data>
+  <data name="NeedAdminRightForSetAutoDeleteTimer" xml:space="preserve">
+    <value>Morate biti administrator kako biste upravljali automatskim brisanjem.</value>
+  </data>
   <data name="NetworkUsage" xml:space="preserve">
     <value>Korištenje podataka</value>
   </data>
@@ -8768,7 +8986,7 @@ To može potrajati, ali možete nastaviti koristiti aplikaciju dok se datoteke p
     <value>Nažalost, trenutno možete dodavati samo obostrane kontakte u grupu.</value>
   </data>
   <data name="NobodyLikesSpam3" xml:space="preserve">
-    <value>Nažalost, ne možete objavljivati u javne grupe zbog ograničenja koje imate.</value>
+    <value>Nažalost, trenutačno vam je zabranjeno objavljivanje u ovoj grupi.</value>
   </data>
   <data name="NobodyViewed" xml:space="preserve">
     <value>Nitko nije vidio</value>
@@ -9383,10 +9601,10 @@ Provjerite jeste li unijeli ispravan URL servera i ključ streama u svoju aplika
     <value>📅 Vi</value>
   </data>
   <data name="NotificationMessageSDPhoto" xml:space="preserve">
-    <value>{0} vam šalje nestajuću sliku</value>
+    <value>{0} vam šalje samouništavajuću sliku</value>
   </data>
   <data name="NotificationMessageSDVideo" xml:space="preserve">
-    <value>{0} vam šalje nestajući video</value>
+    <value>{0} vam šalje samouništavajući video</value>
   </data>
   <data name="NotificationMessagesPeopleDisplayOrder" xml:space="preserve">
     <value>{0} {1}</value>
@@ -9610,8 +9828,11 @@ Telegram tim</value>
     <value>Ovdje trenutno nema tema</value>
   </data>
   <data name="NoTopicsDescription" xml:space="preserve">
-    <value>Otvorite svoju prvu temu ili dodirnite tipku
-{0} za prebacivanje na popis poruka.</value>
+    <value>Otvorite svoju prvu temu ili dodirnite
+{0} za prikaz svih poruka u grupi.</value>
+  </data>
+  <data name="NoTopicsDescriptionUser" xml:space="preserve">
+    <value>Stare poruke iz ove grupe premještene su u temu **’{0}’**.</value>
   </data>
   <data name="NoUsernameFound" xml:space="preserve">
     <value>Korisničko ime nije pronađeno.</value>
@@ -9696,6 +9917,9 @@ Telegram tim</value>
   </data>
   <data name="OpenFile" xml:space="preserve">
     <value>OTVORI DATOTEKU</value>
+  </data>
+  <data name="OpenFragment" xml:space="preserve">
+    <value>Otvori Fragment</value>
   </data>
   <data name="OpenGroup" xml:space="preserve">
     <value>POGLEDAJ GRUPU</value>
@@ -10511,10 +10735,10 @@ Ako želite saznati više posjetite *Česta pitanja*.</value>
     <value>Postavite podsjetnik za vašu lozinku.</value>
   </data>
   <data name="PasswordOff" xml:space="preserve">
-    <value>Isključena</value>
+    <value>Isključeno</value>
   </data>
   <data name="PasswordOn" xml:space="preserve">
-    <value>Uključena</value>
+    <value>Uključeno</value>
   </data>
   <data name="PasswordRecovery" xml:space="preserve">
     <value>Oporavak lozinke</value>
@@ -10738,7 +10962,7 @@ Ako želite saznati više posjetite *Česta pitanja*.</value>
   <data name="PaymentWarningText" xml:space="preserve">
     <value>{0} i Telegram neće imati pristup vašim podacima s kreditne kartice. Podatke s vaše kreditne kartice će koristiti jedino platni sustav - {1}.
 
-Novac će se prebaciti direktno programeru bota {0}. Telegram ne nudi nikakvu garanciju, ali možete nastaviti s plaćanjem na vlastitu odgovornost. U slučaju problema kontaktirajte programera bota {0} ili svoju banku.</value>
+Novac će se prebaciti direktno programeru bota {0}. Telegram ne nudi nikakvu garanciju, ali možete nastaviti s plaćanjem na vlastitu odgovornost. U slučaju problema kontaktirajte programera {0} bota ili svoju banku.</value>
   </data>
   <data name="PendingEmailText" xml:space="preserve">
     <value>Vaša e-pošta za oporavak {0} nije aktivna i čeka potvrdu.</value>
@@ -12072,6 +12296,42 @@ Telegram će imat pristup lokaciji za vrijeme koje vi odredite i možete zaustav
   <data name="RemoveGroupStickerSet" xml:space="preserve">
     <value>Ukloni naljepnice od grupe</value>
   </data>
+  <data name="RemoveManyEmojiCount_few" xml:space="preserve">
+    <value>Ukloni {0} emojija</value>
+  </data>
+  <data name="RemoveManyEmojiCount_one" xml:space="preserve">
+    <value>Ukloni {0} emoji</value>
+  </data>
+  <data name="RemoveManyEmojiCount_other" xml:space="preserve">
+    <value>Ukloni {0} emojija</value>
+  </data>
+  <data name="RemoveManyEmojiPacksCount_few" xml:space="preserve">
+    <value>Ukloni {0} paketa emojija</value>
+  </data>
+  <data name="RemoveManyEmojiPacksCount_one" xml:space="preserve">
+    <value>Ukloni {0} paket emojija</value>
+  </data>
+  <data name="RemoveManyEmojiPacksCount_other" xml:space="preserve">
+    <value>Ukloni {0} paketa emojija</value>
+  </data>
+  <data name="RemoveManyMasksCount_few" xml:space="preserve">
+    <value>Ukloni {0} maske</value>
+  </data>
+  <data name="RemoveManyMasksCount_one" xml:space="preserve">
+    <value>Ukloni {0} masku</value>
+  </data>
+  <data name="RemoveManyMasksCount_other" xml:space="preserve">
+    <value>Ukloni {0} maski</value>
+  </data>
+  <data name="RemoveManyStickersCount_few" xml:space="preserve">
+    <value>Ukloni {0} naljepnice</value>
+  </data>
+  <data name="RemoveManyStickersCount_one" xml:space="preserve">
+    <value>Ukloni {0} naljepnicu</value>
+  </data>
+  <data name="RemoveManyStickersCount_other" xml:space="preserve">
+    <value>Ukloni {0} naljepnica</value>
+  </data>
   <data name="RemoveStickersCount" xml:space="preserve">
     <value>Ukloni {0}</value>
   </data>
@@ -12152,6 +12412,9 @@ Telegram će imat pristup lokaciji za vrijeme koje vi odredite i možete zaustav
   </data>
   <data name="ReportChatViolence" xml:space="preserve">
     <value>Nasilje</value>
+  </data>
+  <data name="ReportFalsePositive" xml:space="preserve">
+    <value>Prijavi pogrešnu akciju</value>
   </data>
   <data name="ReportHint" xml:space="preserve">
     <value>Dodatne informacije</value>
@@ -12716,6 +12979,9 @@ Možda će biti potrebno da ponovno pokrenete aplikaciju.</value>
   <data name="SearchMessages" xml:space="preserve">
     <value>Poruke</value>
   </data>
+  <data name="SearchMessagesIn" xml:space="preserve">
+    <value>Poruke u {0}</value>
+  </data>
   <data name="SearchMusic" xml:space="preserve">
     <value>Pretražite glazbu</value>
   </data>
@@ -12814,6 +13080,18 @@ Možda će biti potrebno da ponovno pokrenete aplikaciju.</value>
   </data>
   <data name="SelectChats" xml:space="preserve">
     <value>Odaberite razgovore</value>
+  </data>
+  <data name="SelectChatsForAutoDelete" xml:space="preserve">
+    <value>i uključite timer za samouništenje</value>
+  </data>
+  <data name="SelectChatsForAutoDelete2" xml:space="preserve">
+    <value>će biti uključen timer za samouništenje</value>
+  </data>
+  <data name="SelectChatsForDisableAutoDelete" xml:space="preserve">
+    <value>i isključite timer za samouništenje</value>
+  </data>
+  <data name="SelectChatsForDisableAutoDelete2" xml:space="preserve">
+    <value>će biti isključen timer za samouništenje</value>
   </data>
   <data name="SelectColor" xml:space="preserve">
     <value>Odaberi boju</value>
@@ -13042,6 +13320,9 @@ Nemojte se javiti na poziv. Telegram će sve riješiti za vas.</value>
   <data name="SentCallOnly" xml:space="preserve">
     <value>Zovemo vaš broj **{0}** da vam pošaljemo kod.</value>
   </data>
+  <data name="SentFragmentCode" xml:space="preserve">
+    <value>Nabavite kod za {0} u Anonymous Numbers odjeljku na Fragmentu.</value>
+  </data>
   <data name="SentSmsCode" xml:space="preserve">
     <value>Poslali smo vam SMS s kodom za potvrdu na vaš broj telefona
 **{0}**.</value>
@@ -13100,11 +13381,17 @@ Nemojte se javiti na poziv. Telegram će sve riješiti za vas.</value>
   <data name="SetAsMain" xml:space="preserve">
     <value>Postavi kao glavnu</value>
   </data>
+  <data name="SetAutoDeleteTimer" xml:space="preserve">
+    <value>Postavi automatsko brisanje</value>
+  </data>
   <data name="SetBackground" xml:space="preserve">
     <value>POSTAVI POZADINU</value>
   </data>
   <data name="SetColor" xml:space="preserve">
     <value>Postavi boju</value>
+  </data>
+  <data name="SetCustomTime" xml:space="preserve">
+    <value>Prilagođeno vrijeme</value>
   </data>
   <data name="SetEmojiStatus" xml:space="preserve">
     <value>Postavi emoji status</value>
@@ -13152,7 +13439,7 @@ Nemojte se javiti na poziv. Telegram će sve riješiti za vas.</value>
     <value>Postavi ograničenje</value>
   </data>
   <data name="SetTimer" xml:space="preserve">
-    <value>Timer nestajanja</value>
+    <value>Timer za samouništenje</value>
   </data>
   <data name="Settings" xml:space="preserve">
     <value>Postavke</value>
@@ -13389,7 +13676,7 @@ Nemojte se javiti na poziv. Telegram će sve riješiti za vas.</value>
     <value>Kratko</value>
   </data>
   <data name="ShortMessageLifetimeForever" xml:space="preserve">
-    <value>Isključi</value>
+    <value>Isključeno</value>
   </data>
   <data name="ShortNumberInfo" xml:space="preserve">
     <value>Broj koji ste naveli je prekratak za **{0}**:
@@ -13698,8 +13985,7 @@ Oglasi više ne smiju biti sinonim za zlouporabu privatnosti korisnika. Zajedno 
     <value>&apos;Pokrenut će se danas u&apos; HH:mm</value>
   </data>
   <data name="StartText" xml:space="preserve">
-    <value>Potvrdite kod države i
-unesite svoj broj telefona.</value>
+    <value>Potvrdite kod države i unesite svoj broj telefona.</value>
   </data>
   <data name="StartTodayAt" xml:space="preserve">
     <value>&apos;Pokreni danas u&apos; HH:mm</value>
@@ -13741,13 +14027,13 @@ unesite svoj broj telefona.</value>
     <value>Pregledi</value>
   </data>
   <data name="Stickers_few" xml:space="preserve">
-    <value>paket od {0} naljepnice</value>
+    <value>{0} naljepnice</value>
   </data>
   <data name="Stickers_one" xml:space="preserve">
-    <value>paket od {0} naljepnice</value>
+    <value>{0} naljepnica</value>
   </data>
   <data name="Stickers_other" xml:space="preserve">
-    <value>paket od {0} naljepnica</value>
+    <value>{0} naljepnica</value>
   </data>
   <data name="StickersAndMasks" xml:space="preserve">
     <value>Naljepnice i maske</value>
@@ -14520,6 +14806,12 @@ Pokušajte ponovno za {0}.</value>
   <data name="TopicEmptyViewDescription" xml:space="preserve">
     <value>Pošaljite poruku da započnete temu.</value>
   </data>
+  <data name="TopicHidden" xml:space="preserve">
+    <value>Općenita tema je skrivena</value>
+  </data>
+  <data name="TopicHidden2" xml:space="preserve">
+    <value>{0} skriva općenitu temu</value>
+  </data>
   <data name="TopicIconChanged" xml:space="preserve">
     <value>Ikona teme je promijenjena</value>
   </data>
@@ -14567,6 +14859,12 @@ Pokušajte ponovno za {0}.</value>
   </data>
   <data name="TopicsDeleted_other" xml:space="preserve">
     <value>Teme su izbrisane.</value>
+  </data>
+  <data name="TopicShown" xml:space="preserve">
+    <value>Općenita tema je prikazana</value>
+  </data>
+  <data name="TopicShown2" xml:space="preserve">
+    <value>{0} prikazuje općenitu temu</value>
   </data>
   <data name="TopicViewAsMessages" xml:space="preserve">
     <value>Prikaži kao poruke</value>
@@ -14752,6 +15050,9 @@ Ako niste zadovoljni načinom kako funkcionira Telegram nećemo vam moći pruži
   </data>
   <data name="UndoAllCustom" xml:space="preserve">
     <value>Vratite postavke obavijesti za kontakte, grupe i kanale na izvorne postavke.</value>
+  </data>
+  <data name="Unhide" xml:space="preserve">
+    <value>Prikaži</value>
   </data>
   <data name="UnhideFromTop" xml:space="preserve">
     <value>Prikvači</value>
@@ -16495,6 +16796,21 @@ Sjećate li se još uvijek svoje lozinke?</value>
   </data>
   <data name="YouSendersNameHidden" xml:space="preserve">
     <value>Vi (imena pošiljatelja su skrivena)</value>
+  </data>
+  <data name="YouTubeVideoErrorHTML" xml:space="preserve">
+    <value>Došlo je do pogreške prilikom pokušaja reprodukcije ovog videozapisa.</value>
+  </data>
+  <data name="YouTubeVideoErrorInvalid" xml:space="preserve">
+    <value>URL videozapisa nije valjan.</value>
+  </data>
+  <data name="YouTubeVideoErrorNotAvailableInApp" xml:space="preserve">
+    <value>Ovaj videozapis se ne može reproducirati unutar ove aplikacije.</value>
+  </data>
+  <data name="YouTubeVideoErrorNotFound" xml:space="preserve">
+    <value>Videozapis nije pronađen.</value>
+  </data>
+  <data name="YouTubeVideoErrorOpenExternal" xml:space="preserve">
+    <value>Otvori na YouTube-u</value>
   </data>
   <data name="YouWereKicked" xml:space="preserve">
     <value>uklonjeni ste iz grupe</value>

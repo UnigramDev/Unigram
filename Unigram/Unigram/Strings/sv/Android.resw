@@ -559,8 +559,14 @@
   <data name="AccReleaseForArchive" xml:space="preserve">
     <value>Släpp för att visa arkivet</value>
   </data>
+  <data name="AccReleaseForGeneral" xml:space="preserve">
+    <value>Släpp för #allmänt</value>
+  </data>
   <data name="AccSwipeForArchive" xml:space="preserve">
     <value>Svep nedåt för att ta fram arkivet</value>
+  </data>
+  <data name="AccSwipeForGeneral" xml:space="preserve">
+    <value>Svep nedåt för #allmänt</value>
   </data>
   <data name="AccSwitchToFullscreen" xml:space="preserve">
     <value>Byt till fullskärm</value>
@@ -1044,6 +1050,30 @@ till: {1}</value>
   <data name="AdditionalReactionsDescription" xml:space="preserve">
     <value>Lås upp fler meddelandereaktioner genom att abonnera på **Telegram Premium**.</value>
   </data>
+  <data name="AddManyEmojiCount_one" xml:space="preserve">
+    <value>Lägg till emoji</value>
+  </data>
+  <data name="AddManyEmojiCount_other" xml:space="preserve">
+    <value>Lägg till {0} emojier</value>
+  </data>
+  <data name="AddManyMasksCount_one" xml:space="preserve">
+    <value>Lägg till mask</value>
+  </data>
+  <data name="AddManyMasksCount_other" xml:space="preserve">
+    <value>Lägg till {0} masker</value>
+  </data>
+  <data name="AddManyMembersAlertTitle_one" xml:space="preserve">
+    <value>Lägg till medlem</value>
+  </data>
+  <data name="AddManyMembersAlertTitle_other" xml:space="preserve">
+    <value>Lägg till {0} medlemmar</value>
+  </data>
+  <data name="AddManyStickersCount_one" xml:space="preserve">
+    <value>Lägg till dekal</value>
+  </data>
+  <data name="AddManyStickersCount_other" xml:space="preserve">
+    <value>Lägg till {0} dekaler</value>
+  </data>
   <data name="AddMasks" xml:space="preserve">
     <value>Lägg till fotomasker</value>
   </data>
@@ -1294,6 +1324,9 @@ Detta kommer att öka tillförlitligheten för inkommande aviseringar och telegr
   </data>
   <data name="AnimatedStickers" xml:space="preserve">
     <value>Animerade dekaler</value>
+  </data>
+  <data name="AnonymousNumber" xml:space="preserve">
+    <value>Anonymt nummer</value>
   </data>
   <data name="AnonymousPoll" xml:space="preserve">
     <value>Anonym omröstning</value>
@@ -1856,6 +1889,15 @@ För att bekräfta inloggningen på Telegram, vänligen Gå till IInställningar
   <data name="AutoDeleteAfter" xml:space="preserve">
     <value>Autoradera efter {0}</value>
   </data>
+  <data name="AutoDeleteAfter1Day" xml:space="preserve">
+    <value>Efter 1 dag</value>
+  </data>
+  <data name="AutoDeleteAfter1Month" xml:space="preserve">
+    <value>Efter 1 månad</value>
+  </data>
+  <data name="AutoDeleteAfter1Week" xml:space="preserve">
+    <value>Efter 1 vecka</value>
+  </data>
   <data name="AutoDeleteAfteTitle" xml:space="preserve">
     <value>Autoradera efter...</value>
   </data>
@@ -1880,6 +1922,12 @@ För att bekräfta inloggningen på Telegram, vänligen Gå till IInställningar
   <data name="AutoDeleteDisable" xml:space="preserve">
     <value>Inaktivera</value>
   </data>
+  <data name="AutoDeleteDisabled" xml:space="preserve">
+    <value>autoradering inaktiverad</value>
+  </data>
+  <data name="AutoDeleteGlobalTimerEnabled" xml:space="preserve">
+    <value>Meddelanden i alla nya chattar kommer att tas bort automatiskt efter **{0}**.</value>
+  </data>
   <data name="AutoDeleteHeader" xml:space="preserve">
     <value>Autoradera meddelanden i den här chatten</value>
   </data>
@@ -1894,6 +1942,9 @@ För att bekräfta inloggningen på Telegram, vänligen Gå till IInställningar
   </data>
   <data name="AutoDeleteInfo" xml:space="preserve">
     <value>Radera automatiskt nya meddelanden i chatten efter en bestämd tid.</value>
+  </data>
+  <data name="AutoDeleteMessages" xml:space="preserve">
+    <value>Autoradera meddelanden</value>
   </data>
   <data name="AutoDeleteNever" xml:space="preserve">
     <value>Av</value>
@@ -1912,6 +1963,9 @@ För att bekräfta inloggningen på Telegram, vänligen Gå till IInställningar
   </data>
   <data name="AutoDeleteSetTimer" xml:space="preserve">
     <value>Ställ in autoraderingstimern</value>
+  </data>
+  <data name="AutoDeleteSettingsInfo" xml:space="preserve">
+    <value>Tar automatiskt bort meddelanden för alla efter en bestämd tid i alla nya chattar du påbörjar. </value>
   </data>
   <data name="AutoDownloadAudioInfo" xml:space="preserve">
     <value>Röstmeddelanden är små och hämtas därför automatiskt.</value>
@@ -2894,6 +2948,24 @@ Observera: om du glömmer din åtkomstkod behöver du logga ut eller ominstaller
   <data name="ChannelAlertTitle" xml:space="preserve">
     <value>Vad är en kanal?</value>
   </data>
+  <data name="ChannelAntiSpam" xml:space="preserve">
+    <value>Kraftfull skräppostfiltrering</value>
+  </data>
+  <data name="ChannelAntiSpamFalsePositiveReported" xml:space="preserve">
+    <value>Telegram-moderatorer kommer att granska din anmälan. Tack! </value>
+  </data>
+  <data name="ChannelAntiSpamForbidden_one" xml:space="preserve">
+    <value>Kraftfull skräppostfiltrering kan endast aktiveras i grupper med fler än **{0} medlem**.</value>
+  </data>
+  <data name="ChannelAntiSpamForbidden_other" xml:space="preserve">
+    <value>Kraftfull skräppostfiltrering kan endast aktiveras i grupper med fler än **{0} medlemmar**.</value>
+  </data>
+  <data name="ChannelAntiSpamInfo" xml:space="preserve">
+    <value>Telegram kommer att filtrera bort mer skräppost, men kan ibland råka filtrera vanliga meddelanden. Du kan rapportera när det blir fel i Senaste åtgärder.</value>
+  </data>
+  <data name="ChannelAntiSpamInfo2" xml:space="preserve">
+    <value>Du kan hantera inställningar för skräppostfiltrering i {0}</value>
+  </data>
   <data name="ChannelBlacklist" xml:space="preserve">
     <value>Borttagna medlemmar</value>
   </data>
@@ -3627,6 +3699,9 @@ Minsta längd är 5 tecken.</value>
   <data name="ClearCacheFewChatsTitle" xml:space="preserve">
     <value>Töm cache för {0}</value>
   </data>
+  <data name="ClearCacheForChats" xml:space="preserve">
+    <value>Är du säker att du vill radera cachad data för valda chattar?</value>
+  </data>
   <data name="ClearCacheInfo" xml:space="preserve">
     <value>Frigör lagringsutrymme på din enhet. Dina media finns kvar i molnet.</value>
   </data>
@@ -4011,6 +4086,9 @@ Utökning av medlemsantalet kan ske genom uppgradering till en supergrupp:
   <data name="CreateEncryptedChatError" xml:space="preserve">
     <value>Ett fel har uppstått.</value>
   </data>
+  <data name="CreateGeneralTopicTitle" xml:space="preserve">
+    <value>Välj ämnesnamn</value>
+  </data>
   <data name="CreateGroupError" xml:space="preserve">
     <value>Beklagar, användarnas integritetsval hindrar dig att skapa en grupp med dessa.</value>
   </data>
@@ -4144,6 +4222,9 @@ Du kan alltid byta tillbaka till Telegrams standardtema här.</value>
   </data>
   <data name="DataUsage" xml:space="preserve">
     <value>Disk- och nätverksanvändning</value>
+  </data>
+  <data name="DataUsageByChats" xml:space="preserve">
+    <value>Lagringsutrymme per chatt</value>
   </data>
   <data name="Days_one" xml:space="preserve">
     <value>{0} dag</value>
@@ -4981,6 +5062,12 @@ Om numret här ovan är korrekt, vänligen invänta verifieringskod.</value>
   </data>
   <data name="EditTopic" xml:space="preserve">
     <value>Redigera ämne</value>
+  </data>
+  <data name="EditTopicHide" xml:space="preserve">
+    <value>Visa bland ämnen</value>
+  </data>
+  <data name="EditTopicHideInfo" xml:space="preserve">
+    <value>Om &apos;Allmänt&apos; är dold kan gruppmedlemmar svepa nedåt i ämneslistan för att se den.</value>
   </data>
   <data name="EditWidget" xml:space="preserve">
     <value>Ändra widget</value>
@@ -6508,6 +6595,9 @@ om Telegram?</value>
   <data name="GroupContacts" xml:space="preserve">
     <value>Kontakter i denna grupp</value>
   </data>
+  <data name="GroupCreateAutodeleteDescription" xml:space="preserve">
+    <value>Radera meddelanden automatiskt för alla i gruppen efter en viss tid.</value>
+  </data>
   <data name="GroupDeletedUndo" xml:space="preserve">
     <value>Grupp borttagen</value>
   </data>
@@ -7755,7 +7845,7 @@ Ditt telefonnummer förblir dolt.</value>
     <value>Du kan skapa ytterligare inbjudningslänkar som har begränsad tid eller antal användare.</value>
   </data>
   <data name="ManageTopicsPermission" xml:space="preserve">
-    <value>Skapa ämnen</value>
+    <value>Redigera ämnen</value>
   </data>
   <data name="Map" xml:space="preserve">
     <value>Karta</value>
@@ -8261,6 +8351,9 @@ Det kan ta en liten stund. Du kan under tiden använda appen medan filerna flytt
   </data>
   <data name="NearbyVenue" xml:space="preserve">
     <value>Eller välj en plats</value>
+  </data>
+  <data name="NeedAdminRightForSetAutoDeleteTimer" xml:space="preserve">
+    <value>Du måste vara en administratör för att aktivera autoradering i denna grupp.</value>
   </data>
   <data name="NetworkUsage" xml:space="preserve">
     <value>Dataanvändning</value>
@@ -9269,6 +9362,9 @@ Telegramteamet</value>
   </data>
   <data name="NoTopicsDescription" xml:space="preserve">
     <value>Du kan skapa ditt första ämne eller trycka på {0}-ikonen för att byta till meddelandelistan.</value>
+  </data>
+  <data name="NoTopicsDescriptionUser" xml:space="preserve">
+    <value>Äldre meddelanden i denna grupp har flyttats till **{0}**.</value>
   </data>
   <data name="NoUsernameFound" xml:space="preserve">
     <value>Användarnamnet hittades inte.</value>
@@ -11638,6 +11734,24 @@ Du kan lägga till användare eller hela grupper som undantag vilket tar över v
   <data name="RemoveGroupStickerSet" xml:space="preserve">
     <value>Ta bort gruppdekalset</value>
   </data>
+  <data name="RemoveManyEmojiCount_one" xml:space="preserve">
+    <value>Ta bort emoji</value>
+  </data>
+  <data name="RemoveManyEmojiCount_other" xml:space="preserve">
+    <value>Ta bort {0} emojier</value>
+  </data>
+  <data name="RemoveManyMasksCount_one" xml:space="preserve">
+    <value>Ta bort mask</value>
+  </data>
+  <data name="RemoveManyMasksCount_other" xml:space="preserve">
+    <value>Ta bort {0} masker</value>
+  </data>
+  <data name="RemoveManyStickersCount_one" xml:space="preserve">
+    <value>Ta bort dekal</value>
+  </data>
+  <data name="RemoveManyStickersCount_other" xml:space="preserve">
+    <value>Ta bort {0} dekaler</value>
+  </data>
   <data name="RemoveStickersCount" xml:space="preserve">
     <value>Ta bort {0}</value>
   </data>
@@ -11715,6 +11829,9 @@ Du kan lägga till användare eller hela grupper som undantag vilket tar över v
   </data>
   <data name="ReportChatViolence" xml:space="preserve">
     <value>Våld</value>
+  </data>
+  <data name="ReportFalsePositive" xml:space="preserve">
+    <value>Rapportera felaktig flaggning</value>
   </data>
   <data name="ReportHint" xml:space="preserve">
     <value>Ytterligare uppgifter...</value>
@@ -12271,6 +12388,9 @@ Eventuellt behöver du starta om appen.</value>
   <data name="SearchMessages" xml:space="preserve">
     <value>Meddelanden</value>
   </data>
+  <data name="SearchMessagesIn" xml:space="preserve">
+    <value>Meddelanden i {0}</value>
+  </data>
   <data name="SearchMusic" xml:space="preserve">
     <value>Sök musik</value>
   </data>
@@ -12650,6 +12770,9 @@ Besvara inte samtalet. Telegram hanterar allt automatiskt.</value>
   </data>
   <data name="SetColor" xml:space="preserve">
     <value>Välj en färg</value>
+  </data>
+  <data name="SetCustomTime" xml:space="preserve">
+    <value>Välj en egen tidsintervall</value>
   </data>
   <data name="SetEmojiStatus" xml:space="preserve">
     <value>Ange emojistatus</value>
@@ -14041,6 +14164,12 @@ Försök igen om {0}.</value>
   <data name="TopicEmptyViewDescription" xml:space="preserve">
     <value>Skicka ett meddelandet för att skapa ämne.</value>
   </data>
+  <data name="TopicHidden" xml:space="preserve">
+    <value>Allmänt doldes</value>
+  </data>
+  <data name="TopicHidden2" xml:space="preserve">
+    <value>{0} dolde allmänt</value>
+  </data>
   <data name="TopicIconChanged" xml:space="preserve">
     <value>Ämnesikon ändrad</value>
   </data>
@@ -14082,6 +14211,12 @@ Försök igen om {0}.</value>
   </data>
   <data name="TopicsDeleted_other" xml:space="preserve">
     <value>Ämnen borttagna</value>
+  </data>
+  <data name="TopicShown" xml:space="preserve">
+    <value>Allmänt synliggjordes</value>
+  </data>
+  <data name="TopicShown2" xml:space="preserve">
+    <value>{0} synliggjorde allmänt</value>
   </data>
   <data name="TopicViewAsMessages" xml:space="preserve">
     <value>Visa som meddelanden</value>

@@ -14997,7 +14997,10 @@ https://telegram.org/blog/coronavirus</value>
     <value>Тэмы выдалены.</value>
   </data>
   <data name="TopicViewAsMessages" xml:space="preserve">
-    <value>Праглядзець як паведамленні</value>
+    <value>Спіс паведамленняў</value>
+  </data>
+  <data name="TopicViewAsTopics" xml:space="preserve">
+    <value>Спіс тэм</value>
   </data>
   <data name="TopicWasClosedAction" xml:space="preserve">
     <value>{0} закрыў(-ла) тэму {1}</value>

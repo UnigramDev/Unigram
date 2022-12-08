@@ -490,6 +490,9 @@
   <data name="AccDescrTakeMorePics" xml:space="preserve">
     <value>Сними још једну фотографију</value>
   </data>
+  <data name="AccDescrTopic" xml:space="preserve">
+    <value>Тема</value>
+  </data>
   <data name="AccDescrUnreadCount_few" xml:space="preserve">
     <value>{0} непрочитана ћаскања</value>
   </data>
@@ -586,8 +589,14 @@
   <data name="AccReleaseForArchive" xml:space="preserve">
     <value>Пустите за приступ архиви</value>
   </data>
+  <data name="AccReleaseForGeneral" xml:space="preserve">
+    <value>Отпустите за „Општу тему”</value>
+  </data>
   <data name="AccSwipeForArchive" xml:space="preserve">
     <value>Превуците надоле за архиву</value>
+  </data>
+  <data name="AccSwipeForGeneral" xml:space="preserve">
+    <value>Повуците доле за „Општу тему”</value>
   </data>
   <data name="AccSwitchToFullscreen" xml:space="preserve">
     <value>Пребаци на цео екран</value>
@@ -1086,6 +1095,51 @@
   <data name="AdditionalReactionsDescription" xml:space="preserve">
     <value>Откључајте више реакција на поруке претплатом на Telegram Premium.</value>
   </data>
+  <data name="AddManyEmojiCount_few" xml:space="preserve">
+    <value>Додај {0} емоџија</value>
+  </data>
+  <data name="AddManyEmojiCount_one" xml:space="preserve">
+    <value>Додај {0} емоџи</value>
+  </data>
+  <data name="AddManyEmojiCount_other" xml:space="preserve">
+    <value>Додај {0} емоџија</value>
+  </data>
+  <data name="AddManyMasksCount_few" xml:space="preserve">
+    <value>Додај {0} маске</value>
+  </data>
+  <data name="AddManyMasksCount_one" xml:space="preserve">
+    <value>Додај {0} маску</value>
+  </data>
+  <data name="AddManyMasksCount_other" xml:space="preserve">
+    <value>Додај {0} маски</value>
+  </data>
+  <data name="AddManyMembersAlertNamesText_few" xml:space="preserve">
+    <value>Желите ли да додате {0} члана у **{1}**?</value>
+  </data>
+  <data name="AddManyMembersAlertNamesText_one" xml:space="preserve">
+    <value>Желите ли да додате {0} члана у **{1}**?</value>
+  </data>
+  <data name="AddManyMembersAlertNamesText_other" xml:space="preserve">
+    <value>Желите ли да додате {0} чланова у **{1}**?</value>
+  </data>
+  <data name="AddManyMembersAlertTitle_few" xml:space="preserve">
+    <value>Додај {0} члана</value>
+  </data>
+  <data name="AddManyMembersAlertTitle_one" xml:space="preserve">
+    <value>Додај {0} члана</value>
+  </data>
+  <data name="AddManyMembersAlertTitle_other" xml:space="preserve">
+    <value>Додај {0} чланова</value>
+  </data>
+  <data name="AddManyStickersCount_few" xml:space="preserve">
+    <value>Додај {0} налепнице</value>
+  </data>
+  <data name="AddManyStickersCount_one" xml:space="preserve">
+    <value>Додај {0} налепницу</value>
+  </data>
+  <data name="AddManyStickersCount_other" xml:space="preserve">
+    <value>Додај {0} налепница</value>
+  </data>
   <data name="AddMasks" xml:space="preserve">
     <value>Додај маске</value>
   </data>
@@ -1150,7 +1204,7 @@
     <value>Налепнице нису пронађене</value>
   </data>
   <data name="AddSubscriber" xml:space="preserve">
-    <value>Додај пратиоца</value>
+    <value>Додај пратиоце</value>
   </data>
   <data name="AddToChannel" xml:space="preserve">
     <value>Додај на канал</value>
@@ -1222,22 +1276,22 @@
     <value>Сви медији</value>
   </data>
   <data name="AllNMedia_few" xml:space="preserve">
-    <value>Сва {0} медија</value>
+    <value>Све медије ({0})</value>
   </data>
   <data name="AllNMedia_one" xml:space="preserve">
-    <value>{0} медиј</value>
+    <value>Све медије ({0})</value>
   </data>
   <data name="AllNMedia_other" xml:space="preserve">
-    <value>Свих {0} медија</value>
+    <value>Све медије ({0})</value>
   </data>
   <data name="AllNPhotos_few" xml:space="preserve">
-    <value>Све {0} фотографије</value>
+    <value>Све фотографије ({0})</value>
   </data>
   <data name="AllNPhotos_one" xml:space="preserve">
-    <value>{0} фотографију</value>
+    <value>Све фотографије ({0})</value>
   </data>
   <data name="AllNPhotos_other" xml:space="preserve">
-    <value>Свих {0} фотографија</value>
+    <value>Све фотографије ({0})</value>
   </data>
   <data name="Allow" xml:space="preserve">
     <value>Дозволи</value>
@@ -1352,6 +1406,12 @@
   </data>
   <data name="AnimatedStickers" xml:space="preserve">
     <value>Анимиране налепнице</value>
+  </data>
+  <data name="AnonymousNumber" xml:space="preserve">
+    <value>Анонимни број</value>
+  </data>
+  <data name="AnonymousNumberNotice" xml:space="preserve">
+    <value>Oвај број је купљен на платформи *Fragment* и није везан за SIM картицу.</value>
   </data>
   <data name="AnonymousPoll" xml:space="preserve">
     <value>Анонимна анкета</value>
@@ -1919,7 +1979,22 @@
     <value>1 недеља</value>
   </data>
   <data name="AutoDeleteAfter" xml:space="preserve">
-    <value>Аутоматски избриши након {0}</value>
+    <value>Аутоматско брисање након {0}</value>
+  </data>
+  <data name="AutoDeleteAfter1Day" xml:space="preserve">
+    <value>Након 1 дана</value>
+  </data>
+  <data name="AutoDeleteAfter1Month" xml:space="preserve">
+    <value>Након 1 месеца</value>
+  </data>
+  <data name="AutoDeleteAfter1Week" xml:space="preserve">
+    <value>Након 1 недеље</value>
+  </data>
+  <data name="AutoDeleteAfter3Weeks" xml:space="preserve">
+    <value>Након 3 недеље</value>
+  </data>
+  <data name="AutoDeleteAfterShort" xml:space="preserve">
+    <value>Након {0}</value>
   </data>
   <data name="AutoDeleteAfteTitle" xml:space="preserve">
     <value>Аутоматски избриши након...</value>
@@ -1939,11 +2014,34 @@
   <data name="AutoDeleteConfirm" xml:space="preserve">
     <value>Потврди</value>
   </data>
+  <data name="AutoDeleteConfirmMessage" xml:space="preserve">
+    <value>Желите ли да се све поруке у вашим новим приватним ћаскањима и новим групама које направите аутоматски бришу за све након {0} од момента слања?</value>
+  </data>
   <data name="AutoDeleteCustom" xml:space="preserve">
     <value>Прилагоди</value>
   </data>
+  <data name="AutoDeleteCustom2" xml:space="preserve">
+    <value>Прилагоди време</value>
+  </data>
   <data name="AutoDeleteDisable" xml:space="preserve">
     <value>Онемогући</value>
+  </data>
+  <data name="AutoDeleteDisabled" xml:space="preserve">
+    <value>аутоматско брисање је онемогућено</value>
+  </data>
+  <data name="AutoDeleteGlobalAction" xml:space="preserve">
+    <value>un1 користи тајмер самоуништења за сва ћаскања.
+Све нове поруке у овом ћаскању ће бити аутоматски избрисане {0} након слања.</value>
+  </data>
+  <data name="AutoDeleteGlobalActionFromYou" xml:space="preserve">
+    <value>Подесили сте тајмер самоуништења за сва ћаскања.
+Све нове поруке у овом ћаскању ће бити аутоматски избрисане {0} након слања.</value>
+  </data>
+  <data name="AutoDeleteGlobalTimerDisabled" xml:space="preserve">
+    <value>Тајмер самоуништења је онемогућен за сва нова ћаскања.</value>
+  </data>
+  <data name="AutoDeleteGlobalTimerEnabled" xml:space="preserve">
+    <value>Поруке у свим новим ћаскањима биће аутоматски избрисане након **{0}**.</value>
   </data>
   <data name="AutoDeleteHeader" xml:space="preserve">
     <value>Аутоматско брисање порука у овом ћаскању</value>
@@ -1960,11 +2058,17 @@
   <data name="AutoDeleteInfo" xml:space="preserve">
     <value>Аутоматски брише нове поруке послате у овом ћаскању након одређеног временског периода.</value>
   </data>
+  <data name="AutoDeleteMessages" xml:space="preserve">
+    <value>Аутоматско брисање порука</value>
+  </data>
   <data name="AutoDeleteNever" xml:space="preserve">
     <value>Не</value>
   </data>
   <data name="AutoDeletePopupDescription" xml:space="preserve">
     <value>Аутоматски брише нове поруке послате у овом ћаскању након одређеног временског периода.</value>
+  </data>
+  <data name="AutoDeletePopupDescription2" xml:space="preserve">
+    <value>У подешавањима можете да подесите подразумевани **тајмер самоуништења** за сва ћаскања.</value>
   </data>
   <data name="AutoDeletePopupTitle" xml:space="preserve">
     <value>Аутоматско брисање</value>
@@ -1978,6 +2082,15 @@
   </data>
   <data name="AutoDeleteSetTimer" xml:space="preserve">
     <value>Подеси тајмер за брисање</value>
+  </data>
+  <data name="AutoDeleteSettingsInfo" xml:space="preserve">
+    <value>Аутоматски брише поруке за све након одређеног времена у свим новим ћаскањима која започнете.</value>
+  </data>
+  <data name="AutodeleteTimerDisabledForChats" xml:space="preserve">
+    <value>Тајмер самоуништења је онемогућен у {0}.</value>
+  </data>
+  <data name="AutodeleteTimerEnabledForChats" xml:space="preserve">
+    <value>Тајмер самоуништења након **{0}** је омогућен у {1}.</value>
   </data>
   <data name="AutoDownloadAudioInfo" xml:space="preserve">
     <value>Гласовне поруке су мале, па се увек аутоматски преузимају.</value>
@@ -2617,6 +2730,9 @@
   <data name="CacheEmpty" xml:space="preserve">
     <value>Празно</value>
   </data>
+  <data name="CacheOtherChats" xml:space="preserve">
+    <value>Остала ћаскања</value>
+  </data>
   <data name="CacheWasCleared" xml:space="preserve">
     <value>{0} је ослобођено на вашем уређају!</value>
   </data>
@@ -2905,6 +3021,9 @@
   <data name="ChangePhoneNumberSuccess" xml:space="preserve">
     <value>Ваш број телефона је успешно промењен.</value>
   </data>
+  <data name="ChangePhoneNumberSuccessWithPhone" xml:space="preserve">
+    <value>Ваш број телефона је успешно промењен у {0}.</value>
+  </data>
   <data name="ChangePublicLimitReached" xml:space="preserve">
     <value>Резервисали сте превише јавних линкова. Покушајте да опозовете линк неке старије групе или канала или уместо тога направите приватни.</value>
   </data>
@@ -2967,6 +3086,30 @@
   </data>
   <data name="ChannelAlertTitle" xml:space="preserve">
     <value>Шта је канал?</value>
+  </data>
+  <data name="ChannelAntiSpam" xml:space="preserve">
+    <value>Напредна заштита од спама</value>
+  </data>
+  <data name="ChannelAntiSpamFalsePositiveReported" xml:space="preserve">
+    <value>Telegram-ови модератори ће прегледати вашу пријаву. Хвала!</value>
+  </data>
+  <data name="ChannelAntiSpamForbidden_few" xml:space="preserve">
+    <value>Напредно филтрирање је могуће само у групама са више од **{0} члана**.</value>
+  </data>
+  <data name="ChannelAntiSpamForbidden_one" xml:space="preserve">
+    <value>Напредно филтрирање је могуће само у групама са више од **{0} члана**.</value>
+  </data>
+  <data name="ChannelAntiSpamForbidden_other" xml:space="preserve">
+    <value>Напредно филтрирање је могуће само у групама са више од **{0} чланова**.</value>
+  </data>
+  <data name="ChannelAntiSpamInfo" xml:space="preserve">
+    <value>Telegram ће филтрирати више нежељеног садржаја, али повремено може утицати на обичне поруке. Потврђене грешке можете пријавити у недавним радњама.</value>
+  </data>
+  <data name="ChannelAntiSpamInfo2" xml:space="preserve">
+    <value>Можете да управљате подешавањима заштите од непожељног садржаја под {0}</value>
+  </data>
+  <data name="ChannelAntiSpamUser" xml:space="preserve">
+    <value>Telegram-ова заштита од спама</value>
   </data>
   <data name="ChannelBlacklist" xml:space="preserve">
     <value>Уклоњени корисници</value>
@@ -3728,6 +3871,9 @@
   <data name="ClearCacheFewChatsTitle" xml:space="preserve">
     <value>Обриши кеш за {0}</value>
   </data>
+  <data name="ClearCacheForChats" xml:space="preserve">
+    <value>Желите ли да избришете кеширане податке за изабрана ћаскања?</value>
+  </data>
   <data name="ClearCacheInfo" xml:space="preserve">
     <value>Ослободите меморију на свом уређају; ваши медији ће остати у облаку.</value>
   </data>
@@ -4130,6 +4276,9 @@
   <data name="CreateEncryptedChatError" xml:space="preserve">
     <value>Дошло је до грешке.</value>
   </data>
+  <data name="CreateGeneralTopicTitle" xml:space="preserve">
+    <value>Изаберите назив теме</value>
+  </data>
   <data name="CreateGroupError" xml:space="preserve">
     <value>Не можете направити групу са овим корисницима због њихових подешавања приватности.</value>
   </data>
@@ -4264,6 +4413,9 @@
   <data name="DataUsage" xml:space="preserve">
     <value>Меморија и коришћење мреже</value>
   </data>
+  <data name="DataUsageByChats" xml:space="preserve">
+    <value>Коришћење меморије по ћаскањима</value>
+  </data>
   <data name="Days_few" xml:space="preserve">
     <value>{0} дана</value>
   </data>
@@ -4303,6 +4455,9 @@
   <data name="Deactivate" xml:space="preserve">
     <value>ИЗБРИШИ САДА</value>
   </data>
+  <data name="DebugAltNavigation" xml:space="preserve">
+    <value>Алтернативна навигација</value>
+  </data>
   <data name="DebugAltNavigationToggleControls" xml:space="preserve">
     <value>Укључи/искључи контроле навигације</value>
   </data>
@@ -4315,8 +4470,14 @@
   <data name="DebugClearSendMessageAsPeers" xml:space="preserve">
     <value>Обриши листу „Пошаљите поруку као...”</value>
   </data>
+  <data name="DebugDialogsActivity" xml:space="preserve">
+    <value>Активност ћаскања</value>
+  </data>
   <data name="DebugDrawSnowInChat" xml:space="preserve">
     <value>Снег у ћаскању</value>
+  </data>
+  <data name="DebugGeneral" xml:space="preserve">
+    <value>Опште</value>
   </data>
   <data name="DebugMenu" xml:space="preserve">
     <value>Отклањање грешака</value>
@@ -4390,6 +4551,12 @@
   <data name="DebugMenuWebViewDebugEnabled" xml:space="preserve">
     <value>Отклањање грешака је укључено!</value>
   </data>
+  <data name="DebugMessageSkeletons" xml:space="preserve">
+    <value>Окоснице порука</value>
+  </data>
+  <data name="DebugMessageSkeletonsSaturation" xml:space="preserve">
+    <value>Засићење</value>
+  </data>
   <data name="DebugSendLastLogs" xml:space="preserve">
     <value>Пошаљи последње евиденције</value>
   </data>
@@ -4410,6 +4577,9 @@
   </data>
   <data name="DebugShareAlertTopicsSlowMotion" xml:space="preserve">
     <value>Укључи/искључи успорени мени за дељење</value>
+  </data>
+  <data name="DebugTestBackend" xml:space="preserve">
+    <value>Позадинско тестирање</value>
   </data>
   <data name="December" xml:space="preserve">
     <value>децембар</value>
@@ -4941,7 +5111,7 @@
     <value>Преузете датотеке</value>
   </data>
   <data name="DownloadedFilesMessage" xml:space="preserve">
-    <value>Telegram вам омогућава да чувате све примљене и послате документе у облаку и да сачувате меморијски простор на свом уређају.</value>
+    <value>Telegram вам омогућава да чувате све примљене и послате документе у облаку како бисте уштедели меморијски простор на свом уређају.</value>
   </data>
   <data name="Downloading" xml:space="preserve">
     <value>Преузимање</value>
@@ -5129,6 +5299,12 @@
   </data>
   <data name="EditTopic" xml:space="preserve">
     <value>Уреди тему</value>
+  </data>
+  <data name="EditTopicHide" xml:space="preserve">
+    <value>Прикажи у темама</value>
+  </data>
+  <data name="EditTopicHideInfo" xml:space="preserve">
+    <value>Ако је „Општа тема” скривена, чланови групе могу повући надоле листу тема да је прикажу.</value>
   </data>
   <data name="EditWidget" xml:space="preserve">
     <value>Уреди виџет</value>
@@ -5533,6 +5709,9 @@
   <data name="EventLogDeleteTopic" xml:space="preserve">
     <value>un1 је избрисао/ла тему un2</value>
   </data>
+  <data name="EventLogDisabledAntiSpam" xml:space="preserve">
+    <value>un1 је онемогућио/ла заштиту од спама</value>
+  </data>
   <data name="EventLogEditedCaption" xml:space="preserve">
     <value>un1 је уредио/ла опис:</value>
   </data>
@@ -5599,6 +5778,9 @@
   </data>
   <data name="EventLogEmptyTextSearch" xml:space="preserve">
     <value>Нема недавних радњи које садрже &apos;**{0}**&apos;.</value>
+  </data>
+  <data name="EventLogEnabledAntiSpam" xml:space="preserve">
+    <value>un1 је омогућио/ла заштиту од спама</value>
   </data>
   <data name="EventLogEndedLiveStream" xml:space="preserve">
     <value>un1 је завршио/ла пренос уживо</value>
@@ -6547,6 +6729,15 @@
   <data name="FwdMessagesToGroup" xml:space="preserve">
     <value>Поруке су прослеђене у **{0}**.</value>
   </data>
+  <data name="FwdMessagesToManyChats_few" xml:space="preserve">
+    <value>Поруке су прослеђене у **{0} ћаскања**.</value>
+  </data>
+  <data name="FwdMessagesToManyChats_one" xml:space="preserve">
+    <value>Поруке су прослеђене у **{0} ћаскање**.</value>
+  </data>
+  <data name="FwdMessagesToManyChats_other" xml:space="preserve">
+    <value>Поруке су прослеђене у **{0} ћаскања**.</value>
+  </data>
   <data name="FwdMessagesToSavedMessages" xml:space="preserve">
     <value>Поруке су прослеђене у **Сачуване поруке**.</value>
   </data>
@@ -6558,6 +6749,15 @@
   </data>
   <data name="FwdMessageToGroup" xml:space="preserve">
     <value>Порука је прослеђена у **{0}**.</value>
+  </data>
+  <data name="FwdMessageToManyChats_few" xml:space="preserve">
+    <value>Порука је прослеђена у **{0} ћаскања**.</value>
+  </data>
+  <data name="FwdMessageToManyChats_one" xml:space="preserve">
+    <value>Порука је прослеђена у **{0} ћаскање**.</value>
+  </data>
+  <data name="FwdMessageToManyChats_other" xml:space="preserve">
+    <value>Порука је прослеђена у **{0} ћаскања**.</value>
   </data>
   <data name="FwdMessageToSavedMessages" xml:space="preserve">
     <value>Порука је прослеђена у **Сачуване поруке**.</value>
@@ -6579,6 +6779,9 @@
   </data>
   <data name="General" xml:space="preserve">
     <value>Опште</value>
+  </data>
+  <data name="GetDirections" xml:space="preserve">
+    <value>Преузми путање</value>
   </data>
   <data name="GetQRCode" xml:space="preserve">
     <value>Направи QR кôд</value>
@@ -6692,6 +6895,9 @@
   <data name="GlobalAttachStickersRestricted" xml:space="preserve">
     <value>У овој групи нису дозвољене налепнице.</value>
   </data>
+  <data name="GlobalAutoDeleteInfo" xml:space="preserve">
+    <value>Ако је омогућено, све нове поруке у ћаскањима која започнете биће аутоматски избрисане за све у неком тренутку након слања. Можете да **примените ово подешавање и на постојећа ћаскања**.</value>
+  </data>
   <data name="GlobalSearch" xml:space="preserve">
     <value>Глобална претрага</value>
   </data>
@@ -6728,6 +6934,9 @@
   </data>
   <data name="GroupContacts" xml:space="preserve">
     <value>Контакти у овој групи</value>
+  </data>
+  <data name="GroupCreateAutodeleteDescription" xml:space="preserve">
+    <value>Аутоматски брише поруке за све у овој групи након одређеног временског периода.</value>
   </data>
   <data name="GroupDeletedUndo" xml:space="preserve">
     <value>Група је избрисана</value>
@@ -8595,6 +8804,9 @@
   <data name="NearbyVenue" xml:space="preserve">
     <value>Или изаберите место</value>
   </data>
+  <data name="NeedAdminRightForSetAutoDeleteTimer" xml:space="preserve">
+    <value>Морате бити администратор да бисте омогућили аутоматско брисање у овој групи.</value>
+  </data>
   <data name="NetworkUsage" xml:space="preserve">
     <value>Коришћење података</value>
   </data>
@@ -8767,7 +8979,7 @@
     <value>Тренутно можете да додате само заједничке контакте у групе.</value>
   </data>
   <data name="NobodyLikesSpam3" xml:space="preserve">
-    <value>Tренутно вам је ограничено објављивање у јавним групама.</value>
+    <value>Tренутно вам је ограничено објављивање у овој групи.</value>
   </data>
   <data name="NobodyViewed" xml:space="preserve">
     <value>Нема прегледа</value>
@@ -8794,13 +9006,13 @@
     <value>Још немате контаката на Telegram-у</value>
   </data>
   <data name="NoContactsYetLine1" xml:space="preserve">
-    <value>Позовите пријатеље да испробају Telegram</value>
+    <value>Позовите пријатеље на Telegram</value>
   </data>
   <data name="NoContactsYetLine2" xml:space="preserve">
     <value>Нађите људе у близини за ћаскање</value>
   </data>
   <data name="NoContactsYetLine3" xml:space="preserve">
-    <value>Тражите људе по корисничком имену</value>
+    <value>Тражите их по корисничком имену</value>
   </data>
   <data name="NoEmojiFound" xml:space="preserve">
     <value>Није пронађен ниједан емоџи</value>
@@ -9606,8 +9818,11 @@ Telegram тим</value>
     <value>Овде још нема тема</value>
   </data>
   <data name="NoTopicsDescription" xml:space="preserve">
-    <value>Отворите своју прву тему или додирните
-мени {0} да прикажете листу порука.</value>
+    <value>Можете отворити прву тему или додирнути
+мени {0} да прикажете групу као поруке.</value>
+  </data>
+  <data name="NoTopicsDescriptionUser" xml:space="preserve">
+    <value>Старије поруке из ове групе су премештене у тему **’{0}’**.</value>
   </data>
   <data name="NoUsernameFound" xml:space="preserve">
     <value>Корисничко име није пронађено.</value>
@@ -9692,6 +9907,9 @@ Telegram тим</value>
   </data>
   <data name="OpenFile" xml:space="preserve">
     <value>ОТВОРИ ДАТОТЕКУ</value>
+  </data>
+  <data name="OpenFragment" xml:space="preserve">
+    <value>Отвори Fragment</value>
   </data>
   <data name="OpenGroup" xml:space="preserve">
     <value>ПРИКАЖИ ГРУПУ</value>
@@ -10596,7 +10814,7 @@ Telegram тим</value>
     <value>Није могуће приступити серверу за плаћање. Проверите интернет везу и покушајте поново.</value>
   </data>
   <data name="PaymentEmailToProvider" xml:space="preserve">
-    <value>Адреса е-поште ће бити прослеђена {0} као податак о плаћању.</value>
+    <value>Адреса е-поште ће бити прослеђена боту {0} као податак о плаћању.</value>
   </data>
   <data name="PaymentFailed" xml:space="preserve">
     <value>Уплата је одбијена.</value>
@@ -11921,7 +12139,7 @@ Telegram тим</value>
     <value>Држите емоџи за суперреакцију</value>
   </data>
   <data name="ReactionsOff" xml:space="preserve">
-    <value>Искључено</value>
+    <value>Не</value>
   </data>
   <data name="ReadAllMentions" xml:space="preserve">
     <value>Прочитај сва спомињања</value>
@@ -12067,6 +12285,42 @@ Telegram тим</value>
   <data name="RemoveGroupStickerSet" xml:space="preserve">
     <value>Уклони пакет налепница групе</value>
   </data>
+  <data name="RemoveManyEmojiCount_few" xml:space="preserve">
+    <value>Уклони {0} емоџија</value>
+  </data>
+  <data name="RemoveManyEmojiCount_one" xml:space="preserve">
+    <value>Уклони {0} емоџи</value>
+  </data>
+  <data name="RemoveManyEmojiCount_other" xml:space="preserve">
+    <value>Уклони {0} емоџија</value>
+  </data>
+  <data name="RemoveManyEmojiPacksCount_few" xml:space="preserve">
+    <value>Уклони {0} пакета емоџија</value>
+  </data>
+  <data name="RemoveManyEmojiPacksCount_one" xml:space="preserve">
+    <value>Уклони {0} пакет емоџија</value>
+  </data>
+  <data name="RemoveManyEmojiPacksCount_other" xml:space="preserve">
+    <value>Уклони {0} пакета емоџија</value>
+  </data>
+  <data name="RemoveManyMasksCount_few" xml:space="preserve">
+    <value>Уклони {0} маске</value>
+  </data>
+  <data name="RemoveManyMasksCount_one" xml:space="preserve">
+    <value>Уклони {0} маску</value>
+  </data>
+  <data name="RemoveManyMasksCount_other" xml:space="preserve">
+    <value>Уклони {0} маски</value>
+  </data>
+  <data name="RemoveManyStickersCount_few" xml:space="preserve">
+    <value>Уклони {0} налепнице</value>
+  </data>
+  <data name="RemoveManyStickersCount_one" xml:space="preserve">
+    <value>Уклони {0} налепницу</value>
+  </data>
+  <data name="RemoveManyStickersCount_other" xml:space="preserve">
+    <value>Уклони {0} налепница</value>
+  </data>
   <data name="RemoveStickersCount" xml:space="preserve">
     <value>Уклони {0}</value>
   </data>
@@ -12148,6 +12402,9 @@ Telegram тим</value>
   <data name="ReportChatViolence" xml:space="preserve">
     <value>Насиље</value>
   </data>
+  <data name="ReportFalsePositive" xml:space="preserve">
+    <value>Пријави потврђену грешку</value>
+  </data>
   <data name="ReportHint" xml:space="preserve">
     <value>Додатне информације...</value>
   </data>
@@ -12173,7 +12430,7 @@ Telegram тим</value>
     <value>Пријави</value>
   </data>
   <data name="ReportSentInfo" xml:space="preserve">
-    <value>Модератори Telegram-а ће проверити вашу пријаву. Хвала на сарадњи!</value>
+    <value>Telegram-ови модератори ће прегледати вашу пријаву. Хвала!</value>
   </data>
   <data name="ReportSpam" xml:space="preserve">
     <value>ПРИЈАВИ НЕПОЖЕЉНО</value>
@@ -12710,6 +12967,9 @@ Telegram тим</value>
   <data name="SearchMessages" xml:space="preserve">
     <value>Поруке</value>
   </data>
+  <data name="SearchMessagesIn" xml:space="preserve">
+    <value>Поруке у {0}</value>
+  </data>
   <data name="SearchMusic" xml:space="preserve">
     <value>Претражите музику</value>
   </data>
@@ -12808,6 +13068,18 @@ Telegram тим</value>
   </data>
   <data name="SelectChats" xml:space="preserve">
     <value>Изабери ћаскања</value>
+  </data>
+  <data name="SelectChatsForAutoDelete" xml:space="preserve">
+    <value>да примените тајмер самоуништења</value>
+  </data>
+  <data name="SelectChatsForAutoDelete2" xml:space="preserve">
+    <value>имаће тајмер самоуништења</value>
+  </data>
+  <data name="SelectChatsForDisableAutoDelete" xml:space="preserve">
+    <value>да онемогућите тајмер самоуништења</value>
+  </data>
+  <data name="SelectChatsForDisableAutoDelete2" xml:space="preserve">
+    <value>биће онемогућен тајмер самоуништења</value>
   </data>
   <data name="SelectColor" xml:space="preserve">
     <value>Изабери боју</value>
@@ -13036,6 +13308,9 @@ Telegram тим</value>
   <data name="SentCallOnly" xml:space="preserve">
     <value>Позивамо ваш број *{0}** како бисмо издиктирали кôд.</value>
   </data>
+  <data name="SentFragmentCode" xml:space="preserve">
+    <value>Преузмите кôд за {0} у одељку „Anonymous Numbers” на платформи Fragment.</value>
+  </data>
   <data name="SentSmsCode" xml:space="preserve">
     <value>Послали смо SMS са кôдом за потврду на ваш број телефона **{0}**.</value>
   </data>
@@ -13093,11 +13368,17 @@ Telegram тим</value>
   <data name="SetAsMain" xml:space="preserve">
     <value>Подеси као главно</value>
   </data>
+  <data name="SetAutoDeleteTimer" xml:space="preserve">
+    <value>Подеси аутоматско брисање</value>
+  </data>
   <data name="SetBackground" xml:space="preserve">
     <value>ПОДЕСИ ПОЗАДИНУ</value>
   </data>
   <data name="SetColor" xml:space="preserve">
     <value>Подеси боју</value>
+  </data>
+  <data name="SetCustomTime" xml:space="preserve">
+    <value>Прилагоди време</value>
   </data>
   <data name="SetEmojiStatus" xml:space="preserve">
     <value>Подеси емоџи-статус</value>
@@ -14423,7 +14704,7 @@ Telegram Premium.</value>
     <value>Можете подесити да линк истекне након одређеног времена.</value>
   </data>
   <data name="TimeLimitHint" xml:space="preserve">
-    <value>Подесите прилагођено трајање</value>
+    <value>Прилагодите трајање</value>
   </data>
   <data name="Times_few" xml:space="preserve">
     <value>{0} пута</value>
@@ -14513,6 +14794,12 @@ Telegram Premium.</value>
   <data name="TopicEmptyViewDescription" xml:space="preserve">
     <value>Пошаљите поруку да бисте започели тему.</value>
   </data>
+  <data name="TopicHidden" xml:space="preserve">
+    <value>„Општа тема” је скривена</value>
+  </data>
+  <data name="TopicHidden2" xml:space="preserve">
+    <value>{0} је сакрио/ла „Општу тему”</value>
+  </data>
   <data name="TopicIconChanged" xml:space="preserve">
     <value>Икона теме је промењена</value>
   </data>
@@ -14560,6 +14847,12 @@ Telegram Premium.</value>
   </data>
   <data name="TopicsDeleted_other" xml:space="preserve">
     <value>Теме су избрисане</value>
+  </data>
+  <data name="TopicShown" xml:space="preserve">
+    <value>„Општа тема” је враћена</value>
+  </data>
+  <data name="TopicShown2" xml:space="preserve">
+    <value>{0} је вратио/ла „Општу тему”</value>
   </data>
   <data name="TopicViewAsMessages" xml:space="preserve">
     <value>Прикажи као поруке</value>
@@ -14745,6 +15038,9 @@ Telegram Premium.</value>
   </data>
   <data name="UndoAllCustom" xml:space="preserve">
     <value>Опозива сва прилагођена подешавања обавештења за контакте, групе и канале.</value>
+  </data>
+  <data name="Unhide" xml:space="preserve">
+    <value>Врати</value>
   </data>
   <data name="UnhideFromTop" xml:space="preserve">
     <value>Закачи</value>
@@ -16488,6 +16784,21 @@ Telegram Premium.</value>
   </data>
   <data name="YouSendersNameHidden" xml:space="preserve">
     <value>Ви (имена пошиљалаца су сакривена)</value>
+  </data>
+  <data name="YouTubeVideoErrorHTML" xml:space="preserve">
+    <value>Дошло је до грешке при покушају репродукције овог видеа.</value>
+  </data>
+  <data name="YouTubeVideoErrorInvalid" xml:space="preserve">
+    <value>URL видео-снимка није важећи.</value>
+  </data>
+  <data name="YouTubeVideoErrorNotAvailableInApp" xml:space="preserve">
+    <value>Овај видео се не може репродуковати у овој апликацији.</value>
+  </data>
+  <data name="YouTubeVideoErrorNotFound" xml:space="preserve">
+    <value>Видео није пронађен.</value>
+  </data>
+  <data name="YouTubeVideoErrorOpenExternal" xml:space="preserve">
+    <value>Гледај на YouTube-у</value>
   </data>
   <data name="YouWereKicked" xml:space="preserve">
     <value>уклоњени сте</value>

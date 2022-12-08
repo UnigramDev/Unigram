@@ -442,6 +442,9 @@
   <data name="AccDescrTakeMorePics" xml:space="preserve">
     <value>Ambil satu lagi gambar</value>
   </data>
+  <data name="AccDescrTopic" xml:space="preserve">
+    <value>Tajuk</value>
+  </data>
   <data name="AccDescrUnreadCount_other" xml:space="preserve">
     <value>{0} bual belum dibaca</value>
   </data>
@@ -532,8 +535,14 @@
   <data name="AccReleaseForArchive" xml:space="preserve">
     <value>Pelepasan untuk arkib</value>
   </data>
+  <data name="AccReleaseForGeneral" xml:space="preserve">
+    <value>Lepaskan untuk #umum</value>
+  </data>
   <data name="AccSwipeForArchive" xml:space="preserve">
     <value>Leret ke bawah untuk arkib</value>
+  </data>
+  <data name="AccSwipeForGeneral" xml:space="preserve">
+    <value>Leret ke bawah untuk #umum</value>
   </data>
   <data name="AccSwitchToFullscreen" xml:space="preserve">
     <value>Tukar ke skrin penuh</value>
@@ -1014,6 +1023,21 @@ ke: {1}</value>
   <data name="AdditionalReactionsDescription" xml:space="preserve">
     <value>Dapatkan lagi banyak reaksi pada mesej dengan melanggan **Telegram Premium**.</value>
   </data>
+  <data name="AddManyEmojiCount_other" xml:space="preserve">
+    <value>Tambah {0} emoji</value>
+  </data>
+  <data name="AddManyMasksCount_other" xml:space="preserve">
+    <value>Tambah {0} topeng</value>
+  </data>
+  <data name="AddManyMembersAlertNamesText_other" xml:space="preserve">
+    <value>Anda pasti ingin tambah  {0} ahli ke **{1}**?</value>
+  </data>
+  <data name="AddManyMembersAlertTitle_other" xml:space="preserve">
+    <value>Tambah {0} ahli</value>
+  </data>
+  <data name="AddManyStickersCount_other" xml:space="preserve">
+    <value>Tambah {0} stiker</value>
+  </data>
   <data name="AddMasks" xml:space="preserve">
     <value>Tambah Mask</value>
   </data>
@@ -1250,6 +1274,12 @@ ke: {1}</value>
   </data>
   <data name="AnimatedStickers" xml:space="preserve">
     <value>Stiker Beranimasi</value>
+  </data>
+  <data name="AnonymousNumber" xml:space="preserve">
+    <value>Nombor Tanpa Nama</value>
+  </data>
+  <data name="AnonymousNumberNotice" xml:space="preserve">
+    <value>Nombor ini tiada kaitan dengan kad SIM dan diperolehi dari *Fragment.*</value>
   </data>
   <data name="AnonymousPoll" xml:space="preserve">
     <value>Undian Sulit</value>
@@ -1805,6 +1835,21 @@ Untuk pastikan log masuk Telegram, sila ke Aturan &gt; Peranti &gt; Imbas QR dan
   <data name="AutoDeleteAfter" xml:space="preserve">
     <value>Hapus auto selepas {0}</value>
   </data>
+  <data name="AutoDeleteAfter1Day" xml:space="preserve">
+    <value>Selepas 1 hari</value>
+  </data>
+  <data name="AutoDeleteAfter1Month" xml:space="preserve">
+    <value>Selepas 1 bulan</value>
+  </data>
+  <data name="AutoDeleteAfter1Week" xml:space="preserve">
+    <value>Selepas 1 minggu</value>
+  </data>
+  <data name="AutoDeleteAfter3Weeks" xml:space="preserve">
+    <value>Selepas 3 minggu</value>
+  </data>
+  <data name="AutoDeleteAfterShort" xml:space="preserve">
+    <value>Selepas {0}</value>
+  </data>
   <data name="AutoDeleteAfteTitle" xml:space="preserve">
     <value>Hapus auto selepas...</value>
   </data>
@@ -1823,11 +1868,34 @@ Untuk pastikan log masuk Telegram, sila ke Aturan &gt; Peranti &gt; Imbas QR dan
   <data name="AutoDeleteConfirm" xml:space="preserve">
     <value>Sahkan</value>
   </data>
+  <data name="AutoDeleteConfirmMessage" xml:space="preserve">
+    <value>Anda pasti ingin semua mesej di bual peribadi baru dan grup baru anda cipta dihapus auto untuk setiap ahli  {0} selepas ianya dikirim?</value>
+  </data>
   <data name="AutoDeleteCustom" xml:space="preserve">
     <value>Tersuai</value>
   </data>
+  <data name="AutoDeleteCustom2" xml:space="preserve">
+    <value>Set masa khusus</value>
+  </data>
   <data name="AutoDeleteDisable" xml:space="preserve">
     <value>Nyahdaya</value>
+  </data>
+  <data name="AutoDeleteDisabled" xml:space="preserve">
+    <value>hapus auto dinyahdaya</value>
+  </data>
+  <data name="AutoDeleteGlobalAction" xml:space="preserve">
+    <value>un1 guna pemasa musnah sendiri untuk semua bual. 
+Semua mesej baru di bual ini akan dihapus auto  {0} selepas ianya dikirim.</value>
+  </data>
+  <data name="AutoDeleteGlobalActionFromYou" xml:space="preserve">
+    <value>Anda set pemasa musnah sendiri untuk semua bual. 
+Semua mesej baru di bual ini akan dihapus auto  {0} selepas mereka dikirim.</value>
+  </data>
+  <data name="AutoDeleteGlobalTimerDisabled" xml:space="preserve">
+    <value>Pemasa musnah sendiri dinyahdaya untuk semua bual baru.</value>
+  </data>
+  <data name="AutoDeleteGlobalTimerEnabled" xml:space="preserve">
+    <value>Mesej dalam semua bual baru yang anda mula akan dihapus auto selepas **{0}**.</value>
   </data>
   <data name="AutoDeleteHeader" xml:space="preserve">
     <value>Hapus mesej di bual ini secara automatik</value>
@@ -1844,11 +1912,17 @@ Untuk pastikan log masuk Telegram, sila ke Aturan &gt; Peranti &gt; Imbas QR dan
   <data name="AutoDeleteInfo" xml:space="preserve">
     <value>Hapus mesej baru di bual ini secara automatik  selepas tempoh tertentu.</value>
   </data>
+  <data name="AutoDeleteMessages" xml:space="preserve">
+    <value>Mesej Hapus Auto</value>
+  </data>
   <data name="AutoDeleteNever" xml:space="preserve">
     <value>TUTUP</value>
   </data>
   <data name="AutoDeletePopupDescription" xml:space="preserve">
     <value>Hapus mesej yang dikirim ke bual ini secara automatik selepas tempoh masa tertentu.</value>
+  </data>
+  <data name="AutoDeletePopupDescription2" xml:space="preserve">
+    <value>Anda juga boleh set **pemasa musnah sendiri** paras asal untuk semua bual di Aturan.</value>
   </data>
   <data name="AutoDeletePopupTitle" xml:space="preserve">
     <value>Hapus Auto</value>
@@ -1861,6 +1935,15 @@ Untuk pastikan log masuk Telegram, sila ke Aturan &gt; Peranti &gt; Imbas QR dan
   </data>
   <data name="AutoDeleteSetTimer" xml:space="preserve">
     <value>Set pemasa hapus automatik</value>
+  </data>
+  <data name="AutoDeleteSettingsInfo" xml:space="preserve">
+    <value>Hapus auto mesej untuk setiap orang selepas tempoh masa tertentu di semua bual baru yang anda mulakan.</value>
+  </data>
+  <data name="AutodeleteTimerDisabledForChats" xml:space="preserve">
+    <value>Pemasa musnah sendiri  dinyahdaya di  {0}.</value>
+  </data>
+  <data name="AutodeleteTimerEnabledForChats" xml:space="preserve">
+    <value>Pemasa musnah sendiri diset untuk **{0}** telah didaya di {1}.</value>
   </data>
   <data name="AutoDownloadAudioInfo" xml:space="preserve">
     <value>Mesej suara adalah kecil, mereka sentiasa dimuat turun secara automatik.</value>
@@ -2488,6 +2571,9 @@ Dayakan akses ke mikrofon di Aturan &gt; Permisi &gt; Mikrofon.</value>
   <data name="CacheEmpty" xml:space="preserve">
     <value>Kosong</value>
   </data>
+  <data name="CacheOtherChats" xml:space="preserve">
+    <value>Bual Lain</value>
+  </data>
   <data name="CacheWasCleared" xml:space="preserve">
     <value>{0} dikosongkan di peranti anda!</value>
   </data>
@@ -2770,6 +2856,9 @@ Nota: kalau anda lupa kod laluan, anda terpaksa log keluar atau pasang balik apl
   <data name="ChangePhoneNumberSuccess" xml:space="preserve">
     <value>Nombor fon anda telah berjaya ditukar.</value>
   </data>
+  <data name="ChangePhoneNumberSuccessWithPhone" xml:space="preserve">
+    <value>Nombor fon anda telah berjaya ditukar ke {0}.</value>
+  </data>
   <data name="ChangePublicLimitReached" xml:space="preserve">
     <value>Anda mempunyai terlalu banyak link awam. Cuba batalkan link dari grup atau saluran lama, atau cipta grup atau saluran peribadi.</value>
   </data>
@@ -2832,6 +2921,24 @@ Nota: kalau anda lupa kod laluan, anda terpaksa log keluar atau pasang balik apl
   </data>
   <data name="ChannelAlertTitle" xml:space="preserve">
     <value>Apa itu Saluran?</value>
+  </data>
+  <data name="ChannelAntiSpam" xml:space="preserve">
+    <value>Anti Spam Agresif</value>
+  </data>
+  <data name="ChannelAntiSpamFalsePositiveReported" xml:space="preserve">
+    <value>Moderator Telegram akan semak lapuran anda. Terima kasih!</value>
+  </data>
+  <data name="ChannelAntiSpamForbidden_other" xml:space="preserve">
+    <value>Tapisan agresif boleh didaya hanya di grup dengan lebih dari **{0} ahli**.</value>
+  </data>
+  <data name="ChannelAntiSpamInfo" xml:space="preserve">
+    <value>Telegram akan tapis lebih banyak spam, tetapi mungkin kadang kala akan memberi kesan kepada mesej biasa. Anda boleh lapur Positif Silap di Aksi Terbaru.</value>
+  </data>
+  <data name="ChannelAntiSpamInfo2" xml:space="preserve">
+    <value>Anda boleh urus aturan anti spam di {0}</value>
+  </data>
+  <data name="ChannelAntiSpamUser" xml:space="preserve">
+    <value>Anti Spam Telegram</value>
   </data>
   <data name="ChannelBlacklist" xml:space="preserve">
     <value>Pengguna Dikeluarkan</value>
@@ -3540,6 +3647,9 @@ Panjang minima adalah 5 aksara.</value>
   <data name="ClearCacheFewChatsTitle" xml:space="preserve">
     <value>Padam kac untuk {0}</value>
   </data>
+  <data name="ClearCacheForChats" xml:space="preserve">
+    <value>Anda pasti ingin hapus data kac untuk bual dipilih?</value>
+  </data>
   <data name="ClearCacheInfo" xml:space="preserve">
     <value>Bebaskan ruang disk pada peranti anda; media anda akan sentiasa berada di awan.</value>
   </data>
@@ -3906,6 +4016,9 @@ Untuk jimatkan ruang dan ciri-ciri tambahan, naik taraf ke grupsuper:
   <data name="CreateEncryptedChatError" xml:space="preserve">
     <value>Ralat berlaku</value>
   </data>
+  <data name="CreateGeneralTopicTitle" xml:space="preserve">
+    <value>Pilih nama tajuk</value>
+  </data>
   <data name="CreateGroupError" xml:space="preserve">
     <value>Maaf, anda tidak boleh cipta grup dengan pengguna ini kerana aturan privasi yang tidak membenarkan.</value>
   </data>
@@ -4040,6 +4153,9 @@ Anda boleh tukar ke tema asal Telegram pada bila-bila masa di sini.</value>
   <data name="DataUsage" xml:space="preserve">
     <value>Kegunaan disk dan rangkaian</value>
   </data>
+  <data name="DataUsageByChats" xml:space="preserve">
+    <value>Kegunaan storan mengikut bual</value>
+  </data>
   <data name="Days_other" xml:space="preserve">
     <value>{0} hari</value>
   </data>
@@ -4055,6 +4171,9 @@ Anda boleh tukar ke tema asal Telegram pada bila-bila masa di sini.</value>
   <data name="Deactivate" xml:space="preserve">
     <value>HAPUS SEKARANG</value>
   </data>
+  <data name="DebugAltNavigation" xml:space="preserve">
+    <value>Navigasi alternatif</value>
+  </data>
   <data name="DebugAltNavigationToggleControls" xml:space="preserve">
     <value>Tukar navigasi kawalan keras</value>
   </data>
@@ -4067,8 +4186,14 @@ Anda boleh tukar ke tema asal Telegram pada bila-bila masa di sini.</value>
   <data name="DebugClearSendMessageAsPeers" xml:space="preserve">
     <value>Padan Kirim Mesej sebagai... rakan sebaya</value>
   </data>
+  <data name="DebugDialogsActivity" xml:space="preserve">
+    <value>Aktiviti Bual</value>
+  </data>
   <data name="DebugDrawSnowInChat" xml:space="preserve">
     <value>Salji di bual</value>
+  </data>
+  <data name="DebugGeneral" xml:space="preserve">
+    <value>Umum</value>
   </data>
   <data name="DebugMenu" xml:space="preserve">
     <value>Menu Nyahpepijat</value>
@@ -4142,11 +4267,23 @@ Anda boleh tukar ke tema asal Telegram pada bila-bila masa di sini.</value>
   <data name="DebugMenuWebViewDebugEnabled" xml:space="preserve">
     <value>Nyahkutu didayakan!</value>
   </data>
+  <data name="DebugMessageSkeletons" xml:space="preserve">
+    <value>Rangka Mesej</value>
+  </data>
+  <data name="DebugMessageSkeletonsLightOverlayAlpha" xml:space="preserve">
+    <value>Tindanan cahaya alpha</value>
+  </data>
+  <data name="DebugMessageSkeletonsSaturation" xml:space="preserve">
+    <value>Saturasi</value>
+  </data>
   <data name="DebugSendLastLogs" xml:space="preserve">
     <value>Kirim Log Terakhir</value>
   </data>
   <data name="DebugSendLogs" xml:space="preserve">
     <value>Kirim Log</value>
+  </data>
+  <data name="DebugShareAlert" xml:space="preserve">
+    <value>Kongsi Perhatian</value>
   </data>
   <data name="DebugShareAlertDialogsModeLess" xml:space="preserve">
     <value>Kurang</value>
@@ -4162,6 +4299,9 @@ Anda boleh tukar ke tema asal Telegram pada bila-bila masa di sini.</value>
   </data>
   <data name="DebugShareAlertTopicsSlowMotion" xml:space="preserve">
     <value>Tukar perkongsian gerak perlahan peringatan tajuk</value>
+  </data>
+  <data name="DebugTestBackend" xml:space="preserve">
+    <value>Uji bahagian belakang</value>
   </data>
   <data name="December" xml:space="preserve">
     <value>Disember</value>
@@ -4847,6 +4987,12 @@ Jika nombor di atas betul, sila tunggu kod verifikasi.</value>
   <data name="EditTopic" xml:space="preserve">
     <value>Sunting tajuk</value>
   </data>
+  <data name="EditTopicHide" xml:space="preserve">
+    <value>Tunjuk dalam Tajuk</value>
+  </data>
+  <data name="EditTopicHideInfo" xml:space="preserve">
+    <value>Jika tajuk 'Umum' disembunyikan, ahli grup boleh tarik ke bawah di senarai tajuk untuk melihatnya.</value>
+  </data>
   <data name="EditWidget" xml:space="preserve">
     <value>Sunting Wijet</value>
   </data>
@@ -5226,6 +5372,9 @@ Sila masukkan nama tema:</value>
   <data name="EventLogDeleteTopic" xml:space="preserve">
     <value>un1 hapus tajuk un2</value>
   </data>
+  <data name="EventLogDisabledAntiSpam" xml:space="preserve">
+    <value>un1 nyahdaya anti spam</value>
+  </data>
   <data name="EventLogEditedCaption" xml:space="preserve">
     <value>un1 sunting kapsyen:</value>
   </data>
@@ -5291,6 +5440,9 @@ telah dijumpai.</value>
   </data>
   <data name="EventLogEmptyTextSearch" xml:space="preserve">
     <value>Tiada tindakan terbaru yang mengandungi '**{0}**' dijumpai.</value>
+  </data>
+  <data name="EventLogEnabledAntiSpam" xml:space="preserve">
+    <value>un1 dayakan anti spam</value>
   </data>
   <data name="EventLogEndedLiveStream" xml:space="preserve">
     <value>un1 tamatkan strim langsung</value>
@@ -6131,6 +6283,9 @@ Semua bual rahsia akan hilang.</value>
   <data name="FwdMessagesToGroup" xml:space="preserve">
     <value>Mesej dimaju ke **{0}**.</value>
   </data>
+  <data name="FwdMessagesToManyChats_other" xml:space="preserve">
+    <value>Mesej dimajukan ke ** {0}s bual**.</value>
+  </data>
   <data name="FwdMessagesToSavedMessages" xml:space="preserve">
     <value>Mesej dimaju ke **Mesej Disimpan**.</value>
   </data>
@@ -6142,6 +6297,9 @@ Semua bual rahsia akan hilang.</value>
   </data>
   <data name="FwdMessageToGroup" xml:space="preserve">
     <value>Mesej dimaju ke **{0}**.</value>
+  </data>
+  <data name="FwdMessageToManyChats_other" xml:space="preserve">
+    <value>Mesej dimajukan ke **{0} bual**.</value>
   </data>
   <data name="FwdMessageToSavedMessages" xml:space="preserve">
     <value>Mesej dimaju ke **Mesej Disimpan**.</value>
@@ -6163,6 +6321,9 @@ Semua bual rahsia akan hilang.</value>
   </data>
   <data name="General" xml:space="preserve">
     <value>Am</value>
+  </data>
+  <data name="GetDirections" xml:space="preserve">
+    <value>Dapatkan Arah</value>
   </data>
   <data name="GetQRCode" xml:space="preserve">
     <value>Perolehi kod QR</value>
@@ -6264,6 +6425,9 @@ Aksi ini **tak boleh** ditukar balik.</value>
   <data name="GlobalAttachStickersRestricted" xml:space="preserve">
     <value>Stiker tak dibenarkan di grup ini.</value>
   </data>
+  <data name="GlobalAutoDeleteInfo" xml:space="preserve">
+    <value>Jika didayakan, semua mesej baru di bual yang anda mula akan dihapus auto untuk setiap ahli di suatu masa selepas mereka dikirim. Anda juga boleh **guna aturan ini untuk bual sedia ada anda.**</value>
+  </data>
   <data name="GlobalSearch" xml:space="preserve">
     <value>Carian global</value>
   </data>
@@ -6300,6 +6464,9 @@ mengenai Telegram?</value>
   </data>
   <data name="GroupContacts" xml:space="preserve">
     <value>Kenalan dalam grup ini</value>
+  </data>
+  <data name="GroupCreateAutodeleteDescription" xml:space="preserve">
+    <value>Hapus auto mesej dalam grup ini untuk setiap ahli selepas tempoh masa tertentu.</value>
   </data>
   <data name="GroupDeletedUndo" xml:space="preserve">
     <value>Grup dihapus</value>
@@ -7208,7 +7375,7 @@ Anda boleh tukar balik pek bahasa anda pada bila-bila masa di Aturan</value>
     <value>{0} masih ada.</value>
   </data>
   <data name="LinkChecking" xml:space="preserve">
-    <value>Nama diperiksa...</value>
+    <value>Memeriksa nama...</value>
   </data>
   <data name="LinkCopied" xml:space="preserve">
     <value>Link disalin ke papan klip.</value>
@@ -7952,6 +8119,9 @@ Ini mungkin mangambil sedikit masa. Anda boleh terus gunakan aplikasi sementara 
   <data name="NearbyVenue" xml:space="preserve">
     <value>Atau pilih tempat</value>
   </data>
+  <data name="NeedAdminRightForSetAutoDeleteTimer" xml:space="preserve">
+    <value>Anda perlu kuasa pentadbir untuk dayakan hapus auto di grup ini.</value>
+  </data>
   <data name="NetworkUsage" xml:space="preserve">
     <value>Kegunaan Data</value>
   </data>
@@ -8118,7 +8288,7 @@ Ini mungkin mangambil sedikit masa. Anda boleh terus gunakan aplikasi sementara 
     <value>Maaf, anda haya boleh tambah kenalan bersama ke grup pada masa ini.</value>
   </data>
   <data name="NobodyLikesSpam3" xml:space="preserve">
-    <value>Maaf, anda kini dihadkan dari membuat pos ke grup.</value>
+    <value>Maaf, anda kini dihadkan dari membuat pos ke grup ini.</value>
   </data>
   <data name="NobodyViewed" xml:space="preserve">
     <value>Tiada yang melihat</value>
@@ -8953,7 +9123,10 @@ Pasukan Telegram </value>
   </data>
   <data name="NoTopicsDescription" xml:space="preserve">
     <value>Anda boleh mula tajuk pertama anda atau tekan pada ikon
-{0} untuk tukar ke senarai mesej.</value>
+{0} untuk lihat grup sebagai mesej.</value>
+  </data>
+  <data name="NoTopicsDescriptionUser" xml:space="preserve">
+    <value>Mesej lama dari grup ini telah dipindah ke tajuk **’{0}’**.</value>
   </data>
   <data name="NoUsernameFound" xml:space="preserve">
     <value>Tiada nama samaran.</value>
@@ -9032,6 +9205,9 @@ Pasukan Telegram </value>
   </data>
   <data name="OpenFile" xml:space="preserve">
     <value>BUKA FAIL</value>
+  </data>
+  <data name="OpenFragment" xml:space="preserve">
+    <value>Buka Fragment</value>
   </data>
   <data name="OpenGroup" xml:space="preserve">
     <value>LIHAT GRUP</value>
@@ -10445,7 +10621,7 @@ Kami akan akses lokasi anda hanya untuk masa yang anda pilih, dan anda boleh hen
     <value>Alatan untuk set folder paras asal, arkib auto dan sorok bual baru dari bukan kenalan.</value>
   </data>
   <data name="PremiumPreviewAdvancedChatManagementDescription2" xml:space="preserve">
-    <value>Pelanggan  Telegram Premium boleh set folder paras asal, arkib auto dan sembunyi bual baru dari bukan kenalan.</value>
+    <value>Pelanggan Telegram Premium boleh set folder paras asal, arkib auto dan sembunyi bual baru dari bukan kenalan.</value>
   </data>
   <data name="PremiumPreviewAnimatedProfiles" xml:space="preserve">
     <value>Gambar Profil Beranimasi</value>
@@ -11235,6 +11411,18 @@ https://telegram.org/blog/coronavirus</value>
   <data name="RemoveGroupStickerSet" xml:space="preserve">
     <value>Keluarkan Set Stiker Grup</value>
   </data>
+  <data name="RemoveManyEmojiCount_other" xml:space="preserve">
+    <value>Keluarkan {0} emoji</value>
+  </data>
+  <data name="RemoveManyEmojiPacksCount_other" xml:space="preserve">
+    <value>Keluarkan {0} pek emoji</value>
+  </data>
+  <data name="RemoveManyMasksCount_other" xml:space="preserve">
+    <value>Keluarkan {0} topeng</value>
+  </data>
+  <data name="RemoveManyStickersCount_other" xml:space="preserve">
+    <value>Keluarkan {0} stiker</value>
+  </data>
   <data name="RemoveStickersCount" xml:space="preserve">
     <value>KELUARKAN {0}</value>
   </data>
@@ -11309,6 +11497,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="ReportChatViolence" xml:space="preserve">
     <value>Keganasan </value>
+  </data>
+  <data name="ReportFalsePositive" xml:space="preserve">
+    <value>Lapur Positif Silap</value>
   </data>
   <data name="ReportHint" xml:space="preserve">
     <value>Maklumat tambahan...</value>
@@ -11861,6 +12052,9 @@ Anda mungkin perlu mula semula aplikasi sebelum ianya berkuat kuasa.</value>
   <data name="SearchMessages" xml:space="preserve">
     <value>Mesej</value>
   </data>
+  <data name="SearchMessagesIn" xml:space="preserve">
+    <value>Mesej dalam {0}</value>
+  </data>
   <data name="SearchMusic" xml:space="preserve">
     <value>Cari muzik</value>
   </data>
@@ -11941,6 +12135,18 @@ Anda mungkin perlu mula semula aplikasi sebelum ianya berkuat kuasa.</value>
   </data>
   <data name="SelectChats" xml:space="preserve">
     <value>Pilih Bual</value>
+  </data>
+  <data name="SelectChatsForAutoDelete" xml:space="preserve">
+    <value>untuk guna pemasa musnah sendiri</value>
+  </data>
+  <data name="SelectChatsForAutoDelete2" xml:space="preserve">
+    <value>akan punyai pemasa musnah sendiri</value>
+  </data>
+  <data name="SelectChatsForDisableAutoDelete" xml:space="preserve">
+    <value>untuk nyahdaya pemasa musnah sendiri</value>
+  </data>
+  <data name="SelectChatsForDisableAutoDelete2" xml:space="preserve">
+    <value>akan nyahdaya pemasa musnah sendiri</value>
   </data>
   <data name="SelectColor" xml:space="preserve">
     <value>Pilih warna</value>
@@ -12169,6 +12375,9 @@ Jangan jawab, Telegram akan proses semuanya secara automatik. </value>
   <data name="SentCallOnly" xml:space="preserve">
     <value>Memanggil fon anda **{0}** untuk serahan kod.</value>
   </data>
+  <data name="SentFragmentCode" xml:space="preserve">
+    <value>Dapatkan kod untuk {0} di seksyen Nombor Tanpa Nama di Fragment.</value>
+  </data>
   <data name="SentSmsCode" xml:space="preserve">
     <value>Kami telah hantar SMS dengan kod aktivasi ke fon anda **{0}**.</value>
   </data>
@@ -12226,11 +12435,17 @@ Jangan jawab, Telegram akan proses semuanya secara automatik. </value>
   <data name="SetAsMain" xml:space="preserve">
     <value>Set sebagai Utama</value>
   </data>
+  <data name="SetAutoDeleteTimer" xml:space="preserve">
+    <value>Set Hapus Auto</value>
+  </data>
   <data name="SetBackground" xml:space="preserve">
     <value>SET LATAR BELAKANG</value>
   </data>
   <data name="SetColor" xml:space="preserve">
     <value>Set warna</value>
+  </data>
+  <data name="SetCustomTime" xml:space="preserve">
+    <value>Set Masa Khusus</value>
   </data>
   <data name="SetEmojiStatus" xml:space="preserve">
     <value>Set Status Emoji</value>
@@ -13589,6 +13804,12 @@ Sila cuba lagi dalam {0}.</value>
   <data name="TopicEmptyViewDescription" xml:space="preserve">
     <value>Kirim mesej untuk mula tajuk.</value>
   </data>
+  <data name="TopicHidden" xml:space="preserve">
+    <value>Tajuk umum disembunyi</value>
+  </data>
+  <data name="TopicHidden2" xml:space="preserve">
+    <value>{0} sembunyi tajuk umum</value>
+  </data>
   <data name="TopicIconChanged" xml:space="preserve">
     <value>Ikon tajuk ditukar</value>
   </data>
@@ -13625,6 +13846,12 @@ Sila cuba lagi dalam {0}.</value>
   <data name="TopicsDeleted_other" xml:space="preserve">
     <value>Tajuk dihapus.</value>
   </data>
+  <data name="TopicShown" xml:space="preserve">
+    <value>Tajuk Umum dipamirkan</value>
+  </data>
+  <data name="TopicShown2" xml:space="preserve">
+    <value>{0} tunjuk tajuk umum</value>
+  </data>
   <data name="TopicViewAsMessages" xml:space="preserve">
     <value>Lihat sebagai mesej</value>
   </data>
@@ -13635,7 +13862,7 @@ Sila cuba lagi dalam {0}.</value>
     <value>{0} tutup {1}</value>
   </data>
   <data name="TopicWasCreatedAction" xml:space="preserve">
-    <value>{0} dicipta</value>
+    <value>Tajuk {0} dicipta</value>
   </data>
   <data name="TopicWasIconChangedToAction" xml:space="preserve">
     <value>{0} tukar ikon tajuk ke {1}</value>
@@ -13809,6 +14036,9 @@ Jika anda tidak selesa dengan keperluan kecil Telegram, kami tak akan dapat beri
   </data>
   <data name="UndoAllCustom" xml:space="preserve">
     <value>Tukar balik aturan notifikasi khusus untuk semua kenalan, grup dan saluran.</value>
+  </data>
+  <data name="Unhide" xml:space="preserve">
+    <value>Tunjuk</value>
   </data>
   <data name="UnhideFromTop" xml:space="preserve">
     <value>Semat</value>
@@ -15464,6 +15694,21 @@ Anda masih ingat kata laluan anda?</value>
   <data name="YouSendersNameHidden" xml:space="preserve">
     <value>Anda (nama pengirim tersembunyi)</value>
   </data>
+  <data name="YouTubeVideoErrorHTML" xml:space="preserve">
+    <value>Ralat berlaku bila cuba main video ini.</value>
+  </data>
+  <data name="YouTubeVideoErrorInvalid" xml:space="preserve">
+    <value>URL video tak sah.</value>
+  </data>
+  <data name="YouTubeVideoErrorNotAvailableInApp" xml:space="preserve">
+    <value>Video ini tak boleh dimain dalam aplikasi ini.</value>
+  </data>
+  <data name="YouTubeVideoErrorNotFound" xml:space="preserve">
+    <value>Video tak dijumpai.</value>
+  </data>
+  <data name="YouTubeVideoErrorOpenExternal" xml:space="preserve">
+    <value>Tonton di You Tube</value>
+  </data>
   <data name="YouWereKicked" xml:space="preserve">
     <value>anda dikeluarkan </value>
   </data>
@@ -15473,16 +15718,8 @@ Anda masih ingat kata laluan anda?</value>
   <data name="cloud_lng_about_psa_covid" xml:space="preserve">
     <value>Mesej ini menyediakan anda dengan pengumuman perkhidmatan awam mengenai wabak COVIC-19 masa kini. Untuk keluarkannya dari senarai bual anda, klik kanan dan pilih **Sembuyi**</value>
   </data>
-  <data name="cloud_lng_badge_psa_covid" xml:space="preserve">
-    <value>COVID-19</value>
-  </data>
   <data name="cloud_lng_forwarded_psa_covid" xml:space="preserve">
     <value>Notifikasi COVID-19 dari {channel}</value>
-  </data>
-  <data name="cloud_lng_tooltip_psa_covid" xml:space="preserve">
-    <value>Mesej ini menyediakan anda dengan pengumuman perkhidmatan awam mengenai wabak COVIC-19 masa kini. Maklumat lanjut tmengenai inisiatif ini ada di
-https://telegram.org/blog/coronavirus
-</value>
   </data>
   <data name="lng_about_psa_default" xml:space="preserve">
     <value>Mesej ini menyediakan anda dengan pengumuman perkhidmatan awam. Untuk keluarkannya dari senarai bual anda, klik kanan dan pilih **Sembunyi**.</value>
@@ -15541,9 +15778,6 @@ Kod asal boleh didapati di {github_link}.</value>
   </data>
   <data name="lng_action_changed_photo" xml:space="preserve">
     <value>{from} kemaskini foto grup</value>
-  </data>
-  <data name="lng_action_changed_photo_channel" xml:space="preserve">
-    <value>Foto saluran dikemaskini</value>
   </data>
   <data name="lng_action_changed_title" xml:space="preserve">
     <value>{from} tukar nama grup ke «{title}»</value>
@@ -15719,17 +15953,11 @@ Kod asal boleh didapati di {github_link}.</value>
   <data name="lng_admin_log_about_text" xml:space="preserve">
     <value>Ini adalah senarai bagi semua tindakan yang diambil oleh ahli dan pentadbir grup dalam masa 48 jam yang lalu.</value>
   </data>
-  <data name="lng_admin_log_about_text_channel" xml:space="preserve">
-    <value>Ini adalah senarai aksi servis yang diambil oleh pentadbir saluran dalam masa 48 jam yang lalu. </value>
-  </data>
   <data name="lng_admin_log_admin_add_admins" xml:space="preserve">
     <value>Tambah pentadbir baru</value>
   </data>
   <data name="lng_admin_log_admin_invite_link" xml:space="preserve">
     <value>Jemput pengguna melalui link</value>
-  </data>
-  <data name="lng_admin_log_admin_manage_calls" xml:space="preserve">
-    <value>Urus bual video</value>
   </data>
   <data name="lng_admin_log_admin_manage_calls_channel" xml:space="preserve">
     <value>Urus strim langsung</value>
@@ -15817,6 +16045,9 @@ Kod asal boleh didapati di {github_link}.</value>
   </data>
   <data name="lng_admin_log_filter_all_admins" xml:space="preserve">
     <value>Semua ahli dan pentadbir</value>
+  </data>
+  <data name="lng_admin_log_filter_members_removed" xml:space="preserve">
+    <value>Ahli yang keluar</value>
   </data>
   <data name="lng_admin_log_filter_restrictions" xml:space="preserve">
     <value>Sekatan baru</value>
@@ -16009,6 +16240,9 @@ masa 48 jam yang lalu.</value>
   <data name="lng_admin_log_stopped_poll" xml:space="preserve">
     <value>{from} hentikan undian:</value>
   </data>
+  <data name="lng_admin_log_title_selected" xml:space="preserve">
+    <value>Tindakan dipilih</value>
+  </data>
   <data name="lng_admin_log_transferred" xml:space="preserve">
     <value>pindah hak milik ke {user}</value>
   </data>
@@ -16049,6 +16283,9 @@ Bual yang disenyapkan akan berada di arkib bila mesej baru tiba.</value>
   <data name="lng_attach_failed" xml:space="preserve">
     <value>Kandas</value>
   </data>
+  <data name="lng_audio_player_reverse" xml:space="preserve">
+    <value>Susunan terbalik</value>
+  </data>
   <data name="lng_background_bad_link" xml:space="preserve">
     <value>Link latar belakang tidak sah.</value>
   </data>
@@ -16058,11 +16295,11 @@ Bual yang disenyapkan akan berada di arkib bila mesej baru tiba.</value>
   <data name="lng_background_header" xml:space="preserve">
     <value>Pratonton latar belakang</value>
   </data>
+  <data name="lng_background_link_copied" xml:space="preserve">
+    <value>Link disalin ke papan klip</value>
+  </data>
   <data name="lng_background_sure_delete" xml:space="preserve">
     <value>Anda pasti ingin hapus latar belakang ini?</value>
-  </data>
-  <data name="lng_background_text2" xml:space="preserve">
-    <value>Saya tak boleh ambil anda dengan serius sekarang.</value>
   </data>
   <data name="lng_backgrounds_header" xml:space="preserve">
     <value>Pilih latar belakang baru untuk bual anda</value>
@@ -16094,9 +16331,6 @@ Bual yang disenyapkan akan berada di arkib bila mesej baru tiba.</value>
   <data name="lng_bio_title" xml:space="preserve">
     <value>Sunting Bio Anda</value>
   </data>
-  <data name="lng_blocked_list_about" xml:space="preserve">
-    <value>Pengguna yang disekat tak boleh kirim mesej atau tambah anda ke grup. Mereka tak akan dapat lihat foto profil, di talian dan status terakhir kelihatan. </value>
-  </data>
   <data name="lng_blocked_list_add_title" xml:space="preserve">
     <value>Pilih pengguna yang ingin disekat</value>
   </data>
@@ -16121,11 +16355,17 @@ Bual yang disenyapkan akan berada di arkib bila mesej baru tiba.</value>
   <data name="lng_blocked_list_title" xml:space="preserve">
     <value>Pengguna disekat</value>
   </data>
+  <data name="lng_blocked_list_unblock" xml:space="preserve">
+    <value>Bebaskan</value>
+  </data>
   <data name="lng_blocked_list_unknown_phone" xml:space="preserve">
     <value>nombor fon tidak diketahui</value>
   </data>
   <data name="lng_bot_already_in_group" xml:space="preserve">
     <value>Bot sudah menjadi ahli grup.</value>
+  </data>
+  <data name="lng_bot_chats_not_found" xml:space="preserve">
+    <value>Tiada bual dijumpai</value>
   </data>
   <data name="lng_bot_choose_chat" xml:space="preserve">
     <value>Pilih bual</value>
@@ -16186,9 +16426,6 @@ Bual yang disenyapkan akan berada di arkib bila mesej baru tiba.</value>
   </data>
   <data name="lng_call_box_about" xml:space="preserve">
     <value>Anda belum buat panggilan Telegram lagi. </value>
-  </data>
-  <data name="lng_call_box_clear_all" xml:space="preserve">
-    <value>Hapus Semua</value>
   </data>
   <data name="lng_call_box_clear_sure" xml:space="preserve">
     <value>Anda pasti ingin hapus kesemua log panggilan anda?</value>
@@ -16322,15 +16559,15 @@ Bual yang disenyapkan akan berada di arkib bila mesej baru tiba.</value>
   <data name="lng_cant_invite_banned" xml:space="preserve">
     <value>Maaf, hanya pentadbir boleh tambah pengguna ini. </value>
   </data>
-  <data name="lng_cant_invite_bot_to_channel" xml:space="preserve">
-    <value>Bot hanya dapat ditambah ke saluran sebagai pentadbir.</value>
-  </data>
   <data name="lng_cant_invite_make_admin" xml:space="preserve">
     <value>Jadikan pentadbir</value>
   </data>
   <data name="lng_cant_invite_not_contact" xml:space="preserve">
     <value>Maaf, anda hanya boleh tambah kenalan bersama ke grup ketika ini.
 {more_info}</value>
+  </data>
+  <data name="lng_cant_invite_offer_admin" xml:space="preserve">
+    <value>Bot hanya boleh ditambah sebagai pentadbir</value>
   </data>
   <data name="lng_cant_invite_privacy" xml:space="preserve">
     <value>Maaf, anda tak boleh tambah pengguna ini ke grup kerana aturan peribadi mereka tidak benarkan</value>
@@ -16404,17 +16641,11 @@ Sila sertainya untuk terus melihat konten.</value>
   <data name="lng_channel_not_accessible" xml:space="preserve">
     <value>Maaf, saluran ini adalah dilarang masuk</value>
   </data>
-  <data name="lng_channel_public_link_copied" xml:space="preserve">
-    <value>Link disalin di papan klip.</value>
-  </data>
   <data name="lng_channel_removed_list_about" xml:space="preserve">
     <value>Pengguna yang dikeluarkan dari saluran oleh pentadbir tak boleh sertai melalui link jemputan.</value>
   </data>
   <data name="lng_channels_too_much_located_other" xml:space="preserve">
     <value>Maaf, pengguna sasar mempunyai terlalu banyak grup berkaitan lokasi. Sila minta mereka untuk hapus atau pindah salah satu daripadanya dahulu.</value>
-  </data>
-  <data name="lng_channels_too_much_public_about" xml:space="preserve">
-    <value>Anda terlalu banyak menyimpan link awam. Cuba batalkan link dari salah satu grup atau saluran lama, atau cipta yang peribadi</value>
   </data>
   <data name="lng_channels_too_much_public_revoke_confirm_channel" xml:space="preserve">
     <value>Anda pasti mahu batalkan link {link}?
@@ -16440,9 +16671,6 @@ Grup «{group}» akan tukar ke grup pribadi. </value>
   </data>
   <data name="lng_chat_theme_cant_voice" xml:space="preserve">
     <value>Maaf, anda tak boleh tukar tema bual jika anda ada mesej suara belum dikirim.</value>
-  </data>
-  <data name="lng_chat_theme_dont" xml:space="preserve">
-    <value>Jangan Set Tema</value>
   </data>
   <data name="lng_chat_theme_none" xml:space="preserve">
     <value>Tiada
@@ -16503,6 +16731,9 @@ Sekiranya anda lupa kata laluan, anda akan kehilangan akses ke akaun Telegram an
   </data>
   <data name="lng_cloud_password_removed" xml:space="preserve">
     <value>Verifikasi 2-langkah dinyahdaya.</value>
+  </data>
+  <data name="lng_cloud_password_resend" xml:space="preserve">
+    <value>Hantar semula kod</value>
   </data>
   <data name="lng_cloud_password_resent" xml:space="preserve">
     <value>Kod dihantar semula.</value>
@@ -16796,14 +17027,14 @@ Anda boleh kembalikannya dari menu konteks di butang arkib.</value>
   <data name="lng_create_channel_crop" xml:space="preserve">
     <value>Pilih ruang untuk foto profil</value>
   </data>
-  <data name="lng_create_channel_link_about" xml:space="preserve">
-    <value>Anda boleh guna a-z, 0-9 dan baris bawah. Minima 5 abjad.</value>
-  </data>
   <data name="lng_create_channel_link_available" xml:space="preserve">
     <value>Link ini ada</value>
   </data>
   <data name="lng_create_channel_link_bad_symbols" xml:space="preserve">
     <value>Hanya 0-9, a-z, dan garis bawah sahaja.</value>
+  </data>
+  <data name="lng_create_channel_link_copied" xml:space="preserve">
+    <value>Link disalinkan ke papan klip </value>
   </data>
   <data name="lng_create_channel_link_invalid" xml:space="preserve">
     <value>Link ini tidak sah </value>
@@ -16825,6 +17056,9 @@ Anda boleh kembalikannya dari menu konteks di butang arkib.</value>
   </data>
   <data name="lng_create_invite_link_title" xml:space="preserve">
     <value>Link jemputan</value>
+  </data>
+  <data name="lng_create_permanent_link_title" xml:space="preserve">
+    <value>Link tetap</value>
   </data>
   <data name="lng_create_private_channel_about" xml:space="preserve">
     <value>Hanya mereka dengan link jemputan istimewa boleh sertai</value>
@@ -17175,6 +17409,9 @@ Ia boleh berlaku kerana lokasi yang anda pilih adalah tak sah. Cuba tukar di Atu
   <data name="lng_edit_privacy_profile_photo_never_empty" xml:space="preserve">
     <value>Jangan benarkan</value>
   </data>
+  <data name="lng_edit_privacy_profile_photo_title" xml:space="preserve">
+    <value>Foto Profil</value>
+  </data>
   <data name="lng_edit_self_title" xml:space="preserve">
     <value>Sunting nama anda</value>
   </data>
@@ -17487,17 +17724,14 @@ Ambil perhatian mereka masih boleh sertai melalui link jemputan grup selagi mere
   <data name="lng_filters_empty" xml:space="preserve">
     <value>Sila pilih seminima satu bual untuk folder ini.</value>
   </data>
-  <data name="lng_filters_error_pinned_max" xml:space="preserve">
-    <value>Maaf, anda sudah tak boleh semat bual tambahan ke atas.</value>
-  </data>
   <data name="lng_filters_exclude_about" xml:space="preserve">
     <value>Pilih bual dan jenis bual yang tak boleh dilihat di folder ini.</value>
   </data>
   <data name="lng_filters_icon_header" xml:space="preserve">
     <value>Pilih ikon</value>
   </data>
-  <data name="lng_filters_include_non_contacts" xml:space="preserve">
-    <value>Bukan Kontak</value>
+  <data name="lng_filters_include_about" xml:space="preserve">
+    <value>Pilih bual dan jenis bual yang boleh dilihat di folder ini.</value>
   </data>
   <data name="lng_filters_limit" xml:space="preserve">
     <value>Maaf, anda tak boleh cipta folder lagi.</value>
@@ -17520,9 +17754,6 @@ Ambil perhatian mereka masih boleh sertai melalui link jemputan grup selagi mere
   <data name="lng_filters_subtitle" xml:space="preserve">
     <value>Folder saya</value>
   </data>
-  <data name="lng_filters_type_non_contacts" xml:space="preserve">
-    <value>Bukan Kenalan</value>
-  </data>
   <data name="lng_flood_error" xml:space="preserve">
     <value>Cubaan yang terlalu banyak. Sila cuba lagi nanti.</value>
   </data>
@@ -17538,6 +17769,9 @@ Ambil perhatian mereka masih boleh sertai melalui link jemputan grup selagi mere
   <data name="lng_forward_cant" xml:space="preserve">
     <value>Maaf, tiada cara untuk majukan di sini :(</value>
   </data>
+  <data name="lng_forward_change_recipient" xml:space="preserve">
+    <value>Tukar penerima</value>
+  </data>
   <data name="lng_forward_choose" xml:space="preserve">
     <value>Pilih penerima...</value>
   </data>
@@ -17552,6 +17786,9 @@ Ambil perhatian mereka masih boleh sertai melalui link jemputan grup selagi mere
   </data>
   <data name="lng_forward_share_contact" xml:space="preserve">
     <value>Kongsi kenalan ke {recipient}?</value>
+  </data>
+  <data name="lng_forward_show_caption" xml:space="preserve">
+    <value>Tunjuk kapsyen</value>
   </data>
   <data name="lng_forward_show_captions" xml:space="preserve">
     <value>Tunjuk kapsyen</value>
@@ -17598,12 +17835,6 @@ Ambil perhatian mereka masih boleh sertai melalui link jemputan grup selagi mere
   <data name="lng_from_request_body" xml:space="preserve">
     <value>Anda terima mesej ini kerana anda pohon untuk sertai {name} pada {date}</value>
   </data>
-  <data name="lng_from_request_title_channel" xml:space="preserve">
-    <value>Respon ke permohonan menyertai anda</value>
-  </data>
-  <data name="lng_from_request_title_group" xml:space="preserve">
-    <value>Respon ke permohonan menyertai anda</value>
-  </data>
   <data name="lng_full_name" xml:space="preserve">
     <value>{first_name} {last_name}</value>
   </data>
@@ -17612,9 +17843,6 @@ Ambil perhatian mereka masih boleh sertai melalui link jemputan grup selagi mere
   </data>
   <data name="lng_gifs_no_saved" xml:space="preserve">
     <value>Anda belum ada GIF tersimpan.</value>
-  </data>
-  <data name="lng_gigagroup_convert_feature3" xml:space="preserve">
-    <value>Tak boleh tukar balik ke grup biasa.</value>
   </data>
   <data name="lng_gigagroup_convert_sure" xml:space="preserve">
     <value>Tukar</value>
@@ -17653,9 +17881,6 @@ Link jemputan tidak akan berfungsi untuk mereka..</value>
   </data>
   <data name="lng_group_call_also_cancel_channel" xml:space="preserve">
     <value>Batal strim langsung</value>
-  </data>
-  <data name="lng_group_call_also_end" xml:space="preserve">
-    <value>Tamat bual video</value>
   </data>
   <data name="lng_group_call_can_speak" xml:space="preserve">
     <value>Anda kini boleh cakap di {chat}.</value>
@@ -17696,17 +17921,11 @@ Link jemputan tidak akan berfungsi untuk mereka..</value>
   <data name="lng_group_call_copy_speaker_link" xml:space="preserve">
     <value>Salin Link Pendengar</value>
   </data>
-  <data name="lng_group_call_create_sure" xml:space="preserve">
-    <value>Mulai bual video di grup ini?</value>
-  </data>
   <data name="lng_group_call_create_sure_channel" xml:space="preserve">
     <value>Anda pasti ingin mula bual video di saluran ini sebagai akaun peribadi anda?</value>
   </data>
   <data name="lng_group_call_edit_title" xml:space="preserve">
     <value>Sunting Tajuk Bual Video</value>
-  </data>
-  <data name="lng_group_call_edit_title_header" xml:space="preserve">
-    <value>Tajuk bual video</value>
   </data>
   <data name="lng_group_call_end" xml:space="preserve">
     <value>Tamat Bual Video</value>
@@ -17747,9 +17966,6 @@ Link jemputan tidak akan berfungsi untuk mereka..</value>
   <data name="lng_group_call_join_as_changed_channel" xml:space="preserve">
     <value>Peserta strim langsung ini akan nampak anda sebagai {name}</value>
   </data>
-  <data name="lng_group_call_join_as_header" xml:space="preserve">
-    <value>Sertai Bual Video sebagai...</value>
-  </data>
   <data name="lng_group_call_join_confirm" xml:space="preserve">
     <value>Sertai bual video {chat}?</value>
   </data>
@@ -17770,9 +17986,6 @@ Link jemputan tidak akan berfungsi untuk mereka..</value>
   </data>
   <data name="lng_group_call_leave_sure_channel" xml:space="preserve">
     <value>Anda pasti ingin keluar strim langsung ini?</value>
-  </data>
-  <data name="lng_group_call_leave_title" xml:space="preserve">
-    <value>Tinggal bual video</value>
   </data>
   <data name="lng_group_call_leave_to_other_sure" xml:space="preserve">
     <value>Tinggal bual suara aktif anda dan sertai bual video ini?</value>
@@ -17814,9 +18027,6 @@ Mula semula aplikasi mungkin perlu</value>
   </data>
   <data name="lng_group_call_new_muted" xml:space="preserve">
     <value>Senyapkan peserta baru</value>
-  </data>
-  <data name="lng_group_call_no_anonymous" xml:space="preserve">
-    <value>Maaf, pentadbir tanpa nama tak boleh sertai bual video.</value>
   </data>
   <data name="lng_group_call_no_members" xml:space="preserve">
     <value>Klik untuk sertai</value>
@@ -17872,11 +18082,6 @@ Mula semula aplikasi mungkin perlu</value>
   <data name="lng_group_call_recording_start_checkbox" xml:space="preserve">
     <value>Juga rakam video</value>
   </data>
-  <data name="lng_group_call_recording_start_sure" xml:space="preserve">
-    <value>Rakam bual ini dan simpannya sebagai fail audio?
-
-Peserta lain akan dapat melihat bual sedang dirakam.</value>
-  </data>
   <data name="lng_group_call_recording_start_title" xml:space="preserve">
     <value>Tambah Tajuk</value>
   </data>
@@ -17894,9 +18099,6 @@ Peserta lain akan dapat melihat bual sedang dirakam.</value>
   </data>
   <data name="lng_group_call_recording_stop" xml:space="preserve">
     <value>Henti Rakaman</value>
-  </data>
-  <data name="lng_group_call_recording_stop_sure" xml:space="preserve">
-    <value>Anda ingin hentikan rakaman bual video ini?</value>
   </data>
   <data name="lng_group_call_recording_stopped" xml:space="preserve">
     <value>Rakaman dihentikan.</value>
@@ -17921,12 +18123,6 @@ Peserta lain akan dapat melihat bual sedang dirakam.</value>
   </data>
   <data name="lng_group_call_schedule_notified_group" xml:space="preserve">
     <value>Ahli grup akan diberitahu bual video akan mula dalam {duration}.</value>
-  </data>
-  <data name="lng_group_call_schedule_title" xml:space="preserve">
-    <value>Jadual Bual Video</value>
-  </data>
-  <data name="lng_group_call_scheduled_title" xml:space="preserve">
-    <value>Bual Video Berjadual</value>
   </data>
   <data name="lng_group_call_screen_share_audio" xml:space="preserve">
     <value>Kongsi Sistem Audio</value>
@@ -17988,9 +18184,6 @@ Peserta lain akan dapat melihat bual sedang dirakam.</value>
   <data name="lng_group_call_switch_done" xml:space="preserve">
     <value>Peserta bual video ini akan nampak anda sebagai **{user}**</value>
   </data>
-  <data name="lng_group_call_title" xml:space="preserve">
-    <value>Bual Video</value>
-  </data>
   <data name="lng_group_call_title_changed" xml:space="preserve">
     <value>Tajuk bual video ditukar ke {title}</value>
   </data>
@@ -18036,6 +18229,9 @@ Peserta lain akan dapat melihat bual sedang dirakam.</value>
   <data name="lng_group_call_you_are_live" xml:space="preserve">
     <value>Anda kini Langsung</value>
   </data>
+  <data name="lng_group_full" xml:space="preserve">
+    <value>Maaf, grup ini sudah penuh.</value>
+  </data>
   <data name="lng_group_invite_about" xml:space="preserve">
     <value>Pengguna Telegram akan dapat sertai grup anda melalui link di bawah. </value>
   </data>
@@ -18078,9 +18274,6 @@ Peserta lain akan dapat melihat bual sedang dirakam.</value>
   <data name="lng_group_invite_expires_at" xml:space="preserve">
     <value>Link ini lupus pada {when}.</value>
   </data>
-  <data name="lng_group_invite_label_about" xml:space="preserve">
-    <value>Hanya pentadbir boleh lihat nama ini.</value>
-  </data>
   <data name="lng_group_invite_label_header" xml:space="preserve">
     <value>Nama Link (Pilihan)</value>
   </data>
@@ -18093,8 +18286,8 @@ Peserta lain akan dapat melihat bual sedang dirakam.</value>
   <data name="lng_group_invite_other_list" xml:space="preserve">
     <value>Link dicipta oleh pentadbir ini</value>
   </data>
-  <data name="lng_group_invite_other_title" xml:space="preserve">
-    <value>Link dicipta oleh pentadbir lain</value>
+  <data name="lng_group_invite_permanent" xml:space="preserve">
+    <value>Link kekal</value>
   </data>
   <data name="lng_group_invite_permanent_other" xml:space="preserve">
     <value>Link kekal untuk pentadbir ini</value>
@@ -18114,11 +18307,20 @@ Peserta lain akan dapat melihat bual sedang dirakam.</value>
   <data name="lng_group_invite_revoked_title" xml:space="preserve">
     <value>Batal link</value>
   </data>
+  <data name="lng_group_invite_usage_about" xml:space="preserve">
+    <value>Anda boleh setkan agar link lupus selepas ianya diguna untuk beberapa kali.</value>
+  </data>
+  <data name="lng_group_invite_usage_title" xml:space="preserve">
+    <value>Had berapa kali boleh diguna</value>
+  </data>
   <data name="lng_group_not_accessible" xml:space="preserve">
     <value>Maaf, grup ini dilarang masuk.</value>
   </data>
   <data name="lng_group_removed_list_about" xml:space="preserve">
     <value>Pengguna yang dikeluarkan dari grup oleh pentadbir tak boleh sertai melalui link jemputan.</value>
+  </data>
+  <data name="lng_group_request_sent" xml:space="preserve">
+    <value>Anda akan dimasukkan ke grup bila permohonan anda dilulus oleh pentadbir.</value>
   </data>
   <data name="lng_group_request_to_join" xml:space="preserve">
     <value>Mohon Menyertai</value>
@@ -18426,17 +18628,14 @@ Anda pasti ingin lakukannya?</value>
   <data name="lng_manage_group_info" xml:space="preserve">
     <value>Info Grup</value>
   </data>
-  <data name="lng_manage_history_visibility_hidden_about" xml:space="preserve">
-    <value>Ahli baru tidak akan dapat melihat mesej sebelumnya.</value>
-  </data>
-  <data name="lng_manage_history_visibility_hidden_legacy" xml:space="preserve">
-    <value>Ahli baru tak dapat lihat lebih dari 100 mesej terdahulu.</value>
-  </data>
   <data name="lng_manage_linked_channel" xml:space="preserve">
     <value>Saluran dilink</value>
   </data>
   <data name="lng_manage_linked_channel_about" xml:space="preserve">
     <value>Grup ini dilink sebagai bilik diskusi untuk {channel}.</value>
+  </data>
+  <data name="lng_manage_linked_channel_posted" xml:space="preserve">
+    <value>Semua mesej yang dipos di saluran ini dimajukan ke grup.</value>
   </data>
   <data name="lng_manage_linked_channel_private" xml:space="preserve">
     <value>Sesiapa dari grup boleh lihat mesej di saluran ini.</value>
@@ -18459,6 +18658,9 @@ Anda pasti ingin lakukannya?</value>
   <data name="lng_manage_peer_link_invite" xml:space="preserve">
     <value>Link jemputan</value>
   </data>
+  <data name="lng_manage_peer_link_permanent" xml:space="preserve">
+    <value>Link tetap</value>
+  </data>
   <data name="lng_manage_peer_link_type" xml:space="preserve">
     <value>Jenis link</value>
   </data>
@@ -18468,17 +18670,11 @@ Anda pasti ingin lakukannya?</value>
   <data name="lng_manage_peer_no_forwards_about_channel" xml:space="preserve">
     <value>Pelanggan tidak boleh majukan mesej dari saluran ini atau menyimpan fail media.</value>
   </data>
-  <data name="lng_manage_peer_reactions_about" xml:space="preserve">
-    <value>Benarkan ahli untuk beri reaksi pada mesej di grup.</value>
+  <data name="lng_manage_peer_no_forwards_title" xml:space="preserve">
+    <value>Menyimpan konten</value>
   </data>
   <data name="lng_manage_peer_recent_actions" xml:space="preserve">
     <value>Tindakan terkini</value>
-  </data>
-  <data name="lng_manage_peer_requests" xml:space="preserve">
-    <value>Permohonan Menyertai</value>
-  </data>
-  <data name="lng_manage_peer_requests_channel" xml:space="preserve">
-    <value>Permohonan Menyertai</value>
   </data>
   <data name="lng_masks_archive_pack" xml:space="preserve">
     <value>Arkib Mask</value>
@@ -18599,6 +18795,9 @@ Anda pasti ingin lakukannya?</value>
   </data>
   <data name="lng_mediaview_playback_speed" xml:space="preserve">
     <value>Kelajuan mainbalik: {speed}</value>
+  </data>
+  <data name="lng_mediaview_profile_photo" xml:space="preserve">
+    <value>Foto Profil</value>
   </data>
   <data name="lng_mediaview_rotate_video" xml:space="preserve">
     <value>Putar video</value>
@@ -18837,14 +19036,11 @@ Nota: jika anda lupa kata laluan tempatan, anda akan dikehendaki log  keluar kem
   <data name="lng_passcode_enter" xml:space="preserve">
     <value>Masukkan kod laluan anda</value>
   </data>
-  <data name="lng_passcode_enter_new" xml:space="preserve">
-    <value>Masukkan kod laluan baru</value>
-  </data>
-  <data name="lng_passcode_enter_old" xml:space="preserve">
-    <value>Masukkan kod laluan terkini</value>
-  </data>
   <data name="lng_passcode_is_same" xml:space="preserve">
     <value>Kod laluan tak ditukar</value>
+  </data>
+  <data name="lng_passcode_logout" xml:space="preserve">
+    <value>Log keluar</value>
   </data>
   <data name="lng_passcode_need_unblock" xml:space="preserve">
     <value>Anda harus buka kunci untuk saya dahulu.</value>
@@ -18908,9 +19104,6 @@ Nota: jika anda lupa kata laluan tempatan, anda akan dikehendaki log  keluar kem
   </data>
   <data name="lng_passport_allow" xml:space="preserve">
     <value>Anda benar {bot} kirim mesej kepada anda.</value>
-  </data>
-  <data name="lng_passport_app_out_of_date" xml:space="preserve">
-    <value>Maaf, Telegram aplikasi anda adalah dari versi yang lama dan tak boleh laksana permintaan ini. Sila kemaskini Telegram anda. </value>
   </data>
   <data name="lng_passport_authorize" xml:space="preserve">
     <value>Diberi kuasa</value>
@@ -19017,9 +19210,6 @@ Nota: jika anda lupa kata laluan tempatan, anda akan dikehendaki log  keluar kem
   </data>
   <data name="lng_passport_identity_license" xml:space="preserve">
     <value>Lesen memandu</value>
-  </data>
-  <data name="lng_passport_identity_license_upload" xml:space="preserve">
-    <value>Muat naik imbasan lesen memandu anda</value>
   </data>
   <data name="lng_passport_identity_selfie" xml:space="preserve">
     <value>Ambil swafoto dengan dokumen anda</value>
@@ -19324,9 +19514,6 @@ Pembayaran akan dibuat terus kepada pemaju {bot2}. Telegram tidak memberikan seb
   <data name="lng_pinned_pin_sure" xml:space="preserve">
     <value>Anda mahu semat mesej ini? </value>
   </data>
-  <data name="lng_pinned_pin_sure_group" xml:space="preserve">
-    <value>Sematkan mesej ini ke grup?</value>
-  </data>
   <data name="lng_pinned_previous" xml:space="preserve">
     <value>Mesej sebelum</value>
   </data>
@@ -19405,9 +19592,6 @@ Pembayaran akan dibuat terus kepada pemaju {bot2}. Telegram tidak memberikan seb
   <data name="lng_polls_view_results" xml:space="preserve">
     <value>Lihat keputusan</value>
   </data>
-  <data name="lng_profile_add_more_after_create" xml:space="preserve">
-    <value>Anda boleh tambah lagi ahli selepas anda cipta grup.</value>
-  </data>
   <data name="lng_profile_bio" xml:space="preserve">
     <value>Bio:</value>
   </data>
@@ -19425,6 +19609,9 @@ Pembayaran akan dibuat terus kepada pemaju {bot2}. Telegram tidak memberikan seb
   </data>
   <data name="lng_profile_clear_and_exit" xml:space="preserve">
     <value>Hapus dan keluar</value>
+  </data>
+  <data name="lng_profile_clear_history" xml:space="preserve">
+    <value>Padam sejarah</value>
   </data>
   <data name="lng_profile_convert_confirm" xml:space="preserve">
     <value>Tukar</value>
@@ -19498,6 +19685,12 @@ Pembayaran akan dibuat terus kepada pemaju {bot2}. Telegram tidak memberikan seb
   <data name="lng_profile_recent_actions" xml:space="preserve">
     <value>Tindakan terkini</value>
   </data>
+  <data name="lng_profile_restart_bot" xml:space="preserve">
+    <value>Mula semula bot</value>
+  </data>
+  <data name="lng_profile_search_members" xml:space="preserve">
+    <value>Cari ahli</value>
+  </data>
   <data name="lng_profile_search_messages" xml:space="preserve">
     <value>Cari untuk mesej</value>
   </data>
@@ -19522,14 +19715,14 @@ Pembayaran akan dibuat terus kepada pemaju {bot2}. Telegram tidak memberikan seb
   <data name="lng_profile_unblock_bot" xml:space="preserve">
     <value>Bebaskan bot</value>
   </data>
-  <data name="lng_profile_unblock_user" xml:space="preserve">
-    <value>Bebaskan pengguna</value>
-  </data>
   <data name="lng_profile_username" xml:space="preserve">
     <value>Nama Samaran</value>
   </data>
   <data name="lng_profile_view_channel" xml:space="preserve">
     <value>Lihat Saluran</value>
+  </data>
+  <data name="lng_profile_view_discussion" xml:space="preserve">
+    <value>Lihat diskusi</value>
   </data>
   <data name="lng_proxy_about" xml:space="preserve">
     <value>Pelayan proksi boleh membantu menghubungi Telegram sekiranya tiada sambungan di rantau tertentu. </value>
@@ -19574,9 +19767,6 @@ Pembayaran akan dibuat terus kepada pemaju {bot2}. Telegram tidak memberikan seb
     <value>Saluran ini dipapar oleh pelayan proksi anda. 
 Untuk menghapus saluran ini dari senarai bual anda, nyahdaya proksi di Aturan Telegram.</value>
   </data>
-  <data name="lng_proxy_sponsor_warning" xml:space="preserve">
-    <value>Proksi ini mungkin akan memaparkan saluran yang ditaja di senarai bual anda. Ianya tidak akan ditunjuk dalam mana-mana trafik Telegram.</value>
-  </data>
   <data name="lng_proxy_unavailable" xml:space="preserve">
     <value>tiada</value>
   </data>
@@ -19589,6 +19779,9 @@ Untuk menghapus saluran ini dari senarai bual anda, nyahdaya proksi di Aturan Te
   <data name="lng_proxy_use_custom" xml:space="preserve">
     <value>Guna proksi khusus</value>
   </data>
+  <data name="lng_proxy_use_for_calls" xml:space="preserve">
+    <value>Guna proksi untuk panggilan</value>
+  </data>
   <data name="lng_proxy_use_system_settings" xml:space="preserve">
     <value>Guna sistem aturan proksi</value>
   </data>
@@ -19597,9 +19790,6 @@ Untuk menghapus saluran ini dari senarai bual anda, nyahdaya proksi di Aturan Te
   </data>
   <data name="lng_recent_stickers" xml:space="preserve">
     <value>Terkini diguna</value>
-  </data>
-  <data name="lng_recent_stickers_remove" xml:space="preserve">
-    <value>Keluarkan dari Terbaru</value>
   </data>
   <data name="lng_reconnecting_try_now" xml:space="preserve">
     <value>Cuba sekarang</value>
@@ -19618,6 +19808,9 @@ Untuk menghapus saluran ini dari senarai bual anda, nyahdaya proksi di Aturan Te
   </data>
   <data name="lng_remind_title" xml:space="preserve">
     <value>Ingatkan saya pada...</value>
+  </data>
+  <data name="lng_reminder_message" xml:space="preserve">
+    <value>Set peringatan</value>
   </data>
   <data name="lng_reply_cant" xml:space="preserve">
     <value>Anda tak boleh jawab mesej dari sebelum grup dinaik taraf ke grupsuper.
@@ -19717,6 +19910,9 @@ Grup akan secara automatik dinaik taraf bila ahli mencecah 200 orang atau bila a
   <data name="lng_restricted_send_public_polls" xml:space="preserve">
     <value>Maaf, undian yang undinya bukan rahsia tak boleh dimajukan ke saluran.</value>
   </data>
+  <data name="lng_restricted_send_stickers" xml:space="preserve">
+    <value>Pentadbir grup ini sekat anda dari mengirim stiker di sini. </value>
+  </data>
   <data name="lng_restricted_send_stickers_all" xml:space="preserve">
     <value>Mengepos sticker tak dibenarkan di grup ini.</value>
   </data>
@@ -19728,6 +19924,9 @@ Grup akan secara automatik dinaik taraf bila ahli mencecah 200 orang atau bila a
   </data>
   <data name="lng_rights_about_add_admins_yes" xml:space="preserve">
     <value>Pentadbir ini boleh tambah pentadbir baru dengan kebenaran yang sama  (atau lebih terhad).</value>
+  </data>
+  <data name="lng_rights_about_admin_cant_edit" xml:space="preserve">
+    <value>Anda tak boleh sunting kuasa pentadbir ini.</value>
   </data>
   <data name="lng_rights_about_restriction_cant_edit" xml:space="preserve">
     <value>Anda tak boleh tukar larangan untuk pengguna ini.</value>
@@ -19765,8 +19964,8 @@ Grup akan secara automatik dinaik taraf bila ahli mencecah 200 orang atau bila a
   <data name="lng_rights_group_invite_link" xml:space="preserve">
     <value>Jemput pengguna melalui link</value>
   </data>
-  <data name="lng_rights_group_manage_calls" xml:space="preserve">
-    <value>Urus bual video</value>
+  <data name="lng_rights_permission_cant_edit" xml:space="preserve">
+    <value>Anda tak boleh sunting permisi ini.</value>
   </data>
   <data name="lng_rights_permission_for_all" xml:space="preserve">
     <value>Opsyen ini didayakan untuk semua ahli di Permisi Grup.</value>
@@ -19959,8 +20158,14 @@ Anda boleh kirim seberapa banyak fail yang anda suka, tetapi setiap fail hendakl
   <data name="lng_send_separate_photos_videos" xml:space="preserve">
     <value>Kirim sebagai media berasingan</value>
   </data>
+  <data name="lng_send_silent_message" xml:space="preserve">
+    <value>Kirim tanpa bunyi</value>
+  </data>
   <data name="lng_sent_date" xml:space="preserve">
     <value>Kirim: {date}</value>
+  </data>
+  <data name="lng_sessions_header" xml:space="preserve">
+    <value>Sesi kini</value>
   </data>
   <data name="lng_sessions_location_about" xml:space="preserve">
     <value>Anggaran lokasi ini berdasarkan pada alamat IP dan tak semestinya tepat.</value>
@@ -20053,6 +20258,9 @@ Sila dayakan Telegram Desktop di Aturan Aplikasi Permulaan.</value>
   </data>
   <data name="lng_settings_bg_show_all" xml:space="preserve">
     <value>Tunjuk semua tema</value>
+  </data>
+  <data name="lng_settings_bg_theme_create" xml:space="preserve">
+    <value>Cipta tema baru</value>
   </data>
   <data name="lng_settings_bg_theme_edit" xml:space="preserve">
     <value>Sunting tema</value>
@@ -20195,6 +20403,9 @@ Sila dayakan Telegram Desktop di Aturan Aplikasi Permulaan.</value>
   <data name="lng_settings_forwards_privacy" xml:space="preserve">
     <value>Mesej dimajukan</value>
   </data>
+  <data name="lng_settings_group_privacy_about" xml:space="preserve">
+    <value>Ubah siapa yang boleh tambah anda ke grup dan saluran.</value>
+  </data>
   <data name="lng_settings_groups_invite" xml:space="preserve">
     <value>Grup &amp; saluran</value>
   </data>
@@ -20221,6 +20432,9 @@ Sila dayakan Telegram Desktop di Aturan Aplikasi Permulaan.</value>
   </data>
   <data name="lng_settings_latest_installed" xml:space="preserve">
     <value>Versi terkini dipasang</value>
+  </data>
+  <data name="lng_settings_logout" xml:space="preserve">
+    <value>Log keluar</value>
   </data>
   <data name="lng_settings_loop_stickers" xml:space="preserve">
     <value>Kitar stiker beranimasi</value>
@@ -20261,9 +20475,6 @@ Sila dayakan Telegram Desktop di Aturan Aplikasi Permulaan.</value>
   <data name="lng_settings_notify_all" xml:space="preserve">
     <value>Semua akaun</value>
   </data>
-  <data name="lng_settings_notify_all_about" xml:space="preserve">
-    <value>Padam ini jika anda mahu terima notifikasi hanya dari akaun yang anda sedang guna sekarang.</value>
-  </data>
   <data name="lng_settings_open_system_settings" xml:space="preserve">
     <value>Buka Aturan</value>
   </data>
@@ -20281,9 +20492,6 @@ Sila dayakan Telegram Desktop di Aturan Aplikasi Permulaan.</value>
   </data>
   <data name="lng_settings_password_title" xml:space="preserve">
     <value>Verifikasi 2-langkah</value>
-  </data>
-  <data name="lng_settings_peer_to_peer_about" xml:space="preserve">
-    <value>Nyahdaya rakan setara akan sampaikan semua panggilan melalui pelayan Telegram untuk mengelakkan alamat IP anda dari didedahkan, tetapi kualiti audio akan berkurangan sedikit.</value>
   </data>
   <data name="lng_settings_performance" xml:space="preserve">
     <value>Prestasi</value>
@@ -20333,9 +20541,6 @@ Sila dayakan Telegram Desktop di Aturan Aplikasi Permulaan.</value>
   <data name="lng_settings_send_ctrlenter" xml:space="preserve">
     <value>Kirim dengan Ctrl+Enter</value>
   </data>
-  <data name="lng_settings_send_enter" xml:space="preserve">
-    <value>Kirim dengan Enter</value>
-  </data>
   <data name="lng_settings_sensitive_about" xml:space="preserve">
     <value>Papar media sensitif di saluran awam di semua peranti Telegram anda.</value>
   </data>
@@ -20345,14 +20550,11 @@ Sila dayakan Telegram Desktop di Aturan Aplikasi Permulaan.</value>
   <data name="lng_settings_sensitive_title" xml:space="preserve">
     <value>Kontent sensitif</value>
   </data>
-  <data name="lng_settings_show_from" xml:space="preserve">
-    <value>Tunjuk notifikasi dari</value>
+  <data name="lng_settings_sessions_about" xml:space="preserve">
+    <value>Kawal sesi anda dari peranti lain.</value>
   </data>
   <data name="lng_settings_show_name" xml:space="preserve">
     <value>Tunjuk nama pengirim</value>
-  </data>
-  <data name="lng_settings_show_preview" xml:space="preserve">
-    <value>Tunjuk pratonton mesej</value>
   </data>
   <data name="lng_settings_show_sessions" xml:space="preserve">
     <value>Tunjuk semua sesi</value>
@@ -20480,9 +20682,6 @@ Sila dayakan Telegram Desktop di Aturan Aplikasi Permulaan.</value>
   <data name="lng_signin_hint" xml:space="preserve">
     <value>Petunjuk: {password_hint}</value>
   </data>
-  <data name="lng_signin_no_email_forgot" xml:space="preserve">
-    <value>Oleh kerana anda tidak memberi emel pemulihan semasa mecipta kata laluan anda, pilihan anda ialah samada untuk mengingati kata laluan atau set semula akaun anda.</value>
-  </data>
   <data name="lng_signin_password" xml:space="preserve">
     <value>Kata laluan awan anda</value>
   </data>
@@ -20502,6 +20701,9 @@ Anda boleh cipta yang baru di Aturan.</value>
   </data>
   <data name="lng_signin_reset_account" xml:space="preserve">
     <value>Set semula akaun anda</value>
+  </data>
+  <data name="lng_signin_reset_cancelled" xml:space="preserve">
+    <value>Percubaan anda untuk set semula akaun ini telah dibatalkan oleh pengguna aktifnya. Sila cuba lagi dalam 7 hari.</value>
   </data>
   <data name="lng_signin_reset_in_days" xml:space="preserve">
     <value>{days_count} {hours_count} {minutes_count}</value>
@@ -20567,11 +20769,6 @@ Tidak seperti aplikasi lain, Telegram tidak mengambil kira samada anda tekan pad
 
 Telegram membolehkan servis percuma dan tanpa had kepada beratus juta pengguna, di mana ianya melibatkan kos tinggi untuk server dan trafik. Untuk pastikan kami terus tidak berpihak kepada sesiapa dan terus memperjuangkan nilai-nilai kami, Telegram  mencipta alatan berbayar untuk mempromosi mesej dengan mengambil kira privasi pengguna. Kami mengalu-alukan pengiklan yang bertanggungjawab di:</value>
   </data>
-  <data name="lng_sponsored_info_description2" xml:space="preserve">
-    <value>Mesej Ditaja kini sedang diuji. Apabila telah dilancarkan sepenuhnya dan membolehkan Telegram membiayai kos asasnya, kami akan mula berkongsi hasil iklan dengan pemilik saluran awam di mana mesej ditaja dipamirkan.
-
-Iklan di talian tidak lagi disamakan dengan salah guna privasi pengguna. Mari kita tentukan semula bagaimana syarikat teknologi sepatutnya beroperasi - bersama-sama.</value>
-  </data>
   <data name="lng_sponsored_title" xml:space="preserve">
     <value>Apa itu mesej ditaja?</value>
   </data>
@@ -20610,9 +20807,6 @@ Iklan di talian tidak lagi disamakan dengan salah guna privasi pengguna. Mari ki
   </data>
   <data name="lng_stickers_attached_sets" xml:space="preserve">
     <value>Set stiker dilampir</value>
-  </data>
-  <data name="lng_stickers_copied" xml:space="preserve">
-    <value>Link disalin ke papan klip.</value>
   </data>
   <data name="lng_stickers_default_set" xml:space="preserve">
     <value>Minda Hebat</value>
@@ -20893,9 +21087,6 @@ Link tema tidak boleh lebih dari 5 aksara dan boleh guna a-z, 0-9 dan garis bawa
   <data name="lng_theme_sure_keep" xml:space="preserve">
     <value>Kekalkan tema ini?</value>
   </data>
-  <data name="lng_tooltip_psa_default" xml:space="preserve">
-    <value>Mesej ini menyediakan anda dengan pengumuman perkhidmatan awam.</value>
-  </data>
   <data name="lng_tray_icon_text" xml:space="preserve">
     <value>Telegram masih beroperasi di sini, anda boleh tukar di Aturan. Jika ianya hilang dari dulang, anda boleh tarik balik dari ikon tersembunyi. </value>
   </data>
@@ -20911,9 +21102,6 @@ Link tema tidak boleh lebih dari 5 aksara dan boleh guna a-z, 0-9 dan garis bawa
   <data name="lng_ttl_edit_about" xml:space="preserve">
     <value>Hapus mesej baru selepas tempoh tertentu secara automatik untuk anda dan {user}.</value>
   </data>
-  <data name="lng_ttl_edit_about_channel" xml:space="preserve">
-    <value>Hapus mesej baru di saluran ini secara automatik selepas tempoh tertentu.</value>
-  </data>
   <data name="lng_ttl_photo_received" xml:space="preserve">
     <value>{from} kirim anda foto musnah-sendiri. Sila lihatnya di fon mobil anda.</value>
   </data>
@@ -20928,6 +21116,9 @@ Link tema tidak boleh lebih dari 5 aksara dan boleh guna a-z, 0-9 dan garis bawa
   </data>
   <data name="lng_typing" xml:space="preserve">
     <value>menaip</value>
+  </data>
+  <data name="lng_unblock_button" xml:space="preserve">
+    <value>Bebaskan</value>
   </data>
   <data name="lng_unread_bar_some" xml:space="preserve">
     <value>Mesej belum dibaca</value>
@@ -20990,12 +21181,6 @@ Anda boleh guna a–z, 0–9 dan _. Panjang minima adalah 5 abjad.</value>
   </data>
   <data name="lng_username_choose" xml:space="preserve">
     <value>Pilih nama samaran anda.</value>
-  </data>
-  <data name="lng_username_copied" xml:space="preserve">
-    <value>Link disalin ke papan klip. </value>
-  </data>
-  <data name="lng_username_invalid" xml:space="preserve">
-    <value>Nama samaran ini tak sah</value>
   </data>
   <data name="lng_username_link" xml:space="preserve">
     <value>Link ini buka bual dengan anda:</value>

@@ -466,6 +466,9 @@
   <data name="AccDescrTakeMorePics" xml:space="preserve">
     <value>یک عکس دیگر نیز بگیرید</value>
   </data>
+  <data name="AccDescrTopic" xml:space="preserve">
+    <value>موضوع</value>
+  </data>
   <data name="AccDescrUnreadCount_one" xml:space="preserve">
     <value>⁨{0}⁩ گفتگوی خوانده نشده</value>
   </data>
@@ -559,8 +562,14 @@
   <data name="AccReleaseForArchive" xml:space="preserve">
     <value>برای بایگانی رها کنید</value>
   </data>
+  <data name="AccReleaseForGeneral" xml:space="preserve">
+    <value>برای #عمومی، رها کنید</value>
+  </data>
   <data name="AccSwipeForArchive" xml:space="preserve">
     <value>برای بایگانی صفحه را به سمت پایین بکشید</value>
+  </data>
+  <data name="AccSwipeForGeneral" xml:space="preserve">
+    <value>برای #عمومی، به پایین بکشید</value>
   </data>
   <data name="AccSwitchToFullscreen" xml:space="preserve">
     <value>تغییر به حالت تمام‌صفحه</value>
@@ -1051,6 +1060,36 @@
   <data name="AdditionalReactionsDescription" xml:space="preserve">
     <value>با خرید اشتراک تلگرام پرمیوم، به واکنش‌های بیشتری برای پیام‌ها دسترسی پیدا کنید.</value>
   </data>
+  <data name="AddManyEmojiCount_one" xml:space="preserve">
+    <value>افزودن اموجی</value>
+  </data>
+  <data name="AddManyEmojiCount_other" xml:space="preserve">
+    <value>افزودن ⁨{0}⁩ اموجی</value>
+  </data>
+  <data name="AddManyMasksCount_one" xml:space="preserve">
+    <value>افزودن ماسک</value>
+  </data>
+  <data name="AddManyMasksCount_other" xml:space="preserve">
+    <value>افزودن ⁨{0}⁩ ماسک</value>
+  </data>
+  <data name="AddManyMembersAlertNamesText_one" xml:space="preserve">
+    <value>آیا از افزودن عضو به **⁨{1}⁩** اطمینان دارید؟</value>
+  </data>
+  <data name="AddManyMembersAlertNamesText_other" xml:space="preserve">
+    <value>آیا از افزودن ⁨{0}⁩ عضو به **⁨{1}⁩** اطمینان دارید؟</value>
+  </data>
+  <data name="AddManyMembersAlertTitle_one" xml:space="preserve">
+    <value>افزودن عضو</value>
+  </data>
+  <data name="AddManyMembersAlertTitle_other" xml:space="preserve">
+    <value>افزودن ⁨{0}⁩ عضو</value>
+  </data>
+  <data name="AddManyStickersCount_one" xml:space="preserve">
+    <value>افزودن استیکر</value>
+  </data>
+  <data name="AddManyStickersCount_other" xml:space="preserve">
+    <value>افزودن ⁨{0}⁩ استیکر</value>
+  </data>
   <data name="AddMasks" xml:space="preserve">
     <value>افزودن ماسک‌ها</value>
   </data>
@@ -1115,7 +1154,7 @@
     <value>استیکرها پیدا نشدند</value>
   </data>
   <data name="AddSubscriber" xml:space="preserve">
-    <value>افزودن مشترک</value>
+    <value>افزودن مشترکین</value>
   </data>
   <data name="AddToChannel" xml:space="preserve">
     <value>افزودن به کانال</value>
@@ -1296,6 +1335,12 @@
   </data>
   <data name="AnimatedStickers" xml:space="preserve">
     <value>استیکرهای متحرک</value>
+  </data>
+  <data name="AnonymousNumber" xml:space="preserve">
+    <value>شماره ناشناس</value>
+  </data>
+  <data name="AnonymousNumberNotice" xml:space="preserve">
+    <value>این شماره مربوط به سیم کارت نیست و از طریق **Fragment** دریافت شده است.</value>
   </data>
   <data name="AnonymousPoll" xml:space="preserve">
     <value>نظرسنجی ناشناس</value>
@@ -1860,6 +1905,21 @@
   <data name="AutoDeleteAfter" xml:space="preserve">
     <value>حذف خودکار پس از ⁨{0}⁩</value>
   </data>
+  <data name="AutoDeleteAfter1Day" xml:space="preserve">
+    <value>پس از 1 روز</value>
+  </data>
+  <data name="AutoDeleteAfter1Month" xml:space="preserve">
+    <value>پس از 1 ماه</value>
+  </data>
+  <data name="AutoDeleteAfter1Week" xml:space="preserve">
+    <value>پس از 1 هفته</value>
+  </data>
+  <data name="AutoDeleteAfter3Weeks" xml:space="preserve">
+    <value>پس از 3 هفته</value>
+  </data>
+  <data name="AutoDeleteAfterShort" xml:space="preserve">
+    <value>پس از ⁨{0}⁩</value>
+  </data>
   <data name="AutoDeleteAfteTitle" xml:space="preserve">
     <value>حذف خودکار پس از...</value>
   </data>
@@ -1878,11 +1938,34 @@
   <data name="AutoDeleteConfirm" xml:space="preserve">
     <value>تأیید</value>
   </data>
+  <data name="AutoDeleteConfirmMessage" xml:space="preserve">
+    <value>آیا اطمینان دارید که می‌خواهید تمامی پیام‌ها در گفتگوهای خصوصی جدید و گروه‌های جدیدی که ایجاد می‌کنید، ⁨{0}⁩ پس از ارسال، برای تمامی افراد به صورت خودکار حذف شوند؟</value>
+  </data>
   <data name="AutoDeleteCustom" xml:space="preserve">
     <value>سفارشی</value>
   </data>
+  <data name="AutoDeleteCustom2" xml:space="preserve">
+    <value>تنظیم زمان دلخواه</value>
+  </data>
   <data name="AutoDeleteDisable" xml:space="preserve">
     <value>غیرفعال کردن</value>
+  </data>
+  <data name="AutoDeleteDisabled" xml:space="preserve">
+    <value>حذف خودکار غیرفعال شد</value>
+  </data>
+  <data name="AutoDeleteGlobalAction" xml:space="preserve">
+    <value>⁨un1⁩ از یک زمان‌سنج نابود کننده را برای تمامی گفتگوها استفاده می‌کند.
+تمامی پیام‌های جدید در این گفتگو ⁨{0}⁩ پس از ارسال به صورت خودکار حذف می‌شوند.</value>
+  </data>
+  <data name="AutoDeleteGlobalActionFromYou" xml:space="preserve">
+    <value>شما یک زمان‌سنج نابود کننده را برای تمامی گفتگوها تنظیم کردید.
+تمامی پیام‌های جدید در این گفتگو ⁨{0}⁩ پس از ارسال به صورت خودکار حذف می‌شوند.</value>
+  </data>
+  <data name="AutoDeleteGlobalTimerDisabled" xml:space="preserve">
+    <value>زمان‌سنج نابود کننده برای تمامی گفتگوهای جدید غیرفعال شد.</value>
+  </data>
+  <data name="AutoDeleteGlobalTimerEnabled" xml:space="preserve">
+    <value>پیام‌های مربوط به تمامی گفتگوهای جدیدی که آغاز می‌کنید، **⁨{0}⁩** پس از ارسال، به صورت خودکار حذف می‌شوند.</value>
   </data>
   <data name="AutoDeleteHeader" xml:space="preserve">
     <value>حذف خودکار پیام‌ها در این گفتگو</value>
@@ -1899,11 +1982,17 @@
   <data name="AutoDeleteInfo" xml:space="preserve">
     <value>پیام‌های جدید ارسال شده در این گفتگو پس از گذشت مدت زمان مشخصی به صورت خودکار حذف خواهند شد.</value>
   </data>
+  <data name="AutoDeleteMessages" xml:space="preserve">
+    <value>حذف خودکار پیام‌ها</value>
+  </data>
   <data name="AutoDeleteNever" xml:space="preserve">
     <value>غیرفعال</value>
   </data>
   <data name="AutoDeletePopupDescription" xml:space="preserve">
     <value>پیام‌های جدید ارسال شده در این گفتگو پس از گذشت مدت زمان مشخصی به صورت خودکار حذف خواهند شد.</value>
+  </data>
+  <data name="AutoDeletePopupDescription2" xml:space="preserve">
+    <value>شما همچنین می‌توانید در قسمت تنظیمات، **زمان‌سنج نابود کننده** پیش‌فرض خود را برای تمامی گفتگوها تنظیم کنید. </value>
   </data>
   <data name="AutoDeletePopupTitle" xml:space="preserve">
     <value>حذف خودکار</value>
@@ -1917,6 +2006,15 @@
   </data>
   <data name="AutoDeleteSetTimer" xml:space="preserve">
     <value>تنظیم زمان‌سنج حذف خودکار</value>
+  </data>
+  <data name="AutoDeleteSettingsInfo" xml:space="preserve">
+    <value>در تمامی گروه‌های جدیدی که آغاز می‌کنید، پیام‌ها به صورت خودکار برای تمامی افراد پس از مدت زمان مشخصی حذف می‌شوند.</value>
+  </data>
+  <data name="AutodeleteTimerDisabledForChats" xml:space="preserve">
+    <value>زمان‌سنج نابود کننده در ⁨{0}⁩ غیرفعال شد.</value>
+  </data>
+  <data name="AutodeleteTimerEnabledForChats" xml:space="preserve">
+    <value>زمان‌سنج نابود کننده برای ⁨{1}⁩، بر روی **⁨{0}⁩** فعال شد.</value>
   </data>
   <data name="AutoDownloadAudioInfo" xml:space="preserve">
     <value>پیام‌های صوتی کم‌حجم هستند و همیشه به صورت خودکار دانلود می‌شوند.</value>
@@ -2550,6 +2648,9 @@
   <data name="CacheEmpty" xml:space="preserve">
     <value>خالی</value>
   </data>
+  <data name="CacheOtherChats" xml:space="preserve">
+    <value>سایر گفتگوها</value>
+  </data>
   <data name="CacheWasCleared" xml:space="preserve">
     <value>⁨{0}⁩ بر روی دستگاه شما آزاد شد!</value>
   </data>
@@ -2835,6 +2936,9 @@
   <data name="ChangePhoneNumberSuccess" xml:space="preserve">
     <value>شماره تلفن شما با موفقیت تغییر یافت.</value>
   </data>
+  <data name="ChangePhoneNumberSuccessWithPhone" xml:space="preserve">
+    <value>شماره تلفن شما با موفقیت به ⁨{0}⁩ تغییر یافت.</value>
+  </data>
   <data name="ChangePublicLimitReached" xml:space="preserve">
     <value>شما لینک‌های عمومی زیادی را رزرو کرده‌اید. می‌توانید لینکی را از یک گروه یا کانال قدیمی‌تر باطل کرده، یا در عوض یک لینک خصوصی ایجاد کنید.</value>
   </data>
@@ -2897,6 +3001,27 @@
   </data>
   <data name="ChannelAlertTitle" xml:space="preserve">
     <value>کانال چيست؟ </value>
+  </data>
+  <data name="ChannelAntiSpam" xml:space="preserve">
+    <value>ضد هرزنامه قوی</value>
+  </data>
+  <data name="ChannelAntiSpamFalsePositiveReported" xml:space="preserve">
+    <value>مدیران تلگرام گزارش شما را بررسی خواهند کرد. با تشکر!</value>
+  </data>
+  <data name="ChannelAntiSpamForbidden_one" xml:space="preserve">
+    <value>فیلتر قوی فقط می‌تواند در گروه‌هایی که بیش از **⁨{0}⁩ عضو** دارند، فعال شود.</value>
+  </data>
+  <data name="ChannelAntiSpamForbidden_other" xml:space="preserve">
+    <value>فیلتر قوی فقط می‌تواند در گروه‌هایی که بیش از **⁨{0}⁩ عضو** دارند، فعال شود.</value>
+  </data>
+  <data name="ChannelAntiSpamInfo" xml:space="preserve">
+    <value>تلگرام هرزنامه‌های بیشتری را فیلتر می‌کند، اما ممکن است گاهی اوقات پیام‌های معمولی را نیز فیلتر نماید. شما می‌توانید موارد اشتباه را در قسمت فعالیت‌های اخیر گزارش دهید.</value>
+  </data>
+  <data name="ChannelAntiSpamInfo2" xml:space="preserve">
+    <value>شما می‌توانید تنظیمات ضد هرزنامه را در ⁨{0}⁩ مدیریت کنید</value>
+  </data>
+  <data name="ChannelAntiSpamUser" xml:space="preserve">
+    <value>ضد هرزنامه تلگرام</value>
   </data>
   <data name="ChannelBlacklist" xml:space="preserve">
     <value>کاربران حذف شده</value>
@@ -3631,6 +3756,9 @@
   <data name="ClearCacheFewChatsTitle" xml:space="preserve">
     <value>خالی کردن حافظه پنهان ⁨{0}⁩</value>
   </data>
+  <data name="ClearCacheForChats" xml:space="preserve">
+    <value>آیا از حذف داده‌های ذخیره شده مربوط به گفتگوهای انتخاب شده اطمینان دارید؟</value>
+  </data>
   <data name="ClearCacheInfo" xml:space="preserve">
     <value>فضای ذخیره‌سازی دستگاه خود آزاد کنید؛ رسانه‌های شما در ابر باقی خواهند ماند.</value>
   </data>
@@ -4016,6 +4144,9 @@
   <data name="CreateEncryptedChatError" xml:space="preserve">
     <value>خطایی رخ داد.</value>
   </data>
+  <data name="CreateGeneralTopicTitle" xml:space="preserve">
+    <value>نام موضوع را انتخاب کنید</value>
+  </data>
   <data name="CreateGroupError" xml:space="preserve">
     <value>متأسفانه به دلیل تنظیمات حریم خصوصی این کاربران، نمی‌توانید با آن‌ها گروهی ایجاد کنید.</value>
   </data>
@@ -4150,6 +4281,9 @@
   <data name="DataUsage" xml:space="preserve">
     <value>میزان استفاده از فضای دیسک و شبکه</value>
   </data>
+  <data name="DataUsageByChats" xml:space="preserve">
+    <value>میزان استفاده از حافظه بر اساس گفتگو</value>
+  </data>
   <data name="Days_one" xml:space="preserve">
     <value>⁨{0}⁩ روز</value>
   </data>
@@ -4177,6 +4311,9 @@
   <data name="Deactivate" xml:space="preserve">
     <value>حذف همین الان</value>
   </data>
+  <data name="DebugAltNavigation" xml:space="preserve">
+    <value>جابجایی جایگزین</value>
+  </data>
   <data name="DebugAltNavigationToggleControls" xml:space="preserve">
     <value>فعال/غیرفعال کردن کنترل‌های سختی جابجایی</value>
   </data>
@@ -4189,8 +4326,14 @@
   <data name="DebugClearSendMessageAsPeers" xml:space="preserve">
     <value>پاک کردن پیش‌فرض‌های ارسال پیام به عنوان...</value>
   </data>
+  <data name="DebugDialogsActivity" xml:space="preserve">
+    <value>فعالیت‌های گفتگو</value>
+  </data>
   <data name="DebugDrawSnowInChat" xml:space="preserve">
     <value>بارش برف در گفتگو</value>
+  </data>
+  <data name="DebugGeneral" xml:space="preserve">
+    <value>عمومی</value>
   </data>
   <data name="DebugMenu" xml:space="preserve">
     <value>منوی رفع اشکال</value>
@@ -4264,11 +4407,23 @@
   <data name="DebugMenuWebViewDebugEnabled" xml:space="preserve">
     <value>رفع اشکال فعال شد!</value>
   </data>
+  <data name="DebugMessageSkeletons" xml:space="preserve">
+    <value>اسکلت‌های پیام</value>
+  </data>
+  <data name="DebugMessageSkeletonsLightOverlayAlpha" xml:space="preserve">
+    <value>زمینه روشن آلفا</value>
+  </data>
+  <data name="DebugMessageSkeletonsSaturation" xml:space="preserve">
+    <value>شدت رنگ</value>
+  </data>
   <data name="DebugSendLastLogs" xml:space="preserve">
     <value>ارسال آخرین گزارش‌ها</value>
   </data>
   <data name="DebugSendLogs" xml:space="preserve">
     <value>ارسال گزارشات</value>
+  </data>
+  <data name="DebugShareAlert" xml:space="preserve">
+    <value>هشدار به اشتراک گذاری</value>
   </data>
   <data name="DebugShareAlertDialogsModeLess" xml:space="preserve">
     <value>کمتر</value>
@@ -4284,6 +4439,9 @@
   </data>
   <data name="DebugShareAlertTopicsSlowMotion" xml:space="preserve">
     <value>فعال/غیرفعال کردن حرکت آهسته هشدار به اشتراک گذاری موضوع‌ها</value>
+  </data>
+  <data name="DebugTestBackend" xml:space="preserve">
+    <value>تست Backend</value>
   </data>
   <data name="December" xml:space="preserve">
     <value>دسامبر</value>
@@ -4986,6 +5144,12 @@
   <data name="EditTopic" xml:space="preserve">
     <value>ویرایش موضوع</value>
   </data>
+  <data name="EditTopicHide" xml:space="preserve">
+    <value>نمایش در موضوع‌ها</value>
+  </data>
+  <data name="EditTopicHideInfo" xml:space="preserve">
+    <value>در صورتی که موضوع «عمومی» پنهان باشد، اعضای گروه می‌توانند برای مشاهده آن، در فهرست موضوع‌ها به سمت پایین بکشند.</value>
+  </data>
   <data name="EditWidget" xml:space="preserve">
     <value>ویرایش ویجت</value>
   </data>
@@ -5378,6 +5542,9 @@
   <data name="EventLogDeleteTopic" xml:space="preserve">
     <value>⁨un1⁩ موضوع ⁨un2⁩ را حذف کرد</value>
   </data>
+  <data name="EventLogDisabledAntiSpam" xml:space="preserve">
+    <value>⁨un1⁩ ضد هرزنامه را غیرفعال کرد</value>
+  </data>
   <data name="EventLogEditedCaption" xml:space="preserve">
     <value>⁨un1⁩ عنوان را ویرایش کرد:</value>
   </data>
@@ -5443,6 +5610,9 @@
   </data>
   <data name="EventLogEmptyTextSearch" xml:space="preserve">
     <value>فعالیت اخیری که شامل «**⁨{0}⁩**» باشد پیدا نشد.</value>
+  </data>
+  <data name="EventLogEnabledAntiSpam" xml:space="preserve">
+    <value>⁨un1⁩ ضد هرزنامه را غیرفعال کرد</value>
   </data>
   <data name="EventLogEndedLiveStream" xml:space="preserve">
     <value>⁨un1⁩ به پخش زنده پایان داد</value>
@@ -6337,6 +6507,12 @@
   <data name="FwdMessagesToGroup" xml:space="preserve">
     <value>پیام‌ها به **⁨{0}⁩** هدایت شدند.</value>
   </data>
+  <data name="FwdMessagesToManyChats_one" xml:space="preserve">
+    <value>پیام‌ها به **یک گفتگو** هدایت شدند.</value>
+  </data>
+  <data name="FwdMessagesToManyChats_other" xml:space="preserve">
+    <value>پیام‌ها به **⁨{0}⁩ گفتگو** هدایت شدند.</value>
+  </data>
   <data name="FwdMessagesToSavedMessages" xml:space="preserve">
     <value>پیام‌ها به **پیام‌های ذخیره شده** هدایت شدند.</value>
   </data>
@@ -6348,6 +6524,12 @@
   </data>
   <data name="FwdMessageToGroup" xml:space="preserve">
     <value>پیام به **⁨{0}⁩** هدایت شد.</value>
+  </data>
+  <data name="FwdMessageToManyChats_one" xml:space="preserve">
+    <value>پیام به **یک گفتگو** هدایت شد.</value>
+  </data>
+  <data name="FwdMessageToManyChats_other" xml:space="preserve">
+    <value>پیام به **⁨{0}⁩ گفتگو** هدایت شد.</value>
   </data>
   <data name="FwdMessageToSavedMessages" xml:space="preserve">
     <value>پیام به **پیام‌های ذخیره شده** هدایت شد.</value>
@@ -6369,6 +6551,9 @@
   </data>
   <data name="General" xml:space="preserve">
     <value>عمومی </value>
+  </data>
+  <data name="GetDirections" xml:space="preserve">
+    <value>دریافت مسیر</value>
   </data>
   <data name="GetQRCode" xml:space="preserve">
     <value>دریافت کد QR</value>
@@ -6477,6 +6662,9 @@
   <data name="GlobalAttachStickersRestricted" xml:space="preserve">
     <value>استیکرها در این گروه مجاز نیستند.</value>
   </data>
+  <data name="GlobalAutoDeleteInfo" xml:space="preserve">
+    <value>در صورت فعال بودن، تمامی پیام‌های جدید در گفتگوهایی که آغاز می‌کنید، مدت زمان مشخصی پس از ارسال، برای تمامی افراد به صورت خودکار حذف می‌شوند. شما همچنین می‌توانید **این تنظیمات را بر روی گفتگوهای فعلی خود اعمال کنید.**</value>
+  </data>
   <data name="GlobalSearch" xml:space="preserve">
     <value>جستجوی سراسری</value>
   </data>
@@ -6513,6 +6701,9 @@
   </data>
   <data name="GroupContacts" xml:space="preserve">
     <value>مخاطبین در این گروه</value>
+  </data>
+  <data name="GroupCreateAutodeleteDescription" xml:space="preserve">
+    <value>پیام‌ها در این گروه پس از مدت زمان مشخصی برای تمامی افراد به صورت خودکار حذف می‌شوند.</value>
   </data>
   <data name="GroupDeletedUndo" xml:space="preserve">
     <value>گروه حذف شد</value>
@@ -8268,6 +8459,9 @@
   <data name="NearbyVenue" xml:space="preserve">
     <value>یا محلی را انتخاب کنید</value>
   </data>
+  <data name="NeedAdminRightForSetAutoDeleteTimer" xml:space="preserve">
+    <value>شما برای فعال کردن حذف خودکار در این گروه به اختیارات مدیر نیاز دارید.</value>
+  </data>
   <data name="NetworkUsage" xml:space="preserve">
     <value>میزان استفاده از داده</value>
   </data>
@@ -8437,7 +8631,7 @@
     <value>متأسفانه شما در حال حاضر فقط می‌توانید مخاطبین مشترک را به گروه‌ها اضافه کنید.</value>
   </data>
   <data name="NobodyLikesSpam3" xml:space="preserve">
-    <value>متأسفانه شما در حال حاضر از ارسال پیام به گروه‌های عمومی محدود شده‌اید.</value>
+    <value>متأسفانه شما در حال حاضر از ارسال پیام در این گروه محدود شده‌اید.</value>
   </data>
   <data name="NobodyViewed" xml:space="preserve">
     <value>کسی ندیده است</value>
@@ -9281,6 +9475,9 @@
     <value>شما می‌توانید اولین موضوع خود را آغاز کرده یا بر روی
 آیکون ⁨{0}⁩ بزنید تا به فهرست پیام‌ها بروید.</value>
   </data>
+  <data name="NoTopicsDescriptionUser" xml:space="preserve">
+    <value>پیام‌های قدیمی‌تر این گروه به **«⁨{0}⁩»** انتقال یافتند.</value>
+  </data>
   <data name="NoUsernameFound" xml:space="preserve">
     <value>نام کاربری پیدا نشد.</value>
   </data>
@@ -9361,6 +9558,9 @@
   </data>
   <data name="OpenFile" xml:space="preserve">
     <value>باز کردن فایل</value>
+  </data>
+  <data name="OpenFragment" xml:space="preserve">
+    <value>باز کردن Fragment</value>
   </data>
   <data name="OpenGroup" xml:space="preserve">
     <value>مشاهده گروه</value>
@@ -11651,6 +11851,30 @@ https://telegram.org/blog/coronavirus</value>
   <data name="RemoveGroupStickerSet" xml:space="preserve">
     <value>حذف بسته استیکر گروه</value>
   </data>
+  <data name="RemoveManyEmojiCount_one" xml:space="preserve">
+    <value>حذف اموجی</value>
+  </data>
+  <data name="RemoveManyEmojiCount_other" xml:space="preserve">
+    <value>حذف ⁨{0}⁩ اموجی</value>
+  </data>
+  <data name="RemoveManyEmojiPacksCount_one" xml:space="preserve">
+    <value>حذف بسته اموجی</value>
+  </data>
+  <data name="RemoveManyEmojiPacksCount_other" xml:space="preserve">
+    <value>حذف ⁨{0}⁩ بسته اموجی</value>
+  </data>
+  <data name="RemoveManyMasksCount_one" xml:space="preserve">
+    <value>حذف ماسک</value>
+  </data>
+  <data name="RemoveManyMasksCount_other" xml:space="preserve">
+    <value>حذف ⁨{0}⁩ ماسک</value>
+  </data>
+  <data name="RemoveManyStickersCount_one" xml:space="preserve">
+    <value>حذف استیکر</value>
+  </data>
+  <data name="RemoveManyStickersCount_other" xml:space="preserve">
+    <value>حذف ⁨{0}⁩ استیکر</value>
+  </data>
   <data name="RemoveStickersCount" xml:space="preserve">
     <value>حذف ⁨{0}⁩</value>
   </data>
@@ -11728,6 +11952,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="ReportChatViolence" xml:space="preserve">
     <value>خشونت</value>
+  </data>
+  <data name="ReportFalsePositive" xml:space="preserve">
+    <value>گزارش موارد اشتباه</value>
   </data>
   <data name="ReportHint" xml:space="preserve">
     <value>جزئیات بیشتر...</value>
@@ -12286,6 +12513,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="SearchMessages" xml:space="preserve">
     <value>پیام‌ها</value>
   </data>
+  <data name="SearchMessagesIn" xml:space="preserve">
+    <value>پیام‌های ⁨{0}⁩</value>
+  </data>
   <data name="SearchMusic" xml:space="preserve">
     <value>جستجوی موزیک</value>
   </data>
@@ -12375,6 +12605,18 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="SelectChats" xml:space="preserve">
     <value>انتخاب گفتگوها</value>
+  </data>
+  <data name="SelectChatsForAutoDelete" xml:space="preserve">
+    <value>برای اعمال زمان‌سنج نابود کننده</value>
+  </data>
+  <data name="SelectChatsForAutoDelete2" xml:space="preserve">
+    <value>دارای زمان‌سنج نابود کننده خواهند بود</value>
+  </data>
+  <data name="SelectChatsForDisableAutoDelete" xml:space="preserve">
+    <value>برای غیرفعال کردن زمان‌سنج نابود کننده</value>
+  </data>
+  <data name="SelectChatsForDisableAutoDelete2" xml:space="preserve">
+    <value>زمان‌سنج نابود کننده را حذف می‌کند</value>
   </data>
   <data name="SelectColor" xml:space="preserve">
     <value>انتخاب رنگ</value>
@@ -12603,6 +12845,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="SentCallOnly" xml:space="preserve">
     <value>ما در حال تماس با شماره تلفن شما **⁨{0}⁩** برای خواندن کد هستیم.</value>
   </data>
+  <data name="SentFragmentCode" xml:space="preserve">
+    <value>کد مربوط به ⁨{0}⁩ را از بخش Anonymous Numbers در Fragment دریافت کنید.</value>
+  </data>
   <data name="SentSmsCode" xml:space="preserve">
     <value>ما پیامکی حاوی کد فعال‌سازی به شماره تلفن شما **⁨{0}⁩** ارسال کرده‌ایم.</value>
   </data>
@@ -12660,11 +12905,17 @@ https://telegram.org/blog/coronavirus</value>
   <data name="SetAsMain" xml:space="preserve">
     <value>تنظیم به عنوان اصلی</value>
   </data>
+  <data name="SetAutoDeleteTimer" xml:space="preserve">
+    <value>تنظیم حذف خودکار</value>
+  </data>
   <data name="SetBackground" xml:space="preserve">
     <value>تنظیم پس‌زمینه</value>
   </data>
   <data name="SetColor" xml:space="preserve">
     <value>تنظیم رنگ</value>
+  </data>
+  <data name="SetCustomTime" xml:space="preserve">
+    <value>تنظیم زمان دلخواه</value>
   </data>
   <data name="SetEmojiStatus" xml:space="preserve">
     <value>تنظیم اموجی وضعیت</value>
@@ -14054,6 +14305,12 @@ https://telegram.org/blog/coronavirus</value>
   <data name="TopicEmptyViewDescription" xml:space="preserve">
     <value>برای آغاز موضوع، پیامی ارسال کنید.</value>
   </data>
+  <data name="TopicHidden" xml:space="preserve">
+    <value>موضوع عمومی پنهان شد</value>
+  </data>
+  <data name="TopicHidden2" xml:space="preserve">
+    <value>⁨{0}⁩ موضوع عمومی را پنهان کرد</value>
+  </data>
   <data name="TopicIconChanged" xml:space="preserve">
     <value>آیکون موضوع تغییر یافت</value>
   </data>
@@ -14095,6 +14352,12 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="TopicsDeleted_other" xml:space="preserve">
     <value>موضوع‌ها حذف شدند</value>
+  </data>
+  <data name="TopicShown" xml:space="preserve">
+    <value>موضوع عمومی از حالت پنهان خارج شد</value>
+  </data>
+  <data name="TopicShown2" xml:space="preserve">
+    <value>⁨{0}⁩ موضوع عمومی را از حالت پنهان خارج کرد</value>
   </data>
   <data name="TopicViewAsMessages" xml:space="preserve">
     <value>مشاهده در قالب پیام‌ها</value>
@@ -14168,7 +14431,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>ترجمه پیام‌‌ها</value>
   </data>
   <data name="TranslateMessagesInfo1" xml:space="preserve">
-    <value>اگر روی یک پیام متنی بزنید، دکمه «ترجمه» نمایش داده خواهد شد.</value>
+    <value>هنگامی که یک بار بر روی یک پیام متنی بزنید، دکمه «ترجمه» نمایش داده خواهد شد.</value>
   </data>
   <data name="TranslateMessagesInfo2" xml:space="preserve">
     <value>گوگل می‌تواند به پیام‌هایی که ترجمه می‌کنید دسترسی داشته باشد.</value>
@@ -14280,6 +14543,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="UndoAllCustom" xml:space="preserve">
     <value>تمامی تنظیمات اعلان‌‌های سفارشی برای مخاطبین، گروه‌ها و کانال‌های خود را به حالت قبلی بازگردانید.</value>
+  </data>
+  <data name="Unhide" xml:space="preserve">
+    <value>خروج از حالت پنهان</value>
   </data>
   <data name="UnhideFromTop" xml:space="preserve">
     <value>سنجاق کردن</value>
@@ -14570,7 +14836,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>این نام کاربری قبلاً انتخاب شده است.</value>
   </data>
   <data name="UsernameInUsePurchase" xml:space="preserve">
-    <value>این نام کاربری در حال حاضر انتخاب شده است.
+    <value>این لینک در حال حاضر انتخاب شده است.
 با این حال، برای خرید در دسترس است. **بیشتر بدانید…**</value>
   </data>
   <data name="UsernameInvalid" xml:space="preserve">
@@ -14584,7 +14850,7 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="UsernameInvalidShortPurchase" xml:space="preserve">
     <value>نام کاربری باید حداقل 5 کاراکتر داشته باشد.
-با این حال، برای خرید در دسترس است. **بیشتر بدانید…**</value>
+با این حال، نام‌های کاربری کلکسیونی کوتاه مانند این نام کاربری برای خرید در دسترس هستند. **بیشتر بدانید…**</value>
   </data>
   <data name="UsernameInvalidStartNumber" xml:space="preserve">
     <value>نام‌های کاربری نمی‌توانند با عدد شروع شوند.</value>
@@ -15981,6 +16247,21 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="YouSendersNameHidden" xml:space="preserve">
     <value>شما (نام ارسال کنندگان پنهان است)</value>
+  </data>
+  <data name="YouTubeVideoErrorHTML" xml:space="preserve">
+    <value>خطایی در هنگام پخش این ویدیو رخ داد.</value>
+  </data>
+  <data name="YouTubeVideoErrorInvalid" xml:space="preserve">
+    <value>آدرس ویدیو نامعتبر است</value>
+  </data>
+  <data name="YouTubeVideoErrorNotAvailableInApp" xml:space="preserve">
+    <value>این ویدیو درون این برنامه قابل پخش نیست.</value>
+  </data>
+  <data name="YouTubeVideoErrorNotFound" xml:space="preserve">
+    <value>ویدیو پیدا نشد.</value>
+  </data>
+  <data name="YouTubeVideoErrorOpenExternal" xml:space="preserve">
+    <value>تماشا در YouTube</value>
   </data>
   <data name="YouWereKicked" xml:space="preserve">
     <value>شما حذف شدید</value>

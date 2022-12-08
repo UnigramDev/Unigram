@@ -466,6 +466,9 @@
   <data name="AccDescrTakeMorePics" xml:space="preserve">
     <value>Ota vielä yksi kuva</value>
   </data>
+  <data name="AccDescrTopic" xml:space="preserve">
+    <value>Ketju</value>
+  </data>
   <data name="AccDescrUnreadCount_one" xml:space="preserve">
     <value>{0} keskustelu lukematta</value>
   </data>
@@ -559,8 +562,14 @@
   <data name="AccReleaseForArchive" xml:space="preserve">
     <value>Päästä irti avataksesi arkiston</value>
   </data>
+  <data name="AccReleaseForGeneral" xml:space="preserve">
+    <value>Yleisketju päästämällä irti</value>
+  </data>
   <data name="AccSwipeForArchive" xml:space="preserve">
     <value>Avaa arkisto liu&apos;uttamalla alas</value>
+  </data>
+  <data name="AccSwipeForGeneral" xml:space="preserve">
+    <value>Yleisketju liu&apos;uttamalla alas</value>
   </data>
   <data name="AccSwitchToFullscreen" xml:space="preserve">
     <value>Siirry kokonäyttötilaan</value>
@@ -1044,6 +1053,36 @@ nyt: {1}</value>
   <data name="AdditionalReactionsDescription" xml:space="preserve">
     <value>Telegram Premium avaa käyttöösi uusia reaktiotyyppejä.</value>
   </data>
+  <data name="AddManyEmojiCount_one" xml:space="preserve">
+    <value>Lisää emoji</value>
+  </data>
+  <data name="AddManyEmojiCount_other" xml:space="preserve">
+    <value>Lisää {0} emojia</value>
+  </data>
+  <data name="AddManyMasksCount_one" xml:space="preserve">
+    <value>Lisää naamio</value>
+  </data>
+  <data name="AddManyMasksCount_other" xml:space="preserve">
+    <value>Lisää {0} naamiota</value>
+  </data>
+  <data name="AddManyMembersAlertNamesText_one" xml:space="preserve">
+    <value>Haluatko varmasti lisätä jäsenen keskusteluun **{1}**?</value>
+  </data>
+  <data name="AddManyMembersAlertNamesText_other" xml:space="preserve">
+    <value>Haluatko varmasti lisätä {0} jäsentä keskusteluun **{1}**?</value>
+  </data>
+  <data name="AddManyMembersAlertTitle_one" xml:space="preserve">
+    <value>Lisää yksi jäsen</value>
+  </data>
+  <data name="AddManyMembersAlertTitle_other" xml:space="preserve">
+    <value>Lisää {0} jäsentä</value>
+  </data>
+  <data name="AddManyStickersCount_one" xml:space="preserve">
+    <value>Lisää tarra</value>
+  </data>
+  <data name="AddManyStickersCount_other" xml:space="preserve">
+    <value>Lisää {0} tarraa</value>
+  </data>
   <data name="AddMasks" xml:space="preserve">
     <value>Lisää naamiot</value>
   </data>
@@ -1289,6 +1328,9 @@ nyt: {1}</value>
   </data>
   <data name="AnimatedStickers" xml:space="preserve">
     <value>Animoidut tarrat</value>
+  </data>
+  <data name="AnonymousNumberNotice" xml:space="preserve">
+    <value>Tämä numero ei tule SIM-kortilta, vaan se ostettiin *Fragment*-palvelusta.</value>
   </data>
   <data name="AnonymousPoll" xml:space="preserve">
     <value>Kysely, vastaukset nimettömiä</value>
@@ -1853,6 +1895,21 @@ Vahvista kirjautuminen siirtymällä asetuksiin &gt; Laitteet &gt; Skannaa QR-ko
   <data name="AutoDeleteAfter" xml:space="preserve">
     <value>Poista automaattisesti ({0})</value>
   </data>
+  <data name="AutoDeleteAfter1Day" xml:space="preserve">
+    <value>Päivän jälkeen</value>
+  </data>
+  <data name="AutoDeleteAfter1Month" xml:space="preserve">
+    <value>Kuukauden jälkeen</value>
+  </data>
+  <data name="AutoDeleteAfter1Week" xml:space="preserve">
+    <value>Viikon jälkeen</value>
+  </data>
+  <data name="AutoDeleteAfter3Weeks" xml:space="preserve">
+    <value>3 viikon jälkeen</value>
+  </data>
+  <data name="AutoDeleteAfterShort" xml:space="preserve">
+    <value>{0}</value>
+  </data>
   <data name="AutoDeleteAfteTitle" xml:space="preserve">
     <value>Poista automaattisesti...</value>
   </data>
@@ -1871,11 +1928,34 @@ Vahvista kirjautuminen siirtymällä asetuksiin &gt; Laitteet &gt; Skannaa QR-ko
   <data name="AutoDeleteConfirm" xml:space="preserve">
     <value>Varmista</value>
   </data>
+  <data name="AutoDeleteConfirmMessage" xml:space="preserve">
+    <value>Haluatko varmasti, että kaikki luomiisi yksityiskeskusteluihin tai ryhmäkeskusteluihin lähetettävät viestit poistetaan automaattisesti, kun niiden lähettämisestä on kulunut {0}?</value>
+  </data>
   <data name="AutoDeleteCustom" xml:space="preserve">
     <value>Mukautettu</value>
   </data>
+  <data name="AutoDeleteCustom2" xml:space="preserve">
+    <value>Mukauta aikaa</value>
+  </data>
   <data name="AutoDeleteDisable" xml:space="preserve">
     <value>Poista käytöstä</value>
+  </data>
+  <data name="AutoDeleteDisabled" xml:space="preserve">
+    <value>automaattipoisto ei käytössä</value>
+  </data>
+  <data name="AutoDeleteGlobalAction" xml:space="preserve">
+    <value>un1 on ottanut poistoajastimen käyttöön luomissaan keskusteluissa.
+Kun tähän keskusteluun lähetetään viesti, kuluu {0} ennen kuin se poistetaan automaattisesti.</value>
+  </data>
+  <data name="AutoDeleteGlobalActionFromYou" xml:space="preserve">
+    <value>Olet ottanut poistoajastimen käyttöön luomissasi keskusteluissa.
+Kun tähän keskusteluun lähetetään viesti, kuluu {0} ennen kuin se poistetaan automaattisesti.</value>
+  </data>
+  <data name="AutoDeleteGlobalTimerDisabled" xml:space="preserve">
+    <value>Automaattipoisto poistettiin käytöstä uusista keskusteluista.</value>
+  </data>
+  <data name="AutoDeleteGlobalTimerEnabled" xml:space="preserve">
+    <value>Tästä lähin aloittamissasi keskusteluissa olevat viestit poistetaan, kun niiden lähettämisestä on kulunut **{0}**.</value>
   </data>
   <data name="AutoDeleteHeader" xml:space="preserve">
     <value>Poista viestit tässä keskustelussa automaattisesti</value>
@@ -1892,11 +1972,17 @@ Vahvista kirjautuminen siirtymällä asetuksiin &gt; Laitteet &gt; Skannaa QR-ko
   <data name="AutoDeleteInfo" xml:space="preserve">
     <value>Poistaa tämän keskustelun viestit automaattisesti, kun niiden lähettämisestä on kulunut tietty aika.</value>
   </data>
+  <data name="AutoDeleteMessages" xml:space="preserve">
+    <value>Automaattipoisto</value>
+  </data>
   <data name="AutoDeleteNever" xml:space="preserve">
     <value>Pois</value>
   </data>
   <data name="AutoDeletePopupDescription" xml:space="preserve">
     <value>Poistaa automaattisesti keskustelun viestit, kun niiden lähettämisestä on kulunut jokin aika.</value>
+  </data>
+  <data name="AutoDeletePopupDescription2" xml:space="preserve">
+    <value>Voit asettaa **poistoajastimen** kaikille keskusteluille asetuksista.</value>
   </data>
   <data name="AutoDeletePopupTitle" xml:space="preserve">
     <value>Automaattipoisto</value>
@@ -1910,6 +1996,15 @@ automaattisesti, kun on kulunut {0}.</value>
   </data>
   <data name="AutoDeleteSetTimer" xml:space="preserve">
     <value>Aseta poistoajastin</value>
+  </data>
+  <data name="AutoDeleteSettingsInfo" xml:space="preserve">
+    <value>Poistaa automaattisesti viestit kaikilta keskusteluissa, jotka olet aloittanut.</value>
+  </data>
+  <data name="AutodeleteTimerDisabledForChats" xml:space="preserve">
+    <value>{0} ei käytä enää poistoajastinta.</value>
+  </data>
+  <data name="AutodeleteTimerEnabledForChats" xml:space="preserve">
+    <value>{1} käyttävät nyt poistoajastinta (**{0}**).</value>
   </data>
   <data name="AutoDownloadAudioInfo" xml:space="preserve">
     <value>Ääniviestit ovat niin pieniä, että ne ladataan aina automaattisesti.</value>
@@ -2543,6 +2638,9 @@ Mikrofonin pääsy sallitaan asetuksista &gt; Luvat &gt; Mikrofoni.</value>
   <data name="CacheEmpty" xml:space="preserve">
     <value>Tyhjä</value>
   </data>
+  <data name="CacheOtherChats" xml:space="preserve">
+    <value>Muut keskustelut</value>
+  </data>
   <data name="CacheWasCleared" xml:space="preserve">
     <value>{0} vapautettiin laitteellasi!</value>
   </data>
@@ -2828,6 +2926,9 @@ Huomautus: jos unohdat pääsykoodin, sinun tulee kirjautua ulos tai asentaa sov
   <data name="ChangePhoneNumberSuccess" xml:space="preserve">
     <value>Puhelinnumerosi vaihdettiin.</value>
   </data>
+  <data name="ChangePhoneNumberSuccessWithPhone" xml:space="preserve">
+    <value>Puhelinnumeroksesi on vaihdettu {0}.</value>
+  </data>
   <data name="ChangePublicLimitReached" xml:space="preserve">
     <value>Olet varannut liian monta julkista linkkiä. Voit mitätöidä linkkejä joistain vanhemmista ryhmistäsi tai kanavistasi, tai voit tehdä tästä yksityisen.</value>
   </data>
@@ -2890,6 +2991,27 @@ Huomautus: jos unohdat pääsykoodin, sinun tulee kirjautua ulos tai asentaa sov
   </data>
   <data name="ChannelAlertTitle" xml:space="preserve">
     <value>Mikä on kanava?</value>
+  </data>
+  <data name="ChannelAntiSpam" xml:space="preserve">
+    <value>Ärhäkkä roskapostin esto</value>
+  </data>
+  <data name="ChannelAntiSpamFalsePositiveReported" xml:space="preserve">
+    <value>Telegramin valvojat lukevat ilmiantosi. Kiitos!</value>
+  </data>
+  <data name="ChannelAntiSpamForbidden_one" xml:space="preserve">
+    <value>Ärhäkkä suodatus voidaan ottaa käyttöön vain ryhmissä, joissa on ainakin **{0} jäsen**.</value>
+  </data>
+  <data name="ChannelAntiSpamForbidden_other" xml:space="preserve">
+    <value>Ärhäkkä suodatus voidaan ottaa käyttöön vain ryhmissä, joissa on ainakin **{0} jäsentä**.</value>
+  </data>
+  <data name="ChannelAntiSpamInfo" xml:space="preserve">
+    <value>Telegram estää roskapostia laajemmin, mutta saattaa myös vahingossa estää oikeita viestejä. Väärin roskapostiksi tulkittuja viestejä voi selata viimeaikaisista tapahtumista.</value>
+  </data>
+  <data name="ChannelAntiSpamInfo2" xml:space="preserve">
+    <value>Roskapostiasetusten hallinnointi: {0}</value>
+  </data>
+  <data name="ChannelAntiSpamUser" xml:space="preserve">
+    <value>Telegramin roskapostin esto</value>
   </data>
   <data name="ChannelBlacklist" xml:space="preserve">
     <value>Estetyt käyttäjät</value>
@@ -3624,6 +3746,9 @@ Linkin on oltava vähintään 5 merkkiä pitkä.</value>
   <data name="ClearCacheFewChatsTitle" xml:space="preserve">
     <value>Tyhjennä välimuisti ({0})</value>
   </data>
+  <data name="ClearCacheForChats" xml:space="preserve">
+    <value>Haluatko varmasti tyhjentää välimuistin valituilta keskusteluilta?</value>
+  </data>
   <data name="ClearCacheInfo" xml:space="preserve">
     <value>Vapauta tallennustilaa laitteestasi; media pysyy pilvessä.</value>
   </data>
@@ -4008,6 +4133,9 @@ Jos haluat lisätä enemmän jäseniä, päivitä ryhmä superryhmäksi:
   <data name="CreateEncryptedChatError" xml:space="preserve">
     <value>Tapahtui virhe</value>
   </data>
+  <data name="CreateGeneralTopicTitle" xml:space="preserve">
+    <value>Anna ketjulle nimi</value>
+  </data>
   <data name="CreateGroupError" xml:space="preserve">
     <value>Valitettavasti et voi luoda ryhmää näiden käyttäjien kanssa heidän yksityisyysasetuksiensa takia.</value>
   </data>
@@ -4142,6 +4270,9 @@ Voit aina vaihtaa takaisin Telegramin oletusteemaan täältä.</value>
   <data name="DataUsage" xml:space="preserve">
     <value>Tilan ja verkon käyttö</value>
   </data>
+  <data name="DataUsageByChats" xml:space="preserve">
+    <value>Keskusteluittainen tilankäyttö</value>
+  </data>
   <data name="Days_one" xml:space="preserve">
     <value>{0} päivä</value>
   </data>
@@ -4169,6 +4300,9 @@ Voit aina vaihtaa takaisin Telegramin oletusteemaan täältä.</value>
   <data name="Deactivate" xml:space="preserve">
     <value>POISTA NYT</value>
   </data>
+  <data name="DebugAltNavigation" xml:space="preserve">
+    <value>Vaihtoehtoinen selaus</value>
+  </data>
   <data name="DebugAltNavigationToggleControls" xml:space="preserve">
     <value>Selauksen jäykkyysohjaimet päälle/pois</value>
   </data>
@@ -4181,8 +4315,14 @@ Voit aina vaihtaa takaisin Telegramin oletusteemaan täältä.</value>
   <data name="DebugClearSendMessageAsPeers" xml:space="preserve">
     <value>Tyhjennä Lähetä viesti nimellä... -valinnat</value>
   </data>
+  <data name="DebugDialogsActivity" xml:space="preserve">
+    <value>Keskustelunäkymä</value>
+  </data>
   <data name="DebugDrawSnowInChat" xml:space="preserve">
     <value>Lumisade keskusteluissa</value>
+  </data>
+  <data name="DebugGeneral" xml:space="preserve">
+    <value>Yleinen</value>
   </data>
   <data name="DebugMenu" xml:space="preserve">
     <value>Kehittäjävalikko</value>
@@ -4256,11 +4396,23 @@ Voit aina vaihtaa takaisin Telegramin oletusteemaan täältä.</value>
   <data name="DebugMenuWebViewDebugEnabled" xml:space="preserve">
     <value>Virheenkorjaustila käytössä!</value>
   </data>
+  <data name="DebugMessageSkeletons" xml:space="preserve">
+    <value>Viestien rangat</value>
+  </data>
+  <data name="DebugMessageSkeletonsLightOverlayAlpha" xml:space="preserve">
+    <value>Alfakerros</value>
+  </data>
+  <data name="DebugMessageSkeletonsSaturation" xml:space="preserve">
+    <value>Värikylläisyys</value>
+  </data>
   <data name="DebugSendLastLogs" xml:space="preserve">
     <value>Lähetä viimeisimmät lokit</value>
   </data>
   <data name="DebugSendLogs" xml:space="preserve">
     <value>Lähetä lokit</value>
+  </data>
+  <data name="DebugShareAlert" xml:space="preserve">
+    <value>Jakovaroitus</value>
   </data>
   <data name="DebugShareAlertDialogsModeLess" xml:space="preserve">
     <value>Vähemmän</value>
@@ -4276,6 +4428,9 @@ Voit aina vaihtaa takaisin Telegramin oletusteemaan täältä.</value>
   </data>
   <data name="DebugShareAlertTopicsSlowMotion" xml:space="preserve">
     <value>Jakomuistutusikkunan hidastus käyttöön/pois käytöstä</value>
+  </data>
+  <data name="DebugTestBackend" xml:space="preserve">
+    <value>Kokeellinen taustajärjestelmä</value>
   </data>
   <data name="December" xml:space="preserve">
     <value>joulukuu</value>
@@ -4978,6 +5133,12 @@ Jos yllä oleva numero on oikein, odota koodin saapumista.</value>
   <data name="EditTopic" xml:space="preserve">
     <value>Muokkaa ketjua</value>
   </data>
+  <data name="EditTopicHide" xml:space="preserve">
+    <value>Näytä ketjuluettelossa</value>
+  </data>
+  <data name="EditTopicHideInfo" xml:space="preserve">
+    <value>Jos yleisketju on piilotettu, se näkyy silti, kun jäsen raahaa keskusteluluetteloa alaspäin.</value>
+  </data>
   <data name="EditWidget" xml:space="preserve">
     <value>Muokkaa pienoisohjelmaa</value>
   </data>
@@ -5369,6 +5530,9 @@ Syötä teeman nimi:</value>
   <data name="EventLogDeleteTopic" xml:space="preserve">
     <value>un1 poisti ketjun un2</value>
   </data>
+  <data name="EventLogDisabledAntiSpam" xml:space="preserve">
+    <value>un1 poisti roskapostieston käytöstä</value>
+  </data>
   <data name="EventLogEditedCaption" xml:space="preserve">
     <value>un1 muokkasi kuvatekstiä:</value>
   </data>
@@ -5434,6 +5598,9 @@ toimenpiteitä ei löytynyt.</value>
   </data>
   <data name="EventLogEmptyTextSearch" xml:space="preserve">
     <value>Haulla &quot;**{0}**&quot; ei löytynyt viimeaikaisia tapahtumia.</value>
+  </data>
+  <data name="EventLogEnabledAntiSpam" xml:space="preserve">
+    <value>un1 otti roskapostieston käyttöön</value>
   </data>
   <data name="EventLogEndedLiveStream" xml:space="preserve">
     <value>un1 päätti suoran lähetyksen</value>
@@ -6327,6 +6494,12 @@ Menetät salaiset keskustelusi.</value>
   <data name="FwdMessagesToGroup" xml:space="preserve">
     <value>Viestit välitettiin ryhmään **{0}**.</value>
   </data>
+  <data name="FwdMessagesToManyChats_one" xml:space="preserve">
+    <value>Viestit välitettiin **keskusteluun**.</value>
+  </data>
+  <data name="FwdMessagesToManyChats_other" xml:space="preserve">
+    <value>Viestit välitettiin **{0} keskusteluun**.</value>
+  </data>
   <data name="FwdMessagesToSavedMessages" xml:space="preserve">
     <value>Viestit välitettiin **Tallennettuihin viesteihin**.</value>
   </data>
@@ -6338,6 +6511,12 @@ Menetät salaiset keskustelusi.</value>
   </data>
   <data name="FwdMessageToGroup" xml:space="preserve">
     <value>Viesti välitettiin ryhmään **{0}**.</value>
+  </data>
+  <data name="FwdMessageToManyChats_one" xml:space="preserve">
+    <value>Viesti välitettiin **keskusteluun**.</value>
+  </data>
+  <data name="FwdMessageToManyChats_other" xml:space="preserve">
+    <value>Viesti välitettiin **{0} keskusteluun**.</value>
   </data>
   <data name="FwdMessageToSavedMessages" xml:space="preserve">
     <value>Viesti välitettiin **Tallennettuihin viesteihin**.</value>
@@ -6359,6 +6538,9 @@ Menetät salaiset keskustelusi.</value>
   </data>
   <data name="General" xml:space="preserve">
     <value>Yleistä</value>
+  </data>
+  <data name="GetDirections" xml:space="preserve">
+    <value>Hae reittiohjeet</value>
   </data>
   <data name="GetQRCode" xml:space="preserve">
     <value>Avaa QR-koodi</value>
@@ -6423,7 +6605,7 @@ Rajaa saa kasvatettua muuttamalla sen **lähetysryhmäksi**, jonne vain valvojat
     <value>Raja saavutettu</value>
   </data>
   <data name="GigagroupConvertAlertConver" xml:space="preserve">
-    <value>MUUNNA</value>
+    <value>Muunna</value>
   </data>
   <data name="GigagroupConvertAlertText" xml:space="preserve">
     <value>Ryhmän normaalit jäsenet (muut kuin valvojat) menettävät pysyvästi oikeutensa lähettää viestejä tähän ryhmään.
@@ -6466,6 +6648,9 @@ Tätä **ei voi** perua.</value>
   <data name="GlobalAttachStickersRestricted" xml:space="preserve">
     <value>Tähän ryhmään ei saa lähettää tarroja.</value>
   </data>
+  <data name="GlobalAutoDeleteInfo" xml:space="preserve">
+    <value>Jos tämä otetaan käyttöön, kaikki uudet viestit aloittamissasi keskusteluissa poistetaan automaattisesti tietyn ajan jälkeen. Voit asettaa tämän asetuksen myös **jo olemassa oleviin keskusteluihisi**.</value>
+  </data>
   <data name="GlobalSearch" xml:space="preserve">
     <value>Lisää tuloksia</value>
   </data>
@@ -6502,6 +6687,9 @@ Telegramista?</value>
   </data>
   <data name="GroupContacts" xml:space="preserve">
     <value>Yhteystiedot tässä ryhmässä</value>
+  </data>
+  <data name="GroupCreateAutodeleteDescription" xml:space="preserve">
+    <value>Poistaa viestit automaattisesti kaikilta tietyn ajan jälkeen.</value>
   </data>
   <data name="GroupDeletedUndo" xml:space="preserve">
     <value>Ryhmä poistettiin</value>
@@ -8256,6 +8444,9 @@ Tässä voi kestää jonkin aikaa. Voit käyttää sovellusta tiedostojen siirro
   <data name="NearbyVenue" xml:space="preserve">
     <value>Tai valitse paikka</value>
   </data>
+  <data name="NeedAdminRightForSetAutoDeleteTimer" xml:space="preserve">
+    <value>Automaattipoiston asetuksia voi säätää vain ryhmän valvoja.</value>
+  </data>
   <data name="NetworkUsage" xml:space="preserve">
     <value>Datan käyttö</value>
   </data>
@@ -8425,7 +8616,7 @@ Tässä voi kestää jonkin aikaa. Voit käyttää sovellusta tiedostojen siirro
     <value>Valitettavasti voit tällä hetkellä lisätä ryhmiin ainoastaan molemminpuolisia yhteystietoja.</value>
   </data>
   <data name="NobodyLikesSpam3" xml:space="preserve">
-    <value>Valitettavasti sinut on tällä hetkellä estetty julkisista ryhmistä.</value>
+    <value>Valitettavasti sinut on tällä hetkellä estetty kirjoittamasta tähän ryhmään.</value>
   </data>
   <data name="NobodyViewed" xml:space="preserve">
     <value>Ei katselijoita</value>
@@ -9266,6 +9457,9 @@ Telegram-tiimi</value>
     <value>Aloita ensimmäinen ketjusi, tai napauta
 {0} nähdäksesi viestiluettelon.</value>
   </data>
+  <data name="NoTopicsDescriptionUser" xml:space="preserve">
+    <value>Tämän ryhmän vanhemmat viestit on siirretty ketjuun **&apos;{0}&apos;**.</value>
+  </data>
   <data name="NoUsernameFound" xml:space="preserve">
     <value>Käyttäjänimeä ei löytynyt.</value>
   </data>
@@ -9346,6 +9540,9 @@ Telegram-tiimi</value>
   </data>
   <data name="OpenFile" xml:space="preserve">
     <value>AVAA TIEDOSTO</value>
+  </data>
+  <data name="OpenFragment" xml:space="preserve">
+    <value>Avaa Fragment</value>
   </data>
   <data name="OpenGroup" xml:space="preserve">
     <value>AVAA RYHMÄ</value>
@@ -11637,6 +11834,30 @@ Lue lisää aloitteesta täältä: https://telegram.org/blog/coronavirus</value>
   <data name="RemoveGroupStickerSet" xml:space="preserve">
     <value>Poista ryhmän tarrakokoelma</value>
   </data>
+  <data name="RemoveManyEmojiCount_one" xml:space="preserve">
+    <value>Poista emoji</value>
+  </data>
+  <data name="RemoveManyEmojiCount_other" xml:space="preserve">
+    <value>Poista {0} emojia</value>
+  </data>
+  <data name="RemoveManyEmojiPacksCount_one" xml:space="preserve">
+    <value>Poista emojikokoelma</value>
+  </data>
+  <data name="RemoveManyEmojiPacksCount_other" xml:space="preserve">
+    <value>Poista {0} emojikokoelmaa</value>
+  </data>
+  <data name="RemoveManyMasksCount_one" xml:space="preserve">
+    <value>Poista naamio</value>
+  </data>
+  <data name="RemoveManyMasksCount_other" xml:space="preserve">
+    <value>Poista {0} naamiota</value>
+  </data>
+  <data name="RemoveManyStickersCount_one" xml:space="preserve">
+    <value>Poista tarra</value>
+  </data>
+  <data name="RemoveManyStickersCount_other" xml:space="preserve">
+    <value>Poista {0} tarraa</value>
+  </data>
   <data name="RemoveStickersCount" xml:space="preserve">
     <value>Poista {0}</value>
   </data>
@@ -11714,6 +11935,9 @@ Lue lisää aloitteesta täältä: https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="ReportChatViolence" xml:space="preserve">
     <value>Väkivalta</value>
+  </data>
+  <data name="ReportFalsePositive" xml:space="preserve">
+    <value>Ilmianna virhetunnistus</value>
   </data>
   <data name="ReportHint" xml:space="preserve">
     <value>Lisätiedot...</value>
@@ -12272,6 +12496,9 @@ Telegram tulee mahdollisesti käynnistää uudelleen, jotta asetus tulee voimaan
   <data name="SearchMessages" xml:space="preserve">
     <value>Viestit</value>
   </data>
+  <data name="SearchMessagesIn" xml:space="preserve">
+    <value>Keskustelussa {0}</value>
+  </data>
   <data name="SearchMusic" xml:space="preserve">
     <value>Hae musiikkia</value>
   </data>
@@ -12361,6 +12588,18 @@ Telegram tulee mahdollisesti käynnistää uudelleen, jotta asetus tulee voimaan
   </data>
   <data name="SelectChats" xml:space="preserve">
     <value>Valitse keskustelut</value>
+  </data>
+  <data name="SelectChatsForAutoDelete" xml:space="preserve">
+    <value>joihin käytetään poistoajastinta</value>
+  </data>
+  <data name="SelectChatsForAutoDelete2" xml:space="preserve">
+    <value>joissa poistoajastin otetaan käyttöön</value>
+  </data>
+  <data name="SelectChatsForDisableAutoDelete" xml:space="preserve">
+    <value>joista poistoajastin poistetaan käytöstä</value>
+  </data>
+  <data name="SelectChatsForDisableAutoDelete2" xml:space="preserve">
+    <value>joista poistoajastin poistetaan käytöstä</value>
   </data>
   <data name="SelectColor" xml:space="preserve">
     <value>Valitse väri</value>
@@ -12646,11 +12885,17 @@ Telegram tulee mahdollisesti käynnistää uudelleen, jotta asetus tulee voimaan
   <data name="SetAsMain" xml:space="preserve">
     <value>Aseta päämediaksi</value>
   </data>
+  <data name="SetAutoDeleteTimer" xml:space="preserve">
+    <value>Aseta ajastin</value>
+  </data>
   <data name="SetBackground" xml:space="preserve">
     <value>ASETA TAUSTAKUVA</value>
   </data>
   <data name="SetColor" xml:space="preserve">
     <value>Aseta väri</value>
+  </data>
+  <data name="SetCustomTime" xml:space="preserve">
+    <value>Mukautettu</value>
   </data>
   <data name="SetEmojiStatus" xml:space="preserve">
     <value>Aseta emojitila</value>
@@ -14040,6 +14285,12 @@ Odota vielä {0}.</value>
   <data name="TopicEmptyViewDescription" xml:space="preserve">
     <value>Aloita ketju lähettämällä ensimmäinen viesti.</value>
   </data>
+  <data name="TopicHidden" xml:space="preserve">
+    <value>Yleisketju piilotettiin</value>
+  </data>
+  <data name="TopicHidden2" xml:space="preserve">
+    <value>{0} piilotti yleisketjun</value>
+  </data>
   <data name="TopicIconChanged" xml:space="preserve">
     <value>Ketjun kuvakkeeksi vaihdettiin</value>
   </data>
@@ -14082,6 +14333,12 @@ Odota vielä {0}.</value>
   <data name="TopicsDeleted_other" xml:space="preserve">
     <value>Ketjut poistettiin.</value>
   </data>
+  <data name="TopicShown" xml:space="preserve">
+    <value>Yleisketju tehtiin näkyväksi</value>
+  </data>
+  <data name="TopicShown2" xml:space="preserve">
+    <value>{0} asetti yleisketjun näkyväksi</value>
+  </data>
   <data name="TopicViewAsMessages" xml:space="preserve">
     <value>Näytä viesteinä</value>
   </data>
@@ -14092,7 +14349,7 @@ Odota vielä {0}.</value>
     <value>{0} sulki ketjun {1}</value>
   </data>
   <data name="TopicWasCreatedAction" xml:space="preserve">
-    <value>{0} luotiin</value>
+    <value>Ketju {0} luotiin</value>
   </data>
   <data name="TopicWasIconChangedToAction" xml:space="preserve">
     <value>{0} vaihtoi ketjun kuvakkeeksi {1}</value>
@@ -14266,6 +14523,9 @@ Mikäli et ole tyytyväinen Telegramin vähäisiinkään edellytyksiin, emme voi
   </data>
   <data name="UndoAllCustom" xml:space="preserve">
     <value>Poista kaikki käyttäjä-, ryhmä-, ja kanavakohtaiset ilmoitusasetukset.</value>
+  </data>
+  <data name="Unhide" xml:space="preserve">
+    <value>Älä piilota</value>
   </data>
   <data name="UnhideFromTop" xml:space="preserve">
     <value>Kiinnitä</value>
@@ -14570,7 +14830,7 @@ Sen voi kuitenkin ostaa. **Lue lisää...**</value>
   </data>
   <data name="UsernameInvalidShortPurchase" xml:space="preserve">
     <value>Käyttäjänimessä on yleensä oltava ainakin viisi merkkiä,
-mutta tämän voi ostaa. **Lue lisää...**</value>
+mutta tämän lyhyen keräilynimen voi ostaa. **Lue lisää...**</value>
   </data>
   <data name="UsernameInvalidStartNumber" xml:space="preserve">
     <value>Käyttäjänimi ei saa alkaa numerolla.</value>
@@ -15964,6 +16224,21 @@ Muistathan yhä salasanasi?</value>
   </data>
   <data name="YouSendersNameHidden" xml:space="preserve">
     <value>Sinä (lähettäjien nimet piilotettu)</value>
+  </data>
+  <data name="YouTubeVideoErrorHTML" xml:space="preserve">
+    <value>Videota toistettaessa tapahtui virhe.</value>
+  </data>
+  <data name="YouTubeVideoErrorInvalid" xml:space="preserve">
+    <value>Videon osoite on virheellinen.</value>
+  </data>
+  <data name="YouTubeVideoErrorNotAvailableInApp" xml:space="preserve">
+    <value>Tätä videota ei voi toistaa sovelluksen sisällä.</value>
+  </data>
+  <data name="YouTubeVideoErrorNotFound" xml:space="preserve">
+    <value>Videota ei löytynyt.</value>
+  </data>
+  <data name="YouTubeVideoErrorOpenExternal" xml:space="preserve">
+    <value>Katso YouTubessa</value>
   </data>
   <data name="YouWereKicked" xml:space="preserve">
     <value>sinut poistettiin</value>

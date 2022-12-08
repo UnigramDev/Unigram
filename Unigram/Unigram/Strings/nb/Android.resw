@@ -466,6 +466,9 @@
   <data name="AccDescrTakeMorePics" xml:space="preserve">
     <value>Ta et bilde til</value>
   </data>
+  <data name="AccDescrTopic" xml:space="preserve">
+    <value>Emne</value>
+  </data>
   <data name="AccDescrUnreadCount_one" xml:space="preserve">
     <value>{0} ulest samtale</value>
   </data>
@@ -559,8 +562,14 @@
   <data name="AccReleaseForArchive" xml:space="preserve">
     <value>Slipp for arkiv</value>
   </data>
+  <data name="AccReleaseForGeneral" xml:space="preserve">
+    <value>Slipp for #generelt</value>
+  </data>
   <data name="AccSwipeForArchive" xml:space="preserve">
     <value>Sveip ned for arkiv</value>
+  </data>
+  <data name="AccSwipeForGeneral" xml:space="preserve">
+    <value>Sveip ned for #generelt</value>
   </data>
   <data name="AccSwitchToFullscreen" xml:space="preserve">
     <value>Bytt til fullskjerm</value>
@@ -1050,6 +1059,36 @@ til: {1}</value>
   <data name="AdditionalReactionsDescription" xml:space="preserve">
     <value>Lås opp et større utvalg av reaksjoner på meldinger ved å abonnere på Telegram Premium</value>
   </data>
+  <data name="AddManyEmojiCount_one" xml:space="preserve">
+    <value>Legg til emoji</value>
+  </data>
+  <data name="AddManyEmojiCount_other" xml:space="preserve">
+    <value>Legg til {0} emoji</value>
+  </data>
+  <data name="AddManyMasksCount_one" xml:space="preserve">
+    <value>Legg til maske</value>
+  </data>
+  <data name="AddManyMasksCount_other" xml:space="preserve">
+    <value>Legg til {0} masker</value>
+  </data>
+  <data name="AddManyMembersAlertNamesText_one" xml:space="preserve">
+    <value>Er du sikker på at du vil legge til et medlem i **{1}**?</value>
+  </data>
+  <data name="AddManyMembersAlertNamesText_other" xml:space="preserve">
+    <value>Er du sikker på at du vil legge til {1} medlemmer i **{0}**?</value>
+  </data>
+  <data name="AddManyMembersAlertTitle_one" xml:space="preserve">
+    <value>Legg til medlem</value>
+  </data>
+  <data name="AddManyMembersAlertTitle_other" xml:space="preserve">
+    <value>Legg til {0} medlemmer</value>
+  </data>
+  <data name="AddManyStickersCount_one" xml:space="preserve">
+    <value>Legg til klistremerke</value>
+  </data>
+  <data name="AddManyStickersCount_other" xml:space="preserve">
+    <value>Legg til {0} klistremerker</value>
+  </data>
   <data name="AddMasks" xml:space="preserve">
     <value>Legg til masker</value>
   </data>
@@ -1114,7 +1153,7 @@ til: {1}</value>
     <value>Klistremerke ikke funnet</value>
   </data>
   <data name="AddSubscriber" xml:space="preserve">
-    <value>Legg til abonnent</value>
+    <value>Legg til abonnenter</value>
   </data>
   <data name="AddToChannel" xml:space="preserve">
     <value>Legg til i kanal</value>
@@ -1295,6 +1334,12 @@ til: {1}</value>
   </data>
   <data name="AnimatedStickers" xml:space="preserve">
     <value>Animerte klistremerker</value>
+  </data>
+  <data name="AnonymousNumber" xml:space="preserve">
+    <value>Anonymt nummer</value>
+  </data>
+  <data name="AnonymousNumberNotice" xml:space="preserve">
+    <value>Dette nummeret er ikke knyttet til et SIM kort og ble anskaffet på *Fragment*.</value>
   </data>
   <data name="AnonymousPoll" xml:space="preserve">
     <value>Anonym avstemning</value>
@@ -1859,6 +1904,21 @@ For å bekrefte Telegram-pålogging, gå til Innstillinger &gt; Enheter &gt; Ska
   <data name="AutoDeleteAfter" xml:space="preserve">
     <value>Autoslett etter {0}</value>
   </data>
+  <data name="AutoDeleteAfter1Day" xml:space="preserve">
+    <value>Etter 1 dag</value>
+  </data>
+  <data name="AutoDeleteAfter1Month" xml:space="preserve">
+    <value>Etter 1 måned</value>
+  </data>
+  <data name="AutoDeleteAfter1Week" xml:space="preserve">
+    <value>Etter 1 uke</value>
+  </data>
+  <data name="AutoDeleteAfter3Weeks" xml:space="preserve">
+    <value>Etter 3 uker</value>
+  </data>
+  <data name="AutoDeleteAfterShort" xml:space="preserve">
+    <value>Etter {0}</value>
+  </data>
   <data name="AutoDeleteAfteTitle" xml:space="preserve">
     <value>Autoslett etter...</value>
   </data>
@@ -1877,11 +1937,34 @@ For å bekrefte Telegram-pålogging, gå til Innstillinger &gt; Enheter &gt; Ska
   <data name="AutoDeleteConfirm" xml:space="preserve">
     <value>Bekreft</value>
   </data>
+  <data name="AutoDeleteConfirmMessage" xml:space="preserve">
+    <value>Er du sikker på at du vil at alle meldinger i dine nye private samtaler og i nye grupper du oppretter automatisk slettes for alle {0} etter sending?</value>
+  </data>
   <data name="AutoDeleteCustom" xml:space="preserve">
     <value>Egendefinert</value>
   </data>
+  <data name="AutoDeleteCustom2" xml:space="preserve">
+    <value>Angi egendefinert tid</value>
+  </data>
   <data name="AutoDeleteDisable" xml:space="preserve">
     <value>Deaktiver</value>
+  </data>
+  <data name="AutoDeleteDisabled" xml:space="preserve">
+    <value>autoslett deaktivert</value>
+  </data>
+  <data name="AutoDeleteGlobalAction" xml:space="preserve">
+    <value>un1 har angitt en nedtelling for selvdestruksjon for alle sine samtaler.
+Alle nye meldinger i denne samtalen vil bli slettet automatisk {0} etter sending.</value>
+  </data>
+  <data name="AutoDeleteGlobalActionFromYou" xml:space="preserve">
+    <value>Du har angitt en nedtelling for selvdestruksjon for alle dine samtaler.
+Alle nye meldinger i denne samtalen vil bli slettet automatisk {0} etter sending.</value>
+  </data>
+  <data name="AutoDeleteGlobalTimerDisabled" xml:space="preserve">
+    <value>Nedtelling for selvdestruksjon er deaktivert for alle nye samtaler.</value>
+  </data>
+  <data name="AutoDeleteGlobalTimerEnabled" xml:space="preserve">
+    <value>Meldinger i alle nye samtaler du starter vil bli slettet automatisk etter **{0}**.</value>
   </data>
   <data name="AutoDeleteHeader" xml:space="preserve">
     <value>Autoslett meldinger i denne samtalen</value>
@@ -1898,11 +1981,17 @@ For å bekrefte Telegram-pålogging, gå til Innstillinger &gt; Enheter &gt; Ska
   <data name="AutoDeleteInfo" xml:space="preserve">
     <value>Slett meldinger sendt i denne samtalen automatisk etter angitt tidsperiode.</value>
   </data>
+  <data name="AutoDeleteMessages" xml:space="preserve">
+    <value>Autoslett meldinger</value>
+  </data>
   <data name="AutoDeleteNever" xml:space="preserve">
     <value>Av</value>
   </data>
   <data name="AutoDeletePopupDescription" xml:space="preserve">
     <value>Sletter meldinger automatisk i denne samtalen etter angitt tidsperiode.</value>
+  </data>
+  <data name="AutoDeletePopupDescription2" xml:space="preserve">
+    <value>Du kan også angi din standard **nedtelling for selvdestruksjon** for alle samtaler i innstillingene.</value>
   </data>
   <data name="AutoDeletePopupTitle" xml:space="preserve">
     <value>Autosletting</value>
@@ -1916,6 +2005,15 @@ slettet {0} etter at de er sendt.</value>
   </data>
   <data name="AutoDeleteSetTimer" xml:space="preserve">
     <value>Autosletting</value>
+  </data>
+  <data name="AutoDeleteSettingsInfo" xml:space="preserve">
+    <value>Slett meldinger for alle automatisk etter en tidsperiode i alle nye samtaler du starter.</value>
+  </data>
+  <data name="AutodeleteTimerDisabledForChats" xml:space="preserve">
+    <value>Nedtelling for selvdestruksjon har blitt deaktivert for {0}.</value>
+  </data>
+  <data name="AutodeleteTimerEnabledForChats" xml:space="preserve">
+    <value>Nedtelling for selvdestruksjon etter **{0}** har blitt aktivert i {1}.</value>
   </data>
   <data name="AutoDownloadAudioInfo" xml:space="preserve">
     <value>Siden talemeldinger bruker så lite data, vil de alltid lastes ned automatisk.</value>
@@ -2549,6 +2647,9 @@ Aktiver mikrofontilgang i Innstillinger &gt; Tillatelser &gt; Mikrofon.</value>
   <data name="CacheEmpty" xml:space="preserve">
     <value>Tom</value>
   </data>
+  <data name="CacheOtherChats" xml:space="preserve">
+    <value>Andre samtaler</value>
+  </data>
   <data name="CacheWasCleared" xml:space="preserve">
     <value>{0} frigjort på enheten din!</value>
   </data>
@@ -2834,6 +2935,9 @@ Merk: hvis du glemmer tilgangskoden, må du reinstallere appen. Alle hemmelige s
   <data name="ChangePhoneNumberSuccess" xml:space="preserve">
     <value>Telefonnummeret ditt ble endret.</value>
   </data>
+  <data name="ChangePhoneNumberSuccessWithPhone" xml:space="preserve">
+    <value>Endring av telefonnummeret ditt til {0} var vellykket.</value>
+  </data>
   <data name="ChangePublicLimitReached" xml:space="preserve">
     <value>Beklager, du har reservert for mange offentlige lenker. Prøv å annullere en lenke fra en eldre gruppe eller kanal, eller opprett en privat i stedet.</value>
   </data>
@@ -2896,6 +3000,27 @@ Merk: hvis du glemmer tilgangskoden, må du reinstallere appen. Alle hemmelige s
   </data>
   <data name="ChannelAlertTitle" xml:space="preserve">
     <value>Hva er en kanal?</value>
+  </data>
+  <data name="ChannelAntiSpam" xml:space="preserve">
+    <value>Aggressiv anti-spam</value>
+  </data>
+  <data name="ChannelAntiSpamFalsePositiveReported" xml:space="preserve">
+    <value>Telegram moderatorer vil gå igjennom rapporten din. Takk!</value>
+  </data>
+  <data name="ChannelAntiSpamForbidden_one" xml:space="preserve">
+    <value>Aggressiv filtrering kan kun aktiveres i grupper med mer enn **{0} medlem**.</value>
+  </data>
+  <data name="ChannelAntiSpamForbidden_other" xml:space="preserve">
+    <value>Aggressiv filtrering kan kun aktiveres i grupper med mer enn **{0} medlemmer**.</value>
+  </data>
+  <data name="ChannelAntiSpamInfo" xml:space="preserve">
+    <value>Telegram vil filtrere mer spam, men dette kan noen ganger påvirke ordinære meldinger. Du kan rapportere falske positive filtreringer i Nylige handlinger.</value>
+  </data>
+  <data name="ChannelAntiSpamInfo2" xml:space="preserve">
+    <value>Du kan håndtere anti-spam innstillinger i {0}</value>
+  </data>
+  <data name="ChannelAntiSpamUser" xml:space="preserve">
+    <value>Telegram anti-spam</value>
   </data>
   <data name="ChannelBlacklist" xml:space="preserve">
     <value>Utestengte brukere</value>
@@ -3630,6 +3755,9 @@ Minimum lengde er 5 tegn.</value>
   <data name="ClearCacheFewChatsTitle" xml:space="preserve">
     <value>Tøm mellomlageret for {0}</value>
   </data>
+  <data name="ClearCacheForChats" xml:space="preserve">
+    <value>Er du sikker på at du vil slette mellomlagret data for valgte samtaler?</value>
+  </data>
   <data name="ClearCacheInfo" xml:space="preserve">
     <value>Frigjør lagringsplass på enheten din; mediefilene dine vil bli værende i skyen.</value>
   </data>
@@ -4014,6 +4142,9 @@ Oppgrader til en supergruppe for mer plass og flere funksjoner:
   <data name="CreateEncryptedChatError" xml:space="preserve">
     <value>Noe gikk galt.</value>
   </data>
+  <data name="CreateGeneralTopicTitle" xml:space="preserve">
+    <value>Velg emnenavn</value>
+  </data>
   <data name="CreateGroupError" xml:space="preserve">
     <value>Beklager, du kan ikke lage en gruppe med disse brukerne på grunn av deres personverninnstillinger.</value>
   </data>
@@ -4148,6 +4279,9 @@ Du kan når som helst bytte tilbake til standard Telegram tema her.</value>
   <data name="DataUsage" xml:space="preserve">
     <value>Disk og nettverksbruk</value>
   </data>
+  <data name="DataUsageByChats" xml:space="preserve">
+    <value>Bruk av lagringsplass etter samtaler</value>
+  </data>
   <data name="Days_one" xml:space="preserve">
     <value>{0} dag</value>
   </data>
@@ -4175,6 +4309,9 @@ Du kan når som helst bytte tilbake til standard Telegram tema her.</value>
   <data name="Deactivate" xml:space="preserve">
     <value>SLETT NÅ</value>
   </data>
+  <data name="DebugAltNavigation" xml:space="preserve">
+    <value>Alternativ navigasjon</value>
+  </data>
   <data name="DebugAltNavigationToggleControls" xml:space="preserve">
     <value>Veksle stivhet i navigasjonskontroller</value>
   </data>
@@ -4187,8 +4324,14 @@ Du kan når som helst bytte tilbake til standard Telegram tema her.</value>
   <data name="DebugClearSendMessageAsPeers" xml:space="preserve">
     <value>Clear Send Message As... peers</value>
   </data>
+  <data name="DebugDialogsActivity" xml:space="preserve">
+    <value>Samtaleaktivitet</value>
+  </data>
   <data name="DebugDrawSnowInChat" xml:space="preserve">
     <value>Snø i samtaler</value>
+  </data>
+  <data name="DebugGeneral" xml:space="preserve">
+    <value>Generelt</value>
   </data>
   <data name="DebugMenu" xml:space="preserve">
     <value>Debug meny</value>
@@ -4262,11 +4405,23 @@ Du kan når som helst bytte tilbake til standard Telegram tema her.</value>
   <data name="DebugMenuWebViewDebugEnabled" xml:space="preserve">
     <value>Feilsøking aktivert!</value>
   </data>
+  <data name="DebugMessageSkeletons" xml:space="preserve">
+    <value>Meldingsskjelett</value>
+  </data>
+  <data name="DebugMessageSkeletonsLightOverlayAlpha" xml:space="preserve">
+    <value>Lyst overlegg alpha</value>
+  </data>
+  <data name="DebugMessageSkeletonsSaturation" xml:space="preserve">
+    <value>Metning</value>
+  </data>
   <data name="DebugSendLastLogs" xml:space="preserve">
     <value>Send siste logger</value>
   </data>
   <data name="DebugSendLogs" xml:space="preserve">
     <value>Send logger</value>
+  </data>
+  <data name="DebugShareAlert" xml:space="preserve">
+    <value>Delingsvarsel</value>
   </data>
   <data name="DebugShareAlertDialogsModeLess" xml:space="preserve">
     <value>Mindre</value>
@@ -4282,6 +4437,9 @@ Du kan når som helst bytte tilbake til standard Telegram tema her.</value>
   </data>
   <data name="DebugShareAlertTopicsSlowMotion" xml:space="preserve">
     <value>Toggle sharing alert topics slow motion</value>
+  </data>
+  <data name="DebugTestBackend" xml:space="preserve">
+    <value>Test Backend</value>
   </data>
   <data name="December" xml:space="preserve">
     <value>Desember</value>
@@ -4984,6 +5142,12 @@ Hvis nummeret over er korrekt, ber vi deg vente på verifiseringskoden.</value>
   <data name="EditTopic" xml:space="preserve">
     <value>Rediger emne</value>
   </data>
+  <data name="EditTopicHide" xml:space="preserve">
+    <value>Vis i emner</value>
+  </data>
+  <data name="EditTopicHideInfo" xml:space="preserve">
+    <value>Hvis emnet &quot;Generelt&quot; er skjult, kan gruppemedlemmer dra emnelisten nedover for å se den.</value>
+  </data>
   <data name="EditWidget" xml:space="preserve">
     <value>Rediger miniprogram</value>
   </data>
@@ -5375,6 +5539,9 @@ Vennligst oppgi temanavn:</value>
   <data name="EventLogDeleteTopic" xml:space="preserve">
     <value>un1 slettet emnet un2</value>
   </data>
+  <data name="EventLogDisabledAntiSpam" xml:space="preserve">
+    <value>un1 deaktiverte anti-spam</value>
+  </data>
   <data name="EventLogEditedCaption" xml:space="preserve">
     <value>un1 redigerte teksten:</value>
   </data>
@@ -5440,6 +5607,9 @@ ble funnet.</value>
   </data>
   <data name="EventLogEmptyTextSearch" xml:space="preserve">
     <value>Fant ingen nylige hendelser som inneholdt &apos;**{0}**&apos;.</value>
+  </data>
+  <data name="EventLogEnabledAntiSpam" xml:space="preserve">
+    <value>un1 aktiverte anti-spam</value>
   </data>
   <data name="EventLogEndedLiveStream" xml:space="preserve">
     <value>un1 avsluttet direktesendingen</value>
@@ -6334,6 +6504,12 @@ Alle hemmelige samtaler vil gå tapt.</value>
   <data name="FwdMessagesToGroup" xml:space="preserve">
     <value>Meldinger videresendt til **{0}**</value>
   </data>
+  <data name="FwdMessagesToManyChats_one" xml:space="preserve">
+    <value>Meldinger videresendt til **en samtale**</value>
+  </data>
+  <data name="FwdMessagesToManyChats_other" xml:space="preserve">
+    <value>Meldinger videresendt til **{0} samtaler**</value>
+  </data>
   <data name="FwdMessagesToSavedMessages" xml:space="preserve">
     <value>Meldinger videresendt til **Lagrede meldinger**.</value>
   </data>
@@ -6345,6 +6521,12 @@ Alle hemmelige samtaler vil gå tapt.</value>
   </data>
   <data name="FwdMessageToGroup" xml:space="preserve">
     <value>Melding videresendt til **{0}**.</value>
+  </data>
+  <data name="FwdMessageToManyChats_one" xml:space="preserve">
+    <value>Melding videresendt til **en samtale**.</value>
+  </data>
+  <data name="FwdMessageToManyChats_other" xml:space="preserve">
+    <value>Melding videresendt til **{0} samtaler**.</value>
   </data>
   <data name="FwdMessageToSavedMessages" xml:space="preserve">
     <value>Melding videresendt til **lagrede meldinger**</value>
@@ -6366,6 +6548,9 @@ Alle hemmelige samtaler vil gå tapt.</value>
   </data>
   <data name="General" xml:space="preserve">
     <value>Generelt</value>
+  </data>
+  <data name="GetDirections" xml:space="preserve">
+    <value>Veibeskrivelse</value>
   </data>
   <data name="GetQRCode" xml:space="preserve">
     <value>Få QR kode</value>
@@ -6431,7 +6616,7 @@ Interessert?</value>
     <value>Grense nådd</value>
   </data>
   <data name="GigagroupConvertAlertConver" xml:space="preserve">
-    <value>KONVERTER</value>
+    <value>Konverter</value>
   </data>
   <data name="GigagroupConvertAlertText" xml:space="preserve">
     <value>Alminnelige medlemmer (ikke administratorer) vil **permanent** miste retten til å sende meldinger i gruppen.
@@ -6474,6 +6659,9 @@ Denne handlingen kan **ikke** angres.</value>
   <data name="GlobalAttachStickersRestricted" xml:space="preserve">
     <value>Klistremerker er ikke tillatt i denne gruppen.</value>
   </data>
+  <data name="GlobalAutoDeleteInfo" xml:space="preserve">
+    <value>Dersom dette aktiveres, vil alle nye meldinger i samtaler du starter bli slettet automatisk for alle en tid etter de er sendt. Du kan også **bruke denne innstillingen for dine eksisterende samtaler**.</value>
+  </data>
   <data name="GlobalSearch" xml:space="preserve">
     <value>Globalt søk</value>
   </data>
@@ -6510,6 +6698,9 @@ om Telegram?</value>
   </data>
   <data name="GroupContacts" xml:space="preserve">
     <value>Kontakter i denne gruppen</value>
+  </data>
+  <data name="GroupCreateAutodeleteDescription" xml:space="preserve">
+    <value>Slett meldinger i denne gruppen automatisk for alle etter en tidsperiode.</value>
   </data>
   <data name="GroupDeletedUndo" xml:space="preserve">
     <value>Gruppe slettet</value>
@@ -7431,7 +7622,7 @@ Du kan endre språket ditt tilbake når som helst i innstillingene.</value>
     <value>Beklager, du kan ikke feste mer enn **{0}** samtaler til toppen. Løsne en som allerede er festet først.</value>
   </data>
   <data name="LimitReachedPinnedTopics" xml:space="preserve">
-    <value>Beklager, du kan ikke feste mer enn {0} samtaler til toppen.</value>
+    <value>Beklager, du kan ikke feste mer enn {0} emner til toppen.</value>
   </data>
   <data name="LimitReachedPublicLinks" xml:space="preserve">
     <value>Du har reservert for mange offentlige lenker. Enten annuller en lenke fra en eldre gruppe eller kanal, eller abonner på **Telegram Premium** for å doble grensen til **{1}** offentlige lenker.</value>
@@ -8269,6 +8460,9 @@ Dette kan ta en stund. Du kan fortsette å bruke appen mens filene flyttes.</val
   <data name="NearbyVenue" xml:space="preserve">
     <value>Eller velg lokale</value>
   </data>
+  <data name="NeedAdminRightForSetAutoDeleteTimer" xml:space="preserve">
+    <value>Du må være en administrator for å aktivere autosletting i denne gruppen.</value>
+  </data>
   <data name="NetworkUsage" xml:space="preserve">
     <value>Databruk</value>
   </data>
@@ -8439,7 +8633,7 @@ Dette kan ta en stund. Du kan fortsette å bruke appen mens filene flyttes.</val
     <value>Beklager, du kan bare legge gjensidige kontakter til i grupper for øyeblikket.</value>
   </data>
   <data name="NobodyLikesSpam3" xml:space="preserve">
-    <value>Beklager, du er for tiden begrenset fra å kunne legge noe ut i offentlige grupper.</value>
+    <value>Beklager, du er for tiden begrenset fra å kunne legge noe ut i denne gruppen.</value>
   </data>
   <data name="NobodyViewed" xml:space="preserve">
     <value>Ingen sett</value>
@@ -9278,7 +9472,10 @@ Telegram teamet</value>
   </data>
   <data name="NoTopicsDescription" xml:space="preserve">
     <value>Du kan starte ditt første emne eller trykke på
-{0}-ikonet for å bytte til meldingslisten.</value>
+{0}-ikonet for å vise gruppen som meldinger.</value>
+  </data>
+  <data name="NoTopicsDescriptionUser" xml:space="preserve">
+    <value>Gamle meldinger fra denne gruppen har blitt flyttet til emnet **&quot;{0}&quot;**.</value>
   </data>
   <data name="NoUsernameFound" xml:space="preserve">
     <value>Brukernavn ble ikke funnet.</value>
@@ -9360,6 +9557,9 @@ Telegram teamet</value>
   </data>
   <data name="OpenFile" xml:space="preserve">
     <value>ÅPNE FIL</value>
+  </data>
+  <data name="OpenFragment" xml:space="preserve">
+    <value>Åpne Fragment</value>
   </data>
   <data name="OpenGroup" xml:space="preserve">
     <value>SE GRUPPEN</value>
@@ -10808,7 +11008,7 @@ Vi henter tilgang til posisjonen din kun i tidsrommet du velger, og du kan stopp
     <value>Verktøy for å angi en standardmappe, automatisk arkivering og skjule nye samtaler fra ikke-kontakter.</value>
   </data>
   <data name="PremiumPreviewAdvancedChatManagementDescription2" xml:space="preserve">
-    <value>Abonnenter på Telegram Premium kan endre standard rekkefølge, auto-arkivere og skjule nye samtaler fra ikke-kontakter.</value>
+    <value>Abonnenter på Telegram Premium kan angi en standardmappe, auto-arkivere og skjule nye samtaler fra ikke-kontakter.</value>
   </data>
   <data name="PremiumPreviewAnimatedProfiles" xml:space="preserve">
     <value>Animerte profilbilder</value>
@@ -11650,6 +11850,30 @@ Vi henter tilgang til posisjonen din kun i tidsrommet du velger, og du kan stopp
   <data name="RemoveGroupStickerSet" xml:space="preserve">
     <value>Fjern gruppens klistremerkepakke</value>
   </data>
+  <data name="RemoveManyEmojiCount_one" xml:space="preserve">
+    <value>Fjern emoji</value>
+  </data>
+  <data name="RemoveManyEmojiCount_other" xml:space="preserve">
+    <value>Fjern {0} emoji</value>
+  </data>
+  <data name="RemoveManyEmojiPacksCount_one" xml:space="preserve">
+    <value>Fjern emojipakke</value>
+  </data>
+  <data name="RemoveManyEmojiPacksCount_other" xml:space="preserve">
+    <value>Fjern {0} emojipakker</value>
+  </data>
+  <data name="RemoveManyMasksCount_one" xml:space="preserve">
+    <value>Fjern maske</value>
+  </data>
+  <data name="RemoveManyMasksCount_other" xml:space="preserve">
+    <value>Fjern {0} masker</value>
+  </data>
+  <data name="RemoveManyStickersCount_one" xml:space="preserve">
+    <value>Fjern klistremerke</value>
+  </data>
+  <data name="RemoveManyStickersCount_other" xml:space="preserve">
+    <value>Fjern {0} klistremerker</value>
+  </data>
   <data name="RemoveStickersCount" xml:space="preserve">
     <value>Fjern {0}</value>
   </data>
@@ -11727,6 +11951,9 @@ Vi henter tilgang til posisjonen din kun i tidsrommet du velger, og du kan stopp
   </data>
   <data name="ReportChatViolence" xml:space="preserve">
     <value>Vold</value>
+  </data>
+  <data name="ReportFalsePositive" xml:space="preserve">
+    <value>Rapporter falsk positiv</value>
   </data>
   <data name="ReportHint" xml:space="preserve">
     <value>Flere detaljer…</value>
@@ -12211,7 +12438,7 @@ Det kan hende du må starte appen på nytt for at endringene skal tre i kraft.</
     <value>Søk etter farge</value>
   </data>
   <data name="SearchEmojiHint" xml:space="preserve">
-    <value>Søk emoji</value>
+    <value>Søk etter emoji</value>
   </data>
   <data name="SearchEmptyViewDownloads" xml:space="preserve">
     <value>Ingen nylige nedlastinger</value>
@@ -12284,6 +12511,9 @@ Det kan hende du må starte appen på nytt for at endringene skal tre i kraft.</
   </data>
   <data name="SearchMessages" xml:space="preserve">
     <value>Meldinger</value>
+  </data>
+  <data name="SearchMessagesIn" xml:space="preserve">
+    <value>Meldinger i {0}</value>
   </data>
   <data name="SearchMusic" xml:space="preserve">
     <value>Søk etter musikk</value>
@@ -12374,6 +12604,18 @@ Det kan hende du må starte appen på nytt for at endringene skal tre i kraft.</
   </data>
   <data name="SelectChats" xml:space="preserve">
     <value>Velg samtaler</value>
+  </data>
+  <data name="SelectChatsForAutoDelete" xml:space="preserve">
+    <value>for å bruke selvdestruksjon</value>
+  </data>
+  <data name="SelectChatsForAutoDelete2" xml:space="preserve">
+    <value>vil telle ned for selvdestruksjon</value>
+  </data>
+  <data name="SelectChatsForDisableAutoDelete" xml:space="preserve">
+    <value>for å deaktivere selvdestruksjon</value>
+  </data>
+  <data name="SelectChatsForDisableAutoDelete2" xml:space="preserve">
+    <value>vil deaktivere selvdestruksjon</value>
   </data>
   <data name="SelectColor" xml:space="preserve">
     <value>Velg farge</value>
@@ -12602,6 +12844,9 @@ Ikke ta telefonen. Telegram vil ordne alt automatisk.</value>
   <data name="SentCallOnly" xml:space="preserve">
     <value>Ringer nummeret ditt **{0}** for å diktere koden.</value>
   </data>
+  <data name="SentFragmentCode" xml:space="preserve">
+    <value>Få koden for {0} i Anonymous Numbers-seksjonen på Fragment.</value>
+  </data>
   <data name="SentSmsCode" xml:space="preserve">
     <value>Vi har sendt en SMS med en aktiveringskode til nummeret ditt **{0}**.</value>
   </data>
@@ -12659,11 +12904,17 @@ Ikke ta telefonen. Telegram vil ordne alt automatisk.</value>
   <data name="SetAsMain" xml:space="preserve">
     <value>Angi som hovedbilde</value>
   </data>
+  <data name="SetAutoDeleteTimer" xml:space="preserve">
+    <value>Angi autosletting</value>
+  </data>
   <data name="SetBackground" xml:space="preserve">
     <value>BRUK BAKGRUNN</value>
   </data>
   <data name="SetColor" xml:space="preserve">
     <value>Angi en farge</value>
+  </data>
+  <data name="SetCustomTime" xml:space="preserve">
+    <value>Angi egendefinert tidsrom</value>
   </data>
   <data name="SetEmojiStatus" xml:space="preserve">
     <value>Angi emojistatus</value>
@@ -14051,6 +14302,12 @@ Vennligst prøv igjen om {0}.</value>
   <data name="TopicEmptyViewDescription" xml:space="preserve">
     <value>Send en melding for å starte emnet.</value>
   </data>
+  <data name="TopicHidden" xml:space="preserve">
+    <value>Generelt-emnet ble skjult</value>
+  </data>
+  <data name="TopicHidden2" xml:space="preserve">
+    <value>{0} skjulte Generelt-emnet</value>
+  </data>
   <data name="TopicIconChanged" xml:space="preserve">
     <value>Emneikon endret</value>
   </data>
@@ -14093,6 +14350,12 @@ Vennligst prøv igjen om {0}.</value>
   <data name="TopicsDeleted_other" xml:space="preserve">
     <value>Emner slettet.</value>
   </data>
+  <data name="TopicShown" xml:space="preserve">
+    <value>Generelt emne er synlig</value>
+  </data>
+  <data name="TopicShown2" xml:space="preserve">
+    <value>{0} gjorde Generelt-emnet synlig igjen</value>
+  </data>
   <data name="TopicViewAsMessages" xml:space="preserve">
     <value>Vis som meldinger</value>
   </data>
@@ -14103,7 +14366,7 @@ Vennligst prøv igjen om {0}.</value>
     <value>{0} stengte {1}</value>
   </data>
   <data name="TopicWasCreatedAction" xml:space="preserve">
-    <value>{0} ble opprettet</value>
+    <value>Emnet {0} ble opprettet</value>
   </data>
   <data name="TopicWasIconChangedToAction" xml:space="preserve">
     <value>{0} endret emnets ikon til {1}</value>
@@ -14277,6 +14540,9 @@ Hvis du ikke er komfortabel med Telegram sine beskjedne behov, vil det ikke vær
   </data>
   <data name="UndoAllCustom" xml:space="preserve">
     <value>Tilbakestill alle egendefinerte varslingsinnstillinger for alle kontakter, grupper og kanaler.</value>
+  </data>
+  <data name="Unhide" xml:space="preserve">
+    <value>Gjør synlig</value>
   </data>
   <data name="UnhideFromTop" xml:space="preserve">
     <value>Fest</value>
@@ -15976,6 +16242,21 @@ Husker du fortsatt passordet ditt?</value>
   </data>
   <data name="YouSendersNameHidden" xml:space="preserve">
     <value>Du (avsenderes navn er skjult)</value>
+  </data>
+  <data name="YouTubeVideoErrorHTML" xml:space="preserve">
+    <value>En feil oppstod under forsøk på å spille av denne videoen.</value>
+  </data>
+  <data name="YouTubeVideoErrorInvalid" xml:space="preserve">
+    <value>Videolenke er ugyldig</value>
+  </data>
+  <data name="YouTubeVideoErrorNotAvailableInApp" xml:space="preserve">
+    <value>Denne videoen kan ikke spilles av i denne appen.</value>
+  </data>
+  <data name="YouTubeVideoErrorNotFound" xml:space="preserve">
+    <value>Video ble ikke funnet.</value>
+  </data>
+  <data name="YouTubeVideoErrorOpenExternal" xml:space="preserve">
+    <value>Se på YouTube</value>
   </data>
   <data name="YouWereKicked" xml:space="preserve">
     <value>du ble fjernet fra gruppen</value>
