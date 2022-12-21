@@ -254,9 +254,14 @@ namespace Unigram.ViewModels.Drawers
                     {
                         foreach (var sticker in customEmojiStickers.StickersValue)
                         {
+                            if (sticker.FullType is not StickerTypeFullInfoCustomEmoji customEmojiType)
+                            {
+                                continue;
+                            }
+
                             for (int i = 0; i < source.Count; i++)
                             {
-                                if (source[i] is long customEmojiId && customEmojiId == sticker.CustomEmojiId)
+                                if (source[i] is long customEmojiId && customEmojiId == customEmojiType.CustomEmojiId)
                                 {
                                     source[i] = new StickerViewModel(ClientService, sticker);
                                 }
@@ -381,7 +386,7 @@ namespace Unigram.ViewModels.Drawers
                     return;
                 }
 
-                assets = stickers.StickersValue.ToDictionary(x => x.CustomEmojiId);
+                assets = stickers.StickersValue.ToDictionary(x => x.FullType is StickerTypeFullInfoCustomEmoji customEmoji ? customEmoji.CustomEmojiId : 0);
             }
 
             var reactions = await ClientService.GetAllReactionsAsync();

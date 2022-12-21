@@ -203,12 +203,12 @@ namespace Unigram.ViewModels.Settings
                 conversion.CropRectangle = rectangle;
 
                 var generated = await media.File.ToGeneratedAsync(ConversionType.Transcode, JsonConvert.SerializeObject(conversion));
-                var response = await ClientService.SendAsync(new SetProfilePhoto(new InputChatPhotoAnimation(generated, 0)));
+                var response = await ClientService.SendAsync(new SetProfilePhoto(new InputChatPhotoAnimation(generated, 0), false));
             }
             else if (file is StoragePhoto photo)
             {
                 var generated = await photo.File.ToGeneratedAsync(ConversionType.Compress, JsonConvert.SerializeObject(photo.EditState));
-                var response = await ClientService.SendAsync(new SetProfilePhoto(new InputChatPhotoStatic(generated)));
+                var response = await ClientService.SendAsync(new SetProfilePhoto(new InputChatPhotoStatic(generated), false));
             }
         }
     }

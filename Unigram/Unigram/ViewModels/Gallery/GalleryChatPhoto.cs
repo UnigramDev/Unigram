@@ -65,7 +65,7 @@ namespace Unigram.ViewModels.Gallery
                 //return new InputMessageAnimation(new InputFileId(_photo.Animation.File.Id), small?.ToInputThumbnail(), new int[0], ?, _photo.Animation.Length, _photo.Animation.Length, null);
             }
 
-            return new InputMessagePhoto(new InputFileId(big.Photo.Id), small?.ToInputThumbnail(), new int[0], big.Width, big.Height, null, 0);
+            return new InputMessagePhoto(new InputFileId(big.Photo.Id), small?.ToInputThumbnail(), new int[0], big.Width, big.Height, null, 0, false);
         }
     }
 }

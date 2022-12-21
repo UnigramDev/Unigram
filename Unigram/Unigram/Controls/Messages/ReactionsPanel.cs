@@ -152,8 +152,13 @@ namespace Unigram.Controls.Messages
                     {
                         foreach (var sticker in stickers.StickersValue)
                         {
+                            if (sticker.FullType is not StickerTypeFullInfoCustomEmoji customEmoji)
+                            {
+                                continue;
+                            }
+
                             EmojiCache.AddOrUpdate(sticker);
-                            UpdateButton<long, Sticker>(_customReactions, sticker.CustomEmojiId, message, sticker, Animate);
+                            UpdateButton<long, Sticker>(_customReactions, customEmoji.CustomEmojiId, message, sticker, Animate);
                         }
                     }
                 }

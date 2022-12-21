@@ -1,21 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
+﻿using System.Collections.Generic;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.System;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Cells.Premium
 {
@@ -58,12 +46,14 @@ namespace Unigram.Controls.Cells.Premium
                 index = 0;
             }
 
-            if (index < _stickers.Count)
+            if (index < _stickers.Count )
             {
                 var sticker = _stickers[index];
-
-                Animation1.Source = UriEx.ToLocal(sticker.StickerValue.Local.Path);
-                PremiumAnimation1.Source = UriEx.ToLocal(sticker.PremiumAnimation.Local.Path);
+                if (sticker.FullType is StickerTypeFullInfoRegular regular)
+                {
+                    Animation1.Source = UriEx.ToLocal(sticker.StickerValue.Local.Path);
+                    PremiumAnimation1.Source = UriEx.ToLocal(regular.PremiumAnimation.Local.Path);
+                }
 
                 _index = index;
                 PreloadSticker();
@@ -79,9 +69,11 @@ namespace Unigram.Controls.Cells.Premium
             }
 
             var sticker = _stickers[index];
-
-            _clientService.DownloadFile(sticker.StickerValue.Id, 32);
-            _clientService.DownloadFile(sticker.PremiumAnimation.Id, 32);
+            if (sticker.FullType is StickerTypeFullInfoRegular regular)
+            {
+                _clientService.DownloadFile(sticker.StickerValue.Id, 32);
+                _clientService.DownloadFile(regular.PremiumAnimation.Id, 32);
+            }
         }
 
         private void OnPositionChanged(object sender, double e)

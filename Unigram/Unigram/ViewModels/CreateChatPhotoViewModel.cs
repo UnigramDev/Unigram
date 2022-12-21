@@ -11,9 +11,23 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {
+    public struct CreateChatPhotoParameters
+    {
+        public long? ChatId { get; }
+
+        public bool IsPublic { get; }
+
+        public CreateChatPhotoParameters(long? chatId, bool isPublic)
+        {
+            ChatId = chatId;
+            IsPublic = isPublic;
+        }
+    }
+
     public class CreateChatPhotoViewModel : TLViewModelBase
     {
         private long? _chatId;
+        private bool _isPublic;
 
         public CreateChatPhotoViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
@@ -23,7 +37,11 @@ namespace Unigram.ViewModels
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            _chatId = parameter as long?;
+            if (parameter is CreateChatPhotoParameters parameters)
+            {
+                _chatId = parameters.ChatId;
+                _isPublic = parameters.IsPublic;
+            }
 
             var dark = Settings.Appearance.IsDarkTheme();
             var freeform = dark ? new[] { 0x1B2836, 0x121A22, 0x1B2836, 0x121A22 } : new[] { 0xDBDDBB, 0x6BA587, 0xD5D88D, 0x88B884 };
@@ -112,7 +130,7 @@ namespace Unigram.ViewModels
             }
             else
             {
-                ClientService.Send(new SetProfilePhoto(inputPhoto));
+                ClientService.Send(new SetProfilePhoto(inputPhoto, _isPublic));
             }
         }
     }

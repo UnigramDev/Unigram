@@ -55,9 +55,9 @@ namespace Unigram.Views.Popups
                     {
                         List.Items.Clear();
 
-                        if (clientService.Options.AggressiveAntiSpamUserId != 0)
+                        if (clientService.Options.AntiSpamBotUserId != 0)
                         {
-                            var antiSpamSender = new MessageSenderUser(clientService.Options.AggressiveAntiSpamUserId);
+                            var antiSpamSender = new MessageSenderUser(clientService.Options.AntiSpamBotUserId);
                             var antiSpam = new ChatMember(antiSpamSender, 0, 0, new ChatMemberStatusAdministrator());
 
                             List.Items.Add(antiSpam);

@@ -27,7 +27,7 @@ namespace Unigram.Views.Popups
         {
             if (SoundDefault.IsChecked == true)
             {
-                _completion.TrySetResult(new NotificationSound { Id = 0 });
+                _completion.TrySetResult(new NotificationSound { Id = -1 });
             }
             else if (NoSound.IsChecked == true)
             {

@@ -217,7 +217,7 @@ namespace Unigram.Views.Popups
 
             if (content.Children.Count > 1 && content.Children[1] is Border panel && panel.Child is TextBlock premium)
             {
-                if (sticker.PremiumAnimation != null && ViewModel.ClientService.IsPremiumAvailable)
+                if (sticker.FullType is StickerTypeFullInfoRegular regular && regular.PremiumAnimation != null && ViewModel.ClientService.IsPremiumAvailable)
                 {
                     premium.Text = ViewModel.ClientService.IsPremium ? Icons.Premium16 : Icons.LockClosed16;
                     panel.HorizontalAlignment = ViewModel.ClientService.IsPremium ? HorizontalAlignment.Right : HorizontalAlignment.Center;

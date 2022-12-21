@@ -239,6 +239,29 @@ namespace Unigram.Services
 • New messages will be deleted after 1 day, week, month – or a custom duration you choose.
 • The new menu in Settings > Privacy & Security > Auto-Delete Messages also lets you set up Auto-Delete for any of your existing chats faster.
 
+**Topics 2.0**
+• Admins of groups with 100+ members can organize discussions into separate topics.
+
+**Topics 2.0: Navigation**
+• Topics now have a two-column layout that keeps recent chats easily accessible as you browse topics.
+• Previews of topic messages in the chat list work like a button – tap to jump to the message or hold to preview the topic.
+• When in a topic, you can hold the 'Back' button to go back to All Chats.
+
+**Topics 2.0: Organization**
+• Up to 5 topics can be pinned to the top of the list.
+• Each topic now supports multiple pinned messages.
+• The 'View as Messages' mode now shows which topic each message belongs to.
+• Badge counters for topics you never opened will have a lighter, less distracting color.
+
+**Topics 2.0: General Topic**
+• A new 'General' topic is now included by default, containing service messages and the earlier message history from the group.
+• Admins can rename the General topic or hide it in the topic list.
+
+**Topics 2.0: Search and Shared Media**
+• Search in the topic list now also includes global results, as well as your recent chats and favorite contacts.
+• Shared media tabs like 'Links', 'Files' and 'Music' in the group now show which topic messages belong to.
+• Topic info pages include a quick link to the main info page of the group.
+
 **Aggressive Anti-Spam for Groups**
 • Large groups can enable 'Aggressive Filtering' in Group Info > Administrators to remove more spam with automated algorithms.
 • Admins help improve filtering by reporting any false positives in 'Recent Actions'.

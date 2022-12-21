@@ -802,7 +802,7 @@ namespace Unigram.ViewModels
                 }
                 else if (fullInfo.BotInfo.Photo != null)
                 {
-                    content = new MessagePhoto(fullInfo.BotInfo.Photo, text, false);
+                    content = new MessagePhoto(fullInfo.BotInfo.Photo, text, false, false);
                 }
                 else
                 {

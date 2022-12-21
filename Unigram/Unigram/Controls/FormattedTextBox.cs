@@ -1050,8 +1050,11 @@ namespace Unigram.Controls
 
         public async void InsertEmoji(Sticker sticker)
         {
-            await InsertEmojiAsync(Document.Selection, sticker.Emoji, sticker.CustomEmojiId);
-            Document.Selection.StartPosition = Document.Selection.EndPosition + 1;
+            if (sticker.FullType is StickerTypeFullInfoCustomEmoji customEmoji)
+            {
+                await InsertEmojiAsync(Document.Selection, sticker.Emoji, customEmoji.CustomEmojiId);
+                Document.Selection.StartPosition = Document.Selection.EndPosition + 1;
+            }
         }
 
         public async Task InsertEmojiAsync(ITextRange range, string emoji, long customEmojiId)

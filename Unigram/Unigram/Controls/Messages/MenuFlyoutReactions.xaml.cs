@@ -705,20 +705,13 @@ namespace Unigram.Controls.Messages
             {
                 _popup.IsOpen = false;
 
-                if (_mode == EmojiDrawerMode.CustomEmojis)
+                if (_mode == EmojiDrawerMode.CustomEmojis && sticker.FullType is StickerTypeFullInfoCustomEmoji customEmoji)
                 {
-                    _clientService.Send(new SetEmojiStatus(new EmojiStatus(sticker.CustomEmojiId), 0));
+                    _clientService.Send(new SetEmojiStatus(new EmojiStatus(customEmoji.CustomEmojiId), 0));
                 }
                 else if (_mode == EmojiDrawerMode.Reactions)
                 {
-                    if (sticker.CustomEmojiId != 0)
-                    {
-                        _clientService.Send(new SetDefaultReactionType(new ReactionTypeCustomEmoji(sticker.CustomEmojiId)));
-                    }
-                    else
-                    {
-                        _clientService.Send(new SetDefaultReactionType(new ReactionTypeEmoji(sticker.Emoji)));
-                    }
+                    _clientService.Send(new SetDefaultReactionType(sticker.ToReactionType()));
                 }
             }
         }

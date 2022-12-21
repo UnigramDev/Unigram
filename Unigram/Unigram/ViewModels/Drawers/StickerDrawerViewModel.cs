@@ -662,24 +662,22 @@ namespace Unigram.ViewModels.Drawers
         }
 
         public File StickerValue => _sticker?.StickerValue;
-        public File PremiumAnimation => _sticker?.PremiumAnimation;
         public IList<ClosedVectorPath> Outline => _sticker?.Outline;
-        public StickerType Type => _sticker?.Type;
+        public StickerTypeFullInfo FullType => _sticker?.FullType;
         public StickerFormat Format => _sticker?.Format ?? _format;
         public string Emoji => _sticker?.Emoji;
         public int Height => _sticker?.Height ?? 0;
         public int Width => _sticker?.Width ?? 0;
         public long SetId => _sticker?.SetId ?? _setId;
 
-        public long CustomEmojiId => _sticker?.CustomEmojiId ?? 0;
-
         public ReactionType ToReactionType()
         {
-            return CustomEmojiId switch
+            if (FullType is StickerTypeFullInfoCustomEmoji customEmoji)
             {
-                0 => new ReactionTypeEmoji(Emoji),
-                _ => new ReactionTypeCustomEmoji(CustomEmojiId)
-            };
+                return new ReactionTypeCustomEmoji(customEmoji.CustomEmojiId);
+            }
+
+            return new ReactionTypeEmoji(Emoji);
         }
     }
 

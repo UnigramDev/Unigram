@@ -71,6 +71,13 @@ namespace Unigram.Entities
             }
         }
 
+        protected bool _hasSpoiler;
+        public bool HasSpoiler
+        {
+            get => _hasSpoiler;
+            set => Set(ref _hasSpoiler, value);
+        }
+
         protected int _ttl;
         public int Ttl
         {

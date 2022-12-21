@@ -47,7 +47,7 @@ namespace Unigram.ViewModels.Gallery
             var big = _photo.GetBig();
             var small = _photo.GetSmall();
 
-            return new InputMessagePhoto(new InputFileId(big.Photo.Id), small?.ToInputThumbnail(), new int[0], big.Width, big.Height, null, 0);
+            return new InputMessagePhoto(new InputFileId(big.Photo.Id), small?.ToInputThumbnail(), new int[0], big.Width, big.Height, null, 0, false);
         }
     }
 }

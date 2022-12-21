@@ -264,7 +264,12 @@ namespace Unigram.Controls.Messages
                     //    continue;
                     //}
 
-                    _cache.Add(sticker.CustomEmojiId);
+                    if (sticker.FullType is not StickerTypeFullInfoCustomEmoji customEmojiType)
+                    {
+                        continue;
+                    }
+
+                    _cache.Add(customEmojiType.CustomEmojiId);
                     _pool.MergeOrCreate(clientService, sticker, hash, _subscribed);
                 }
             }
@@ -287,9 +292,9 @@ namespace Unigram.Controls.Messages
 
         public static void AddOrUpdate(Sticker sticker)
         {
-            var id = sticker.CustomEmojiId == 0
+            var id = sticker.FullType is not StickerTypeFullInfoCustomEmoji customEmoji
                 ? sticker.StickerValue.Id
-                : sticker.CustomEmojiId;
+                : customEmoji.CustomEmojiId;
 
             _stickers[id] = sticker;
         }
@@ -409,9 +414,9 @@ namespace Unigram.Controls.Messages
 
         public void MergeOrCreate(IClientService clientService, Sticker sticker, int hash, bool subscribe)
         {
-            var id = sticker.CustomEmojiId == 0
+            var id = sticker.FullType is not StickerTypeFullInfoCustomEmoji customEmoji
                 ? sticker.StickerValue.Id
-                : sticker.CustomEmojiId;
+                : customEmoji.CustomEmojiId;
 
             if (TryMerge(null, id, hash, subscribe, out EmojiRenderer renderer))
             {
@@ -566,7 +571,9 @@ namespace Unigram.Controls.Messages
 
         public Sticker Sticker => _sticker;
 
-        public long CustomEmojiId => _sticker.CustomEmojiId;
+        public long CustomEmojiId => _sticker.FullType is StickerTypeFullInfoCustomEmoji customEmoji
+            ? customEmoji.CustomEmojiId
+            : 0;
 
         public IBuffer Buffer => _buffer;
 

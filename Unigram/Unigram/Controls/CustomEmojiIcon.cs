@@ -244,12 +244,12 @@ namespace Unigram.Controls
             if (response is Stickers stickers && stickers.StickersValue.Count == 1)
             {
                 var sticker = stickers.StickersValue[0];
-                if (sticker.CustomEmojiId == _cache)
+                if (sticker.FullType is not StickerTypeFullInfoCustomEmoji customEmoji || customEmoji.CustomEmojiId == _cache)
                 {
                     return;
                 }
 
-                _cache = sticker.CustomEmojiId;
+                _cache = customEmoji.CustomEmojiId;
                 _pool.MergeOrCreate(clientService, sticker, hash, _subscribed);
             }
 
@@ -281,9 +281,9 @@ namespace Unigram.Controls
             }
 
             var hash = GetHashCode();
-            var id = sticker.CustomEmojiId == 0
+            var id = sticker.FullType is not StickerTypeFullInfoCustomEmoji customEmoji
                 ? sticker.StickerValue.Id
-                : sticker.CustomEmojiId;
+                : customEmoji.CustomEmojiId;
 
             if (_pool.TryMerge(clientService, id, hash, _subscribed, out _))
             {

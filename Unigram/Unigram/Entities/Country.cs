@@ -21,8 +21,15 @@ namespace Unigram.Entities
                 DisplayName = name;
             }
 
-            Emoji = char.ConvertFromUtf32(127462 + (code[0] - 'A'))
-                + char.ConvertFromUtf32(127462 + (code[1] - 'A'));
+            if (code == "FT")
+            {
+                Emoji = "\U0001F3F4\u200D\u2620";
+            }
+            else
+            {
+                Emoji = char.ConvertFromUtf32(127462 + (code[0] - 'A'))
+                    + char.ConvertFromUtf32(127462 + (code[1] - 'A'));
+            }
         }
 
         public string Code { get; set; }
@@ -58,6 +65,7 @@ namespace Unigram.Entities
 
         public static readonly IList<Country> All = new List<Country>
         {
+            new Country("FT", "888", "Anonymous Numbers"),
             new Country("AD", "376", "Andorra"),
             new Country("AE", "971", "United Arab Emirates"),
             new Country("AF", "93", "Afghanistan"),

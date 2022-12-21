@@ -46,7 +46,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            if (sticker.PremiumAnimation != null && ClientService.IsPremiumAvailable && !ClientService.IsPremium)
+            if (sticker.FullType is StickerTypeFullInfoRegular regular && regular.PremiumAnimation != null && ClientService.IsPremiumAvailable && !ClientService.IsPremium)
             {
                 await new UniqueStickersPopup(ClientService, sticker).ShowQueuedAsync();
                 return;
@@ -354,11 +354,11 @@ namespace Unigram.ViewModels
             }
             else if (storage is StoragePhoto)
             {
-                await SendPhotoAsync(chat, storage.File, caption, asFile, storage.Ttl, storage.IsEdited ? storage.EditState : null, options);
+                await SendPhotoAsync(chat, storage.File, caption, asFile, storage.HasSpoiler, storage.Ttl, storage.IsEdited ? storage.EditState : null, options);
             }
             else if (storage is StorageVideo video)
             {
-                await SendVideoAsync(chat, storage.File, caption, video.IsMuted, asFile, storage.Ttl, await video.GetEncodingAsync(), video.GetTransform(), options);
+                await SendVideoAsync(chat, storage.File, caption, video.IsMuted, asFile, storage.HasSpoiler, storage.Ttl, await video.GetEncodingAsync(), video.GetTransform(), options);
             }
         }
 
@@ -374,9 +374,9 @@ namespace Unigram.ViewModels
             }
         }
 
-        private async Task SendPhotoAsync(Chat chat, StorageFile file, FormattedText caption, bool asFile, int ttl = 0, BitmapEditState editState = null, MessageSendOptions options = null)
+        private async Task SendPhotoAsync(Chat chat, StorageFile file, FormattedText caption, bool asFile, bool spoiler = false, int ttl = 0, BitmapEditState editState = null, MessageSendOptions options = null)
         {
-            var factory = await _messageFactory.CreatePhotoAsync(file, asFile, ttl, editState);
+            var factory = await _messageFactory.CreatePhotoAsync(file, asFile, spoiler, ttl, editState);
             if (factory != null)
             {
                 var reply = GetReply(true);
@@ -386,9 +386,9 @@ namespace Unigram.ViewModels
             }
         }
 
-        public async Task SendVideoAsync(Chat chat, StorageFile file, FormattedText caption, bool animated, bool asFile, int ttl = 0, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null, MessageSendOptions options = null)
+        public async Task SendVideoAsync(Chat chat, StorageFile file, FormattedText caption, bool animated, bool asFile, bool spoiler = false, int ttl = 0, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null, MessageSendOptions options = null)
         {
-            var factory = await _messageFactory.CreateVideoAsync(file, animated, asFile, ttl, profile, transform);
+            var factory = await _messageFactory.CreateVideoAsync(file, animated, asFile, spoiler, ttl, profile, transform);
             if (factory != null)
             {
                 var reply = GetReply(true);
@@ -716,7 +716,7 @@ namespace Unigram.ViewModels
                 }
                 else if (item is StoragePhoto photo)
                 {
-                    var factory = await _messageFactory.CreatePhotoAsync(photo.File, asFile, photo.Ttl, photo.IsEdited ? photo.EditState : null);
+                    var factory = await _messageFactory.CreatePhotoAsync(photo.File, asFile, photo.HasSpoiler, photo.Ttl, photo.IsEdited ? photo.EditState : null);
                     if (factory != null)
                     {
                         var input = factory.Delegate(factory.InputFile, firstCaption);
@@ -727,7 +727,7 @@ namespace Unigram.ViewModels
                 }
                 else if (item is StorageVideo video)
                 {
-                    var factory = await _messageFactory.CreateVideoAsync(video.File, video.IsMuted, asFile, video.Ttl, await video.GetEncodingAsync(), video.GetTransform());
+                    var factory = await _messageFactory.CreateVideoAsync(video.File, video.IsMuted, asFile, video.HasSpoiler, video.Ttl, await video.GetEncodingAsync(), video.GetTransform());
                     if (factory != null)
                     {
                         var input = factory.Delegate(factory.InputFile, firstCaption);
@@ -982,11 +982,11 @@ namespace Unigram.ViewModels
             Task<InputMessageFactory> request = null;
             if (storage is StoragePhoto)
             {
-                request = _messageFactory.CreatePhotoAsync(storage.File, dialog.IsFilesSelected, storage.Ttl, storage.IsEdited ? storage.EditState : null);
+                request = _messageFactory.CreatePhotoAsync(storage.File, dialog.IsFilesSelected, storage.HasSpoiler, storage.Ttl, storage.IsEdited ? storage.EditState : null);
             }
             else if (storage is StorageVideo video)
             {
-                request = _messageFactory.CreateVideoAsync(storage.File, video.IsMuted, dialog.IsFilesSelected, storage.Ttl, await video.GetEncodingAsync(), video.GetTransform());
+                request = _messageFactory.CreateVideoAsync(storage.File, video.IsMuted, dialog.IsFilesSelected, storage.HasSpoiler, storage.Ttl, await video.GetEncodingAsync(), video.GetTransform());
             }
 
             if (request == null)

@@ -225,8 +225,15 @@ namespace Unigram.Controls
                 SecretHashKey.Visibility = Visibility.Collapsed;
             }
 
-            AnonymousNumber.Visibility = user.HasVirtualPhoneNumber ? Visibility.Visible : Visibility.Collapsed;
-            AnonymousNumberSeparator.Visibility = user.HasVirtualPhoneNumber ? Visibility.Visible : Visibility.Collapsed;
+            if (user.PhoneNumber.Length > 0)
+            {
+                var info = Client.Execute(new GetPhoneNumberInfoSync("en", user.PhoneNumber)) as PhoneNumberInfo;
+                if (info != null)
+                {
+                    AnonymousNumber.Visibility = info.IsAnonymous ? Visibility.Visible : Visibility.Collapsed;
+                    AnonymousNumberSeparator.Visibility = info.IsAnonymous ? Visibility.Visible : Visibility.Collapsed;
+                }
+            }
 
             OpenChat.Content = Strings.Resources.VoipGroupOpenChat;
 
@@ -562,7 +569,7 @@ namespace Unigram.Controls
             var basicGroup = chat.Type is ChatTypeBasicGroup basicGroupType ? ViewModel.ClientService.GetBasicGroup(basicGroupType.BasicGroupId) : null;
             var supergroup = chat.Type is ChatTypeSupergroup supergroupType ? ViewModel.ClientService.GetSupergroup(supergroupType.SupergroupId) : null;
 
-            if ((user != null && user.Type is not UserTypeBot) || (basicGroup != null && basicGroup.CanDeleteMessages()) || (supergroup != null && supergroup.CanDeleteMessages()))
+            if ((user != null && user.Type is not UserTypeBot) || (basicGroup != null && basicGroup.CanChangeInfo()) || (supergroup != null && supergroup.CanChangeInfo()))
             {
                 var icon = chat.MessageTtl switch
                 {

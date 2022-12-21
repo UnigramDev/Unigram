@@ -3050,12 +3050,12 @@ namespace Unigram.Views
             }
             else if (e.ClickedItem is Sticker sticker)
             {
-                if (sticker.CustomEmojiId != 0)
+                if (sticker.FullType is StickerTypeFullInfoCustomEmoji customEmoji)
                 {
                     var range = TextField.Document.GetRange(index, TextField.Document.Selection.StartPosition);
                     range.SetText(TextSetOptions.None, string.Empty);
 
-                    await TextField.InsertEmojiAsync(range, sticker.Emoji, sticker.CustomEmojiId);
+                    await TextField.InsertEmojiAsync(range, sticker.Emoji, customEmoji.CustomEmojiId);
                     TextField.Document.Selection.StartPosition = index + 1;
                 }
                 else
@@ -3392,7 +3392,7 @@ namespace Unigram.Views
                     return;
                 }
 
-                if (sticker.CustomEmojiId != 0)
+                if (sticker.FullType is StickerTypeFullInfoCustomEmoji)
                 {
                     content.Width = 40;
                     content.Height = 40;

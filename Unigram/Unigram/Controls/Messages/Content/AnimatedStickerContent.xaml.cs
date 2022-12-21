@@ -86,10 +86,11 @@ namespace Unigram.Controls.Messages.Content
             }
             else
             {
-                Width = Player.Width = sticker.PremiumAnimation != null ? 180 : 180;
+                var premiumAnimation = sticker.FullType is StickerTypeFullInfoRegular regular && regular.PremiumAnimation != null;
+                Width = Player.Width = premiumAnimation ? 180 : 180;
                 Height = Player.Height = 180;
                 Player.ColorReplacements = null;
-                Player.IsFlipped = premium && sticker.PremiumAnimation != null && !message.IsOutgoing;
+                Player.IsFlipped = premium && premiumAnimation && !message.IsOutgoing;
             }
 
             if (!sticker.StickerValue.Local.IsDownloadingCompleted)
@@ -120,7 +121,7 @@ namespace Unigram.Controls.Messages.Content
                 {
                     PlayInteraction(message, message.Interaction);
                 }
-                else if (sticker.PremiumAnimation?.Id == file.Id && file.Local.IsDownloadingCompleted)
+                else if (sticker.FullType is StickerTypeFullInfoRegular regular && regular.PremiumAnimation?.Id == file.Id && file.Local.IsDownloadingCompleted)
                 {
                     PlayPremium(message, sticker);
                 }
@@ -154,7 +155,7 @@ namespace Unigram.Controls.Messages.Content
             ElementCompositionPreview.SetElementChildVisual(Player, null);
 
             var sticker = _message?.Content as MessageSticker;
-            if (sticker?.Sticker.PremiumAnimation != null && sticker.IsPremium && _message.GeneratedContentUnread && IsLoaded)
+            if (sticker?.Sticker.FullType is StickerTypeFullInfoRegular regular && regular.PremiumAnimation != null && sticker.IsPremium && _message.GeneratedContentUnread && IsLoaded)
             {
                 _message.GeneratedContentUnread = false;
                 PlayPremium(_message, sticker.Sticker);
@@ -225,7 +226,7 @@ namespace Unigram.Controls.Messages.Content
             }
             else
             {
-                if (premium && sticker.PremiumAnimation != null)
+                if (premium && sticker.FullType is StickerTypeFullInfoRegular regular && regular.PremiumAnimation != null)
                 {
                     if (Interactions?.Children.Count > 0)
                     {
@@ -323,7 +324,12 @@ namespace Unigram.Controls.Messages.Content
                 Interactions = GetTemplateChild(nameof(Interactions)) as Grid;
             }
 
-            var file = sticker.PremiumAnimation;
+            if (sticker.FullType is not StickerTypeFullInfoRegular regular)
+            {
+                return;
+            }
+
+            var file = regular.PremiumAnimation;
             if (file.Local.IsDownloadingCompleted && Interactions.Children.Count < 1)
             {
                 var dispatcher = DispatcherQueue.GetForCurrentThread();

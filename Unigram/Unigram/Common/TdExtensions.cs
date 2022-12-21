@@ -1278,10 +1278,10 @@ namespace Unigram.Common
 
                 if (stickerSet.Thumbnail.Format is ThumbnailFormatTgs)
                 {
-                    return new Sticker(stickerSet.Id, 512, 512, "\U0001F4A9", format, null, null, 0, stickerSet.ThumbnailOutline, stickerSet.Thumbnail, false, null, stickerSet.Thumbnail.File);
+                    return new Sticker(stickerSet.Id, 512, 512, "\U0001F4A9", format, new StickerTypeFullInfoRegular(null), stickerSet.ThumbnailOutline, stickerSet.Thumbnail, stickerSet.Thumbnail.File);
                 }
 
-                return new Sticker(stickerSet.Id, stickerSet.Thumbnail.Width, stickerSet.Thumbnail.Height, "\U0001F4A9", format, null, null, 0, stickerSet.ThumbnailOutline, stickerSet.Thumbnail, false, null, stickerSet.Thumbnail.File);
+                return new Sticker(stickerSet.Id, stickerSet.Thumbnail.Width, stickerSet.Thumbnail.Height, "\U0001F4A9", format, new StickerTypeFullInfoRegular(null), stickerSet.ThumbnailOutline, stickerSet.Thumbnail, stickerSet.Thumbnail.File);
             }
 
             var cover = stickerSet.Covers?.FirstOrDefault();
@@ -1831,6 +1831,16 @@ namespace Unigram.Common
             }
 
             return basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanDeleteMessages;
+        }
+
+        public static bool CanChangeInfo(this BasicGroup basicGroup)
+        {
+            if (basicGroup.Status == null)
+            {
+                return false;
+            }
+
+            return basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanChangeInfo;
         }
 
         public static bool CanChangeInfo(this Supergroup supergroup)

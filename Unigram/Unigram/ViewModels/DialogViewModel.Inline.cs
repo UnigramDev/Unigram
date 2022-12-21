@@ -6,7 +6,6 @@ using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Services;
-using Windows.UI.Xaml;
 
 namespace Unigram.ViewModels
 {

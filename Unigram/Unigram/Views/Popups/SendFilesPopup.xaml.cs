@@ -245,13 +245,13 @@ namespace Unigram.Views.Popups
 
                     CaptionInput.Document.Selection.StartPosition = start;
                 }
-                else if (e.ClickedItem is Sticker sticker && sticker.CustomEmojiId != 0)
+                else if (e.ClickedItem is Sticker sticker && sticker.FullType is StickerTypeFullInfoCustomEmoji customEmoji)
                 {
                     var start = CaptionInput.Document.Selection.StartPosition - 1 - result.Length + 1;
                     var range = CaptionInput.Document.GetRange(CaptionInput.Document.Selection.StartPosition - 1 - result.Length, CaptionInput.Document.Selection.StartPosition);
                     range.SetText(TextSetOptions.None, string.Empty);
 
-                    await CaptionInput.InsertEmojiAsync(range, sticker.Emoji, sticker.CustomEmojiId);
+                    await CaptionInput.InsertEmojiAsync(range, sticker.Emoji, customEmoji.CustomEmojiId);
                     CaptionInput.Document.Selection.StartPosition = start;
                 }
             }

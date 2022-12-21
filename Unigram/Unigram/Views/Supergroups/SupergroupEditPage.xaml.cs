@@ -3,6 +3,7 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
+using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Supergroups;
 using Unigram.Views.Popups;
@@ -48,7 +49,7 @@ namespace Unigram.Views.Supergroups
 
         private async void CreatePhoto_Click(object sender, RoutedEventArgs e)
         {
-            await ViewModel.NavigationService.ShowAsync(typeof(CreateChatPhotoPopup), ViewModel.Chat?.Id);
+            await ViewModel.NavigationService.ShowAsync(typeof(CreateChatPhotoPopup), new CreateChatPhotoParameters(ViewModel.Chat?.Id, false));
         }
 
         #region Binding

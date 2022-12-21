@@ -838,7 +838,7 @@ namespace Unigram.Views
             var galleryItem = new GalleryPhoto(ViewModel.ClientService, block.Photo, block.Caption.ToPlainText());
             ViewModel.Gallery.Items.Add(galleryItem);
 
-            var message = GetMessage(new MessagePhoto(block.Photo, null, false));
+            var message = GetMessage(new MessagePhoto(block.Photo, null, false, false));
             var element = new StackPanel { Style = Resources["BlockPhotoStyle"] as Style };
 
             var content = new PhotoContent(message);
@@ -864,7 +864,7 @@ namespace Unigram.Views
             var galleryItem = new GalleryVideo(ViewModel.ClientService, block.Video, block.Caption.ToPlainText());
             ViewModel.Gallery.Items.Add(galleryItem);
 
-            var message = GetMessage(new MessageVideo(block.Video, null, false));
+            var message = GetMessage(new MessageVideo(block.Video, null, false, false));
             var element = new StackPanel { Style = Resources["BlockVideoStyle"] as Style };
 
             var content = new VideoContent(message);
@@ -992,7 +992,7 @@ namespace Unigram.Views
                     var galleryItem = new GalleryPhoto(ViewModel.ClientService, photoBlock.Photo, block.Caption.ToPlainText());
                     ViewModel.Gallery.Items.Add(galleryItem);
 
-                    var message = GetMessage(new MessagePhoto(photoBlock.Photo, null, false));
+                    var message = GetMessage(new MessagePhoto(photoBlock.Photo, null, false, false));
 
                     var content = new PhotoContent(message);
                     content.Tag = galleryItem;
@@ -1007,7 +1007,7 @@ namespace Unigram.Views
                     var galleryItem = new GalleryVideo(ViewModel.ClientService, videoBlock.Video, block.Caption.ToPlainText());
                     ViewModel.Gallery.Items.Add(galleryItem);
 
-                    var message = GetMessage(new MessageVideo(videoBlock.Video, null, false));
+                    var message = GetMessage(new MessageVideo(videoBlock.Video, null, false, false));
 
                     var content = new VideoContent(message);
                     content.Tag = galleryItem;

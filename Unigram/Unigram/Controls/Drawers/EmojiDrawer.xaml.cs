@@ -264,9 +264,9 @@ namespace Unigram.Controls.Drawers
                         }
                     }
                 }
-                else
+                else if (sticker.FullType is StickerTypeFullInfoCustomEmoji customEmoji)
                 {
-                    SettingsService.Current.Emoji.AddRecentEmoji($"{sticker.Emoji};{sticker.CustomEmojiId}");
+                    SettingsService.Current.Emoji.AddRecentEmoji($"{sticker.Emoji};{customEmoji.CustomEmojiId}");
                     SettingsService.Current.Emoji.SortRecentEmoji();
                     SettingsService.Current.Emoji.SaveRecentEmoji();
                 }
