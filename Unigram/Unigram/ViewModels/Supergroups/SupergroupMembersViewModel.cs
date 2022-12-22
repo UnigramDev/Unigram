@@ -25,6 +25,34 @@ namespace Unigram.ViewModels.Supergroups
 
         public bool IsEmbedded { get; set; }
 
+        private bool _hasHiddenMembers;
+        public bool HasHiddenMembers
+        {
+            get => _hasHiddenMembers;
+            set => SetHiddenMembers(value);
+        }
+
+        public void UpdateHiddenMembers(bool value)
+        {
+            Set(ref _hasHiddenMembers, value, nameof(HasHiddenMembers));
+        }
+
+        private void SetHiddenMembers(bool value)
+        {
+            if (Chat.Type is ChatTypeSupergroup supergroupType && ClientService.TryGetSupergroupFull(Chat, out SupergroupFullInfo supergroup))
+            {
+                if (supergroup.CanHideMembers)
+                {
+                    Set(ref _hasHiddenMembers, value, nameof(HasHiddenMembers));
+                    ClientService.Send(new ToggleSupergroupHasHiddenMembers(supergroupType.SupergroupId, value));
+                }
+                else
+                {
+                    Set(ref _hasHiddenMembers, false, nameof(HasHiddenMembers));
+                }
+            }
+        }
+
         public RelayCommand AddCommand { get; }
         private async void AddExecute()
         {

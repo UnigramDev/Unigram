@@ -43,7 +43,7 @@
 
                     <controls:FauxCheckBox x:Name="AntiSpam"
                                            Content="{CustomResource ChannelAntiSpam}"
-                                           Click="{x:Bind ViewModel.ToggleAntiSpam}"
+                                           IsChecked="{x:Bind ViewModel.IsAggressiveAntiSpamEnabled, Mode=TwoWay}"
                                            Style="{StaticResource SettingsCheckBoxStyle}" />
                 </controls:HeaderedControl>
             </ListView.Header>

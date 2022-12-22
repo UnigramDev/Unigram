@@ -97,7 +97,8 @@ namespace Unigram.Views.Supergroups
 
         public void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo)
         {
-            AntiSpam.IsChecked = fullInfo.IsAggressiveAntiSpamEnabled;
+            ViewModel.UpdateIsAggressiveAntiSpamEnabled(fullInfo.IsAggressiveAntiSpamEnabled);
+            AntiSpam.Visibility = fullInfo.CanToggleAggressiveAntiSpam ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public void UpdateBasicGroup(Chat chat, BasicGroup group)
@@ -115,7 +116,11 @@ namespace Unigram.Views.Supergroups
                 : Visibility.Collapsed;
         }
 
-        public void UpdateBasicGroupFullInfo(Chat chat, BasicGroup group, BasicGroupFullInfo fullInfo) { }
+        public void UpdateBasicGroupFullInfo(Chat chat, BasicGroup group, BasicGroupFullInfo fullInfo)
+        {
+            ViewModel.UpdateIsAggressiveAntiSpamEnabled(false);
+            AntiSpam.Visibility = fullInfo.CanToggleAggressiveAntiSpam ? Visibility.Visible : Visibility.Collapsed;
+        }
 
         #endregion
 

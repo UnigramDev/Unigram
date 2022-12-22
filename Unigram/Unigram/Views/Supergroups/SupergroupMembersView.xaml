@@ -83,6 +83,14 @@
                              Width="280"
                              Margin="24,0" />
 
+                    <controls:HeaderedControl x:Name="HideMembers"
+                                              Footer="{CustomResource ChannelHideMembersInfo}"
+                                              Visibility="Collapsed">
+                        <CheckBox Content="{CustomResource ChannelHideMembers}"
+                                  IsChecked="{x:Bind ViewModel.HasHiddenMembers, Mode=TwoWay}"
+                                  Style="{StaticResource SettingsCheckBoxStyle}" />
+                    </controls:HeaderedControl>
+
                     <controls:HeaderedControl x:Name="AddNewPanel"
                                               Visibility="Collapsed">
                         <controls:BadgeButton x:Name="AddNew"

@@ -1,13 +1,12 @@
 ﻿using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls;
 using Unigram.Services;
 using Unigram.Views;
 using Unigram.Views.Supergroups;
 
 namespace Unigram.ViewModels.Supergroups
 {
-    public class SupergroupAdministratorsViewModel : SupergroupMembersViewModelBase, IHandle
+    public class SupergroupAdministratorsViewModel : SupergroupMembersViewModelBase
     {
         public SupergroupAdministratorsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator, new SupergroupMembersFilterAdministrators(), query => new SupergroupMembersFilterAdministrators())
@@ -17,23 +16,30 @@ namespace Unigram.ViewModels.Supergroups
             ParticipantDismissCommand = new RelayCommand<ChatMember>(ParticipantDismissExecute);
         }
 
-        public override void Subscribe()
+        private bool _isAggressiveAntiSpamEnabled;
+        public bool IsAggressiveAntiSpamEnabled
         {
-            Aggregator.Subscribe<UpdateSupergroupFullInfo>(this, Handle);
+            get => _isAggressiveAntiSpamEnabled;
+            set => SetIsAggressiveAntiSpamEnabled(value);
         }
 
-        public async void ToggleAntiSpam()
+        public void UpdateIsAggressiveAntiSpamEnabled(bool value)
         {
-            if (Chat.Type is ChatTypeSupergroup supergroup && ClientService.TryGetSupergroupFull(Chat, out SupergroupFullInfo supergroupFull))
+            Set(ref _isAggressiveAntiSpamEnabled, value, nameof(IsAggressiveAntiSpamEnabled));
+        }
+
+        private void SetIsAggressiveAntiSpamEnabled(bool value)
+        {
+            if (Chat.Type is ChatTypeSupergroup supergroupType && ClientService.TryGetSupergroupFull(Chat, out SupergroupFullInfo supergroup))
             {
-                if (supergroupFull.MemberCount >= ClientService.Options.AggressiveAntiSpamSupergroupMemberCountMin || supergroupFull.IsAggressiveAntiSpamEnabled)
+                if (supergroup.CanToggleAggressiveAntiSpam)
                 {
-                    ClientService.Send(new ToggleSupergroupIsAggressiveAntiSpamEnabled(supergroup.SupergroupId, !supergroupFull.IsAggressiveAntiSpamEnabled));
+                    Set(ref _isAggressiveAntiSpamEnabled, value, nameof(IsAggressiveAntiSpamEnabled));
+                    ClientService.Send(new ToggleSupergroupIsAggressiveAntiSpamEnabled(supergroupType.SupergroupId, value));
                 }
                 else
                 {
-                    var message = Locale.Declension("ChannelAntiSpamForbidden", ClientService.Options.AggressiveAntiSpamSupergroupMemberCountMin);
-                    await MessagePopup.ShowAsync(message, Strings.Resources.AppName, Strings.Resources.OK);
+                    Set(ref _isAggressiveAntiSpamEnabled, false, nameof(IsAggressiveAntiSpamEnabled));
                 }
             }
         }
