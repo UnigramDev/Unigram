@@ -48,14 +48,14 @@
                 <controls:HeaderedControl Header="{CustomResource AddExceptions}"
                                           Footer="{CustomResource PrivacyVoiceMessagesInfo2}">
                     <controls:BadgeButton Content="{CustomResource AlwaysAllow}"
-                                          Command="{x:Bind ViewModel.AlwaysCommand}"
+                                          Click="{x:Bind ViewModel.Always}"
                                           Visibility="{x:Bind ConvertAlways(ViewModel.SelectedItem), Mode=OneWay}"
                                           Badge="{x:Bind ViewModel.AllowedBadge, Mode=OneWay}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Glyph="&#xE9E5;" />
 
                     <controls:BadgeButton Content="{CustomResource NeverAllow}"
-                                          Command="{x:Bind ViewModel.NeverCommand}"
+                                          Click="{x:Bind ViewModel.Never}"
                                           Visibility="{x:Bind ConvertNever(ViewModel.SelectedItem), Mode=OneWay}"
                                           Badge="{x:Bind ViewModel.RestrictedBadge, Mode=OneWay}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"

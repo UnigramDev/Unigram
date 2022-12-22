@@ -24,8 +24,6 @@ namespace Unigram.ViewModels.Settings
         {
             _inputKey = inputKey;
 
-            AlwaysCommand = new RelayCommand(AlwaysExecute);
-            NeverCommand = new RelayCommand(NeverExecute);
             SendCommand = new RelayCommand(SendExecute);
         }
 
@@ -217,8 +215,7 @@ namespace Unigram.ViewModels.Settings
         private UserPrivacySettingRuleRestrictUsers _restrictedUsers;
         private UserPrivacySettingRuleRestrictChatMembers _restrictedChatMembers;
 
-        public RelayCommand AlwaysCommand { get; }
-        public async void AlwaysExecute()
+        public async void Always()
         {
             if (_allowedUsers == null ||
                 _allowedChatMembers == null)
@@ -289,8 +286,7 @@ namespace Unigram.ViewModels.Settings
             AllowedBadge = GetBadge(_allowedUsers.UserIds, _allowedChatMembers.ChatIds);
         }
 
-        public RelayCommand NeverCommand { get; }
-        public async void NeverExecute()
+        public async void Never()
         {
             if (_restrictedUsers == null ||
                 _restrictedChatMembers == null)

@@ -571,7 +571,7 @@ namespace Unigram
                 Unigram.Views.Settings.Privacy.SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesViewModel>(sessionId),
                 Unigram.Views.Settings.Privacy.SettingsPrivacyShowForwardedPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyShowForwardedViewModel>(sessionId),
                 Unigram.Views.Settings.Privacy.SettingsPrivacyPhonePage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyPhoneViewModel>(sessionId),
-                Unigram.Views.Settings.Privacy.SettingsPrivacyShowPhotoPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyShowPhotoViewModel>(sessionId),
+                Unigram.Views.Settings.Privacy.SettingsPrivacyShowPhotoPage privacyShowPhotoPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyShowPhotoViewModel, Unigram.ViewModels.Delegates.IUserDelegate>(privacyShowPhotoPage, sessionId),
                 Unigram.Views.Settings.Privacy.SettingsPrivacyShowStatusPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyShowStatusViewModel>(sessionId),
                 Unigram.Views.Settings.Password.SettingsPasswordConfirmPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.Password.SettingsPasswordConfirmViewModel>(sessionId),
                 Unigram.Views.Settings.Password.SettingsPasswordCreatePage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.Password.SettingsPasswordCreateViewModel>(sessionId),
