@@ -594,9 +594,9 @@ namespace Unigram.Controls.Drawers
             { 0xFFFFFF, 0x000000 }
         };
 
-        private IReadOnlyDictionary<int, int> GetColorReplacements(long setId)
+        private IReadOnlyDictionary<int, int> GetColorReplacements(StickerTypeFullInfo info)
         {
-            if (setId == ViewModel.ClientService.Options.ThemedEmojiStatusesStickerSetId)
+            if (info is StickerTypeFullInfoCustomEmoji customEmoji && customEmoji.HasTextColor)
             {
                 if (_currentReplacement != Theme.Accent)
                 {
@@ -660,7 +660,7 @@ namespace Unigram.Controls.Drawers
                         lottie.DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical;
                     }
 
-                    lottie.ColorReplacements = GetColorReplacements(sticker.SetId);
+                    lottie.ColorReplacements = GetColorReplacements(sticker.FullType);
                     lottie.Source = UriEx.ToLocal(file.Local.Path);
                 }
                 else if (content.Children[0] is AnimationView video)

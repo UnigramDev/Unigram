@@ -634,7 +634,7 @@ namespace Unigram.Controls.Messages
             {
                 if (_sticker.Format is StickerFormatTgs)
                 {
-                    var animation = LottieAnimation.LoadFromFile(file.Local.Path, new Windows.Graphics.SizeInt32 { Width = _size, Height = _size }, true, GetColorReplacements(_sticker.SetId));
+                    var animation = LottieAnimation.LoadFromFile(file.Local.Path, new Windows.Graphics.SizeInt32 { Width = _size, Height = _size }, true, GetColorReplacements(_sticker.FullType));
                     if (animation != null)
                     {
                         var frameRate = Math.Clamp(animation.FrameRate, 30, 30);
@@ -747,9 +747,9 @@ namespace Unigram.Controls.Messages
             { 0xFFFFFF, 0x000000 }
         };
 
-        private IReadOnlyDictionary<int, int> GetColorReplacements(long setId)
+        private IReadOnlyDictionary<int, int> GetColorReplacements(StickerTypeFullInfo info)
         {
-            if (setId == _clientService.Options.ThemedEmojiStatusesStickerSetId)
+            if (info is StickerTypeFullInfoCustomEmoji customEmoji && customEmoji.HasTextColor)
             {
                 if (_currentReplacement != Theme.Accent)
                 {
