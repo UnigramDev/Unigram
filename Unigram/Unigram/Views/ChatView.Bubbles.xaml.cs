@@ -557,22 +557,23 @@ namespace Unigram.Views
 
                 if (message.Content is MessageChatChangePhoto chatChangePhoto)
                 {
-                    var photo = panel.FindName("Photo") as Image;
-                    if (photo != null)
+                    var photo = panel.FindName("Photo") as ProfilePicture;
+                    photo?.SetMessage(message);
+                }
+            }
+            else if (content is MessageService service)
+            {
+                if (message.Content is MessageSuggestProfilePhoto suggestProfilePhoto)
+                {
+                    var photo = service.FindName("Photo") as ProfilePicture;
+                    photo?.SetChatPhoto(message.ClientService, suggestProfilePhoto.Photo, 120);
+
+                    var view = service.FindName("View") as TextBlock;
+                    if (view != null)
                     {
-                        var file = chatChangePhoto.Photo.GetSmall();
-                        if (file != null)
-                        {
-                            if (file.Photo.Local.IsDownloadingCompleted)
-                            {
-                                photo.Source = UriEx.ToBitmap(file.Photo.Local.Path, 120, 120);
-                            }
-                            else if (file.Photo.Local.CanBeDownloaded && !file.Photo.Local.IsDownloadingActive)
-                            {
-                                photo.Source = null;
-                                ViewModel.ClientService.DownloadFile(file.Photo.Id, 1);
-                            }
-                        }
+                        view.Text = suggestProfilePhoto.Photo.Animation != null
+                            ? Strings.Resources.ViewVideoAction
+                            : Strings.Resources.ViewPhotoAction;
                     }
                 }
             }
@@ -765,6 +766,10 @@ namespace Unigram.Views
                 if (message.Content is MessageChatChangePhoto)
                 {
                     return "ServiceMessagePhotoTemplate";
+                }
+                else if (message.Content is MessageSuggestProfilePhoto)
+                {
+                    return "ServiceMessagePhotoTemplateNew";
                 }
                 else if (message.Content is MessageHeaderUnread)
                 {

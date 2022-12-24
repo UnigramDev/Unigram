@@ -29,7 +29,7 @@ namespace Unigram.Controls.Messages
         {
             base.OnApplyTemplate();
 
-            var content = Content as FormattedTextBlock;
+            var content = FindName("Text") as FormattedTextBlock;
             if (content == null)
             {
                 return;
@@ -68,7 +68,7 @@ namespace Unigram.Controls.Messages
             _message = message;
             Tag = message;
 
-            var content = Content as FormattedTextBlock;
+            var content = FindName("Text") as FormattedTextBlock;
             if (content == null)
             {
                 return;
@@ -116,6 +116,7 @@ namespace Unigram.Controls.Messages
                 MessagePaymentSuccessful paymentSuccessful => UpdatePaymentSuccessful(message, paymentSuccessful, active),
                 MessagePinMessage pinMessage => UpdatePinMessage(message, pinMessage, active),
                 MessageScreenshotTaken screenshotTaken => UpdateScreenshotTaken(message, screenshotTaken, active),
+                MessageSuggestProfilePhoto suggestProfilePhoto => UpdateSuggestProfilePhoto(message, suggestProfilePhoto, active),
                 MessageSupergroupChatCreate supergroupChatCreate => UpdateSupergroupChatCreate(message, supergroupChatCreate, active),
                 MessageVideoChatEnded videoChatEnded => UpdateVideoChatEnded(message, videoChatEnded, active),
                 MessageVideoChatScheduled videoChatScheduled => UpdateVideoChatScheduled(message, videoChatScheduled, active),
@@ -1669,6 +1670,28 @@ namespace Unigram.Controls.Messages
             else
             {
                 content = ReplaceWithLink(Strings.Resources.ActionTakeScreenshoot, "un1", message.GetSender(), ref entities);
+            }
+
+            return (content, entities);
+        }
+
+        private static (string, IList<TextEntity>) UpdateSuggestProfilePhoto(MessageViewModel message, MessageSuggestProfilePhoto suggestProfilePhoto, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            if (message.ClientService.TryGetUser(message.SenderId, out User user))
+            {
+                if (message.IsOutgoing)
+                {
+                    content = string.Format(Strings.Resources.ActionSuggestPhotoFromYouDescription, user.FirstName);
+                    entities?.Add(new TextEntity(Strings.Resources.ActionSuggestPhotoFromYouDescription.IndexOf("{0}"), user.FirstName.Length, new TextEntityTypeBold()));
+                }
+                else
+                {
+                    content = string.Format(Strings.Resources.ActionSuggestPhotoToYouDescription, user.FirstName);
+                    entities?.Add(new TextEntity(Strings.Resources.ActionSuggestPhotoToYouDescription.IndexOf("{0}"), user.FirstName.Length, new TextEntityTypeBold()));
+                }
             }
 
             return (content, entities);

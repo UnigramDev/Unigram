@@ -313,6 +313,7 @@ namespace Unigram.Controls.Messages
                 case MessagePaymentSuccessful:
                 case MessagePinMessage:
                 case MessageScreenshotTaken:
+                case MessageSuggestProfilePhoto:
                 case MessageSupergroupChatCreate:
                 case MessageVideoChatEnded:
                 case MessageVideoChatScheduled:

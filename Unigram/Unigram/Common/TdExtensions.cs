@@ -1197,6 +1197,7 @@ namespace Unigram.Common
                 case MessagePaymentSuccessful:
                 case MessagePinMessage:
                 case MessageScreenshotTaken:
+                case MessageSuggestProfilePhoto:
                 case MessageSupergroupChatCreate:
                 case MessageVideoChatEnded:
                 case MessageVideoChatScheduled:

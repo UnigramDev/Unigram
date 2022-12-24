@@ -1,24 +1,31 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
+using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Controls.Gallery;
 using Unigram.Converters;
+using Unigram.Entities;
 using Unigram.Native;
 using Unigram.Services;
+using Unigram.ViewModels.Chats;
 using Unigram.Views;
 using Unigram.Views.Chats;
 using Unigram.Views.Popups;
 using Unigram.Views.Settings;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.Foundation;
 using Windows.Storage.Streams;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using static Unigram.Services.GenerationService;
 
 namespace Unigram.ViewModels
 {
@@ -1388,7 +1395,7 @@ namespace Unigram.ViewModels
         #region Service message
 
         public RelayCommand<MessageViewModel> MessageServiceCommand { get; }
-        private async void MessageServiceExecute(MessageViewModel message)
+        public async void MessageServiceExecute(MessageViewModel message)
         {
             if (message.Content is MessageHeaderDate)
             {
@@ -1432,6 +1439,74 @@ namespace Unigram.ViewModels
             else if (message.Content is MessageChatSetTheme)
             {
                 SetThemeExecute();
+            }
+            else if (message.Content is MessageSuggestProfilePhoto suggestProfilePhoto)
+            {
+                if (message.IsOutgoing)
+                {
+                    var viewModel = new ChatPhotosViewModel(ClientService, StorageService, Aggregator, Chat, suggestProfilePhoto.Photo);
+                    await GalleryView.ShowAsync(viewModel);
+                }
+                else
+                {
+                    var file = suggestProfilePhoto.Photo.Animation?.File
+                        ?? suggestProfilePhoto.Photo.GetBig()?.Photo;
+
+                    var storage = await ClientService.GetFileAsync(file);
+                    if (storage == null)
+                    {
+                        return;
+                    }
+
+                    var media = await StorageMedia.CreateAsync(storage);
+                    var dialog = new EditMediaPopup(media, ImageCropperMask.Ellipse);
+
+                    var confirm = await dialog.ShowAsync();
+                    if (confirm == ContentDialogResult.Primary)
+                    {
+                        await EditPhotoAsync(media);
+                    }
+                }
+            }
+        }
+
+        public async Task EditPhotoAsync(StorageMedia file)
+        {
+            if (file is StorageVideo media)
+            {
+                var props = await media.File.Properties.GetVideoPropertiesAsync();
+
+                var duration = media.EditState.TrimStopTime - media.EditState.TrimStartTime;
+                var seconds = duration.TotalSeconds;
+
+                var conversion = new VideoConversion();
+                conversion.Mute = true;
+                conversion.TrimStartTime = media.EditState.TrimStartTime;
+                conversion.TrimStopTime = media.EditState.TrimStartTime + TimeSpan.FromSeconds(Math.Min(seconds, 9.9));
+                conversion.Transcode = true;
+                conversion.Transform = true;
+                //conversion.Rotation = file.EditState.Rotation;
+                conversion.OutputSize = new Size(640, 640);
+                //conversion.Mirror = transform.Mirror;
+                conversion.CropRectangle = new Rect(
+                    media.EditState.Rectangle.X * props.Width,
+                    media.EditState.Rectangle.Y * props.Height,
+                    media.EditState.Rectangle.Width * props.Width,
+                    media.EditState.Rectangle.Height * props.Height);
+
+                var rectangle = conversion.CropRectangle;
+                rectangle.Width = Math.Min(conversion.CropRectangle.Width, conversion.CropRectangle.Height);
+                rectangle.Height = rectangle.Width;
+
+                conversion.CropRectangle = rectangle;
+
+                var generated = await media.File.ToGeneratedAsync(ConversionType.Transcode, JsonConvert.SerializeObject(conversion));
+                var response = await ClientService.SendAsync(new SetProfilePhoto(new InputChatPhotoAnimation(generated, 0), false));
+            }
+            else if (file is StoragePhoto photo)
+            {
+                var generated = await photo.File.ToGeneratedAsync(ConversionType.Compress, JsonConvert.SerializeObject(photo.EditState));
+                var response = await ClientService.SendAsync(new SetProfilePhoto(new InputChatPhotoStatic(generated), false));
             }
         }
 
