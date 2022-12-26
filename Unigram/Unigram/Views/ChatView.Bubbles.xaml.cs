@@ -551,19 +551,22 @@ namespace Unigram.Views
 
                 content = checkbox.Content as FrameworkElement;
             }
-            else if (content is StackPanel panel)
-            {
-                content = panel.FindName("Service") as FrameworkElement;
-
-                if (message.Content is MessageChatChangePhoto chatChangePhoto)
-                {
-                    var photo = panel.FindName("Photo") as ProfilePicture;
-                    photo?.SetMessage(message);
-                }
-            }
             else if (content is MessageService service)
             {
-                if (message.Content is MessageSuggestProfilePhoto suggestProfilePhoto)
+                if (message.Content is MessageChatChangePhoto chatChangePhoto)
+                {
+                    var photo = service.FindName("Photo") as ProfilePicture;
+                    photo?.SetChatPhoto(message.ClientService, chatChangePhoto.Photo, 120);
+
+                    var view = service.FindName("View") as TextBlock;
+                    if (view != null)
+                    {
+                        view.Text = chatChangePhoto.Photo.Animation != null
+                            ? Strings.Resources.ViewVideoAction
+                            : Strings.Resources.ViewPhotoAction;
+                    }
+                }
+                else if (message.Content is MessageSuggestProfilePhoto suggestProfilePhoto)
                 {
                     var photo = service.FindName("Photo") as ProfilePicture;
                     photo?.SetChatPhoto(message.ClientService, suggestProfilePhoto.Photo, 120);
@@ -763,13 +766,9 @@ namespace Unigram.Views
 
             if (message.IsService())
             {
-                if (message.Content is MessageChatChangePhoto)
+                if (message.Content is MessageChatChangePhoto or MessageSuggestProfilePhoto)
                 {
                     return "ServiceMessagePhotoTemplate";
-                }
-                else if (message.Content is MessageSuggestProfilePhoto)
-                {
-                    return "ServiceMessagePhotoTemplateNew";
                 }
                 else if (message.Content is MessageHeaderUnread)
                 {

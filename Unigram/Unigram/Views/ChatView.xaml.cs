@@ -111,7 +111,6 @@ namespace Unigram.Views
             _typeToItemHashSetMapping.Add("FriendMessageTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("ServiceMessageTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("ServiceMessagePhotoTemplate", new HashSet<SelectorItem>());
-            _typeToItemHashSetMapping.Add("ServiceMessagePhotoTemplateNew", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("ServiceMessageUnreadTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("EmptyMessageTemplate", new HashSet<SelectorItem>());
 
@@ -119,7 +118,6 @@ namespace Unigram.Views
             _typeToTemplateMapping.Add("FriendMessageTemplate", Resources["FriendMessageTemplate"] as DataTemplate);
             _typeToTemplateMapping.Add("ServiceMessageTemplate", Resources["ServiceMessageTemplate"] as DataTemplate);
             _typeToTemplateMapping.Add("ServiceMessagePhotoTemplate", Resources["ServiceMessagePhotoTemplate"] as DataTemplate);
-            _typeToTemplateMapping.Add("ServiceMessagePhotoTemplateNew", Resources["ServiceMessagePhotoTemplateNew"] as DataTemplate);
             _typeToTemplateMapping.Add("ServiceMessageUnreadTemplate", Resources["ServiceMessageUnreadTemplate"] as DataTemplate);
             _typeToTemplateMapping.Add("EmptyMessageTemplate", Resources["EmptyMessageTemplate"] as DataTemplate);
 

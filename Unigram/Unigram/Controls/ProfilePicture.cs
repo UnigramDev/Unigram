@@ -170,6 +170,10 @@ namespace Unigram.Controls
             {
                 SetChat(chatInvite.ClientService, chatInvite.Chat, chatInvite.Side, false);
             }
+            else if (_parameters is ChatPhotoParameters chatPhoto)
+            {
+                SetChatPhoto(chatPhoto.ClientService, chatPhoto.Photo, chatPhoto.Side, false);
+            }
         }
 
         #region MessageSender
@@ -410,6 +414,69 @@ namespace Unigram.Controls
             }
 
             return PlaceholderHelper.GetChat(chat, side);
+        }
+
+        #endregion
+
+        #region Chat invite
+
+        struct ChatPhotoParameters
+        {
+            public IClientService ClientService;
+            public ChatPhoto Photo;
+            public int Side;
+
+            public ChatPhotoParameters(IClientService clientService, ChatPhoto photo, int side)
+            {
+                ClientService = clientService;
+                Photo = photo;
+                Side = side;
+            }
+        }
+
+        public void SetChatPhoto(IClientService clientService, ChatPhoto photo, int side, bool download = true)
+        {
+            SetChatPhoto(clientService, photo, photo.GetBig()?.Photo, side, download);
+        }
+
+        private void SetChatPhoto(IClientService clientService, ChatPhoto photo, File file, int side, bool download = true)
+        {
+            if (_fileToken is string fileToken)
+            {
+                _fileToken = null;
+                EventAggregator.Default.Unregister<File>(this, fileToken);
+            }
+
+            Source = GetChatPhoto(clientService, photo, file, side, download);
+            Shape = ProfilePictureShape.Ellipse;
+        }
+
+        private ImageSource GetChatPhoto(IClientService clientService, ChatPhoto photo, File file, int side, bool download = true)
+        {
+            if (file != null)
+            {
+                if (file.Local.IsDownloadingCompleted)
+                {
+                    return UriEx.ToBitmap(file.Local.Path, side, side);
+                }
+                else
+                {
+                    if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && download)
+                    {
+                        clientService.DownloadFile(file.Id, 1);
+                    }
+
+                    _parameters = new ChatPhotoParameters(clientService, photo, side);
+                    UpdateManager.Subscribe(this, clientService, file, ref _fileToken, UpdateFile, true);
+                }
+            }
+
+            if (photo.Minithumbnail != null)
+            {
+                return PlaceholderHelper.GetBlurred(photo.Minithumbnail.Data);
+            }
+
+            return null;
         }
 
         #endregion

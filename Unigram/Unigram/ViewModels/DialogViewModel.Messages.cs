@@ -1440,6 +1440,11 @@ namespace Unigram.ViewModels
             {
                 SetThemeExecute();
             }
+            else if (message.Content is MessageChatChangePhoto chatChangePhoto)
+            {
+                var viewModel = new ChatPhotosViewModel(ClientService, StorageService, Aggregator, Chat, chatChangePhoto.Photo);
+                await GalleryView.ShowAsync(viewModel);
+            }
             else if (message.Content is MessageSuggestProfilePhoto suggestProfilePhoto)
             {
                 if (message.IsOutgoing)
