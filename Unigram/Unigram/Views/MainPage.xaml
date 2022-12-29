@@ -752,7 +752,7 @@
                                 </ListView>
 
                                 <ListView x:Name="DialogsSearchListView"
-                                          ItemsSource="{x:Bind ChatsResults.View, Mode=OneWay}"
+                                          ItemsSource="{x:Bind ViewModel.Chats.Search, Mode=OneWay}"
                                           IsItemClickEnabled="True"
                                           SelectionMode="Single"
                                           ItemClick="ListView_ItemClick"
@@ -820,7 +820,7 @@
                                                 </ListView.ItemContainerTransitions>
                                             </controls:TextListView>
 
-                                            <Grid Visibility="{x:Bind ViewModel.Chats.Search.Local.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                            <Grid Visibility="{x:Bind ViewModel.Chats.Search.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition />
                                                     <ColumnDefinition Width="Auto" />
@@ -842,6 +842,13 @@
                                     </ListView.Header>
                                     <ListView.ItemTemplateSelector>
                                         <selectors:SearchTemplateSelector>
+                                            <selectors:SearchTemplateSelector.HeaderTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Style="{StaticResource BaseTextBlockStyle}"
+                                                               FontFamily="{StaticResource EmojiThemeFontFamily}"
+                                                               Margin="12,12,0,0" />
+                                                </DataTemplate>
+                                            </selectors:SearchTemplateSelector.HeaderTemplate>
                                             <selectors:SearchTemplateSelector.ChatTemplate>
                                                 <DataTemplate>
                                                     <cells:UserCell />

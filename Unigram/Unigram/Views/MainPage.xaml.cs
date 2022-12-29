@@ -1937,9 +1937,7 @@ namespace Unigram.Views
                     ViewModel.Chats.TopChats = null;
                 }
 
-                var items = ViewModel.Chats.Search = new SearchChatsCollection(ViewModel.ClientService, SearchField.Text, ViewModel.Chats.SearchFilters);
-                await items.LoadMoreItemsAsync(0);
-                await items.LoadMoreItemsAsync(1);
+                ViewModel.Chats.Search = new SearchChatsCollection(ViewModel.ClientService, SearchField.Text, ViewModel.Chats.SearchFilters);
             }
             else if (rpMasterTitlebar.SelectedIndex == 1)
             {
@@ -2001,7 +1999,7 @@ namespace Unigram.Views
             ViewModel.Settings.Results.Clear();
         }
 
-        private async void Search_KeyDown(object sender, KeyRoutedEventArgs e)
+        private void Search_KeyDown(object sender, KeyRoutedEventArgs e)
         {
             if (rpMasterTitlebar.SelectedIndex == 0 && e.Key == Windows.System.VirtualKey.Back)
             {
@@ -2011,14 +2009,7 @@ namespace Unigram.Views
                     {
                         e.Handled = true;
                         ViewModel.Chats.SearchFilters.RemoveAt(ViewModel.Chats.SearchFilters.Count - 1);
-
-                        var items = ViewModel.Chats.Search = new SearchChatsCollection(ViewModel.ClientService, SearchField.Text, ViewModel.Chats.SearchFilters);
-                        await items.LoadMoreItemsAsync(0);
-                        await items.LoadMoreItemsAsync(1);
-                        await items.LoadMoreItemsAsync(2);
-                        await items.LoadMoreItemsAsync(3);
-                        await items.LoadMoreItemsAsync(4);
-
+                        ViewModel.Chats.Search = new SearchChatsCollection(ViewModel.ClientService, SearchField.Text, ViewModel.Chats.SearchFilters);
                         return;
                     }
                 }
@@ -2111,6 +2102,16 @@ namespace Unigram.Views
 
         private void DialogsSearchListView_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
+            if (args.Item is Header header)
+            {
+                var content = args.ItemContainer.ContentTemplateRoot as TextBlock;
+                if (content == null)
+                {
+                    return;
+                }
+
+                content.Text = header.Title;
+            }
             if (args.Item is SearchResult result)
             {
                 var content = args.ItemContainer.ContentTemplateRoot as UserCell;
@@ -2972,19 +2973,14 @@ namespace Unigram.Views
             }
         }
 
-        private async void SearchFilters_ItemClick(object sender, ItemClickEventArgs e)
+        private void SearchFilters_ItemClick(object sender, ItemClickEventArgs e)
         {
             if (e.ClickedItem is ISearchChatsFilter filter)
             {
                 ViewModel.Chats.SearchFilters.Add(filter);
                 SearchField.Text = string.Empty;
 
-                var items = ViewModel.Chats.Search = new SearchChatsCollection(ViewModel.ClientService, SearchField.Text, ViewModel.Chats.SearchFilters);
-                await items.LoadMoreItemsAsync(0);
-                await items.LoadMoreItemsAsync(1);
-                await items.LoadMoreItemsAsync(2);
-                await items.LoadMoreItemsAsync(3);
-                await items.LoadMoreItemsAsync(4);
+                ViewModel.Chats.Search = new SearchChatsCollection(ViewModel.ClientService, SearchField.Text, ViewModel.Chats.SearchFilters);
             }
         }
 

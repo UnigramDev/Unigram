@@ -13,12 +13,21 @@ using Windows.UI.Xaml.Data;
 
 namespace Unigram.Collections
 {
-    public class SearchChatsCollection : ObservableCollection<KeyedList<string, object>>, ISupportIncrementalLoading
+    public class SearchChatsCollection : ObservableCollection<object>, ISupportIncrementalLoading
     {
         private readonly IClientService _clientService;
         private readonly string _query;
         private readonly ChatList _chatList;
         private readonly SearchChatsType _type;
+        private readonly Chat _chat;
+
+        private Phase _phase;
+        private bool _createLocalHeader = true;
+        private bool _createRemoteHeader = true;
+        private bool _createForumMessagesHeader = true;
+        private bool _createMessagesHeader = true;
+
+        private string _nextOffset = string.Empty;
 
         private readonly List<long> _chats = new List<long>();
         private readonly List<long> _users = new List<long>();
@@ -26,19 +35,11 @@ namespace Unigram.Collections
         private readonly IList<ISearchChatsFilter> _internal;
         private readonly MvxObservableCollection<ISearchChatsFilter> _filters;
 
-        private readonly KeyedList<string, object> _local;
-        private readonly KeyedList<string, object> _remote;
-        private readonly KeyedList<string, object> _messages;
-
         public MvxObservableCollection<ISearchChatsFilter> Filters => _filters;
 
         public bool IsFiltered => _filters.Count > 0;
 
-        public KeyedList<string, object> Local => _local;
-        public KeyedList<string, object> Remote => _remote;
-        public KeyedList<string, object> Messages => _messages;
-
-        public SearchChatsCollection(IClientService clientService, string query, IList<ISearchChatsFilter> filters/*, ChatList chatList = null*/, SearchChatsType type = SearchChatsType.All)
+        public SearchChatsCollection(IClientService clientService, string query, IList<ISearchChatsFilter> filters/*, ChatList chatList = null*/, SearchChatsType type = SearchChatsType.All, Chat chat = null)
         {
             _clientService = clientService;
             _query = query;
@@ -49,16 +50,23 @@ namespace Unigram.Collections
             _internal = filters;
             _filters = new MvxObservableCollection<ISearchChatsFilter>();
 
-            _local = new KeyedList<string, object>(null as string);
-            _remote = new KeyedList<string, object>(Strings.Resources.GlobalSearch);
-            _messages = new KeyedList<string, object>(Strings.Resources.SearchMessages);
-
-            Add(_local);
-            Add(_remote);
-            Add(_messages);
+            _chat = chat;
+            _phase = chat != null ? Phase.Topics : Phase.Chats;
         }
 
         public string Query => _query;
+
+        enum Phase
+        {
+            Topics,
+            Chats,
+            Contacts,
+            ChatsOnServer,
+            PublicChats,
+            ForumMessages,
+            Messages,
+            None
+        }
 
         public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint phase)
         {
@@ -66,19 +74,19 @@ namespace Unigram.Collections
             {
                 // If the query string is empty we want to load recent chats only
                 var empty = string.IsNullOrEmpty(_query);
-                if (empty && phase > 0 && (_internal == null || _internal.IsEmpty()))
-                {
-                    _filters.ReplaceWith(new[]
-                    {
-                        new SearchChatsFilterContent(new SearchMessagesFilterPhotoAndVideo()),
-                        new SearchChatsFilterContent(new SearchMessagesFilterDocument()),
-                        new SearchChatsFilterContent(new SearchMessagesFilterUrl()),
-                        new SearchChatsFilterContent(new SearchMessagesFilterAudio()),
-                        new SearchChatsFilterContent(new SearchMessagesFilterVoiceNote())
-                    });
+                //if (empty && phase > 0 && (_internal == null || _internal.IsEmpty()))
+                //{
+                //    _filters.ReplaceWith(new[]
+                //    {
+                //        new SearchChatsFilterContent(new SearchMessagesFilterPhotoAndVideo()),
+                //        new SearchChatsFilterContent(new SearchMessagesFilterDocument()),
+                //        new SearchChatsFilterContent(new SearchMessagesFilterUrl()),
+                //        new SearchChatsFilterContent(new SearchMessagesFilterAudio()),
+                //        new SearchChatsFilterContent(new SearchMessagesFilterVoiceNote())
+                //    });
 
-                    return new LoadMoreItemsResult();
-                }
+                //    return new LoadMoreItemsResult();
+                //}
 
                 bool IsFiltered(Chat chat)
                 {
@@ -115,7 +123,24 @@ namespace Unigram.Collections
                 var hasContent = _internal?.Any(x => x is SearchChatsFilterContent) ?? false;
                 var hasChat = _internal?.Any(x => x is SearchChatsFilterChat) ?? false;
 
-                if (phase == 0 && (!hasChat || (hasContent && !hasChat && !empty)))
+                if (_phase == Phase.Topics)
+                {
+                    var response = await _clientService.SendAsync(new GetForumTopics(_chat.Id, _query, 0, 0, 0, 100));
+                    if (response is ForumTopics topics)
+                    {
+                        Add(new Header(Strings.Resources.Topics));
+
+                        foreach (var topic in topics.Topics)
+                        {
+                            Add(topic);
+                        }
+                    }
+
+                    _phase = !hasChat || (hasContent && !hasChat && !empty)
+                        ? Phase.Chats
+                        : Phase.None;
+                }
+                else if (_phase == Phase.Chats)
                 {
                     if (_type != SearchChatsType.BasicAndSupergroups && _query.Length > 0 && Strings.Resources.SavedMessages.StartsWith(_query, StringComparison.OrdinalIgnoreCase))
                     {
@@ -126,7 +151,13 @@ namespace Unigram.Collections
 
                             if (!hasContent)
                             {
-                                _local.Add(new SearchResult(chat, _query, false));
+                                //if (_createLocalHeader)
+                                //{
+                                //    _createLocalHeader = false;
+                                //    Add(new Header(Strings.Resources.SearchAllChatsShort));
+                                //}
+
+                                Add(new SearchResult(chat, _query, false));
                             }
 
                             _filters.Add(new SearchChatsFilterChat(_clientService, chat));
@@ -160,15 +191,25 @@ namespace Unigram.Collections
 
                                 if (!hasContent)
                                 {
-                                    _local.Add(new SearchResult(chat, _query, false));
+                                    //if (_createLocalHeader)
+                                    //{
+                                    //    _createLocalHeader = false;
+                                    //    Add(new Header(Strings.Resources.SearchAllChatsShort));
+                                    //}
+
+                                    Add(new SearchResult(chat, _query, false));
                                 }
 
                                 _filters.Add(new SearchChatsFilterChat(_clientService, chat));
                             }
                         }
                     }
+
+                    _phase = !empty && !hasChat && !hasContent && _type != SearchChatsType.BasicAndSupergroups
+                        ? Phase.Contacts
+                        : Phase.None;
                 }
-                else if (phase == 1 && !hasChat && !hasContent && _type != SearchChatsType.BasicAndSupergroups)
+                else if (_phase == Phase.Contacts)
                 {
                     var response = await _clientService.SendAsync(new SearchContacts(_query, 100));
                     if (response is Users users)
@@ -183,16 +224,26 @@ namespace Unigram.Collections
                             var user = _clientService.GetUser(id);
                             if (user != null)
                             {
+                                //if (_createLocalHeader)
+                                //{
+                                //    _createLocalHeader = false;
+                                //    Add(new Header(Strings.Resources.SearchAllChatsShort));
+                                //}
+
                                 _users.Add(id);
-                                _local.Add(new SearchResult(user, _query, false));
+                                Add(new SearchResult(user, _query, false));
                             }
                         }
                     }
+
+                    _phase = !hasChat || (hasContent && !hasChat && !empty)
+                        ? Phase.ChatsOnServer
+                        : Phase.None;
                 }
-                else if (phase == 2 && (!hasChat || (hasContent && !hasChat && !empty)))
+                else if (_phase == Phase.ChatsOnServer)
                 {
                     var response = await _clientService.SendAsync(new SearchChatsOnServer(_query, 100));
-                    if (response is Chats chats && _local != null)
+                    if (response is Chats chats && !_createLocalHeader)
                     {
                         foreach (var id in chats.ChatIds)
                         {
@@ -217,15 +268,25 @@ namespace Unigram.Collections
 
                                 if (!hasContent)
                                 {
-                                    _local.Add(new SearchResult(chat, _query, false));
+                                    //if (_createLocalHeader)
+                                    //{
+                                    //    _createLocalHeader = false;
+                                    //    Add(new Header(Strings.Resources.SearchAllChatsShort));
+                                    //}
+
+                                    Add(new SearchResult(chat, _query, false));
                                 }
 
                                 _filters.Add(new SearchChatsFilterChat(_clientService, chat));
                             }
                         }
                     }
+
+                    _phase = !hasChat && !hasContent
+                        ? Phase.PublicChats
+                        : Phase.None;
                 }
-                else if (phase == 3 && !hasChat && !hasContent)
+                else if (_phase == Phase.PublicChats)
                 {
                     var response = await _clientService.SendAsync(new SearchPublicChats(_query));
                     if (response is Chats chats)
@@ -240,12 +301,22 @@ namespace Unigram.Collections
                                     continue;
                                 }
 
-                                _remote.Add(new SearchResult(chat, _query, true));
+                                if (_createRemoteHeader)
+                                {
+                                    _createRemoteHeader = false;
+                                    Add(new Header(Strings.Resources.GlobalSearch));
+                                }
+
+                                Add(new SearchResult(chat, _query, true));
                             }
                         }
                     }
+
+                    _phase = _chat != null
+                        ? Phase.ForumMessages
+                        : Phase.Messages;
                 }
-                else if (phase == 4)
+                else if (_phase == Phase.Messages)
                 {
                     hasRanges = LoadDateRanges(_query);
 
@@ -275,17 +346,44 @@ namespace Unigram.Collections
                     }
                     else
                     {
-                        function = new SearchMessages(_chatList, _query, int.MaxValue, 0, 0, 100, content?.Filter, minDate, maxDate);
+                        function = new SearchMessages(_chatList, _query, _nextOffset, 100, content?.Filter, minDate, maxDate);
                     }
 
                     var response = await _clientService.SendAsync(function);
                     if (response is Messages messages)
                     {
+                        if (_createMessagesHeader)
+                        {
+                            _createMessagesHeader = false;
+                            Add(new Header(Strings.Resources.SearchMessages));
+                        }
+
                         foreach (var message in messages.MessagesValue)
                         {
-                            _messages.Add(message);
+                            Add(message);
                         }
                     }
+                    else if (response is FoundMessages foundMessages)
+                    {
+                        if (_createMessagesHeader)
+                        {
+                            _createMessagesHeader = false;
+                            Add(new Header(Strings.Resources.SearchMessages));
+                        }
+
+                        _nextOffset = foundMessages.NextOffset;
+                        _hasMoreItems = !string.IsNullOrEmpty(foundMessages.NextOffset);
+
+                        foreach (var message in foundMessages.Messages)
+                        {
+                            Add(message);
+                        }
+                    }
+                }
+
+                if (_phase == Phase.None)
+                {
+                    _hasMoreItems = false;
                 }
 
                 return new LoadMoreItemsResult();
@@ -304,7 +402,18 @@ namespace Unigram.Collections
             return ranges.Count > 0;
         }
 
-        public bool HasMoreItems => false;
+        private bool _hasMoreItems = true;
+        public bool HasMoreItems => _hasMoreItems;
+    }
+
+    public class Header
+    {
+        public string Title { get; set; }
+
+        public Header(string title)
+        {
+            Title = title;
+        }
     }
 
     public interface ISearchChatsFilter
