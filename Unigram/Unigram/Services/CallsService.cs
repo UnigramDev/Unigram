@@ -10,6 +10,7 @@ using Unigram.Services.ViewService;
 using Unigram.ViewModels;
 using Unigram.Views.Calls;
 using Unigram.Views.Popups;
+using Windows.ApplicationModel;
 using Windows.ApplicationModel.Calls;
 using Windows.Devices.Enumeration;
 using Windows.Graphics.Capture;
@@ -115,11 +116,11 @@ namespace Unigram.Services
                     _manager.IsMuted = value;
                     MutedChanged?.Invoke(_manager, EventArgs.Empty);
 
-                    _coordinator?.NotifyMutedChanged(value);
+                    _coordinator?.TryNotifyMutedChanged(value);
                 }
                 else
                 {
-                    _coordinator?.NotifyMutedChanged(true);
+                    _coordinator?.TryNotifyMutedChanged(true);
                 }
             }
         }
@@ -299,44 +300,106 @@ namespace Unigram.Services
             }
         }
 
-        private async Task InitializeSystemCallAsync(User user)
+        private async Task InitializeSystemCallAsync(User user, bool outgoing)
         {
-            if (ApiInfo.IsVoipSupported)
+            if (_systemCall != null || !ApiInfo.IsVoipSupported)
             {
-                var coordinator = VoipCallCoordinator.GetDefault();
-                var status = VoipPhoneCallResourceReservationStatus.ResourcesNotAvailable;
+                return;
+            }
 
-                try
-                {
-                    status = await coordinator.ReserveCallResourcesAsync();
-                }
-                catch (Exception ex)
-                {
-                    if (ex.HResult == -2147024713)
-                    {
-                        // CPU and memory resources have already been reserved for the app.
-                        // Ignore the return value from your call to ReserveCallResourcesAsync,
-                        // and proceed to handle a new VoIP call.
-                        status = VoipPhoneCallResourceReservationStatus.Success;
-                    }
-                }
+            var coordinator = VoipCallCoordinator.GetDefault();
+            var status = VoipPhoneCallResourceReservationStatus.ResourcesNotAvailable;
 
+            try
+            {
+                status = await coordinator.ReserveCallResourcesAsync();
+            }
+            catch (Exception ex)
+            {
+                if (ex.HResult == -2147024713)
+                {
+                    // CPU and memory resources have already been reserved for the app.
+                    // Ignore the return value from your call to ReserveCallResourcesAsync,
+                    // and proceed to handle a new VoIP call.
+                    status = VoipPhoneCallResourceReservationStatus.Success;
+                }
+            }
+
+            try
+            {
                 if (status == VoipPhoneCallResourceReservationStatus.Success)
                 {
                     _coordinator = coordinator;
                     _coordinator.MuteStateChanged += OnMuteStateChanged;
 
-                    // I'm not sure if RequestNewOutgoingCall is the right method to call, but it seem to work.
-                    _systemCall = _coordinator.RequestNewOutgoingCall($"{user.Id}", user.FullName(), Strings.Resources.AppName, VoipPhoneCallMedia.Audio | VoipPhoneCallMedia.Video);
-                    _systemCall.NotifyCallActive();
+                    if (outgoing)
+                    {
+                        // I'm not sure if RequestNewOutgoingCall is the right method to call, but it seem to work.
+                        _systemCall = _coordinator.RequestNewOutgoingCall(
+                            $"{user.Id}",
+                            user.FullName(),
+                            Strings.Resources.AppName,
+                            VoipPhoneCallMedia.Audio | VoipPhoneCallMedia.Video);
+                        //_systemCall.TryNotifyCallActive();
+                    }
+                    else
+                    {
+                        static Uri GetPhoto(User user)
+                        {
+                            if (user.ProfilePhoto != null && user.ProfilePhoto.Small.Local.IsDownloadingCompleted)
+                            {
+                                return new Uri(user.ProfilePhoto.Small.Local.Path);
+                            }
+
+                            return null;
+                        }
+
+                        _systemCall = _coordinator.RequestNewIncomingCall(
+                            $"{user.Id}",
+                            user.FullName(),
+                            user.PhoneNumber,
+                            GetPhoto(user),
+                            Strings.Resources.AppName,
+                            new Uri(Path.Combine(Package.Current.InstalledLocation.Path, "Assets\\Logos\\LockScreenLogo.png")),
+                            string.Empty,
+                            null,
+                            VoipPhoneCallMedia.Audio | VoipPhoneCallMedia.Video,
+                            TimeSpan.FromSeconds(120));
+                        _systemCall.AnswerRequested += OnAnswerRequested;
+                        _systemCall.RejectRequested += OnRejectRequested;
+                    }
+
                     _systemCall.EndRequested += OnEndRequested;
                 }
+            }
+            catch
+            {
+                _coordinator = null;
+                _systemCall = null;
             }
         }
 
         private void OnMuteStateChanged(VoipCallCoordinator sender, MuteChangeEventArgs args)
         {
             IsMuted = args.Muted;
+        }
+
+        private void OnAnswerRequested(VoipPhoneCall sender, CallAnswerEventArgs args)
+        {
+            if (Call is Call call)
+            {
+                ClientService.Send(new AcceptCall(call.Id, Protocol));
+            }
+
+            sender.TryShowAppUI();
+        }
+
+        private void OnRejectRequested(VoipPhoneCall sender, CallRejectEventArgs args)
+        {
+            if (Call is Call call)
+            {
+                ClientService.Send(new DiscardCall(call.Id, false, 0, false, 0));
+            }
         }
 
         private void OnEndRequested(VoipPhoneCall sender, CallStateChangeEventArgs args)
@@ -390,6 +453,14 @@ namespace Unigram.Services
                     if (pending.IsCreated && pending.IsReceived)
                     {
                         SoundEffects.Play(update.Call.IsOutgoing ? SoundEffect.VoipRingback : SoundEffect.VoipIncoming);
+
+                        var user = ClientService.GetUser(update.Call.UserId);
+                        if (user == null)
+                        {
+                            return;
+                        }
+
+                        await InitializeSystemCallAsync(user, update.Call.IsOutgoing);
                     }
                 }
                 else if (update.Call.State is CallStateExchangingKeys exchangingKeys)
@@ -406,7 +477,8 @@ namespace Unigram.Services
 
                     //VoIPControllerWrapper.UpdateServerConfig(ready.Config);
 
-                    await InitializeSystemCallAsync(user);
+                    _systemCall?.TryNotifyCallActive();
+                    //await InitializeSystemCallAsync(user, false);
 
                     var logFile = Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{SessionId}", $"voip{update.Call.Id}.txt");
                     var statsDumpFile = Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{SessionId}", "tgvoip.statsDump.txt");
@@ -443,7 +515,7 @@ namespace Unigram.Services
                     _manager.SignalingDataEmitted += OnSignalingDataEmitted;
 
                     _manager.Start();
-                    _coordinator?.NotifyMutedChanged(_manager.IsMuted);
+                    _coordinator?.TryNotifyMutedChanged(_manager.IsMuted);
 
                     await ShowAsync(update.Call, _manager, _capturer, _callStarted);
                 }
@@ -566,7 +638,9 @@ namespace Unigram.Services
 
                 if (_systemCall != null)
                 {
-                    _systemCall.NotifyCallEnded();
+                    _systemCall.TryNotifyCallEnded();
+                    _systemCall.AnswerRequested -= OnAnswerRequested;
+                    _systemCall.RejectRequested -= OnRejectRequested;
                     _systemCall.EndRequested -= OnEndRequested;
                     _systemCall = null;
                 }
@@ -625,6 +699,11 @@ namespace Unigram.Services
 
         private async Task ShowAsync(Call call, VoipManager controller, VoipCaptureBase capturer, DateTime started)
         {
+            if (call.State is CallStatePending && !call.IsOutgoing && _systemCall != null)
+            {
+                return;
+            }
+
             if (_callPage == null)
             {
                 var parameters = new ViewServiceParams

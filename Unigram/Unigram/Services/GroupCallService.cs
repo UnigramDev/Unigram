@@ -88,8 +88,8 @@ namespace Unigram.Services
 
     public class GroupCallService : TLViewModelBase
         , IGroupCallService
-        //, IHandle<UpdateGroupCall>
-        //, IHandle<UpdateGroupCallParticipant>
+    //, IHandle<UpdateGroupCall>
+    //, IHandle<UpdateGroupCallParticipant>
     {
         private readonly IViewService _viewService;
 
@@ -234,6 +234,12 @@ namespace Unigram.Services
             //    return;
             //}
 
+            var permissions = await MediaDeviceWatcher.CheckAccessAsync(true);
+            if (permissions == false)
+            {
+                return;
+            }
+
             await JoinAsyncInternal(chat, chat.VideoChat.GroupCallId, null);
         }
 
@@ -368,7 +374,7 @@ namespace Unigram.Services
                 _manager.BroadcastTimeRequested += OnBroadcastTimeRequested;
                 _manager.BroadcastPartRequested += OnBroadcastPartRequested;
 
-                _coordinator?.NotifyMutedChanged(_manager.IsMuted);
+                _coordinator?.TryNotifyMutedChanged(_manager.IsMuted);
 #endif
 
                 // This must be set before, as updates might come
@@ -391,26 +397,31 @@ namespace Unigram.Services
 
         private async Task InitializeSystemCallAsync(Chat chat)
         {
-            if (ApiInfo.IsVoipSupported)
+            if (_systemCall != null || !ApiInfo.IsVoipSupported)
             {
-                var coordinator = VoipCallCoordinator.GetDefault();
-                var status = VoipPhoneCallResourceReservationStatus.ResourcesNotAvailable;
+                return;
+            }
 
-                try
-                {
-                    status = await coordinator.ReserveCallResourcesAsync();
-                }
-                catch (Exception ex)
-                {
-                    if (ex.HResult == -2147024713)
-                    {
-                        // CPU and memory resources have already been reserved for the app.
-                        // Ignore the return value from your call to ReserveCallResourcesAsync,
-                        // and proceed to handle a new VoIP call.
-                        status = VoipPhoneCallResourceReservationStatus.Success;
-                    }
-                }
+            var coordinator = VoipCallCoordinator.GetDefault();
+            var status = VoipPhoneCallResourceReservationStatus.ResourcesNotAvailable;
 
+            try
+            {
+                status = await coordinator.ReserveCallResourcesAsync();
+            }
+            catch (Exception ex)
+            {
+                if (ex.HResult == -2147024713)
+                {
+                    // CPU and memory resources have already been reserved for the app.
+                    // Ignore the return value from your call to ReserveCallResourcesAsync,
+                    // and proceed to handle a new VoIP call.
+                    status = VoipPhoneCallResourceReservationStatus.Success;
+                }
+            }
+
+            try
+            {
                 if (status == VoipPhoneCallResourceReservationStatus.Success)
                 {
                     _coordinator = coordinator;
@@ -418,9 +429,14 @@ namespace Unigram.Services
 
                     // I'm not sure if RequestNewOutgoingCall is the right method to call, but it seem to work.
                     _systemCall = _coordinator.RequestNewOutgoingCall($"{chat.Id}", chat.Title, Strings.Resources.AppName, VoipPhoneCallMedia.Audio | VoipPhoneCallMedia.Video);
-                    _systemCall.NotifyCallActive();
+                    _systemCall.TryNotifyCallActive();
                     _systemCall.EndRequested += OnEndRequested;
                 }
+            }
+            catch
+            {
+                _coordinator = null;
+                _systemCall = null;
             }
         }
 
@@ -899,7 +915,7 @@ namespace Unigram.Services
 
                     if (_systemCall != null)
                     {
-                        _systemCall.NotifyCallEnded();
+                        _systemCall.TryNotifyCallEnded();
                         _systemCall.EndRequested -= OnEndRequested;
                         _systemCall = null;
                     }
@@ -946,11 +962,11 @@ namespace Unigram.Services
                     ClientService.Send(new ToggleGroupCallParticipantIsMuted(_call.Id, _currentUser.ParticipantId, value));
                     MutedChanged?.Invoke(_manager, EventArgs.Empty);
 
-                    _coordinator?.NotifyMutedChanged(value);
+                    _coordinator?.TryNotifyMutedChanged(value);
                 }
                 else
                 {
-                    _coordinator?.NotifyMutedChanged(true);
+                    _coordinator?.TryNotifyMutedChanged(true);
                 }
             }
         }

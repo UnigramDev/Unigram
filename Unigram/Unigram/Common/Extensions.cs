@@ -84,15 +84,46 @@ namespace Unigram.Common
             return new Version(version.Major, version.Minor, version.Build, version.Revision);
         }
 
-        public static void NotifyMutedChanged(this VoipCallCoordinator coordinator, bool muted)
+        public static void TryNotifyMutedChanged(this VoipCallCoordinator coordinator, bool muted)
         {
-            if (muted)
+            try
             {
-                coordinator?.NotifyMuted();
+                if (muted)
+                {
+                    coordinator?.NotifyMuted();
+                }
+                else
+                {
+                    coordinator?.NotifyUnmuted();
+                }
             }
-            else
+            catch
             {
-                coordinator?.NotifyUnmuted();
+
+            }
+        }
+
+        public static void TryNotifyCallActive(this VoipPhoneCall call)
+        {
+            try
+            {
+                call.NotifyCallActive();
+            }
+            catch
+            {
+
+            }
+        }
+
+        public static void TryNotifyCallEnded(this VoipPhoneCall call)
+        {
+            try
+            {
+                call.NotifyCallEnded();
+            }
+            catch
+            {
+
             }
         }
 
