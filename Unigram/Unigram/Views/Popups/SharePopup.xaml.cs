@@ -701,9 +701,7 @@ namespace Unigram.Views.Popups
                     ViewModel.TopChats = null;
                 }
 
-                var items = ViewModel.Search = new SearchChatsCollection(ViewModel.ClientService, SearchField.Text, null, ViewModel.SearchType);
-                await items.LoadMoreItemsAsync(0);
-                await items.LoadMoreItemsAsync(1);
+                ViewModel.Search = new SearchChatsCollection(ViewModel.ClientService, SearchField.Text, null, ViewModel.SearchType);
             }
         }
 
@@ -711,9 +709,9 @@ namespace Unigram.Views.Popups
         {
             var activePanel = ChatsPanel;
             var activeList = DialogsSearchListView;
-            var activeResults = ChatsResults;
+            var activeResults = ViewModel.Search;
 
-            if (activePanel.Visibility == Visibility.Visible)
+            if (activePanel.Visibility == Visibility.Visible || activeResults == null)
             {
                 return;
             }
@@ -722,7 +720,7 @@ namespace Unigram.Views.Popups
             {
                 var index = e.Key == Windows.System.VirtualKey.Up ? -1 : 1;
                 var next = activeList.SelectedIndex + index;
-                if (next >= 0 && next < activeResults.View.Count)
+                if (next >= 0 && next < activeResults.Count)
                 {
                     activeList.SelectedIndex = next;
                     activeList.ScrollIntoView(activeList.SelectedItem);

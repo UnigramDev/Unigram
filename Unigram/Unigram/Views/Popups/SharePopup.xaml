@@ -21,12 +21,6 @@
                        Opened="OnOpened"
                        Closing="OnClosing">
 
-    <ContentControl.Resources>
-        <CollectionViewSource x:Name="ChatsResults"
-                              Source="{x:Bind ViewModel.Search, Mode=OneWay}"
-                              IsSourceGrouped="True" />
-    </ContentControl.Resources>
-
     <Grid Margin="0,0,0,-24">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -87,7 +81,7 @@
                   x:Load="False">
                 <controls:TextListView x:Name="DialogsSearchListView"
                                        Background="{ThemeResource ContentDialogBackground}"
-                                       ItemsSource="{x:Bind ChatsResults.View, Mode=OneWay}"
+                                       ItemsSource="{x:Bind ViewModel.Search, Mode=OneWay}"
                                        IsItemClickEnabled="True"
                                        SelectionMode="None"
                                        ItemClick="ListView_ItemClick"
@@ -150,6 +144,13 @@
                     </ListView.Header>
                     <ListView.ItemTemplateSelector>
                         <selectors:SearchTemplateSelector>
+                            <selectors:SearchTemplateSelector.HeaderTemplate>
+                                <DataTemplate>
+                                    <TextBlock Style="{StaticResource BaseTextBlockStyle}"
+                                               FontFamily="{StaticResource EmojiThemeFontFamily}"
+                                               Margin="12,12,0,0" />
+                                </DataTemplate>
+                            </selectors:SearchTemplateSelector.HeaderTemplate>
                             <selectors:SearchTemplateSelector.ChatTemplate>
                                 <DataTemplate>
                                     <Grid Padding="12,6">
@@ -210,59 +211,6 @@
                     <ListView.ItemContainerTransitions>
                         <TransitionCollection />
                     </ListView.ItemContainerTransitions>
-                    <ListView.GroupStyle>
-                        <GroupStyle>
-                            <GroupStyle.HeaderTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding Key}"
-                                               Style="{StaticResource BaseTextBlockStyle}"
-                                               Margin="0,16,0,8" />
-                                </DataTemplate>
-                            </GroupStyle.HeaderTemplate>
-                            <GroupStyle.HeaderContainerStyle>
-                                <Style TargetType="ListViewHeaderItem">
-                                    <Setter Property="Background"
-                                            Value="Transparent" />
-                                    <Setter Property="FontFamily"
-                                            Value="{ThemeResource ContentControlThemeFontFamily}" />
-                                    <Setter Property="FontSize"
-                                            Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
-                                    <Setter Property="Margin"
-                                            Value="0,0,0,0" />
-                                    <Setter Property="Padding"
-                                            Value="12,0,12,0" />
-                                    <Setter Property="HorizontalContentAlignment"
-                                            Value="Stretch" />
-                                    <Setter Property="VerticalContentAlignment"
-                                            Value="Top" />
-                                    <Setter Property="MinHeight"
-                                            Value="0" />
-                                    <Setter Property="UseSystemFocusVisuals"
-                                            Value="True" />
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="ListViewHeaderItem">
-                                                <Border Visibility="{Binding Content.Count, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                                    <Border Background="{TemplateBinding Background}"
-                                                            BorderBrush="{TemplateBinding BorderBrush}"
-                                                            BorderThickness="{TemplateBinding BorderThickness}"
-                                                            Visibility="{Binding Content.Key, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource NullToVisibilityConverter}}">
-                                                        <ContentPresenter x:Name="ContentPresenter"
-                                                                          Margin="{TemplateBinding Padding}"
-                                                                          Content="{TemplateBinding Content}"
-                                                                          ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                                          ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
-                                                    </Border>
-                                                </Border>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </GroupStyle.HeaderContainerStyle>
-                        </GroupStyle>
-                    </ListView.GroupStyle>
                 </controls:TextListView>
 
                 <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
