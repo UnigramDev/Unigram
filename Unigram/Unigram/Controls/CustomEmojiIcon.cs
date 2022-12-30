@@ -244,7 +244,7 @@ namespace Unigram.Controls
             if (response is Stickers stickers && stickers.StickersValue.Count == 1)
             {
                 var sticker = stickers.StickersValue[0];
-                if (sticker.FullType is not StickerTypeFullInfoCustomEmoji customEmoji || customEmoji.CustomEmojiId == _cache)
+                if (sticker.FullType is not StickerFullTypeCustomEmoji customEmoji || customEmoji.CustomEmojiId == _cache)
                 {
                     return;
                 }
@@ -281,7 +281,7 @@ namespace Unigram.Controls
             }
 
             var hash = GetHashCode();
-            var id = sticker.FullType is not StickerTypeFullInfoCustomEmoji customEmoji
+            var id = sticker.FullType is not StickerFullTypeCustomEmoji customEmoji
                 ? sticker.StickerValue.Id
                 : customEmoji.CustomEmojiId;
 

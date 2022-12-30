@@ -55,7 +55,7 @@ namespace Unigram.ViewModels.Gallery
 
         public override InputMessageContent ToInput()
         {
-            return new InputMessageAnimation(new InputFileId(_animation.AnimationValue.Id), _animation.Thumbnail?.ToInput(), new int[0], _animation.Duration, _animation.Width, _animation.Height, null);
+            return new InputMessageAnimation(new InputFileId(_animation.AnimationValue.Id), _animation.Thumbnail?.ToInput(), new int[0], _animation.Duration, _animation.Width, _animation.Height, null, false);
         }
     }
 }

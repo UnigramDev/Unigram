@@ -22,10 +22,10 @@ namespace Unigram.ViewModels.Settings
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            var response = await ClientService.SendAsync(new GetDefaultMessageTtl());
-            if (response is MessageTtl messageTtl)
+            var response = await ClientService.SendAsync(new GetDefaultMessageAutoDeleteTime());
+            if (response is MessageAutoDeleteTime messageTtl)
             {
-                UpdateSelection(messageTtl.Ttl, false);
+                UpdateSelection(messageTtl.Time, false);
             }
         }
 
@@ -85,7 +85,7 @@ namespace Unigram.ViewModels.Settings
                 Items.Add(new SettingsOptionItem<int>(value, Locale.FormatTtl(value)) { IsChecked = true });
             }
 
-            ClientService.Send(new SetDefaultMessageTtl(new MessageTtl(value)));
+            ClientService.Send(new SetDefaultMessageAutoDeleteTime(new MessageAutoDeleteTime(value)));
         }
     }
 }

@@ -97,7 +97,7 @@ namespace Unigram.Views.Supergroups
 
         public void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo)
         {
-            ViewModel.UpdateIsAggressiveAntiSpamEnabled(fullInfo.IsAggressiveAntiSpamEnabled);
+            ViewModel.UpdateIsAggressiveAntiSpamEnabled(fullInfo.HasAggressiveAntiSpamEnabled);
             AntiSpam.Visibility = fullInfo.CanToggleAggressiveAntiSpam ? Visibility.Visible : Visibility.Collapsed;
         }
 

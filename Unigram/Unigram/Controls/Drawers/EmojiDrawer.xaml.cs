@@ -264,7 +264,7 @@ namespace Unigram.Controls.Drawers
                         }
                     }
                 }
-                else if (sticker.FullType is StickerTypeFullInfoCustomEmoji customEmoji)
+                else if (sticker.FullType is StickerFullTypeCustomEmoji customEmoji)
                 {
                     SettingsService.Current.Emoji.AddRecentEmoji($"{sticker.Emoji};{customEmoji.CustomEmojiId}");
                     SettingsService.Current.Emoji.SortRecentEmoji();
@@ -594,9 +594,9 @@ namespace Unigram.Controls.Drawers
             { 0xFFFFFF, 0x000000 }
         };
 
-        private IReadOnlyDictionary<int, int> GetColorReplacements(StickerTypeFullInfo info)
+        private IReadOnlyDictionary<int, int> GetColorReplacements(StickerFullType info)
         {
-            if (info is StickerTypeFullInfoCustomEmoji customEmoji && customEmoji.HasTextColor)
+            if (info is StickerFullTypeCustomEmoji customEmoji && customEmoji.NeedsRepainting)
             {
                 if (_currentReplacement != Theme.Accent)
                 {

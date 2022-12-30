@@ -29,7 +29,7 @@ namespace Unigram.ViewModels
         {
             private readonly IClientService _clientService;
 
-            private long _lastMaxId;
+            private string _nextOffset;
             private bool _hasMoreItems = true;
 
             public ItemsCollection(IClientService clientService)
@@ -39,17 +39,11 @@ namespace Unigram.ViewModels
 
             public override async Task<IList<TLCallGroup>> LoadDataAsync()
             {
-                var response = await _clientService.SendAsync(new SearchCallMessages(_lastMaxId, 50, false)); //(new TLInputPeerEmpty(), null, null, new TLInputMessagesFilterPhoneCalls(), 0, 0, 0, _lastMaxId, 50);
-                if (response is Messages messages)
+                var response = await _clientService.SendAsync(new SearchCallMessages(_nextOffset, 50, false)); //(new TLInputPeerEmpty(), null, null, new TLInputMessagesFilterPhoneCalls(), 0, 0, 0, _lastMaxId, 50);
+                if (response is FoundMessages messages)
                 {
-                    if (messages.MessagesValue.Count > 0)
-                    {
-                        _lastMaxId = messages.MessagesValue.Min(x => x.Id);
-                    }
-                    else
-                    {
-                        _hasMoreItems = false;
-                    }
+                    _nextOffset = messages.NextOffset;
+                    _hasMoreItems = messages.NextOffset.Length > 0;
 
                     List<TLCallGroup> groups = new List<TLCallGroup>();
                     List<Message> currentMessages = null;
@@ -58,7 +52,7 @@ namespace Unigram.ViewModels
                     bool currentFailed = false;
                     DateTime? currentTime = null;
 
-                    foreach (var message in messages.MessagesValue)
+                    foreach (var message in messages.Messages)
                     {
                         var chat = _clientService.GetChat(message.ChatId);
                         if (chat == null)

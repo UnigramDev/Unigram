@@ -139,7 +139,7 @@ namespace Unigram.Controls.Messages.Content
                     Button.SetGlyph(file.Id, MessageContentState.Ttl);
                     Button.Progress = 1;
 
-                    Subtitle.Text = Locale.FormatTtl(Math.Max(message.Ttl, animation.Duration), true);
+                    Subtitle.Text = Locale.FormatTtl(Math.Max(message.SelfDestructTime, animation.Duration), true);
                     Overlay.Opacity = 1;
 
                     Player.Source = null;

@@ -286,7 +286,7 @@ namespace Unigram.Controls
         {
             if (secretChat.State is SecretChatStateReady)
             {
-                SecretLifetime.Badge = chat.MessageTtl > 0 ? Locale.FormatTtl(chat.MessageTtl) : Strings.Resources.ShortMessageLifetimeForever;
+                SecretLifetime.Badge = chat.MessageAutoDeleteTime > 0 ? Locale.FormatTtl(chat.MessageAutoDeleteTime) : Strings.Resources.ShortMessageLifetimeForever;
                 //SecretIdenticon.Source = PlaceholderHelper.GetIdenticon(secretChat.KeyHash, 24);
 
                 MiscPanel.Visibility = Visibility.Visible;
@@ -571,7 +571,7 @@ namespace Unigram.Controls
 
             if ((user != null && user.Type is not UserTypeBot) || (basicGroup != null && basicGroup.CanChangeInfo()) || (supergroup != null && supergroup.CanChangeInfo()))
             {
-                var icon = chat.MessageTtl switch
+                var icon = chat.MessageAutoDeleteTime switch
                 {
                     60 * 60 * 24 => Icons.AutoDeleteDay,
                     60 * 60 * 24 * 7 => Icons.AutoDeleteWeek,
@@ -595,14 +595,14 @@ namespace Unigram.Controls
                     autodelete.Items.Add(item);
                 }
 
-                AddToggle(chat.MessageTtl, 0, Strings.Resources.ShortMessageLifetimeForever, Icons.AutoDeleteOff);
+                AddToggle(chat.MessageAutoDeleteTime, 0, Strings.Resources.ShortMessageLifetimeForever, Icons.AutoDeleteOff);
 
                 autodelete.CreateFlyoutSeparator();
 
-                AddToggle(chat.MessageTtl, 60 * 60 * 24, Locale.FormatTtl(60 * 60 * 24), Icons.AutoDeleteDay);
-                AddToggle(chat.MessageTtl, 60 * 60 * 24 * 7, Locale.FormatTtl(60 * 60 * 24 * 7), Icons.AutoDeleteWeek);
-                AddToggle(chat.MessageTtl, 60 * 60 * 24 * 31, Locale.FormatTtl(60 * 60 * 24 * 31), Icons.AutoDeleteMonth);
-                AddToggle(chat.MessageTtl, null, Strings.Resources.AutoDownloadCustom, Icons.Options);
+                AddToggle(chat.MessageAutoDeleteTime, 60 * 60 * 24, Locale.FormatTtl(60 * 60 * 24), Icons.AutoDeleteDay);
+                AddToggle(chat.MessageAutoDeleteTime, 60 * 60 * 24 * 7, Locale.FormatTtl(60 * 60 * 24 * 7), Icons.AutoDeleteWeek);
+                AddToggle(chat.MessageAutoDeleteTime, 60 * 60 * 24 * 31, Locale.FormatTtl(60 * 60 * 24 * 31), Icons.AutoDeleteMonth);
+                AddToggle(chat.MessageAutoDeleteTime, null, Strings.Resources.AutoDownloadCustom, Icons.Options);
 
                 flyout.Items.Add(autodelete);
                 flyout.CreateFlyoutSeparator();

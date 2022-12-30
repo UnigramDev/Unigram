@@ -254,7 +254,7 @@ namespace Unigram.ViewModels.Drawers
                     {
                         foreach (var sticker in customEmojiStickers.StickersValue)
                         {
-                            if (sticker.FullType is not StickerTypeFullInfoCustomEmoji customEmojiType)
+                            if (sticker.FullType is not StickerFullTypeCustomEmoji customEmojiType)
                             {
                                 continue;
                             }
@@ -386,7 +386,7 @@ namespace Unigram.ViewModels.Drawers
                     return;
                 }
 
-                assets = stickers.StickersValue.ToDictionary(x => x.FullType is StickerTypeFullInfoCustomEmoji customEmoji ? customEmoji.CustomEmojiId : 0);
+                assets = stickers.StickersValue.ToDictionary(x => x.FullType is StickerFullTypeCustomEmoji customEmoji ? customEmoji.CustomEmojiId : 0);
             }
 
             var reactions = await ClientService.GetAllReactionsAsync();

@@ -46,7 +46,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            if (sticker.FullType is StickerTypeFullInfoRegular regular && regular.PremiumAnimation != null && ClientService.IsPremiumAvailable && !ClientService.IsPremium)
+            if (sticker.FullType is StickerFullTypeRegular regular && regular.PremiumAnimation != null && ClientService.IsPremiumAvailable && !ClientService.IsPremium)
             {
                 await new UniqueStickersPopup(ClientService, sticker).ShowQueuedAsync();
                 return;
@@ -129,7 +129,7 @@ namespace Unigram.ViewModels
             }
 
             var reply = GetReply(true);
-            var input = new InputMessageAnimation(new InputFileId(animation.AnimationValue.Id), animation.Thumbnail?.ToInput(), new int[0], animation.Duration, animation.Width, animation.Height, null);
+            var input = new InputMessageAnimation(new InputFileId(animation.AnimationValue.Id), animation.Thumbnail?.ToInput(), new int[0], animation.Duration, animation.Width, animation.Height, null, false);
 
             await SendMessageAsync(chat, reply, input, options);
         }

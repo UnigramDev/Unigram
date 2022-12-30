@@ -35,7 +35,7 @@ namespace Unigram.ViewModels.Supergroups
                 if (supergroup.CanToggleAggressiveAntiSpam)
                 {
                     Set(ref _isAggressiveAntiSpamEnabled, value, nameof(IsAggressiveAntiSpamEnabled));
-                    ClientService.Send(new ToggleSupergroupIsAggressiveAntiSpamEnabled(supergroupType.SupergroupId, value));
+                    ClientService.Send(new ToggleSupergroupHasAggressiveAntiSpamEnabled(supergroupType.SupergroupId, value));
                 }
                 else
                 {

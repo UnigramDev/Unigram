@@ -1075,12 +1075,12 @@ namespace Unigram.ViewModels
 
             if (ttl is int value)
             {
-                ClientService.Send(new SetChatMessageTtl(chat.Id, value));
+                ClientService.Send(new SetChatMessageAutoDeleteTime(chat.Id, value));
             }
             else
             {
                 var dialog = new ChatTtlPopup(chat.Type is ChatTypeSecret ? ChatTtlType.Secret : ChatTtlType.Normal);
-                dialog.Value = chat.MessageTtl;
+                dialog.Value = chat.MessageAutoDeleteTime;
 
                 var confirm = await dialog.ShowQueuedAsync();
                 if (confirm != ContentDialogResult.Primary)
@@ -1088,7 +1088,7 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                ClientService.Send(new SetChatMessageTtl(chat.Id, dialog.Value));
+                ClientService.Send(new SetChatMessageAutoDeleteTime(chat.Id, dialog.Value));
             }
         }
 

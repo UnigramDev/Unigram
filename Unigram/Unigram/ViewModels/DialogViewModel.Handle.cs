@@ -679,7 +679,7 @@ namespace Unigram.ViewModels
             {
                 Handle(update.MessageId, message =>
                 {
-                    message.TtlExpiresIn = message.Ttl;
+                    message.SelfDestructIn = message.SelfDestructTime;
 
                     switch (message.Content)
                     {

@@ -264,7 +264,7 @@ namespace Unigram.Controls.Messages
                     //    continue;
                     //}
 
-                    if (sticker.FullType is not StickerTypeFullInfoCustomEmoji customEmojiType)
+                    if (sticker.FullType is not StickerFullTypeCustomEmoji customEmojiType)
                     {
                         continue;
                     }
@@ -292,7 +292,7 @@ namespace Unigram.Controls.Messages
 
         public static void AddOrUpdate(Sticker sticker)
         {
-            var id = sticker.FullType is not StickerTypeFullInfoCustomEmoji customEmoji
+            var id = sticker.FullType is not StickerFullTypeCustomEmoji customEmoji
                 ? sticker.StickerValue.Id
                 : customEmoji.CustomEmojiId;
 
@@ -414,7 +414,7 @@ namespace Unigram.Controls.Messages
 
         public void MergeOrCreate(IClientService clientService, Sticker sticker, int hash, bool subscribe)
         {
-            var id = sticker.FullType is not StickerTypeFullInfoCustomEmoji customEmoji
+            var id = sticker.FullType is not StickerFullTypeCustomEmoji customEmoji
                 ? sticker.StickerValue.Id
                 : customEmoji.CustomEmojiId;
 
@@ -571,7 +571,7 @@ namespace Unigram.Controls.Messages
 
         public Sticker Sticker => _sticker;
 
-        public long CustomEmojiId => _sticker.FullType is StickerTypeFullInfoCustomEmoji customEmoji
+        public long CustomEmojiId => _sticker.FullType is StickerFullTypeCustomEmoji customEmoji
             ? customEmoji.CustomEmojiId
             : 0;
 
@@ -747,9 +747,9 @@ namespace Unigram.Controls.Messages
             { 0xFFFFFF, 0x000000 }
         };
 
-        private IReadOnlyDictionary<int, int> GetColorReplacements(StickerTypeFullInfo info)
+        private IReadOnlyDictionary<int, int> GetColorReplacements(StickerFullType info)
         {
-            if (info is StickerTypeFullInfoCustomEmoji customEmoji && customEmoji.HasTextColor)
+            if (info is StickerFullTypeCustomEmoji customEmoji && customEmoji.NeedsRepainting)
             {
                 if (_currentReplacement != Theme.Accent)
                 {

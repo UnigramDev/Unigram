@@ -663,7 +663,7 @@ namespace Unigram.ViewModels.Drawers
 
         public File StickerValue => _sticker?.StickerValue;
         public IList<ClosedVectorPath> Outline => _sticker?.Outline;
-        public StickerTypeFullInfo FullType => _sticker?.FullType;
+        public StickerFullType FullType => _sticker?.FullType;
         public StickerFormat Format => _sticker?.Format ?? _format;
         public string Emoji => _sticker?.Emoji;
         public int Height => _sticker?.Height ?? 0;
@@ -672,7 +672,7 @@ namespace Unigram.ViewModels.Drawers
 
         public ReactionType ToReactionType()
         {
-            if (FullType is StickerTypeFullInfoCustomEmoji customEmoji)
+            if (FullType is StickerFullTypeCustomEmoji customEmoji)
             {
                 return new ReactionTypeCustomEmoji(customEmoji.CustomEmojiId);
             }

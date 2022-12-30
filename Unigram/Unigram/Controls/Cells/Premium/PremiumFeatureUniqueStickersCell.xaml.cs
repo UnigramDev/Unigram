@@ -49,7 +49,7 @@ namespace Unigram.Controls.Cells.Premium
             if (index < _stickers.Count )
             {
                 var sticker = _stickers[index];
-                if (sticker.FullType is StickerTypeFullInfoRegular regular)
+                if (sticker.FullType is StickerFullTypeRegular regular)
                 {
                     Animation1.Source = UriEx.ToLocal(sticker.StickerValue.Local.Path);
                     PremiumAnimation1.Source = UriEx.ToLocal(regular.PremiumAnimation.Local.Path);
@@ -69,7 +69,7 @@ namespace Unigram.Controls.Cells.Premium
             }
 
             var sticker = _stickers[index];
-            if (sticker.FullType is StickerTypeFullInfoRegular regular)
+            if (sticker.FullType is StickerFullTypeRegular regular)
             {
                 _clientService.DownloadFile(sticker.StickerValue.Id, 32);
                 _clientService.DownloadFile(regular.PremiumAnimation.Id, 32);

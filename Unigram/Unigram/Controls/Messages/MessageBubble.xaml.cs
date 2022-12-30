@@ -169,7 +169,7 @@ namespace Unigram.Controls.Messages
 
         private bool AllowDrag(MessageViewModel message, out string path)
         {
-            if (message == null || message.Ttl > 0 || !message.CanBeSaved)
+            if (message == null || message.SelfDestructTime > 0 || !message.CanBeSaved)
             {
                 path = null;
                 return false;
@@ -2527,7 +2527,7 @@ namespace Unigram.Controls.Messages
             }
             else if (constraint is Message message)
             {
-                ttl = message.Ttl > 0;
+                ttl = message.SelfDestructTime > 0;
                 constraint = message.Content;
             }
 

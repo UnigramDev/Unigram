@@ -81,7 +81,7 @@ namespace Unigram.Controls.Messages.Content
 
         public void UpdateMessageContentOpened(MessageViewModel message)
         {
-            if (message.Ttl > 0)
+            if (message.SelfDestructTime > 0)
             {
                 //Timer.Maximum = message.Ttl;
                 //Timer.Value = DateTime.Now.AddSeconds(message.TtlExpiresIn);
@@ -139,7 +139,7 @@ namespace Unigram.Controls.Messages.Content
                     Button.SetGlyph(file.Id, MessageContentState.Download);
                     Button.Progress = 0;
 
-                    Subtitle.Text = string.Format("{0}, {1}", Locale.FormatTtl(message.Ttl, true), FileSizeConverter.Convert(size));
+                    Subtitle.Text = string.Format("{0}, {1}", Locale.FormatTtl(message.SelfDestructTime, true), FileSizeConverter.Convert(size));
 
                     if (message.Delegate.CanBeDownloaded(video, file))
                     {
@@ -151,7 +151,7 @@ namespace Unigram.Controls.Messages.Content
                     Button.SetGlyph(file.Id, MessageContentState.Ttl);
                     Button.Progress = 1;
 
-                    Subtitle.Text = Locale.FormatTtl(message.Ttl, true);
+                    Subtitle.Text = Locale.FormatTtl(message.SelfDestructTime, true);
                 }
             }
             else

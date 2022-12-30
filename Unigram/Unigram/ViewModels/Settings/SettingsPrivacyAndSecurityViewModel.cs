@@ -116,11 +116,11 @@ namespace Unigram.ViewModels.Settings
                 }
             });
 
-            ClientService.Send(new GetDefaultMessageTtl(), result =>
+            ClientService.Send(new GetDefaultMessageAutoDeleteTime(), result =>
             {
-                if (result is MessageTtl messageTtl)
+                if (result is MessageAutoDeleteTime messageTtl)
                 {
-                    BeginOnUIThread(() => DefaultTtl = messageTtl.Ttl);
+                    BeginOnUIThread(() => DefaultTtl = messageTtl.Time);
                 }
             });
 

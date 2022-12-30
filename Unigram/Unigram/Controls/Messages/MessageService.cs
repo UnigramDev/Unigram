@@ -100,7 +100,7 @@ namespace Unigram.Controls.Messages
                 MessageChatDeletePhoto chatDeletePhoto => UpdateChatDeletePhoto(message, chatDeletePhoto, active),
                 MessageChatJoinByLink chatJoinByLink => UpdateChatJoinByLink(message, chatJoinByLink, active),
                 MessageChatJoinByRequest chatJoinByRequest => UpdateChatJoinByRequest(message, chatJoinByRequest, active),
-                MessageChatSetTtl chatSetTtl => UpdateChatSetTtl(message, chatSetTtl, active),
+                MessageChatSetMessageAutoDeleteTime chatSetMessageAutoDeleteTime => UpdateChatSetMessageAutoDeleteTime(message, chatSetMessageAutoDeleteTime, active),
                 MessageChatUpgradeFrom chatUpgradeFrom => UpdateChatUpgradeFrom(message, chatUpgradeFrom, active),
                 MessageChatUpgradeTo chatUpgradeTo => UpdateChatUpgradeTo(message, chatUpgradeTo, active),
                 MessageContactRegistered contactRegistered => UpdateContactRegistered(message, contactRegistered, active),
@@ -139,7 +139,7 @@ namespace Unigram.Controls.Messages
                     ChatEventMessageUnpinned messageUnpinned => UpdateMessageUnpinned(message, messageUnpinned, active),
                     ChatEventMessageDeleted messageDeleted => UpdateMessageDeleted(message, messageDeleted, active),
                     ChatEventMessageEdited messageEdited => UpdateMessageEdited(message, messageEdited, active),
-                    ChatEventMessageTtlChanged messageTtlChanged => UpdateMessageTtlChanged(message, messageTtlChanged, active),
+                    ChatEventMessageAutoDeleteTimeChanged messageAutoDeleteTimeChanged => UpdateMessageAutoDeleteTimeChanged(message, messageAutoDeleteTimeChanged, active),
                     ChatEventDescriptionChanged descriptionChanged => UpdateDescriptionChanged(message, descriptionChanged, active),
                     ChatEventInviteLinkDeleted inviteLinkDeleted => UpdateInviteLinkDeleted(message, inviteLinkDeleted, active),
                     ChatEventInviteLinkEdited inviteLinkEdited => UpdateInviteLinkEdited(message, inviteLinkEdited, active),
@@ -439,16 +439,16 @@ namespace Unigram.Controls.Messages
             return (content, entities);
         }
 
-        private static (string Text, IList<TextEntity> Entities) UpdateMessageTtlChanged(MessageViewModel message, ChatEventMessageTtlChanged messageTtlChanged, bool active)
+        private static (string Text, IList<TextEntity> Entities) UpdateMessageAutoDeleteTimeChanged(MessageViewModel message, ChatEventMessageAutoDeleteTimeChanged messageAutoDeleteTimeChanged, bool active)
         {
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
             var fromUser = message.GetSender();
 
-            if (messageTtlChanged.NewMessageTtl > 0)
+            if (messageAutoDeleteTimeChanged.NewMessageAutoDeleteTime > 0)
             {
-                content = ReplaceWithLink(string.Format(Strings.Resources.ActionTTLChanged, Locale.FormatTtl(messageTtlChanged.NewMessageTtl)), "un1", fromUser, ref entities);
+                content = ReplaceWithLink(string.Format(Strings.Resources.ActionTTLChanged, Locale.FormatTtl(messageAutoDeleteTimeChanged.NewMessageAutoDeleteTime)), "un1", fromUser, ref entities);
             }
             else
             {
@@ -1086,7 +1086,7 @@ namespace Unigram.Controls.Messages
             return (content, entities);
         }
 
-        private static (string, IList<TextEntity>) UpdateChatSetTtl(MessageViewModel message, MessageChatSetTtl chatSetTtl, bool active)
+        private static (string, IList<TextEntity>) UpdateChatSetMessageAutoDeleteTime(MessageViewModel message, MessageChatSetMessageAutoDeleteTime chatSetMessageAutoDeleteTime, bool active)
         {
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
@@ -1094,15 +1094,15 @@ namespace Unigram.Controls.Messages
             var chat = message.GetChat();
             if (chat.Type is ChatTypeSecret)
             {
-                if (chatSetTtl.Ttl != 0)
+                if (chatSetMessageAutoDeleteTime.MessageAutoDeleteTime != 0)
                 {
                     if (message.IsOutgoing)
                     {
-                        content = string.Format(Strings.Resources.MessageLifetimeChangedOutgoing, Locale.FormatTtl(chatSetTtl.Ttl));
+                        content = string.Format(Strings.Resources.MessageLifetimeChangedOutgoing, Locale.FormatTtl(chatSetMessageAutoDeleteTime.MessageAutoDeleteTime));
                     }
                     else
                     {
-                        content = ReplaceWithLink(string.Format(Strings.Resources.MessageLifetimeChanged, "un1", Locale.FormatTtl(chatSetTtl.Ttl)), "un1", message.GetSender(), ref entities);
+                        content = ReplaceWithLink(string.Format(Strings.Resources.MessageLifetimeChanged, "un1", Locale.FormatTtl(chatSetMessageAutoDeleteTime.MessageAutoDeleteTime)), "un1", message.GetSender(), ref entities);
                     }
                 }
                 else
@@ -1119,9 +1119,9 @@ namespace Unigram.Controls.Messages
             }
             else if (message.IsChannelPost)
             {
-                if (chatSetTtl.Ttl != 0)
+                if (chatSetMessageAutoDeleteTime.MessageAutoDeleteTime != 0)
                 {
-                    content = string.Format(Strings.Resources.ActionTTLChannelChanged, Locale.FormatTtl(chatSetTtl.Ttl));
+                    content = string.Format(Strings.Resources.ActionTTLChannelChanged, Locale.FormatTtl(chatSetMessageAutoDeleteTime.MessageAutoDeleteTime));
                 }
                 else
                 {
@@ -1130,15 +1130,23 @@ namespace Unigram.Controls.Messages
             }
             else
             {
-                if (chatSetTtl.Ttl != 0)
+                if (chatSetMessageAutoDeleteTime.MessageAutoDeleteTime != 0)
                 {
-                    if (message.IsOutgoing)
+                    if (chatSetMessageAutoDeleteTime.FromUserId == message.ClientService.Options.MyId)
                     {
-                        content = string.Format(Strings.Resources.ActionTTLYouChanged, Locale.FormatTtl(chatSetTtl.Ttl));
+                        content = string.Format(Strings.Resources.AutoDeleteGlobalActionFromYou, Locale.FormatTtl(chatSetMessageAutoDeleteTime.MessageAutoDeleteTime));
+                    }
+                    else if (chatSetMessageAutoDeleteTime.FromUserId != 0)
+                    {
+                        content = ReplaceWithLink(string.Format(Strings.Resources.AutoDeleteGlobalAction, "un1", Locale.FormatTtl(chatSetMessageAutoDeleteTime.MessageAutoDeleteTime)), "un1", message.GetSender(), ref entities);
+                    }
+                    else if (message.IsOutgoing)
+                    {
+                        content = string.Format(Strings.Resources.ActionTTLYouChanged, Locale.FormatTtl(chatSetMessageAutoDeleteTime.MessageAutoDeleteTime));
                     }
                     else
                     {
-                        content = ReplaceWithLink(string.Format(Strings.Resources.ActionTTLChanged, Locale.FormatTtl(chatSetTtl.Ttl)), "un1", message.GetSender(), ref entities);
+                        content = ReplaceWithLink(string.Format(Strings.Resources.ActionTTLChanged, Locale.FormatTtl(chatSetMessageAutoDeleteTime.MessageAutoDeleteTime)), "un1", message.GetSender(), ref entities);
                     }
                 }
                 else
@@ -1680,14 +1688,17 @@ namespace Unigram.Controls.Messages
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            if (message.ClientService.TryGetUser(message.SenderId, out User user))
+            if (message.IsOutgoing)
             {
-                if (message.IsOutgoing)
+                if (message.ClientService.TryGetUser(message.ChatId, out User user))
                 {
                     content = string.Format(Strings.Resources.ActionSuggestPhotoFromYouDescription, user.FirstName);
                     entities?.Add(new TextEntity(Strings.Resources.ActionSuggestPhotoFromYouDescription.IndexOf("{0}"), user.FirstName.Length, new TextEntityTypeBold()));
                 }
-                else
+            }
+            else
+            {
+                if (message.ClientService.TryGetUser(message.SenderId, out User user))
                 {
                     content = string.Format(Strings.Resources.ActionSuggestPhotoToYouDescription, user.FirstName);
                     entities?.Add(new TextEntity(Strings.Resources.ActionSuggestPhotoToYouDescription.IndexOf("{0}"), user.FirstName.Length, new TextEntityTypeBold()));

@@ -132,7 +132,7 @@ namespace Unigram.Controls
             }
             else if (constraint is Message message)
             {
-                ttl = message.Ttl > 0;
+                ttl = message.SelfDestructTime > 0;
                 constraint = message.Content;
             }
 

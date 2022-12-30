@@ -297,7 +297,7 @@ namespace Unigram.Controls.Messages
                 case MessageChatDeletePhoto:
                 case MessageChatJoinByLink:
                 case MessageChatJoinByRequest:
-                case MessageChatSetTtl:
+                case MessageChatSetMessageAutoDeleteTime:
                 case MessageChatUpgradeFrom:
                 case MessageChatUpgradeTo:
                 case MessageContactRegistered:
@@ -372,7 +372,7 @@ namespace Unigram.Controls.Messages
                 Strings.Resources.AttachPhoto,
                 photo.Caption);
 
-            if (message.Ttl > 0)
+            if (message.SelfDestructTime > 0)
             {
                 HideThumbnail();
             }
@@ -554,7 +554,7 @@ namespace Unigram.Controls.Messages
                 Strings.Resources.AttachVideo,
                 video.Caption);
 
-            if (message.Ttl > 0)
+            if (message.SelfDestructTime > 0)
             {
                 HideThumbnail();
             }

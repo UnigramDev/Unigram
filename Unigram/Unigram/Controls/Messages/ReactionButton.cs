@@ -301,7 +301,7 @@ namespace Unigram.Controls.Messages
                     var next = random.Next(0, stickers.StickersValue.Count);
 
                     var around = await _message.ClientService.DownloadFileAsync(stickers.StickersValue[next].StickerValue, 32);
-                    if (around.Local.IsDownloadingCompleted && IsLoaded && _sticker.FullType is StickerTypeFullInfoCustomEmoji customEmoji)
+                    if (around.Local.IsDownloadingCompleted && IsLoaded && _sticker.FullType is StickerFullTypeCustomEmoji customEmoji)
                     {
                         Icon?.SetCustomEmoji(_message.ClientService, customEmoji.CustomEmojiId);
                         Icon?.Play();

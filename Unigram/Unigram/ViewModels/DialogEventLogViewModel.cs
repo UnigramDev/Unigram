@@ -237,7 +237,7 @@ namespace Unigram.ViewModels
                 }
             }
 
-            return new Message(chatEvent.Id, sender, chatId, null, null, false, false, false, false, true, false, false, false, false, false, false, false, false, false, isChannel, false, false, chatEvent.Date, 0, null, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, null, null);
+            return new Message(chatEvent.Id, sender, chatId, null, null, false, false, false, false, true, false, false, false, false, false, false, false, false, false, isChannel, false, false, chatEvent.Date, 0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, null, null);
         }
 
         private MessageViewModel GetMessage(long chatId, bool isChannel, ChatEvent chatEvent, bool child = false)
@@ -288,7 +288,7 @@ namespace Unigram.ViewModels
                     case ChatEventInvitesToggled:
                     case ChatEventIsAllHistoryAvailableToggled:
                     case ChatEventMessageUnpinned:
-                    case ChatEventMessageTtlChanged:
+                    case ChatEventMessageAutoDeleteTimeChanged:
                     case ChatEventLinkedChatChanged:
                     case ChatEventLocationChanged:
                     case ChatEventVideoChatCreated:

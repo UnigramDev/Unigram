@@ -152,7 +152,7 @@ namespace Unigram.Controls.Messages
                     {
                         foreach (var sticker in stickers.StickersValue)
                         {
-                            if (sticker.FullType is not StickerTypeFullInfoCustomEmoji customEmoji)
+                            if (sticker.FullType is not StickerFullTypeCustomEmoji customEmoji)
                             {
                                 continue;
                             }

@@ -1181,7 +1181,7 @@ namespace Unigram.Common
                 case MessageChatDeletePhoto:
                 case MessageChatJoinByLink:
                 case MessageChatJoinByRequest:
-                case MessageChatSetTtl:
+                case MessageChatSetMessageAutoDeleteTime:
                 case MessageChatUpgradeFrom:
                 case MessageChatUpgradeTo:
                 case MessageContactRegistered:
@@ -1279,10 +1279,10 @@ namespace Unigram.Common
 
                 if (stickerSet.Thumbnail.Format is ThumbnailFormatTgs)
                 {
-                    return new Sticker(stickerSet.Id, 512, 512, "\U0001F4A9", format, new StickerTypeFullInfoRegular(null), stickerSet.ThumbnailOutline, stickerSet.Thumbnail, stickerSet.Thumbnail.File);
+                    return new Sticker(stickerSet.Id, 512, 512, "\U0001F4A9", format, new StickerFullTypeRegular(null), stickerSet.ThumbnailOutline, stickerSet.Thumbnail, stickerSet.Thumbnail.File);
                 }
 
-                return new Sticker(stickerSet.Id, stickerSet.Thumbnail.Width, stickerSet.Thumbnail.Height, "\U0001F4A9", format, new StickerTypeFullInfoRegular(null), stickerSet.ThumbnailOutline, stickerSet.Thumbnail, stickerSet.Thumbnail.File);
+                return new Sticker(stickerSet.Id, stickerSet.Thumbnail.Width, stickerSet.Thumbnail.Height, "\U0001F4A9", format, new StickerFullTypeRegular(null), stickerSet.ThumbnailOutline, stickerSet.Thumbnail, stickerSet.Thumbnail.File);
             }
 
             var cover = stickerSet.Covers?.FirstOrDefault();

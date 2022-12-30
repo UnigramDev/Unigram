@@ -254,8 +254,9 @@ namespace Unigram.ViewModels
             _message.ReplyToMessageId = message.ReplyToMessageId;
             _message.SenderId = message.SenderId;
             _message.SendingState = message.SendingState;
-            _message.Ttl = message.Ttl;
-            _message.TtlExpiresIn = message.TtlExpiresIn;
+            _message.SelfDestructTime = message.SelfDestructTime;
+            _message.SelfDestructIn = message.SelfDestructIn;
+            _message.AutoDeleteIn = message.AutoDeleteIn;
             _message.ViaBotUserId = message.ViaBotUserId;
             _message.InteractionInfo = message.InteractionInfo;
             _message.UnreadReactions = message.UnreadReactions;
@@ -319,8 +320,8 @@ namespace Unigram.ViewModels
         public MessageInteractionInfo InteractionInfo { get => _message.InteractionInfo; set => _message.InteractionInfo = value; }
         public string AuthorSignature => _message.AuthorSignature;
         public long ViaBotUserId => _message.ViaBotUserId;
-        public double TtlExpiresIn { get => _message.TtlExpiresIn; set => _message.TtlExpiresIn = value; }
-        public int Ttl => _message.Ttl;
+        public double SelfDestructIn { get => _message.SelfDestructIn; set => _message.SelfDestructIn = value; }
+        public int SelfDestructTime => _message.SelfDestructTime;
         public long ReplyToMessageId { get => _message.ReplyToMessageId; set => _message.ReplyToMessageId = value; }
         public long ReplyInChatId => _message.ReplyInChatId;
         public MessageForwardInfo ForwardInfo => _message.ForwardInfo;

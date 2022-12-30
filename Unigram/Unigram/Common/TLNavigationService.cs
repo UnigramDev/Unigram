@@ -162,7 +162,7 @@ namespace Unigram.Common
                     await MessagePopup.ShowAsync(user.RestrictionReason, Strings.Resources.AppName, Strings.Resources.OK);
                     return;
                 }
-                else if (user.Id == _clientService.Options.AggressiveAntiSpamUserId)
+                else if (user.Id == _clientService.Options.AntiSpamBotUserId)
                 {
                     var groupInfo = Strings.Resources.EventLogFilterGroupInfo;
                     var administrators = Strings.Resources.ChannelAdministrators;

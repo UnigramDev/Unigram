@@ -890,7 +890,7 @@ namespace Unigram.Views
             var galleryItem = new GalleryAnimation(ViewModel.ClientService, block.Animation, block.Caption.ToPlainText());
             ViewModel.Gallery.Items.Add(galleryItem);
 
-            var message = GetMessage(new MessageAnimation(block.Animation, null, false));
+            var message = GetMessage(new MessageAnimation(block.Animation, null, false, false));
             var element = new StackPanel { Style = Resources["BlockVideoStyle"] as Style };
 
             var content = new AnimationContent(message);

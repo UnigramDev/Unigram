@@ -705,7 +705,7 @@ namespace Unigram.Controls.Messages
             {
                 _popup.IsOpen = false;
 
-                if (_mode == EmojiDrawerMode.CustomEmojis && sticker.FullType is StickerTypeFullInfoCustomEmoji customEmoji)
+                if (_mode == EmojiDrawerMode.CustomEmojis && sticker.FullType is StickerFullTypeCustomEmoji customEmoji)
                 {
                     _clientService.Send(new SetEmojiStatus(new EmojiStatus(customEmoji.CustomEmojiId), 0));
                 }

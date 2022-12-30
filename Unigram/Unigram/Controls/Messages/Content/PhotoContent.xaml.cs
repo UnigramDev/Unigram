@@ -117,10 +117,10 @@ namespace Unigram.Controls.Messages.Content
 
         public void UpdateMessageContentOpened(MessageViewModel message)
         {
-            if (message.Ttl > 0 && _templateApplied)
+            if (message.SelfDestructTime > 0 && _templateApplied)
             {
-                Timer.Maximum = message.Ttl;
-                Timer.Value = DateTime.Now.AddSeconds(message.TtlExpiresIn);
+                Timer.Maximum = message.SelfDestructTime;
+                Timer.Value = DateTime.Now.AddSeconds(message.SelfDestructIn);
             }
         }
 
@@ -197,7 +197,7 @@ namespace Unigram.Controls.Messages.Content
                     Overlay.Opacity = 1;
 
                     Texture.Source = null;
-                    Subtitle.Text = Locale.FormatTtl(message.Ttl, true);
+                    Subtitle.Text = Locale.FormatTtl(message.SelfDestructTime, true);
                 }
                 else
                 {

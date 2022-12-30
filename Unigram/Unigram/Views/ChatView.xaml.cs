@@ -2479,7 +2479,7 @@ namespace Unigram.Views
 
         private bool MessageCopyMedia_Loaded(MessageViewModel message)
         {
-            if (message.Ttl > 0 || !message.CanBeSaved)
+            if (message.SelfDestructTime > 0 || !message.CanBeSaved)
             {
                 return false;
             }
@@ -2564,7 +2564,7 @@ namespace Unigram.Views
 
         private bool MessageSaveMedia_Loaded(MessageViewModel message)
         {
-            if (message.Ttl > 0 || !message.CanBeSaved)
+            if (message.SelfDestructTime > 0 || !message.CanBeSaved)
             {
                 return false;
             }
@@ -3050,7 +3050,7 @@ namespace Unigram.Views
             }
             else if (e.ClickedItem is Sticker sticker)
             {
-                if (sticker.FullType is StickerTypeFullInfoCustomEmoji customEmoji)
+                if (sticker.FullType is StickerFullTypeCustomEmoji customEmoji)
                 {
                     var range = TextField.Document.GetRange(index, TextField.Document.Selection.StartPosition);
                     range.SetText(TextSetOptions.None, string.Empty);
@@ -3392,7 +3392,7 @@ namespace Unigram.Views
                     return;
                 }
 
-                if (sticker.FullType is StickerTypeFullInfoCustomEmoji)
+                if (sticker.FullType is StickerFullTypeCustomEmoji)
                 {
                     content.Width = 40;
                     content.Height = 40;

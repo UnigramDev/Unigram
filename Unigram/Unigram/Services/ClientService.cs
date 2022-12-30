@@ -1755,11 +1755,11 @@ Read more about how to update your device [here](https://support.microsoft.com/h
                     value.Title = updateChatTitle.Title;
                 }
             }
-            else if (update is UpdateChatMessageTtl updateChatMessageTtl)
+            else if (update is UpdateChatMessageAutoDeleteTime updateChatMessageAutoDeleteTime)
             {
-                if (_chats.TryGetValue(updateChatMessageTtl.ChatId, out Chat value))
+                if (_chats.TryGetValue(updateChatMessageAutoDeleteTime.ChatId, out Chat value))
                 {
-                    value.MessageTtl = updateChatMessageTtl.MessageTtl;
+                    value.MessageAutoDeleteTime = updateChatMessageAutoDeleteTime.MessageAutoDeleteTime;
                 }
             }
             else if (update is UpdateChatUnreadMentionCount updateChatUnreadMentionCount)
