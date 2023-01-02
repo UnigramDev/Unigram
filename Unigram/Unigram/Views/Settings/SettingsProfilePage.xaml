@@ -55,14 +55,14 @@
                                 <Button.Flyout>
                                     <MenuFlyout Placement="BottomEdgeAlignedLeft">
                                         <MenuFlyoutItem Text="{CustomResource ChoosePhotoOrVideo}"
-                                                        Click="EditPhoto_Click">
+                                                        Click="{x:Bind ViewModel.SetPhoto}">
                                             <MenuFlyoutItem.Icon>
                                                 <FontIcon Glyph="&#xEB9F;"
                                                           Style="{StaticResource DefaultFontIconStyle}" />
                                             </MenuFlyoutItem.Icon>
                                         </MenuFlyoutItem>
                                         <MenuFlyoutItem Text="{CustomResource StickersName}"
-                                                        Click="CreatePhoto_Click">
+                                                        Click="{x:Bind ViewModel.CreatePhoto}">
                                             <MenuFlyoutItem.Icon>
                                                 <FontIcon Glyph="&#xF4AA;"
                                                           Style="{StaticResource DefaultFontIconStyle}" />

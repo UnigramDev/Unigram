@@ -1,20 +1,16 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Entities;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.Views.Chats;
 using Unigram.Views.Popups;
 using Unigram.Views.Supergroups;
-using Windows.Foundation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using static Unigram.Services.GenerationService;
 
 namespace Unigram.ViewModels.Supergroups
 {
@@ -29,13 +25,16 @@ namespace Unigram.ViewModels.Supergroups
     {
         public ISupergroupEditDelegate Delegate { get; set; }
 
-        public SupergroupEditViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+        private readonly IProfilePhotoService _profilePhotoService;
+
+        public SupergroupEditViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IProfilePhotoService profilePhotoService)
             : base(clientService, settingsService, aggregator)
         {
+            _profilePhotoService = profilePhotoService;
+
             EditTypeCommand = new RelayCommand(EditTypeExecute);
             EditLinkedChatCommand = new RelayCommand(EditLinkedChatExecute);
             EditStickerSetCommand = new RelayCommand(EditStickerSetExecute);
-            EditPhotoCommand = new RelayCommand<StorageMedia>(EditPhotoExecute);
 
             LinksCommand = new RelayCommand(LinksExecute);
             DeleteCommand = new RelayCommand(DeleteExecute);
@@ -327,51 +326,14 @@ namespace Unigram.ViewModels.Supergroups
             NavigationService.GoBack();
         }
 
-        public RelayCommand<StorageMedia> EditPhotoCommand { get; }
-        private async void EditPhotoExecute(StorageMedia file)
+        public async void SetPhoto()
         {
-            var chat = _chat;
-            if (chat == null)
-            {
-                return;
-            }
+            await _profilePhotoService.SetPhotoAsync(Chat.Id);
+        }
 
-            if (file is StorageVideo media)
-            {
-                var props = await media.File.Properties.GetVideoPropertiesAsync();
-
-                var duration = media.EditState.TrimStopTime - media.EditState.TrimStartTime;
-                var seconds = duration.TotalSeconds;
-
-                var conversion = new VideoConversion();
-                conversion.Mute = true;
-                conversion.TrimStartTime = media.EditState.TrimStartTime;
-                conversion.TrimStopTime = media.EditState.TrimStartTime + TimeSpan.FromSeconds(Math.Min(seconds, 9.9));
-                conversion.Transcode = true;
-                conversion.Transform = true;
-                //conversion.Rotation = file.EditState.Rotation;
-                conversion.OutputSize = new Size(640, 640);
-                //conversion.Mirror = transform.Mirror;
-                conversion.CropRectangle = new Rect(
-                    media.EditState.Rectangle.X * props.Width,
-                    media.EditState.Rectangle.Y * props.Height,
-                    media.EditState.Rectangle.Width * props.Width,
-                    media.EditState.Rectangle.Height * props.Height);
-
-                var rectangle = conversion.CropRectangle;
-                rectangle.Width = Math.Min(conversion.CropRectangle.Width, conversion.CropRectangle.Height);
-                rectangle.Height = rectangle.Width;
-
-                conversion.CropRectangle = rectangle;
-
-                var generated = await media.File.ToGeneratedAsync(ConversionType.Transcode, JsonConvert.SerializeObject(conversion));
-                var response = await ClientService.SendAsync(new SetChatPhoto(chat.Id, new InputChatPhotoAnimation(generated, 0)));
-            }
-            else if (file is StoragePhoto photo)
-            {
-                var generated = await photo.File.ToGeneratedAsync(ConversionType.Compress, JsonConvert.SerializeObject(photo.EditState));
-                var response = await ClientService.SendAsync(new SetChatPhoto(chat.Id, new InputChatPhotoStatic(generated)));
-            }
+        public async void CreatePhoto()
+        {
+            await _profilePhotoService.CreatePhotoAsync(NavigationService, Chat.Id);
         }
 
         public RelayCommand EditTypeCommand { get; }

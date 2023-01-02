@@ -1,14 +1,8 @@
 ﻿using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Controls;
-using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Settings;
 using Unigram.ViewModels.Settings.Privacy;
-using Unigram.Views.Popups;
-using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Settings.Privacy
 {
@@ -20,35 +14,6 @@ namespace Unigram.Views.Settings.Privacy
         {
             InitializeComponent();
             Title = Strings.Resources.PrivacyProfilePhoto;
-        }
-
-        private async void EditPhoto_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                var picker = new FileOpenPicker();
-                picker.ViewMode = PickerViewMode.Thumbnail;
-                picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-                picker.FileTypeFilter.AddRange(Constants.MediaTypes);
-
-                var media = await picker.PickSingleMediaAsync();
-                if (media != null)
-                {
-                    var dialog = new EditMediaPopup(media, ImageCropperMask.Ellipse);
-
-                    var confirm = await dialog.ShowAsync();
-                    if (confirm == ContentDialogResult.Primary)
-                    {
-                        await ViewModel.EditPhotoAsync(media);
-                    }
-                }
-            }
-            catch { }
-        }
-
-        private async void CreatePhoto_Click(object sender, RoutedEventArgs e)
-        {
-            await ViewModel.NavigationService.ShowAsync(typeof(CreateChatPhotoPopup), new CreateChatPhotoParameters(null, true));
         }
 
         #region Delegate

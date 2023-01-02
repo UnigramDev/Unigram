@@ -5,8 +5,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Navigation.Services;
 using Unigram.Services;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
@@ -17,10 +19,13 @@ namespace Unigram.ViewModels
 
         public bool IsPublic { get; }
 
-        public CreateChatPhotoParameters(long? chatId, bool isPublic)
+        public bool IsPersonal { get; }
+
+        public CreateChatPhotoParameters(long? chatId, bool isPublic, bool isPersonal)
         {
             ChatId = chatId;
             IsPublic = isPublic;
+            IsPersonal = isPersonal;
         }
     }
 
@@ -28,6 +33,9 @@ namespace Unigram.ViewModels
     {
         private long? _chatId;
         private bool _isPublic;
+        private bool _isPersonal;
+
+        public TaskCompletionSource<object> Completion { get; set; }
 
         public CreateChatPhotoViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
@@ -41,6 +49,7 @@ namespace Unigram.ViewModels
             {
                 _chatId = parameters.ChatId;
                 _isPublic = parameters.IsPublic;
+                _isPersonal = parameters.IsPersonal;
             }
 
             var dark = Settings.Appearance.IsDarkTheme();
@@ -99,6 +108,7 @@ namespace Unigram.ViewModels
         {
             if (SelectedForeground is not Sticker foreground || SelectedBackground is not Background background)
             {
+                Completion?.SetResult(false);
                 return;
             }
 
@@ -126,11 +136,45 @@ namespace Unigram.ViewModels
 
             if (_chatId is long chatId)
             {
-                ClientService.Send(new SetChatPhoto(chatId, inputPhoto));
+                if (ClientService.TryGetUser(chatId, out User user))
+                {
+                    if (_isPersonal)
+                    {
+                        var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.SetUserPhotoAlertMessage, user.FirstName), Strings.Resources.AppName, Strings.Resources.SuggestPhotoShort, Strings.Resources.Cancel);
+                        if (confirm == ContentDialogResult.Primary)
+                        {
+                            ClientService.Send(new SetUserPersonalProfilePhoto(user.Id, inputPhoto));
+                            Completion?.SetResult(true);
+                        }
+                        else
+                        {
+                            Completion?.SetResult(false);
+                        }
+                    }
+                    else
+                    {
+                        var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.SuggestPhotoAlertMessage, user.FirstName), Strings.Resources.AppName, Strings.Resources.SuggestPhotoShort, Strings.Resources.Cancel);
+                        if (confirm == ContentDialogResult.Primary)
+                        {
+                            ClientService.Send(new SuggestUserProfilePhoto(user.Id, inputPhoto));
+                            Completion?.SetResult(true);
+                        }
+                        else
+                        {
+                            Completion?.SetResult(false);
+                        }
+                    }
+                }
+                else
+                {
+                    ClientService.Send(new SetChatPhoto(chatId, inputPhoto));
+                    Completion?.SetResult(true);
+                }
             }
             else
             {
                 ClientService.Send(new SetProfilePhoto(inputPhoto, _isPublic));
+                Completion?.SetResult(true);
             }
         }
     }

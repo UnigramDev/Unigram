@@ -31,6 +31,7 @@
         private Unigram.Services.Factories.IMessageFactory _messageFactory;
         private Unigram.Services.IStorageService _storageService;
         private Unigram.Services.ITranslateService _translateService;
+        private Unigram.Services.IProfilePhotoService _profilePhotoService;
 
         public TLLocator(Unigram.Services.ILifetimeService lifetimeService, Unigram.Services.ILocaleService localeService, Unigram.Services.IPasscodeService passcodeService, Unigram.Services.IPlaybackService playbackService, int session, bool active)
         {
@@ -369,12 +370,21 @@
                     _settingsService,
                     _eventAggregator);
             }
+            else if (type == typeof(Unigram.ViewModels.Users.UserEditViewModel))
+            {
+                return (T)(object)new Unigram.ViewModels.Users.UserEditViewModel(
+                    _clientService,
+                    _settingsService,
+                    _eventAggregator,
+                    _profilePhotoService ??= new Unigram.Services.ProfilePhotoService(_clientService));
+            }
             else if (type == typeof(Unigram.ViewModels.Supergroups.SupergroupEditViewModel))
             {
                 return (T)(object)new Unigram.ViewModels.Supergroups.SupergroupEditViewModel(
                     _clientService,
                     _settingsService,
-                    _eventAggregator);
+                    _eventAggregator,
+                    _profilePhotoService ??= new Unigram.Services.ProfilePhotoService(_clientService));
             }
             else if (type == typeof(Unigram.ViewModels.Supergroups.SupergroupEditTypeViewModel))
             {
@@ -747,7 +757,8 @@
                 return (T)(object)new Unigram.ViewModels.Settings.Privacy.SettingsPrivacyShowPhotoViewModel(
                     _clientService,
                     _settingsService,
-                    _eventAggregator);
+                    _eventAggregator,
+                    _profilePhotoService ??= new Unigram.Services.ProfilePhotoService(_clientService));
             }
             else if (type == typeof(Unigram.ViewModels.Settings.Privacy.SettingsPrivacyShowStatusViewModel))
             {
@@ -768,7 +779,8 @@
                 return (T)(object)new Unigram.ViewModels.Settings.SettingsProfileViewModel(
                     _clientService,
                     _settingsService,
-                    _eventAggregator);
+                    _eventAggregator,
+                    _profilePhotoService ??= new Unigram.Services.ProfilePhotoService(_clientService));
             }
             else if (type == typeof(Unigram.ViewModels.Settings.SettingsPasswordViewModel))
             {
@@ -1094,6 +1106,10 @@
                 return (T)(_translateService ??= new Unigram.Services.TranslateService(
                     _clientService,
                     _settingsService));
+            }
+            else if (type == typeof(Unigram.Services.IProfilePhotoService))
+            {
+                return (T)(_profilePhotoService ??= new Unigram.Services.ProfilePhotoService(_clientService));
             }
 
             return default;

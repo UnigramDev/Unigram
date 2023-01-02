@@ -1,4 +1,5 @@
-﻿using Telegram.Td.Api;
+﻿using System.Threading.Tasks;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Chats;
@@ -14,13 +15,17 @@ namespace Unigram.Views.Popups
     {
         public CreateChatPhotoViewModel ViewModel => DataContext as CreateChatPhotoViewModel;
 
-        public CreateChatPhotoPopup()
+        public CreateChatPhotoPopup(TaskCompletionSource<object> completion)
         {
             InitializeComponent();
+
+            _completion = completion;
 
             PrimaryButtonText = Strings.Resources.Save;
             SecondaryButtonText = Strings.Resources.Cancel;
         }
+
+        private readonly TaskCompletionSource<object> _completion;
 
         private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
         {
@@ -59,6 +64,7 @@ namespace Unigram.Views.Popups
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
+            ViewModel.Completion = _completion;
         }
 
         private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

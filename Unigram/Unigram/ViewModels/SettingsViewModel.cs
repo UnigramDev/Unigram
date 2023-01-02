@@ -1,21 +1,16 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Entities;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.Views;
 using Unigram.Views.Settings;
-using Windows.Foundation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using static Unigram.Services.GenerationService;
 
 namespace Unigram.ViewModels
 {
@@ -39,7 +34,6 @@ namespace Unigram.ViewModels
             _storageService = storageService;
 
             AskCommand = new RelayCommand(AskExecute);
-            EditPhotoCommand = new RelayCommand<StorageMedia>(EditPhotoExecute);
             NavigateCommand = new RelayCommand<SettingsSearchEntry>(NavigateExecute);
 
             Results = new MvxObservableCollection<SettingsSearchEntry>();
@@ -141,47 +135,6 @@ namespace Unigram.ViewModels
         }
 
 
-
-        public RelayCommand<StorageMedia> EditPhotoCommand { get; }
-        private async void EditPhotoExecute(StorageMedia media)
-        {
-            if (media is StorageVideo)
-            {
-                var props = await media.File.Properties.GetVideoPropertiesAsync();
-
-                var duration = media.EditState.TrimStopTime - media.EditState.TrimStartTime;
-                var seconds = duration.TotalSeconds;
-
-                var conversion = new VideoConversion();
-                conversion.Mute = true;
-                conversion.TrimStartTime = media.EditState.TrimStartTime;
-                conversion.TrimStopTime = media.EditState.TrimStartTime + TimeSpan.FromSeconds(Math.Min(seconds, 9.9));
-                conversion.Transcode = true;
-                conversion.Transform = true;
-                //conversion.Rotation = file.EditState.Rotation;
-                conversion.OutputSize = new Size(640, 640);
-                //conversion.Mirror = transform.Mirror;
-                conversion.CropRectangle = new Rect(
-                    media.EditState.Rectangle.X * props.Width,
-                    media.EditState.Rectangle.Y * props.Height,
-                    media.EditState.Rectangle.Width * props.Width,
-                    media.EditState.Rectangle.Height * props.Height);
-
-                var rectangle = conversion.CropRectangle;
-                rectangle.Width = Math.Min(conversion.CropRectangle.Width, conversion.CropRectangle.Height);
-                rectangle.Height = rectangle.Width;
-
-                conversion.CropRectangle = rectangle;
-
-                var generated = await media.File.ToGeneratedAsync(ConversionType.Transcode, JsonConvert.SerializeObject(conversion));
-                var response = await ClientService.SendAsync(new SetProfilePhoto(new InputChatPhotoAnimation(generated, 0)));
-            }
-            else
-            {
-                var generated = await media.File.ToGeneratedAsync(ConversionType.Compress, JsonConvert.SerializeObject(media.EditState));
-                var response = await ClientService.SendAsync(new SetProfilePhoto(new InputChatPhotoStatic(generated)));
-            }
-        }
 
         public RelayCommand AskCommand { get; }
         private async void AskExecute()
