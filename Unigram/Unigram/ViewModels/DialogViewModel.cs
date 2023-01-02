@@ -1342,10 +1342,10 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var response = await ClientService.SendAsync(new GetChatSponsoredMessage(chat.Id));
-            if (response is SponsoredMessage sponsored)
+            var response = await ClientService.SendAsync(new GetChatSponsoredMessages(chat.Id));
+            if (response is SponsoredMessages sponsored && sponsored.Messages.Count > 0)
             {
-                SponsoredMessage = sponsored;
+                SponsoredMessage = sponsored.Messages[0];
                 //Items.Add(_messageFactory.Create(this, new Message(0, new MessageSenderChat(sponsored.SponsorChatId), sponsored.SponsorChatId, null, null, false, false, false, false, false, false, false, false, false, false, false, false, true, false, 0, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, sponsored.Content, null)));
             }
         }
@@ -2345,47 +2345,6 @@ namespace Unigram.ViewModels
         public async Task SendMessageAsync(string text, IList<TextEntity> entities = null, MessageSendOptions options = null)
         {
             text = text.Replace('\v', '\n').Replace('\r', '\n');
-
-            if (text.StartsWith("/k8"))
-            {
-                var data = text.Split(' ');
-                var emoji = data[1];
-
-                var sticker = await ClientService.SendAsync(new GetAnimatedEmoji(emoji)) as AnimatedEmoji;
-                if (sticker != null)
-                {
-                    if (sticker.Sticker.StickerValue.Local.IsDownloadingCompleted)
-                    {
-                        var arguments = new GenerationService.ChatPhotoConversion
-                        {
-                            StickerFileId = sticker.Sticker.StickerValue.Id,
-                            Scale = 1
-                        };
-
-                        var background = ClientService.GetChatTheme(_chat.ThemeName)?.LightSettings.Background;
-                        if (background == null)
-                        {
-                            background = ClientService.GetSelectedBackground(false);
-                        }
-
-                        if (background != null)
-                        {
-                            var url = await ClientService.SendAsync(new GetBackgroundUrl(background.Name, background.Type)) as HttpUrl;
-                            if (url != null)
-                            {
-                                arguments.BackgroundUrl = url.Url;
-                            }
-                        }
-
-                        ClientService.Send(new SendMessage(_chat.Id, 0, 0, null, null, new InputMessageAnimation(new InputFileGenerated("animation.mp4", "token" + "#" + ConversionType.ChatPhoto + "#" + Newtonsoft.Json.JsonConvert.SerializeObject(arguments) + "#" + DateTime.Now.ToString("s"), 0), null, null, 0, 640, 640, null)));
-                        return;
-                    }
-                    else
-                    {
-                        ClientService.DownloadFile(sticker.Sticker.StickerValue.Id, 32);
-                    }
-                }
-            }
 
             var chat = _chat;
             if (chat == null)

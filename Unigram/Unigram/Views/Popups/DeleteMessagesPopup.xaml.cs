@@ -44,18 +44,38 @@ namespace Unigram.Views.Popups
                     : Visibility.Collapsed;
 
                 var sender = clientService.GetMessageSender(first.SenderId);
+                var deleteAllText = string.Empty;
+
                 if (sender is User senderUser)
                 {
-                    DeleteAllCheck.Content = string.Format(Strings.Resources.DeleteAllFrom, senderUser.FullName());
+                    deleteAllText = string.Format(Strings.Resources.DeleteAllFrom, senderUser.FullName());
                 }
                 else if (sender is Chat senderChat)
                 {
-                    DeleteAllCheck.Content = string.Format(Strings.Resources.DeleteAllFrom, senderChat.Title);
+                    deleteAllText = string.Format(Strings.Resources.DeleteAllFrom, senderChat.Title);
                 }
 
+                DeleteAllCheck.Content = deleteAllText;
                 TextBlockHelper.SetMarkdown(Message, messages.Count == 1
                     ? Strings.Resources.AreYouSureDeleteSingleMessage
                     : Strings.Resources.AreYouSureDeleteFewMessages);
+
+                // TODO: I don't like the UI moving around when the text appears
+                // also, the CheckBox looks misaligned on two lines, one more reason not to have this.
+                //var queue = Windows.System.DispatcherQueue.GetForCurrentThread();
+                //clientService.Send(new SearchChatMessages(chat.Id, string.Empty, first.SenderId, 0, 0, 1, null, 0), result =>
+                //{
+                //    if (result is Messages messages)
+                //    {
+                //        queue.TryEnqueue(() =>
+                //        {
+                //            if (DeleteAllCheck.IsLoaded)
+                //            {
+                //                DeleteAllCheck.Content = deleteAllText + string.Format(" ({0})", Locale.Declension("messages", messages.TotalCount));
+                //            }
+                //        });
+                //    }
+                //});
             }
             else
             {

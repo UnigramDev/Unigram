@@ -310,6 +310,7 @@ namespace Unigram.ViewModels
 
             if (dialog.Items.Count == 1)
             {
+                dialog.Items[0].HasSpoiler = dialog.Spoiler && !dialog.IsFilesSelected;
                 await SendStorageMediaAsync(chat, dialog.Items[0], dialog.Caption, dialog.IsFilesSelected, options);
             }
             else if (dialog.Items.Count > 1 && dialog.IsAlbum && dialog.IsAlbumAvailable)
@@ -318,6 +319,7 @@ namespace Unigram.ViewModels
 
                 foreach (var item in dialog.Items)
                 {
+                    item.HasSpoiler = dialog.Spoiler && !dialog.IsFilesSelected;
                     group.Add(item);
 
                     if (group.Count == 10)
@@ -341,6 +343,7 @@ namespace Unigram.ViewModels
 
                 foreach (var file in dialog.Items)
                 {
+                    file.HasSpoiler = dialog.Spoiler && !dialog.IsFilesSelected;
                     await SendStorageMediaAsync(chat, file, null, dialog.IsFilesSelected, options);
                 }
             }

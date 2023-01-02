@@ -214,7 +214,7 @@ namespace Unigram.Controls
                 opacityAnim.InsertKeyFrame(0.0f, 1.0f);
                 opacityAnim.InsertKeyFrame(0.333f, 1.0f, singleStep);
                 opacityAnim.InsertKeyFrame(1.0f, 0.0f, comp.CreateCubicBezierEasingFunction(c_frame2point1, c_frame2point2));
-                opacityAnim.Duration = TimeSpan.FromMilliseconds(600);
+                opacityAnim.Duration = TimeSpan.FromMilliseconds(300);
 
                 visual.StartAnimation("Opacity", opacityAnim);
             }
@@ -226,18 +226,18 @@ namespace Unigram.Controls
             ScalarKeyFrameAnimation posAnim = comp.CreateScalarKeyFrameAnimation();
             posAnim.InsertKeyFrame(0.0f, from < to ? from : (from + (dimension * (beginScale - 1))));
             posAnim.InsertKeyFrame(0.333f, from < to ? (to + (dimension * (endScale - 1))) : to, singleStep);
-            posAnim.Duration = TimeSpan.FromMilliseconds(600);
+            posAnim.Duration = TimeSpan.FromMilliseconds(300);
 
             ScalarKeyFrameAnimation scaleAnim = comp.CreateScalarKeyFrameAnimation();
             scaleAnim.InsertKeyFrame(0.0f, beginScale);
             scaleAnim.InsertKeyFrame(0.333f, MathF.Abs(to - from) / dimension + (from < to ? endScale : beginScale), comp.CreateCubicBezierEasingFunction(c_frame1point1, c_frame1point2));
             scaleAnim.InsertKeyFrame(1.0f, endScale, comp.CreateCubicBezierEasingFunction(c_frame2point1, c_frame2point2));
-            scaleAnim.Duration = TimeSpan.FromMilliseconds(600);
+            scaleAnim.Duration = TimeSpan.FromMilliseconds(300);
 
             ScalarKeyFrameAnimation centerAnim = comp.CreateScalarKeyFrameAnimation();
             centerAnim.InsertKeyFrame(0.0f, from < to ? 0.0f : dimension);
             centerAnim.InsertKeyFrame(1.0f, from < to ? dimension : 0.0f, singleStep);
-            centerAnim.Duration = TimeSpan.FromMilliseconds(200);
+            centerAnim.Duration = TimeSpan.FromMilliseconds(100);
 
             if (Orientation == Orientation.Horizontal)
             {

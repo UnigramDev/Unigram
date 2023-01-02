@@ -119,45 +119,7 @@ namespace Unigram.Controls
                 return;
             }
 
-            if (chat.Type is ChatTypePrivate or ChatTypeSecret)
-            {
-                var user = ViewModel.ClientService.GetUser(chat);
-                if (user == null || user.ProfilePhoto == null)
-                {
-                    return;
-                }
-
-                var userFull = ViewModel.ClientService.GetUserFull(user.Id);
-                if (userFull?.Photo == null)
-                {
-                    return;
-                }
-
-                var viewModel = new UserPhotosViewModel(ViewModel.ClientService, ViewModel.StorageService, ViewModel.Aggregator, user, userFull);
-                await GalleryView.ShowAsync(viewModel, () => Photo);
-            }
-            else if (chat.Type is ChatTypeBasicGroup)
-            {
-                var basicGroupFull = ViewModel.ClientService.GetBasicGroupFull(chat);
-                if (basicGroupFull?.Photo == null)
-                {
-                    return;
-                }
-
-                var viewModel = new ChatPhotosViewModel(ViewModel.ClientService, ViewModel.StorageService, ViewModel.Aggregator, chat, basicGroupFull.Photo);
-                await GalleryView.ShowAsync(viewModel, () => Photo);
-            }
-            else if (chat.Type is ChatTypeSupergroup)
-            {
-                var supergroupFull = ViewModel.ClientService.GetSupergroupFull(chat);
-                if (supergroupFull?.Photo == null)
-                {
-                    return;
-                }
-
-                var viewModel = new ChatPhotosViewModel(ViewModel.ClientService, ViewModel.StorageService, ViewModel.Aggregator, chat, supergroupFull.Photo);
-                await GalleryView.ShowAsync(viewModel, () => Photo);
-            }
+            await GalleryView.ShowAsync(ViewModel.ClientService, ViewModel.StorageService, ViewModel.Aggregator, chat, () => Photo);
         }
 
         #region Delegate

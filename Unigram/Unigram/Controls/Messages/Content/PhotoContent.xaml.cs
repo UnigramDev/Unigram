@@ -19,6 +19,8 @@ namespace Unigram.Controls.Messages.Content
         private string _fileToken;
         private string _thumbnailToken;
 
+        private bool _hidden = true;
+
         public PhotoContent(MessageViewModel message, bool album = false)
         {
             _message = message;
@@ -65,13 +67,19 @@ namespace Unigram.Controls.Messages.Content
 
         public void UpdateMessage(MessageViewModel message)
         {
+            var prevId = _message?.Id;
+            var nextId = message?.Id;
+
             _message = message;
 
-            var photo = GetContent(message.Content);
+            var photo = GetContent(message.Content, out bool hasSpoiler);
             if (photo == null || !_templateApplied)
             {
+                _hidden = (prevId != nextId || _hidden) && hasSpoiler;
                 return;
             }
+
+            _hidden = (prevId != nextId || _hidden) && hasSpoiler;
 
             LayoutRoot.Constraint = message;
             LayoutRoot.Background = null;
@@ -131,7 +139,7 @@ namespace Unigram.Controls.Messages.Content
 
         private void UpdateFile(MessageViewModel message, File file)
         {
-            var photo = GetContent(message.Content);
+            var photo = GetContent(message.Content, out bool hasSpoiler);
             if (photo == null || !_templateApplied)
             {
                 return;
@@ -216,7 +224,14 @@ namespace Unigram.Controls.Messages.Content
 
                     Overlay.Opacity = 0;
 
-                    UpdateTexture(message, big, file);
+                    if (hasSpoiler && _hidden)
+                    {
+                        Texture.Source = null;
+                    }
+                    else
+                    {
+                        UpdateTexture(message, big, file);
+                    }
                 }
             }
         }
@@ -261,7 +276,7 @@ namespace Unigram.Controls.Messages.Content
 
         private void UpdateThumbnail(object target, File file)
         {
-            var photo = GetContent(_message.Content);
+            var photo = GetContent(_message.Content, out _);
             if (photo == null || !_templateApplied)
             {
                 return;
@@ -342,33 +357,46 @@ namespace Unigram.Controls.Messages.Content
             return false;
         }
 
-        private Photo GetContent(MessageContent content)
+        private Photo GetContent(MessageContent content, out bool hasSpoiler)
         {
             if (content is MessagePhoto photo)
             {
+                hasSpoiler = photo.HasSpoiler;
                 return photo.Photo;
             }
             else if (content is MessageGame game)
             {
+                hasSpoiler = false;
                 return game.Game.Photo;
             }
             else if (content is MessageText text && text.WebPage != null)
             {
+                hasSpoiler = false;
                 return text.WebPage.Photo;
             }
             else if (content is MessageInvoice invoice && invoice.ExtendedMedia is MessageExtendedMediaPhoto extendedMediaPhoto)
             {
+                hasSpoiler = false;
                 return extendedMediaPhoto.Photo;
             }
 
+            hasSpoiler = false;
             return null;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var photo = GetContent(_message?.Content);
+            var photo = GetContent(_message?.Content, out bool hasSpoiler);
             if (photo == null)
             {
+                return;
+            }
+
+            if (hasSpoiler && _hidden)
+            {
+                _hidden = false;
+                UpdateMessage(_message);
+
                 return;
             }
 

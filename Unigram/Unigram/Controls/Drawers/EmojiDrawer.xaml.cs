@@ -18,7 +18,16 @@ using StickerSetViewModel = Unigram.ViewModels.Drawers.StickerSetViewModel;
 
 namespace Unigram.Controls.Drawers
 {
-    public sealed partial class EmojiDrawer : UserControl, IDrawer
+    public class TopicsEmojiDrawer : EmojiDrawer
+    {
+        public TopicsEmojiDrawer()
+            : base(EmojiDrawerMode.CustomEmojis)
+        {
+
+        }
+    }
+
+    public partial class EmojiDrawer : UserControl, IDrawer
     {
         public EmojiDrawerViewModel ViewModel => DataContext as EmojiDrawerViewModel;
 

@@ -32,7 +32,9 @@ namespace Unigram.Common
             _source = new RemoteVideoSource(clientService, file, duration);
         }
 
-        public int FileId => _source.Id;
+        public File File => _file;
+
+        public int FileId => _file.Id;
 
         public bool CanRead => true;
 
@@ -254,7 +256,8 @@ namespace Unigram.Common
             _canceled = true;
             _clientService.Send(new CancelDownloadFile(_file.Id, false));
 
-            _event.Set();
+            _event.Dispose();
+            _readLock.Dispose();
         }
     }
 

@@ -16,53 +16,53 @@ using Windows.UI.Xaml.Controls.Primitives;
 namespace Unigram.ViewModels
 {
     public partial class DialogViewModel : IHandle
-        //IHandle<UpdateWindowActivated>,
-        //IHandle<UpdateChatPermissions>,
-        //IHandle<UpdateChatReplyMarkup>,
-        //IHandle<UpdateChatUnreadMentionCount>,
-        //IHandle<UpdateChatUnreadReactionCount>,
-        //IHandle<UpdateChatReadOutbox>,
-        //IHandle<UpdateChatReadInbox>,
-        //IHandle<UpdateChatDraftMessage>,
-        //IHandle<UpdateChatDefaultDisableNotification>,
-        //IHandle<UpdateChatMessageSender>,
-        //IHandle<UpdateChatActionBar>,
-        //IHandle<UpdateChatHasScheduledMessages>,
-        //IHandle<UpdateChatVideoChat>,
-        //IHandle<UpdateChatPendingJoinRequests>,
+    //IHandle<UpdateWindowActivated>,
+    //IHandle<UpdateChatPermissions>,
+    //IHandle<UpdateChatReplyMarkup>,
+    //IHandle<UpdateChatUnreadMentionCount>,
+    //IHandle<UpdateChatUnreadReactionCount>,
+    //IHandle<UpdateChatReadOutbox>,
+    //IHandle<UpdateChatReadInbox>,
+    //IHandle<UpdateChatDraftMessage>,
+    //IHandle<UpdateChatDefaultDisableNotification>,
+    //IHandle<UpdateChatMessageSender>,
+    //IHandle<UpdateChatActionBar>,
+    //IHandle<UpdateChatHasScheduledMessages>,
+    //IHandle<UpdateChatVideoChat>,
+    //IHandle<UpdateChatPendingJoinRequests>,
 
-        //IHandle<UpdateChatAction>,
+    //IHandle<UpdateChatAction>,
 
-        //IHandle<UpdateChatLastMessage>,
-        //IHandle<UpdateNewMessage>,
-        //IHandle<UpdateDeleteMessages>,
+    //IHandle<UpdateChatLastMessage>,
+    //IHandle<UpdateNewMessage>,
+    //IHandle<UpdateDeleteMessages>,
 
-        //IHandle<UpdateMessageContent>,
-        //IHandle<UpdateMessageContentOpened>,
-        //IHandle<UpdateMessageMentionRead>,
-        //IHandle<UpdateMessageUnreadReactions>,
-        //IHandle<UpdateMessageEdited>,
-        //IHandle<UpdateMessageInteractionInfo>,
-        //IHandle<UpdateMessageIsPinned>,
-        //IHandle<UpdateMessageSendFailed>,
-        //IHandle<UpdateMessageSendSucceeded>,
-        //IHandle<UpdateAnimatedEmojiMessageClicked>,
+    //IHandle<UpdateMessageContent>,
+    //IHandle<UpdateMessageContentOpened>,
+    //IHandle<UpdateMessageMentionRead>,
+    //IHandle<UpdateMessageUnreadReactions>,
+    //IHandle<UpdateMessageEdited>,
+    //IHandle<UpdateMessageInteractionInfo>,
+    //IHandle<UpdateMessageIsPinned>,
+    //IHandle<UpdateMessageSendFailed>,
+    //IHandle<UpdateMessageSendSucceeded>,
+    //IHandle<UpdateAnimatedEmojiMessageClicked>,
 
-        //IHandle<UpdateUser>,
-        //IHandle<UpdateUserFullInfo>,
-        //IHandle<UpdateSecretChat>,
-        //IHandle<UpdateBasicGroup>,
-        //IHandle<UpdateBasicGroupFullInfo>,
-        //IHandle<UpdateSupergroup>,
-        //IHandle<UpdateSupergroupFullInfo>,
-        //IHandle<UpdateUserStatus>,
-        //IHandle<UpdateChatTitle>,
-        //IHandle<UpdateChatPhoto>,
-        //IHandle<UpdateChatTheme>,
-        //IHandle<UpdateChatNotificationSettings>,
-        //IHandle<UpdateChatOnlineMemberCount>,
+    //IHandle<UpdateUser>,
+    //IHandle<UpdateUserFullInfo>,
+    //IHandle<UpdateSecretChat>,
+    //IHandle<UpdateBasicGroup>,
+    //IHandle<UpdateBasicGroupFullInfo>,
+    //IHandle<UpdateSupergroup>,
+    //IHandle<UpdateSupergroupFullInfo>,
+    //IHandle<UpdateUserStatus>,
+    //IHandle<UpdateChatTitle>,
+    //IHandle<UpdateChatPhoto>,
+    //IHandle<UpdateChatTheme>,
+    //IHandle<UpdateChatNotificationSettings>,
+    //IHandle<UpdateChatOnlineMemberCount>,
 
-        //IHandle<UpdateGroupCall>
+    //IHandle<UpdateGroupCall>
     {
         public override void Subscribe()
         {
@@ -625,17 +625,11 @@ namespace Unigram.ViewModels
             {
                 Handle(update.MessageId, message =>
                 {
-                    if (update.NewContent is MessageAlbum)
-                    {
-                    }
-                    else
+                    if (update.NewContent is not MessageAlbum)
                     {
                         message.Content = update.NewContent;
 
-                        if (!ClientService.Options.DisableAnimatedEmoji)
-                        {
-                            ProcessEmoji(new[] { message });
-                        }
+                        ProcessEmoji(message);
 
                         if (update.NewContent is MessageExpiredPhoto or MessageExpiredVideo)
                         {

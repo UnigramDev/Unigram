@@ -61,9 +61,9 @@ namespace Unigram.Controls
         {
             var popup = new MessagePopup
             {
-                Title = title,
+                Title = title ?? Strings.Resources.AppName,
                 Message = message,
-                PrimaryButtonText = primary ?? string.Empty,
+                PrimaryButtonText = primary ?? Strings.Resources.OK,
                 SecondaryButtonText = secondary ?? string.Empty
             };
 
@@ -80,9 +80,9 @@ namespace Unigram.Controls
         {
             var popup = new MessagePopup
             {
-                Title = title,
+                Title = title ?? Strings.Resources.AppName,
                 FormattedMessage = message,
-                PrimaryButtonText = primary ?? string.Empty,
+                PrimaryButtonText = primary ?? Strings.Resources.OK,
                 SecondaryButtonText = secondary ?? string.Empty
             };
 

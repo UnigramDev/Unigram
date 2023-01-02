@@ -195,6 +195,11 @@ namespace Unigram.Views.Host
                         break;
                 }
 
+                //if (service is TLRootNavigationService rootService)
+                //{
+                //    rootService.Handle(session.ClientService.GetAuthorizationState());
+                //}
+
                 var counters = session.ClientService.GetUnreadCount(new ChatListMain());
                 if (counters != null)
                 {
@@ -625,6 +630,11 @@ namespace Unigram.Views.Host
         }
 
         #region Exposed
+
+        public void PresentContent(UIElement element)
+        {
+            Transition.Child = element;
+        }
 
         public void UpdateSessions()
         {

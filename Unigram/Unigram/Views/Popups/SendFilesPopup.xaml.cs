@@ -133,6 +133,7 @@ namespace Unigram.Views.Popups
         public bool CanSchedule { get; set; }
         public bool IsSavedMessages { get; set; }
 
+        public bool Spoiler { get; private set; }
         public bool? Schedule { get; private set; }
         public bool? Silent { get; private set; }
 
@@ -245,7 +246,7 @@ namespace Unigram.Views.Popups
 
                     CaptionInput.Document.Selection.StartPosition = start;
                 }
-                else if (e.ClickedItem is Sticker sticker && sticker.FullType is StickerTypeFullInfoCustomEmoji customEmoji)
+                else if (e.ClickedItem is Sticker sticker && sticker.FullType is StickerFullTypeCustomEmoji customEmoji)
                 {
                     var start = CaptionInput.Document.Selection.StartPosition - 1 - result.Length + 1;
                     var range = CaptionInput.Document.GetRange(CaptionInput.Document.Selection.StartPosition - 1 - result.Length, CaptionInput.Document.Selection.StartPosition);
@@ -646,6 +647,14 @@ namespace Unigram.Views.Popups
             var self = IsSavedMessages;
 
             var flyout = new MenuFlyout();
+
+            var media = Items.All(x => x is StoragePhoto or StorageVideo);
+            if (media && !IsFilesSelected)
+            {
+                flyout.CreateFlyoutItem(new RelayCommand(() => Spoiler = !Spoiler), Spoiler ? Strings.Resources.DisablePhotoSpoiler : Strings.Resources.EnablePhotoSpoiler, new FontIcon { Glyph = Icons.TabInPrivate });
+                flyout.CreateFlyoutSeparator();
+            }
+
             flyout.CreateFlyoutItem(new RelayCommand(() => { Silent = true; Hide(ContentDialogResult.Primary); }), Strings.Resources.SendWithoutSound, new FontIcon { Glyph = Icons.AlertOff });
             flyout.CreateFlyoutItem(new RelayCommand(() => { Schedule = true; Hide(ContentDialogResult.Primary); }), self ? Strings.Resources.SetReminder : Strings.Resources.ScheduleMessage, new FontIcon { Glyph = Icons.CalendarClock });
 

@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Unigram.Logs;
 using Unigram.Navigation;
+using Unigram.Views.Host;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.UI.ViewManagement;
@@ -13,6 +14,8 @@ namespace Unigram.Services.ViewService
 {
     public interface IViewService
     {
+        public bool IsSupported { get; }
+
         ///<summary>
         /// Creates and opens new secondary view        
         /// </summary>
@@ -57,6 +60,8 @@ namespace Unigram.Services.ViewService
             }
         }
 
+        public bool IsSupported => true;
+
         public async Task<ViewLifetimeControl> OpenAsync(ViewServiceParams parameters)
         {
             //if (ApiInformation.IsPropertyPresent("Windows.UI.ViewManagement.ApplicationView", "PersistedStateId"))
@@ -68,38 +73,53 @@ namespace Unigram.Services.ViewService
             //    catch { }
             //}
 
-            var newView = CoreApplication.CreateNewView();
-            var dispatcher = new DispatcherContext(newView.DispatcherQueue);
-
-            var newControl = await dispatcher.DispatchAsync(async () =>
+            if (IsSupported)
             {
-                var newWindow = Window.Current;
-                var newAppView = ApplicationView.GetForCurrentView();
+                var newView = CoreApplication.CreateNewView();
+                var dispatcher = new DispatcherContext(newView.DispatcherQueue);
 
-                newAppView.Title = parameters.Title ?? string.Empty;
-                newAppView.PersistedStateId = parameters.PersistentId ?? string.Empty;
-
-                var control = ViewLifetimeControl.GetForCurrentView();
-                control.Released += (s, args) =>
+                var newControl = await dispatcher.DispatchAsync(async () =>
                 {
-                    newWindow.Close();
-                };
+                    var newWindow = Window.Current;
+                    var newAppView = ApplicationView.GetForCurrentView();
 
-                newWindow.Content = parameters.Content(control);
-                newWindow.Activate();
+                    newAppView.Title = parameters.Title ?? string.Empty;
+                    newAppView.PersistedStateId = parameters.PersistentId ?? string.Empty;
 
-                var preferences = ViewModePreferences.CreateDefault(parameters.ViewMode);
-                if (parameters.Width != 0 && parameters.Height != 0)
+                    var control = ViewLifetimeControl.GetForCurrentView();
+                    control.Released += (s, args) =>
+                    {
+                        newWindow.Close();
+                    };
+
+                    newWindow.Content = parameters.Content(control);
+                    newWindow.Activate();
+
+                    var preferences = ViewModePreferences.CreateDefault(parameters.ViewMode);
+                    if (parameters.Width != 0 && parameters.Height != 0)
+                    {
+                        preferences.CustomSize = new Size(parameters.Width, parameters.Height);
+                    }
+
+                    await ApplicationViewSwitcher.TryShowAsViewModeAsync(newAppView.Id, parameters.ViewMode, preferences);
+                    newAppView.TryResizeView(preferences.CustomSize);
+
+                    return control;
+                }).ConfigureAwait(false);
+                return newControl;
+            }
+            else
+            {
+                await CoreApplication.MainView.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
                 {
-                    preferences.CustomSize = new Size(parameters.Width, parameters.Height);
-                }
-
-                await ApplicationViewSwitcher.TryShowAsViewModeAsync(newAppView.Id, parameters.ViewMode, preferences);
-                newAppView.TryResizeView(preferences.CustomSize);
-
-                return control;
-            }).ConfigureAwait(false);
-            return newControl;
+                    if (Window.Current.Content is RootPage root)
+                    {
+                        root.PresentContent(parameters.Content(null));
+                        await ApplicationViewSwitcher.TryShowAsStandaloneAsync(ApplicationView.GetForCurrentView().Id);
+                    }
+                });
+                return null;
+            }
         }
 
         public async Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null,

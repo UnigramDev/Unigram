@@ -487,7 +487,18 @@ namespace Unigram.ViewModels.Drawers
             var response = await ClientService.SendAsync(new GetCustomEmojiStickers(emoji));
             if (response is Stickers stickers)
             {
-                _reactionTopSet.Update(stickers.StickersValue.OrderBy(x => emoji.IndexOf(x.CustomEmojiId)), true);
+                _reactionTopSet.Update(stickers.StickersValue.OrderBy(x => emoji.IndexOf(x.FullType is StickerFullTypeCustomEmoji customEmoji ? customEmoji.CustomEmojiId : 0)), true);
+            }
+        }
+
+        public async void UpdateTopics()
+        {
+            _ = UpdateAsync();
+
+            var response = await ClientService.SendAsync(new GetForumTopicDefaultIcons()) as Stickers;
+            if (response is Stickers stickers)
+            {
+                _reactionTopSet.Update(stickers.StickersValue, true);
             }
         }
 

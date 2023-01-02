@@ -231,50 +231,24 @@ namespace Unigram.Services
 
         #region App version
 
-        public const ulong CurrentVersion = (9UL << 48) | (2UL << 32) | (0UL << 16);
-        public const string CurrentChangelog = @"GLOBAL AUTO-DELETE, TOPICS 2.0 AND MUCH MORE
+        public const ulong CurrentVersion = (9UL << 48) | (3UL << 32) | (0UL << 16);
+        public const string CurrentChangelog = @"HIDDEN MEDIA, PROFILE PICTURES FOR YOUR CONTACTS, AND PUPPIES
 
-**Global Auto-Delete**
-• You can set a Global Auto-Delete Timer for all new chats and groups you create.
-• New messages will be deleted after 1 day, week, month – or a custom duration you choose.
-• The new menu in Settings > Privacy & Security > Auto-Delete Messages also lets you set up Auto-Delete for any of your existing chats faster.
+We found someone's letter to Santa and implemented everything on the list:
 
-**Topics 2.0**
-• Admins of groups with 100+ members can organize discussions into separate topics.
+**Hidden Media**
+• Media with spoiler effects. You can wrap photos and videos you send in a fuzzy cover by selecting media in the attachment menu and tapping (⋯) > Hide With Spoiler.
 
-**Topics 2.0: Navigation**
-• Topics now have a two-column layout that keeps recent chats easily accessible as you browse topics.
-• Previews of topic messages in the chat list work like a button – tap to jump to the message or hold to preview the topic.
-• When in a topic, you can hold the 'Back' button to go back to All Chats.
+**Profile Pictures for Your Contacts**
+• Setting pictures for your contacts. You can choose your own picture for a contact – only you will see it on their profile.
+• Suggested profile pictures. When editing your contacts, you can suggest a photo for their profile. It will take them just two taps to add the picture you suggested.
+• Public profile pictures. If you only allow certain users to see your profile photos, you can set a public picture for everyone else.
+• Ultimate profile picture privacy. You can set 'Who can see my profile photos' to 'Nobody' and add some users or groups as exceptions.
 
-**Topics 2.0: Organization**
-• Up to 5 topics can be pinned to the top of the list.
-• Each topic now supports multiple pinned messages.
-• The 'View as Messages' mode now shows which topic each message belongs to.
-• Badge counters for topics you never opened will have a lighter, less distracting color.
+**Hiding Members in Large Groups**
+• Member list privacy. Owners of large groups can hide the list of members. 
 
-**Topics 2.0: General Topic**
-• A new 'General' topic is now included by default, containing service messages and the earlier message history from the group.
-• Admins can rename the General topic or hide it in the topic list.
-
-**Topics 2.0: Search and Shared Media**
-• Search in the topic list now also includes global results, as well as your recent chats and favorite contacts.
-• Shared media tabs like 'Links', 'Files' and 'Music' in the group now show which topic messages belong to.
-• Topic info pages include a quick link to the main info page of the group.
-
-**Aggressive Anti-Spam for Groups**
-• Large groups can enable 'Aggressive Filtering' in Group Info > Administrators to remove more spam with automated algorithms.
-• Admins help improve filtering by reporting any false positives in 'Recent Actions'.
-
-**Temporary QR Codes**
-• The QR Code page in Settings can now generate a temporary code for users who don’t have a username and hide their phone number from everyone.
-• Show this code to others if you want them to add you as a contact without sharing any details.
-
-**Improved Emoji and Sticker Search**
-• You can search for basic and custom emoji in the Emoji tab of the Sticker Panel using hundreds of keywords like ‘smile’, ‘heart’ or 'hypnotoad'.
-• More keywords can be suggested via translations.telegram.org/en/emoji
-• Sticker search will also show stickers that match these keywords.
-• Tapping on custom emoji in any message now shows you which emoji pack they came from.";
+The letter also mentioned taking over the world and a puppy, but we hope the real Santa will be able to handle that – now that we've done the rest.";
 
         public int Session => _session;
 

@@ -303,6 +303,12 @@ namespace Unigram.Converters
                 return DayOfWeekAbbreviated.Format(dateTime);
             }
 
+            //Year
+            if (dateTime.Date.Year == System.DateTime.Now.Year)
+            {
+                // TODO: no idea about how to get a short date without year
+            }
+
             //Long long time ago
             //TimeLabel.Text = dateTime.ToString(string.Format("d.MM.yyyy", shortTimePattern), cultureInfo);
             return ShortDate.Format(dateTime);

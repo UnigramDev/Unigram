@@ -51,7 +51,14 @@
                   Content="{CustomResource DeleteBanUser}"
                   Margin="0,16,0,0" />
         <CheckBox x:Name="ReportSpamCheck"
+                  Background="Blue"
                   Content="{CustomResource DeleteReportSpam}" />
-        <CheckBox x:Name="DeleteAllCheck" />
+        <CheckBox x:Name="DeleteAllCheck"
+                  Background="Red" />
+        <!--<CheckBox x:Name="DeleteAllCheck"
+                  Background="Red"
+                  VerticalContentAlignment="Top"
+                  Padding="8,6,0,0"
+                  Margin="0,0,-24,0" />-->
     </StackPanel>
 </controls:ContentPopup>
