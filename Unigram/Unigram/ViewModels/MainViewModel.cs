@@ -80,6 +80,7 @@ namespace Unigram.ViewModels
                 : new ChatListMain();
 
             Chats = new ChatListViewModel(clientService, settingsService, aggregator, pushService, chatList);
+            Topics = new TopicListViewModel(clientService, settingsService, aggregator, pushService, 0);
             Contacts = new ContactsViewModel(clientService, settingsService, aggregator, contactsService);
             Calls = new CallsViewModel(clientService, settingsService, aggregator);
             Settings = new SettingsViewModel(clientService, settingsService, storageService, aggregator, settingsSearchService);
@@ -429,6 +430,7 @@ namespace Unigram.ViewModels
         }
 
         public ChatListViewModel Chats { get; private set; }
+        public TopicListViewModel Topics { get; private set; }
         public ContactsViewModel Contacts { get; private set; }
         public CallsViewModel Calls { get; private set; }
         public SettingsViewModel Settings { get; private set; }

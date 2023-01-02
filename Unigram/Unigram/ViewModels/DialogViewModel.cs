@@ -235,8 +235,8 @@ namespace Unigram.ViewModels
             set => Set(ref _linkedChat, value);
         }
 
-        protected long _threadId => _thread?.MessageThreadId ?? 0;
-        public long ThreadId => _thread?.MessageThreadId ?? 0;
+        protected long _threadId => _topic?.Info.MessageThreadId ?? _thread?.MessageThreadId ?? 0;
+        public long ThreadId => _topic?.Info.MessageThreadId ?? _thread?.MessageThreadId ?? 0;
 
         protected MessageThreadInfo _thread;
         public MessageThreadInfo Thread
@@ -245,8 +245,8 @@ namespace Unigram.ViewModels
             set => Set(ref _thread, value);
         }
 
-        protected ForumTopicInfo _topic;
-        public ForumTopicInfo Topic
+        protected ForumTopic _topic;
+        public ForumTopic Topic
         {
             get => _topic;
             set => Set(ref _topic, value);
@@ -1112,7 +1112,11 @@ namespace Unigram.ViewModels
                 Function func;
                 if (_threadId != 0)
                 {
-                    if (_thread.Messages.Any(x => x.Id == maxId))
+                    if (_topic?.LastMessage != null)
+                    {
+                        func = new GetMessageThreadHistory(chat.Id, _topic.LastMessage.Id, maxId, -25, 50);
+                    }
+                    else if (_thread != null && _thread.Messages.Any(x => x.Id == maxId))
                     {
                         func = new GetMessageThreadHistory(chat.Id, _threadId, 1, -25, 50);
                     }
@@ -1170,8 +1174,12 @@ namespace Unigram.ViewModels
                         long lastReadMessageId;
                         long lastMessageId;
 
-                        var thread = _thread;
-                        if (thread != null)
+                        if (_topic is ForumTopic topic)
+                        {
+                            lastReadMessageId = topic.LastReadInboxMessageId;
+                            lastMessageId = topic.LastMessage?.Id ?? long.MaxValue;
+                        }
+                        else if (_thread is MessageThreadInfo thread)
                         {
                             lastReadMessageId = thread.ReplyInfo?.LastReadInboxMessageId ?? long.MaxValue;
                             lastMessageId = thread.ReplyInfo?.LastMessageId ?? long.MaxValue;
@@ -1628,7 +1636,7 @@ namespace Unigram.ViewModels
             if (parameter is string pair)
             {
                 var split = pair.Split(';');
-                if (split.Length != 2)
+                if (split.Length != 2) 
                 {
                     return;
                 }
@@ -1641,19 +1649,20 @@ namespace Unigram.ViewModels
                     return;
                 }
 
+                Topic = await ClientService.SendAsync(new GetForumTopic(result1, result2)) as ForumTopic;
                 Thread = await ClientService.SendAsync(new GetMessageThread(result1, result2)) as MessageThreadInfo;
-                parameter = Thread?.ChatId;
 
-                if (parameter == null)
+                if (Topic != null)
+                {
+                    parameter = result1;
+                }
+                else if (Thread != null)
+                {
+                    parameter = Thread.ChatId;
+                }
+                else
                 {
                     return;
-                }
-
-                // TODO: replace with real code
-                var message = Thread.Messages.FirstOrDefault();
-                if (message != null && message.Content is MessageForumTopicCreated forumTopicCreated)
-                {
-                    Topic = new ForumTopicInfo(message.MessageThreadId, forumTopicCreated.Name, forumTopicCreated.Icon, message.Date, message.SenderId, message.IsOutgoing, false);
                 }
             }
 
@@ -1722,8 +1731,12 @@ namespace Unigram.ViewModels
                 long lastReadMessageId;
                 long lastMessageId;
 
-                var thread = _thread;
-                if (thread != null)
+                if (_topic is ForumTopic topic)
+                {
+                    lastReadMessageId = topic.LastReadInboxMessageId;
+                    lastMessageId = topic.LastMessage?.Id ?? long.MaxValue;
+                }
+                else if (_thread is MessageThreadInfo thread)
                 {
                     lastReadMessageId = thread.ReplyInfo?.LastReadInboxMessageId ?? long.MaxValue;
                     lastMessageId = thread.ReplyInfo?.LastMessageId ?? long.MaxValue;

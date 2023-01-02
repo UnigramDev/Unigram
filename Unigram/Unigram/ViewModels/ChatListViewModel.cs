@@ -216,6 +216,11 @@ namespace Unigram.ViewModels
                 {
                     ClientService.Send(new ReadAllChatMentions(chat.Id));
                 }
+
+                if (chat.UnreadReactionCount > 0)
+                {
+                    ClientService.Send(new ReadAllChatReactions(chat.Id));
+                }
             }
             else
             {
@@ -248,6 +253,11 @@ namespace Unigram.ViewModels
                     if (chat.UnreadMentionCount > 0)
                     {
                         ClientService.Send(new ReadAllChatMentions(chat.Id));
+                    }
+
+                    if (chat.UnreadReactionCount > 0)
+                    {
+                        ClientService.Send(new ReadAllChatReactions(chat.Id));
                     }
                 }
                 else if (chat.UnreadCount == 0 && !chat.IsMarkedAsUnread)
@@ -871,7 +881,7 @@ namespace Unigram.ViewModels
                         }
                         else if (lastMessage)
                         {
-                            _viewModel.Dispatcher.Dispatch(() => _viewModel.Delegate?.UpdateChatLastMessage(chat));
+                            _viewModel.Delegate?.UpdateChatLastMessage(chat);
                         }
                     }
                     else if (Contains(chat))
@@ -970,6 +980,7 @@ namespace Unigram.ViewModels
     {
         public Chat Chat { get; set; }
         public User User { get; set; }
+        public ForumTopic Topic { get; set; }
 
         public string Query { get; set; }
 
@@ -985,6 +996,13 @@ namespace Unigram.ViewModels
         public SearchResult(User user, string query, bool pub)
         {
             User = user;
+            Query = query;
+            IsPublic = pub;
+        }
+
+        public SearchResult(ForumTopic topic, string query, bool pub)
+        {
+            Topic = topic;
             Query = query;
             IsPublic = pub;
         }

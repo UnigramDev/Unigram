@@ -77,7 +77,7 @@ namespace Unigram.Services
         Chat GetChat(long id);
         IList<Chat> GetChats(IList<long> ids);
 
-        IDictionary<MessageSender, ChatAction> GetChatActions(long id);
+        IDictionary<MessageSender, ChatAction> GetChatActions(long id, long threadId = 0);
 
         bool IsSavedMessages(MessageSender sender);
         bool IsSavedMessages(User user);
@@ -134,6 +134,9 @@ namespace Unigram.Services
         bool TryGetSupergroupFull(long id, out SupergroupFullInfo value);
         bool TryGetSupergroupFull(Chat chat, out SupergroupFullInfo value);
 
+        ForumTopicInfo GetTopicInfo(long chatId, long messageThreadId);
+        bool TryGetTopicInfo(long chatId, long messageThreadId, out ForumTopicInfo value);
+
         bool IsAnimationSaved(int id);
         bool IsStickerRecent(int id);
         bool IsStickerFavorite(int id);
@@ -152,6 +155,18 @@ namespace Unigram.Services
 
     public partial class ClientService : IClientService, ClientResultHandler
     {
+        readonly struct ChatMessageId
+        {
+            public readonly long ChatId;
+            public readonly long MessageId;
+
+            public ChatMessageId(long chatId, long messageId)
+            {
+                ChatId = chatId;
+                MessageId = messageId;
+            }
+        }
+
         private Client _client;
 
         private readonly int _session;
@@ -166,6 +181,7 @@ namespace Unigram.Services
 
         private readonly Dictionary<long, Chat> _chats = new Dictionary<long, Chat>();
         private readonly ConcurrentDictionary<long, ConcurrentDictionary<MessageSender, ChatAction>> _chatActions = new ConcurrentDictionary<long, ConcurrentDictionary<MessageSender, ChatAction>>();
+        private readonly ConcurrentDictionary<ChatMessageId, ConcurrentDictionary<MessageSender, ChatAction>> _topicActions = new ConcurrentDictionary<ChatMessageId, ConcurrentDictionary<MessageSender, ChatAction>>();
 
         private readonly Dictionary<int, SecretChat> _secretChats = new Dictionary<int, SecretChat>();
 
@@ -179,6 +195,8 @@ namespace Unigram.Services
 
         private readonly Dictionary<long, Supergroup> _supergroups = new Dictionary<long, Supergroup>();
         private readonly Dictionary<long, SupergroupFullInfo> _supergroupsFull = new Dictionary<long, SupergroupFullInfo>();
+
+        private readonly Dictionary<ChatMessageId, ForumTopicInfo> _topics = new Dictionary<ChatMessageId, ForumTopicInfo>();
 
         private readonly Dictionary<int, ChatListUnreadCount> _unreadCounts = new Dictionary<int, ChatListUnreadCount>();
 
@@ -466,34 +484,21 @@ namespace Unigram.Services
             Task.Factory.StartNew(() =>
             {
                 var now = DateTime.Now;
-
                 var path = System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{_session}", "stickers");
-                var files = System.IO.Directory.GetFiles(path, "*.cache");
 
-                foreach (var file in files)
+                if (System.IO.Directory.Exists(path))
                 {
-                    var date = System.IO.File.GetLastAccessTime(file);
+                    var files = System.IO.Directory.GetFiles(path, "*.cache");
 
-                    var diff = now - date;
-                    if (diff.TotalDays >= 3)
+                    foreach (var file in files)
                     {
-                        System.IO.File.Delete(file);
-                    }
-                }
-            });
-        }
+                        var date = System.IO.File.GetLastAccessTime(file);
 
-        private void InitializeStickers()
-        {
-            Task.Factory.StartNew(async () =>
-            {
-                var response = await SendAsync(new GetInstalledStickerSets());
-                if (response is StickerSets stickerSets)
-                {
-                    foreach (var set in stickerSets.Sets)
-                    {
-                        await SendAsync(new GetStickerSet(set.Id));
-                        await Task.Delay(200);
+                        var diff = now - date;
+                        if (diff.TotalDays >= 3)
+                        {
+                            System.IO.File.Delete(file);
+                        }
                     }
                 }
             });
@@ -1007,9 +1012,16 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             return null;
         }
 
-        public IDictionary<MessageSender, ChatAction> GetChatActions(long id)
+        public IDictionary<MessageSender, ChatAction> GetChatActions(long id, long threadId = 0)
         {
-            if (_chatActions.TryGetValue(id, out ConcurrentDictionary<MessageSender, ChatAction> value))
+            if (threadId != 0)
+            {
+                if (_topicActions.TryGetValue(new ChatMessageId(id, threadId), out ConcurrentDictionary<MessageSender, ChatAction> value))
+                {
+                    return value;
+                }
+            }
+            else if (_chatActions.TryGetValue(id, out ConcurrentDictionary<MessageSender, ChatAction> value))
             {
                 return value;
             }
@@ -1440,6 +1452,23 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 
 
 
+        public ForumTopicInfo GetTopicInfo(long chatId, long messageThreadId)
+        {
+            if (_topics.TryGetValue(new ChatMessageId(chatId, messageThreadId), out ForumTopicInfo value))
+            {
+                return value;
+            }
+
+            return null;
+        }
+
+        public bool TryGetTopicInfo(long chatId, long messageThreadId, out ForumTopicInfo value)
+        {
+            return _topics.TryGetValue(new ChatMessageId(chatId, messageThreadId), out value);
+        }
+
+
+
         public bool IsStickerRecent(int id)
         {
             if (_recentStickers != null)
@@ -1558,6 +1587,19 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             }
             else if (update is UpdateChatAction updateUserChatAction)
             {
+                if (updateUserChatAction.MessageThreadId != 0)
+                {
+                    var threadActions = _topicActions.GetOrAdd(new ChatMessageId(updateUserChatAction.ChatId, updateUserChatAction.MessageThreadId), x => new ConcurrentDictionary<MessageSender, ChatAction>(new MessageSenderEqualityComparer()));
+                    if (updateUserChatAction.Action is ChatActionCancel)
+                    {
+                        threadActions.TryRemove(updateUserChatAction.SenderId, out _);
+                    }
+                    else
+                    {
+                        threadActions[updateUserChatAction.SenderId] = updateUserChatAction.Action;
+                    }
+                }
+
                 var actions = _chatActions.GetOrAdd(updateUserChatAction.ChatId, x => new ConcurrentDictionary<MessageSender, ChatAction>(new MessageSenderEqualityComparer()));
                 if (updateUserChatAction.Action is ChatActionCancel)
                 {
@@ -1818,6 +1860,10 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             {
 
             }
+            else if (update is UpdateForumTopicInfo updateForumTopicInfo)
+            {
+                _topics[new ChatMessageId(updateForumTopicInfo.ChatId, updateForumTopicInfo.Info.MessageThreadId)] = updateForumTopicInfo.Info;
+            }
             else if (update is UpdateInstalledStickerSets updateInstalledStickerSets)
             {
                 switch (updateInstalledStickerSets.StickerType)
@@ -1997,6 +2043,34 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 
             _aggregator.Publish(update);
         }
+
+        private void ProcessTopicUpdate(Update update)
+        {
+            if (update is UpdateNewMessage newMessage)
+            {
+                if (newMessage.Message.Content is MessageForumTopicCreated)
+                {
+
+                }
+                else if (newMessage.Message.Content is MessageForumTopicEdited)
+                {
+
+                }
+                else if (newMessage.Message.Content is MessageForumTopicIsClosedToggled)
+                {
+
+                }
+                else if (newMessage.Message.Content is MessageForumTopicIsHiddenToggled)
+                {
+
+                }
+            }
+        }
+    }
+
+    public class TopicLoader
+    {
+
     }
 
     public class ChatListUnreadCount

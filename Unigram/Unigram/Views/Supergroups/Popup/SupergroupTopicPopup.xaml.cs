@@ -1,0 +1,55 @@
+﻿using Telegram.Td.Api;
+using Unigram.Controls;
+using Unigram.Services;
+using Unigram.ViewModels.Drawers;
+using Windows.UI.Xaml.Controls;
+
+namespace Unigram.Views.Supergroups.Popup
+{
+    public sealed partial class SupergroupTopicPopup : ContentPopup
+    {
+        private readonly IClientService _clientService;
+
+        public SupergroupTopicPopup(IClientService clientService, ForumTopicInfo topic)
+        {
+            InitializeComponent();
+
+            _clientService = clientService;
+            Title = topic == null ? Strings.Resources.NewTopic : Strings.Resources.EditTopic;
+
+            PrimaryButtonText = topic == null ? Strings.Resources.Create : Strings.Resources.Done;
+            SecondaryButtonText = Strings.Resources.Cancel;
+
+            NameLabel.Text = topic?.Name ?? string.Empty;
+            Identity.SetStatus(clientService, topic.Icon);
+
+            var viewModel = EmojiDrawerViewModel.GetForCurrentView(clientService.SessionId, EmojiDrawerMode.CustomEmojis);
+            viewModel.UpdateTopics();
+
+            Emoji.DataContext = viewModel;
+            Emoji.ItemClick += OnItemClick;
+
+            SelectedEmojiId = topic?.Icon.CustomEmojiId ?? 0;
+        }
+
+        public string SelectedName => NameLabel.Text;
+        public long SelectedEmojiId { get; private set; }
+
+        private void OnItemClick(object sender, ItemClickEventArgs e)
+        {
+            if (e.ClickedItem is StickerViewModel sticker && sticker.FullType is StickerFullTypeCustomEmoji customEmoji)
+            {
+                SelectedEmojiId = customEmoji.CustomEmojiId;
+                Identity.SetStatus(_clientService, new ForumTopicIcon(0, customEmoji.CustomEmojiId));
+            }
+        }
+
+        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+        }
+
+        private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+        }
+    }
+}

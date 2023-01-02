@@ -330,6 +330,7 @@ namespace Unigram.ViewModels
         public int Date => _message.Date;
         public bool ContainsUnreadMention { get => _message.ContainsUnreadMention; set => _message.ContainsUnreadMention = value; }
         public bool IsChannelPost => _message.IsChannelPost;
+        public bool IsTopicMessage => _message.IsTopicMessage;
         public bool CanBeDeletedForAllUsers => _message.CanBeDeletedForAllUsers;
         public bool CanBeDeletedOnlyForSelf => _message.CanBeDeletedOnlyForSelf;
         public bool CanBeForwarded => _message.CanBeForwarded;

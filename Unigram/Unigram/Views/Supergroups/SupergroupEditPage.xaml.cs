@@ -1,15 +1,10 @@
 ﻿using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls;
 using Unigram.Converters;
-using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Supergroups;
-using Unigram.Views.Popups;
-using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Supergroups
 {
@@ -21,35 +16,6 @@ namespace Unigram.Views.Supergroups
         {
             InitializeComponent();
             Title = Strings.Resources.ChannelEdit;
-        }
-
-        private async void EditPhoto_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                var picker = new FileOpenPicker();
-                picker.ViewMode = PickerViewMode.Thumbnail;
-                picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-                picker.FileTypeFilter.AddRange(Constants.MediaTypes);
-
-                var media = await picker.PickSingleMediaAsync();
-                if (media != null)
-                {
-                    var dialog = new EditMediaPopup(media, ImageCropperMask.Ellipse);
-
-                    var confirm = await dialog.ShowAsync();
-                    if (confirm == ContentDialogResult.Primary)
-                    {
-                        ViewModel.EditPhotoCommand.Execute(media);
-                    }
-                }
-            }
-            catch { }
-        }
-
-        private async void CreatePhoto_Click(object sender, RoutedEventArgs e)
-        {
-            await ViewModel.NavigationService.ShowAsync(typeof(CreateChatPhotoPopup), new CreateChatPhotoParameters(ViewModel.Chat?.Id, false));
         }
 
         #region Binding

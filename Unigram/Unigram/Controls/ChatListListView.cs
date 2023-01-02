@@ -34,7 +34,7 @@ namespace Unigram.Controls
             var content = args.ItemContainer.ContentTemplateRoot as ChatCell;
             if (content != null && args.Item is Chat chat)
             {
-                content.UpdateViewState(chat, _viewState == MasterDetailState.Compact);
+                content.UpdateViewState(chat, _viewState == MasterDetailState.Compact, false);
                 content.UpdateChat(ViewModel.ClientService, chat, ViewModel.Items.ChatList);
                 args.Handled = true;
             }
@@ -51,7 +51,7 @@ namespace Unigram.Controls
             UpdateVisibleChats();
         }
 
-        private void UpdateVisibleChats()
+        public void UpdateVisibleChats()
         {
             var panel = ItemsPanelRoot as ItemsStackPanel;
             if (panel == null)
@@ -76,7 +76,7 @@ namespace Unigram.Controls
                         continue;
                     }
 
-                    content.UpdateViewState(item, _viewState == MasterDetailState.Compact);
+                    content.UpdateViewState(item, _viewState == MasterDetailState.Compact, true);
                 }
             }
         }
@@ -136,7 +136,7 @@ namespace Unigram.Controls
             var content = ContentTemplateRoot as ChatCell;
             if (content != null)
             {
-                content.UpdateViewState(_list.ItemFromContainer(this) as Chat, _list._viewState == MasterDetailState.Compact);
+                content.UpdateViewState(_list.ItemFromContainer(this) as Chat, _list._viewState == MasterDetailState.Compact, false);
             }
         }
     }

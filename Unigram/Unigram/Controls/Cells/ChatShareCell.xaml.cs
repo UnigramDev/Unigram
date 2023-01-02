@@ -90,6 +90,9 @@ namespace Unigram.Controls.Cells
             {
                 Photo.SetChat(clientService, chat, 36);
                 Identity.SetStatus(clientService, chat);
+
+                SelectionOutline.RadiusX = Photo.Shape == ProfilePictureShape.Ellipse ? 18 : 9;
+                SelectionOutline.RadiusY = Photo.Shape == ProfilePictureShape.Ellipse ? 18 : 9;
             }
 
             if (args.Phase < 2)
@@ -135,6 +138,9 @@ namespace Unigram.Controls.Cells
                     Photo.SetChat(clientService, chat, 36);
                     Identity.SetStatus(clientService, chat);
                 }
+
+                SelectionOutline.RadiusX = Photo.Shape == ProfilePictureShape.Ellipse ? 18 : 9;
+                SelectionOutline.RadiusY = Photo.Shape == ProfilePictureShape.Ellipse ? 18 : 9;
             }
 
             if (args.Phase < 2)

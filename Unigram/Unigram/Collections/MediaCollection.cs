@@ -14,15 +14,17 @@ namespace Unigram.Collections
         private readonly IClientService _clientService;
         private readonly SearchMessagesFilter _filter;
         private readonly long _chatId;
+        private readonly long _threadId;
         private readonly string _query;
 
         private long _lastMaxId;
         private bool _hasMore = true;
 
-        public MediaCollection(IClientService clientService, long chatId, SearchMessagesFilter filter, string query = null)
+        public MediaCollection(IClientService clientService, long chatId, long threadId, SearchMessagesFilter filter, string query = null)
         {
             _clientService = clientService;
             _chatId = chatId;
+            _threadId = threadId;
             _filter = filter;
             _query = query ?? string.Empty;
         }
@@ -33,7 +35,7 @@ namespace Unigram.Collections
             {
                 var count = 0u;
 
-                var response = await _clientService.SendAsync(new SearchChatMessages(_chatId, _query, null, _lastMaxId, 0, 50, _filter, 0));
+                var response = await _clientService.SendAsync(new SearchChatMessages(_chatId, _query, null, _lastMaxId, 0, 50, _filter, _threadId));
                 if (response is Messages messages)
                 {
                     if (messages.MessagesValue.Count > 0)

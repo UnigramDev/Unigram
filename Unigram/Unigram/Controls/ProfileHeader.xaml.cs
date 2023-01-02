@@ -8,8 +8,6 @@ using Unigram.Controls.Gallery;
 using Unigram.Converters;
 using Unigram.Navigation;
 using Unigram.ViewModels;
-using Unigram.ViewModels.Chats;
-using Unigram.ViewModels.Users;
 using Windows.Foundation;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
@@ -180,12 +178,29 @@ namespace Unigram.Controls
 
         public void UpdateChatTitle(Chat chat)
         {
-            Title.Text = ViewModel.ClientService.GetTitle(chat);
+            if (ViewModel.Topic != null)
+            {
+                Title.Text = ViewModel.Topic.Name;
+            }
+            else
+            {
+                Title.Text = ViewModel.ClientService.GetTitle(chat);
+            }
         }
 
         public void UpdateChatPhoto(Chat chat)
         {
-            Photo.SetChat(ViewModel.ClientService, chat, 140);
+            if (ViewModel.Topic != null)
+            {
+                FindName(nameof(Icon));
+                Icon.SetCustomEmoji(ViewModel.ClientService, ViewModel.Topic.Icon.CustomEmojiId);
+                Photo.Clear();
+            }
+            else
+            {
+                UnloadObject(Icon);
+                Photo.SetChat(ViewModel.ClientService, chat, 140);
+            }
         }
 
         public void UpdateChatNotificationSettings(Chat chat)
@@ -383,7 +398,14 @@ namespace Unigram.Controls
 
         public void UpdateSupergroup(Chat chat, Supergroup group)
         {
-            Subtitle.Text = Locale.Declension(group.IsChannel ? "Subscribers" : "Members", group.MemberCount);
+            if (ViewModel.Topic != null)
+            {
+                Subtitle.Text = string.Format(Strings.Resources.TopicProfileStatus, chat.Title);
+            }
+            else
+            {
+                Subtitle.Text = Locale.Declension(group.IsChannel ? "Subscribers" : "Members", group.MemberCount);
+            }
 
             Description.Content = Strings.Resources.DescriptionPlaceholder;
 
@@ -472,6 +494,15 @@ namespace Unigram.Controls
 
         public void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo)
         {
+            if (ViewModel.Topic != null)
+            {
+                Subtitle.Text = string.Format(Strings.Resources.TopicProfileStatus, chat.Title);
+            }
+            else
+            {
+                Subtitle.Text = Locale.Declension(group.IsChannel ? "Subscribers" : "Members", fullInfo.MemberCount);
+            }
+
             GetEntities(fullInfo.Description);
             Description.Visibility = string.IsNullOrEmpty(fullInfo.Description) ? Visibility.Collapsed : Visibility.Visible;
 

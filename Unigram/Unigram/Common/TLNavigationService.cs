@@ -19,6 +19,7 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.WindowManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media.Animation;
 
 namespace Unigram.Common
 {
@@ -307,12 +308,22 @@ namespace Unigram.Common
                     else
                     {
                         Type target;
+                        NavigationTransitionInfo info = null;
                         object parameter;
 
                         if (thread != null)
                         {
                             target = typeof(ChatThreadPage);
                             parameter = $"{chat.Id};{thread}";
+
+                            if (CurrentPageType == typeof(ChatPage) && chat.Id.Equals((long)CurrentPageParam))
+                            {
+                                info = new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight };
+                            }
+                            else
+                            {
+                                info = new SuppressNavigationTransitionInfo();
+                            }
                         }
                         else if (scheduled)
                         {
@@ -325,7 +336,7 @@ namespace Unigram.Common
                             parameter = chat.Id;
                         }
 
-                        Navigate(target, parameter, state);
+                        Navigate(target, parameter, state, info);
                     }
                 }
             }

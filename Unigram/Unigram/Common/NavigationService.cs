@@ -249,6 +249,17 @@ namespace Unigram.Common
                     return chatId;
                 }
             }
+            else if (service.CurrentPageType == typeof(ChatThreadPage))
+            {
+                if (service.CurrentPageParam is string pair)
+                {
+                    var split = pair.Split(';');
+                    if (long.TryParse(split[0], out long chatId))
+                    {
+                        return chatId;
+                    }
+                }
+            }
 
             for (int i = service.Frame.BackStackDepth - 1; i >= 0; i--)
             {
@@ -258,6 +269,17 @@ namespace Unigram.Common
                     if (TryGetPeerFromParameter(service, entry.Parameter, out long chatId))
                     {
                         return chatId;
+                    }
+                }
+                else if (entry.SourcePageType == typeof(ChatThreadPage))
+                {
+                    if (entry.Parameter is string pair)
+                    {
+                        var split = pair.Split(';');
+                        if (long.TryParse(split[0], out long chatId))
+                        {
+                            return chatId;
+                        }
                     }
                 }
             }

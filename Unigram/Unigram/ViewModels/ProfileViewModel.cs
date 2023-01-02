@@ -116,6 +116,31 @@ namespace Unigram.ViewModels
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
+            if (parameter is string pair)
+            {
+                var split = pair.Split(';');
+                if (split.Length != 2)
+                {
+                    return Task.CompletedTask;
+                }
+
+                var failed1 = !long.TryParse(split[0], out long result1);
+                var failed2 = !long.TryParse(split[1], out long result2);
+
+                if (failed1 || failed2)
+                {
+                    return Task.CompletedTask;
+                }
+
+                parameter = result1;
+
+                if (ClientService.TryGetTopicInfo(result1, result2, out ForumTopicInfo info))
+                {
+                    Topic = info;
+                }
+            }
+
+
             var chatId = (long)parameter;
 
             Chat = ClientService.GetChat(chatId);
@@ -890,7 +915,7 @@ namespace Unigram.ViewModels
         }
 
         public RelayCommand EditCommand { get; }
-        private void EditExecute()
+        private async void EditExecute()
         {
             var chat = _chat;
             if (chat == null)
@@ -898,7 +923,17 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            if (chat.Type is ChatTypeSupergroup or ChatTypeBasicGroup)
+            if (_topic != null)
+            {
+                var popup = new SupergroupTopicPopup(ClientService, _topic);
+
+                var confirm = await popup.ShowQueuedAsync();
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    ClientService.Send(new EditForumTopic(chat.Id, _topic.MessageThreadId, popup.Name, true, popup.SelectedEmojiId));
+                }
+            }
+            else if (chat.Type is ChatTypeSupergroup or ChatTypeBasicGroup)
             {
                 NavigationService.Navigate(typeof(SupergroupEditPage), chat.Id);
             }

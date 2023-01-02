@@ -18,8 +18,8 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ChatCell">
-                    <local:ChatCellPanel Height="64"
-                                         Background="Transparent">
+                    <Grid Height="64"
+                          Background="Transparent">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup>
                                 <VisualState x:Name="Normal" />
@@ -61,14 +61,19 @@
                 </VisualState>-->
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
 
                         <Grid x:Name="PhotoPanel"
                               Width="48"
                               Height="48"
-                              Margin="0,8">
-                            <Ellipse x:Name="SelectionOutline"
-                                     StrokeThickness="2"
-                                     Stroke="{ThemeResource SystemControlBackgroundAccentBrush}" />
+                              Margin="8,8,0,8"
+                              Canvas.ZIndex="1">
+                            <Rectangle x:Name="SelectionOutline"
+                                       StrokeThickness="2"
+                                       Stroke="{ThemeResource SystemControlBackgroundAccentBrush}" />
                             <controls:ProfilePicture x:Name="Photo"
                                                      Width="48"
                                                      Height="48"
@@ -90,70 +95,90 @@
                                         Height="8"
                                         CornerRadius="4" />
                             </Border>
+
+                            <Border x:Name="CompactBadgeRoot"
+                                    x:Load="False"
+                                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                    CornerRadius="10"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Bottom"
+                                    Padding="2"
+                                    Margin="-2">
+                                <muxc:InfoBadge x:Name="CompactBadge"
+                                                Value="1"
+                                                Background="{ThemeResource ChatUnreadBadgeBrush}"
+                                                Foreground="{ThemeResource ChatUnreadLabelBrush}"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Bottom" />
+                            </Border>
                         </Grid>
 
-                        <TextBlock x:Name="TypeIcon"
-                                   Text="&#xE716;"
-                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                   Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                                   VerticalAlignment="Bottom"
-                                   FontSize="16"
-                                   Margin="0,0,4,1"
-                                   Grid.Column="0" />
-                        <TextBlock x:Name="TitleLabel"
-                                   MaxLines="1"
-                                   TextWrapping="NoWrap"
-                                   TextTrimming="CharacterEllipsis"
-                                   Style="{StaticResource BodyTextBlockStyle}"
-                                   FontFamily="{ThemeResource EmojiThemeFontFamily}" />
-                        <controls:IdentityIcon x:Name="Identity"
-                                               VerticalAlignment="Bottom"
-                                               Margin="4,0,0,0"
-                                               Grid.Column="2" />
-                        <FontIcon x:Name="MutedIcon"
-                                  Glyph="&#xE979;"
-                                  FontFamily="{StaticResource TelegramThemeFontFamily}"
-                                  Foreground="{ThemeResource TextFillColorTertiaryBrush}"
-                                  VerticalAlignment="Bottom"
-                                  FontSize="16"
-                                  Margin="4,0,0,0"
-                                  Grid.Column="3" />
+                        <local:ChatCellPanel x:Name="LayoutRoot"
+                                             Height="64"
+                                             Background="Transparent"
+                                             Grid.Column="1">
+                            <TextBlock x:Name="TypeIcon"
+                                       Text="&#xE716;"
+                                       FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                                       VerticalAlignment="Bottom"
+                                       FontSize="16"
+                                       Margin="0,0,4,1"
+                                       Grid.Column="0" />
+                            <TextBlock x:Name="TitleLabel"
+                                       MaxLines="1"
+                                       TextWrapping="NoWrap"
+                                       TextTrimming="CharacterEllipsis"
+                                       Style="{StaticResource BodyTextBlockStyle}"
+                                       FontFamily="{ThemeResource EmojiThemeFontFamily}" />
+                            <controls:IdentityIcon x:Name="Identity"
+                                                   VerticalAlignment="Bottom"
+                                                   Margin="4,0,0,0"
+                                                   Grid.Column="2" />
+                            <FontIcon x:Name="MutedIcon"
+                                      Glyph="&#xE979;"
+                                      FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                      Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                                      VerticalAlignment="Bottom"
+                                      FontSize="16"
+                                      Margin="4,0,0,0"
+                                      Grid.Column="3" />
 
-                        <FontIcon x:Name="StateIcon"
-                                  FontFamily="{StaticResource TelegramThemeFontFamily}"
-                                  Foreground="{ThemeResource ChatLastMessageStateBrush}"
-                                  FontSize="10"
-                                  Height="10"
-                                  Width="18"
-                                  Margin="0,3,4,0"
-                                  Grid.Column="1" />
-                        <TextBlock x:Name="TimeLabel"
-                                   Text="11:10"
-                                   Style="{StaticResource CaptionTextBlockStyle}"
-                                   Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
-                                   Margin="0,0,0,1"
-                                   Grid.Column="2" />
+                            <FontIcon x:Name="StateIcon"
+                                      FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                      Foreground="{ThemeResource ChatLastMessageStateBrush}"
+                                      FontSize="10"
+                                      Height="10"
+                                      Width="18"
+                                      Margin="0,3,4,0"
+                                      Grid.Column="1" />
+                            <TextBlock x:Name="TimeLabel"
+                                       Text="11:10"
+                                       Style="{StaticResource CaptionTextBlockStyle}"
+                                       Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
+                                       Margin="0,0,0,1"
+                                       Grid.Column="2" />
 
-                        <Border x:Name="MinithumbnailPanel"
-                                Margin="0,0,6,0"
-                                CornerRadius="2"
-                                Height="16"
-                                Grid.Column="2"
-                                Grid.Row="1">
-                            <Image x:Name="Minithumbnail"
-                                   Stretch="UniformToFill"
-                                   Width="16"
-                                   Height="16" />
-                        </Border>
+                            <Border x:Name="MinithumbnailPanel"
+                                    Margin="0,0,6,0"
+                                    CornerRadius="2"
+                                    Height="16"
+                                    Grid.Column="2"
+                                    Grid.Row="1">
+                                <Image x:Name="Minithumbnail"
+                                       Stretch="UniformToFill"
+                                       Width="16"
+                                       Height="16" />
+                            </Border>
 
-                        <TextBlock x:Name="BriefInfo"
-                                   Style="{StaticResource BodyTextBlockStyle}"
-                                   FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                   Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                   TextTrimming="CharacterEllipsis"
-                                   TextWrapping="NoWrap"
-                                   VerticalAlignment="Top"
-                                   MaxLines="1">
+                            <TextBlock x:Name="BriefInfo"
+                                       Style="{StaticResource BodyTextBlockStyle}"
+                                       FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                       Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                       TextTrimming="CharacterEllipsis"
+                                       TextWrapping="NoWrap"
+                                       VerticalAlignment="Top"
+                                       MaxLines="1">
                             <!--<ToolTipService.ToolTip>
                                 <ToolTip Opened="ToolTip_Opened" />
                             </ToolTipService.ToolTip>-->
@@ -161,80 +186,81 @@
                                  Foreground="{ThemeResource ChatFromLabelBrush}" /><Run x:Name="DraftLabel"
                                                                                         Foreground="{ThemeResource ChatDraftLabelBrush}" /><Span x:Name="BriefLabel"
                                                                                                                                                  Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
-                        </TextBlock>
-                        <messages:CustomEmojiCanvas x:Name="CustomEmoji"
-                                                    x:Load="False" />
+                            </TextBlock>
+                            <messages:CustomEmojiCanvas x:Name="CustomEmoji"
+                                                        x:Load="False" />
 
-                        <chats:ChatActionIndicator x:Name="ChatActionIndicator"
-                                                   Visibility="Collapsed"
-                                                   Fill="{ThemeResource PageHeaderHighlightBrush}"
-                                                   VerticalAlignment="Bottom"
-                                                   Width="20"
-                                                   Height="20"
-                                                   Margin="0,0,4,0" />
-                        <TextBlock x:Name="TypingLabel"
-                                   Visibility="Collapsed"
-                                   Style="{StaticResource BodyTextBlockStyle}"
-                                   FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                   Foreground="{ThemeResource SystemControlHighlightAccentBrush}"
-                                   TextTrimming="CharacterEllipsis"
-                                   TextWrapping="NoWrap"
-                                   MaxLines="1" />
+                            <chats:ChatActionIndicator x:Name="ChatActionIndicator"
+                                                       Visibility="Collapsed"
+                                                       Fill="{ThemeResource PageHeaderHighlightBrush}"
+                                                       VerticalAlignment="Bottom"
+                                                       Width="20"
+                                                       Height="20"
+                                                       Margin="0,0,4,0" />
+                            <TextBlock x:Name="TypingLabel"
+                                       Visibility="Collapsed"
+                                       Style="{StaticResource BodyTextBlockStyle}"
+                                       FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                       Foreground="{ThemeResource SystemControlHighlightAccentBrush}"
+                                       TextTrimming="CharacterEllipsis"
+                                       TextWrapping="NoWrap"
+                                       MaxLines="1" />
 
-                        <Border x:Name="PinnedIcon"
-                                Width="20"
-                                Height="20"
-                                VerticalAlignment="Bottom"
-                                HorizontalAlignment="Right"
-                                Margin="8,0,0,0"
-                                Grid.ColumnSpan="2"
-                                Grid.Column="4"
-                                Grid.Row="1">
-                            <FontIcon Glyph="&#xE97B;"
-                                      FontSize="16"
-                                      FontFamily="{StaticResource TelegramThemeFontFamily}"
-                                      Foreground="{ThemeResource TextFillColorTertiaryBrush}"
-                                      HorizontalAlignment="Right"
-                                      VerticalAlignment="Center" />
-                        </Border>
-                        <Border x:Name="UnreadMentionsBadge"
-                                Background="{ThemeResource ChatUnreadBadgeBrush}"
-                                Width="16"
-                                Height="16"
-                                CornerRadius="8"
-                                VerticalAlignment="Bottom"
-                                HorizontalAlignment="Right"
-                                Margin="8,0,0,0"
-                                Visibility="Collapsed"
-                                Grid.Column="4"
-                                Grid.Row="1">
-                            <TextBlock x:Name="UnreadMentionsLabel"
-                                       Text="&#xE986;"
-                                       FontSize="12"
-                                       FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                       Style="{StaticResource CaptionTextBlockStyle}"
-                                       Foreground="{ThemeResource ChatUnreadLabelBrush}"
-                                       VerticalAlignment="Center"
-                                       TextAlignment="Center" />
-                        </Border>
-                        <muxc:InfoBadge x:Name="UnreadBadge"
-                                        Background="{ThemeResource ChatUnreadBadgeBrush}"
-                                        Foreground="{ThemeResource ChatUnreadLabelBrush}"
-                                        VerticalAlignment="Bottom"
-                                        HorizontalAlignment="Right"
-                                        Margin="8,0,0,0"
-                                        Visibility="Collapsed"
-                                        Grid.Column="5"
-                                        Grid.Row="1" />
+                            <Border x:Name="PinnedIcon"
+                                    Width="20"
+                                    Height="20"
+                                    VerticalAlignment="Bottom"
+                                    HorizontalAlignment="Right"
+                                    Margin="8,0,0,0"
+                                    Grid.ColumnSpan="2"
+                                    Grid.Column="4"
+                                    Grid.Row="1">
+                                <FontIcon Glyph="&#xE97B;"
+                                          FontSize="16"
+                                          FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                          Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                                          HorizontalAlignment="Right"
+                                          VerticalAlignment="Center" />
+                            </Border>
+                            <Border x:Name="UnreadMentionsBadge"
+                                    Background="{ThemeResource ChatUnreadBadgeBrush}"
+                                    Width="16"
+                                    Height="16"
+                                    CornerRadius="8"
+                                    VerticalAlignment="Bottom"
+                                    HorizontalAlignment="Right"
+                                    Margin="8,0,0,0"
+                                    Visibility="Collapsed"
+                                    Grid.Column="4"
+                                    Grid.Row="1">
+                                <TextBlock x:Name="UnreadMentionsLabel"
+                                           Text="&#xE986;"
+                                           FontSize="12"
+                                           FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                           Style="{StaticResource CaptionTextBlockStyle}"
+                                           Foreground="{ThemeResource ChatUnreadLabelBrush}"
+                                           VerticalAlignment="Center"
+                                           TextAlignment="Center" />
+                            </Border>
+                            <muxc:InfoBadge x:Name="UnreadBadge"
+                                            Background="{ThemeResource ChatUnreadBadgeBrush}"
+                                            Foreground="{ThemeResource ChatUnreadLabelBrush}"
+                                            VerticalAlignment="Bottom"
+                                            HorizontalAlignment="Right"
+                                            Margin="8,0,0,0"
+                                            Visibility="Collapsed"
+                                            Grid.Column="5"
+                                            Grid.Row="1" />
 
-                        <Rectangle x:Name="DropVisual"
-                                   x:Load="False"
-                                   Stroke="{ThemeResource SystemControlForegroundBaseHighBrush}"
-                                   StrokeThickness="2"
-                                   RadiusX="4"
-                                   RadiusY="4"
-                                   Visibility="Collapsed" />
-                    </local:ChatCellPanel>
+                            <Rectangle x:Name="DropVisual"
+                                       x:Load="False"
+                                       Stroke="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                                       StrokeThickness="2"
+                                       RadiusX="4"
+                                       RadiusY="4"
+                                       Visibility="Collapsed" />
+                        </local:ChatCellPanel>
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

@@ -380,6 +380,13 @@ namespace Unigram.Services
                     ProcessFiles(forumTopic.LastMessage);
                 }
             }
+            else if (target is ForumTopics forumTopics)
+            {
+                foreach (var item in forumTopics.Topics)
+                {
+                    ProcessFiles(item);
+                }
+            }
             else if (target is FoundFileDownloads foundFileDownloads)
             {
                 foreach (var item in foundFileDownloads.Files)
@@ -654,6 +661,13 @@ namespace Unigram.Services
                 if (messageSticker.Sticker != null)
                 {
                     ProcessFiles(messageSticker.Sticker);
+                }
+            }
+            else if (target is MessageSuggestProfilePhoto messageSuggestProfilePhoto)
+            {
+                if (messageSuggestProfilePhoto.Photo != null)
+                {
+                    ProcessFiles(messageSuggestProfilePhoto.Photo);
                 }
             }
             else if (target is MessageText messageText)
@@ -1336,13 +1350,13 @@ namespace Unigram.Services
                 {
                     sticker.StickerValue = ProcessFile(sticker.StickerValue);
                 }
-                if (sticker.PremiumAnimation != null)
-                {
-                    sticker.PremiumAnimation = ProcessFile(sticker.PremiumAnimation);
-                }
                 if (sticker.Thumbnail != null)
                 {
                     ProcessFiles(sticker.Thumbnail);
+                }
+                if (sticker.FullType != null)
+                {
+                    ProcessFiles(sticker.FullType);
                 }
             }
             else if (target is Stickers stickers)
@@ -1379,6 +1393,13 @@ namespace Unigram.Services
                 foreach (var item in stickerSets.Sets)
                 {
                     ProcessFiles(item);
+                }
+            }
+            else if (target is StickerFullTypeRegular StickerFullTypeRegular)
+            {
+                if (StickerFullTypeRegular.PremiumAnimation != null)
+                {
+                    StickerFullTypeRegular.PremiumAnimation = ProcessFile(StickerFullTypeRegular.PremiumAnimation);
                 }
             }
             else if (target is SupergroupFullInfo supergroupFullInfo)
@@ -1603,6 +1624,14 @@ namespace Unigram.Services
                 if (userFullInfo.BotInfo != null)
                 {
                     ProcessFiles(userFullInfo.BotInfo);
+                }
+                if (userFullInfo.PersonalPhoto != null)
+                {
+                    ProcessFiles(userFullInfo.PersonalPhoto);
+                }
+                if (userFullInfo.PublicPhoto != null)
+                {
+                    ProcessFiles(userFullInfo.PublicPhoto);
                 }
                 if (userFullInfo.Photo != null)
                 {

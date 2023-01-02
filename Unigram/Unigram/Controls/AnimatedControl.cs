@@ -46,7 +46,7 @@ namespace Unigram.Controls
         protected bool _subscribed;
         protected bool _unsubscribe;
 
-        private bool _hasInitialLoadedEventFired;
+        protected bool _hasInitialLoadedEventFired;
         protected bool _unloaded;
 
         protected bool _isLoopingEnabled = true;

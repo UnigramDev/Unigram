@@ -993,6 +993,7 @@
                                                         SelectionMode="{x:Bind ViewModel.Chats.SelectionMode, Mode=TwoWay}"
                                                         SelectionChanged="ListView_SelectionChanged"
                                                         ChoosingItemContainer="ChatsList_ChoosingItemContainer"
+                                                        SizeChanged="ChatList_SizeChanged"
                                                         Grid.Row="1">
                                         <ListView.Header>
                                             <Grid x:Name="ArchivedChatsPresenter">
@@ -1027,6 +1028,40 @@
                                     <controls:ChatListSkeleton x:Name="Skeleton"
                                                                x:Load="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
                                                                Grid.Row="1" />
+
+
+                                    <Grid x:Name="TopicListPresenter"
+                                          x:Load="False"
+                                          Margin="72,0,0,0"
+                                          Grid.Row="1">
+                                        <Border Background="{ThemeResource SettingsItemBackground}"
+                                                BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+                                                CornerRadius="{ThemeResource NavigationViewContentGridCornerRadius}"
+                                                BorderThickness="{ThemeResource NavigationViewContentGridBorderThickness}"
+                                                BackgroundSizing="InnerBorderEdge" />
+                                        <controls:TopNavView x:Name="TopicList"
+                                                             ItemsSource="{x:Bind ViewModel.Topics.Items}"
+                                                             ChoosingItemContainer="TopicList_ChoosingItemContainer"
+                                                             ContainerContentChanging="TopicList_ContainerContentChanging"
+                                                             Orientation="Vertical"
+                                                             IsItemClickEnabled="True"
+                                                             ItemClick="ListView_ItemClick"
+                                                             Style="{StaticResource DefaultListViewStyle}"
+                                                             VerticalAlignment="Stretch"
+                                                             Height="Auto">
+                                            <ListView.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <ItemsStackPanel />
+                                                </ItemsPanelTemplate>
+                                            </ListView.ItemsPanel>
+                                            <ListView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <cells:ForumTopicCell Stroke="{ThemeResource ChatLastMessageStateBrush}"
+                                                                          SelectionStroke="{ThemeResource ApplicationPageBackgroundThemeBrush}" />
+                                                </DataTemplate>
+                                            </ListView.ItemTemplate>
+                                        </controls:TopNavView>
+                                    </Grid>
 
                                     <Grid x:Name="EmptyState"
                                           x:Load="{x:Bind ViewModel.Chats.Items.IsEmpty, Mode=OneWay}"

@@ -74,8 +74,43 @@ namespace Unigram.ViewModels.Chats
 
         public IStorageService StorageService => _storageService;
 
+        protected MessageThreadInfo _thread;
+        public MessageThreadInfo Thread
+        {
+            get => _thread;
+            set => Set(ref _thread, value);
+        }
+
+        public long ThreadId => Thread?.MessageThreadId ?? 0;
+
+        protected ForumTopicInfo _topic;
+        public ForumTopicInfo Topic
+        {
+            get => _topic;
+            set => Set(ref _topic, value);
+        }
+
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
+            if (parameter is string pair)
+            {
+                var split = pair.Split(';');
+                if (split.Length != 2)
+                {
+                    return;
+                }
+
+                var failed1 = !long.TryParse(split[0], out long result1);
+                var failed2 = !long.TryParse(split[1], out long result2);
+
+                if (failed1 || failed2)
+                {
+                    return;
+                }
+
+                parameter = result1;
+            }
+
             var chatId = (long)parameter;
 
             if (state.TryGet("selectedIndex", out int selectedIndex))
@@ -99,7 +134,7 @@ namespace Unigram.ViewModels.Chats
             if (Chat.Type is ChatTypeBasicGroup || Chat.Type is ChatTypeSupergroup supergroup && !supergroup.IsChannel)
             {
                 Items.Add(new ProfileItem(Strings.Resources.ChannelMembers, typeof(ChatSharedMembersPage)));
-                HasSharedMembers = true;
+                HasSharedMembers = Topic == null;
                 SelectedItem = Items.FirstOrDefault();
             }
 
@@ -249,7 +284,7 @@ namespace Unigram.ViewModels.Chats
         {
             if (sender is SearchMessagesFilter filter)
             {
-                return new MediaCollection(ClientService, Chat.Id, filter, query);
+                return new MediaCollection(ClientService, Chat.Id, ThreadId, filter, query);
             }
 
             return null;

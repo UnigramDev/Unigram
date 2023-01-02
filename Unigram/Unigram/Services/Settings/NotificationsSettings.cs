@@ -17,6 +17,16 @@ namespace Unigram.Services.Settings
 
         public Dictionary<Type, ScopeNotificationSettings> Scope => _scopeNotificationSettings;
 
+        public int GetMutedFor(Chat chat, ForumTopic topic)
+        {
+            if (topic.NotificationSettings.UseDefaultMuteFor)
+            {
+                return GetMutedFor(chat);
+            }
+
+            return topic.NotificationSettings.MuteFor;
+        }
+
         public int GetMutedFor(Chat chat)
         {
             if (chat.NotificationSettings.UseDefaultMuteFor && TryGetScope(chat, out var scope))

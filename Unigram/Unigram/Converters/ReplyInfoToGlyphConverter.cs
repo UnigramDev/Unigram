@@ -50,6 +50,8 @@ namespace Unigram.Converters
         public const string Payment16 = "\uE9AB";
         public const string Window16 = "\uE9AA";
 
+        public const string NumberSymbolFilled16 = "\uE9FB";
+
         public const string TextBold = "\uE8DD";
         public const string TextItalic = "\uE8DB";
         public const string TextUnderline = "\uE8DC";
@@ -65,6 +67,9 @@ namespace Unigram.Converters
 
         public const string Gift = "\uE9D3";
         public const string GiftPremium = "\uE9D4";
+
+        public const string HandRight = "\uE98B";
+        public const string PlayCircle = "\uE9FC";
 
         public const string PeopleFilled16 = "\uE983";
         public const string MegaphoneFilled16 = "\uE982";

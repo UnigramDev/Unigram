@@ -9,7 +9,7 @@ namespace Unigram.Common.Chats
     {
         public static string GetTypingString(Chat chat, IDictionary<MessageSender, ChatAction> typingUsers, Func<long, User> getUser, Func<long, Chat> getChat, out ChatAction commonAction)
         {
-            if (chat.Type is ChatTypePrivate or ChatTypeSecret)
+            if (chat?.Type is ChatTypePrivate or ChatTypeSecret)
             {
                 var tuple = typingUsers.FirstOrDefault();
                 var action = tuple.Value;

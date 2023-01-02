@@ -34,6 +34,10 @@ namespace Unigram.Controls
             {
                 SetStatus(_clientService, user);
             }
+            else if (_parameter is ForumTopicIcon icon)
+            {
+                SetStatus(_clientService, icon);
+            }
             else if (_parameter is Supergroup supergroup)
             {
                 SetStatus(supergroup);
@@ -97,6 +101,42 @@ namespace Unigram.Controls
                 {
                     UnloadObject(ref Icon);
                 }
+
+                UnloadObject(ref Status);
+            }
+        }
+
+
+        public void SetStatus(IClientService clientService, ForumTopicIcon icon)
+        {
+            if (!_templateApplied)
+            {
+                _clientService = clientService;
+                _parameter = icon;
+                return;
+            }
+
+            if (icon.CustomEmojiId != 0)
+            {
+                LoadObject(ref Status, nameof(Status));
+                Status.SetCustomEmoji(clientService, icon.CustomEmojiId);
+
+                UnloadObject(ref Icon);
+            }
+            else
+            {
+                //var verified = user.IsVerified;
+                //var premium = user.IsPremium && clientService.IsPremiumAvailable && user.Id != clientService.Options.MyId;
+
+                //if (premium || verified)
+                {
+                    LoadObject(ref Icon, nameof(Icon));
+                    Icon.Glyph = /*premium ? Icons.Premium16 :*/ Icons.NumberSymbolFilled16;
+                }
+                //else
+                //{
+                //    UnloadObject(ref Icon);
+                //}
 
                 UnloadObject(ref Status);
             }

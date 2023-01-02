@@ -19,9 +19,9 @@
           Width="36"
           Height="36"
           Margin="0,0,12,0">
-        <Ellipse x:Name="SelectionOutline"
-                 StrokeThickness="2"
-                 Stroke="{ThemeResource SystemControlBackgroundAccentBrush}" />
+        <Rectangle x:Name="SelectionOutline"
+                   StrokeThickness="2"
+                   Stroke="{ThemeResource SystemControlBackgroundAccentBrush}" />
         <controls:ProfilePicture x:Name="Photo"
                                  Width="36"
                                  Height="36"

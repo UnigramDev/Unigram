@@ -217,7 +217,11 @@ namespace Unigram.Controls
             _animation = new object();
             _loopCount = -1;
 
-            if (_playing == false)
+            if (_withinViewport && _hasInitialLoadedEventFired)
+            {
+                _playing = true;
+            }
+            else if (_playing == false)
             {
                 _playing = null;
             }

@@ -28,6 +28,15 @@
                                          Click="Photo_Click"
                                          AutomationProperties.Name="{CustomResource AccDescrProfilePicture}" />
             </Border>
+            <Border Height="140"
+                    Width="140"
+                    Margin="12,8">
+                <controls:CustomEmojiIcon x:Name="Icon"
+                                          x:Load="False"
+                                          Width="128"
+                                          Height="128"
+                                          FrameSize="128" />
+            </Border>
 
             <Border VerticalAlignment="Bottom"
                     HorizontalAlignment="Center"
