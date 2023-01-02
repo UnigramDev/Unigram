@@ -279,6 +279,9 @@
     <Compile Include="Controls\Cells\ChartCell.xaml.cs">
       <DependentUpon>ChartCell.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Cells\ForumTopicCell.xaml.cs">
+      <DependentUpon>ForumTopicCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Cells\ChatCell.xaml.cs">
       <DependentUpon>ChatCell.xaml</DependentUpon>
     </Compile>
@@ -593,6 +596,7 @@
     <Compile Include="Services\GroupCallService.cs" />
     <Compile Include="Services\ClientService.ChatList.cs" />
     <Compile Include="Services\ClientService.Files.cs" />
+    <Compile Include="Services\ProfilePhotoService.cs" />
     <Compile Include="Services\StorageService.cs" />
     <Compile Include="Services\Stripe\SmartGlocalClient.cs" />
     <Compile Include="Services\Theme\ThemeAccentInfo.cs" />
@@ -606,6 +610,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resw</DependentUpon>
     </Compile>
+    <Compile Include="TypeContainerGenerator.cs" />
+    <Compile Include="TypeCrosserGenerator.cs" />
     <Compile Include="ViewModels\Authorization\AuthorizationCodeViewModel.cs" />
     <Compile Include="ViewModels\Authorization\AuthorizationEmailAddressViewModel.cs" />
     <Compile Include="ViewModels\Authorization\AuthorizationEmailCodeViewModel.cs" />
@@ -613,6 +619,7 @@
     <Compile Include="ViewModels\Authorization\AuthorizationRecoveryViewModel.cs" />
     <Compile Include="ViewModels\Authorization\AuthorizationRegistrationViewModel.cs" />
     <Compile Include="ViewModels\Authorization\AuthorizationViewModel.cs" />
+    <Compile Include="ViewModels\TopicListViewModel.cs" />
     <Compile Include="ViewModels\ChatListViewModel.cs" />
     <Compile Include="ViewModels\ChooseSoundViewModel.cs" />
     <Compile Include="ViewModels\CreateChatPhotoViewModel.cs" />
@@ -637,6 +644,7 @@
     <Compile Include="ViewModels\Settings\SettingsThemeViewModel.cs" />
     <Compile Include="ViewModels\StickersViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupReactionsViewModel.cs" />
+    <Compile Include="ViewModels\Users\UserEditViewModel.cs" />
     <Compile Include="Views\Authorization\AuthorizationCodePage.xaml.cs">
       <DependentUpon>AuthorizationCodePage.xaml</DependentUpon>
     </Compile>
@@ -1042,9 +1050,6 @@
     <Compile Include="Views\Popups\EditShortcutPopup.xaml.cs">
       <DependentUpon>EditShortcutPopup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Popups\EditUserNamePopup.xaml.cs">
-      <DependentUpon>EditUserNamePopup.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Popups\JoinChatPopup.xaml.cs">
       <DependentUpon>JoinChatPopup.xaml</DependentUpon>
     </Compile>
@@ -1228,6 +1233,9 @@
     <Compile Include="Views\Settings\SettingsWebSessionsPage.xaml.cs">
       <DependentUpon>SettingsWebSessionsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Supergroups\Popup\SupergroupTopicPopup.xaml.cs">
+      <DependentUpon>SupergroupTopicPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Supergroups\SupergroupAddAdministratorPage.xaml.cs">
       <DependentUpon>SupergroupAddAdministratorPage.xaml</DependentUpon>
     </Compile>
@@ -1249,6 +1257,9 @@
     <Compile Include="Views\Supergroups\SupergroupEditPage.xaml.cs">
       <DependentUpon>SupergroupEditPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Supergroups\SupergroupEditTopicPage.xaml.cs">
+      <DependentUpon>SupergroupEditTopicPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Supergroups\SupergroupReactionsPage.xaml.cs">
       <DependentUpon>SupergroupReactionsPage.xaml</DependentUpon>
     </Compile>
@@ -1266,6 +1277,9 @@
     </Compile>
     <Compile Include="Views\Supergroups\SupergroupPermissionsPage.xaml.cs">
       <DependentUpon>SupergroupPermissionsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Users\UserEditPage.xaml.cs">
+      <DependentUpon>UserEditPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Users\UserCommonChatsPage.xaml.cs">
       <DependentUpon>UserCommonChatsPage.xaml</DependentUpon>
@@ -1457,7 +1471,6 @@
     <Content Include="Assets\Emoji\spoiler.ttf" />
     <Content Include="Assets\Animations\BlockedChats.tgs" />
     <Content Include="Assets\Animations\EmptyFolder.tgs" />
-    <Content Include="Assets\Animations\Premium.tgs" />
     <Content Include="Assets\Animations\AddOne.json" />
     <Content Include="Assets\Animations\Double.json" />
     <Content Include="Assets\Animations\Unlock.json" />
@@ -1467,6 +1480,7 @@
     <Content Include="Assets\Animations\AuthorizationStateWaitRegistration.tgs" />
     <Content Include="Assets\Animations\AuthorizationStateWaitFragment.tgs" />
     <Content Include="Assets\Animations\AutoDelete.tgs" />
+    <Content Include="Assets\Animations\Premium.tgs" />
     <None Include="Assets\i420.hlsl" />
     <Content Include="Assets\Images\BoxArt.png" />
     <Content Include="Assets\Images\Reply.scale-100.png" />
@@ -1614,6 +1628,10 @@
     <Page Include="Controls\Cells\ChartCell.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Cells\ForumTopicCell.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Cells\ChatCell.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -2223,10 +2241,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Popups\EditUserNamePopup.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Views\Popups\JoinChatPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2503,6 +2517,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Supergroups\Popup\SupergroupTopicPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Supergroups\SupergroupAddAdministratorPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2531,6 +2549,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Supergroups\SupergroupEditTopicPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Supergroups\SupergroupReactionsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2552,6 +2574,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Supergroups\SupergroupPermissionsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Users\UserEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

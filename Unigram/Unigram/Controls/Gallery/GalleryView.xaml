@@ -219,7 +219,7 @@
                     Height="{ThemeResource TelegramToolBarHeight}"
                     Grid.Row="2">
                 <StackPanel Padding="12,0,0,0">
-                    <TextBlock Text="{x:Bind ConvertOf(ViewModel.Position, ViewModel.TotalItems), Mode=OneWay}"
+                    <TextBlock Text="{x:Bind ConvertOf(ViewModel.SelectedItem, ViewModel.Position, ViewModel.TotalItems), Mode=OneWay}"
                                Visibility="{x:Bind ViewModel.TotalItems, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                Style="{StaticResource BaseTextBlockStyle}"
                                Grid.ColumnSpan="4" />

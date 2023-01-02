@@ -47,6 +47,9 @@ namespace Unigram.ViewModels.Gallery
 
         public virtual bool IsProtected { get; private set; } = false;
 
+        public virtual bool IsPublic { get; protected set; }
+        public virtual bool IsPersonal { get; protected set; }
+
         public virtual InputMessageContent ToInput()
         {
             return null;

@@ -509,6 +509,7 @@ namespace Unigram
                 Unigram.Views.SettingsPage settings => TLContainer.Current.Resolve<Unigram.ViewModels.SettingsViewModel, Unigram.ViewModels.Delegates.ISettingsDelegate>(settings, sessionId),
                 Unigram.Views.Users.UserCommonChatsPage => TLContainer.Current.Resolve<Unigram.ViewModels.Users.UserCommonChatsViewModel>(sessionId),
                 Unigram.Views.Users.UserCreatePage => TLContainer.Current.Resolve<Unigram.ViewModels.Users.UserCreateViewModel>(sessionId),
+                Unigram.Views.Users.UserEditPage userEdit => TLContainer.Current.Resolve<Unigram.ViewModels.Users.UserEditViewModel, Unigram.ViewModels.Delegates.IUserDelegate>(userEdit, sessionId),
                 //
                 Unigram.Views.Supergroups.SupergroupAddAdministratorPage => TLContainer.Current.Resolve<Unigram.ViewModels.Supergroups.SupergroupAddAdministratorViewModel>(sessionId),
                 Unigram.Views.Supergroups.SupergroupAddRestrictedPage => TLContainer.Current.Resolve<Unigram.ViewModels.Supergroups.SupergroupAddRestrictedViewModel>(sessionId),

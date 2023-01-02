@@ -13,7 +13,8 @@ namespace Unigram.ViewModels.Gallery
     {
         private readonly IStorageService _storageService;
 
-        private bool _hasProtectedContent;
+        protected int _additionalPhotos;
+        protected bool _hasProtectedContent;
 
         public GalleryViewModelBase(IClientService clientService, IStorageService storageService, IEventAggregator aggregator)
             : base(clientService, null, aggregator)

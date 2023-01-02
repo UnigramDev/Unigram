@@ -6,7 +6,6 @@ using Unigram.Controls;
 using Unigram.Controls.Gallery;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
-using Unigram.ViewModels.Users;
 using Unigram.Views.Folders;
 using Unigram.Views.Settings;
 using Windows.ApplicationModel;
@@ -202,23 +201,7 @@ namespace Unigram.Views
                 return;
             }
 
-            if (chat.Type is ChatTypePrivate)
-            {
-                var user = ViewModel.ClientService.GetUser(chat);
-                if (user == null || user.ProfilePhoto == null)
-                {
-                    return;
-                }
-
-                var userFull = ViewModel.ClientService.GetUserFull(user.Id);
-                if (userFull?.Photo == null)
-                {
-                    return;
-                }
-
-                var viewModel = new UserPhotosViewModel(ViewModel.ClientService, ViewModel.StorageService, ViewModel.Aggregator, user, userFull);
-                await GalleryView.ShowAsync(viewModel, () => Photo);
-            }
+            await GalleryView.ShowAsync(ViewModel.ClientService, ViewModel.StorageService, ViewModel.Aggregator, chat, () => Photo);
         }
 
         #region Binding

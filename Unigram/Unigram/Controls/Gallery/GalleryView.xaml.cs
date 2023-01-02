@@ -11,8 +11,10 @@ using Unigram.Converters;
 using Unigram.Navigation;
 using Unigram.Services;
 using Unigram.Services.ViewService;
+using Unigram.ViewModels.Chats;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Gallery;
+using Unigram.ViewModels.Users;
 using Unigram.Views;
 using Windows.Devices.Input;
 using Windows.Foundation;
@@ -299,6 +301,51 @@ namespace Unigram.Controls.Gallery
             return new GalleryView();
         }
 
+        public static Task<ContentDialogResult> ShowAsync(IClientService clientService, IStorageService storageService, IEventAggregator aggregator, Chat chat, Func<FrameworkElement> closing = null)
+        {
+            if (chat.Type is ChatTypePrivate or ChatTypeSecret)
+            {
+                var user = clientService.GetUser(chat);
+                if (user == null)
+                {
+                    return Task.FromResult(ContentDialogResult.None);
+                }
+
+                var userFull = clientService.GetUserFull(user.Id);
+                if (userFull?.Photo == null && userFull?.PublicPhoto == null && userFull?.PersonalPhoto == null)
+                {
+                    return Task.FromResult(ContentDialogResult.None);
+                }
+
+                var viewModel = new UserPhotosViewModel(clientService, storageService, aggregator, user, userFull);
+                return GalleryView.ShowAsync(viewModel, closing);
+            }
+            else if (chat.Type is ChatTypeBasicGroup)
+            {
+                var basicGroupFull = clientService.GetBasicGroupFull(chat);
+                if (basicGroupFull?.Photo == null)
+                {
+                    return Task.FromResult(ContentDialogResult.None);
+                }
+
+                var viewModel = new ChatPhotosViewModel(clientService, storageService, aggregator, chat, basicGroupFull.Photo);
+                return GalleryView.ShowAsync(viewModel, closing);
+            }
+            else if (chat.Type is ChatTypeSupergroup)
+            {
+                var supergroupFull = clientService.GetSupergroupFull(chat);
+                if (supergroupFull?.Photo == null)
+                {
+                    return Task.FromResult(ContentDialogResult.None);
+                }
+
+                var viewModel = new ChatPhotosViewModel(clientService, storageService, aggregator, chat, supergroupFull.Photo);
+                return GalleryView.ShowAsync(viewModel, closing);
+            }
+
+            return Task.FromResult(ContentDialogResult.None);
+        }
+
         public static Task<ContentDialogResult> ShowAsync(GalleryViewModelBase parameter, Func<FrameworkElement> closing = null, int timestamp = 0)
         {
             var popup = new GalleryView
@@ -580,8 +627,17 @@ namespace Unigram.Controls.Gallery
             return string.Format(Strings.Resources.formatDateAtTime, Converter.ShortDate.Format(date), Converter.ShortTime.Format(date));
         }
 
-        private string ConvertOf(int index, int count)
+        private string ConvertOf(GalleryContent item, int index, int count)
         {
+            if (item.IsPersonal)
+            {
+                return Strings.Resources.CustomAvatarTooltip;
+            }
+            else if (item.IsPublic)
+            {
+                return Strings.Resources.FallbackTooltip;
+            }
+
             return string.Format(Strings.Resources.Of, index, count);
         }
 

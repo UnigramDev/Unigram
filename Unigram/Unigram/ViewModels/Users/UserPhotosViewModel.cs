@@ -19,7 +19,30 @@ namespace Unigram.ViewModels.Users
         {
             _user = user;
 
-            Items = new MvxObservableCollection<GalleryContent> { new GalleryChatPhoto(clientService, user, userFull.Photo) };
+            Items = new MvxObservableCollection<GalleryContent>();
+
+            if (userFull.PersonalPhoto != null)
+            {
+                _additionalPhotos++;
+                Items.Add(new GalleryChatPhoto(clientService, user, userFull.PersonalPhoto, 0, true, false));
+            }
+            if (userFull.PublicPhoto != null && user.Id == clientService.Options.MyId)
+            {
+                _additionalPhotos++;
+                Items.Add(new GalleryChatPhoto(clientService, user, userFull.PublicPhoto, 0, false, true));
+            }
+
+            if (userFull.Photo != null)
+            {
+                Items.Add(new GalleryChatPhoto(clientService, user, userFull.Photo));
+            }
+
+            if (userFull.PublicPhoto != null && userFull.Photo == null && user.Id != clientService.Options.MyId)
+            {
+                _additionalPhotos++;
+                Items.Add(new GalleryChatPhoto(clientService, user, userFull.PublicPhoto, 0, false, true));
+            }
+
             SelectedItem = Items[0];
             FirstItem = Items[0];
 
@@ -33,7 +56,7 @@ namespace Unigram.ViewModels.Users
                 var response = await ClientService.SendAsync(new GetUserProfilePhotos(_user.Id, 0, 20));
                 if (response is ChatPhotos photos)
                 {
-                    TotalItems = photos.TotalCount;
+                    TotalItems = photos.TotalCount + _additionalPhotos;
 
                     foreach (var item in photos.Photos)
                     {
@@ -52,10 +75,10 @@ namespace Unigram.ViewModels.Users
         {
             using (await _loadMoreLock.WaitAsync())
             {
-                var response = await ClientService.SendAsync(new GetUserProfilePhotos(_user.Id, Items.Count, 20));
+                var response = await ClientService.SendAsync(new GetUserProfilePhotos(_user.Id, Items.Count - _additionalPhotos, 20));
                 if (response is ChatPhotos photos)
                 {
-                    TotalItems = photos.TotalCount;
+                    TotalItems = photos.TotalCount + _additionalPhotos;
 
                     foreach (var item in photos.Photos)
                     {

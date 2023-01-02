@@ -1,0 +1,121 @@
+﻿<local:HostedPage x:Class="Unigram.Views.Users.UserEditPage"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:local="using:Unigram.Views"
+                  xmlns:controls="using:Unigram.Controls"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  mc:Ignorable="d">
+
+    <local:HostedPage.Footer>
+        <Button Content="{CustomResource Save}"
+                Command="{x:Bind ViewModel.SendCommand}"
+                Style="{StaticResource AccentButtonStyle}" />
+    </local:HostedPage.Footer>
+
+    <Grid Background="{ThemeResource SettingsPageBackground}">
+        <ScrollViewer x:Name="ScrollingHost"
+                      VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto">
+            <StackPanel Spacing="16"
+                        Padding="0,0,0,32">
+                <controls:HeaderedControl Footer="{CustomResource RegisterText2}">
+                    <Grid Background="{ThemeResource SettingsItemBackground}"
+                          Padding="12,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Grid Height="96"
+                              Width="96"
+                              Margin="0,0,12,0"
+                              Grid.RowSpan="2">
+                            <controls:ProfilePicture x:Name="Photo"
+                                                     IsEnabled="False"
+                                                     Height="96"
+                                                     Width="96" />
+                        </Grid>
+
+                        <TextBox Text="{x:Bind ViewModel.FirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 PlaceholderText="{CustomResource FirstNameSmall}"
+                                 FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                 MaxLength="{StaticResource ChannelTitleMaxLength}"
+                                 VerticalAlignment="Bottom"
+                                 Margin="0,0,0,2"
+                                 Grid.Column="1" />
+                        <TextBox Text="{x:Bind ViewModel.LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 PlaceholderText="{CustomResource LastNameSmall}"
+                                 FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                 MaxLength="{StaticResource ChannelTitleMaxLength}"
+                                 VerticalAlignment="Top"
+                                 Margin="0,2,0,0"
+                                 Grid.Column="1"
+                                 Grid.Row="1" />
+                    </Grid>
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl x:Name="SharePhone">
+                    <CheckBox x:Name="SharePhoneCheck"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl>
+                    <controls:BadgeButton x:Name="SuggestPhoto"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xE9FE;">
+                        <Button.Flyout>
+                            <MenuFlyout Placement="BottomEdgeAlignedLeft">
+                                <MenuFlyoutItem Text="{CustomResource ChoosePhotoOrVideo}"
+                                                Click="{x:Bind ViewModel.SetPhoto}">
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon Glyph="&#xEB9F;"
+                                                  Style="{StaticResource DefaultFontIconStyle}" />
+                                    </MenuFlyoutItem.Icon>
+                                </MenuFlyoutItem>
+                                <MenuFlyoutItem Text="{CustomResource StickersName}"
+                                                Click="{x:Bind ViewModel.CreatePhoto}">
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon Glyph="&#xF4AA;"
+                                                  Style="{StaticResource DefaultFontIconStyle}" />
+                                    </MenuFlyoutItem.Icon>
+                                </MenuFlyoutItem>
+                            </MenuFlyout>
+                        </Button.Flyout>
+                    </controls:BadgeButton>
+                    <controls:BadgeButton x:Name="PersonalPhoto"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xE9FD;">
+                        <Button.Flyout>
+                            <MenuFlyout Placement="BottomEdgeAlignedLeft">
+                                <MenuFlyoutItem Text="{CustomResource ChoosePhotoOrVideo}"
+                                                Click="{x:Bind ViewModel.SetPersonalPhoto}">
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon Glyph="&#xEB9F;"
+                                                  Style="{StaticResource DefaultFontIconStyle}" />
+                                    </MenuFlyoutItem.Icon>
+                                </MenuFlyoutItem>
+                                <MenuFlyoutItem Text="{CustomResource StickersName}"
+                                                Click="{x:Bind ViewModel.CreatePersonalPhoto}">
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon Glyph="&#xF4AA;"
+                                                  Style="{StaticResource DefaultFontIconStyle}" />
+                                    </MenuFlyoutItem.Icon>
+                                </MenuFlyoutItem>
+                            </MenuFlyout>
+                        </Button.Flyout>
+                    </controls:BadgeButton>
+                    <controls:BadgeButton x:Name="ResetPhoto"
+                                          Click="{x:Bind ViewModel.ResetPhoto}"
+                                          Content="{CustomResource ResetToOriginalPhoto}"
+                                          Foreground="{ThemeResource DangerButtonBackground}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xF3B1;" />
+                </controls:HeaderedControl>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</local:HostedPage>

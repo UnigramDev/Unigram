@@ -19,6 +19,7 @@ using Unigram.Views;
 using Unigram.Views.Chats;
 using Unigram.Views.Popups;
 using Unigram.Views.Settings;
+using Unigram.Views.Users;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Storage.Streams;
@@ -1355,7 +1356,7 @@ namespace Unigram.ViewModels
         #region Add contact
 
         public RelayCommand<MessageViewModel> MessageAddContactCommand { get; }
-        private async void MessageAddContactExecute(MessageViewModel message)
+        private void MessageAddContactExecute(MessageViewModel message)
         {
             var contact = message.Content as MessageContact;
             if (contact == null)
@@ -1369,25 +1370,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var fullInfo = ClientService.GetUserFull(contact.Contact.UserId);
-            if (fullInfo == null)
-            {
-                fullInfo = await ClientService.SendAsync(new GetUserFullInfo(contact.Contact.UserId)) as UserFullInfo;
-            }
-
-            if (fullInfo == null)
-            {
-                return;
-            }
-
-            var dialog = new EditUserNamePopup(user.FirstName, user.LastName, fullInfo.NeedPhoneNumberPrivacyException);
-
-            var confirm = await dialog.ShowQueuedAsync();
-            if (confirm == ContentDialogResult.Primary)
-            {
-                ClientService.Send(new AddContact(new Contact(user.PhoneNumber, dialog.FirstName, dialog.LastName, string.Empty, user.Id),
-                    fullInfo.NeedPhoneNumberPrivacyException ? dialog.SharePhoneNumber : true));
-            }
+            NavigationService.Navigate(typeof(UserEditPage), user.Id);
         }
 
         #endregion

@@ -18,6 +18,8 @@ using Unigram.Views.Chats;
 using Unigram.Views.Popups;
 using Unigram.Views.Premium.Popups;
 using Unigram.Views.Supergroups;
+using Unigram.Views.Supergroups.Popup;
+using Unigram.Views.Users;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -884,7 +886,7 @@ namespace Unigram.ViewModels
         #endregion
 
         public RelayCommand AddCommand { get; }
-        private async void AddExecute()
+        private void AddExecute()
         {
             var chat = _chat;
             if (chat == null)
@@ -898,20 +900,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var fullInfo = ClientService.GetUserFull(chat);
-            if (fullInfo == null)
-            {
-                return;
-            }
-
-            var dialog = new EditUserNamePopup(user.FirstName, user.LastName, fullInfo.NeedPhoneNumberPrivacyException);
-
-            var confirm = await dialog.ShowQueuedAsync();
-            if (confirm == ContentDialogResult.Primary)
-            {
-                ClientService.Send(new AddContact(new Contact(user.PhoneNumber, dialog.FirstName, dialog.LastName, string.Empty, user.Id),
-                    fullInfo.NeedPhoneNumberPrivacyException ? dialog.SharePhoneNumber : true));
-            }
+            NavigationService.Navigate(typeof(UserEditPage), user.Id);
         }
 
         public RelayCommand EditCommand { get; }

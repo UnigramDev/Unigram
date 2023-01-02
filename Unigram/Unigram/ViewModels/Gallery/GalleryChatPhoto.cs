@@ -11,12 +11,16 @@ namespace Unigram.ViewModels.Gallery
 
         private readonly long _messageId;
 
-        public GalleryChatPhoto(IClientService clientService, object from, ChatPhoto photo, long messageId = 0)
+        public GalleryChatPhoto(IClientService clientService, object from, ChatPhoto photo, long messageId = 0, bool isPersonal = false, bool isPublic = false)
             : base(clientService)
         {
             _from = from;
             _photo = photo;
             _messageId = messageId;
+
+            IsPersonal = isPersonal;
+            IsPublic = isPublic;
+
         }
 
         public long Id => _photo.Id;
