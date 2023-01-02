@@ -1,4 +1,10 @@
-﻿using System.ComponentModel;
+//
+// Copyright Fela Ameghino 2015-2023
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+using System.ComponentModel;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.ViewModels;
@@ -212,6 +218,11 @@ namespace Unigram.Views
 
         private void OnNavigated(object sender, NavigationEventArgs e)
         {
+            if (e.Content is ChatSharedMediaPageBase sharedMedia)
+            {
+                sharedMedia.Header.DataContext = ViewModel;
+            }
+
             UnloadObject(ProfileHeader);
         }
     }

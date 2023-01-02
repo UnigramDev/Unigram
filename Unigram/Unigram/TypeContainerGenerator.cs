@@ -1,4 +1,10 @@
-﻿using System;
+//
+// Copyright Fela Ameghino 2015-2023
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Unigram.Services;
@@ -67,6 +73,7 @@ namespace Unigram
                 ( typeof(ISessionService), typeof(SessionService) ),
                 ( typeof(IStorageService), typeof(StorageService) ),
                 ( typeof(ITranslateService), typeof(TranslateService) ),
+                ( typeof(IProfilePhotoService), typeof(ProfilePhotoService) ),
             };
 
             _instances = new List<Type>
@@ -93,6 +100,7 @@ namespace Unigram
                 typeof(ProfileViewModel),
                 typeof(UserCommonChatsViewModel),
                 typeof(UserCreateViewModel),
+                typeof(UserEditViewModel),
                 typeof(SupergroupEditViewModel),
                 typeof(SupergroupEditTypeViewModel),
                 typeof(SupergroupEditStickerSetViewModel),
