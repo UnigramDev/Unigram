@@ -636,6 +636,11 @@ namespace Unigram.ViewModels
                 }
 
                 var response = await ClientService.SendAsync(func);
+                if (response is FoundChatMessages foundChatMessages)
+                {
+                    response = new Messages(foundChatMessages.TotalCount, foundChatMessages.Messages);
+                }
+
                 if (response is Messages messages)
                 {
                     if (_chat?.Id != chat.Id && _migratedChat?.Id != chat.Id)
@@ -728,6 +733,11 @@ namespace Unigram.ViewModels
                 }
 
                 var response = await ClientService.SendAsync(func);
+                if (response is FoundChatMessages foundChatMessages)
+                {
+                    response = new Messages(foundChatMessages.TotalCount, foundChatMessages.Messages);
+                }
+
                 if (response is Messages messages)
                 {
                     if (_chat?.Id != chat.Id)
@@ -998,14 +1008,14 @@ namespace Unigram.ViewModels
             }
 
             var response = await ClientService.SendAsync(new SearchChatMessages(chat.Id, string.Empty, null, maxId, offset, limit, new SearchMessagesFilterPinned(), 0));
-            if (response is Messages messages)
+            if (response is FoundChatMessages messages)
             {
                 if (direction == VerticalAlignment.Center)
                 {
                     PinnedMessages.Clear();
                 }
 
-                var replied = messages.MessagesValue.OrderByDescending(x => x.Id).Select(x => _messageFactory.Create(this, x)).ToList();
+                var replied = messages.Messages.OrderByDescending(x => x.Id).Select(x => _messageFactory.Create(this, x)).ToList();
 
                 foreach (var message in replied)
                 {
@@ -1154,6 +1164,11 @@ namespace Unigram.ViewModels
                 }
 
                 var response = await send;
+                if (response is FoundChatMessages foundChatMessages)
+                {
+                    response = new Messages(foundChatMessages.TotalCount, foundChatMessages.Messages);
+                }
+
                 if (response is Messages messages)
                 {
                     if (_chat?.Id != chat.Id)
@@ -3937,20 +3952,20 @@ namespace Unigram.ViewModels
                 }
 
                 var response = await _viewModel.ClientService.SendAsync(new SearchChatMessages(chat.Id, string.Empty, null, fromMessageId, -9, 10, _filter, _viewModel.ThreadId));
-                if (response is Messages messages)
+                if (response is FoundChatMessages messages)
                 {
                     var stack = new List<long>();
 
                     if (_oldToNew)
                     {
-                        foreach (var message in messages.MessagesValue.Reverse())
+                        foreach (var message in messages.Messages.Reverse())
                         {
                             stack.Add(message.Id);
                         }
                     }
                     else
                     {
-                        foreach (var message in messages.MessagesValue)
+                        foreach (var message in messages.Messages)
                         {
                             stack.Add(message.Id);
                         }

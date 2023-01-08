@@ -162,7 +162,7 @@ namespace Unigram.Services
             var chatId = _chatId.Value;
             await _clientService.SendAsync(new OpenChat(chatId));
 
-            var response = await _clientService.SendAsync(new SearchChatMessages(chatId, "#emoji", null, 0, 0, 100, null, 0)) as Messages;
+            var response = await _clientService.SendAsync(new SearchChatMessages(chatId, "#emoji", null, 0, 0, 100, null, 0)) as FoundChatMessages;
             if (response == null)
             {
                 _clientService.Send(new CloseChat(chatId));
@@ -178,7 +178,7 @@ namespace Unigram.Services
 
             var results = new List<EmojiSet>();
 
-            foreach (var message in response.MessagesValue)
+            foreach (var message in response.Messages)
             {
                 var document = message.Content as MessageDocument;
                 if (document == null)

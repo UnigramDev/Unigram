@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
 using Unigram.Services;
@@ -42,11 +41,11 @@ namespace Unigram.Collections
                 var count = 0u;
 
                 var response = await _clientService.SendAsync(new SearchChatMessages(_chatId, _query, null, _lastMaxId, 0, 50, _filter, _threadId));
-                if (response is Messages messages)
+                if (response is FoundChatMessages messages)
                 {
-                    if (messages.MessagesValue.Count > 0)
+                    if (messages.NextFromMessageId != 0)
                     {
-                        _lastMaxId = messages.MessagesValue.Min(x => x.Id);
+                        _lastMaxId = messages.NextFromMessageId;
                         _hasMore = true;
                     }
                     else
@@ -54,7 +53,7 @@ namespace Unigram.Collections
                         _hasMore = false;
                     }
 
-                    foreach (var message in messages.MessagesValue)
+                    foreach (var message in messages.Messages)
                     {
                         Add(new MessageWithOwner(_clientService, message));
                         count++;

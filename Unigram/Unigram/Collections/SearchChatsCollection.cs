@@ -356,7 +356,7 @@ namespace Unigram.Collections
                     }
 
                     var response = await _clientService.SendAsync(function);
-                    if (response is Messages messages)
+                    if (response is FoundChatMessages messages)
                     {
                         if (_createMessagesHeader)
                         {
@@ -364,7 +364,7 @@ namespace Unigram.Collections
                             Add(new Header(Strings.Resources.SearchMessages));
                         }
 
-                        foreach (var message in messages.MessagesValue)
+                        foreach (var message in messages.Messages)
                         {
                             Add(message);
                         }

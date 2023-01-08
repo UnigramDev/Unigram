@@ -77,11 +77,11 @@ namespace Unigram.ViewModels.Chats
                 var offset = -limit / 2;
 
                 var response = await ClientService.SendAsync(new SearchChatMessages(_chatId, string.Empty, null, fromMessageId, offset, limit, _filter, _threadId));
-                if (response is Messages messages)
+                if (response is FoundChatMessages messages)
                 {
                     TotalItems = messages.TotalCount;
 
-                    foreach (var message in messages.MessagesValue.Where(x => x != null && x.Id < fromMessageId).OrderByDescending(x => x.Id))
+                    foreach (var message in messages.Messages.Where(x => x != null && x.Id < fromMessageId).OrderByDescending(x => x.Id))
                     {
                         if (message.Content is MessagePhoto or MessageVideo or MessageAnimation)
                         {
@@ -93,7 +93,7 @@ namespace Unigram.ViewModels.Chats
                         }
                     }
 
-                    foreach (var message in messages.MessagesValue.Where(x => x != null && x.Id > fromMessageId).OrderBy(x => x.Id))
+                    foreach (var message in messages.Messages.Where(x => x != null && x.Id > fromMessageId).OrderBy(x => x.Id))
                     {
                         if (message.Content is MessagePhoto or MessageVideo or MessageAnimation)
                         {
@@ -141,11 +141,11 @@ namespace Unigram.ViewModels.Chats
                 var offset = _isMirrored ? -limit + 1 : 0;
 
                 var response = await ClientService.SendAsync(new SearchChatMessages(_chatId, string.Empty, null, fromMessageId, offset, limit, _filter, _threadId));
-                if (response is Messages messages)
+                if (response is FoundChatMessages messages)
                 {
                     TotalItems = messages.TotalCount;
 
-                    foreach (var message in _isMirrored ? messages.MessagesValue.Where(x => x != null && x.Id > fromMessageId).OrderBy(x => x.Id) : messages.MessagesValue.Where(x => x != null && x.Id < fromMessageId).OrderByDescending(x => x.Id))
+                    foreach (var message in _isMirrored ? messages.Messages.Where(x => x != null && x.Id > fromMessageId).OrderBy(x => x.Id) : messages.Messages.Where(x => x != null && x.Id < fromMessageId).OrderByDescending(x => x.Id))
                     {
                         if (message.Content is MessagePhoto or MessageVideo or MessageAnimation)
                         {
@@ -178,11 +178,11 @@ namespace Unigram.ViewModels.Chats
                 var offset = _isMirrored ? 0 : -limit + 1;
 
                 var response = await ClientService.SendAsync(new SearchChatMessages(_chatId, string.Empty, null, fromMessageId, offset, limit, _filter, _threadId));
-                if (response is Messages messages)
+                if (response is FoundChatMessages messages)
                 {
                     TotalItems = messages.TotalCount;
 
-                    foreach (var message in _isMirrored ? messages.MessagesValue.Where(x => x != null && x.Id < fromMessageId).OrderByDescending(x => x.Id) : messages.MessagesValue.Where(x => x != null && x.Id > fromMessageId).OrderBy(x => x.Id))
+                    foreach (var message in _isMirrored ? messages.Messages.Where(x => x != null && x.Id < fromMessageId).OrderByDescending(x => x.Id) : messages.Messages.Where(x => x != null && x.Id > fromMessageId).OrderBy(x => x.Id))
                     {
                         if (message.Content is MessagePhoto or MessageVideo or MessageAnimation)
                         {

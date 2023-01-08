@@ -178,7 +178,7 @@ namespace Unigram.Services
             var chatId = _chatId.Value;
             await _clientService.SendAsync(new OpenChat(chatId));
 
-            var messages = await _clientService.SendAsync(new SearchChatMessages(chatId, string.Empty, null, 0, 0, 10, new SearchMessagesFilterDocument(), 0)) as Messages;
+            var messages = await _clientService.SendAsync(new SearchChatMessages(chatId, string.Empty, null, 0, 0, 10, new SearchMessagesFilterDocument(), 0)) as FoundChatMessages;
             if (messages == null)
             {
                 _clientService.Send(new CloseChat(chatId));
@@ -187,7 +187,7 @@ namespace Unigram.Services
 
             _clientService.Send(new CloseChat(chatId));
 
-            foreach (var message in messages.MessagesValue)
+            foreach (var message in messages.Messages)
             {
                 var document = message.Content as MessageDocument;
                 if (document == null)
@@ -268,7 +268,7 @@ namespace Unigram.Services
 
             await _clientService.SendAsync(new OpenChat(chat.Id));
 
-            var response = await _clientService.SendAsync(new SearchChatMessages(chat.Id, "#update", null, 0, 0, 10, new SearchMessagesFilterDocument(), 0)) as Messages;
+            var response = await _clientService.SendAsync(new SearchChatMessages(chat.Id, "#update", null, 0, 0, 10, new SearchMessagesFilterDocument(), 0)) as FoundChatMessages;
             if (response == null)
             {
                 _clientService.Send(new CloseChat(chat.Id));
@@ -284,7 +284,7 @@ namespace Unigram.Services
 
             var results = new List<CloudUpdate>();
 
-            foreach (var message in response.MessagesValue)
+            foreach (var message in response.Messages)
             {
                 var document = message.Content as MessageDocument;
                 if (document == null)

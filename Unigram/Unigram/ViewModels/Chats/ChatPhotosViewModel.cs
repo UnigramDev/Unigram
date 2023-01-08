@@ -55,13 +55,13 @@ namespace Unigram.ViewModels.Chats
                 var offset = -limit / 2;
 
                 var response = await ClientService.SendAsync(new SearchChatMessages(_chat.Id, string.Empty, null, 0, offset, limit, new SearchMessagesFilterChatPhoto(), 0));
-                if (response is Messages messages)
+                if (response is FoundChatMessages messages)
                 {
                     TotalItems = messages.TotalCount;
 
                     var missing = true;
 
-                    foreach (var message in messages.MessagesValue.OrderByDescending(x => x.Id))
+                    foreach (var message in messages.Messages.OrderByDescending(x => x.Id))
                     {
                         if (message.Content is MessageChatChangePhoto chatChangePhoto)
                         {

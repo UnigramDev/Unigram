@@ -558,9 +558,9 @@ namespace Unigram.Services
             var filter = message.Content is MessageAudio ? new SearchMessagesFilterAudio() : (SearchMessagesFilter)new SearchMessagesFilterVoiceNote();
 
             var response = await message.ClientService.SendAsync(new SearchChatMessages(message.ChatId, string.Empty, null, message.Id, offset, 100, filter, _threadId));
-            if (response is Messages messages)
+            if (response is FoundChatMessages messages)
             {
-                foreach (var add in message.Content is MessageAudio ? messages.MessagesValue.OrderBy(x => x.Id) : messages.MessagesValue.OrderByDescending(x => x.Id))
+                foreach (var add in message.Content is MessageAudio ? messages.Messages.OrderBy(x => x.Id) : messages.Messages.OrderByDescending(x => x.Id))
                 {
                     if (add.Id > message.Id && add.Content is MessageAudio)
                     {
@@ -572,7 +572,7 @@ namespace Unigram.Services
                     }
                 }
 
-                foreach (var add in message.Content is MessageAudio ? messages.MessagesValue.OrderByDescending(x => x.Id) : messages.MessagesValue.OrderBy(x => x.Id))
+                foreach (var add in message.Content is MessageAudio ? messages.Messages.OrderByDescending(x => x.Id) : messages.Messages.OrderBy(x => x.Id))
                 {
                     if (add.Id < message.Id && add.Content is MessageAudio)
                     {
