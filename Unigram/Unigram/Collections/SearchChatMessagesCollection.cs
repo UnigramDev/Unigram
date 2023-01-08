@@ -21,7 +21,9 @@ namespace Unigram.Collections
         private readonly long _threadId;
         private readonly string _query;
         private readonly MessageSender _sender;
-        private readonly long _fromMessageId;
+
+        private long _fromMessageId;
+        private bool _hasMoreItems = true;
 
         private readonly SearchMessagesFilter _filter;
 
@@ -56,18 +58,21 @@ namespace Unigram.Collections
                 }
 
                 var response = await _clientService.SendAsync(new SearchChatMessages(_chatId, _query, _sender, fromMessageId, offset, (int)count, _filter, _threadId));
-                if (response is Messages messages)
+                if (response is FoundChatMessages messages)
                 {
                     TotalCount = messages.TotalCount;
-                    AddRange(messages.MessagesValue);
+                    AddRange(messages.Messages);
 
-                    return new LoadMoreItemsResult { Count = (uint)messages.MessagesValue.Count };
+                    _fromMessageId = messages.NextFromMessageId;
+                    _hasMoreItems = messages.NextFromMessageId != 0;
+
+                    return new LoadMoreItemsResult { Count = (uint)messages.Messages.Count };
                 }
 
                 return new LoadMoreItemsResult { Count = 0 };
             });
         }
 
-        public bool HasMoreItems => true;
+        public bool HasMoreItems => _hasMoreItems;
     }
 }
