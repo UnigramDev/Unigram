@@ -1,8 +1,8 @@
 diff --git a/config/compiler/BUILD.gn b/config/compiler/BUILD.gn
-index 665b42c3b..dfb81fe21 100644
+index cd9b186a1..c647b7e57 100644
 --- a/config/compiler/BUILD.gn
 +++ b/config/compiler/BUILD.gn
-@@ -605,7 +605,7 @@ config("compiler") {
+@@ -603,7 +603,7 @@ config("compiler") {
      }
    } else if (is_win) {
      cflags_c += [ "/std:c11" ]
