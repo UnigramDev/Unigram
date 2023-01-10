@@ -281,7 +281,7 @@ namespace Unigram.Services
                 return;
             }
 
-            var permissions = await MediaDeviceWatcher.CheckAccessAsync(video);
+            var permissions = await MediaDeviceWatcher.CheckAccessAsync(video, false);
             if (permissions == false)
             {
                 return;

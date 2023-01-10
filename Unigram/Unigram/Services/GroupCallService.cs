@@ -240,7 +240,7 @@ namespace Unigram.Services
             //    return;
             //}
 
-            var permissions = await MediaDeviceWatcher.CheckAccessAsync(true);
+            var permissions = await MediaDeviceWatcher.CheckAccessAsync(true, false);
             if (permissions == false)
             {
                 return;
