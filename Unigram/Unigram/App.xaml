@@ -21,8 +21,7 @@
                     <!--<StaticResource x:Key="TelegramSeparatorBrush" ResourceKey="SystemControlForegroundBaseLowBrush"/>-->
 
                     <StaticResource x:Key="SettingsItemBorderBrush"
-                                    ResourceKey="{ThemeResource CardStrokeColorDefaultBrush}" />
-
+                                    ResourceKey="CardStrokeColorDefaultBrush" />
                     <StaticResource x:Key="SettingsItemBackground"
                                     ResourceKey="CardBackgroundFillColorDefaultBrush" />
                     <StaticResource x:Key="SettingsItemBackgroundPointerOver"
@@ -51,7 +50,6 @@
 
                     <StaticResource x:Key="SettingsItemBorderBrush"
                                     ResourceKey="CardStrokeColorDefaultBrush" />
-
                     <StaticResource x:Key="SettingsItemBackground"
                                     ResourceKey="CardBackgroundFillColorDefaultBrush" />
                     <StaticResource x:Key="SettingsItemBackgroundPointerOver"
