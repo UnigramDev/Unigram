@@ -87,4 +87,11 @@ You can find [here](/Documentation) some documentation on how to build Unigram, 
 
 <a name="privacy"></a>
 ## Privacy policy
-Here's our [privacy policy](https://telegram.org/privacy)
+In order to guarantee a great user experience, Unigram uses some third party services:
+- **Microsoft Bing Maps**  
+  Used to generate map previews when receiving and sharing locations.
+- **Microsoft AppCenter**  
+  Used to collect anonymous crash data and usage statistics, fundamental to monitor app health and to fix issues.  
+  Anonymised data is stored for 28 days.
+
+Additionally to this, Telegram [privacy policy](https://telegram.org/privacy) applies.
