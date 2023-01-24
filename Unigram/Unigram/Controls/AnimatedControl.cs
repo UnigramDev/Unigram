@@ -225,12 +225,16 @@ namespace Unigram.Controls
             }
         }
 
-        private void Changed(bool force = false)
+        private void Changed(bool force = false, bool load = true)
         {
             if (_canvas == null || !_visible)
             {
-                // Load is going to invoke Changed again
-                Load();
+                if (load)
+                {
+                    // Load is going to invoke Changed again
+                    Load();
+                }
+
                 return;
             }
 
@@ -285,7 +289,7 @@ namespace Unigram.Controls
                 AutomationProperties.SetAccessibilityView(_canvas, AccessibilityView.Raw);
 
                 _layoutRoot.Children.Add(_canvas);
-                Changed();
+                Changed(load: false);
 
                 _unloaded = false;
                 _disposed = false;
