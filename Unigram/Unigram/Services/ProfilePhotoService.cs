@@ -100,6 +100,8 @@ namespace Unigram.Services
                 //conversion.Rotation = file.EditState.Rotation;
                 conversion.OutputSize = new Size(640, 640);
                 //conversion.Mirror = transform.Mirror;
+                conversion.VideoBitrate = 1000000;
+                conversion.AudioBitrate = 1000000;
                 conversion.CropRectangle = new Rect(
                     media.EditState.Rectangle.X * props.Width,
                     media.EditState.Rectangle.Y * props.Height,
