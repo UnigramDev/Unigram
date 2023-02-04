@@ -1728,7 +1728,7 @@ Nezapomeňte, že Telegram můžete používat na více zařízeních současně
 Mějte na paměti, že s odhlášením se vymažou všechny Vaše důvěrné konverzace.</value>
   </data>
   <data name="AreYouSureRegistration" xml:space="preserve">
-    <value>Opravdu chcete zrušit registraci?</value>
+    <value>Opravdu chcete zastavit registraci?</value>
   </data>
   <data name="AreYouSureSecretChat" xml:space="preserve">
     <value>Opravdu chcete zahájit důvěrnou konverzaci?</value>
@@ -7914,6 +7914,9 @@ Jazyk můžete změnit kdykoli zpátky v Nastavení.</value>
   <data name="LimitReachedPinDialogsPremium" xml:space="preserve">
     <value>Je nám líto, ale nemůžete připnout více než {0} konverzací na začátek. Některé, které jsou aktuálně připnuté, můžete odepnout.</value>
   </data>
+  <data name="LimitReachedPinnedTopics" xml:space="preserve">
+    <value>Je nám líto, ale na nahoru nelze připnout více než {0} vláken.</value>
+  </data>
   <data name="LimitReachedPublicLinks" xml:space="preserve">
     <value>Máte zarezervováno příliš mnoho veřejných odkazů. Zkuste odvolat odkaz ze starší skupiny nebo kanálu nebo si předplaťte **Telegram Premium** a zdvojnásobte limit na **{1}** veřejných odkazů.</value>
   </data>
@@ -9068,7 +9071,7 @@ Může to chvíli trvat. Můžete dál používat aplikaci, zatímco budou soubo
     <value>Litujeme, momentálně můžete do skupin přidat pouze vzájemné kontakty.</value>
   </data>
   <data name="NobodyLikesSpam3" xml:space="preserve">
-    <value>Litujeme, momentálně máte omezeno přispívání do veřejných skupin.</value>
+    <value>Litujeme, momentálně máte omezeno přispívání do této skupiny.</value>
   </data>
   <data name="NobodyViewed" xml:space="preserve">
     <value>Žádné zobrazení</value>
@@ -15026,7 +15029,7 @@ Zkuste to prosím znovu za {0}.</value>
     <value>{0} zavřel/a {1}</value>
   </data>
   <data name="TopicWasCreatedAction" xml:space="preserve">
-    <value>{0} - bylo vytvořeno</value>
+    <value>Vlákno {0} bylo vytvořeno</value>
   </data>
   <data name="TopicWasIconChangedToAction" xml:space="preserve">
     <value>{0} změnil/a ikonu vlákna na {1}</value>
@@ -15106,7 +15109,7 @@ Ale pokud nesouhlasíte s těmito potřebami, nemůžeme Vám tuto službu nabí
     <value>Vypnout heslo.</value>
   </data>
   <data name="TurnPasswordOffPassport" xml:space="preserve">
-    <value>Varování! Všechna uložená data ve Vašem Telegram Passportu budou ztracena!</value>
+    <value>Všechna uložená data ve Vašem Telegram Passportu budou ztracena!</value>
   </data>
   <data name="TurnPasswordOffQuestion" xml:space="preserve">
     <value>Opravdu chcete zrušit Vaše heslo?</value>
