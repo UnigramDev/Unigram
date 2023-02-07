@@ -64,12 +64,12 @@
                                             <DiscreteObjectKeyFrame KeyTime="0"
                                                                     Value="{ThemeResource CheckBoxForegroundUnchecked}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
+                                        <!--<ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
                                                                        Storyboard.TargetProperty="Background">
                                             <DiscreteObjectKeyFrame KeyTime="0"
                                                                     Value="{ThemeResource SettingsItemBackground}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <!--<ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
                                                                        Storyboard.TargetProperty="BorderBrush">
                                             <DiscreteObjectKeyFrame KeyTime="0"
                                                                     Value="{ThemeResource CheckBoxBorderBrushUnchecked}" />
@@ -221,12 +221,12 @@
                                             <DiscreteObjectKeyFrame KeyTime="0"
                                                                     Value="{ThemeResource CheckBoxForegroundChecked}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
+                                        <!--<ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
                                                                        Storyboard.TargetProperty="Background">
                                             <DiscreteObjectKeyFrame KeyTime="0"
                                                                     Value="{ThemeResource SettingsItemBackground}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <!--<ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
                                                                        Storyboard.TargetProperty="BorderBrush">
                                             <DiscreteObjectKeyFrame KeyTime="0"
                                                                     Value="{ThemeResource CheckBoxBorderBrushChecked}" />
@@ -378,12 +378,12 @@
                                             <DiscreteObjectKeyFrame KeyTime="0"
                                                                     Value="{ThemeResource CheckBoxForegroundIndeterminate}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
+                                        <!--<ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
                                                                        Storyboard.TargetProperty="Background">
                                             <DiscreteObjectKeyFrame KeyTime="0"
                                                                     Value="{ThemeResource SettingsItemBackground}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <!--<ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
                                                                        Storyboard.TargetProperty="BorderBrush">
                                             <DiscreteObjectKeyFrame KeyTime="0"
                                                                     Value="{ThemeResource CheckBoxBorderBrushIndeterminate}" />

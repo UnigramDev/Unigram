@@ -35,6 +35,11 @@ namespace Unigram.Views.Supergroups
             return Converter.ShortDate.Format(dateTime) + ", " + Converter.ShortTime.Format(dateTime);
         }
 
+        private string ConvertCanSendCount(int count)
+        {
+            return $"{count}/9";
+        }
+
         #endregion
 
         #region Delegate

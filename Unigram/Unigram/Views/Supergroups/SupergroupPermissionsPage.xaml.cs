@@ -230,6 +230,11 @@ namespace Unigram.Views.Supergroups
             }
         }
 
+        private string ConvertCanSendCount(int count)
+        {
+            return $"{count}/9";
+        }
+
         #endregion
 
         #region Recycle

@@ -39,10 +39,15 @@ namespace Unigram.ViewModels.Supergroups
             CanChangeInfo = chat.Permissions.CanChangeInfo;
             CanPinMessages = chat.Permissions.CanPinMessages;
             CanInviteUsers = chat.Permissions.CanInviteUsers;
+            CanSendPhotos = chat.Permissions.CanSendPhotos;
+            CanSendVideos = chat.Permissions.CanSendVideos;
+            CanSendOtherMessages = chat.Permissions.CanSendOtherMessages;
+            CanSendAudios = chat.Permissions.CanSendAudios;
+            CanSendDocuments = chat.Permissions.CanSendDocuments;
+            CanSendVoiceNotes = chat.Permissions.CanSendVoiceNotes;
+            CanSendVideoNotes = chat.Permissions.CanSendVideoNotes;
             CanSendPolls = chat.Permissions.CanSendPolls;
             CanAddWebPagePreviews = chat.Permissions.CanAddWebPagePreviews;
-            CanSendOtherMessages = chat.Permissions.CanSendOtherMessages;
-            CanSendMediaMessages = chat.Permissions.CanSendMediaMessages;
             CanSendMessages = chat.Permissions.CanSendMessages;
         }
 
@@ -57,38 +62,114 @@ namespace Unigram.ViewModels.Supergroups
                 Set(ref _canSendMessages, value);
 
                 // Don't allow send media
-                if (!value && _canSendMediaMessages)
+                if (!value && _canAddWebPagePreviews)
                 {
-                    CanSendMediaMessages = false;
+                    CanAddWebPagePreviews = false;
                 }
             }
         }
 
-        private bool _canSendMediaMessages;
-        public bool CanSendMediaMessages
+        private bool? _canSendMediaMessages;
+        public bool? CanSendMediaMessages
         {
             get => _canSendMediaMessages;
             set
             {
                 Set(ref _canSendMediaMessages, value);
 
-                // Allow send messages
-                if (value && !_canSendMessages)
+                if (value.HasValue)
                 {
-                    CanSendMessages = true;
+                    CanSendPhotos = value.Value;
+                    CanSendVideos = value.Value;
+                    CanSendOtherMessages = value.Value;
+                    CanSendAudios = value.Value;
+                    CanSendDocuments = value.Value;
+                    CanSendVoiceNotes = value.Value;
+                    CanSendVideoNotes = value.Value;
+                    CanSendPolls = value.Value;
+                    CanAddWebPagePreviews = value.Value;
                 }
+            }
+        }
 
-                // Don't allow send stickers
-                if (!value && _canSendOtherMessages)
-                {
-                    CanSendOtherMessages = false;
-                }
+        private void UpdateCanSendMediaMessages()
+        {
+            var count = Count();
 
-                // Don't allow embed links
-                if (!value && _canAddWebPagePreviews)
-                {
-                    CanAddWebPagePreviews = false;
-                }
+            Set(ref _canSendCount, count, nameof(CanSendCount));
+            Set(ref _canSendMediaMessages, count == 0 ? false : count == 9 ? true : null, nameof(CanSendMediaMessages));
+        }
+
+        private int Count()
+        {
+            var count = 0;
+            if (_canAddWebPagePreviews)
+            {
+                count++;
+            }
+            if (_canSendVoiceNotes)
+            {
+                count++;
+            }
+            if (_canSendVideoNotes)
+            {
+                count++;
+            }
+            if (_canSendVideos)
+            {
+                count++;
+            }
+            if (_canSendPhotos)
+            {
+                count++;
+            }
+            if (_canSendDocuments)
+            {
+                count++;
+            }
+            if (_canSendAudios)
+            {
+                count++;
+            }
+            if (_canSendOtherMessages)
+            {
+                count++;
+            }
+            if (_canSendPolls)
+            {
+                count++;
+            }
+
+            return count;
+        }
+
+        private int _canSendCount;
+        public int CanSendCount
+        {
+            get => _canSendCount;
+            set => Set(ref _canSendCount, value);
+        }
+
+
+        private bool _canSendPhotos;
+        public bool CanSendPhotos
+        {
+            get => _canSendPhotos;
+            set
+            {
+                Set(ref _canSendPhotos, value);
+                UpdateCanSendMediaMessages();
+            }
+        }
+
+        private bool _canSendVideos;
+        public bool CanSendVideos
+        {
+            get => _canSendVideos;
+            set
+            {
+                Set(ref _canSendVideos, value);
+                UpdateCanSendMediaMessages();
             }
         }
 
@@ -99,12 +180,51 @@ namespace Unigram.ViewModels.Supergroups
             set
             {
                 Set(ref _canSendOtherMessages, value);
+                UpdateCanSendMediaMessages();
+            }
+        }
 
-                // Allow send media
-                if (value && !_canSendMediaMessages)
-                {
-                    CanSendMediaMessages = true;
-                }
+        private bool _canSendAudios;
+        public bool CanSendAudios
+        {
+            get => _canSendAudios;
+            set
+            {
+                Set(ref _canSendAudios, value);
+                UpdateCanSendMediaMessages();
+            }
+        }
+
+        private bool _canSendDocuments;
+        public bool CanSendDocuments
+        {
+            get => _canSendDocuments;
+            set
+            {
+                Set(ref _canSendDocuments, value);
+                UpdateCanSendMediaMessages();
+            }
+        }
+
+        private bool _canSendVoiceNotes;
+        public bool CanSendVoiceNotes
+        {
+            get => _canSendVoiceNotes;
+            set
+            {
+                Set(ref _canSendVoiceNotes, value);
+                UpdateCanSendMediaMessages();
+            }
+        }
+
+        private bool _canSendVideoNotes;
+        public bool CanSendVideoNotes
+        {
+            get => _canSendVideoNotes;
+            set
+            {
+                Set(ref _canSendVideoNotes, value);
+                UpdateCanSendMediaMessages();
             }
         }
 
@@ -115,12 +235,7 @@ namespace Unigram.ViewModels.Supergroups
             set
             {
                 Set(ref _canSendPolls, value);
-
-                // Allow send media
-                if (value && !_canSendMediaMessages)
-                {
-                    CanSendMediaMessages = true;
-                }
+                UpdateCanSendMediaMessages();
             }
         }
 
@@ -131,11 +246,7 @@ namespace Unigram.ViewModels.Supergroups
             set
             {
                 Set(ref _canAddWebPagePreviews, value);
-
-                if (value && !_canSendMediaMessages)
-                {
-                    CanSendMediaMessages = true;
-                }
+                UpdateCanSendMediaMessages();
             }
         }
 
@@ -185,10 +296,15 @@ namespace Unigram.ViewModels.Supergroups
                 CanChangeInfo = _canChangeInfo,
                 CanPinMessages = _canPinMessages,
                 CanInviteUsers = _canInviteUsers,
-                CanAddWebPagePreviews = _canAddWebPagePreviews,
-                CanSendPolls = _canSendPolls,
+                CanSendPhotos = _canSendPhotos,
+                CanSendVideos = _canSendVideos,
                 CanSendOtherMessages = _canSendOtherMessages,
-                CanSendMediaMessages = _canSendMediaMessages,
+                CanSendAudios = _canSendAudios,
+                CanSendDocuments = _canSendDocuments,
+                CanSendVoiceNotes = _canSendVoiceNotes,
+                CanSendVideoNotes = _canSendVideoNotes,
+                CanSendPolls = _canSendPolls,
+                CanAddWebPagePreviews = _canAddWebPagePreviews,
                 CanSendMessages = _canSendMessages
             };
 
