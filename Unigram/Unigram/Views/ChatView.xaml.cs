@@ -3627,12 +3627,11 @@ namespace Unigram.Views
             {
                 ButtonSilent.IsChecked = defaultDisableNotification;
                 Automation.SetToolTip(ButtonSilent, defaultDisableNotification ? Strings.Resources.AccDescrChanSilentOn : Strings.Resources.AccDescrChanSilentOff);
-
-                TextField.PlaceholderText = chat.DefaultDisableNotification
-                    ? Strings.Resources.ChannelSilentBroadcast
-                    : Strings.Resources.ChannelBroadcast;
             }
-        }
+
+            TextField.PlaceholderText = GetPlaceholder(chat, out bool readOnly);
+            TextField.IsReadOnly = readOnly;
+            }
 
         public void UpdateChatActions(Chat chat, IDictionary<MessageSender, ChatAction> actions)
         {
@@ -3715,27 +3714,60 @@ namespace Unigram.Views
             }
         }
 
-        public void UpdateChatReplyMarkup(Chat chat, MessageViewModel message)
+        private string GetPlaceholder(Chat chat, out bool readOnly)
         {
-            string GetPlaceholder()
-            {
+            readOnly = false;
+
                 if (ViewModel.ClientService.TryGetSupergroup(chat, out Supergroup supergroup))
                 {
+                return GetPlaceholder(chat, supergroup, out readOnly);
+            }
+            else if (ViewModel.ClientService.TryGetBasicGroup(chat, out BasicGroup basicGroup))
+            {
+                return GetPlaceholder(chat, basicGroup, out readOnly);
+            }
+
+            return Strings.Resources.TypeMessage;
+        }
+
+        private string GetPlaceholder(Chat chat, Supergroup supergroup, out bool readOnly)
+        {
+            readOnly = false;
+
                     if (supergroup.IsChannel)
                     {
                         return chat.DefaultDisableNotification
                             ? Strings.Resources.ChannelSilentBroadcast
                             : Strings.Resources.ChannelBroadcast;
                     }
+            else if (chat.Permissions.CanSendMessages is false && supergroup.Status is not ChatMemberStatusCreator and not ChatMemberStatusAdministrator)
+            {
+                readOnly = true;
+                return Strings.Resources.PlainTextRestrictedHint;
+            }
                     else if (supergroup.Status is ChatMemberStatusCreator creator && creator.IsAnonymous || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.IsAnonymous)
                     {
                         return Strings.Resources.SendAnonymously;
                     }
+
+            return Strings.Resources.TypeMessage;
                 }
+
+        private string GetPlaceholder(Chat chat, BasicGroup basicGroup, out bool readOnly)
+        {
+            readOnly = false;
+
+            if (chat.Permissions.CanSendMessages is false && basicGroup.Status is not ChatMemberStatusCreator and not ChatMemberStatusAdministrator)
+            {
+                readOnly = true;
+                return Strings.Resources.PlainTextRestrictedHint;
+            }
 
                 return Strings.Resources.TypeMessage;
             }
 
+        public void UpdateChatReplyMarkup(Chat chat, MessageViewModel message)
+        {
             if (message?.ReplyMarkup is ReplyMarkupForceReply forceReply && forceReply.IsPersonal)
             {
                 ViewModel.MessageReplyCommand.Execute(message);
@@ -3743,10 +3775,12 @@ namespace Unigram.Views
                 if (forceReply.InputFieldPlaceholder.Length > 0)
                 {
                     TextField.PlaceholderText = forceReply.InputFieldPlaceholder;
+                    TextField.IsReadOnly = false;
                 }
                 else
                 {
-                    TextField.PlaceholderText = GetPlaceholder();
+                    TextField.PlaceholderText = GetPlaceholder(chat, out bool readOnly);
+                    TextField.IsReadOnly = readOnly;
                 }
 
                 ButtonMarkup.Visibility = Visibility.Collapsed;
@@ -3760,10 +3794,12 @@ namespace Unigram.Views
                     if (message.ReplyMarkup is ReplyMarkupShowKeyboard showKeyboard && showKeyboard.InputFieldPlaceholder.Length > 0)
                     {
                         TextField.PlaceholderText = showKeyboard.InputFieldPlaceholder;
+                        TextField.IsReadOnly = false;
                     }
                     else
                     {
-                        TextField.PlaceholderText = GetPlaceholder();
+                        TextField.PlaceholderText = GetPlaceholder(chat, out bool readOnly);
+                        TextField.IsReadOnly = readOnly;
                     }
 
                     ButtonMarkup.Visibility = Visibility.Visible;
@@ -3771,7 +3807,8 @@ namespace Unigram.Views
                 }
                 else
                 {
-                    TextField.PlaceholderText = GetPlaceholder();
+                    TextField.PlaceholderText = GetPlaceholder(chat, out bool readOnly);
+                    TextField.IsReadOnly = readOnly;
 
                     ButtonMarkup.Visibility = Visibility.Collapsed;
                     CollapseMarkup(false);
@@ -4258,7 +4295,9 @@ namespace Unigram.Views
                 ShowArea();
             }
 
-            TextField.PlaceholderText = Strings.Resources.TypeMessage;
+            TextField.PlaceholderText = GetPlaceholder(chat, out bool readOnly);
+            TextField.IsReadOnly = readOnly;
+
             UpdateUserStatus(chat, user);
         }
 
@@ -4380,7 +4419,8 @@ namespace Unigram.Views
                     ShowArea();
                 }
 
-                TextField.PlaceholderText = Strings.Resources.TypeMessage;
+                TextField.PlaceholderText = GetPlaceholder(chat, group, out bool readOnly);
+                TextField.IsReadOnly = readOnly;
 
                 ViewModel.LastSeen = Locale.Declension("Members", group.MemberCount);
             }
@@ -4509,20 +4549,8 @@ namespace Unigram.Views
                 }
             }
 
-            if (group.IsChannel)
-            {
-                TextField.PlaceholderText = chat.DefaultDisableNotification
-                    ? Strings.Resources.ChannelSilentBroadcast
-                    : Strings.Resources.ChannelBroadcast;
-            }
-            else if (group.Status is ChatMemberStatusCreator creator && creator.IsAnonymous || group.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.IsAnonymous)
-            {
-                TextField.PlaceholderText = Strings.Resources.SendAnonymously;
-            }
-            else
-            {
-                TextField.PlaceholderText = Strings.Resources.TypeMessage;
-            }
+            TextField.PlaceholderText = GetPlaceholder(chat, group, out bool readOnly);
+            TextField.IsReadOnly = readOnly;
 
             if (ViewModel.Type == DialogType.History)
             {
