@@ -4,14 +4,15 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI;
+using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
 using Unigram.Assets.Icons;
 using Unigram.Common;
+using Unigram.Navigation;
 using Windows.UI;
-using Windows.UI.Composition;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
 
 namespace Unigram.Controls
 {
@@ -37,7 +38,7 @@ namespace Unigram.Controls
         {
             DefaultStyleKey = typeof(DownloadsIndicator);
 
-            var compositor = Window.Current.Compositor;
+            var compositor = BootStrapper.Current.Compositor;
             var source = new Downloading();
 
             var visual = source.TryCreateAnimatedVisual(compositor, out _);
@@ -115,7 +116,7 @@ namespace Unigram.Controls
 
                 var batch = PrepareBatch();
 
-                var compositor = Window.Current.Compositor;
+                var compositor = BootStrapper.Current.Compositor;
                 var linearEasing = compositor.CreateLinearEasingFunction();
 
                 _animation.Duration = _visual.Duration / (_state == State.IndeterminateToCompleted ? 3 : 2);

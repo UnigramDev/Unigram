@@ -229,43 +229,6 @@
             <Color x:Key="SystemRevealChromeGrayColor">#F2767676</Color>
             <Color x:Key="SystemRevealListLowColor">#18FFFFFF</Color>
             <Color x:Key="SystemRevealListMediumColor">#30FFFFFF</Color>
-            <media:RevealBackgroundBrush x:Key="SystemControlBackgroundBaseLowRevealBackgroundBrush" TargetTheme="Dark" Color="{StaticResource SystemRevealBaseLowColor}" FallbackColor="{StaticResource SystemBaseLowColor}" />
-            <media:RevealBackgroundBrush x:Key="SystemControlTransparentRevealBackgroundBrush" TargetTheme="Dark" Color="Transparent" FallbackColor="Transparent" />
-            <media:RevealBackgroundBrush x:Key="SystemControlBackgroundAltHighRevealBackgroundBrush" TargetTheme="Dark" Color="{StaticResource SystemAltHighColor}" FallbackColor="{StaticResource SystemAltHighColor}" />
-            <media:RevealBackgroundBrush x:Key="SystemControlHighlightAccentRevealBackgroundBrush" TargetTheme="Dark" Color="{StaticResource SystemAccentColor}" FallbackColor="{StaticResource SystemAccentColor}" />
-            <media:RevealBackgroundBrush x:Key="SystemControlHighlightAccent3RevealBackgroundBrush" TargetTheme="Dark" Color="{StaticResource SystemAccentColorDark3}" FallbackColor="{StaticResource SystemAccentColorDark3}" />
-            <media:RevealBackgroundBrush x:Key="SystemControlHighlightAccent2RevealBackgroundBrush" TargetTheme="Dark" Color="{StaticResource SystemAccentColorDark2}" FallbackColor="{StaticResource SystemAccentColorDark2}" />
-            <media:RevealBackgroundBrush x:Key="SystemControlHighlightListMediumRevealBackgroundBrush" TargetTheme="Dark" Color="{StaticResource SystemRevealListMediumColor}" FallbackColor="{StaticResource SystemListMediumColor}" />
-            <media:RevealBackgroundBrush x:Key="SystemControlHighlightListLowRevealBackgroundBrush" TargetTheme="Dark" Color="{StaticResource SystemRevealListLowColor}" FallbackColor="{StaticResource SystemListLowColor}" />
-            <media:RevealBackgroundBrush x:Key="SystemControlBackgroundBaseMediumLowRevealBaseLowBackgroundBrush" TargetTheme="Dark" Color="{StaticResource SystemRevealBaseLowColor}" FallbackColor="{StaticResource SystemBaseMediumLowColor}" />
-            <media:RevealBackgroundBrush x:Key="SystemControlHighlightBaseMediumLowRevealAccentBackgroundBrush" TargetTheme="Dark" Color="{StaticResource SystemAccentColor}" FallbackColor="{StaticResource SystemBaseMediumLowColor}" />
-            <media:RevealBackgroundBrush x:Key="SystemControlHighlightListMediumRevealListLowBackgroundBrush" TargetTheme="Dark" Color="{StaticResource SystemRevealListLowColor}" FallbackColor="{StaticResource SystemListMediumColor}" />
-            <media:RevealBackgroundBrush x:Key="SystemControlHighlightAccent3RevealAccent2BackgroundBrush" TargetTheme="Dark" Color="{StaticResource SystemAccentColorDark2}" FallbackColor="{StaticResource SystemAccentColorDark3}" />
-            <media:RevealBorderBrush x:Key="SystemControlBackgroundAccentRevealBorderBrush" TargetTheme="Dark" Color="{StaticResource SystemAccentColor}" FallbackColor="{StaticResource SystemAccentColor}" />
-            <media:RevealBorderBrush x:Key="SystemControlBackgroundBaseHighRevealBorderBrush" TargetTheme="Dark" Color="{StaticResource SystemRevealBaseHighColor}" FallbackColor="{StaticResource SystemBaseHighColor}" />
-            <media:RevealBorderBrush x:Key="SystemControlBackgroundBaseLowRevealBorderBrush" TargetTheme="Dark" Color="{StaticResource SystemRevealBaseLowColor}" FallbackColor="{StaticResource SystemBaseLowColor}" />
-            <media:RevealBorderBrush x:Key="SystemControlBackgroundBaseMediumRevealBorderBrush" TargetTheme="Dark" Color="{StaticResource SystemRevealBaseMediumColor}" FallbackColor="{StaticResource SystemBaseMediumColor}" />
-            <media:RevealBorderBrush x:Key="SystemControlBackgroundBaseMediumHighRevealBorderBrush" TargetTheme="Dark" Color="{StaticResource SystemRevealBaseMediumHighColor}" FallbackColor="{StaticResource SystemBaseMediumHighColor}" />
-            <media:RevealBorderBrush x:Key="SystemControlBackgroundBaseMediumLowRevealBorderBrush" TargetTheme="Dark" Color="{StaticResource SystemRevealBaseMediumLowColor}" FallbackColor="{StaticResource SystemBaseMediumLowColor}" />
-            <media:RevealBorderBrush x:Key="SystemControlBackgroundChromeBlackHighRevealBorderBrush" TargetTheme="Dark" Color="{StaticResource SystemRevealChromeBlackHighColor}" FallbackColor="{StaticResource SystemChromeBlackHighColor}" />
-            <media:RevealBorderBrush x:Key="SystemControlBackgroundChromeBlackMediumRevealChromeBorderBrush" TargetTheme="Dark" Color="{StaticResource SystemRevealChromeBlackMediumColor}" FallbackColor="{StaticResource SystemChromeBlackMediumColor}" />
-            <media:RevealBorderBrush x:Key="SystemControlBackgroundChromeMediumRevealBorderBrush" TargetTheme="Dark" Color="{StaticResource SystemRevealChromeMediumColor}" FallbackColor="{StaticResource SystemChromeMediumColor}" />
-            <media:RevealBorderBrush x:Key="SystemControlBackgroundChromeMediumLowRevealBorderBrush" TargetTheme="Dark" Color="{StaticResource SystemRevealChromeMediumLowColor}" FallbackColor="{StaticResource SystemChromeMediumLowColor}" />
-            <media:RevealBorderBrush x:Key="SystemControlBackgroundChromeWhiteRevealBorderBrush" TargetTheme="Dark" Color="{StaticResource SystemRevealChromeWhiteColor}" FallbackColor="{StaticResource SystemChromeWhiteColor}" />
-            <media:RevealBorderBrush x:Key="SystemControlTransparentRevealListLowBorderBrush" TargetTheme="Dark" Color="{StaticResource SystemRevealListLowColor}" FallbackColor="Transparent" />
-            <media:RevealBorderBrush x:Key="SystemControlBackgroundListLowRevealBorderBrush" TargetTheme="Dark" Color="{StaticResource SystemRevealListLowColor}" FallbackColor="{StaticResource SystemListLowColor}" />
-            <media:RevealBorderBrush x:Key="SystemControlBackgroundListMediumRevealBorderBrush" TargetTheme="Dark" Color="{StaticResource SystemRevealListMediumColor}" FallbackColor="{StaticResource SystemListMediumColor}" />
-            <media:RevealBorderBrush x:Key="SystemControlTransparentRevealBorderBrush" TargetTheme="Dark" Color="Transparent" FallbackColor="Transparent" />
-            <media:RevealBorderBrush x:Key="SystemControlForegroundRevealTransparentBorderBrush" TargetTheme="Dark" Color="Transparent" FallbackColor="Transparent" />
-            <media:RevealBorderBrush x:Key="SystemControlBackgroundTransparentRevealBorderBrush" TargetTheme="Dark" Color="Transparent" FallbackColor="Transparent" />
-            <media:RevealBorderBrush x:Key="SystemControlHighlightTransparentRevealBorderBrush" TargetTheme="Dark" Color="Transparent" FallbackColor="Transparent" />
-            <media:RevealBorderBrush x:Key="SystemControlHighlightAltTransparentRevealBorderBrush" TargetTheme="Dark" Color="Transparent" FallbackColor="Transparent" />
-            <media:RevealBorderBrush x:Key="SystemControlHighlightAccentRevealBorderBrush" TargetTheme="Dark" Color="{StaticResource SystemAccentColor}" FallbackColor="{StaticResource SystemAccentColor}" />
-            <media:RevealBorderBrush x:Key="SystemControlHighlightBaseHighRevealBorderBrush" TargetTheme="Dark" Color="{StaticResource SystemRevealBaseHighColor}" FallbackColor="{StaticResource SystemBaseHighColor}" />
-            <media:RevealBorderBrush x:Key="SystemControlHighlightBaseLowRevealBorderBrush" TargetTheme="Dark" Color="{StaticResource SystemRevealBaseLowColor}" FallbackColor="{StaticResource SystemBaseLowColor}" />
-            <media:RevealBorderBrush x:Key="SystemControlHighlightBaseMediumRevealBorderBrush" TargetTheme="Dark" Color="{StaticResource SystemRevealBaseMediumColor}" FallbackColor="{StaticResource SystemBaseMediumColor}" />
-            <media:RevealBorderBrush x:Key="SystemControlHighlightBaseMediumHighRevealBorderBrush" TargetTheme="Dark" Color="{StaticResource SystemRevealBaseMediumHighColor}" FallbackColor="{StaticResource SystemBaseMediumHighColor}" />
-            <media:RevealBorderBrush x:Key="SystemControlHighlightBaseMediumLowRevealBorderBrush" TargetTheme="Dark" Color="{StaticResource SystemRevealBaseMediumLowColor}" FallbackColor="{StaticResource SystemBaseMediumLowColor}" />
             <StaticResource x:Key="ListViewItemRevealBorderBrushPointerOver" ResourceKey="SystemControlTransparentRevealBorderBrush" />
             <StaticResource x:Key="ListViewItemRevealBorderBrushPressed" ResourceKey="SystemControlTransparentRevealBorderBrush" />
             <StaticResource x:Key="GridViewItemRevealBorderBrush" ResourceKey="SystemControlTransparentRevealBorderBrush" />
@@ -890,43 +853,6 @@
             <Color x:Key="SystemRevealChromeGrayColor">#E6767676</Color>
             <Color x:Key="SystemRevealListLowColor">#17000000</Color>
             <Color x:Key="SystemRevealListMediumColor">#2E000000</Color>
-            <media:RevealBackgroundBrush x:Key="SystemControlBackgroundBaseLowRevealBackgroundBrush" TargetTheme="Light" Color="{StaticResource SystemRevealBaseLowColor}" FallbackColor="{StaticResource SystemBaseLowColor}" />
-            <media:RevealBackgroundBrush x:Key="SystemControlTransparentRevealBackgroundBrush" TargetTheme="Light" Color="Transparent" FallbackColor="Transparent" />
-            <media:RevealBackgroundBrush x:Key="SystemControlBackgroundAltHighRevealBackgroundBrush" TargetTheme="Light" Color="{StaticResource SystemAltHighColor}" FallbackColor="{StaticResource SystemAltHighColor}" />
-            <media:RevealBackgroundBrush x:Key="SystemControlHighlightAccentRevealBackgroundBrush" TargetTheme="Light" Color="{StaticResource SystemAccentColor}" FallbackColor="{StaticResource SystemAccentColor}" />
-            <media:RevealBackgroundBrush x:Key="SystemControlHighlightAccent3RevealBackgroundBrush" TargetTheme="Light" Color="{StaticResource SystemAccentColorLight3}" FallbackColor="{StaticResource SystemAccentColorLight3}" />
-            <media:RevealBackgroundBrush x:Key="SystemControlHighlightAccent2RevealBackgroundBrush" TargetTheme="Light" Color="{StaticResource SystemAccentColorLight2}" FallbackColor="{StaticResource SystemAccentColorLight2}" />
-            <media:RevealBackgroundBrush x:Key="SystemControlHighlightListMediumRevealBackgroundBrush" TargetTheme="Light" Color="{StaticResource SystemRevealListMediumColor}" FallbackColor="{StaticResource SystemListMediumColor}" />
-            <media:RevealBackgroundBrush x:Key="SystemControlHighlightListLowRevealBackgroundBrush" TargetTheme="Light" Color="{StaticResource SystemRevealListLowColor}" FallbackColor="{StaticResource SystemListLowColor}" />
-            <media:RevealBackgroundBrush x:Key="SystemControlBackgroundBaseMediumLowRevealBaseLowBackgroundBrush" TargetTheme="Light" Color="{StaticResource SystemRevealBaseLowColor}" FallbackColor="{StaticResource SystemBaseMediumLowColor}" />
-            <media:RevealBackgroundBrush x:Key="SystemControlHighlightBaseMediumLowRevealAccentBackgroundBrush" TargetTheme="Light" Color="{StaticResource SystemAccentColor}" FallbackColor="{StaticResource SystemBaseMediumLowColor}" />
-            <media:RevealBackgroundBrush x:Key="SystemControlHighlightListMediumRevealListLowBackgroundBrush" TargetTheme="Light" Color="{StaticResource SystemRevealListLowColor}" FallbackColor="{StaticResource SystemListMediumColor}" />
-            <media:RevealBackgroundBrush x:Key="SystemControlHighlightAccent3RevealAccent2BackgroundBrush" TargetTheme="Light" Color="{StaticResource SystemAccentColorLight2}" FallbackColor="{StaticResource SystemAccentColorLight3}" />
-            <media:RevealBorderBrush x:Key="SystemControlBackgroundAccentRevealBorderBrush" TargetTheme="Light" Color="{StaticResource SystemAccentColor}" FallbackColor="{StaticResource SystemAccentColor}" />
-            <media:RevealBorderBrush x:Key="SystemControlBackgroundBaseHighRevealBorderBrush" TargetTheme="Light" Color="{StaticResource SystemRevealBaseHighColor}" FallbackColor="{StaticResource SystemBaseHighColor}" />
-            <media:RevealBorderBrush x:Key="SystemControlBackgroundBaseLowRevealBorderBrush" TargetTheme="Light" Color="{StaticResource SystemRevealBaseLowColor}" FallbackColor="{StaticResource SystemBaseLowColor}" />
-            <media:RevealBorderBrush x:Key="SystemControlBackgroundBaseMediumRevealBorderBrush" TargetTheme="Light" Color="{StaticResource SystemRevealBaseMediumColor}" FallbackColor="{StaticResource SystemBaseMediumColor}" />
-            <media:RevealBorderBrush x:Key="SystemControlBackgroundBaseMediumHighRevealBorderBrush" TargetTheme="Light" Color="{StaticResource SystemRevealBaseMediumHighColor}" FallbackColor="{StaticResource SystemBaseMediumHighColor}" />
-            <media:RevealBorderBrush x:Key="SystemControlBackgroundBaseMediumLowRevealBorderBrush" TargetTheme="Light" Color="{StaticResource SystemRevealBaseMediumLowColor}" FallbackColor="{StaticResource SystemBaseMediumLowColor}" />
-            <media:RevealBorderBrush x:Key="SystemControlBackgroundChromeBlackHighRevealBorderBrush" TargetTheme="Light" Color="{StaticResource SystemRevealChromeBlackHighColor}" FallbackColor="{StaticResource SystemChromeBlackHighColor}" />
-            <media:RevealBorderBrush x:Key="SystemControlBackgroundChromeBlackMediumRevealChromeBorderBrush" TargetTheme="Light" Color="{StaticResource SystemRevealChromeBlackMediumColor}" FallbackColor="{StaticResource SystemChromeBlackMediumColor}" />
-            <media:RevealBorderBrush x:Key="SystemControlBackgroundChromeMediumRevealBorderBrush" TargetTheme="Light" Color="{StaticResource SystemRevealChromeMediumColor}" FallbackColor="{StaticResource SystemChromeMediumColor}" />
-            <media:RevealBorderBrush x:Key="SystemControlBackgroundChromeMediumLowRevealBorderBrush" TargetTheme="Light" Color="{StaticResource SystemRevealChromeMediumLowColor}" FallbackColor="{StaticResource SystemChromeMediumLowColor}" />
-            <media:RevealBorderBrush x:Key="SystemControlBackgroundChromeWhiteRevealBorderBrush" TargetTheme="Light" Color="{StaticResource SystemRevealChromeWhiteColor}" FallbackColor="{StaticResource SystemChromeWhiteColor}" />
-            <media:RevealBorderBrush x:Key="SystemControlTransparentRevealListLowBorderBrush" TargetTheme="Light" Color="{StaticResource SystemRevealListLowColor}" FallbackColor="Transparent" />
-            <media:RevealBorderBrush x:Key="SystemControlBackgroundListLowRevealBorderBrush" TargetTheme="Light" Color="{StaticResource SystemRevealListLowColor}" FallbackColor="{StaticResource SystemListLowColor}" />
-            <media:RevealBorderBrush x:Key="SystemControlBackgroundListMediumRevealBorderBrush" TargetTheme="Light" Color="{StaticResource SystemRevealListMediumColor}" FallbackColor="{StaticResource SystemListMediumColor}" />
-            <media:RevealBorderBrush x:Key="SystemControlTransparentRevealBorderBrush" TargetTheme="Light" Color="Transparent" FallbackColor="Transparent" />
-            <media:RevealBorderBrush x:Key="SystemControlForegroundRevealTransparentBorderBrush" TargetTheme="Light" Color="Transparent" FallbackColor="Transparent" />
-            <media:RevealBorderBrush x:Key="SystemControlBackgroundTransparentRevealBorderBrush" TargetTheme="Light" Color="Transparent" FallbackColor="Transparent" />
-            <media:RevealBorderBrush x:Key="SystemControlHighlightTransparentRevealBorderBrush" TargetTheme="Light" Color="Transparent" FallbackColor="Transparent" />
-            <media:RevealBorderBrush x:Key="SystemControlHighlightAltTransparentRevealBorderBrush" TargetTheme="Light" Color="Transparent" FallbackColor="Transparent" />
-            <media:RevealBorderBrush x:Key="SystemControlHighlightAccentRevealBorderBrush" TargetTheme="Light" Color="{StaticResource SystemAccentColor}" FallbackColor="{StaticResource SystemAccentColor}" />
-            <media:RevealBorderBrush x:Key="SystemControlHighlightBaseHighRevealBorderBrush" TargetTheme="Light" Color="{StaticResource SystemRevealBaseHighColor}" FallbackColor="{StaticResource SystemBaseHighColor}" />
-            <media:RevealBorderBrush x:Key="SystemControlHighlightBaseLowRevealBorderBrush" TargetTheme="Light" Color="{StaticResource SystemRevealBaseLowColor}" FallbackColor="{StaticResource SystemBaseLowColor}" />
-            <media:RevealBorderBrush x:Key="SystemControlHighlightBaseMediumRevealBorderBrush" TargetTheme="Light" Color="{StaticResource SystemRevealBaseMediumColor}" FallbackColor="{StaticResource SystemBaseMediumColor}" />
-            <media:RevealBorderBrush x:Key="SystemControlHighlightBaseMediumHighRevealBorderBrush" TargetTheme="Light" Color="{StaticResource SystemRevealBaseMediumHighColor}" FallbackColor="{StaticResource SystemBaseMediumHighColor}" />
-            <media:RevealBorderBrush x:Key="SystemControlHighlightBaseMediumLowRevealBorderBrush" TargetTheme="Light" Color="{StaticResource SystemRevealBaseMediumLowColor}" FallbackColor="{StaticResource SystemBaseMediumLowColor}" />
             <StaticResource x:Key="ListViewItemRevealBorderBrushPointerOver" ResourceKey="SystemControlTransparentRevealBorderBrush" />
             <StaticResource x:Key="ListViewItemRevealBorderBrushPressed" ResourceKey="SystemControlTransparentRevealBorderBrush" />
             <StaticResource x:Key="GridViewItemRevealBorderBrush" ResourceKey="SystemControlTransparentRevealBorderBrush" />

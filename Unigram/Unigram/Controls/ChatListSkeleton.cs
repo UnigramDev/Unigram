@@ -5,15 +5,15 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.Graphics.Canvas.Geometry;
+using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using Unigram.Navigation;
 using Windows.Foundation;
 using Windows.UI;
-using Windows.UI.Composition;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
 
 namespace Unigram.Controls
 {
@@ -40,7 +40,7 @@ namespace Unigram.Controls
                 shapes.Add(CanvasGeometry.CreateRoundedRectangle(null, size.X - 32 - 12, y + 16, 32, 14, 4, 4));
             }
 
-            var compositor = Window.Current.Compositor;
+            var compositor = BootStrapper.Current.Compositor;
 
             var geometries = shapes.ToArray();
             var path = compositor.CreatePathGeometry(new CompositionPath(CanvasGeometry.CreateGroup(null, geometries, CanvasFilledRegionDetermination.Winding)));

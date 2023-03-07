@@ -4,6 +4,11 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Hosting;
 using Rg.DiffUtils;
 using System;
 using System.Collections.Generic;
@@ -11,12 +16,8 @@ using System.Collections.Specialized;
 using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Navigation;
 using Windows.Foundation;
-using Windows.UI.Composition;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Hosting;
 
 namespace Unigram.Controls
 {
@@ -239,7 +240,7 @@ namespace Unigram.Controls
 
             _layoutRoot.Children.Move((uint)oldIndex, (uint)newIndex);
 
-            var compositor = Window.Current.Compositor;
+            var compositor = BootStrapper.Current.Compositor;
             var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
 
             var start = Math.Min(oldIndex, newIndex);
@@ -299,7 +300,7 @@ namespace Unigram.Controls
 
         private CompositionScopedBatch CreateScopedBatch()
         {
-            var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            var batch = BootStrapper.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
                 lock (_toBeRemoved)
@@ -326,13 +327,13 @@ namespace Unigram.Controls
             visual.Offset = new Vector3(index * (_itemSize + 4 - _itemOverlap), 0, 0);
             visual.CenterPoint = new Vector3((_itemSize + 4) / 2);
 
-            var addingScale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var addingScale = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
             addingScale.InsertKeyFrame(0.0f, new Vector3(0));
             addingScale.InsertKeyFrame(0.9f, new Vector3(1.1f, 1.1f, 1));
             addingScale.InsertKeyFrame(1.0f, new Vector3(1));
             //addingScale.Duration = TimeSpan.FromSeconds(1);
 
-            var addingOpacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var addingOpacity = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
             addingOpacity.InsertKeyFrame(0.0f, 0);
             addingOpacity.InsertKeyFrame(1.0f, 1);
             //addingOpacity.Duration = TimeSpan.FromSeconds(1);
@@ -348,12 +349,12 @@ namespace Unigram.Controls
             var child = ElementCompositionPreview.GetElementVisual(container);
             child.CenterPoint = new Vector3((_itemSize + 4) / 2);
 
-            var removingScale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var removingScale = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
             removingScale.InsertKeyFrame(0.0f, new Vector3(1));
             removingScale.InsertKeyFrame(1.0f, new Vector3(0));
             //removingScale.Duration = TimeSpan.FromSeconds(1);
 
-            var removingOpacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var removingOpacity = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
             removingOpacity.InsertKeyFrame(0.0f, 1);
             removingOpacity.InsertKeyFrame(1.0f, 0);
             //removingOpacity.Duration = TimeSpan.FromSeconds(1);
@@ -367,7 +368,7 @@ namespace Unigram.Controls
             Canvas.SetZIndex(container, -newIndex);
 
             var child = ElementCompositionPreview.GetElementVisual(container);
-            var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var offset = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
 
             if (oldIndex >= 0)
             {
@@ -392,7 +393,7 @@ namespace Unigram.Controls
                 var count = Math.Min(_maxCount, Math.Max(1, _items.Count));
                 var diff = maxWidth - (count * (float)(_itemSize + 4) - ((count - 1) * _itemOverlap));
 
-                var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                var offset = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
                 offset.InsertKeyFrame(1, new Vector3(diff / 2, 0, 0));
                 //offset.Duration = TimeSpan.FromSeconds(1);
 
@@ -409,7 +410,7 @@ namespace Unigram.Controls
                 var count = Math.Min(_maxCount, Math.Max(1, _items.Count));
                 var diff = maxWidth - (count * (float)(_itemSize + 4) - ((count - 1) * _itemOverlap));
 
-                var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                var offset = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
                 offset.InsertKeyFrame(0, new Vector3(-diff, 0, 0));
                 offset.InsertKeyFrame(1, new Vector3());
                 //offset.Duration = TimeSpan.FromSeconds(10);

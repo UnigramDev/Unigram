@@ -226,7 +226,7 @@ namespace Unigram.Services.Factories
                     //var webp = WebPImage.DecodeFromBuffer(buffer);
 
                     // This isn't supposed to work.
-                    var webp = PlaceholderHelper.GetWebPFrame(file.Path) as Windows.UI.Xaml.Media.Imaging.BitmapImage;
+                    var webp = PlaceholderHelper.GetWebPFrame(file.Path) as Microsoft.UI.Xaml.Media.Imaging.BitmapImage;
 
                     var width = webp.PixelWidth;
                     var height = webp.PixelHeight;

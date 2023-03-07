@@ -4,14 +4,14 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Navigation.Services;
 using Unigram.Services;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Authorization
 {
@@ -52,7 +52,7 @@ namespace Unigram.ViewModels.Authorization
                 var message = string.Format(Strings.Resources.EditNumberInfo, Common.PhoneNumber.Format(waitCode.CodeInfo.PhoneNumber));
                 var title = Strings.Resources.EditNumber;
 
-                var confirm = await MessagePopup.ShowAsync(message, title, Strings.Resources.Edit, Strings.Resources.Close);
+                var confirm = await MessagePopup.ShowAsync(XamlRoot, message, title, Strings.Resources.Edit, Strings.Resources.Close);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     _confirmedGoBack = true;
@@ -125,40 +125,40 @@ namespace Unigram.ViewModels.Authorization
 
                 if (error.TypeEquals(ErrorType.PHONE_NUMBER_INVALID))
                 {
-                    await MessagePopup.ShowAsync(error.Message, Strings.Resources.InvalidPhoneNumber, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(XamlRoot, error.Message, Strings.Resources.InvalidPhoneNumber, Strings.Resources.OK);
                 }
                 else if (error.TypeEquals(ErrorType.PHONE_CODE_EMPTY) || error.TypeEquals(ErrorType.PHONE_CODE_INVALID))
                 {
-                    await MessagePopup.ShowAsync(error.Message, Strings.Resources.InvalidCode, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(XamlRoot, error.Message, Strings.Resources.InvalidCode, Strings.Resources.OK);
                 }
                 else if (error.TypeEquals(ErrorType.PHONE_CODE_EXPIRED))
                 {
                     NavigationService.GoBack();
                     NavigationService.Frame.ForwardStack.Clear();
 
-                    await MessagePopup.ShowAsync(error.Message, Strings.Resources.CodeExpired, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(XamlRoot, error.Message, Strings.Resources.CodeExpired, Strings.Resources.OK);
                 }
                 else if (error.TypeEquals(ErrorType.FIRSTNAME_INVALID))
                 {
                     NavigationService.GoBack();
                     NavigationService.Frame.ForwardStack.Clear();
 
-                    await MessagePopup.ShowAsync(error.Message, Strings.Resources.InvalidFirstName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(XamlRoot, error.Message, Strings.Resources.InvalidFirstName, Strings.Resources.OK);
                 }
                 else if (error.TypeEquals(ErrorType.LASTNAME_INVALID))
                 {
                     NavigationService.GoBack();
                     NavigationService.Frame.ForwardStack.Clear();
 
-                    await MessagePopup.ShowAsync(error.Message, Strings.Resources.InvalidLastName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(XamlRoot, error.Message, Strings.Resources.InvalidLastName, Strings.Resources.OK);
                 }
                 else if (error.Message.StartsWith("FLOOD_WAIT"))
                 {
-                    await MessagePopup.ShowAsync(Strings.Resources.FloodWait, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.FloodWait, Strings.Resources.AppName, Strings.Resources.OK);
                 }
                 else if (error.Code != -1000)
                 {
-                    await MessagePopup.ShowAsync(error.Message, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(XamlRoot, error.Message, Strings.Resources.AppName, Strings.Resources.OK);
                 }
 
                 Logs.Logger.Error(Logs.LogTarget.API, "account.signIn error " + error);

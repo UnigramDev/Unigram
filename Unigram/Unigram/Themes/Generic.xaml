@@ -63,7 +63,7 @@
                 <ControlTemplate TargetType="local:NavigationView">
                     <SplitView x:Name="RootSplitView"
                                BorderBrush="{ThemeResource NavigationViewItemSeparatorForeground}"
-                               BorderThickness="0 0 1 0"
+                               BorderThickness="0,0,1,0"
                                CornerRadius="{Binding Source={ThemeResource OverlayCornerRadius}, Converter={StaticResource RightCornerRadiusFilterConverter}}"
                                PaneBackground="{ThemeResource NavigationViewDefaultPaneBackground}"
                                OpenPaneLength="240"
@@ -79,7 +79,6 @@
                                     <RowDefinition Height="*" />
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
-                                    <!--<RowDefinition Height="8" />-->
                                 </Grid.RowDefinitions>
                                 <Grid.Children>
                                     <Grid x:Name="ContentPaneTopPadding"
@@ -91,7 +90,6 @@
                                     <Border x:Name="FooterContentBorder"
                                             Grid.Row="3"
                                             Child="{TemplateBinding PaneFooter}" />
-                                    <!--<local:NavigationViewItem x:Name="SettingsNavPaneItem" Glyph="&#xE713;" Grid.Row="5" />-->
                                 </Grid.Children>
                             </Grid>
                         </SplitView.Pane>
@@ -1665,9 +1663,9 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ConfettiView">
-                    <xaml:CanvasAnimatedControl x:Name="Canvas"
+                    <!--<xaml:CanvasAnimatedControl x:Name="Canvas"
                                                 Paused="True"
-                                                IsHitTestVisible="False" />
+                                                IsHitTestVisible="False" />-->
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

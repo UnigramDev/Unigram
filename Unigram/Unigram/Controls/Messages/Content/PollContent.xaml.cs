@@ -4,15 +4,15 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Navigation;
 using Unigram.ViewModels;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls.Messages.Content
 {
@@ -296,7 +296,7 @@ namespace Unigram.Controls.Messages.Content
         {
             if (_message?.SchedulingState != null)
             {
-                await MessagePopup.ShowAsync(Strings.Resources.MessageScheduledVote, Strings.Resources.AppName, Strings.Resources.OK);
+                await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.MessageScheduledVote, Strings.Resources.AppName, Strings.Resources.OK);
                 return;
             }
 
@@ -374,7 +374,7 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            Window.Current.ShowTeachingTip(Explanation, quiz.Explanation, TeachingTipPlacementMode.TopLeft);
+            BootStrapper.Current.ShowTeachingTip(Explanation, quiz.Explanation, TeachingTipPlacementMode.TopLeft);
         }
     }
 }

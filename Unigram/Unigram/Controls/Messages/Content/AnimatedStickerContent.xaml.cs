@@ -4,6 +4,11 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Hosting;
 using RLottie;
 using System;
 using Telegram.Td.Api;
@@ -11,12 +16,6 @@ using Unigram.Common;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.Foundation;
-using Windows.System;
-using Windows.UI.Composition;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Hosting;
 
 namespace Unigram.Controls.Messages.Content
 {
@@ -263,8 +262,6 @@ namespace Unigram.Controls.Messages.Content
             var file = interaction.StickerValue;
             if (file.Local.IsDownloadingCompleted && Interactions.Children.Count < 4)
             {
-                var dispatcher = DispatcherQueue.GetForCurrentThread();
-
                 var player = new LottieView();
                 player.Width = Player.Height * 3;
                 player.Height = Player.Height * 3;
@@ -277,7 +274,7 @@ namespace Unigram.Controls.Messages.Content
                 {
                     if (args == 1)
                     {
-                        dispatcher.TryEnqueue(() =>
+                        DispatcherQueue.TryEnqueue(() =>
                         {
                             Interactions.Children.Remove(player);
 
@@ -338,8 +335,6 @@ namespace Unigram.Controls.Messages.Content
             var file = regular.PremiumAnimation;
             if (file.Local.IsDownloadingCompleted && Interactions.Children.Count < 1)
             {
-                var dispatcher = DispatcherQueue.GetForCurrentThread();
-
                 var player = new LottieView();
                 player.Width = 270;
                 player.Height = 270;
@@ -352,7 +347,7 @@ namespace Unigram.Controls.Messages.Content
                 {
                     if (args == 1)
                     {
-                        dispatcher.TryEnqueue(() =>
+                        DispatcherQueue.TryEnqueue(() =>
                         {
                             Interactions.Children.Remove(player);
                             InteractionsPopup.IsOpen = false;

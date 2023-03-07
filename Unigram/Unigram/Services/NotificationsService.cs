@@ -13,18 +13,14 @@ using System.Threading.Tasks;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls;
 using Unigram.Controls.Messages;
 using Unigram.Converters;
 using Unigram.Navigation;
 using Unigram.Views;
-using Windows.ApplicationModel.AppService;
 using Windows.Data.Xml.Dom;
-using Windows.Foundation.Collections;
 using Windows.Networking.PushNotifications;
 using Windows.Storage;
 using Windows.UI.Notifications;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Services
 {
@@ -130,47 +126,48 @@ namespace Unigram.Services
 
             if (terms.ShowPopup)
             {
-                async void DeleteAccount()
-                {
-                    var decline = await MessagePopup.ShowAsync(Strings.Resources.TosUpdateDecline, Strings.Resources.TermsOfService, Strings.Resources.DeclineDeactivate, Strings.Resources.Back);
-                    if (decline != ContentDialogResult.Primary)
-                    {
-                        Handle(update);
-                        return;
-                    }
+#warning TODO: figure out how to deal with this stuff
+                //async void DeleteAccount()
+                //{
+                //    var decline = await MessagePopup.ShowAsync(Strings.Resources.TosUpdateDecline, Strings.Resources.TermsOfService, Strings.Resources.DeclineDeactivate, Strings.Resources.Back);
+                //    if (decline != ContentDialogResult.Primary)
+                //    {
+                //        Handle(update);
+                //        return;
+                //    }
 
-                    var delete = await MessagePopup.ShowAsync(Strings.Resources.TosDeclineDeleteAccount, Strings.Resources.AppName, Strings.Resources.Deactivate, Strings.Resources.Cancel);
-                    if (delete != ContentDialogResult.Primary)
-                    {
-                        Handle(update);
-                        return;
-                    }
+                //    var delete = await MessagePopup.ShowAsync(Strings.Resources.TosDeclineDeleteAccount, Strings.Resources.AppName, Strings.Resources.Deactivate, Strings.Resources.Cancel);
+                //    if (delete != ContentDialogResult.Primary)
+                //    {
+                //        Handle(update);
+                //        return;
+                //    }
 
-                    _clientService.Send(new DeleteAccount("Decline ToS update", string.Empty));
-                }
+                //    _clientService.Send(new DeleteAccount("Decline ToS update", string.Empty));
+                //}
 
-                await Task.Delay(2000);
-                BeginOnUIThread(async () =>
-                {
-                    var confirm = await MessagePopup.ShowAsync(terms.Text, Strings.Resources.PrivacyPolicyAndTerms, Strings.Resources.Agree, Strings.Resources.Cancel);
-                    if (confirm != ContentDialogResult.Primary)
-                    {
-                        DeleteAccount();
-                        return;
-                    }
+                //await Task.Delay(2000);
+                //BeginOnUIThread(async () =>
+                //{
+                //    var confirm = await MessagePopup.ShowAsync(terms.Text, Strings.Resources.PrivacyPolicyAndTerms, Strings.Resources.Agree, Strings.Resources.Cancel);
+                //    if (confirm != ContentDialogResult.Primary)
+                //    {
+                //        DeleteAccount();
+                //        return;
+                //    }
 
-                    if (terms.MinUserAge > 0)
-                    {
-                        var age = await MessagePopup.ShowAsync(string.Format(Strings.Resources.TosAgeText, terms.MinUserAge), Strings.Resources.TosAgeTitle, Strings.Resources.Agree, Strings.Resources.Cancel);
-                        if (age != ContentDialogResult.Primary)
-                        {
-                            DeleteAccount();
-                            return;
-                        }
-                    }
+                //    if (terms.MinUserAge > 0)
+                //    {
+                //        var age = await MessagePopup.ShowAsync(string.Format(Strings.Resources.TosAgeText, terms.MinUserAge), Strings.Resources.TosAgeTitle, Strings.Resources.Agree, Strings.Resources.Cancel);
+                //        if (age != ContentDialogResult.Primary)
+                //        {
+                //            DeleteAccount();
+                //            return;
+                //        }
+                //    }
 
-                    _clientService.Send(new AcceptTermsOfService(update.TermsOfServiceId));
-                });
+                //    _clientService.Send(new AcceptTermsOfService(update.TermsOfServiceId));
+                //});
             }
         }
 
@@ -178,19 +175,20 @@ namespace Unigram.Services
         {
             BeginOnUIThread(async () =>
             {
-                foreach (var action in update.AddedActions)
-                {
-                    if (action is SuggestedActionEnableArchiveAndMuteNewChats)
-                    {
-                        var confirm = await MessagePopup.ShowAsync(Strings.Resources.HideNewChatsAlertText, Strings.Resources.HideNewChatsAlertTitle, Strings.Resources.OK, Strings.Resources.Cancel);
-                        if (confirm == ContentDialogResult.Primary)
-                        {
-                            _clientService.Options.ArchiveAndMuteNewChatsFromUnknownUsers = true;
-                        }
+#warning TODO: figure out how to deal with this stuff
+                //foreach (var action in update.AddedActions)
+                //{
+                //    if (action is SuggestedActionEnableArchiveAndMuteNewChats)
+                //    {
+                //        var confirm = await MessagePopup.ShowAsync(Strings.Resources.HideNewChatsAlertText, Strings.Resources.HideNewChatsAlertTitle, Strings.Resources.OK, Strings.Resources.Cancel);
+                //        if (confirm == ContentDialogResult.Primary)
+                //        {
+                //            _clientService.Options.ArchiveAndMuteNewChatsFromUnknownUsers = true;
+                //        }
 
-                        _clientService.Send(new HideSuggestedAction(action));
-                    }
-                }
+                //        _clientService.Send(new HideSuggestedAction(action));
+                //    }
+                //}
             });
         }
 
@@ -210,18 +208,19 @@ namespace Unigram.Services
 
             BeginOnUIThread(async () =>
             {
-                if (update.Type.StartsWith("AUTH_KEY_DROP_"))
-                {
-                    var confirm = await MessagePopup.ShowAsync(text, Strings.Resources.AppName, Strings.Resources.LogOut, Strings.Resources.Cancel);
-                    if (confirm == ContentDialogResult.Primary)
-                    {
-                        _clientService.Send(new Destroy());
-                    }
-                }
-                else
-                {
-                    await MessagePopup.ShowAsync(text, Strings.Resources.AppName, Strings.Resources.OK);
-                }
+#warning TODO: figure out how to deal with this stuff
+                //if (update.Type.StartsWith("AUTH_KEY_DROP_"))
+                //{
+                //    var confirm = await MessagePopup.ShowAsync(text, Strings.Resources.AppName, Strings.Resources.LogOut, Strings.Resources.Cancel);
+                //    if (confirm == ContentDialogResult.Primary)
+                //    {
+                //        _clientService.Send(new Destroy());
+                //    }
+                //}
+                //else
+                //{
+                //    await MessagePopup.ShowAsync(text, Strings.Resources.AppName, Strings.Resources.OK);
+                //}
             });
         }
 
@@ -263,10 +262,10 @@ namespace Unigram.Services
                     UpdateBadge(update.UnreadUnmutedCount);
                 }
 
-                if (App.Connection is AppServiceConnection connection)
-                {
-                    await connection.SendMessageAsync(new ValueSet { { "UnreadCount", _settings.Notifications.IncludeMutedChats ? update.UnreadCount : 0 }, { "UnreadUnmutedCount", update.UnreadUnmutedCount } });
-                }
+                //if (App.Connection is AppServiceConnection connection)
+                //{
+                //    await connection.SendMessageAsync(new ValueSet { { "UnreadCount", _settings.Notifications.IncludeMutedChats ? update.UnreadCount : 0 }, { "UnreadUnmutedCount", update.UnreadUnmutedCount } });
+                //}
             }
         }
 
@@ -288,10 +287,10 @@ namespace Unigram.Services
                     UpdateBadge(update.UnreadUnmutedCount);
                 }
 
-                if (App.Connection is AppServiceConnection connection)
-                {
-                    await connection.SendMessageAsync(new ValueSet { { "UnreadCount", _settings.Notifications.IncludeMutedChats ? update.UnreadCount : 0 }, { "UnreadUnmutedCount", update.UnreadUnmutedCount } });
-                }
+                //if (App.Connection is AppServiceConnection connection)
+                //{
+                //    await connection.SendMessageAsync(new ValueSet { { "UnreadCount", _settings.Notifications.IncludeMutedChats ? update.UnreadCount : 0 }, { "UnreadUnmutedCount", update.UnreadUnmutedCount } });
+                //}
             }
         }
 
@@ -529,10 +528,10 @@ namespace Unigram.Services
 
             await UpdateAsync(chat, () => UpdateToast(caption, content, $"{_sessionService.Id}", sound, launch, $"{id}", $"{groupId}", picture, dateTime, canReply));
 
-            if (App.Connection is AppServiceConnection connection && _settings.Notifications.InAppFlash)
-            {
-                await connection.SendMessageAsync(new ValueSet { { "FlashWindow", string.Empty } });
-            }
+            //if (App.Connection is AppServiceConnection connection && _settings.Notifications.InAppFlash)
+            //{
+            //    await connection.SendMessageAsync(new ValueSet { { "FlashWindow", string.Empty } });
+            //}
         }
 
         private async Task UpdateAsync(Chat chat, Func<Task> action)
@@ -1425,7 +1424,7 @@ namespace Unigram.Services
             return false;
         }
 
-        private void BeginOnUIThread(Windows.System.DispatcherQueueHandler action, Action fallback = null)
+        private void BeginOnUIThread(Microsoft.UI.Dispatching.DispatcherQueueHandler action, Action fallback = null)
         {
             var dispatcher = WindowContext.Default()?.Dispatcher;
             if (dispatcher != null)

@@ -4,11 +4,11 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
 using Telegram.Td.Api;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Settings;
 using Unigram.ViewModels.Settings.Privacy;
-using Windows.UI.Xaml;
 
 namespace Unigram.Views.Settings.Privacy
 {
@@ -33,7 +33,7 @@ namespace Unigram.Views.Settings.Privacy
                 UpdatePhoto.Content = fullInfo.PublicPhoto == null
                     ? Strings.Resources.SetPhotoForRest
                     : Strings.Resources.UpdatePhotoForRest;
-                
+
                 RemovePhoto.Visibility = fullInfo.PublicPhoto == null
                     ? Visibility.Collapsed
                     : Visibility.Visible;

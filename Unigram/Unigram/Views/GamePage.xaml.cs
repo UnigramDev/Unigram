@@ -4,15 +4,12 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Navigation;
 using System.Collections.Generic;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Native;
 using Unigram.Views.Popups;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views
 {
@@ -55,13 +52,13 @@ namespace Unigram.Views
             TitleLabel.Visibility = string.IsNullOrWhiteSpace(title) ? Visibility.Collapsed : Visibility.Visible;
             UsernameLabel.Visibility = string.IsNullOrWhiteSpace(username) ? Visibility.Collapsed : Visibility.Visible;
 
-            View.Navigate(new Uri(url));
+            //View.Navigate(new Uri(url));
             //}
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
-            View.NavigateToString(string.Empty);
+            //View.NavigateToString(string.Empty);
         }
 
         private async void Share_Click(object sender, RoutedEventArgs e)
@@ -69,15 +66,15 @@ namespace Unigram.Views
             await SharePopup.GetForCurrentView().ShowAsync(_shareMessage);
         }
 
-        private void View_NavigationStarting(WebView sender, WebViewNavigationStartingEventArgs args)
-        {
-            sender.AddWebAllowedObject("TelegramWebviewProxy", new TelegramGameProxy(withMyScore =>
-            {
-                this.BeginOnUIThread(async () =>
-                {
-                    await SharePopup.GetForCurrentView().ShowAsync(_shareMessage, withMyScore);
-                });
-            }));
-        }
+        //private void View_NavigationStarting(WebView sender, WebViewNavigationStartingEventArgs args)
+        //{
+        //    sender.AddWebAllowedObject("TelegramWebviewProxy", new TelegramGameProxy(withMyScore =>
+        //    {
+        //        this.BeginOnUIThread(async () =>
+        //        {
+        //            await SharePopup.GetForCurrentView().ShowAsync(_shareMessage, withMyScore);
+        //        });
+        //    }));
+        //}
     }
 }

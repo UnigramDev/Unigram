@@ -4,6 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,8 +19,6 @@ using Unigram.Services.Settings;
 using Unigram.Views.Popups;
 using Windows.Storage;
 using Windows.UI;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Services
 {
@@ -33,7 +33,7 @@ namespace Unigram.Services
         Task InstallThemeAsync(StorageFile file);
         void SetTheme(ThemeInfoBase info, bool apply);
 
-        Task CreateThemeAsync(ThemeInfoBase theme);
+        Task CreateThemeAsync(XamlRoot xamlRoot, ThemeInfoBase theme);
     }
 
     public partial class ThemeService : IThemeService
@@ -182,9 +182,9 @@ namespace Unigram.Services
             _settingsService.Appearance.UpdateNightMode();
         }
 
-        public async Task CreateThemeAsync(ThemeInfoBase theme)
+        public async Task CreateThemeAsync(XamlRoot xamlRoot, ThemeInfoBase theme)
         {
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.CreateNewThemeAlert, Strings.Resources.NewTheme, Strings.Resources.CreateTheme, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(xamlRoot, Strings.Resources.CreateNewThemeAlert, Strings.Resources.NewTheme, Strings.Resources.CreateTheme, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -199,7 +199,7 @@ namespace Unigram.Services
             input.PrimaryButtonText = Strings.Resources.OK;
             input.SecondaryButtonText = Strings.Resources.Cancel;
 
-            confirm = await input.ShowQueuedAsync();
+            confirm = await input.ShowQueuedAsync(xamlRoot);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

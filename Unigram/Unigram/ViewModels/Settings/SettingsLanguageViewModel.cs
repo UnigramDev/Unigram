@@ -4,6 +4,9 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,9 +22,6 @@ using Unigram.Views.Host;
 using Unigram.Views.Popups;
 using Windows.ApplicationModel.Resources.Core;
 using Windows.Globalization;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
@@ -127,7 +127,7 @@ namespace Unigram.ViewModels.Settings
 
             var popup = new DoNotTranslatePopup(_officialLanguages, exclude);
 
-            var confirm = await popup.ShowQueuedAsync();
+            var confirm = await popup.ShowQueuedAsync(XamlRoot);
             if (confirm == ContentDialogResult.Primary && popup.SelectedItems != null)
             {
                 var updated = popup.SelectedItems;
@@ -186,7 +186,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand<LanguagePackInfo> DeleteCommand { get; }
         private async void DeleteExecute(LanguagePackInfo info)
         {
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.DeleteLocalization, Strings.Resources.AppName, Strings.Resources.Delete, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.DeleteLocalization, Strings.Resources.AppName, Strings.Resources.Delete, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

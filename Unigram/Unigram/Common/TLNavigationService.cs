@@ -5,6 +5,9 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using LinqToVisualTree;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Animation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,11 +24,7 @@ using Unigram.Views.Payments;
 using Unigram.Views.Premium.Popups;
 using Unigram.Views.Settings;
 using Unigram.Views.Settings.Popups;
-using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.WindowManagement;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media.Animation;
 
 namespace Unigram.Common
 {
@@ -49,7 +48,7 @@ namespace Unigram.Common
 
         public async void NavigateToInstant(string url)
         {
-            //if (ApiInformation.IsTypePresent("Windows.UI.WindowManagement.AppWindow"))
+            //if (ApiInformation.IsTypePresent("Microsoft.UI.WindowManagement.AppWindow"))
             //{
             //    _instantWindows.TryGetValue(url, out AppWindow window);
             //    if (window == null)
@@ -83,7 +82,7 @@ namespace Unigram.Common
 
         public async void ShowLimitReached(PremiumLimitType type)
         {
-            await new LimitReachedPopup(this, _clientService, type).ShowQueuedAsync();
+            await new LimitReachedPopup(this, _clientService, type).ShowQueuedAsync(Frame.XamlRoot);
         }
 
         public async void ShowPromo(PremiumSource source = null)
@@ -166,7 +165,7 @@ namespace Unigram.Common
 
                 if (user.RestrictionReason.Length > 0)
                 {
-                    await MessagePopup.ShowAsync(user.RestrictionReason, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(Frame.XamlRoot, user.RestrictionReason, Strings.Resources.AppName, Strings.Resources.OK);
                     return;
                 }
                 else if (user.Id == _clientService.Options.AntiSpamBotUserId)
@@ -180,7 +179,7 @@ namespace Unigram.Common
 
                     var formatted = new FormattedText(text, new[] { new TextEntity(index, path.Length, new TextEntityTypeTextUrl("tg://")) });
 
-                    await MessagePopup.ShowAsync(formatted, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(Frame.XamlRoot, formatted, Strings.Resources.AppName, Strings.Resources.OK);
                     return;
                 }
             }
@@ -194,13 +193,13 @@ namespace Unigram.Common
 
                 if (supergroup.Status is ChatMemberStatusLeft && !supergroup.IsPublic() && !_clientService.IsChatAccessible(chat))
                 {
-                    await MessagePopup.ShowAsync(Strings.Resources.ChannelCantOpenPrivate, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(Frame.XamlRoot, Strings.Resources.ChannelCantOpenPrivate, Strings.Resources.AppName, Strings.Resources.OK);
                     return;
                 }
 
                 if (supergroup.RestrictionReason.Length > 0)
                 {
-                    await MessagePopup.ShowAsync(supergroup.RestrictionReason, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(Frame.XamlRoot, supergroup.RestrictionReason, Strings.Resources.AppName, Strings.Resources.OK);
                     return;
                 }
             }
@@ -307,7 +306,7 @@ namespace Unigram.Common
                         chatPage.Activate(SessionId);
                         chatPage.ViewModel.NavigationService = this;
                         chatPage.ViewModel.Dispatcher = Dispatcher;
-                        await chatPage.ViewModel.NavigatedToAsync(chat.Id, Windows.UI.Xaml.Navigation.NavigationMode.New, state);
+                        await chatPage.ViewModel.NavigatedToAsync(chat.Id, Microsoft.UI.Xaml.Navigation.NavigationMode.New, state);
 
                         FrameFacade.RaiseNavigated(chat.Id);
                     }
@@ -370,7 +369,7 @@ namespace Unigram.Common
             {
                 var popup = new SettingsPasscodeConfirmPopup();
 
-                var confirm = await popup.ShowQueuedAsync();
+                var confirm = await popup.ShowQueuedAsync(Frame.XamlRoot);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     Navigate(typeof(SettingsPasscodePage));
@@ -380,7 +379,7 @@ namespace Unigram.Common
             {
                 var popup = new SettingsPasscodePopup();
 
-                var confirm = await popup.ShowQueuedAsync();
+                var confirm = await popup.ShowQueuedAsync(Frame.XamlRoot);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     var viewModel = TLContainer.Current.Resolve<SettingsPasscodeViewModel>(SessionId);

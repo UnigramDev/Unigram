@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
 using System;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -13,7 +14,6 @@ using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.Views.Popups;
 using Unigram.Views.Supergroups;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.ViewModels.Supergroups
 {
@@ -76,7 +76,7 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.AddToTheGroup, user.FullName()), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(XamlRoot, string.Format(Strings.Resources.AddToTheGroup, user.FullName()), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

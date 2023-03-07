@@ -4,6 +4,13 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Input;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Animation;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,18 +22,9 @@ using Unigram.Services;
 using Unigram.Services.Keyboard;
 using Unigram.Services.ViewService;
 using Unigram.Views.Host;
-using Windows.Devices.Input;
 using Windows.Foundation;
 using Windows.Graphics.Display;
-using Windows.UI;
-using Windows.UI.Core;
 using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Animation;
 
 namespace Unigram.Controls
 {
@@ -102,10 +100,10 @@ namespace Unigram.Controls
             }
 
             var titlebar = ApplicationView.GetForCurrentView().TitleBar;
-            //titlebar.BackgroundColor = Colors.Black;
-            titlebar.ForegroundColor = Colors.White;
-            //titlebar.ButtonBackgroundColor = Colors.Black;
-            titlebar.ButtonForegroundColor = Colors.White;
+            //titlebar.BackgroundColor = Microsoft.UI.Colors.Black;
+            titlebar.ForegroundColor = Microsoft.UI.Colors.White;
+            //titlebar.ButtonBackgroundColor = Microsoft.UI.Colors.Black;
+            titlebar.ButtonForegroundColor = Microsoft.UI.Colors.White;
         }
 
         protected void UnmaskTitleAndStatusBar()

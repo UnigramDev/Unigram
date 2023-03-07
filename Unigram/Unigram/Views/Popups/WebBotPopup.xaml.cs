@@ -4,15 +4,13 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using System.Globalization;
 using Telegram.Td.Api;
 using Unigram.Controls;
-using Unigram.Native;
 using Windows.Data.Json;
 using Windows.UI;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 
 // The Content Dialog item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -24,27 +22,27 @@ namespace Unigram.Views.Popups
         {
             InitializeComponent();
 
-            View.Navigate(new Uri(info.Url));
+            //View.Navigate(new Uri(info.Url));
         }
 
         private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             args.Cancel = true;
 
-            await View.InvokeScriptAsync("eval", new string[]
-            {
-                "window.Telegram.WebView.receiveEvent('main_button_pressed', null);"
-            });
+            //await View.InvokeScriptAsync("eval", new string[]
+            //{
+            //    "window.Telegram.WebView.receiveEvent('main_button_pressed', null);"
+            //});
         }
 
         private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
         }
 
-        private void View_NavigationStarting(WebView sender, WebViewNavigationStartingEventArgs args)
-        {
-            sender.AddWebAllowedObject("TelegramWebviewProxy", new TelegramWebviewProxy(ReceiveEvent));
-        }
+        //private void View_NavigationStarting(WebView sender, WebViewNavigationStartingEventArgs args)
+        //{
+        //    sender.AddWebAllowedObject("TelegramWebviewProxy", new TelegramWebviewProxy(ReceiveEvent));
+        //}
 
         private async void ReceiveEvent(string eventName, string eventData)
         {
@@ -106,10 +104,10 @@ namespace Unigram.Views.Popups
             }
             else if (eventName == "web_app_request_viewport")
             {
-                await View.InvokeScriptAsync("eval", new string[]
-                {
-                    "window.Telegram.WebView.receiveEvent('viewport_changed', {\"height\": " + 500 + "});"
-                });
+                //await View.InvokeScriptAsync("eval", new string[]
+                //{
+                //    "window.Telegram.WebView.receiveEvent('viewport_changed', {\"height\": " + 500 + "});"
+                //});
             }
             else if (eventName == "web_app_ready")
             {
@@ -127,7 +125,7 @@ namespace Unigram.Views.Popups
 
         private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
         {
-            View.NavigateToString(string.Empty);
+            //View.NavigateToString(string.Empty);
         }
     }
 }

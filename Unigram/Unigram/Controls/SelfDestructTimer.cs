@@ -4,13 +4,14 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.Numerics;
-using Windows.UI.Composition;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media;
+using Unigram.Navigation;
 
 namespace Unigram.Controls
 {
@@ -28,11 +29,11 @@ namespace Unigram.Controls
             DefaultStyleKey = typeof(SelfDestructTimer);
             Visibility = Visibility.Collapsed;
 
-            var ellipse = Window.Current.Compositor.CreateEllipseGeometry();
+            var ellipse = BootStrapper.Current.Compositor.CreateEllipseGeometry();
             ellipse.Radius = new Vector2((float)Radius);
             ellipse.Center = new Vector2((float)Center);
 
-            var shape = Window.Current.Compositor.CreateSpriteShape(ellipse);
+            var shape = BootStrapper.Current.Compositor.CreateSpriteShape(ellipse);
             shape.CenterPoint = new Vector2((float)Center);
             shape.StrokeThickness = 2;
             shape.StrokeStartCap = CompositionStrokeCap.Round;
@@ -40,10 +41,10 @@ namespace Unigram.Controls
 
             if (Foreground is SolidColorBrush brush)
             {
-                shape.StrokeBrush = Window.Current.Compositor.CreateColorBrush(brush.Color);
+                shape.StrokeBrush = BootStrapper.Current.Compositor.CreateColorBrush(brush.Color);
             }
 
-            var visual = Window.Current.Compositor.CreateShapeVisual();
+            var visual = BootStrapper.Current.Compositor.CreateShapeVisual();
             visual.Shapes.Add(shape);
             visual.Size = new Vector2((float)Center * 2);
             visual.CenterPoint = new Vector3((float)Center);
@@ -73,7 +74,7 @@ namespace Unigram.Controls
         {
             if (_shape != null && Foreground is SolidColorBrush brush)
             {
-                _shape.StrokeBrush = Window.Current.Compositor.CreateColorBrush(brush.Color);
+                _shape.StrokeBrush = BootStrapper.Current.Compositor.CreateColorBrush(brush.Color);
             }
         }
 
@@ -130,8 +131,8 @@ namespace Unigram.Controls
 
             var seconds = (float)difference.TotalSeconds;
 
-            var easing = Window.Current.Compositor.CreateLinearEasingFunction();
-            var angleAnimation = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var easing = BootStrapper.Current.Compositor.CreateLinearEasingFunction();
+            var angleAnimation = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
             angleAnimation.InsertKeyFrame(0, 1f - (seconds / (Maximum ?? 0)));
             angleAnimation.InsertKeyFrame(1, 1f, easing);
             angleAnimation.Duration = difference;
@@ -159,7 +160,7 @@ namespace Unigram.Controls
             //{
             //    if (value > 0.0 && value < 359.0)
             //    {
-            //        Visibility = Windows.UI.Xaml.Visibility.Visible;
+            //        Visibility = Microsoft.UI.Xaml.Visibility.Visible;
             //    }
 
             //    if (value > Indicator.StartAngle)

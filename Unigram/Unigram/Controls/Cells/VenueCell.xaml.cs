@@ -5,16 +5,17 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.Graphics.Canvas.Geometry;
+using Microsoft.UI;
+using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Windows.UI;
-using Windows.UI.Composition;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media;
+using Unigram.Navigation;
 
 namespace Unigram.Controls.Cells
 {
@@ -117,7 +118,7 @@ namespace Unigram.Controls.Cells
                 return;
             }
 
-            _stroke.FillBrush = Window.Current.Compositor.CreateColorBrush(newValue.Color);
+            _stroke.FillBrush = BootStrapper.Current.Compositor.CreateColorBrush(newValue.Color);
             _selectionStrokeToken = newValue.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, OnSelectionStrokeChanged);
         }
 
@@ -129,7 +130,7 @@ namespace Unigram.Controls.Cells
                 return;
             }
 
-            _stroke.FillBrush = Window.Current.Compositor.CreateColorBrush(solid.Color);
+            _stroke.FillBrush = BootStrapper.Current.Compositor.CreateColorBrush(solid.Color);
         }
 
         #endregion
@@ -164,10 +165,10 @@ namespace Unigram.Controls.Cells
                     token = solid.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, callback);
                 }
 
-                return Window.Current.Compositor.CreateColorBrush(solid.Color);
+                return BootStrapper.Current.Compositor.CreateColorBrush(solid.Color);
             }
 
-            return Window.Current.Compositor.CreateColorBrush(Colors.Black);
+            return BootStrapper.Current.Compositor.CreateColorBrush(Colors.Black);
         }
 
         private void InitializeSelection()
@@ -189,7 +190,7 @@ namespace Unigram.Controls.Cells
                 return new CompositionPath(result);
             }
 
-            var compositor = Window.Current.Compositor;
+            var compositor = BootStrapper.Current.Compositor;
             //12.711,5.352 11.648,4.289 6.5,9.438 4.352,7.289 3.289,8.352 6.5,11.563
 
             var polygon = compositor.CreatePathGeometry();
@@ -247,7 +248,7 @@ namespace Unigram.Controls.Cells
 
             if (animate)
             {
-                var compositor = Window.Current.Compositor;
+                var compositor = BootStrapper.Current.Compositor;
 
                 var anim3 = compositor.CreateScalarKeyFrameAnimation();
                 anim3.InsertKeyFrame(selected ? 0 : 1, 0);

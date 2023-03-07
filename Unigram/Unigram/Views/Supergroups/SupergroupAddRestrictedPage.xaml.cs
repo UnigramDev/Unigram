@@ -4,6 +4,10 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.ComponentModel;
 using Telegram.Td.Api;
@@ -14,11 +18,6 @@ using Unigram.Converters;
 using Unigram.Navigation.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Supergroups;
-using Windows.UI;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Views.Supergroups
 {
@@ -167,8 +166,8 @@ namespace Unigram.Views.Supergroups
                 if (subtitle.Text.StartsWith($"@{result.Query}", StringComparison.OrdinalIgnoreCase))
                 {
                     var highligher = new TextHighlighter();
-                    highligher.Foreground = new SolidColorBrush(Colors.Red);
-                    highligher.Background = new SolidColorBrush(Colors.Transparent);
+                    highligher.Foreground = new SolidColorBrush(Microsoft.UI.Colors.Red);
+                    highligher.Background = new SolidColorBrush(Microsoft.UI.Colors.Transparent);
                     highligher.Ranges.Add(new TextRange { StartIndex = 1, Length = result.Query.Length });
 
                     subtitle.TextHighlighters.Add(highligher);

@@ -7,7 +7,7 @@ namespace Unigram.Native.Calls
         String EndpointId{ get; };
         IVector<Telegram.Td.Api.GroupCallVideoSourceGroup> SourceGroups{ get; };
 
-        Windows.UI.Xaml.Media.Stretch Stretch;
+        Microsoft.UI.Xaml.Media.Stretch Stretch;
         Boolean IsMirrored;
 
         Boolean IsMatch(String endpointId, Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvasControl);

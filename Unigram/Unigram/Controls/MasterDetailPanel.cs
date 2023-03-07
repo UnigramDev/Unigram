@@ -4,14 +4,15 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Input;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using System;
 using System.Runtime.CompilerServices;
 using Unigram.Services;
 using Windows.Foundation;
 using Windows.UI.Core;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Input;
 
 namespace Unigram.Controls
 {
@@ -180,28 +181,28 @@ namespace Unigram.Controls
             return result;
         }
 
-        private static readonly CoreCursor _defaultCursor = new CoreCursor(CoreCursorType.Arrow, 1);
-        private static readonly CoreCursor _resizeCursor = new CoreCursor(CoreCursorType.SizeWestEast, 1);
+        private static readonly CoreCursor _defaultCursor = new(CoreCursorType.Arrow, 1);
+        private static readonly CoreCursor _resizeCursor = new(CoreCursorType.SizeWestEast, 1);
 
         private bool _pointerPressed;
         private double _pointerDelta;
 
         private void Grip_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
-            Window.Current.CoreWindow.PointerCursor = _resizeCursor;
+            ProtectedCursor = InputCursor.CreateFromCoreCursor(_resizeCursor);
         }
 
         private void Grip_PointerExited(object sender, PointerRoutedEventArgs e)
         {
             if (!_pointerPressed)
             {
-                Window.Current.CoreWindow.PointerCursor = _defaultCursor;
+                ProtectedCursor = InputCursor.CreateFromCoreCursor(_defaultCursor);
             }
         }
 
         private void Grip_Unloaded(object sender, RoutedEventArgs e)
         {
-            Window.Current.CoreWindow.PointerCursor = _defaultCursor;
+            ProtectedCursor = InputCursor.CreateFromCoreCursor(_defaultCursor);
         }
 
         private void Grip_PointerPressed(object sender, PointerRoutedEventArgs e)
@@ -266,7 +267,7 @@ namespace Unigram.Controls
             var point = e.GetCurrentPoint(grip);
             if (point.Position.X is < 0 or > 8)
             {
-                Window.Current.CoreWindow.PointerCursor = _defaultCursor;
+                ProtectedCursor = InputCursor.CreateFromCoreCursor(_defaultCursor);
             }
         }
 

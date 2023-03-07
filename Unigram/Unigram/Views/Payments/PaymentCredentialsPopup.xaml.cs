@@ -4,13 +4,11 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System;
+using Microsoft.UI.Xaml.Controls;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Native;
 using Unigram.ViewModels.Payments;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Payments
 {
@@ -31,7 +29,7 @@ namespace Unigram.Views.Payments
             if (url != null)
             {
                 FindName(nameof(WebPanel));
-                View.Navigate(new Uri(url));
+                //View.Navigate(new Uri(url));
             }
             else
             {
@@ -51,7 +49,7 @@ namespace Unigram.Views.Payments
             if (url != null)
             {
                 FindName(nameof(WebPanel));
-                View.Navigate(new Uri(url));
+                //View.Navigate(new Uri(url));
             }
             else
             {
@@ -94,14 +92,14 @@ namespace Unigram.Views.Payments
             }
         }
 
-        private void View_NavigationStarting(WebView sender, WebViewNavigationStartingEventArgs args)
-        {
-            sender.AddWebAllowedObject("TelegramWebviewProxy", new TelegramPaymentProxy((title, credentials) =>
-            {
-                Credentials = new SavedCredentials(credentials, title);
-                Hide(ContentDialogResult.Primary);
-            }));
-        }
+        //private void View_NavigationStarting(WebView sender, WebViewNavigationStartingEventArgs args)
+        //{
+        //    sender.AddWebAllowedObject("TelegramWebviewProxy", new TelegramPaymentProxy((title, credentials) =>
+        //    {
+        //        Credentials = new SavedCredentials(credentials, title);
+        //        Hide(ContentDialogResult.Primary);
+        //    }));
+        //}
 
         private async void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {

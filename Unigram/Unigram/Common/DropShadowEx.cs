@@ -4,13 +4,14 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI;
+using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Shapes;
 using System.Numerics;
-using Windows.UI;
-using Windows.UI.Composition;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Shapes;
+using Unigram.Navigation;
 
 namespace Unigram.Common
 {
@@ -18,12 +19,12 @@ namespace Unigram.Common
     {
         public static SpriteVisual Attach(UIElement element, float radius = 20, float opacity = 0.25f)
         {
-            var shadow = Window.Current.Compositor.CreateDropShadow();
+            var shadow = BootStrapper.Current.Compositor.CreateDropShadow();
             shadow.BlurRadius = radius;
             shadow.Opacity = opacity;
             shadow.Color = Colors.Black;
 
-            var visual = Window.Current.Compositor.CreateSpriteVisual();
+            var visual = BootStrapper.Current.Compositor.CreateSpriteVisual();
             visual.Shadow = shadow;
             visual.Size = new Vector2(0, 0);
             visual.Offset = new Vector3(0, 0, 0);

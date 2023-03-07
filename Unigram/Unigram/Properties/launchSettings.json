@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Unigram (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "Unigram (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

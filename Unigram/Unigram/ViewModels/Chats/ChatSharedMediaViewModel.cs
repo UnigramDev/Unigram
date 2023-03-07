@@ -4,6 +4,9 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 using Rg.DiffUtils;
 using System;
 using System.Collections.Generic;
@@ -22,9 +25,6 @@ using Unigram.Views;
 using Unigram.Views.Chats;
 using Unigram.Views.Popups;
 using Unigram.Views.Users;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Chats
 {
@@ -415,7 +415,7 @@ namespace Unigram.ViewModels.Chats
             var sameUser = messages.All(x => x.SenderId.AreTheSame(first.SenderId));
             var dialog = new DeleteMessagesPopup(ClientService, items.Where(x => x != null).ToArray());
 
-            var confirm = await dialog.ShowQueuedAsync();
+            var confirm = await dialog.ShowQueuedAsync(XamlRoot);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -681,7 +681,7 @@ namespace Unigram.ViewModels.Chats
                 {
                     if (untrust)
                     {
-                        var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.OpenUrlAlert, url), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+                        var confirm = await MessagePopup.ShowAsync(XamlRoot, string.Format(Strings.Resources.OpenUrlAlert, url), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
                         if (confirm != ContentDialogResult.Primary)
                         {
                             return;

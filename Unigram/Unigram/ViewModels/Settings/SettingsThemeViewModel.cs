@@ -4,6 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using Rg.DiffUtils;
 using System;
 using System.Collections.Generic;
@@ -16,8 +18,6 @@ using Unigram.Services.Settings;
 using Unigram.Views.Popups;
 using Windows.Storage;
 using Windows.UI;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.ViewModels.Settings
 {
@@ -122,7 +122,7 @@ namespace Unigram.ViewModels.Settings
                 {
                     key = value.Key.Substring(0, value.Key.Length - "Brush".Length) + suffix;
                 }
-                
+
                 if (theme.Values.TryGetValue(key, out Color custom))
                 {
                     _index[i] = new ThemeBrush(key, custom, value.Value.Color.A < 255);
@@ -149,7 +149,7 @@ namespace Unigram.ViewModels.Settings
             dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
-            var confirm = await dialog.ShowQueuedAsync();
+            var confirm = await dialog.ShowQueuedAsync(XamlRoot);
             if (confirm == ContentDialogResult.Primary)
             {
                 _theme.Name = dialog.Text;
@@ -169,7 +169,7 @@ namespace Unigram.ViewModels.Settings
             dialog.Title = brush.Key;
             dialog.Color = brush.Color;
 
-            var confirm = await dialog.ShowQueuedAsync();
+            var confirm = await dialog.ShowQueuedAsync(XamlRoot);
             if (confirm == ContentDialogResult.Primary)
             {
                 brush.Color = dialog.Color;

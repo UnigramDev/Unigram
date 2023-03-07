@@ -7,6 +7,7 @@
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Canvas.UI.Xaml;
+using Microsoft.UI;
 using System;
 using System.Numerics;
 using System.Threading;

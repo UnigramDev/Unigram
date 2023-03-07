@@ -4,19 +4,17 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Dispatching;
+using Microsoft.UI.Xaml.Controls;
 using System.Collections.Generic;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services;
-using Windows.System;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls.Cells.Premium
 {
     public sealed partial class PremiumFeatureUniqueStickersCell : UserControl
     {
-        private readonly DispatcherQueue _dispatcher;
-
         private IClientService _clientService;
 
         private IList<Sticker> _stickers;
@@ -25,8 +23,6 @@ namespace Unigram.Controls.Cells.Premium
         public PremiumFeatureUniqueStickersCell()
         {
             InitializeComponent();
-
-            _dispatcher = DispatcherQueue.GetForCurrentThread();
         }
 
         public void UpdateFature(IClientService clientService, IList<Sticker> stickers)
@@ -52,7 +48,7 @@ namespace Unigram.Controls.Cells.Premium
                 index = 0;
             }
 
-            if (index < _stickers.Count )
+            if (index < _stickers.Count)
             {
                 var sticker = _stickers[index];
                 if (sticker.FullType is StickerFullTypeRegular regular)
@@ -86,7 +82,7 @@ namespace Unigram.Controls.Cells.Premium
         {
             if (e == 1 && _stickers.Count > 1)
             {
-                _dispatcher.TryEnqueue(UpdateSticker);
+                DispatcherQueue.TryEnqueue(UpdateSticker);
             }
         }
     }

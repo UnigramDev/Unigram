@@ -55,7 +55,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using Windows.Graphics;
 using Windows.UI;
-using Windows.UI.Composition;
+using Microsoft.UI.Composition;
 
 namespace Unigram.Assets.Icons
 {

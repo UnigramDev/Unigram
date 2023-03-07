@@ -4,6 +4,10 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using System.Linq;
 using Telegram.Td.Api;
@@ -11,10 +15,6 @@ using Unigram.Common;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.Foundation;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Controls
 {
@@ -313,7 +313,7 @@ namespace Unigram.Controls
 
 
 
-            Calculate:
+        Calculate:
             if (width > availableWidth || height > availableHeight)
             {
                 var ratioX = availableWidth / width;

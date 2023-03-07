@@ -4,12 +4,12 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Navigation;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls
 {
@@ -63,7 +63,7 @@ namespace Unigram.Controls
             set => CheckBox.IsChecked = value;
         }
 
-        public static Task<ContentDialogResult> ShowAsync(string message, string title = null, string primary = null, string secondary = null, bool dangerous = false)
+        public static Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot, string message, string title = null, string primary = null, string secondary = null, bool dangerous = false)
         {
             var popup = new MessagePopup
             {
@@ -79,10 +79,10 @@ namespace Unigram.Controls
                 popup.PrimaryButtonStyle = BootStrapper.Current.Resources["DangerButtonStyle"] as Style;
             }
 
-            return popup.ShowQueuedAsync();
+            return popup.ShowQueuedAsync(xamlRoot);
         }
 
-        public static Task<ContentDialogResult> ShowAsync(FormattedText message, string title = null, string primary = null, string secondary = null, bool dangerous = false)
+        public static Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot, FormattedText message, string title = null, string primary = null, string secondary = null, bool dangerous = false)
         {
             var popup = new MessagePopup
             {
@@ -98,7 +98,7 @@ namespace Unigram.Controls
                 popup.PrimaryButtonStyle = BootStrapper.Current.Resources["DangerButtonStyle"] as Style;
             }
 
-            return popup.ShowQueuedAsync();
+            return popup.ShowQueuedAsync(xamlRoot);
         }
     }
 }

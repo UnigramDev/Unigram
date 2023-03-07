@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,9 +18,6 @@ using Unigram.Views;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.UI.Text.Core;
-using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Data;
 
 namespace Unigram.ViewModels.Drawers
 {
@@ -86,24 +84,16 @@ namespace Unigram.ViewModels.Drawers
                 .Subscribe<UpdateInstalledStickerSets>(Handle);
         }
 
-        private static readonly Dictionary<int, Dictionary<int, StickerDrawerViewModel>> _windowContext = new Dictionary<int, Dictionary<int, StickerDrawerViewModel>>();
+        private static readonly Dictionary<int, StickerDrawerViewModel> _windowContext = new();
         public static StickerDrawerViewModel GetForCurrentView(int sessionId)
         {
-            var id = ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow);
-            if (_windowContext.TryGetValue(id, out Dictionary<int, StickerDrawerViewModel> reference))
+            if (_windowContext.TryGetValue(sessionId, out StickerDrawerViewModel value))
             {
-                if (reference.TryGetValue(sessionId, out StickerDrawerViewModel value))
-                {
-                    return value;
-                }
-            }
-            else
-            {
-                _windowContext[id] = new Dictionary<int, StickerDrawerViewModel>();
+                return value;
             }
 
             var context = TLContainer.Current.Resolve<StickerDrawerViewModel>();
-            _windowContext[id][sessionId] = context;
+            _windowContext[sessionId] = context;
 
             return context;
         }

@@ -4,11 +4,11 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Services;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.ViewModels.Authorization
 {
@@ -54,14 +54,14 @@ namespace Unigram.ViewModels.Authorization
             {
                 async void CancelSignUp()
                 {
-                    var decline = await MessagePopup.ShowAsync(Strings.Resources.TosUpdateDecline, Strings.Resources.TermsOfService, Strings.Resources.DeclineDeactivate, Strings.Resources.Back);
+                    var decline = await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.TosUpdateDecline, Strings.Resources.TermsOfService, Strings.Resources.DeclineDeactivate, Strings.Resources.Back);
                     if (decline != ContentDialogResult.Primary)
                     {
                         SendExecute();
                         return;
                     }
 
-                    var delete = await MessagePopup.ShowAsync(Strings.Resources.TosDeclineDeleteAccount, Strings.Resources.AppName, Strings.Resources.Deactivate, Strings.Resources.Cancel);
+                    var delete = await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.TosDeclineDeleteAccount, Strings.Resources.AppName, Strings.Resources.Deactivate, Strings.Resources.Cancel);
                     if (delete != ContentDialogResult.Primary)
                     {
                         SendExecute();
@@ -71,7 +71,7 @@ namespace Unigram.ViewModels.Authorization
                     ClientService.Send(new LogOut());
                 }
 
-                var confirm = await MessagePopup.ShowAsync(waitRegistration.TermsOfService.Text, Strings.Resources.TermsOfService, Strings.Resources.SignUp, Strings.Resources.Decline);
+                var confirm = await MessagePopup.ShowAsync(XamlRoot, waitRegistration.TermsOfService.Text, Strings.Resources.TermsOfService, Strings.Resources.SignUp, Strings.Resources.Decline);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     CancelSignUp();
@@ -80,7 +80,7 @@ namespace Unigram.ViewModels.Authorization
 
                 if (waitRegistration.TermsOfService.MinUserAge > 0)
                 {
-                    var age = await MessagePopup.ShowAsync(string.Format(Strings.Resources.TosAgeText, waitRegistration.TermsOfService.MinUserAge), Strings.Resources.TosAgeTitle, Strings.Resources.Agree, Strings.Resources.Cancel);
+                    var age = await MessagePopup.ShowAsync(XamlRoot, string.Format(Strings.Resources.TosAgeText, waitRegistration.TermsOfService.MinUserAge), Strings.Resources.TosAgeTitle, Strings.Resources.Agree, Strings.Resources.Cancel);
                     if (age != ContentDialogResult.Primary)
                     {
                         CancelSignUp();

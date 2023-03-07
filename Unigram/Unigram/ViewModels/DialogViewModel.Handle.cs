@@ -4,6 +4,9 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -14,10 +17,6 @@ using Unigram.Controls.Messages;
 using Unigram.Controls.Messages.Content;
 using Unigram.Services;
 using Unigram.Services.Updates;
-using Windows.UI.Core;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Unigram.ViewModels
 {
@@ -527,7 +526,7 @@ namespace Unigram.ViewModels
 
                     if (!update.Message.IsOutgoing && Settings.Notifications.InAppSounds)
                     {
-                        if (TLWindowContext.Current.ActivationMode == CoreWindowActivationMode.ActivatedInForeground)
+                        if (TLWindowContext.Current.ActivationMode != WindowActivationState.Deactivated)
                         {
                             _pushService.PlaySound();
                         }

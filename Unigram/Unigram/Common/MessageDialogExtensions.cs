@@ -4,9 +4,12 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Threading.Tasks;
-using Windows.UI.Xaml.Controls;
+using Unigram.Navigation;
+using Unigram.Services;
 
 namespace Unigram.Common
 {
@@ -28,11 +31,24 @@ namespace Unigram.Common
         /// <param name="dialog">The dialog.</param>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException">This method can only be invoked from UI thread.</exception>
-        public static async Task<ContentDialogResult> ShowQueuedAsync(this ContentDialog dialog)
+        public static async Task<ContentDialogResult> ShowQueuedAsync(this ContentDialog dialog, XamlRoot xamlRoot)
         {
             while (_currentDialogShowRequest != null)
             {
                 await _currentDialogShowRequest.Task;
+            }
+
+            dialog.XamlRoot = xamlRoot;
+
+            if (dialog.XamlRoot.Content is FrameworkElement element)
+            {
+                var app = BootStrapper.Current.RequestedTheme == ApplicationTheme.Dark ? ElementTheme.Dark : ElementTheme.Light;
+                var frame = element.RequestedTheme;
+
+                if (app != frame)
+                {
+                    dialog.RequestedTheme = SettingsService.Current.Appearance.GetCalculatedElementTheme();
+                }
             }
 
             var request = _currentDialogShowRequest = new TaskCompletionSource<ContentDialog>();
@@ -52,11 +68,24 @@ namespace Unigram.Common
         /// <param name="dialog">The dialog.</param>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException">This method can only be invoked from UI thread.</exception>
-        public static async Task<ContentDialogResult> ShowIfPossibleAsync(this ContentDialog dialog)
+        public static async Task<ContentDialogResult> ShowIfPossibleAsync(this ContentDialog dialog, XamlRoot xamlRoot)
         {
             while (_currentDialogShowRequest != null)
             {
                 return ContentDialogResult.None;
+            }
+
+            dialog.XamlRoot = xamlRoot;
+
+            if (dialog.XamlRoot.Content is FrameworkElement element)
+            {
+                var app = BootStrapper.Current.RequestedTheme == ApplicationTheme.Dark ? ElementTheme.Dark : ElementTheme.Light;
+                var frame = element.RequestedTheme;
+
+                if (app != frame)
+                {
+                    dialog.RequestedTheme = SettingsService.Current.Appearance.GetCalculatedElementTheme();
+                }
             }
 
             var request = _currentDialogShowRequest = new TaskCompletionSource<ContentDialog>();

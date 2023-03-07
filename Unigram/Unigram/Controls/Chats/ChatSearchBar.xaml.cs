@@ -4,6 +4,13 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.Numerics;
 using Telegram.Td.Api;
@@ -11,11 +18,6 @@ using Unigram.Common;
 using Unigram.Navigation;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Chats;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media;
 using static Unigram.Controls.Chats.ChatTextBox;
 
 namespace Unigram.Controls.Chats
@@ -76,7 +78,7 @@ namespace Unigram.Controls.Chats
             var visual = ElementCompositionPreview.GetElementVisual(TopPanel);
             visual.Clip = visual.Compositor.CreateInsetClip();
 
-            var batch = visual.Compositor.CreateScopedBatch(Windows.UI.Composition.CompositionBatchTypes.Animation);
+            var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
                 visual.Clip = null;
@@ -195,9 +197,9 @@ namespace Unigram.Controls.Chats
             DeleteButton.Visibility = string.IsNullOrEmpty(Field.Text) && Field.State == ChatSearchState.Text ? Visibility.Collapsed : Visibility.Visible;
         }
 
-        private void OnKeyDown(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
+        private void OnKeyDown(object sender, KeyRoutedEventArgs e)
         {
-            var shift = Window.Current.CoreWindow.IsKeyDown(Windows.System.VirtualKey.Shift);
+            var shift = WindowContext.IsKeyDown(Windows.System.VirtualKey.Shift);
 
             if (e.Key == Windows.System.VirtualKey.Enter && !shift && Field.State != ChatSearchState.Members)
             {

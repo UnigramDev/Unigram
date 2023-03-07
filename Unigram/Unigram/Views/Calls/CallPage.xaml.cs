@@ -5,6 +5,15 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.Graphics.Canvas.Effects;
+using Microsoft.UI.Composition;
+using Microsoft.UI.Dispatching;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Shapes;
 using System;
 using System.Numerics;
 using System.Threading.Tasks;
@@ -16,18 +25,8 @@ using Unigram.Native.Calls;
 using Unigram.Navigation;
 using Unigram.Services;
 using Windows.Devices.Enumeration;
-using Windows.System;
 using Windows.System.Display;
-using Windows.UI;
-using Windows.UI.Composition;
 using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Shapes;
 using Point = Windows.Foundation.Point;
 
 namespace Unigram.Views.Calls
@@ -47,8 +46,6 @@ namespace Unigram.Views.Calls
 
         private readonly IVoipService _service;
         private VoipManager _manager;
-
-        private readonly DispatcherQueue _dispatcherQueue;
 
         private VoipState _state;
 
@@ -78,8 +75,6 @@ namespace Unigram.Views.Calls
 
             _service = voipService;
             _service.MutedChanged += OnMutedChanged;
-
-            _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
             _durationTimer = new DispatcherTimer();
             _durationTimer.Interval = TimeSpan.FromMilliseconds(500);
@@ -120,10 +115,10 @@ namespace Unigram.Views.Calls
             #endregion
 
             var titleBar = ApplicationView.GetForCurrentView().TitleBar;
-            titleBar.ButtonBackgroundColor = Colors.Transparent;
-            titleBar.ButtonForegroundColor = Colors.White;
-            titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
-            titleBar.ButtonInactiveForegroundColor = Colors.White;
+            titleBar.ButtonBackgroundColor = Microsoft.UI.Colors.Transparent;
+            titleBar.ButtonForegroundColor = Microsoft.UI.Colors.White;
+            titleBar.ButtonInactiveBackgroundColor = Microsoft.UI.Colors.Transparent;
+            titleBar.ButtonInactiveForegroundColor = Microsoft.UI.Colors.White;
 
             //Window.Current.SetTitleBar(BlurPanel);
 
@@ -247,11 +242,11 @@ namespace Unigram.Views.Calls
 
             if (x1 != _viewfinder.Offset.X || y1 != _viewfinder.Offset.Y)
             {
-                var anim = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                var anim = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
                 anim.InsertKeyFrame(0, _viewfinder.Offset);
                 anim.InsertKeyFrame(1, new Vector3(x1, y1, 0));
 
-                var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+                var batch = BootStrapper.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
                 batch.Completed += (s, args) =>
                 {
                     _viewfinder.Offset = new Vector3(x1, y1, 0);
@@ -320,7 +315,7 @@ namespace Unigram.Views.Calls
 
         private void OnMutedChanged(object sender, EventArgs e)
         {
-            _dispatcherQueue.TryEnqueue(() => Audio.IsChecked = !_service.IsMuted);
+            DispatcherQueue.TryEnqueue(() => Audio.IsChecked = !_service.IsMuted);
         }
 
         public void Connect(VoipManager controller)
@@ -453,7 +448,7 @@ namespace Unigram.Views.Calls
                 //    if (file.Local.IsDownloadingCompleted)
                 //    {
                 //        Image.Source = new BitmapImage(UriEx.GetLocal(file.Local.Path));
-                //        BackgroundPanel.Background = new SolidColorBrush(Colors.Transparent);
+                //        BackgroundPanel.Background = new SolidColorBrush(Microsoft.UI.Colors.Transparent);
                 //    }
                 //    else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 //    {
@@ -755,7 +750,7 @@ namespace Unigram.Views.Calls
             }
             else
             {
-                var permissions = await MediaDeviceWatcher.CheckAccessAsync(call.IsVideo);
+                var permissions = await MediaDeviceWatcher.CheckAccessAsync(XamlRoot, call.IsVideo);
                 if (permissions == false)
                 {
                     _clientService.Send(new DiscardCall(call.Id, false, 0, call.IsVideo, 0));
@@ -823,7 +818,7 @@ namespace Unigram.Views.Calls
             }
         }
 
-        private async void Menu_ContextRequested(object sender, RoutedEventArgs e)
+        private void Menu_ContextRequested(object sender, RoutedEventArgs e)
         {
             var flyout = new MenuFlyout();
 
@@ -835,7 +830,7 @@ namespace Unigram.Views.Calls
             video.Text = "Webcam";
             video.Icon = new FontIcon { Glyph = Icons.Camera, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
 
-            _dispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, async () =>
+            DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, async () =>
             {
                 var videoDevices = await DeviceInformation.FindAllAsync(DeviceClass.VideoCapture);
                 foreach (var device in videoDevices)
@@ -865,7 +860,7 @@ namespace Unigram.Views.Calls
             input.Icon = new FontIcon { Glyph = Icons.MicOn, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
             input.Items.Add(defaultInput);
 
-            _dispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, async () =>
+            DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, async () =>
             {
                 var inputDevices = await DeviceInformation.FindAllAsync(DeviceClass.AudioCapture);
                 foreach (var device in inputDevices)
@@ -895,7 +890,7 @@ namespace Unigram.Views.Calls
             output.Icon = new FontIcon { Glyph = Icons.Speaker, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
             output.Items.Add(defaultOutput);
 
-            _dispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, async () =>
+            DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, async () =>
             {
                 var outputDevices = await DeviceInformation.FindAllAsync(DeviceClass.AudioRender);
                 foreach (var device in outputDevices)
@@ -968,7 +963,7 @@ namespace Unigram.Views.Calls
             _debugDialog = dialog;
             _debugTimer.Start();
 
-            await dialog.ShowQueuedAsync();
+            await dialog.ShowQueuedAsync(XamlRoot);
         }
 
         private void DebugTimer_Tick(object sender, object e)

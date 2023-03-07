@@ -5,21 +5,24 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using LinqToVisualTree;
+using Microsoft.UI;
+using Microsoft.UI.Composition;
+using Microsoft.UI.Composition.Interactions;
+using Microsoft.UI.Input;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.Linq;
 using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Navigation;
 using Unigram.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.UI.Composition;
-using Windows.UI.Composition.Interactions;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Views
 {
@@ -131,7 +134,7 @@ namespace Unigram.Views
                 _visual = ElementCompositionPreview.GetElementVisual(root);
 
                 _hitTest = _visual.Compositor.CreateSpriteVisual();
-                _hitTest.Brush = _visual.Compositor.CreateColorBrush(Windows.UI.Colors.Transparent);
+                _hitTest.Brush = _visual.Compositor.CreateColorBrush(Colors.Transparent);
                 _hitTest.RelativeSizeAdjustment = Vector2.One;
 
                 _container = _visual.Compositor.CreateContainerVisual();
@@ -208,7 +211,7 @@ namespace Unigram.Views
 
         private void OnPointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            if (e.Pointer.PointerDeviceType != Windows.Devices.Input.PointerDeviceType.Mouse)
+            if (e.Pointer.PointerDeviceType != PointerDeviceType.Mouse)
             {
                 try
                 {
@@ -280,8 +283,8 @@ namespace Unigram.Views
                     return;
                 }
 
-                var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-                var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                var offset = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
+                var opacity = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
 
                 if (position.X >= 72 && _canGoNext)
                 {

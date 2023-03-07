@@ -4,7 +4,12 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Input;
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -24,12 +29,6 @@ using Windows.Storage;
 using Windows.System;
 using Windows.System.Display;
 using Windows.System.Profile;
-using Windows.UI.Composition;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Input;
 
 namespace Unigram.Controls.Chats
 {
@@ -334,7 +333,7 @@ namespace Unigram.Controls.Chats
                         ? Strings.Resources.VideoMessagesRestrictedByPrivacy
                         : Strings.Resources.VoiceMessagesRestrictedByPrivacy;
 
-                    await MessagePopup.ShowAsync(string.Format(message, ViewModel.Chat.Title), Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(XamlRoot, string.Format(message, ViewModel.Chat.Title), Strings.Resources.AppName, Strings.Resources.OK);
                     return;
                 }
 
@@ -492,7 +491,7 @@ namespace Unigram.Controls.Chats
 
                 this.BeginOnUIThread(async () =>
                 {
-                    var confirm = await MessagePopup.ShowAsync(message, Strings.Resources.AppName, Strings.Resources.PermissionOpenSettings, Strings.Resources.OK);
+                    var confirm = await MessagePopup.ShowAsync(XamlRoot, message, Strings.Resources.AppName, Strings.Resources.PermissionOpenSettings, Strings.Resources.OK);
                     if (confirm == ContentDialogResult.Primary)
                     {
                         await Launcher.LaunchUriAsync(new Uri("ms-settings:appsfeatures-app"));

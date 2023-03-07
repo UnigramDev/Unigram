@@ -4,19 +4,18 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
 using Unigram.Collections;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Views;
-using Windows.UI.Composition;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls
 {
@@ -245,7 +244,7 @@ namespace Unigram.Controls
             BorderPart.Visibility = _backgroundCollapsed ? Visibility.Collapsed : Visibility.Visible;
 
             var detailVisual = ElementCompositionPreview.GetElementVisual(DetailPresenter);
-            detailVisual.Clip = Window.Current.Compositor.CreateInsetClip(0, -40, 0, 0);
+            detailVisual.Clip = BootStrapper.Current.Compositor.CreateInsetClip(0, -40, 0, 0);
 
             if (DetailFrame != null)
             {

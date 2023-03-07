@@ -4,6 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Navigation;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -11,8 +13,6 @@ using Unigram.Controls;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings.Privacy
 {
@@ -57,7 +57,7 @@ namespace Unigram.ViewModels.Settings.Privacy
 
         public async void SetPhoto()
         {
-            await _profilePhotoService.SetPhotoAsync(null, true);
+            await _profilePhotoService.SetPhotoAsync(NavigationService, null, true);
         }
 
         public async void CreatePhoto()
@@ -73,10 +73,10 @@ namespace Unigram.ViewModels.Settings.Privacy
             popup.PrimaryButtonText = Strings.Resources.Remove;
             popup.SecondaryButtonText = Strings.Resources.Cancel;
             popup.PrimaryButtonStyle = App.Current.Resources["DangerButtonStyle"] as Style;
-            popup.DefaultButton = Windows.UI.Xaml.Controls.ContentDialogButton.None;
+            popup.DefaultButton = Microsoft.UI.Xaml.Controls.ContentDialogButton.None;
 
-            var confirm = await popup.ShowQueuedAsync();
-            if (confirm == Windows.UI.Xaml.Controls.ContentDialogResult.Primary)
+            var confirm = await popup.ShowQueuedAsync(XamlRoot);
+            if (confirm == Microsoft.UI.Xaml.Controls.ContentDialogResult.Primary)
             {
                 if (ClientService.TryGetUserFull(ClientService.Options.MyId, out UserFullInfo userFull))
                 {

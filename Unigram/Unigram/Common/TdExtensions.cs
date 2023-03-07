@@ -6,6 +6,7 @@
 //
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Brushes;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -20,7 +21,6 @@ using Unigram.ViewModels;
 using Unigram.ViewModels.Settings;
 using Windows.Foundation;
 using Windows.UI;
-using Windows.UI.Xaml.Media;
 using Point = Windows.Foundation.Point;
 
 namespace Unigram.Common

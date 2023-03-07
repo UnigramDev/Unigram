@@ -14,8 +14,6 @@ using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Services;
 using Unigram.Views;
-using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
 
 namespace Unigram.ViewModels.Drawers
 {
@@ -62,35 +60,27 @@ namespace Unigram.ViewModels.Drawers
             Aggregator.Subscribe<UpdateInstalledStickerSets>(this, Handle);
         }
 
-        private static readonly Dictionary<int, Dictionary<int, Dictionary<EmojiDrawerMode, EmojiDrawerViewModel>>> _windowContext = new();
+        private static readonly Dictionary<int, Dictionary<EmojiDrawerMode, EmojiDrawerViewModel>> _windowContext = new();
         public static EmojiDrawerViewModel GetForCurrentView(int sessionId, EmojiDrawerMode mode = EmojiDrawerMode.Chat)
         {
-            var id = ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow);
-            if (_windowContext.TryGetValue(id, out Dictionary<int, Dictionary<EmojiDrawerMode, EmojiDrawerViewModel>> reference))
+            if (_windowContext.TryGetValue(sessionId, out Dictionary<EmojiDrawerMode, EmojiDrawerViewModel> value))
             {
-                if (reference.TryGetValue(sessionId, out Dictionary<EmojiDrawerMode, EmojiDrawerViewModel> value))
+                if (value.TryGetValue(mode, out EmojiDrawerViewModel viewModel))
                 {
-                    if (value.TryGetValue(mode, out EmojiDrawerViewModel viewModel))
-                    {
-                        return viewModel;
-                    }
-                    else
-                    {
-                        var context2 = TLContainer.Current.Resolve<EmojiDrawerViewModel>();
-                        value[mode] = context2;
-
-                        context2.Mode = mode;
-                        return context2;
-                    }
+                    return viewModel;
                 }
-            }
-            else
-            {
-                _windowContext[id] = new Dictionary<int, Dictionary<EmojiDrawerMode, EmojiDrawerViewModel>>();
+                else
+                {
+                    var context2 = TLContainer.Current.Resolve<EmojiDrawerViewModel>();
+                    value[mode] = context2;
+
+                    context2.Mode = mode;
+                    return context2;
+                }
             }
 
             var context = TLContainer.Current.Resolve<EmojiDrawerViewModel>();
-            _windowContext[id][sessionId] = new Dictionary<EmojiDrawerMode, EmojiDrawerViewModel>
+            _windowContext[sessionId] = new Dictionary<EmojiDrawerMode, EmojiDrawerViewModel>
             {
                 { mode, context }
             };

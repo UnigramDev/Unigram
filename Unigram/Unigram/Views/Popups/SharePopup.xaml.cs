@@ -4,10 +4,19 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation.Peers;
+using Microsoft.UI.Xaml.Automation.Provider;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
@@ -21,17 +30,6 @@ using Unigram.ViewModels;
 using Unigram.ViewModels.Drawers;
 using Unigram.ViewModels.Folders;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.UI;
-using Windows.UI.Core;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation.Peers;
-using Windows.UI.Xaml.Automation.Provider;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Popups
 {
@@ -333,7 +331,7 @@ namespace Unigram.Views.Popups
             });
 
             Loaded += handler;
-            return this.ShowQueuedAsync();
+            return this.ShowQueuedAsync(XamlRoot);
         }
 
         #endregion
@@ -862,27 +860,22 @@ namespace Unigram.Views.Popups
 
         private void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
         {
-            Window.Current.CoreWindow.CharacterReceived += OnCharacterReceived;
+            CharacterReceived += OnCharacterReceived;
         }
 
         private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
         {
             ViewModel.PropertyChanged -= OnPropertyChanged;
-            Window.Current.CoreWindow.CharacterReceived -= OnCharacterReceived;
+            CharacterReceived -= OnCharacterReceived;
         }
 
-        private void OnCharacterReceived(CoreWindow sender, CharacterReceivedEventArgs args)
+        private void OnCharacterReceived(UIElement sender, CharacterReceivedRoutedEventArgs args)
         {
-            var character = Encoding.UTF32.GetString(BitConverter.GetBytes(args.KeyCode));
-            if (character.Length == 0)
+            if (args.Character != '\u0016' && args.Character != '\r' && char.IsControl(args.Character))
             {
                 return;
             }
-            else if (character != "\u0016" && character != "\r" && char.IsControl(character[0]))
-            {
-                return;
-            }
-            else if (character != "\u0016" && character != "\r" && char.IsWhiteSpace(character[0]))
+            else if (args.Character != '\u0016' && args.Character != '\r' && char.IsWhiteSpace(args.Character))
             {
                 return;
             }
@@ -890,12 +883,12 @@ namespace Unigram.Views.Popups
             var focused = FocusManager.GetFocusedElement();
             if (focused is null or (not TextBox and not RichEditBox))
             {
-                if (character == "\u0016" && CaptionInput.CanPasteClipboardContent)
+                if (args.Character == '\u0016' && CaptionInput.CanPasteClipboardContent)
                 {
                     CaptionInput.Focus(FocusState.Keyboard);
                     CaptionInput.PasteFromClipboard();
                 }
-                else if (character == "\r" && IsPrimaryButtonEnabled)
+                else if (args.Character == '\r' && IsPrimaryButtonEnabled)
                 {
                     Accept();
                 }
@@ -904,8 +897,8 @@ namespace Unigram.Views.Popups
                     Search_Click(null, null);
 
                     SearchField.Focus(FocusState.Keyboard);
-                    SearchField.Text = character;
-                    SearchField.SelectionStart = character.Length;
+                    SearchField.Text = args.Character.ToString();
+                    SearchField.SelectionStart = 1;
                 }
 
                 args.Handled = true;
@@ -914,20 +907,20 @@ namespace Unigram.Views.Popups
 
         private void Accept()
         {
-            if (CaptionInput.HandwritingView.IsOpen)
-            {
-                void handler(object s, RoutedEventArgs args)
-                {
-                    CaptionInput.HandwritingView.Unloaded -= handler;
+            //if (CaptionInput.HandwritingView.IsOpen)
+            //{
+            //    void handler(object s, RoutedEventArgs args)
+            //    {
+            //        CaptionInput.HandwritingView.Unloaded -= handler;
 
-                    ViewModel.Caption = CaptionInput.GetFormattedText();
-                    Hide(ContentDialogResult.Primary);
-                }
+            //        ViewModel.Caption = CaptionInput.GetFormattedText();
+            //        Hide(ContentDialogResult.Primary);
+            //    }
 
-                CaptionInput.HandwritingView.Unloaded += handler;
-                CaptionInput.HandwritingView.TryClose();
-            }
-            else
+            //    CaptionInput.HandwritingView.Unloaded += handler;
+            //    CaptionInput.HandwritingView.TryClose();
+            //}
+            //else
             {
                 ViewModel.Caption = CaptionInput.GetFormattedText();
                 Hide(ContentDialogResult.Primary);

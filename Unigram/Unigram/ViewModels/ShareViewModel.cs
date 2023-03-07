@@ -4,6 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,8 +17,6 @@ using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {
@@ -465,7 +465,7 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                App.DataPackages[chat.Id] = _package;
+                //App.DataPackages[chat.Id] = _package;
 
                 var service = WindowContext.Current.NavigationServices.GetByFrameId("Main" + ClientService.SessionId);
                 if (service != null)

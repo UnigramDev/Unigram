@@ -4,19 +4,20 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Navigation;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Gallery;
 using Windows.Foundation;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Controls.Gallery
 {
@@ -57,7 +58,7 @@ namespace Unigram.Controls.Gallery
             var prev = e.PreviousSize.ToVector2();
             var next = e.NewSize.ToVector2();
 
-            var anim = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var anim = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
             anim.InsertKeyFrame(0, new Vector3(prev / next, 1));
             anim.InsertKeyFrame(1, Vector3.One);
 
@@ -65,7 +66,7 @@ namespace Unigram.Controls.Gallery
             panel.CenterPoint = new Vector3(next.X / 2, next.Y / 2, 0);
             panel.StartAnimation("Scale", anim);
 
-            var factor = Window.Current.Compositor.CreateExpressionAnimation("Vector3(1 / content.Scale.X, 1 / content.Scale.Y, 1)");
+            var factor = BootStrapper.Current.Compositor.CreateExpressionAnimation("Vector3(1 / content.Scale.X, 1 / content.Scale.Y, 1)");
             factor.SetReferenceParameter("content", panel);
 
             var button = ElementCompositionPreview.GetElementVisual(Button);

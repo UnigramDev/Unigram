@@ -4,11 +4,11 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Services;
 using Unigram.Views.Popups;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.ViewModels.Settings
 {
@@ -33,7 +33,7 @@ namespace Unigram.ViewModels.Settings
         {
             var dialog = new EditShortcutPopup(_shortcutsService, info);
 
-            var confirm = await dialog.ShowQueuedAsync();
+            var confirm = await dialog.ShowQueuedAsync(XamlRoot);
             if (confirm == ContentDialogResult.Primary)
             {
                 Items.ReplaceWith(_shortcutsService.Update(dialog.Shortcut, info.Command));

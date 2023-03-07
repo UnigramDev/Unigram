@@ -4,6 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 using Rg.DiffUtils;
 using System;
 using System.Collections.Generic;
@@ -18,16 +20,18 @@ using Unigram.Views;
 using Unigram.Views.Popups;
 using Windows.Storage;
 using Windows.Storage.Pickers;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
     public class SettingsBackgroundsViewModel : TLViewModelBase
     {
-        public SettingsBackgroundsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+        private readonly IStorageService _storageService;
+
+        public SettingsBackgroundsViewModel(IClientService clientService, ISettingsService settingsService, IStorageService storageService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
+            _storageService = storageService;
+
             Items = new DiffObservableCollection<Background>(new BackgroundDiffHandler(), Constants.DiffOptions);
 
             LocalCommand = new RelayCommand(LocalExecute);
@@ -102,27 +106,18 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand LocalCommand { get; }
         private async void LocalExecute()
         {
-            try
+            var file = await _storageService.PickSingleFileAsync(XamlRoot, PickerLocationId.PicturesLibrary, Constants.PhotoTypes);
+            if (file != null)
             {
-                var picker = new FileOpenPicker();
-                picker.ViewMode = PickerViewMode.Thumbnail;
-                picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-                picker.FileTypeFilter.AddRange(Constants.PhotoTypes);
-
-                var file = await picker.PickSingleFileAsync();
-                if (file != null)
-                {
-                    await file.CopyAsync(ApplicationData.Current.TemporaryFolder, Constants.WallpaperLocalFileName, NameCollisionOption.ReplaceExisting);
-                    await new BackgroundPopup(Constants.WallpaperLocalFileName).ShowQueuedAsync();
-                }
+                await file.CopyAsync(ApplicationData.Current.TemporaryFolder, Constants.WallpaperLocalFileName, NameCollisionOption.ReplaceExisting);
+                await new BackgroundPopup(Constants.WallpaperLocalFileName).ShowQueuedAsync(XamlRoot);
             }
-            catch { }
         }
 
         public RelayCommand ColorCommand { get; }
         private async void ColorExecute()
         {
-            var confirm = await new BackgroundPopup(Constants.WallpaperColorFileName).ShowQueuedAsync();
+            var confirm = await new BackgroundPopup(Constants.WallpaperColorFileName).ShowQueuedAsync(XamlRoot);
             if (confirm == ContentDialogResult.Primary)
             {
                 await OnNavigatedToAsync(null, NavigationMode.Refresh, null);
@@ -132,7 +127,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand ResetCommand { get; }
         private async void ResetExecute()
         {
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.ResetChatBackgroundsAlert, Strings.Resources.ResetChatBackgroundsAlertTitle, Strings.Resources.Reset, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.ResetChatBackgroundsAlert, Strings.Resources.ResetChatBackgroundsAlertTitle, Strings.Resources.Reset, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -172,7 +167,7 @@ namespace Unigram.ViewModels.Settings
                 return;
             }
 
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.DeleteChatBackgroundsAlert, Locale.Declension("DeleteBackground", 1), Strings.Resources.Delete, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.DeleteChatBackgroundsAlert, Locale.Declension("DeleteBackground", 1), Strings.Resources.Delete, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

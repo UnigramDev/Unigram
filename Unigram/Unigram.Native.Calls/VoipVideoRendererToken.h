@@ -21,8 +21,8 @@ namespace winrt::Unigram::Native::Calls::implementation
 		hstring EndpointId();
 		IVector<GroupCallVideoSourceGroup> SourceGroups();
 
-		winrt::Windows::UI::Xaml::Media::Stretch Stretch();
-		void Stretch(winrt::Windows::UI::Xaml::Media::Stretch value);
+		winrt::Microsoft::UI::Xaml::Media::Stretch Stretch();
+		void Stretch(winrt::Microsoft::UI::Xaml::Media::Stretch value);
 
 		bool IsMirrored();
 		void IsMirrored(bool value);

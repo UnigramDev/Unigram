@@ -4,8 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
 using Unigram.Controls;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Popups
 {
@@ -37,7 +37,7 @@ namespace Unigram.Views.Popups
         {
         }
 
-        private void Label_KeyDown(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
+        private void Label_KeyDown(object sender, Microsoft.UI.Xaml.Input.KeyRoutedEventArgs e)
         {
             if (e.Key != Windows.System.VirtualKey.Enter)
             {

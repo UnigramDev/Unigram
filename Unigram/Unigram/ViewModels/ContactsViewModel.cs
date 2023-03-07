@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
 using System.Collections.Generic;
 using System.Linq;
 using Telegram.Td.Api;
@@ -42,8 +43,8 @@ namespace Unigram.ViewModels
             {
                 Settings.IsContactsSyncRequested = true;
 
-                var confirm = await MessagePopup.ShowAsync(Strings.Resources.ContactsPermissionAlert, Strings.Resources.AppName, Strings.Resources.ContactsPermissionAlertContinue, Strings.Resources.ContactsPermissionAlertNotNow);
-                if (confirm != Windows.UI.Xaml.Controls.ContentDialogResult.Primary)
+                var confirm = await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.ContactsPermissionAlert, Strings.Resources.AppName, Strings.Resources.ContactsPermissionAlertContinue, Strings.Resources.ContactsPermissionAlertNotNow);
+                if (confirm != ContentDialogResult.Primary)
                 {
                     Settings.IsContactsSyncEnabled = false;
                     await _contactsService.RemoveAsync();

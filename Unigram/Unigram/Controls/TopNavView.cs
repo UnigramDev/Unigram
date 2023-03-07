@@ -4,15 +4,16 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Input;
 using System;
 using System.Linq;
 using System.Numerics;
+using Unigram.Navigation;
 using Windows.Foundation;
-using Windows.UI.Composition;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Input;
 
 namespace Unigram.Controls
 {
@@ -137,7 +138,7 @@ namespace Unigram.Controls
                     float outgoingEndPosition = (float)(nextPos - prevPos);
                     float incomingStartPosition = (float)(prevPos - nextPos);
 
-                    var scopedBatch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+                    var scopedBatch = BootStrapper.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
                     scopedBatch.Completed += OnAnimationCompleted;
 
                     // Play the animation on both the previous and next indicators
@@ -172,7 +173,7 @@ namespace Unigram.Controls
 
         private UIElement FindSelectionIndicator(object item, bool retry)
         {
-            var container = ContainerFromItem(item) as TopNavViewItem;
+            var container = (item is TopNavViewItem ? item : ContainerFromItem(item)) as TopNavViewItem;
             if (container == null)
             {
                 return null;

@@ -4,19 +4,20 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
 using Unigram.Common;
-using Unigram.ViewModels.Delegates;
+using Unigram.Navigation;
 using Unigram.ViewModels.Authorization;
+using Unigram.ViewModels.Delegates;
 using Windows.Foundation;
-using Windows.UI.Composition;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Authorization
 {
@@ -27,10 +28,9 @@ namespace Unigram.Views.Authorization
         public AuthorizationPage()
         {
             InitializeComponent();
-            Window.Current.SetTitleBar(TitleBar);
 
             TokenPlaceholder.FrameSize = new Size(259, 259);
-            TokenPlaceholder.DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical;
+            TokenPlaceholder.DecodeFrameType = Microsoft.UI.Xaml.Media.Imaging.DecodePixelType.Logical;
             TokenPlaceholder.ColorReplacements = new Dictionary<int, int>
             {
                 { 0xffffff, 0x000000 }
@@ -40,6 +40,17 @@ namespace Unigram.Views.Authorization
         }
 
         private bool _waiting = true;
+
+        protected override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+
+            var window = WindowContext.ForXamlRoot(XamlRoot);
+            if (window != null)
+            {
+                window.Window.SetTitleBar(TitleBar);
+            }
+        }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
@@ -114,7 +125,7 @@ namespace Unigram.Views.Authorization
             var transform2 = Logo1Panel.TransformToVisual(Logo2Panel);
             var point2 = transform2.TransformPoint(new Point()).ToVector2();
 
-            var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            var batch = BootStrapper.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
                 TokenPanel.Visibility = Visibility.Collapsed;
@@ -122,15 +133,15 @@ namespace Unigram.Views.Authorization
             };
 
             // Small to big
-            var offset1 = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var offset1 = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
             offset1.InsertKeyFrame(0, new Vector3());
             offset1.InsertKeyFrame(1, new Vector3(point1.X, point1.Y, 0));
 
-            var scale1 = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var scale1 = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
             scale1.InsertKeyFrame(0, new Vector3(1));
             scale1.InsertKeyFrame(1, new Vector3(160f / 48f));
 
-            var opacity1 = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var opacity1 = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
             opacity1.InsertKeyFrame(0, 1);
             opacity1.InsertKeyFrame(1, 0);
 
@@ -139,15 +150,15 @@ namespace Unigram.Views.Authorization
             logo1.StartAnimation("Opacity", opacity1);
 
             // Big to small
-            var offset2 = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var offset2 = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
             offset2.InsertKeyFrame(0, new Vector3(point2.X, point2.Y, 0));
             offset2.InsertKeyFrame(1, new Vector3());
 
-            var scale2 = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var scale2 = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
             scale2.InsertKeyFrame(0, new Vector3(48f / 160f));
             scale2.InsertKeyFrame(1, new Vector3(1));
 
-            var opacity2 = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var opacity2 = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
             opacity2.InsertKeyFrame(0, 0);
             opacity2.InsertKeyFrame(1, 1);
 
@@ -156,11 +167,11 @@ namespace Unigram.Views.Authorization
             logo2.StartAnimation("Opacity", opacity2);
 
             // Other
-            var scale3 = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var scale3 = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
             scale3.InsertKeyFrame(0, new Vector3(1));
             scale3.InsertKeyFrame(1, new Vector3(0));
 
-            var opacity3 = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var opacity3 = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
             opacity3.InsertKeyFrame(0, 1);
             opacity3.InsertKeyFrame(1, 0);
 
@@ -194,7 +205,7 @@ namespace Unigram.Views.Authorization
             var transform2 = Logo1Panel.TransformToVisual(Logo2Panel);
             var point2 = transform2.TransformPoint(new Point()).ToVector2();
 
-            var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            var batch = BootStrapper.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
                 TokenPanel.Visibility = Visibility.Visible;
@@ -202,15 +213,15 @@ namespace Unigram.Views.Authorization
             };
 
             // Small to big
-            var offset1 = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var offset1 = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
             offset1.InsertKeyFrame(1, new Vector3());
             offset1.InsertKeyFrame(0, new Vector3(point1.X, point1.Y, 0));
 
-            var scale1 = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var scale1 = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
             scale1.InsertKeyFrame(1, new Vector3(1));
             scale1.InsertKeyFrame(0, new Vector3(160f / 48f));
 
-            var opacity1 = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var opacity1 = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
             opacity1.InsertKeyFrame(1, 1);
             opacity1.InsertKeyFrame(0, 0);
 
@@ -219,15 +230,15 @@ namespace Unigram.Views.Authorization
             logo1.StartAnimation("Opacity", opacity1);
 
             // Big to small
-            var offset2 = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var offset2 = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
             offset2.InsertKeyFrame(1, new Vector3(point2.X, point2.Y, 0));
             offset2.InsertKeyFrame(0, new Vector3());
 
-            var scale2 = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var scale2 = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
             scale2.InsertKeyFrame(1, new Vector3(48f / 160f));
             scale2.InsertKeyFrame(0, new Vector3(1));
 
-            var opacity2 = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var opacity2 = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
             opacity2.InsertKeyFrame(1, 0);
             opacity2.InsertKeyFrame(0, 1);
 
@@ -236,11 +247,11 @@ namespace Unigram.Views.Authorization
             logo2.StartAnimation("Opacity", opacity2);
 
             // Other
-            var scale3 = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var scale3 = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
             scale3.InsertKeyFrame(0, new Vector3(0));
             scale3.InsertKeyFrame(1, new Vector3(1));
 
-            var opacity3 = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var opacity3 = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
             opacity3.InsertKeyFrame(0, 0);
             opacity3.InsertKeyFrame(1, 1);
 
@@ -290,13 +301,13 @@ namespace Unigram.Views.Authorization
                 return;
             }
 
-            var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            var batch = BootStrapper.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
                 TokenPlaceholder.Unload();
             };
 
-            var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var opacity = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
             //opacity.InsertKeyFrame(0.0f, 0);
             //opacity.InsertKeyFrame(1.0f, 1);
             //token.StartAnimation("Opacity", opacity);

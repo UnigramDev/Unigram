@@ -6,23 +6,24 @@
 //
 using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Canvas.UI.Xaml;
+using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation.Peers;
+using Microsoft.UI.Xaml.Automation.Provider;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Native.Calls;
+using Unigram.Navigation;
 using Unigram.Services;
 using Unigram.Views.Calls;
 using Windows.Foundation;
 using Windows.UI;
-using Windows.UI.Composition;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation.Peers;
-using Windows.UI.Xaml.Automation.Provider;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Cells
 {
@@ -151,7 +152,7 @@ namespace Unigram.Controls.Cells
 
             _infoCollapsed = !show;
 
-            var anim = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var anim = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
             //anim.InsertKeyFrame(0, show ? 0 : 1);
             anim.InsertKeyFrame(1, show ? 1 : 0);
 
@@ -187,7 +188,7 @@ namespace Unigram.Controls.Cells
 
             Back.IsEnabled = Mode.IsEnabled = Pin.IsEnabled = show;
 
-            var anim = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var anim = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
             anim.InsertKeyFrame(1, show ? 1 : 0);
 
             var header = ElementCompositionPreview.GetElementVisual(Header);
@@ -217,13 +218,13 @@ namespace Unigram.Controls.Cells
                     Source = new CompositionEffectSourceParameter("backdrop")
                 };
 
-                var effectFactory = Window.Current.Compositor.CreateEffectFactory(graphicsEffect, new[] { "Blur.BlurAmount" });
+                var effectFactory = paused.Compositor.CreateEffectFactory(graphicsEffect, new[] { "Blur.BlurAmount" });
                 var effectBrush = effectFactory.CreateBrush();
-                var backdrop = Window.Current.Compositor.CreateBackdropBrush();
+                var backdrop = BootStrapper.Current.Compositor.CreateBackdropBrush();
                 effectBrush.SetSourceParameter("backdrop", backdrop);
 
                 _pausedBrush = effectBrush;
-                _pausedVisual = Window.Current.Compositor.CreateSpriteVisual();
+                _pausedVisual = paused.Compositor.CreateSpriteVisual();
                 _pausedVisual.Size = ActualSize;
                 _pausedVisual.Brush = effectBrush;
 
@@ -231,11 +232,11 @@ namespace Unigram.Controls.Cells
                 PausedRoot.Visibility = Visibility.Visible;
                 Scrim.Visibility = Visibility.Collapsed;
 
-                //var blur = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                //var blur = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
                 //blur.Duration = TimeSpan.FromMilliseconds(300);
                 //blur.InsertKeyFrame(1, 10);
 
-                //var anim = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                //var anim = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
                 //anim.InsertKeyFrame(0, show ? 0 : 1);
                 //anim.InsertKeyFrame(1, show ? 1 : 0);
 

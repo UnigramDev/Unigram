@@ -4,6 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,8 +26,6 @@ using Windows.Devices.Enumeration;
 using Windows.Media.Capture;
 using Windows.Media.MediaProperties;
 using Windows.Storage;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {
@@ -120,7 +120,7 @@ namespace Unigram.ViewModels
             var tags = Client.Execute(new GetLogTags()) as LogTags;
             if (tags != null)
             {
-                Tags.ReplaceWith(tags.Tags.Select(x => new DiagnosticsTag(Settings)
+                Tags.ReplaceWith(tags.Tags.Select(x => new DiagnosticsTag(NavigationService, Settings)
                 {
                     Name = x,
                     Default = ((LogVerbosityLevel)Client.Execute(new GetLogTagVerbosityLevel(x))).VerbosityLevel,
@@ -342,7 +342,7 @@ namespace Unigram.ViewModels
             }
             else
             {
-                var confirm = await MessagePopup.ShowAsync("If you disable the messages database some **features** might **stop to work** as expected, **secret chats** will become **inaccessible** and app won't recognize downloaded files after download.\r\n\r\nAre you sure you want to proceed? You can re-enable messages database anytime from here.", Strings.Resources.Warning, Strings.Resources.OK, Strings.Resources.Cancel);
+                var confirm = await MessagePopup.ShowAsync(XamlRoot, "If you disable the messages database some **features** might **stop to work** as expected, **secret chats** will become **inaccessible** and app won't recognize downloaded files after download.\r\n\r\nAre you sure you want to proceed? You can re-enable messages database anytime from here.", Strings.Resources.Warning, Strings.Resources.OK, Strings.Resources.Cancel);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     Settings.Diagnostics.DisableDatabase = true;
@@ -375,13 +375,15 @@ namespace Unigram.ViewModels
 
     public class DiagnosticsTag : BindableBase
     {
+        private readonly INavigationService _navigationService;
         private readonly ISettingsService _settings;
 
         public string Name { get; set; }
         public int Default { get; set; }
 
-        public DiagnosticsTag(ISettingsService settings)
+        public DiagnosticsTag(INavigationService navigationService, ISettingsService settings)
         {
+            _navigationService = navigationService;
             _settings = settings;
         }
 
@@ -417,7 +419,7 @@ namespace Unigram.ViewModels
             dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
-            var confirm = await dialog.ShowQueuedAsync();
+            var confirm = await dialog.ShowQueuedAsync(_navigationService.XamlRoot);
             if (confirm == ContentDialogResult.Primary && dialog.SelectedIndex is VerbosityLevel index)
             {
                 Value = index;

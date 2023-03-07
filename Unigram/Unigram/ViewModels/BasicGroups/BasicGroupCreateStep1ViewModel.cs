@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using System.Linq;
 using Telegram.Td.Api;
@@ -12,7 +13,6 @@ using Unigram.Common;
 using Unigram.Services;
 using Unigram.Views.Popups;
 using Windows.Storage;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.ViewModels.BasicGroups
 {
@@ -82,7 +82,7 @@ namespace Unigram.ViewModels.BasicGroups
                 }
                 else if (response is Error error)
                 {
-                    AlertsService.ShowAddUserAlert(Dispatcher, error.Message, false);
+                    AlertsService.ShowAddUserAlert(XamlRoot, error.Message, false);
                 }
             }
             else

@@ -4,6 +4,12 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI;
+using Microsoft.UI.Text;
+using Microsoft.UI.Xaml.Automation;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,12 +19,6 @@ using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Services;
 using Unigram.ViewModels;
-using Windows.UI;
-using Windows.UI.Text;
-using Windows.UI.Xaml.Automation;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Messages
 {
@@ -1895,7 +1895,7 @@ namespace Unigram.Controls.Messages
                 }
                 else if (entity.Type is TextEntityTypeItalic)
                 {
-                    span.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontStyle = FontStyle.Italic });
+                    span.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontStyle = Windows.UI.Text.FontStyle.Italic });
                 }
                 else if (entity.Type is TextEntityTypeCode)
                 {

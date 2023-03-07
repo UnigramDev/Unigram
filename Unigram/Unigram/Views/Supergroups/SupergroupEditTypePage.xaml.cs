@@ -4,7 +4,9 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
@@ -14,9 +16,6 @@ using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Settings;
 using Unigram.ViewModels.Supergroups;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Unigram.Views.Supergroups
 {
@@ -66,15 +65,12 @@ namespace Unigram.Views.Supergroups
                 ViewModel.ToggleUsername(username);
             };
 
-            if (Window.Current.Content is FrameworkElement element)
+            if (XamlRoot.Content is FrameworkElement element)
             {
                 element.Resources["TeachingTip"] = popup;
             }
-            else
-            {
-                container.Resources["TeachingTip"] = popup;
-            }
 
+            popup.XamlRoot = XamlRoot;
             popup.IsOpen = true;
         }
 
@@ -88,7 +84,7 @@ namespace Unigram.Views.Supergroups
             }
 
             var content = args.ItemContainer.ContentTemplateRoot as Grid;
-            
+
             if (args.Item is string username)
             {
                 var active = ViewModel.Usernames != null

@@ -5,6 +5,12 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using LinqToVisualTree;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,6 +23,7 @@ using Telegram.Td.Api;
 using Unigram.Controls.Messages;
 using Unigram.Entities;
 using Unigram.Native;
+using Unigram.Navigation;
 using Unigram.Services;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Calls;
@@ -29,12 +36,6 @@ using Windows.Storage.Pickers;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 using static Unigram.Services.GenerationService;
 using Point = Windows.Foundation.Point;
 
@@ -145,12 +146,12 @@ namespace Unigram.Common
             return result.TrimEnd('&');
         }
 
-        public static void ShowTeachingTip(this Window app, FrameworkElement target, string text, Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode placement = Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode.TopRight)
+        public static void ShowTeachingTip(this BootStrapper app, FrameworkElement target, string text, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight)
         {
             ShowTeachingTip(app, target, new FormattedText(text, new TextEntity[0]), placement);
         }
 
-        public static void ShowTeachingTip(this Window app, FrameworkElement target, FormattedText text, Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode placement = Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode.TopRight)
+        public static void ShowTeachingTip(this BootStrapper app, FrameworkElement target, FormattedText text, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight)
         {
             var label = new TextBlock
             {
@@ -168,14 +169,12 @@ namespace Unigram.Common
 
             TextBlockHelper.SetFormattedText(label, text);
 
-            if (app.Content is FrameworkElement element)
+            if (target.XamlRoot.Content is FrameworkElement element)
             {
                 element.Resources["TeachingTip"] = tip;
             }
-            else
-            {
-                target.Resources["TeachingTip"] = tip;
-            }
+
+            tip.XamlRoot = target.XamlRoot;
             tip.IsOpen = true;
         }
 
@@ -639,17 +638,17 @@ namespace Unigram.Common
 
 
 
-        public static async void BeginOnUIThread(this DependencyObject element, Action action)
+        public static void BeginOnUIThread(this DependencyObject element, Action action)
         {
             try
             {
-                if (element.Dispatcher.HasThreadAccess)
+                if (element.DispatcherQueue.HasThreadAccess)
                 {
                     action();
                 }
                 else
                 {
-                    await element.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, new Windows.UI.Core.DispatchedHandler(action));
+                    element.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Normal, new Microsoft.UI.Dispatching.DispatcherQueueHandler(action));
                 }
             }
             catch

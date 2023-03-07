@@ -4,6 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -17,8 +19,6 @@ using Unigram.Services;
 using Unigram.Views.Payments;
 using Unigram.Views.Popups;
 using Windows.UI.ViewManagement;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Payments
 {
@@ -294,7 +294,7 @@ namespace Unigram.ViewModels.Payments
                 choose.PrimaryButtonText = Strings.Resources.OK;
                 choose.SecondaryButtonText = Strings.Resources.Cancel;
 
-                var confirm1 = await choose.ShowQueuedAsync();
+                var confirm1 = await choose.ShowQueuedAsync(XamlRoot);
                 if (confirm1 == ContentDialogResult.Primary)
                 {
                     if (choose.SelectedIndex is SavedCredentials savedCredentials)
@@ -307,7 +307,7 @@ namespace Unigram.ViewModels.Payments
                     {
                         var option = new PaymentCredentialsPopup(form, paymentOption);
 
-                        var confirm2 = await option.ShowQueuedAsync();
+                        var confirm2 = await option.ShowQueuedAsync(XamlRoot);
                         if (confirm2 == ContentDialogResult.Primary && option.Credentials != null)
                         {
                             _inputCredentials = new InputCredentialsNew(option.Credentials.Id, true);
@@ -321,7 +321,7 @@ namespace Unigram.ViewModels.Payments
 
             var popup = new PaymentCredentialsPopup(_paymentForm);
 
-            var confirm = await popup.ShowQueuedAsync();
+            var confirm = await popup.ShowQueuedAsync(XamlRoot);
             if (confirm == ContentDialogResult.Primary && popup.Credentials != null)
             {
                 _inputCredentials = new InputCredentialsNew(popup.Credentials.Id, true);
@@ -338,7 +338,7 @@ namespace Unigram.ViewModels.Payments
 
             var popup = new PaymentAddressPopup(_inputInvoice, _paymentForm.Invoice, _info);
 
-            var confirm = await popup.ShowQueuedAsync();
+            var confirm = await popup.ShowQueuedAsync(XamlRoot);
             if (confirm == ContentDialogResult.Primary && popup.ValidatedInfo != null)
             {
                 ValidatedInfo = popup.ValidatedInfo;
@@ -367,7 +367,7 @@ namespace Unigram.ViewModels.Payments
             popup.PrimaryButtonText = Strings.Resources.OK;
             popup.SecondaryButtonText = Strings.Resources.Cancel;
 
-            var confirm = await popup.ShowQueuedAsync();
+            var confirm = await popup.ShowQueuedAsync(XamlRoot);
             if (confirm == ContentDialogResult.Primary && popup.SelectedIndex is ShippingOption index)
             {
                 Shipping = index;
@@ -385,7 +385,7 @@ namespace Unigram.ViewModels.Payments
             popup.PrimaryButtonText = Strings.Resources.OK;
             popup.SecondaryButtonText = Strings.Resources.Cancel;
 
-            var confirm = await popup.ShowQueuedAsync();
+            var confirm = await popup.ShowQueuedAsync(XamlRoot);
             if (confirm == ContentDialogResult.Primary)
             {
                 TipAmount = Converter.AmountBack(popup.Value, _paymentForm.Invoice.Currency);
@@ -422,9 +422,9 @@ namespace Unigram.ViewModels.Payments
             var bot = ClientService.GetUser(_paymentForm.SellerBotUserId);
             var provider = ClientService.GetUser(_paymentForm.PaymentProviderUserId);
 
-            var disclaimer = await MessagePopup.ShowAsync(string.Format(Strings.Resources.PaymentWarningText, bot.FirstName, provider.FirstName), Strings.Resources.PaymentWarning, Strings.Resources.OK);
+            var disclaimer = await MessagePopup.ShowAsync(XamlRoot, string.Format(Strings.Resources.PaymentWarningText, bot.FirstName, provider.FirstName), Strings.Resources.PaymentWarning, Strings.Resources.OK);
 
-            var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.PaymentTransactionMessage, Locale.FormatCurrency(TotalAmount, _paymentForm.Invoice.Currency), bot.FirstName, _title), Strings.Resources.PaymentTransactionReview, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(XamlRoot, string.Format(Strings.Resources.PaymentTransactionMessage, Locale.FormatCurrency(TotalAmount, _paymentForm.Invoice.Currency), bot.FirstName, _title), Strings.Resources.PaymentTransactionReview, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -492,7 +492,7 @@ namespace Unigram.ViewModels.Payments
             popup.PrimaryButtonText = Strings.Resources.Continue;
             popup.SecondaryButtonText = Strings.Resources.Cancel;
 
-            var confirm = await popup.ShowQueuedAsync();
+            var confirm = await popup.ShowQueuedAsync(XamlRoot);
             if (confirm != ContentDialogResult.Primary)
             {
                 return new TemporaryPasswordState(false, 0);

@@ -4,6 +4,9 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
@@ -11,9 +14,6 @@ using Unigram.Converters;
 using Unigram.Navigation;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Supergroups;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Input;
 
 namespace Unigram.Views.Supergroups
 {
@@ -289,7 +289,7 @@ namespace Unigram.Views.Supergroups
             ViewModel.UpdateHiddenMembers(fullInfo.HasHiddenMembers);
             HideMembers.Visibility = fullInfo.CanHideMembers ? Visibility.Visible : Visibility.Collapsed;
         }
-        
+
         public void UpdateBasicGroupFullInfo(Chat chat, BasicGroup group, BasicGroupFullInfo fullInfo)
         {
             ViewModel.UpdateHiddenMembers(false);

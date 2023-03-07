@@ -4,6 +4,9 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Dispatching;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -21,7 +24,6 @@ using Windows.ApplicationModel.Calls;
 using Windows.Devices.Enumeration;
 using Windows.Graphics.Capture;
 using Windows.Storage;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Services
 {
@@ -53,7 +55,7 @@ namespace Unigram.Services
 
         void Show();
 
-        void Start(long chatId, bool video);
+        void Start(XamlRoot xamlRoot, long chatId, bool video);
 
 #if ENABLE_CALLS
         VoipCaptureType CaptureType { get; }
@@ -240,7 +242,7 @@ namespace Unigram.Services
 
 #endif
 
-        public async void Start(long chatId, bool video)
+        public async void Start(XamlRoot xamlRoot, long chatId, bool video)
         {
             var chat = ClientService.GetChat(chatId);
             if (chat == null)
@@ -260,7 +262,7 @@ namespace Unigram.Services
                 var callUser = ClientService.GetUser(call.UserId);
                 if (callUser != null && callUser.Id != user.Id)
                 {
-                    var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.VoipOngoingAlert, callUser.FullName(), user.FullName()), Strings.Resources.VoipOngoingAlertTitle, Strings.Resources.OK, Strings.Resources.Cancel);
+                    var confirm = await MessagePopup.ShowAsync(xamlRoot, string.Format(Strings.Resources.VoipOngoingAlert, callUser.FullName(), user.FullName()), Strings.Resources.VoipOngoingAlertTitle, Strings.Resources.OK, Strings.Resources.Cancel);
                     if (confirm == ContentDialogResult.Primary)
                     {
 
@@ -277,11 +279,11 @@ namespace Unigram.Services
             var fullInfo = ClientService.GetUserFull(user.Id);
             if (fullInfo != null && fullInfo.HasPrivateCalls)
             {
-                await MessagePopup.ShowAsync(string.Format(Strings.Resources.CallNotAvailable, user.FirstName), Strings.Resources.VoipFailed, Strings.Resources.OK);
+                await MessagePopup.ShowAsync(xamlRoot, string.Format(Strings.Resources.CallNotAvailable, user.FirstName), Strings.Resources.VoipFailed, Strings.Resources.OK);
                 return;
             }
 
-            var permissions = await MediaDeviceWatcher.CheckAccessAsync(video, false);
+            var permissions = await MediaDeviceWatcher.CheckAccessAsync(xamlRoot, video, false);
             if (permissions == false)
             {
                 return;
@@ -297,11 +299,11 @@ namespace Unigram.Services
                     var message = video
                         ? Strings.Resources.VoipPeerVideoOutdated
                         : Strings.Resources.VoipPeerOutdated;
-                    await MessagePopup.ShowAsync(string.Format(message, user.FirstName), Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(xamlRoot, string.Format(message, user.FirstName), Strings.Resources.AppName, Strings.Resources.OK);
                 }
                 else if (error.Code == 400 && error.Message.Equals("USER_PRIVACY_RESTRICTED"))
                 {
-                    await MessagePopup.ShowAsync(string.Format(Strings.Resources.CallNotAvailable, user.FullName()), Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(xamlRoot, string.Format(Strings.Resources.CallNotAvailable, user.FullName()), Strings.Resources.AppName, Strings.Resources.OK);
                 }
             }
         }
@@ -534,7 +536,7 @@ namespace Unigram.Services
 
                     if (discarded.NeedRating)
                     {
-                        BeginOnUIThread(async () => await SendRatingAsync(update.Call.Id));
+                        //BeginOnUIThread(async () => await SendRatingAsync(update.Call.Id));
                     }
 
                     Dispose();
@@ -551,10 +553,10 @@ namespace Unigram.Services
                             return;
                         }
 
-                        var message = update.Call.IsVideo
-                            ? Strings.Resources.VoipPeerVideoOutdated
-                            : Strings.Resources.VoipPeerOutdated;
-                        BeginOnUIThread(async () => await MessagePopup.ShowAsync(string.Format(message, user.FirstName), Strings.Resources.AppName, Strings.Resources.OK));
+                        //var message = update.Call.IsVideo
+                        //    ? Strings.Resources.VoipPeerVideoOutdated
+                        //    : Strings.Resources.VoipPeerOutdated;
+                        //BeginOnUIThread(async () => await MessagePopup.ShowAsync(string.Format(message, user.FirstName), Strings.Resources.AppName, Strings.Resources.OK));
                     }
 
                     _call = null;
@@ -658,11 +660,11 @@ namespace Unigram.Services
             }
         }
 
-        private async Task SendRatingAsync(int callId)
+        private async Task SendRatingAsync(XamlRoot xamlRoot, int callId)
         {
             var dialog = new CallRatingPopup();
 
-            var confirm = await dialog.ShowQueuedAsync();
+            var confirm = await dialog.ShowQueuedAsync(xamlRoot);
             if (confirm == ContentDialogResult.Primary)
             {
                 // We need updates here
@@ -731,7 +733,7 @@ namespace Unigram.Services
                 return;
             }
 
-            await callPage.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            callPage.DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, () =>
             {
                 if (controller != null)
                 {

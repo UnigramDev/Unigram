@@ -6,13 +6,13 @@
 #include <mutex>
 
 #include <winrt/Microsoft.Graphics.Canvas.h>
-#include <winrt/Windows.UI.Xaml.Media.Imaging.h>
+#include <winrt/Microsoft.UI.Xaml.Media.Imaging.h>
 
 #include "VideoAnimation.h"
 
 using namespace winrt::Microsoft::Graphics::Canvas;
+using namespace winrt::Microsoft::UI::Xaml::Media::Imaging;
 using namespace winrt::Windows::Storage::Streams;
-using namespace winrt::Windows::UI::Xaml::Media::Imaging;
 
 #define CACHED_VERSION 5
 

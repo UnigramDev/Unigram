@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,7 +14,6 @@ using Unigram.Services;
 using Unigram.Services.Updates;
 using Unigram.Views.Popups;
 using Unigram.Views.Settings.Popups;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.ViewModels.Settings
 {
@@ -106,7 +106,7 @@ namespace Unigram.ViewModels.Settings
         {
             if (_passcodeService.IsEnabled)
             {
-                var confirm = await MessagePopup.ShowAsync(Strings.Resources.DisablePasscodeConfirmMessage, Strings.Resources.DisablePasscode, Strings.Resources.DisablePasscodeTurnOff, Strings.Resources.Cancel, true);
+                var confirm = await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.DisablePasscodeConfirmMessage, Strings.Resources.DisablePasscode, Strings.Resources.DisablePasscodeTurnOff, Strings.Resources.Cancel, true);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     _passcodeService.Reset();
@@ -119,7 +119,7 @@ namespace Unigram.ViewModels.Settings
                 var popup = new SettingsPasscodeInputPopup();
                 popup.IsSimple = _passcodeService.IsSimple;
 
-                var confirm = await popup.ShowQueuedAsync();
+                var confirm = await popup.ShowQueuedAsync(XamlRoot);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     var passcode = popup.Passcode;
@@ -141,7 +141,7 @@ namespace Unigram.ViewModels.Settings
             var dialog = new SettingsPasscodeInputPopup();
             dialog.IsSimple = _passcodeService.IsSimple;
 
-            var confirm = await dialog.ShowQueuedAsync();
+            var confirm = await dialog.ShowQueuedAsync(XamlRoot);
             if (confirm == ContentDialogResult.Primary)
             {
                 var passcode = dialog.Passcode;

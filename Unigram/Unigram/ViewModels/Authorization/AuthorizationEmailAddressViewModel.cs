@@ -4,13 +4,13 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Navigation;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Navigation.Services;
 using Unigram.Services;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Authorization
 {
@@ -58,11 +58,11 @@ namespace Unigram.ViewModels.Authorization
 
                 if (error.TypeEquals(ErrorType.EMAIL_INVALID))
                 {
-                    await MessagePopup.ShowAsync(Strings.Resources.EmailAddressInvalid, Strings.Resources.RestorePasswordNoEmailTitle, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.EmailAddressInvalid, Strings.Resources.RestorePasswordNoEmailTitle, Strings.Resources.OK);
                 }
                 else if (error.TypeEquals(ErrorType.EMAIL_NOT_ALLOWED))
                 {
-                    await MessagePopup.ShowAsync(Strings.Resources.EmailNotAllowed, Strings.Resources.RestorePasswordNoEmailTitle, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.EmailNotAllowed, Strings.Resources.RestorePasswordNoEmailTitle, Strings.Resources.OK);
                 }
 
                 Logs.Logger.Error(Logs.LogTarget.API, "account.signIn error " + error);

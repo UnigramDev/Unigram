@@ -4,7 +4,10 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.Collections.Generic;
 using Telegram.Td.Api;
@@ -12,8 +15,6 @@ using Unigram.Services;
 using Unigram.Services.Settings;
 using Windows.Storage;
 using Windows.UI;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Media;
 using AcrylicBrush = Microsoft.UI.Xaml.Media.AcrylicBrush;
 
 namespace Unigram.Common
@@ -246,7 +247,7 @@ namespace Unigram.Common
                 {
                     if (item.Value is AccentShade or Color)
                     {
-                        Color value;
+                        Color value = default;
                         if (item.Value is AccentShade shade)
                         {
                             value = GetShade(shade);

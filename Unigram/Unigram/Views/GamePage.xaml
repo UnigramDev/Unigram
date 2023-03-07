@@ -32,7 +32,7 @@
     </local:HostedPage.Header>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <WebView x:Name="View"
-                 NavigationStarting="View_NavigationStarting" />
+        <!--<WebView x:Name="View"
+                 NavigationStarting="View_NavigationStarting" />-->
     </Grid>
 </local:HostedPage>

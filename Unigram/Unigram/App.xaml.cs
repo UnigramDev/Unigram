@@ -4,9 +4,11 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Resources;
 using System;
 using System.Collections.Concurrent;
-using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Td;
 using Telegram.Td.Api;
@@ -19,29 +21,20 @@ using Unigram.Services.ViewService;
 using Unigram.Views;
 using Unigram.Views.Host;
 using Windows.ApplicationModel;
-using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.Background;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.ApplicationModel.DataTransfer.ShareTarget;
 using Windows.ApplicationModel.ExtendedExecution;
-using Windows.Foundation;
 using Windows.System.Profile;
-using Windows.UI.Core;
 using Windows.UI.Notifications;
 using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Resources;
 
 namespace Unigram
 {
     sealed partial class App : BootStrapper
     {
-        public static ShareOperation ShareOperation { get; set; }
-        public static Window ShareWindow { get; set; }
-
-        public bool IsBackground { get; private set; }
+        //public static ShareOperation ShareOperation { get; set; }
+        //public static Window ShareWindow { get; set; }
 
         public static ConcurrentDictionary<long, DataPackageView> DataPackages { get; } = new ConcurrentDictionary<long, DataPackageView>();
 
@@ -66,7 +59,7 @@ namespace Unigram
 
             TLContainer.Current.Configure(out int count);
 
-            RequestedTheme = SettingsService.Current.Appearance.GetCalculatedApplicationTheme();
+            //RequestedTheme = SettingsService.Current.Appearance.GetCalculatedApplicationTheme();
             InitializeComponent();
 
             InactivityHelper.Detected += Inactivity_Detected;
@@ -111,9 +104,6 @@ namespace Unigram
                 }
             }
 #endif
-
-            EnteredBackground += OnEnteredBackground;
-            LeavingBackground += OnLeavingBackground;
         }
 
         private void FatalErrorCallback(int verbosityLevel, string message)
@@ -134,28 +124,18 @@ namespace Unigram
             }
         }
 
-        private void OnEnteredBackground(object sender, EnteredBackgroundEventArgs e)
+        protected override void OnWindowCreated(Window window)
         {
-            IsBackground = true;
-        }
-
-        private void OnLeavingBackground(object sender, LeavingBackgroundEventArgs e)
-        {
-            IsBackground = false;
-        }
-
-        protected override void OnWindowCreated(WindowCreatedEventArgs args)
-        {
-            args.Window.Activated += Window_Activated;
+            window.Activated += Window_Activated;
             //args.Window.CoreWindow.FlowDirection = LocaleService.Current.FlowDirection == FlowDirection.RightToLeft
             //    ? CoreWindowFlowDirection.RightToLeft
             //    : CoreWindowFlowDirection.LeftToRight;
 
             CustomXamlResourceLoader.Current = new XamlResourceLoader();
-            base.OnWindowCreated(args);
+            base.OnWindowCreated(window);
 
 #if !DEBUG
-            var capabilities = Windows.UI.Composition.CompositionCapabilities.GetForCurrentView();
+            var capabilities = new Microsoft.UI.Composition.CompositionCapabilities();
 
             Microsoft.AppCenter.Analytics.Analytics.TrackEvent("Capabilities",
                 new System.Collections.Generic.Dictionary<string, string>
@@ -168,7 +148,7 @@ namespace Unigram
 
         protected override WindowContext CreateWindowWrapper(Window window)
         {
-            return new TLWindowContext(window, ApplicationView.GetApplicationViewIdForWindow(window.CoreWindow));
+            return new TLWindowContext(window, 0);
         }
 
         private void Inactivity_Detected(object sender, EventArgs e)
@@ -216,14 +196,14 @@ namespace Unigram
             }
 
             dialog.Closing += handler;
-            var result = await dialog.ShowQueuedAsync();
+            var result = await dialog.ShowQueuedAsync(null);
 
             _passcodeShown = false;
         }
 
         private void Window_Activated(object sender, WindowActivatedEventArgs e)
         {
-            HandleActivated(e.WindowActivationState != CoreWindowActivationState.Deactivated);
+            HandleActivated(e.WindowActivationState != WindowActivationState.Deactivated);
             SettingsService.Current.Appearance.UpdateTimer();
         }
 
@@ -242,49 +222,49 @@ namespace Unigram
             }
         }
 
-        protected override async void OnBackgroundActivated(BackgroundActivatedEventArgs args)
-        {
-            base.OnBackgroundActivated(args);
+        //protected override async void OnBackgroundActivated(BackgroundActivatedEventArgs args)
+        //{
+        //    base.OnBackgroundActivated(args);
 
-            if (args.TaskInstance.TriggerDetails is AppServiceTriggerDetails appService && string.Equals(appService.CallerPackageFamilyName, Package.Current.Id.FamilyName))
-            {
-                Connection = appService.AppServiceConnection;
-                Deferral = args.TaskInstance.GetDeferral();
+        //    if (args.TaskInstance.TriggerDetails is AppServiceTriggerDetails appService && string.Equals(appService.CallerPackageFamilyName, Package.Current.Id.FamilyName))
+        //    {
+        //        Connection = appService.AppServiceConnection;
+        //        Deferral = args.TaskInstance.GetDeferral();
 
-                appService.AppServiceConnection.RequestReceived += AppServiceConnection_RequestReceived;
-                args.TaskInstance.Canceled += (s, e) =>
-                {
-                    Deferral.Complete();
-                };
-            }
-            else
-            {
-                var deferral = args.TaskInstance.GetDeferral();
+        //        appService.AppServiceConnection.RequestReceived += AppServiceConnection_RequestReceived;
+        //        args.TaskInstance.Canceled += (s, e) =>
+        //        {
+        //            Deferral.Complete();
+        //        };
+        //    }
+        //    else
+        //    {
+        //        var deferral = args.TaskInstance.GetDeferral();
 
-                if (args.TaskInstance.TriggerDetails is ToastNotificationActionTriggerDetail triggerDetail)
-                {
-                    var data = Toast.GetData(triggerDetail);
-                    if (data == null)
-                    {
-                        deferral.Complete();
-                        return;
-                    }
+        //        if (args.TaskInstance.TriggerDetails is ToastNotificationActionTriggerDetail triggerDetail)
+        //        {
+        //            var data = Toast.GetData(triggerDetail);
+        //            if (data == null)
+        //            {
+        //                deferral.Complete();
+        //                return;
+        //            }
 
-                    var session = TLContainer.Current.Lifetime.ActiveItem.Id;
-                    if (data.TryGetValue("session", out string value) && int.TryParse(value, out int result))
-                    {
-                        session = result;
-                    }
+        //            var session = TLContainer.Current.Lifetime.ActiveItem.Id;
+        //            if (data.TryGetValue("session", out string value) && int.TryParse(value, out int result))
+        //            {
+        //                session = result;
+        //            }
 
-                    if (TLContainer.Current.TryResolve(session, out INotificationsService service))
-                    {
-                        await service.ProcessAsync(data);
-                    }
-                }
+        //            if (TLContainer.Current.TryResolve(session, out INotificationsService service))
+        //            {
+        //                await service.ProcessAsync(data);
+        //            }
+        //        }
 
-                deferral.Complete();
-            }
-        }
+        //        deferral.Complete();
+        //    }
+        //}
 
         private void AppServiceConnection_RequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
         {
@@ -294,7 +274,7 @@ namespace Unigram
             }
         }
 
-        public override void OnInitialize(IActivatedEventArgs args)
+        public override void OnInitialize(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
             //Locator.Configure();
             //UnigramContainer.Current.ResolveType<IGenerationService>();
@@ -306,30 +286,30 @@ namespace Unigram
             }
         }
 
-        public override async void OnStart(StartKind startKind, IActivatedEventArgs args)
+        public override async void OnStart(StartKind startKind, Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
             if (TLContainer.Current.Passcode.IsLockscreenRequired)
             {
                 ShowPasscode(true);
             }
 
-            if (startKind == StartKind.Activate)
-            {
-                var lifetime = TLContainer.Current.Lifetime;
-                var sessionId = lifetime.ActiveItem.Id;
+            //if (startKind == StartKind.Activate)
+            //{
+            //    var lifetime = TLContainer.Current.Lifetime;
+            //    var sessionId = lifetime.ActiveItem.Id;
 
-                var id = Toast.GetSession(args);
-                if (id != null)
-                {
-                    lifetime.ActiveItem = lifetime.Items.FirstOrDefault(x => x.Id == id.Value) ?? lifetime.ActiveItem;
-                }
+            //    var id = Toast.GetSession(args);
+            //    if (id != null)
+            //    {
+            //        lifetime.ActiveItem = lifetime.Items.FirstOrDefault(x => x.Id == id.Value) ?? lifetime.ActiveItem;
+            //    }
 
-                if (sessionId != TLContainer.Current.Lifetime.ActiveItem.Id)
-                {
-                    var root = Window.Current.Content as RootPage;
-                    root?.Switch(lifetime.ActiveItem);
-                }
-            }
+            //    if (sessionId != TLContainer.Current.Lifetime.ActiveItem.Id)
+            //    {
+            //        var root = Window.Current.Content as RootPage;
+            //        root?.Switch(lifetime.ActiveItem);
+            //    }
+            //}
 
             var navService = WindowContext.Current.NavigationServices.GetByFrameId($"{TLContainer.Current.Lifetime.ActiveItem.Id}");
             var service = TLContainer.Current.Resolve<IClientService>();
@@ -345,10 +325,10 @@ namespace Unigram
             }
 
             TLWindowContext.Current.SetActivatedArgs(args, navService);
-            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(320, 500));
+            //ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(320, 500));
             //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 
-            Task.Run(() => OnStartSync());
+            //Task.Run(OnStartSync);
             //return Task.CompletedTask;
 
             if (startKind == StartKind.Activate)
@@ -359,24 +339,24 @@ namespace Unigram
             }
         }
 
-        public override UIElement CreateRootElement(IActivatedEventArgs e)
+        public override UIElement CreateRootElement(Microsoft.UI.Xaml.LaunchActivatedEventArgs e)
         {
-            var id = Toast.GetSession(e);
-            if (id != null)
-            {
-                TLContainer.Current.Lifetime.ActiveItem = TLContainer.Current.Lifetime.Items.FirstOrDefault(x => x.Id == id.Value) ?? TLContainer.Current.Lifetime.ActiveItem;
-            }
+            //var id = Toast.GetSession(e);
+            //if (id != null)
+            //{
+            //    TLContainer.Current.Lifetime.ActiveItem = TLContainer.Current.Lifetime.Items.FirstOrDefault(x => x.Id == id.Value) ?? TLContainer.Current.Lifetime.ActiveItem;
+            //}
 
             var sessionId = TLContainer.Current.Lifetime.ActiveItem.Id;
 
-            if (e is ContactPanelActivatedEventArgs /*|| (e is ProtocolActivatedEventArgs protocol && protocol.Uri.PathAndQuery.Contains("domain=telegrampassport", StringComparison.OrdinalIgnoreCase))*/)
-            {
-                var navigationFrame = new Frame { FlowDirection = LocaleService.Current.FlowDirection };
-                var navigationService = NavigationServiceFactory(BackButton.Ignore, ExistingContent.Include, navigationFrame, sessionId, $"Main{sessionId}", false) as NavigationService;
+            //if (e is ContactPanelActivatedEventArgs /*|| (e is ProtocolActivatedEventArgs protocol && protocol.Uri.PathAndQuery.Contains("domain=telegrampassport", StringComparison.OrdinalIgnoreCase))*/)
+            //{
+            //    var navigationFrame = new Frame { FlowDirection = LocaleService.Current.FlowDirection };
+            //    var navigationService = NavigationServiceFactory(BackButton.Ignore, ExistingContent.Include, navigationFrame, sessionId, $"Main{sessionId}", false) as NavigationService;
 
-                return navigationFrame;
-            }
-            else
+            //    return navigationFrame;
+            //}
+            //else
             {
                 var navigationFrame = new Frame();
                 var navigationService = NavigationServiceFactory(BackButton.Ignore, ExistingContent.Include, navigationFrame, sessionId, $"{sessionId}", true) as NavigationService;

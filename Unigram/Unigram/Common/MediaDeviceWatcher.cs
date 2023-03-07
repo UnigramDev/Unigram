@@ -4,6 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Threading.Tasks;
 using Unigram.Controls;
@@ -13,8 +15,6 @@ using Windows.Media.Capture;
 using Windows.Media.Devices;
 using Windows.System;
 using Windows.System.Profile;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Common
 {
@@ -182,9 +182,9 @@ namespace Unigram.Common
 
         #region Device Access
 
-        public static async Task<bool> CheckAccessAsync(bool video, bool required = true, ElementTheme requestedTheme = ElementTheme.Default)
+        public static async Task<bool> CheckAccessAsync(XamlRoot xamlRoot, bool video, bool required = true, ElementTheme requestedTheme = ElementTheme.Default)
         {
-            var audioPermission = await CheckDeviceAccessAsync(true, video, required, requestedTheme);
+            var audioPermission = await CheckDeviceAccessAsync(xamlRoot, true, video, required, requestedTheme);
             if (audioPermission == false)
             {
                 return false;
@@ -192,7 +192,7 @@ namespace Unigram.Common
 
             if (video)
             {
-                var videoPermission = await CheckDeviceAccessAsync(false, true, required, requestedTheme);
+                var videoPermission = await CheckDeviceAccessAsync(xamlRoot, false, true, required, requestedTheme);
                 if (videoPermission == false)
                 {
                     return false;
@@ -202,7 +202,7 @@ namespace Unigram.Common
             return true;
         }
 
-        private static async Task<bool> CheckDeviceAccessAsync(bool audio, bool video, bool required, ElementTheme requestedTheme = ElementTheme.Default)
+        private static async Task<bool> CheckDeviceAccessAsync(XamlRoot xamlRoot, bool audio, bool video, bool required, ElementTheme requestedTheme = ElementTheme.Default)
         {
             // For some reason, as far as I understood, CurrentStatus is always Unspecified on Xbox
             if (string.Equals(AnalyticsInfo.VersionInfo.DeviceFamily, "Windows.Xbox"))
@@ -253,7 +253,7 @@ namespace Unigram.Common
                     RequestedTheme = requestedTheme
                 };
 
-                var confirm = await popup.ShowQueuedAsync();
+                var confirm = await popup.ShowQueuedAsync(xamlRoot);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     await Launcher.LaunchUriAsync(new Uri("ms-settings:appsfeatures-app"));

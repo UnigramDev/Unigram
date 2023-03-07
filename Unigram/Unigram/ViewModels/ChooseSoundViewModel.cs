@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Navigation;
 using Rg.DiffUtils;
 using System;
 using System.Linq;
@@ -14,7 +15,6 @@ using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Windows.Storage.Pickers;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {
@@ -22,9 +22,13 @@ namespace Unigram.ViewModels
         , IHandle
         //, IHandle<UpdateSavedNotificationSounds>
     {
-        public ChooseSoundViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+        private readonly IStorageService _storageService;
+
+        public ChooseSoundViewModel(IClientService clientService, ISettingsService settingsService, IStorageService storageService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
+            _storageService = storageService;
+
             Items = new DiffObservableCollection<NotificationSoundViewModel>(new NotificationSoundDiffHandler());
 
             UploadCommand = new RelayCommand(Upload);
@@ -73,35 +77,25 @@ namespace Unigram.ViewModels
         public RelayCommand UploadCommand { get; }
         private async void Upload()
         {
-            try
+            var file = await _storageService.PickSingleFileAsync(XamlRoot, PickerLocationId.MusicLibrary, ".mp3");
+            if (file != null)
             {
-                var picker = new FileOpenPicker();
-                picker.ViewMode = PickerViewMode.Thumbnail;
-                picker.SuggestedStartLocation = PickerLocationId.MusicLibrary;
-                picker.FileTypeFilter.Add(".mp3");
-
-                var file = await picker.PickSingleFileAsync();
-                if (file != null)
+                var properties = await file.GetBasicPropertiesAsync();
+                if ((long)properties.Size > ClientService.Options.NotificationSoundSizeMax)
                 {
-                    var properties = await file.GetBasicPropertiesAsync();
-                    if ((long)properties.Size > ClientService.Options.NotificationSoundSizeMax)
-                    {
-                        // TODO: ...
-                        return;
-                    }
-
-                    var music = await file.Properties.GetMusicPropertiesAsync();
-                    if (music.Duration.TotalSeconds > ClientService.Options.NotificationSoundDurationMax)
-                    {
-                        // TODO: ...
-                        return;
-                    }
-
-                    ClientService.Send(new AddSavedNotificationSound(await file.ToGeneratedAsync()));
+                    // TODO: ...
+                    return;
                 }
-            }
-            catch { }
 
+                var music = await file.Properties.GetMusicPropertiesAsync();
+                if (music.Duration.TotalSeconds > ClientService.Options.NotificationSoundDurationMax)
+                {
+                    // TODO: ...
+                    return;
+                }
+
+                ClientService.Send(new AddSavedNotificationSound(await file.ToGeneratedAsync()));
+            }
         }
     }
 

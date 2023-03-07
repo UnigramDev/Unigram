@@ -4,6 +4,9 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Navigation;
 using Rg.DiffUtils;
 using System;
 using System.Collections.Generic;
@@ -18,9 +21,6 @@ using Unigram.Services;
 using Unigram.Services.Settings;
 using Unigram.Views.Popups;
 using Windows.Foundation;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
@@ -306,7 +306,7 @@ namespace Unigram.ViewModels.Settings
         {
             if (stickerSet.Name.Equals("tg/recentlyUsed"))
             {
-                var confirm = await MessagePopup.ShowAsync(Strings.Resources.ClearRecentEmoji, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+                var confirm = await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.ClearRecentEmoji, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;
@@ -317,7 +317,7 @@ namespace Unigram.ViewModels.Settings
             }
             else
             {
-                await StickersPopup.ShowAsync(stickerSet.Id);
+                await StickersPopup.ShowAsync(XamlRoot, stickerSet.Id);
             }
         }
 

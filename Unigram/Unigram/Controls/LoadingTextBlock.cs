@@ -6,18 +6,20 @@
 //
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
+using Microsoft.UI;
+using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
 using Unigram.Common;
 using Unigram.Native;
+using Unigram.Navigation;
 using Windows.Foundation;
 using Windows.UI;
-using Windows.UI.Composition;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls
 {
@@ -36,8 +38,10 @@ namespace Unigram.Controls
 
         protected override void OnApplyTemplate()
         {
-            var ease = Window.Current.Compositor.CreateLinearEasingFunction();
-            var animation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var compositor = BootStrapper.Current.Compositor;
+            var ease = compositor.CreateLinearEasingFunction();
+
+            var animation = compositor.CreateVector3KeyFrameAnimation();
             animation.InsertKeyFrame(0, new Vector3(-1, 0, 0), ease);
             animation.InsertKeyFrame(1, new Vector3(0, 0, 0), ease);
             animation.IterationBehavior = AnimationIterationBehavior.Forever;
@@ -46,19 +50,19 @@ namespace Unigram.Controls
             var backgroundColor = GetColor(BorderBrushProperty);
             var foregroundColor = GetColor(BackgroundProperty);
 
-            var gradient = Window.Current.Compositor.CreateLinearGradientBrush();
-            gradient.ColorStops.Add(Window.Current.Compositor.CreateColorGradientStop(0, Color.FromArgb(0x00, backgroundColor.R, backgroundColor.G, backgroundColor.B)));
-            gradient.ColorStops.Add(Window.Current.Compositor.CreateColorGradientStop(0.67f, Color.FromArgb(0x67, backgroundColor.R, backgroundColor.G, backgroundColor.B)));
-            gradient.ColorStops.Add(Window.Current.Compositor.CreateColorGradientStop(1, Color.FromArgb(0x00, backgroundColor.R, backgroundColor.G, backgroundColor.B)));
+            var gradient = compositor.CreateLinearGradientBrush();
+            gradient.ColorStops.Add(compositor.CreateColorGradientStop(0, Color.FromArgb(0x00, backgroundColor.R, backgroundColor.G, backgroundColor.B)));
+            gradient.ColorStops.Add(compositor.CreateColorGradientStop(0.67f, Color.FromArgb(0x67, backgroundColor.R, backgroundColor.G, backgroundColor.B)));
+            gradient.ColorStops.Add(compositor.CreateColorGradientStop(1, Color.FromArgb(0x00, backgroundColor.R, backgroundColor.G, backgroundColor.B)));
             gradient.StartPoint = new Vector2(0, 0);
             gradient.EndPoint = new Vector2(0.5f, 0);
             gradient.ExtendMode = CompositionGradientExtendMode.Wrap;
 
-            var background = Window.Current.Compositor.CreateSpriteVisual();
+            var background = compositor.CreateSpriteVisual();
             background.RelativeSizeAdjustment = Vector2.One;
-            background.Brush = Window.Current.Compositor.CreateColorBrush(foregroundColor);
+            background.Brush = compositor.CreateColorBrush(foregroundColor);
 
-            _foreground = Window.Current.Compositor.CreateSpriteVisual();
+            _foreground = compositor.CreateSpriteVisual();
             _foreground.RelativeSizeAdjustment = new Vector2(2, 1);
             _foreground.Brush = gradient;
             _foreground.StartAnimation("RelativeOffsetAdjustment", animation);
@@ -66,11 +70,11 @@ namespace Unigram.Controls
             _placeholder = GetTemplateChild("Placeholder") as TextBlock;
             _presenter = GetTemplateChild("Presenter") as TextBlock;
 
-            _skeleton = Window.Current.Compositor.CreateContainerVisual();
+            _skeleton = compositor.CreateContainerVisual();
             _skeleton.Children.InsertAtTop(background);
             _skeleton.Children.InsertAtTop(_foreground);
             _skeleton.Opacity = 0.67f;
-            
+
             _skeleton.AnchorPoint = new Vector2(IsPlaceholderRightToLeft ? 1 : 0, 0);
             _skeleton.RelativeOffsetAdjustment = new Vector3(IsPlaceholderRightToLeft ? 1 : 0, 0, 0);
 
@@ -92,7 +96,7 @@ namespace Unigram.Controls
 
         private CompositionBrush GetBrush(DependencyProperty dp)
         {
-            return Window.Current.Compositor.CreateColorBrush(GetColor(dp));
+            return BootStrapper.Current.Compositor.CreateColorBrush(GetColor(dp));
         }
 
         #region PlaceholderText
@@ -149,13 +153,13 @@ namespace Unigram.Controls
 
             await this.UpdateLayoutAsync();
 
-            var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            var batch = BootStrapper.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
                 _placeholder.Visibility = Visibility.Collapsed;
             };
 
-            var fadeIn = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var fadeIn = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
             fadeIn.InsertKeyFrame(0, 0);
             fadeIn.InsertKeyFrame(1, 1);
 
@@ -195,11 +199,11 @@ namespace Unigram.Controls
             var elli2 = CanvasGeometry.CreateCircle(device, left, top, diaginal);
             var group2 = CanvasGeometry.CreateGroup(device, new[] { elli2, rect1 }, CanvasFilledRegionDetermination.Alternate);
 
-            var ellipse = Window.Current.Compositor.CreatePathGeometry(new CompositionPath(group2));
-            var clip = Window.Current.Compositor.CreateGeometricClip(ellipse);
+            var ellipse = BootStrapper.Current.Compositor.CreatePathGeometry(new CompositionPath(group2));
+            var clip = BootStrapper.Current.Compositor.CreateGeometricClip(ellipse);
 
-            var ease = Window.Current.Compositor.CreateCubicBezierEasingFunction(new Vector2(.42f, 0), new Vector2(1, 1));
-            var anim = Window.Current.Compositor.CreatePathKeyFrameAnimation();
+            var ease = BootStrapper.Current.Compositor.CreateCubicBezierEasingFunction(new Vector2(.42f, 0), new Vector2(1, 1));
+            var anim = BootStrapper.Current.Compositor.CreatePathKeyFrameAnimation();
             anim.InsertKeyFrame(0, new CompositionPath(group1), ease);
             anim.InsertKeyFrame(1, new CompositionPath(group2), ease);
             anim.Duration = TimeSpan.FromMilliseconds(500);
@@ -287,7 +291,7 @@ namespace Unigram.Controls
                 list.Add(CanvasGeometry.CreateRoundedRectangle(device, new Rect(left + rect.X - 4, top + rect.Y - 2, rect.Width + 6, rect.Height + 6), 4, 4));
             }
 
-            _skeleton.Clip = Window.Current.Compositor.CreateGeometricClip(Window.Current.Compositor.CreatePathGeometry(new CompositionPath(CanvasGeometry.CreateGroup(device, list.ToArray(), CanvasFilledRegionDetermination.Winding))));
+            _skeleton.Clip = BootStrapper.Current.Compositor.CreateGeometricClip(BootStrapper.Current.Compositor.CreatePathGeometry(new CompositionPath(CanvasGeometry.CreateGroup(device, list.ToArray(), CanvasFilledRegionDetermination.Winding))));
             _skeleton.Size = _placeholder.DesiredSize.ToVector2();
 
             return finalSize;

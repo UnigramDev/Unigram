@@ -4,6 +4,13 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Input;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
+using Microsoft.UI.Xaml.Shapes;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -12,12 +19,6 @@ using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.UI.Core;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Controls
 {
@@ -229,7 +230,7 @@ namespace Unigram.Controls
 
             //if (animate && _clipVisual != null)
             //{
-            //    var animation = Window.Current.Compositor.CreatePathKeyFrameAnimation();
+            //    var animation = BootStrapper.Current.Compositor.CreatePathKeyFrameAnimation();
             //    animation.InsertKeyFrame(0, _clipGeometry.Path);
             //    animation.InsertKeyFrame(1, GetCheckMark(_clipVisual.Size, new Rect(rect.Left * w, rect.Top * h, rect.Width * w, rect.Height * h)));
             //    animation.Duration = TimeSpan.FromSeconds(3);
@@ -269,7 +270,7 @@ namespace Unigram.Controls
 
         private void Thumb_PointerExited(object sender, PointerRoutedEventArgs e)
         {
-            Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 1);
+            ProtectedCursor = InputCursor.CreateFromCoreCursor(new CoreCursor(CoreCursorType.Arrow, 1));
         }
 
         private void Thumb_PointerPressed(object sender, PointerRoutedEventArgs e)
@@ -631,22 +632,22 @@ namespace Unigram.Controls
 
         private void NWSEThumb_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
-            Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.SizeNorthwestSoutheast, 1);
+            ProtectedCursor = InputCursor.CreateFromCoreCursor(new CoreCursor(CoreCursorType.SizeNorthwestSoutheast, 1));
         }
 
         private void NESWThumb_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
-            Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.SizeNortheastSouthwest, 1);
+            ProtectedCursor = InputCursor.CreateFromCoreCursor(new CoreCursor(CoreCursorType.SizeNortheastSouthwest, 1));
         }
 
         private void WEThumb_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
-            Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.SizeWestEast, 1);
+            ProtectedCursor = InputCursor.CreateFromCoreCursor(new CoreCursor(CoreCursorType.SizeWestEast, 1));
         }
 
         private void NSThumb_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
-            Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.SizeNorthSouth, 1);
+            ProtectedCursor = InputCursor.CreateFromCoreCursor(new CoreCursor(CoreCursorType.SizeNorthSouth, 1));
         }
 
         #endregion

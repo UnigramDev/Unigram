@@ -6,7 +6,9 @@
 //
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Brushes;
+using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Canvas.UI.Xaml;
+using Microsoft.UI.Xaml;
 using System;
 using System.Collections.Generic;
 using Telegram.Td.Api;
@@ -14,7 +16,6 @@ using Unigram.Controls.Messages;
 using Unigram.Services;
 using Windows.Foundation;
 using Windows.UI;
-using Windows.UI.Xaml;
 
 namespace Unigram.Controls
 {
@@ -72,7 +73,7 @@ namespace Unigram.Controls
             }
         }
 
-        protected override void OnDpiChanged(float currentDpi)
+        protected override void OnDpiChanged(double currentDpi)
         {
             var hash = GetHashCode();
 
@@ -328,7 +329,7 @@ namespace Unigram.Controls
                 if (_frameSize != value)
                 {
                     _frameSize = value;
-                    OnDpiChanged(_currentDpi);
+                    OnDpiChanged(_rasterizationScale);
                 }
             }
         }

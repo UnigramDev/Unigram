@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,7 +16,6 @@ using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Services.Settings;
 using Unigram.Views.Popups;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
@@ -287,7 +287,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand EmojiSetCommand { get; }
         private async void EmojiSetExecute()
         {
-            await new SettingsEmojiSetPopup(ClientService, _emojiSetService, Aggregator).ShowQueuedAsync();
+            await new SettingsEmojiSetPopup(ClientService, _emojiSetService, Aggregator).ShowQueuedAsync(XamlRoot);
 
             var emojiSet = Settings.Appearance.EmojiSet;
             EmojiSet = emojiSet.Title;
@@ -323,7 +323,7 @@ namespace Unigram.ViewModels.Settings
             var accent = settings.AccentColor.ToColor();
             var outgoing = settings.OutgoingMessageAccentColor.ToColor();
 
-            await _themeService.CreateThemeAsync(ThemeAccentInfo.FromAccent(tint, accent, outgoing));
+            await _themeService.CreateThemeAsync(XamlRoot, ThemeAccentInfo.FromAccent(tint, accent, outgoing));
         }
     }
 }

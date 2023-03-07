@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
@@ -16,7 +17,6 @@ using Unigram.ViewModels.Delegates;
 using Unigram.Views.Popups;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.System;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {
@@ -118,7 +118,7 @@ namespace Unigram.ViewModels
             dataPackage.SetText(link.AbsoluteUri);
             ClipboardEx.TrySetContent(dataPackage);
 
-            await MessagePopup.ShowAsync(Strings.Resources.LinkCopied, Strings.Resources.AppName, Strings.Resources.OK);
+            await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.LinkCopied, Strings.Resources.AppName, Strings.Resources.OK);
         }
     }
 }

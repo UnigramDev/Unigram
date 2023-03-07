@@ -4,6 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -11,8 +13,6 @@ using Unigram.Controls;
 using Unigram.Entities;
 using Unigram.Navigation.Services;
 using Unigram.Services;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Authorization
 {
@@ -80,7 +80,7 @@ namespace Unigram.ViewModels.Authorization
                 }
                 else if (error.CodeEquals(ErrorCode.FLOOD))
                 {
-                    AlertsService.ShowFloodWaitAlert(error.Message);
+                    AlertsService.ShowFloodWaitAlert(XamlRoot, error.Message);
                     //await new MessageDialog($"{Resources.FloodWaitString}\r\n\r\n({result.Error.Message})", Resources.Error).ShowAsync();
                 }
 
@@ -105,12 +105,12 @@ namespace Unigram.ViewModels.Authorization
                 if (response is Error error)
                 {
                     IsLoading = false;
-                    await MessagePopup.ShowAsync(error.Message, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(XamlRoot, error.Message, Strings.Resources.AppName, Strings.Resources.OK);
                 }
             }
             else
             {
-                await MessagePopup.ShowAsync(Strings.Resources.RestorePasswordNoEmailText, Strings.Resources.RestorePasswordNoEmailTitle, Strings.Resources.OK);
+                await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.RestorePasswordNoEmailText, Strings.Resources.RestorePasswordNoEmailTitle, Strings.Resources.OK);
                 IsResettable = true;
             }
         }
@@ -118,7 +118,7 @@ namespace Unigram.ViewModels.Authorization
         public RelayCommand ResetCommand { get; }
         private async void ResetExecute()
         {
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.ResetMyAccountWarningText, Strings.Resources.ResetMyAccountWarning, Strings.Resources.ResetMyAccountWarningReset, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.ResetMyAccountWarningText, Strings.Resources.ResetMyAccountWarning, Strings.Resources.ResetMyAccountWarningReset, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 IsLoading = true;
@@ -143,7 +143,7 @@ namespace Unigram.ViewModels.Authorization
 
                     if (error.Message.Contains("2FA_RECENT_CONFIRM"))
                     {
-                        await MessagePopup.ShowAsync(Strings.Resources.ResetAccountCancelledAlert, Strings.Resources.AppName, Strings.Resources.OK);
+                        await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.ResetAccountCancelledAlert, Strings.Resources.AppName, Strings.Resources.OK);
                     }
                     else if (error.Message.StartsWith("2FA_CONFIRM_WAIT_"))
                     {
@@ -151,7 +151,7 @@ namespace Unigram.ViewModels.Authorization
                     }
                     else
                     {
-                        await MessagePopup.ShowAsync(error.Message, Strings.Resources.AppName, Strings.Resources.OK);
+                        await MessagePopup.ShowAsync(XamlRoot, error.Message, Strings.Resources.AppName, Strings.Resources.OK);
                     }
                 }
             }

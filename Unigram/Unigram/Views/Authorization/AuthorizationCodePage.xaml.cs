@@ -4,13 +4,14 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 using System;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Navigation;
 using Unigram.ViewModels.Authorization;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Authorization
 {
@@ -21,7 +22,17 @@ namespace Unigram.Views.Authorization
         public AuthorizationCodePage()
         {
             InitializeComponent();
-            Window.Current.SetTitleBar(TitleBar);
+        }
+
+        protected override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+
+            var window = WindowContext.ForXamlRoot(XamlRoot);
+            if (window != null)
+            {
+                window.Window.SetTitleBar(TitleBar);
+            }
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)

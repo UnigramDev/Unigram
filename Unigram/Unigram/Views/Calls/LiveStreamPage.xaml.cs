@@ -5,6 +5,12 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.Graphics.Canvas.UI.Xaml;
+using Microsoft.UI;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Media;
 using System;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -16,13 +22,7 @@ using Unigram.Services;
 using Unigram.Views.Popups;
 using Windows.Devices.Enumeration;
 using Windows.System.Display;
-using Windows.UI;
 using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Views.Calls
 {
@@ -135,7 +135,7 @@ namespace Unigram.Views.Calls
             }
         }
 
-        private void OnClosed(object sender, Windows.UI.Core.CoreWindowEventArgs e)
+        private void OnClosed(object sender, WindowEventArgs e)
         {
             Window.Current.Content = null;
         }
@@ -358,7 +358,7 @@ namespace Unigram.Views.Calls
                     CheckBoxLabel = _service.IsChannel ? Strings.Resources.VoipChannelLeaveAlertEndChat : Strings.Resources.VoipGroupLeaveAlertEndChat
                 };
 
-                var confirm = await popup.ShowQueuedAsync();
+                var confirm = await popup.ShowQueuedAsync(XamlRoot);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     Dispose(popup.IsChecked == true);
@@ -390,7 +390,7 @@ namespace Unigram.Views.Calls
             popup.PrimaryButtonText = Strings.Resources.VoipGroupEnd;
             popup.SecondaryButtonText = Strings.Resources.Cancel;
 
-            var confirm = await popup.ShowQueuedAsync();
+            var confirm = await popup.ShowQueuedAsync(XamlRoot);
             if (confirm == ContentDialogResult.Primary)
             {
                 Dispose(true);
@@ -492,7 +492,7 @@ namespace Unigram.Views.Calls
                 flyout.CreateFlyoutSeparator();
 
                 var discard = flyout.CreateFlyoutItem(Discard, _service.IsChannel ? Strings.Resources.VoipChannelEndChat : Strings.Resources.VoipGroupEndChat, new FontIcon { Glyph = Icons.Dismiss });
-                discard.Foreground = new SolidColorBrush(Colors.IndianRed);
+                discard.Foreground = new SolidColorBrush(Microsoft.UI.Colors.IndianRed);
             }
 
             if (flyout.Items.Count > 0)
@@ -506,7 +506,7 @@ namespace Unigram.Views.Calls
             var popup = new VideoChatStreamsPopup(_clientService, _service.Chat.Id, false);
             popup.RequestedTheme = ElementTheme.Dark;
 
-            await popup.ShowQueuedAsync();
+            await popup.ShowQueuedAsync(XamlRoot);
         }
 
         private async void SetTitle()
@@ -529,7 +529,7 @@ namespace Unigram.Views.Calls
             input.MaxLength = 64;
             input.MinLength = 0;
 
-            var confirm = await input.ShowQueuedAsync();
+            var confirm = await input.ShowQueuedAsync(XamlRoot);
             if (confirm == ContentDialogResult.Primary)
             {
                 _clientService.Send(new SetGroupCallTitle(call.Id, input.Text));
@@ -549,7 +549,7 @@ namespace Unigram.Views.Calls
             var input = new RecordVideoChatPopup(call.Title);
             input.RequestedTheme = ElementTheme.Dark;
 
-            var confirm = await input.ShowQueuedAsync();
+            var confirm = await input.ShowQueuedAsync(XamlRoot);
             if (confirm == ContentDialogResult.Primary)
             {
                 _clientService.Send(new StartGroupCallRecording(call.Id, input.FileName, input.RecordVideo, input.UsePortraitOrientation));
@@ -571,7 +571,7 @@ namespace Unigram.Views.Calls
             popup.PrimaryButtonText = Strings.Resources.Stop;
             popup.SecondaryButtonText = Strings.Resources.Cancel;
 
-            var confirm = await popup.ShowQueuedAsync();
+            var confirm = await popup.ShowQueuedAsync(XamlRoot);
             if (confirm == ContentDialogResult.Primary)
             {
                 _clientService.Send(new EndGroupCallRecording(call.Id));
@@ -607,7 +607,7 @@ namespace Unigram.Views.Calls
 
             _bottomRootCollapsed = !show;
 
-            var anim = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var anim = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
             anim.InsertKeyFrame(0, show ? 0 : 1);
             anim.InsertKeyFrame(1, show ? 1 : 0);
 
@@ -616,12 +616,12 @@ namespace Unigram.Views.Calls
             root.StartAnimation("Opacity", anim);
         }
 
-        private void Viewport_PointerEntered(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+        private void Viewport_PointerEntered(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
         {
 
         }
 
-        private void Viewport_PointerExited(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+        private void Viewport_PointerExited(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
         {
 
         }

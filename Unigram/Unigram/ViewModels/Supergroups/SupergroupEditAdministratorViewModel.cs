@@ -4,6 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,8 +18,6 @@ using Unigram.ViewModels.Delegates;
 using Unigram.Views.Popups;
 using Unigram.Views.Settings;
 using Unigram.Views.Supergroups;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Supergroups
 {
@@ -390,7 +390,7 @@ namespace Unigram.ViewModels.Supergroups
                     builder.AppendLine(Strings.Resources.EditAdminTransferAlertText3);
                 }
 
-                var confirm = await MessagePopup.ShowAsync(builder.ToString(), Strings.Resources.EditAdminTransferAlertTitle, primary, Strings.Resources.Cancel);
+                var confirm = await MessagePopup.ShowAsync(XamlRoot, builder.ToString(), Strings.Resources.EditAdminTransferAlertTitle, primary, Strings.Resources.Cancel);
                 if (confirm == ContentDialogResult.Primary && canTransfer is CanTransferOwnershipResultPasswordNeeded)
                 {
                     NavigationService.Navigate(typeof(SettingsPasswordPage));
@@ -398,7 +398,7 @@ namespace Unigram.ViewModels.Supergroups
             }
             else if (canTransfer is CanTransferOwnershipResultOk)
             {
-                var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.EditAdminTransferReadyAlertText, chat.Title, user.FullName()), supergroup.IsChannel ? Strings.Resources.EditAdminChannelTransfer : Strings.Resources.EditAdminGroupTransfer, Strings.Resources.EditAdminTransferChangeOwner, Strings.Resources.Cancel);
+                var confirm = await MessagePopup.ShowAsync(XamlRoot, string.Format(Strings.Resources.EditAdminTransferReadyAlertText, chat.Title, user.FullName()), supergroup.IsChannel ? Strings.Resources.EditAdminChannelTransfer : Strings.Resources.EditAdminGroupTransfer, Strings.Resources.EditAdminTransferChangeOwner, Strings.Resources.Cancel);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;
@@ -413,7 +413,7 @@ namespace Unigram.ViewModels.Supergroups
                     SecondaryButtonText = Strings.Resources.Cancel
                 };
 
-                var result = await popup.ShowQueuedAsync();
+                var result = await popup.ShowQueuedAsync(XamlRoot);
                 if (result != ContentDialogResult.Primary)
                 {
                     return;

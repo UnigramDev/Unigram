@@ -30,9 +30,9 @@ namespace ABI {
 using namespace winrt::Microsoft::Graphics::Canvas;
 using namespace winrt::Microsoft::Graphics::Canvas::Effects;
 using namespace winrt::Microsoft::Graphics::Canvas::UI::Xaml;
+using namespace winrt::Microsoft::UI::Xaml::Media;
 using namespace winrt::Windows::Foundation::Numerics;
 using namespace winrt::Windows::Graphics::DirectX;
-using namespace winrt::Windows::UI::Xaml::Media;
 
 struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 {

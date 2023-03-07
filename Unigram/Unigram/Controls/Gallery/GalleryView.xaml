@@ -282,7 +282,6 @@
                         MinWidth="320">
                 <MediaTransportControls x:Name="Transport"
                                         ShowAndHideAutomatically="False"
-                                        IsFullWindowButtonVisible="False"
                                         IsZoomButtonVisible="False"
                                         IsSkipBackwardButtonVisible="True"
                                         IsSkipForwardButtonVisible="True"

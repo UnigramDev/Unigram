@@ -4,6 +4,10 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Media;
 using System;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -14,11 +18,6 @@ using Unigram.ViewModels;
 using Unigram.ViewModels.Folders;
 using Unigram.Views;
 using Windows.Foundation;
-using Windows.UI;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Cells
 {
@@ -77,7 +76,7 @@ namespace Unigram.Controls.Cells
                 SubtitleLabel.Text = LastSeenConverter.GetLabel(user, false);
                 SubtitleLabel.Style = BootStrapper.Current.Resources[user.Status is UserStatusOnline ? "AccentCaptionTextBlockStyle" : "InfoCaptionTextBlockStyle"] as Style;
             }
-            
+
             Photo.Width = photoSize;
             Photo.Height = photoSize;
             Photo.SetUser(clientService, user, photoSize);
@@ -314,8 +313,8 @@ namespace Unigram.Controls.Cells
                 if (SubtitleLabel.Text.StartsWith($"@{result.Query}", StringComparison.OrdinalIgnoreCase))
                 {
                     var highligher = new TextHighlighter();
-                    highligher.Foreground = new SolidColorBrush(Colors.Red);
-                    highligher.Background = new SolidColorBrush(Colors.Transparent);
+                    highligher.Foreground = new SolidColorBrush(Microsoft.UI.Colors.Red);
+                    highligher.Background = new SolidColorBrush(Microsoft.UI.Colors.Transparent);
                     highligher.Ranges.Add(new TextRange { StartIndex = 1, Length = result.Query.Length });
 
                     SubtitleLabel.TextHighlighters.Add(highligher);

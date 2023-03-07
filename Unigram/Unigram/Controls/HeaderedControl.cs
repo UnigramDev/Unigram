@@ -4,9 +4,9 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Windows.Foundation;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls
 {
@@ -74,7 +74,7 @@ namespace Unigram.Controls
             var last = true;
             var first = default(UIElement);
 
-            for (int i = Children.Count -1; i >= 0; i--)
+            for (int i = Children.Count - 1; i >= 0; i--)
             {
                 if (Children[i].Visibility == Visibility.Visible)
                 {

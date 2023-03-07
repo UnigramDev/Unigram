@@ -4,6 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Data;
 using System.Collections.ObjectModel;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
@@ -13,8 +15,6 @@ using Unigram.Controls;
 using Unigram.Services;
 using Unigram.Views.Popups;
 using Windows.Foundation;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Data;
 
 namespace Unigram.ViewModels.Settings
 {
@@ -55,7 +55,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand<MessageSender> UnblockCommand { get; }
         private async void UnblockExecute(MessageSender sender)
         {
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.AreYouSureUnblockContact, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.AreYouSureUnblockContact, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 Items.Remove(sender);

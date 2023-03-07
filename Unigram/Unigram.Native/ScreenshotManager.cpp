@@ -7,12 +7,12 @@
 #include "Helpers\LibraryHelper.h"
 
 #include <winrt/Windows.UI.Core.h>
-#include <winrt/Windows.UI.Xaml.Media.h>
-#include <winrt/Windows.UI.Xaml.Media.Imaging.h>
+#include <winrt/Microsoft.UI.Xaml.Media.h>
+#include <winrt/Microsoft.UI.Xaml.Media.Imaging.h>
 
 using namespace winrt::Windows::UI::Core;
-using namespace winrt::Windows::UI::Xaml::Media;
-using namespace winrt::Windows::UI::Xaml::Media::Imaging;
+using namespace winrt::Microsoft::UI::Xaml::Media;
+using namespace winrt::Microsoft::UI::Xaml::Media::Imaging;
 
 struct
 	__declspec(uuid("45D64A29-A63E-4CB6-B498-5781D298CB4F"))

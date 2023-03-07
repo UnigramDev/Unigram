@@ -4,6 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,8 +14,6 @@ using Unigram.Common;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views.Settings;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
@@ -117,7 +117,7 @@ namespace Unigram.ViewModels.Settings
 
             var dialog = new SettingsStorageOptimizationPage(ClientService, byChat);
 
-            var confirm = await dialog.ShowQueuedAsync();
+            var confirm = await dialog.ShowQueuedAsync(XamlRoot);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

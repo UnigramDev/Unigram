@@ -4,15 +4,17 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Composition;
+using Microsoft.UI.Composition.Interactions;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.Numerics;
-using Windows.UI.Composition;
-using Windows.UI.Composition.Interactions;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
+using Unigram.Navigation;
+using Windows.UI;
 
 namespace Unigram.Controls
 {
@@ -36,7 +38,7 @@ namespace Unigram.Controls
             RegisterPropertyChangedCallback(CanGoBackProperty, OnCanGoBackChanged);
         }
 
-        private void OnNavigated(object sender, Windows.UI.Xaml.Navigation.NavigationEventArgs e)
+        private void OnNavigated(object sender, Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
         {
             if (e.Content is UIElement element)
             {
@@ -60,7 +62,7 @@ namespace Unigram.Controls
         {
             if (!_hasInitialLoadedEventFired)
             {
-                var compositor = Window.Current.Compositor;
+                var compositor = BootStrapper.Current.Compositor;
 
                 if (Content is UIElement element)
                 {
@@ -68,7 +70,7 @@ namespace Unigram.Controls
                 }
 
                 _hitTest = compositor.CreateSpriteVisual();
-                _hitTest.Brush = compositor.CreateColorBrush(Windows.UI.Colors.Transparent);
+                _hitTest.Brush = compositor.CreateColorBrush(Microsoft.UI.Colors.Transparent);
                 _hitTest.RelativeSizeAdjustment = Vector2.One;
 
                 _container = compositor.CreateContainerVisual();
@@ -134,7 +136,7 @@ namespace Unigram.Controls
 
         private void OnPointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            if (e.Pointer.PointerDeviceType != Windows.Devices.Input.PointerDeviceType.Mouse)
+            if (e.Pointer.PointerDeviceType != Microsoft.UI.Input.PointerDeviceType.Mouse)
             {
                 try
                 {
@@ -162,7 +164,7 @@ namespace Unigram.Controls
                 ellipse.Radius = new Vector2(15);
 
                 var ellipseShape = _hitTest.Compositor.CreateSpriteShape(ellipse);
-                ellipseShape.FillBrush = _hitTest.Compositor.CreateColorBrush((Windows.UI.Color)Navigation.BootStrapper.Current.Resources["MessageServiceBackgroundColor"]);
+                ellipseShape.FillBrush = _hitTest.Compositor.CreateColorBrush((Color)Navigation.BootStrapper.Current.Resources["MessageServiceBackgroundColor"]);
                 ellipseShape.Offset = new Vector2(15);
 
                 var shape = _hitTest.Compositor.CreateShapeVisual();
@@ -200,8 +202,8 @@ namespace Unigram.Controls
             var position = _tracker.Position;
             if (position.X <= -72 && CanGoBack)
             {
-                var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-                var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                var offset = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
+                var opacity = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
 
                 if (position.X <= -72 && CanGoBack)
                 {

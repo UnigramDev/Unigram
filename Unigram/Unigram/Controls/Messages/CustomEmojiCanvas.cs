@@ -8,6 +8,7 @@ using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Brushes;
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.Graphics.Canvas.UI.Xaml;
+using Microsoft.UI;
 using RLottie;
 using System;
 using System.Buffers;
@@ -26,6 +27,7 @@ using Windows.UI;
 
 namespace Unigram.Controls.Messages
 {
+#warning TODO: this class requires some refactoring
     public class CustomEmojiCanvas : AnimatedControl<object>
     {
         private readonly HashSet<long> _cache = new();
@@ -49,7 +51,7 @@ namespace Unigram.Controls.Messages
             _pool = EmojiCache.MergeOrCreate(_emojiSize, GetHashCode());
         }
 
-        protected override void OnDpiChanged(float currentDpi)
+        protected override void OnDpiChanged(double currentDpi)
         {
             var hash = GetHashCode();
 
@@ -81,7 +83,7 @@ namespace Unigram.Controls.Messages
             if (needsCreate)
             {
                 _emojiSize = GetDpiAwareSize(20);
-                return CreateBitmap(device, awareSize.Width, awareSize.Height, dpi: _currentDpi);
+                return CreateBitmap(device, awareSize.Width, awareSize.Height, scale: _rasterizationScale);
             }
 
             return null;
@@ -118,8 +120,8 @@ namespace Unigram.Controls.Messages
             {
                 if (_pool.TryGet(item.CustomEmojiId, out EmojiRenderer animation))
                 {
-                    var x = (int)((2 + item.X - 0) * (_currentDpi / 96));
-                    var y = (int)((2 + item.Y - 0) * (_currentDpi / 96));
+                    var x = (int)((2 + item.X - 0) * _rasterizationScale);
+                    var y = (int)((2 + item.Y - 0) * _rasterizationScale);
 
                     var matches = animation.PixelWidth * animation.PixelHeight * 4 == animation.Buffer?.Length;
                     if (matches && animation.HasRenderedFirstFrame && x + _emojiSize <= _bitmap.SizeInPixels.Width && y + _emojiSize <= _bitmap.SizeInPixels.Height)

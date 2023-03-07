@@ -5,6 +5,11 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using LinqToVisualTree;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation.Peers;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -13,11 +18,6 @@ using Unigram.Common;
 using Unigram.Native;
 using Unigram.ViewModels;
 using Windows.Storage.Streams;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation.Peers;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Controls.Messages
 {
@@ -121,7 +121,7 @@ namespace Unigram.Controls.Messages
 
             var outgoing = message.IsOutgoing && !message.IsChannelPost;
             outgoing &= !message.IsChannelPost;
-            
+
             // TODO: chat type
 
             if (message.ReplyToMessageState == ReplyToMessageState.Hidden || message.ReplyToMessageId == 0)

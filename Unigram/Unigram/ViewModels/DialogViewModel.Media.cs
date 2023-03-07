@@ -4,6 +4,9 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Text;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,9 +29,6 @@ using Windows.Media.MediaProperties;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
-using Windows.UI.Text;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.ViewModels
 {
@@ -54,7 +54,7 @@ namespace Unigram.ViewModels
 
             if (sticker.FullType is StickerFullTypeRegular regular && regular.PremiumAnimation != null && ClientService.IsPremiumAvailable && !ClientService.IsPremium)
             {
-                await new UniqueStickersPopup(ClientService, sticker).ShowQueuedAsync();
+                await new UniqueStickersPopup(ClientService, sticker).ShowQueuedAsync(XamlRoot);
                 return;
             }
 
@@ -168,11 +168,11 @@ namespace Unigram.ViewModels
                 {
                     if (restricted.IsForever())
                     {
-                        await MessagePopup.ShowAsync(forever, Strings.Resources.AppName, Strings.Resources.OK);
+                        await MessagePopup.ShowAsync(XamlRoot, forever, Strings.Resources.AppName, Strings.Resources.OK);
                     }
                     else
                     {
-                        await MessagePopup.ShowAsync(string.Format(temporary, Converter.BannedUntil(restricted.RestrictedUntilDate)), Strings.Resources.AppName, Strings.Resources.OK);
+                        await MessagePopup.ShowAsync(XamlRoot, string.Format(temporary, Converter.BannedUntil(restricted.RestrictedUntilDate)), Strings.Resources.AppName, Strings.Resources.OK);
                     }
 
                     return true;
@@ -181,7 +181,7 @@ namespace Unigram.ViewModels
                 {
                     if (!permission(chat.Permissions))
                     {
-                        await MessagePopup.ShowAsync(global, Strings.Resources.AppName, Strings.Resources.OK);
+                        await MessagePopup.ShowAsync(XamlRoot, global, Strings.Resources.AppName, Strings.Resources.OK);
                         return true;
                     }
                 }
@@ -190,7 +190,7 @@ namespace Unigram.ViewModels
             {
                 if (!permission(chat.Permissions))
                 {
-                    await MessagePopup.ShowAsync(global, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(XamlRoot, global, Strings.Resources.AppName, Strings.Resources.OK);
                     return true;
                 }
             }
@@ -249,20 +249,11 @@ namespace Unigram.ViewModels
             var header = _composerHeader;
             if (header?.EditingMessage == null)
             {
-                try
+                var files = await _storageService.PickMultipleFilesAsync(XamlRoot, PickerLocationId.DocumentsLibrary, "*");
+                if (files != null && files.Count > 0)
                 {
-                    var picker = new FileOpenPicker();
-                    picker.ViewMode = PickerViewMode.Thumbnail;
-                    picker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
-                    picker.FileTypeFilter.Add("*");
-
-                    var files = await picker.PickMultipleFilesAsync();
-                    if (files != null && files.Count > 0)
-                    {
-                        SendFileExecute(files, media: false);
-                    }
+                    SendFileExecute(files, media: false);
                 }
-                catch { }
             }
             else
             {
@@ -297,7 +288,7 @@ namespace Unigram.ViewModels
             dialog.ViewModel = this;
             dialog.Caption = caption;
 
-            var confirm = await dialog.OpenAsync();
+            var confirm = await dialog.OpenAsync(XamlRoot);
             if (confirm != ContentDialogResult.Primary)
             {
                 if (formattedText != null)
@@ -459,20 +450,29 @@ namespace Unigram.ViewModels
         public RelayCommand SendMediaCommand { get; }
         private async void SendMediaExecute()
         {
-            try
+            var chat = _chat;
+            if (chat == null)
             {
-                var picker = new FileOpenPicker();
-                picker.ViewMode = PickerViewMode.Thumbnail;
-                picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-                picker.FileTypeFilter.AddRange(Constants.MediaTypes);
-
-                var files = await picker.PickMultipleFilesAsync();
-                if (files != null && files.Count > 0)
-                {
-                    SendFileExecute(files);
-                }
+                return;
             }
-            catch { }
+
+            var canSendPhotos = true;
+            var canSendVideos = true;
+
+            var restricted = await VerifyRightsAsync(chat, x => (canSendPhotos = x.CanSendPhotos) || (canSendVideos = x.CanSendVideos),
+                Strings.Resources.ErrorSendRestrictedMediaAll,
+                Strings.Resources.ErrorSendRestrictedMedia,
+                Strings.Resources.ErrorSendRestrictedMedia);
+            if (restricted)
+            {
+                return;
+            }
+
+            var files = await _storageService.PickMultipleFilesAsync(XamlRoot, PickerLocationId.PicturesLibrary, Constants.MediaTypes);
+            if (files != null && files.Count > 0)
+            {
+                SendFileExecute(files);
+            }
         }
 
         public RelayCommand SendContactCommand { get; }
@@ -555,7 +555,7 @@ namespace Unigram.ViewModels
                 }
 
                 var dialog = new ScheduleMessagePopup(user, until.AddMinutes(1), ClientService.IsSavedMessages(chat));
-                var confirm = await dialog.ShowQueuedAsync();
+                var confirm = await dialog.ShowQueuedAsync(XamlRoot);
 
                 if (confirm != ContentDialogResult.Primary)
                 {
@@ -568,7 +568,7 @@ namespace Unigram.ViewModels
                 }
                 else
                 {
-                    return new MessageSendOptions(false, false, false, false,new MessageSchedulingStateSendAtDate(dialog.Value.ToTimestamp()));
+                    return new MessageSendOptions(false, false, false, false, new MessageSchedulingStateSendAtDate(dialog.Value.ToTimestamp()));
                 }
             }
             else
@@ -592,7 +592,7 @@ namespace Unigram.ViewModels
                 }
                 else if (error.TypeEquals(ErrorType.SCHEDULE_TOO_MUCH))
                 {
-                    await MessagePopup.ShowAsync(Strings.Resources.MessageScheduledLimitReached, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.MessageScheduledLimitReached, Strings.Resources.AppName, Strings.Resources.OK);
                 }
             }
 
@@ -609,7 +609,7 @@ namespace Unigram.ViewModels
             }
 
             var popup = new SendLocationPopup();
-            var confirm = await popup.ShowQueuedAsync();
+            var confirm = await popup.ShowQueuedAsync(XamlRoot);
             if (confirm == ContentDialogResult.Primary)
             {
                 var options = await PickMessageSendOptionsAsync();
@@ -645,7 +645,7 @@ namespace Unigram.ViewModels
 
             var dialog = new CreatePollPopup(forceQuiz, forceRegular, forceAnonymous);
 
-            var confirm = await dialog.ShowQueuedAsync();
+            var confirm = await dialog.ShowQueuedAsync(XamlRoot);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -884,26 +884,17 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            try
+            var file = await _storageService.PickSingleFileAsync(XamlRoot, PickerLocationId.DocumentsLibrary, "*");
+            if (file == null)
             {
-                var picker = new FileOpenPicker();
-                picker.ViewMode = PickerViewMode.Thumbnail;
-                picker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
-                picker.FileTypeFilter.Add("*");
-
-                var file = await picker.PickSingleFileAsync();
-                if (file == null)
-                {
-                    return;
-                }
-
-                var factory = await _messageFactory.CreateDocumentAsync(file, false);
-                if (factory != null)
-                {
-                    header.EditingMessageMedia = factory;
-                }
+                return;
             }
-            catch { }
+
+            var factory = await _messageFactory.CreateDocumentAsync(file, false);
+            if (factory != null)
+            {
+                header.EditingMessageMedia = factory;
+            }
         }
 
         public RelayCommand EditMediaCommand { get; }
@@ -915,22 +906,13 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            try
+            var file = await _storageService.PickSingleFileAsync(XamlRoot, PickerLocationId.PicturesLibrary, Constants.MediaTypes);
+            if (file == null)
             {
-                var picker = new FileOpenPicker();
-                picker.ViewMode = PickerViewMode.Thumbnail;
-                picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-                picker.FileTypeFilter.AddRange(Constants.MediaTypes);
-
-                var file = await picker.PickSingleFileAsync();
-                if (file == null)
-                {
-                    return;
-                }
-
-                await EditMediaAsync(file);
+                return;
             }
-            catch { }
+
+            await EditMediaAsync(file);
         }
 
         public RelayCommand EditCurrentCommand { get; }
@@ -973,11 +955,11 @@ namespace Unigram.ViewModels
 
             var formattedText = GetFormattedText(true);
 
-            var dialog = new SendFilesPopup(SessionId, new[] { storage }, true, false, false, false);
+            var dialog = new SendFilesPopup(SessionId, new[] { storage }, true, true, true, false, false, false);
             dialog.Caption = formattedText
                 .Substring(0, ClientService.Options.MessageCaptionLengthMax);
 
-            var confirm = await dialog.OpenAsync();
+            var confirm = await dialog.OpenAsync(XamlRoot);
 
             TextField?.Focus(FocusState.Programmatic);
 

@@ -7,6 +7,9 @@
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
+using Microsoft.UI.Dispatching;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using RLottie;
 using System;
 using System.Buffers;
@@ -22,9 +25,6 @@ using Windows.Data.Json;
 using Windows.Foundation;
 using Windows.Graphics;
 using Windows.Graphics.DirectX;
-using Windows.UI.Composition;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls
 {
@@ -80,7 +80,8 @@ namespace Unigram.Controls
         private bool _unloaded;
 
         public DiceView()
-            : this(CompositionCapabilities.GetForCurrentView().AreEffectsFast())
+            : this(false)
+        //: this(CompositionCapabilities.GetForCurrentView().AreEffectsFast())
         {
         }
 
@@ -323,7 +324,7 @@ namespace Unigram.Controls
             if (enqueue)
             {
                 _subscribed = false;
-                _ = Dispatcher.RunIdleAsync(idle => SetValue(_enqueuedState, _enqueued));
+                DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, () => SetValue(_enqueuedState, _enqueued));
             }
         }
 
@@ -334,7 +335,7 @@ namespace Unigram.Controls
         public async void SetValue(DiceStickers state, int newValue)
         {
             var canvas = _canvas;
-            if (canvas == null  && !Load())
+            if (canvas == null && !Load())
             {
                 _previous = newValue;
                 _previousState = state;

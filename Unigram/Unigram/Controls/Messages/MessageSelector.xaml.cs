@@ -5,20 +5,20 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using LinqToVisualTree;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation.Peers;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 using System.Linq;
 using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls.Messages.Content;
+using Unigram.Navigation;
 using Unigram.Services;
 using Unigram.ViewModels;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation.Peers;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Messages
 {
@@ -72,7 +72,7 @@ namespace Unigram.Controls.Messages
 
             RegisterPropertyChangedCallback(BackgroundProperty, OnBackgroundChanged);
             OnBackgroundChanged(this, BackgroundProperty);
-        
+
             if (IsAlbumChild)
             {
                 if (_message.Content is MessagePhoto or MessageVideo)
@@ -105,7 +105,7 @@ namespace Unigram.Controls.Messages
         {
             Presenter = GetTemplateChild(nameof(Presenter)) as ContentPresenter;
             ElementCompositionPreview.SetIsTranslationEnabled(Presenter, true);
-            ElementCompositionPreview.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
+            ElementCompositionPreview.GetElementVisual(this).Clip = BootStrapper.Current.Compositor.CreateInsetClip();
 
             _templateApplied = true;
             UpdateMessage(_message);
@@ -355,11 +355,11 @@ namespace Unigram.Controls.Messages
 
                 if (animate)
                 {
-                    var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                    var offset = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
                     offset.InsertKeyFrame(0, new Vector3(value ? 0 : 36, 0, 0));
                     offset.InsertKeyFrame(1, new Vector3(value ? 36 : 0, 0, 0));
 
-                    var scale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                    var scale = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
                     scale.InsertKeyFrame(0, value ? Vector3.Zero : Vector3.One);
                     scale.InsertKeyFrame(1, value ? Vector3.One : Vector3.Zero);
 

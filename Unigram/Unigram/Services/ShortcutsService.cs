@@ -9,14 +9,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Unigram.Collections;
-using Unigram.Common;
 using Unigram.Navigation;
 using Unigram.ViewModels;
 using Windows.Data.Json;
 using Windows.Storage;
 using Windows.System;
 using Windows.UI.Core;
-using Windows.UI.Xaml;
 
 namespace Unigram.Services
 {
@@ -189,9 +187,9 @@ namespace Unigram.Services
                 return new InvokedShortcut(VirtualKeyModifiers.None, VirtualKey.None, new ShortcutCommand[0]);
             }
 
-            var alt = Window.Current.CoreWindow.IsKeyDown(VirtualKey.Menu);
-            var ctrl = Window.Current.CoreWindow.IsKeyDown(VirtualKey.Control);
-            var shift = Window.Current.CoreWindow.IsKeyDown(VirtualKey.Shift);
+            var alt = WindowContext.IsKeyDown(VirtualKey.Menu);
+            var ctrl = WindowContext.IsKeyDown(VirtualKey.Control);
+            var shift = WindowContext.IsKeyDown(VirtualKey.Shift);
 
             var modifiers = VirtualKeyModifiers.None;
             if (alt)
@@ -240,9 +238,9 @@ namespace Unigram.Services
                 return false;
             }
 
-            var alt = Window.Current.CoreWindow.IsKeyDown(VirtualKey.Menu);
-            var ctrl = Window.Current.CoreWindow.IsKeyDown(VirtualKey.Control);
-            var shift = Window.Current.CoreWindow.IsKeyDown(VirtualKey.Shift);
+            var alt = WindowContext.IsKeyDown(VirtualKey.Menu);
+            var ctrl = WindowContext.IsKeyDown(VirtualKey.Control);
+            var shift = WindowContext.IsKeyDown(VirtualKey.Shift);
 
             var modifiers = VirtualKeyModifiers.None;
             if (alt)

@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,7 +16,6 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Services;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.ViewModels
 {
@@ -134,7 +134,7 @@ namespace Unigram.ViewModels
                 CheckBoxLabel = Strings.Resources.DeleteCallsForEveryone
             };
 
-            var confirm = await popup.ShowQueuedAsync();
+            var confirm = await popup.ShowQueuedAsync(XamlRoot);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

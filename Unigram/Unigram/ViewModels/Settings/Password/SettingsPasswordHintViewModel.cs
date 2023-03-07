@@ -4,13 +4,13 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Navigation;
 using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views.Settings.Password;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings.Password
 {
@@ -49,7 +49,7 @@ namespace Unigram.ViewModels.Settings.Password
 
             if (string.Equals(password, hint))
             {
-                await MessagePopup.ShowAsync(Strings.Resources.PasswordAsHintError, Strings.Resources.AppName, Strings.Resources.OK);
+                await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.PasswordAsHintError, Strings.Resources.AppName, Strings.Resources.OK);
                 return;
             }
 

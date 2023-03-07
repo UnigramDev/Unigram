@@ -4,6 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
@@ -15,8 +17,6 @@ using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.Views;
 using Unigram.Views.Settings;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {
@@ -147,7 +147,7 @@ namespace Unigram.ViewModels
         {
             var text = Regex.Replace(Strings.Resources.AskAQuestionInfo, "<!\\[CDATA\\[(.*?)\\]\\]>", "$1");
 
-            var confirm = await MessagePopup.ShowAsync(text, Strings.Resources.AskAQuestion, Strings.Resources.AskButton, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(XamlRoot, text, Strings.Resources.AskAQuestion, Strings.Resources.AskButton, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 var response = await ClientService.SendAsync(new GetSupportUser());

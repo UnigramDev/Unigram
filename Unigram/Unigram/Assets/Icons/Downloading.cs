@@ -52,12 +52,11 @@
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Canvas.Geometry;
+using Microsoft.UI.Composition;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using Windows.Graphics;
 using Windows.UI;
-using Windows.UI.Composition;
 
 namespace Unigram.Assets.Icons
 {

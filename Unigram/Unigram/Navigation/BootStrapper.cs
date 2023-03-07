@@ -4,6 +4,9 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,19 +16,18 @@ using Unigram.Logs;
 using Unigram.Navigation.Services;
 using Unigram.Services.ViewService;
 using Windows.ApplicationModel;
-using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.ExtendedExecution;
 using Windows.System.Profile;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Navigation
 {
+#warning TODO: this class needs refactoring
     public abstract class BootStrapper : Application
     {
+        public Microsoft.UI.Composition.Compositor Compositor { get; private set; }
+
         /// <summary>
         /// If a developer overrides this method, the developer can resolve DataContext or unwrap DataContext 
         /// available for the Page object when using a MVVM pattern that relies on a wrapped/porxy around ViewModels
@@ -44,8 +46,11 @@ namespace Unigram.Navigation
         public BootStrapper()
         {
             Current = this;
-            Resuming += CallResuming;
-            Suspending += CallHandleSuspendingAsync;
+        }
+
+        protected virtual void OnWindowCreated(Window window)
+        {
+
         }
 
         private void Loaded()
@@ -59,7 +64,8 @@ namespace Unigram.Navigation
                 Logger.Info(member: nameof(keyboard.AfterBackGesture));
 
                 var handled = false;
-                RaiseBackRequested(key, ref handled);
+#warning TODO: missing parameter
+                RaiseBackRequested(null, key, ref handled);
             };
 
             keyboard.AfterForwardGesture = () =>
@@ -70,22 +76,22 @@ namespace Unigram.Navigation
             };
 
             // Hook up the default Back handler
-            SystemNavigationManager.GetForCurrentView().BackRequested += BackHandler;
+            //SystemNavigationManager.GetForCurrentView().BackRequested += BackHandler;
         }
 
-        protected override void OnWindowCreated(WindowCreatedEventArgs args)
-        {
-            Logger.Info();
+        //protected override void OnWindowCreated(WindowCreatedEventArgs args)
+        //{
+        //    Logger.Info();
 
-            IsMainWindowCreated = true;
-            //should be called to initialize and set new SynchronizationContext
-            //if (!WindowWrapper.ActiveWrappers.Any())
-            // handle window
-            CreateWindowWrapper(args.Window);
-            Loaded();
-            ViewService.OnWindowCreated();
-            base.OnWindowCreated(args);
-        }
+        //    IsMainWindowCreated = true;
+        //    //should be called to initialize and set new SynchronizationContext
+        //    //if (!WindowWrapper.ActiveWrappers.Any())
+        //    // handle window
+        //    CreateWindowWrapper(args.Window);
+        //    Loaded();
+        //    ViewService.OnWindowCreated();
+        //    base.OnWindowCreated(args);
+        //}
 
         protected virtual WindowContext CreateWindowWrapper(Window window)
         {
@@ -120,51 +126,9 @@ namespace Unigram.Navigation
 
         // it is the intent of Template 10 to no longer require Launched/Activated overrides, only OnStartAsync()
 
-        protected sealed override void OnActivated(IActivatedEventArgs e)
-        {
-            Logger.Info();
-            CallInternalActivated(e);
-        }
-
-        protected sealed override void OnCachedFileUpdaterActivated(CachedFileUpdaterActivatedEventArgs args)
-        {
-            Logger.Info();
-            CallInternalActivated(args);
-        }
-
-        protected sealed override void OnFileActivated(FileActivatedEventArgs args)
-        {
-            Logger.Info();
-            CallInternalActivated(args);
-        }
-
-        protected sealed override void OnFileOpenPickerActivated(FileOpenPickerActivatedEventArgs args)
-        {
-            Logger.Info();
-            CallInternalActivated(args);
-        }
-
-        protected sealed override void OnFileSavePickerActivated(FileSavePickerActivatedEventArgs args)
-        {
-            Logger.Info();
-            CallInternalActivated(args);
-        }
-
-        protected sealed override void OnSearchActivated(SearchActivatedEventArgs args)
-        {
-            Logger.Info();
-            CallInternalActivated(args);
-        }
-
-        protected sealed override void OnShareTargetActivated(ShareTargetActivatedEventArgs args)
-        {
-            Logger.Info();
-            CallInternalActivated(args);
-        }
-
         public bool PrelaunchActivated { get; private set; }
 
-        private void CallInternalActivated(IActivatedEventArgs e)
+        private void CallInternalActivated(LaunchActivatedEventArgs e)
         {
             CurrentState = States.BeforeActivate;
             InternalActivated(e);
@@ -176,7 +140,7 @@ namespace Unigram.Navigation
         /// This is private because it is a specialized prelude to OnStartAsync().
         /// OnStartAsync will not be called if state restore is determined.
         /// </summary>
-        private void InternalActivated(IActivatedEventArgs e)
+        private void InternalActivated(LaunchActivatedEventArgs e)
         {
             Logger.Info();
 
@@ -220,11 +184,6 @@ namespace Unigram.Navigation
         /// </summary>
         private void InternalLaunch(LaunchActivatedEventArgs e)
         {
-            Logger.Info($"Previous:{e.PreviousExecutionState}");
-
-            PrelaunchActivated = e.PrelaunchActivated;
-
-            if (e.PreviousExecutionState != ApplicationExecutionState.Running || Window.Current.Content == null)
             {
                 try
                 {
@@ -238,48 +197,26 @@ namespace Unigram.Navigation
 
             // okay, now handle launch
             bool restored = false;
-            switch (e.PreviousExecutionState)
-            {
-                case ApplicationExecutionState.Suspended:
-                case ApplicationExecutionState.Terminated:
-                    {
-                        OnResuming(this, null, AppExecutionState.Terminated);
+            OnResuming(this, null, AppExecutionState.Terminated);
 
-                        /*
-                            Restore state if you need to/can do.
-                            Remember that only the primary tile or when user has
-                            switched to the app (for instance via the task switcher)
-                            should restore. (this includes toast with no data payload)
-                            The rest are already providing a nav path.
+            /*
+                Restore state if you need to/can do.
+                Remember that only the primary tile or when user has
+                switched to the app (for instance via the task switcher)
+                should restore. (this includes toast with no data payload)
+                The rest are already providing a nav path.
 
-                            In the event that the cache has expired, attempting to restore
-                            from state will fail because of missing values. 
-                            This is okay & by design.
-                        */
+                In the event that the cache has expired, attempting to restore
+                from state will fail because of missing values. 
+                This is okay & by design.
+            */
 
 
-                        //restored = await CallAutoRestoreAsync(e, restored);
-                        break;
-                    }
-                case ApplicationExecutionState.ClosedByUser:
-                case ApplicationExecutionState.NotRunning:
-                default:
-                    break;
-            }
-
-            // handle pre-launch
-            if (e.PrelaunchActivated)
-            {
-                OnPrelaunch(e, out bool runOnStartAsync);
-                if (!runOnStartAsync)
-                {
-                    return;
-                }
-            }
+            //restored = await CallAutoRestoreAsync(e, restored);
 
             if (!restored)
             {
-                var kind = e.PreviousExecutionState == ApplicationExecutionState.Running ? StartKind.Activate : StartKind.Launch;
+                var kind = StartKind.Launch;
                 CallOnStart(e, true, kind);
             }
 
@@ -304,16 +241,16 @@ namespace Unigram.Navigation
             //}
             var handled = NavigationService?.CanGoBack == false;
 
-            RaiseBackRequested(Windows.System.VirtualKey.GoBack, ref handled);
+            RaiseBackRequested(null, Windows.System.VirtualKey.GoBack, ref handled);
             args.Handled = handled;
         }
 
         #endregion
 
-        public void RaiseBackRequested()
+        public void RaiseBackRequested(XamlRoot xamlRoot)
         {
             var handled = false;
-            RaiseBackRequested(Windows.System.VirtualKey.GoBack, ref handled);
+            RaiseBackRequested(xamlRoot, Windows.System.VirtualKey.GoBack, ref handled);
         }
 
         /// <summary>
@@ -322,7 +259,7 @@ namespace Unigram.Navigation
         /// Views or Viewodels can override this behavior by handling the BackRequested 
         /// event and setting the Handled property of the BackRequestedEventArgs to true.
         /// </summary>
-        private void RaiseBackRequested(Windows.System.VirtualKey key, ref bool handled)
+        private void RaiseBackRequested(XamlRoot xamlRoot, Windows.System.VirtualKey key, ref bool handled)
         {
             Logger.Info();
 
@@ -333,7 +270,7 @@ namespace Unigram.Navigation
                 return;
             }
 
-            var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+            var popups = VisualTreeHelper.GetOpenPopupsForXamlRoot(xamlRoot);
             foreach (var popup in popups)
             {
                 if (popup.Child is INavigablePage page)
@@ -420,38 +357,20 @@ namespace Unigram.Navigation
         public enum StartKind { Launch, Activate }
 
         /// <summary>
-        /// Prelaunch may never occur. However, it's possible that it will. It is a Windows mechanism
-        /// to launch apps in the background and quickly suspend them. Because of this, developers need to
-        /// handle Prelaunch scenarios if their typical launch is expensive or requires user interaction.
-        /// </summary>
-        /// <param name="args">IActivatedEventArgs from startup</param>
-        /// <param name="runOnStartAsync">A developer can force the typical startup pipeline. Default should be false.</param>
-        /// <remarks>
-        /// For Prelaunch Template 10 does not continue the typical startup pipeline by default. 
-        /// OnActivated will occur if the application has been prelaunched.
-        /// </remarks>
-        public virtual void OnPrelaunch(IActivatedEventArgs args, out bool runOnStartAsync)
-        {
-            Logger.Info("Virtual");
-
-            runOnStartAsync = false;
-        }
-
-        /// <summary>
         /// OnStartAsync is the one-stop-show override to handle when your app starts
         /// Template 10 will not call OnStartAsync if the app is restored from state.
         /// An app restores from state when the app was suspended and then terminated (PreviousExecutionState terminated).
         /// </summary>
-        public abstract void OnStart(StartKind startKind, IActivatedEventArgs args);
+        public abstract void OnStart(StartKind startKind, LaunchActivatedEventArgs args);
 
         /// <summary>
         /// OnInitializeAsync is where your app will do must-have up-front operations
         /// OnInitializeAsync will be called even if the application is restoring from state.
         /// An app restores from state when the app was suspended and then terminated (PreviousExecutionState terminated).
         /// </summary>
-        public virtual void OnInitialize(IActivatedEventArgs args)
+        public virtual void OnInitialize(LaunchActivatedEventArgs args)
         {
-            Logger.Info($"Virtual {nameof(IActivatedEventArgs)}:{args.Kind}");
+            Logger.Info($"Virtual {nameof(LaunchActivatedEventArgs)}:{args}");
         }
 
         /// <summary>
@@ -525,7 +444,7 @@ namespace Unigram.Navigation
         {
             Logger.Info($"{nameof(backButton)}:{backButton} {nameof(existingContent)}:{existingContent} {nameof(frame)}:{frame}");
 
-            frame.Content = (existingContent == ExistingContent.Include) ? Window.Current.Content : null;
+            //frame.Content = (existingContent == ExistingContent.Include) ? Window.Current.Content : null;
 
             // if the service already exists for this frame, use the existing one.
             foreach (var nav in WindowContext.ActiveWrappers.SelectMany(x => x.NavigationServices))
@@ -604,7 +523,7 @@ namespace Unigram.Navigation
 
         private readonly Dictionary<string, States> CurrentStateHistory = new Dictionary<string, States>();
 
-        private void InitializeFrame(IActivatedEventArgs e)
+        private void InitializeFrame(LaunchActivatedEventArgs e)
         {
             /*
                 InitializeFrameAsync creates a default Frame preceeded by the optional 
@@ -612,9 +531,32 @@ namespace Unigram.Navigation
                 This is private because there's no reason for the developer to call this.
             */
 
-            Logger.Info($"{nameof(IActivatedEventArgs)}:{e.Kind}");
+            Logger.Info($"{nameof(LaunchActivatedEventArgs)}:{e}");
 
             CallOnInitialize(false, e);
+
+#warning TODO: melma
+            var window = new Window();
+            window.Activate();
+            OnWindowCreated(window);
+            Logger.Info();
+
+            Compositor ??= window.Compositor;
+            IsMainWindowCreated = true;
+            //should be called to initialize and set new SynchronizationContext
+            //if (!WindowWrapper.ActiveWrappers.Any())
+            // handle window
+            var wrapper = CreateWindowWrapper(window);
+            Loaded();
+            ViewService.OnWindowCreated();
+            window.Content = CreateRootElement(e);
+
+            ((FrameworkElement)window.Content).Loading += (s, args) =>
+            {
+                wrapper.TrySetMicaBackdrop();
+                WindowContext.AddWindow(wrapper);
+            };
+            return;
 
             if (Window.Current.Content == null)
             {
@@ -641,11 +583,11 @@ namespace Unigram.Navigation
         ///  By default, Template 10 will setup the root element to be a Template 10
         ///  Modal Dialog control. If you desire something different, you can set it here.
         /// </summary>
-        public abstract UIElement CreateRootElement(IActivatedEventArgs e);
+        public abstract UIElement CreateRootElement(LaunchActivatedEventArgs e);
 
         public abstract UIElement CreateRootElement(INavigationService navigationService);
 
-        private void CallOnInitialize(bool canRepeat, IActivatedEventArgs e)
+        private void CallOnInitialize(bool canRepeat, LaunchActivatedEventArgs e)
         {
             Logger.Info();
 
@@ -659,7 +601,7 @@ namespace Unigram.Navigation
             CurrentState = States.AfterInit;
         }
 
-        private void CallOnStart(IActivatedEventArgs args, bool canRepeat, StartKind startKind)
+        private void CallOnStart(LaunchActivatedEventArgs args, bool canRepeat, StartKind startKind)
         {
             Logger.Info();
 
@@ -675,70 +617,6 @@ namespace Unigram.Navigation
 
         #endregion
 
-        #region lifecycle logic
-
-        public bool AutoRestoreAfterTerminated { get; set; } = true;
-        public bool AutoExtendExecutionSession { get; set; } = true;
-        public bool AutoSuspendAllFrames { get; set; } = true;
-
-        private readonly LifecycleLogic _LifecycleLogic = new LifecycleLogic();
-
-        private void CallResuming(object sender, object e)
-        {
-            Logger.Info();
-
-            try
-            {
-                OnResuming(sender, e, AppExecutionState.Suspended);
-
-                //var services = WindowContext.ActiveWrappers.SelectMany(x => x.NavigationServices).Where(x => x.IsInMainView);
-                //foreach (INavigationService nav in services)
-                //{
-                //    try
-                //    {
-                //        // call view model suspend (OnNavigatedfrom)
-                //        // date the cache (which marks the date/time it was suspended)
-                //        DebugWrite($"Nav.FrameId:{nav.FrameFacade.FrameId}");
-                //        await (nav as INavigationService).GetDispatcherWrapper().DispatchAsync(() => nav.Resuming());
-                //    }
-                //    catch (Exception ex)
-                //    {
-                //        DebugWrite($"FrameId: [{nav.FrameFacade.FrameId}] {ex} {ex.Message}", caller: nameof(Resuming));
-                //    }
-                //}
-            }
-            catch { }
-        }
-
-        private async Task<bool> CallAutoRestoreAsync(ILaunchActivatedEventArgs e, bool restored)
-        {
-            if (!AutoRestoreAfterTerminated)
-            {
-                return false;
-            }
-
-            return await _LifecycleLogic.AutoRestoreAsync(e, NavigationService);
-        }
-
-        private async void CallHandleSuspendingAsync(object sender, SuspendingEventArgs e)
-        {
-            var deferral = e.SuspendingOperation.GetDeferral();
-            try
-            {
-                //if (AutoSuspendAllFrames)
-                //{
-                //    await _LifecycleLogic.AutoSuspendAllFramesAsync(sender, e, AutoExtendExecutionSession);
-                //}
-                await OnSuspendingAsync(sender, e, PrelaunchActivated);
-            }
-            finally
-            {
-                deferral.Complete();
-            }
-        }
-
-        #endregion
-
         public enum BackButton { Attach, Ignore }
 
         public enum ExistingContent { Include, Exclude }
@@ -747,50 +625,19 @@ namespace Unigram.Navigation
 
         public enum AdditionalKinds { Primary, Toast, SecondaryTile, Other, JumpListItem }
 
-        /// <summary>
-        /// This determines the simplest case for starting. This should handle 80% of common scenarios. 
-        /// When Other is returned the developer must determine start manually using IActivatedEventArgs.Kind
-        /// </summary>
-        public static AdditionalKinds DetermineStartCause(IActivatedEventArgs args)
-        {
-            Logger.Info($"{nameof(IActivatedEventArgs)}:{args.Kind}");
-
-            if (args is ToastNotificationActivatedEventArgs)
-            {
-                return AdditionalKinds.Toast;
-            }
-            var e = args as ILaunchActivatedEventArgs;
-            if (e?.TileId == DefaultTileID && string.IsNullOrEmpty(e?.Arguments))
-            {
-                return AdditionalKinds.Primary;
-            }
-            else if (e?.TileId == DefaultTileID && !string.IsNullOrEmpty(e?.Arguments))
-            {
-                return AdditionalKinds.JumpListItem;
-            }
-            else if (!string.IsNullOrEmpty(e?.TileId) && e?.TileId != DefaultTileID)
-            {
-                return AdditionalKinds.SecondaryTile;
-            }
-            else
-            {
-                return AdditionalKinds.Other;
-            }
-        }
-
         public class LifecycleLogic
         {
-            public async Task<bool> AutoRestoreAsync(ILaunchActivatedEventArgs e, INavigationService nav)
-            {
-                var restored = false;
-                var launchedEvent = e;
-                if (DetermineStartCause(e) == AdditionalKinds.Primary || launchedEvent?.TileId == "")
-                {
-                    restored = await nav.LoadAsync();
-                    Logger.Info($"{nameof(restored)}:{restored}", member: nameof(nav.LoadAsync));
-                }
-                return restored;
-            }
+            //public async Task<bool> AutoRestoreAsync(LaunchActivatedEventArgs e, INavigationService nav)
+            //{
+            //    var restored = false;
+            //    var launchedEvent = e;
+            //    if (DetermineStartCause(e) == AdditionalKinds.Primary || launchedEvent?.TileId == "")
+            //    {
+            //        restored = await nav.LoadAsync();
+            //        Logger.Info($"{nameof(restored)}:{restored}", member: nameof(nav.LoadAsync));
+            //    }
+            //    return restored;
+            //}
 
             public async Task AutoSuspendAllFramesAsync(object sender, SuspendingEventArgs e, bool autoExtendExecutionSession)
             {
@@ -823,7 +670,7 @@ namespace Unigram.Navigation
                         // date the cache (which marks the date/time it was suspended)
                         nav.FrameFacade.SetFrameState(CacheDateKey, DateTime.Now.ToString());
                         Logger.Info($"Nav.FrameId:{nav.FrameFacade.FrameId}");
-                        await nav.Dispatcher.DispatchAsync(async () => await nav.SuspendingAsync());
+                        await nav.Dispatcher.DispatchAsync(nav.SuspendingAsync);
                     }
                     catch (Exception ex)
                     {
@@ -846,7 +693,7 @@ namespace Unigram.Navigation
             {
                 Logger.Info($"source:{source}");
 
-                Window.Current.Activate();
+                //Window.Current.Activate();
             }
         }
     }

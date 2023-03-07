@@ -14,9 +14,9 @@
                        Closing="OnClosing">
 
     <Grid>
-        <WebView x:Name="View"
+        <!--<WebView x:Name="View"
                  NavigationStarting="View_NavigationStarting"
                  MinHeight="500"
-                 Margin="-24" />
+                 Margin="-24" />-->
     </Grid>
 </controls:ContentPopup>

@@ -74,9 +74,6 @@
     <ClCompile Include="..\Libraries\tgcalls\tgcalls\StaticThreads.cpp">
       <Filter>tgcalls</Filter>
     </ClCompile>
-    <ClCompile Include="..\Libraries\tgcalls\tgcalls\FakeVideoTrackSource.cpp">
-      <Filter>tgcalls</Filter>
-    </ClCompile>
     <ClCompile Include="..\Libraries\tgcalls\tgcalls\third-party\json11.cpp">
       <Filter>tgcalls\third-party</Filter>
     </ClCompile>
@@ -272,9 +269,6 @@
       <Filter>tgcalls</Filter>
     </ClInclude>
     <ClInclude Include="..\Libraries\tgcalls\tgcalls\AudioFrame.h">
-      <Filter>tgcalls</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Libraries\tgcalls\tgcalls\FakeVideoTrackSource.h">
       <Filter>tgcalls</Filter>
     </ClInclude>
     <ClInclude Include="..\Libraries\tgcalls\tgcalls\third-party\json11.hpp">

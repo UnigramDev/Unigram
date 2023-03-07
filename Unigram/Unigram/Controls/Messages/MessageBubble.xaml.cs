@@ -4,7 +4,16 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI;
+using Microsoft.UI.Composition;
+using Microsoft.UI.Text;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Markup;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -14,23 +23,13 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls.Messages.Content;
 using Unigram.Converters;
-using Unigram.Native.Composition;
+using Unigram.Navigation;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Storage.Streams;
-using Windows.UI;
-using Windows.UI.Composition;
 using Windows.UI.Text;
 using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Core.Direct;
-using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Markup;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Messages
 {
@@ -43,7 +42,7 @@ namespace Unigram.Controls.Messages
 
         private bool _ignoreSizeChanged = true;
 
-        private DirectRectangleClip _cornerRadius;
+        private RectangleClip _cornerRadius;
 
         public MessageBubble()
         {
@@ -119,7 +118,10 @@ namespace Unigram.Controls.Messages
             ElementCompositionPreview.SetIsTranslationEnabled(Message, true);
             ElementCompositionPreview.SetIsTranslationEnabled(Media, true);
 
-            _cornerRadius = CompositionDevice.CreateRectangleClip(ContentPanel);
+            _cornerRadius = BootStrapper.Current.Compositor.CreateRectangleClip();
+
+            var visual = ElementCompositionPreview.GetElementVisual(ContentPanel);
+            visual.Clip = _cornerRadius;
 
             _templateApplied = true;
 
@@ -446,15 +448,24 @@ namespace Unigram.Controls.Messages
             var content = message.GeneratedContent ?? message.Content;
             if (content is MessageSticker or MessageDice or MessageVideoNote or MessageBigEmoji)
             {
-                _cornerRadius.Set(0);
+                _cornerRadius.TopLeftRadius =
+                    _cornerRadius.TopRightRadius =
+                    _cornerRadius.BottomRightRadius =
+                    _cornerRadius.BottomLeftRadius = Vector2.Zero;
             }
             else if (content is MessageInvoice invoice && invoice.ExtendedMedia is not MessageExtendedMediaUnsupported and not null)
             {
-                _cornerRadius.Set(topLeft, topRight, bottomRight, bottomLeft);
+                _cornerRadius.TopLeftRadius = new Vector2(topLeft);
+                _cornerRadius.TopRightRadius = new Vector2(topRight);
+                _cornerRadius.BottomRightRadius = new Vector2(bottomRight);
+                _cornerRadius.BottomLeftRadius = new Vector2(bottomLeft);
             }
             else if (message.ReplyMarkup is ReplyMarkupInlineKeyboard)
             {
-                _cornerRadius.Set(topLeft, topRight, small, small);
+                _cornerRadius.TopLeftRadius = new Vector2(topLeft);
+                _cornerRadius.TopRightRadius = new Vector2(topRight);
+                _cornerRadius.BottomRightRadius = new Vector2(small);
+                _cornerRadius.BottomLeftRadius = new Vector2(small);
 
                 if (Markup != null)
                 {
@@ -463,7 +474,10 @@ namespace Unigram.Controls.Messages
             }
             else
             {
-                _cornerRadius.Set(topLeft, topRight, bottomRight, bottomLeft);
+                _cornerRadius.TopLeftRadius = new Vector2(topLeft);
+                _cornerRadius.TopRightRadius = new Vector2(topRight);
+                _cornerRadius.BottomRightRadius = new Vector2(bottomRight);
+                _cornerRadius.BottomLeftRadius = new Vector2(bottomLeft);
             }
 
             Margin = new Thickness(0, message.IsFirst ? 4 : 2, 0, 0);
@@ -541,7 +555,7 @@ namespace Unigram.Controls.Messages
                 }
                 else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser)
                 {
-                    Window.Current.ShowTeachingTip(sender as FrameworkElement, Strings.Resources.HidAccount);
+                    BootStrapper.Current.ShowTeachingTip(sender as FrameworkElement, Strings.Resources.HidAccount);
                     //await MessagePopup.ShowAsync(Strings.Resources.HidAccount, Strings.Resources.AppName, Strings.Resources.OK);
                 }
             }
@@ -1057,7 +1071,7 @@ namespace Unigram.Controls.Messages
             }
             else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser)
             {
-                Window.Current.ShowTeachingTip(HeaderLabel, Strings.Resources.HidAccount);
+                BootStrapper.Current.ShowTeachingTip(HeaderLabel, Strings.Resources.HidAccount);
             }
         }
 
@@ -1688,23 +1702,23 @@ namespace Unigram.Controls.Messages
             return text.Length > 0;
         }
 
+#warning TODO: Remove
         private Run CreateRun(string text, FontWeight? fontWeight = null, FontFamily fontFamily = null)
         {
-            var direct = XamlDirect.GetDefault();
-            var run = direct.CreateInstance(XamlTypeIndex.Run);
-            direct.SetStringProperty(run, XamlPropertyIndex.Run_Text, text);
+            var run = new Run();
+            run.Text = text;
 
             if (fontWeight != null)
             {
-                direct.SetObjectProperty(run, XamlPropertyIndex.TextElement_FontWeight, fontWeight.Value);
+                run.FontWeight = fontWeight.Value;
             }
 
             if (fontFamily != null)
             {
-                direct.SetObjectProperty(run, XamlPropertyIndex.TextElement_FontFamily, fontFamily);
+                run.FontFamily = fontFamily;
             }
 
-            return direct.GetObject(run) as Run;
+            return run;
         }
 
         private Brush GetBrush(string key)
@@ -1845,7 +1859,7 @@ namespace Unigram.Controls.Messages
 
         private void UpdateClip()
         {
-            if (_cornerRadius.TopLeft == 0 && _cornerRadius.BottomRight == 0)
+            if (_cornerRadius.TopLeftRadius == Vector2.Zero && _cornerRadius.BottomRightRadius == Vector2.Zero)
             {
                 _cornerRadius.Left = -float.MaxValue;
                 _cornerRadius.Top = -float.MaxValue;
@@ -1873,14 +1887,14 @@ namespace Unigram.Controls.Messages
 
             if (content is MessageText)
             {
-                var crossScale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                var crossScale = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
                 crossScale.InsertKeyFrame(0, new Vector3(1, yScale, 1));
                 crossScale.InsertKeyFrame(1, new Vector3(1));
                 crossScale.Duration = TimeSpan.FromMilliseconds(outer);
                 crossScale.DelayTime = TimeSpan.FromMilliseconds(delay);
                 crossScale.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
 
-                var outOpacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                var outOpacity = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
                 outOpacity.InsertKeyFrame(0, 1);
                 outOpacity.InsertKeyFrame(1, 0);
                 outOpacity.Duration = TimeSpan.FromMilliseconds(outer);
@@ -1900,17 +1914,21 @@ namespace Unigram.Controls.Messages
                 background.CenterPoint = new Vector3(0, reply ? 0 : ContentPanel.ActualSize.Y / 2, 0);
                 background.StartAnimation("Scale", crossScale);
 
+#warning TODO: Animate
                 if (reply)
                 {
-                    _cornerRadius.AnimateBottom(Window.Current.Compositor, ContentPanel.ActualSize.Y * yScale, ContentPanel.ActualSize.Y, outer / 1000);
+                    //_cornerRadius.AnimateBottom(BootStrapper.Current.Compositor, ContentPanel.ActualSize.Y * yScale, ContentPanel.ActualSize.Y, outer / 1000);
+                    _cornerRadius.Bottom = ContentPanel.ActualSize.Y;
                 }
                 else
                 {
                     var scaled = ContentPanel.ActualSize.Y * yScale;
                     var diff = (scaled - ContentPanel.ActualSize.Y) / 2;
 
-                    _cornerRadius.AnimateTop(Window.Current.Compositor, -diff, 0, outer / 1000);
-                    _cornerRadius.AnimateBottom(Window.Current.Compositor, ContentPanel.ActualSize.Y + diff, ContentPanel.ActualSize.Y, outer / 1000);
+                    //_cornerRadius.AnimateTop(BootStrapper.Current.Compositor, -diff, 0, outer / 1000);
+                    //_cornerRadius.AnimateBottom(BootStrapper.Current.Compositor, ContentPanel.ActualSize.Y + diff, ContentPanel.ActualSize.Y, outer / 1000);
+                    _cornerRadius.Top = 0;
+                    _cornerRadius.Bottom = ContentPanel.ActualSize.Y;
                 }
             }
 
@@ -1919,27 +1937,29 @@ namespace Unigram.Controls.Messages
             var media = ElementCompositionPreview.GetElementVisual(Media);
             var footer = ElementCompositionPreview.GetElementVisual(Footer);
 
-            var scale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var compositor = BootStrapper.Current.Compositor;
+
+            var scale = compositor.CreateVector3KeyFrameAnimation();
             scale.InsertKeyFrame(0, new Vector3(xScale, 1, 1));
             scale.InsertKeyFrame(1, new Vector3(1));
             scale.Duration = TimeSpan.FromMilliseconds(inner);
             scale.DelayTime = TimeSpan.FromMilliseconds(delay);
             scale.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
 
-            var factor = Window.Current.Compositor.CreateExpressionAnimation("Vector3(1 / content.Scale.X, 1, 1)");
+            var factor = compositor.CreateExpressionAnimation("Vector3(1 / content.Scale.X, 1, 1)");
             factor.SetReferenceParameter("content", panel);
 
             CompositionAnimation textScale = factor;
             if (fontScale != 1)
             {
-                var textScaleImpl = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                var textScaleImpl = compositor.CreateScalarKeyFrameAnimation();
                 textScaleImpl.InsertKeyFrame(0, fontScale);
                 textScaleImpl.InsertKeyFrame(1, 1);
                 textScaleImpl.Duration = TimeSpan.FromMilliseconds(outer);
                 textScaleImpl.DelayTime = TimeSpan.FromMilliseconds(delay);
                 textScaleImpl.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
 
-                textScale = Window.Current.Compositor.CreateExpressionAnimation("Vector3(this.Scale * (1 / content.Scale.X), this.Scale, 1)");
+                textScale = compositor.CreateExpressionAnimation("Vector3(this.Scale * (1 / content.Scale.X), this.Scale, 1)");
                 textScale.SetReferenceParameter("content", panel);
                 textScale.Properties.InsertScalar("Scale", fontScale);
                 textScale.Properties.StartAnimation("Scale", textScaleImpl);
@@ -1948,7 +1968,7 @@ namespace Unigram.Controls.Messages
                 Media.Tag = textScale;
             }
 
-            var inOpacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var inOpacity = compositor.CreateScalarKeyFrameAnimation();
             inOpacity.InsertKeyFrame(0, 0);
             inOpacity.InsertKeyFrame(1, 1);
             inOpacity.Duration = TimeSpan.FromMilliseconds(outer / 3 * 2);
@@ -1996,7 +2016,7 @@ namespace Unigram.Controls.Messages
                 textOffsetY = reply ? 16 : 0;
             }
 
-            var headerOffset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var headerOffset = compositor.CreateVector3KeyFrameAnimation();
             headerOffset.InsertKeyFrame(0, new Vector3(-(headerOffsetX * (1 / xScale)), headerOffsetY, 0));
             headerOffset.InsertKeyFrame(1, new Vector3(0));
             headerOffset.Duration = TimeSpan.FromMilliseconds(headerOffsetY > 0 ? outer : inner);
@@ -2004,7 +2024,7 @@ namespace Unigram.Controls.Messages
             headerOffset.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
             header.StartAnimation("Translation", headerOffset);
 
-            var textOffset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var textOffset = compositor.CreateVector3KeyFrameAnimation();
             textOffset.InsertKeyFrame(0, new Vector3(-textOffsetX, textOffsetY, 0));
             textOffset.InsertKeyFrame(1, new Vector3());
             textOffset.Duration = TimeSpan.FromMilliseconds(textOffsetY > 0 ? outer : inner);
@@ -2045,7 +2065,7 @@ namespace Unigram.Controls.Messages
 
             var outgoing = message.IsOutgoing && !message.IsChannelPost;
 
-            var anim = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var anim = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
             anim.InsertKeyFrame(0, new Vector3(prev / next, 1));
             anim.InsertKeyFrame(1, Vector3.One);
 
@@ -2053,7 +2073,7 @@ namespace Unigram.Controls.Messages
             panel.CenterPoint = new Vector3(outgoing ? next.X : 0, 0, 0);
             panel.StartAnimation("Scale", anim);
 
-            var factor = Window.Current.Compositor.CreateExpressionAnimation("Vector3(1 / content.Scale.X, 1 / content.Scale.Y, 1)");
+            var factor = BootStrapper.Current.Compositor.CreateExpressionAnimation("Vector3(1 / content.Scale.X, 1 / content.Scale.Y, 1)");
             factor.SetReferenceParameter("content", panel);
 
             var header = ElementCompositionPreview.GetElementVisual(Header);
@@ -2103,7 +2123,7 @@ namespace Unigram.Controls.Messages
             var overlay = _highlight;
             if (overlay == null)
             {
-                _highlight = overlay = Window.Current.Compositor.CreateSpriteVisual();
+                _highlight = overlay = BootStrapper.Current.Compositor.CreateSpriteVisual();
             }
 
             FrameworkElement target;
@@ -2176,7 +2196,7 @@ namespace Unigram.Controls.Messages
             }
 
             var entities = Client.Execute(new GetTextEntities(type)) as TextEntities;
-            Window.Current.ShowTeachingTip(PsaInfo, new FormattedText(type, entities.Entities), TeachingTipPlacementMode.TopLeft);
+            BootStrapper.Current.ShowTeachingTip(PsaInfo, new FormattedText(type, entities.Entities), TeachingTipPlacementMode.TopLeft);
         }
 
         private void Thread_Click(object sender, RoutedEventArgs e)

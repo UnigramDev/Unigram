@@ -1,0 +1,64 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net7.0-windows10.0.22000.0</TargetFramework>
+		<TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+		<RootNamespace>Unigram.WinRT</RootNamespace>
+		<RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
+		<UseWinUI>true</UseWinUI>
+		<Platforms>x86;x64;ARM64</Platforms>
+	</PropertyGroup>
+	
+	<PropertyGroup>
+		<RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
+		<RunAnalyzersDuringLiveAnalysis>false</RunAnalyzersDuringLiveAnalysis>
+		<RunAnalyzers>false</RunAnalyzers>
+	</PropertyGroup>
+	
+	<PropertyGroup>
+		<CsWinRTWindowsMetadata>10.0.22000.0 "C:\Users\Fela\.nuget\packages\microsoft.graphics.win2d\1.0.4\lib\uap10.0\Microsoft.Graphics.Canvas.winmd"</CsWinRTWindowsMetadata>
+		<CsWinRTIncludes>Telegram.Td;Unigram.Native;Unigram.Native.Calls;RLottie;FFmpegInteropX</CsWinRTIncludes>
+		<CsWinRTGenerateProjection>true</CsWinRTGenerateProjection>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.230217.4" />
+		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
+		<PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.0.1" />
+		<PackageReference Include="Microsoft.Graphics.Win2D" Version="1.2.230217.4" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Unigram.Native.Calls\Unigram.Native.Calls.vcxproj" />
+	  <ProjectReference Include="..\Unigram.Native\Unigram.Native.vcxproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Reference Include="Telegram.Td">
+			<HintPath>C:\Users\Fela\AppData\Local\Microsoft SDKs\UAP\v0.8.0.0\ExtensionSDKs\Telegram.Td.UWP\1.0\References\CommonConfiguration\$(Platform)\Telegram.Td.winmd</HintPath>
+			<Implementation>Telegram.Td.dll</Implementation>
+		</Reference>
+		<!--<ReferenceCopyLocalPaths Include="C:\Users\Fela\AppData\Local\Microsoft SDKs\UAP\v0.8.0.0\ExtensionSDKs\Telegram.Td.UWP\1.0\Redist\CommonConfiguration\$(Platform)\libcrypto-1_1-x64.dll" />
+		<ReferenceCopyLocalPaths Include="C:\Users\Fela\AppData\Local\Microsoft SDKs\UAP\v0.8.0.0\ExtensionSDKs\Telegram.Td.UWP\1.0\Redist\CommonConfiguration\$(Platform)\libssl-1_1-x64.dll" />
+		<ReferenceCopyLocalPaths Include="C:\Users\Fela\AppData\Local\Microsoft SDKs\UAP\v0.8.0.0\ExtensionSDKs\Telegram.Td.UWP\1.0\Redist\CommonConfiguration\$(Platform)\zlib1.dll" />
+		<ReferenceCopyLocalPaths Include="C:\Users\Fela\AppData\Local\Microsoft SDKs\UAP\v0.8.0.0\ExtensionSDKs\Telegram.Td.UWP\1.0\Redist\CommonConfiguration\$(Platform)\Telegram.Td.dll" />
+		<ReferenceCopyLocalPaths Include="C:\Users\Fela\AppData\Local\Microsoft SDKs\UAP\v0.8.0.0\ExtensionSDKs\Telegram.Td.UWP\1.0\References\CommonConfiguration\$(Platform)\Telegram.Td.pri" />-->
+	</ItemGroup>
+	<ItemGroup>
+		<Reference Include="RLottie">
+			<HintPath>$(ProjectDir)..\Libraries\rlottie\$(Platform)\RLottie.winmd</HintPath>
+			<Implementation>RLottie.dll</Implementation>
+		</Reference>
+		<!--<ReferenceCopyLocalPaths Include="$(ProjectDir)..\Libraries\rlottie\$(Platform)\RLottie.dll" />
+		<ReferenceCopyLocalPaths Include="$(ProjectDir)..\Libraries\rlottie\$(Platform)\RLottie.pri" />-->
+		<!--<ReferenceCopyLocalPaths Condition=" '$(Configuration)' == 'Debug' " Include="$(ProjectDir)\..\Libraries\rlottie\$(Platform)\zlib1.dll" />-->
+	</ItemGroup>
+	<ItemGroup>
+		<Reference Include="FFmpegInteropX">
+			<HintPath>$(ProjectDir)..\Libraries\ffmpeg\$(Platform)\FFmpegInteropX.winmd</HintPath>
+			<Implementation>FFmpegInteropX.dll</Implementation>
+		</Reference>
+		<!--<ReferenceCopyLocalPaths Include="$(ProjectDir)..\Libraries\ffmpeg\$(Platform)\FFmpegInteropX.dll" />
+		<ReferenceCopyLocalPaths Include="$(ProjectDir)..\Libraries\ffmpeg\$(Platform)\FFmpegInteropX.pri" />
+		<ReferenceCopyLocalPaths Include="$(ProjectDir)..\Libraries\ffmpeg\$(Platform)\avfilter-7.dll" />-->
+	</ItemGroup>
+</Project>

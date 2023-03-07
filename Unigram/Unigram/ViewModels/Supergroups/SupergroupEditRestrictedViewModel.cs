@@ -4,6 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
@@ -12,8 +14,6 @@ using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.Views.Popups;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Supergroups
 {
@@ -423,7 +423,7 @@ namespace Unigram.ViewModels.Supergroups
         private async void EditUntilExecute()
         {
             var dialog = new SupergroupEditRestrictedUntilPopup(_untilDate);
-            var confirm = await dialog.ShowQueuedAsync();
+            var confirm = await dialog.ShowQueuedAsync(XamlRoot);
             if (confirm == ContentDialogResult.Primary)
             {
                 UntilDate = dialog.Value <= DateTime.Now ? 0 : dialog.Value.ToTimestamp();

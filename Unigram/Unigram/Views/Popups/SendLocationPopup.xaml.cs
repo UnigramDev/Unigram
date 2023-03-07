@@ -4,21 +4,20 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Cells;
-using Unigram.Navigation;
 using Unigram.ViewModels;
 using Windows.Devices.Geolocation;
 using Windows.Foundation;
-using Windows.UI.Composition;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Views.Popups
 {
@@ -55,7 +54,7 @@ namespace Unigram.Views.Popups
             _accuracy = ElementCompositionPreview.GetElementVisual(Accuracy);
             _position = ElementCompositionPreview.GetElementVisual(Position);
 
-            _position.CenterPoint = new Vector3(20, 48,0);
+            _position.CenterPoint = new Vector3(20, 48, 0);
             _position.Scale = Vector3.Zero;
 
             _previewShimmer = CompositionPathParser.CreateThumbnail(16, 9, 0, out ShapeVisual visual);
@@ -106,10 +105,10 @@ namespace Unigram.Views.Popups
             }
         }
 
-        private async void OnPositionChanged(Geolocator sender, PositionChangedEventArgs args)
+        private void OnPositionChanged(Geolocator sender, PositionChangedEventArgs args)
         {
-            await Dispatcher.RunAsync(
-                Windows.UI.Core.CoreDispatcherPriority.Normal,
+            DispatcherQueue.TryEnqueue(
+                Microsoft.UI.Dispatching.DispatcherQueuePriority.Normal,
                 () => UpdateLocation(args.Position));
         }
 
@@ -134,10 +133,10 @@ namespace Unigram.Views.Popups
             var latitude = point.Coordinate.Point.Position.Latitude;
             var longitude = point.Coordinate.Point.Position.Longitude;
 
-            var width = MapPresenter.ActualWidth * WindowContext.Current.RasterizationScale;
-            var height = MapPresenter.ActualHeight * WindowContext.Current.RasterizationScale;
+            var width = MapPresenter.ActualWidth * XamlRoot.RasterizationScale;
+            var height = MapPresenter.ActualHeight * XamlRoot.RasterizationScale;
 
-            var pixels = 96 * WindowContext.Current.RasterizationScale;
+            var pixels = 96 * XamlRoot.RasterizationScale;
             var scale = pixels * 39.37 * 156543.04 * Math.Cos(latitude * Math.PI / 180) / Math.Pow(2, 15);
             var accuracy = point.Coordinate.Accuracy * 39.37;
 
@@ -165,7 +164,7 @@ namespace Unigram.Views.Popups
                 anim.InsertKeyFrame(0, new Vector3(prev / next, 1));
                 anim.InsertKeyFrame(1, Vector3.One);
 
-                _accuracy.CenterPoint = new Vector3(next, 0); 
+                _accuracy.CenterPoint = new Vector3(next, 0);
                 _accuracy.StartAnimation("Scale", anim);
                 _accuracyRadius = radius;
             }

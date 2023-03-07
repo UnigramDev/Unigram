@@ -4,6 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -27,8 +29,6 @@ using Windows.Foundation;
 using Windows.Graphics.Capture;
 using Windows.System.Display;
 using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Services
 {
@@ -70,11 +70,11 @@ namespace Unigram.Services
 
         Task<bool> CanChooseAliasAsync(long chatId);
 
-        Task JoinAsync(long chatId);
-        Task RejoinAsync();
+        Task JoinAsync(XamlRoot xamlRoot, long chatId);
+        Task RejoinAsync(XamlRoot xamlRoot);
         Task LeaveAsync();
 
-        Task CreateAsync(long chatId);
+        Task CreateAsync(XamlRoot xamlRoot, long chatId);
         Task DiscardAsync();
 
 #if ENABLE_CALLS
@@ -212,7 +212,7 @@ namespace Unigram.Services
         }
 
 
-        public async Task JoinAsync(long chatId)
+        public async Task JoinAsync(XamlRoot xamlRoot, long chatId)
         {
             var chat = ClientService.GetChat(chatId);
             if (chat == null || chat.VideoChat.GroupCallId == 0)
@@ -240,13 +240,13 @@ namespace Unigram.Services
             //    return;
             //}
 
-            var permissions = await MediaDeviceWatcher.CheckAccessAsync(true, false);
+            var permissions = await MediaDeviceWatcher.CheckAccessAsync(xamlRoot, true, false);
             if (permissions == false)
             {
                 return;
             }
 
-            await JoinAsyncInternal(chat, chat.VideoChat.GroupCallId, null);
+            await JoinAsyncInternal(xamlRoot, chat, chat.VideoChat.GroupCallId, null);
         }
 
         public Task LeaveAsync()
@@ -254,7 +254,7 @@ namespace Unigram.Services
             return DisposeAsync(false);
         }
 
-        public async Task CreateAsync(long chatId)
+        public async Task CreateAsync(XamlRoot xamlRoot, long chatId)
         {
             var chat = ClientService.GetChat(chatId);
             if (chat == null || chat.VideoChat.GroupCallId != 0)
@@ -266,7 +266,7 @@ namespace Unigram.Services
 
             var popup = new VideoChatAliasesPopup(ClientService, chat, true, _availableAliases?.Senders.ToArray());
 
-            var confirm = await popup.ShowQueuedAsync();
+            var confirm = await popup.ShowQueuedAsync(xamlRoot);
             if (confirm == ContentDialogResult.Primary)
             {
                 var participantId = popup.SelectedSender ?? new MessageSenderUser(ClientService.Options.MyId);
@@ -276,7 +276,7 @@ namespace Unigram.Services
                 {
                     var schedule = new ScheduleVideoChatPopup(chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel);
 
-                    var again = await schedule.ShowQueuedAsync();
+                    var again = await schedule.ShowQueuedAsync(xamlRoot);
                     if (again != ContentDialogResult.Primary)
                     {
                         return;
@@ -288,7 +288,7 @@ namespace Unigram.Services
                 {
                     var streams = new VideoChatStreamsPopup(ClientService, chat.Id, true);
 
-                    var again = await streams.ShowQueuedAsync();
+                    var again = await streams.ShowQueuedAsync(xamlRoot);
                     if (again != ContentDialogResult.Primary)
                     {
                         return;
@@ -298,7 +298,7 @@ namespace Unigram.Services
                     {
                         var schedule = new ScheduleVideoChatPopup(true);
 
-                        var oneMore = await schedule.ShowQueuedAsync();
+                        var oneMore = await schedule.ShowQueuedAsync(xamlRoot);
                         if (oneMore != ContentDialogResult.Primary)
                         {
                             return;
@@ -311,12 +311,12 @@ namespace Unigram.Services
                 var response = await ClientService.SendAsync(new CreateVideoChat(chat.Id, string.Empty, startDate, popup.IsStartWithSelected));
                 if (response is GroupCallId groupCallId)
                 {
-                    await JoinAsyncInternal(chat, groupCallId.Id, participantId);
+                    await JoinAsyncInternal(xamlRoot, chat, groupCallId.Id, participantId);
                 }
             }
         }
 
-        private async Task JoinAsyncInternal(Chat chat, int groupCallId, MessageSender alias)
+        private async Task JoinAsyncInternal(XamlRoot xamlRoot, Chat chat, int groupCallId, MessageSender alias)
         {
             var activeCall = _call;
             if (activeCall != null)
@@ -328,7 +328,7 @@ namespace Unigram.Services
                 }
                 else
                 {
-                    var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.VoipOngoingChatAlert, _chat.Title, chat.Title), Strings.Resources.VoipOngoingChatAlertTitle, Strings.Resources.OK, Strings.Resources.Cancel);
+                    var confirm = await MessagePopup.ShowAsync(xamlRoot, string.Format(Strings.Resources.VoipOngoingChatAlert, _chat.Title, chat.Title), Strings.Resources.VoipOngoingChatAlertTitle, Strings.Resources.OK, Strings.Resources.Cancel);
                     if (confirm != ContentDialogResult.Primary)
                     {
                         return;
@@ -342,7 +342,7 @@ namespace Unigram.Services
 
             if (alias == null)
             {
-                alias = await PickAliasAsync(chat, false);
+                alias = await PickAliasAsync(xamlRoot, chat, false);
             }
 
             var response = await ClientService.SendAsync(new GetGroupCall(groupCallId));
@@ -456,7 +456,7 @@ namespace Unigram.Services
             await LeaveAsync();
         }
 
-        public async Task RejoinAsync()
+        public async Task RejoinAsync(XamlRoot xamlRoot)
         {
             var call = _call;
             var chat = _chat;
@@ -466,14 +466,14 @@ namespace Unigram.Services
                 return;
             }
 
-            var alias = await PickAliasAsync(chat, true);
+            var alias = await PickAliasAsync(xamlRoot, chat, true);
             if (alias != null)
             {
                 Rejoin(call, alias);
             }
         }
 
-        private async Task<MessageSender> PickAliasAsync(Chat chat, bool darkTheme)
+        private async Task<MessageSender> PickAliasAsync(XamlRoot xamlRoot, Chat chat, bool darkTheme)
         {
             var available = await CanChooseAliasAsync(chat.Id);
             if (available && _availableAliases != null)
@@ -481,7 +481,7 @@ namespace Unigram.Services
                 var popup = new VideoChatAliasesPopup(ClientService, chat, false, _availableAliases.Senders.ToArray());
                 popup.RequestedTheme = darkTheme ? ElementTheme.Dark : ElementTheme.Default;
 
-                var confirm = await popup.ShowQueuedAsync();
+                var confirm = await popup.ShowQueuedAsync(xamlRoot);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     return popup.SelectedSender;

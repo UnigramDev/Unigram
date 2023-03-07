@@ -4,6 +4,9 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,9 +23,6 @@ using Unigram.Views.Popups;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
@@ -196,7 +196,7 @@ namespace Unigram.ViewModels.Settings
                 var dialog = new ChooseColorPopup();
                 dialog.Color = accent;
 
-                var confirm = await dialog.ShowQueuedAsync();
+                var confirm = await dialog.ShowQueuedAsync(XamlRoot);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     await SetThemeAsync(ThemeAccentInfo.FromAccent(type, dialog.Color));
@@ -211,7 +211,7 @@ namespace Unigram.ViewModels.Settings
         {
             if (theme != null)
             {
-                await _themeService.CreateThemeAsync(theme);
+                await _themeService.CreateThemeAsync(XamlRoot, theme);
                 await RefreshThemesAsync();
             }
         }
@@ -237,7 +237,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand<ThemeCustomInfo> ThemeDeleteCommand { get; }
         private async void ThemeDeleteExecute(ThemeCustomInfo theme)
         {
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.DeleteThemeAlert, Strings.Resources.AppName, Strings.Resources.Delete, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.DeleteThemeAlert, Strings.Resources.AppName, Strings.Resources.Delete, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

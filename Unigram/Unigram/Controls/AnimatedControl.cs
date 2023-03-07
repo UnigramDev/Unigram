@@ -6,6 +6,13 @@
 //
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
+using Microsoft.UI;
+using Microsoft.UI.Dispatching;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation;
+using Microsoft.UI.Xaml.Automation.Peers;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.Buffers;
 using System.Numerics;
@@ -15,23 +22,15 @@ using Unigram.Common;
 using Windows.Foundation;
 using Windows.Graphics;
 using Windows.Graphics.DirectX;
-using Windows.Graphics.Display;
-using Windows.System;
-using Windows.UI;
-using Windows.UI.Core;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation;
-using Windows.UI.Xaml.Automation.Peers;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls
 {
+#warning TODO: refactoring
     [TemplatePart(Name = "Canvas", Type = typeof(Image))]
     public abstract class AnimatedControl<TAnimation> : Control, IPlayerView
     {
         protected Vector2 _currentSize;
-        protected float _currentDpi;
+        protected double _rasterizationScale;
         protected bool _active = true;
         protected bool _visible = true;
 
@@ -68,22 +67,20 @@ namespace Unigram.Controls
         // Better hardware detection?
         protected readonly bool _limitFps = true;
 
-        protected readonly DispatcherQueue _dispatcher;
-
         protected AnimatedControl(bool? limitFps, bool autoPause = true)
         {
             _interval = TimeSpan.FromMilliseconds(Math.Floor(1000d / 30));
             _autoPause = autoPause;
 
-            _limitFps = limitFps ?? !Windows.UI.Composition.CompositionCapabilities.GetForCurrentView().AreEffectsFast();
-            _dispatcher = DispatcherQueue.GetForCurrentThread();
+            //_limitFps = limitFps ?? !Microsoft.UI.Composition.CompositionCapabilities.GetForCurrentView().AreEffectsFast();
 
             SizeChanged += OnSizeChanged;
-            RegisterEventHandlers();
         }
 
         protected override void OnApplyTemplate()
         {
+            RegisterEventHandlers();
+
             var canvas = GetTemplateChild("Canvas") as Image;
             if (canvas == null)
             {
@@ -103,52 +100,74 @@ namespace Unigram.Controls
 
         private void RegisterEventHandlers()
         {
-            _currentDpi = DisplayInformation.GetForCurrentView().LogicalDpi;
-            _active = !_autoPause || Window.Current.CoreWindow.ActivationMode == CoreWindowActivationMode.ActivatedInForeground;
-            _visible = Window.Current.CoreWindow.Visible;
+            _rasterizationScale = XamlRoot.RasterizationScale;
+            //_active = !_autoPause || Window.Current.CoreWindow.ActivationMode == CoreWindowActivationMode.ActivatedInForeground;
+            _visible = XamlRoot.IsHostVisible;
 
             if (_hasInitialLoadedEventFired)
             {
                 return;
             }
 
-            DisplayInformation.GetForCurrentView().DpiChanged += OnDpiChanged;
-            Window.Current.VisibilityChanged += OnVisibilityChanged;
+#warning TODO: this
+            OnDpiChanged(_rasterizationScale);
+
+            XamlRoot.Changed += OnXamlRootChanged;
             CompositionTarget.SurfaceContentsLost += OnSurfaceContentsLost;
 
-            if (_autoPause)
-            {
-                Window.Current.Activated += OnActivated;
-            }
+            //if (_autoPause)
+            //{
+            //    Window.Current.Activated += OnActivated;
+            //}
 
             _hasInitialLoadedEventFired = true;
         }
 
         private void UnregisterEventHandlers()
         {
-            DisplayInformation.GetForCurrentView().DpiChanged -= OnDpiChanged;
-            Window.Current.VisibilityChanged -= OnVisibilityChanged;
+            XamlRoot.Changed -= OnXamlRootChanged;
             CompositionTarget.SurfaceContentsLost -= OnSurfaceContentsLost;
 
-            if (_autoPause)
-            {
-                Window.Current.Activated -= OnActivated;
-            }
+            //if (_autoPause)
+            //{
+            //    Window.Current.Activated -= OnActivated;
+            //}
 
             _hasInitialLoadedEventFired = false;
         }
 
-        private void OnDpiChanged(DisplayInformation sender, object args)
+        private void OnXamlRootChanged(XamlRoot sender, XamlRootChangedEventArgs args)
         {
             lock (_drawFrameLock)
             {
-                _currentDpi = sender.LogicalDpi;
-                Changed();
-                OnDpiChanged(sender.LogicalDpi);
+                if (_rasterizationScale != sender.RasterizationScale)
+                {
+                    _rasterizationScale = sender.RasterizationScale;
+
+                    Changed();
+                    OnDpiChanged(sender.RasterizationScale);
+                }
+
+#warning TODO: this method logic should be improved
+                if (_visible == sender.IsHostVisible)
+                {
+                    return;
+                }
+
+                _visible = sender.IsHostVisible;
+
+                if (sender.IsHostVisible)
+                {
+                    Changed();
+                }
+                else
+                {
+                    Subscribe(false);
+                }
             }
         }
 
-        protected virtual void OnDpiChanged(float currentDpi)
+        protected virtual void OnDpiChanged(double currentDpi)
         {
 
         }
@@ -185,38 +204,16 @@ namespace Unigram.Controls
         {
             lock (_drawFrameLock)
             {
-                if (_active == (e.WindowActivationState != CoreWindowActivationState.Deactivated))
+                if (_active == (e.WindowActivationState != WindowActivationState.Deactivated))
                 {
                     return;
                 }
 
-                _active = e.WindowActivationState != CoreWindowActivationState.Deactivated;
+                _active = e.WindowActivationState != WindowActivationState.Deactivated;
 
-                if (e.WindowActivationState != CoreWindowActivationState.Deactivated)
+                if (e.WindowActivationState != WindowActivationState.Deactivated)
                 {
                     OnSourceChanged();
-                }
-                else
-                {
-                    Subscribe(false);
-                }
-            }
-        }
-
-        private void OnVisibilityChanged(object sender, VisibilityChangedEventArgs e)
-        {
-            lock (_drawFrameLock)
-            {
-                if (_visible == e.Visible)
-                {
-                    return;
-                }
-
-                _visible = e.Visible;
-
-                if (e.Visible)
-                {
-                    Changed();
                 }
                 else
                 {
@@ -240,7 +237,7 @@ namespace Unigram.Controls
 
             lock (_recreateLock)
             {
-                var newDpi = _currentDpi;
+                var newDpi = _rasterizationScale;
                 var newSize = _currentSize;
 
                 bool needsCreate = _surface == null;
@@ -254,7 +251,7 @@ namespace Unigram.Controls
                     {
                         var device = _surface?.Device ?? CanvasDevice.GetSharedDevice();
 
-                        _surface = new CanvasImageSource(device, newSize.X, newSize.Y, newDpi, CanvasAlphaMode.Premultiplied);
+                        _surface = new CanvasImageSource(device, newSize.X, newSize.Y, (float)(newDpi * 96), CanvasAlphaMode.Premultiplied);
                         _canvas.Source = _surface;
 
                         CreateBitmap(true);
@@ -480,18 +477,18 @@ namespace Unigram.Controls
 
         protected abstract CanvasBitmap CreateBitmap(CanvasDevice device);
 
-        protected CanvasBitmap CreateBitmap(CanvasDevice device, int width, int height, DirectXPixelFormat pixelFormat = DirectXPixelFormat.B8G8R8A8UIntNormalized, float dpi = 96)
+        protected CanvasBitmap CreateBitmap(CanvasDevice device, int width, int height, DirectXPixelFormat pixelFormat = DirectXPixelFormat.B8G8R8A8UIntNormalized, double scale = 1)
         {
             var buffer = ArrayPool<byte>.Shared.Rent(width * height * 4);
-            var bitmap = CanvasBitmap.CreateFromBytes(device, buffer, width, height, pixelFormat, dpi);
+            var bitmap = CanvasBitmap.CreateFromBytes(device, buffer, width, height, pixelFormat, (float)(scale * 96));
             ArrayPool<byte>.Shared.Return(buffer);
 
             return bitmap;
         }
 
-        protected CanvasRenderTarget CreateTarget(ICanvasResourceCreator sender, int width, int height, DirectXPixelFormat pixelFormat = DirectXPixelFormat.B8G8R8A8UIntNormalized, float dpi = 96)
+        protected CanvasRenderTarget CreateTarget(ICanvasResourceCreator sender, int width, int height, DirectXPixelFormat pixelFormat = DirectXPixelFormat.B8G8R8A8UIntNormalized, double scale = 1)
         {
-            return new CanvasRenderTarget(sender, width, height, dpi, pixelFormat, CanvasAlphaMode.Premultiplied);
+            return new CanvasRenderTarget(sender, width, height, (float)(scale * 96), pixelFormat, CanvasAlphaMode.Premultiplied);
         }
 
         protected SizeInt32 GetDpiAwareSize(Size size)
@@ -503,14 +500,14 @@ namespace Unigram.Controls
         {
             return new SizeInt32
             {
-                Width = (int)(width * (_currentDpi / 96)),
-                Height = (int)(height * (_currentDpi / 96))
+                Width = (int)(width * _rasterizationScale),
+                Height = (int)(height * _rasterizationScale)
             };
         }
 
         protected int GetDpiAwareSize(double size)
         {
-            return (int)(size * (_currentDpi / 96));
+            return (int)(size * _rasterizationScale);
         }
 
         protected abstract void DrawFrame(CanvasImageSource sender, CanvasDrawingSession args);
@@ -605,7 +602,7 @@ namespace Unigram.Controls
         {
             lock (_drawFrameLock)
             {
-                if (Dispatcher.HasThreadAccess)
+                if (DispatcherQueue.HasThreadAccess)
                 {
                     if (subscribe && _active)
                     {

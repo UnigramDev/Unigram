@@ -4,16 +4,16 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Media;
 using System.Numerics;
 using Unigram.Assets.Icons;
 using Unigram.Converters;
+using Unigram.Navigation;
 using Unigram.Services.Settings;
-using Windows.UI.Composition;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Chats
 {
@@ -104,7 +104,7 @@ namespace Unigram.Controls.Chats
                 }
 
                 var animate = oldValue != StickersTab.None;
-                var visual = GetVisual(newValue, oldValue, animate, Window.Current.Compositor, out var source, out _props);
+                var visual = GetVisual(newValue, oldValue, animate, BootStrapper.Current.Compositor, out var source, out _props);
 
                 _source = source;
                 _previous = visual;

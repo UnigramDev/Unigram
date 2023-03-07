@@ -5,15 +5,16 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using LinqToVisualTree;
+using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Shapes;
 using System.Linq;
 using System.Numerics;
 using Unigram.Common;
-using Windows.UI.Composition;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Shapes;
+using Unigram.Navigation;
 
 namespace Unigram.Controls
 {
@@ -106,7 +107,7 @@ namespace Unigram.Controls
             }
 
             _scrollViewer = scrollViewer;
-            _propertySet = Window.Current.Compositor.CreatePropertySet();
+            _propertySet = BootStrapper.Current.Compositor.CreatePropertySet();
             _propertySet.InsertScalar("ScrollableHeight", (float)scrollViewer.ScrollableHeight);
             _propertySet.InsertScalar("TopInset", _topInset);
             _propertySet.InsertScalar("BottomInset", _bottomInset);
@@ -115,11 +116,11 @@ namespace Unigram.Controls
             var bottom = ElementCompositionPreview.GetElementVisual(_bottomScrim);
             var props = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(scrollViewer);
 
-            var topAnimation = Window.Current.Compositor.CreateExpressionAnimation("Min(-(Scroll.Translation.Y / Props.TopInset), 1)");
+            var topAnimation = BootStrapper.Current.Compositor.CreateExpressionAnimation("Min(-(Scroll.Translation.Y / Props.TopInset), 1)");
             topAnimation.SetReferenceParameter("Scroll", props);
             topAnimation.SetReferenceParameter("Props", _propertySet);
 
-            var bottomAnimation = Window.Current.Compositor.CreateExpressionAnimation("Min((Props.ScrollableHeight + Scroll.Translation.Y) / Props.BottomInset, 1)");
+            var bottomAnimation = BootStrapper.Current.Compositor.CreateExpressionAnimation("Min((Props.ScrollableHeight + Scroll.Translation.Y) / Props.BottomInset, 1)");
             bottomAnimation.SetReferenceParameter("Scroll", props);
             bottomAnimation.SetReferenceParameter("Props", _propertySet);
 

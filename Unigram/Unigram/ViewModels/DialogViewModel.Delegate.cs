@@ -4,6 +4,9 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -21,9 +24,6 @@ using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Gallery;
 using Unigram.Views;
 using Unigram.Views.Popups;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Unigram.ViewModels
 {
@@ -198,7 +198,7 @@ namespace Unigram.ViewModels
             {
                 if (file.Local.Path.EndsWith(".unigram-theme"))
                 {
-                    await new ThemePreviewPopup(local).ShowQueuedAsync();
+                    await new ThemePreviewPopup(local).ShowQueuedAsync(XamlRoot);
                 }
                 else
                 {
@@ -233,7 +233,7 @@ namespace Unigram.ViewModels
         {
             if (sticker.SetId != 0)
             {
-                await StickersPopup.ShowAsync(sticker.SetId, Sticker_Click);
+                await StickersPopup.ShowAsync(XamlRoot, sticker.SetId, Sticker_Click);
             }
         }
 
@@ -331,7 +331,7 @@ namespace Unigram.ViewModels
             }
             else
             {
-                await MessagePopup.ShowAsync(Strings.Resources.NoUsernameFound, Strings.Resources.AppName, Strings.Resources.OK);
+                await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.NoUsernameFound, Strings.Resources.AppName, Strings.Resources.OK);
             }
         }
 
@@ -432,7 +432,7 @@ namespace Unigram.ViewModels
 
                     if (untrust)
                     {
-                        var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.OpenUrlAlert, url), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+                        var confirm = await MessagePopup.ShowAsync(XamlRoot, string.Format(Strings.Resources.OpenUrlAlert, url), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
                         if (confirm != ContentDialogResult.Primary)
                         {
                             return;
@@ -470,7 +470,7 @@ namespace Unigram.ViewModels
             }
             else if (message.Content is MessagePoll poll)
             {
-                await new PollResultsPopup(ClientService, Settings, Aggregator, this, message.ChatId, message.Id, poll.Poll).ShowQueuedAsync();
+                await new PollResultsPopup(ClientService, Settings, Aggregator, this, message.ChatId, message.Id, poll.Poll).ShowQueuedAsync(XamlRoot);
             }
             else if (message.Content is MessageGame game && message.ReplyMarkup is ReplyMarkupInlineKeyboard inline)
             {

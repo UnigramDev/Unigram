@@ -5,6 +5,12 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using LinqToVisualTree;
+using Microsoft.UI.Input;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,13 +18,6 @@ using Unigram.Common;
 using Unigram.Controls.Messages;
 using Unigram.Logs;
 using Unigram.ViewModels;
-using Windows.Devices.Input;
-using Windows.UI.Input;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Point = Windows.Foundation.Point;
 
 namespace Unigram.Controls.Chats
@@ -432,7 +431,7 @@ namespace Unigram.Controls.Chats
         {
             if (IsSelectionEnabled is false)
             {
-                var point = e.GetCurrentPoint(Window.Current.Content as FrameworkElement);
+                var point = e.GetCurrentPoint(this);
                 if (point.Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonPressed && e.Pointer.PointerDeviceType == PointerDeviceType.Mouse)
                 {
                     try
@@ -603,7 +602,7 @@ namespace Unigram.Controls.Chats
 
         internal void OnPointerReleased(LazoListViewItem item, PointerRoutedEventArgs e)
         {
-            var point = e.GetCurrentPoint(Window.Current.Content as FrameworkElement);
+            var point = e.GetCurrentPoint(this);
             if (point.Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonReleased && e.Pointer.PointerDeviceType == PointerDeviceType.Mouse)
             {
                 try

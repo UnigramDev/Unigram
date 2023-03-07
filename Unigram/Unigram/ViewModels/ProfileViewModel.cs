@@ -4,6 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -27,8 +29,6 @@ using Unigram.Views.Supergroups;
 using Unigram.Views.Supergroups.Popup;
 using Unigram.Views.Users;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {
@@ -455,7 +455,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.AreYouSureBlockContact, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.AreYouSureBlockContact, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -473,7 +473,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.AreYouSureUnblockContact, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.AreYouSureUnblockContact, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -716,7 +716,7 @@ namespace Unigram.ViewModels
             if (ClientService.TryGetUser(chat, out User user)
                 && ClientService.TryGetUserFull(chat, out UserFullInfo userFull))
             {
-                await new GiftPopup(ClientService, NavigationService, user, userFull.PremiumGiftOptions).ShowQueuedAsync();
+                await new GiftPopup(ClientService, NavigationService, user, userFull.PremiumGiftOptions).ShowQueuedAsync(XamlRoot);
             }
         }
 
@@ -729,7 +729,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.AreYouSureSecretChat, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.AreYouSureSecretChat, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -754,7 +754,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            await new IdenticonPopup(SessionId, chat).ShowQueuedAsync();
+            await new IdenticonPopup(SessionId, chat).ShowQueuedAsync(XamlRoot);
         }
 
         public RelayCommand MigrateCommand { get; }
@@ -766,13 +766,13 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.ConvertGroupInfo2 + "\n\n" + Strings.Resources.ConvertGroupInfo3, Strings.Resources.ConvertGroup, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.ConvertGroupInfo2 + "\n\n" + Strings.Resources.ConvertGroupInfo3, Strings.Resources.ConvertGroup, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
             }
 
-            var warning = await MessagePopup.ShowAsync(Strings.Resources.ConvertGroupAlert, Strings.Resources.ConvertGroupAlertWarning, Strings.Resources.OK, Strings.Resources.Cancel);
+            var warning = await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.ConvertGroupAlert, Strings.Resources.ConvertGroupAlertWarning, Strings.Resources.OK, Strings.Resources.Cancel);
             if (warning != ContentDialogResult.Primary)
             {
                 return;
@@ -815,7 +815,7 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.AddToTheGroup, user.FullName()), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+                var confirm = await MessagePopup.ShowAsync(XamlRoot, string.Format(Strings.Resources.AddToTheGroup, user.FullName()), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;
@@ -881,11 +881,11 @@ namespace Unigram.ViewModels
 
             if (chat.Type is ChatTypePrivate or ChatTypeSecret)
             {
-                _voipService.Start(chat.Id, video);
+                _voipService.Start(XamlRoot, chat.Id, video);
             }
             else
             {
-                await _groupCallService.CreateAsync(chat.Id);
+                await _groupCallService.CreateAsync(XamlRoot, chat.Id);
             }
         }
 
@@ -922,7 +922,7 @@ namespace Unigram.ViewModels
             {
                 var popup = new SupergroupTopicPopup(ClientService, _topic);
 
-                var confirm = await popup.ShowQueuedAsync();
+                var confirm = await popup.ShowQueuedAsync(XamlRoot);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     ClientService.Send(new EditForumTopic(chat.Id, _topic.MessageThreadId, popup.Name, true, popup.SelectedEmojiId));
@@ -990,7 +990,7 @@ namespace Unigram.ViewModels
                 message = super.IsChannel ? Strings.Resources.ChannelLeaveAlert : Strings.Resources.MegaLeaveAlert;
             }
 
-            var confirm = await MessagePopup.ShowAsync(message, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(XamlRoot, message, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 if (chat.Type is ChatTypePrivate privata)
@@ -1077,7 +1077,7 @@ namespace Unigram.ViewModels
                 var mutedFor = Settings.Notifications.GetMutedFor(chat);
                 var popup = new ChatMutePopup(mutedFor);
 
-                var confirm = await popup.ShowQueuedAsync();
+                var confirm = await popup.ShowQueuedAsync(XamlRoot);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;
@@ -1112,7 +1112,7 @@ namespace Unigram.ViewModels
                 var dialog = new ChatTtlPopup(chat.Type is ChatTypeSecret ? ChatTtlType.Secret : ChatTtlType.Normal);
                 dialog.Value = chat.MessageAutoDeleteTime;
 
-                var confirm = await dialog.ShowQueuedAsync();
+                var confirm = await dialog.ShowQueuedAsync(XamlRoot);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;

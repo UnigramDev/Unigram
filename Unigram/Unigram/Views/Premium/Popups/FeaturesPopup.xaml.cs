@@ -4,6 +4,9 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,9 +15,6 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Cells.Premium;
 using Unigram.Services;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Unigram.Views.Premium.Popups
 {
@@ -46,7 +46,7 @@ namespace Unigram.Views.Premium.Popups
 
         public bool ShouldPurchase { get; private set; }
 
-        private void Purchase_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void Purchase_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
             ShouldPurchase = true;
             Hide();

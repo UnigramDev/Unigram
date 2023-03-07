@@ -4,12 +4,11 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Input;
 using System;
 using Unigram.Navigation;
 using Windows.System;
 using Windows.UI.Core;
-using Windows.UI.Input;
-using Windows.UI.Xaml;
 
 namespace Unigram.Services.Keyboard
 {
@@ -23,8 +22,9 @@ namespace Unigram.Services.Keyboard
             _context = WindowContext.Current;
             _context.AcceleratorKeyActivated += CoreDispatcher_AcceleratorKeyActivated;
 
-            _window = Window.Current.CoreWindow;
-            _window.PointerPressed += CoreWindow_PointerPressed;
+#warning TODO: missing
+            //_window = Window.Current.CoreWindow;
+            //_window.PointerPressed += CoreWindow_PointerPressed;
         }
 
         public void Cleanup()
@@ -76,7 +76,7 @@ namespace Unigram.Services.Keyboard
         /// </summary>
         /// <param name="sender">Instance that triggered the event.</param>
         /// <param name="e">Event data describing the conditions that led to the event.</param>
-        private void CoreWindow_PointerPressed(CoreWindow sender, PointerEventArgs e)
+        private void CoreWindow_PointerPressed(CoreWindow sender, Windows.UI.Core.PointerEventArgs e)
         {
             var properties = e.CurrentPoint.Properties;
 

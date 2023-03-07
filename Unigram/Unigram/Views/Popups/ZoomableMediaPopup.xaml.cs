@@ -4,21 +4,17 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using System;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
-using Windows.Foundation;
-using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Popups
 {
     public sealed partial class ZoomableMediaPopup : Grid
     {
-        private ApplicationView _applicationView;
-
         private string _fileToken;
         private string _thumbnailToken;
 
@@ -27,49 +23,17 @@ namespace Unigram.Views.Popups
         public ZoomableMediaPopup()
         {
             InitializeComponent();
-
-            Loaded += OnLoaded;
             Unloaded += OnUnloaded;
-        }
-
-        private void OnLoaded(object sender, RoutedEventArgs e)
-        {
-            _applicationView = ApplicationView.GetForCurrentView();
-            _applicationView.VisibleBoundsChanged += OnVisibleBoundsChanged;
-
-            OnVisibleBoundsChanged(_applicationView, null);
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             _lastItem = null;
-
-            if (_applicationView != null)
-            {
-                _applicationView.VisibleBoundsChanged -= OnVisibleBoundsChanged;
-            }
         }
 
         public Action<int> DownloadFile { get; set; }
 
         public Func<int> SessionId { get; set; }
-
-        private void OnVisibleBoundsChanged(ApplicationView sender, object args)
-        {
-            if (sender == null)
-            {
-                return;
-            }
-
-            if (/*BackgroundElement != null &&*/ Window.Current?.Bounds is Rect bounds && sender.VisibleBounds != bounds)
-            {
-                Margin = new Thickness(sender.VisibleBounds.X - bounds.Left, sender.VisibleBounds.Y - bounds.Top, bounds.Width - (sender.VisibleBounds.Right - bounds.Left), bounds.Height - (sender.VisibleBounds.Bottom - bounds.Top));
-            }
-            else
-            {
-                Margin = new Thickness();
-            }
-        }
 
         public void SetSticker(Sticker sticker)
         {

@@ -5,14 +5,16 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.Graphics.Canvas.Geometry;
+using Microsoft.UI;
+using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
 using System;
 using System.Numerics;
 using Unigram.Converters;
-using Windows.UI.Composition;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
+using Unigram.Navigation;
 
 namespace Unigram.Controls
 {
@@ -84,7 +86,7 @@ namespace Unigram.Controls
             _visual1.Scale = new Vector3(1);
             _visual1.CenterPoint = new Vector3(10);
 
-            _container = Window.Current.Compositor.CreateContainerVisual();
+            _container = BootStrapper.Current.Compositor.CreateContainerVisual();
             _container.Size = new Vector2(48, 48);
             _container.CenterPoint = new Vector3(24, 24, 0);
 
@@ -295,7 +297,7 @@ namespace Unigram.Controls
                 return;
             }
 
-            var compositor = Window.Current.Compositor;
+            var compositor = BootStrapper.Current.Compositor;
             var diameter = 48f; // min(bounds.size.width, bounds.size.height)
             var factor = diameter / 48f;
 
@@ -321,13 +323,13 @@ namespace Unigram.Controls
 
             var leftShape = compositor.CreateSpriteShape(leftLine);
             leftShape.StrokeThickness = lineWidth;
-            leftShape.StrokeBrush = compositor.CreateColorBrush(Windows.UI.Colors.White);
+            leftShape.StrokeBrush = compositor.CreateColorBrush(Colors.White);
             leftShape.StrokeStartCap = CompositionStrokeCap.Round;
             leftShape.StrokeEndCap = CompositionStrokeCap.Round;
 
             var rightShape = compositor.CreateSpriteShape(rightLine);
             rightShape.StrokeThickness = lineWidth;
-            rightShape.StrokeBrush = compositor.CreateColorBrush(Windows.UI.Colors.White);
+            rightShape.StrokeBrush = compositor.CreateColorBrush(Colors.White);
             rightShape.StrokeStartCap = CompositionStrokeCap.Round;
             rightShape.StrokeEndCap = CompositionStrokeCap.Round;
 
@@ -338,7 +340,7 @@ namespace Unigram.Controls
 
             var arrowShape = compositor.CreateSpriteShape(arrowPath);
             arrowShape.StrokeThickness = lineWidth;
-            arrowShape.StrokeBrush = compositor.CreateColorBrush(Windows.UI.Colors.White);
+            arrowShape.StrokeBrush = compositor.CreateColorBrush(Colors.White);
             arrowShape.StrokeStartCap = CompositionStrokeCap.Round;
             arrowShape.StrokeEndCap = CompositionStrokeCap.Round;
             arrowShape.StrokeLineJoin = CompositionStrokeLineJoin.Round;

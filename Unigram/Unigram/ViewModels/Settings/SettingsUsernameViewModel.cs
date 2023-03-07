@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Navigation;
 using Rg.DiffUtils;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,6 @@ using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
@@ -376,7 +376,7 @@ namespace Unigram.ViewModels.Settings
             dataPackage.SetText(MeUrlPrefixConverter.Convert(ClientService, _username));
             ClipboardEx.TrySetContent(dataPackage);
 
-            await MessagePopup.ShowAsync(Strings.Resources.LinkCopied, Strings.Resources.AppName, Strings.Resources.OK);
+            await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.LinkCopied, Strings.Resources.AppName, Strings.Resources.OK);
         }
     }
 
@@ -437,7 +437,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public string DisplayValue => _tme? MeUrlPrefixConverter.Convert(_clientService, _value, true): $"@{_value}";
+        public string DisplayValue => _tme ? MeUrlPrefixConverter.Convert(_clientService, _value, true) : $"@{_value}";
 
         private bool _isActive;
         public bool IsActive

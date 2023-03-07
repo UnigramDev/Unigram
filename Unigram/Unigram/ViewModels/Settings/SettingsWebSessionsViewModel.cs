@@ -4,6 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -14,8 +16,6 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Navigation.Services;
 using Unigram.Services;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
@@ -103,7 +103,7 @@ namespace Unigram.ViewModels.Settings
             dialog.SecondaryButtonText = Strings.Resources.Cancel;
             dialog.CheckBoxLabel = string.Format(Strings.Resources.TerminateWebSessionStop, bot.FullName());
 
-            var terminate = await dialog.ShowQueuedAsync();
+            var terminate = await dialog.ShowQueuedAsync(XamlRoot);
             if (terminate == ContentDialogResult.Primary)
             {
                 var response = await ClientService.SendAsync(new DisconnectWebsite(session.Id));
@@ -123,7 +123,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand TerminateOthersCommand { get; }
         private async void TerminateOtherExecute()
         {
-            var terminate = await MessagePopup.ShowAsync(Strings.Resources.AreYouSureWebSessions, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var terminate = await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.AreYouSureWebSessions, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (terminate == ContentDialogResult.Primary)
             {
                 var response = await ClientService.SendAsync(new DisconnectAllWebsites());

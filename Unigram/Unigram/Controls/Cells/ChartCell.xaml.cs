@@ -4,6 +4,10 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Dispatching;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.Linq;
 using Unigram.Charts;
@@ -12,9 +16,6 @@ using Unigram.Charts.DataView;
 using Unigram.Common;
 using Unigram.Navigation;
 using Unigram.ViewModels.Chats;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Cells
 {
@@ -386,7 +387,7 @@ namespace Unigram.Controls.Cells
                 ValueAnimator animator = CreateTransitionAnimator(d, true);
                 animator.AddListener(new AnimatorUpdateListener(null, animation =>
                 {
-                    _ = chartView.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                    chartView.DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, () =>
                     {
                         chartView.Visibility = Visibility.Collapsed;
                     });
@@ -440,7 +441,7 @@ namespace Unigram.Controls.Cells
                 ValueAnimator animator = CreateTransitionAnimator(d, false);
                 animator.AddListener(new AnimatorUpdateListener(animator =>
                 {
-                    _ = zoomedChartView.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                    zoomedChartView.DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, () =>
                     {
                         zoomedChartView.Visibility = Visibility.Collapsed;
                     });
@@ -539,7 +540,7 @@ namespace Unigram.Controls.Cells
 
                 if (hidden)
                 {
-                    _ = chartView.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                    chartView.DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, () =>
                     {
                         chartView.Visibility = Visibility.Visible;
                     });

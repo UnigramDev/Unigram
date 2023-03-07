@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using Telegram.Td.Api;
@@ -16,7 +17,6 @@ using Unigram.Views.Popups;
 using Unigram.Views.Settings.Popups;
 using Windows.Storage.AccessCache;
 using Windows.Storage.Pickers;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.ViewModels.Settings
 {
@@ -155,7 +155,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand ResetAutoDownloadCommand { get; }
         private async void ResetAutoDownloadExecute()
         {
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.ResetAutomaticMediaDownloadAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.ResetAutomaticMediaDownloadAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 var response = await ClientService.SendAsync(new GetAutoDownloadSettingsPresets());

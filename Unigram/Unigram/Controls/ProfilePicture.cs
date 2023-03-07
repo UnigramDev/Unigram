@@ -4,18 +4,19 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Media;
 using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Converters;
+using Unigram.Navigation;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.Foundation;
-using Windows.UI.Composition;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls
 {
@@ -39,7 +40,7 @@ namespace Unigram.Controls
 
         public ProfilePicture()
         {
-            _clip = Window.Current.Compositor.CreateRoundedRectangleGeometry();
+            _clip = BootStrapper.Current.Compositor.CreateRoundedRectangleGeometry();
             DefaultStyleKey = typeof(ProfilePicture);
         }
 
@@ -93,7 +94,7 @@ namespace Unigram.Controls
                 {
                     var visual = ElementCompositionPreview.GetElementVisual(this);
 
-                    var compositor = Window.Current.Compositor;
+                    var compositor = BootStrapper.Current.Compositor;
                     var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
                     batch.Completed += (s, args) =>
                     {
@@ -249,7 +250,7 @@ namespace Unigram.Controls
             {
                 return PlaceholderHelper.GetGlyph(Icons.ChatMultiple, 5, side);
             }
-            
+
             if (clientService.IsForum(chat))
             {
                 shape = ProfilePictureShape.Superellipse;

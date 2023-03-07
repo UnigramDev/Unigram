@@ -4,6 +4,17 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Composition;
+using Microsoft.UI.Dispatching;
+using Microsoft.UI.Input;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Animation;
+using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Concurrent;
 using System.ComponentModel;
@@ -22,23 +33,12 @@ using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Gallery;
 using Unigram.ViewModels.Users;
 using Unigram.Views;
-using Windows.Devices.Input;
 using Windows.Foundation;
 using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.System.Display;
-using Windows.UI.Composition;
 using Windows.UI.Core;
-using Windows.UI.Input;
 using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Animation;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Gallery
 {
@@ -241,10 +241,10 @@ namespace Unigram.Controls.Gallery
             OnSourceChanged();
         }
 
-        private async void OnSourceChanged()
+        private void OnSourceChanged()
         {
             var source = _mediaPlayer == null || _mediaPlayer.Source == null;
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, () =>
             {
                 Transport.Visibility = source ? Visibility.Collapsed : Visibility.Visible;
 
@@ -260,10 +260,10 @@ namespace Unigram.Controls.Gallery
             });
         }
 
-        private async void OnPlaybackStateChanged(MediaPlaybackSession sender, object args)
+        private void OnPlaybackStateChanged(MediaPlaybackSession sender, object args)
         {
             var state = sender.PlaybackState;
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, () =>
             {
                 switch (state)
                 {
@@ -287,11 +287,11 @@ namespace Unigram.Controls.Gallery
             });
         }
 
-        private async void OnVolumeChanged(MediaPlayer sender, object args)
+        private void OnVolumeChanged(MediaPlayer sender, object args)
         {
             SettingsService.Current.VolumeLevel = sender.Volume;
 
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, () =>
             {
                 //Transport.Volume = sender.Volume;
             });
@@ -452,7 +452,7 @@ namespace Unigram.Controls.Gallery
                         : Stretch.Uniform;
                 }
 
-                var anim = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                var anim = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
                 anim.InsertKeyFrame(0, sender.IsFullScreenMode ? 0 : 1);
                 anim.InsertKeyFrame(1, sender.IsFullScreenMode ? 1 : 0);
 
@@ -695,7 +695,7 @@ namespace Unigram.Controls.Gallery
                     _mediaPlayerElement.SetMediaPlayer(_mediaPlayer);
                 }
 
-                var dpi = WindowContext.Current.RasterizationScale;
+                var dpi = XamlRoot.RasterizationScale;
                 _mediaPlayer.SetSurfaceSize(new Size(
                     content.Presenter.ActualWidth * dpi,
                     content.Presenter.ActualHeight * dpi));
@@ -862,9 +862,9 @@ namespace Unigram.Controls.Gallery
                 return;
             }
 
-            var alt = Window.Current.CoreWindow.IsKeyDown(Windows.System.VirtualKey.Menu);
-            var ctrl = Window.Current.CoreWindow.IsKeyDown(Windows.System.VirtualKey.Control);
-            var shift = Window.Current.CoreWindow.IsKeyDown(Windows.System.VirtualKey.Shift);
+            var alt = WindowContext.IsKeyDown(Windows.System.VirtualKey.Menu);
+            var ctrl = WindowContext.IsKeyDown(Windows.System.VirtualKey.Control);
+            var shift = WindowContext.IsKeyDown(Windows.System.VirtualKey.Shift);
 
             var keyCode = (int)args.VirtualKey;
 

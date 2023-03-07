@@ -4,6 +4,10 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Animation;
+using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -14,10 +18,6 @@ using Unigram.Services.ViewService;
 using Unigram.Views;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
-using Windows.System;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media.Animation;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Navigation.Services
 {
@@ -65,6 +65,7 @@ namespace Unigram.Navigation.Services
         Task SuspendingAsync();
         void Resuming();
 
+        XamlRoot XamlRoot => Frame.XamlRoot;
         Frame Frame { get; }
         FrameFacade FrameFacade { get; }
 
@@ -180,9 +181,10 @@ namespace Unigram.Navigation.Services
 
         public NavigationService(Frame frame, int session, string id)
         {
-            IsInMainView = CoreApplication.MainView == CoreApplication.GetCurrentView();
+#warning TODO:
+            IsInMainView = true; //CoreApplication.MainView == CoreApplication.GetCurrentView();
             SessionId = session;
-            Dispatcher = new DispatcherContext(DispatcherQueue.GetForCurrentThread());
+            Dispatcher = new DispatcherContext(frame.DispatcherQueue);
             FrameFacade = new FrameFacade(this, frame, id);
             FrameFacade.Navigating += async (s, e) =>
             {
@@ -363,7 +365,7 @@ namespace Unigram.Navigation.Services
                     popup.Closed += OnClosed;
                 }
 
-                return popup.ShowQueuedAsync();
+                return popup.ShowQueuedAsync(Frame.XamlRoot);
             }
 
             return Task.FromResult(ContentDialogResult.None);

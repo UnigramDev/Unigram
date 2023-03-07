@@ -4,13 +4,13 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Hosting;
 using System;
 using System.Numerics;
 using System.Text.RegularExpressions;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Hosting;
 
 namespace Unigram.Controls
 {
@@ -108,13 +108,13 @@ namespace Unigram.Controls
                     {
                         var visual = ElementCompositionPreview.GetElementVisual(prevArr[i]);
 
-                        var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                        var offset = visual.Compositor.CreateVector3KeyFrameAnimation();
                         offset.InsertKeyFrame(0, new Vector3(0, 0, 0));
                         offset.InsertKeyFrame(1, new Vector3(0, direction > 0 ? -8 : 8, 0));
 
                         visual.StartAnimation("Translation", offset);
 
-                        var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                        var opacity = visual.Compositor.CreateScalarKeyFrameAnimation();
                         opacity.InsertKeyFrame(0, 1);
                         opacity.InsertKeyFrame(1, 0);
 
@@ -128,13 +128,13 @@ namespace Unigram.Controls
 
                     var visual = ElementCompositionPreview.GetElementVisual(nextArr[i]);
 
-                    var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                    var offset = visual.Compositor.CreateVector3KeyFrameAnimation();
                     offset.InsertKeyFrame(0, new Vector3(0, direction > 0 ? 8 : -8, 0));
                     offset.InsertKeyFrame(1, new Vector3(0, 0, 0));
 
                     visual.StartAnimation("Translation", offset);
 
-                    var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                    var opacity = visual.Compositor.CreateScalarKeyFrameAnimation();
                     opacity.InsertKeyFrame(0, 0);
                     opacity.InsertKeyFrame(1, 1);
 

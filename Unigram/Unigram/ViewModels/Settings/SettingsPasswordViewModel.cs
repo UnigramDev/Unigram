@@ -4,6 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
@@ -12,8 +14,6 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Navigation.Services;
 using Unigram.Services;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
@@ -112,7 +112,7 @@ namespace Unigram.ViewModels.Settings
 
             if (string.IsNullOrEmpty(_password))
             {
-                await MessagePopup.ShowAsync("Please enter your password.");
+                await MessagePopup.ShowAsync(XamlRoot, "Please enter your password.");
                 return;
             }
 
@@ -198,7 +198,7 @@ namespace Unigram.ViewModels.Settings
                 message += Environment.NewLine + Environment.NewLine + Strings.Resources.TurnPasswordOffPassport;
             }
 
-            var confirm = await MessagePopup.ShowAsync(message, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(XamlRoot, message, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -276,7 +276,7 @@ namespace Unigram.ViewModels.Settings
                 if (!string.Equals(password, passwordRetype))
                 {
                     // Error
-                    await MessagePopup.ShowAsync(Strings.Resources.PasswordDoNotMatch, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.PasswordDoNotMatch, Strings.Resources.AppName, Strings.Resources.OK);
                     return;
                 }
 
@@ -285,7 +285,7 @@ namespace Unigram.ViewModels.Settings
                     emailValid = false;
                     emailAddress = string.Empty;
 
-                    var confirm = await MessagePopup.ShowAsync(Strings.Resources.YourEmailSkipWarningText, Strings.Resources.YourEmailSkipWarning, Strings.Resources.YourEmailSkip, Strings.Resources.Cancel);
+                    var confirm = await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.YourEmailSkipWarningText, Strings.Resources.YourEmailSkipWarning, Strings.Resources.YourEmailSkip, Strings.Resources.Cancel);
                     if (confirm != ContentDialogResult.Primary)
                     {
                         return;

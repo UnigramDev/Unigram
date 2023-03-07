@@ -4,13 +4,14 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.Numerics;
-using Windows.UI.Composition;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media;
+using Unigram.Navigation;
 
 namespace Unigram.Controls
 {
@@ -27,12 +28,14 @@ namespace Unigram.Controls
         {
             DefaultStyleKey = typeof(ProgressBarRing);
 
-            var ellipse = Window.Current.Compositor.CreateEllipseGeometry();
+            var compositor = BootStrapper.Current.Compositor;
+
+            var ellipse = compositor.CreateEllipseGeometry();
             ellipse.Radius = new Vector2((float)Radius);
             ellipse.Center = new Vector2((float)Center);
             ellipse.TrimEnd = 0f;
 
-            var shape = Window.Current.Compositor.CreateSpriteShape(ellipse);
+            var shape = compositor.CreateSpriteShape(ellipse);
             shape.CenterPoint = new Vector2((float)Center);
             shape.StrokeThickness = 2;
             shape.StrokeStartCap = CompositionStrokeCap.Round;
@@ -40,26 +43,26 @@ namespace Unigram.Controls
 
             if (Foreground is SolidColorBrush brush)
             {
-                shape.StrokeBrush = Window.Current.Compositor.CreateColorBrush(brush.Color);
+                shape.StrokeBrush = compositor.CreateColorBrush(brush.Color);
             }
 
-            var visual = Window.Current.Compositor.CreateShapeVisual();
+            var visual = compositor.CreateShapeVisual();
             visual.Shapes.Add(shape);
             visual.Size = new Vector2((float)Center * 2);
             visual.CenterPoint = new Vector3((float)Center);
 
-            var trimStart = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var trimStart = compositor.CreateScalarKeyFrameAnimation();
             trimStart.Target = nameof(CompositionGeometry.TrimStart);
-            trimStart.InsertExpressionKeyFrame(1.0f, "this.FinalValue", Window.Current.Compositor.CreateLinearEasingFunction());
+            trimStart.InsertExpressionKeyFrame(1.0f, "this.FinalValue", compositor.CreateLinearEasingFunction());
 
-            var trimEnd = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var trimEnd = compositor.CreateScalarKeyFrameAnimation();
             trimEnd.Target = nameof(CompositionGeometry.TrimEnd);
-            trimEnd.InsertExpressionKeyFrame(1.0f, "this.FinalValue", Window.Current.Compositor.CreateLinearEasingFunction());
+            trimEnd.InsertExpressionKeyFrame(1.0f, "this.FinalValue", compositor.CreateLinearEasingFunction());
 
-            var visibility = Window.Current.Compositor.CreateExpressionAnimation("target.TrimEnd > 0 && target.TrimEnd < 1");
+            var visibility = compositor.CreateExpressionAnimation("target.TrimEnd > 0 && target.TrimEnd < 1");
             visibility.SetReferenceParameter("target", ellipse);
 
-            var animations = Window.Current.Compositor.CreateImplicitAnimationCollection();
+            var animations = compositor.CreateImplicitAnimationCollection();
             animations[nameof(CompositionGeometry.TrimStart)] = trimStart;
             animations[nameof(CompositionGeometry.TrimEnd)] = trimEnd;
 
@@ -71,8 +74,8 @@ namespace Unigram.Controls
             _shape = shape;
             _ellipse = ellipse;
 
-            var easing = Window.Current.Compositor.CreateLinearEasingFunction();
-            var forever = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var easing = compositor.CreateLinearEasingFunction();
+            var forever = compositor.CreateScalarKeyFrameAnimation();
             forever.InsertKeyFrame(0, 240, easing);
             forever.InsertKeyFrame(1, 599, easing);
             forever.IterationBehavior = AnimationIterationBehavior.Forever;
@@ -114,7 +117,7 @@ namespace Unigram.Controls
         {
             if (_shape != null && Foreground is SolidColorBrush brush)
             {
-                _shape.StrokeBrush = Window.Current.Compositor.CreateColorBrush(brush.Color);
+                _shape.StrokeBrush = BootStrapper.Current.Compositor.CreateColorBrush(brush.Color);
             }
         }
 
@@ -178,9 +181,9 @@ namespace Unigram.Controls
                 }
                 else
                 {
-                    var linear = Window.Current.Compositor.CreateLinearEasingFunction();
-                    var trimStart = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-                    var trimEnd = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                    var linear = BootStrapper.Current.Compositor.CreateLinearEasingFunction();
+                    var trimStart = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
+                    var trimEnd = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
 
                     if (newValue < 1)
                     {
@@ -201,7 +204,7 @@ namespace Unigram.Controls
                         trimStart.InsertKeyFrame(1, ShrinkOut ? 1 : 0, linear);
                         trimEnd.InsertKeyFrame(1, 1, linear);
 
-                        var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+                        var batch = BootStrapper.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
                         batch.Completed += (s, args) =>
                         {
                             if (_foreverAnimation != null && _spinning)

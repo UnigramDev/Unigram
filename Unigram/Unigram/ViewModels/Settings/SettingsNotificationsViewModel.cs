@@ -4,6 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,8 +18,6 @@ using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views;
 using Unigram.Views.Settings;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
@@ -105,7 +105,7 @@ namespace Unigram.ViewModels.Settings
             get => Scopes.All(x => !x.DisablePinnedMessage);
             set => SetPinnedEnabled(value);
         }
-        
+
         private async void SetPinnedEnabled(bool value)
         {
             foreach (var scope in Scopes)
@@ -167,7 +167,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand ResetCommand { get; }
         private async void ResetExecute()
         {
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.ResetNotificationsAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.ResetNotificationsAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 foreach (var scope in Scopes)

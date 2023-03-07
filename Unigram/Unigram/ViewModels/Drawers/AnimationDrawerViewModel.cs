@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,9 +15,6 @@ using Unigram.Common;
 using Unigram.Services;
 using Unigram.Views;
 using Windows.Foundation;
-using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Data;
 
 namespace Unigram.ViewModels.Drawers
 {
@@ -46,24 +44,16 @@ namespace Unigram.ViewModels.Drawers
             Aggregator.Subscribe<UpdateSavedAnimations>(this, Handle);
         }
 
-        private static readonly Dictionary<int, Dictionary<int, AnimationDrawerViewModel>> _windowContext = new Dictionary<int, Dictionary<int, AnimationDrawerViewModel>>();
+        private static readonly Dictionary<int, AnimationDrawerViewModel> _windowContext = new();
         public static AnimationDrawerViewModel GetForCurrentView(int sessionId)
         {
-            var id = ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow);
-            if (_windowContext.TryGetValue(id, out Dictionary<int, AnimationDrawerViewModel> reference))
+            if (_windowContext.TryGetValue(sessionId, out AnimationDrawerViewModel value))
             {
-                if (reference.TryGetValue(sessionId, out AnimationDrawerViewModel value))
-                {
-                    return value;
-                }
-            }
-            else
-            {
-                _windowContext[id] = new Dictionary<int, AnimationDrawerViewModel>();
+                return value;
             }
 
             var context = TLContainer.Current.Resolve<AnimationDrawerViewModel>();
-            _windowContext[id][sessionId] = context;
+            _windowContext[sessionId] = context;
 
             return context;
         }

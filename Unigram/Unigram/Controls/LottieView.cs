@@ -5,7 +5,11 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Canvas.UI.Xaml;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Media.Imaging;
 using RLottie;
 using System;
 using System.Buffers;
@@ -15,14 +19,11 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using Unigram.Common;
-using Unigram.Navigation;
 using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.Graphics;
 using Windows.Storage;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media.Imaging;
+using Windows.UI;
 
 namespace Unigram.Controls
 {
@@ -452,24 +453,25 @@ namespace Unigram.Controls
 
         private void OnFrameSizeChanged(Size frameSize, DecodePixelType decodeFrameType)
         {
-            if (decodeFrameType == DecodePixelType.Logical)
-            {
-                // TODO: subscribe for DPI changed event
-                var dpi = WindowContext.Current.RasterizationScale;
+#warning TODO: missing code
+            //if (decodeFrameType == DecodePixelType.Logical)
+            //{
+            //    // TODO: subscribe for DPI changed event
+            //    var dpi = XamlRoot.RasterizationScale;
 
-                _decodeFrameType = decodeFrameType;
-                _logicalSize = new SizeInt32
-                {
-                    Width = (int)frameSize.Width,
-                    Height = (int)frameSize.Height
-                };
-                _frameSize = new SizeInt32
-                {
-                    Width = (int)(frameSize.Width * dpi),
-                    Height = (int)(frameSize.Height * dpi)
-                };
-            }
-            else
+            //    _decodeFrameType = decodeFrameType;
+            //    _logicalSize = new SizeInt32
+            //    {
+            //        Width = (int)frameSize.Width,
+            //        Height = (int)frameSize.Height
+            //    };
+            //    _frameSize = new SizeInt32
+            //    {
+            //        Width = (int)(frameSize.Width * dpi),
+            //        Height = (int)(frameSize.Height * dpi)
+            //    };
+            //}
+            //else
             {
                 _decodeFrameType = decodeFrameType;
                 _logicalSize = new SizeInt32

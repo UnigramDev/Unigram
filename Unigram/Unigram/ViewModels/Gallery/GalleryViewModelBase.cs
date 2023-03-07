@@ -186,7 +186,7 @@ namespace Unigram.ViewModels.Gallery
                     return;
                 }
 
-                await StickersPopup.ShowAsync(new InputFileId(file.Id));
+                await StickersPopup.ShowAsync(XamlRoot, new InputFileId(file.Id));
             }
         }
 

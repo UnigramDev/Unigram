@@ -4,10 +4,9 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System;
+using Microsoft.UI.Xaml;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Navigation;
 
 namespace Unigram.Services
 {
@@ -301,7 +300,7 @@ namespace Unigram.Services
         //    }
         //}
 
-        private static async void ShowPeerFloodAlert(IDispatcherContext fragment, int reason)
+        private static async void ShowPeerFloodAlert(XamlRoot xamlRoot, int reason)
         {
             var dialog = new MessagePopup();
             dialog.Title = Strings.Resources.AppName;
@@ -329,10 +328,10 @@ namespace Unigram.Services
                 //builder.setMessage((String)args[1]);
             }
 
-            await dialog.ShowQueuedAsync();
+            await dialog.ShowQueuedAsync(xamlRoot);
         }
 
-        public static void ShowSimpleToast(IDispatcherContext fragment, string text)
+        public static void ShowSimpleToast(XamlRoot xamlRoot, string text)
         {
             if (text == null)
             {
@@ -344,10 +343,10 @@ namespace Unigram.Services
             //toast.show();
             //return toast;
 
-            ShowSimpleAlert(text);
+            ShowSimpleAlert(xamlRoot, text);
         }
 
-        public static async void ShowSimpleAlert(string text)
+        public static async void ShowSimpleAlert(XamlRoot xamlRoot, string text)
         {
             if (text == null)
             {
@@ -359,7 +358,7 @@ namespace Unigram.Services
             dialog.Message = text;
             dialog.PrimaryButtonText = Strings.Resources.OK;
 
-            await dialog.ShowQueuedAsync();
+            await dialog.ShowQueuedAsync(xamlRoot);
         }
 
         private static string GetFloodWaitString(string error)
@@ -368,17 +367,17 @@ namespace Unigram.Services
             return string.Format(Strings.Resources.FloodWaitTime, Locale.FormatCallDuration(time));
         }
 
-        public static void ShowFloodWaitAlert(string error)
+        public static void ShowFloodWaitAlert(XamlRoot xamlRoot, string error)
         {
             if (error == null || !error.StartsWith("FLOOD_WAIT"))
             {
                 return;
             }
 
-            ShowSimpleAlert(GetFloodWaitString(error));
+            ShowSimpleAlert(xamlRoot, GetFloodWaitString(error));
         }
 
-        public static async void ShowAddUserAlert(IDispatcherContext fragment, string error, bool channel)
+        public static async void ShowAddUserAlert(XamlRoot xamlRoot, string error, bool channel)
         {
             if (error == null)
             {
@@ -443,7 +442,7 @@ namespace Unigram.Services
                     break;
             }
 
-            await dialog.ShowQueuedAsync();
+            await dialog.ShowQueuedAsync(xamlRoot);
         }
     }
 }

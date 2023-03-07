@@ -4,6 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,8 +18,6 @@ using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views.Popups;
 using Unigram.Views.Settings.Popups;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
@@ -153,7 +153,7 @@ namespace Unigram.ViewModels.Settings
             popup.Text = session.DeviceModel;
             popup.MaxLength = 32;
 
-            var confirm = await popup.ShowQueuedAsync();
+            var confirm = await popup.ShowQueuedAsync(XamlRoot);
             if (confirm == ContentDialogResult.Primary && popup.Text != Settings.Diagnostics.DeviceName)
             {
                 session.DeviceModel = popup.Text;
@@ -166,7 +166,7 @@ namespace Unigram.ViewModels.Settings
 
         public async void TerminateOthers()
         {
-            var terminate = await MessagePopup.ShowAsync(Strings.Resources.AreYouSureSessions, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var terminate = await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.AreYouSureSessions, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (terminate == ContentDialogResult.Primary)
             {
                 var response = await ClientService.SendAsync(new TerminateAllOtherSessions());
@@ -191,7 +191,7 @@ namespace Unigram.ViewModels.Settings
 
             var dialog = new SettingsSessionPopup(session);
 
-            var confirm = await dialog.ShowQueuedAsync();
+            var confirm = await dialog.ShowQueuedAsync(XamlRoot);
             if (confirm != ContentDialogResult.Primary)
             {
                 if (session.CanAcceptCalls != dialog.CanAcceptCalls && confirm == ContentDialogResult.Secondary)
@@ -209,7 +209,7 @@ namespace Unigram.ViewModels.Settings
                 return;
             }
 
-            var terminate = await MessagePopup.ShowAsync(Strings.Resources.TerminateSessionQuestion, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var terminate = await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.TerminateSessionQuestion, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (terminate == ContentDialogResult.Primary)
             {
                 var response = await ClientService.SendAsync(new TerminateSession(session.Id));

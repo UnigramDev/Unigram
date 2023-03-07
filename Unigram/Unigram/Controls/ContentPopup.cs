@@ -4,23 +4,19 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Input;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation.Peers;
+using Microsoft.UI.Xaml.Automation.Provider;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Shapes;
 using System;
-using System.Text;
 using System.Threading.Tasks;
 using Unigram.Common;
-using Unigram.Navigation;
-using Unigram.Services;
 using Unigram.Views.Host;
-using Windows.UI.Core;
-using Windows.UI.Input;
 using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation.Peers;
-using Windows.UI.Xaml.Automation.Provider;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Controls
 {
@@ -35,17 +31,6 @@ namespace Unigram.Controls
             DefaultStyleKey = typeof(ContentPopup);
             DefaultButton = ContentDialogButton.Primary;
 
-            if (Window.Current.Content is FrameworkElement element)
-            {
-                var app = BootStrapper.Current.RequestedTheme == ApplicationTheme.Dark ? ElementTheme.Dark : ElementTheme.Light;
-                var frame = element.RequestedTheme;
-
-                if (app != frame)
-                {
-                    RequestedTheme = SettingsService.Current.Appearance.GetCalculatedElementTheme();
-                }
-            }
-
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
 
@@ -55,7 +40,7 @@ namespace Unigram.Controls
 
         private void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
         {
-            if (Window.Current.Content is RootPage root)
+            if (XamlRoot.Content is RootPage root)
             {
                 root.PopupOpened();
             }
@@ -63,7 +48,7 @@ namespace Unigram.Controls
 
         private void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
         {
-            if (Window.Current.Content is RootPage root)
+            if (XamlRoot.Content is RootPage root)
             {
                 root.PopupClosed();
             }
@@ -71,24 +56,24 @@ namespace Unigram.Controls
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            ApplicationView.GetForCurrentView().VisibleBoundsChanged += ApplicationView_VisibleBoundsChanged;
+#warning TODO
+            //ApplicationView.GetForCurrentView().VisibleBoundsChanged += ApplicationView_VisibleBoundsChanged;
 
-            Window.Current.CoreWindow.CharacterReceived += OnCharacterReceived;
+            CharacterReceived += OnCharacterReceived;
 
-            ApplicationView_VisibleBoundsChanged(ApplicationView.GetForCurrentView());
+            //ApplicationView_VisibleBoundsChanged(ApplicationView.GetForCurrentView());
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            ApplicationView.GetForCurrentView().VisibleBoundsChanged -= ApplicationView_VisibleBoundsChanged;
+            //ApplicationView.GetForCurrentView().VisibleBoundsChanged -= ApplicationView_VisibleBoundsChanged;
 
-            Window.Current.CoreWindow.CharacterReceived -= OnCharacterReceived;
+            CharacterReceived -= OnCharacterReceived;
         }
 
-        private void OnCharacterReceived(CoreWindow sender, CharacterReceivedEventArgs args)
+        private void OnCharacterReceived(UIElement sender, CharacterReceivedRoutedEventArgs args)
         {
-            var character = Encoding.UTF32.GetString(BitConverter.GetBytes(args.KeyCode));
-            if (character != "\r" || DefaultButton == ContentDialogButton.Primary)
+            if (args.Character != '\r' || DefaultButton == ContentDialogButton.Primary)
             {
                 return;
             }
@@ -170,9 +155,9 @@ namespace Unigram.Controls
             }
         }
 
-        public async Task<ContentDialogResult> OpenAsync()
+        public async Task<ContentDialogResult> OpenAsync(XamlRoot xamlRoot)
         {
-            await this.ShowQueuedAsync();
+            await this.ShowQueuedAsync(xamlRoot);
             return _result;
         }
 

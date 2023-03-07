@@ -4,15 +4,15 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using System.Threading.Tasks;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Native;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Controls
 {
@@ -81,7 +81,7 @@ namespace Unigram.Controls
             _animation = null;
         }
 
-        protected override WriteableBitmap CreateBitmap(float dpi)
+        protected override WriteableBitmap CreateBitmap(double dpi)
         {
             bool needsCreate = _bitmap == null;
             needsCreate |= _bitmap?.PixelWidth != _animation?.PixelWidth || _bitmap?.PixelHeight != _animation?.PixelHeight;

@@ -6,13 +6,13 @@
 //
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
-using Windows.System;
+using Microsoft.UI.Composition;
+using Microsoft.UI.Dispatching;
+using Microsoft.UI.Xaml.Media;
+using Unigram.Navigation;
 using Windows.System.Power;
 using Windows.UI;
-using Windows.UI.Composition;
 using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Media
 {
@@ -30,7 +30,7 @@ namespace Unigram.Controls.Media
 
         public SolidGaussianBrush()
         {
-            m_dispatcher = DispatcherQueue.GetForCurrentThread();
+            m_dispatcher = DispatcherQueue;
 
             try
             {
@@ -42,7 +42,7 @@ namespace Unigram.Controls.Media
 
             }
 
-            m_compositionCapabilities = CompositionCapabilities.GetForCurrentView();
+            m_compositionCapabilities = new CompositionCapabilities();
             m_compositionCapabilities.Changed += CompositionCapabilities_Changed;
 
             m_uiSettings = new UISettings();
@@ -115,7 +115,7 @@ namespace Unigram.Controls.Media
             {
                 if (m_isDisabledByPolicy)
                 {
-                    m_brush = Window.Current.Compositor.CreateColorBrush(FallbackColor);
+                    m_brush = BootStrapper.Current.Compositor.CreateColorBrush(FallbackColor);
                     CompositionBrush = m_brush;
                 }
                 else
@@ -147,8 +147,8 @@ namespace Unigram.Controls.Media
                     compositeEffect.Sources.Add(saturationEffect);
                     compositeEffect.Sources.Add(tintColorEffect);
 
-                    var effectFactory = Window.Current.Compositor.CreateEffectFactory(compositeEffect);
-                    var backdrop = Window.Current.Compositor.CreateBackdropBrush();
+                    var effectFactory = BootStrapper.Current.Compositor.CreateEffectFactory(compositeEffect);
+                    var backdrop = BootStrapper.Current.Compositor.CreateBackdropBrush();
 
                     var brush = effectFactory.CreateBrush();
                     brush.SetSourceParameter("Backdrop", backdrop);

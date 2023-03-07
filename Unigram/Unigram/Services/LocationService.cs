@@ -4,6 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,7 +15,6 @@ using Windows.ApplicationModel.ExtendedExecution;
 using Windows.Devices.Enumeration;
 using Windows.Devices.Geolocation;
 using Windows.System;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Services
 {
@@ -35,7 +36,7 @@ namespace Unigram.Services
         Task<Geolocator> StartTrackingAsync();
         void StopTracking();
 
-        Task<Location> GetPositionAsync();
+        Task<Location> GetPositionAsync(XamlRoot xamlRoot);
 
         Task<GetVenuesResult> GetVenuesAsync(long chatId, double latitude, double longitude, string query = null, string offset = null);
     }
@@ -100,11 +101,11 @@ namespace Unigram.Services
             StopTracking();
         }
 
-        public async Task<Location> GetPositionAsync()
+        public async Task<Location> GetPositionAsync(XamlRoot xamlRoot)
         {
             try
             {
-                var accessStatus = await CheckDeviceAccessAsync();
+                var accessStatus = await CheckDeviceAccessAsync(xamlRoot);
                 if (accessStatus)
                 {
                     var geolocator = new Geolocator { DesiredAccuracy = PositionAccuracy.Default };
@@ -121,7 +122,7 @@ namespace Unigram.Services
             return null;
         }
 
-        public async Task<bool> CheckDeviceAccessAsync()
+        public async Task<bool> CheckDeviceAccessAsync(XamlRoot xamlRoot)
         {
             var access = DeviceAccessInformation.CreateFromDeviceClass(DeviceClass.Location);
             if (access.CurrentStatus == DeviceAccessStatus.Unspecified)
@@ -138,7 +139,7 @@ namespace Unigram.Services
             {
                 var message = Strings.Resources.PermissionNoLocationPosition;
 
-                var confirm = await MessagePopup.ShowAsync(message, Strings.Resources.AppName, Strings.Resources.PermissionOpenSettings, Strings.Resources.OK);
+                var confirm = await MessagePopup.ShowAsync(xamlRoot, message, Strings.Resources.AppName, Strings.Resources.PermissionOpenSettings, Strings.Resources.OK);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     await Launcher.LaunchUriAsync(new Uri("ms-settings:appsfeatures-app"));

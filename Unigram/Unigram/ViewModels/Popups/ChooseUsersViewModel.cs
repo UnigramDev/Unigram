@@ -12,7 +12,7 @@ using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Services;
 using Windows.Foundation;
-using Windows.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Data;
 
 namespace Unigram.ViewModels.Popups
 {

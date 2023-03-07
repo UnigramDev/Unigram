@@ -4,6 +4,13 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI;
+using Microsoft.UI.Text;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -24,14 +31,7 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Storage.Streams;
 using Windows.System;
-using Windows.UI;
 using Windows.UI.Core;
-using Windows.UI.Text;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls
 {
@@ -135,27 +135,25 @@ namespace Unigram.Controls
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            Window.Current.CoreWindow.CharacterReceived += OnCharacterReceived;
+            CharacterReceived += OnCharacterReceived;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            Window.Current.CoreWindow.CharacterReceived -= OnCharacterReceived;
+            CharacterReceived -= OnCharacterReceived;
         }
 
         public bool IsReplaceEmojiEnabled { get; set; } = true;
 
-        private void OnCharacterReceived(CoreWindow sender, CharacterReceivedEventArgs args)
+        private void OnCharacterReceived(UIElement sender, CharacterReceivedRoutedEventArgs args)
         {
             if (FocusState == FocusState.Unfocused || !IsReplaceEmojiEnabled || string.Equals(Document.Selection.CharacterFormat.Name, "Consolas", StringComparison.OrdinalIgnoreCase))
             {
                 return;
             }
 
-            var character = Encoding.UTF32.GetString(BitConverter.GetBytes(args.KeyCode));
-
             //var matches = Emoticon.Data.Keys.Where(x => x.EndsWith(character)).ToArray();
-            if (Emoticon.Matches.TryGetValue(character[0], out string[] matches))
+            if (Emoticon.Matches.TryGetValue(args.Character, out string[] matches))
             {
                 var length = matches.Max(x => x.Length);
                 var start = Math.Max(Document.Selection.EndPosition - length, 0);
@@ -208,39 +206,40 @@ namespace Unigram.Controls
             }
             else if (e.Key == VirtualKey.Enter)
             {
-                var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
-                var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
+                var ctrl = WindowContext.IsKeyDown(VirtualKey.Control);
+                var shift = WindowContext.IsKeyDown(VirtualKey.Shift);
 
                 var send = SettingsService.Current.IsSendByEnterEnabled
-                    ? !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down)
-                    : ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
+                    ? !ctrl && !shift
+                    : ctrl && !shift;
 
                 AcceptsReturn = !send;
                 e.Handled = send;
 
                 // If handwriting panel is open, the app would crash on send.
                 // Still, someone should fill a ticket to Microsoft about this.
-                if (send && HandwritingView.IsOpen)
-                {
-                    void handler(object s, RoutedEventArgs args)
-                    {
-                        OnAccept();
-                        HandwritingView.Unloaded -= handler;
-                    }
+                //if (send && HandwritingView.IsOpen)
+                //{
+                //    void handler(object s, RoutedEventArgs args)
+                //    {
+                //        OnAccept();
+                //        HandwritingView.Unloaded -= handler;
+                //    }
 
-                    HandwritingView.Unloaded += handler;
-                    HandwritingView.TryClose();
-                }
-                else if (send)
+                //    HandwritingView.Unloaded += handler;
+                //    HandwritingView.TryClose();
+                //}
+                //else
+                if (send)
                 {
                     OnAccept();
                 }
             }
             else if (e.Key == VirtualKey.Z)
             {
-                var alt = Window.Current.CoreWindow.IsKeyDown(VirtualKey.Menu);
-                var ctrl = Window.Current.CoreWindow.IsKeyDown(VirtualKey.Control);
-                var shift = Window.Current.CoreWindow.IsKeyDown(VirtualKey.Shift);
+                var alt = WindowContext.IsKeyDown(VirtualKey.Menu);
+                var ctrl = WindowContext.IsKeyDown(VirtualKey.Control);
+                var shift = WindowContext.IsKeyDown(VirtualKey.Shift);
 
                 if (ctrl && shift && !alt)
                 {

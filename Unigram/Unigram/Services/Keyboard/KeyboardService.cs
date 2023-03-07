@@ -7,8 +7,6 @@
 using System;
 using System.Collections.Generic;
 using Unigram.Logs;
-using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
 
 namespace Unigram.Services.Keyboard
 {
@@ -19,7 +17,7 @@ namespace Unigram.Services.Keyboard
         private static readonly Dictionary<int, KeyboardService> _windowContext = new Dictionary<int, KeyboardService>();
         public static KeyboardService GetForCurrentView()
         {
-            var id = ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow);
+            var id = 0; // ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow);
             if (_windowContext.TryGetValue(id, out KeyboardService value))
             {
                 return value;

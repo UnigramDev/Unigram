@@ -4,6 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -11,7 +13,6 @@ using Unigram.Controls;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Users
 {
@@ -150,7 +151,7 @@ namespace Unigram.ViewModels.Users
 
         public async void SetPhoto()
         {
-            var success = await _profilePhotoService.SetPhotoAsync(_userId, isPersonal: false);
+            var success = await _profilePhotoService.SetPhotoAsync(NavigationService, _userId, isPersonal: false);
             if (success)
             {
                 NavigationService.NavigateToChat(_userId);
@@ -168,7 +169,7 @@ namespace Unigram.ViewModels.Users
 
         public async void SetPersonalPhoto()
         {
-            await _profilePhotoService.SetPhotoAsync(_userId, isPersonal: true);
+            await _profilePhotoService.SetPhotoAsync(NavigationService, _userId, isPersonal: true);
         }
 
         public async void CreatePersonalPhoto()
@@ -180,8 +181,8 @@ namespace Unigram.ViewModels.Users
         {
             if (ClientService.TryGetUser(_userId, out User user))
             {
-                var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.ResetToOriginalPhotoMessage, user.FirstName), Strings.Resources.ResetToOriginalPhotoTitle, Strings.Resources.Reset, Strings.Resources.Cancel);
-                if (confirm == Windows.UI.Xaml.Controls.ContentDialogResult.Primary)
+                var confirm = await MessagePopup.ShowAsync(XamlRoot, string.Format(Strings.Resources.ResetToOriginalPhotoMessage, user.FirstName), Strings.Resources.ResetToOriginalPhotoTitle, Strings.Resources.Reset, Strings.Resources.Cancel);
+                if (confirm == ContentDialogResult.Primary)
                 {
                     ClientService.Send(new SetUserPersonalProfilePhoto(user.Id, null));
                 }

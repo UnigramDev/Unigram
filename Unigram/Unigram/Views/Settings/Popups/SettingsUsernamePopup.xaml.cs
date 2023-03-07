@@ -4,16 +4,15 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Navigation;
 using Unigram.ViewModels.Settings;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Unigram.Views.Settings.Popups
 {
@@ -112,13 +111,9 @@ namespace Unigram.Views.Settings.Popups
                 ViewModel.ToggleUsername(username);
             };
 
-            if (Window.Current.Content is FrameworkElement element)
+            if (XamlRoot.Content is FrameworkElement element)
             {
                 element.Resources["TeachingTip"] = popup;
-            }
-            else
-            {
-                container.Resources["TeachingTip"] = popup;
             }
 
             popup.IsOpen = true;

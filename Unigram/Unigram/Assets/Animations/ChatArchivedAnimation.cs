@@ -5,11 +5,11 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.Graphics.Canvas.Geometry;
+using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Numerics;
 using Windows.UI;
-using Windows.UI.Composition;
 
 namespace Unigram.Assets.Animations
 {

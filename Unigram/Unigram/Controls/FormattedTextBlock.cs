@@ -4,6 +4,13 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI;
+using Microsoft.UI.Text;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Markup;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,14 +19,7 @@ using Unigram.Common;
 using Unigram.Controls.Messages;
 using Unigram.Services;
 using Windows.Foundation;
-using Windows.UI;
 using Windows.UI.Text;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Core.Direct;
-using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Markup;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls
 {
@@ -232,9 +232,8 @@ namespace Unigram.Controls
             var shift = 1;
             var close = false;
 
-            var direct = XamlDirect.GetDefault();
-            var paragraph = direct.CreateInstance(XamlTypeIndex.Paragraph);
-            var inlines = direct.GetXamlDirectObjectProperty(paragraph, XamlPropertyIndex.Paragraph_Inlines);
+            var paragraph = new Paragraph();
+            var inlines = paragraph.Inlines;
 
             var emojis = new HashSet<long>();
 
@@ -242,7 +241,7 @@ namespace Unigram.Controls
             {
                 if (entity.Offset > previous)
                 {
-                    direct.AddToCollection(inlines, CreateDirectRun(text.Substring(previous, entity.Offset - previous), fontSize: fontSize));
+                    inlines.Add(CreateDirectRun(text.Substring(previous, entity.Offset - previous), fontSize: fontSize));
 
                     // Run
                     shift++;
@@ -269,7 +268,7 @@ namespace Unigram.Controls
                         hyperlink.UnderlineStyle = UnderlineStyle.None;
 
                         hyperlink.Inlines.Add(CreateRun(data, fontFamily: new FontFamily("Consolas"), fontSize: fontSize));
-                        direct.AddToCollection(inlines, direct.GetXamlDirectObject(hyperlink));
+                        inlines.Add(hyperlink);
 
                         // Hyperlink
                         shift++;
@@ -281,7 +280,7 @@ namespace Unigram.Controls
                     }
                     else
                     {
-                        direct.AddToCollection(inlines, CreateDirectRun(data, fontFamily: new FontFamily("Consolas"), fontSize: fontSize));
+                        inlines.Add(CreateDirectRun(data, fontFamily: new FontFamily("Consolas"), fontSize: fontSize));
                         preformatted = entity.Type is TextEntityTypePre or TextEntityTypePreCode;
 
                         // Run
@@ -305,10 +304,8 @@ namespace Unigram.Controls
                         spoiler ??= new TextHighlighter();
                         spoiler.Ranges.Add(new TextRange { StartIndex = entity.Offset, Length = entity.Length });
 
-                        var temp = direct.GetXamlDirectObject(hyperlink);
-
-                        direct.AddToCollection(inlines, temp);
-                        local = direct.GetXamlDirectObjectProperty(temp, XamlPropertyIndex.Span_Inlines);
+                        inlines.Add(hyperlink);
+                        local = hyperlink.Inlines;
 
                         // Hyperlink
                         shift++;
@@ -338,10 +335,8 @@ namespace Unigram.Controls
                             hyperlink.UnderlineStyle = HyperlinkStyle;
                             hyperlink.FontWeight = HyperlinkFontWeight;
 
-                            var temp = direct.GetXamlDirectObject(hyperlink);
-
-                            direct.AddToCollection(inlines, temp);
-                            local = direct.GetXamlDirectObjectProperty(temp, XamlPropertyIndex.Span_Inlines);
+                            inlines.Add(hyperlink);
+                            local = hyperlink.Inlines;
                         }
                         else
                         {
@@ -366,10 +361,8 @@ namespace Unigram.Controls
                                 MessageHelper.SetEntityType(hyperlink, entity.Type);
                             }
 
-                            var temp = direct.GetXamlDirectObject(hyperlink);
-
-                            direct.AddToCollection(inlines, temp);
-                            local = direct.GetXamlDirectObjectProperty(temp, XamlPropertyIndex.Span_Inlines);
+                            inlines.Add(hyperlink);
+                            local = hyperlink.Inlines;
                         }
 
                         // Hyperlink
@@ -384,7 +377,7 @@ namespace Unigram.Controls
 
                         _positions.Add(new EmojiPosition { X = shift, CustomEmojiId = customEmoji.CustomEmojiId });
 
-                        direct.AddToCollection(inlines, CreateDirectRun(text.Substring(entity.Offset, entity.Length), fontFamily: App.Current.Resources["SpoilerFontFamily"] as FontFamily, fontSize: fontSize));
+                        inlines.Add(CreateDirectRun(text.Substring(entity.Offset, entity.Length), fontFamily: App.Current.Resources["SpoilerFontFamily"] as FontFamily, fontSize: fontSize));
                         emojis.Add(customEmoji.CustomEmojiId);
 
                         shift += entity.Length;
@@ -392,32 +385,26 @@ namespace Unigram.Controls
                     else
                     {
                         var run = CreateDirectRun(text.Substring(entity.Offset, entity.Length), fontSize: fontSize);
-                        var decorations = TextDecorations.None;
 
                         if (entity.HasFlag(Common.TextStyle.Underline))
                         {
-                            decorations |= TextDecorations.Underline;
+                            run.TextDecorations |= TextDecorations.Underline;
                         }
                         if (entity.HasFlag(Common.TextStyle.Strikethrough))
                         {
-                            decorations |= TextDecorations.Strikethrough;
-                        }
-
-                        if (decorations != TextDecorations.None)
-                        {
-                            direct.SetEnumProperty(run, XamlPropertyIndex.TextElement_TextDecorations, (uint)decorations);
+                            run.TextDecorations |= TextDecorations.Strikethrough;
                         }
 
                         if (entity.HasFlag(Common.TextStyle.Bold))
                         {
-                            direct.SetObjectProperty(run, XamlPropertyIndex.TextElement_FontWeight, FontWeights.SemiBold);
+                            run.FontWeight = FontWeights.SemiBold;
                         }
                         if (entity.HasFlag(Common.TextStyle.Italic))
                         {
-                            direct.SetEnumProperty(run, XamlPropertyIndex.TextElement_FontStyle, (uint)FontStyle.Italic);
+                            run.FontStyle = FontStyle.Italic;
                         }
 
-                        direct.AddToCollection(local, run);
+                        local.Add(run);
 
                         // Run
                         shift++;
@@ -440,7 +427,7 @@ namespace Unigram.Controls
 
             if (text.Length > previous)
             {
-                direct.AddToCollection(inlines, CreateDirectRun(text.Substring(previous), fontSize: fontSize));
+                inlines.Add(CreateDirectRun(text.Substring(previous), fontSize: fontSize));
             }
 
             if (spoiler?.Ranges.Count > 0)
@@ -457,11 +444,11 @@ namespace Unigram.Controls
 
             if (AutoFontSize)
             {
-                direct.SetDoubleProperty(paragraph, XamlPropertyIndex.TextElement_FontSize, Theme.Current.MessageFontSize);
+                paragraph.FontSize = Theme.Current.MessageFontSize;
             }
 
             TextBlock.Blocks.Clear();
-            TextBlock.Blocks.Add(direct.GetObject(paragraph) as Paragraph);
+            TextBlock.Blocks.Add(paragraph);
 
             if (AdjustLineEnding)
             {
@@ -560,49 +547,48 @@ namespace Unigram.Controls
             }
         }
 
+#warning TODO: remove
         private Run CreateRun(string text, FontWeight? fontWeight = null, FontFamily fontFamily = null, double fontSize = 0)
         {
-            var direct = XamlDirect.GetDefault();
-            var run = direct.CreateInstance(XamlTypeIndex.Run);
-            direct.SetStringProperty(run, XamlPropertyIndex.Run_Text, text);
+            var run = new Run();
+            run.Text = text;
 
             if (fontWeight != null)
             {
-                direct.SetObjectProperty(run, XamlPropertyIndex.TextElement_FontWeight, fontWeight.Value);
+                run.FontWeight = fontWeight.Value;
             }
 
             if (fontFamily != null)
             {
-                direct.SetObjectProperty(run, XamlPropertyIndex.TextElement_FontFamily, fontFamily);
+                run.FontFamily = fontFamily;
             }
 
             if (fontSize > 0)
             {
-                direct.SetDoubleProperty(run, XamlPropertyIndex.TextElement_FontSize, fontSize);
+                run.FontSize = fontSize;
             }
 
-            return direct.GetObject(run) as Run;
+            return run;
         }
 
-        private IXamlDirectObject CreateDirectRun(string text, FontWeight? fontWeight = null, FontFamily fontFamily = null, double fontSize = 0)
+        private Run CreateDirectRun(string text, FontWeight? fontWeight = null, FontFamily fontFamily = null, double fontSize = 0)
         {
-            var direct = XamlDirect.GetDefault();
-            var run = direct.CreateInstance(XamlTypeIndex.Run);
-            direct.SetStringProperty(run, XamlPropertyIndex.Run_Text, text);
+            var run = new Run();
+            run.Text = text;
 
             if (fontWeight != null)
             {
-                direct.SetObjectProperty(run, XamlPropertyIndex.TextElement_FontWeight, fontWeight.Value);
+                run.FontWeight = fontWeight.Value;
             }
 
             if (fontFamily != null)
             {
-                direct.SetObjectProperty(run, XamlPropertyIndex.TextElement_FontFamily, fontFamily);
+                run.FontFamily = fontFamily;
             }
 
             if (fontSize > 0)
             {
-                direct.SetDoubleProperty(run, XamlPropertyIndex.TextElement_FontSize, fontSize);
+                run.FontSize = fontSize;
             }
 
             return run;

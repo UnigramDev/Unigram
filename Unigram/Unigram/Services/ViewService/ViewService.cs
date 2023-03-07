@@ -4,9 +4,9 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
 using System;
 using System.Collections.Concurrent;
-using System.Threading;
 using System.Threading.Tasks;
 using Unigram.Logs;
 using Unigram.Navigation;
@@ -14,7 +14,6 @@ using Unigram.Views.Host;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
 
 namespace Unigram.Services.ViewService
 {
@@ -54,16 +53,16 @@ namespace Unigram.Services.ViewService
     {
         internal static void OnWindowCreated()
         {
-            var view = CoreApplication.GetCurrentView();
-            if (!view.IsMain && !view.IsHosted)
-            {
-                var control = ViewLifetimeControl.GetForCurrentView();
-                //This one time it should be made manually, as after Consolidate event fires the inner reference number should become zero
-                control.StartViewInUse();
-                //This is necessary to not make control.StartViewInUse()/control.StopViewInUse() manually on each and every async call. Facade will do it for you
-                SynchronizationContext.SetSynchronizationContext(new SecondaryViewSynchronizationContextDecorator(control,
-                    SynchronizationContext.Current));
-            }
+            //var view = CoreApplication.GetCurrentView();
+            //if (!view.IsMain && !view.IsHosted)
+            //{
+            //    var control = ViewLifetimeControl.GetForCurrentView();
+            //    //This one time it should be made manually, as after Consolidate event fires the inner reference number should become zero
+            //    control.StartViewInUse();
+            //    //This is necessary to not make control.StartViewInUse()/control.StopViewInUse() manually on each and every async call. Facade will do it for you
+            //    SynchronizationContext.SetSynchronizationContext(new SecondaryViewSynchronizationContextDecorator(control,
+            //        SynchronizationContext.Current));
+            //}
         }
 
         public bool IsSupported => true;
@@ -81,7 +80,7 @@ namespace Unigram.Services.ViewService
 
             if (IsSupported)
             {
-                var newView = CoreApplication.CreateNewView();
+                var newView = new Window();
                 var dispatcher = new DispatcherContext(newView.DispatcherQueue);
 
                 var newControl = await dispatcher.DispatchAsync(async () =>
@@ -169,7 +168,7 @@ namespace Unigram.Services.ViewService
                 //    catch { }
                 //}
 
-                var newView = CoreApplication.CreateNewView();
+                var newView = new Window();
                 var dispatcher = new DispatcherContext(newView.DispatcherQueue);
 
                 if (parameter != null)

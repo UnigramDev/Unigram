@@ -5,12 +5,13 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.Graphics.Canvas.Geometry;
+using Microsoft.UI;
+using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Media;
 using System.Numerics;
-using Windows.UI;
-using Windows.UI.Composition;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media;
+using Unigram.Navigation;
 
 namespace Unigram.Controls
 {
@@ -33,14 +34,14 @@ namespace Unigram.Controls
                 return;
             }
 
-            var easing = Window.Current.Compositor.CreateLinearEasingFunction();
+            var easing = BootStrapper.Current.Compositor.CreateLinearEasingFunction();
 
-            var scale1 = Window.Current.Compositor.CreateVector2KeyFrameAnimation();
+            var scale1 = BootStrapper.Current.Compositor.CreateVector2KeyFrameAnimation();
             scale1.InsertKeyFrame(1, Vector2.One, easing);
             scale1.InsertKeyFrame(0, Vector2.Zero, easing);
             //scale1.Duration = TimeSpan.FromMilliseconds(500);
 
-            var scale2 = Window.Current.Compositor.CreateVector2KeyFrameAnimation();
+            var scale2 = BootStrapper.Current.Compositor.CreateVector2KeyFrameAnimation();
             scale2.InsertKeyFrame(1, Vector2.Zero, easing);
             scale2.InsertKeyFrame(0, Vector2.One, easing);
             //scale2.Duration = TimeSpan.FromMilliseconds(500);
@@ -57,33 +58,35 @@ namespace Unigram.Controls
             var back = IsPrevious;
             var target = GetTemplateChild("Target") as UIElement;
 
-            var line = Window.Current.Compositor.CreateLineGeometry();
+            var compositor = BootStrapper.Current.Compositor;
+
+            var line = compositor.CreateLineGeometry();
             line.Start = new Vector2(back ? 2.5f : w - 2.5f, 2);
             line.End = new Vector2(back ? 2.5f : w - 2.5f, 14);
 
-            var triangle = Window.Current.Compositor.CreatePathGeometry(GetPolygon(
+            var triangle = compositor.CreatePathGeometry(GetPolygon(
                 new Vector2(back ? 13.5f : w - 13.5f, 3),
                 new Vector2(back ? 13.5f : w - 13.5f, 13),
                 new Vector2(back ? 6.5f : w - 6.5f, 8)));
 
-            var lineShape = Window.Current.Compositor.CreateSpriteShape(line);
+            var lineShape = compositor.CreateSpriteShape(line);
             lineShape.StrokeThickness = 1;
-            lineShape.StrokeBrush = Window.Current.Compositor.CreateColorBrush(Colors.Black);
+            lineShape.StrokeBrush = compositor.CreateColorBrush(Colors.Black);
 
-            var triangleShape1 = Window.Current.Compositor.CreateSpriteShape(triangle);
+            var triangleShape1 = compositor.CreateSpriteShape(triangle);
             triangleShape1.StrokeThickness = 1;
-            triangleShape1.StrokeBrush = Window.Current.Compositor.CreateColorBrush(Colors.Black);
+            triangleShape1.StrokeBrush = compositor.CreateColorBrush(Colors.Black);
             triangleShape1.CenterPoint = new Vector2(back ? 2.5f : w - 2.5f, 8);
             triangleShape1.IsStrokeNonScaling = true;
 
-            var triangleShape2 = Window.Current.Compositor.CreateSpriteShape(triangle);
+            var triangleShape2 = compositor.CreateSpriteShape(triangle);
             triangleShape2.StrokeThickness = 1;
-            triangleShape2.StrokeBrush = Window.Current.Compositor.CreateColorBrush(Colors.Black);
+            triangleShape2.StrokeBrush = compositor.CreateColorBrush(Colors.Black);
             triangleShape2.CenterPoint = new Vector2(back ? 16 : w - 16, 8);
             triangleShape2.Scale = Vector2.Zero;
             triangleShape2.IsStrokeNonScaling = true;
 
-            var test = Window.Current.Compositor.CreateShapeVisual();
+            var test = compositor.CreateShapeVisual();
             test.Size = new Vector2(w, h);
             test.Shapes.Add(lineShape);
             test.Shapes.Add(triangleShape1);
@@ -108,7 +111,7 @@ namespace Unigram.Controls
         {
             if (Foreground is SolidColorBrush solid)
             {
-                var brush = Window.Current.Compositor.CreateColorBrush(solid.Color);
+                var brush = BootStrapper.Current.Compositor.CreateColorBrush(solid.Color);
 
                 _line.StrokeBrush = brush;
                 _triangle1.StrokeBrush = brush;

@@ -5,11 +5,11 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.Graphics.Canvas.Geometry;
+using Microsoft.UI.Xaml;
 using System.Collections.Generic;
 using Unigram.Charts.Data;
 using Unigram.Common;
 using Windows.UI;
-using Windows.UI.Xaml;
 
 namespace Unigram.Charts.DataView
 {

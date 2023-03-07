@@ -7,6 +7,13 @@
 using LinqToVisualTree;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
+using Microsoft.UI;
+using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.Linq;
 using System.Numerics;
@@ -17,13 +24,6 @@ using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Drawers;
 using Windows.Foundation;
-using Windows.UI;
-using Windows.UI.Composition;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media;
 using Point = Windows.Foundation.Point;
 
 namespace Unigram.Controls.Messages
@@ -62,9 +62,12 @@ namespace Unigram.Controls.Messages
             var presenter = last.Ancestors<MenuFlyoutPresenter>().FirstOrDefault();
 
             _presenter = presenter;
-            _popup = new Popup();
+            _popup = new Popup
+            {
+                XamlRoot = flyout.XamlRoot
+            };
 
-            var transform = presenter.TransformToVisual(Window.Current.Content);
+            var transform = presenter.TransformToVisual(flyout.XamlRoot.Content);
             var position = transform.TransformPoint(new Point());
 
             var source = reactions.TopReactions.ToList();

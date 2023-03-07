@@ -4,6 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
@@ -16,48 +18,40 @@ using Unigram.ViewModels;
 using Unigram.Views.Popups;
 using Windows.Foundation;
 using Windows.Storage.Pickers;
-using Windows.UI.Xaml.Controls;
 using static Unigram.Services.GenerationService;
 
 namespace Unigram.Services
 {
     public interface IProfilePhotoService
     {
-        Task<bool> SetPhotoAsync(long? chatId, bool isPublic = false, bool isPersonal = false);
+        Task<bool> SetPhotoAsync(INavigationService navigation, long? chatId, bool isPublic = false, bool isPersonal = false);
         Task<bool> CreatePhotoAsync(INavigationService navigation, long? chatId, bool isPublic = false, bool isPersonal = false);
     }
 
     public class ProfilePhotoService : IProfilePhotoService
     {
         private readonly IClientService _clientService;
+        private readonly IStorageService _storageService;
 
-        public ProfilePhotoService(IClientService clientService)
+        public ProfilePhotoService(IClientService clientService, IStorageService storageService)
         {
             _clientService = clientService;
+            _storageService = storageService;
         }
 
-        public async Task<bool> SetPhotoAsync(long? chatId, bool isPublic, bool isPersonal)
+        public async Task<bool> SetPhotoAsync(INavigationService navigation, long? chatId, bool isPublic, bool isPersonal)
         {
-            try
+            var media = await _storageService.PickSingleMediaAsync(navigation.XamlRoot, PickerLocationId.PicturesLibrary, Constants.MediaTypes);
+            if (media != null)
             {
-                var picker = new FileOpenPicker();
-                picker.ViewMode = PickerViewMode.Thumbnail;
-                picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-                picker.FileTypeFilter.AddRange(Constants.MediaTypes);
+                var dialog = new EditMediaPopup(media, ImageCropperMask.Ellipse);
 
-                var media = await picker.PickSingleMediaAsync();
-                if (media != null)
+                var confirm = await dialog.ShowAsync();
+                if (confirm == ContentDialogResult.Primary)
                 {
-                    var dialog = new EditMediaPopup(media, ImageCropperMask.Ellipse);
-
-                    var confirm = await dialog.ShowAsync();
-                    if (confirm == ContentDialogResult.Primary)
-                    {
-                        return await EditPhotoAsync(chatId, isPublic, isPersonal, media);
-                    }
+                    return await EditPhotoAsync(navigation.XamlRoot, chatId, isPublic, isPersonal, media);
                 }
             }
-            catch { }
 
             return false;
         }
@@ -81,7 +75,7 @@ namespace Unigram.Services
             return false;
         }
 
-        private async Task<bool> EditPhotoAsync(long? chatId, bool isPublic, bool isPersonal, StorageMedia file)
+        private async Task<bool> EditPhotoAsync(XamlRoot xamlRoot, long? chatId, bool isPublic, bool isPersonal, StorageMedia file)
         {
             InputChatPhoto inputPhoto;
             if (file is StorageVideo media)
@@ -131,7 +125,7 @@ namespace Unigram.Services
             {
                 if (isPersonal)
                 {
-                    var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.SetUserPhotoAlertMessage, user.FirstName), Strings.Resources.AppName, Strings.Resources.SuggestPhotoShort, Strings.Resources.Cancel);
+                    var confirm = await MessagePopup.ShowAsync(xamlRoot, string.Format(Strings.Resources.SetUserPhotoAlertMessage, user.FirstName), Strings.Resources.AppName, Strings.Resources.SuggestPhotoShort, Strings.Resources.Cancel);
                     if (confirm == ContentDialogResult.Primary)
                     {
                         _clientService.Send(new SetUserPersonalProfilePhoto(user.Id, inputPhoto));
@@ -140,7 +134,7 @@ namespace Unigram.Services
                 }
                 else
                 {
-                    var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.SuggestPhotoAlertMessage, user.FirstName), Strings.Resources.AppName, Strings.Resources.SuggestPhotoShort, Strings.Resources.Cancel);
+                    var confirm = await MessagePopup.ShowAsync(xamlRoot, string.Format(Strings.Resources.SuggestPhotoAlertMessage, user.FirstName), Strings.Resources.AppName, Strings.Resources.SuggestPhotoShort, Strings.Resources.Cancel);
                     if (confirm == ContentDialogResult.Primary)
                     {
                         _clientService.Send(new SuggestUserProfilePhoto(user.Id, inputPhoto));

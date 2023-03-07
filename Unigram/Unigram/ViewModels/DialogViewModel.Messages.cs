@@ -4,6 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -30,8 +32,6 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Storage.Streams;
 using Windows.System;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using static Unigram.Services.GenerationService;
 
 namespace Unigram.ViewModels
@@ -153,7 +153,7 @@ namespace Unigram.ViewModels
             var sameUser = messages.All(x => x.SenderId.AreTheSame(first.SenderId));
             var dialog = new DeleteMessagesPopup(ClientService, items.Where(x => x != null).ToArray());
 
-            var confirm = await dialog.ShowQueuedAsync();
+            var confirm = await dialog.ShowQueuedAsync(XamlRoot);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -762,7 +762,7 @@ namespace Unigram.ViewModels
 
             if (message.IsPinned)
             {
-                var confirm = await MessagePopup.ShowAsync(Strings.Resources.UnpinMessageAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+                var confirm = await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.UnpinMessageAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     ClientService.Send(new UnpinChatMessage(chat.Id, message.Id));
@@ -809,7 +809,7 @@ namespace Unigram.ViewModels
                     dialog.IsChecked = false;
                 }
 
-                var confirm = await dialog.ShowQueuedAsync();
+                var confirm = await dialog.ShowQueuedAsync(XamlRoot);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     var disableNotification = false;
@@ -849,7 +849,7 @@ namespace Unigram.ViewModels
             if (_chat?.Type is ChatTypeSupergroup supergroup)
             {
                 ClientService.Send(new ReportSupergroupAntiSpamFalsePositive(supergroup.SupergroupId, message.Id));
-                await MessagePopup.ShowAsync(Strings.Resources.ChannelAntiSpamFalsePositiveReported);
+                await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.ChannelAntiSpamFalsePositiveReported);
             }
         }
 
@@ -894,7 +894,7 @@ namespace Unigram.ViewModels
 
             var language = LanguageIdentification.IdentifyLanguage(caption.Text);
             var popup = new TranslatePopup(_translateService, caption.Text, language, LocaleService.Current.CurrentCulture.TwoLetterISOLanguageName, !message.CanBeSaved);
-            await popup.ShowQueuedAsync();
+            await popup.ShowQueuedAsync(XamlRoot);
         }
 
         #endregion
@@ -910,7 +910,7 @@ namespace Unigram.ViewModels
 
             if (message.SchedulingState != null)
             {
-                await MessagePopup.ShowAsync(Strings.Resources.MessageScheduledBotAction, Strings.Resources.AppName, Strings.Resources.OK);
+                await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.MessageScheduledBotAction, Strings.Resources.AppName, Strings.Resources.OK);
                 return;
             }
 
@@ -936,7 +936,7 @@ namespace Unigram.ViewModels
                 else if (response is LoginUrlInfoRequestConfirmation requestConfirmation)
                 {
                     var dialog = new LoginUrlInfoPopup(ClientService, requestConfirmation);
-                    var confirm = await dialog.ShowQueuedAsync();
+                    var confirm = await dialog.ShowQueuedAsync(XamlRoot);
                     if (confirm != ContentDialogResult.Primary || !dialog.HasAccepted)
                     {
                         return;
@@ -987,7 +987,7 @@ namespace Unigram.ViewModels
                     }
                     else
                     {
-                        var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.OpenUrlAlert, urlButton.Url), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+                        var confirm = await MessagePopup.ShowAsync(XamlRoot, string.Format(Strings.Resources.OpenUrlAlert, urlButton.Url), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
                         if (confirm != ContentDialogResult.Primary)
                         {
                             return;
@@ -1014,14 +1014,14 @@ namespace Unigram.ViewModels
                     {
                         if (answer.ShowAlert)
                         {
-                            await new MessagePopup(answer.Text).ShowQueuedAsync();
+                            await new MessagePopup(answer.Text).ShowQueuedAsync(XamlRoot);
                         }
                         else
                         {
                             if (bot == null)
                             {
                                 // TODO:
-                                await new MessagePopup(answer.Text).ShowQueuedAsync();
+                                await new MessagePopup(answer.Text).ShowQueuedAsync(XamlRoot);
                                 return;
                             }
 
@@ -1065,7 +1065,7 @@ namespace Unigram.ViewModels
                     SecondaryButtonText = Strings.Resources.Cancel
                 };
 
-                var result = await popup.ShowQueuedAsync();
+                var result = await popup.ShowQueuedAsync(XamlRoot);
                 if (result != ContentDialogResult.Primary)
                 {
                     return;
@@ -1093,7 +1093,7 @@ namespace Unigram.ViewModels
                             builder.AppendLine(Strings.Resources.EditAdminTransferAlertText3);
                         }
 
-                        var confirm = await MessagePopup.ShowAsync(builder.ToString(), Strings.Resources.EditAdminTransferAlertTitle, primary, Strings.Resources.Cancel);
+                        var confirm = await MessagePopup.ShowAsync(XamlRoot, builder.ToString(), Strings.Resources.EditAdminTransferAlertTitle, primary, Strings.Resources.Cancel);
                         if (confirm == ContentDialogResult.Primary && !error.Message.Equals("PASSWORD_MISSING"))
                         {
                             NavigationService.Navigate(typeof(SettingsPasswordPage));
@@ -1143,7 +1143,7 @@ namespace Unigram.ViewModels
                 var response = await ClientService.SendAsync(new OpenWebApp(chat.Id, bot.Id, webApp.Url, Theme.Current.Parameters, Strings.Resources.AppName, _threadId, 0));
                 if (response is WebAppInfo webAppInfo)
                 {
-                    await new WebBotPopup(SessionId, webAppInfo, inline.Text).ShowQueuedAsync();
+                    await new WebBotPopup(SessionId, webAppInfo, inline.Text).ShowQueuedAsync(XamlRoot);
                 }
             }
         }
@@ -1169,7 +1169,7 @@ namespace Unigram.ViewModels
                         }
                     }
 
-                    var confirm = await MessagePopup.ShowAsync(content, Strings.Resources.ShareYouPhoneNumberTitle, Strings.Resources.OK, Strings.Resources.Cancel);
+                    var confirm = await MessagePopup.ShowAsync(XamlRoot, content, Strings.Resources.ShareYouPhoneNumberTitle, Strings.Resources.OK, Strings.Resources.Cancel);
                     if (confirm == ContentDialogResult.Primary)
                     {
                         await SendContactAsync(chat, new Contact(cached.PhoneNumber, cached.FirstName, cached.LastName, string.Empty, cached.Id), null);
@@ -1178,10 +1178,10 @@ namespace Unigram.ViewModels
             }
             else if (keyboardButton.Type is KeyboardButtonTypeRequestLocation)
             {
-                var confirm = await MessagePopup.ShowAsync(Strings.Resources.ShareYouLocationInfo, Strings.Resources.ShareYouLocationTitle, Strings.Resources.OK, Strings.Resources.Cancel);
+                var confirm = await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.ShareYouLocationInfo, Strings.Resources.ShareYouLocationTitle, Strings.Resources.OK, Strings.Resources.Cancel);
                 if (confirm == ContentDialogResult.Primary)
                 {
-                    var location = await _locationService.GetPositionAsync();
+                    var location = await _locationService.GetPositionAsync(XamlRoot);
                     if (location != null)
                     {
                         await SendMessageAsync(chat, 0, new InputMessageLocation(location, 0, 0, 0), null);
@@ -1202,7 +1202,7 @@ namespace Unigram.ViewModels
                 var response = await ClientService.SendAsync(new OpenWebApp(chat.Id, bot.UserId, webApp.Url, Theme.Current.Parameters, Strings.Resources.AppName, _threadId, 0));
                 if (response is WebAppInfo webAppInfo)
                 {
-                    await new WebBotPopup(SessionId, webAppInfo, keyboardButton.Text).ShowQueuedAsync();
+                    await new WebBotPopup(SessionId, webAppInfo, keyboardButton.Text).ShowQueuedAsync(XamlRoot);
                 }
             }
         }
@@ -1215,7 +1215,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            if (ContentDialogResult.Primary != await MessagePopup.ShowAsync(string.Format(Strings.Resources.BotOpenPageMessage, chat.Title), Strings.Resources.BotOpenPageTitle, Strings.Resources.OK, Strings.Resources.Cancel))
+            if (ContentDialogResult.Primary != await MessagePopup.ShowAsync(XamlRoot, string.Format(Strings.Resources.BotOpenPageMessage, chat.Title), Strings.Resources.BotOpenPageTitle, Strings.Resources.OK, Strings.Resources.Cancel))
             {
                 return;
             }
@@ -1393,7 +1393,7 @@ namespace Unigram.ViewModels
                 var dialog = new CalendarPopup(date);
                 dialog.MaxDate = DateTimeOffset.Now.Date;
 
-                var confirm = await dialog.ShowQueuedAsync();
+                var confirm = await dialog.ShowQueuedAsync(XamlRoot);
                 if (confirm == ContentDialogResult.Primary && dialog.SelectedDates.Count > 0)
                 {
                     var first = dialog.SelectedDates.FirstOrDefault();
@@ -1414,12 +1414,12 @@ namespace Unigram.ViewModels
             {
                 if (chatEvent.Action is ChatEventStickerSetChanged stickerSetChanged && stickerSetChanged.NewStickerSetId != 0)
                 {
-                    await StickersPopup.ShowAsync(stickerSetChanged.NewStickerSetId);
+                    await StickersPopup.ShowAsync(XamlRoot, stickerSetChanged.NewStickerSetId);
                 }
             }
             else if (message.Content is MessageVideoChatStarted or MessageVideoChatScheduled)
             {
-                await _groupCallService.JoinAsync(message.ChatId);
+                await _groupCallService.JoinAsync(XamlRoot, message.ChatId);
             }
             else if (message.Content is MessagePaymentSuccessful)
             {
@@ -1533,7 +1533,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.StopPollAlertText, Strings.Resources.StopPollAlertTitle, Strings.Resources.Stop, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.StopPollAlertText, Strings.Resources.StopPollAlertTitle, Strings.Resources.Stop, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -1575,7 +1575,7 @@ namespace Unigram.ViewModels
                     sets.Add(sticker.SetId);
                 }
 
-                await StickersPopup.ShowAsync(sets);
+                await StickersPopup.ShowAsync(XamlRoot, sets);
             }
         }
 

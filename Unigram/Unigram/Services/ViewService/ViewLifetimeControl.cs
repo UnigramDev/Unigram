@@ -26,13 +26,13 @@
 // certain objects may be bound to UI on given threads. Properties of those objects should only be updated
 // on that UI thread.
 
+using Microsoft.UI.Xaml;
 using System;
 using System.Collections.Concurrent;
 using Unigram.Logs;
 using Unigram.Navigation;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
 
 namespace Unigram.Services.ViewService
 {
@@ -116,7 +116,7 @@ namespace Unigram.Services.ViewService
             catch { }
         }
 
-        private void OnClosed(object sender, CoreWindowEventArgs e)
+        private void OnClosed(object sender, WindowEventArgs e)
         {
             Closed?.Invoke(this, EventArgs.Empty);
         }

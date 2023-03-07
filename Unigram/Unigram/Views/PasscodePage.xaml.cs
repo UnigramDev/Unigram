@@ -4,6 +4,9 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using System;
 using Unigram.Common;
 using Unigram.Controls;
@@ -11,11 +14,7 @@ using Unigram.Services;
 using Windows.ApplicationModel;
 using Windows.Security.Credentials;
 using Windows.Security.Cryptography;
-using Windows.UI.Core;
 using Windows.UI.ViewManagement.Core;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Input;
 
 namespace Unigram.Views
 {
@@ -159,7 +158,7 @@ namespace Unigram.Views
 
         private void Window_Activated(object sender, WindowActivatedEventArgs e)
         {
-            if (e.WindowActivationState != CoreWindowActivationState.Deactivated)
+            if (e.WindowActivationState != WindowActivationState.Deactivated)
             {
                 Field.Focus(FocusState.Keyboard);
             }

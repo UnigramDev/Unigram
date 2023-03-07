@@ -22,9 +22,6 @@
     <Filter Include="libyuv\source">
       <UniqueIdentifier>{157965a2-87a0-4380-bdc0-420a42492e3e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Composition">
-      <UniqueIdentifier>{721dff3e-daaf-45ba-955e-038df064ed5c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="libtextclassifier">
       <UniqueIdentifier>{5fa98185-a396-4fbe-b443-b54257ec33f7}</UniqueIdentifier>
     </Filter>
@@ -506,9 +503,6 @@
     <ClInclude Include="Composition\CompositionDevice.h">
       <Filter>Composition</Filter>
     </ClInclude>
-    <ClInclude Include="Composition\dcompex.h">
-      <Filter>Composition</Filter>
-    </ClInclude>
     <ClInclude Include="Composition\DirectRectangleClip.h">
       <Filter>Composition</Filter>
     </ClInclude>
@@ -698,12 +692,6 @@
     <Midl Include="VideoAnimation.idl" />
     <Midl Include="AudioPitchEffect.idl" />
     <Midl Include="HttpProxyWatcher.idl" />
-    <Midl Include="Composition\CompositionDevice.idl">
-      <Filter>Composition</Filter>
-    </Midl>
-    <Midl Include="Composition\DirectRectangleClip.idl">
-      <Filter>Composition</Filter>
-    </Midl>
     <Midl Include="ScreenshotManager.idl" />
     <Midl Include="LanguageIdentification.idl" />
     <Midl Include="QrBuffer.idl" />

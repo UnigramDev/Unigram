@@ -4,6 +4,9 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Animation;
+using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -11,9 +14,6 @@ using Telegram.Td.Api;
 using Unigram.Navigation.Services;
 using Unigram.ViewModels;
 using Unigram.Views;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media.Animation;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Common
 {
@@ -39,7 +39,7 @@ namespace Unigram.Common
             }
 
             _currentDialog = dialog;
-            return await dialog.ShowQueuedAsync();
+            return await dialog.ShowQueuedAsync(service.XamlRoot);
         }
 
         public static void PopModal(this INavigationService service)

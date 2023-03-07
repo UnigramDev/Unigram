@@ -5,7 +5,18 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using LinqToVisualTree;
+using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation.Peers;
+using Microsoft.UI.Xaml.Automation.Provider;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Markup;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -35,20 +46,8 @@ using Unigram.Views.Settings;
 using Unigram.Views.Users;
 using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation.Peers;
-using Windows.UI.Xaml.Automation.Provider;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Markup;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views
 {
@@ -121,7 +120,6 @@ namespace Unigram.Views
             }
 
             DropShadowEx.Attach(UpdateShadow);
-            Window.Current.SetTitleBar(TitleBarHandle);
 
             ChatsList.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
 
@@ -135,15 +133,29 @@ namespace Unigram.Views
             //ArchivedChatsCompactPanel.Visibility = show ? Visibility.Collapsed : Visibility.Visible;
         }
 
+        protected override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+
+            var window = WindowContext.ForXamlRoot(XamlRoot);
+            if (window != null)
+            {
+                window.Window.SetTitleBar(TitleBarHandle);
+            }
+        }
+
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             Initialize();
-            Window.Current.SetTitleBar(TitleBarHandle);
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
-            Window.Current.SetTitleBar(null);
+            var window = WindowContext.ForXamlRoot(XamlRoot);
+            if (window != null)
+            {
+                window.Window.SetTitleBar(null);
+            }
         }
 
         public void Dispose()
@@ -175,23 +187,23 @@ namespace Unigram.Views
 
         private void InitializeTitleBar()
         {
-            var sender = CoreApplication.GetCurrentView().TitleBar;
+            //var sender = CoreApplication.GetCurrentView().TitleBar;
 
-            TitleBarrr.ColumnDefinitions[0].Width = new GridLength(Math.Max(sender.SystemOverlayLeftInset, 0), GridUnitType.Pixel);
-            TitleBarrr.ColumnDefinitions[3].Width = new GridLength(Math.Max(sender.SystemOverlayRightInset, 6), GridUnitType.Pixel);
+            //TitleBarrr.ColumnDefinitions[0].Width = new GridLength(Math.Max(sender.SystemOverlayLeftInset, 0), GridUnitType.Pixel);
+            //TitleBarrr.ColumnDefinitions[3].Width = new GridLength(Math.Max(sender.SystemOverlayRightInset, 6), GridUnitType.Pixel);
 
-            StateLabel.FlowDirection = sender.SystemOverlayLeftInset > 0 ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
+            //StateLabel.FlowDirection = sender.SystemOverlayLeftInset > 0 ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
 
-            sender.IsVisibleChanged += CoreTitleBar_LayoutMetricsChanged;
-            sender.LayoutMetricsChanged += CoreTitleBar_LayoutMetricsChanged;
+            //sender.IsVisibleChanged += CoreTitleBar_LayoutMetricsChanged;
+            //sender.LayoutMetricsChanged += CoreTitleBar_LayoutMetricsChanged;
         }
 
         private void CoreTitleBar_LayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)
         {
-            TitleBarrr.ColumnDefinitions[0].Width = new GridLength(Math.Max(sender.SystemOverlayLeftInset, 0), GridUnitType.Pixel);
-            TitleBarrr.ColumnDefinitions[3].Width = new GridLength(Math.Max(sender.SystemOverlayRightInset, 6), GridUnitType.Pixel);
+            //TitleBarrr.ColumnDefinitions[0].Width = new GridLength(Math.Max(sender.SystemOverlayLeftInset, 0), GridUnitType.Pixel);
+            //TitleBarrr.ColumnDefinitions[3].Width = new GridLength(Math.Max(sender.SystemOverlayRightInset, 6), GridUnitType.Pixel);
 
-            StateLabel.FlowDirection = sender.SystemOverlayLeftInset > 0 ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
+            //StateLabel.FlowDirection = sender.SystemOverlayLeftInset > 0 ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
         }
 
         private void InitializeLocalization()
@@ -458,7 +470,7 @@ namespace Unigram.Views
             this.BeginOnUIThread(() =>
             {
                 FindName(nameof(Confetti));
-                Confetti.Start();
+                //Confetti.Start();
             });
         }
 
@@ -532,11 +544,11 @@ namespace Unigram.Views
                 peer.RaiseAutomationEvent(AutomationEvents.LiveRegionChanged);
             }
 
-            try
-            {
-                ApplicationView.GetForCurrentView().Title = text;
-            }
-            catch { }
+            //try
+            //{
+            //    ApplicationView.GetForCurrentView().Title = text;
+            //}
+            //catch { }
         }
 
         private void HideState()
@@ -548,11 +560,11 @@ namespace Unigram.Views
             StateLabel.Text = "Unigram";
 #endif
 
-            try
-            {
-                ApplicationView.GetForCurrentView().Title = string.Empty;
-            }
-            catch { }
+            //try
+            //{
+            //    ApplicationView.GetForCurrentView().Title = string.Empty;
+            //}
+            //catch { }
         }
 
         public void Handle(UpdateCallDialog update)
@@ -884,8 +896,8 @@ namespace Unigram.Views
             }
 
             Subscribe();
-            Window.Current.CoreWindow.CharacterReceived += OnCharacterReceived;
-            WindowContext.Current.AcceleratorKeyActivated += OnAcceleratorKeyActivated;
+            CharacterReceived += OnCharacterReceived;
+            //WindowContext.Current.AcceleratorKeyActivated += OnAcceleratorKeyActivated;
 
             OnStateChanged(null, null);
 
@@ -911,7 +923,7 @@ namespace Unigram.Views
             {
                 SettingsService.Current.Diagnostics.IsLastErrorDiskFull = false;
 
-                var confirm = await MessagePopup.ShowAsync("Unigram has previously failed to launch because the device storage was full.\r\n\r\nMake sure there's enough storage space available and press **OK** to continue.", "Disk storage is full", Strings.Resources.OK, Strings.Resources.StorageUsage);
+                var confirm = await MessagePopup.ShowAsync(XamlRoot, "Unigram has previously failed to launch because the device storage was full.\r\n\r\nMake sure there's enough storage space available and press **OK** to continue.", "Disk storage is full", Strings.Resources.OK, Strings.Resources.StorageUsage);
                 if (confirm == ContentDialogResult.Secondary)
                 {
                     MasterDetail.NavigationService.Navigate(typeof(SettingsStoragePage));
@@ -1031,7 +1043,7 @@ namespace Unigram.Views
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            Window.Current.CoreWindow.CharacterReceived -= OnCharacterReceived;
+            CharacterReceived -= OnCharacterReceived;
             WindowContext.Current.AcceleratorKeyActivated -= OnAcceleratorKeyActivated;
 
             var titleBar = CoreApplication.GetCurrentView().TitleBar;
@@ -1043,15 +1055,14 @@ namespace Unigram.Views
             _unloaded = true;
         }
 
-        private void OnCharacterReceived(CoreWindow sender, CharacterReceivedEventArgs args)
+        private void OnCharacterReceived(UIElement sender, CharacterReceivedRoutedEventArgs args)
         {
             if (MasterDetail.NavigationService.Frame.Content is BlankPage == false)
             {
                 return;
             }
 
-            var character = System.Text.Encoding.UTF32.GetString(BitConverter.GetBytes(args.KeyCode));
-            if (character.Length == 0 || char.IsControl(character[0]) || char.IsWhiteSpace(character[0]))
+            if (char.IsControl(args.Character) || char.IsWhiteSpace(args.Character))
             {
                 return;
             }
@@ -1059,7 +1070,7 @@ namespace Unigram.Views
             var focused = FocusManager.GetFocusedElement();
             if (focused == null || (focused is TextBox == false && focused is RichEditBox == false))
             {
-                var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+                var popups = VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot);
                 if (popups.Count > 0)
                 {
                     return;
@@ -1067,8 +1078,8 @@ namespace Unigram.Views
 
                 Search_Click(null, null);
                 SearchField.Focus(FocusState.Keyboard);
-                SearchField.Text = character;
-                SearchField.SelectionStart = character.Length;
+                SearchField.Text = args.Character.ToString();
+                SearchField.SelectionStart = 1;
 
                 args.Handled = true;
             }
@@ -1126,11 +1137,6 @@ namespace Unigram.Views
             }
             else if (command is ShortcutCommand.Quit or ShortcutCommand.Close)
             {
-                if (command is ShortcutCommand.Quit && App.Connection != null)
-                {
-                    await App.Connection.SendMessageAsync(new Windows.Foundation.Collections.ValueSet { { "Exit", string.Empty } });
-                }
-
                 ApplicationView.GetForCurrentView().Consolidated += (s, args) =>
                 {
                     Application.Current.Exit();
@@ -1401,15 +1407,18 @@ namespace Unigram.Views
                 }
             }
 
-            var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
-            if (popups != null)
+            if (XamlRoot != null)
             {
-                foreach (var popup in popups)
+                var popups = VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot);
+                if (popups != null)
                 {
-                    if (popup.Child is GalleryView gallery)
+                    foreach (var popup in popups)
                     {
-                        gallery.OnBackRequested(new BackRequestedRoutedEventArgs());
-                        break;
+                        if (popup.Child is GalleryView gallery)
+                        {
+                            gallery.OnBackRequested(new BackRequestedRoutedEventArgs());
+                            break;
+                        }
                     }
                 }
             }
@@ -1417,10 +1426,10 @@ namespace Unigram.Views
 
         public async void Activate(Uri scheme)
         {
-            if (App.DataPackages.TryRemove(0, out DataPackageView package))
-            {
-                await SharePopup.GetForCurrentView().ShowAsync(package);
-            }
+            //if (App.DataPackages.TryRemove(0, out DataPackageView package))
+            //{
+            //    await SharePopup.GetForCurrentView().ShowAsync(package);
+            //}
 
             if (MessageHelper.IsTelegramUrl(scheme))
             {
@@ -2177,7 +2186,7 @@ namespace Unigram.Views
             }
 
             ViewModel.Passcode.Lock();
-            App.ShowPasscode(false);
+            //App.ShowPasscode(false);
         }
 
         private void OnUpdate(object sender, EventArgs e)
@@ -2568,7 +2577,7 @@ namespace Unigram.Views
 
                 if (show is false)
                 {
-                    Window.Current.ShowTeachingTip(Photo, Strings.Resources.lng_context_archive_to_menu_info, Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode.BottomRight);
+                    BootStrapper.Current.ShowTeachingTip(Photo, Strings.Resources.lng_context_archive_to_menu_info, TeachingTipPlacementMode.BottomRight);
                 }
             };
 
@@ -2678,7 +2687,7 @@ namespace Unigram.Views
         {
             if (_shouldGoBackWithDetail && MasterDetail.NavigationService.CanGoBack)
             {
-                BootStrapper.Current.RaiseBackRequested();
+                BootStrapper.Current.RaiseBackRequested(XamlRoot);
             }
             else
             {
@@ -2717,12 +2726,12 @@ namespace Unigram.Views
                     ConvertFilter(filter);
                 }
 
-                var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                var offset = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
                 offset.InsertKeyFrame(0, new Vector3(0, 16, 0));
                 offset.InsertKeyFrame(1, new Vector3(0, 0, 0));
                 offset.Duration = TimeSpan.FromMilliseconds(150);
 
-                var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                var opacity = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
                 opacity.InsertKeyFrame(0, 0);
                 opacity.InsertKeyFrame(1, 1);
                 opacity.Duration = TimeSpan.FromMilliseconds(150);
@@ -2731,12 +2740,12 @@ namespace Unigram.Views
                 visual.StartAnimation("Opacity", opacity);
             };
 
-            var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var offset = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
             offset.InsertKeyFrame(0, new Vector3());
             offset.InsertKeyFrame(1, new Vector3(0, -16, 0));
             offset.Duration = TimeSpan.FromMilliseconds(150);
 
-            var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var opacity = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
             opacity.InsertKeyFrame(0, 1);
             opacity.InsertKeyFrame(1, 0);
             opacity.Duration = TimeSpan.FromMilliseconds(150);
@@ -3078,7 +3087,7 @@ namespace Unigram.Views
                 ViewModel.Chats.SearchFilters.Add(filter);
                 SearchField.Text = string.Empty;
 
-                ViewModel.Chats.Search = new SearchChatsCollection(ViewModel.ClientService, SearchField.Text, ViewModel.Chats.SearchFilters);
+                //ViewModel.Chats.Search = new SearchChatsCollection(ViewModel.ClientService, SearchField.Text, ViewModel.Chats.SearchFilters);
             }
         }
 
@@ -3089,7 +3098,7 @@ namespace Unigram.Views
 
         private async void Downloads_Click(object sender, RoutedEventArgs e)
         {
-            await new DownloadsPopup(ViewModel.SessionId, ViewModel.NavigationService).ShowQueuedAsync();
+            await new DownloadsPopup(ViewModel.SessionId, ViewModel.NavigationService).ShowQueuedAsync(XamlRoot);
         }
 
         private void Photo_Click(object sender, RoutedEventArgs e)
@@ -3132,7 +3141,11 @@ namespace Unigram.Views
 
         public void PopupOpened()
         {
-            Window.Current.SetTitleBar(null);
+            var window = WindowContext.ForXamlRoot(XamlRoot);
+            if (window != null)
+            {
+                window.Window.SetTitleBar(null);
+            }
 
             if (MasterDetail.NavigationService.Frame.Content is IActivablePage page)
             {
@@ -3142,7 +3155,11 @@ namespace Unigram.Views
 
         public void PopupClosed()
         {
-            Window.Current.SetTitleBar(TitleBarHandle);
+            var window = WindowContext.ForXamlRoot(XamlRoot);
+            if (window != null)
+            {
+                window.Window.SetTitleBar(TitleBarHandle);
+            }
 
             if (MasterDetail.NavigationService.Frame.Content is IActivablePage page)
             {

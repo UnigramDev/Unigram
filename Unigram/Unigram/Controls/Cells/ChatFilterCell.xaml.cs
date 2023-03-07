@@ -4,12 +4,12 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
 using System;
 using System.Numerics;
 using Unigram.ViewModels;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
 
 namespace Unigram.Controls.Cells
 {
@@ -42,12 +42,11 @@ namespace Unigram.Controls.Cells
             var prev = e.OldState?.Name;
             var next = e.NewState?.Name;
 
-            var compositor = Window.Current.Compositor;
-
             var iconUnselected = ElementCompositionPreview.GetElementVisual(UnselectedIcon);
             var iconSelected = ElementCompositionPreview.GetElementVisual(SelectedIcon);
 
             var title = ElementCompositionPreview.GetElementVisual(Title);
+            var compositor = title.Compositor;
 
             if (next == "PointerOver")
             {

@@ -4,17 +4,19 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Shapes;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using Unigram.Navigation;
 using Windows.Foundation;
 using Windows.UI;
-using Windows.UI.Composition;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Controls
 {
@@ -116,7 +118,7 @@ namespace Unigram.Controls
             base.OnApplyTemplate();
         }
 
-        private void Thumb_PointerPressed(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+        private void Thumb_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
             ((UIElement)sender).CapturePointer(e.Pointer);
 
@@ -129,7 +131,7 @@ namespace Unigram.Controls
             e.Handled = true;
         }
 
-        private void Thumb_PointerReleased(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+        private void Thumb_PointerReleased(object sender, PointerRoutedEventArgs e)
         {
             var pointer = e.GetCurrentPoint(_container);
             m_pointerPositions.Remove(pointer.PointerId);
@@ -143,7 +145,7 @@ namespace Unigram.Controls
             e.Handled = true;
         }
 
-        private void Thumb_PointerMoved(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+        private void Thumb_PointerMoved(object sender, PointerRoutedEventArgs e)
         {
             if (e.Pointer.IsInContact && m_pointerPositions.TryGetValue(e.Pointer.PointerId, out _))
             {
@@ -198,11 +200,11 @@ namespace Unigram.Controls
                 //if (ApiInformation.IsMethodPresent(".Compositor", "CreateSpringVector3Animation"))
                 if (false)
                 {
-                    var scale = Window.Current.Compositor.CreateSpringVector3Animation();
+                    var scale = BootStrapper.Current.Compositor.CreateSpringVector3Animation();
                     scale.InitialValue = new Vector3(zoom ? 0.5f : 1);
                     scale.FinalValue = new Vector3(zoom ? 1 : 0.5f);
 
-                    var offset = Window.Current.Compositor.CreateSpringVector3Animation();
+                    var offset = BootStrapper.Current.Compositor.CreateSpringVector3Animation();
                     //offset.InitialValue = new Vector3(_current.X * w, -60, 0);
                     offset.InitialValue = _thumbVisual.Offset;
                     offset.FinalValue = new Vector3(_current.X * w, zoom ? -60 : 0, 0);
@@ -215,18 +217,18 @@ namespace Unigram.Controls
                     _container.Height = 200;
                     _container.Margin = new Thickness(0, -180, 0, 0);
 
-                    var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+                    var batch = BootStrapper.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
                     batch.Completed += (s, args) =>
                     {
                         _container.Height = zoom ? 200 : 20;
                         _container.Margin = new Thickness(0, zoom ? -180 : 0, 0, 0);
                     };
 
-                    var scale = Window.Current.Compositor.CreateSpringVector3Animation();
+                    var scale = BootStrapper.Current.Compositor.CreateSpringVector3Animation();
                     scale.InitialValue = new Vector3(zoom ? 0.5f : 1);
                     scale.FinalValue = new Vector3(zoom ? 1 : 0.5f);
 
-                    var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                    var offset = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
                     offset.InsertKeyFrame(0, _thumbVisual.Offset);
                     offset.InsertKeyFrame(1, new Vector3(_current.X * w, zoom ? -60 : 0, 0));
 

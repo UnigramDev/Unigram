@@ -4,6 +4,14 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Animation;
+using Microsoft.UI.Xaml.Media.Imaging;
+using Microsoft.UI.Xaml.Shapes;
 using System;
 using System.Linq;
 using System.Numerics;
@@ -13,14 +21,7 @@ using Unigram.Common;
 using Unigram.Navigation;
 using Unigram.Services;
 using Windows.UI;
-using Windows.UI.Composition;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Animation;
-using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Shapes;
+using WinRT;
 
 namespace Unigram.Controls.Chats
 {
@@ -40,7 +41,7 @@ namespace Unigram.Controls.Chats
         public ChatBackgroundPresenter()
         {
             _renderer = new ChatBackgroundRenderer();
-            _compositor = Window.Current.Compositor;
+            _compositor = BootStrapper.Current.Compositor;
 
             ElementCompositionPreview.GetElementVisual(this).Clip = _compositor.CreateInsetClip();
 
@@ -119,8 +120,8 @@ namespace Unigram.Controls.Chats
         {
             if (background == null)
             {
-                var freeform = dark ? new[] { 0x0D0E17, 0x090A0C, 0x181C28, 0x0E0F12} : new[] { 0xDBDDBB, 0x6BA587, 0xD5D88D, 0x88B884 };
-                background = new Background(0, true, dark, string.Empty, 
+                var freeform = dark ? new[] { 0x0D0E17, 0x090A0C, 0x181C28, 0x0E0F12 } : new[] { 0xDBDDBB, 0x6BA587, 0xD5D88D, 0x88B884 };
+                background = new Background(0, true, dark, string.Empty,
                     new Document(string.Empty, "application/x-tgwallpattern", null, null, TdExtensions.GetLocalFile("Assets\\Background.tgv", "Background")),
                     new BackgroundTypePattern(new BackgroundFillFreeformGradient(freeform), dark ? 100 : 50, dark, false));
             }
@@ -374,7 +375,7 @@ namespace Unigram.Controls.Chats
         private static unsafe WriteableBitmap GenerateGradient(int width, int height, Color[] colors, Vector2[] positions)
         {
             var context = new WriteableBitmap(width, height);
-            var buffer = (IBufferByteAccess)context.PixelBuffer;
+            var buffer = context.PixelBuffer.As<IBufferByteAccess>();
             buffer.Buffer(out byte* imageBytes);
 
             for (int y = 0; y < height; y++)

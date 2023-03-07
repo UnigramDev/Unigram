@@ -5,12 +5,12 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.Graphics.Canvas.Effects;
+using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml.Media;
 using System.Collections.Generic;
+using Unigram.Navigation;
 using Windows.Graphics.Effects;
 using Windows.UI;
-using Windows.UI.Composition;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Media
 {
@@ -32,7 +32,7 @@ namespace Unigram.Controls.Media
                 _recreate = false;
 
                 var surface = Surface;
-                var surfaceBrush = Window.Current.Compositor.CreateSurfaceBrush(surface);
+                var surfaceBrush = BootStrapper.Current.Compositor.CreateSurfaceBrush(surface);
                 surfaceBrush.Stretch = CompositionStretch.None;
 
                 var borderEffect = new BorderEffect()
@@ -89,9 +89,9 @@ namespace Unigram.Controls.Media
                     };
                 }
 
-                var backdrop = Window.Current.Compositor.CreateBackdropBrush();
+                var backdrop = BootStrapper.Current.Compositor.CreateBackdropBrush();
 
-                var borderEffectFactory = Window.Current.Compositor.CreateEffectFactory(effect, animatableProperties);
+                var borderEffectFactory = BootStrapper.Current.Compositor.CreateEffectFactory(effect, animatableProperties);
                 var borderEffectBrush = borderEffectFactory.CreateBrush();
                 borderEffectBrush.SetSourceParameter("Source", surfaceBrush);
 
@@ -139,7 +139,7 @@ namespace Unigram.Controls.Media
                 }
 
                 var surface = Surface;
-                var surfaceBrush = Window.Current.Compositor.CreateSurfaceBrush(surface);
+                var surfaceBrush = BootStrapper.Current.Compositor.CreateSurfaceBrush(surface);
                 surfaceBrush.Stretch = CompositionStretch.None;
 
                 if (CompositionBrush is CompositionEffectBrush effectBrush)

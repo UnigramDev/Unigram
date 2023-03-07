@@ -4,16 +4,16 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Numerics;
 using Unigram.Common;
 using Unigram.ViewModels.Settings;
 using Unigram.ViewModels.Settings.Privacy;
 using Windows.Foundation.Metadata;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Settings.Privacy
 {
@@ -26,7 +26,7 @@ namespace Unigram.Views.Settings.Privacy
             InitializeComponent();
             Title = Strings.Resources.PrivacyForwards;
 
-            if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "Shadow"))
+            if (ApiInformation.IsPropertyPresent("Microsoft.UI.Xaml.UIElement", "Shadow"))
             {
                 var themeShadow = new ThemeShadow();
                 ToolTip.Shadow = themeShadow;

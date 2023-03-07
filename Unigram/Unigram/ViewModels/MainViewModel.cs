@@ -4,7 +4,9 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -23,9 +25,6 @@ using Unigram.Views;
 using Unigram.Views.Folders;
 using Unigram.Views.Popups;
 using Windows.System;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {
@@ -268,7 +267,7 @@ namespace Unigram.ViewModels
 
                 var filters = chatFilters.ToList();
                 var index = Math.Min(mainChatListPosition, filters.Count);
-                
+
                 filters.Insert(index, new ChatFilterInfo { Id = Constants.ChatListMain, Title = Strings.Resources.FilterAllChats, IconName = "All" });
 
                 Merge(Filters, filters);
@@ -453,10 +452,10 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            if (App.Connection != null)
-            {
-                await App.Connection.SendMessageAsync(new Windows.Foundation.Collections.ValueSet { { "Exit", string.Empty } });
-            }
+            //if (App.Connection != null)
+            //{
+            //    await App.Connection.SendMessageAsync(new Windows.Foundation.Collections.ValueSet { { "Exit", string.Empty } });
+            //}
 
             await Launcher.LaunchFileAsync(file);
             Application.Current.Exit();
@@ -473,7 +472,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.AreYouSureSecretChat, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.AreYouSureSecretChat, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -511,7 +510,7 @@ namespace Unigram.ViewModels
         public RelayCommand<ChatFilterViewModel> FilterMarkAsReadCommand { get; }
         private async void FilterMarkAsReadExecute(ChatFilterViewModel filter)
         {
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.AreYouSure, Strings.Resources.AppName, Strings.Resources.MarkAsRead, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.AreYouSure, Strings.Resources.AppName, Strings.Resources.MarkAsRead, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -538,7 +537,7 @@ namespace Unigram.ViewModels
         public RelayCommand<ChatFilterViewModel> FilterDeleteCommand { get; }
         private async void FilterDeleteExecute(ChatFilterViewModel filter)
         {
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.FilterDeleteAlert, Strings.Resources.FilterDelete, Strings.Resources.Delete, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.FilterDeleteAlert, Strings.Resources.FilterDelete, Strings.Resources.Delete, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

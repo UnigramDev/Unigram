@@ -4,18 +4,17 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Input;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.Linq;
 using Telegram.Td.Api;
 using Unigram.ViewModels.Drawers;
 using Unigram.Views.Popups;
-using Windows.Devices.Input;
-using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Common
 {
@@ -170,7 +169,7 @@ namespace Unigram.Common
         {
             if (_popupHost.IsOpen)
             {
-                var pointer = e.GetCurrentPoint(Window.Current.Content);
+                var pointer = e.GetCurrentPoint(_listView.XamlRoot.Content);
                 var children = VisualTreeHelper.FindElementsInHostCoordinates(pointer.Position, _listView);
 
                 var container = children?.FirstOrDefault(x => x is SelectorItem) as SelectorItem;
@@ -275,15 +274,15 @@ namespace Unigram.Common
                 _popupPanel.SetAnimation(animation);
             }
 
-            var bounds = ApplicationView.GetForCurrentView().VisibleBounds;
-            if (bounds != Window.Current.Bounds)
-            {
-                _popupPanel.Margin = new Thickness(bounds.X, bounds.Y, Window.Current.Bounds.Width - bounds.Right, Window.Current.Bounds.Height - bounds.Bottom);
-            }
-            else
-            {
-                _popupPanel.Margin = new Thickness();
-            }
+            //var bounds = ApplicationView.GetForCurrentView().VisibleBounds;
+            //if (bounds != Window.Current.Bounds)
+            //{
+            //    _popupPanel.Margin = new Thickness(bounds.X, bounds.Y, Window.Current.Bounds.Width - bounds.Right, Window.Current.Bounds.Height - bounds.Bottom);
+            //}
+            //else
+            //{
+            //    _popupPanel.Margin = new Thickness();
+            //}
 
             //if (item is TLDocument content && content.StickerSet != null)
             //{
@@ -292,9 +291,11 @@ namespace Unigram.Common
 
             Opening?.Invoke();
 
-            _popupPanel.Width = bounds.Width;
-            _popupPanel.Height = bounds.Height;
+            _popupPanel.Margin = new Thickness();
+            _popupPanel.Width = _listView.XamlRoot.Size.Width;
+            _popupPanel.Height = _listView.XamlRoot.Size.Height;
             _popupContent = item;
+            _popupHost.XamlRoot = _listView.XamlRoot;
             _popupHost.IsOpen = true;
 
             //_scrollingHost.CancelDirectManipulations();

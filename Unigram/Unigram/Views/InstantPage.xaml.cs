@@ -4,6 +4,15 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Text;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
+using Microsoft.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Shapes;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -23,16 +32,7 @@ using Unigram.ViewModels.Gallery;
 using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.System;
-using Windows.UI;
 using Windows.UI.Text;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Navigation;
-using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Views
 {
@@ -361,7 +361,7 @@ namespace Unigram.Views
         {
             var grid = new Grid();
             grid.BorderThickness = new Thickness(table.IsBordered ? 1 : 0, table.IsBordered ? 1 : 0, 0, 0);
-            grid.BorderBrush = new SolidColorBrush(Colors.Green);
+            grid.BorderBrush = new SolidColorBrush(Microsoft.UI.Colors.Green);
 
             var columns = table.Cells.Max(x => x.Count);
             var rows = table.Cells.Count;
@@ -422,9 +422,9 @@ namespace Unigram.Views
                     ProcessRichText(cell.Text, span, textBlock);
 
                     var border = new Border();
-                    border.Background = cell.IsHeader || (table.IsStriped && row % 2 == 0) ? new SolidColorBrush(Colors.LightGray) : null;
+                    border.Background = cell.IsHeader || (table.IsStriped && row % 2 == 0) ? new SolidColorBrush(Microsoft.UI.Colors.LightGray) : null;
                     border.BorderThickness = new Thickness(0, 0, table.IsBordered ? 1 : 0, table.IsBordered ? 1 : 0);
-                    border.BorderBrush = new SolidColorBrush(Colors.Green);
+                    border.BorderBrush = new SolidColorBrush(Microsoft.UI.Colors.Green);
                     border.Child = textBlock;
                     border.Padding = new Thickness(8, 4, 8, 4);
 
@@ -943,34 +943,34 @@ namespace Unigram.Views
             //}
             if (!string.IsNullOrEmpty(block.Html))
             {
-                var view = new WebView();
-                if (!block.AllowScrolling)
-                {
-                    view.NavigationCompleted += OnWebViewNavigationCompleted;
-                }
-                view.NavigateToString(block.Html.Replace("src=\"//", "src=\"https://"));
+                //var view = new WebView();
+                //if (!block.AllowScrolling)
+                //{
+                //    view.NavigationCompleted += OnWebViewNavigationCompleted;
+                //}
+                //view.NavigateToString(block.Html.Replace("src=\"//", "src=\"https://"));
 
                 var ratio = new AspectView();
                 ratio.MaxWidth = block.Width;
                 ratio.MaxHeight = block.Height;
                 ratio.Constraint = new Size(block.Width, block.Height);
-                ratio.Children.Add(view);
+                //ratio.Children.Add(view);
                 child = ratio;
             }
             else if (!string.IsNullOrEmpty(block.Url))
             {
-                var view = new WebView();
-                if (!block.AllowScrolling)
-                {
-                    view.NavigationCompleted += OnWebViewNavigationCompleted;
-                }
-                view.Navigate(new Uri(block.Url));
+                //var view = new WebView();
+                //if (!block.AllowScrolling)
+                //{
+                //    view.NavigationCompleted += OnWebViewNavigationCompleted;
+                //}
+                //view.Navigate(new Uri(block.Url));
 
                 var ratio = new AspectView();
                 ratio.MaxWidth = block.Width;
                 ratio.MaxHeight = block.Height;
                 ratio.Constraint = new Size(block.Width, block.Height);
-                ratio.Children.Add(view);
+                //ratio.Children.Add(view);
                 child = ratio;
             }
 
@@ -1201,7 +1201,7 @@ namespace Unigram.Views
                     if (effects.HasFlag(TextEffects.Marked))
                     {
                         var highlight = new TextHighlighter();
-                        highlight.Background = new SolidColorBrush(Colors.PaleGoldenrod);
+                        highlight.Background = new SolidColorBrush(Microsoft.UI.Colors.PaleGoldenrod);
                         highlight.Ranges.Add(new TextRange { StartIndex = offset, Length = plainText.Text.Length });
 
                         //textBlock.TextHighlighters.Add(highlight);
@@ -1532,15 +1532,15 @@ namespace Unigram.Views
             return false;
         }
 
-        private async void OnWebViewNavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
-        {
-            try
-            {
-                var jss = _injectedJs;
-                await sender.InvokeScriptAsync("eval", new[] { jss });
-            }
-            catch { }
-        }
+        //private async void OnWebViewNavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
+        //{
+        //    try
+        //    {
+        //        var jss = _injectedJs;
+        //        await sender.InvokeScriptAsync("eval", new[] { jss });
+        //    }
+        //    catch { }
+        //}
 
         #region Delegate
 

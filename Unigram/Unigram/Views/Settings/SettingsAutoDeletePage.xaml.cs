@@ -4,9 +4,9 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
 using Unigram.ViewModels.Settings;
 using Unigram.Views.Popups;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Settings
 {
@@ -20,7 +20,7 @@ namespace Unigram.Views.Settings
             Title = Strings.Resources.AutoDeleteMessages;
         }
 
-        private void OnChecked(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void OnChecked(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
             if (sender is RadioButton button && button.DataContext is SettingsOptionItem<int> option)
             {

@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
 using System;
 using Telegram.Td.Api;
 using Unigram.Collections;
@@ -11,7 +12,6 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Services;
 using Unigram.ViewModels.Gallery;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.ViewModels.Users
 {
@@ -100,7 +100,7 @@ namespace Unigram.ViewModels.Users
 
         protected override async void DeleteExecute()
         {
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.AreYouSureDeletePhoto, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.AreYouSureDeletePhoto, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary && _selectedItem is GalleryChatPhoto profileItem)
             {
                 var response = await ClientService.SendAsync(new DeleteProfilePhoto(profileItem.Id));

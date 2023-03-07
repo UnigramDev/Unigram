@@ -4,6 +4,12 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,12 +21,6 @@ using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Navigation;
 using Unigram.ViewModels;
-using Windows.UI.Composition;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Popups
 {
@@ -76,47 +76,47 @@ namespace Unigram.Views.Popups
 
         public Action<Sticker> ItemClick { get; set; }
 
-        public static Task<ContentDialogResult> ShowAsync(StickerSet parameter)
+        public static Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot, StickerSet parameter)
         {
-            return ShowAsyncInternal(parameter, null);
+            return ShowAsyncInternal(xamlRoot, parameter, null);
         }
 
-        public static Task<ContentDialogResult> ShowAsync(StickerSet parameter, Action<Sticker> callback)
+        public static Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot, StickerSet parameter, Action<Sticker> callback)
         {
-            return ShowAsyncInternal(parameter, callback);
+            return ShowAsyncInternal(xamlRoot, parameter, callback);
         }
 
-        public static Task<ContentDialogResult> ShowAsync(HashSet<long> parameter)
+        public static Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot, HashSet<long> parameter)
         {
-            return ShowAsyncInternal(parameter, null);
+            return ShowAsyncInternal(xamlRoot, parameter, null);
         }
 
-        public static Task<ContentDialogResult> ShowAsync(HashSet<long> parameter, Action<Sticker> callback)
+        public static Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot, HashSet<long> parameter, Action<Sticker> callback)
         {
-            return ShowAsyncInternal(parameter, callback);
+            return ShowAsyncInternal(xamlRoot, parameter, callback);
         }
 
-        public static Task<ContentDialogResult> ShowAsync(long parameter)
+        public static Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot, long parameter)
         {
-            return ShowAsyncInternal(parameter, null);
+            return ShowAsyncInternal(xamlRoot, parameter, null);
         }
 
-        public static Task<ContentDialogResult> ShowAsync(long parameter, Action<Sticker> callback)
+        public static Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot, long parameter, Action<Sticker> callback)
         {
-            return ShowAsyncInternal(parameter, callback);
+            return ShowAsyncInternal(xamlRoot, parameter, callback);
         }
 
-        public static Task<ContentDialogResult> ShowAsync(InputFileId parameter)
+        public static Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot, InputFileId parameter)
         {
-            return ShowAsyncInternal(parameter, null);
+            return ShowAsyncInternal(xamlRoot, parameter, null);
         }
 
-        public static Task<ContentDialogResult> ShowAsync(InputFileId parameter, Action<Sticker> callback)
+        public static Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot, InputFileId parameter, Action<Sticker> callback)
         {
-            return ShowAsyncInternal(parameter, callback);
+            return ShowAsyncInternal(xamlRoot, parameter, callback);
         }
 
-        private static Task<ContentDialogResult> ShowAsyncInternal(object parameter, Action<Sticker> callback)
+        private static Task<ContentDialogResult> ShowAsyncInternal(XamlRoot xamlRoot, object parameter, Action<Sticker> callback)
         {
             var popup = new StickersPopup();
 
@@ -132,17 +132,17 @@ namespace Unigram.Views.Popups
             });
 
             popup.Loaded += handler;
-            return popup.ShowQueuedAsync();
+            return popup.ShowQueuedAsync(xamlRoot);
         }
 
-        public static Task<ContentDialogResult> ShowAsync(string parameter)
+        public static Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot, string parameter)
         {
-            return ShowAsyncInternal(parameter, null);
+            return ShowAsyncInternal(xamlRoot, parameter, null);
         }
 
-        public static Task<ContentDialogResult> ShowAsync(string parameter, Action<Sticker> callback)
+        public static Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot, string parameter, Action<Sticker> callback)
         {
-            return ShowAsyncInternal(parameter, callback);
+            return ShowAsyncInternal(xamlRoot, parameter, callback);
         }
 
         #endregion

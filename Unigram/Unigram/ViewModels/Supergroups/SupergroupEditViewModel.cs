@@ -4,6 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -15,8 +17,6 @@ using Unigram.ViewModels.Delegates;
 using Unigram.Views.Chats;
 using Unigram.Views.Popups;
 using Unigram.Views.Supergroups;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Supergroups
 {
@@ -334,7 +334,7 @@ namespace Unigram.ViewModels.Supergroups
 
         public async void SetPhoto()
         {
-            await _profilePhotoService.SetPhotoAsync(Chat.Id);
+            await _profilePhotoService.SetPhotoAsync(NavigationService, Chat.Id);
         }
 
         public async void CreatePhoto()
@@ -408,7 +408,7 @@ namespace Unigram.ViewModels.Supergroups
             var updated = await ClientService.SendAsync(new GetChat(chat.Id)) as Chat ?? chat;
             var dialog = new DeleteChatPopup(ClientService, updated, null, false, true);
 
-            var confirm = await dialog.ShowQueuedAsync();
+            var confirm = await dialog.ShowQueuedAsync(XamlRoot);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

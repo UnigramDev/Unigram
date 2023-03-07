@@ -5,6 +5,10 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.Graphics.Canvas;
+using Microsoft.UI;
+using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
 using RLottie;
 using System;
 using System.Collections.Generic;
@@ -20,9 +24,6 @@ using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI;
-using Windows.UI.Composition;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Common
 {
@@ -469,7 +470,7 @@ namespace Unigram.Common
                 maxWidth = maxWidth < 512 ? maxWidth * TLWindowContext.Current.RasterizationScale : maxWidth;
                 maxWidth = Math.Min(maxWidth, 512);
 
-                Size size;
+                Size size = default;
                 var buffer = await Task.Run(() => PlaceholderImageHelper.Current.DrawWebP(path, (int)maxWidth, out size));
 
                 if (size.Width > 0 && size.Height > 0)

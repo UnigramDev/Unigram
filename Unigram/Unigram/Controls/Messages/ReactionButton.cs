@@ -4,21 +4,20 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
 using RLottie;
 using System;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Converters;
-using Unigram.Navigation;
 using Unigram.ViewModels;
 using Windows.Foundation;
-using Windows.System;
-using Windows.UI.Xaml.Automation;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Controls.Messages
 {
@@ -154,19 +153,19 @@ namespace Unigram.Controls.Messages
             if (interaction.TotalCount > interaction.RecentSenderIds.Count)
             {
                 Count ??= GetTemplateChild(nameof(Count)) as NumericTextBlock;
-                Count.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                Count.Visibility = Visibility.Visible;
 
                 Count.Text = Converter.ShortNumber(interaction.TotalCount);
 
                 if (RecentChoosers != null)
                 {
-                    RecentChoosers.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    RecentChoosers.Visibility = Visibility.Collapsed;
                 }
             }
             else
             {
                 RecentChoosers ??= GetRecentChoosers();
-                RecentChoosers.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                RecentChoosers.Visibility = Visibility.Visible;
 
                 var destination = RecentChoosers.Items;
                 var origin = interaction.RecentSenderIds;
@@ -183,7 +182,7 @@ namespace Unigram.Controls.Messages
 
                 if (Count != null)
                 {
-                    Count.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    Count.Visibility = Visibility.Collapsed;
                 }
             }
         }
@@ -217,12 +216,10 @@ namespace Unigram.Controls.Messages
             }
         }
 
-        private static async Task<ImageSource> GetLottieFrame(string path, int frame, int width, int height)
+        private async Task<ImageSource> GetLottieFrame(string path, int frame, int width, int height)
         {
-            var dpi = WindowContext.Current.RasterizationScale;
-
-            width = (int)(width * dpi);
-            height = (int)(height * dpi);
+            width = (int)(width * XamlRoot.RasterizationScale);
+            height = (int)(height * XamlRoot.RasterizationScale);
 
             var cache = $"{path}.{width}x{height}.png";
             if (System.IO.File.Exists(cache))
@@ -269,7 +266,7 @@ namespace Unigram.Controls.Messages
             //base.OnToggle();
         }
 
-        private void OnClick(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void OnClick(object sender, RoutedEventArgs e)
         {
             var chosen = _interaction;
             if (chosen == null || Presenter == null)
@@ -315,8 +312,6 @@ namespace Unigram.Controls.Messages
                         var presenter = Presenter;
                         var popup = Overlay;
 
-                        var dispatcher = DispatcherQueue.GetForCurrentThread();
-
                         var aroundView = new LottieView();
                         aroundView.Width = 32 * 3;
                         aroundView.Height = 32 * 3;
@@ -328,7 +323,7 @@ namespace Unigram.Controls.Messages
                         {
                             if (args == 1)
                             {
-                                dispatcher.TryEnqueue(Continue2);
+                                DispatcherQueue.TryEnqueue(Continue2);
                                 //dispatcher.TryEnqueue(() => popup.IsOpen = false);
                             }
                         };
@@ -366,8 +361,6 @@ namespace Unigram.Controls.Messages
                 var presenter = Presenter;
                 var popup = Overlay;
 
-                var dispatcher = DispatcherQueue.GetForCurrentThread();
-
                 var centerView = new LottieView();
                 centerView.Width = 32;
                 centerView.Height = 32;
@@ -383,7 +376,7 @@ namespace Unigram.Controls.Messages
                 {
                     if (args == 1)
                     {
-                        dispatcher.TryEnqueue(Continue1);
+                        DispatcherQueue.TryEnqueue(Continue1);
                         //dispatcher.TryEnqueue(() => popup.IsOpen = false);
                     }
                 };
@@ -399,7 +392,7 @@ namespace Unigram.Controls.Messages
                 {
                     if (args == 1)
                     {
-                        dispatcher.TryEnqueue(Continue2);
+                        DispatcherQueue.TryEnqueue(Continue2);
                         //dispatcher.TryEnqueue(() => popup.IsOpen = false);
                     }
                 };

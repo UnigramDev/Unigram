@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
@@ -14,7 +15,6 @@ using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views.Settings;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
@@ -89,7 +89,7 @@ namespace Unigram.ViewModels.Settings
 
             await ClientService.SendAsync(new SetOption("x_phonenumber", new OptionValueString(phoneNumber)));
 
-            var response = await ClientService.SendAsync(new ChangePhoneNumber(phoneNumber, new PhoneNumberAuthenticationSettings(false, false, false, false, new string[0])));
+            var response = await ClientService.SendAsync(new ChangePhoneNumber(phoneNumber, new PhoneNumberAuthenticationSettings(false, false, false, false, null, new string[0])));
             if (response is AuthenticationCodeInfo info)
             {
                 BootStrapper.Current.SessionState["x_codeinfo"] = info;
@@ -101,11 +101,11 @@ namespace Unigram.ViewModels.Settings
 
                 if (error.TypeEquals(ErrorType.PHONE_NUMBER_FLOOD))
                 {
-                    await MessagePopup.ShowAsync("Sorry, you have deleted and re-created your account too many times recently. Please wait for a few days before signing up again.", "Telegram", "OK");
+                    await MessagePopup.ShowAsync(XamlRoot, "Sorry, you have deleted and re-created your account too many times recently. Please wait for a few days before signing up again.", "Telegram", "OK");
                 }
                 else
                 {
-                    await new MessagePopup(error.Message ?? "Error message", error.Code.ToString()).ShowQueuedAsync();
+                    await new MessagePopup(error.Message ?? "Error message", error.Code.ToString()).ShowQueuedAsync(XamlRoot);
                 }
             }
         }

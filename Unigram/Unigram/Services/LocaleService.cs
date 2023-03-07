@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -19,7 +20,6 @@ using Unigram.Common;
 using Unigram.Views;
 using Windows.ApplicationModel.Resources;
 using Windows.Storage;
-using Windows.UI.Xaml;
 
 namespace Unigram.Services
 {

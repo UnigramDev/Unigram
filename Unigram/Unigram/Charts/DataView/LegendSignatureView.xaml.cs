@@ -4,14 +4,14 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using Unigram.Common;
 using Unigram.Converters;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Charts.DataView
 {
@@ -351,13 +351,13 @@ namespace Unigram.Charts.DataView
         internal void setVisibility(Visibility visibility)
         {
             //throw new NotImplementedException();
-            if (Dispatcher.HasThreadAccess)
+            if (DispatcherQueue.HasThreadAccess)
             {
                 Visibility = visibility;
             }
             else
             {
-                _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => Visibility = visibility);
+                DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Normal, () => Visibility = visibility);
             }
         }
     }

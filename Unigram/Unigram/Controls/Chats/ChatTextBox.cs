@@ -4,6 +4,14 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Text;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation.Peers;
+using Microsoft.UI.Xaml.Automation.Provider;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Input;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,21 +24,14 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
+using Unigram.Navigation;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Storage.Streams;
 using Windows.System;
-using Windows.UI.Text;
 using Windows.UI.Text.Core;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation.Peers;
-using Windows.UI.Xaml.Automation.Provider;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Input;
 
 namespace Unigram.Controls.Chats
 {
@@ -153,9 +154,9 @@ namespace Unigram.Controls.Chats
             }
             else if (e.Key is VirtualKey.Up or VirtualKey.Down)
             {
-                var alt = Window.Current.CoreWindow.IsKeyDown(VirtualKey.Menu);
-                var ctrl = Window.Current.CoreWindow.IsKeyDown(VirtualKey.Control);
-                var shift = Window.Current.CoreWindow.IsKeyDown(VirtualKey.Shift);
+                var alt = WindowContext.IsKeyDown(VirtualKey.Menu);
+                var ctrl = WindowContext.IsKeyDown(VirtualKey.Control);
+                var shift = WindowContext.IsKeyDown(VirtualKey.Shift);
 
                 if (e.Key is VirtualKey.Up or VirtualKey.Down && !alt && !ctrl && !shift && ViewModel.Autocomplete == null)
                 {
@@ -241,7 +242,7 @@ namespace Unigram.Controls.Chats
             else if ((e.Key == VirtualKey.Tab || e.Key == VirtualKey.Enter) && Autocomplete != null && Autocomplete.Items.Count > 0 && ViewModel.Autocomplete != null
                 && ((ViewModel.Autocomplete is SearchStickersCollection && Autocomplete.SelectedItem != null) || ViewModel.Autocomplete is not SearchStickersCollection))
             {
-                var shift = Window.Current.CoreWindow.IsKeyDown(VirtualKey.Shift);
+                var shift = WindowContext.IsKeyDown(VirtualKey.Shift);
                 if (shift)
                 {
                     return;
@@ -260,7 +261,7 @@ namespace Unigram.Controls.Chats
             }
             else if (e.Key == VirtualKey.Tab)
             {
-                var ctrl = Window.Current.CoreWindow.IsKeyDown(VirtualKey.Control);
+                var ctrl = WindowContext.IsKeyDown(VirtualKey.Control);
                 if (ctrl)
                 {
                     return;
@@ -268,7 +269,7 @@ namespace Unigram.Controls.Chats
             }
             else if (e.Key == VirtualKey.X && Math.Abs(Document.Selection.Length) == 4)
             {
-                var alt = Window.Current.CoreWindow.IsKeyDown(VirtualKey.Menu);
+                var alt = WindowContext.IsKeyDown(VirtualKey.Menu);
                 if (alt)
                 {
                     Document.Selection.GetText(TextGetOptions.NoHidden, out string hex);

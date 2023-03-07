@@ -4,6 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
@@ -12,8 +14,6 @@ using Unigram.Controls;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views.Settings.Password;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings.Password
 {
@@ -63,7 +63,7 @@ namespace Unigram.ViewModels.Settings.Password
                 address = string.Empty;
                 addressValid = false;
 
-                var confirm = await MessagePopup.ShowAsync(Strings.Resources.YourEmailSkipWarningText, Strings.Resources.YourEmailSkipWarning, Strings.Resources.YourEmailSkip, Strings.Resources.Cancel);
+                var confirm = await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.YourEmailSkipWarningText, Strings.Resources.YourEmailSkipWarning, Strings.Resources.YourEmailSkip, Strings.Resources.Cancel);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;
@@ -93,7 +93,7 @@ namespace Unigram.ViewModels.Settings.Password
             {
                 if (error.TypeEquals(ErrorType.EMAIL_INVALID))
                 {
-                    await MessagePopup.ShowAsync(Strings.Resources.PasswordEmailInvalid, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+                    await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.PasswordEmailInvalid, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
                 }
             }
         }

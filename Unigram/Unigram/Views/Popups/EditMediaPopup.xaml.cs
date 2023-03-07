@@ -7,6 +7,10 @@
 using FFmpegInteropX;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
+using Microsoft.UI.Dispatching;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -20,9 +24,6 @@ using Windows.Media.Core;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Views.Popups
 {
@@ -132,7 +133,7 @@ namespace Unigram.Views.Popups
                     var image = new Image();
                     image.Width = width;
                     image.Height = height;
-                    image.Stretch = Windows.UI.Xaml.Media.Stretch.UniformToFill;
+                    image.Stretch = Microsoft.UI.Xaml.Media.Stretch.UniformToFill;
                     image.Source = bitmap;
 
                     TrimThumbnails.Children.Add(image);
@@ -147,8 +148,8 @@ namespace Unigram.Views.Popups
             {
                 var rect = Cropper.CropRectangle;
 
-                TimeSpan trimStartTime;
-                TimeSpan trimStopTime;
+                TimeSpan trimStartTime = default;
+                TimeSpan trimStopTime = default;
 
                 if (TrimRange != null)
                 {
@@ -470,9 +471,9 @@ namespace Unigram.Views.Popups
             }
         }
 
-        private async void MediaPlayer_PositionChanged(Windows.Media.Playback.MediaPlaybackSession sender, object args)
+        private void MediaPlayer_PositionChanged(Windows.Media.Playback.MediaPlaybackSession sender, object args)
         {
-            await TrimRange.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            TrimRange.DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, () =>
             {
                 if (sender.Position.TotalMilliseconds >= TrimRange.Maximum * sender.NaturalDuration.TotalMilliseconds)
                 {

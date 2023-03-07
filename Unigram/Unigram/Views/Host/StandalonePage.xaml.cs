@@ -4,6 +4,10 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Navigation;
 using System;
 using Unigram.Common;
 using Unigram.Controls;
@@ -14,9 +18,6 @@ using Windows.ApplicationModel.Core;
 using Windows.System.Profile;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Views.Host
 {
@@ -71,7 +72,7 @@ namespace Unigram.Views.Host
             WindowContext.Current.AcceleratorKeyActivated -= OnAcceleratorKeyActivated;
         }
 
-        private void OnNavigated(object sender, Windows.UI.Xaml.Navigation.NavigationEventArgs e)
+        private void OnNavigated(object sender, NavigationEventArgs e)
         {
             if (e.Content is HostedPage hosted)
             {
@@ -110,7 +111,7 @@ namespace Unigram.Views.Host
             Navigation.Padding = new Thickness(sender.IsVisible ? Math.Max(sender.SystemOverlayLeftInset, 6) : 0, 0, 0, 0);
             Navigation.Height = sender.IsVisible ? sender.Height : 0;
 
-            var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+            var popups = VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot);
             foreach (var popup in popups)
             {
                 if (popup.Child is OverlayPage contentDialog)

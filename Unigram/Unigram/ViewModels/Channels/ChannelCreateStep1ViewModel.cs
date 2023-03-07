@@ -4,12 +4,12 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Media.Imaging;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services;
 using Unigram.Views.Channels;
 using Windows.Storage;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.ViewModels.Channels
 {
@@ -50,7 +50,7 @@ namespace Unigram.ViewModels.Channels
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
-            var response = await ClientService.SendAsync(new CreateNewSupergroupChat(_title, true, _about ?? string.Empty, null, 0, false));
+            var response = await ClientService.SendAsync(new CreateNewSupergroupChat(_title, false, true, _about ?? string.Empty, null, 0, false));
             if (response is Chat chat)
             {
                 // TODO: photo

@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,6 @@ using Unigram.Common;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views.Premium.Popups;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Premium
 {
@@ -125,7 +125,7 @@ namespace Unigram.ViewModels.Premium
             if (feature is PremiumFeatureIncreasedLimits)
             {
                 var dialog = new LimitsPopup(ClientService, Option, Limits);
-                await dialog.ShowQueuedAsync();
+                await dialog.ShowQueuedAsync(XamlRoot);
 
                 if (dialog.ShouldPurchase && !ClientService.IsPremium)
                 {
@@ -138,7 +138,7 @@ namespace Unigram.ViewModels.Premium
             else
             {
                 var dialog = new FeaturesPopup(ClientService, Option, Features, _animations, _stickers, feature);
-                await dialog.ShowQueuedAsync();
+                await dialog.ShowQueuedAsync(XamlRoot);
 
                 if (dialog.ShouldPurchase && !ClientService.IsPremium)
                 {

@@ -4,6 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI;
+using Microsoft.UI.Xaml;
 using System;
 using System.Threading;
 using Telegram.Td.Api;
@@ -13,7 +15,6 @@ using Unigram.Views;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
 
 namespace Unigram.Services.Settings
 {
@@ -496,8 +497,8 @@ namespace Unigram.Services.Settings
             }
             else if (NightMode == NightMode.Scheduled && RequestedTheme == TelegramTheme.Light)
             {
-                TimeSpan start;
-                TimeSpan end;
+                TimeSpan start = TimeSpan.Zero;
+                TimeSpan end = TimeSpan.Zero;
 
                 if (IsLocationBased && Location.Latitude != 0 && Location.Longitude != 0)
                 {

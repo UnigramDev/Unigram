@@ -4,6 +4,10 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,10 +17,6 @@ using Unigram.Controls;
 using Unigram.Controls.Cells;
 using Unigram.Converters;
 using Windows.Foundation;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Views.Settings.Popups
 {
@@ -29,7 +29,7 @@ namespace Unigram.Views.Settings.Popups
             var icon = SessionCell.IconForSession(session);
 
             IconBackground.Background = new SolidColorBrush(icon.Backgroud);
-            
+
             if (icon.Animation != null)
             {
                 Icon.ColorReplacements = new Dictionary<int, int> { { 0x000000, icon.Backgroud.ToValue() } };
@@ -78,12 +78,12 @@ namespace Unigram.Views.Settings.Popups
             Icon.Play();
         }
 
-        private void AcceptCallsPanel_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void AcceptCallsPanel_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
             AcceptCalls.IsChecked = AcceptCalls.IsChecked != true;
         }
 
-        private void AcceptSecretChatsPanel_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void AcceptSecretChatsPanel_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
             AcceptSecretChats.IsChecked = AcceptSecretChats.IsChecked != true;
         }

@@ -109,7 +109,6 @@ namespace Unigram.Services
 
         public ISessionService Create(bool update = true, bool test = false)
         {
-            var app = BootStrapper.Current as App;
             var sessions = TLContainer.Current.GetSessions().ToList();
             var id = sessions.Count > 0 ? sessions.Max(x => x.Id) + 1 : 0;
 

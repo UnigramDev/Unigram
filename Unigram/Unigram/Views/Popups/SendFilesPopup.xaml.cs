@@ -4,12 +4,17 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Text;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Input;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
@@ -23,13 +28,6 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
-using Windows.UI.Core;
-using Windows.UI.Text;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Input;
 
 namespace Unigram.Views.Popups
 {
@@ -284,7 +282,7 @@ namespace Unigram.Views.Popups
                 var username = title.Inlines[1] as Run;
 
                 name.Text = user.FullName();
-                
+
                 if (user.HasActiveUsername(out string usernameValue))
                 {
                     username.Text = $" @{usernameValue}";
@@ -379,20 +377,20 @@ namespace Unigram.Views.Popups
 
         public void Accept()
         {
-            if (CaptionInput.HandwritingView.IsOpen)
-            {
-                void handler(object s, RoutedEventArgs args)
-                {
-                    CaptionInput.HandwritingView.Unloaded -= handler;
+            //if (CaptionInput.HandwritingView.IsOpen)
+            //{
+            //    void handler(object s, RoutedEventArgs args)
+            //    {
+            //        CaptionInput.HandwritingView.Unloaded -= handler;
 
-                    Caption = CaptionInput.GetFormattedText();
-                    Hide(ContentDialogResult.Primary);
-                }
+            //        Caption = CaptionInput.GetFormattedText();
+            //        Hide(ContentDialogResult.Primary);
+            //    }
 
-                CaptionInput.HandwritingView.Unloaded += handler;
-                CaptionInput.HandwritingView.TryClose();
-            }
-            else
+            //    CaptionInput.HandwritingView.Unloaded += handler;
+            //    CaptionInput.HandwritingView.TryClose();
+            //}
+            //else
             {
                 Caption = CaptionInput.GetFormattedText();
                 Hide(ContentDialogResult.Primary);
@@ -670,26 +668,21 @@ namespace Unigram.Views.Popups
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             CaptionInput.Focus(FocusState.Keyboard);
-            Window.Current.CoreWindow.CharacterReceived += OnCharacterReceived;
+            CharacterReceived += OnCharacterReceived;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            Window.Current.CoreWindow.CharacterReceived -= OnCharacterReceived;
+            CharacterReceived -= OnCharacterReceived;
         }
 
-        private void OnCharacterReceived(CoreWindow sender, CharacterReceivedEventArgs args)
+        private void OnCharacterReceived(UIElement sender, CharacterReceivedRoutedEventArgs args)
         {
-            var character = Encoding.UTF32.GetString(BitConverter.GetBytes(args.KeyCode));
-            if (character.Length == 0)
+            if (args.Character != '\u0016' && args.Character != '\r' && char.IsControl(args.Character))
             {
                 return;
             }
-            else if (character != "\u0016" && character != "\r" && char.IsControl(character[0]))
-            {
-                return;
-            }
-            else if (character != "\u0016" && character != "\r" && char.IsWhiteSpace(character[0]))
+            else if (args.Character != '\u0016' && args.Character != '\r' && char.IsWhiteSpace(args.Character))
             {
                 return;
             }
@@ -697,19 +690,19 @@ namespace Unigram.Views.Popups
             var focused = FocusManager.GetFocusedElement();
             if (focused is null or (not TextBox and not RichEditBox))
             {
-                if (character == "\u0016" && CaptionInput.CanPasteClipboardContent)
+                if (args.Character == '\u0016' && CaptionInput.CanPasteClipboardContent)
                 {
                     CaptionInput.Focus(FocusState.Keyboard);
                     CaptionInput.PasteFromClipboard();
                 }
-                else if (character == "\r")
+                else if (args.Character == '\r')
                 {
                     Accept();
                 }
                 else
                 {
                     CaptionInput.Focus(FocusState.Keyboard);
-                    CaptionInput.InsertText(character);
+                    CaptionInput.InsertText(args.Character.ToString());
                 }
 
                 args.Handled = true;

@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Dispatching;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -11,7 +12,6 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Unigram.Navigation.Services;
-using Windows.System;
 using static Unigram.Services.EventAggregator;
 
 namespace Unigram.Services
@@ -980,7 +980,7 @@ namespace Unigram.Services
         public WeakAction(object target, Action action, bool keepTargetAlive = false)
         {
             // A parameterized approach might might be better
-            if (target is Windows.UI.Xaml.UIElement or INavigable)
+            if (target is Microsoft.UI.Xaml.UIElement or INavigable)
             {
                 DispatcherQueue = DispatcherQueue.GetForCurrentThread();
             }
@@ -1225,7 +1225,7 @@ namespace Unigram.Services
         public WeakAction(object target, UpdateHandler<T> action, bool keepTargetAlive = false)
         {
             // A parameterized approach might might be better
-            if (target is Windows.UI.Xaml.UIElement or INavigable)
+            if (target is Microsoft.UI.Xaml.UIElement or INavigable)
             {
                 DispatcherQueue = DispatcherQueue.GetForCurrentThread();
             }

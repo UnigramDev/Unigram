@@ -7,6 +7,14 @@
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Brushes;
 using Microsoft.Graphics.Canvas.UI.Xaml;
+using Microsoft.UI;
+using Microsoft.UI.Dispatching;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -26,15 +34,9 @@ using Unigram.Views.Popups;
 using Windows.Devices.Enumeration;
 using Windows.Foundation;
 using Windows.Graphics.Capture;
-using Windows.System;
 using Windows.System.Display;
 using Windows.UI;
 using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media;
 using Point = Windows.Foundation.Point;
 
 namespace Unigram.Views.Calls
@@ -64,8 +66,6 @@ namespace Unigram.Views.Calls
 
         private readonly DisplayRequest _displayRequest = new();
 
-        private readonly DispatcherQueue _dispatcherQueue;
-
         private ParticipantsGridMode _mode = ParticipantsGridMode.Compact;
         private bool _docked = true;
 
@@ -75,8 +75,6 @@ namespace Unigram.Views.Calls
 
             _clientService = clientService;
             _aggregator = aggregator;
-
-            _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
             _scheduledTimer = new DispatcherTimer();
             _scheduledTimer.Interval = TimeSpan.FromSeconds(1);
@@ -245,7 +243,7 @@ namespace Unigram.Views.Calls
             this.BeginOnUIThread(() => List.ItemsSource = _service.Participants);
         }
 
-        private void OnClosed(object sender, Windows.UI.Core.CoreWindowEventArgs e)
+        private void OnClosed(object sender, WindowEventArgs e)
         {
             Window.Current.Content = null;
         }
@@ -421,7 +419,13 @@ namespace Unigram.Views.Calls
 
                 BottomShadow.Visibility = Visibility.Collapsed;
                 BottomRoot.Padding = new Thickness(4, 8, 4, 8);
-                BottomBackground.Background = new AcrylicBrush { TintColor = Colors.Black, TintOpacity = 0, FallbackColor = Color.FromArgb(0xDD, 0, 0, 0) /*TintLuminosityOpacity = 0.5*/ }; //new SolidColorBrush(Color.FromArgb(0x99, 0x33, 0x33, 0x33));
+                BottomBackground.Background = new AcrylicBrush
+                {
+                    TintColor = Colors.Black,
+                    TintOpacity = 0,
+                    FallbackColor = Color.FromArgb(0xDD, 0, 0, 0)
+                    /*TintLuminosityOpacity = 0.5*/
+                }; //new SolidColorBrush(Color.FromArgb(0x99, 0x33, 0x33, 0x33));
                 BottomRoot.RowDefinitions[0].Height = new GridLength(1, GridUnitType.Auto);
 
                 foreach (var column in BottomRoot.ColumnDefinitions)
@@ -645,7 +649,7 @@ namespace Unigram.Views.Calls
             ElementCompositionPreview.SetIsTranslationEnabled(List, true);
 
             // Root offset
-            var rootOffset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var rootOffset = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
 
             if (_mode == ParticipantsGridMode.Docked)
             {
@@ -659,7 +663,7 @@ namespace Unigram.Views.Calls
             rootOffset.InsertKeyFrame(1, Vector3.Zero);
 
             // List offset
-            var listOffset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var listOffset = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
 
             if (_mode == ParticipantsGridMode.Docked)
             {
@@ -751,7 +755,7 @@ namespace Unigram.Views.Calls
             ElementCompositionPreview.SetIsTranslationEnabled(LeaveInfo, true);
 
             // Root
-            var rootOffset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var rootOffset = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
 
             var prevCenter = prevSize.X / 2 - BottomRoot.ActualSize.X / 2;
             var nextCenter = nextSize.X / 2 - BottomRoot.ActualSize.X / 2;
@@ -769,7 +773,7 @@ namespace Unigram.Views.Calls
             rootOffset.InsertKeyFrame(1, Vector3.Zero);
 
             // List offset
-            var listOffset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var listOffset = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
 
             if (next == ParticipantsGridMode.Docked)
             {
@@ -783,7 +787,7 @@ namespace Unigram.Views.Calls
             listOffset.InsertKeyFrame(1, Vector3.Zero);
 
             // Audio scale
-            var audioScale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var audioScale = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
 
             if (expanded)
             {
@@ -797,7 +801,7 @@ namespace Unigram.Views.Calls
             audioScale.InsertKeyFrame(1, Vector3.One);
 
             // Audio info offset
-            var audioInfoOffset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var audioInfoOffset = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
 
             if (expanded)
             {
@@ -811,7 +815,7 @@ namespace Unigram.Views.Calls
             audioInfoOffset.InsertKeyFrame(1, Vector3.Zero);
 
             // Other offset
-            var otherOffset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var otherOffset = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
 
             if (expanded)
             {
@@ -825,7 +829,7 @@ namespace Unigram.Views.Calls
             otherOffset.InsertKeyFrame(1, Vector3.Zero);
 
             // Other scales
-            var otherScale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var otherScale = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
 
             if (expanded)
             {
@@ -1070,10 +1074,10 @@ namespace Unigram.Views.Calls
 
             var amplitude = Math.Min(value, 1);
 
-            var outer = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var outer = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
             outer.InsertKeyFrame(1, new Vector3(0.9f + 0.5f * amplitude));
 
-            var inner = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var inner = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
             inner.InsertKeyFrame(1, new Vector3(1f + 0.15f * amplitude));
 
             wave.CenterPoint = new Vector3(18, 18, 0);
@@ -1106,7 +1110,7 @@ namespace Unigram.Views.Calls
                     CheckBoxLabel = _service.IsChannel ? Strings.Resources.VoipChannelLeaveAlertEndChat : Strings.Resources.VoipGroupLeaveAlertEndChat
                 };
 
-                var confirm = await popup.ShowQueuedAsync();
+                var confirm = await popup.ShowQueuedAsync(XamlRoot);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     Dispose(popup.IsChecked == true);
@@ -1138,7 +1142,7 @@ namespace Unigram.Views.Calls
             popup.PrimaryButtonText = Strings.Resources.VoipGroupEnd;
             popup.SecondaryButtonText = Strings.Resources.Cancel;
 
-            var confirm = await popup.ShowQueuedAsync();
+            var confirm = await popup.ShowQueuedAsync(XamlRoot);
             if (confirm == ContentDialogResult.Primary)
             {
                 Dispose(true);
@@ -1172,7 +1176,7 @@ namespace Unigram.Views.Calls
             //}
             else if (currentUser != null && currentUser.CanUnmuteSelf && _service.IsMuted)
             {
-                var permissions = await MediaDeviceWatcher.CheckAccessAsync(false, false, ElementTheme.Dark);
+                var permissions = await MediaDeviceWatcher.CheckAccessAsync(XamlRoot, false, false, ElementTheme.Dark);
                 if (permissions == false || _service == null)
                 {
                     return;
@@ -1194,7 +1198,7 @@ namespace Unigram.Views.Calls
         {
             if (_service?.IsVideoEnabled == false)
             {
-                var permissions = await MediaDeviceWatcher.CheckAccessAsync(true, false, ElementTheme.Dark);
+                var permissions = await MediaDeviceWatcher.CheckAccessAsync(XamlRoot, true, false, ElementTheme.Dark);
                 if (permissions == false || _service == null)
                 {
                     return;
@@ -1458,7 +1462,7 @@ namespace Unigram.Views.Calls
             var aliases = await _service.CanChooseAliasAsync(chat.Id);
             if (aliases)
             {
-                flyout.CreateFlyoutItem(async () => await _service.RejoinAsync(), Strings.Resources.VoipGroupDisplayAs, new FontIcon { Glyph = Icons.Person });
+                flyout.CreateFlyoutItem(async () => await _service.RejoinAsync(XamlRoot), Strings.Resources.VoipGroupDisplayAs, new FontIcon { Glyph = Icons.Person });
                 flyout.CreateFlyoutSeparator();
             }
 
@@ -1530,7 +1534,7 @@ namespace Unigram.Views.Calls
                 video.Text = "Webcam";
                 video.Icon = new FontIcon { Glyph = Icons.Camera, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
 
-                _dispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, async () =>
+                DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, async () =>
                 {
                     var videoDevices = await DeviceInformation.FindAllAsync(DeviceClass.VideoCapture);
                     foreach (var device in videoDevices)
@@ -1560,7 +1564,7 @@ namespace Unigram.Views.Calls
                 input.Icon = new FontIcon { Glyph = Icons.MicOn, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
                 input.Items.Add(defaultInput);
 
-                _dispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, async () =>
+                DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, async () =>
                 {
                     var inputDevices = await DeviceInformation.FindAllAsync(DeviceClass.AudioCapture);
                     foreach (var device in inputDevices)
@@ -1590,7 +1594,7 @@ namespace Unigram.Views.Calls
                 output.Icon = new FontIcon { Glyph = Icons.Speaker, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
                 output.Items.Add(defaultOutput);
 
-                _dispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, async () =>
+                DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, async () =>
                 {
                     var outputDevices = await DeviceInformation.FindAllAsync(DeviceClass.AudioRender);
                     foreach (var device in outputDevices)
@@ -1657,7 +1661,7 @@ namespace Unigram.Views.Calls
             input.MaxLength = 64;
             input.MinLength = 0;
 
-            var confirm = await input.ShowQueuedAsync();
+            var confirm = await input.ShowQueuedAsync(XamlRoot);
             if (confirm == ContentDialogResult.Primary)
             {
                 _clientService.Send(new SetGroupCallTitle(call.Id, input.Text));
@@ -1677,7 +1681,7 @@ namespace Unigram.Views.Calls
             var input = new RecordVideoChatPopup(call.Title);
             input.RequestedTheme = ElementTheme.Dark;
 
-            var confirm = await input.ShowQueuedAsync();
+            var confirm = await input.ShowQueuedAsync(XamlRoot);
             if (confirm == ContentDialogResult.Primary)
             {
                 _clientService.Send(new StartGroupCallRecording(call.Id, input.FileName, input.RecordVideo, input.UsePortraitOrientation));
@@ -1699,7 +1703,7 @@ namespace Unigram.Views.Calls
             popup.PrimaryButtonText = Strings.Resources.Stop;
             popup.SecondaryButtonText = Strings.Resources.Cancel;
 
-            var confirm = await popup.ShowQueuedAsync();
+            var confirm = await popup.ShowQueuedAsync(XamlRoot);
             if (confirm == ContentDialogResult.Primary)
             {
                 _clientService.Send(new EndGroupCallRecording(call.Id));
@@ -2077,7 +2081,7 @@ namespace Unigram.Views.Calls
             }
         }
 
-        private void Participant_ContextRequested(UIElement sender, Windows.UI.Xaml.Input.ContextRequestedEventArgs args)
+        private void Participant_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
             var flyout = new MenuFlyout();
 
@@ -2327,7 +2331,7 @@ namespace Unigram.Views.Calls
             }
         }
 
-        private void Viewport_PointerEntered(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+        private void Viewport_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
             var point = e.GetCurrentPoint(PointerListener);
             if (point.Position.X > PointerListener.ActualWidth - 224 && Viewport.Mode == ParticipantsGridMode.Docked)
@@ -2344,7 +2348,7 @@ namespace Unigram.Views.Calls
             }
         }
 
-        private void Viewport_PointerExited(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+        private void Viewport_PointerExited(object sender, PointerRoutedEventArgs e)
         {
             ShowHideInfo(false);
         }
@@ -2379,7 +2383,7 @@ namespace Unigram.Views.Calls
 
             _bottomRootCollapsed = !show;
 
-            var anim = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var anim = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
             anim.InsertKeyFrame(0, show ? 0 : 1);
             anim.InsertKeyFrame(1, show ? 1 : 0);
 
@@ -2413,7 +2417,7 @@ namespace Unigram.Views.Calls
             var prev = e.PreviousSize.ToVector2();
             var next = e.NewSize.ToVector2();
 
-            var animation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var animation = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
             animation.InsertKeyFrame(0, new Vector3(0, prev.Y - next.Y, 0));
             animation.InsertKeyFrame(1, Vector3.Zero);
 
@@ -2630,7 +2634,7 @@ namespace Unigram.Views.Calls
         Expanded
     }
 
-    public class ParticipantsGrid : Windows.UI.Xaml.Controls.Panel
+    public class ParticipantsGrid : Microsoft.UI.Xaml.Controls.Panel
     {
         private ParticipantsGridMode _mode = ParticipantsGridMode.Compact;
         public ParticipantsGridMode Mode
@@ -2821,7 +2825,7 @@ namespace Unigram.Views.Calls
                             ElementCompositionPreview.SetIsTranslationEnabled(Children[index], true);
 
                             var visual = ElementCompositionPreview.GetElementVisual(Children[index]);
-                            var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                            var offset = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
                             offset.InsertKeyFrame(0, new Vector3((float)(prev.X - point.X), (float)(prev.Y - point.Y), 0));
                             offset.InsertKeyFrame(1, Vector3.Zero);
                             offset.Duration = TimeSpan.FromMilliseconds(300);
@@ -2831,7 +2835,7 @@ namespace Unigram.Views.Calls
                         if (prev.Width != size.Width || prev.Height != size.Height)
                         {
                             var visual = ElementCompositionPreview.GetElementVisual(Children[index]);
-                            var scale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                            var scale = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
                             scale.InsertKeyFrame(0, new Vector3((float)(prev.Width / size.Width), (float)(prev.Height / size.Height), 0));
                             scale.InsertKeyFrame(1, Vector3.One);
                             scale.Duration = TimeSpan.FromMilliseconds(300);

@@ -4,10 +4,10 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
 using Telegram.Td.Api;
 using Unigram.Controls;
 using Unigram.Services;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Popups
 {
@@ -25,8 +25,8 @@ namespace Unigram.Views.Popups
 
             Title = "Stream with...";
             Schedule.Visibility = start
-                ? Windows.UI.Xaml.Visibility.Visible
-                : Windows.UI.Xaml.Visibility.Collapsed;
+                ? Microsoft.UI.Xaml.Visibility.Visible
+                : Microsoft.UI.Xaml.Visibility.Collapsed;
 
             if (start)
             {
@@ -59,7 +59,7 @@ namespace Unigram.Views.Popups
         {
         }
 
-        private void Schedule_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void Schedule_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
             IsScheduleSelected = true;
             Hide(ContentDialogResult.Primary);
