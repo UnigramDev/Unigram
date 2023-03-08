@@ -711,7 +711,7 @@ namespace Unigram.ViewModels.Drawers
             _clientService = clientService;
             _type = type;
             _query = query;
-            _inputLanguage = CoreTextServicesManager.GetForCurrentView().InputLanguage.LanguageTag;
+            _inputLanguage = Windows.Globalization.Language.CurrentInputMethodLanguageTag;
             _chatId = chatId;
         }
 

@@ -251,7 +251,7 @@ namespace Unigram.Common
         public static async Task<List<EmojiGroup>> SearchAsync(IClientService clientService, string query, EmojiSkinTone skin)
         {
             var result = new List<EmojiData>();
-            var inputLanguage = CoreTextServicesManager.GetForCurrentView().InputLanguage.LanguageTag;
+            var inputLanguage = Windows.Globalization.Language.CurrentInputMethodLanguageTag;
 
             var response = await clientService.SendAsync(new SearchEmojis(query, false, new[] { inputLanguage }));
             if (response is Emojis suggestions)
