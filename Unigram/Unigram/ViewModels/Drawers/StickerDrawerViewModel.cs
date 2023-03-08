@@ -17,7 +17,6 @@ using Unigram.Services;
 using Unigram.Views;
 using Windows.Foundation;
 using Windows.Storage;
-using Windows.UI.Text.Core;
 
 namespace Unigram.ViewModels.Drawers
 {
@@ -701,7 +700,7 @@ namespace Unigram.ViewModels.Drawers
             _clientService = clientService;
             _type = type;
             _query = query;
-            _inputLanguage = CoreTextServicesManager.GetForCurrentView().InputLanguage.LanguageTag;
+            _inputLanguage = Windows.Globalization.Language.CurrentInputMethodLanguageTag;
             _chatId = chatId;
         }
 
