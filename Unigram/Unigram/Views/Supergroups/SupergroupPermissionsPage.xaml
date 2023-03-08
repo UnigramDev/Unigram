@@ -46,7 +46,7 @@
                 <StackPanel Spacing="16"
                             Margin="0,0,0,16">
                     <controls:HeaderedControl Header="{CustomResource ChannelPermissionsHeader}">
-                        <CheckBox IsChecked="{x:Bind ViewModel.CanSendMessages, Mode=TwoWay}"
+                        <CheckBox IsChecked="{x:Bind ViewModel.CanSendBasicMessages, Mode=TwoWay}"
                                   Content="{CustomResource UserRestrictionsSend}"
                                   Style="{StaticResource SettingsCheckBoxStyle}" />
 

@@ -241,7 +241,16 @@ namespace Unigram.Views
             // Read and play messages logic:
             if (messages.Count > 0 && !Messages.IsProgrammaticScrolling && _windowContext.ActivationMode != WindowActivationState.Deactivated)
             {
-                ViewModel.ClientService.Send(new ViewMessages(chat.Id, ViewModel.ThreadId, messages, false));
+                MessageSource source = ViewModel.Type switch
+                {
+                    DialogType.EventLog => new MessageSourceChatEventLog(),
+                    DialogType.Thread => ViewModel.Topic != null
+                        ? new MessageSourceForumTopicHistory()
+                        : new MessageSourceMessageThreadHistory(),
+                    _ => new MessageSourceChatHistory()
+                };
+
+                ViewModel.ClientService.Send(new ViewMessages(chat.Id, messages, source, false));
             }
 
             if (animations.Count > 0 && !intermediate)

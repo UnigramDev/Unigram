@@ -37,7 +37,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public bool IsInlineBotResultsVisible => _inlineBotResults != null && (!string.IsNullOrEmpty(_inlineBotResults.SwitchPmText) || _inlineBotResults.Count > 0);
+        public bool IsInlineBotResultsVisible => _inlineBotResults != null && _inlineBotResults.Count > 0;
 
         public async Task<bool> ResolveInlineBotAsync(string text, CancellationToken token)
         {
@@ -244,9 +244,6 @@ namespace Unigram.ViewModels
 
         public long InlineQueryId => _results.InlineQueryId;
         public string NextOffset => _results.NextOffset;
-
-        public string SwitchPmParameter => _results.SwitchPmParameter;
-        public string SwitchPmText => _results.SwitchPmText;
 
         public override async Task<IList<InlineQueryResult>> LoadDataAsync()
         {

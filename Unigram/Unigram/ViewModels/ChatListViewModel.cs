@@ -215,7 +215,7 @@ namespace Unigram.ViewModels
             {
                 if (chat.LastMessage != null)
                 {
-                    ClientService.Send(new ViewMessages(chat.Id, 0, new[] { chat.LastMessage.Id }, true));
+                    ClientService.Send(new ViewMessages(chat.Id, new[] { chat.LastMessage.Id }, new MessageSourceChatList(), true));
                 }
 
                 if (chat.UnreadMentionCount > 0)
@@ -249,7 +249,7 @@ namespace Unigram.ViewModels
                 {
                     if (chat.UnreadCount > 0 && chat.LastMessage != null)
                     {
-                        ClientService.Send(new ViewMessages(chat.Id, 0, new[] { chat.LastMessage.Id }, true));
+                        ClientService.Send(new ViewMessages(chat.Id, new[] { chat.LastMessage.Id }, new MessageSourceChatList(), true));
                     }
                     else if (chat.IsMarkedAsUnread)
                     {

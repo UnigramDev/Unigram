@@ -226,6 +226,27 @@ namespace Unigram.ViewModels
                     return false;
                 }
             }
+            else if (clientService.TryGetBasicGroup(chat, out var basicGroup))
+            {
+                if (basicGroup.Status is ChatMemberStatusRestricted restricted && !permission(restricted.Permissions))
+                {
+                    if (restricted.IsForever())
+                    {
+                        label = forever;
+                    }
+                    else
+                    {
+                        label = string.Format(temporary, Converter.BannedUntil(restricted.RestrictedUntilDate));
+                    }
+
+                    return true;
+                }
+                else if (basicGroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator)
+                {
+                    label = null;
+                    return false;
+                }
+            }
 
             if (!permission(chat.Permissions))
             {
@@ -243,9 +264,104 @@ namespace Unigram.ViewModels
             return false;
         }
 
+        public bool VerifyRights(Chat chat, Func<ChatPermissions, bool> permission)
+        {
+            return VerifyRights(ClientService, chat, permission);
+        }
+
+        public static bool VerifyRights(IClientService clientService, Chat chat, Func<ChatPermissions, bool> permission)
+        {
+            if (clientService.TryGetSupergroup(chat, out var supergroup))
+            {
+                if (supergroup.Status is ChatMemberStatusRestricted restricted && !permission(restricted.Permissions))
+                {
+                    return true;
+                }
+                else if (supergroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator)
+                {
+                    return false;
+                }
+            }
+            else if (clientService.TryGetBasicGroup(chat, out var basicGroup))
+            {
+                if (basicGroup.Status is ChatMemberStatusRestricted restricted && !permission(restricted.Permissions))
+                {
+                    return true;
+                }
+                else if (basicGroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator)
+                {
+                    return false;
+                }
+            }
+
+            if (!permission(chat.Permissions))
+            {
+                if (chat.Type is ChatTypeSupergroup super && super.IsChannel)
+                {
+                    return true;
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        public ChatPermissions GetPermissions(Chat chat, out bool restricted)
+        {
+            return GetPermissions(ClientService, chat, out restricted);
+        }
+
+        public static ChatPermissions GetPermissions(IClientService clientService, Chat chat, out bool restrict)
+        {
+            restrict = false;
+
+            if (clientService.TryGetSupergroup(chat, out var supergroup))
+            {
+                if (supergroup.Status is ChatMemberStatusRestricted restricted)
+                {
+                    restrict = true;
+                    return restricted.Permissions;
+                }
+                else if (supergroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator)
+                {
+                    return new ChatPermissions(true, true, true, true, true, true, true, true, true, true, true, true, true, true);
+                }
+            }
+            else if (clientService.TryGetBasicGroup(chat, out var basicGroup))
+            {
+                if (basicGroup.Status is ChatMemberStatusRestricted restricted)
+                {
+                    restrict = true;
+                    return restricted.Permissions;
+                }
+                else if (basicGroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator)
+                {
+                    return new ChatPermissions(true, true, true, true, true, true, true, true, true, true, true, true, true, true);
+                }
+            }
+
+            return chat.Permissions;
+        }
+
         public RelayCommand SendDocumentCommand { get; }
         private async void SendDocumentExecute()
         {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            var restricted = await VerifyRightsAsync(chat, x => x.CanSendDocuments,
+                Strings.Resources.ErrorSendRestrictedDocumentsAll,
+                Strings.Resources.ErrorSendRestrictedDocuments,
+                Strings.Resources.ErrorSendRestrictedDocuments);
+            if (restricted)
+            {
+                return;
+            }
+
             var header = _composerHeader;
             if (header?.EditingMessage == null)
             {
@@ -269,10 +385,36 @@ namespace Unigram.ViewModels
                 return;
             }
 
+            var permissions = GetPermissions(chat, out bool restricted);
+
             var items = await StorageMedia.CreateAsync(files);
             if (items.IsEmpty())
             {
                 return;
+            }
+
+            foreach (var item in items)
+            {
+                if (item is StoragePhoto && !permissions.CanSendPhotos)
+                {
+                    await MessagePopup.ShowAsync(XamlRoot, restricted ? Strings.Resources.ErrorSendRestrictedPhoto : Strings.Resources.ErrorSendRestrictedPhotoAll, Strings.Resources.AppName, Strings.Resources.OK);
+                    return;
+                }
+                else if (item is StorageVideo && !permissions.CanSendVideos)
+                {
+                    await MessagePopup.ShowAsync(XamlRoot, restricted ? Strings.Resources.ErrorSendRestrictedVideo : Strings.Resources.ErrorSendRestrictedVideoAll, Strings.Resources.AppName, Strings.Resources.OK);
+                    return;
+                }
+                else if (item is StorageAudio && !permissions.CanSendAudios)
+                {
+                    await MessagePopup.ShowAsync(XamlRoot, restricted ? Strings.Resources.ErrorSendRestrictedMusic : Strings.Resources.ErrorSendRestrictedMusicAll, Strings.Resources.AppName, Strings.Resources.OK);
+                    return;
+                }
+                else if (item is StorageDocument && !permissions.CanSendDocuments)
+                {
+                    await MessagePopup.ShowAsync(XamlRoot, restricted ? Strings.Resources.ErrorSendRestrictedDocuments : Strings.Resources.ErrorSendRestrictedDocumentsAll, Strings.Resources.AppName, Strings.Resources.OK);
+                    return;
+                }
             }
 
             FormattedText formattedText = null;
@@ -284,7 +426,15 @@ namespace Unigram.ViewModels
 
             var self = ClientService.IsSavedMessages(_chat);
 
-            var dialog = new SendFilesPopup(SessionId, items, media, _chat.Type is ChatTypePrivate && !self, _type == DialogType.History, self);
+            var mediaAllowed = permissions.CanSendPhotos
+                ? items.All(x => x is StoragePhoto)
+                ? permissions.CanSendVideos
+                : items.All(x => x is StoragePhoto or StorageVideo)
+                : permissions.CanSendVideos
+                ? items.All(x => x is StorageVideo)
+                : false;
+
+            var dialog = new SendFilesPopup(SessionId, items, media, mediaAllowed, permissions.CanSendDocuments || permissions.CanSendAudios, _chat.Type is ChatTypePrivate && !self, _type == DialogType.History, self);
             dialog.ViewModel = this;
             dialog.Caption = caption;
 
@@ -564,16 +714,16 @@ namespace Unigram.ViewModels
 
                 if (dialog.IsUntilOnline)
                 {
-                    return new MessageSendOptions(false, false, false, false, new MessageSchedulingStateSendWhenOnline());
+                    return new MessageSendOptions(false, false, false, false, new MessageSchedulingStateSendWhenOnline(), 0);
                 }
                 else
                 {
-                    return new MessageSendOptions(false, false, false, false, new MessageSchedulingStateSendAtDate(dialog.Value.ToTimestamp()));
+                    return new MessageSendOptions(false, false, false, false, new MessageSchedulingStateSendAtDate(dialog.Value.ToTimestamp()), 0);
                 }
             }
             else
             {
-                return new MessageSendOptions(silent ?? false, false, false, false, null);
+                return new MessageSendOptions(silent ?? false, false, false, false, null, 0);
             }
         }
 

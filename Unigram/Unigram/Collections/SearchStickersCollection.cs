@@ -68,7 +68,7 @@ namespace Unigram.Collections
                 {
                     _hasMore = false;
 
-                    var response = await _clientService.SendAsync(new SearchStickers(_query, 20));
+                    var response = await _clientService.SendAsync(new SearchStickers(_type, _query, 20));
                     if (response is Stickers stickers)
                     {
                         foreach (var sticker in stickers.StickersValue)

@@ -48,9 +48,9 @@ namespace Unigram.ViewModels.Premium
             get => _state;
             set => Set(ref _state, value);
         }
-        
-        private PremiumPaymentOption _option;
-        public PremiumPaymentOption Option
+
+        private PremiumStatePaymentOption _option;
+        public PremiumStatePaymentOption Option
         {
             get => _option;
             set => Set(ref _option, value);
@@ -124,7 +124,7 @@ namespace Unigram.ViewModels.Premium
 
             if (feature is PremiumFeatureIncreasedLimits)
             {
-                var dialog = new LimitsPopup(ClientService, Option, Limits);
+                var dialog = new LimitsPopup(ClientService, Option.PaymentOption, Limits);
                 await dialog.ShowQueuedAsync(XamlRoot);
 
                 if (dialog.ShouldPurchase && !ClientService.IsPremium)
@@ -137,7 +137,7 @@ namespace Unigram.ViewModels.Premium
             }
             else
             {
-                var dialog = new FeaturesPopup(ClientService, Option, Features, _animations, _stickers, feature);
+                var dialog = new FeaturesPopup(ClientService, Option.PaymentOption, Features, _animations, _stickers, feature);
                 await dialog.ShowQueuedAsync(XamlRoot);
 
                 if (dialog.ShouldPurchase && !ClientService.IsPremium)

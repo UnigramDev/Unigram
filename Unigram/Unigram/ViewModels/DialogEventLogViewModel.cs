@@ -424,17 +424,41 @@ namespace Unigram.ViewModels
                 //{
                 //    AppendChange(n.IsViewMessages, Strings.Resources.EventLogRestrictedReadMessages);
                 //}
-                if (o.CanSendMessages != n.CanSendMessages)
+                if (o.CanSendBasicMessages != n.CanSendBasicMessages)
                 {
-                    AppendChange(n.CanSendMessages, Strings.Resources.EventLogRestrictedSendMessages);
+                    AppendChange(n.CanSendBasicMessages, Strings.Resources.EventLogRestrictedSendMessages);
                 }
                 if (o.CanSendOtherMessages != n.CanSendOtherMessages)
                 {
                     AppendChange(n.CanSendOtherMessages, Strings.Resources.EventLogRestrictedSendStickers);
                 }
-                if (o.CanSendMediaMessages != n.CanSendMediaMessages)
+                if (o.CanSendPhotos != n.CanSendPhotos)
                 {
-                    AppendChange(n.CanSendMediaMessages, Strings.Resources.EventLogRestrictedSendMedia);
+                    AppendChange(n.CanSendPhotos, Strings.Resources.UserRestrictionsSendPhotos);
+                }
+                if (o.CanSendVideos != n.CanSendVideos)
+                {
+                    AppendChange(n.CanSendVideos, Strings.Resources.UserRestrictionsSendVideos);
+                }
+                if (o.CanSendOtherMessages != n.CanSendOtherMessages)
+                {
+                    AppendChange(n.CanSendOtherMessages, Strings.Resources.UserRestrictionsSendStickers);
+                }
+                if (o.CanSendAudios != n.CanSendAudios)
+                {
+                    AppendChange(n.CanSendAudios, Strings.Resources.UserRestrictionsSendMusic);
+                }
+                if (o.CanSendDocuments != n.CanSendDocuments)
+                {
+                    AppendChange(n.CanSendDocuments, Strings.Resources.UserRestrictionsSendFiles);
+                }
+                if (o.CanSendVoiceNotes != n.CanSendVoiceNotes)
+                {
+                    AppendChange(n.CanSendVoiceNotes, Strings.Resources.UserRestrictionsSendVoices);
+                }
+                if (o.CanSendVideoNotes != n.CanSendVideoNotes)
+                {
+                    AppendChange(n.CanSendVideoNotes, Strings.Resources.UserRestrictionsSendRound);
                 }
                 if (o.CanSendPolls != n.CanSendPolls)
                 {
@@ -487,11 +511,11 @@ namespace Unigram.ViewModels
                     }
                     else if (memberRestricted.OldStatus is ChatMemberStatusBanned oldBanned)
                     {
-                        o = new ChatMemberStatusRestricted(false, oldBanned.BannedUntilDate, new ChatPermissions(false, false, false, false, false, false, false, false, false));
+                        o = new ChatMemberStatusRestricted(false, oldBanned.BannedUntilDate, new ChatPermissions(false, false, false, false, false, false, false, false, false, false, false, false, false, false));
                     }
                     else if (memberRestricted.OldStatus is ChatMemberStatusMember)
                     {
-                        o = new ChatMemberStatusRestricted(true, 0, new ChatPermissions(true, true, true, true, true, true, true, true, true));
+                        o = new ChatMemberStatusRestricted(true, 0, new ChatPermissions(true, true, true, true, true, true, true, true, true, true, true, true, true, true));
                     }
 
                     if (memberRestricted.NewStatus is ChatMemberStatusRestricted newRestricted)
@@ -500,11 +524,11 @@ namespace Unigram.ViewModels
                     }
                     else if (memberRestricted.NewStatus is ChatMemberStatusBanned newBanned)
                     {
-                        n = new ChatMemberStatusRestricted(false, newBanned.BannedUntilDate, new ChatPermissions(false, false, false, false, false, false, false, false, false));
+                        n = new ChatMemberStatusRestricted(false, newBanned.BannedUntilDate, new ChatPermissions(false, false, false, false, false, false, false, false, false, false, false, false, false, false));
                     }
                     else if (memberRestricted.NewStatus is ChatMemberStatusMember)
                     {
-                        n = new ChatMemberStatusRestricted(true, 0, new ChatPermissions(true, true, true, true, true, true, true, true, true));
+                        n = new ChatMemberStatusRestricted(true, 0, new ChatPermissions(true, true, true, true, true, true, true, true, true, true, true, true, true, true));
                     }
 
                     if (!channel && (n != null && o != null /*&& n.RestrictedUntilDate != o.RestrictedUntilDate*/))
@@ -572,11 +596,11 @@ namespace Unigram.ViewModels
                         var added = false;
                         if (o == null)
                         {
-                            o = new ChatMemberStatusRestricted(true, 0, new ChatPermissions(true, true, true, true, true, true, true, true, true));
+                            o = new ChatMemberStatusRestricted(true, 0, new ChatPermissions(true, true, true, true, true, true, true, true, true, true, true, true, true, true));
                         }
                         if (n == null)
                         {
-                            n = new ChatMemberStatusRestricted(true, 0, new ChatPermissions(true, true, true, true, true, true, true, true, true));
+                            n = new ChatMemberStatusRestricted(true, 0, new ChatPermissions(true, true, true, true, true, true, true, true, true, true, true, true, true, true));
                         }
 
                         void AppendChange(bool value, string label)
@@ -595,17 +619,41 @@ namespace Unigram.ViewModels
                         //{
                         //    AppendChange(n.IsViewMessages, Strings.Resources.EventLogRestrictedReadMessages);
                         //}
-                        if (o.Permissions.CanSendMessages != n.Permissions.CanSendMessages)
+                        if (o.Permissions.CanSendBasicMessages != n.Permissions.CanSendBasicMessages)
                         {
-                            AppendChange(n.Permissions.CanSendMessages, Strings.Resources.EventLogRestrictedSendMessages);
+                            AppendChange(n.Permissions.CanSendBasicMessages, Strings.Resources.EventLogRestrictedSendMessages);
                         }
                         if (o.Permissions.CanSendOtherMessages != n.Permissions.CanSendOtherMessages)
                         {
                             AppendChange(n.Permissions.CanSendOtherMessages, Strings.Resources.EventLogRestrictedSendStickers);
                         }
-                        if (o.Permissions.CanSendMediaMessages != n.Permissions.CanSendMediaMessages)
+                        if (o.Permissions.CanSendPhotos != n.Permissions.CanSendPhotos)
                         {
-                            AppendChange(n.Permissions.CanSendMediaMessages, Strings.Resources.EventLogRestrictedSendMedia);
+                            AppendChange(n.Permissions.CanSendPhotos, Strings.Resources.UserRestrictionsSendPhotos);
+                        }
+                        if (o.Permissions.CanSendVideos != n.Permissions.CanSendVideos)
+                        {
+                            AppendChange(n.Permissions.CanSendVideos, Strings.Resources.UserRestrictionsSendVideos);
+                        }
+                        if (o.Permissions.CanSendOtherMessages != n.Permissions.CanSendOtherMessages)
+                        {
+                            AppendChange(n.Permissions.CanSendOtherMessages, Strings.Resources.UserRestrictionsSendStickers);
+                        }
+                        if (o.Permissions.CanSendAudios != n.Permissions.CanSendAudios)
+                        {
+                            AppendChange(n.Permissions.CanSendAudios, Strings.Resources.UserRestrictionsSendMusic);
+                        }
+                        if (o.Permissions.CanSendDocuments != n.Permissions.CanSendDocuments)
+                        {
+                            AppendChange(n.Permissions.CanSendDocuments, Strings.Resources.UserRestrictionsSendFiles);
+                        }
+                        if (o.Permissions.CanSendVoiceNotes != n.Permissions.CanSendVoiceNotes)
+                        {
+                            AppendChange(n.Permissions.CanSendVoiceNotes, Strings.Resources.UserRestrictionsSendVoices);
+                        }
+                        if (o.Permissions.CanSendVideoNotes != n.Permissions.CanSendVideoNotes)
+                        {
+                            AppendChange(n.Permissions.CanSendVideoNotes, Strings.Resources.UserRestrictionsSendRound);
                         }
                         if (o.Permissions.CanSendPolls != n.Permissions.CanSendPolls)
                         {

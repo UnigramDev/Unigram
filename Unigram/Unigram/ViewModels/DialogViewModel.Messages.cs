@@ -931,7 +931,7 @@ namespace Unigram.ViewModels
                 var response = await ClientService.SendAsync(new GetLoginUrlInfo(chat.Id, message.Id, loginUrl.Id));
                 if (response is LoginUrlInfoOpen infoOpen)
                 {
-                    OpenUrl(infoOpen.Url, !infoOpen.SkipConfirm);
+                    OpenUrl(infoOpen.Url, !infoOpen.SkipConfirmation);
                 }
                 else if (response is LoginUrlInfoRequestConfirmation requestConfirmation)
                 {

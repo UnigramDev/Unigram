@@ -149,7 +149,7 @@ namespace Unigram.ViewModels
             {
                 if (topic.LastMessage != null)
                 {
-                    ClientService.Send(new ViewMessages(chat.Id, topic.Info.MessageThreadId, new[] { topic.LastMessage.Id }, true));
+                    ClientService.Send(new ViewMessages(chat.Id, new[] { topic.LastMessage.Id }, new MessageSourceChatList(), true));
                 }
 
                 if (topic.UnreadMentionCount > 0)

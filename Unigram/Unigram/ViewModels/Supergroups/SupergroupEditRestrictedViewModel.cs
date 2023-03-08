@@ -90,7 +90,7 @@ namespace Unigram.ViewModels.Supergroups
                     CanSendVideoNotes = restricted.Permissions.CanSendVideoNotes;
                     CanSendPolls = restricted.Permissions.CanSendPolls;
                     CanAddWebPagePreviews = restricted.Permissions.CanAddWebPagePreviews;
-                    CanSendMessages = restricted.Permissions.CanSendMessages;
+                    CanSendBasicMessages = restricted.Permissions.CanSendBasicMessages;
                     UntilDate = restricted.RestrictedUntilDate;
                 }
                 else if (member.Status is ChatMemberStatusBanned banned)
@@ -99,7 +99,7 @@ namespace Unigram.ViewModels.Supergroups
                     CanPinMessages = false;
                     CanInviteUsers = false;
                     CanSendMediaMessages = false;
-                    CanSendMessages = false;
+                    CanSendBasicMessages = false;
                     UntilDate = banned.BannedUntilDate;
                 }
                 else
@@ -116,7 +116,7 @@ namespace Unigram.ViewModels.Supergroups
                     CanSendVideoNotes = chat.Permissions.CanSendVideoNotes;
                     CanSendPolls = chat.Permissions.CanSendPolls;
                     CanAddWebPagePreviews = chat.Permissions.CanAddWebPagePreviews;
-                    CanSendMessages = chat.Permissions.CanSendMessages;
+                    CanSendBasicMessages = chat.Permissions.CanSendBasicMessages;
                     UntilDate = 0;
                 }
             }
@@ -124,13 +124,13 @@ namespace Unigram.ViewModels.Supergroups
 
         #region Flags
 
-        private bool _canSendMessages;
-        public bool CanSendMessages
+        private bool _canSendBasicMessages;
+        public bool CanSendBasicMessages
         {
-            get => _canSendMessages;
+            get => _canSendBasicMessages;
             set
             {
-                Set(ref _canSendMessages, value);
+                Set(ref _canSendBasicMessages, value);
 
                 // Don't allow send media
                 if (!value && _canAddWebPagePreviews)
@@ -403,7 +403,7 @@ namespace Unigram.ViewModels.Supergroups
                     CanSendVideoNotes = _canSendVideoNotes,
                     CanSendPolls = _canSendPolls,
                     CanAddWebPagePreviews = _canAddWebPagePreviews,
-                    CanSendMessages = _canSendMessages,
+                    CanSendBasicMessages = _canSendBasicMessages,
                 }
             };
 

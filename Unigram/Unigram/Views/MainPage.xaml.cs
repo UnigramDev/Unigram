@@ -3274,7 +3274,7 @@ namespace Unigram.Views
                 flyout.CreateFlyoutSeparator();
                 flyout.CreateFlyoutItem(viewModel.ChatOpenCommand, chat, "Open in new window", new FontIcon { Glyph = Icons.WindowNew });
                 flyout.CreateFlyoutSeparator();
-                flyout.CreateFlyoutItem(viewModel.ChatSelectCommand, chat, Strings.Resources.lng_context_select_msg, new FontIcon { Glyph = Icons.CheckmarkCircle });
+                flyout.CreateFlyoutItem(viewModel.ChatSelectCommand, chat, Strings.Resources.Select, new FontIcon { Glyph = Icons.CheckmarkCircle });
             }
 
             args.ShowAt(flyout, element);
@@ -3465,7 +3465,7 @@ namespace Unigram.Views
                 flyout.CreateFlyoutSeparator();
                 flyout.CreateFlyoutItem(viewModel.ChatOpenCommand, topic, "Open in new window", new FontIcon { Glyph = Icons.WindowNew });
                 flyout.CreateFlyoutSeparator();
-                flyout.CreateFlyoutItem(viewModel.TopicSelectCommand, topic, Strings.Resources.lng_context_select_msg, new FontIcon { Glyph = Icons.CheckmarkCircle });
+                flyout.CreateFlyoutItem(viewModel.TopicSelectCommand, topic, Strings.Resources.Select, new FontIcon { Glyph = Icons.CheckmarkCircle });
             }
 
             args.ShowAt(flyout, element);

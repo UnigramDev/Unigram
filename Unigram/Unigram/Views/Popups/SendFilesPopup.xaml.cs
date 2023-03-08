@@ -50,7 +50,10 @@ namespace Unigram.Views.Popups
             }
         }
 
-        public bool IsMediaOnly => Items.All(x => x is StoragePhoto or StorageVideo);
+        private bool _mediaAllowed;
+        private bool _documentAllowed;
+
+        public bool IsMediaOnly => _mediaAllowed && _documentAllowed && Items.All(x => x is StoragePhoto or StorageVideo);
         public bool IsAlbumAvailable
         {
             get
@@ -141,7 +144,7 @@ namespace Unigram.Views.Popups
         public bool? Schedule { get; private set; }
         public bool? Silent { get; private set; }
 
-        public SendFilesPopup(int sessionId, IEnumerable<StorageMedia> items, bool media, bool ttl, bool schedule, bool savedMessages)
+        public SendFilesPopup(int sessionId, IEnumerable<StorageMedia> items, bool media, bool mediaAllowed, bool documentAllowed, bool ttl, bool schedule, bool savedMessages)
         {
             InitializeComponent();
 
@@ -152,9 +155,12 @@ namespace Unigram.Views.Popups
             IsSavedMessages = savedMessages;
             CanSchedule = schedule;
 
+            _mediaAllowed = mediaAllowed;
+            _documentAllowed = documentAllowed;
+
             Items = new MvxObservableCollection<StorageMedia>(items);
             Items.CollectionChanged += OnCollectionChanged;
-            IsMediaSelected = media && IsMediaOnly;
+            IsMediaSelected = media && mediaAllowed && Items.All(x => x is StoragePhoto or StorageVideo);
             IsFilesSelected = !IsMediaSelected;
 
             EmojiPanel.DataContext = EmojiDrawerViewModel.GetForCurrentView(sessionId);

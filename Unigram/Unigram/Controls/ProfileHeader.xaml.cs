@@ -238,8 +238,8 @@ namespace Unigram.Controls
         {
             if (user.Type is UserTypeBot && fullInfo.BotInfo != null)
             {
-                GetEntities(fullInfo.BotInfo.ShareText);
-                Description.Visibility = string.IsNullOrEmpty(fullInfo.BotInfo.ShareText) ? Visibility.Collapsed : Visibility.Visible;
+                GetEntities(fullInfo.BotInfo.ShortDescription);
+                Description.Visibility = string.IsNullOrEmpty(fullInfo.BotInfo.ShortDescription) ? Visibility.Collapsed : Visibility.Visible;
             }
             else
             {

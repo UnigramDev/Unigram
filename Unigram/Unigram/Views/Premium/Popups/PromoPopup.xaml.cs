@@ -162,17 +162,18 @@ namespace Unigram.Views.Premium.Popups
             return premium ? Strings.Resources.TelegramPremiumSubscribedSubtitle : Strings.Resources.TelegramPremiumSubtitle;
         }
 
-        public string ConvertPurchase(bool premium, PremiumPaymentOption option)
+        public string ConvertPurchase(bool premium, PremiumStatePaymentOption option)
         {
             if (premium || option == null)
             {
                 return Strings.Resources.OK;
             }
 
-            return string.Format(Strings.Resources.SubscribeToPremium, Locale.FormatCurrency(option.Amount / option.MonthCount, option.Currency));
+            return string.Format(Strings.Resources.SubscribeToPremium,
+                Locale.FormatCurrency(option.PaymentOption.Amount / option.PaymentOption.MonthCount, option.PaymentOption.Currency));
         }
 
-        private void PurchaseShadow_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void PurchaseShadow_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
             DropShadowEx.Attach(PurchaseShadow);
         }

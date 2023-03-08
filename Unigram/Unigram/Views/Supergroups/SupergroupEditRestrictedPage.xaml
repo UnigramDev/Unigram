@@ -42,7 +42,7 @@
 
                 <controls:HeaderedControl x:Name="PermissionsPanel"
                                           Visibility="Collapsed">
-                    <CheckBox IsChecked="{x:Bind ViewModel.CanSendMessages, Mode=TwoWay}"
+                    <CheckBox IsChecked="{x:Bind ViewModel.CanSendBasicMessages, Mode=TwoWay}"
                               Content="{CustomResource UserRestrictionsSend}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
