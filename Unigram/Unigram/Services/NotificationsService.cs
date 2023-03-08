@@ -868,11 +868,11 @@ namespace Unigram.Services
                     var formatted = Client.Execute(new ParseMarkdown(new FormattedText(messageText, new TextEntity[0]))) as FormattedText;
 
                     var replyToMsgId = data.ContainsKey("msg_id") ? long.Parse(data["msg_id"]) << 20 : 0;
-                    var response = await _clientService.SendAsync(new SendMessage(chat.Id, 0, replyToMsgId, new MessageSendOptions(false, true, false, false, null), null, new InputMessageText(formatted, false, false)));
+                    var response = await _clientService.SendAsync(new SendMessage(chat.Id, 0, replyToMsgId, new MessageSendOptions(false, true, false, false, null, 0), null, new InputMessageText(formatted, false, false)));
 
                     if (chat.Type is ChatTypePrivate && chat.LastMessage != null)
                     {
-                        await _clientService.SendAsync(new ViewMessages(chat.Id, 0, new long[] { chat.LastMessage.Id }, true));
+                        await _clientService.SendAsync(new ViewMessages(chat.Id, new long[] { chat.LastMessage.Id }, new MessageSourceNotification(), true));
                     }
                 }
                 else if (string.Equals(action, "markasread", StringComparison.OrdinalIgnoreCase))
@@ -882,7 +882,7 @@ namespace Unigram.Services
                         return;
                     }
 
-                    await _clientService.SendAsync(new ViewMessages(chat.Id, 0, new long[] { chat.LastMessage.Id }, true));
+                    await _clientService.SendAsync(new ViewMessages(chat.Id, new long[] { chat.LastMessage.Id }, new MessageSourceNotification(), true));
                 }
             }
         }

@@ -531,7 +531,7 @@ namespace Unigram.ViewModels
                     continue;
                 }
 
-                ClientService.Send(new ViewMessages(chat.Id, 0, new[] { chat.LastMessage.Id }, true));
+                ClientService.Send(new ViewMessages(chat.Id, new[] { chat.LastMessage.Id }, new MessageSourceChatList(), true));
             }
         }
 

@@ -360,7 +360,7 @@ namespace Unigram.Controls.Chats
                     return;
                 }
 
-                var restricted = await ViewModel.VerifyRightsAsync(chat, x => x.CanSendMediaMessages, Strings.Resources.GlobalAttachMediaRestricted, Strings.Resources.AttachMediaRestrictedForever, Strings.Resources.AttachMediaRestricted);
+                var restricted = await ViewModel.VerifyRightsAsync(chat, x => Mode == ChatRecordMode.Video ? x.CanSendVideoNotes : x.CanSendVoiceNotes, Strings.Resources.GlobalAttachMediaRestricted, Strings.Resources.AttachMediaRestrictedForever, Strings.Resources.AttachMediaRestricted);
                 if (restricted)
                 {
                     return;
@@ -553,7 +553,7 @@ namespace Unigram.Controls.Chats
                     return;
                 }
 
-                var restricted = await ViewModel.VerifyRightsAsync(chat, x => x.CanSendMediaMessages, Strings.Resources.GlobalAttachMediaRestricted, Strings.Resources.AttachMediaRestrictedForever, Strings.Resources.AttachMediaRestricted);
+                var restricted = await ViewModel.VerifyRightsAsync(chat, x => Mode == ChatRecordMode.Video ? x.CanSendVideoNotes : x.CanSendVoiceNotes, Strings.Resources.GlobalAttachMediaRestricted, Strings.Resources.AttachMediaRestrictedForever, Strings.Resources.AttachMediaRestricted);
                 if (restricted)
                 {
                     return;

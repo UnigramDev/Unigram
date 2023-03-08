@@ -72,17 +72,13 @@ namespace Unigram.Services
             }
             else if (target is AttachmentMenuBot attachmentMenuBot)
             {
-                if (attachmentMenuBot.WebAppPlaceholder != null)
-                {
-                    attachmentMenuBot.WebAppPlaceholder = ProcessFile(attachmentMenuBot.WebAppPlaceholder);
-                }
-                if (attachmentMenuBot.MacosIcon != null)
-                {
-                    attachmentMenuBot.MacosIcon = ProcessFile(attachmentMenuBot.MacosIcon);
-                }
                 if (attachmentMenuBot.AndroidIcon != null)
                 {
                     attachmentMenuBot.AndroidIcon = ProcessFile(attachmentMenuBot.AndroidIcon);
+                }
+                if (attachmentMenuBot.DefaultIcon != null)
+                {
+                    attachmentMenuBot.DefaultIcon = ProcessFile(attachmentMenuBot.DefaultIcon);
                 }
                 if (attachmentMenuBot.IosAnimatedIcon != null)
                 {
@@ -92,13 +88,21 @@ namespace Unigram.Services
                 {
                     attachmentMenuBot.IosStaticIcon = ProcessFile(attachmentMenuBot.IosStaticIcon);
                 }
-                if (attachmentMenuBot.DefaultIcon != null)
+                if (attachmentMenuBot.MacosIcon != null)
                 {
-                    attachmentMenuBot.DefaultIcon = ProcessFile(attachmentMenuBot.DefaultIcon);
+                    attachmentMenuBot.MacosIcon = ProcessFile(attachmentMenuBot.MacosIcon);
+                }
+                if (attachmentMenuBot.WebAppPlaceholder != null)
+                {
+                    attachmentMenuBot.WebAppPlaceholder = ProcessFile(attachmentMenuBot.WebAppPlaceholder);
                 }
             }
             else if (target is Audio audio)
             {
+                if (audio.AlbumCoverThumbnail != null)
+                {
+                    ProcessFiles(audio.AlbumCoverThumbnail);
+                }
                 if (audio.AudioValue != null)
                 {
                     audio.AudioValue = ProcessFile(audio.AudioValue);
@@ -106,10 +110,6 @@ namespace Unigram.Services
                 foreach (var item in audio.ExternalAlbumCovers)
                 {
                     ProcessFiles(item);
-                }
-                if (audio.AlbumCoverThumbnail != null)
-                {
-                    ProcessFiles(audio.AlbumCoverThumbnail);
                 }
             }
             else if (target is Background background)
@@ -228,10 +228,6 @@ namespace Unigram.Services
             }
             else if (target is ChatPhoto chatPhoto)
             {
-                if (chatPhoto.SmallAnimation != null)
-                {
-                    ProcessFiles(chatPhoto.SmallAnimation);
-                }
                 if (chatPhoto.Animation != null)
                 {
                     ProcessFiles(chatPhoto.Animation);
@@ -239,6 +235,10 @@ namespace Unigram.Services
                 foreach (var item in chatPhoto.Sizes)
                 {
                     ProcessFiles(item);
+                }
+                if (chatPhoto.SmallAnimation != null)
+                {
+                    ProcessFiles(chatPhoto.SmallAnimation);
                 }
             }
             else if (target is ChatPhotoInfo chatPhotoInfo)
@@ -286,9 +286,9 @@ namespace Unigram.Services
             }
             else if (target is DiceStickersSlotMachine diceStickersSlotMachine)
             {
-                if (diceStickersSlotMachine.RightReel != null)
+                if (diceStickersSlotMachine.Background != null)
                 {
-                    ProcessFiles(diceStickersSlotMachine.RightReel);
+                    ProcessFiles(diceStickersSlotMachine.Background);
                 }
                 if (diceStickersSlotMachine.CenterReel != null)
                 {
@@ -302,9 +302,9 @@ namespace Unigram.Services
                 {
                     ProcessFiles(diceStickersSlotMachine.Lever);
                 }
-                if (diceStickersSlotMachine.Background != null)
+                if (diceStickersSlotMachine.RightReel != null)
                 {
-                    ProcessFiles(diceStickersSlotMachine.Background);
+                    ProcessFiles(diceStickersSlotMachine.RightReel);
                 }
             }
             else if (target is Document document)
@@ -318,31 +318,45 @@ namespace Unigram.Services
                     ProcessFiles(document.Thumbnail);
                 }
             }
+            else if (target is EmojiCategories emojiCategories)
+            {
+                foreach (var item in emojiCategories.Categories)
+                {
+                    ProcessFiles(item);
+                }
+            }
+            else if (target is EmojiCategory emojiCategory)
+            {
+                if (emojiCategory.Icon != null)
+                {
+                    ProcessFiles(emojiCategory.Icon);
+                }
+            }
             else if (target is EmojiReaction emojiReaction)
             {
-                if (emojiReaction.CenterAnimation != null)
+                if (emojiReaction.ActivateAnimation != null)
                 {
-                    ProcessFiles(emojiReaction.CenterAnimation);
+                    ProcessFiles(emojiReaction.ActivateAnimation);
+                }
+                if (emojiReaction.AppearAnimation != null)
+                {
+                    ProcessFiles(emojiReaction.AppearAnimation);
                 }
                 if (emojiReaction.AroundAnimation != null)
                 {
                     ProcessFiles(emojiReaction.AroundAnimation);
                 }
+                if (emojiReaction.CenterAnimation != null)
+                {
+                    ProcessFiles(emojiReaction.CenterAnimation);
+                }
                 if (emojiReaction.EffectAnimation != null)
                 {
                     ProcessFiles(emojiReaction.EffectAnimation);
                 }
-                if (emojiReaction.ActivateAnimation != null)
-                {
-                    ProcessFiles(emojiReaction.ActivateAnimation);
-                }
                 if (emojiReaction.SelectAnimation != null)
                 {
                     ProcessFiles(emojiReaction.SelectAnimation);
-                }
-                if (emojiReaction.AppearAnimation != null)
-                {
-                    ProcessFiles(emojiReaction.AppearAnimation);
                 }
                 if (emojiReaction.StaticIcon != null)
                 {
@@ -355,21 +369,21 @@ namespace Unigram.Services
                 {
                     ProcessFiles(item);
                 }
-                foreach (var item in encryptedPassportElement.Translation)
+                if (encryptedPassportElement.FrontSide != null)
                 {
-                    ProcessFiles(item);
-                }
-                if (encryptedPassportElement.Selfie != null)
-                {
-                    ProcessFiles(encryptedPassportElement.Selfie);
+                    ProcessFiles(encryptedPassportElement.FrontSide);
                 }
                 if (encryptedPassportElement.ReverseSide != null)
                 {
                     ProcessFiles(encryptedPassportElement.ReverseSide);
                 }
-                if (encryptedPassportElement.FrontSide != null)
+                if (encryptedPassportElement.Selfie != null)
                 {
-                    ProcessFiles(encryptedPassportElement.FrontSide);
+                    ProcessFiles(encryptedPassportElement.Selfie);
+                }
+                foreach (var item in encryptedPassportElement.Translation)
+                {
+                    ProcessFiles(item);
                 }
             }
             else if (target is FileDownload fileDownload)
@@ -393,6 +407,13 @@ namespace Unigram.Services
                     ProcessFiles(item);
                 }
             }
+            else if (target is FoundChatMessages foundChatMessages)
+            {
+                foreach (var item in foundChatMessages.Messages)
+                {
+                    ProcessFiles(item);
+                }
+            }
             else if (target is FoundFileDownloads foundFileDownloads)
             {
                 foreach (var item in foundFileDownloads.Files)
@@ -405,6 +426,13 @@ namespace Unigram.Services
                 foreach (var item in foundMessages.Messages)
                 {
                     ProcessFiles(item);
+                }
+            }
+            else if (target is FoundWebApp foundWebApp)
+            {
+                if (foundWebApp.WebApp != null)
+                {
+                    ProcessFiles(foundWebApp.WebApp);
                 }
             }
             else if (target is Game game)
@@ -420,21 +448,21 @@ namespace Unigram.Services
             }
             else if (target is IdentityDocument identityDocument)
             {
-                foreach (var item in identityDocument.Translation)
+                if (identityDocument.FrontSide != null)
                 {
-                    ProcessFiles(item);
-                }
-                if (identityDocument.Selfie != null)
-                {
-                    ProcessFiles(identityDocument.Selfie);
+                    ProcessFiles(identityDocument.FrontSide);
                 }
                 if (identityDocument.ReverseSide != null)
                 {
                     ProcessFiles(identityDocument.ReverseSide);
                 }
-                if (identityDocument.FrontSide != null)
+                if (identityDocument.Selfie != null)
                 {
-                    ProcessFiles(identityDocument.FrontSide);
+                    ProcessFiles(identityDocument.Selfie);
+                }
+                foreach (var item in identityDocument.Translation)
+                {
+                    ProcessFiles(item);
                 }
             }
             else if (target is InlineQueryResultAnimation inlineQueryResultAnimation)
@@ -554,6 +582,13 @@ namespace Unigram.Services
                 if (messageAudio.Audio != null)
                 {
                     ProcessFiles(messageAudio.Audio);
+                }
+            }
+            else if (target is MessageBotWriteAccessAllowed messageBotWriteAccessAllowed)
+            {
+                if (messageBotWriteAccessAllowed.WebApp != null)
+                {
+                    ProcessFiles(messageBotWriteAccessAllowed.WebApp);
                 }
             }
             else if (target is MessageCalendar messageCalendar)
@@ -755,24 +790,24 @@ namespace Unigram.Services
             }
             else if (target is PageBlockAnimation pageBlockAnimation)
             {
-                if (pageBlockAnimation.Caption != null)
-                {
-                    ProcessFiles(pageBlockAnimation.Caption);
-                }
                 if (pageBlockAnimation.Animation != null)
                 {
                     ProcessFiles(pageBlockAnimation.Animation);
                 }
+                if (pageBlockAnimation.Caption != null)
+                {
+                    ProcessFiles(pageBlockAnimation.Caption);
+                }
             }
             else if (target is PageBlockAudio pageBlockAudio)
             {
-                if (pageBlockAudio.Caption != null)
-                {
-                    ProcessFiles(pageBlockAudio.Caption);
-                }
                 if (pageBlockAudio.Audio != null)
                 {
                     ProcessFiles(pageBlockAudio.Audio);
+                }
+                if (pageBlockAudio.Caption != null)
+                {
+                    ProcessFiles(pageBlockAudio.Caption);
                 }
             }
             else if (target is PageBlockAuthorDate pageBlockAuthorDate)
@@ -831,13 +866,13 @@ namespace Unigram.Services
             }
             else if (target is PageBlockDetails pageBlockDetails)
             {
-                foreach (var item in pageBlockDetails.PageBlocks)
-                {
-                    ProcessFiles(item);
-                }
                 if (pageBlockDetails.Header != null)
                 {
                     ProcessFiles(pageBlockDetails.Header);
+                }
+                foreach (var item in pageBlockDetails.PageBlocks)
+                {
+                    ProcessFiles(item);
                 }
             }
             else if (target is PageBlockEmbedded pageBlockEmbedded)
@@ -853,6 +888,10 @@ namespace Unigram.Services
             }
             else if (target is PageBlockEmbeddedPost pageBlockEmbeddedPost)
             {
+                if (pageBlockEmbeddedPost.AuthorPhoto != null)
+                {
+                    ProcessFiles(pageBlockEmbeddedPost.AuthorPhoto);
+                }
                 if (pageBlockEmbeddedPost.Caption != null)
                 {
                     ProcessFiles(pageBlockEmbeddedPost.Caption);
@@ -860,10 +899,6 @@ namespace Unigram.Services
                 foreach (var item in pageBlockEmbeddedPost.PageBlocks)
                 {
                     ProcessFiles(item);
-                }
-                if (pageBlockEmbeddedPost.AuthorPhoto != null)
-                {
-                    ProcessFiles(pageBlockEmbeddedPost.AuthorPhoto);
                 }
             }
             else if (target is PageBlockFooter pageBlockFooter)
@@ -1123,11 +1158,11 @@ namespace Unigram.Services
             }
             else if (target is PersonalDocument personalDocument)
             {
-                foreach (var item in personalDocument.Translation)
+                foreach (var item in personalDocument.Files)
                 {
                     ProcessFiles(item);
                 }
-                foreach (var item in personalDocument.Files)
+                foreach (var item in personalDocument.Translation)
                 {
                     ProcessFiles(item);
                 }
@@ -1352,6 +1387,10 @@ namespace Unigram.Services
             }
             else if (target is Sticker sticker)
             {
+                if (sticker.FullType != null)
+                {
+                    ProcessFiles(sticker.FullType);
+                }
                 if (sticker.StickerValue != null)
                 {
                     sticker.StickerValue = ProcessFile(sticker.StickerValue);
@@ -1360,9 +1399,12 @@ namespace Unigram.Services
                 {
                     ProcessFiles(sticker.Thumbnail);
                 }
-                if (sticker.FullType != null)
+            }
+            else if (target is StickerFullTypeRegular stickerFullTypeRegular)
+            {
+                if (stickerFullTypeRegular.PremiumAnimation != null)
                 {
-                    ProcessFiles(sticker.FullType);
+                    stickerFullTypeRegular.PremiumAnimation = ProcessFile(stickerFullTypeRegular.PremiumAnimation);
                 }
             }
             else if (target is Stickers stickers)
@@ -1399,13 +1441,6 @@ namespace Unigram.Services
                 foreach (var item in stickerSets.Sets)
                 {
                     ProcessFiles(item);
-                }
-            }
-            else if (target is StickerFullTypeRegular StickerFullTypeRegular)
-            {
-                if (StickerFullTypeRegular.PremiumAnimation != null)
-                {
-                    StickerFullTypeRegular.PremiumAnimation = ProcessFile(StickerFullTypeRegular.PremiumAnimation);
                 }
             }
             else if (target is SupergroupFullInfo supergroupFullInfo)
@@ -1569,6 +1604,13 @@ namespace Unigram.Services
                     ProcessFiles(item);
                 }
             }
+            else if (target is Updates updates)
+            {
+                foreach (var item in updates.UpdatesValue)
+                {
+                    ProcessFiles(item);
+                }
+            }
             else if (target is UpdateSelectedBackground updateSelectedBackground)
             {
                 if (updateSelectedBackground.Background != null)
@@ -1635,35 +1677,35 @@ namespace Unigram.Services
                 {
                     ProcessFiles(userFullInfo.PersonalPhoto);
                 }
-                if (userFullInfo.PublicPhoto != null)
-                {
-                    ProcessFiles(userFullInfo.PublicPhoto);
-                }
                 if (userFullInfo.Photo != null)
                 {
                     ProcessFiles(userFullInfo.Photo);
                 }
+                if (userFullInfo.PublicPhoto != null)
+                {
+                    ProcessFiles(userFullInfo.PublicPhoto);
+                }
             }
             else if (target is Video video)
             {
-                if (video.VideoValue != null)
-                {
-                    video.VideoValue = ProcessFile(video.VideoValue);
-                }
                 if (video.Thumbnail != null)
                 {
                     ProcessFiles(video.Thumbnail);
                 }
+                if (video.VideoValue != null)
+                {
+                    video.VideoValue = ProcessFile(video.VideoValue);
+                }
             }
             else if (target is VideoNote videoNote)
             {
-                if (videoNote.Video != null)
-                {
-                    videoNote.Video = ProcessFile(videoNote.Video);
-                }
                 if (videoNote.Thumbnail != null)
                 {
                     ProcessFiles(videoNote.Thumbnail);
+                }
+                if (videoNote.Video != null)
+                {
+                    videoNote.Video = ProcessFile(videoNote.Video);
                 }
             }
             else if (target is VoiceNote voiceNote)
@@ -1673,39 +1715,50 @@ namespace Unigram.Services
                     voiceNote.Voice = ProcessFile(voiceNote.Voice);
                 }
             }
+            else if (target is WebApp webApp)
+            {
+                if (webApp.Animation != null)
+                {
+                    ProcessFiles(webApp.Animation);
+                }
+                if (webApp.Photo != null)
+                {
+                    ProcessFiles(webApp.Photo);
+                }
+            }
             else if (target is WebPage webPage)
             {
-                if (webPage.VoiceNote != null)
+                if (webPage.Animation != null)
                 {
-                    ProcessFiles(webPage.VoiceNote);
-                }
-                if (webPage.VideoNote != null)
-                {
-                    ProcessFiles(webPage.VideoNote);
-                }
-                if (webPage.Video != null)
-                {
-                    ProcessFiles(webPage.Video);
-                }
-                if (webPage.Sticker != null)
-                {
-                    ProcessFiles(webPage.Sticker);
-                }
-                if (webPage.Document != null)
-                {
-                    ProcessFiles(webPage.Document);
+                    ProcessFiles(webPage.Animation);
                 }
                 if (webPage.Audio != null)
                 {
                     ProcessFiles(webPage.Audio);
                 }
-                if (webPage.Animation != null)
+                if (webPage.Document != null)
                 {
-                    ProcessFiles(webPage.Animation);
+                    ProcessFiles(webPage.Document);
                 }
                 if (webPage.Photo != null)
                 {
                     ProcessFiles(webPage.Photo);
+                }
+                if (webPage.Sticker != null)
+                {
+                    ProcessFiles(webPage.Sticker);
+                }
+                if (webPage.Video != null)
+                {
+                    ProcessFiles(webPage.Video);
+                }
+                if (webPage.VideoNote != null)
+                {
+                    ProcessFiles(webPage.VideoNote);
+                }
+                if (webPage.VoiceNote != null)
+                {
+                    ProcessFiles(webPage.VoiceNote);
                 }
             }
             else if (target is WebPageInstantView webPageInstantView)

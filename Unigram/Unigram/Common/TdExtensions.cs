@@ -1285,10 +1285,10 @@ namespace Unigram.Common
 
                 if (stickerSet.Thumbnail.Format is ThumbnailFormatTgs)
                 {
-                    return new Sticker(stickerSet.Id, 512, 512, "\U0001F4A9", format, new StickerFullTypeRegular(null), stickerSet.ThumbnailOutline, stickerSet.Thumbnail, stickerSet.Thumbnail.File);
+                    return new Sticker(stickerSet.Id, stickerSet.Id, 512, 512, "\U0001F4A9", format, new StickerFullTypeRegular(null), stickerSet.ThumbnailOutline, stickerSet.Thumbnail, stickerSet.Thumbnail.File);
                 }
 
-                return new Sticker(stickerSet.Id, stickerSet.Thumbnail.Width, stickerSet.Thumbnail.Height, "\U0001F4A9", format, new StickerFullTypeRegular(null), stickerSet.ThumbnailOutline, stickerSet.Thumbnail, stickerSet.Thumbnail.File);
+                return new Sticker(stickerSet.Id, stickerSet.Id, stickerSet.Thumbnail.Width, stickerSet.Thumbnail.Height, "\U0001F4A9", format, new StickerFullTypeRegular(null), stickerSet.ThumbnailOutline, stickerSet.Thumbnail, stickerSet.Thumbnail.File);
             }
 
             var cover = stickerSet.Covers?.FirstOrDefault();
@@ -1775,11 +1775,31 @@ namespace Unigram.Common
             {
                 count++;
             }
-            if (permissions.CanSendMediaMessages)
+            if (permissions.CanSendVoiceNotes)
             {
                 count++;
             }
-            if (permissions.CanSendMessages)
+            if (permissions.CanSendVideoNotes)
+            {
+                count++;
+            }
+            if (permissions.CanSendVideos)
+            {
+                count++;
+            }
+            if (permissions.CanSendPhotos)
+            {
+                count++;
+            }
+            if (permissions.CanSendDocuments)
+            {
+                count++;
+            }
+            if (permissions.CanSendAudios)
+            {
+                count++;
+            }
+            if (permissions.CanSendBasicMessages)
             {
                 count++;
             }
@@ -1797,7 +1817,7 @@ namespace Unigram.Common
 
         public static int Total(this ChatPermissions permissions)
         {
-            return 8;
+            return 13;
         }
 
         public static bool CanPinMessages(this Supergroup supergroup)
@@ -1894,8 +1914,8 @@ namespace Unigram.Common
             }
             else
             {
-                return supergroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator or ChatMemberStatusMember 
-                    || supergroup.Status is ChatMemberStatusRestricted restricted && restricted.Permissions.CanSendMessages;
+                return supergroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator or ChatMemberStatusMember
+                    || supergroup.Status is ChatMemberStatusRestricted restricted && restricted.Permissions.CanSendBasicMessages;
             }
         }
 
