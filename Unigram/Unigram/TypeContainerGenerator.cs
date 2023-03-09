@@ -6,11 +6,13 @@
 //
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Unigram.Services;
 using Unigram.Services.Factories;
 using Unigram.Services.ViewService;
 using Unigram.ViewModels;
+using Unigram.ViewModels.Authorization;
 using Unigram.ViewModels.BasicGroups;
 using Unigram.ViewModels.Channels;
 using Unigram.ViewModels.Chats;
@@ -21,10 +23,8 @@ using Unigram.ViewModels.Premium;
 using Unigram.ViewModels.Settings;
 using Unigram.ViewModels.Settings.Password;
 using Unigram.ViewModels.Settings.Privacy;
-using Unigram.ViewModels.Authorization;
 using Unigram.ViewModels.Supergroups;
 using Unigram.ViewModels.Users;
-using System.Diagnostics;
 
 namespace Unigram
 {

@@ -12,7 +12,7 @@ if errorlevel 1 goto :error
 
 echo.
 echo Opening the developer command prompt
-call "C:\Program Files\Microsoft Visual Studio\2022\Professional\Common7\Tools\VsDevCmd.bat" -arch=amd64
+call "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat" -arch=amd64
 if errorlevel 1 goto :error
 
 for %%a in (%~1) do (

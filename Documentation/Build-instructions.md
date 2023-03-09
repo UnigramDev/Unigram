@@ -51,8 +51,8 @@ Make sure to replace `$arch$` with either `x64`, `x86` or `arm64` depending on y
 Unigram uses WebRTC for calls and video chats. Since WebRTC doesn't currently support UWP, you must use our fork to build it.
 1. Click on Start Menu → Visual Studio 2019 → x64 Native Tools Command Prompt for VS 2022.
 2. Navigate to .\Unigram\Libraries\webrtc
-3. Execute `.\acquire-m107.cmd`. This will clone WebRTC source code to `C:\webrtc`, and it will take a while (~1.5h)
-4. Execute `.\build-m107.cmd "$arch$" "$config$"`. Replace `$arch$` with either `x64`, `x86` or `arm64` depending on your build target. `$config$` can be set to either `release` or `debug`.
+3. Execute `.\acquire-m108.cmd`. This will clone WebRTC source code to `C:\webrtc`, and it will take a while (~1.5h)
+4. Execute `.\build-m108.cmd "$arch$" "$config$"`. Replace `$arch$` with either `x64`, `win32` or `arm64` depending on your build target. `$config$` can be set to either `release` or `debug`.
 
 ⚠️ Note that WebRTC build instructions are based on [WinRTC](https://github.com/microsoft/winrtc/tree/master/patches_for_WebRTC_org/m84).
 

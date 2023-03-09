@@ -1756,13 +1756,13 @@ namespace Unigram.Views
             {
                 if (rpMasterTitlebar.SelectedIndex == 0)
                 {
-                    var items = ViewModel.Chats.Search;
-                    if (items != null && string.Equals(SearchField.Text, items.Query))
-                    {
-                        await items.LoadMoreItemsAsync(2);
-                        await items.LoadMoreItemsAsync(3);
-                        await items.LoadMoreItemsAsync(4);
-                    }
+                    //var items = ViewModel.Chats.Search;
+                    //if (items != null && string.Equals(SearchField.Text, items.Query))
+                    //{
+                    //    await items.LoadMoreItemsAsync(2);
+                    //    await items.LoadMoreItemsAsync(3);
+                    //    await items.LoadMoreItemsAsync(4);
+                    //}
                 }
                 else if (rpMasterTitlebar.SelectedIndex == 1)
                 {
@@ -2020,22 +2020,16 @@ namespace Unigram.Views
                 //DialogsPanel.Visibility = Visibility.Collapsed;
                 ShowHideSearch(true);
 
-                if (string.Equals(ViewModel.Chats.Search?.Query, SearchField.Text))
-                {
-                    return;
-                }
+                ViewModel.Chats.Search.UpdateQuery(SearchField.Text);
 
                 if (ViewModel.Chats.SearchFilters.IsEmpty() && string.IsNullOrEmpty(SearchField.Text))
                 {
-                    var top = ViewModel.Chats.TopChats = new TopChatsCollection(ViewModel.ClientService, new TopChatCategoryUsers(), 30);
-                    await top.LoadMoreItemsAsync(0);
+                    ViewModel.Chats.TopChats = new TopChatsCollection(ViewModel.ClientService, new TopChatCategoryUsers(), 30);
                 }
                 else
                 {
                     ViewModel.Chats.TopChats = null;
                 }
-
-                ViewModel.Chats.Search = new SearchChatsCollection(ViewModel.ClientService, SearchField.Text, ViewModel.Chats.SearchFilters);
             }
             else if (rpMasterTitlebar.SelectedIndex == 1)
             {
@@ -2092,7 +2086,7 @@ namespace Unigram.Views
 
             ViewModel.Chats.SearchFilters.Clear();
             ViewModel.Chats.TopChats = null;
-            ViewModel.Chats.Search = null;
+            ViewModel.Chats.Search.Clear();
             ViewModel.Contacts.Search = null;
             ViewModel.Settings.Results.Clear();
         }
@@ -2107,7 +2101,7 @@ namespace Unigram.Views
                     {
                         e.Handled = true;
                         ViewModel.Chats.SearchFilters.RemoveAt(ViewModel.Chats.SearchFilters.Count - 1);
-                        ViewModel.Chats.Search = new SearchChatsCollection(ViewModel.ClientService, SearchField.Text, ViewModel.Chats.SearchFilters);
+                        ViewModel.Chats.Search.UpdateQuery(SearchField.Text);
                         return;
                     }
                 }
@@ -3078,7 +3072,7 @@ namespace Unigram.Views
                 ViewModel.Chats.SearchFilters.Add(filter);
                 SearchField.Text = string.Empty;
 
-                ViewModel.Chats.Search = new SearchChatsCollection(ViewModel.ClientService, SearchField.Text, ViewModel.Chats.SearchFilters);
+                //ViewModel.Chats.Search = new SearchChatsCollection(ViewModel.ClientService, SearchField.Text, ViewModel.Chats.SearchFilters);
             }
         }
 

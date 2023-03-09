@@ -1,4 +1,10 @@
-﻿using LinqToVisualTree;
+//
+// Copyright Fela Ameghino 2015-2023
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+using LinqToVisualTree;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.Graphics.Canvas.UI.Xaml;
@@ -388,8 +394,6 @@ namespace Unigram.Views
 
             Focus(FocusState.Programmatic);
             TextField.Focus(FocusState.Programmatic);
-
-            CoreInputView.GetForCurrentView().TryHide();
 
             _stickersPanel.Opacity = 0;
             _stickersPanel.Clip = Window.Current.Compositor.CreateInsetClip(48, 48, 0, 0);
@@ -1592,8 +1596,6 @@ namespace Unigram.Views
             {
                 Focus(FocusState.Programmatic);
                 TextField.Focus(FocusState.Keyboard);
-
-                CoreInputView.GetForCurrentView().TryShow();
             }
         }
 
@@ -1607,14 +1609,11 @@ namespace Unigram.Views
 
             Focus(FocusState.Programmatic);
             TextField.Focus(FocusState.Programmatic);
-
-            CoreInputView.GetForCurrentView().TryHide();
         }
 
         private void TextField_Tapped(object sender, TappedRoutedEventArgs e)
         {
             Collapse_Click(null, null);
-            CoreInputView.GetForCurrentView().TryShow();
         }
 
         #region Context menu
@@ -1873,7 +1872,7 @@ namespace Unigram.Views
                 }
                 else
                 {
-                    flyout.CreateFlyoutItem(MessageSelect_Loaded, ViewModel.MessageSelectCommand, message, Strings.Resources.lng_context_select_msg, new FontIcon { Glyph = Icons.CheckmarkCircle });
+                    flyout.CreateFlyoutItem(MessageSelect_Loaded, ViewModel.MessageSelectCommand, message, Strings.Resources.Select, new FontIcon { Glyph = Icons.CheckmarkCircle });
                 }
             }
             else if (message.SendingState is MessageSendingStateFailed or MessageSendingStatePending)
@@ -3408,9 +3407,11 @@ namespace Unigram.Views
             }
         }
 
-        private void ShowAction(string content, bool enabled)
+        private bool? _replyEnabled = null;
+
+        private void ShowAction(string content, bool enabled, bool replyEnabled = false)
         {
-            if (ButtonAction.Content is not TextBlock || (ButtonAction.Content is TextBlock block && !string.Equals(block.Text, content)))
+            if (content != null && (ButtonAction.Content is not TextBlock || (ButtonAction.Content is TextBlock block && !string.Equals(block.Text, content))))
             {
                 ButtonAction.Content = new TextBlock
                 {
@@ -3422,6 +3423,7 @@ namespace Unigram.Views
             }
 
             //LabelAction.Text = content;
+            _replyEnabled = replyEnabled;
             ButtonAction.IsEnabled = enabled;
             ButtonAction.Visibility = Visibility.Visible;
             ChatFooter.Visibility = Visibility.Visible;
@@ -3430,8 +3432,13 @@ namespace Unigram.Views
             ButtonAction.Focus(FocusState.Programmatic);
         }
 
-        private void ShowArea()
+        private void ShowArea(bool permanent = true)
         {
+            if (permanent)
+            {
+                _replyEnabled = null;
+            }
+
             ButtonAction.IsEnabled = false;
             ButtonAction.Visibility = Visibility.Collapsed;
             ChatFooter.Visibility = Visibility.Collapsed;
@@ -3911,7 +3918,6 @@ namespace Unigram.Views
                     AttachMedia.Command = ViewModel.EditMediaCommand;
                     AttachDocument.Command = ViewModel.EditDocumentCommand;
 
-                    AttachRestriction.Visibility = Visibility.Collapsed;
                     AttachMedia.Visibility = Visibility.Visible;
                     AttachDocument.Visibility = Visibility.Visible;
                     AttachLocation.Visibility = Visibility.Collapsed;
@@ -3986,10 +3992,17 @@ namespace Unigram.Views
         {
             if (ButtonAction.Visibility == Visibility.Visible)
             {
-                _composerHeaderCollapsed = true;
-                ComposerHeader.Visibility = Visibility.Collapsed;
+                if (_replyEnabled == true && show)
+                {
+                    ShowArea(false);
+                }
+                else
+                {
+                    _composerHeaderCollapsed = true;
+                    ComposerHeader.Visibility = Visibility.Collapsed;
 
-                return;
+                    return;
+                }
             }
 
             if ((show && ComposerHeader.Visibility == Visibility.Visible) || (!show && (ComposerHeader.Visibility == Visibility.Collapsed || _composerHeaderCollapsed)))
@@ -4039,6 +4052,11 @@ namespace Unigram.Views
                 }
                 else
                 {
+                    if (_replyEnabled.HasValue)
+                    {
+                        ShowAction(null, ButtonAction.IsEnabled, true);
+                    }
+
                     ComposerHeader.Visibility = Visibility.Collapsed;
                 }
 

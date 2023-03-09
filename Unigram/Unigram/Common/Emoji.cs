@@ -14,7 +14,7 @@ using Telegram.Td.Api;
 using Unigram.Converters;
 using Unigram.Services;
 using Unigram.Services.Settings;
-using Windows.UI.Text.Core;
+using Unigram.ViewModels.Drawers;
 
 namespace Unigram.Common
 {
@@ -248,14 +248,24 @@ namespace Unigram.Common
             return results;
         }
 
-        public static async Task<List<EmojiGroup>> SearchAsync(IClientService clientService, string query, EmojiSkinTone skin)
+        public static async Task<IList<object>> SearchAsync(IClientService clientService, string query, EmojiSkinTone skin)
         {
-            var result = new List<EmojiData>();
+            var result = new List<object>();
             var inputLanguage = Windows.Globalization.Language.CurrentInputMethodLanguageTag;
 
             var response = await clientService.SendAsync(new SearchEmojis(query, false, new[] { inputLanguage }));
             if (response is Emojis suggestions)
             {
+                if (clientService.IsPremium)
+                {
+                    var stickers = await SearchAsync(clientService, suggestions.EmojisValue);
+
+                    foreach (var item in stickers)
+                    {
+                        result.Add(item);
+                    }
+                }
+
                 foreach (var item in suggestions.EmojisValue)
                 {
                     var emoji = item;
@@ -270,14 +280,24 @@ namespace Unigram.Common
                 }
             }
 
-            return new List<EmojiGroup>
+            return result;
+        }
+
+        public static async Task<IList<StickerViewModel>> SearchAsync(IClientService clientService, IList<string> emojis)
+        {
+            var result = new List<StickerViewModel>();
+            var query = string.Join(" ", emojis);
+
+            var resp = await clientService.SendAsync(new SearchStickers(new StickerTypeCustomEmoji(), query, 100));
+            if (resp is Stickers stickers)
             {
-                new EmojiGroup
+                foreach (var item in stickers.StickersValue)
                 {
-                    Title = result.Count > 0 ? Strings.Resources.SearchEmojiHint : Strings.Resources.NoEmojiFound,
-                    Stickers = result.ToArray()
+                    result.Add(new StickerViewModel(clientService, item));
                 }
-            };
+            }
+
+            return result;
         }
 
         public static bool ContainsSingleEmoji(string text)

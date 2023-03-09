@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Rg.DiffUtils;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -129,16 +130,24 @@ namespace Unigram.Collections
                 var hasContent = _internal?.Any(x => x is SearchChatsFilterContent) ?? false;
                 var hasChat = _internal?.Any(x => x is SearchChatsFilterChat) ?? false;
 
+                var count = 0u;
+
+                void Increase(object item)
+                {
+                    Add(item);
+                    count++;
+                }
+
                 if (_phase == Phase.Topics)
                 {
                     var response = await _clientService.SendAsync(new GetForumTopics(_chat.Id, _query, 0, 0, 0, 100));
                     if (response is ForumTopics topics)
                     {
-                        Add(new Header(Strings.Resources.Topics));
+                        Increase(new Header(Strings.Resources.Topics));
 
                         foreach (var topic in topics.Topics)
                         {
-                            Add(topic);
+                            Increase(topic);
                         }
                     }
 
@@ -163,7 +172,7 @@ namespace Unigram.Collections
                                 //    Add(new Header(Strings.Resources.SearchAllChatsShort));
                                 //}
 
-                                Add(new SearchResult(chat, _query, false));
+                                Increase(new SearchResult(chat, _query, false));
                             }
 
                             _filters.Add(new SearchChatsFilterChat(_clientService, chat));
@@ -203,7 +212,7 @@ namespace Unigram.Collections
                                     //    Add(new Header(Strings.Resources.SearchAllChatsShort));
                                     //}
 
-                                    Add(new SearchResult(chat, _query, false));
+                                    Increase(new SearchResult(chat, _query, false));
                                 }
 
                                 _filters.Add(new SearchChatsFilterChat(_clientService, chat));
@@ -237,7 +246,7 @@ namespace Unigram.Collections
                                 //}
 
                                 _users.Add(id);
-                                Add(new SearchResult(user, _query, false));
+                                Increase(new SearchResult(user, _query, false));
                             }
                         }
                     }
@@ -280,7 +289,7 @@ namespace Unigram.Collections
                                     //    Add(new Header(Strings.Resources.SearchAllChatsShort));
                                     //}
 
-                                    Add(new SearchResult(chat, _query, false));
+                                    Increase(new SearchResult(chat, _query, false));
                                 }
 
                                 _filters.Add(new SearchChatsFilterChat(_clientService, chat));
@@ -310,10 +319,10 @@ namespace Unigram.Collections
                                 if (_createRemoteHeader)
                                 {
                                     _createRemoteHeader = false;
-                                    Add(new Header(Strings.Resources.GlobalSearch));
+                                    Increase(new Header(Strings.Resources.GlobalSearch));
                                 }
 
-                                Add(new SearchResult(chat, _query, true));
+                                Increase(new SearchResult(chat, _query, true));
                             }
                         }
                     }
@@ -338,9 +347,9 @@ namespace Unigram.Collections
                         });
                     }
 
-                    var content = _internal.FirstOrDefault(x => x is SearchChatsFilterContent) as SearchChatsFilterContent;
-                    var range = _internal.FirstOrDefault(x => x is SearchChatsFilterDateRange) as SearchChatsFilterDateRange;
-                    var chat = _internal.FirstOrDefault(x => x is SearchChatsFilterChat) as SearchChatsFilterChat;
+                    var content = _internal?.FirstOrDefault(x => x is SearchChatsFilterContent) as SearchChatsFilterContent;
+                    var range = _internal?.FirstOrDefault(x => x is SearchChatsFilterDateRange) as SearchChatsFilterDateRange;
+                    var chat = _internal?.FirstOrDefault(x => x is SearchChatsFilterChat) as SearchChatsFilterChat;
 
                     var minDate = range?.StartDate ?? 0;
                     var maxDate = range?.EndDate ?? 0;
@@ -361,12 +370,12 @@ namespace Unigram.Collections
                         if (_createMessagesHeader)
                         {
                             _createMessagesHeader = false;
-                            Add(new Header(Strings.Resources.SearchMessages));
+                            Increase(new Header(Strings.Resources.SearchMessages));
                         }
 
                         foreach (var message in messages.Messages)
                         {
-                            Add(message);
+                            Increase(message);
                         }
                     }
                     else if (response is FoundMessages foundMessages)
@@ -374,7 +383,7 @@ namespace Unigram.Collections
                         if (_createMessagesHeader)
                         {
                             _createMessagesHeader = false;
-                            Add(new Header(Strings.Resources.SearchMessages));
+                            Increase(new Header(Strings.Resources.SearchMessages));
                         }
 
                         _nextOffset = foundMessages.NextOffset;
@@ -382,7 +391,7 @@ namespace Unigram.Collections
 
                         foreach (var message in foundMessages.Messages)
                         {
-                            Add(message);
+                            Increase(message);
                         }
                     }
                 }
@@ -392,7 +401,7 @@ namespace Unigram.Collections
                     _hasMoreItems = false;
                 }
 
-                return new LoadMoreItemsResult();
+                return new LoadMoreItemsResult { Count = count };
             });
         }
 
@@ -410,6 +419,43 @@ namespace Unigram.Collections
 
         private bool _hasMoreItems = true;
         public bool HasMoreItems => _hasMoreItems;
+    }
+
+    public class SearchDiffHandler : IDiffHandler<object>
+    {
+        public bool CompareItems(object oldItem, object newItem)
+        {
+            if (oldItem is Header oldHeader && newItem is Header newHeader)
+            {
+                return oldHeader.Title == newHeader.Title;
+            }
+            else if (oldItem is SearchResult oldResult && newItem is SearchResult newResult)
+            {
+                if (oldResult.Chat != null && newResult.Chat != null)
+                {
+                    return oldResult.Chat.Id == newResult.Chat.Id;
+                }
+                else if (oldResult.User != null && newResult.User != null)
+                {
+                    return oldResult.User.Id == newResult.User.Id;
+                }
+                else if (oldResult.Topic != null && newResult.Topic != null)
+                {
+
+                }
+            }
+            else if (oldItem is Message oldMessage && newItem is Message newMessage)
+            {
+                return oldMessage.Id == newMessage.Id && oldMessage.ChatId == newMessage.ChatId;
+            }
+
+            return false;
+        }
+
+        public void UpdateItem(object oldItem, object newItem)
+        {
+            //throw new NotImplementedException();
+        }
     }
 
     public class Header

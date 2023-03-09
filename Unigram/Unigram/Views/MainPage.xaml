@@ -712,7 +712,7 @@
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
-                                <ListView x:Load="False"
+                                <!--<ListView x:Load="False"
                                           x:Name="PippoFranco"
                                           SelectionMode="None"
                                           IsItemClickEnabled="True"
@@ -749,7 +749,7 @@
                                     <ListView.ItemContainerTransitions>
                                         <TransitionCollection />
                                     </ListView.ItemContainerTransitions>
-                                </ListView>
+                                </ListView>-->
 
                                 <ListView x:Name="DialogsSearchListView"
                                           ItemsSource="{x:Bind ViewModel.Chats.Search, Mode=OneWay}"
@@ -873,59 +873,6 @@
                                     <ListView.ItemContainerTransitions>
                                         <TransitionCollection />
                                     </ListView.ItemContainerTransitions>
-                                    <ListView.GroupStyle>
-                                        <GroupStyle>
-                                            <GroupStyle.HeaderTemplate>
-                                                <DataTemplate>
-                                                    <TextBlock Text="{Binding Key}"
-                                                               Style="{StaticResource BaseTextBlockStyle}"
-                                                               Margin="0,16,0,0" />
-                                                </DataTemplate>
-                                            </GroupStyle.HeaderTemplate>
-                                            <GroupStyle.HeaderContainerStyle>
-                                                <Style TargetType="ListViewHeaderItem">
-                                                    <Setter Property="Background"
-                                                            Value="Transparent" />
-                                                    <Setter Property="FontFamily"
-                                                            Value="{ThemeResource ContentControlThemeFontFamily}" />
-                                                    <Setter Property="FontSize"
-                                                            Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
-                                                    <Setter Property="Margin"
-                                                            Value="0,0,0,0" />
-                                                    <Setter Property="Padding"
-                                                            Value="12,0,12,0" />
-                                                    <Setter Property="HorizontalContentAlignment"
-                                                            Value="Stretch" />
-                                                    <Setter Property="VerticalContentAlignment"
-                                                            Value="Top" />
-                                                    <Setter Property="MinHeight"
-                                                            Value="0" />
-                                                    <Setter Property="UseSystemFocusVisuals"
-                                                            Value="True" />
-                                                    <Setter Property="Template">
-                                                        <Setter.Value>
-                                                            <ControlTemplate TargetType="ListViewHeaderItem">
-                                                                <Border Visibility="{Binding Content.Count, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                                                    <Border Background="{TemplateBinding Background}"
-                                                                            BorderBrush="{TemplateBinding BorderBrush}"
-                                                                            BorderThickness="{TemplateBinding BorderThickness}"
-                                                                            Visibility="{Binding Content.Key, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource NullToVisibilityConverter}}">
-                                                                        <ContentPresenter x:Name="ContentPresenter"
-                                                                                          Margin="{TemplateBinding Padding}"
-                                                                                          Content="{TemplateBinding Content}"
-                                                                                          ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                                                          ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
-                                                                    </Border>
-                                                                </Border>
-                                                            </ControlTemplate>
-                                                        </Setter.Value>
-                                                    </Setter>
-                                                </Style>
-                                            </GroupStyle.HeaderContainerStyle>
-                                        </GroupStyle>
-                                    </ListView.GroupStyle>
                                 </ListView>
                             </Grid>
                             <Grid x:Name="DialogsPanel">
@@ -1301,9 +1248,9 @@
 
         <controls:ConfettiView x:Name="Confetti"
                                x:Load="False"
-                               Completed="Confetti_Completed"
                                IsHitTestVisible="False"
                                Grid.ColumnSpan="2"
                                Grid.Row="1" />
+                               <!--Completed="Confetti_Completed"-->
     </Grid>
 </Page>

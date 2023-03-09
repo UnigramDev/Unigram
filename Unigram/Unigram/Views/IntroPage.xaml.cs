@@ -9,11 +9,11 @@ using Unigram.Common;
 using Unigram.Views.SignIn;
 using Windows.Devices.Input;
 using Windows.Foundation;
-using Windows.UI.Composition;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Input;
+using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Input;
 #if INCLUDE_INTRO
 using Telegram.Intro;
 #endif

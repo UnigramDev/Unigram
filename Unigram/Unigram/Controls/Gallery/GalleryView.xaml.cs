@@ -324,7 +324,7 @@ namespace Unigram.Controls.Gallery
                 }
 
                 var viewModel = new UserPhotosViewModel(clientService, storageService, aggregator, user, userFull);
-                return GalleryView.ShowAsync(viewModel, closing);
+                return ShowAsync(viewModel, closing);
             }
             else if (chat.Type is ChatTypeBasicGroup)
             {
@@ -335,7 +335,7 @@ namespace Unigram.Controls.Gallery
                 }
 
                 var viewModel = new ChatPhotosViewModel(clientService, storageService, aggregator, chat, basicGroupFull.Photo);
-                return GalleryView.ShowAsync(viewModel, closing);
+                return ShowAsync(viewModel, closing);
             }
             else if (chat.Type is ChatTypeSupergroup)
             {
@@ -346,7 +346,7 @@ namespace Unigram.Controls.Gallery
                 }
 
                 var viewModel = new ChatPhotosViewModel(clientService, storageService, aggregator, chat, supergroupFull.Photo);
-                return GalleryView.ShowAsync(viewModel, closing);
+                return ShowAsync(viewModel, closing);
             }
 
             return Task.FromResult(ContentDialogResult.None);

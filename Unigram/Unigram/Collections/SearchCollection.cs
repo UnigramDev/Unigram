@@ -53,6 +53,8 @@ namespace Unigram.Collections
 
         public void UpdateQuery(string value)
         {
+            _query.Value = value;
+
             Update(_factory(_sender ?? this, value));
             OnPropertyChanged(new PropertyChangedEventArgs(nameof(Query)));
         }

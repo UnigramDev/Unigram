@@ -1604,13 +1604,6 @@ namespace Unigram.Services
                     ProcessFiles(item);
                 }
             }
-            else if (target is Updates updates)
-            {
-                foreach (var item in updates.UpdatesValue)
-                {
-                    ProcessFiles(item);
-                }
-            }
             else if (target is UpdateSelectedBackground updateSelectedBackground)
             {
                 if (updateSelectedBackground.Background != null)

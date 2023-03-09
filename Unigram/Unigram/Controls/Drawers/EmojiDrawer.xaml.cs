@@ -33,6 +33,15 @@ namespace Unigram.Controls.Drawers
         }
     }
 
+    public class ChatPhotoEmojiDrawer : EmojiDrawer
+    {
+        public ChatPhotoEmojiDrawer()
+            : base(EmojiDrawerMode.ChatPhoto)
+        {
+
+        }
+    }
+
     public partial class EmojiDrawer : UserControl, IDrawer
     {
         public EmojiDrawerViewModel ViewModel => DataContext as EmojiDrawerViewModel;
@@ -80,21 +89,37 @@ namespace Unigram.Controls.Drawers
 
             if (mode != EmojiDrawerMode.Chat)
             {
-                FieldEmoji.Visibility = Visibility.Collapsed;
+                SearchField.Visibility = Visibility.Collapsed;
                 Toolbar3.Visibility = Visibility.Collapsed;
                 Toolbar2.Header = null;
 
-                List.Padding = new Thickness(8, 0, 0, 0);
-                List.ItemContainerStyle.Setters.Add(new Setter(MarginProperty, new Thickness(0, 0, 4, 4)));
-                List.GroupStyle[0].HeaderContainerStyle.Setters.Add(new Setter(PaddingProperty, new Thickness(0, 0, 0, 6)));
+                if (mode is not EmojiDrawerMode.ChatPhoto and not EmojiDrawerMode.UserPhoto)
+                {
+                    List.Padding = new Thickness(8, 0, 0, 0);
+                    List.ItemContainerStyle.Setters.Add(new Setter(MarginProperty, new Thickness(0, 0, 4, 4)));
+                    List.GroupStyle[0].HeaderContainerStyle.Setters.Add(new Setter(PaddingProperty, new Thickness(0, 0, 0, 6)));
 
-                FluidGridView.GetTriggers(List).Clear();
-                FluidGridView.GetTriggers(List).Add(new FixedGridViewTrigger { ItemLength = 28 });
+                    FluidGridView.GetTriggers(List).Clear();
+                    FluidGridView.GetTriggers(List).Add(new FixedGridViewTrigger { ItemLength = 28 });
+                }
             }
             else
             {
                 UpdateView();
             }
+
+            var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
+            debouncer.Invoked += async (s, args) =>
+            {
+                if (string.IsNullOrWhiteSpace(SearchField.Text))
+                {
+                    List.ItemsSource = EmojiCollection.View;
+                }
+                else
+                {
+                    List.ItemsSource = await Emoji.SearchAsync(ViewModel.ClientService, SearchField.Text, _selected);
+                }
+            };
         }
 
         public bool IsShadowVisible
@@ -113,13 +138,28 @@ namespace Unigram.Controls.Drawers
 
         public ListViewBase ScrollingHost => List;
 
-        public void Activate(Chat chat)
+        public void Activate(Chat chat, EmojiSearchType type = EmojiSearchType.Default)
         {
             _isActive = true;
             _handler.ThrottleVisibleItems();
             _toolbarHandler.ThrottleVisibleItems();
 
-            ViewModel.Update();
+            SearchField.SetType(ViewModel.ClientService, _mode switch
+            {
+                EmojiDrawerMode.ChatPhoto => EmojiSearchType.ChatPhoto,
+                EmojiDrawerMode.UserPhoto => EmojiSearchType.ChatPhoto,
+                EmojiDrawerMode.CustomEmojis => EmojiSearchType.EmojiStatus,
+                _ => EmojiSearchType.Default
+            });
+
+            if (_mode == EmojiDrawerMode.ChatPhoto)
+            {
+                ViewModel.UpdateChatPhoto();
+            }
+            else
+            {
+                ViewModel.Update();
+            }
         }
 
         public void Deactivate()
@@ -165,7 +205,7 @@ namespace Unigram.Controls.Drawers
 
         public void UpdateView()
         {
-            if (_mode != EmojiDrawerMode.Chat)
+            if (_mode is not EmojiDrawerMode.ChatPhoto and not EmojiDrawerMode.UserPhoto and not EmojiDrawerMode.Chat)
             {
                 return;
             }
@@ -288,16 +328,9 @@ namespace Unigram.Controls.Drawers
             }
         }
 
-        private async void FieldEmoji_TextChanged(object sender, TextChangedEventArgs e)
+        private async void SearchField_CategorySelected(object sender, EmojiCategorySelectedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(FieldEmoji.Text))
-            {
-                EmojiCollection.Source = Toolbar.ItemsSource;
-            }
-            else
-            {
-                EmojiCollection.Source = await Emoji.SearchAsync(ViewModel.ClientService, FieldEmoji.Text, _selected);
-            }
+            List.ItemsSource = await Emoji.SearchAsync(ViewModel.ClientService, e.Category.Emojis);
         }
 
         private void SkinTone_Click(object sender, RoutedEventArgs e)
@@ -336,7 +369,7 @@ namespace Unigram.Controls.Drawers
 
         private void UpdateToolbar(bool collapse = false)
         {
-            if (_mode != EmojiDrawerMode.Chat)
+            if (_mode is not EmojiDrawerMode.ChatPhoto and not EmojiDrawerMode.UserPhoto and not EmojiDrawerMode.Chat)
             {
                 return;
             }
@@ -633,7 +666,7 @@ namespace Unigram.Controls.Drawers
                 return;
             }
 
-            if (toolbar || _mode != EmojiDrawerMode.Chat)
+            if (toolbar || _mode is not EmojiDrawerMode.ChatPhoto and not EmojiDrawerMode.UserPhoto and not EmojiDrawerMode.Chat)
             {
                 content.Width = 24;
                 content.Height = 24;
@@ -669,7 +702,7 @@ namespace Unigram.Controls.Drawers
                 }
                 else if (content.Children[0] is LottieView lottie)
                 {
-                    if (_mode != EmojiDrawerMode.Chat)
+                    if (_mode is not EmojiDrawerMode.ChatPhoto and not EmojiDrawerMode.UserPhoto and not EmojiDrawerMode.Chat)
                     {
                         lottie.FrameSize = new Windows.Foundation.Size(24, 24);
                         lottie.DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical;

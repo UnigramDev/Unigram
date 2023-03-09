@@ -25,6 +25,7 @@ namespace Unigram
 
         public static readonly string[] MediaTypes = new[] { ".jpg", ".jpeg", ".png", ".gif", ".mp4" };
         public static readonly string[] PhotoTypes = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+        public static readonly string[] VideoTypes = new[] { ".mp4" };
 
         public const string WallpaperFileName = "wallpaper.jpg";
         public const string WallpaperLocalFileName = "wallpaper.local.jpg";

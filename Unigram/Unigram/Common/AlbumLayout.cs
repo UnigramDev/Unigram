@@ -289,7 +289,7 @@ namespace Unigram.Common
 
                 if (croppedRatios.Count - 2 >= 1)
                 {
-                    outer: for (int firstLine = 1; firstLine < croppedRatios.Count - 2; firstLine++)
+                outer: for (int firstLine = 1; firstLine < croppedRatios.Count - 2; firstLine++)
                     {
                         if (croppedRatios.Count - firstLine < 1)
                         {

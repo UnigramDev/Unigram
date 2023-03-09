@@ -174,10 +174,10 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <Border Grid.Row="1">
-            <TextBox x:Name="FieldEmoji"
-                     PlaceholderText="{CustomResource SearchEmojiHint}"
-                     TextChanged="FieldEmoji_TextChanged"
-                     Margin="12,8,12,0" />
+            <controls:EmojiSearchBox x:Name="SearchField"
+                                     PlaceholderText="{CustomResource Search}"
+                                     CategorySelected="SearchField_CategorySelected"
+                                     Margin="12,8,12,0" />
         </Border>
 
         <GridView x:Name="List"

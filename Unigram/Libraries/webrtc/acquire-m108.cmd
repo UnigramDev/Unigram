@@ -45,16 +45,16 @@ call fetch --nohooks webrtc
 if errorlevel 1 goto :error
 
 echo.
-echo Changing to the branch-heads/5304 branch...
+echo Changing to the branch-heads/5359 branch...
 cd src
 if errorlevel 1 goto :error
 
-call git checkout branch-heads/5304
+call git checkout branch-heads/5359
 if errorlevel 1 goto :error
 
 echo.
 echo Instructing the tools to bring the bits from all the sub repositories to your dev box...
-call gclient sync -D -r branch-heads/5304
+call gclient sync -D -r branch-heads/5359
 if errorlevel 1 goto :error
 
 echo.

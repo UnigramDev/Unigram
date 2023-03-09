@@ -380,6 +380,7 @@
     <Compile Include="Controls\Drawers\StickerDrawer.xaml.cs">
       <DependentUpon>StickerDrawer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\EmojiSearchBox.cs" />
     <Compile Include="Controls\FauxRadioButton.cs" />
     <Compile Include="Controls\FauxCheckBox.cs" />
     <Compile Include="Controls\FileButton.cs" />
@@ -1256,9 +1257,6 @@
     </Compile>
     <Compile Include="Views\Supergroups\SupergroupEditPage.xaml.cs">
       <DependentUpon>SupergroupEditPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Supergroups\SupergroupEditTopicPage.xaml.cs">
-      <DependentUpon>SupergroupEditTopicPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Supergroups\SupergroupReactionsPage.xaml.cs">
       <DependentUpon>SupergroupReactionsPage.xaml</DependentUpon>
@@ -2548,10 +2546,6 @@
     <Page Include="Views\Supergroups\SupergroupEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Supergroups\SupergroupEditTopicPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Supergroups\SupergroupReactionsPage.xaml">
       <SubType>Designer</SubType>

@@ -6,6 +6,7 @@
 //
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Brushes;
+using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Collections.Generic;
@@ -32,6 +33,8 @@ namespace Unigram.Controls
         private int _loopTrack;
 
         private bool _withinViewport;
+
+        public Color? TintColor { get; set; }
 
         public CustomEmojiIcon()
             : base(true)
@@ -150,7 +153,47 @@ namespace Unigram.Controls
                     var offsetX = (sender.SizeInPixels.Width - animation.PixelWidth) * (sender.Size.Width / sender.SizeInPixels.Width);
                     var offsetY = (sender.SizeInPixels.Height - animation.PixelHeight) * (sender.Size.Width / sender.SizeInPixels.Width);
 
-                    args.DrawImage(_bitmap, new Rect(offsetX, offsetY, sender.Size.Width, sender.Size.Height));
+                    if (TintColor.HasValue)
+                    {
+                        var r = TintColor.Value.R / 255f;
+                        var g = TintColor.Value.G / 255f;
+                        var b = TintColor.Value.B / 255f;
+
+                        using (var matrix = new ColorMatrixEffect
+                        {
+                            Source = _bitmap,
+                            ColorMatrix = new Matrix5x4
+                            {
+                                M11 = 0,
+                                M12 = 0,
+                                M13 = 0,
+                                M14 = 0,
+                                M21 = 0,
+                                M22 = 0,
+                                M23 = 0,
+                                M24 = 0,
+                                M31 = 0,
+                                M32 = 0,
+                                M33 = 0,
+                                M34 = 0,
+                                M41 = 0,
+                                M42 = 0,
+                                M43 = 0,
+                                M44 = 1,
+                                M51 = r,
+                                M52 = g,
+                                M53 = b,
+                                M54 = 0
+                            }
+                        })
+                        {
+                            args.DrawImage(matrix, new Rect(offsetX, offsetY, sender.Size.Width, sender.Size.Height), new Rect(0, 0, _bitmap.Size.Width, _bitmap.Size.Height));
+                        }
+                    }
+                    else
+                    {
+                        args.DrawImage(_bitmap, new Rect(offsetX, offsetY, sender.Size.Width, sender.Size.Height));
+                    }
                 }
                 else
                 {

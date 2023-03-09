@@ -23,7 +23,9 @@ namespace Unigram.ViewModels.Drawers
     {
         Chat,
         Reactions,
-        CustomEmojis
+        CustomEmojis,
+        ChatPhoto,
+        UserPhoto
     }
 
     public class EmojiDrawerViewModel : TLViewModelBase
@@ -199,7 +201,7 @@ namespace Unigram.ViewModels.Drawers
 
         //public MvxObservableCollection<StickerSetViewModel> Stickers => SearchStickers ?? (MvxObservableCollection<StickerSetViewModel>)SavedStickers;
 
-        public async void Search(string query)
+        public async void Search(string query, bool emojiOnly)
         {
             if (string.IsNullOrWhiteSpace(query))
             {
@@ -207,7 +209,7 @@ namespace Unigram.ViewModels.Drawers
             }
             else
             {
-                var items = SearchStickers = new SearchStickerSetsCollection(ClientService, new StickerTypeRegular(), query, 0);
+                var items = SearchStickers = new SearchStickerSetsCollection(ClientService, new StickerTypeRegular(), query, 0, emojiOnly);
                 await items.LoadMoreItemsAsync(0);
             }
         }
@@ -310,7 +312,7 @@ namespace Unigram.ViewModels.Drawers
 
                 sets.Insert(0, _reactionTopSet);
 
-                if (_mode == EmojiDrawerMode.CustomEmojis)
+                if (_mode is EmojiDrawerMode.CustomEmojis or EmojiDrawerMode.ChatPhoto or EmojiDrawerMode.UserPhoto)
                 {
                     installedSets.Insert(0, _reactionTopSet);
                 }
@@ -502,6 +504,28 @@ namespace Unigram.ViewModels.Drawers
             _ = UpdateAsync();
 
             var response = await ClientService.SendAsync(new GetForumTopicDefaultIcons()) as Stickers;
+            if (response is Stickers stickers)
+            {
+                _reactionTopSet.Update(stickers.StickersValue, true);
+            }
+        }
+
+        public async void UpdateChatPhoto()
+        {
+            _ = UpdateAsync();
+
+            var response = await ClientService.SendAsync(new GetDefaultChatPhotoCustomEmojiStickers()) as Stickers;
+            if (response is Stickers stickers)
+            {
+                _reactionTopSet.Update(stickers.StickersValue, true);
+            }
+        }
+
+        public async void UpdateUserPhoto()
+        {
+            _ = UpdateAsync();
+
+            var response = await ClientService.SendAsync(new GetDefaultChatPhotoCustomEmojiStickers()) as Stickers;
             if (response is Stickers stickers)
             {
                 _reactionTopSet.Update(stickers.StickersValue, true);

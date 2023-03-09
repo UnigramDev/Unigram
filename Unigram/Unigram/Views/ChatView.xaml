@@ -415,7 +415,7 @@
                         <TextBlock x:Name="TypeIcon"
                                    Text="&#xE716;"
                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                   Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                                   Foreground="{ThemeResource PageHeaderForegroundBrush}"
                                    VerticalAlignment="Bottom"
                                    FontSize="16"
                                    Margin="0,0,4,1" />
@@ -1184,7 +1184,6 @@
                                           Grid.Row="1">
                         <FlyoutBase.AttachedFlyout>
                             <MenuFlyout Placement="Top">
-                                <controls:MenuFlyoutLabel x:Name="AttachRestriction" />
                                 <MenuFlyoutItem x:Name="AttachMedia"
                                                 Text="{CustomResource ChatGallery}"
                                                 Command="{x:Bind ViewModel.SendMediaCommand}">

@@ -8,6 +8,7 @@
                        xmlns:drawers="using:Unigram.Controls.Drawers"
                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       xmlns:td="using:Telegram.Td.Api"
                        mc:Ignorable="d"
                        Title="{x:Null}"
                        PrimaryButtonText="Button1"
@@ -584,28 +585,22 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition />
             <RowDefinition Height="Auto" />
+            <RowDefinition />
         </Grid.RowDefinitions>
         <Grid Width="128"
               Height="128"
               CornerRadius="60"
               Margin="0,8,0,8"
-              Grid.Row="1">
-            <chats:ChatBackgroundRenderer x:Name="Renderer"
-                                          Tag="{x:Bind ConvertBackground(ViewModel.SelectedBackground), Mode=OneWay}" />
+              Grid.Row="0">
+            <chats:ChatBackgroundPreview x:Name="Renderer"
+                                         Fill="{x:Bind ViewModel.SelectedBackground, Mode=OneWay}" />
             <controls:CustomEmojiIcon x:Name="Icon"
                                       Tag="{x:Bind ConvertForeground(ViewModel.SelectedForeground), Mode=OneWay}"
-                                      RenderTransformOrigin="0.5,0.5"
                                       IsLoopingEnabled="True"
-                                      FrameSize="102"
-                                      Width="102"
-                                      Height="102">
-                <controls:CustomEmojiIcon.RenderTransform>
-                    <ScaleTransform ScaleX="{x:Bind ViewModel.Scale, Mode=OneWay}"
-                                    ScaleY="{x:Bind ViewModel.Scale, Mode=OneWay}" />
-                </controls:CustomEmojiIcon.RenderTransform>
-            </controls:CustomEmojiIcon>
+                                      FrameSize="128"
+                                      Width="128"
+                                      Height="128" />
 
             <Ellipse Stroke="{ThemeResource NavigationViewContentGridBorderBrush}"
                      StrokeThickness="1" />
@@ -622,18 +617,62 @@
             </Path>
         </Grid>
 
-        <Slider Value="{x:Bind ConvertScale(ViewModel.Scale), BindBack=ConvertScaleBack, Mode=TwoWay}"
-                Maximum="100"
-                Minimum="50"
-                Orientation="Vertical"
-                HorizontalAlignment="Right"
-                Margin="0,12,0,12"
-                Grid.Row="1" />
+        <!--<TextBlock Text="{CustomResource ColorPickerBackground}"
+                   Style="{StaticResource BaseTextBlockStyle}" />-->
+
+        <ListView ItemsSource="{x:Bind ViewModel.Items}"
+                  SelectedItem="{x:Bind ViewModel.SelectedBackground, Mode=TwoWay}"
+                  Style="{StaticResource StaticListViewStyle}"
+                  Padding="4,0,0,0"
+                  Grid.Row="1">
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="MinWidth"
+                            Value="0" />
+                    <Setter Property="MinHeight"
+                            Value="0" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListViewItem">
+                                <Grid CornerRadius="100"
+                                      Margin="0,0,8,0">
+                                    <ContentPresenter />
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="td:BackgroundFill">
+                    <chats:ChatBackgroundPreview Fill="{x:Bind}"
+                                                 Width="31"
+                                                 Height="31" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
 
         <Pivot x:Name="Pivot"
                SelectionChanged="OnSelectionChanged"
                Style="{StaticResource HeaderlessPivotStyle}"
-               Grid.Row="2">
+               Grid.Row="3">
+            <PivotItem>
+                <Grid x:Name="EmojisPanel"
+                      x:Load="False">
+                    <drawers:ChatPhotoEmojiDrawer x:Name="EmojisRoot"
+                                                  ItemClick="Emojis_ItemClick"
+                                                  ScrollingHostPadding="0,0,0,56" />
+                    <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
+                                                ScrollingHost="{x:Bind EmojisRoot.ScrollingHost}"
+                                                TopInset="0"
+                                                BottomInset="56" />
+                </Grid>
+            </PivotItem>
             <PivotItem>
                 <Grid x:Name="StickersPanel"
                       x:Load="False">
@@ -645,55 +684,9 @@
                                                 BottomInset="56" />
                 </Grid>
             </PivotItem>
-            <!--<PivotItem>
-                <Grid x:Name="EmojisPanel"
-                      x:Load="False">
-                    <drawers:EmojiDrawer x:Name="EmojisRoot"
-                                         ItemClick="Emojis_ItemClick"
-                                         ScrollingHostPadding="0,0,0,56" />
-                    <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
-                                                ScrollingHost="{x:Bind EmojisRoot.ScrollingHost}"
-                                                TopInset="0"
-                                                BottomInset="56" />
-                </Grid>
-            </PivotItem>-->
-            <PivotItem>
-                <Grid>
-                    <GridView x:Name="ScrollingHost"
-                              ItemsSource="{x:Bind ViewModel.Items}"
-                              SelectedItem="{x:Bind ViewModel.SelectedBackground, Mode=TwoWay}"
-                              ContainerContentChanging="OnContainerContentChanging"
-                              Padding="4,8,0,56"
-                              common:FluidGridView.OrientationOnly="False">
-                        <common:FluidGridView.Triggers>
-                            <common:FluidGridViewTrigger RowsOrColumns="3" />
-                        </common:FluidGridView.Triggers>
-                        <GridView.ItemContainerStyle>
-                            <Style TargetType="GridViewItem"
-                                   BasedOn="{StaticResource GridViewItemExpanded}">
-                                <Setter Property="HorizontalContentAlignment"
-                                        Value="Stretch" />
-                                <Setter Property="VerticalContentAlignment"
-                                        Value="Stretch" />
-                                <Setter Property="CornerRadius"
-                                        Value="50" />
-                            </Style>
-                        </GridView.ItemContainerStyle>
-                        <GridView.ItemTemplate>
-                            <DataTemplate>
-                                <chats:ChatBackgroundRenderer />
-                            </DataTemplate>
-                        </GridView.ItemTemplate>
-                    </GridView>
-
-                    <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
-                                                ScrollingHost="{x:Bind ScrollingHost}"
-                                                BottomInset="56" />
-                </Grid>
-            </PivotItem>
         </Pivot>
 
-        <Grid Grid.Row="0">
+        <Grid Grid.Row="2">
             <Border x:Name="NavigationSeparator" />
 
             <controls:TopNavView x:Name="Navigation"
@@ -701,8 +694,7 @@
                                  HorizontalAlignment="Center"
                                  Height="40">
                 <controls:TopNavViewItem Content="{CustomResource AccDescrStickers}" />
-                <!--<controls:TopNavViewItem Content="{CustomResource Emoji}" />-->
-                <controls:TopNavViewItem Content="{CustomResource ColorPickerBackground}" />
+                <controls:TopNavViewItem Content="{CustomResource Emoji}" />
             </controls:TopNavView>
         </Grid>
     </Grid>

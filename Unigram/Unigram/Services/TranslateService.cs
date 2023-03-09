@@ -5,22 +5,19 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using System.Collections.Generic;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Native;
-using Windows.Data.Json;
 
 namespace Unigram.Services
 {
     public interface ITranslateService
     {
-        IList<string> Tokenize(string full, int maxBlockSize);
-
         bool CanTranslate(string text);
 
-        Task<object> TranslateAsync(string text, string fromLanguage, string toLanguage);
+        Task<object> TranslateAsync(long chatId, long messageId, string toLanguage);
+        Task<object> TranslateAsync(string text, string toLanguage);
+        Task<object> TranslateAsync(FormattedText text, string toLanguage);
     }
 
     public class TranslateService : ITranslateService
@@ -72,105 +69,19 @@ namespace Unigram.Services
             return true;
         }
 
-        public IList<string> Tokenize(string full, int maxBlockSize)
+        public Task<object> TranslateAsync(string text, string toLanguage)
         {
-            var blocks = new List<string>();
-            if (full == null)
-                return blocks;
-
-            while (full.Length > maxBlockSize)
-            {
-                string maxBlockStr = full.Substring(0, maxBlockSize);
-                int n = -1;
-                if (n == -1) n = maxBlockStr.LastIndexOf("\n\n");
-                if (n == -1) n = maxBlockStr.LastIndexOf("\n");
-                if (n == -1) n = maxBlockStr.LastIndexOf(". ");
-                blocks.Add(full.Substring(0, n + 1));
-                full = full.Substring(n + 1);
-            }
-
-            if (full.Length > 0)
-                blocks.Add(full);
-
-            return blocks;
+            return TranslateAsync(new FormattedText(text, null), toLanguage);
         }
 
-        public async Task<object> TranslateAsync(string text, string fromLanguage, string toLanguage)
+        public async Task<object> TranslateAsync(FormattedText text, string toLanguage)
         {
-            return await _clientService.SendAsync(new TranslateText(text, fromLanguage, toLanguage));
+            return await _clientService.SendAsync(new TranslateText(text, toLanguage));
+        }
 
-            Random random = new Random();
-            try
-            {
-                var uri = "https://translate.goo";
-                uri += "gleapis.com/transl";
-                uri += "ate_a";
-                uri += "/singl";
-                uri += "e?client=gtx&sl=" + Uri.EscapeDataString(fromLanguage) + "&tl=" + Uri.EscapeDataString(toLanguage) + "&dt=t" + "&ie=UTF-8&oe=UTF-8&otf=1&ssel=0&tsel=0&kc=7&dt=at&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&q=";
-                uri += Uri.EscapeDataString(text);
-
-                var request = new HttpRequestMessage(HttpMethod.Get, uri);
-                request.Headers.TryAddWithoutValidation("User-Agent", _userAgents[random.Next(0, _userAgents.Length)]);
-                request.Headers.TryAddWithoutValidation("Content-Type", "application/json");
-
-                using var client = new HttpClient();
-                var response = await client.SendAsync(request);
-                if (response.IsSuccessStatusCode)
-                {
-                    var content = await response.Content.ReadAsStringAsync();
-
-                    if (JsonArray.TryParse(content, out JsonArray tokener))
-                    {
-                        var array = tokener.GetArrayAt(0);
-
-                        string sourceLanguage = null;
-                        try
-                        {
-                            sourceLanguage = tokener.GetStringAt(2);
-                        }
-                        catch { }
-
-                        if (sourceLanguage != null && sourceLanguage.Contains("-"))
-                        {
-                            sourceLanguage = sourceLanguage.Substring(0, sourceLanguage.IndexOf("-"));
-                        }
-
-                        string result = "";
-                        for (uint i = 0; i < array.Count; ++i)
-                        {
-                            var block = array.GetArrayAt(i)[0];
-                            if (block.ValueType != JsonValueType.String)
-                            {
-                                continue;
-                            }
-
-                            var blockText = block.GetString();
-                            if (blockText != null && !blockText.Equals("null"))
-                                result += /*(i > 0 ? "\n" : "") +*/ blockText;
-                        }
-
-                        if (text.Length > 0 && text[0] == '\n')
-                            result = "\n" + result;
-
-                        return new Text(result);
-                    }
-                    else
-                    {
-                        return new Error(500, "WHATEVER");
-                    }
-                }
-                else
-                {
-                    var status = response != null ? (int)response.StatusCode : 500;
-                    var rateLimit = status == 429;
-
-                    return new Error(status, rateLimit ? "FLOOD_WAIT" : "WHATEVER");
-                }
-            }
-            catch
-            {
-                return new Error(500, "WHATEVER");
-            }
+        public async Task<object> TranslateAsync(long chatId, long messageId, string toLanguage)
+        {
+            return await _clientService.SendAsync(new TranslateMessageText(chatId, messageId, toLanguage));
         }
     }
 }

@@ -182,7 +182,7 @@ namespace Unigram.Controls
 
                 if (viewModel != null)
                 {
-                    viewModel.Search(string.Empty);
+                    viewModel.Search(string.Empty, false);
                 }
             }
         }
@@ -244,7 +244,7 @@ namespace Unigram.Controls
 
     public interface IDrawer
     {
-        void Activate(Chat chat);
+        void Activate(Chat chat, EmojiSearchType type = EmojiSearchType.Default);
         void Deactivate();
 
         void LoadVisibleItems();

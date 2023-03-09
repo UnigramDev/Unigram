@@ -18,7 +18,7 @@ namespace Unigram.Collections
         private readonly TopChatCategory _category;
         private readonly int _limit;
 
-        private readonly bool _hasMore = false;
+        private bool _hasMore = true;
 
         public TopChatsCollection(IClientService clientService, TopChatCategory category, int limit)
         {
@@ -47,6 +47,7 @@ namespace Unigram.Collections
                     }
                 }
 
+                _hasMore = false;
                 return new LoadMoreItemsResult { Count = count };
             });
         }

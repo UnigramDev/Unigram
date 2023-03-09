@@ -72,10 +72,10 @@ namespace Unigram.Controls.Drawers
             var header = DropShadowEx.Attach(Separator);
             header.Clip = header.Compositor.CreateInsetClip(0, 40, 0, -40);
 
-            var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => FieldAnimations.TextChanged += new TextChangedEventHandler(handler));
+            var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
             debouncer.Invoked += (s, args) =>
             {
-                ViewModel.Search(FieldAnimations.Text);
+                ViewModel.Search(SearchField.Text);
             };
         }
 
@@ -89,10 +89,12 @@ namespace Unigram.Controls.Drawers
 
         public ListViewBase ScrollingHost => List;
 
-        public void Activate(Chat chat)
+        public void Activate(Chat chat, EmojiSearchType type = EmojiSearchType.Default)
         {
             _isActive = true;
             _handler.ThrottleVisibleItems();
+
+            SearchField.SetType(ViewModel.ClientService, type);
 
             if (chat != null)
             {
@@ -224,9 +226,14 @@ namespace Unigram.Controls.Drawers
             ItemContextRequested?.Invoke(sender, new ItemContextRequestedEventArgs<Animation>(animation, args));
         }
 
-        private void FieldAnimations_TextChanged(object sender, TextChangedEventArgs e)
+        private void SearchField_TextChanged(object sender, TextChangedEventArgs e)
         {
-            //ViewModel.Stickers.FindAnimations(FieldAnimations.Text);
+            //ViewModel.Search(SearchField.Text, false);
+        }
+
+        private void SearchField_CategorySelected(object sender, EmojiCategorySelectedEventArgs e)
+        {
+            ViewModel.Search(string.Join(" ", e.Category.Emojis));
         }
 
         private object ConvertItems(object items)

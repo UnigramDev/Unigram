@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using System;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -36,6 +37,7 @@ namespace Unigram.Views.Popups
         private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
         {
             UnloadAtIndex(0);
+            UnloadAtIndex(1);
         }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -92,11 +94,11 @@ namespace Unigram.Views.Popups
 
         private void LoadAtIndex(int index, bool unload)
         {
-            if (index == 0)
+            if (index == 1)
             {
                 if (unload)
                 {
-                    UnloadAtIndex(1);
+                    UnloadAtIndex(0);
                 }
 
                 if (StickersRoot == null)
@@ -106,25 +108,25 @@ namespace Unigram.Views.Popups
                     StickersRoot.ItemClick = Stickers_ItemClick;
                 }
 
-                StickersRoot.Activate(null);
+                StickersRoot.Activate(null, EmojiSearchType.ChatPhoto);
                 SettingsService.Current.Stickers.SelectedTab = StickersTab.Stickers;
             }
-            //else if (index == 1)
-            //{
-            //    if (unload)
-            //    {
-            //        UnloadAtIndex(0);
-            //    }
+            else if (index == 0)
+            {
+                if (unload)
+                {
+                    UnloadAtIndex(1);
+                }
 
-            //    if (EmojisRoot == null)
-            //    {
-            //        FindName(nameof(EmojisPanel));
-            //        EmojisRoot.DataContext = EmojiDrawerViewModel.GetForCurrentView(ViewModel.SessionId);
-            //    }
+                if (EmojisRoot == null)
+                {
+                    FindName(nameof(EmojisPanel));
+                    EmojisRoot.DataContext = EmojiDrawerViewModel.GetForCurrentView(ViewModel.SessionId, EmojiDrawerMode.ChatPhoto);
+                }
 
-            //    EmojisRoot.Activate(null);
-            //    SettingsService.Current.Stickers.SelectedTab = StickersTab.Emoji;
-            //}
+                EmojisRoot.Activate(null);
+                SettingsService.Current.Stickers.SelectedTab = StickersTab.Emoji;
+            }
         }
 
         private void UnloadAtIndex(int index)
@@ -136,51 +138,50 @@ namespace Unigram.Views.Popups
                 StickersRoot.Deactivate();
                 UnloadObject(StickersPanel);
 
-                if (viewModel != null)
-                {
-                    viewModel.Search(string.Empty);
-                }
+                viewModel?.Search(string.Empty, false);
             }
-            //else if (index == 1 && EmojisPanel != null)
-            //{
-            //    EmojisRoot.Deactivate();
-            //    UnloadObject(EmojisPanel);
-            //}
+            else if (index == 1 && EmojisPanel != null)
+            {
+                EmojisRoot.Deactivate();
+                UnloadObject(EmojisPanel);
+            }
         }
 
         #region Binding
-
-        private object ConvertBackground(Background background)
-        {
-            if (background != null)
-            {
-                Renderer.UpdateSource(ViewModel.ClientService, background, true);
-            }
-
-            return null;
-        }
 
         private object ConvertForeground(Sticker foreground)
         {
             if (foreground != null)
             {
+                double maxSize = 128d / 3 * 2;
+                double width = foreground.Width;
+                double height = foreground.Height;
+
+                double ratioX = (double)maxSize / width;
+                double ratioY = (double)maxSize / height;
+
+                if (ratioX <= ratioY)
+                {
+                    width = maxSize;
+                    height *= ratioX;
+                }
+                else
+                {
+                    width *= ratioY;
+                    height = maxSize;
+                }
+
+                Icon.Width = width;
+                Icon.Height = height;
+                Icon.FrameSize = (int)Math.Max(width, height);
+
                 Icon.SetSticker(ViewModel.ClientService, foreground);
             }
 
             return null;
         }
 
-        private double ConvertScale(float scale)
-        {
-            return scale * 100;
-        }
-
-        private void ConvertScaleBack(double scale)
-        {
-            ViewModel.Scale = (float)scale / 100f;
-        }
-
-        private bool ConvertEnabled(Background background, Sticker foreground)
+        private bool ConvertEnabled(BackgroundFill background, Sticker foreground)
         {
             return background != null
                 && foreground != null;

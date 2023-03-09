@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using RLottie;
 using System;
@@ -20,6 +21,7 @@ using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.Graphics;
 using Windows.Storage;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media.Imaging;
@@ -143,14 +145,25 @@ namespace Unigram.Controls
             var y = (sender.Size.Height - height) / 2;
             var x = (sender.Size.Width - width) / 2;
 
+            ICanvasImage source = _bitmap;
+            if (TintColor.HasValue)
+            {
+                source = new TintEffect
+                {
+                    Source = _bitmap,
+                    Color = TintColor.Value
+                };
+            }
+
             if (sender.Size.Width >= _logicalSize.Width || sender.Size.Height >= _logicalSize.Height)
             {
-                args.DrawImage(_bitmap,
-                    new Rect(x, y, width, height));
+                args.DrawImage(source,
+                    new Rect(x, y, width, height),
+                    new Rect(0, 0, _bitmap.Size.Width, _bitmap.Size.Height));
             }
             else
             {
-                args.DrawImage(_bitmap,
+                args.DrawImage(source,
                     new Rect(x, y, width, height),
                     new Rect(0, 0, _bitmap.Size.Width, _bitmap.Size.Height), 1,
                     CanvasImageInterpolation.MultiSampleLinear);
@@ -511,5 +524,7 @@ namespace Unigram.Controls
         public IReadOnlyDictionary<int, int> ColorReplacements { get; set; }
 
         public FitzModifier FitzModifier { get; set; }
+
+        public Color? TintColor { get; set; }
     }
 }

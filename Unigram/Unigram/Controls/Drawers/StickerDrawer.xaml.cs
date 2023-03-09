@@ -69,16 +69,16 @@ namespace Unigram.Controls.Drawers
             var header = DropShadowEx.Attach(Separator);
             header.Clip = header.Compositor.CreateInsetClip(0, 40, 0, -40);
 
-            var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => FieldStickers.TextChanged += new TextChangedEventHandler(handler));
-            debouncer.Invoked += async (s, args) =>
-            {
-                var items = ViewModel.SearchStickers;
-                if (items != null && string.Equals(FieldStickers.Text, items.Query))
-                {
-                    await items.LoadMoreItemsAsync(1);
-                    await items.LoadMoreItemsAsync(2);
-                }
-            };
+            //var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => FieldStickers.TextChanged += new TextChangedEventHandler(handler));
+            //debouncer.Invoked += async (s, args) =>
+            //{
+            //    var items = ViewModel.SearchStickers;
+            //    if (items != null && string.Equals(FieldStickers.Text, items.Query))
+            //    {
+            //        await items.LoadMoreItemsAsync(1);
+            //        await items.LoadMoreItemsAsync(2);
+            //    }
+            //};
         }
 
         public Services.Settings.StickersTab Tab => Services.Settings.StickersTab.Stickers;
@@ -91,12 +91,13 @@ namespace Unigram.Controls.Drawers
 
         public ListViewBase ScrollingHost => List;
 
-        public void Activate(Chat chat)
+        public void Activate(Chat chat, EmojiSearchType type = EmojiSearchType.Default)
         {
             _isActive = true;
             _handler.ThrottleVisibleItems();
             _toolbarHandler.ThrottleVisibleItems();
 
+            SearchField.SetType(ViewModel.ClientService, type);
             ViewModel.Update(chat);
         }
 
@@ -487,9 +488,14 @@ namespace Unigram.Controls.Drawers
             }
         }
 
-        private void FieldStickers_TextChanged(object sender, TextChangedEventArgs e)
+        private void SearchField_TextChanged(object sender, TextChangedEventArgs e)
         {
-            ViewModel.Search(FieldStickers.Text);
+            ViewModel.Search(SearchField.Text, false);
+        }
+
+        private void SearchField_CategorySelected(object sender, EmojiCategorySelectedEventArgs e)
+        {
+            ViewModel.Search(string.Join(" ", e.Category.Emojis), true);
         }
 
         private void OnContextRequested(UIElement sender, ContextRequestedEventArgs args)

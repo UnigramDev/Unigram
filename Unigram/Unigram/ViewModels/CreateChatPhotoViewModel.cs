@@ -5,12 +5,9 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Rg.DiffUtils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
-using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Navigation.Services;
 using Unigram.Services;
@@ -46,7 +43,19 @@ namespace Unigram.ViewModels
         public CreateChatPhotoViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            Items = new DiffObservableCollection<Background>(new BackgroundDiffHandler(), Constants.DiffOptions);
+            Items = new ObservableCollection<BackgroundFill>
+            {
+                new BackgroundFillFreeformGradient(new[] { 0x5A7FFF, 0x2CA0F2, 0x4DFF89, 0x6BFCEB }),
+                new BackgroundFillFreeformGradient(new[] { 0xFF011D, 0xFF530D, 0xFE64DC, 0xFFDC61 }),
+                new BackgroundFillFreeformGradient(new[] { 0xFE64DC, 0xFF6847, 0xFFDD02, 0xFFAE10 }),
+                new BackgroundFillFreeformGradient(new[] { 0x84EC00, 0x00B7C2, 0x00C217, 0xFFE600 }),
+                new BackgroundFillFreeformGradient(new[] { 0x86B0FF, 0x35FFCF, 0x69FFFF, 0x76DEFF }),
+                new BackgroundFillFreeformGradient(new[] { 0xFAE100, 0xFF54EE, 0xFC2B78, 0xFF52D9 }),
+                new BackgroundFillFreeformGradient(new[] { 0x73A4FF, 0x5F55FF, 0xFF49F8, 0xEC76FF }),
+                new BackgroundFillFreeformGradient(new[] { 0x73A4FF, 0x5F55FF, 0xFF49F8, 0xEC76FF }),
+            };
+
+            SelectedBackground = Items[0];
         }
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -58,40 +67,11 @@ namespace Unigram.ViewModels
                 _isPersonal = parameters.IsPersonal;
             }
 
-            var dark = Settings.Appearance.IsDarkTheme();
-            var freeform = dark ? new[] { 0x1B2836, 0x121A22, 0x1B2836, 0x121A22 } : new[] { 0xDBDDBB, 0x6BA587, 0xD5D88D, 0x88B884 };
-
-            var predefined = new Background(Constants.WallpaperColorId, true, dark, string.Empty,
-                new Document(string.Empty, "application/x-tgwallpattern", null, null, TdExtensions.GetLocalFile("Assets\\Background.tgv", "Background")),
-                new BackgroundTypePattern(new BackgroundFillFreeformGradient(freeform), dark ? 100 : 50, dark, false));
-
-            var items = new List<Background>
-            {
-                predefined
-            };
-
-            SelectedBackground = predefined;
-            Items.ReplaceDiff(items);
-
-            var response = await ClientService.SendAsync(new GetBackgrounds(dark));
-            if (response is Backgrounds wallpapers)
-            {
-                items.AddRange(wallpapers.BackgroundsValue.Where(x => x.Type is BackgroundTypePattern));
-                Items.ReplaceDiff(items);
-            }
-
             var foreground = await ClientService.SendAsync(new GetAnimatedEmoji("\U0001F916")) as AnimatedEmoji;
             if (foreground != null)
             {
                 SelectedForeground = foreground.Sticker;
             }
-        }
-
-        private float _scale = 0.75f;
-        public float Scale
-        {
-            get => _scale;
-            set => Set(ref _scale, value);
         }
 
         private Sticker _selectedForeground;
@@ -101,44 +81,27 @@ namespace Unigram.ViewModels
             set => Set(ref _selectedForeground, value);
         }
 
-        private Background _selectedBackground;
-        public Background SelectedBackground
+        private BackgroundFill _selectedBackground;
+        public BackgroundFill SelectedBackground
         {
             get => _selectedBackground;
             set => Set(ref _selectedBackground, value);
         }
 
-        public DiffObservableCollection<Background> Items { get; private set; }
+        public ObservableCollection<BackgroundFill> Items { get; private set; }
 
         public async void Send()
         {
-            if (SelectedForeground is not Sticker foreground || SelectedBackground is not Background background)
+            if (SelectedForeground is not Sticker foreground || SelectedBackground is not BackgroundFill background)
             {
                 Completion?.SetResult(false);
                 return;
             }
 
-            var url = await ClientService.SendAsync(new GetBackgroundUrl(background.Name, background.Type)) as HttpUrl;
-            var fileName = foreground.Format is StickerFormatWebp ? "static.jpg" : "animation.mp4";
-
-            var arguments = new GenerationService.ChatPhotoConversion
-            {
-                StickerFileId = foreground.StickerValue.Id,
-                StickerFileType = foreground.Format switch
-                {
-                    StickerFormatWebp => 0,
-                    StickerFormatTgs => 1,
-                    StickerFormatWebm => 2,
-                    _ => -1
-                },
-                BackgroundUrl = url.Url,
-                Scale = Scale
-            };
-
-            InputFile inputFile = new InputFileGenerated(fileName, "token" + "#" + ConversionType.ChatPhoto + "#" + Newtonsoft.Json.JsonConvert.SerializeObject(arguments) + "#" + DateTime.Now.ToString("s"), 0);
-            InputChatPhoto inputPhoto = foreground.Format is StickerFormatWebp
-                ? new InputChatPhotoStatic(inputFile)
-                : new InputChatPhotoAnimation(inputFile, 0);
+            ChatPhotoStickerType stickerType = foreground.FullType is StickerFullTypeCustomEmoji customEmoji
+                ? new ChatPhotoStickerTypeCustomEmoji(customEmoji.CustomEmojiId)
+                : new ChatPhotoStickerTypeRegularOrMask(foreground.SetId, foreground.Id);
+            InputChatPhoto inputPhoto = new InputChatPhotoSticker(new ChatPhotoSticker(stickerType, background));
 
             if (_chatId is long chatId)
             {

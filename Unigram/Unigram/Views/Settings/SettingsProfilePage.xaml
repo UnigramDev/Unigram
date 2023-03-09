@@ -61,10 +61,10 @@
                                                           Style="{StaticResource DefaultFontIconStyle}" />
                                             </MenuFlyoutItem.Icon>
                                         </MenuFlyoutItem>
-                                        <MenuFlyoutItem Text="{CustomResource StickersName}"
+                                        <MenuFlyoutItem Text="{CustomResource UseEmoji}"
                                                         Click="{x:Bind ViewModel.CreatePhoto}">
                                             <MenuFlyoutItem.Icon>
-                                                <FontIcon Glyph="&#xF4AA;"
+                                                <FontIcon Glyph="&#xE76E;"
                                                           Style="{StaticResource DefaultFontIconStyle}" />
                                             </MenuFlyoutItem.Icon>
                                         </MenuFlyoutItem>

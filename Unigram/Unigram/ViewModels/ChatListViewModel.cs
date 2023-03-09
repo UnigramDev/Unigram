@@ -41,6 +41,7 @@ namespace Unigram.ViewModels
 
             Items = new ItemsCollection(clientService, aggregator, this, chatList);
 
+            Search = new SearchCollection<object, SearchChatsCollection>(UpdateSearch, new SearchDiffHandler());
             SearchFilters = new MvxObservableCollection<ISearchChatsFilter>();
 
             ChatOpenCommand = new RelayCommand<Chat>(ChatOpenExecute);
@@ -74,6 +75,11 @@ namespace Unigram.ViewModels
             SelectedItems = new MvxObservableCollection<Chat>();
         }
 
+        private SearchChatsCollection UpdateSearch(object arg1, string query)
+        {
+            return new SearchChatsCollection(ClientService, query, null);
+        }
+
         #region Selection
 
         private long? _selectedItem;
@@ -103,12 +109,7 @@ namespace Unigram.ViewModels
 
         public bool IsLastSliceLoaded { get; set; }
 
-        private SearchChatsCollection _search;
-        public SearchChatsCollection Search
-        {
-            get => _search;
-            set => Set(ref _search, value);
-        }
+        public SearchCollection<object, SearchChatsCollection> Search { get; private set; }
 
         public MvxObservableCollection<ISearchChatsFilter> SearchFilters { get; private set; }
 

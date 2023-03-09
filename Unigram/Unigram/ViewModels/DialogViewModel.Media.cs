@@ -406,22 +406,22 @@ namespace Unigram.ViewModels
             {
                 if (item is StoragePhoto && !permissions.CanSendPhotos)
                 {
-                    await MessagePopup.ShowAsync(XamlRoot, restricted ? Strings.Resources.ErrorSendRestrictedPhoto : Strings.Resources.ErrorSendRestrictedPhotoAll, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(restricted ? Strings.Resources.ErrorSendRestrictedPhoto : Strings.Resources.ErrorSendRestrictedPhotoAll, Strings.Resources.AppName, Strings.Resources.OK);
                     return;
                 }
                 else if (item is StorageVideo && !permissions.CanSendVideos)
                 {
-                    await MessagePopup.ShowAsync(XamlRoot, restricted ? Strings.Resources.ErrorSendRestrictedVideo : Strings.Resources.ErrorSendRestrictedVideoAll, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(restricted ? Strings.Resources.ErrorSendRestrictedVideo : Strings.Resources.ErrorSendRestrictedVideoAll, Strings.Resources.AppName, Strings.Resources.OK);
                     return;
                 }
                 else if (item is StorageAudio && !permissions.CanSendAudios)
                 {
-                    await MessagePopup.ShowAsync(XamlRoot, restricted ? Strings.Resources.ErrorSendRestrictedMusic : Strings.Resources.ErrorSendRestrictedMusicAll, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(restricted ? Strings.Resources.ErrorSendRestrictedMusic : Strings.Resources.ErrorSendRestrictedMusicAll, Strings.Resources.AppName, Strings.Resources.OK);
                     return;
                 }
                 else if (item is StorageDocument && !permissions.CanSendDocuments)
                 {
-                    await MessagePopup.ShowAsync(XamlRoot, restricted ? Strings.Resources.ErrorSendRestrictedDocuments : Strings.Resources.ErrorSendRestrictedDocumentsAll, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(restricted ? Strings.Resources.ErrorSendRestrictedDocuments : Strings.Resources.ErrorSendRestrictedDocumentsAll, Strings.Resources.AppName, Strings.Resources.OK);
                     return;
                 }
             }
@@ -1123,7 +1123,7 @@ namespace Unigram.ViewModels
 
             var formattedText = GetFormattedText(true);
 
-            var dialog = new SendFilesPopup(SessionId, new[] { storage }, true, false, false, false);
+            var dialog = new SendFilesPopup(SessionId, new[] { storage }, true, false, false, false, false, false);
             dialog.Caption = formattedText
                 .Substring(0, ClientService.Options.MessageCaptionLengthMax);
 

@@ -173,7 +173,7 @@ namespace Unigram.Views.Premium.Popups
                 Locale.FormatCurrency(option.PaymentOption.Amount / option.PaymentOption.MonthCount, option.PaymentOption.Currency));
         }
 
-        private void PurchaseShadow_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        private void PurchaseShadow_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
             DropShadowEx.Attach(PurchaseShadow);
         }

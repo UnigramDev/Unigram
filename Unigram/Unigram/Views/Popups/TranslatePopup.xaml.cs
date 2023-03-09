@@ -22,24 +22,32 @@ namespace Unigram.Views.Popups
         private const string LANG_LATN = "latn";
 
         private readonly ITranslateService _translateService;
-        private readonly string _fromLanguage;
         private readonly string _toLanguage;
+
+        private readonly long _chatId;
+        private readonly long _messageId;
 
         private bool _loadingMore;
 
         public TranslatePopup(ITranslateService translateService, string text, string fromLanguage, string toLanguage, bool contentProtected)
+            : this(translateService, 0, 0, text, fromLanguage, toLanguage, contentProtected)
+        {
+
+        }
+
+        public TranslatePopup(ITranslateService translateService, long chatId, long messageId, string text, string fromLanguage, string toLanguage, bool contentProtected)
         {
             InitializeComponent();
 
             _translateService = translateService;
-            _fromLanguage = fromLanguage == LANG_UND ? LANG_AUTO : fromLanguage;
             _toLanguage = toLanguage;
+
+            _chatId = chatId;
+            _messageId = messageId;
 
             Title = Strings.Resources.AutomaticTranslation;
             PrimaryButtonText = Strings.Resources.Close;
             //SecondaryButtonText = Strings.Resources.Language;
-
-            var tokenizedText = translateService.Tokenize(text, 1024);
 
             var fromName = LanguageName(fromLanguage, out bool rtl);
             var toName = LanguageName(toLanguage, out _);
@@ -53,35 +61,16 @@ namespace Unigram.Views.Popups
                 Subtitle.Text = string.Format("{0} \u2192 {1}", fromName, toName);
             }
 
-            foreach (var token in tokenizedText)
+            var block = new LoadingTextBlock
             {
-                var block = new LoadingTextBlock
-                {
-                    PlaceholderText = token,
-                    IsPlaceholderRightToLeft = rtl,
-                    IsTextSelectionEnabled = !contentProtected,
-                    Margin = new Thickness(0, Presenter.Children.Count > 0 ? -8 : 0, 0, 0)
-                };
+                PlaceholderText = text,
+                IsPlaceholderRightToLeft = rtl,
+                IsTextSelectionEnabled = !contentProtected,
+                Margin = new Thickness(0, Presenter.Children.Count > 0 ? -8 : 0, 0, 0)
+            };
 
-                if (Presenter.Children.Count > 0)
-                {
-                    block.EffectiveViewportChanged += Block_EffectiveViewportChanged;
-                }
-
-                Presenter.Children.Add(block);
-            }
-
+            Presenter.Children.Add(block);
             Opened += OnOpened;
-        }
-
-        private async void Block_EffectiveViewportChanged(FrameworkElement sender, EffectiveViewportChangedEventArgs args)
-        {
-            //System.Diagnostics.Debug.WriteLine("Bring into view distance: " + (sender.ActualHeight + args.EffectiveViewport.Y) + " item index: " + Presenter.Children.IndexOf(sender));
-
-            if (sender.ActualHeight + args.EffectiveViewport.Y > 100)
-            {
-                await TranslateTokenAsync(sender as LoadingTextBlock);
-            }
         }
 
         private async void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
@@ -101,14 +90,20 @@ namespace Unigram.Views.Popups
 
             _loadingMore = true;
 
-            // Unsubscribe to disable load more
-            block.EffectiveViewportChanged -= Block_EffectiveViewportChanged;
-            block.Tag = new object();
-
             var ticks = Environment.TickCount;
 
-            var response = await _translateService.TranslateAsync(block.PlaceholderText, _fromLanguage, _toLanguage);
-            if (response is Text translation)
+            Task<object> task;
+            if (_chatId != 0 && _messageId != 0)
+            {
+                task = _translateService.TranslateAsync(_chatId, _messageId, _toLanguage);
+            }
+            else
+            {
+                task = _translateService.TranslateAsync(block.PlaceholderText, _toLanguage);
+            }
+
+            var response = await task;
+            if (response is FormattedText translation)
             {
                 var diff = Environment.TickCount - ticks;
                 if (diff < 1000)
@@ -116,7 +111,7 @@ namespace Unigram.Views.Popups
                     await Task.Delay(1000 - diff);
                 }
 
-                block.Text = translation.TextValue;
+                block.Text = translation.Text;
             }
             else if (response is Error error)
             {

@@ -101,7 +101,7 @@ namespace Unigram
 
                 builder.AppendLine("{");
 
-                foreach (var property in type.Value)
+                foreach (var property in type.Value.OrderBy(x => x.Key))
                 {
                     var propertyKey = property.Key;
 

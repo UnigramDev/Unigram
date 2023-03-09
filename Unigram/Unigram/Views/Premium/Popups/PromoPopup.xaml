@@ -32,9 +32,9 @@
                     <controls:LottieView Source="ms-appx:///Assets/Animations/Premium.tgs"
                                          IsLoopingEnabled="True"
                                          IsCachingEnabled="False"
-                                         Width="140"
-                                         Height="140"
-                                         Margin="0,16,0,0" />
+                                         Width="120"
+                                         Height="120"
+                                         Margin="10,26,10,10" />
                     <TextBlock common:TextBlockHelper.Markdown="{x:Bind ConvertTitle(ViewModel.IsPremium, x:False), Mode=OneWay}"
                                Style="{StaticResource InfoCaptionTextBlockStyle}"
                                TextAlignment="Center"

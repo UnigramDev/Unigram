@@ -115,21 +115,9 @@
                     <controls:TopNavView SelectedIndex="{x:Bind Pivot.SelectedIndex, Mode=TwoWay}"
                                          HorizontalAlignment="Center"
                                          Height="40">
-                        <controls:TopNavViewItem Content="&#xE76E;"
-                                                 FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                                 FontSize="{StaticResource GlyphMediumFontSize}"
-                                                 AutomationProperties.Name="{CustomResource Emoji}"
-                                                 ToolTipService.ToolTip="{CustomResource Emoji}" />
-                        <controls:TopNavViewItem Content="&#xF4A9;"
-                                                 FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                                 FontSize="{StaticResource GlyphMediumFontSize}"
-                                                 AutomationProperties.Name="{CustomResource AccDescrGIFs}"
-                                                 ToolTipService.ToolTip="{CustomResource AccDescrGIFs}" />
-                        <controls:TopNavViewItem Content="&#xF4AA;"
-                                                 FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                                 FontSize="{StaticResource GlyphMediumFontSize}"
-                                                 AutomationProperties.Name="{CustomResource AccDescrStickers}"
-                                                 ToolTipService.ToolTip="{CustomResource AccDescrStickers}" />
+                        <controls:TopNavViewItem Content="{CustomResource Emoji}" />
+                        <controls:TopNavViewItem Content="{CustomResource AccDescrGIFs}" />
+                        <controls:TopNavViewItem Content="{CustomResource AccDescrStickers}" />
                     </controls:TopNavView>
                 </Grid>
             </Grid>

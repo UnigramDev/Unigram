@@ -66,7 +66,8 @@
 
             <HyperlinkButton Command="{x:Bind ViewModel.ResendCommand}"
                              Visibility="{x:Bind ViewModel.CodeInfo.NextType, Converter={StaticResource NullToVisibilityConverter}}"
-                             Content="{CustomResource DidNotGetTheCode}" />
+                             Content="{CustomResource DidNotGetTheCode}"
+                             HorizontalAlignment="Center" />
         </StackPanel>
 
         <Border x:Name="TitleBar"

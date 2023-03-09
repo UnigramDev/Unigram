@@ -891,12 +891,12 @@ namespace Unigram.Common
 
             for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
             {
-                var _Child = VisualTreeHelper.GetChild(parent, i);
-                if (_Child is Control)
+                var child = VisualTreeHelper.GetChild(parent, i);
+                if (child is Control)
                 {
-                    list.Add(_Child as Control);
+                    list.Add(child as Control);
                 }
-                list.AddRange(AllChildren(_Child));
+                list.AddRange(AllChildren(child));
             }
 
             return list;
@@ -914,12 +914,9 @@ namespace Unigram.Common
             }
         }
 
-        public static T GetChild<T>(this DependencyObject parentContainer, string controlName)
+        public static T GetChild<T>(this DependencyObject parentContainer, string controlName) where T : FrameworkElement
         {
-            var childControls = AllChildren(parentContainer);
-            var control = childControls.OfType<Control>().Where(x => x.Name.Equals(controlName)).Cast<T>().First();
-
-            return control;
+            return parentContainer.Descendants<T>().FirstOrDefault(x => x.Name.Equals(controlName));
         }
 
         public static async Task UpdateLayoutAsync(this FrameworkElement element, bool update = false)

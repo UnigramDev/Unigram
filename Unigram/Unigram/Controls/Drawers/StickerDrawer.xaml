@@ -68,10 +68,11 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <Border Grid.Row="1">
-            <TextBox x:Name="FieldStickers"
-                     PlaceholderText="{CustomResource SearchStickersHint}"
-                     TextChanged="FieldStickers_TextChanged"
-                     Margin="12,8,12,0" />
+            <controls:EmojiSearchBox x:Name="SearchField"
+                                     PlaceholderText="{CustomResource Search}"
+                                     TextChanged="SearchField_TextChanged"
+                                     CategorySelected="SearchField_CategorySelected"
+                                     Margin="12,8,12,0" />
         </Border>
 
         <GridView x:Name="List"

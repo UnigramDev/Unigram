@@ -240,7 +240,7 @@ namespace Unigram.ViewModels.Drawers
 
         public MvxObservableCollection<StickerSetViewModel> Stickers => SearchStickers ?? (MvxObservableCollection<StickerSetViewModel>)SavedStickers;
 
-        public async void Search(string query)
+        public async void Search(string query, bool emojiOnly)
         {
             if (string.IsNullOrWhiteSpace(query))
             {
@@ -248,7 +248,7 @@ namespace Unigram.ViewModels.Drawers
             }
             else
             {
-                var items = SearchStickers = new SearchStickerSetsCollection(ClientService, new StickerTypeRegular(), query, 0);
+                var items = SearchStickers = new SearchStickerSetsCollection(ClientService, new StickerTypeRegular(), query, 0, emojiOnly);
                 await items.LoadMoreItemsAsync(0);
             }
         }
@@ -705,14 +705,16 @@ namespace Unigram.ViewModels.Drawers
         private readonly string _query;
         private readonly string _inputLanguage;
         private readonly long _chatId;
+        private readonly bool _emojiOnly;
 
-        public SearchStickerSetsCollection(IClientService clientService, StickerType type, string query, long chatId)
+        public SearchStickerSetsCollection(IClientService clientService, StickerType type, string query, long chatId, bool emojiOnly)
         {
             _clientService = clientService;
             _type = type;
             _query = query;
             _inputLanguage = Windows.Globalization.Language.CurrentInputMethodLanguageTag;
             _chatId = chatId;
+            _emojiOnly = emojiOnly;
         }
 
         public string Query => _query;
@@ -723,7 +725,11 @@ namespace Unigram.ViewModels.Drawers
             {
                 if (phase == 0)
                 {
-                    var response = await _clientService.SendAsync(new SearchInstalledStickerSets(_type, _query, 100));
+                    Function task = _emojiOnly
+                        ? new SearchStickers(_type, _query, 100)
+                        : new SearchInstalledStickerSets(_type, _query, 100);
+
+                    var response = await _clientService.SendAsync(task);
                     if (response is StickerSets sets)
                     {
                         foreach (var item in sets.Sets.Select(x => new StickerSetViewModel(_clientService, x)))
@@ -733,8 +739,14 @@ namespace Unigram.ViewModels.Drawers
 
                         //AddRange(sets.Sets.Select(x => new StickerSetViewModel(_clientService, _aggregator, x)));
                     }
+                    else if (response is Stickers stickers)
+                    {
+                        Add(new StickerSetViewModel(_clientService,
+                            new StickerSetInfo(0, string.Empty, "emoji", null, new ClosedVectorPath[0], false, false, false, new StickerFormatWebp(), _type, false, stickers.StickersValue.Count, stickers.StickersValue),
+                            new StickerSet(0, string.Empty, "emoji", null, new ClosedVectorPath[0], false, false, false, new StickerFormatWebp(), _type, false, stickers.StickersValue, new Emojis[0])));
+                    }
                 }
-                else if (phase == 1 && _query.Length > 1)
+                else if (phase == 1 && _query.Length > 1 && !_emojiOnly)
                 {
                     if (Emoji.ContainsSingleEmoji(_query))
                     {
@@ -764,7 +776,7 @@ namespace Unigram.ViewModels.Drawers
                         }
                     }
                 }
-                else if (phase == 2)
+                else if (phase == 2 && !_emojiOnly)
                 {
                     var response = await _clientService.SendAsync(new SearchStickerSets(_query));
                     if (response is StickerSets sets)

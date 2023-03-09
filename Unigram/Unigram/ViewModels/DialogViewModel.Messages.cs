@@ -893,7 +893,7 @@ namespace Unigram.ViewModels
             }
 
             var language = LanguageIdentification.IdentifyLanguage(caption.Text);
-            var popup = new TranslatePopup(_translateService, caption.Text, language, LocaleService.Current.CurrentCulture.TwoLetterISOLanguageName, !message.CanBeSaved);
+            var popup = new TranslatePopup(_translateService, message.ChatId, message.Id, caption.Text, language, LocaleService.Current.CurrentCulture.TwoLetterISOLanguageName, !message.CanBeSaved);
             await popup.ShowQueuedAsync();
         }
 

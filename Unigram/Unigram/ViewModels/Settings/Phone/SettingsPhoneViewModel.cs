@@ -89,7 +89,7 @@ namespace Unigram.ViewModels.Settings
 
             await ClientService.SendAsync(new SetOption("x_phonenumber", new OptionValueString(phoneNumber)));
 
-            var response = await ClientService.SendAsync(new ChangePhoneNumber(phoneNumber, new PhoneNumberAuthenticationSettings(false, false, false, false, new string[0])));
+            var response = await ClientService.SendAsync(new ChangePhoneNumber(phoneNumber, new PhoneNumberAuthenticationSettings(false, false, false, false, null, new string[0])));
             if (response is AuthenticationCodeInfo info)
             {
                 BootStrapper.Current.SessionState["x_codeinfo"] = info;
