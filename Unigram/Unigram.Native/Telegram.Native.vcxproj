@@ -133,7 +133,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>..\Libraries\libopus\include;..\Libraries\libogg\include;libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Libraries\libopus\include;libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -153,7 +153,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>..\Libraries\libopus\include;..\Libraries\libogg\include;libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Libraries\libopus\include;libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -173,7 +173,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>..\Libraries\libopus\include;..\Libraries\libogg\include;libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Libraries\libopus\include;libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -193,7 +193,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>..\Libraries\libopus\include;..\Libraries\libogg\include;libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Libraries\libopus\include;libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -213,7 +213,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>..\Libraries\libopus\include;..\Libraries\libogg\include;libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Libraries\libopus\include;libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -233,7 +233,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>..\Libraries\libopus\include;..\Libraries\libogg\include;libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Libraries\libopus\include;libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -778,9 +778,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Libraries\libogg\libogg.vcxproj">
-      <Project>{3520c5e6-f0c2-468f-8970-372414c233dc}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\Libraries\libopus\libopus.vcxproj">
       <Project>{904ac506-51a0-474e-9f55-ec3febbcccd9}</Project>
     </ProjectReference>
