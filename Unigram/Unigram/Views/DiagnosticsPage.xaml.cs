@@ -44,7 +44,7 @@ namespace Unigram.Views
             var log = await ApplicationData.Current.LocalFolder.TryGetItemAsync("tgcalls.txt") as StorageFile;
             if (log != null)
             {
-                await SharePopup.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(log.Path), null, true, null));
+                await SharePopup.Create().ShowAsync(new InputMessageDocument(new InputFileLocal(log.Path), null, true, null));
             }
         }
 
@@ -53,7 +53,7 @@ namespace Unigram.Views
             var log = await ApplicationData.Current.LocalFolder.TryGetItemAsync("tgcalls_group.txt") as StorageFile;
             if (log != null)
             {
-                await SharePopup.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(log.Path), null, true, null));
+                await SharePopup.Create().ShowAsync(new InputMessageDocument(new InputFileLocal(log.Path), null, true, null));
             }
         }
 
@@ -62,7 +62,7 @@ namespace Unigram.Views
             var log = await ApplicationData.Current.LocalFolder.TryGetItemAsync("tdlib_log.txt") as StorageFile;
             if (log != null)
             {
-                await SharePopup.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(log.Path), null, true, null));
+                await SharePopup.Create().ShowAsync(new InputMessageDocument(new InputFileLocal(log.Path), null, true, null));
             }
         }
 
@@ -71,7 +71,7 @@ namespace Unigram.Views
             var log = await ApplicationData.Current.LocalFolder.TryGetItemAsync("tdlib_log.txt.old") as StorageFile;
             if (log != null)
             {
-                await SharePopup.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(log.Path), null, true, null));
+                await SharePopup.Create().ShowAsync(new InputMessageDocument(new InputFileLocal(log.Path), null, true, null));
             }
         }
 

@@ -1679,7 +1679,7 @@ namespace Unigram.Controls.Cells
                 var service = WindowContext.Current.NavigationServices.GetByFrameId($"Main{_clientService.SessionId}") as NavigationService;
                 if (service != null)
                 {
-                    App.DataPackages[chat.Id] = e.DataView;
+                    //App.DataPackages[chat.Id] = e.DataView;
                     service.NavigateToChat(chat);
                 }
             }

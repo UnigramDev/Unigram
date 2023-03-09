@@ -61,7 +61,7 @@ namespace Unigram.ViewModels.Drawers
         }
 
         private static readonly Dictionary<int, Dictionary<EmojiDrawerMode, EmojiDrawerViewModel>> _windowContext = new();
-        public static EmojiDrawerViewModel GetForCurrentView(int sessionId, EmojiDrawerMode mode = EmojiDrawerMode.Chat)
+        public static EmojiDrawerViewModel GetForSession(int sessionId, EmojiDrawerMode mode = EmojiDrawerMode.Chat)
         {
             if (_windowContext.TryGetValue(sessionId, out Dictionary<EmojiDrawerMode, EmojiDrawerViewModel> value))
             {

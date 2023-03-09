@@ -123,7 +123,7 @@ namespace Unigram.Controls.Messages
 
             var padding = actualWidth - width;
 
-            var viewModel = EmojiDrawerViewModel.GetForCurrentView(_message.ClientService.SessionId, EmojiDrawerMode.Reactions);
+            var viewModel = EmojiDrawerViewModel.GetForSession(_message.ClientService.SessionId, EmojiDrawerMode.Reactions);
             var view = new EmojiDrawer(EmojiDrawerMode.Reactions);
             view.DataContext = viewModel;
             view.VerticalAlignment = VerticalAlignment.Top;
@@ -522,7 +522,7 @@ namespace Unigram.Controls.Messages
 
             var padding = actualWidth - width;
 
-            var viewModel = EmojiDrawerViewModel.GetForCurrentView(clientService.SessionId, mode);
+            var viewModel = EmojiDrawerViewModel.GetForSession(clientService.SessionId, mode);
             var view = new EmojiDrawer(mode);
             view.DataContext = viewModel;
             view.VerticalAlignment = VerticalAlignment.Top;

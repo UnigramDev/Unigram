@@ -219,7 +219,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand<ThemeCustomInfo> ThemeShareCommand { get; }
         private async void ThemeShareExecute(ThemeCustomInfo theme)
         {
-            await SharePopup.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(theme.Path), null, false, null));
+            await SharePopup.Create().ShowAsync(new InputMessageDocument(new InputFileLocal(theme.Path), null, false, null));
         }
 
         public RelayCommand<ThemeCustomInfo> ThemeEditCommand { get; }

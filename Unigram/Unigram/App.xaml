@@ -67,6 +67,9 @@
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
 
+            <SolidColorBrush x:Key="WindowCaptionBackground">#00FFFFFF</SolidColorBrush>
+            <SolidColorBrush x:Key="WindowCaptionBackgroundDisabled">#00FFFFFF</SolidColorBrush>
+            
             <!-- WinUI bug: https://github.com/microsoft/microsoft-ui-xaml/issues/xxxx -->
             <x:Boolean x:Key="HyperlinkUnderlineVisible">True</x:Boolean>
 

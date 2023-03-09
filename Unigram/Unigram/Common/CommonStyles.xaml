@@ -6,6 +6,9 @@
                     xmlns:media="using:Microsoft.UI.Xaml.Media"
                     xmlns:muxc="using:Microsoft.UI.Xaml.Controls">
 
+    <Thickness x:Key="ProgressBarBorderThemeThickness">0</Thickness>
+    <x:Double x:Key="ProgressBarThemeMinHeight">4</x:Double>
+
     <SolidColorBrush x:Key="DangerButtonBackground"
                      Color="#D13438" />
     <SolidColorBrush x:Key="DangerButtonBackgroundPointerOver"

@@ -10,6 +10,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using Unigram.Common;
+using Unigram.Navigation;
 using Unigram.ViewModels.Authorization;
 
 namespace Unigram.Views.Authorization

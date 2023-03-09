@@ -342,7 +342,7 @@ namespace Unigram.Views.Calls
 
             if (chat == null || call == null)
             {
-                await ApplicationView.GetForCurrentView().ConsolidateAsync();
+                WindowContext.Close(XamlRoot);
                 return;
             }
 
@@ -362,13 +362,13 @@ namespace Unigram.Views.Calls
                 if (confirm == ContentDialogResult.Primary)
                 {
                     Dispose(popup.IsChecked == true);
-                    await ApplicationView.GetForCurrentView().ConsolidateAsync();
+                    WindowContext.Close(XamlRoot);
                 }
             }
             else
             {
                 Dispose(false);
-                await ApplicationView.GetForCurrentView().ConsolidateAsync();
+                WindowContext.Close(XamlRoot);
             }
         }
 
@@ -379,22 +379,24 @@ namespace Unigram.Views.Calls
 
             if (chat == null || call == null)
             {
-                await ApplicationView.GetForCurrentView().ConsolidateAsync();
+                WindowContext.Close(XamlRoot);
                 return;
             }
 
-            var popup = new MessagePopup();
-            popup.RequestedTheme = ElementTheme.Dark;
-            popup.Title = _service.IsChannel ? Strings.Resources.VoipChannelEndAlertTitle : Strings.Resources.VoipGroupEndAlertTitle;
-            popup.Message = _service.IsChannel ? Strings.Resources.VoipChannelEndAlertText : Strings.Resources.VoipGroupEndAlertText;
-            popup.PrimaryButtonText = Strings.Resources.VoipGroupEnd;
-            popup.SecondaryButtonText = Strings.Resources.Cancel;
+            var popup = new MessagePopup
+            {
+                RequestedTheme = ElementTheme.Dark,
+                Title = _service.IsChannel ? Strings.Resources.VoipChannelEndAlertTitle : Strings.Resources.VoipGroupEndAlertTitle,
+                Message = _service.IsChannel ? Strings.Resources.VoipChannelEndAlertText : Strings.Resources.VoipGroupEndAlertText,
+                PrimaryButtonText = Strings.Resources.VoipGroupEnd,
+                SecondaryButtonText = Strings.Resources.Cancel
+            };
 
             var confirm = await popup.ShowQueuedAsync(XamlRoot);
             if (confirm == ContentDialogResult.Primary)
             {
                 Dispose(true);
-                await ApplicationView.GetForCurrentView().ConsolidateAsync();
+                WindowContext.Close(XamlRoot);
             }
         }
 
@@ -586,7 +588,7 @@ namespace Unigram.Views.Calls
                 return;
             }
 
-            await SharePopup.GetForCurrentView().ShowAsync(call);
+            await SharePopup.Create().ShowAsync(call);
         }
 
         private void AudioCanvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)

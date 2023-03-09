@@ -229,10 +229,10 @@ namespace Unigram.Common
 
                 page.ViewModel.TextField?.Focus(FocusState.Programmatic);
 
-                if (App.DataPackages.TryRemove(chat.Id, out DataPackageView package))
-                {
-                    await page.ViewModel.HandlePackageAsync(package);
-                }
+                //if (App.DataPackages.TryRemove(chat.Id, out DataPackageView package))
+                //{
+                //    await page.ViewModel.HandlePackageAsync(package);
+                //}
             }
             else
             {

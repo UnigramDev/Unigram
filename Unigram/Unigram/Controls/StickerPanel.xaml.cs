@@ -107,7 +107,7 @@ namespace Unigram.Controls
                 if (EmojisRoot == null)
                 {
                     FindName(nameof(EmojisRoot));
-                    EmojisRoot.DataContext = EmojiDrawerViewModel.GetForCurrentView(ViewModel.SessionId);
+                    EmojisRoot.DataContext = EmojiDrawerViewModel.GetForSession(ViewModel.SessionId);
                 }
 
                 EmojisRoot.Activate(chat);
@@ -124,7 +124,7 @@ namespace Unigram.Controls
                 if (AnimationsRoot == null)
                 {
                     FindName(nameof(AnimationsRoot));
-                    AnimationsRoot.DataContext = AnimationDrawerViewModel.GetForCurrentView(ViewModel.SessionId);
+                    AnimationsRoot.DataContext = AnimationDrawerViewModel.GetForSession(ViewModel.SessionId);
                     AnimationsRoot.ItemClick = Animations_ItemClick;
                     AnimationsRoot.ItemContextRequested += (s, args) => AnimationContextRequested?.Invoke(s, args);
                 }
@@ -143,7 +143,7 @@ namespace Unigram.Controls
                 if (StickersRoot == null)
                 {
                     FindName(nameof(StickersRoot));
-                    StickersRoot.DataContext = StickerDrawerViewModel.GetForCurrentView(ViewModel.SessionId);
+                    StickersRoot.DataContext = StickerDrawerViewModel.GetForSession(ViewModel.SessionId);
                     StickersRoot.ItemClick = Stickers_ItemClick;
                     StickersRoot.ItemContextRequested += (s, args) => StickerContextRequested?.Invoke(s, args);
                     StickersRoot.ChoosingItem += (s, args) => ChoosingSticker?.Invoke(s, args);

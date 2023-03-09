@@ -63,7 +63,7 @@ namespace Unigram.Views
 
         private async void Share_Click(object sender, RoutedEventArgs e)
         {
-            await SharePopup.GetForCurrentView().ShowAsync(_shareMessage);
+            await SharePopup.Create().ShowAsync(_shareMessage);
         }
 
         //private void View_NavigationStarting(WebView sender, WebViewNavigationStartingEventArgs args)

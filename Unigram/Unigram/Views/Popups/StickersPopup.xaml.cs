@@ -378,7 +378,7 @@ namespace Unigram.Views.Popups
             var text = builder.ToString();
             var formatted = new FormattedText(text, new TextEntity[0]);
 
-            await SharePopup.GetForCurrentView().ShowAsync(formatted);
+            await SharePopup.Create().ShowAsync(formatted);
         }
 
         private void List_ItemClick(object sender, ItemClickEventArgs e)

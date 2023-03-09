@@ -370,7 +370,7 @@ namespace Unigram.Controls.Messages
                 centerView.Source = UriEx.ToLocal(center.Local.Path);
                 centerView.FirstFrameRendered += (s, args) =>
                 {
-                    dispatcher.TryEnqueue(Start);
+                    DispatcherQueue.TryEnqueue(Start);
                 };
                 centerView.PositionChanged += (s, args) =>
                 {

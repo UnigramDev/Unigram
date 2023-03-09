@@ -29,7 +29,7 @@ namespace Unigram.Views.Supergroups.Popup
             NameLabel.Text = topic?.Name ?? string.Empty;
             Identity.SetStatus(clientService, topic.Icon);
 
-            var viewModel = EmojiDrawerViewModel.GetForCurrentView(clientService.SessionId, EmojiDrawerMode.CustomEmojis);
+            var viewModel = EmojiDrawerViewModel.GetForSession(clientService.SessionId, EmojiDrawerMode.CustomEmojis);
             viewModel.UpdateTopics();
 
             Emoji.DataContext = viewModel;

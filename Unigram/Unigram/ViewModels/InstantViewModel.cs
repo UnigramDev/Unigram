@@ -80,7 +80,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            await SharePopup.GetForCurrentView().ShowAsync(link, ShareTitle);
+            await SharePopup.Create().ShowAsync(link, ShareTitle);
         }
 
         public RelayCommand FeedbackCommand { get; }

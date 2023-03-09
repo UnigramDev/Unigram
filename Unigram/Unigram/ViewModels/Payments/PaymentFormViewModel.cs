@@ -14,11 +14,11 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
+using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views.Payments;
 using Unigram.Views.Popups;
-using Windows.UI.ViewManagement;
 
 namespace Unigram.ViewModels.Payments
 {
@@ -397,7 +397,7 @@ namespace Unigram.ViewModels.Payments
         {
             if (_paymentForm == null)
             {
-                await ApplicationView.GetForCurrentView().ConsolidateAsync();
+                WindowContext.Close(XamlRoot);
                 return;
             }
 
@@ -462,7 +462,7 @@ namespace Unigram.ViewModels.Payments
                     await Windows.System.Launcher.LaunchUriAsync(uri);
                 }
 
-                await ApplicationView.GetForCurrentView().ConsolidateAsync();
+                WindowContext.Close(XamlRoot);
             }
         }
 

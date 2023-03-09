@@ -59,7 +59,7 @@ namespace Unigram.Controls
         protected override void OnPointerPressed(PointerRoutedEventArgs e)
         {
             var pointer = e.GetCurrentPoint(this);
-            if (!IsConstrainedToRootBounds && KeyboardHelper.IsPointerGoBackGesture(pointer.Properties))
+            if (!IsConstrainedToRootBounds /*&& KeyboardHelper.IsPointerGoBackGesture(pointer.Properties)*/)
             {
                 var args = new BackRequestedRoutedEventArgs();
                 OnBackRequested(args);

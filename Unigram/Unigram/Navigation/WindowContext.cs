@@ -50,6 +50,10 @@ namespace Unigram.Navigation
             }
         }
 
+        public virtual void Initialize()
+        {
+
+        }
 
 
 
@@ -317,6 +321,16 @@ namespace Unigram.Navigation
             return InputKeyboardSource
                 .GetKeyStateForCurrentThread(key)
                 .HasFlag(Windows.UI.Core.CoreVirtualKeyStates.Down);
+        }
+
+        public static void Close(XamlRoot xamlRoot)
+        {
+            //                 await ApplicationView.GetForCurrentView().ConsolidateAsync();
+
+            if (_mapping.TryGetValue(xamlRoot, out WindowContext window))
+            {
+                window.Close();
+            }
         }
 
 

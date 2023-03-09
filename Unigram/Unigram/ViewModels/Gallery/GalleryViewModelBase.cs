@@ -214,7 +214,7 @@ namespace Unigram.ViewModels.Gallery
         {
             if (_selectedItem is GalleryMessage message)
             {
-                await SharePopup.GetForCurrentView().ShowAsync(message.Message);
+                await SharePopup.Create().ShowAsync(message.Message);
             }
             else
             {
@@ -224,7 +224,7 @@ namespace Unigram.ViewModels.Gallery
                     return;
                 }
 
-                await SharePopup.GetForCurrentView().ShowAsync(input);
+                await SharePopup.Create().ShowAsync(input);
             }
         }
 

@@ -246,7 +246,7 @@ namespace Unigram.ViewModels.Settings
                 chats.Add(id);
             }
 
-            var dialog = SharePopup.GetForCurrentView();
+            var dialog = SharePopup.Create();
             dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.ViewModel.AllowEmptySelection = true;
 
@@ -317,7 +317,7 @@ namespace Unigram.ViewModels.Settings
                 chats.Add(id);
             }
 
-            var dialog = SharePopup.GetForCurrentView();
+            var dialog = SharePopup.Create();
             dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.ViewModel.AllowEmptySelection = true;
 

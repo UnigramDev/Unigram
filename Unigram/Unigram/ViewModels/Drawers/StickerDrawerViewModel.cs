@@ -84,7 +84,7 @@ namespace Unigram.ViewModels.Drawers
         }
 
         private static readonly Dictionary<int, StickerDrawerViewModel> _windowContext = new();
-        public static StickerDrawerViewModel GetForCurrentView(int sessionId)
+        public static StickerDrawerViewModel GetForSession(int sessionId)
         {
             if (_windowContext.TryGetValue(sessionId, out StickerDrawerViewModel value))
             {

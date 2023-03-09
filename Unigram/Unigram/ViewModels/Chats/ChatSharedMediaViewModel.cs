@@ -451,7 +451,7 @@ namespace Unigram.ViewModels.Chats
         private async void MessageForwardExecute(MessageWithOwner message)
         {
             SelectionMode = ListViewSelectionMode.None;
-            await SharePopup.GetForCurrentView().ShowAsync(message.Get());
+            await SharePopup.Create().ShowAsync(message.Get());
         }
 
         #endregion
@@ -494,7 +494,7 @@ namespace Unigram.ViewModels.Chats
             if (messages.Count > 0)
             {
                 SelectionMode = ListViewSelectionMode.None;
-                await SharePopup.GetForCurrentView().ShowAsync(messages);
+                await SharePopup.Create().ShowAsync(messages);
             }
         }
 

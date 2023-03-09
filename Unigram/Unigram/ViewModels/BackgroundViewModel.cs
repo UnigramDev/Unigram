@@ -409,7 +409,7 @@ namespace Unigram.ViewModels
             var response = await ClientService.SendAsync(new GetBackgroundUrl(background.Name, background.Type));
             if (response is HttpUrl url)
             {
-                await SharePopup.GetForCurrentView().ShowAsync(new Uri(url.Url), null);
+                await SharePopup.Create().ShowAsync(new Uri(url.Url), null);
             }
         }
 

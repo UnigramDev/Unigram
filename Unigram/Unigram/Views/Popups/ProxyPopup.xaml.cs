@@ -133,7 +133,7 @@ namespace Unigram.Views.Popups
             var title = Strings.Resources.ProxySettings;
             var link = new Uri(MeUrlPrefixConverter.Convert(TLContainer.Current.Resolve<IClientService>(), $"socks?{string.Join("&", builder)}"));
 
-            await SharePopup.GetForCurrentView().ShowAsync(link, title);
+            await SharePopup.Create().ShowAsync(link, title);
         }
 
         private void Type_Toggled(object sender, RoutedEventArgs e)

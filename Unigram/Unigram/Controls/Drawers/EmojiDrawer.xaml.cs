@@ -673,7 +673,7 @@ namespace Unigram.Controls.Drawers
                     if (_mode != EmojiDrawerMode.Chat)
                     {
                         lottie.FrameSize = new Windows.Foundation.Size(24, 24);
-                        lottie.DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical;
+                        lottie.DecodeFrameType = Microsoft.UI.Xaml.Media.Imaging.DecodePixelType.Logical;
                     }
 
                     lottie.ColorReplacements = GetColorReplacements(sticker.FullType);

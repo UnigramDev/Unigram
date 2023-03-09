@@ -46,7 +46,7 @@ namespace Unigram.Views.Popups
             PrimaryButtonText = Strings.Resources.Send;
             SecondaryButtonText = Strings.Resources.Close;
 
-            EmojiPanel.DataContext = EmojiDrawerViewModel.GetForCurrentView(ViewModel.SessionId);
+            EmojiPanel.DataContext = EmojiDrawerViewModel.GetForSession(ViewModel.SessionId);
             CaptionInput.CustomEmoji = CustomEmoji;
 
             ViewModel.PropertyChanged += OnPropertyChanged;
@@ -102,14 +102,14 @@ namespace Unigram.Views.Popups
 
         #region Show
 
-        public static SharePopup GetForCurrentView()
+        public static SharePopup Create()
         {
             return new SharePopup();
         }
 
         public static async Task<Chat> PickChatAsync(string title, SearchChatsType type = SearchChatsType.Private)
         {
-            var dialog = GetForCurrentView();
+            var dialog = Create();
             dialog.ViewModel.Title = title;
 
             var confirm = await dialog.PickAsync(new long[0], type, ListViewSelectionMode.Single);
@@ -128,7 +128,7 @@ namespace Unigram.Views.Popups
 
         public static async Task<IList<Chat>> PickChatsAsync(string title, long[] selected)
         {
-            var dialog = GetForCurrentView();
+            var dialog = Create();
             dialog.ViewModel.Title = title;
 
             var confirm = await dialog.PickAsync(selected, SearchChatsType.Private);
@@ -395,7 +395,7 @@ namespace Unigram.Views.Popups
                 }
             });
 
-            var dialog = GetForCurrentView();
+            var dialog = Create();
             dialog.ViewModel.Title = include ? Strings.Resources.FilterAlwaysShow : Strings.Resources.FilterNeverShow;
             dialog.ViewModel.AllowEmptySelection = true;
             dialog.Header = panel;

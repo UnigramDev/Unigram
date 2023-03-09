@@ -45,7 +45,7 @@ namespace Unigram.ViewModels.Drawers
         }
 
         private static readonly Dictionary<int, AnimationDrawerViewModel> _windowContext = new();
-        public static AnimationDrawerViewModel GetForCurrentView(int sessionId)
+        public static AnimationDrawerViewModel GetForSession(int sessionId)
         {
             if (_windowContext.TryGetValue(sessionId, out AnimationDrawerViewModel value))
             {

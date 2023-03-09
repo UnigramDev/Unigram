@@ -1024,12 +1024,12 @@ namespace Unigram.Controls.Gallery
             LayoutRoot.HasPrevious = index > 0;
             LayoutRoot.HasNext = index < viewModel.Items.Count - 1;
 
-            if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
-            {
-                PrevButton.Visibility = index > 0 ? Visibility.Visible : Visibility.Collapsed;
-                NextButton.Visibility = index < viewModel.Items.Count - 1 ? Visibility.Visible : Visibility.Collapsed;
-            }
-            else
+            //if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
+            //{
+            //    PrevButton.Visibility = index > 0 ? Visibility.Visible : Visibility.Collapsed;
+            //    NextButton.Visibility = index < viewModel.Items.Count - 1 ? Visibility.Visible : Visibility.Collapsed;
+            //}
+            //else
             {
                 PrevButton.Visibility = Visibility.Collapsed;
                 NextButton.Visibility = Visibility.Collapsed;

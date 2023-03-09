@@ -86,24 +86,24 @@ namespace Unigram.Views.Host
 
         private void InitializeTitleBar()
         {
-            var sender = CoreApplication.GetCurrentView().TitleBar;
+            //var sender = CoreApplication.GetCurrentView().TitleBar;
 
-            if (string.Equals(AnalyticsInfo.VersionInfo.DeviceFamily, "Windows.Desktop") && UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
-            {
-                // If running on PC and tablet mode is disabled, then titlebar is most likely visible
-                // So we're going to force it
-                Navigation.Padding = new Thickness(48, 0, 0, 0);
-                Navigation.Height = 32;
-            }
-            else
-            {
-                Navigation.Padding = new Thickness(sender.IsVisible ? Math.Max(sender.SystemOverlayLeftInset, 6) : 0, 0, 0, 0);
-                Navigation.Height = sender.IsVisible ? sender.Height : 0;
-            }
+            //if (string.Equals(AnalyticsInfo.VersionInfo.DeviceFamily, "Windows.Desktop") && UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
+            //{
+            //    // If running on PC and tablet mode is disabled, then titlebar is most likely visible
+            //    // So we're going to force it
+            //    Navigation.Padding = new Thickness(48, 0, 0, 0);
+            //    Navigation.Height = 32;
+            //}
+            //else
+            //{
+            //    Navigation.Padding = new Thickness(sender.IsVisible ? Math.Max(sender.SystemOverlayLeftInset, 6) : 0, 0, 0, 0);
+            //    Navigation.Height = sender.IsVisible ? sender.Height : 0;
+            //}
 
-            sender.ExtendViewIntoTitleBar = true;
-            sender.IsVisibleChanged += CoreTitleBar_LayoutMetricsChanged;
-            sender.LayoutMetricsChanged += CoreTitleBar_LayoutMetricsChanged;
+            //sender.ExtendViewIntoTitleBar = true;
+            //sender.IsVisibleChanged += CoreTitleBar_LayoutMetricsChanged;
+            //sender.LayoutMetricsChanged += CoreTitleBar_LayoutMetricsChanged;
         }
 
         private void CoreTitleBar_LayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)
@@ -131,7 +131,7 @@ namespace Unigram.Views.Host
             }
         }
 
-        private async void ProcessAppCommands(ShortcutCommand command, AcceleratorKeyEventArgs args)
+        private void ProcessAppCommands(ShortcutCommand command, AcceleratorKeyEventArgs args)
         {
             if (command == ShortcutCommand.Search)
             {
@@ -144,7 +144,11 @@ namespace Unigram.Views.Host
             }
             else if (command == ShortcutCommand.Close)
             {
-                await ApplicationView.GetForCurrentView().ConsolidateAsync();
+                var window = WindowContext.ForXamlRoot(XamlRoot);
+                if (window != null)
+                {
+                    window.Window.Close();
+                }
             }
         }
     }

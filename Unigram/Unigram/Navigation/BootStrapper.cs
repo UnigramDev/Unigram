@@ -14,7 +14,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Unigram.Logs;
 using Unigram.Navigation.Services;
-using Unigram.Services.ViewService;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.ExtendedExecution;
 using Windows.System.Profile;
@@ -51,32 +50,6 @@ namespace Unigram.Navigation
         protected virtual void OnWindowCreated(Window window)
         {
 
-        }
-
-        private void Loaded()
-        {
-            Logger.Info();
-
-            // Hook up keyboard and mouse Back handler
-            var keyboard = Unigram.Services.Keyboard.KeyboardService.GetForCurrentView();
-            keyboard.AfterBackGesture = (key) =>
-            {
-                Logger.Info(member: nameof(keyboard.AfterBackGesture));
-
-                var handled = false;
-#warning TODO: missing parameter
-                RaiseBackRequested(null, key, ref handled);
-            };
-
-            keyboard.AfterForwardGesture = () =>
-            {
-                Logger.Info(member: nameof(keyboard.AfterForwardGesture));
-
-                RaiseForwardRequested();
-            };
-
-            // Hook up the default Back handler
-            //SystemNavigationManager.GetForCurrentView().BackRequested += BackHandler;
         }
 
         //protected override void OnWindowCreated(WindowCreatedEventArgs args)
@@ -253,6 +226,12 @@ namespace Unigram.Navigation
             RaiseBackRequested(xamlRoot, Windows.System.VirtualKey.GoBack, ref handled);
         }
 
+        public void RaiseBackRequested(XamlRoot xamlRoot, Windows.System.VirtualKey key)
+        {
+            var handled = false;
+            RaiseBackRequested(xamlRoot, key, ref handled);
+        }
+
         /// <summary>
         /// Default Hardware/Shell Back handler overrides standard Back behavior 
         /// that navigates to previous app in the app stack to instead cause a backward page navigation.
@@ -313,7 +292,7 @@ namespace Unigram.Navigation
         // this event precedes the in-frame event by the same name
         public static event EventHandler<HandledEventArgs> BackRequested;
 
-        private void RaiseForwardRequested()
+        public void RaiseForwardRequested(XamlRoot xamlRoot)
         {
             Logger.Info();
 
@@ -327,6 +306,7 @@ namespace Unigram.Navigation
             foreach (var frame in WindowContext.Current.NavigationServices.Select(x => x.FrameFacade))
             {
                 frame.RaiseForwardRequested(args);
+
                 if (args.Handled)
                 {
                     return;
@@ -335,19 +315,6 @@ namespace Unigram.Navigation
 
             NavigationService?.GoForward();
         }
-
-        public void UpdateShellBackButton()
-        {
-            Logger.Info();
-
-            // show the shell back only if there is anywhere to go in the default frame
-            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
-                (ShowShellBackButton && (NavigationService.CanGoBack || ForceShowShellBackButton))
-                    ? AppViewBackButtonVisibility.Visible
-                    : AppViewBackButtonVisibility.Collapsed;
-            ShellBackButtonUpdated?.Invoke(this, EventArgs.Empty);
-        }
-        public event EventHandler ShellBackButtonUpdated;
 
         // this event precedes the in-frame event by the same name
         public static event EventHandler<HandledEventArgs> ForwardRequested;
@@ -547,9 +514,9 @@ namespace Unigram.Navigation
             //if (!WindowWrapper.ActiveWrappers.Any())
             // handle window
             var wrapper = CreateWindowWrapper(window);
-            Loaded();
-            ViewService.OnWindowCreated();
             window.Content = CreateRootElement(e);
+
+            wrapper.Initialize();
 
             ((FrameworkElement)window.Content).Loading += (s, args) =>
             {

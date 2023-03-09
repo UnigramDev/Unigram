@@ -4,29 +4,20 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Documents;
 using System;
 using System.Linq;
 using Telegram.Td.Api;
-using Unigram.Controls;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Services;
+using Unigram.Services.Keyboard;
 using Unigram.Views;
-using Unigram.Views.Popups;
 using Unigram.Views.Authorization;
-using Windows.ApplicationModel;
-using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Contacts;
-using Windows.ApplicationModel.Core;
-using Windows.ApplicationModel.DataTransfer;
-using Windows.Foundation;
-using Windows.Storage;
 using Windows.UI;
-using Windows.UI.Core;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Common
 {
@@ -37,6 +28,8 @@ namespace Unigram.Common
 
         private readonly ILifetimeService _lifetime;
 
+        private readonly KeyboardListener _listener;
+
         public TLWindowContext(Window window, int id)
             : base(window)
         {
@@ -46,12 +39,19 @@ namespace Unigram.Common
 
             _lifetime = TLContainer.Current.Lifetime;
 
-            Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(320, 500));
-            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
+            //Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(320, 500));
+            //Windows.UI.Core.SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = Windows.UI.Core.AppViewBackButtonVisibility.Collapsed;
 
             UpdateTitleBar();
 
             window.Activated += OnActivated;
+
+            _listener = new KeyboardListener(window);
+        }
+
+        public override void Initialize()
+        {
+            _listener.Attach();
         }
 
         private static readonly object _activeLock = new object();
@@ -61,7 +61,7 @@ namespace Unigram.Common
         {
             lock (_activeLock)
             {
-                if (e.WindowActivationState != CoreWindowActivationState.Deactivated)
+                if (e.WindowActivationState != WindowActivationState.Deactivated)
                 {
                     ActiveWindow = this;
                 }
@@ -77,7 +77,7 @@ namespace Unigram.Common
         #region UI
 
         /// <summary>
-        /// Update the Title and Status Bars colors.
+        /// Update the Title and Status Bars Microsoft.UI.Colors.
         /// </summary>
         public void UpdateTitleBar()
         {
@@ -91,45 +91,45 @@ namespace Unigram.Common
             if (theme == ApplicationTheme.Dark)
             {
                 //background = Color.FromArgb(255, 43, 43, 43);
-                foreground = Colors.White;
+                foreground = Microsoft.UI.Colors.White;
                 buttonHover = Color.FromArgb(25, 255, 255, 255);
                 buttonPressed = Color.FromArgb(51, 255, 255, 255);
             }
-            else if (theme == ApplicationTheme.Light)
+            else
             {
                 //background = Color.FromArgb(255, 230, 230, 230);
-                foreground = Colors.Black;
+                foreground = Microsoft.UI.Colors.Black;
                 buttonHover = Color.FromArgb(25, 0, 0, 0);
                 buttonPressed = Color.FromArgb(51, 0, 0, 0);
             }
 
             // Desktop Title Bar
-            var titleBar = Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().TitleBar;
-            CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
+            //var titleBar = Window.TitleBar;
+            Window.ExtendsContentIntoTitleBar = true;
 
-            // Background
-            //titleBar.BackgroundColor = background;
-            //titleBar.InactiveBackgroundColor = background;
+            //// Background
+            ////titleBar.BackgroundColor = background;
+            ////titleBar.InactiveBackgroundColor = background;
 
-            // Foreground
-            titleBar.ForegroundColor = foreground;
-            titleBar.ButtonForegroundColor = foreground;
-            titleBar.ButtonHoverForegroundColor = foreground;
+            //// Foreground
+            //titleBar.ForegroundColor = foreground;
+            //titleBar.ButtonForegroundColor = foreground;
+            //titleBar.ButtonHoverForegroundColor = foreground;
 
-            // Buttons
-            //titleBar.ButtonBackgroundColor = background;
-            //titleBar.ButtonInactiveBackgroundColor = background;
-            titleBar.ButtonBackgroundColor = Colors.Transparent;
-            titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+            //// Buttons
+            ////titleBar.ButtonBackgroundColor = background;
+            ////titleBar.ButtonInactiveBackgroundColor = background;
+            //titleBar.ButtonBackgroundColor = Microsoft.UI.Colors.Transparent;
+            //titleBar.ButtonInactiveBackgroundColor = Microsoft.UI.Colors.Transparent;
 
-            // Buttons feedback
-            titleBar.ButtonPressedBackgroundColor = buttonPressed;
-            titleBar.ButtonHoverBackgroundColor = buttonHover;
+            //// Buttons feedback
+            //titleBar.ButtonPressedBackgroundColor = buttonPressed;
+            //titleBar.ButtonHoverBackgroundColor = buttonHover;
         }
 
         #endregion
 
-        public CoreWindowActivationMode ActivationMode => _window.CoreWindow.ActivationMode;
+        public WindowActivationState ActivationMode => _window.Visible ? WindowActivationState.CodeActivated : WindowActivationState.Deactivated;
 
         public ContactPanel ContactPanel { get; private set; }
 
@@ -145,12 +145,12 @@ namespace Unigram.Common
 
 
 
-        public void SetActivatedArgs(IActivatedEventArgs args, INavigationService service)
+        public void SetActivatedArgs(Microsoft.UI.Xaml.LaunchActivatedEventArgs args, INavigationService service)
         {
             UseActivatedArgs(args, service, _lifetime.ActiveItem.ClientService.GetAuthorizationState());
         }
 
-        private async void UseActivatedArgs(IActivatedEventArgs args, INavigationService service, AuthorizationState state)
+        private async void UseActivatedArgs(Microsoft.UI.Xaml.LaunchActivatedEventArgs args, INavigationService service, AuthorizationState state)
         {
             try
             {
@@ -177,10 +177,10 @@ namespace Unigram.Common
                         service.Navigate(typeof(AuthorizationRegistrationPage));
                         break;
                     case AuthorizationStateWaitPassword waitPassword:
-                        if (!string.IsNullOrEmpty(waitPassword.RecoveryEmailAddressPattern))
-                        {
-                            await MessagePopup.ShowAsync(string.Format(Strings.Resources.RestoreEmailSent, waitPassword.RecoveryEmailAddressPattern), Strings.Resources.AppName, Strings.Resources.OK);
-                        }
+                        //if (!string.IsNullOrEmpty(waitPassword.RecoveryEmailAddressPattern))
+                        //{
+                        //    await MessagePopup.ShowAsync(XamlRoot, string.Format(Strings.Resources.RestoreEmailSent, waitPassword.RecoveryEmailAddressPattern), Strings.Resources.AppName, Strings.Resources.OK);
+                        //}
 
                         service.Navigate(typeof(AuthorizationPasswordPage));
                         break;
@@ -189,7 +189,7 @@ namespace Unigram.Common
             catch { }
         }
 
-        private async void UseActivatedArgs(IActivatedEventArgs args, INavigationService service)
+        private async void UseActivatedArgs(Microsoft.UI.Xaml.LaunchActivatedEventArgs args, INavigationService service)
         {
             if (service == null)
             {
@@ -201,166 +201,164 @@ namespace Unigram.Common
                 return;
             }
 
-            if (args is ShareTargetActivatedEventArgs share)
+            //if (args.UWPLaunchActivatedEventArgs is ShareTargetActivatedEventArgs share)
+            //{
+            //    var package = new DataPackage();
+
+            //    try
+            //    {
+            //        var operation = share.ShareOperation.Data;
+            //        if (operation.AvailableFormats.Contains(StandardDataFormats.ApplicationLink))
+            //        {
+            //            package.SetApplicationLink(await operation.GetApplicationLinkAsync());
+            //        }
+            //        if (operation.AvailableFormats.Contains(StandardDataFormats.Bitmap))
+            //        {
+            //            package.SetBitmap(await operation.GetBitmapAsync());
+            //        }
+            //        //if (operation.Contains(StandardDataFormats.Html))
+            //        //{
+            //        //    package.SetHtmlFormat(await operation.GetHtmlFormatAsync());
+            //        //}
+            //        //if (operation.Contains(StandardDataFormats.Rtf))
+            //        //{
+            //        //    package.SetRtf(await operation.GetRtfAsync());
+            //        //}
+            //        if (operation.AvailableFormats.Contains(StandardDataFormats.StorageItems))
+            //        {
+            //            package.SetStorageItems(await operation.GetStorageItemsAsync());
+            //        }
+            //        if (operation.AvailableFormats.Contains(StandardDataFormats.Text))
+            //        {
+            //            package.SetText(await operation.GetTextAsync());
+            //        }
+            //        //if (operation.Contains(StandardDataFormats.Uri))
+            //        //{
+            //        //    package.SetUri(await operation.GetUriAsync());
+            //        //}
+            //        if (operation.AvailableFormats.Contains(StandardDataFormats.WebLink))
+            //        {
+            //            package.SetWebLink(await operation.GetWebLinkAsync());
+            //        }
+            //    }
+            //    catch { }
+
+            //    var query = "tg://";
+
+            //    //var contactId = await ContactsService.GetContactIdAsync(share.ShareOperation.Contacts.FirstOrDefault());
+            //    //if (contactId is long userId)
+            //    //{
+            //    //    var response = await _lifetime.ActiveItem.ClientService.SendAsync(new CreatePrivateChat(userId, false));
+            //    //    if (response is Chat chat)
+            //    //    {
+            //    //        query = $"ms-contact-profile://meh?ContactRemoteIds=u" + userId;
+            //    //        App.DataPackages[chat.Id] = package.GetView();
+            //    //    }
+            //    //    else
+            //    //    {
+            //    //        App.DataPackages[0] = package.GetView();
+            //    //    }
+            //    //}
+            //    //else
+            //    //{
+            //    //    App.DataPackages[0] = package.GetView();
+            //    //}
+
+            //    //App.ShareOperation = share.ShareOperation;
+            //    //App.ShareWindow = _window;
+
+            //    var options = new Windows.System.LauncherOptions();
+            //    options.TargetApplicationPackageFamilyName = Package.Current.Id.FamilyName;
+
+            //    try
+            //    {
+            //        await Windows.System.Launcher.LaunchUriAsync(new Uri(query), options);
+            //    }
+            //    catch
+            //    {
+            //        // It's too early?
+            //    }
+            //}
+            //else if (args.UWPLaunchActivatedEventArgs is ContactPanelActivatedEventArgs contact)
+            //{
+            //    SetContactPanel(contact.ContactPanel);
+
+            //    if (Application.Current.Resources.TryGet("PageHeaderBackgroundBrush", out SolidColorBrush backgroundBrush))
+            //    {
+            //        contact.ContactPanel.HeaderColor = backgroundBrush.Color;
+            //    }
+
+            //    var contactId = await ContactsService.GetContactIdAsync(contact.Contact.Id);
+            //    if (contactId is long userId)
+            //    {
+            //        var response = await _lifetime.ActiveItem.ClientService.SendAsync(new CreatePrivateChat(userId, false));
+            //        if (response is Chat chat)
+            //        {
+            //            service.NavigateToChat(chat);
+            //        }
+            //        else
+            //        {
+            //            ContactPanelFallback(service);
+            //        }
+            //    }
+            //    else
+            //    {
+            //        ContactPanelFallback(service);
+            //    }
+            //}
+            //else if (args.UWPLaunchActivatedEventArgs is ProtocolActivatedEventArgs protocol)
+            //{
+            //    if (service?.Frame?.Content is MainPage page)
+            //    {
+            //        page.Activate(protocol.Uri.ToString());
+            //    }
+            //    else
+            //    {
+            //        service.NavigateToMain(protocol.Uri.ToString());
+            //    }
+
+            //    //if (App.ShareOperation != null)
+            //    //{
+            //    //    try
+            //    //    {
+            //    //        App.ShareOperation.ReportCompleted();
+            //    //        App.ShareOperation = null;
+            //    //    }
+            //    //    catch { }
+            //    //}
+
+            //    //if (App.ShareWindow != null)
+            //    //{
+            //    //    try
+            //    //    {
+            //    //        await App.ShareWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            //    //        {
+            //    //            App.ShareWindow.Close();
+            //    //            App.ShareWindow = null;
+            //    //        });
+            //    //    }
+            //    //    catch { }
+            //    //}
+            //}
+            //else if (args.UWPLaunchActivatedEventArgs is FileActivatedEventArgs file)
+            //{
+            //    if (service?.Frame?.Content is MainPage page)
+            //    {
+            //        //page.Activate(launch);
+            //    }
+            //    else
+            //    {
+            //        service.NavigateToMain(string.Empty);
+            //    }
+
+            //    if (file.Files[0] is StorageFile item)
+            //    {
+            //        await new ThemePreviewPopup(item).ShowQueuedAsync();
+            //    }
+            //}
+            //else
             {
-                var package = new DataPackage();
-
-                try
-                {
-                    var operation = share.ShareOperation.Data;
-                    if (operation.AvailableFormats.Contains(StandardDataFormats.ApplicationLink))
-                    {
-                        package.SetApplicationLink(await operation.GetApplicationLinkAsync());
-                    }
-                    if (operation.AvailableFormats.Contains(StandardDataFormats.Bitmap))
-                    {
-                        package.SetBitmap(await operation.GetBitmapAsync());
-                    }
-                    //if (operation.Contains(StandardDataFormats.Html))
-                    //{
-                    //    package.SetHtmlFormat(await operation.GetHtmlFormatAsync());
-                    //}
-                    //if (operation.Contains(StandardDataFormats.Rtf))
-                    //{
-                    //    package.SetRtf(await operation.GetRtfAsync());
-                    //}
-                    if (operation.AvailableFormats.Contains(StandardDataFormats.StorageItems))
-                    {
-                        package.SetStorageItems(await operation.GetStorageItemsAsync());
-                    }
-                    if (operation.AvailableFormats.Contains(StandardDataFormats.Text))
-                    {
-                        package.SetText(await operation.GetTextAsync());
-                    }
-                    //if (operation.Contains(StandardDataFormats.Uri))
-                    //{
-                    //    package.SetUri(await operation.GetUriAsync());
-                    //}
-                    if (operation.AvailableFormats.Contains(StandardDataFormats.WebLink))
-                    {
-                        package.SetWebLink(await operation.GetWebLinkAsync());
-                    }
-                }
-                catch { }
-
-                var query = "tg://";
-
-                var contactId = await ContactsService.GetContactIdAsync(share.ShareOperation.Contacts.FirstOrDefault());
-                if (contactId is long userId)
-                {
-                    var response = await _lifetime.ActiveItem.ClientService.SendAsync(new CreatePrivateChat(userId, false));
-                    if (response is Chat chat)
-                    {
-                        query = $"ms-contact-profile://meh?ContactRemoteIds=u" + userId;
-                        App.DataPackages[chat.Id] = package.GetView();
-                    }
-                    else
-                    {
-                        App.DataPackages[0] = package.GetView();
-                    }
-                }
-                else
-                {
-                    App.DataPackages[0] = package.GetView();
-                }
-
-                App.ShareOperation = share.ShareOperation;
-                App.ShareWindow = _window;
-
-                var options = new Windows.System.LauncherOptions();
-                options.TargetApplicationPackageFamilyName = Package.Current.Id.FamilyName;
-
-                try
-                {
-                    await Windows.System.Launcher.LaunchUriAsync(new Uri(query), options);
-                }
-                catch
-                {
-                    // It's too early?
-                }
-            }
-            else if (args is ContactPanelActivatedEventArgs contact)
-            {
-                SetContactPanel(contact.ContactPanel);
-
-                if (Application.Current.Resources.TryGet("PageHeaderBackgroundBrush", out SolidColorBrush backgroundBrush))
-                {
-                    contact.ContactPanel.HeaderColor = backgroundBrush.Color;
-                }
-
-                var contactId = await ContactsService.GetContactIdAsync(contact.Contact.Id);
-                if (contactId is long userId)
-                {
-                    var response = await _lifetime.ActiveItem.ClientService.SendAsync(new CreatePrivateChat(userId, false));
-                    if (response is Chat chat)
-                    {
-                        service.NavigateToChat(chat);
-                    }
-                    else
-                    {
-                        ContactPanelFallback(service);
-                    }
-                }
-                else
-                {
-                    ContactPanelFallback(service);
-                }
-            }
-            else if (args is ProtocolActivatedEventArgs protocol)
-            {
-                if (service?.Frame?.Content is MainPage page)
-                {
-                    page.Activate(protocol.Uri.ToString());
-                }
-                else
-                {
-                    service.NavigateToMain(protocol.Uri.ToString());
-                }
-
-                if (App.ShareOperation != null)
-                {
-                    try
-                    {
-                        App.ShareOperation.ReportCompleted();
-                        App.ShareOperation = null;
-                    }
-                    catch { }
-                }
-
-                if (App.ShareWindow != null)
-                {
-                    try
-                    {
-                        await App.ShareWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                        {
-                            App.ShareWindow.Close();
-                            App.ShareWindow = null;
-                        });
-                    }
-                    catch { }
-                }
-            }
-            else if (args is FileActivatedEventArgs file)
-            {
-                if (service?.Frame?.Content is MainPage page)
-                {
-                    //page.Activate(launch);
-                }
-                else
-                {
-                    service.NavigateToMain(string.Empty);
-                }
-
-                if (file.Files[0] is StorageFile item)
-                {
-                    await new ThemePreviewPopup(item).ShowQueuedAsync();
-                }
-            }
-            else
-            {
-                var activate = args as ToastNotificationActivatedEventArgs;
-                var launched = args as LaunchActivatedEventArgs;
-                var launch = activate?.Argument ?? launched?.Arguments;
+                var launch = args?.Arguments;
 
                 if (service?.Frame?.Content is MainPage page)
                 {

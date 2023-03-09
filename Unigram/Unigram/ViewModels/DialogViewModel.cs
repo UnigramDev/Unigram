@@ -93,9 +93,9 @@ namespace Unigram.ViewModels
             _messageFactory = messageFactory;
 
             //_stickers = new DialogStickersViewModel(clientService, settingsService, aggregator);
-            _emoji = EmojiDrawerViewModel.GetForCurrentView(clientService.SessionId);
-            _stickers = StickerDrawerViewModel.GetForCurrentView(clientService.SessionId);
-            _animations = AnimationDrawerViewModel.GetForCurrentView(clientService.SessionId);
+            _emoji = EmojiDrawerViewModel.GetForSession(clientService.SessionId);
+            _stickers = StickerDrawerViewModel.GetForSession(clientService.SessionId);
+            _animations = AnimationDrawerViewModel.GetForSession(clientService.SessionId);
 
             _mentions = new DialogUnreadMessagesViewModel<SearchMessagesFilterUnreadMention>(this, true);
             _reactions = new DialogUnreadMessagesViewModel<SearchMessagesFilterUnreadReaction>(this, false);

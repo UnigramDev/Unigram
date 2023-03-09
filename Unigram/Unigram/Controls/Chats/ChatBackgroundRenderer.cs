@@ -129,7 +129,7 @@ namespace Unigram.Controls.Chats
                 // Must happen asynchronously because the method
                 // might be called from within a drawing session
                 // causing an exception to be thrown by DirectX
-                _dispatcher.TryEnqueue(Invalidate);
+                DispatcherQueue.TryEnqueue(Invalidate);
             }
         }
 

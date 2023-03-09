@@ -192,11 +192,11 @@ namespace Unigram.ViewModels
 
             if (message.Content is MessageAlbum album)
             {
-                await SharePopup.GetForCurrentView().ShowAsync(album.Messages.Select(x => x.Get()).ToList());
+                await SharePopup.Create().ShowAsync(album.Messages.Select(x => x.Get()).ToList());
             }
             else
             {
-                await SharePopup.GetForCurrentView().ShowAsync(message.Get());
+                await SharePopup.Create().ShowAsync(message.Get());
             }
 
             TextField?.Focus(FocusState.Programmatic);
@@ -243,7 +243,7 @@ namespace Unigram.ViewModels
             {
                 IsSelectionEnabled = false;
 
-                await SharePopup.GetForCurrentView().ShowAsync(messages);
+                await SharePopup.Create().ShowAsync(messages);
                 TextField?.Focus(FocusState.Programmatic);
             }
         }
@@ -658,7 +658,7 @@ namespace Unigram.ViewModels
 
                 if (!link.IsPublic)
                 {
-                    await MessagePopup.ShowAsync(Strings.Resources.LinkCopiedPrivate, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(XamlRoot, Strings.Resources.LinkCopiedPrivate, Strings.Resources.AppName, Strings.Resources.OK);
                 }
             }
         }
@@ -974,7 +974,7 @@ namespace Unigram.ViewModels
                 }
                 else
                 {
-                    await SharePopup.GetForCurrentView().ShowAsync(switchInline, bot);
+                    await SharePopup.Create().ShowAsync(switchInline, bot);
                 }
             }
             else if (inline.Type is InlineKeyboardButtonTypeUrl urlButton)

@@ -133,17 +133,6 @@ namespace Unigram.Views
             //ArchivedChatsCompactPanel.Visibility = show ? Visibility.Collapsed : Visibility.Visible;
         }
 
-        protected override void OnApplyTemplate()
-        {
-            base.OnApplyTemplate();
-
-            var window = WindowContext.ForXamlRoot(XamlRoot);
-            if (window != null)
-            {
-                window.Window.SetTitleBar(TitleBarHandle);
-            }
-        }
-
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             Initialize();
@@ -890,6 +879,12 @@ namespace Unigram.Views
 
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
+            var window = WindowContext.ForXamlRoot(XamlRoot);
+            if (window != null)
+            {
+                window.Window.SetTitleBar(TitleBarHandle);
+            }
+
             if (_clientService.TryGetUser(_clientService.Options.MyId, out User user))
             {
                 UpdateUser(user);
@@ -1046,9 +1041,9 @@ namespace Unigram.Views
             CharacterReceived -= OnCharacterReceived;
             WindowContext.Current.AcceleratorKeyActivated -= OnAcceleratorKeyActivated;
 
-            var titleBar = CoreApplication.GetCurrentView().TitleBar;
-            titleBar.IsVisibleChanged -= CoreTitleBar_LayoutMetricsChanged;
-            titleBar.LayoutMetricsChanged -= CoreTitleBar_LayoutMetricsChanged;
+            //var titleBar = CoreApplication.GetCurrentView().TitleBar;
+            //titleBar.IsVisibleChanged -= CoreTitleBar_LayoutMetricsChanged;
+            //titleBar.LayoutMetricsChanged -= CoreTitleBar_LayoutMetricsChanged;
 
             Bindings.StopTracking();
 
@@ -1137,17 +1132,19 @@ namespace Unigram.Views
             }
             else if (command is ShortcutCommand.Quit or ShortcutCommand.Close)
             {
-                ApplicationView.GetForCurrentView().Consolidated += (s, args) =>
+                var window = WindowContext.ForXamlRoot(XamlRoot);
+                if (window != null)
                 {
-                    Application.Current.Exit();
-                };
+                    if (command is ShortcutCommand.Quit)
+                    {
+                        window.Window.Closed += (s, args) =>
+                        {
+                            Application.Current.Exit();
+                        };
+                    }
 
-                if (await ApplicationView.GetForCurrentView().TryConsolidateAsync())
-                {
-                    return;
+                    window.Window.Close();
                 }
-
-                Application.Current.Exit();
             }
             else if (command == ShortcutCommand.Lock)
             {

@@ -163,7 +163,7 @@ namespace Unigram.Views.Popups
             IsMediaSelected = media && mediaAllowed && Items.All(x => x is StoragePhoto or StorageVideo);
             IsFilesSelected = !IsMediaSelected;
 
-            EmojiPanel.DataContext = EmojiDrawerViewModel.GetForCurrentView(sessionId);
+            EmojiPanel.DataContext = EmojiDrawerViewModel.GetForSession(sessionId);
             CaptionInput.CustomEmoji = CustomEmoji;
 
             UpdateView();

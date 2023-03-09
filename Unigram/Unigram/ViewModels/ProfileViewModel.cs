@@ -508,7 +508,7 @@ namespace Unigram.ViewModels
                 var user = ClientService.GetUser(chat.Type is ChatTypePrivate privata ? privata.UserId : chat.Type is ChatTypeSecret secret ? secret.UserId : 0);
                 if (user != null)
                 {
-                    await SharePopup.GetForCurrentView().ShowAsync(new InputMessageContact(new Contact(user.PhoneNumber, user.FirstName, user.LastName, string.Empty, user.Id)));
+                    await SharePopup.Create().ShowAsync(new InputMessageContact(new Contact(user.PhoneNumber, user.FirstName, user.LastName, string.Empty, user.Id)));
                 }
             }
         }
@@ -803,7 +803,7 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                await SharePopup.GetForCurrentView().ShowAsync(user);
+                await SharePopup.Create().ShowAsync(user);
             }
             else
             {

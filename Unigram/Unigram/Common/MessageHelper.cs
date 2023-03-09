@@ -513,7 +513,7 @@ namespace Unigram.Common
 
         public static async void NavigateToShare(FormattedText text, bool hasUrl)
         {
-            await SharePopup.GetForCurrentView().ShowAsync(text);
+            await SharePopup.Create().ShowAsync(text);
         }
 
         public static async void NavigateToProxy(IClientService clientService, INavigationService navigation, string server, int port, ProxyType type)
@@ -621,7 +621,7 @@ namespace Unigram.Common
             {
                 if (group)
                 {
-                    await SharePopup.GetForCurrentView().ShowAsync(user, startParameter);
+                    await SharePopup.Create().ShowAsync(user, startParameter);
                 }
                 else if (autoStart)
                 {

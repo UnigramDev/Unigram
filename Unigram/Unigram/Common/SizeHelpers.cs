@@ -41,16 +41,5 @@ namespace Unigram.Common
         {
             return new Size((int)normalSize.Width, (int)normalSize.Height);
         }
-
-        public static int LogicalPixels(int pixels)
-        {
-            return (int)(pixels * (DisplayInformation.GetForCurrentView().LogicalDpi / 96.0f));
-        }
-
-        public static Size LogicalPixels(this Size size)
-        {
-            var dpi = DisplayInformation.GetForCurrentView().LogicalDpi / 96.0f;
-            return new Size(size.Width * dpi, size.Height * dpi);
-        }
     }
 }
