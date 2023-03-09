@@ -334,7 +334,7 @@ namespace Unigram.Controls
         public async void SetValue(DiceStickers state, int newValue)
         {
             var canvas = _canvas;
-            if (canvas == null  && !Load())
+            if (canvas == null && !Load())
             {
                 _previous = newValue;
                 _previousState = state;

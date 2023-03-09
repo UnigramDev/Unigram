@@ -22,7 +22,7 @@ namespace Unigram.Services
     }
 
     public class EmojiSetService : IEmojiSetService
-        //, IHandle<UpdateFile>
+    //, IHandle<UpdateFile>
     {
         private readonly FileContext<EmojiSet> _mapping = new FileContext<EmojiSet>();
 

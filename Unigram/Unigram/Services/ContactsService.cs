@@ -32,7 +32,7 @@ namespace Unigram.Services
     }
 
     public class ContactsService : IContactsService
-        //, IHandle<Telegram.Td.Api.UpdateAuthorizationState>/*, IHandle<Telegram.Td.Api.UpdateUser>*/
+    //, IHandle<Telegram.Td.Api.UpdateAuthorizationState>/*, IHandle<Telegram.Td.Api.UpdateUser>*/
     {
         private readonly IClientService _clientService;
         private readonly ISettingsService _settingsService;

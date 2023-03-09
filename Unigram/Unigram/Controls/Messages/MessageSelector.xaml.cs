@@ -72,7 +72,7 @@ namespace Unigram.Controls.Messages
 
             RegisterPropertyChangedCallback(BackgroundProperty, OnBackgroundChanged);
             OnBackgroundChanged(this, BackgroundProperty);
-        
+
             if (IsAlbumChild)
             {
                 if (_message.Content is MessagePhoto or MessageVideo)

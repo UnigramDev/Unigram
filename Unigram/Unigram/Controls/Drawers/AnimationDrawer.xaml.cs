@@ -164,7 +164,7 @@ namespace Unigram.Controls.Drawers
                 return;
             }
 
-            var view = content.Child as AnimationView; 
+            var view = content.Child as AnimationView;
 
             var file = animation.AnimationValue;
             if (file == null)

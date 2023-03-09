@@ -45,18 +45,18 @@ namespace Unigram.Services
     }
 
     public class NotificationsService : INotificationsService
-        //IHandle<UpdateUnreadMessageCount>,
-        //IHandle<UpdateUnreadChatCount>,
-        //IHandle<UpdateChatReadInbox>,
-        //IHandle<UpdateSuggestedActions>,
-        //IHandle<UpdateServiceNotification>,
-        //IHandle<UpdateTermsOfService>,
-        //IHandle<UpdateAuthorizationState>,
-        //IHandle<UpdateUser>,
-        //IHandle<UpdateNotification>,
-        //IHandle<UpdateNotificationGroup>,
-        //IHandle<UpdateHavePendingNotifications>,
-        //IHandle<UpdateActiveNotifications>
+    //IHandle<UpdateUnreadMessageCount>,
+    //IHandle<UpdateUnreadChatCount>,
+    //IHandle<UpdateChatReadInbox>,
+    //IHandle<UpdateSuggestedActions>,
+    //IHandle<UpdateServiceNotification>,
+    //IHandle<UpdateTermsOfService>,
+    //IHandle<UpdateAuthorizationState>,
+    //IHandle<UpdateUser>,
+    //IHandle<UpdateNotification>,
+    //IHandle<UpdateNotificationGroup>,
+    //IHandle<UpdateHavePendingNotifications>,
+    //IHandle<UpdateActiveNotifications>
     {
         private readonly IClientService _clientService;
         private readonly ISessionService _sessionService;

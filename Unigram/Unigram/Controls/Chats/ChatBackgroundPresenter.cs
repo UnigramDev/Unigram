@@ -25,7 +25,7 @@ using Windows.UI.Xaml.Shapes;
 namespace Unigram.Controls.Chats
 {
     public class ChatBackgroundPresenter : Grid
-        //, IHandle<UpdateSelectedBackground>
+    //, IHandle<UpdateSelectedBackground>
     {
         private IClientService _clientService;
         private IEventAggregator _aggregator;
@@ -119,8 +119,8 @@ namespace Unigram.Controls.Chats
         {
             if (background == null)
             {
-                var freeform = dark ? new[] { 0x0D0E17, 0x090A0C, 0x181C28, 0x0E0F12} : new[] { 0xDBDDBB, 0x6BA587, 0xD5D88D, 0x88B884 };
-                background = new Background(0, true, dark, string.Empty, 
+                var freeform = dark ? new[] { 0x0D0E17, 0x090A0C, 0x181C28, 0x0E0F12 } : new[] { 0xDBDDBB, 0x6BA587, 0xD5D88D, 0x88B884 };
+                background = new Background(0, true, dark, string.Empty,
                     new Document(string.Empty, "application/x-tgwallpattern", null, null, TdExtensions.GetLocalFile("Assets\\Background.tgv", "Background")),
                     new BackgroundTypePattern(new BackgroundFillFreeformGradient(freeform), dark ? 100 : 50, dark, false));
             }

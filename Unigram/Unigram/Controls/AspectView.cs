@@ -318,7 +318,7 @@ namespace Unigram.Controls
                 height = int.MaxValue;
             }
 
-            Calculate:
+        Calculate:
             if (width > availableWidth || height > availableHeight || Constraint is Size || Stretch == Stretch.UniformToFill)
             {
                 var ratioX = availableWidth / width;

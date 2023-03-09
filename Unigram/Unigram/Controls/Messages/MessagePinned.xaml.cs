@@ -11,7 +11,6 @@ using System.Diagnostics;
 using System.Numerics;
 using System.Windows.Input;
 using Telegram.Td.Api;
-using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.UI;
 using Windows.UI.Composition;

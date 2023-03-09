@@ -74,7 +74,7 @@ namespace Unigram.Controls
             var last = true;
             var first = default(UIElement);
 
-            for (int i = Children.Count -1; i >= 0; i--)
+            for (int i = Children.Count - 1; i >= 0; i--)
             {
                 if (Children[i].Visibility == Visibility.Visible)
                 {

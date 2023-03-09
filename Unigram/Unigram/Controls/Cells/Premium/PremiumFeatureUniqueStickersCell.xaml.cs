@@ -52,7 +52,7 @@ namespace Unigram.Controls.Cells.Premium
                 index = 0;
             }
 
-            if (index < _stickers.Count )
+            if (index < _stickers.Count)
             {
                 var sticker = _stickers[index];
                 if (sticker.FullType is StickerFullTypeRegular regular)

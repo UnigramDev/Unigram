@@ -33,9 +33,9 @@ namespace Unigram.Services
 
     public class SessionService : TLViewModelBase
         , ISessionService
-        //, IHandle<UpdateUnreadMessageCount>
-        //, IHandle<UpdateUnreadChatCount>
-        //, IHandle<UpdateAuthorizationState>
+    //, IHandle<UpdateUnreadMessageCount>
+    //, IHandle<UpdateUnreadChatCount>
+    //, IHandle<UpdateAuthorizationState>
     {
         private readonly ILifetimeService _lifetimeService;
         private readonly int _id;

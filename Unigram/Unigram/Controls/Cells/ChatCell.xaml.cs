@@ -887,7 +887,7 @@ namespace Unigram.Controls.Cells
             else
             {
                 visual.Properties.InsertVector3("Translation", new Vector3(compact ? -x : 0, 0, 0));
-                
+
                 if (visual.Clip is InsetClip inset)
                 {
                     inset.LeftInset = compact ? x - 24 : -24;

@@ -18,16 +18,16 @@ using Unigram.Navigation;
 using Windows.Foundation;
 using Windows.Graphics.Display;
 using Windows.UI;
-using Windows.UI.Composition;
-using Windows.UI.Core;
-using Windows.UI.Text;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation;
-using Windows.UI.Xaml.Automation.Peers;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Composition;
+using Microsoft.UI.Core;
+using Microsoft.UI.Text;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation;
+using Microsoft.UI.Xaml.Automation.Peers;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 
 namespace Unigram.Controls.Messages
 {
@@ -342,13 +342,13 @@ namespace Unigram.Controls.Messages
         private void RegisterEventHandlers()
         {
             DisplayInformation.GetForCurrentView().DpiChanged += OnDpiChanged;
-            Windows.UI.Xaml.Media.CompositionTarget.SurfaceContentsLost += OnSurfaceContentsLost;
+            Microsoft.UI.Xaml.Media.CompositionTarget.SurfaceContentsLost += OnSurfaceContentsLost;
         }
 
         private void UnregisterEventHandlers()
         {
             DisplayInformation.GetForCurrentView().DpiChanged -= OnDpiChanged;
-            Windows.UI.Xaml.Media.CompositionTarget.SurfaceContentsLost -= OnSurfaceContentsLost;
+            Microsoft.UI.Xaml.Media.CompositionTarget.SurfaceContentsLost -= OnSurfaceContentsLost;
         }
 
         private void OnDpiChanged(DisplayInformation sender, object args)

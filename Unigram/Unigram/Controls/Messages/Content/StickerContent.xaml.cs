@@ -6,7 +6,6 @@
 //
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Navigation;
 using Unigram.ViewModels;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -83,7 +82,7 @@ namespace Unigram.Controls.Messages.Content
 
                 UpdateManager.Unsubscribe(this, ref _fileToken);
             }
-            else 
+            else
             {
                 Source = null;
                 UpdateThumbnail(message, sticker);

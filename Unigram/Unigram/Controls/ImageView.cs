@@ -313,7 +313,7 @@ namespace Unigram.Controls
 
 
 
-            Calculate:
+        Calculate:
             if (width > availableWidth || height > availableHeight)
             {
                 var ratioX = availableWidth / width;

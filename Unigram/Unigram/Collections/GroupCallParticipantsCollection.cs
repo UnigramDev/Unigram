@@ -24,8 +24,8 @@ namespace Unigram.Collections
     public class GroupCallParticipantsCollection : ObservableCollection<GroupCallParticipant>
         , ISupportIncrementalLoading
         , IDelegable<IGroupCallDelegate>
-        //, IHandle<UpdateGroupCall>
-        //, IHandle<UpdateGroupCallParticipant>
+    //, IHandle<UpdateGroupCall>
+    //, IHandle<UpdateGroupCallParticipant>
     {
         private readonly IClientService _clientService;
         private readonly IEventAggregator _aggregator;

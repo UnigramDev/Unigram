@@ -58,7 +58,7 @@ namespace Unigram.Controls
             {
                 ShowHide(true);
 
-                if (chat.PendingJoinRequests.UserIds.Count < 3 
+                if (chat.PendingJoinRequests.UserIds.Count < 3
                     && chat.PendingJoinRequests.UserIds.Count < chat.PendingJoinRequests.TotalCount)
                 {
                     _clientService.Send(new GetChatJoinRequests(chat.Id, string.Empty, string.Empty, null, 3));

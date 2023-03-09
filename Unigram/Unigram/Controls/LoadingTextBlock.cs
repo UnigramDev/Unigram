@@ -70,7 +70,7 @@ namespace Unigram.Controls
             _skeleton.Children.InsertAtTop(background);
             _skeleton.Children.InsertAtTop(_foreground);
             _skeleton.Opacity = 0.67f;
-            
+
             _skeleton.AnchorPoint = new Vector2(IsPlaceholderRightToLeft ? 1 : 0, 0);
             _skeleton.RelativeOffsetAdjustment = new Vector3(IsPlaceholderRightToLeft ? 1 : 0, 0, 0);
 

@@ -23,7 +23,6 @@ using Windows.Foundation;
 using Windows.Storage.Streams;
 using Windows.System;
 using Windows.UI.Text;
-using Windows.UI.Text.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Automation.Provider;

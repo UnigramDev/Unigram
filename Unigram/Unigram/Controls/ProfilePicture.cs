@@ -249,7 +249,7 @@ namespace Unigram.Controls
             {
                 return PlaceholderHelper.GetGlyph(Icons.ChatMultiple, 5, side);
             }
-            
+
             if (clientService.IsForum(chat))
             {
                 shape = ProfilePictureShape.Superellipse;

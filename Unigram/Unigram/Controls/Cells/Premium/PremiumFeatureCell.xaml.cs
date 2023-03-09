@@ -6,7 +6,6 @@
 //
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Converters;
 using Unigram.Services;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;

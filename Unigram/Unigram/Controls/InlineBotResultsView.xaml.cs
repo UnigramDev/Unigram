@@ -217,7 +217,7 @@ namespace Unigram.Controls
                     {
                         image.Source = new BitmapImage(UriEx.ToLocal(file.Local.Path));
                     }
-                    else 
+                    else
                     {
                         image.Source = null;
                         UpdateManager.Subscribe(image, ViewModel.ClientService, file, UpdateThumbnail, true);

@@ -103,7 +103,7 @@ namespace Unigram.Controls
 
         protected override void OnApplyTemplate()
         {
-            Root = GetTemplateChild(nameof(Root)) as ListViewItemPresenter; 
+            Root = GetTemplateChild(nameof(Root)) as ListViewItemPresenter;
             base.OnApplyTemplate();
         }
 

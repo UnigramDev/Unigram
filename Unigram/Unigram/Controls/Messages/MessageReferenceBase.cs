@@ -121,7 +121,7 @@ namespace Unigram.Controls.Messages
 
             var outgoing = message.IsOutgoing && !message.IsChannelPost;
             outgoing &= !message.IsChannelPost;
-            
+
             // TODO: chat type
 
             if (message.ReplyToMessageState == ReplyToMessageState.Hidden || message.ReplyToMessageId == 0)

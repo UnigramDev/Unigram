@@ -77,7 +77,7 @@ namespace Unigram.Controls.Cells
                 SubtitleLabel.Text = LastSeenConverter.GetLabel(user, false);
                 SubtitleLabel.Style = BootStrapper.Current.Resources[user.Status is UserStatusOnline ? "AccentCaptionTextBlockStyle" : "InfoCaptionTextBlockStyle"] as Style;
             }
-            
+
             Photo.Width = photoSize;
             Photo.Height = photoSize;
             Photo.SetUser(clientService, user, photoSize);
