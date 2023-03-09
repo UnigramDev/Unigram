@@ -7,7 +7,7 @@
 using System;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
-using Unigram.Native;
+using Telegram.Native;
 
 namespace Unigram.Services
 {

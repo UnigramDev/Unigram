@@ -9,7 +9,7 @@
 #include "lang_id/fb_model/lang-id-from-fb.h"
 #include "lang_id/lang-id.h"
 
-namespace winrt::Unigram::Native::implementation
+namespace winrt::Telegram::Native::implementation
 {
 	critical_section LanguageIdentification::s_criticalSection;
 	std::unique_ptr<libtextclassifier3::mobile::lang_id::LangId> LanguageIdentification::s_langid{ nullptr };

@@ -26,7 +26,7 @@
 #include "media/base/video_adapter.h"
 #include "media/base/video_broadcaster.h"
 
-namespace winrt::Unigram::Native::Calls::implementation
+namespace winrt::Telegram::Native::Calls::implementation
 {
 	VoipManager::VoipManager(hstring version, VoipDescriptor descriptor)
 	{
@@ -161,7 +161,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 				m_remoteBatteryLevelIsLowUpdatedEventSource(*this, low);
 			},
 			.remoteMediaStateUpdated = [this](tgcalls::AudioState audio, tgcalls::VideoState video) {
-				auto args = winrt::make_self<winrt::Unigram::Native::Calls::implementation::RemoteMediaStateUpdatedEventArgs>((VoipAudioState)audio, (VoipVideoState)video);
+				auto args = winrt::make_self<winrt::Telegram::Native::Calls::implementation::RemoteMediaStateUpdatedEventArgs>((VoipAudioState)audio, (VoipVideoState)video);
 				m_remoteMediaStateUpdatedEventSource(*this, *args);
 			},
 			.remotePrefferedAspectRatioUpdated = [this](float aspect) {
@@ -169,7 +169,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 			},
 			.signalingDataEmitted = [this](std::vector<uint8_t> data) {
 				auto bytes = winrt::single_threaded_vector<uint8_t>(std::move(data));
-				auto args = winrt::make_self<winrt::Unigram::Native::Calls::implementation::SignalingDataEmittedEventArgs>(bytes);
+				auto args = winrt::make_self<winrt::Telegram::Native::Calls::implementation::SignalingDataEmittedEventArgs>(bytes);
 				m_signalingDataEmittedEventSource(*this, *args);
 			}
 		};
@@ -301,7 +301,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 		}
 	}
 
-	void VoipManager::SetVideoCapture(Unigram::Native::Calls::VoipCaptureBase videoCapture) {
+	void VoipManager::SetVideoCapture(Telegram::Native::Calls::VoipCaptureBase videoCapture) {
 		if (m_impl) {
 			if (videoCapture) {
 				if (auto screen = videoCapture.try_as<winrt::default_interface<VoipScreenCapture>>()) {
@@ -330,7 +330,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 
 
 	winrt::event_token VoipManager::StateUpdated(Windows::Foundation::TypedEventHandler<
-		winrt::Unigram::Native::Calls::VoipManager,
+		winrt::Telegram::Native::Calls::VoipManager,
 		VoipState> const& value)
 	{
 		return m_stateUpdatedEventSource.add(value);
@@ -344,7 +344,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 
 
 	winrt::event_token VoipManager::SignalBarsUpdated(Windows::Foundation::TypedEventHandler<
-		winrt::Unigram::Native::Calls::VoipManager,
+		winrt::Telegram::Native::Calls::VoipManager,
 		int> const& value)
 	{
 		return m_signalBarsUpdatedEventSource.add(value);
@@ -358,7 +358,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 
 
 	winrt::event_token VoipManager::AudioLevelUpdated(Windows::Foundation::TypedEventHandler<
-		winrt::Unigram::Native::Calls::VoipManager,
+		winrt::Telegram::Native::Calls::VoipManager,
 		float> const& value)
 	{
 		return m_audioLevelUpdated.add(value);
@@ -372,7 +372,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 
 
 	winrt::event_token VoipManager::RemoteBatteryLevelIsLowUpdated(Windows::Foundation::TypedEventHandler<
-		winrt::Unigram::Native::Calls::VoipManager,
+		winrt::Telegram::Native::Calls::VoipManager,
 		bool> const& value)
 	{
 		return m_remoteBatteryLevelIsLowUpdatedEventSource.add(value);
@@ -386,8 +386,8 @@ namespace winrt::Unigram::Native::Calls::implementation
 
 
 	winrt::event_token VoipManager::RemoteMediaStateUpdated(Windows::Foundation::TypedEventHandler<
-		winrt::Unigram::Native::Calls::VoipManager,
-		winrt::Unigram::Native::Calls::RemoteMediaStateUpdatedEventArgs> const& value)
+		winrt::Telegram::Native::Calls::VoipManager,
+		winrt::Telegram::Native::Calls::RemoteMediaStateUpdatedEventArgs> const& value)
 	{
 		return m_remoteMediaStateUpdatedEventSource.add(value);
 	}
@@ -400,7 +400,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 
 
 	winrt::event_token VoipManager::RemotePrefferedAspectRatioUpdated(Windows::Foundation::TypedEventHandler<
-		winrt::Unigram::Native::Calls::VoipManager,
+		winrt::Telegram::Native::Calls::VoipManager,
 		float> const& value)
 	{
 		return m_remotePrefferedAspectRatioUpdatedEventSource.add(value);
@@ -414,8 +414,8 @@ namespace winrt::Unigram::Native::Calls::implementation
 
 
 	winrt::event_token VoipManager::SignalingDataEmitted(Windows::Foundation::TypedEventHandler<
-		winrt::Unigram::Native::Calls::VoipManager,
-		winrt::Unigram::Native::Calls::SignalingDataEmittedEventArgs> const& value)
+		winrt::Telegram::Native::Calls::VoipManager,
+		winrt::Telegram::Native::Calls::SignalingDataEmittedEventArgs> const& value)
 	{
 		return m_signalingDataEmittedEventSource.add(value);
 	}
@@ -424,4 +424,4 @@ namespace winrt::Unigram::Native::Calls::implementation
 	{
 		m_signalingDataEmittedEventSource.remove(token);
 	}
-} // namespace winrt::Unigram::Native::Calls::implementation
+} // namespace winrt::Telegram::Native::Calls::implementation

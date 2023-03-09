@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using Unigram.Charts;
 using Unigram.Common;
-using Unigram.Native.Calls;
+using Telegram.Native.Calls;
 using Unigram.Services;
 using Unigram.Views;
 using Windows.UI;

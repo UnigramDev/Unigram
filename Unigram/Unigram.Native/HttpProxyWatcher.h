@@ -6,11 +6,11 @@
 
 using namespace concurrency;
 
-namespace winrt::Unigram::Native::implementation
+namespace winrt::Telegram::Native::implementation
 {
     struct HttpProxyWatcher : HttpProxyWatcherT<HttpProxyWatcher>
     {
-        static winrt::Unigram::Native::HttpProxyWatcher Current()
+        static winrt::Telegram::Native::HttpProxyWatcher Current()
         {
             auto lock = critical_section::scoped_lock(s_criticalSection);
 
@@ -18,7 +18,7 @@ namespace winrt::Unigram::Native::implementation
                 s_current = winrt::make_self<HttpProxyWatcher>();
             }
 
-            return s_current.as<winrt::Unigram::Native::HttpProxyWatcher>();
+            return s_current.as<winrt::Telegram::Native::HttpProxyWatcher>();
         }
 
         HttpProxyWatcher();
@@ -37,7 +37,7 @@ namespace winrt::Unigram::Native::implementation
         }
 
         winrt::event_token Changed(Windows::Foundation::TypedEventHandler<
-            winrt::Unigram::Native::HttpProxyWatcher,
+            winrt::Telegram::Native::HttpProxyWatcher,
             bool> const& value)
         {
             if (!m_changed) {
@@ -71,12 +71,12 @@ namespace winrt::Unigram::Native::implementation
         hstring m_server;
         bool m_isEnabled;
         winrt::event<Windows::Foundation::TypedEventHandler<
-            winrt::Unigram::Native::HttpProxyWatcher,
+            winrt::Telegram::Native::HttpProxyWatcher,
             bool>> m_changed;
     };
 }
 
-namespace winrt::Unigram::Native::factory_implementation
+namespace winrt::Telegram::Native::factory_implementation
 {
     struct HttpProxyWatcher : HttpProxyWatcherT<HttpProxyWatcher, implementation::HttpProxyWatcher>
     {

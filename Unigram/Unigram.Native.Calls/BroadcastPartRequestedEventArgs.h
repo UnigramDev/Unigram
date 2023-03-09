@@ -6,7 +6,7 @@
 
 using namespace winrt::Telegram::Td::Api;
 
-namespace winrt::Unigram::Native::Calls::implementation
+namespace winrt::Telegram::Native::Calls::implementation
 {
 	struct BroadcastPartRequestedEventArgs : BroadcastPartRequestedEventArgsT<BroadcastPartRequestedEventArgs>
 	{

@@ -403,7 +403,7 @@
     <ResourceCompile Include="VoipManager.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Midl Include="Unigram.Native.Calls.idl" />
+    <Midl Include="Telegram.Native.Calls.idl" />
     <Midl Include="VoipVideoCapture.idl" />
     <Midl Include="VoipDescriptor.idl" />
     <Midl Include="RemoteMediaStateUpdatedEventArgs.idl" />

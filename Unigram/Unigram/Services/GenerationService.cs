@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Entities;
-using Unigram.Native.Opus;
+using Telegram.Native.Opus;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Media.Effects;

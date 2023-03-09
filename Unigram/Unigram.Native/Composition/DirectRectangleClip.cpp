@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "DirectRectangleClip.h"
 
-namespace winrt::Unigram::Native::Composition::implementation
+namespace winrt::Telegram::Native::Composition::implementation
 {
 	float DirectRectangleClip::Left() {
 		return m_left;

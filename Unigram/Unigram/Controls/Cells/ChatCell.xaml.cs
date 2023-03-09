@@ -16,7 +16,7 @@ using Unigram.Common.Chats;
 using Unigram.Controls.Chats;
 using Unigram.Controls.Messages;
 using Unigram.Converters;
-using Unigram.Native;
+using Telegram.Native;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Services;

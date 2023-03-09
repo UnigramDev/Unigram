@@ -2,7 +2,7 @@
 
 #include "TelegramPaymentProxy.g.h"
 
-namespace winrt::Unigram::Native::implementation
+namespace winrt::Telegram::Native::implementation
 {
 	struct TelegramPaymentProxy : TelegramPaymentProxyT<TelegramPaymentProxy>
 	{
@@ -14,11 +14,11 @@ namespace winrt::Unigram::Native::implementation
 	private:
 		TelegramPaymentProxyDelegate _delegate;
 	};
-} // namespace winrt::Unigram::Native::implementation
+} // namespace winrt::Telegram::Native::implementation
 
-namespace winrt::Unigram::Native::factory_implementation
+namespace winrt::Telegram::Native::factory_implementation
 {
 	struct TelegramPaymentProxy : TelegramPaymentProxyT<TelegramPaymentProxy, implementation::TelegramPaymentProxy>
 	{
 	};
-} // namespace winrt::Unigram::Native::factory_implementation
+} // namespace winrt::Telegram::Native::factory_implementation

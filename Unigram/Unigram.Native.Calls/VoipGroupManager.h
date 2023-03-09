@@ -13,7 +13,7 @@ using namespace winrt::Microsoft::Graphics::Canvas::UI::Xaml;
 using namespace winrt::Telegram::Td::Api;
 using namespace winrt::Windows::Foundation::Collections;
 
-namespace winrt::Unigram::Native::Calls::implementation
+namespace winrt::Telegram::Native::Calls::implementation
 {
 	struct VoipGroupManager : VoipGroupManagerT<VoipGroupManager>
 	{
@@ -27,7 +27,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 		void SetJoinResponsePayload(hstring payload);
 		void RemoveSsrcs(IVector<int32_t> ssrcs);
 
-		winrt::Unigram::Native::Calls::VoipVideoRendererToken AddIncomingVideoOutput(int32_t audioSource, GroupCallParticipantVideoInfo videoInfo, CanvasControl canvas);
+		winrt::Telegram::Native::Calls::VoipVideoRendererToken AddIncomingVideoOutput(int32_t audioSource, GroupCallParticipantVideoInfo videoInfo, CanvasControl canvas);
 		void AddUnifiedVideoOutput(CanvasControl canvas);
 
 		bool IsMuted();
@@ -38,7 +38,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 
 		void SetAudioOutputDevice(hstring id);
 		void SetAudioInputDevice(hstring id);
-		void SetVideoCapture(Unigram::Native::Calls::VoipCaptureBase videoCapture);
+		void SetVideoCapture(Telegram::Native::Calls::VoipCaptureBase videoCapture);
 
 		void AddExternalAudioSamples(std::vector<uint8_t>&& samples);
 
@@ -46,23 +46,23 @@ namespace winrt::Unigram::Native::Calls::implementation
 		void SetRequestedVideoChannels(IVector<VoipVideoChannelInfo> descriptions);
 
 		winrt::event_token NetworkStateUpdated(Windows::Foundation::TypedEventHandler<
-			winrt::Unigram::Native::Calls::VoipGroupManager,
-			winrt::Unigram::Native::Calls::GroupNetworkStateChangedEventArgs> const& value);
+			winrt::Telegram::Native::Calls::VoipGroupManager,
+			winrt::Telegram::Native::Calls::GroupNetworkStateChangedEventArgs> const& value);
 		void NetworkStateUpdated(winrt::event_token const& token);
 
 		winrt::event_token AudioLevelsUpdated(Windows::Foundation::TypedEventHandler<
-			winrt::Unigram::Native::Calls::VoipGroupManager,
+			winrt::Telegram::Native::Calls::VoipGroupManager,
 			IMapView<int32_t, IKeyValuePair<float, bool>>> const& value);
 		void AudioLevelsUpdated(winrt::event_token const& token);
 
 		winrt::event_token BroadcastPartRequested(Windows::Foundation::TypedEventHandler<
-			winrt::Unigram::Native::Calls::VoipGroupManager,
-			winrt::Unigram::Native::Calls::BroadcastPartRequestedEventArgs> const& value);
+			winrt::Telegram::Native::Calls::VoipGroupManager,
+			winrt::Telegram::Native::Calls::BroadcastPartRequestedEventArgs> const& value);
 		void BroadcastPartRequested(winrt::event_token const& token);
 
 		winrt::event_token BroadcastTimeRequested(Windows::Foundation::TypedEventHandler<
-			winrt::Unigram::Native::Calls::VoipGroupManager,
-			winrt::Unigram::Native::Calls::BroadcastTimeRequestedEventArgs> const& value);
+			winrt::Telegram::Native::Calls::VoipGroupManager,
+			winrt::Telegram::Native::Calls::BroadcastTimeRequestedEventArgs> const& value);
 		void BroadcastTimeRequested(winrt::event_token const& token);
 
 	private:
@@ -75,17 +75,17 @@ namespace winrt::Unigram::Native::Calls::implementation
 		bool m_isNoiseSuppressionEnabled = true;
 
 		winrt::event<Windows::Foundation::TypedEventHandler<
-			winrt::Unigram::Native::Calls::VoipGroupManager,
-			winrt::Unigram::Native::Calls::GroupNetworkStateChangedEventArgs>> m_networkStateUpdated;
+			winrt::Telegram::Native::Calls::VoipGroupManager,
+			winrt::Telegram::Native::Calls::GroupNetworkStateChangedEventArgs>> m_networkStateUpdated;
 		winrt::event<Windows::Foundation::TypedEventHandler<
-			winrt::Unigram::Native::Calls::VoipGroupManager,
+			winrt::Telegram::Native::Calls::VoipGroupManager,
 			IMapView<int32_t, IKeyValuePair<float, bool>>>> m_audioLevelsUpdated;
 		winrt::event<Windows::Foundation::TypedEventHandler<
-			winrt::Unigram::Native::Calls::VoipGroupManager,
-			winrt::Unigram::Native::Calls::BroadcastPartRequestedEventArgs>> m_broadcastPartRequested;
+			winrt::Telegram::Native::Calls::VoipGroupManager,
+			winrt::Telegram::Native::Calls::BroadcastPartRequestedEventArgs>> m_broadcastPartRequested;
 		winrt::event<Windows::Foundation::TypedEventHandler<
-			winrt::Unigram::Native::Calls::VoipGroupManager,
-			winrt::Unigram::Native::Calls::BroadcastTimeRequestedEventArgs>> m_broadcastTimeRequested;
+			winrt::Telegram::Native::Calls::VoipGroupManager,
+			winrt::Telegram::Native::Calls::BroadcastTimeRequestedEventArgs>> m_broadcastTimeRequested;
 	};
 
 
@@ -182,7 +182,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 
 }
 
-namespace winrt::Unigram::Native::Calls::factory_implementation
+namespace winrt::Telegram::Native::Calls::factory_implementation
 {
 	struct VoipGroupManager : VoipGroupManagerT<VoipGroupManager, implementation::VoipGroupManager>
 	{

@@ -1,4 +1,4 @@
-namespace Unigram.Native
+namespace Telegram.Native
 {
     [default_interface]
     runtimeclass AudioPitchEffect : Windows.Media.Effects.IBasicAudioEffect

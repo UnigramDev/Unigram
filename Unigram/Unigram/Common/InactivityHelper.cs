@@ -6,7 +6,7 @@
 //
 using System;
 using System.Threading;
-using Unigram.Native;
+using Telegram.Native;
 using Windows.System.Profile;
 
 namespace Unigram.Common

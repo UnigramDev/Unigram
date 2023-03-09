@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "BroadcastTimeRequestedEventArgs.h"
 
-namespace winrt::Unigram::Native::Calls::implementation
+namespace winrt::Telegram::Native::Calls::implementation
 {
 	BroadcastTimeRequestedEventArgs::BroadcastTimeRequestedEventArgs(BroadcastTimeRequestedDeferral deferral)
 		: m_deferral(deferral)

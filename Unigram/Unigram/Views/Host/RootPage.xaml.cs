@@ -15,7 +15,7 @@ using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
-using Unigram.Native;
+using Telegram.Native;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Services;

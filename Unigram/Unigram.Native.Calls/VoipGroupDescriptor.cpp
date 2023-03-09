@@ -4,7 +4,7 @@
 #include "VoipGroupDescriptor.g.cpp"
 #endif
 
-namespace winrt::Unigram::Native::Calls::implementation
+namespace winrt::Telegram::Native::Calls::implementation
 {
 	hstring VoipGroupDescriptor::AudioInputId() {
 		return m_audioInputId;

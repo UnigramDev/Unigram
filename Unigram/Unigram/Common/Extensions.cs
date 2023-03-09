@@ -16,7 +16,7 @@ using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Controls.Messages;
 using Unigram.Entities;
-using Unigram.Native;
+using Telegram.Native;
 using Unigram.Services;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Calls;

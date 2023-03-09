@@ -1,4 +1,4 @@
-namespace Unigram.Native.Calls
+namespace Telegram.Native.Calls
 {
     delegate void BroadcastTimeRequestedDeferral(Int64 time);
 

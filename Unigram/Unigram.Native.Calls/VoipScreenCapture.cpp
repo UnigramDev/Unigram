@@ -7,7 +7,7 @@
 #include "StaticThreads.h"
 #include "platform/uwp/UwpContext.h"
 
-namespace winrt::Unigram::Native::Calls::implementation
+namespace winrt::Telegram::Native::Calls::implementation
 {
 	VoipScreenCapture::VoipScreenCapture(GraphicsCaptureItem item)
 	{
@@ -62,7 +62,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 	}
 
 	winrt::event_token VoipScreenCapture::FatalErrorOccurred(Windows::Foundation::TypedEventHandler<
-		winrt::Unigram::Native::Calls::VoipScreenCapture,
+		winrt::Telegram::Native::Calls::VoipScreenCapture,
 		winrt::Windows::Foundation::IInspectable> const& value)
 	{
 		return m_fatalErrorOccurred.add(value);
@@ -74,7 +74,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 	}
 
 	winrt::event_token VoipScreenCapture::Paused(Windows::Foundation::TypedEventHandler<
-		winrt::Unigram::Native::Calls::VoipScreenCapture,
+		winrt::Telegram::Native::Calls::VoipScreenCapture,
 		bool> const& value)
 	{
 		return m_paused.add(value);

@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Unigram.Converters;
-using Unigram.Native;
+using Telegram.Native;
 using Unigram.Services;
 using Windows.ApplicationModel.Resources;
 using Windows.System.UserProfile;

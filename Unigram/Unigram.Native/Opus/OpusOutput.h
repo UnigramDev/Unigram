@@ -26,7 +26,7 @@
 using namespace winrt::Windows::Foundation;
 using namespace winrt::Windows::Media;
 
-namespace winrt::Unigram::Native::Opus::implementation
+namespace winrt::Telegram::Native::Opus::implementation
 {
     typedef struct {
         int version;
@@ -147,7 +147,7 @@ namespace winrt::Unigram::Native::Opus::implementation
     };
 }
 
-namespace winrt::Unigram::Native::Opus::factory_implementation
+namespace winrt::Telegram::Native::Opus::factory_implementation
 {
     struct OpusOutput : OpusOutputT<OpusOutput, implementation::OpusOutput>
     {

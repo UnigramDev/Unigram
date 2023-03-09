@@ -9,7 +9,7 @@ using System.Globalization;
 using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Native;
+using Telegram.Native;
 using Unigram.Services;
 using Windows.Globalization.DateTimeFormatting;
 using Windows.System.UserProfile;

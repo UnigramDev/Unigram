@@ -2,7 +2,7 @@
 #include "Composition.CompositionDevice.h"
 #include "Composition.DirectRectangleClip.h"
 
-namespace winrt::Unigram::Native::Composition::implementation
+namespace winrt::Telegram::Native::Composition::implementation
 {
 	winrt::slim_mutex CompositionDevice::s_lock;
 	winrt::com_ptr<CompositionDevice> CompositionDevice::s_current{ nullptr };
@@ -25,7 +25,7 @@ namespace winrt::Unigram::Native::Composition::implementation
 		}
 	}
 
-	winrt::Unigram::Native::Composition::DirectRectangleClip CompositionDevice::CreateRectangleClip(Visual visual)
+	winrt::Telegram::Native::Composition::DirectRectangleClip CompositionDevice::CreateRectangleClip(Visual visual)
 	{
 		HRESULT hr;
 		auto compositor = visual.Compositor();

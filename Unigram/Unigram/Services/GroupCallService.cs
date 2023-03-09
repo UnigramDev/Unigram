@@ -13,7 +13,7 @@ using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Native.Calls;
+using Telegram.Native.Calls;
 using Unigram.Services.Updates;
 using Unigram.Services.ViewService;
 using Unigram.ViewModels;

@@ -4,7 +4,7 @@
 #include "Opus/OpusOutput.g.cpp"
 #endif
 
-namespace winrt::Unigram::Native::Opus::implementation
+namespace winrt::Telegram::Native::Opus::implementation
 {
     static int write_uint32(Packet* p, ogg_uint32_t val) {
         if (p->pos > p->maxlen - 4) {

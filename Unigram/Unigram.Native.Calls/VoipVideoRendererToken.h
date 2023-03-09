@@ -11,7 +11,7 @@ using namespace winrt::Microsoft::Graphics::Canvas::UI::Xaml;
 using namespace winrt::Telegram::Td::Api;
 using namespace winrt::Windows::Foundation::Collections;
 
-namespace winrt::Unigram::Native::Calls::implementation
+namespace winrt::Telegram::Native::Calls::implementation
 {
 	struct VoipVideoRendererToken : VoipVideoRendererTokenT<VoipVideoRendererToken>
 	{

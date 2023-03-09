@@ -2,7 +2,7 @@
 
 #include "TelegramGameProxy.g.h"
 
-namespace winrt::Unigram::Native::implementation
+namespace winrt::Telegram::Native::implementation
 {
 	struct TelegramGameProxy : TelegramGameProxyT<TelegramGameProxy>
 	{
@@ -14,11 +14,11 @@ namespace winrt::Unigram::Native::implementation
 	private:
 		TelegramGameProxyDelegate _delegate;
 	};
-} // namespace winrt::Unigram::Native::implementation
+} // namespace winrt::Telegram::Native::implementation
 
-namespace winrt::Unigram::Native::factory_implementation
+namespace winrt::Telegram::Native::factory_implementation
 {
 	struct TelegramGameProxy : TelegramGameProxyT<TelegramGameProxy, implementation::TelegramGameProxy>
 	{
 	};
-} // namespace winrt::Unigram::Native::factory_implementation
+} // namespace winrt::Telegram::Native::factory_implementation

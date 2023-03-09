@@ -1,6 +1,6 @@
 import "Composition.DirectRectangleClip.idl";
 
-namespace Unigram.Native.Composition
+namespace Telegram.Native.Composition
 {
     [default_interface]
     static runtimeclass CompositionDevice 

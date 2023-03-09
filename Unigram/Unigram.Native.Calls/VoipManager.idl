@@ -1,10 +1,10 @@
-import "Unigram.Native.Calls.idl";
+import "Telegram.Native.Calls.idl";
 import "RemoteMediaStateUpdatedEventArgs.idl";
 import "SignalingDataEmittedEventArgs.idl";
 import "VoipVideoCapture.idl";
 import "VoipDescriptor.idl";
 
-namespace Unigram.Native.Calls
+namespace Telegram.Native.Calls
 {
     runtimeclass VoipManager : Windows.Foundation.IClosable
     {
@@ -52,4 +52,4 @@ namespace Unigram.Native.Calls
         event Windows.Foundation.TypedEventHandler<VoipManager, Single> RemotePrefferedAspectRatioUpdated;
         event Windows.Foundation.TypedEventHandler<VoipManager, SignalingDataEmittedEventArgs> SignalingDataEmitted;
     }
-} // namespace Unigram.Native.Calls
+} // namespace Telegram.Native.Calls

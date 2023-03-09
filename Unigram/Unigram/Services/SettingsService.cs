@@ -7,7 +7,7 @@
 using System;
 using System.Linq;
 using System.Numerics;
-using Unigram.Native.Calls;
+using Telegram.Native.Calls;
 using Unigram.Services.Settings;
 using Windows.Globalization;
 using Windows.Storage;
@@ -15,7 +15,7 @@ using Windows.System.Profile;
 
 #if !ENABLE_CALLS
 
-namespace Unigram.Native.Calls
+namespace Telegram.Native.Calls
 {
     public enum VoipDataSaving
     {

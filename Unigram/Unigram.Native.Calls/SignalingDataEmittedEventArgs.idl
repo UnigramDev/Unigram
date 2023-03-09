@@ -1,8 +1,8 @@
-namespace Unigram.Native.Calls
+namespace Telegram.Native.Calls
 {
     [default_interface]
     runtimeclass SignalingDataEmittedEventArgs
     {
         Windows.Foundation.Collections.IVector<byte> Data{ get; };
     }
-} // namespace Unigram.Native.Calls
+} // namespace Telegram.Native.Calls

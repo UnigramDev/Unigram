@@ -14,7 +14,7 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls.Messages.Content;
 using Unigram.Converters;
-using Unigram.Native.Composition;
+using Telegram.Native.Composition;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.Foundation;

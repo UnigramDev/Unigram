@@ -2,7 +2,7 @@
 
 #include "GroupNetworkStateChangedEventArgs.g.h"
 
-namespace winrt::Unigram::Native::Calls::implementation
+namespace winrt::Telegram::Native::Calls::implementation
 {
 	struct GroupNetworkStateChangedEventArgs : GroupNetworkStateChangedEventArgsT<GroupNetworkStateChangedEventArgs>
 	{

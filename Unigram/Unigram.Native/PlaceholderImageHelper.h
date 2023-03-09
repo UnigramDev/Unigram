@@ -18,7 +18,7 @@ using namespace winrt::Windows::Foundation::Collections;
 using namespace winrt::Windows::Foundation::Numerics;
 using namespace winrt::Windows::Storage::Streams;
 
-namespace winrt::Unigram::Native::implementation
+namespace winrt::Telegram::Native::implementation
 {
 	struct PlaceholderImageHelper : PlaceholderImageHelperT<PlaceholderImageHelper>
 	{
@@ -35,7 +35,7 @@ namespace winrt::Unigram::Native::implementation
 			return S_OK;
 		}
 
-		static winrt::Unigram::Native::PlaceholderImageHelper Current()
+		static winrt::Telegram::Native::PlaceholderImageHelper Current()
 		{
 			auto lock = critical_section::scoped_lock(s_criticalSection);
 
@@ -44,7 +44,7 @@ namespace winrt::Unigram::Native::implementation
 			}
 
 			s_current->HandleDeviceLost();
-			return s_current.as<winrt::Unigram::Native::PlaceholderImageHelper>();
+			return s_current.as<winrt::Telegram::Native::PlaceholderImageHelper>();
 		}
 
 		void WriteBytes(IVector<byte> hash, IRandomAccessStream randomAccessStream);
@@ -115,11 +115,11 @@ namespace winrt::Unigram::Native::implementation
 		winrt::com_ptr<ID2D1Bitmap1> m_targetBitmap;
 		critical_section m_criticalSection;
 	};
-} // namespace winrt::Unigram::Native::implementation
+} // namespace winrt::Telegram::Native::implementation
 
-namespace winrt::Unigram::Native::factory_implementation
+namespace winrt::Telegram::Native::factory_implementation
 {
 	struct PlaceholderImageHelper : PlaceholderImageHelperT<PlaceholderImageHelper, implementation::PlaceholderImageHelper>
 	{
 	};
-} // namespace winrt::Unigram::Native::factory_implementation
+} // namespace winrt::Telegram::Native::factory_implementation

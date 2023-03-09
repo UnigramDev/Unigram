@@ -6,6 +6,7 @@
 //
 using System;
 using System.Linq;
+using Telegram.Native;
 using Unigram.Controls;
 using Unigram.Converters;
 using Windows.System.UserProfile;
@@ -26,8 +27,8 @@ namespace Unigram.Views.Popups
             Date.CalendarIdentifier = GlobalizationPreferences.Calendars.FirstOrDefault();
             Time.ClockIdentifier = GlobalizationPreferences.Clocks.FirstOrDefault();
 
-            Date.Language = Native.NativeUtils.GetCurrentCulture();
-            Time.Language = Native.NativeUtils.GetCurrentCulture();
+            Date.Language = NativeUtils.GetCurrentCulture();
+            Time.Language = NativeUtils.GetCurrentCulture();
 
             Date.MinYear = DateTime.Today;
 

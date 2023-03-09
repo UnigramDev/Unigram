@@ -2,7 +2,7 @@
 #include "VoipDescriptor.h"
 #include "VoipDescriptor.g.cpp"
 
-namespace winrt::Unigram::Native::Calls::implementation
+namespace winrt::Telegram::Native::Calls::implementation
 {
 	VoipDescriptor::VoipDescriptor()
 	{
@@ -96,4 +96,4 @@ namespace winrt::Unigram::Native::Calls::implementation
 		m_videoCapture = value;
 	}
 
-} // namespace winrt::Unigram::Native::Calls::implementation
+} // namespace winrt::Telegram::Native::Calls::implementation

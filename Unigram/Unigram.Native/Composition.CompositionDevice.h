@@ -7,7 +7,7 @@
 
 using namespace winrt::Windows::UI::Composition;
 
-namespace winrt::Unigram::Native::Composition::implementation
+namespace winrt::Telegram::Native::Composition::implementation
 {
     static struct CompositionDevice : CompositionDeviceT<CompositionDevice>
     {
@@ -26,7 +26,7 @@ namespace winrt::Unigram::Native::Composition::implementation
 
         HRESULT CreateCubicBezierAnimation(Compositor compositor, float from, float to, double duration, IDCompositionAnimation** slideAnimation);
 
-        static winrt::Unigram::Native::Composition::DirectRectangleClip CreateRectangleClip(Visual visual);
+        static winrt::Telegram::Native::Composition::DirectRectangleClip CreateRectangleClip(Visual visual);
 
     private:
         winrt::com_ptr<IUIAnimationManager2> _manager;
@@ -37,7 +37,7 @@ namespace winrt::Unigram::Native::Composition::implementation
     };
 }
 
-namespace winrt::Unigram::Native::Composition::factory_implementation
+namespace winrt::Telegram::Native::Composition::factory_implementation
 {
     struct CompositionDevice : CompositionDeviceT<CompositionDevice, implementation::CompositionDevice>
     {

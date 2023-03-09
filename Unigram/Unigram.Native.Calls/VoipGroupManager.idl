@@ -1,4 +1,4 @@
-import "Unigram.Native.Calls.idl";
+import "Telegram.Native.Calls.idl";
 import "VoipGroupDescriptor.idl";
 import "VoipVideoCapture.idl";
 import "VoipVideoChannelInfo.idl";
@@ -7,7 +7,7 @@ import "GroupNetworkStateChangedEventArgs.idl";
 import "BroadcastTimeRequestedEventArgs.idl";
 import "BroadcastPartRequestedEventArgs.idl";
 
-namespace Unigram.Native.Calls
+namespace Telegram.Native.Calls
 {
     delegate void EmitJsonPayloadDelegate(Int32 ssrc, String payload);
 

@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Telegram.Native;
 using Unigram.Controls;
 using Unigram.Navigation;
 using Windows.System.UserProfile;
@@ -24,7 +25,7 @@ namespace Unigram.Views.Popups
             InitializeComponent();
 
             View.CalendarIdentifier = GlobalizationPreferences.Calendars.FirstOrDefault();
-            View.Language = Native.NativeUtils.GetCurrentCulture();
+            View.Language = NativeUtils.GetCurrentCulture();
 
             if (date.HasValue)
             {

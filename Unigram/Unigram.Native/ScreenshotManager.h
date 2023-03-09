@@ -4,7 +4,7 @@
 
 #include <winrt/Windows.UI.Xaml.Media.h>
 
-namespace winrt::Unigram::Native::implementation
+namespace winrt::Telegram::Native::implementation
 {
     struct ScreenshotManager : ScreenshotManagerT<ScreenshotManager>
     {
@@ -14,7 +14,7 @@ namespace winrt::Unigram::Native::implementation
     };
 }
 
-namespace winrt::Unigram::Native::factory_implementation
+namespace winrt::Telegram::Native::factory_implementation
 {
     struct ScreenshotManager : ScreenshotManagerT<ScreenshotManager, implementation::ScreenshotManager>
     {

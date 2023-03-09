@@ -1,4 +1,4 @@
-namespace Unigram.Native
+namespace Telegram.Native
 {
 	enum PlaceholderEntityType
 	{
@@ -44,4 +44,4 @@ namespace Unigram.Native
 		Windows.Foundation.Collections.IVector<Windows.Foundation.Rect> LineMetrics(String text, Double fontSize, Double width, Boolean rtl);
 		//Windows.Foundation.Collections.IVector<Windows.Foundation.Rect> EntityMetrics(String text, Windows.Foundation.Collections.IVector<Telegram.Td.Api.TextEntity> entities, Double fontSize, Double width, Boolean rtl);
 	}
-} // namespace Unigram.Native
+} // namespace Telegram.Native

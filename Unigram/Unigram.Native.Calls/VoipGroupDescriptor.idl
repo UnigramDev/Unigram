@@ -1,7 +1,7 @@
-import "Unigram.Native.Calls.idl";
+import "Telegram.Native.Calls.idl";
 import "VoipVideoCapture.idl";
 
-namespace Unigram.Native.Calls
+namespace Telegram.Native.Calls
 {
     [default_interface]
     runtimeclass VoipGroupDescriptor 

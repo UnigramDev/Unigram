@@ -4,7 +4,7 @@
 #include "AudioPitchEffect.g.cpp"
 #endif
 
-namespace winrt::Unigram::Native::implementation
+namespace winrt::Telegram::Native::implementation
 {
 
 }

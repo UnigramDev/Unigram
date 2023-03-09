@@ -5,7 +5,7 @@
 
 using namespace winrt::Windows::Storage::Streams;
 
-namespace winrt::Unigram::Native::implementation
+namespace winrt::Telegram::Native::implementation
 {
     struct __declspec(uuid("905a0fef-bc53-11df-8c49-001e4fc686da")) IBufferByteAccess : ::IUnknown
     {
@@ -25,7 +25,7 @@ namespace winrt::Unigram::Native::implementation
         }
 
         static IBuffer Create(uint32_t size) {
-            auto info = winrt::make_self<winrt::Unigram::Native::implementation::BufferSurface>(size);
+            auto info = winrt::make_self<winrt::Telegram::Native::implementation::BufferSurface>(size);
             return info.as<IBuffer>();
         }
 
@@ -57,7 +57,7 @@ namespace winrt::Unigram::Native::implementation
     };
 }
 
-namespace winrt::Unigram::Native::factory_implementation
+namespace winrt::Telegram::Native::factory_implementation
 {
     struct BufferSurface : BufferSurfaceT<BufferSurface, implementation::BufferSurface>
     {

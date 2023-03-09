@@ -1,4 +1,4 @@
-namespace Unigram.Native
+namespace Telegram.Native
 {
     [default_interface]
 	runtimeclass NativeUtils
@@ -22,4 +22,4 @@ namespace Unigram.Native
 
 		static Boolean IsMediaSupported();
 	}
-} // namespace Unigram.Native
+} // namespace Telegram.Native

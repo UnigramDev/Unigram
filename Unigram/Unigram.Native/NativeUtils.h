@@ -9,7 +9,7 @@
 
 using namespace winrt::Windows::Foundation;
 
-namespace winrt::Unigram::Native::implementation
+namespace winrt::Telegram::Native::implementation
 {
 	struct NativeUtils : NativeUtilsT<NativeUtils>
 	{
@@ -39,11 +39,11 @@ namespace winrt::Unigram::Native::implementation
 		static bool IsBrowsePath(const std::wstring& path);
 		static ULONGLONG FileTimeToSeconds(FILETIME& ft);
 	};
-} // namespace winrt::Unigram::Native::implementation
+} // namespace winrt::Telegram::Native::implementation
 
-namespace winrt::Unigram::Native::factory_implementation
+namespace winrt::Telegram::Native::factory_implementation
 {
 	struct NativeUtils : NativeUtilsT<NativeUtils, implementation::NativeUtils>
 	{
 	};
-} // namespace winrt::Unigram::Native::factory_implementation
+} // namespace winrt::Telegram::Native::factory_implementation

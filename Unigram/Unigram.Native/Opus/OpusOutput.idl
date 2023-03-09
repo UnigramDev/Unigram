@@ -1,4 +1,4 @@
-namespace Unigram.Native.Opus
+namespace Telegram.Native.Opus
 {
     [bindable]
     [default_interface]

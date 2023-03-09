@@ -39,7 +39,7 @@
 
 #undef small
 
-#include "winrt/Unigram.Native.Calls.h"
+#include "winrt/Telegram.Native.Calls.h"
 
 /// checks UTF-8 string for correctness
 //bool check_utf8(char* str);

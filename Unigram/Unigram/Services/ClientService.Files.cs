@@ -6,7 +6,7 @@
 //
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Native;
+using Telegram.Native;
 
 namespace Unigram.Services
 {

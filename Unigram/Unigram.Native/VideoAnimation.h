@@ -29,7 +29,7 @@ static const std::string av_make_error_str(int errnum) {
 
 using namespace winrt::Microsoft::Graphics::Canvas;
 
-namespace winrt::Unigram::Native::implementation
+namespace winrt::Telegram::Native::implementation
 {
 	enum PARAM_NUM
 	{
@@ -92,7 +92,7 @@ namespace winrt::Unigram::Native::implementation
 			audio_stream = nullptr;
 		}
 
-		static winrt::Unigram::Native::VideoAnimation LoadFromFile(IVideoAnimationSource file, bool preview, bool limitFps);
+		static winrt::Telegram::Native::VideoAnimation LoadFromFile(IVideoAnimationSource file, bool preview, bool limitFps);
 
 		VideoAnimation() = default;
 
@@ -167,11 +167,11 @@ namespace winrt::Unigram::Native::implementation
 		int32_t duration;
 		double framerate;
 	};
-} // namespace winrt::Unigram::Native::implementation
+} // namespace winrt::Telegram::Native::implementation
 
-namespace winrt::Unigram::Native::factory_implementation
+namespace winrt::Telegram::Native::factory_implementation
 {
 	struct VideoAnimation : VideoAnimationT<VideoAnimation, implementation::VideoAnimation>
 	{
 	};
-} // namespace winrt::Unigram::Native::factory_implementation
+} // namespace winrt::Telegram::Native::factory_implementation

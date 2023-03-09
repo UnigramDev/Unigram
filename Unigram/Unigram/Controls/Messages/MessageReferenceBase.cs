@@ -10,7 +10,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Native;
+using Telegram.Native;
 using Unigram.ViewModels;
 using Windows.Storage.Streams;
 using Windows.UI.Xaml;

@@ -10,7 +10,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unigram", "Unigram\Unigram.
 		{3520C5E6-F0C2-468F-8970-372414C233DC} = {3520C5E6-F0C2-468F-8970-372414C233DC}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Unigram.Native", "Unigram.Native\Unigram.Native.vcxproj", "{1B521E77-46BD-4D60-89F6-D68E9BB9ABFF}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Telegram.Native", "Unigram.Native\Telegram.Native.vcxproj", "{1B521E77-46BD-4D60-89F6-D68E9BB9ABFF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{C385BB20-B82D-496E-A38D-835D017AC0EA}"
 EndProject
@@ -20,7 +20,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libopus", "Libraries\libopu
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libogg", "Libraries\libogg\libogg.vcxproj", "{3520C5E6-F0C2-468F-8970-372414C233DC}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Unigram.Native.Calls", "Unigram.Native.Calls\Unigram.Native.Calls.vcxproj", "{FDD3C45D-4CFF-4A90-8FEF-16CA70AB00BE}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Telegram.Native.Calls", "Unigram.Native.Calls\Telegram.Native.Calls.vcxproj", "{FDD3C45D-4CFF-4A90-8FEF-16CA70AB00BE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnigramBridge", "UnigramBridge\UnigramBridge.csproj", "{3CAEF699-4E32-4DE0-9F77-0095D7DFD1C2}"
 EndProject

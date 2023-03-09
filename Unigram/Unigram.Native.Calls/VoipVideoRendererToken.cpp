@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "VoipVideoRendererToken.h"
 
-namespace winrt::Unigram::Native::Calls::implementation
+namespace winrt::Telegram::Native::Calls::implementation
 {
 	VoipVideoRendererToken::VoipVideoRendererToken(std::shared_ptr<VoipVideoRenderer> sink, int32_t audioSource, hstring endpointId, IVector<GroupCallVideoSourceGroup> sourceGroups, CanvasControl canvasControl)
 		: m_sink(sink),

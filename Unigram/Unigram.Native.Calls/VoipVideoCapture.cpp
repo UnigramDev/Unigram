@@ -7,7 +7,7 @@
 #include "StaticThreads.h"
 #include "platform/uwp/UwpContext.h"
 
-namespace winrt::Unigram::Native::Calls::implementation
+namespace winrt::Telegram::Native::Calls::implementation
 {
 	VoipVideoCapture::VoipVideoCapture(hstring id)
 	{
@@ -53,4 +53,4 @@ namespace winrt::Unigram::Native::Calls::implementation
 			}
 		}
 	}
-} // namespace winrt::Unigram::Native::Calls::implementation
+} // namespace winrt::Telegram::Native::Calls::implementation

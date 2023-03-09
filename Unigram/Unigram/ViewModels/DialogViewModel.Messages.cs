@@ -18,7 +18,7 @@ using Unigram.Controls;
 using Unigram.Controls.Gallery;
 using Unigram.Converters;
 using Unigram.Entities;
-using Unigram.Native;
+using Telegram.Native;
 using Unigram.Services;
 using Unigram.ViewModels.Chats;
 using Unigram.Views;

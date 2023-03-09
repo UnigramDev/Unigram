@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "RemoteMediaStateUpdatedEventArgs.h"
 
-namespace winrt::Unigram::Native::Calls::implementation
+namespace winrt::Telegram::Native::Calls::implementation
 {
 	RemoteMediaStateUpdatedEventArgs::RemoteMediaStateUpdatedEventArgs(VoipAudioState audio, VoipVideoState video)
 		: m_audio(audio),
@@ -16,4 +16,4 @@ namespace winrt::Unigram::Native::Calls::implementation
 	VoipVideoState RemoteMediaStateUpdatedEventArgs::Video() {
 		return m_video;
 	}
-} // namespace winrt::Unigram::Native::Calls::implementation
+} // namespace winrt::Telegram::Native::Calls::implementation

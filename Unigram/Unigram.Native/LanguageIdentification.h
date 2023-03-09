@@ -9,7 +9,7 @@
 using namespace concurrency;
 using namespace libtextclassifier3::mobile::lang_id;
 
-namespace winrt::Unigram::Native::implementation
+namespace winrt::Telegram::Native::implementation
 {
     struct LanguageIdentification : LanguageIdentificationT<LanguageIdentification>
     {
@@ -23,7 +23,7 @@ namespace winrt::Unigram::Native::implementation
     };
 }
 
-namespace winrt::Unigram::Native::factory_implementation
+namespace winrt::Telegram::Native::factory_implementation
 {
     struct LanguageIdentification : LanguageIdentificationT<LanguageIdentification, implementation::LanguageIdentification>
     {

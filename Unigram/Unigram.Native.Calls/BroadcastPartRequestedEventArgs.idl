@@ -1,4 +1,4 @@
-namespace Unigram.Native.Calls
+namespace Telegram.Native.Calls
 {
     delegate void BroadcastPartRequestedDeferral(Int64 time, Int64 response, Telegram.Td.Api.FilePart filePart);
 

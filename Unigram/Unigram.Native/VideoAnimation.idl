@@ -1,4 +1,4 @@
-namespace Unigram.Native
+namespace Telegram.Native
 {
 	interface IVideoAnimationSource {
 		void SeekCallback(Int64 offset);
@@ -28,4 +28,4 @@ namespace Unigram.Native
 
 		Double FrameRate{ get; };
 	}
-} // namespace Unigram.Native
+} // namespace Telegram.Native

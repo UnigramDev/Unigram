@@ -4,7 +4,7 @@
 
 using namespace winrt::Windows::Foundation::Collections;
 
-namespace winrt::Unigram::Native::Calls::implementation
+namespace winrt::Telegram::Native::Calls::implementation
 {
 	struct RemoteMediaStateUpdatedEventArgs : RemoteMediaStateUpdatedEventArgsT<RemoteMediaStateUpdatedEventArgs>
 	{
@@ -18,4 +18,4 @@ namespace winrt::Unigram::Native::Calls::implementation
 		VoipAudioState m_audio;
 		VoipVideoState m_video;
 	};
-} // namespace winrt::Unigram::Native::Calls::implementation
+} // namespace winrt::Telegram::Native::Calls::implementation

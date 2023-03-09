@@ -4,7 +4,7 @@
 
 using namespace winrt::Windows::Foundation::Collections;
 
-namespace winrt::Unigram::Native::Calls::implementation
+namespace winrt::Telegram::Native::Calls::implementation
 {
 	struct SignalingDataEmittedEventArgs : SignalingDataEmittedEventArgsT<SignalingDataEmittedEventArgs>
 	{
@@ -15,4 +15,4 @@ namespace winrt::Unigram::Native::Calls::implementation
 	private:
 		IVector<uint8_t> m_data{ nullptr };
 	};
-} // namespace winrt::Unigram::Native::Calls::implementation
+} // namespace winrt::Telegram::Native::Calls::implementation

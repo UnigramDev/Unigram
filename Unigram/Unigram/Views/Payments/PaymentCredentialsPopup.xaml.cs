@@ -8,7 +8,7 @@ using System;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Native;
+using Telegram.Native;
 using Unigram.ViewModels.Payments;
 using Windows.UI.Xaml.Controls;
 

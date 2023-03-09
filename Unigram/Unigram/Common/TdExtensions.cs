@@ -15,7 +15,7 @@ using System.Text;
 using System.Threading;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Native;
+using Telegram.Native;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Settings;
 using Windows.Foundation;

@@ -1,6 +1,6 @@
-import "Unigram.Native.Calls.idl";
+import "Telegram.Native.Calls.idl";
 
-namespace Unigram.Native.Calls
+namespace Telegram.Native.Calls
 {
     [default_interface]
     unsealed runtimeclass VoipCaptureBase : Windows.Foundation.IClosable
@@ -19,4 +19,4 @@ namespace Unigram.Native.Calls
         void SwitchToDevice(String deviceId);
         void SetPreferredAspectRatio(Single aspectRatio);
     }
-} // namespace Unigram.Native.Calls
+} // namespace Telegram.Native.Calls

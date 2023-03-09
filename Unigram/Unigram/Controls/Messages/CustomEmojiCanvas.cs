@@ -17,7 +17,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Native;
+using Telegram.Native;
 using Unigram.Services;
 using Windows.Foundation;
 using Windows.Storage.Streams;

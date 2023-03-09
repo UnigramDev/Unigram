@@ -1,4 +1,4 @@
-namespace Unigram.Native
+namespace Telegram.Native
 {
     delegate void TelegramPaymentProxyDelegate(String title, String credentials);
 
@@ -10,4 +10,4 @@ namespace Unigram.Native
 
         void PostEvent(String eventName, String eventData);
     }
-} // namespace Unigram.Native
+} // namespace Telegram.Native

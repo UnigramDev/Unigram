@@ -4,7 +4,7 @@
 #include "VoipVideoChannelInfo.g.cpp"
 #endif
 
-namespace winrt::Unigram::Native::Calls::implementation
+namespace winrt::Telegram::Native::Calls::implementation
 {
 	int32_t VoipVideoChannelInfo::AudioSource()
 	{

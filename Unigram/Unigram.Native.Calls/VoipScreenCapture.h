@@ -8,9 +8,9 @@
 
 using namespace winrt::Windows::Graphics::Capture;
 
-namespace winrt::Unigram::Native::Calls::implementation
+namespace winrt::Telegram::Native::Calls::implementation
 {
-	struct VoipScreenCapture : VoipScreenCaptureT<VoipScreenCapture, winrt::Unigram::Native::Calls::VoipCaptureBase>
+	struct VoipScreenCapture : VoipScreenCaptureT<VoipScreenCapture, winrt::Telegram::Native::Calls::VoipCaptureBase>
 	{
 		VoipScreenCapture(GraphicsCaptureItem item);
 		~VoipScreenCapture();
@@ -25,26 +25,26 @@ namespace winrt::Unigram::Native::Calls::implementation
 		std::shared_ptr<tgcalls::VideoCaptureInterface> m_impl = nullptr;
 
 		winrt::event_token FatalErrorOccurred(Windows::Foundation::TypedEventHandler<
-			winrt::Unigram::Native::Calls::VoipScreenCapture,
+			winrt::Telegram::Native::Calls::VoipScreenCapture,
 			winrt::Windows::Foundation::IInspectable> const& value);
 		void FatalErrorOccurred(winrt::event_token const& token);
 
 		winrt::event_token Paused(Windows::Foundation::TypedEventHandler<
-			winrt::Unigram::Native::Calls::VoipScreenCapture,
+			winrt::Telegram::Native::Calls::VoipScreenCapture,
 			bool> const& value);
 		void Paused(winrt::event_token const& token);
 
 	private:
 		winrt::event<Windows::Foundation::TypedEventHandler<
-			winrt::Unigram::Native::Calls::VoipScreenCapture,
+			winrt::Telegram::Native::Calls::VoipScreenCapture,
 			winrt::Windows::Foundation::IInspectable>> m_fatalErrorOccurred;
 		winrt::event<Windows::Foundation::TypedEventHandler<
-			winrt::Unigram::Native::Calls::VoipScreenCapture,
+			winrt::Telegram::Native::Calls::VoipScreenCapture,
 			bool>> m_paused;
 	};
 }
 
-namespace winrt::Unigram::Native::Calls::factory_implementation
+namespace winrt::Telegram::Native::Calls::factory_implementation
 {
 	struct VoipScreenCapture : VoipScreenCaptureT<VoipScreenCapture, implementation::VoipScreenCapture>
 	{

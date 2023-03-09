@@ -2,7 +2,7 @@
 
 #include "VoipGroupDescriptor.g.h"
 
-namespace winrt::Unigram::Native::Calls::implementation
+namespace winrt::Telegram::Native::Calls::implementation
 {
 	struct VoipGroupDescriptor : VoipGroupDescriptorT<VoipGroupDescriptor>
 	{
@@ -32,7 +32,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 	};
 }
 
-namespace winrt::Unigram::Native::Calls::factory_implementation
+namespace winrt::Telegram::Native::Calls::factory_implementation
 {
 	struct VoipGroupDescriptor : VoipGroupDescriptorT<VoipGroupDescriptor, implementation::VoipGroupDescriptor>
 	{

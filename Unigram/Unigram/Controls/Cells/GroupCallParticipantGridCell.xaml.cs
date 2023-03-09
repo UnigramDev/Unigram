@@ -11,7 +11,7 @@ using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Converters;
-using Unigram.Native.Calls;
+using Telegram.Native.Calls;
 using Unigram.Services;
 using Unigram.Views.Calls;
 using Windows.Foundation;

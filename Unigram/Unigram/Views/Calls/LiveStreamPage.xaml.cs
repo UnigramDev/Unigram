@@ -10,7 +10,7 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
-using Unigram.Native.Calls;
+using Telegram.Native.Calls;
 using Unigram.Navigation;
 using Unigram.Services;
 using Unigram.Views.Popups;

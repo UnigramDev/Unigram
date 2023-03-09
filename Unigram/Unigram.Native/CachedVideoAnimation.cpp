@@ -10,7 +10,7 @@
 #include <lz4.h>
 #include <qoi.h>
 
-namespace winrt::Unigram::Native::implementation
+namespace winrt::Telegram::Native::implementation
 {
     std::map<std::string, winrt::slim_mutex> CachedVideoAnimation::s_locks;
 
@@ -19,7 +19,7 @@ namespace winrt::Unigram::Native::implementation
     std::thread CachedVideoAnimation::s_compressWorker;
     WorkQueue CachedVideoAnimation::s_compressQueue;
 
-    winrt::Unigram::Native::CachedVideoAnimation CachedVideoAnimation::LoadFromFile(IVideoAnimationSource file, int32_t width, int32_t height, bool createCache)
+    winrt::Telegram::Native::CachedVideoAnimation CachedVideoAnimation::LoadFromFile(IVideoAnimationSource file, int32_t width, int32_t height, bool createCache)
     {
         auto info = winrt::make_self<CachedVideoAnimation>();
         file.SeekCallback(0);
@@ -125,7 +125,7 @@ namespace winrt::Unigram::Native::implementation
             }
         }
 
-        return info.as<winrt::Unigram::Native::CachedVideoAnimation>();
+        return info.as<winrt::Telegram::Native::CachedVideoAnimation>();
     }
 
     void CachedVideoAnimation::Stop() {

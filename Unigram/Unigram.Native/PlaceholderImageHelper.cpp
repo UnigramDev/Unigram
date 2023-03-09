@@ -21,7 +21,7 @@
 using namespace D2D1;
 using namespace winrt::Windows::ApplicationModel;
 
-namespace winrt::Unigram::Native::implementation
+namespace winrt::Telegram::Native::implementation
 {
     critical_section PlaceholderImageHelper::s_criticalSection;
     winrt::com_ptr<PlaceholderImageHelper> PlaceholderImageHelper::s_current{ nullptr };
@@ -286,7 +286,7 @@ namespace winrt::Unigram::Native::implementation
             size.Width = width;
             size.Height = height;
 
-            surface = Unigram::Native::BufferSurface::Create(width * 4 * height);
+            surface = Telegram::Native::BufferSurface::Create(width * 4 * height);
             auto pixels = surface.data();
             //uint8_t* pixels = new uint8_t[(width * 4) * height];
 
@@ -1067,4 +1067,4 @@ namespace winrt::Unigram::Native::implementation
 
         return stream->Seek({ 0 }, STREAM_SEEK_SET, nullptr);
     }
-} // namespace winrt::Unigram::Native::implementation
+} // namespace winrt::Telegram::Native::implementation

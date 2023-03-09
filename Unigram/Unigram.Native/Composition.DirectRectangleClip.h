@@ -4,7 +4,7 @@
 #include "Composition.CompositionDevice.h"
 #include "dcompex.h"
 
-namespace winrt::Unigram::Native::Composition::implementation
+namespace winrt::Telegram::Native::Composition::implementation
 {
     struct DirectRectangleClip : DirectRectangleClipT<DirectRectangleClip>
     {

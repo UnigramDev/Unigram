@@ -9,7 +9,7 @@
 
 using namespace qrcodegen;
 
-namespace winrt::Unigram::Native::implementation
+namespace winrt::Telegram::Native::implementation
 {
 	inline int ReplaceElements(const QrData& data) {
 		const auto elements = (data.size / 4);
@@ -21,7 +21,7 @@ namespace winrt::Unigram::Native::implementation
 		return ReplaceElements(data) * pixel;
 	}
 
-	winrt::Unigram::Native::QrBuffer QrBuffer::FromString(hstring text) {
+	winrt::Telegram::Native::QrBuffer QrBuffer::FromString(hstring text) {
 		auto data = QrData();
 		const auto utf8 = string_to_unmanaged(text);
 		const auto qr = QrCode::encodeText(utf8.c_str(), QrCode::Ecc::MEDIUM);
@@ -41,6 +41,6 @@ namespace winrt::Unigram::Native::implementation
 		auto values = winrt::single_threaded_vector<bool>(std::move(data.values));
 		auto args = winrt::make_self<QrBuffer>(data.size, values, replaceFrom, replaceTill);
 
-		return args.as<winrt::Unigram::Native::QrBuffer>();
+		return args.as<winrt::Telegram::Native::QrBuffer>();
 	}
 }

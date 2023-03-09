@@ -1,6 +1,6 @@
 import "VoipVideoRendererToken.idl";
 
-namespace Unigram.Native.Calls
+namespace Telegram.Native.Calls
 {
     enum VoipVideoChannelQuality {
         Thumbnail = 0,

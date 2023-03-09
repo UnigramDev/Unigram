@@ -1,6 +1,6 @@
-import "Unigram.Native.Calls.idl";
+import "Telegram.Native.Calls.idl";
 
-namespace Unigram.Native.Calls
+namespace Telegram.Native.Calls
 {
     [default_interface]
     runtimeclass RemoteMediaStateUpdatedEventArgs
@@ -8,4 +8,4 @@ namespace Unigram.Native.Calls
         VoipAudioState Audio{ get; };
         VoipVideoState Video{ get; };
     }
-} // namespace Unigram.Native.Calls
+} // namespace Telegram.Native.Calls

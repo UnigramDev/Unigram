@@ -31,7 +31,7 @@ typedef struct tagMONITORINFO
 	DWORD   dwFlags;
 } MONITORINFO, * LPMONITORINFO;
 
-namespace winrt::Unigram::Native::implementation
+namespace winrt::Telegram::Native::implementation
 {
 	ImageSource ScreenshotManager::Capture()
 	{

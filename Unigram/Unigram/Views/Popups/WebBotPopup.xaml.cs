@@ -8,7 +8,7 @@ using System;
 using System.Globalization;
 using Telegram.Td.Api;
 using Unigram.Controls;
-using Unigram.Native;
+using Telegram.Native;
 using Windows.Data.Json;
 using Windows.UI;
 using Windows.UI.Xaml.Controls;

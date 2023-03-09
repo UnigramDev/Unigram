@@ -1,4 +1,4 @@
-namespace Unigram.Native.Calls
+namespace Telegram.Native.Calls
 {
 	[default_interface]
 	runtimeclass GroupNetworkStateChangedEventArgs

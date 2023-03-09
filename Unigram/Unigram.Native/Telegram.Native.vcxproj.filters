@@ -688,7 +688,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="Unigram.Native.def" />
+    <None Include="Telegram.Native.def" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="NativeUtils.idl" />

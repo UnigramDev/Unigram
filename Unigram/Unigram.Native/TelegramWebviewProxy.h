@@ -2,7 +2,7 @@
 
 #include "TelegramWebviewProxy.g.h"
 
-namespace winrt::Unigram::Native::implementation
+namespace winrt::Telegram::Native::implementation
 {
 	struct TelegramWebviewProxy : TelegramWebviewProxyT<TelegramWebviewProxy>
 	{
@@ -14,11 +14,11 @@ namespace winrt::Unigram::Native::implementation
 	private:
 		TelegramWebviewProxyDelegate _delegate;
 	};
-} // namespace winrt::Unigram::Native::implementation
+} // namespace winrt::Telegram::Native::implementation
 
-namespace winrt::Unigram::Native::factory_implementation
+namespace winrt::Telegram::Native::factory_implementation
 {
 	struct TelegramWebviewProxy : TelegramWebviewProxyT<TelegramWebviewProxy, implementation::TelegramWebviewProxy>
 	{
 	};
-} // namespace winrt::Unigram::Native::factory_implementation
+} // namespace winrt::Telegram::Native::factory_implementation

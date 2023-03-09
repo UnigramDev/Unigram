@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "GroupNetworkStateChangedEventArgs.h"
 
-namespace winrt::Unigram::Native::Calls::implementation
+namespace winrt::Telegram::Native::Calls::implementation
 {
 	GroupNetworkStateChangedEventArgs::GroupNetworkStateChangedEventArgs(bool isConnected, bool isTransitioningFromBroadcastToRtc)
 		: m_isConnected(isConnected),

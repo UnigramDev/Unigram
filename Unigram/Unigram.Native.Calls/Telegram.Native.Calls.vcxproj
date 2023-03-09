@@ -7,8 +7,8 @@
     <CppWinRTGenerateWindowsMetadata>true</CppWinRTGenerateWindowsMetadata>
     <MinimalCoreWin>true</MinimalCoreWin>
     <ProjectGuid>{FDD3C45D-4CFF-4A90-8FEF-16CA70AB00BE}</ProjectGuid>
-    <ProjectName>Unigram.Native.Calls</ProjectName>
-    <RootNamespace>Unigram.Native.Calls</RootNamespace>
+    <ProjectName>Telegram.Native.Calls</ProjectName>
+    <RootNamespace>Telegram.Native.Calls</RootNamespace>
     <DefaultLanguage>en-US</DefaultLanguage>
     <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
     <AppContainerApplication>true</AppContainerApplication>
@@ -507,7 +507,7 @@
     </Midl>
     <Midl Include="RemoteMediaStateUpdatedEventArgs.idl" />
     <Midl Include="SignalingDataEmittedEventArgs.idl" />
-    <Midl Include="Unigram.Native.Calls.idl" />
+    <Midl Include="Telegram.Native.Calls.idl" />
     <Midl Include="VoipDescriptor.idl" />
     <Midl Include="VoipGroupDescriptor.idl">
       <SubType>Designer</SubType>

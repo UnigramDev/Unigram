@@ -6,7 +6,7 @@
 
 using namespace winrt::Windows::Foundation::Collections;
 
-namespace winrt::Unigram::Native::implementation
+namespace winrt::Telegram::Native::implementation
 {
     struct QrData {
         int size = 0;
@@ -39,7 +39,7 @@ namespace winrt::Unigram::Native::implementation
             return m_replaceTill;
         }
 
-        static winrt::Unigram::Native::QrBuffer FromString(hstring text);
+        static winrt::Telegram::Native::QrBuffer FromString(hstring text);
 
     private:
         int32_t m_size;
@@ -50,7 +50,7 @@ namespace winrt::Unigram::Native::implementation
     };
 }
 
-namespace winrt::Unigram::Native::factory_implementation
+namespace winrt::Telegram::Native::factory_implementation
 {
     struct QrBuffer : QrBufferT<QrBuffer, implementation::QrBuffer>
     {

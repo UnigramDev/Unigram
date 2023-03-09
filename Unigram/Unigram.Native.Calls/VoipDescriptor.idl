@@ -1,6 +1,6 @@
 import "VoipVideoCapture.idl";
 
-namespace Unigram.Native.Calls
+namespace Telegram.Native.Calls
 {
     [default_interface]
     runtimeclass VoipDescriptor
@@ -18,4 +18,4 @@ namespace Unigram.Native.Calls
         String AudioOutputId;
         VoipCaptureBase VideoCapture;
     }
-} // namespace Unigram.Native.Calls
+} // namespace Telegram.Native.Calls

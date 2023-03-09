@@ -7,7 +7,7 @@
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Numerics;
-using Unigram.Native;
+using Telegram.Native;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;

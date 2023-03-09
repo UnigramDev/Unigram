@@ -10,9 +10,9 @@
 
 using namespace winrt::Windows::Graphics::Capture;
 
-namespace winrt::Unigram::Native::Calls::implementation
+namespace winrt::Telegram::Native::Calls::implementation
 {
-	struct VoipVideoCapture : VoipVideoCaptureT<VoipVideoCapture, winrt::Unigram::Native::Calls::VoipCaptureBase>
+	struct VoipVideoCapture : VoipVideoCaptureT<VoipVideoCapture, winrt::Telegram::Native::Calls::VoipCaptureBase>
 	{
 		VoipVideoCapture(hstring id);
 		VoipVideoCapture() = default;
@@ -28,11 +28,11 @@ namespace winrt::Unigram::Native::Calls::implementation
 		std::shared_ptr<tgcalls::VideoCaptureInterface> m_impl = nullptr;
 	private:
 	};
-} // namespace winrt::Unigram::Native::Calls::implementation
+} // namespace winrt::Telegram::Native::Calls::implementation
 
-namespace winrt::Unigram::Native::Calls::factory_implementation
+namespace winrt::Telegram::Native::Calls::factory_implementation
 {
 	struct VoipVideoCapture : VoipVideoCaptureT<VoipVideoCapture, implementation::VoipVideoCapture>
 	{
 	};
-} // namespace winrt::Unigram::Native::Calls::factory_implementation
+} // namespace winrt::Telegram::Native::Calls::factory_implementation

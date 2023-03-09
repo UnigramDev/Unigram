@@ -4,7 +4,7 @@
 #include "TelegramGameProxy.g.cpp"
 #endif
 
-namespace winrt::Unigram::Native::implementation
+namespace winrt::Telegram::Native::implementation
 {
 	TelegramGameProxy::TelegramGameProxy(TelegramGameProxyDelegate delegate)
 	{
@@ -22,4 +22,4 @@ namespace winrt::Unigram::Native::implementation
 			_delegate(true);
 		}
 	}
-} // namespace winrt::Unigram::Native::implementation
+} // namespace winrt::Telegram::Native::implementation

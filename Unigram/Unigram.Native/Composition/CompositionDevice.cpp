@@ -7,7 +7,7 @@
 
 #include <winrt/Windows.UI.Xaml.Hosting.h>
 
-namespace winrt::Unigram::Native::Composition::implementation
+namespace winrt::Telegram::Native::Composition::implementation
 {
 	winrt::slim_mutex CompositionDevice::s_lock;
 	winrt::com_ptr<CompositionDevice> CompositionDevice::s_current{ nullptr };
@@ -30,12 +30,12 @@ namespace winrt::Unigram::Native::Composition::implementation
 		}
 	}
 
-	winrt::Unigram::Native::Composition::DirectRectangleClip CompositionDevice::CreateRectangleClip(UIElement element)
+	winrt::Telegram::Native::Composition::DirectRectangleClip CompositionDevice::CreateRectangleClip(UIElement element)
 	{
 		return CreateRectangleClip(winrt::Windows::UI::Xaml::Hosting::ElementCompositionPreview::GetElementVisual(element));
 	}
 
-	winrt::Unigram::Native::Composition::DirectRectangleClip CompositionDevice::CreateRectangleClip(Visual visual)
+	winrt::Telegram::Native::Composition::DirectRectangleClip CompositionDevice::CreateRectangleClip(Visual visual)
 	{
 		HRESULT hr;
 		auto compositor = visual.Compositor();
@@ -51,7 +51,7 @@ namespace winrt::Unigram::Native::Composition::implementation
 		return *result;
 	}
 
-	void CompositionDevice::SetClip(Visual visual, winrt::Unigram::Native::Composition::DirectRectangleClip clip)
+	void CompositionDevice::SetClip(Visual visual, winrt::Telegram::Native::Composition::DirectRectangleClip clip)
 	{
 		HRESULT hr;
 

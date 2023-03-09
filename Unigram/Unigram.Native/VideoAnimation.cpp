@@ -11,7 +11,7 @@
 // apply a fast variant: (X+127)/255 = ((X+127)*257+257)>>16 = ((X+128)*257)>>16
 #define FAST_DIV255(x) ((((x)+128) * 257) >> 16)
 
-namespace winrt::Unigram::Native::implementation
+namespace winrt::Telegram::Native::implementation
 {
 	static int open_codec_context(int* stream_idx, AVCodecContext** dec_ctx, AVFormatContext* fmt_ctx, enum AVMediaType type) {
 		int ret, stream_index;
@@ -120,7 +120,7 @@ namespace winrt::Unigram::Native::implementation
 		OutputDebugStringA(buffer);
 	}
 
-	winrt::Unigram::Native::VideoAnimation VideoAnimation::LoadFromFile(IVideoAnimationSource file, bool preview, bool limitFps)
+	winrt::Telegram::Native::VideoAnimation VideoAnimation::LoadFromFile(IVideoAnimationSource file, bool preview, bool limitFps)
 	{
 		auto info = winrt::make_self<VideoAnimation>();
 		file.SeekCallback(0);
@@ -212,7 +212,7 @@ namespace winrt::Unigram::Native::implementation
 		//OutputDebugStringFormat(L"successfully opened file %s", info->src);
 
 		info->limitFps = limitFps && info->framerate > 30;
-		return info.as<winrt::Unigram::Native::VideoAnimation>();
+		return info.as<winrt::Telegram::Native::VideoAnimation>();
 	}
 
 	void VideoAnimation::Stop()
@@ -459,4 +459,4 @@ namespace winrt::Unigram::Native::implementation
 		}
 		return 0;
 	}
-} // namespace winrt::Unigram::Native::implementation
+} // namespace winrt::Telegram::Native::implementation

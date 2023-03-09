@@ -5,7 +5,7 @@
 using namespace winrt::Telegram::Td::Api;
 using namespace winrt::Windows::Foundation::Collections;
 
-namespace winrt::Unigram::Native::Calls::implementation
+namespace winrt::Telegram::Native::Calls::implementation
 {
 	struct VoipVideoChannelInfo : VoipVideoChannelInfoT<VoipVideoChannelInfo>
 	{
@@ -54,7 +54,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 	};
 }
 
-namespace winrt::Unigram::Native::Calls::factory_implementation
+namespace winrt::Telegram::Native::Calls::factory_implementation
 {
 	struct VoipVideoChannelInfo : VoipVideoChannelInfoT<VoipVideoChannelInfo, implementation::VoipVideoChannelInfo>
 	{

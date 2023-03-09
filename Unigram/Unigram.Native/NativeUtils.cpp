@@ -12,7 +12,7 @@
 using namespace winrt::Windows::Data::Xml::Dom;
 using namespace winrt::Windows::UI::Notifications;
 
-namespace winrt::Unigram::Native::implementation
+namespace winrt::Telegram::Native::implementation
 {
 	bool NativeUtils::FileExists(hstring path)
 	{
@@ -253,4 +253,4 @@ namespace winrt::Unigram::Native::implementation
 
 		return result != E_NOTIMPL;
 	}
-} // namespace winrt::Unigram::Native::implementation
+} // namespace winrt::Telegram::Native::implementation

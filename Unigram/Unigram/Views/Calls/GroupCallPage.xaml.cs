@@ -18,7 +18,7 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Cells;
 using Unigram.Converters;
-using Unigram.Native.Calls;
+using Telegram.Native.Calls;
 using Unigram.Navigation;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;

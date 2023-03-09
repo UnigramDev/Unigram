@@ -8,7 +8,7 @@ using System;
 using System.Threading.Tasks;
 using Telegram.Td;
 using Telegram.Td.Api;
-using Unigram.Native;
+using Telegram.Native;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;

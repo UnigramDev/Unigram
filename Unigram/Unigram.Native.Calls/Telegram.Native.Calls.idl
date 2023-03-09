@@ -1,4 +1,4 @@
-namespace Unigram.Native.Calls
+namespace Telegram.Native.Calls
 {
 	enum VoipDataSaving
 	{
@@ -43,5 +43,5 @@ namespace Unigram.Native.Calls
 		Generic = 2
 	};
 
-} // namespace Unigram.Native.Calls
+} // namespace Telegram.Native.Calls
 

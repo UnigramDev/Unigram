@@ -8,7 +8,7 @@
 
 using namespace winrt::Windows::Data::Json;
 
-namespace winrt::Unigram::Native::implementation
+namespace winrt::Telegram::Native::implementation
 {
 	TelegramPaymentProxy::TelegramPaymentProxy(TelegramPaymentProxyDelegate delegate)
 	{
@@ -33,4 +33,4 @@ namespace winrt::Unigram::Native::implementation
 			}
 		}
 	}
-} // namespace winrt::Unigram::Native::implementation
+} // namespace winrt::Telegram::Native::implementation

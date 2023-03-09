@@ -1,6 +1,6 @@
 import "VideoAnimation.idl";
 
-namespace Unigram.Native
+namespace Telegram.Native
 {
     [default_interface]
     runtimeclass CachedVideoAnimation : Windows.Foundation.IClosable

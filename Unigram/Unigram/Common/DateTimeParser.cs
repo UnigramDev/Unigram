@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using Telegram.Td.Api;
-using Unigram.Native;
+using Telegram.Native;
 
 namespace Unigram.Common
 {

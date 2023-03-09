@@ -16,7 +16,7 @@ using namespace winrt::Windows::UI::Xaml::Media::Imaging;
 
 #define CACHED_VERSION 5
 
-namespace winrt::Unigram::Native::implementation
+namespace winrt::Telegram::Native::implementation
 {
 	class WorkQueue;
 
@@ -42,7 +42,7 @@ namespace winrt::Unigram::Native::implementation
 			}
 		}
 
-		static winrt::Unigram::Native::CachedVideoAnimation LoadFromFile(IVideoAnimationSource file, int32_t width, int32_t height, bool precache);
+		static winrt::Telegram::Native::CachedVideoAnimation LoadFromFile(IVideoAnimationSource file, int32_t width, int32_t height, bool precache);
 
 		void SetTarget(WriteableBitmap bitmap);
 
@@ -182,7 +182,7 @@ namespace winrt::Unigram::Native::implementation
 
 }
 
-namespace winrt::Unigram::Native::factory_implementation
+namespace winrt::Telegram::Native::factory_implementation
 {
 	struct CachedVideoAnimation : CachedVideoAnimationT<CachedVideoAnimation, implementation::CachedVideoAnimation>
 	{

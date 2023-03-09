@@ -3,7 +3,7 @@
 #include "VoipDescriptor.g.h"
 #include "Instance.h"
 
-namespace winrt::Unigram::Native::Calls::implementation
+namespace winrt::Telegram::Native::Calls::implementation
 {
 	struct VoipDescriptor : VoipDescriptorT<VoipDescriptor>
 	{
@@ -53,11 +53,11 @@ namespace winrt::Unigram::Native::Calls::implementation
 		VoipCaptureBase VideoCapture();
 		void VideoCapture(VoipCaptureBase value);
 	};
-} // namespace winrt::Unigram::Native::Calls::implementation
+} // namespace winrt::Telegram::Native::Calls::implementation
 
-namespace winrt::Unigram::Native::Calls::factory_implementation
+namespace winrt::Telegram::Native::Calls::factory_implementation
 {
 	struct VoipDescriptor : VoipDescriptorT<VoipDescriptor, implementation::VoipDescriptor>
 	{
 	};
-} // namespace winrt::Unigram::Native::Calls::factory_implementation
+} // namespace winrt::Telegram::Native::Calls::factory_implementation

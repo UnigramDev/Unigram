@@ -30,7 +30,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{1b521e77-46bd-4d60-89f6-d68e9bb9abff}</ProjectGuid>
     <Keyword>WindowsRuntimeComponent</Keyword>
-    <RootNamespace>Unigram.Native</RootNamespace>
+    <RootNamespace>Telegram.Native</RootNamespace>
     <DefaultLanguage>en</DefaultLanguage>
     <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
     <AppContainerApplication>true</AppContainerApplication>
@@ -38,7 +38,7 @@
     <WindowsTargetPlatformVersion>10.0.22621.0</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformMinVersion>10.0.18362.0</WindowsTargetPlatformMinVersion>
     <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
-    <ProjectName>Unigram.Native</ProjectName>
+    <ProjectName>Telegram.Native</ProjectName>
     <CppWinRTNamespaceMergeDepth>2</CppWinRTNamespaceMergeDepth>
     <CppWinRTUsePrefixes>false</CppWinRTUsePrefixes>
     <CppWinRTOptimized>true</CppWinRTOptimized>
@@ -143,7 +143,7 @@
       <AdditionalDependencies>libwebp.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\$(MappedPlatform)\libwebp\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>Mfplat.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
-      <ModuleDefinitionFile>Unigram.Native.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>Telegram.Native.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
@@ -164,7 +164,7 @@
       <AdditionalDependencies>libwebp.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\$(MappedPlatform)\libwebp\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>Mfplat.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
-      <ModuleDefinitionFile>Unigram.Native.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>Telegram.Native.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -185,7 +185,7 @@
       <AdditionalDependencies>libwebp.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\$(MappedPlatform)\libwebp\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>Mfplat.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
-      <ModuleDefinitionFile>Unigram.Native.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>Telegram.Native.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -206,7 +206,7 @@
       <AdditionalDependencies>libwebp.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\$(MappedPlatform)\libwebp\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>Mfplat.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
-      <ModuleDefinitionFile>Unigram.Native.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>Telegram.Native.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
@@ -227,7 +227,7 @@
       <AdditionalDependencies>libwebp.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\$(MappedPlatform)\libwebp\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>Mfplat.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
-      <ModuleDefinitionFile>Unigram.Native.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>Telegram.Native.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -248,7 +248,7 @@
       <AdditionalDependencies>libwebp.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\$(MappedPlatform)\libwebp\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>Mfplat.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
-      <ModuleDefinitionFile>Unigram.Native.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>Telegram.Native.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -795,7 +795,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Unigram.Native.def" />
+    <None Include="Telegram.Native.def" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

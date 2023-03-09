@@ -55,7 +55,7 @@ LSTATUS
 		_In_ HKEY hKey
 		);
 
-namespace winrt::Unigram::Native::implementation
+namespace winrt::Telegram::Native::implementation
 {
 	critical_section HttpProxyWatcher::s_criticalSection;
 	winrt::com_ptr<HttpProxyWatcher> HttpProxyWatcher::s_current{ nullptr };
