@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 02/04/2023 14:30:09
+// 	Generated: 03/09/2023 19:34:12
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Telegram.Strings
@@ -274,6 +274,28 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("AccAutoDeleteTimer");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Archived chats hidden"
+        /// </summary>
+        public static string AccDescrArchivedChatsHidden
+        {
+            get
+            {
+                return resourceLoader.GetString("AccDescrArchivedChatsHidden");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Archived chats shown"
+        /// </summary>
+        public static string AccDescrArchivedChatsShown
+        {
+            get
+            {
+                return resourceLoader.GetString("AccDescrArchivedChatsShown");
             }
         }
         
@@ -538,6 +560,17 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("AccDescrCustomEmoji");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ", {0} file"
+        /// </summary>
+        public static string AccDescrDocumentType
+        {
+            get
+            {
+                return resourceLoader.GetString("AccDescrDocumentType");
             }
         }
         
@@ -868,6 +901,17 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("AccDescrMyLocation");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Muted"
+        /// </summary>
+        public static string AccDescrNotificationsMuted
+        {
+            get
+            {
+                return resourceLoader.GetString("AccDescrNotificationsMuted");
             }
         }
         
@@ -1488,6 +1532,17 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Choose speed"
+        /// </summary>
+        public static string AccDescrSpeedSlider
+        {
+            get
+            {
+                return resourceLoader.GetString("AccDescrSpeedSlider");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Stickers"
         /// </summary>
         public static string AccDescrStickers
@@ -1605,6 +1660,17 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("AccDescrUploadProgress");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Online"
+        /// </summary>
+        public static string AccDescrUserOnline
+        {
+            get
+            {
+                return resourceLoader.GetString("AccDescrUserOnline");
             }
         }
         
@@ -2236,7 +2302,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 changed the group video"
+        /// Localized resource similar to "un1 changed the group photo"
         /// </summary>
         public static string ActionChangedVideo
         {
@@ -2302,7 +2368,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Channel video changed"
+        /// Localized resource similar to "Channel photo updated"
         /// </summary>
         public static string ActionChannelChangedVideo
         {
@@ -3008,6 +3074,17 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Skip"
+        /// </summary>
+        public static string ActionSkip
+        {
+            get
+            {
+                return resourceLoader.GetString("ActionSkip");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Suggested Photo"
         /// </summary>
         public static string ActionSuggestPhoto
@@ -3305,7 +3382,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "You changed the group video"
+        /// Localized resource similar to "You changed the group photo"
         /// </summary>
         public static string ActionYouChangedVideo
         {
@@ -3767,6 +3844,17 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "**{0}** is added to the Do Not Translate list."
+        /// </summary>
+        public static string AddedToDoNotTranslateOther
+        {
+            get
+            {
+                return resourceLoader.GetString("AddedToDoNotTranslateOther");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Sticker added to Favorites."
         /// </summary>
         public static string AddedToFavorites
@@ -3778,7 +3866,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Please enter your valid email address to protect your account."
+        /// Localized resource similar to "You will now receive Telegram login codes via email and not SMS. Please enter an email address to which you have access."
         /// </summary>
         public static string AddEmailSubtitle
         {
@@ -3789,7 +3877,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Add Email"
+        /// Localized resource similar to "Choose a login email"
         /// </summary>
         public static string AddEmailTitle
         {
@@ -3899,7 +3987,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Add emoji"
+        /// Localized resource similar to "Add Emoji"
         /// </summary>
         public static string AddManyEmojiCount_one
         {
@@ -3910,7 +3998,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Add {0} emoji"
+        /// Localized resource similar to "Add {0} Emoji"
         /// </summary>
         public static string AddManyEmojiCount_other
         {
@@ -4746,7 +4834,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Almost done"
+        /// Localized resource similar to "Almost done!"
         /// </summary>
         public static string AlmostDone
         {
@@ -6028,7 +6116,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Do you want to delete this chat?"
+        /// Localized resource similar to "Do you want to permanently delete this chat?"
         /// </summary>
         public static string AreYouSureDeleteThisChat
         {
@@ -6375,7 +6463,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "The admins of this group have restricted you from sending music here until {0}"
+        /// Localized resource similar to "The admins of this group have restricted you from sending music here until {0}."
         /// </summary>
         public static string AttachAudioRestricted
         {
@@ -6452,7 +6540,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "The admins of this group have restricted you from sending documents here until {0}"
+        /// Localized resource similar to "The admins of this group have restricted you from sending documents here until {0}."
         /// </summary>
         public static string AttachDocumentsRestricted
         {
@@ -6716,7 +6804,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "The admins of this group have restricted you from sending photos here until {0}"
+        /// Localized resource similar to "The admins of this group have restricted you from sending photos here until {0}."
         /// </summary>
         public static string AttachPhotoRestricted
         {
@@ -6738,7 +6826,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "The admins of this group have restricted you from sending text message here until {0}"
+        /// Localized resource similar to "The admins of this group have restricted you from sending text messages here until {0}"
         /// </summary>
         public static string AttachPlainRestricted
         {
@@ -6771,7 +6859,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "The admins of this group have restricted you from sending video messages here until {0}"
+        /// Localized resource similar to "The admins of this group have restricted you from sending video messages here until {0}."
         /// </summary>
         public static string AttachRoundRestricted
         {
@@ -6848,7 +6936,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "The admins of this group have restricted you from sending videos here until {0}"
+        /// Localized resource similar to "The admins of this group have restricted you from sending videos here until {0}."
         /// </summary>
         public static string AttachVideoRestricted
         {
@@ -6870,7 +6958,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "The admins of this group have restricted you from sending voice messages here until {0}"
+        /// Localized resource similar to "The admins of this group have restricted you from sending voice messages here until {0}."
         /// </summary>
         public static string AttachVoiceRestricted
         {
@@ -6914,6 +7002,17 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Audio will play at {0}x speed."
+        /// </summary>
+        public static string AudioSpeedCustom
+        {
+            get
+            {
+                return resourceLoader.GetString("AudioSpeedCustom");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Audio will play two times faster."
         /// </summary>
         public static string AudioSpeedFast
@@ -6921,6 +7020,17 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("AudioSpeedFast");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Audio will play at 1.5x speed."
+        /// </summary>
+        public static string AudioSpeedMedium
+        {
+            get
+            {
+                return resourceLoader.GetString("AudioSpeedMedium");
             }
         }
         
@@ -7612,7 +7722,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Self-destruct timer has been disabled in {0}."
+        /// Localized resource similar to "Self-destruct timer disabled in {0}."
         /// </summary>
         public static string AutodeleteTimerDisabledForChats
         {
@@ -8162,7 +8272,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "You can change your auto-download settings for media to reduce data usage when roaming."
+        /// Localized resource similar to "You can change your auto-download settings to reduce data usage when roaming."
         /// </summary>
         public static string AutomaticDownloadSettingsInfoRoaming
         {
@@ -8334,6 +8444,17 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("AutoNightSystemDefault");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "System Default theme is now disabled."
+        /// </summary>
+        public static string AutoNightSystemModeOff
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoNightSystemModeOff");
             }
         }
         
@@ -9542,6 +9663,19 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Do you want to start app **{0}** from bot **{1}**?
+        ///
+        ///It will be able to access your **IP address** and basic device info."
+        /// </summary>
+        public static string BotStartAppPermission
+        {
+            get
+            {
+                return resourceLoader.GetString("BotStartAppPermission");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "has no access to messages"
         /// </summary>
         public static string BotStatusCantRead
@@ -9564,7 +9698,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Stop Bot"
+        /// Localized resource similar to "Block Bot"
         /// </summary>
         public static string BotStop
         {
@@ -11656,6 +11790,39 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "You can't create a link"
+        /// </summary>
+        public static string ChannelInviteViaLinkRestricted
+        {
+            get
+            {
+                return resourceLoader.GetString("ChannelInviteViaLinkRestricted");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This user can't be invited"
+        /// </summary>
+        public static string ChannelInviteViaLinkRestricted2
+        {
+            get
+            {
+                return resourceLoader.GetString("ChannelInviteViaLinkRestricted2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "These users can't be invited"
+        /// </summary>
+        public static string ChannelInviteViaLinkRestricted3
+        {
+            get
+            {
+                return resourceLoader.GetString("ChannelInviteViaLinkRestricted3");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "JOIN"
         /// </summary>
         public static string ChannelJoin
@@ -12609,7 +12776,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Channel {0} updated its video"
+        /// Localized resource similar to "{0} updated its photo"
         /// </summary>
         public static string ChannelVideoEditNotification
         {
@@ -12946,6 +13113,17 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("ChatListSwipeGesture");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Choose which action you want to perform when you swipe to the left in the chat list."
+        /// </summary>
+        public static string ChatListSwipeGestureInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("ChatListSwipeGestureInfo");
             }
         }
         
@@ -15528,7 +15706,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Create a New Channel For This"
+        /// Localized resource similar to "Create a New Channel for This"
         /// </summary>
         public static string CreateChannelForThis
         {
@@ -15594,7 +15772,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Create a New Group For This"
+        /// Localized resource similar to "Create a New Group for This"
         /// </summary>
         public static string CreateGroupForThis
         {
@@ -16498,7 +16676,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Read all Chats"
+        /// Localized resource similar to "Mark all chats as read"
         /// </summary>
         public static string DebugMenuReadAllDialogs
         {
@@ -16971,7 +17149,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Delete and stop"
+        /// Localized resource similar to "Delete and block"
         /// </summary>
         public static string DeleteAndStop
         {
@@ -18715,6 +18893,50 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("Draft");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Dynamic Pack Order"
+        /// </summary>
+        public static string DynamicPackOrder
+        {
+            get
+            {
+                return resourceLoader.GetString("DynamicPackOrder");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Automatically place recently used sticker packs above others."
+        /// </summary>
+        public static string DynamicPackOrderInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("DynamicPackOrderInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Dynamic Order off"
+        /// </summary>
+        public static string DynamicPackOrderOff
+        {
+            get
+            {
+                return resourceLoader.GetString("DynamicPackOrderOff");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sticker packs will no longer be rearranged when you send a sticker."
+        /// </summary>
+        public static string DynamicPackOrderOffInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("DynamicPackOrderOffInfo");
             }
         }
         
@@ -21005,7 +21227,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 set a new channel video"
+        /// Localized resource similar to "un1 set a new channel photo"
         /// </summary>
         public static string EventLogEditedChannelVideo
         {
@@ -21060,7 +21282,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 set a new group video"
+        /// Localized resource similar to "un1 set a new group photo"
         /// </summary>
         public static string EventLogEditedGroupVideo
         {
@@ -24594,7 +24816,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "?opying and forwarding is not allowed in this group."
+        /// Localized resource similar to "?opying and forwarding is not allowed from this group."
         /// </summary>
         public static string ForwardsRestrictedInfoGroup
         {
@@ -25336,7 +25558,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Sending round videos isn't allowed in this group."
+        /// Localized resource similar to "Sending video messages isn't allowed here."
         /// </summary>
         public static string GlobalAttachRoundRestricted
         {
@@ -27185,6 +27407,72 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "**{0} user** restricts adding them to channels. You can send them an invite link instead."
+        /// </summary>
+        public static string InviteChannelRestrictedUsers_one
+        {
+            get
+            {
+                return resourceLoader.GetString("InviteChannelRestrictedUsers_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "**{0} users** restrict adding them to channels. You can send them an invite link instead."
+        /// </summary>
+        public static string InviteChannelRestrictedUsers_other
+        {
+            get
+            {
+                return resourceLoader.GetString("InviteChannelRestrictedUsers_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "**{0} user** can only be invited via link, but you don't have permission to share invite links to this channel."
+        /// </summary>
+        public static string InviteChannelRestrictedUsers2_one
+        {
+            get
+            {
+                return resourceLoader.GetString("InviteChannelRestrictedUsers2_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "**{0} users** can only be invited via link, but you don't have permission to share invite links to this channel."
+        /// </summary>
+        public static string InviteChannelRestrictedUsers2_other
+        {
+            get
+            {
+                return resourceLoader.GetString("InviteChannelRestrictedUsers2_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "**{0}** can only be invited via link, but you don't have permission to share invite links to this channel."
+        /// </summary>
+        public static string InviteChannelRestrictedUsers2One
+        {
+            get
+            {
+                return resourceLoader.GetString("InviteChannelRestrictedUsers2One");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "**{0}** restricts adding them to channels. You can send them an invite link instead."
+        /// </summary>
+        public static string InviteChannelRestrictedUsersOne
+        {
+            get
+            {
+                return resourceLoader.GetString("InviteChannelRestrictedUsersOne");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "invited"
         /// </summary>
         public static string Invited
@@ -27269,6 +27557,105 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("InviteLinks");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Invite link sent to {0} user."
+        /// </summary>
+        public static string InviteLinkSent_one
+        {
+            get
+            {
+                return resourceLoader.GetString("InviteLinkSent_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Invite link sent to {0} users."
+        /// </summary>
+        public static string InviteLinkSent_other
+        {
+            get
+            {
+                return resourceLoader.GetString("InviteLinkSent_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Invite link sent to **{0}**."
+        /// </summary>
+        public static string InviteLinkSentSingle
+        {
+            get
+            {
+                return resourceLoader.GetString("InviteLinkSentSingle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "**{0} user** restricts adding them to groups. You can send them an invite link instead."
+        /// </summary>
+        public static string InviteRestrictedUsers_one
+        {
+            get
+            {
+                return resourceLoader.GetString("InviteRestrictedUsers_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "**{0} users** restrict adding them to groups. You can send them an invite link instead."
+        /// </summary>
+        public static string InviteRestrictedUsers_other
+        {
+            get
+            {
+                return resourceLoader.GetString("InviteRestrictedUsers_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "**{0} user** can only be invited via link, but you don't have permission to share invite links to this group."
+        /// </summary>
+        public static string InviteRestrictedUsers2_one
+        {
+            get
+            {
+                return resourceLoader.GetString("InviteRestrictedUsers2_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "**{0} users** can only be invited via link, but you don't have permission to share invite links to this group."
+        /// </summary>
+        public static string InviteRestrictedUsers2_other
+        {
+            get
+            {
+                return resourceLoader.GetString("InviteRestrictedUsers2_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "**{0}** can only be invited via link, but you don't have permission to share invite links to this group."
+        /// </summary>
+        public static string InviteRestrictedUsers2One
+        {
+            get
+            {
+                return resourceLoader.GetString("InviteRestrictedUsers2One");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "**{0}** restricts adding them to groups. You can send them an invite link instead."
+        /// </summary>
+        public static string InviteRestrictedUsersOne
+        {
+            get
+            {
+                return resourceLoader.GetString("InviteRestrictedUsersOne");
             }
         }
         
@@ -29384,6 +29771,347 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Always Disabled"
+        /// </summary>
+        public static string LiteBatteryAlwaysDisabled
+        {
+            get
+            {
+                return resourceLoader.GetString("LiteBatteryAlwaysDisabled");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Always Enabled"
+        /// </summary>
+        public static string LiteBatteryAlwaysEnabled
+        {
+            get
+            {
+                return resourceLoader.GetString("LiteBatteryAlwaysEnabled");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Off"
+        /// </summary>
+        public static string LiteBatteryDisabled
+        {
+            get
+            {
+                return resourceLoader.GetString("LiteBatteryDisabled");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "On"
+        /// </summary>
+        public static string LiteBatteryEnabled
+        {
+            get
+            {
+                return resourceLoader.GetString("LiteBatteryEnabled");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Automatically reduce power usage and animations when your battery is below {0}."
+        /// </summary>
+        public static string LiteBatteryInfoBelow
+        {
+            get
+            {
+                return resourceLoader.GetString("LiteBatteryInfoBelow");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Never reduce power usage and keep all animations even when your battery is low."
+        /// </summary>
+        public static string LiteBatteryInfoDisabled
+        {
+            get
+            {
+                return resourceLoader.GetString("LiteBatteryInfoDisabled");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Always reduce power usage regardless of your battery level."
+        /// </summary>
+        public static string LiteBatteryInfoEnabled
+        {
+            get
+            {
+                return resourceLoader.GetString("LiteBatteryInfoEnabled");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please turn off Power Saving Mode to change these settings."
+        /// </summary>
+        public static string LiteBatteryRestricted
+        {
+            get
+            {
+                return resourceLoader.GetString("LiteBatteryRestricted");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Power Saving Mode"
+        /// </summary>
+        public static string LiteBatteryTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("LiteBatteryTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "When below {0}"
+        /// </summary>
+        public static string LiteBatteryWhenBelow
+        {
+            get
+            {
+                return resourceLoader.GetString("LiteBatteryWhenBelow");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Animations"
+        /// </summary>
+        public static string LiteMode
+        {
+            get
+            {
+                return resourceLoader.GetString("LiteMode");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Reduce motion effects to save power."
+        /// </summary>
+        public static string LiteModeInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("LiteModeInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Autoplay in chat"
+        /// </summary>
+        public static string LiteOptionsAutoplayChat
+        {
+            get
+            {
+                return resourceLoader.GetString("LiteOptionsAutoplayChat");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Autoplay GIFs"
+        /// </summary>
+        public static string LiteOptionsAutoplayGifs
+        {
+            get
+            {
+                return resourceLoader.GetString("LiteOptionsAutoplayGifs");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Autoplay in keyboard"
+        /// </summary>
+        public static string LiteOptionsAutoplayKeyboard
+        {
+            get
+            {
+                return resourceLoader.GetString("LiteOptionsAutoplayKeyboard");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Autoplay in reaction menu"
+        /// </summary>
+        public static string LiteOptionsAutoplayReactions
+        {
+            get
+            {
+                return resourceLoader.GetString("LiteOptionsAutoplayReactions");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Autoplay Videos"
+        /// </summary>
+        public static string LiteOptionsAutoplayVideo
+        {
+            get
+            {
+                return resourceLoader.GetString("LiteOptionsAutoplayVideo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Background rotation"
+        /// </summary>
+        public static string LiteOptionsBackground
+        {
+            get
+            {
+                return resourceLoader.GetString("LiteOptionsBackground");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Night theme blur"
+        /// </summary>
+        public static string LiteOptionsBlur
+        {
+            get
+            {
+                return resourceLoader.GetString("LiteOptionsBlur");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Animations in Calls"
+        /// </summary>
+        public static string LiteOptionsCalls
+        {
+            get
+            {
+                return resourceLoader.GetString("LiteOptionsCalls");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Animations in Chats"
+        /// </summary>
+        public static string LiteOptionsChat
+        {
+            get
+            {
+                return resourceLoader.GetString("LiteOptionsChat");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Animated Emoji"
+        /// </summary>
+        public static string LiteOptionsEmoji
+        {
+            get
+            {
+                return resourceLoader.GetString("LiteOptionsEmoji");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Zoom animations"
+        /// </summary>
+        public static string LiteOptionsScale
+        {
+            get
+            {
+                return resourceLoader.GetString("LiteOptionsScale");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Animated spoiler effect"
+        /// </summary>
+        public static string LiteOptionsSpoiler
+        {
+            get
+            {
+                return resourceLoader.GetString("LiteOptionsSpoiler");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Animated Stickers"
+        /// </summary>
+        public static string LiteOptionsStickers
+        {
+            get
+            {
+                return resourceLoader.GetString("LiteOptionsStickers");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Power saving options"
+        /// </summary>
+        public static string LiteOptionsTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("LiteOptionsTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Side menu in topics"
+        /// </summary>
+        public static string LiteOptionsTopics
+        {
+            get
+            {
+                return resourceLoader.GetString("LiteOptionsTopics");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Save Power on Low Battery"
+        /// </summary>
+        public static string LitePowerSaver
+        {
+            get
+            {
+                return resourceLoader.GetString("LitePowerSaver");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Automatically switch to low power usage when your system is in Battery Saving Mode."
+        /// </summary>
+        public static string LitePowerSaverInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("LitePowerSaverInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Enable Smooth Transitions"
+        /// </summary>
+        public static string LiteSmoothTransitions
+        {
+            get
+            {
+                return resourceLoader.GetString("LiteSmoothTransitions");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can disable animated transitions between different sections of the app."
+        /// </summary>
+        public static string LiteSmoothTransitionsInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("LiteSmoothTransitionsInfo");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Choose for how long people in this chat will see your accurate location, including when the app is closed."
         /// </summary>
         public static string LiveLocationAlertGroup
@@ -29994,6 +30722,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{0} battery remaining"
+        /// </summary>
+        public static string LowPowerEnabledSubtitle
+        {
+            get
+            {
+                return resourceLoader.GetString("LowPowerEnabledSubtitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Power Saving Mode enabled"
+        /// </summary>
+        public static string LowPowerEnabledTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("LowPowerEnabledTitle");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "This is the main channel photo now."
         /// </summary>
         public static string MainChannelProfilePhotoSetHint
@@ -30005,7 +30755,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "This is the main channel video now."
+        /// Localized resource similar to "This is the main channel photo now."
         /// </summary>
         public static string MainChannelProfileVideoSetHint
         {
@@ -30027,7 +30777,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "This is the main group video now."
+        /// Localized resource similar to "This is the main group photo now."
         /// </summary>
         public static string MainGroupProfileVideoSetHint
         {
@@ -34373,7 +35123,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} changed the group video for {1}"
+        /// Localized resource similar to "{0} changed the group photo for {1}"
         /// </summary>
         public static string NotificationEditedGroupVideo
         {
@@ -34846,7 +35596,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} sent a poll to the group {1}"
+        /// Localized resource similar to "{0} sent a poll to {1}"
         /// </summary>
         public static string NotificationMessageGroupPoll
         {
@@ -41528,6 +42278,17 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Emoji Panel Animations"
+        /// </summary>
+        public static string PlayEmojiInKeyboard
+        {
+            get
+            {
+                return resourceLoader.GetString("PlayEmojiInKeyboard");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Play File"
         /// </summary>
         public static string PlayFile
@@ -41902,6 +42663,17 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Power Saving"
+        /// </summary>
+        public static string PowerUsage
+        {
+            get
+            {
+                return resourceLoader.GetString("PowerUsage");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "More"
         /// </summary>
         public static string PremiumMore
@@ -42078,7 +42850,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Emoji Status"
+        /// Localized resource similar to "Emoji Statuses"
         /// </summary>
         public static string PremiumPreviewEmojiStatus
         {
@@ -44454,7 +45226,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Raise to Speak"
+        /// Localized resource similar to "Raise to Listen"
         /// </summary>
         public static string RaiseToSpeak
         {
@@ -47109,7 +47881,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Save on your subscription up to **{0}%**"
+        /// Localized resource similar to "Save up to **{0}%** on your subscription"
         /// </summary>
         public static string SaveOnAnnualPremiumTitle
         {
@@ -47340,7 +48112,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Save to GIFs"
+        /// Localized resource similar to "Add to GIFs"
         /// </summary>
         public static string SaveToGIFs
         {
@@ -48713,6 +49485,17 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("SendingVideoStatus");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send Invite Link"
+        /// </summary>
+        public static string SendInviteLink
+        {
+            get
+            {
+                return resourceLoader.GetString("SendInviteLink");
             }
         }
         
@@ -51476,6 +52259,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Long press for more speed options."
+        /// </summary>
+        public static string SpeedHint
+        {
+            get
+            {
+                return resourceLoader.GetString("SpeedHint");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Medium"
+        /// </summary>
+        public static string SpeedMedium
+        {
+            get
+            {
+                return resourceLoader.GetString("SpeedMedium");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Normal"
         /// </summary>
         public static string SpeedNormal
@@ -51494,6 +52299,17 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("SpeedSlow");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Super Fast"
+        /// </summary>
+        public static string SpeedSuperFast
+        {
+            get
+            {
+                return resourceLoader.GetString("SpeedSuperFast");
             }
         }
         
@@ -51651,6 +52467,17 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("SponsoredMessageRecommended");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Advertiser Info"
+        /// </summary>
+        public static string SponsoredMessageSponsor
+        {
+            get
+            {
+                return resourceLoader.GetString("SponsoredMessageSponsor");
             }
         }
         
@@ -52052,6 +52879,17 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Manage your sticker packs, emoji and reactions."
+        /// </summary>
+        public static string StickersNameInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("StickersNameInfo");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Remove"
         /// </summary>
         public static string StickersRemove
@@ -52103,6 +52941,17 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("StickersReorderHint");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Settings"
+        /// </summary>
+        public static string StickersSettings
+        {
+            get
+            {
+                return resourceLoader.GetString("StickersSettings");
             }
         }
         
@@ -52659,7 +53508,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Suggested Video"
+        /// Localized resource similar to "Suggested Photo"
         /// </summary>
         public static string SuggestedVideo
         {
@@ -54807,7 +55656,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} closed topic"
+        /// Localized resource similar to "{0} closed the topic"
         /// </summary>
         public static string TopicClosed2
         {
@@ -54906,7 +55755,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} changed topic icon to {1}"
+        /// Localized resource similar to "{0} changed the topic icon to {1}"
         /// </summary>
         public static string TopicIconChangedTo
         {
@@ -54972,7 +55821,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} renamed topic to {1}"
+        /// Localized resource similar to "{0} renamed the topic to {1}"
         /// </summary>
         public static string TopicRenamedTo
         {
@@ -55761,7 +56610,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "The translation bar is now hidden for this channel."
+        /// Localized resource similar to "Translation bar hidden for this channel."
         /// </summary>
         public static string TranslationBarHiddenForChannel
         {
@@ -55772,7 +56621,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "The translation bar is now hidden for this chat."
+        /// Localized resource similar to "Translation bar hidden for this chat."
         /// </summary>
         public static string TranslationBarHiddenForChat
         {
@@ -55783,7 +56632,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "The translation bar is now hidden for this group."
+        /// Localized resource similar to "Translation bar hidden for this group."
         /// </summary>
         public static string TranslationBarHiddenForGroup
         {
@@ -56641,7 +57490,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Upgrade to the annual payment plan of Telegram Premium now to enjoy the discount."
+        /// Localized resource similar to "Upgrade to the annual payment plan for Telegram Premium now to get the discount."
         /// </summary>
         public static string UpgradePremiumMessage
         {
@@ -56674,7 +57523,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Upgrade to Premium with a discount of **{0}%**"
+        /// Localized resource similar to "Upgrade to Premium with a **{0}%** discount"
         /// </summary>
         public static string UpgradePremiumTitle
         {
@@ -57427,7 +58276,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "not active"
+        /// Localized resource similar to "inactive"
         /// </summary>
         public static string UsernameLinkInactive
         {
@@ -57856,7 +58705,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "no round"
+        /// Localized resource similar to "no video messages"
         /// </summary>
         public static string UserRestrictionsNoSendRound
         {
@@ -58457,6 +59306,72 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("VideoSavedToDownloadsHint");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Custom {0}"
+        /// </summary>
+        public static string VideoSpeedCustom
+        {
+            get
+            {
+                return resourceLoader.GetString("VideoSpeedCustom");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Fast"
+        /// </summary>
+        public static string VideoSpeedFast
+        {
+            get
+            {
+                return resourceLoader.GetString("VideoSpeedFast");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Normal"
+        /// </summary>
+        public static string VideoSpeedNormal
+        {
+            get
+            {
+                return resourceLoader.GetString("VideoSpeedNormal");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Slow"
+        /// </summary>
+        public static string VideoSpeedSlow
+        {
+            get
+            {
+                return resourceLoader.GetString("VideoSpeedSlow");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Very fast"
+        /// </summary>
+        public static string VideoSpeedVeryFast
+        {
+            get
+            {
+                return resourceLoader.GetString("VideoSpeedVeryFast");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Very slow"
+        /// </summary>
+        public static string VideoSpeedVerySlow
+        {
+            get
+            {
+                return resourceLoader.GetString("VideoSpeedVerySlow");
             }
         }
         
@@ -67190,17 +68105,6 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_context_hide_psa");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Mark all chats as read"
-        /// </summary>
-        public static string lng_context_mark_read_all
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_context_mark_read_all");
             }
         }
         

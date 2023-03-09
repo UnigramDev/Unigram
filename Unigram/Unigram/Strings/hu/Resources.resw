@@ -124,6 +124,12 @@
   <data name="AccAutoDeleteTimer" xml:space="preserve">
     <value>Törlés időzítő</value>
   </data>
+  <data name="AccDescrArchivedChatsHidden" xml:space="preserve">
+    <value>Az archivált beszélgetések elrejtve</value>
+  </data>
+  <data name="AccDescrArchivedChatsShown" xml:space="preserve">
+    <value>Az archivált csevegések láthatóak</value>
+  </data>
   <data name="AccDescrAspectRatio" xml:space="preserve">
     <value>Képarány</value>
   </data>
@@ -195,6 +201,9 @@
   </data>
   <data name="AccDescrCustomEmoji" xml:space="preserve">
     <value>Egyedi emoji</value>
+  </data>
+  <data name="AccDescrDocumentType" xml:space="preserve">
+    <value>, {0} fájl</value>
   </data>
   <data name="AccDescrDownloadProgress" xml:space="preserve">
     <value>{1} letöltve, hátra van {0}</value>
@@ -285,6 +294,9 @@
   </data>
   <data name="AccDescrMyLocation" xml:space="preserve">
     <value>Saját hely</value>
+  </data>
+  <data name="AccDescrNotificationsMuted" xml:space="preserve">
+    <value>Némítva</value>
   </data>
   <data name="AccDescrNumberOfPeopleReactions_one" xml:space="preserve">
     <value>{0} ember reagált ezzel: {1}</value>
@@ -454,6 +466,9 @@
   <data name="AccDescrShutter" xml:space="preserve">
     <value>Redőnyzár</value>
   </data>
+  <data name="AccDescrSpeedSlider" xml:space="preserve">
+    <value>Válaszd ki a sebességet</value>
+  </data>
   <data name="AccDescrStickers" xml:space="preserve">
     <value>Matricák</value>
   </data>
@@ -486,6 +501,9 @@
   </data>
   <data name="AccDescrUploadProgress" xml:space="preserve">
     <value>{1} feltöltve, hátra van {0}</value>
+  </data>
+  <data name="AccDescrUserOnline" xml:space="preserve">
+    <value>A felhasználó online.</value>
   </data>
   <data name="AccDescrUserOptions" xml:space="preserve">
     <value>Felhasználói beállítások</value>
@@ -659,7 +677,7 @@
     <value>un1 megváltoztatta a csoport nevét: un2</value>
   </data>
   <data name="ActionChangedVideo" xml:space="preserve">
-    <value>un1 megváltoztatta a csoport videóját</value>
+    <value>un1 megváltoztatta a csoport fényképét</value>
   </data>
   <data name="ActionChannelCallEnded" xml:space="preserve">
     <value>Az élő adás véget ért ({0})</value>
@@ -674,10 +692,10 @@
     <value>A csatorna képe frissítve</value>
   </data>
   <data name="ActionChannelChangedTitle" xml:space="preserve">
-    <value>A csatorna új neve: un2</value>
+    <value>A csatorna neve megváltozott: &quot;un2&quot;</value>
   </data>
   <data name="ActionChannelChangedVideo" xml:space="preserve">
-    <value>A csatorna videója megváltozott</value>
+    <value>A csatorna fényképe megváltozott</value>
   </data>
   <data name="ActionChannelRemovedPhoto" xml:space="preserve">
     <value>A csatorna képe eltávolítva</value>
@@ -852,6 +870,15 @@ erre: {1}</value>
   <data name="ActionRequestedPeer" xml:space="preserve">
     <value>Megosztottad un1-t vele: un2</value>
   </data>
+  <data name="ActionRequestedPeerChannel" xml:space="preserve">
+    <value>Megosztottál egy csatornát vele: un2</value>
+  </data>
+  <data name="ActionRequestedPeerChat" xml:space="preserve">
+    <value>Megosztottál egy csevegést vele: un2</value>
+  </data>
+  <data name="ActionRequestedPeerUser" xml:space="preserve">
+    <value>Megosztottál egy felhasználót vele: un2</value>
+  </data>
   <data name="ActionRevokedInviteLink" xml:space="preserve">
     <value>un1 visszavonta a meghívó linket: {0}</value>
   </data>
@@ -860,6 +887,9 @@ erre: {1}</value>
   </data>
   <data name="ActionsChartTitle" xml:space="preserve">
     <value>Műveletek</value>
+  </data>
+  <data name="ActionSkip" xml:space="preserve">
+    <value>Kihagy</value>
   </data>
   <data name="ActionSuggestPhoto" xml:space="preserve">
     <value>Javasolt fénykép</value>
@@ -943,7 +973,7 @@ erre: {1}</value>
     <value>Megváltoztattad a csoport nevét erre: un2</value>
   </data>
   <data name="ActionYouChangedVideo" xml:space="preserve">
-    <value>Megváltoztattad a csoport videóját</value>
+    <value>Megváltoztattad a csoport fényképét</value>
   </data>
   <data name="ActionYouCreateGroup" xml:space="preserve">
     <value>Létrehoztad a csoportot</value>
@@ -1068,14 +1098,17 @@ erre: {1}</value>
   <data name="AddedToDoNotTranslate" xml:space="preserve">
     <value>**{0}** hozzáadva a nem lefordítandók listájához.</value>
   </data>
+  <data name="AddedToDoNotTranslateOther" xml:space="preserve">
+    <value>**{0}** hozzáadva a Ne fordítsd le listához.</value>
+  </data>
   <data name="AddedToFavorites" xml:space="preserve">
     <value>A matrica hozzáadva a kedvencekhez.</value>
   </data>
   <data name="AddEmailSubtitle" xml:space="preserve">
-    <value>Kérjük, adj meg egy érvényes e-mail címet, hogy megvédd fiókodat.</value>
+    <value>A Telegram bejelentkezési kódokat mostantól nem SMS-ben, hanem e-mailben kapod meg. Kérjük, adj meg egy olyan e-mail címet, amelyhez hozzáférsz.</value>
   </data>
   <data name="AddEmailTitle" xml:space="preserve">
-    <value>Email megadása</value>
+    <value>Válassz egy bejelentkezési e-mailt</value>
   </data>
   <data name="AddEmojiInstalled" xml:space="preserve">
     <value>Emoji hozzáadva.</value>
@@ -1333,7 +1366,7 @@ erre: {1}</value>
     <value>Az összes weboldal leválasztva.</value>
   </data>
   <data name="AlmostDone" xml:space="preserve">
-    <value>Majdnem kész</value>
+    <value>Majdnem kész!</value>
   </data>
   <data name="ALongTimeAgo" xml:space="preserve">
     <value>utoljára aktív: elég régen</value>
@@ -1687,7 +1720,7 @@ is archiválva maradnak.</value>
     <value>Biztos, hogy mindenki számára törölni szeretnéd ezt az üzenetet?</value>
   </data>
   <data name="AreYouSureDeleteThisChat" xml:space="preserve">
-    <value>Szeretnéd törölni ezt a csevegést?</value>
+    <value>Szeretnéd végleg törölni ezt a csevegést?</value>
   </data>
   <data name="AreYouSureDeleteThisChatSavedMessages" xml:space="preserve">
     <value>Biztosan törölni akarod a **Saját jegyzeteidet**?</value>
@@ -1728,6 +1761,20 @@ A Telegramot egyszerre használhatod minden eszközödön, és több fiókot is 
   </data>
   <data name="AreYouSureSecretChatTitle" xml:space="preserve">
     <value>Titkos csevegés</value>
+  </data>
+  <data name="AreYouSureSendChatToBotAdd" xml:space="preserve">
+    <value>Ezzel **{0}** is hozzáadódik: **{1}**.</value>
+  </data>
+  <data name="AreYouSureSendChatToBotAddRights" xml:space="preserve">
+    <value>Ezzel {0} is hozzáadásra kerül a(z) {1} csoporthoz a következő jogosultságokkal:
+
+{2}</value>
+  </data>
+  <data name="AreYouSureSendChatToBotMessage" xml:space="preserve">
+    <value>Biztos, hogy el akarod küldeni ezt: **{0}** neki: **{1}**?</value>
+  </data>
+  <data name="AreYouSureSendChatToBotTitle" xml:space="preserve">
+    <value>{0} küldése neki: {1}?</value>
   </data>
   <data name="AreYouSureSessions" xml:space="preserve">
     <value>Biztos, hogy meg akarod szüntetni az összes többi munkamenetet?</value>
@@ -1777,7 +1824,7 @@ Keresd fel a &lt;![CDATA[&lt;a href=&quot;https://telegram.org/faq#general&quot;
     <value>A csoport adminjai korlátozták, hogy zenét küldj {0}-ig.</value>
   </data>
   <data name="AttachAudioRestrictedForever" xml:space="preserve">
-    <value>Sajnáljuk, de a csoport adminjai korlátoztak téged a zenék küldésében.</value>
+    <value>A csoport adminjai korlátoztak téged a zenék küldésében.</value>
   </data>
   <data name="AttachBotsHelp" xml:space="preserve">
     <value>Görgess le a botokhoz</value>
@@ -1882,10 +1929,10 @@ Keresd fel a &lt;![CDATA[&lt;a href=&quot;https://telegram.org/faq#general&quot;
     <value>Videóüzenet</value>
   </data>
   <data name="AttachRoundRestricted" xml:space="preserve">
-    <value>A csoport adminjai korlátozták, hogy  a videóüzenetet küldj {0}-ig.</value>
+    <value>A csoport adminjai korlátozták, hogy videóüzenetet küldj {0}-ig.</value>
   </data>
   <data name="AttachRoundRestrictedForever" xml:space="preserve">
-    <value>A csoport adminjai korlátozták a videóüzenetek küldésének lehetőségét.</value>
+    <value>A csoport adminjai korlátoztak téged a videóüzenetek küldésében.</value>
   </data>
   <data name="AttachSticker" xml:space="preserve">
     <value>Matrica</value>
@@ -1909,10 +1956,10 @@ Keresd fel a &lt;![CDATA[&lt;a href=&quot;https://telegram.org/faq#general&quot;
     <value>A csoport adminjai korlátoztak téged a videók küldésében.</value>
   </data>
   <data name="AttachVoiceRestricted" xml:space="preserve">
-    <value>A csoport adminjai korlátozták, hogy  a hangüzenetet küldj {0}-ig.</value>
+    <value>A csoport adminjai korlátozták, hogy  hangüzeneteket küldj {0}-ig.</value>
   </data>
   <data name="AttachVoiceRestrictedForever" xml:space="preserve">
-    <value>Ennek a csoportnak az adminjai korlátozták a hangüzenetek küldését.</value>
+    <value>A csoport adminjai korlátoztak téged a hangüzenetek küldésében.</value>
   </data>
   <data name="AudioAutodownload" xml:space="preserve">
     <value>Hangüzenetek</value>
@@ -1920,8 +1967,14 @@ Keresd fel a &lt;![CDATA[&lt;a href=&quot;https://telegram.org/faq#general&quot;
   <data name="AudioSavedHint" xml:space="preserve">
     <value>A fájl mentve a zenékhez.</value>
   </data>
+  <data name="AudioSpeedCustom" xml:space="preserve">
+    <value>A hang {0}x sebességgel fog lejátszódni.</value>
+  </data>
   <data name="AudioSpeedFast" xml:space="preserve">
     <value>A hang kétszer gyorsabban fog lejátszódni.</value>
+  </data>
+  <data name="AudioSpeedMedium" xml:space="preserve">
+    <value>A hang 1,5X sebességgel fog lejátszódni.</value>
   </data>
   <data name="AudioSpeedNormal" xml:space="preserve">
     <value>A hang normál sebességgel fog lejátszódni.</value>
@@ -2115,7 +2168,7 @@ automatikusan törlésre kerülnek.</value>
     <value>Az üzenetek automatikus törlése meghatározott idő után az összes új csevegésben amit indítasz.</value>
   </data>
   <data name="AutodeleteTimerDisabledForChats" xml:space="preserve">
-    <value>Az automatikus törlés kikapcsolva {0} csevegésben.</value>
+    <value>Az önmegsemmisítő időzítés kikapcsolva {0}.</value>
   </data>
   <data name="AutodeleteTimerEnabledForChats" xml:space="preserve">
     <value>Az önmegsemmisítő időzítő beállítva: **{0}**, {1} számára.</value>
@@ -2311,6 +2364,9 @@ automatikusan törlésre kerülnek.</value>
   </data>
   <data name="AutoNightSystemDefault" xml:space="preserve">
     <value>Rendszer alapértelmezett</value>
+  </data>
+  <data name="AutoNightSystemModeOff" xml:space="preserve">
+    <value>A rendszer alapértelmezett témája le van tiltva</value>
   </data>
   <data name="AutoNightTheme" xml:space="preserve">
     <value>Automatikus éjszakai mód</value>
@@ -2643,6 +2699,11 @@ Hozzá fog férni az **IP-címedhez** és a készülék alapvető adataihoz.</va
   </data>
   <data name="BotStart" xml:space="preserve">
     <value>Indítás</value>
+  </data>
+  <data name="BotStartAppPermission" xml:space="preserve">
+    <value>Szeretnéd elindítani ezt az alkalmazást: **{0}** ettől a bottól: **{1}**?
+
+Hozzá fog férni az **IP-címedhez** és az alapvető eszközadataidhoz.</value>
   </data>
   <data name="BotStatusCantRead" xml:space="preserve">
     <value>nem fér hozzá az üzenetekhez</value>
@@ -3230,13 +3291,22 @@ Megjegyzés: ha elfelejted a jelszavad, ki kell jelentkezned vagy újra kell tel
     <value>Tagok elrejtése</value>
   </data>
   <data name="ChannelHideMembersInfo" xml:space="preserve">
-    <value>Kapcsold be a csoport tagjainak elrejtéséhez. A rendszergazdák továbbra is láthatóak maradnak.</value>
+    <value>Kapcsold be a csoport tagjainak elrejtéséhez. Az adminisztrátorok továbbra is láthatóak maradnak.</value>
   </data>
   <data name="ChannelInviteLinkTitle" xml:space="preserve">
     <value>Meghívó link</value>
   </data>
   <data name="ChannelInviteViaLink" xml:space="preserve">
     <value>Meghívás hivatkozással</value>
+  </data>
+  <data name="ChannelInviteViaLinkRestricted" xml:space="preserve">
+    <value>Nem tudsz linket létrehozni</value>
+  </data>
+  <data name="ChannelInviteViaLinkRestricted2" xml:space="preserve">
+    <value>Ezt a felhasználót nem lehet meghívni</value>
+  </data>
+  <data name="ChannelInviteViaLinkRestricted3" xml:space="preserve">
+    <value>Ezeket a felhasználókat nem lehet meghívni</value>
   </data>
   <data name="ChannelJoin" xml:space="preserve">
     <value>CSATLAKOZÁS</value>
@@ -3501,7 +3571,7 @@ A minimális hossz 5 karakter.</value>
     <value>Figyelmeztetés</value>
   </data>
   <data name="ChannelVideoEditNotification" xml:space="preserve">
-    <value>{0} csatorna frissítette a videóját</value>
+    <value>{0} csatorna frissítette a fényképét</value>
   </data>
   <data name="Characters_one" xml:space="preserve">
     <value>{0} karakter</value>
@@ -3593,6 +3663,9 @@ A minimális hossz 5 karakter.</value>
   <data name="ChatListSwipeGesture" xml:space="preserve">
     <value>Csevegési oldalra húzás műveletek</value>
   </data>
+  <data name="ChatListSwipeGestureInfo" xml:space="preserve">
+    <value>Állítsd be, hogy milyen műveletet szeretnél végrehajtani minden egyes alkalommal, amikor balra csúsztatsz a csevegési listában.</value>
+  </data>
   <data name="ChatLocation" xml:space="preserve">
     <value>Hely</value>
   </data>
@@ -3609,10 +3682,10 @@ A minimális hossz 5 karakter.</value>
     <value>A kinézet visszaállítása</value>
   </data>
   <data name="Chats_one" xml:space="preserve">
-    <value>{0} csevegésbe</value>
+    <value>{0} csevegésben</value>
   </data>
   <data name="Chats_other" xml:space="preserve">
-    <value>{0} csevegésbe</value>
+    <value>{0} csevegésben</value>
   </data>
   <data name="ChatsArchived" xml:space="preserve">
     <value>Csevegések archiválva.</value>
@@ -4326,7 +4399,7 @@ Fejleszd a csoportod szupercsoporttá, hogy még többen használhassátok:
     <value>Egy új csoport létrehozása importáláshoz</value>
   </data>
   <data name="CreateGroupForThis" xml:space="preserve">
-    <value>Új csoport létrehozása ehhez</value>
+    <value>Új csoport létrehozása ezekhez</value>
   </data>
   <data name="CreateLink" xml:space="preserve">
     <value>Hivatkozás létrehozása</value>
@@ -5187,6 +5260,18 @@ A csatorna összes feliratkozója láthatja az üzeneteket ebben a csoportban.</
   <data name="Draft" xml:space="preserve">
     <value>Piszkozat</value>
   </data>
+  <data name="DynamicPackOrder" xml:space="preserve">
+    <value>Dinamikus csomagrendezés</value>
+  </data>
+  <data name="DynamicPackOrderInfo" xml:space="preserve">
+    <value>Automatikusan a előre helyezi a nemrég használt matricacsomagokat.</value>
+  </data>
+  <data name="DynamicPackOrderOff" xml:space="preserve">
+    <value>Dinamikus sorrend kikapcsolva</value>
+  </data>
+  <data name="DynamicPackOrderOffInfo" xml:space="preserve">
+    <value>A matricacsomagok nem lesznek automatikusan átrendezve matricák használatakor.</value>
+  </data>
   <data name="Edit" xml:space="preserve">
     <value>Szerkesztés</value>
   </data>
@@ -5750,7 +5835,7 @@ Add meg a téma nevét:</value>
     <value>Legutóbbi műveletek</value>
   </data>
   <data name="EventLogActivatedUsername" xml:space="preserve">
-    <value> un1 aktiválta a(z) {0} felhasználónevet</value>
+    <value>un1 aktiválta a(z) {0} felhasználónevet</value>
   </data>
   <data name="EventLogAdded" xml:space="preserve">
     <value>un1 hozzáadta un2 felhasználót</value>
@@ -5828,7 +5913,7 @@ Add meg a téma nevét:</value>
     <value>un1 átnevezte a csatornát erre: &quot;{0}&quot;</value>
   </data>
   <data name="EventLogEditedChannelVideo" xml:space="preserve">
-    <value>un1 megváltoztatta a csatorna videóját</value>
+    <value>un1 megváltoztatta a csatorna fényképét</value>
   </data>
   <data name="EventLogEditedGroupDescription" xml:space="preserve">
     <value>un1 szerkesztette a csoport leírását:</value>
@@ -5843,7 +5928,7 @@ Add meg a téma nevét:</value>
     <value>un1 átnevezte a csoportot erre: &quot;{0}&quot;</value>
   </data>
   <data name="EventLogEditedGroupVideo" xml:space="preserve">
-    <value>un1 beállított egy új csoport videót</value>
+    <value>un1 beállított egy új csoport fényképet</value>
   </data>
   <data name="EventLogEditedMedia" xml:space="preserve">
     <value>un1 szerkesztette a médiát:</value>
@@ -6960,13 +7045,13 @@ Ez a művelet **nem** visszavonható.</value>
     <value>A média küldése ebben a csoportban nem engedélyezett.</value>
   </data>
   <data name="GlobalAttachPhotoRestricted" xml:space="preserve">
-    <value>Ebben a csoportban nem engedélyezett a fényképek küldése.</value>
+    <value>Ebben a csoportban nem engedélyezett a képek küldése.</value>
   </data>
   <data name="GlobalAttachPlainRestricted" xml:space="preserve">
     <value>Ebben a csoportban nem engedélyezett a szöveges üzenetek küldése.</value>
   </data>
   <data name="GlobalAttachRoundRestricted" xml:space="preserve">
-    <value>Ebben a csoportban nem engedélyezett a kerek videók küldése.</value>
+    <value>Ebben a csoportban nem engedélyezett a videóüzenetek küldése.</value>
   </data>
   <data name="GlobalAttachStickersRestricted" xml:space="preserve">
     <value>A matricák ebben a csoportban nem engedélyezettek.</value>
@@ -6975,7 +7060,7 @@ Ez a művelet **nem** visszavonható.</value>
     <value>Ebben a csoportban nem engedélyezett a videók küldése.</value>
   </data>
   <data name="GlobalAttachVoiceRestricted" xml:space="preserve">
-    <value>Ebben a csoportban nem engedélyezett a zene küldése.</value>
+    <value>Ebben a csoportban nem engedélyezett a hangüzenet küldése.</value>
   </data>
   <data name="GlobalAutoDeleteInfo" xml:space="preserve">
     <value>Ha engedélyezve van, akkor az általad indított csevegésekben az összes új üzenet automatikusan törlődik mindenki számára az elküldést követően egy idő elteltével. Ezt a beállítást **meglévő csevegéseidre is alkalmazhatod**.</value>
@@ -7482,6 +7567,24 @@ Az üzeneteket az aktuális napra kerül importálásra, de tartalmazzák eredet
   <data name="InviteByQRCode" xml:space="preserve">
     <value>Meghívás QR-kóddal</value>
   </data>
+  <data name="InviteChannelRestrictedUsers_one" xml:space="preserve">
+    <value>**{0} felhasználó** korlátozta a csatornákhoz való hozzáadást. Helyette küldhetsz neki egy meghívó linket.</value>
+  </data>
+  <data name="InviteChannelRestrictedUsers_other" xml:space="preserve">
+    <value>**{0} felhasználó** korlátozta a csatornákhoz való hozzáadást. Helyette küldhetsz nekik egy meghívó linket.</value>
+  </data>
+  <data name="InviteChannelRestrictedUsers2_one" xml:space="preserve">
+    <value>**{0} felhasználó** csak linkkel hívható meg, de nincs jogosultságod meghívó linkek megosztására ezen a csatornán.</value>
+  </data>
+  <data name="InviteChannelRestrictedUsers2_other" xml:space="preserve">
+    <value>**{0} felhasználó** csak linkkel hívható meg, de nincs jogosultságod meghívó linkek megosztására ezen a csatornán.</value>
+  </data>
+  <data name="InviteChannelRestrictedUsers2One" xml:space="preserve">
+    <value>**{0}** csak linkkel hívható meg, de nincs jogosultságod meghívó linkek megosztására ezen a csatornán.</value>
+  </data>
+  <data name="InviteChannelRestrictedUsersOne" xml:space="preserve">
+    <value>**{0}** korlátozta a csatornákhoz való hozzáadását. Helyette küldhetsz neki egy meghívó linket.</value>
+  </data>
   <data name="Invited" xml:space="preserve">
     <value>meghívott</value>
   </data>
@@ -7505,6 +7608,33 @@ Az üzeneteket az aktuális napra kerül importálásra, de tartalmazzák eredet
   </data>
   <data name="InviteLinks" xml:space="preserve">
     <value>Meghívó linkek</value>
+  </data>
+  <data name="InviteLinkSent_one" xml:space="preserve">
+    <value>Meghívó link elküldve {0} felhasználónak</value>
+  </data>
+  <data name="InviteLinkSent_other" xml:space="preserve">
+    <value>Meghívó link elküldve {0} felhasználónak</value>
+  </data>
+  <data name="InviteLinkSentSingle" xml:space="preserve">
+    <value>Meghívó link elküldve: **{0}**</value>
+  </data>
+  <data name="InviteRestrictedUsers_one" xml:space="preserve">
+    <value>**{0} felhasználó** korlátozta a csoportokhoz való hozzáadást. Helyette küldhetsz neki egy meghívó linket.</value>
+  </data>
+  <data name="InviteRestrictedUsers_other" xml:space="preserve">
+    <value>**{0} felhasználó** korlátozta a csoportokhoz való hozzáadást. Helyette küldhetsz nekik egy meghívó linket.</value>
+  </data>
+  <data name="InviteRestrictedUsers2_one" xml:space="preserve">
+    <value>**{0} felhasználót** csak linkkel lehetne meghívni, de nincs engedélyed meghívó linkek megosztására ebben a csoportban.</value>
+  </data>
+  <data name="InviteRestrictedUsers2_other" xml:space="preserve">
+    <value>**{0} felhasználót** csak linkkel lehetne meghívni, de nincs engedélyed meghívó linkek megosztására ebben a csoportban.</value>
+  </data>
+  <data name="InviteRestrictedUsers2One" xml:space="preserve">
+    <value>**{0}** csak linkkel hívható meg, de nincs engedélyed meghívó linkek megosztására ebben a csoportban.</value>
+  </data>
+  <data name="InviteRestrictedUsersOne" xml:space="preserve">
+    <value>**{0}** korlátozta a csoportokhoz való hozzáadását. Helyette küldhetsz neki egy meghívó linket.</value>
   </data>
   <data name="InviteRevokedHint" xml:space="preserve">
     <value>A meghívó linket visszavonták.</value>
@@ -8086,6 +8216,99 @@ Bármikor visszaállíthatod a nyelvet a Beállítások menüpontban.</value>
   <data name="Listening" xml:space="preserve">
     <value>hallgatja</value>
   </data>
+  <data name="LiteBatteryAlwaysDisabled" xml:space="preserve">
+    <value>Mindig letiltva</value>
+  </data>
+  <data name="LiteBatteryAlwaysEnabled" xml:space="preserve">
+    <value>Mindig engedélyezve</value>
+  </data>
+  <data name="LiteBatteryDisabled" xml:space="preserve">
+    <value>Ki</value>
+  </data>
+  <data name="LiteBatteryEnabled" xml:space="preserve">
+    <value>Be</value>
+  </data>
+  <data name="LiteBatteryInfoBelow" xml:space="preserve">
+    <value>Automatikusan csökkenti az energiafelhasználást és az animációkat, ha az akkumulátor töltöttsége {0} alá csökken.</value>
+  </data>
+  <data name="LiteBatteryInfoDisabled" xml:space="preserve">
+    <value>Soha ne csökkentse az energiafelhasználást, és tartsa meg az összes animációt még akkor is, ha az energiaszint alacsony.</value>
+  </data>
+  <data name="LiteBatteryInfoEnabled" xml:space="preserve">
+    <value>A töltöttségi szinttől függetlenül mindig csökkentse az energiafelhasználást.</value>
+  </data>
+  <data name="LiteBatteryRestricted" xml:space="preserve">
+    <value>Kérjük, a beállítások módosításához kapcsold ki az Alacsony energiafogyasztású módot.</value>
+  </data>
+  <data name="LiteBatteryTitle" xml:space="preserve">
+    <value>Energiatakarékos üzemmód</value>
+  </data>
+  <data name="LiteBatteryWhenBelow" xml:space="preserve">
+    <value>Ha {0} alatt van</value>
+  </data>
+  <data name="LiteMode" xml:space="preserve">
+    <value>Animációk</value>
+  </data>
+  <data name="LiteModeInfo" xml:space="preserve">
+    <value>Mozgás effektusok csökkentése az energiatakarékosság érdekében.</value>
+  </data>
+  <data name="LiteOptionsAutoplayChat" xml:space="preserve">
+    <value>Automatikus lejátszás a csevegésben</value>
+  </data>
+  <data name="LiteOptionsAutoplayGifs" xml:space="preserve">
+    <value>GIF-ek automata lejátszása</value>
+  </data>
+  <data name="LiteOptionsAutoplayKeyboard" xml:space="preserve">
+    <value>Automatikus lejátszás a billentyűzeten</value>
+  </data>
+  <data name="LiteOptionsAutoplayReactions" xml:space="preserve">
+    <value>Automatikus lejátszás a reakciók menüben</value>
+  </data>
+  <data name="LiteOptionsAutoplayVideo" xml:space="preserve">
+    <value>Videók automata lejátszása</value>
+  </data>
+  <data name="LiteOptionsBackground" xml:space="preserve">
+    <value>Háttérforgatás</value>
+  </data>
+  <data name="LiteOptionsBlur" xml:space="preserve">
+    <value>Éjszakai téma elmosódás</value>
+  </data>
+  <data name="LiteOptionsCalls" xml:space="preserve">
+    <value>Hívások animációi</value>
+  </data>
+  <data name="LiteOptionsChat" xml:space="preserve">
+    <value>Csevegések animációi</value>
+  </data>
+  <data name="LiteOptionsEmoji" xml:space="preserve">
+    <value>Animált Emoji</value>
+  </data>
+  <data name="LiteOptionsScale" xml:space="preserve">
+    <value>Nagyítás animációk</value>
+  </data>
+  <data name="LiteOptionsSpoiler" xml:space="preserve">
+    <value>Animált spoiler effekt</value>
+  </data>
+  <data name="LiteOptionsStickers" xml:space="preserve">
+    <value>Animált matricák</value>
+  </data>
+  <data name="LiteOptionsTitle" xml:space="preserve">
+    <value>Energiatakarékossági lehetőségek</value>
+  </data>
+  <data name="LiteOptionsTopics" xml:space="preserve">
+    <value>Oldalmenü a témakörökben</value>
+  </data>
+  <data name="LitePowerSaver" xml:space="preserve">
+    <value>Energiatakarékosság alacsony töltöttségnél</value>
+  </data>
+  <data name="LitePowerSaverInfo" xml:space="preserve">
+    <value>Automatikusan átvált alacsony energiafelhasználásra, amikor a rendszer energiatakarékos üzemmódban van.</value>
+  </data>
+  <data name="LiteSmoothTransitions" xml:space="preserve">
+    <value>Gördülékeny átmenetek</value>
+  </data>
+  <data name="LiteSmoothTransitionsInfo" xml:space="preserve">
+    <value>Letilthatod az animált átmeneteket az alkalmazás különböző részei között.</value>
+  </data>
   <data name="LiveLocationAlertGroup" xml:space="preserve">
     <value>Válaszd ki, hogy a csevegőpartnerek mennyi ideig láthatják a pontos helyzetedet, beleértve azt is, amikor az alkalmazás be van zárva.</value>
   </data>
@@ -8255,17 +8478,23 @@ A művelet több percig is eltarthat.</value>
   <data name="LowDiskSpaceTitle2" xml:space="preserve">
     <value>Média törlése</value>
   </data>
+  <data name="LowPowerEnabledSubtitle" xml:space="preserve">
+    <value>{0} hátralévő akkumulátor töltöttség</value>
+  </data>
+  <data name="LowPowerEnabledTitle" xml:space="preserve">
+    <value>Energiatakarékos Üzemmód engedélyezve</value>
+  </data>
   <data name="MainChannelProfilePhotoSetHint" xml:space="preserve">
     <value>Ez az aktuális csatornafotó most.</value>
   </data>
   <data name="MainChannelProfileVideoSetHint" xml:space="preserve">
-    <value>Ez az aktuális csatornavideó most.</value>
+    <value>Ez a jelenlegi csatornakép.</value>
   </data>
   <data name="MainGroupProfilePhotoSetHint" xml:space="preserve">
     <value>Ez az aktuális csoportkép most.</value>
   </data>
   <data name="MainGroupProfileVideoSetHint" xml:space="preserve">
-    <value>Ez az aktuális csoportvideó most.</value>
+    <value>Ez a jelenlegi csoportkép.</value>
   </data>
   <data name="MainProfilePhotoSetHint" xml:space="preserve">
     <value>Ez az aktuális profilképed most.</value>
@@ -9465,7 +9694,7 @@ Kérjük, ellenőrizd, hogy a megfelelő szerver URL-t és stream kulcsot adtad-
     <value>{0} megváltoztatta a csoport képét itt: {1}</value>
   </data>
   <data name="NotificationEditedGroupVideo" xml:space="preserve">
-    <value>{0} megváltoztatta a csoport videót itt: {1}</value>
+    <value>{0} megváltoztatta a csoport fényképét itt: {1}</value>
   </data>
   <data name="NotificationGroupAddMember" xml:space="preserve">
     <value>{0} meghívta {2} felhasználót a(z) {1} csoportba</value>
@@ -11442,6 +11671,9 @@ Csak az általad választott időtartamig fogunk hozzáférni tartózkodási hel
   <data name="PlainTextRestrictedHint" xml:space="preserve">
     <value>Szöveg nem megengedett</value>
   </data>
+  <data name="PlayEmojiInKeyboard" xml:space="preserve">
+    <value>Emoji panel animációk</value>
+  </data>
   <data name="PlayFile" xml:space="preserve">
     <value>Fájl lejátszása</value>
   </data>
@@ -11544,6 +11776,9 @@ Csak az általad választott időtartamig fogunk hozzáférni tartózkodási hel
   <data name="PostingMembers" xml:space="preserve">
     <value>Posztoló tagok</value>
   </data>
+  <data name="PowerUsage" xml:space="preserve">
+    <value>Energiatakarékosság</value>
+  </data>
   <data name="PremiumMore" xml:space="preserve">
     <value>Bővebben</value>
   </data>
@@ -11593,7 +11828,7 @@ Csak az általad választott időtartamig fogunk hozzáférni tartózkodási hel
     <value>Ez az emoji csomag csak a **Telegram Prémium** előfizetők számára érhető el.</value>
   </data>
   <data name="PremiumPreviewEmojiStatus" xml:space="preserve">
-    <value>Emoji állapot</value>
+    <value>Emoji állapotok</value>
   </data>
   <data name="PremiumPreviewEmojiStatusDescription" xml:space="preserve">
     <value>Válassz több ezer emoji közül az aktuális tevékenység megjelenítéséhez a neved mellett.</value>
@@ -12241,7 +12476,7 @@ Csak az általad választott időtartamig fogunk hozzáférni tartózkodási hel
     <value>Nem találtad el a helyes választ.</value>
   </data>
   <data name="RaiseToSpeak" xml:space="preserve">
-    <value>Felemelés a beszédhez</value>
+    <value>Felemelés a hallgatáshoz</value>
   </data>
   <data name="RateCallDistorted" xml:space="preserve">
     <value>A beszéd torz volt</value>
@@ -12976,7 +13211,7 @@ A csatornák privátok lesznek.</value>
     <value>Jelentkezz a Telegram Prémium éves fizetési csomagjára most, hogy megkapd a kedvezményt.</value>
   </data>
   <data name="SaveOnAnnualPremiumTitle" xml:space="preserve">
-    <value>Spórolj az előfizetéseddel akár **{0}%**-ot</value>
+    <value>Spórolj az előfizetéssel akár **{0}%**-ot</value>
   </data>
   <data name="SaveTheme" xml:space="preserve">
     <value>Téma mentése</value>
@@ -13039,7 +13274,7 @@ A csatornák privátok lesznek.</value>
     <value>Videók {0}-ig</value>
   </data>
   <data name="SaveToGIFs" xml:space="preserve">
-    <value>Mentés a GIF-ek közé</value>
+    <value>Hozzáadás a GIF-ekhez</value>
   </data>
   <data name="SaveToMusic" xml:space="preserve">
     <value>Mentés a zenék közé</value>
@@ -13275,7 +13510,7 @@ A csatornák privátok lesznek.</value>
     <value>megkapja az önmegsemmisítő időzítőt</value>
   </data>
   <data name="SelectChatsForDisableAutoDelete" xml:space="preserve">
-    <value>az önmegsemmisítő kikapcsolásához</value>
+    <value>az automatikus törlés kikapcsolásához</value>
   </data>
   <data name="SelectChatsForDisableAutoDelete2" xml:space="preserve">
     <value>kikapcsolásra kerül az önmegesemmisítés</value>
@@ -13415,6 +13650,9 @@ A csatornák privátok lesznek.</value>
   <data name="SendingVideoStatus" xml:space="preserve">
     <value>éppen videót küld...</value>
   </data>
+  <data name="SendInviteLink" xml:space="preserve">
+    <value>Meghívó hivatkozás küldése</value>
+  </data>
   <data name="SendItems" xml:space="preserve">
     <value>Küldés {0}</value>
   </data>
@@ -13452,7 +13690,7 @@ A csatornák privátok lesznek.</value>
     <value>Képek</value>
   </data>
   <data name="SendMediaPermissionRound" xml:space="preserve">
-    <value>Videó üzenetek</value>
+    <value>Videóüzenetek</value>
   </data>
   <data name="SendMediaPermissionStickersGifs" xml:space="preserve">
     <value>&lt;![CDATA[Matrica és GIFek]]&gt;</value>
@@ -14020,7 +14258,7 @@ Kérjük, add meg a helyes számot, beleértve az országkódot is.</value>
     <value>Fordítás gomb megjelenítése</value>
   </data>
   <data name="ShowTranslateChatButton" xml:space="preserve">
-    <value>A teljes csevegés lefordítása</value>
+    <value>Teljes csevegések fordítása</value>
   </data>
   <data name="ShowTranslateChatButtonLocked" xml:space="preserve">
     <value>Fizess elő a **Telegram Premiumra**, hogy egyszerre le tudd fordítani az összes üzenetet a csevegésben.</value>
@@ -14174,11 +14412,20 @@ A lassú mód engedélyezve van. Nem küldhetsz egyszerre több üzenetet.</valu
   <data name="SpeedFast" xml:space="preserve">
     <value>Gyors</value>
   </data>
+  <data name="SpeedHint" xml:space="preserve">
+    <value>Hosszú koppintás a további sebességekhez.</value>
+  </data>
+  <data name="SpeedMedium" xml:space="preserve">
+    <value>Közepes</value>
+  </data>
   <data name="SpeedNormal" xml:space="preserve">
     <value>Normál</value>
   </data>
   <data name="SpeedSlow" xml:space="preserve">
     <value>Lassú</value>
+  </data>
+  <data name="SpeedSuperFast" xml:space="preserve">
+    <value>Szupergyors</value>
   </data>
   <data name="SpeedVeryFast" xml:space="preserve">
     <value>Nagyon gyors</value>
@@ -14224,6 +14471,9 @@ Az online hirdetések többé nem jelenthetnek egyet a felhasználói magánéle
   </data>
   <data name="SponsoredMessageRecommended" xml:space="preserve">
     <value>ajánlott</value>
+  </data>
+  <data name="SponsoredMessageSponsor" xml:space="preserve">
+    <value>Hirdető infó</value>
   </data>
   <data name="Start" xml:space="preserve">
     <value>Indítás</value>
@@ -14334,6 +14584,9 @@ Az online hirdetések többé nem jelenthetnek egyet a felhasználói magánéle
   <data name="StickersName" xml:space="preserve">
     <value>Matricák és emojik</value>
   </data>
+  <data name="StickersNameInfo" xml:space="preserve">
+    <value>Kezeld a matricacsomagokat, hangulatjeleket és reakciókat.</value>
+  </data>
   <data name="StickersRemove" xml:space="preserve">
     <value>Eltávolítás</value>
   </data>
@@ -14348,6 +14601,9 @@ Az online hirdetések többé nem jelenthetnek egyet a felhasználói magánéle
   </data>
   <data name="StickersReorderHint" xml:space="preserve">
     <value>Húzd a matricákat az újrarendezéshez.</value>
+  </data>
+  <data name="StickersSettings" xml:space="preserve">
+    <value>Beállítások</value>
   </data>
   <data name="StickersShare" xml:space="preserve">
     <value>Megosztás</value>
@@ -14502,7 +14758,7 @@ Miután előfizettél, a Telegram Prémium előnyeit minden olyan alkalmazásbó
     <value>Javasolt fénykép</value>
   </data>
   <data name="SuggestedVideo" xml:space="preserve">
-    <value>Javasolt videó</value>
+    <value>Javasolt fénykép</value>
   </data>
   <data name="SuggestPhoto" xml:space="preserve">
     <value>Javasolj fényképet</value>
@@ -15605,7 +15861,7 @@ Ha nem értesz egyet a Telegram szerény igényeivel, akkor nem tudjuk biztosít
     <value>Szupercsoporttá fejlesztés</value>
   </data>
   <data name="UpgradePremiumMessage" xml:space="preserve">
-    <value>Frissíts a Telegram Prémium éves díjcsomagjára most, hogy élvezhesd a kedvezményt.</value>
+    <value>Frissíts a Telegram Prémium éves díjcsomagjára most, hogy megkapd a kedvezményt.</value>
   </data>
   <data name="UpgradePremiumPerMonth" xml:space="preserve">
     <value>Frissítés {0} havidíjért</value>
@@ -15940,7 +16196,7 @@ Azonban rövid, gyűjthető felhasználónevek, köztük ez is megvásárolható
     <value>szavazások tiltva</value>
   </data>
   <data name="UserRestrictionsNoSendRound" xml:space="preserve">
-    <value>nincs körvideó</value>
+    <value>nincs videóüzenet</value>
   </data>
   <data name="UserRestrictionsNoSendStickers" xml:space="preserve">
     <value>GIF-ek és matricák tiltva</value>
@@ -16097,6 +16353,24 @@ Azonban rövid, gyűjthető felhasználónevek, köztük ez is megvásárolható
   </data>
   <data name="VideoSavedToDownloadsHint" xml:space="preserve">
     <value>A videó mentve a letöltésekbe.</value>
+  </data>
+  <data name="VideoSpeedCustom" xml:space="preserve">
+    <value>Egyedi {0}</value>
+  </data>
+  <data name="VideoSpeedFast" xml:space="preserve">
+    <value>Gyors</value>
+  </data>
+  <data name="VideoSpeedNormal" xml:space="preserve">
+    <value>Normál</value>
+  </data>
+  <data name="VideoSpeedSlow" xml:space="preserve">
+    <value>Lassú</value>
+  </data>
+  <data name="VideoSpeedVeryFast" xml:space="preserve">
+    <value>Nagyon gyors</value>
+  </data>
+  <data name="VideoSpeedVerySlow" xml:space="preserve">
+    <value>Nagyon lassú</value>
   </data>
   <data name="VideosSavedHint_one" xml:space="preserve">
     <value>A videó mentve a galériába.</value>
@@ -17166,6 +17440,9 @@ A jelkódod **nem befolyásolja** a kezdőképernyőhöz hozzáadott widgeteket.
   </data>
   <data name="YourContactsToInvite" xml:space="preserve">
     <value>Névjegyeid</value>
+  </data>
+  <data name="YourCurrentPlan" xml:space="preserve">
+    <value>a jelenlegi előfizetésed</value>
   </data>
   <data name="YourEmail" xml:space="preserve">
     <value>Az e-mail címed</value>

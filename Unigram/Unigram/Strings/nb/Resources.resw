@@ -124,6 +124,12 @@
   <data name="AccAutoDeleteTimer" xml:space="preserve">
     <value>Nedtelling for autosletting</value>
   </data>
+  <data name="AccDescrArchivedChatsHidden" xml:space="preserve">
+    <value>Arkiverte samtaler skjult</value>
+  </data>
+  <data name="AccDescrArchivedChatsShown" xml:space="preserve">
+    <value>Arkiverte samtaler vises</value>
+  </data>
   <data name="AccDescrAspectRatio" xml:space="preserve">
     <value>Størrelsesforhold</value>
   </data>
@@ -195,6 +201,9 @@
   </data>
   <data name="AccDescrCustomEmoji" xml:space="preserve">
     <value>Egendefinert emoji</value>
+  </data>
+  <data name="AccDescrDocumentType" xml:space="preserve">
+    <value>, {0} fil</value>
   </data>
   <data name="AccDescrDownloadProgress" xml:space="preserve">
     <value>Lastet ned {0} av {1}</value>
@@ -285,6 +294,9 @@
   </data>
   <data name="AccDescrMyLocation" xml:space="preserve">
     <value>Min posisjon</value>
+  </data>
+  <data name="AccDescrNotificationsMuted" xml:space="preserve">
+    <value>Stille</value>
   </data>
   <data name="AccDescrNumberOfPeopleReactions_one" xml:space="preserve">
     <value>{0} person reagerte med {1}</value>
@@ -454,6 +466,9 @@
   <data name="AccDescrShutter" xml:space="preserve">
     <value>Lukker</value>
   </data>
+  <data name="AccDescrSpeedSlider" xml:space="preserve">
+    <value>Velg hastighet</value>
+  </data>
   <data name="AccDescrStickers" xml:space="preserve">
     <value>Klistermerker</value>
   </data>
@@ -486,6 +501,9 @@
   </data>
   <data name="AccDescrUploadProgress" xml:space="preserve">
     <value>Lastet opp {0} av {1}</value>
+  </data>
+  <data name="AccDescrUserOnline" xml:space="preserve">
+    <value>På nett</value>
   </data>
   <data name="AccDescrUserOptions" xml:space="preserve">
     <value>Brukeralternativer</value>
@@ -870,6 +888,9 @@ til: {1}</value>
   <data name="ActionsChartTitle" xml:space="preserve">
     <value>Handlinger</value>
   </data>
+  <data name="ActionSkip" xml:space="preserve">
+    <value>Hopp over</value>
+  </data>
   <data name="ActionSuggestPhoto" xml:space="preserve">
     <value>Foreslo bilde</value>
   </data>
@@ -1083,14 +1104,17 @@ til: {1}</value>
   <data name="AddedToDoNotTranslate" xml:space="preserve">
     <value>**{0}** ble lagt til i listen din over språk som ikke skal oversettes.</value>
   </data>
+  <data name="AddedToDoNotTranslateOther" xml:space="preserve">
+    <value>**{0}** vil ikke lenger bli oversatt.</value>
+  </data>
   <data name="AddedToFavorites" xml:space="preserve">
     <value>Klistremerket lagt til i favoritter</value>
   </data>
   <data name="AddEmailSubtitle" xml:space="preserve">
-    <value>Vennligst angi din gyldige e-postadresse for å beskytte kontoen din.</value>
+    <value>Du vil nå motta Telegram innloggingskoder via e-post og ikke SMS. Vennligst angi en e-postadresse du har tilgang til.</value>
   </data>
   <data name="AddEmailTitle" xml:space="preserve">
-    <value>Legg til e-post</value>
+    <value>Velg en e-post for innlogging</value>
   </data>
   <data name="AddEmojiInstalled" xml:space="preserve">
     <value>Emoji ble lagt til.</value>
@@ -1947,8 +1971,14 @@ Vennligst ta en titt på &lt;![CDATA[&lt;a href=&quot;https://telegram.org/faq#g
   <data name="AudioSavedHint" xml:space="preserve">
     <value>Fil lagret til musikk.</value>
   </data>
+  <data name="AudioSpeedCustom" xml:space="preserve">
+    <value>Lyd vil spilles av med {0}x hastighet.</value>
+  </data>
   <data name="AudioSpeedFast" xml:space="preserve">
     <value>Lyd vil bli spilt av i dobbel hastighet.</value>
+  </data>
+  <data name="AudioSpeedMedium" xml:space="preserve">
+    <value>Lyd vil spilles av på 1.5x hastighet</value>
   </data>
   <data name="AudioSpeedNormal" xml:space="preserve">
     <value>Lyd vil bli spilt av i normal hastighet.</value>
@@ -2339,6 +2369,9 @@ slettet {0} etter at de er sendt.</value>
   <data name="AutoNightSystemDefault" xml:space="preserve">
     <value>Systemstandard</value>
   </data>
+  <data name="AutoNightSystemModeOff" xml:space="preserve">
+    <value>Systemets standardtema er deaktivert.</value>
+  </data>
   <data name="AutoNightTheme" xml:space="preserve">
     <value>Automatisk mørk modus</value>
   </data>
@@ -2670,6 +2703,11 @@ Den vil kunne få tilgang til **IP adressen din** og grunnleggende enhetsinforma
   </data>
   <data name="BotStart" xml:space="preserve">
     <value>START</value>
+  </data>
+  <data name="BotStartAppPermission" xml:space="preserve">
+    <value>Vil du starte appen **{0}** fra roboten **{1}**?
+
+Den vil kunne se din **IP adresse** og grunnleggende enhetsinfo.</value>
   </data>
   <data name="BotStatusCantRead" xml:space="preserve">
     <value>har ikke tilgang til meldinger</value>
@@ -3265,6 +3303,15 @@ Merk: hvis du glemmer tilgangskoden, må du reinstallere appen. Alle hemmelige s
   <data name="ChannelInviteViaLink" xml:space="preserve">
     <value>Inviter via lenke</value>
   </data>
+  <data name="ChannelInviteViaLinkRestricted" xml:space="preserve">
+    <value>Du kan ikke opprette en lenke</value>
+  </data>
+  <data name="ChannelInviteViaLinkRestricted2" xml:space="preserve">
+    <value>Denne brukeren kan ikke inviteres.</value>
+  </data>
+  <data name="ChannelInviteViaLinkRestricted3" xml:space="preserve">
+    <value>Disse brukerne kan ikke inviteres</value>
+  </data>
   <data name="ChannelJoin" xml:space="preserve">
     <value>BLI MED</value>
   </data>
@@ -3619,6 +3666,9 @@ Minimum lengde er 5 tegn.</value>
   </data>
   <data name="ChatListSwipeGesture" xml:space="preserve">
     <value>Sveip i samtaleliste</value>
+  </data>
+  <data name="ChatListSwipeGestureInfo" xml:space="preserve">
+    <value>Angi hvilken handling som skal utføres når du sveiper til venstre i samtalelisten.</value>
   </data>
   <data name="ChatLocation" xml:space="preserve">
     <value>Posisjon</value>
@@ -4460,7 +4510,7 @@ Du kan når som helst bytte tilbake til standard Telegram tema her.</value>
     <value>Disse brukerne vil ikke kunne ringe deg, uavhengig av instillingene ovenfor.</value>
   </data>
   <data name="CustomHelp" xml:space="preserve">
-    <value>Du vil ikke kunne se Sist sett-tidspunkt eller nettstatus for folk du selv ikke deler dette med. Omtrentlig tidspunkt vil da bli vist i stedet (nylig, i løpet av en uke, i løpet av en måned).</value>
+    <value>Du vil ikke se Sist sett-tidspunkt eller nettstatus for personer du ikke deler din egen status med. Omtrentlige tider vil i stedet vises (nylig, i løpet av en uke, i løpet av en måned).</value>
   </data>
   <data name="CustomNotifications" xml:space="preserve">
     <value>Egendefinerte varsler</value>
@@ -5213,6 +5263,18 @@ Alle fra kanalen vil kunne se meldingene i denne gruppen.</value>
   <data name="Draft" xml:space="preserve">
     <value>Utkast</value>
   </data>
+  <data name="DynamicPackOrder" xml:space="preserve">
+    <value>Dynamisk rekkefølge</value>
+  </data>
+  <data name="DynamicPackOrderInfo" xml:space="preserve">
+    <value>Plasser nylige brukte klistremerkepakker øverst på panelet automatisk.</value>
+  </data>
+  <data name="DynamicPackOrderOff" xml:space="preserve">
+    <value>Dynamisk sortering av</value>
+  </data>
+  <data name="DynamicPackOrderOffInfo" xml:space="preserve">
+    <value>Klistremerkepakker vil ikke lenger plasseres først hver gang du bruker et klistremerke.</value>
+  </data>
   <data name="Edit" xml:space="preserve">
     <value>Rediger</value>
   </data>
@@ -5750,7 +5812,7 @@ Vennligst oppgi temanavn:</value>
     <value>Beklager, administratorene i denne gruppen har begrenset deg fra å sende videomeldinger.</value>
   </data>
   <data name="ErrorSendRestrictedRoundAll" xml:space="preserve">
-    <value>Beklager, sending av videomeldinger er ikke tillatt i denne gruppen.</value>
+    <value>Det er ikke tillatt å sende videomeldinger i denne gruppen</value>
   </data>
   <data name="ErrorSendRestrictedStickers" xml:space="preserve">
     <value>Beklager, administratorene i denne gruppen har begrenset din mulighet til å sende klistremerker.</value>
@@ -6787,7 +6849,7 @@ Alle hemmelige samtaler vil gå tapt.</value>
     <value>Kopiering og videresending er ikke tillatt i denne kanalen.</value>
   </data>
   <data name="ForwardsRestrictedInfoGroup" xml:space="preserve">
-    <value>Kopiering og videresending er ikke tillatt i denne gruppen.</value>
+    <value>Kopiering og videresending er ikke tillatt fra denne gruppen.</value>
   </data>
   <data name="ForwardTo" xml:space="preserve">
     <value>Videresend til…</value>
@@ -6969,10 +7031,10 @@ Denne handlingen kan **ikke** angres.</value>
     <value>Kringkastingsgrupper</value>
   </data>
   <data name="GlobalAttachAudioRestricted" xml:space="preserve">
-    <value>Sending av musikk er ikke tillatt i denne gruppen.</value>
+    <value>Det er ikke tillatt å sende musikk i denne gruppen.</value>
   </data>
   <data name="GlobalAttachDocumentsRestricted" xml:space="preserve">
-    <value>Sending av dokumenter er ikke tillatt i denne gruppen.</value>
+    <value>Det er ikke tillatt å sende dokumenter i denne gruppen.</value>
   </data>
   <data name="GlobalAttachEmojiRestricted" xml:space="preserve">
     <value>Tekstmeldinger er ikke tillatt i denne gruppen.</value>
@@ -6987,7 +7049,7 @@ Denne handlingen kan **ikke** angres.</value>
     <value>Sending av mediefiler er ikke tillatt i denne gruppen.</value>
   </data>
   <data name="GlobalAttachPhotoRestricted" xml:space="preserve">
-    <value>Sending av bilder er ikke tillatt i denne gruppen.</value>
+    <value>Det er ikke tillatt å sende bilder i denne gruppen.</value>
   </data>
   <data name="GlobalAttachPlainRestricted" xml:space="preserve">
     <value>Sending av tekstmeldinger er ikke tillatt i denne gruppen.</value>
@@ -6999,7 +7061,7 @@ Denne handlingen kan **ikke** angres.</value>
     <value>Klistremerker er ikke tillatt i denne gruppen.</value>
   </data>
   <data name="GlobalAttachVideoRestricted" xml:space="preserve">
-    <value>Sending av video er ikke tillatt i denne gruppen.</value>
+    <value>Det er ikke tillatt å sende videoer i denne gruppen</value>
   </data>
   <data name="GlobalAttachVoiceRestricted" xml:space="preserve">
     <value>Det er ikke tillatt å sende talemeldinger i denne gruppen.</value>
@@ -7505,6 +7567,24 @@ Meldinger blir importert til nåværende dag, men vil også inkludere opprinneli
   <data name="InviteByQRCode" xml:space="preserve">
     <value>Inviter med QR kode</value>
   </data>
+  <data name="InviteChannelRestrictedUsers_one" xml:space="preserve">
+    <value>**{0} bruker** begrenser muligheten til å legge vedkommende i kanaler. Du kan sende en invitasjonslenke i stedet.</value>
+  </data>
+  <data name="InviteChannelRestrictedUsers_other" xml:space="preserve">
+    <value>**{0} brukere** begrenser muligheten til å legge dem til i kanaler. Du kan sende de en invitasjonslenke i stedet.</value>
+  </data>
+  <data name="InviteChannelRestrictedUsers2_one" xml:space="preserve">
+    <value>**{0} bruker** kan kun inviteres via lenke, men administratorene i denne kanalen begrenser deg fra å dele invitasjonslenker.</value>
+  </data>
+  <data name="InviteChannelRestrictedUsers2_other" xml:space="preserve">
+    <value>**{0} brukere** kan kun inviteres via lenke, men administratorene i denne kanalen begrenser deg fra å dele invitasjonslenker.</value>
+  </data>
+  <data name="InviteChannelRestrictedUsers2One" xml:space="preserve">
+    <value>**{0}** kan kun inviteres via invitasjonslenke, men administratorene i denne kanalen begrenser deg fra å dele invitasjonslenker.</value>
+  </data>
+  <data name="InviteChannelRestrictedUsersOne" xml:space="preserve">
+    <value>**{0}** begrenser muligheten for å legge vedkommende til i kanaler. Du kan sende en invitasjonslenke i stedet.</value>
+  </data>
   <data name="Invited" xml:space="preserve">
     <value>invitert</value>
   </data>
@@ -7528,6 +7608,33 @@ Meldinger blir importert til nåværende dag, men vil også inkludere opprinneli
   </data>
   <data name="InviteLinks" xml:space="preserve">
     <value>Invitasjonslenker</value>
+  </data>
+  <data name="InviteLinkSent_one" xml:space="preserve">
+    <value>Invitasjonslenke sendt til {0} bruker</value>
+  </data>
+  <data name="InviteLinkSent_other" xml:space="preserve">
+    <value>Invitasjonslenke sendt til {0} brukere</value>
+  </data>
+  <data name="InviteLinkSentSingle" xml:space="preserve">
+    <value>Invitasjonslenke sendt til **{0}**</value>
+  </data>
+  <data name="InviteRestrictedUsers_one" xml:space="preserve">
+    <value>**{0} bruker** begrenser muligheten til å legge vedkommende til i grupper. Du kan sende en invitasjonslenke i stedet.</value>
+  </data>
+  <data name="InviteRestrictedUsers_other" xml:space="preserve">
+    <value>**{0} brukere** begrenser muligheten til å legge vedkommende til i grupper. Du kan sende de invitasjonslenker i stedet.</value>
+  </data>
+  <data name="InviteRestrictedUsers2_one" xml:space="preserve">
+    <value>**{0} bruker** kan kun bli invitert via en invitasjonslenke, men administratorene i denne gruppen har begrenset deg fra å sende invitasjonslenker.</value>
+  </data>
+  <data name="InviteRestrictedUsers2_other" xml:space="preserve">
+    <value>**{0} brukere** kan kun bli invitert via en invitasjonslenke, men administratorene i denne gruppen har begrenset deg fra å sende invitasjonslenker.</value>
+  </data>
+  <data name="InviteRestrictedUsers2One" xml:space="preserve">
+    <value>**{0}** kan kun bli invitert via en invitasjonslenke, men administratorene i denne gruppen har begrenset deg fra å sende invitasjonslenker.</value>
+  </data>
+  <data name="InviteRestrictedUsersOne" xml:space="preserve">
+    <value>**{0}** begrenser andre fra å legge dem til i grupper. Du kan sende en invitasjonslenke i stedet.</value>
   </data>
   <data name="InviteRevokedHint" xml:space="preserve">
     <value>Invitasjonslenken har blitt annullert.</value>
@@ -8110,6 +8217,99 @@ Du kan endre språket ditt tilbake når som helst i innstillingene.</value>
   <data name="Listening" xml:space="preserve">
     <value>lytter</value>
   </data>
+  <data name="LiteBatteryAlwaysDisabled" xml:space="preserve">
+    <value>Alltid deaktivert</value>
+  </data>
+  <data name="LiteBatteryAlwaysEnabled" xml:space="preserve">
+    <value>Alltid aktivert</value>
+  </data>
+  <data name="LiteBatteryDisabled" xml:space="preserve">
+    <value>Av</value>
+  </data>
+  <data name="LiteBatteryEnabled" xml:space="preserve">
+    <value>På</value>
+  </data>
+  <data name="LiteBatteryInfoBelow" xml:space="preserve">
+    <value>Reduser strømforbruk og animasjoner automatisk når batteriet er under {0}.</value>
+  </data>
+  <data name="LiteBatteryInfoDisabled" xml:space="preserve">
+    <value>Aldri reduser strømbruk og behold alle animasjoner på selv når batteriet er lavt.</value>
+  </data>
+  <data name="LiteBatteryInfoEnabled" xml:space="preserve">
+    <value>Alltid reduser strømbruk uavhengig av batterinivå.</value>
+  </data>
+  <data name="LiteBatteryRestricted" xml:space="preserve">
+    <value>Vennligst slå av strømsparing for å endre disse innstillingene.</value>
+  </data>
+  <data name="LiteBatteryTitle" xml:space="preserve">
+    <value>Lavt strømforbruk</value>
+  </data>
+  <data name="LiteBatteryWhenBelow" xml:space="preserve">
+    <value>Når under {0}</value>
+  </data>
+  <data name="LiteMode" xml:space="preserve">
+    <value>Animasjoner</value>
+  </data>
+  <data name="LiteModeInfo" xml:space="preserve">
+    <value>Reduser bevegelseseffekter for å spare strøm.</value>
+  </data>
+  <data name="LiteOptionsAutoplayChat" xml:space="preserve">
+    <value>Autoavspilling i samtale</value>
+  </data>
+  <data name="LiteOptionsAutoplayGifs" xml:space="preserve">
+    <value>Autoavspilling av GIF&apos;er</value>
+  </data>
+  <data name="LiteOptionsAutoplayKeyboard" xml:space="preserve">
+    <value>Autoavspilling i tastatur</value>
+  </data>
+  <data name="LiteOptionsAutoplayReactions" xml:space="preserve">
+    <value>Autoavspilling i reaksjonsmeny</value>
+  </data>
+  <data name="LiteOptionsAutoplayVideo" xml:space="preserve">
+    <value>Autoavspilling av videoer</value>
+  </data>
+  <data name="LiteOptionsBackground" xml:space="preserve">
+    <value>Bakgrunnsrotasjon</value>
+  </data>
+  <data name="LiteOptionsBlur" xml:space="preserve">
+    <value>Uklarhet i natt tema</value>
+  </data>
+  <data name="LiteOptionsCalls" xml:space="preserve">
+    <value>Animasjoner i samtaler</value>
+  </data>
+  <data name="LiteOptionsChat" xml:space="preserve">
+    <value>Animasjoner i samtaler</value>
+  </data>
+  <data name="LiteOptionsEmoji" xml:space="preserve">
+    <value>Animerte emoji</value>
+  </data>
+  <data name="LiteOptionsScale" xml:space="preserve">
+    <value>Zoomanimasjoner</value>
+  </data>
+  <data name="LiteOptionsSpoiler" xml:space="preserve">
+    <value>Animert spoilereffekt</value>
+  </data>
+  <data name="LiteOptionsStickers" xml:space="preserve">
+    <value>Animerte klistremerker</value>
+  </data>
+  <data name="LiteOptionsTitle" xml:space="preserve">
+    <value>Alternativer for strømsparing</value>
+  </data>
+  <data name="LiteOptionsTopics" xml:space="preserve">
+    <value>Sidemeny i emner</value>
+  </data>
+  <data name="LitePowerSaver" xml:space="preserve">
+    <value>Spar strøm på lavt batteri</value>
+  </data>
+  <data name="LitePowerSaverInfo" xml:space="preserve">
+    <value>Bytt automatisk til lavt strømforbruk i appen når enheten din settes i batterisparingsmodus.</value>
+  </data>
+  <data name="LiteSmoothTransitions" xml:space="preserve">
+    <value>Aktiver myke overganger</value>
+  </data>
+  <data name="LiteSmoothTransitionsInfo" xml:space="preserve">
+    <value>Du kan deaktivere animerte overganger mellom forskjellige seksjoner i appen.</value>
+  </data>
   <data name="LiveLocationAlertGroup" xml:space="preserve">
     <value>Velg hvor lenge folk i denne samtalen får se din nøyaktige posisjon, inkludert når appen er lukket.</value>
   </data>
@@ -8279,6 +8479,12 @@ Det kan ta noen minutter å fullføre denne handlingen.</value>
   </data>
   <data name="LowDiskSpaceTitle2" xml:space="preserve">
     <value>Fjern mediefiler etter</value>
+  </data>
+  <data name="LowPowerEnabledSubtitle" xml:space="preserve">
+    <value>**{0}** batteri gjenstår</value>
+  </data>
+  <data name="LowPowerEnabledTitle" xml:space="preserve">
+    <value>Strømsparing aktivert</value>
   </data>
   <data name="MainChannelProfilePhotoSetHint" xml:space="preserve">
     <value>Dette er nåværende hovedbilde for kanalen.</value>
@@ -9618,7 +9824,7 @@ Vennligst forsikre deg om at du har angitt riktig serveradresse og strømmenøkk
     <value>{0} sendte et bilde til gruppen {1}</value>
   </data>
   <data name="NotificationMessageGroupPoll" xml:space="preserve">
-    <value>{0} sendte en avstemning til gruppen {1}</value>
+    <value>{0} sendte en avstemning til {1}</value>
   </data>
   <data name="NotificationMessageGroupPoll2" xml:space="preserve">
     <value>{0} sendte en avstemning {2} til gruppen {1}</value>
@@ -11109,7 +11315,7 @@ Betaling vil gå rett til utvikleren av {0}. Telegram kan ikke gi noen garantier
     <value>Gruppen må være offentlig.</value>
   </data>
   <data name="PeerRequirementPremiumFalse" xml:space="preserve">
-    <value>Brukeren har ikke et Premium abonnement.</value>
+    <value>Brukeren kan ikke ha et Premium abonnement.</value>
   </data>
   <data name="PeerRequirementPremiumTrue" xml:space="preserve">
     <value>Brukeren må ha et Premium abonnement.</value>
@@ -11468,6 +11674,9 @@ Vi henter tilgang til posisjonen din kun i tidsrommet du velger, og du kan stopp
   <data name="PlainTextRestrictedHint" xml:space="preserve">
     <value>Tekst er ikke tillatt</value>
   </data>
+  <data name="PlayEmojiInKeyboard" xml:space="preserve">
+    <value>Emojipanel animasjoner</value>
+  </data>
   <data name="PlayFile" xml:space="preserve">
     <value>Spill av</value>
   </data>
@@ -11569,6 +11778,9 @@ Vi henter tilgang til posisjonen din kun i tidsrommet du velger, og du kan stopp
   </data>
   <data name="PostingMembers" xml:space="preserve">
     <value>Deltakende medlemmer</value>
+  </data>
+  <data name="PowerUsage" xml:space="preserve">
+    <value>Strømbruk</value>
   </data>
   <data name="PremiumMore" xml:space="preserve">
     <value>Mer</value>
@@ -12393,10 +12605,10 @@ Vi henter tilgang til posisjonen din kun i tidsrommet du velger, og du kan stopp
     <value>Bekreft tilgangskode</value>
   </data>
   <data name="RegisterText" xml:space="preserve">
-    <value>Skriv inn ditt for- og etternavn</value>
+    <value>Oppgi for- og etternavnet ditt</value>
   </data>
   <data name="RegisterText2" xml:space="preserve">
-    <value>Skriv inn navnet ditt og legg til et profilbilde.</value>
+    <value>Oppgi navnet ditt og legg til et profilbilde.</value>
   </data>
   <data name="RegistrationProfileInfo" xml:space="preserve">
     <value>Profilinformasjon</value>
@@ -13301,7 +13513,7 @@ Det kan hende du må starte appen på nytt for at endringene skal tre i kraft.</
     <value>vil telle ned for selvdestruksjon</value>
   </data>
   <data name="SelectChatsForDisableAutoDelete" xml:space="preserve">
-    <value>for å deaktivere selvdestruksjon</value>
+    <value>for å deaktivere autoslett</value>
   </data>
   <data name="SelectChatsForDisableAutoDelete2" xml:space="preserve">
     <value>vil deaktivere selvdestruksjon</value>
@@ -13440,6 +13652,9 @@ Det kan hende du må starte appen på nytt for at endringene skal tre i kraft.</
   </data>
   <data name="SendingVideoStatus" xml:space="preserve">
     <value>sender video…</value>
+  </data>
+  <data name="SendInviteLink" xml:space="preserve">
+    <value>Send invitasjonslenke</value>
   </data>
   <data name="SendItems" xml:space="preserve">
     <value>Send {0}</value>
@@ -13582,7 +13797,7 @@ Ikke ta telefonen. Telegram vil ordne alt automatisk.</value>
     <value>Tjenestevarsler</value>
   </data>
   <data name="SessionsInfo" xml:space="preserve">
-    <value>Administrer dine økter på andre enheter.</value>
+    <value>Administrer øktene dine på alle enhetene dine.</value>
   </data>
   <data name="SessionsListInfo" xml:space="preserve">
     <value>Den offisielle Telegram-appen er tilgjengelig på Android, iPhone, iPad, Windows, macOS og Linux.</value>
@@ -14199,11 +14414,20 @@ Saktemodus er aktivert. Du kan ikke sende mer enn en melding av gangen.</value>
   <data name="SpeedFast" xml:space="preserve">
     <value>Rask</value>
   </data>
+  <data name="SpeedHint" xml:space="preserve">
+    <value>Trykk og hold for flere valg.</value>
+  </data>
+  <data name="SpeedMedium" xml:space="preserve">
+    <value>Medium</value>
+  </data>
   <data name="SpeedNormal" xml:space="preserve">
     <value>Normal</value>
   </data>
   <data name="SpeedSlow" xml:space="preserve">
     <value>Sakte</value>
+  </data>
+  <data name="SpeedSuperFast" xml:space="preserve">
+    <value>Superraskt</value>
   </data>
   <data name="SpeedVeryFast" xml:space="preserve">
     <value>Veldig rask</value>
@@ -14249,6 +14473,9 @@ Reklame på nett bør ikke lenger være synonymt med misbruk av personvern. La o
   </data>
   <data name="SponsoredMessageRecommended" xml:space="preserve">
     <value>anbefalt</value>
+  </data>
+  <data name="SponsoredMessageSponsor" xml:space="preserve">
+    <value>Sponsorinfo</value>
   </data>
   <data name="Start" xml:space="preserve">
     <value>Start</value>
@@ -14359,6 +14586,9 @@ og skriv inn telefonnummeret ditt.</value>
   <data name="StickersName" xml:space="preserve">
     <value>Klistremerker og Emoji</value>
   </data>
+  <data name="StickersNameInfo" xml:space="preserve">
+    <value>Administrer klistremerkepakker, emoji og reaksjoner.</value>
+  </data>
   <data name="StickersRemove" xml:space="preserve">
     <value>Fjern</value>
   </data>
@@ -14373,6 +14603,9 @@ og skriv inn telefonnummeret ditt.</value>
   </data>
   <data name="StickersReorderHint" xml:space="preserve">
     <value>Dra klistremerker for å omorganisere.</value>
+  </data>
+  <data name="StickersSettings" xml:space="preserve">
+    <value>Innstillinger</value>
   </data>
   <data name="StickersShare" xml:space="preserve">
     <value>Del</value>
@@ -14497,6 +14730,9 @@ og skriv inn telefonnummeret ditt.</value>
 
 Så snart du er en abonnent, kan du benytte deg av fordelene til Telegram Premium i enhver app som har støtte for det, inkludert uoffisiell apper.</value>
   </data>
+  <data name="SubscribeToPremiumPerYear" xml:space="preserve">
+    <value>Abonner for {0} pr. år</value>
+  </data>
   <data name="SuggestAnimatedEmoji" xml:space="preserve">
     <value>Foreslå animert emoji</value>
   </data>
@@ -14525,7 +14761,7 @@ Så snart du er en abonnent, kan du benytte deg av fordelene til Telegram Premiu
     <value>Foreslått bilde</value>
   </data>
   <data name="SuggestedVideo" xml:space="preserve">
-    <value>Foreslått video</value>
+    <value>Foreslått bilde</value>
   </data>
   <data name="SuggestPhoto" xml:space="preserve">
     <value>Foreslå bilde</value>
@@ -15257,6 +15493,108 @@ Hvis du ikke er komfortabel med Telegram sine beskjedne behov, vil det ikke vær
   <data name="TranscriptionReportSent" xml:space="preserve">
     <value>Takk for tilbakemeldingen din.</value>
   </data>
+  <data name="TranslateLanguageAR" xml:space="preserve">
+    <value>Arabisk</value>
+  </data>
+  <data name="TranslateLanguageBE" xml:space="preserve">
+    <value>Hviterussisk</value>
+  </data>
+  <data name="TranslateLanguageCA" xml:space="preserve">
+    <value>Katalansk</value>
+  </data>
+  <data name="TranslateLanguageCS" xml:space="preserve">
+    <value>Tsjekkisk</value>
+  </data>
+  <data name="TranslateLanguageDE" xml:space="preserve">
+    <value>Tysk</value>
+  </data>
+  <data name="TranslateLanguageEN" xml:space="preserve">
+    <value>Engelsk</value>
+  </data>
+  <data name="TranslateLanguageEO" xml:space="preserve">
+    <value>Esperanto</value>
+  </data>
+  <data name="TranslateLanguageES" xml:space="preserve">
+    <value>Spansk</value>
+  </data>
+  <data name="TranslateLanguageFA" xml:space="preserve">
+    <value>Persisk</value>
+  </data>
+  <data name="TranslateLanguageFI" xml:space="preserve">
+    <value>Finsk</value>
+  </data>
+  <data name="TranslateLanguageFR" xml:space="preserve">
+    <value>Fransk</value>
+  </data>
+  <data name="TranslateLanguageHE" xml:space="preserve">
+    <value>Hebraisk</value>
+  </data>
+  <data name="TranslateLanguageHR" xml:space="preserve">
+    <value>Kroatisk</value>
+  </data>
+  <data name="TranslateLanguageHU" xml:space="preserve">
+    <value>Ungarsk</value>
+  </data>
+  <data name="TranslateLanguageID" xml:space="preserve">
+    <value>Indonesisk</value>
+  </data>
+  <data name="TranslateLanguageIT" xml:space="preserve">
+    <value>Italiensk</value>
+  </data>
+  <data name="TranslateLanguageJA" xml:space="preserve">
+    <value>Japansk</value>
+  </data>
+  <data name="TranslateLanguageKO" xml:space="preserve">
+    <value>Koreansk</value>
+  </data>
+  <data name="TranslateLanguageML" xml:space="preserve">
+    <value>Malayalam</value>
+  </data>
+  <data name="TranslateLanguageMS" xml:space="preserve">
+    <value>Malaysisk</value>
+  </data>
+  <data name="TranslateLanguageNL" xml:space="preserve">
+    <value>Nederlandsk</value>
+  </data>
+  <data name="TranslateLanguageNO" xml:space="preserve">
+    <value>Norsk</value>
+  </data>
+  <data name="TranslateLanguagePO" xml:space="preserve">
+    <value>Polsk</value>
+  </data>
+  <data name="TranslateLanguagePT" xml:space="preserve">
+    <value>Portugisisk</value>
+  </data>
+  <data name="TranslateLanguageRO" xml:space="preserve">
+    <value>Rumensk</value>
+  </data>
+  <data name="TranslateLanguageRU" xml:space="preserve">
+    <value>Russisk</value>
+  </data>
+  <data name="TranslateLanguageSK" xml:space="preserve">
+    <value>Slovakisk</value>
+  </data>
+  <data name="TranslateLanguageSR" xml:space="preserve">
+    <value>Serbisk</value>
+  </data>
+  <data name="TranslateLanguageSV" xml:space="preserve">
+    <value>Svensk</value>
+  </data>
+  <data name="TranslateLanguageTA" xml:space="preserve">
+    <value>Tamil</value>
+  </data>
+  <data name="TranslateLanguageTR" xml:space="preserve">
+    <value>Tyrkisk</value>
+  </data>
+  <data name="TranslateLanguageUK" xml:space="preserve">
+    <value>Ukrainsk</value>
+  </data>
+  <data name="TranslateLanguageUZ" xml:space="preserve">
+    <value>Usbekisk</value>
+  </data>
+  <data name="TranslateLanguageZH" xml:space="preserve">
+    <value>Kinesisk</value>
+  </data>
   <data name="TranslateMessage" xml:space="preserve">
     <value>Oversett</value>
   </data>
@@ -15522,7 +15860,13 @@ Hvis du ikke er komfortabel med Telegram sine beskjedne behov, vil det ikke vær
     <value>Forandre til supergruppe</value>
   </data>
   <data name="UpgradePremiumMessage" xml:space="preserve">
-    <value>Oppgrader til årlig betaling av Telegram Premium nå for å dra nytte av tilbudet.</value>
+    <value>Oppgrader til årlig betaling av Telegram Premium nå for å benytte deg av tilbudet.</value>
+  </data>
+  <data name="UpgradePremiumPerMonth" xml:space="preserve">
+    <value>Oppgrader for {0} pr. måned</value>
+  </data>
+  <data name="UpgradePremiumPerYear" xml:space="preserve">
+    <value>Oppgrader for {0} pr. år</value>
   </data>
   <data name="UpgradePremiumTitle" xml:space="preserve">
     <value>Oppgrader til Premium med en rabatt på **{0}%**</value>
@@ -15709,7 +16053,7 @@ Du kan bruke **a–z**, **0–9** og understrek. Minste lengde er **5** tegn.</v
   </data>
   <data name="UsernameInUsePurchase" xml:space="preserve">
     <value>Denne lenken er allerede opptatt.
-Men, den er for tiden tilgjengelig for kjøp. **Les mer…**</value>
+Den er allikevel for tiden tilgjengelig for kjøp. **Les mer…**</value>
   </data>
   <data name="UsernameInvalid" xml:space="preserve">
     <value>Dette brukernavnet er ugyldig.</value>
@@ -15980,7 +16324,7 @@ Korte, samlerbare brukernavn inkludert dette er tilgjengelig for kjøp. **Les me
     <value>Video tekst</value>
   </data>
   <data name="VideoDoesNotSupportStreaming" xml:space="preserve">
-    <value>Videoen er ikke optimalisert for strømming. Du må kanskje laste den ned før du kan spille den av.</value>
+    <value>Videoen er ikke optimalisert for strømming. Den må kanskje lastes ned før avspilling.</value>
   </data>
   <data name="VideoMessagesAutodownload" xml:space="preserve">
     <value>Videomeldinger</value>
@@ -16008,6 +16352,24 @@ Korte, samlerbare brukernavn inkludert dette er tilgjengelig for kjøp. **Les me
   </data>
   <data name="VideoSavedToDownloadsHint" xml:space="preserve">
     <value>Video lagret til nedlastinger.</value>
+  </data>
+  <data name="VideoSpeedCustom" xml:space="preserve">
+    <value>Egendefinert {0}</value>
+  </data>
+  <data name="VideoSpeedFast" xml:space="preserve">
+    <value>Rask</value>
+  </data>
+  <data name="VideoSpeedNormal" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="VideoSpeedSlow" xml:space="preserve">
+    <value>Sakte</value>
+  </data>
+  <data name="VideoSpeedVeryFast" xml:space="preserve">
+    <value>Veldig rask</value>
+  </data>
+  <data name="VideoSpeedVerySlow" xml:space="preserve">
+    <value>Veldig sakte</value>
   </data>
   <data name="VideosSavedHint_one" xml:space="preserve">
     <value>Video lagret til galleri</value>
@@ -17050,10 +17412,10 @@ Din tilgangskode **vil ikke påvirke** miniprogrammer lagt til på hjem-skjermen
     <value>i går</value>
   </data>
   <data name="YesterdayAt" xml:space="preserve">
-    <value>i går</value>
+    <value>i går kl.</value>
   </data>
   <data name="YesterdayAtFormatted" xml:space="preserve">
-    <value>i går {0}</value>
+    <value>i går kl. {0}</value>
   </data>
   <data name="YouBlockedUser" xml:space="preserve">
     <value>Beklager, du kan ikke legge til denne brukeren eller roboten til grupper fordi du har blokkert vedkommende. Vennligst opphev blokkeringen for å fortsette.</value>
@@ -17078,6 +17440,9 @@ Din tilgangskode **vil ikke påvirke** miniprogrammer lagt til på hjem-skjermen
   </data>
   <data name="YourContactsToInvite" xml:space="preserve">
     <value>Dine kontakter</value>
+  </data>
+  <data name="YourCurrentPlan" xml:space="preserve">
+    <value>ditt nåværende abonnement</value>
   </data>
   <data name="YourEmail" xml:space="preserve">
     <value>Din e-post</value>

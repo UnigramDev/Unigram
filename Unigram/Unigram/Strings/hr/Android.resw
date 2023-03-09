@@ -124,6 +124,12 @@
   <data name="AccAutoDeleteTimer" xml:space="preserve">
     <value>Timer automatskog brisanja</value>
   </data>
+  <data name="AccDescrArchivedChatsHidden" xml:space="preserve">
+    <value>Arhivirani razgovori su skriveni</value>
+  </data>
+  <data name="AccDescrArchivedChatsShown" xml:space="preserve">
+    <value>Arhivirani razgovori su vidljivi</value>
+  </data>
   <data name="AccDescrAspectRatio" xml:space="preserve">
     <value>Omjer stranica</value>
   </data>
@@ -195,6 +201,9 @@
   </data>
   <data name="AccDescrCustomEmoji" xml:space="preserve">
     <value>Prilagođeni emojiji</value>
+  </data>
+  <data name="AccDescrDocumentType" xml:space="preserve">
+    <value>, {0} datoteka</value>
   </data>
   <data name="AccDescrDownloadProgress" xml:space="preserve">
     <value>Preuzeto {0} od {1}</value>
@@ -288,6 +297,9 @@
   </data>
   <data name="AccDescrMyLocation" xml:space="preserve">
     <value>Moja lokacija</value>
+  </data>
+  <data name="AccDescrNotificationsMuted" xml:space="preserve">
+    <value>Utišano</value>
   </data>
   <data name="AccDescrNumberOfPeopleReactions_few" xml:space="preserve">
     <value>{0} osobe reagiraju s {1}</value>
@@ -478,6 +490,9 @@
   <data name="AccDescrShutter" xml:space="preserve">
     <value>Zatvarač</value>
   </data>
+  <data name="AccDescrSpeedSlider" xml:space="preserve">
+    <value>Odaberite brzinu reprodukcije</value>
+  </data>
   <data name="AccDescrStickers" xml:space="preserve">
     <value>Naljepnice</value>
   </data>
@@ -513,6 +528,9 @@
   </data>
   <data name="AccDescrUploadProgress" xml:space="preserve">
     <value>Preneseno {0} od {1}</value>
+  </data>
+  <data name="AccDescrUserOnline" xml:space="preserve">
+    <value>Na mreži</value>
   </data>
   <data name="AccDescrUserOptions" xml:space="preserve">
     <value>Postavke korisnika</value>
@@ -686,7 +704,7 @@
     <value>un1 mijenja naziv grupe u un2</value>
   </data>
   <data name="ActionChangedVideo" xml:space="preserve">
-    <value>un1 mijenja video grupe</value>
+    <value>un1 mijenja sliku grupe</value>
   </data>
   <data name="ActionChannelCallEnded" xml:space="preserve">
     <value>Prijenos uživo je završio ({0})</value>
@@ -704,7 +722,7 @@
     <value>Naziv kanala je promijenjen u un2</value>
   </data>
   <data name="ActionChannelChangedVideo" xml:space="preserve">
-    <value>Promijenjen je video kanala</value>
+    <value>Slika kanala je promijenjena</value>
   </data>
   <data name="ActionChannelRemovedPhoto" xml:space="preserve">
     <value>Slika kanala je uklonjena</value>
@@ -897,6 +915,9 @@ sada: {1}</value>
   <data name="ActionsChartTitle" xml:space="preserve">
     <value>Radnje</value>
   </data>
+  <data name="ActionSkip" xml:space="preserve">
+    <value>Preskoči</value>
+  </data>
   <data name="ActionSuggestPhoto" xml:space="preserve">
     <value>Predložena slika</value>
   </data>
@@ -979,7 +1000,7 @@ sada: {1}</value>
     <value>Promijenili ste naziv grupe u un2</value>
   </data>
   <data name="ActionYouChangedVideo" xml:space="preserve">
-    <value>Promijenili ste video grupe</value>
+    <value>Promijenili ste sliku grupe</value>
   </data>
   <data name="ActionYouCreateGroup" xml:space="preserve">
     <value>Napravili ste grupu</value>
@@ -1114,16 +1135,19 @@ sada: {1}</value>
     <value>**{0} pretplatnika** je dodano u kanal</value>
   </data>
   <data name="AddedToDoNotTranslate" xml:space="preserve">
+    <value>{0} je dodan na listu jezika koji se neće prevoditi.</value>
+  </data>
+  <data name="AddedToDoNotTranslateOther" xml:space="preserve">
     <value>**{0}** je dodan na listu jezika koji se neće prevoditi.</value>
   </data>
   <data name="AddedToFavorites" xml:space="preserve">
     <value>Naljepnica je dodana u omiljene.</value>
   </data>
   <data name="AddEmailSubtitle" xml:space="preserve">
-    <value>Unesite valjanu adresu e-pošte kako biste zaštitili svoj račun.</value>
+    <value>Sada ćete primati kodove za prijavu na Telegram putem e-pošte, a ne SMS-a. Unesite adresu e-pošte kojoj imate pristup.</value>
   </data>
   <data name="AddEmailTitle" xml:space="preserve">
-    <value>Dodaj e-poštu</value>
+    <value>Odaberite e-poštu za prijavu</value>
   </data>
   <data name="AddEmojiInstalled" xml:space="preserve">
     <value>Emojiji su dodani</value>
@@ -1414,7 +1438,7 @@ sada: {1}</value>
     <value>Sve web stranice su odjavljene.</value>
   </data>
   <data name="AlmostDone" xml:space="preserve">
-    <value>Skoro gotovo</value>
+    <value>Skoro gotovo!</value>
   </data>
   <data name="ALongTimeAgo" xml:space="preserve">
     <value>zadnji posjet veoma davno</value>
@@ -1669,7 +1693,7 @@ ostati u arhivi kad stignu nove poruke.</value>
     <value>Arhiva je prikvačena</value>
   </data>
   <data name="ArchivePinnedInfo" xml:space="preserve">
-    <value>Povucite ulijevo za skrivanje arhive.</value>
+    <value>Povucite ulijevo za sakrivanje arhive.</value>
   </data>
   <data name="ArchiveSearchFilter" xml:space="preserve">
     <value>Arhiva</value>
@@ -1780,7 +1804,7 @@ ostati u arhivi kad stignu nove poruke.</value>
     <value>Želite li svima izbrisati ovu poruku?</value>
   </data>
   <data name="AreYouSureDeleteThisChat" xml:space="preserve">
-    <value>Želite li izbrisati ovaj razgovor?</value>
+    <value>Želite li trajno izbrisati ovaj razgovor?</value>
   </data>
   <data name="AreYouSureDeleteThisChatSavedMessages" xml:space="preserve">
     <value>Želite li izbrisati **Spremljene poruke**?</value>
@@ -1879,7 +1903,7 @@ Najprije pogledajte &lt;![CDATA[&lt;a href=&quot;https://telegram.org/faq#genera
     <value>Glasovna poruka</value>
   </data>
   <data name="AttachAudioRestricted" xml:space="preserve">
-    <value>Administratori ove grupe su vam ograničili slanje glazbe do {0}</value>
+    <value>Administratori ove grupe su vam ograničili slanje glazbe do {0}.</value>
   </data>
   <data name="AttachAudioRestrictedForever" xml:space="preserve">
     <value>Administratori ove grupe su vam ograničili slanje glazbe.</value>
@@ -1900,7 +1924,7 @@ Najprije pogledajte &lt;![CDATA[&lt;a href=&quot;https://telegram.org/faq#genera
     <value>Datoteka</value>
   </data>
   <data name="AttachDocumentsRestricted" xml:space="preserve">
-    <value>Administratori ove grupe su vam ograničili slanje datoteka do {0}</value>
+    <value>Administratori ove grupe su vam ograničili slanje datoteka do {0}.</value>
   </data>
   <data name="AttachDocumentsRestrictedForever" xml:space="preserve">
     <value>Administratori ove grupe su vam ograničili slanje datoteka.</value>
@@ -1972,13 +1996,13 @@ Najprije pogledajte &lt;![CDATA[&lt;a href=&quot;https://telegram.org/faq#genera
     <value>Slika je nestala</value>
   </data>
   <data name="AttachPhotoRestricted" xml:space="preserve">
-    <value>Administratori ove grupe su vam ograničili slanje slika do {0}</value>
+    <value>Administratori ove grupe su vam ograničili slanje slika do {0}.</value>
   </data>
   <data name="AttachPhotoRestrictedForever" xml:space="preserve">
     <value>Administratori ove grupe su vam ograničili slanje slika.</value>
   </data>
   <data name="AttachPlainRestricted" xml:space="preserve">
-    <value>Administratori ove grupe su vam ograničili slanje tekstualnih poruka do {0}</value>
+    <value>Administratori ove grupe su vam ograničili slanje tekstualnih poruka do {0}.</value>
   </data>
   <data name="AttachPlainRestrictedForever" xml:space="preserve">
     <value>Administratori ove grupe su vam ograničili slanje tekstualnih poruka.</value>
@@ -1987,7 +2011,7 @@ Najprije pogledajte &lt;![CDATA[&lt;a href=&quot;https://telegram.org/faq#genera
     <value>Videoporuka</value>
   </data>
   <data name="AttachRoundRestricted" xml:space="preserve">
-    <value>Administratori ove grupe su vam ograničili slanje videoporuka do {0}</value>
+    <value>Administratori ove grupe su vam ograničili slanje videoporuka do {0}.</value>
   </data>
   <data name="AttachRoundRestrictedForever" xml:space="preserve">
     <value>Administratori ove grupe su vam ograničili slanje videoporuka.</value>
@@ -2008,13 +2032,13 @@ Najprije pogledajte &lt;![CDATA[&lt;a href=&quot;https://telegram.org/faq#genera
     <value>Video je istekao</value>
   </data>
   <data name="AttachVideoRestricted" xml:space="preserve">
-    <value>Administratori ove grupe su vam ograničili slanje videozapisa do {0}</value>
+    <value>Administratori ove grupe su vam ograničili slanje videozapisa do {0}.</value>
   </data>
   <data name="AttachVideoRestrictedForever" xml:space="preserve">
     <value>Administratori ove grupe su vam ograničili slanje videozapisa.</value>
   </data>
   <data name="AttachVoiceRestricted" xml:space="preserve">
-    <value>Administratori ove grupe su vam ograničili slanje glasovnih poruka do {0}</value>
+    <value>Administratori ove grupe su vam ograničili slanje glasovnih poruka do {0}.</value>
   </data>
   <data name="AttachVoiceRestrictedForever" xml:space="preserve">
     <value>Administratori ove grupe su vam ograničili slanje glasovnih poruka.</value>
@@ -2025,8 +2049,14 @@ Najprije pogledajte &lt;![CDATA[&lt;a href=&quot;https://telegram.org/faq#genera
   <data name="AudioSavedHint" xml:space="preserve">
     <value>Datoteka je spremljena u glazbu.</value>
   </data>
+  <data name="AudioSpeedCustom" xml:space="preserve">
+    <value>Poruka će se reproducirati u {0}x brzini.</value>
+  </data>
   <data name="AudioSpeedFast" xml:space="preserve">
     <value>Poruka će se reproducirati ubrzano.</value>
+  </data>
+  <data name="AudioSpeedMedium" xml:space="preserve">
+    <value>Poruka će se reproducirati 1.5x ubrzano.</value>
   </data>
   <data name="AudioSpeedNormal" xml:space="preserve">
     <value>Poruka će se reproducirati u normalnoj brzini.</value>
@@ -2222,7 +2252,7 @@ Sve nove poruke u ovom razgovoru bit će automatski izbrisane {0} nakon slanja.<
     <value>Poruke će se svima izbrisati nakon određenog vremenskog perioda u novim razgovorima koje pokrenete.</value>
   </data>
   <data name="AutodeleteTimerDisabledForChats" xml:space="preserve">
-    <value>Timer za samouništenje je isključen u {0}.</value>
+    <value>Automatsko brisanje je isključeno u {0}.</value>
   </data>
   <data name="AutodeleteTimerEnabledForChats" xml:space="preserve">
     <value>U {1} poruke će automatski biti obrisane nakon **{0}**.</value>
@@ -2372,7 +2402,7 @@ Sve nove poruke u ovom razgovoru bit će automatski izbrisane {0} nakon slanja.<
     <value>Možete promijeniti postavke automatskog preuzimanja kako biste smanjili potrošnju podataka kada ste povezani preko mobilnih podataka.</value>
   </data>
   <data name="AutomaticDownloadSettingsInfoRoaming" xml:space="preserve">
-    <value>Možete promijeniti postavke automatskog preuzimanja za medije kako biste smanjili potrošnju podataka kada ste u roamingu.</value>
+    <value>Možete promijeniti postavke automatskog preuzimanja kako biste smanjili potrošnju podataka kada ste u roamingu.</value>
   </data>
   <data name="AutomaticDownloadSettingsInfoWiFi" xml:space="preserve">
     <value>Možete promijeniti postavke automatskog preuzimanja kako biste smanjili potrošnju podataka kada ste povezani preko Wi-Fi veze.</value>
@@ -2418,6 +2448,9 @@ Sve nove poruke u ovom razgovoru bit će automatski izbrisane {0} nakon slanja.<
   </data>
   <data name="AutoNightSystemDefault" xml:space="preserve">
     <value>Zadane postavke sustava</value>
+  </data>
+  <data name="AutoNightSystemModeOff" xml:space="preserve">
+    <value>Zadana tema sustava je isključena.</value>
   </data>
   <data name="AutoNightTheme" xml:space="preserve">
     <value>Automatski noćni način</value>
@@ -2764,7 +2797,7 @@ Moći će pristupiti vašoj **IP adresi** i osnovnim podacima o uređaju.</value
     <value>ima pristup porukama</value>
   </data>
   <data name="BotStop" xml:space="preserve">
-    <value>Zaustavi bot</value>
+    <value>Blokiraj bot</value>
   </data>
   <data name="BotUnblock" xml:space="preserve">
     <value>PONOVO POKRENI</value>
@@ -3363,6 +3396,15 @@ Napomena: ako zaboravite lozinku, trebat ćete se odjaviti ili ponovno instalira
   <data name="ChannelInviteViaLink" xml:space="preserve">
     <value>Pozovi preko linka</value>
   </data>
+  <data name="ChannelInviteViaLinkRestricted" xml:space="preserve">
+    <value>Ne možete napraviti link</value>
+  </data>
+  <data name="ChannelInviteViaLinkRestricted2" xml:space="preserve">
+    <value>Ovaj korisnik ne može biti pozvan</value>
+  </data>
+  <data name="ChannelInviteViaLinkRestricted3" xml:space="preserve">
+    <value>Ovi korisnici ne mogu biti pozvani</value>
+  </data>
   <data name="ChannelJoin" xml:space="preserve">
     <value>PRIDRUŽI SE</value>
   </data>
@@ -3582,7 +3624,7 @@ Ukoliko niste zainteresirani, predlažemo da umjesto toga napravite privatni kan
     <value>Teme</value>
   </data>
   <data name="ChannelTopicsDiscussionForbidden" xml:space="preserve">
-    <value>Teme trenutno nisu dostupne u grupama koje su povezane s kanalom.</value>
+    <value>Teme trenutno nisu dostupne u grupama za komentiranje kanala.</value>
   </data>
   <data name="ChannelTopicsForbidden_few" xml:space="preserve">
     <value>Samo grupe s više od **{0} člana** mogu biti organizirane po temama.</value>
@@ -3632,7 +3674,7 @@ Mora imati najmanje 5 znakova.</value>
     <value>Upozorenje</value>
   </data>
   <data name="ChannelVideoEditNotification" xml:space="preserve">
-    <value>Kanal {0} je promijenio video profila</value>
+    <value>Kanal {0} je promijenio svoju sliku</value>
   </data>
   <data name="Characters_few" xml:space="preserve">
     <value>{0} znaka</value>
@@ -3726,6 +3768,9 @@ Mora imati najmanje 5 znakova.</value>
   </data>
   <data name="ChatListSwipeGesture" xml:space="preserve">
     <value>Povlačenje razgovora</value>
+  </data>
+  <data name="ChatListSwipeGestureInfo" xml:space="preserve">
+    <value>Odaberite radnju koju želite izvršiti kada razgovor povučete ulijevo.</value>
   </data>
   <data name="ChatLocation" xml:space="preserve">
     <value>Lokacija</value>
@@ -4340,7 +4385,7 @@ Kada {1} ažurira Telegram, slike s timerom od 1 minute ili manje će početi ra
     <value>Isključi</value>
   </data>
   <data name="ConnectingToProxyDisableAlert" xml:space="preserve">
-    <value>Želite li isključiti server {0}? Možete ga ponovno uključiti ako odaberete Postavke &gt; Podaci i pohrana.</value>
+    <value>Želite li isključiti proxy server {0}? Možete ga ponovno uključiti ako odaberete Postavke &gt; Podaci i pohrana.</value>
   </data>
   <data name="ConnectingToProxyEnable" xml:space="preserve">
     <value>OMOGUĆI</value>
@@ -4754,7 +4799,7 @@ Uvijek se možete vratiti na Telegramovu zadanu temu.</value>
     <value>Uvezi kontakte</value>
   </data>
   <data name="DebugMenuReadAllDialogs" xml:space="preserve">
-    <value>Pročitaj sve razgovore</value>
+    <value>Označi sve razgovore kao pročitane</value>
   </data>
   <data name="DebugMenuReloadContacts" xml:space="preserve">
     <value>Ponovno učitaj kontakte</value>
@@ -4883,7 +4928,7 @@ Uvijek se možete vratiti na Telegramovu zadanu temu.</value>
     <value>Izbriši i napusti grupu</value>
   </data>
   <data name="DeleteAndStop" xml:space="preserve">
-    <value>Izbriši i zaustavi</value>
+    <value>Izbriši i blokiraj</value>
   </data>
   <data name="DeleteBackground_few" xml:space="preserve">
     <value>Izbriši {0} pozadine</value>
@@ -5384,6 +5429,18 @@ Svi korisnici iz tog kanala će vidjeti poruke u ovoj grupi.</value>
   <data name="Draft" xml:space="preserve">
     <value>Skica</value>
   </data>
+  <data name="DynamicPackOrder" xml:space="preserve">
+    <value>Dinamičan redoslijed paketa</value>
+  </data>
+  <data name="DynamicPackOrderInfo" xml:space="preserve">
+    <value>Nedavno korišteni paketi naljepnica će automatski biti ispred ostalih paketa.</value>
+  </data>
+  <data name="DynamicPackOrderOff" xml:space="preserve">
+    <value>Dinamičan redoslijed je isključen</value>
+  </data>
+  <data name="DynamicPackOrderOffInfo" xml:space="preserve">
+    <value>Paketi naljepnica više neće mijenjati redoslijed kada upotrijebite naljepnicu.</value>
+  </data>
   <data name="Edit" xml:space="preserve">
     <value>Uredi</value>
   </data>
@@ -5457,7 +5514,7 @@ Svi korisnici iz tog kanala će vidjeti poruke u ovoj grupi.</value>
     <value>Imate uključenu **potvrdu u dva koraka* dulje od **7 dana**.</value>
   </data>
   <data name="EditAdminTransferAlertText2" xml:space="preserve">
-    <value>Prijavljeni ste na ovaj uređaj dulje o **24 sata**.</value>
+    <value>Prijavljeni ste na ovaj uređaj dulje od **24 sata**.</value>
   </data>
   <data name="EditAdminTransferAlertText3" xml:space="preserve">
     <value>Vratite se ponovno kasnije.</value>
@@ -6035,7 +6092,7 @@ Unesite naziv teme:</value>
     <value>un1 mijenja naziv kanala u &quot;{0}&quot;</value>
   </data>
   <data name="EventLogEditedChannelVideo" xml:space="preserve">
-    <value>un1 postavlja novi video kanala</value>
+    <value>un1 postavlja novu sliku kanala</value>
   </data>
   <data name="EventLogEditedGroupDescription" xml:space="preserve">
     <value>un1 mijenja opis grupe:</value>
@@ -6050,7 +6107,7 @@ Unesite naziv teme:</value>
     <value>un1 mijenja naziv grupe u &quot;{0}&quot;</value>
   </data>
   <data name="EventLogEditedGroupVideo" xml:space="preserve">
-    <value>un1 postavlja novi video grupe</value>
+    <value>un1 postavlja novu sliku grupe</value>
   </data>
   <data name="EventLogEditedMedia" xml:space="preserve">
     <value>un1 uređuje datoteku:</value>
@@ -7027,7 +7084,7 @@ Svi tajni razgovori će biti izgubljeni.</value>
     <value>U ovom kanalu nije dopušteno prosljeđivanje i spremanje sadržaja.</value>
   </data>
   <data name="ForwardsRestrictedInfoGroup" xml:space="preserve">
-    <value>U ovoj grupi nije dopušteno prosljeđivanje i spremanje sadržaja.</value>
+    <value>Nije dopušteno kopiranje i prosljeđivanje iz ove grupe.</value>
   </data>
   <data name="ForwardTo" xml:space="preserve">
     <value>Proslijedi...</value>
@@ -7774,6 +7831,33 @@ Poruke će biti uvezene na današnji dan, ali će sadržavati napomenu s origina
   <data name="InviteByQRCode" xml:space="preserve">
     <value>Pozovi preko QR koda</value>
   </data>
+  <data name="InviteChannelRestrictedUsers_few" xml:space="preserve">
+    <value>**{0} korisnika** ne žele da ih se dodaje u kanale.
+Umjesto toga možete im poslati pozivnicu.</value>
+  </data>
+  <data name="InviteChannelRestrictedUsers_one" xml:space="preserve">
+    <value>**{0} korisnik** ne želi da ih se dodaje u kanale.
+Umjesto toga možete im poslati pozivnicu.</value>
+  </data>
+  <data name="InviteChannelRestrictedUsers_other" xml:space="preserve">
+    <value>**{0} korisnik** ne žele da ih se dodaje u kanale.
+Umjesto toga možete im poslati pozivnicu.</value>
+  </data>
+  <data name="InviteChannelRestrictedUsers2_few" xml:space="preserve">
+    <value>**{0} korisnika** mogu biti pozvana jedino preko pozivnice, ali vi nemate dopuštenje za dijeljenje pozivnica ovog kanala.</value>
+  </data>
+  <data name="InviteChannelRestrictedUsers2_one" xml:space="preserve">
+    <value>**{0} korisnik** može biti pozvan jedino preko pozivnice, ali vi nemate dopuštenje za dijeljenje pozivnica ovog kanala.</value>
+  </data>
+  <data name="InviteChannelRestrictedUsers2_other" xml:space="preserve">
+    <value>**{0} korisnika** mogu biti pozvana jedino preko pozivnice, ali vi nemate dopuštenje za dijeljenje pozivnica ovog kanala.</value>
+  </data>
+  <data name="InviteChannelRestrictedUsers2One" xml:space="preserve">
+    <value>Korisnik **{0}** može biti pozvan jedino preko pozivnice, ali vi nemate dopuštenje za dijeljenje pozivnica ovog kanala.</value>
+  </data>
+  <data name="InviteChannelRestrictedUsersOne" xml:space="preserve">
+    <value>Korisnik **{0}** ne želi da ga se dodaje u kanale. Umjesto toga možete poslati pozivnicu.</value>
+  </data>
   <data name="Invited" xml:space="preserve">
     <value>pozivnica je poslana</value>
   </data>
@@ -7800,6 +7884,45 @@ Poruke će biti uvezene na današnji dan, ali će sadržavati napomenu s origina
   </data>
   <data name="InviteLinks" xml:space="preserve">
     <value>Pozivnice</value>
+  </data>
+  <data name="InviteLinkSent_few" xml:space="preserve">
+    <value>Pozivnica je poslana prema {0} korisnika.</value>
+  </data>
+  <data name="InviteLinkSent_one" xml:space="preserve">
+    <value>Pozivnica je poslana prema {0} korisniku.</value>
+  </data>
+  <data name="InviteLinkSent_other" xml:space="preserve">
+    <value>Pozivnica je poslana prema {0} korisnika.</value>
+  </data>
+  <data name="InviteLinkSentSingle" xml:space="preserve">
+    <value>Pozivnica je poslana korisniku **{0}**.</value>
+  </data>
+  <data name="InviteRestrictedUsers_few" xml:space="preserve">
+    <value>**{0} korisnika** ne žele da ih se dodaje u grupe.
+Umjesto toga možete im poslati pozivnicu.</value>
+  </data>
+  <data name="InviteRestrictedUsers_one" xml:space="preserve">
+    <value>**{0} korisnik** ne želi da ih se dodaje u grupe.
+Umjesto toga možete im poslati pozivnicu.</value>
+  </data>
+  <data name="InviteRestrictedUsers_other" xml:space="preserve">
+    <value>**{0} korisnika** ne žele da ih se dodaje u grupe.
+Umjesto toga možete im poslati pozivnicu.</value>
+  </data>
+  <data name="InviteRestrictedUsers2_few" xml:space="preserve">
+    <value>**{0} korisnika** mogu biti pozvana jedino preko pozivnice, ali vi nemate dopuštenje za dijeljenje pozivnica ove grupe.</value>
+  </data>
+  <data name="InviteRestrictedUsers2_one" xml:space="preserve">
+    <value>**{0} korisnik** može biti pozvan jedino preko pozivnice, ali vi nemate dopuštenje za dijeljenje pozivnica ove grupe.</value>
+  </data>
+  <data name="InviteRestrictedUsers2_other" xml:space="preserve">
+    <value>**{0} korisnika** mogu biti pozvani jedino preko pozivnice, ali vi nemate dopuštenje za dijeljenje pozivnica ove grupe.</value>
+  </data>
+  <data name="InviteRestrictedUsers2One" xml:space="preserve">
+    <value>Korisnik **{0}** može biti pozvan jedino preko pozivnice, ali vi nemate dopuštenje za dijeljenje pozivnica ove grupe.</value>
+  </data>
+  <data name="InviteRestrictedUsersOne" xml:space="preserve">
+    <value>Korisnik **{0}** ne želi da ga se dodaje u grupe. Umjesto toga možete poslati pozivnicu.</value>
   </data>
   <data name="InviteRevokedHint" xml:space="preserve">
     <value>Ovaj link je opozvan.</value>
@@ -8100,7 +8223,7 @@ Jezik možete promijeniti u postavkama u bilo kojem trenutku.</value>
     <value>Jezik nije pronađen.</value>
   </data>
   <data name="LargeEmoji" xml:space="preserve">
-    <value>Veliki emoji</value>
+    <value>Veliki emojiji</value>
   </data>
   <data name="LastActiveCommunities" xml:space="preserve">
     <value>Nedavno aktivne zajednice</value>
@@ -8402,6 +8525,93 @@ Jezik možete promijeniti u postavkama u bilo kojem trenutku.</value>
   <data name="Listening" xml:space="preserve">
     <value>sluša</value>
   </data>
+  <data name="LiteBatteryAlwaysDisabled" xml:space="preserve">
+    <value>Uvijek isključeno</value>
+  </data>
+  <data name="LiteBatteryAlwaysEnabled" xml:space="preserve">
+    <value>Uvijek uključeno</value>
+  </data>
+  <data name="LiteBatteryDisabled" xml:space="preserve">
+    <value>Ne</value>
+  </data>
+  <data name="LiteBatteryEnabled" xml:space="preserve">
+    <value>Da</value>
+  </data>
+  <data name="LiteBatteryInfoBelow" xml:space="preserve">
+    <value>Potrošnja energije i animacije će se smanjiti ako je razina baterije ispod {0}.</value>
+  </data>
+  <data name="LiteBatteryInfoDisabled" xml:space="preserve">
+    <value>Potrošnja energije se neće smanjiti, a animacije će ostati uključene čak i ako je vaša baterija slaba.</value>
+  </data>
+  <data name="LiteBatteryInfoEnabled" xml:space="preserve">
+    <value>Ušteda energije će biti uvijek uključena bez obzira na stanje vaše baterije.</value>
+  </data>
+  <data name="LiteBatteryRestricted" xml:space="preserve">
+    <value>Isključite uštedu energije kako biste promijenili ove postavke.</value>
+  </data>
+  <data name="LiteBatteryTitle" xml:space="preserve">
+    <value>Način za uštedu energije</value>
+  </data>
+  <data name="LiteBatteryWhenBelow" xml:space="preserve">
+    <value>Kad je manje od {0}</value>
+  </data>
+  <data name="LiteMode" xml:space="preserve">
+    <value>Animacije</value>
+  </data>
+  <data name="LiteModeInfo" xml:space="preserve">
+    <value>Smanjite efekte pokreta za uštedu energije.</value>
+  </data>
+  <data name="LiteOptionsAutoplayChat" xml:space="preserve">
+    <value>Pokretanje u razgovoru</value>
+  </data>
+  <data name="LiteOptionsAutoplayGifs" xml:space="preserve">
+    <value>Pokretanje GIF-ova</value>
+  </data>
+  <data name="LiteOptionsAutoplayKeyboard" xml:space="preserve">
+    <value>Pokretanje na tipkovnici</value>
+  </data>
+  <data name="LiteOptionsAutoplayReactions" xml:space="preserve">
+    <value>Pokretanje u izborniku reakcija</value>
+  </data>
+  <data name="LiteOptionsAutoplayVideo" xml:space="preserve">
+    <value>Pokretanje videozapisa</value>
+  </data>
+  <data name="LiteOptionsBackground" xml:space="preserve">
+    <value>Rotacija pozadine</value>
+  </data>
+  <data name="LiteOptionsBlur" xml:space="preserve">
+    <value>Zamućenje noćne teme</value>
+  </data>
+  <data name="LiteOptionsCalls" xml:space="preserve">
+    <value>Animacije u pozivima</value>
+  </data>
+  <data name="LiteOptionsChat" xml:space="preserve">
+    <value>Animacije u razgovorima</value>
+  </data>
+  <data name="LiteOptionsEmoji" xml:space="preserve">
+    <value>Animirani emojiji</value>
+  </data>
+  <data name="LiteOptionsScale" xml:space="preserve">
+    <value>Animacije zumiranja</value>
+  </data>
+  <data name="LiteOptionsSpoiler" xml:space="preserve">
+    <value>Animirani spoiler efekt</value>
+  </data>
+  <data name="LiteOptionsStickers" xml:space="preserve">
+    <value>Animirane naljepnice</value>
+  </data>
+  <data name="LiteOptionsTitle" xml:space="preserve">
+    <value>Postavke uštede energije</value>
+  </data>
+  <data name="LiteOptionsTopics" xml:space="preserve">
+    <value>Bočni izbornik u temama</value>
+  </data>
+  <data name="LiteSmoothTransitions" xml:space="preserve">
+    <value>Uključi glatke prijelaze</value>
+  </data>
+  <data name="LiteSmoothTransitionsInfo" xml:space="preserve">
+    <value>Možete isključiti animirane prijelaze između različitih odjeljaka aplikacije.</value>
+  </data>
   <data name="LiveLocationAlertGroup" xml:space="preserve">
     <value>Odaberite koliko dugo će korisnici moći vidjeti vašu preciznu lokaciju, čak i kad je aplikacija zatvorena.</value>
   </data>
@@ -8572,17 +8782,23 @@ Ova radnja može potrajati nekoliko minuta.</value>
   <data name="LowDiskSpaceTitle2" xml:space="preserve">
     <value>Ukloni medije nakon</value>
   </data>
+  <data name="LowPowerEnabledSubtitle" xml:space="preserve">
+    <value>Preostalo je {0} baterije</value>
+  </data>
+  <data name="LowPowerEnabledTitle" xml:space="preserve">
+    <value>Ušteda energije je uključena</value>
+  </data>
   <data name="MainChannelProfilePhotoSetHint" xml:space="preserve">
     <value>Ovo je sada glavna slika kanala.</value>
   </data>
   <data name="MainChannelProfileVideoSetHint" xml:space="preserve">
-    <value>Ovo je sada glavni video kanala.</value>
+    <value>Ovo je sada glavna slika kanala.</value>
   </data>
   <data name="MainGroupProfilePhotoSetHint" xml:space="preserve">
     <value>Ovo je sada glavna slika grupe.</value>
   </data>
   <data name="MainGroupProfileVideoSetHint" xml:space="preserve">
-    <value>Ovo je sada glavni video grupe.</value>
+    <value>Ovo je sada glavna slika grupe.</value>
   </data>
   <data name="MainProfilePhotoSetHint" xml:space="preserve">
     <value>Ovo je sada vaša glavna slika profila.</value>
@@ -9857,7 +10073,7 @@ Provjerite jeste li unijeli ispravan URL servera i ključ streama u svoju aplika
     <value>{0} mijenja sliku grupe {1}</value>
   </data>
   <data name="NotificationEditedGroupVideo" xml:space="preserve">
-    <value>{0} mijenja video grupe za {1}</value>
+    <value>{0} mijenja sliku grupe za {1}</value>
   </data>
   <data name="NotificationGroupAddMember" xml:space="preserve">
     <value>{0} dodaje {2} u grupu {1}</value>
@@ -9987,7 +10203,7 @@ Provjerite jeste li unijeli ispravan URL servera i ključ streama u svoju aplika
 {0} šalje sliku u grupu {1}</value>
   </data>
   <data name="NotificationMessageGroupPoll" xml:space="preserve">
-    <value>{0} šalje anketu u grupu {1}</value>
+    <value>{0} šalje anketu u {1}</value>
   </data>
   <data name="NotificationMessageGroupPoll2" xml:space="preserve">
     <value>{0} šalje anketu {2} u grupu {1}</value>
@@ -11872,6 +12088,9 @@ Telegram će imat pristup lokaciji za vrijeme koje vi odredite i možete zaustav
   <data name="PlainTextRestrictedHint" xml:space="preserve">
     <value>Tekst nije dopušten</value>
   </data>
+  <data name="PlayEmojiInKeyboard" xml:space="preserve">
+    <value>Animacije emojija na panelu</value>
+  </data>
   <data name="PlayFile" xml:space="preserve">
     <value>Pokreni datoteku</value>
   </data>
@@ -11976,6 +12195,9 @@ Telegram će imat pristup lokaciji za vrijeme koje vi odredite i možete zaustav
   </data>
   <data name="PostingMembers" xml:space="preserve">
     <value>Članovi koji objavljuju</value>
+  </data>
+  <data name="PowerUsage" xml:space="preserve">
+    <value>Ušteda energije</value>
   </data>
   <data name="PremiumMore" xml:space="preserve">
     <value>Više</value>
@@ -12299,7 +12521,7 @@ Telegram će imat pristup lokaciji za vrijeme koje vi odredite i možete zaustav
     <value>Tko može povezati moj račun kad prosljeđuje moje poruke?</value>
   </data>
   <data name="PrivacyLastSeen" xml:space="preserve">
-    <value>Zadnji posjet</value>
+    <value>Zadnji posjet i na mreži</value>
   </data>
   <data name="PrivacyP2P" xml:space="preserve">
     <value>Peer-to-Peer pozivi</value>
@@ -12710,7 +12932,7 @@ Telegram će imat pristup lokaciji za vrijeme koje vi odredite i možete zaustav
     <value>Promašili ste točan odgovor.</value>
   </data>
   <data name="RaiseToSpeak" xml:space="preserve">
-    <value>Podigni za govorenje</value>
+    <value>Podigni za slušanje</value>
   </data>
   <data name="RateCallDistorted" xml:space="preserve">
     <value>Glas je bio izobličen</value>
@@ -13484,7 +13706,7 @@ Kanali će postati privatni.</value>
     <value>Odaberite godišnji plan plaćanja za Telegram Premium kako biste ostvarili popust.</value>
   </data>
   <data name="SaveOnAnnualPremiumTitle" xml:space="preserve">
-    <value>Uštedite na pretplati do **{0}%**</value>
+    <value>Uštedite do **{0}%** na svojoj pretplati</value>
   </data>
   <data name="SaveTheme" xml:space="preserve">
     <value>SPREMI TEMU</value>
@@ -13547,7 +13769,7 @@ Kanali će postati privatni.</value>
     <value>Videozapisi do {0}</value>
   </data>
   <data name="SaveToGIFs" xml:space="preserve">
-    <value>Spremi u GIF-ove</value>
+    <value>Dodaj u GIF-ove</value>
   </data>
   <data name="SaveToMusic" xml:space="preserve">
     <value>Spremi u glazbu</value>
@@ -13932,6 +14154,9 @@ Možda će biti potrebno da ponovno pokrenete aplikaciju.</value>
   <data name="SendingVideoStatus" xml:space="preserve">
     <value>šalje videozapis...</value>
   </data>
+  <data name="SendInviteLink" xml:space="preserve">
+    <value>Pošalji pozivnicu</value>
+  </data>
   <data name="SendItems" xml:space="preserve">
     <value>Pošalji {0}</value>
   </data>
@@ -14055,7 +14280,7 @@ Možda će biti potrebno da ponovno pokrenete aplikaciju.</value>
 Nemojte se javiti na poziv. Telegram će sve riješiti za vas.</value>
   </data>
   <data name="SentCallOnly" xml:space="preserve">
-    <value>Zovemo vaš broj **{0}** da vam pošaljemo kod.</value>
+    <value>Zovemo vaš broj **{0}** da vam izdiktiramo kod.</value>
   </data>
   <data name="SentFragmentCode" xml:space="preserve">
     <value>Nabavite kod za {0} u Anonymous Numbers odjeljku na Fragmentu.</value>
@@ -14143,7 +14368,7 @@ Nemojte se javiti na poziv. Telegram će sve riješiti za vas.</value>
     <value>Postavi boju</value>
   </data>
   <data name="SetCover" xml:space="preserve">
-    <value>Odaberite naslovnicu videozapisa</value>
+    <value>Odaberite sličicu za sliku profila</value>
   </data>
   <data name="SetCustomTime" xml:space="preserve">
     <value>Prilagođeno vrijeme</value>
@@ -14700,11 +14925,20 @@ Uključen je spori način. Ne možete poslati više od jedne poruke odjednom.</v
   <data name="SpeedFast" xml:space="preserve">
     <value>Ubrzano</value>
   </data>
+  <data name="SpeedHint" xml:space="preserve">
+    <value>Dugo držite za drugačije brzine.</value>
+  </data>
+  <data name="SpeedMedium" xml:space="preserve">
+    <value>Srednje ubrzano</value>
+  </data>
   <data name="SpeedNormal" xml:space="preserve">
     <value>Normalno</value>
   </data>
   <data name="SpeedSlow" xml:space="preserve">
     <value>Usporeno</value>
+  </data>
+  <data name="SpeedSuperFast" xml:space="preserve">
+    <value>Super ubrzano</value>
   </data>
   <data name="SpeedVeryFast" xml:space="preserve">
     <value>Vrlo ubrzano</value>
@@ -14865,6 +15099,9 @@ Oglasi više ne smiju biti sinonim za zlouporabu privatnosti korisnika. Zajedno 
   <data name="StickersName" xml:space="preserve">
     <value>Naljepnice i emojiji</value>
   </data>
+  <data name="StickersNameInfo" xml:space="preserve">
+    <value>Upravljajte svojim paketima naljepnica, emojija i reakcijama.</value>
+  </data>
   <data name="StickersRemove" xml:space="preserve">
     <value>Ukloni</value>
   </data>
@@ -14879,6 +15116,9 @@ Oglasi više ne smiju biti sinonim za zlouporabu privatnosti korisnika. Zajedno 
   </data>
   <data name="StickersReorderHint" xml:space="preserve">
     <value>Vucite naljepnice i promijenite redoslijed.</value>
+  </data>
+  <data name="StickersSettings" xml:space="preserve">
+    <value>Postavke</value>
   </data>
   <data name="StickersShare" xml:space="preserve">
     <value>Podijeli</value>
@@ -15036,7 +15276,7 @@ Nakon što se pretplatite, moći ćete koristiti pogodnosti Telegram Premiuma u 
     <value>Predložena slika</value>
   </data>
   <data name="SuggestedVideo" xml:space="preserve">
-    <value>Predloženi video</value>
+    <value>Predložena slika</value>
   </data>
   <data name="SuggestPhoto" xml:space="preserve">
     <value>Predloži sliku</value>
@@ -15661,7 +15901,7 @@ Pokušajte ponovno za {0}.</value>
     <value>Općenita tema je skrivena</value>
   </data>
   <data name="TopicHidden2" xml:space="preserve">
-    <value>{0} skriva općenitu temu</value>
+    <value>{0} sakriva općenitu temu</value>
   </data>
   <data name="TopicIconChanged" xml:space="preserve">
     <value>Ikona teme je promijenjena</value>
@@ -15912,13 +16152,13 @@ Ako niste zadovoljni načinom kako funkcionira Telegram nećemo vam moći pruži
     <value>Prevedi na {0}</value>
   </data>
   <data name="TranslationBarHiddenForChannel" xml:space="preserve">
-    <value>Traka za prijevod je skrivena za ovaj kanal.</value>
+    <value>Traka za prijevod je skrivena u ovom kanalu.</value>
   </data>
   <data name="TranslationBarHiddenForChat" xml:space="preserve">
-    <value>Traka za prijevod je skrivena za ovaj razgovor.</value>
+    <value>Traka za prijevod je skrivena u ovom razgovoru.</value>
   </data>
   <data name="TranslationBarHiddenForGroup" xml:space="preserve">
-    <value>Traka za prijevod je skrivena za ovu grupu.</value>
+    <value>Traka za prijevod je skrivena u ovoj grupi.</value>
   </data>
   <data name="TranslationFailedAlert1" xml:space="preserve">
     <value>Prijevod nije uspio. Pokušajte ponovno kasnije.</value>
@@ -16167,7 +16407,7 @@ Ako niste zadovoljni načinom kako funkcionira Telegram nećemo vam moći pruži
     <value>Nadogradite za {0} godišnje</value>
   </data>
   <data name="UpgradePremiumTitle" xml:space="preserve">
-    <value>Odaberite Premium uz popust od **{0}%**</value>
+    <value>Aktivirajte Premium uz **{0}%** popusta</value>
   </data>
   <data name="UploadImage" xml:space="preserve">
     <value>Prenesi sliku</value>
@@ -16662,6 +16902,24 @@ Međutim, kratka kolekcionarska korisnička imena, uključujući ovo, dostupna s
   </data>
   <data name="VideoSavedToDownloadsHint" xml:space="preserve">
     <value>Video je spremljen u Preuzimanja.</value>
+  </data>
+  <data name="VideoSpeedCustom" xml:space="preserve">
+    <value>Prilagođeno {0}</value>
+  </data>
+  <data name="VideoSpeedFast" xml:space="preserve">
+    <value>Ubrzano</value>
+  </data>
+  <data name="VideoSpeedNormal" xml:space="preserve">
+    <value>Normalno</value>
+  </data>
+  <data name="VideoSpeedSlow" xml:space="preserve">
+    <value>Usporeno</value>
+  </data>
+  <data name="VideoSpeedVeryFast" xml:space="preserve">
+    <value>Vrlo ubrzano</value>
+  </data>
+  <data name="VideoSpeedVerySlow" xml:space="preserve">
+    <value>Jako usporeno</value>
   </data>
   <data name="VideosSavedHint_few" xml:space="preserve">
     <value>{0} videozapisa su spremljena u galeriju.</value>

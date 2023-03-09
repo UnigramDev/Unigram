@@ -124,6 +124,12 @@
   <data name="AccAutoDeleteTimer" xml:space="preserve">
     <value>Avtomatik oʻchirish taymeri</value>
   </data>
+  <data name="AccDescrArchivedChatsHidden" xml:space="preserve">
+    <value>Arxivlangan chatlar berkitildi</value>
+  </data>
+  <data name="AccDescrArchivedChatsShown" xml:space="preserve">
+    <value>Arxivlangan chatlar roʻyxatga qaytarildi</value>
+  </data>
   <data name="AccDescrAspectRatio" xml:space="preserve">
     <value>Tomonlar nisbati</value>
   </data>
@@ -195,6 +201,9 @@
   </data>
   <data name="AccDescrCustomEmoji" xml:space="preserve">
     <value>Maxsus emoji</value>
+  </data>
+  <data name="AccDescrDocumentType" xml:space="preserve">
+    <value>, {0} fayli</value>
   </data>
   <data name="AccDescrDownloadProgress" xml:space="preserve">
     <value>Yuklab olindi: {0} / {1}</value>
@@ -285,6 +294,9 @@
   </data>
   <data name="AccDescrMyLocation" xml:space="preserve">
     <value>Mening joylashuvim</value>
+  </data>
+  <data name="AccDescrNotificationsMuted" xml:space="preserve">
+    <value>Sukut qilingan</value>
   </data>
   <data name="AccDescrNumberOfPeopleReactions_one" xml:space="preserve">
     <value>{0} kishi {1} bilan reaksiya bildirdi</value>
@@ -454,6 +466,9 @@
   <data name="AccDescrShutter" xml:space="preserve">
     <value>Rasmga olish tugmasi</value>
   </data>
+  <data name="AccDescrSpeedSlider" xml:space="preserve">
+    <value>Tezlikni tanlang</value>
+  </data>
   <data name="AccDescrStickers" xml:space="preserve">
     <value>Stikerlar</value>
   </data>
@@ -486,6 +501,9 @@
   </data>
   <data name="AccDescrUploadProgress" xml:space="preserve">
     <value>Yuklandi: {0} / {1}</value>
+  </data>
+  <data name="AccDescrUserOnline" xml:space="preserve">
+    <value>Onlayn</value>
   </data>
   <data name="AccDescrUserOptions" xml:space="preserve">
     <value>Foydalanuvchi amallari</value>
@@ -870,6 +888,9 @@ bunga: {1}</value>
   <data name="ActionsChartTitle" xml:space="preserve">
     <value>Amallar</value>
   </data>
+  <data name="ActionSkip" xml:space="preserve">
+    <value>Tashlab ketish</value>
+  </data>
   <data name="ActionSuggestPhoto" xml:space="preserve">
     <value>Taklif qilingan rasm</value>
   </data>
@@ -1080,14 +1101,17 @@ bunga: {1}</value>
   <data name="AddedToDoNotTranslate" xml:space="preserve">
     <value>**{0}** Tarjima qilinmasin roʻyxatingizga kiritildi.</value>
   </data>
+  <data name="AddedToDoNotTranslateOther" xml:space="preserve">
+    <value>**{0}** tili Tarjima qilinmasin roʻyxatiga kiritildi.</value>
+  </data>
   <data name="AddedToFavorites" xml:space="preserve">
     <value>Stiker saralanganlarga kiritildi.</value>
   </data>
   <data name="AddEmailSubtitle" xml:space="preserve">
-    <value>Hisobingizni himoyalash uchun yaroqli email manzilingizni kiriting.</value>
+    <value>Endi Telegram logi kodlarini SMS orqali emas, email orqali olasiz. Siz kirish ruxsatiga ega boʻlgan email manzilini kiriting. </value>
   </data>
   <data name="AddEmailTitle" xml:space="preserve">
-    <value>Email manzilini kiriting</value>
+    <value>Login emailini kiriting</value>
   </data>
   <data name="AddEmojiInstalled" xml:space="preserve">
     <value>Emoji kiritildi.</value>
@@ -1947,6 +1971,9 @@ Telegramdan barcha qurilmalaringizda bir vaqtda va bitta ilovada bir nechta hiso
   <data name="AudioSpeedFast" xml:space="preserve">
     <value>Audio ikki marta tezroq ijro etiladi.</value>
   </data>
+  <data name="AudioSpeedMedium" xml:space="preserve">
+    <value>Audio 1,5x tezlikda ijro etiladi.</value>
+  </data>
   <data name="AudioSpeedNormal" xml:space="preserve">
     <value>Audio normal tezlikda ijro etiladi.</value>
   </data>
@@ -2335,6 +2362,9 @@ avtomatik ravishda oʻchirib tashlanadi.</value>
   </data>
   <data name="AutoNightSystemDefault" xml:space="preserve">
     <value>Standart tizim</value>
+  </data>
+  <data name="AutoNightSystemModeOff" xml:space="preserve">
+    <value>Tizimning birlamchi mavzusi faolsizlantirildi.</value>
   </data>
   <data name="AutoNightTheme" xml:space="preserve">
     <value>Avtomatik tun rejimi</value>
@@ -3262,6 +3292,15 @@ Eslatma: agar kirish kodingizni unutsangiz, hisobingizdan chiqishingiz yoki ilov
   </data>
   <data name="ChannelInviteViaLink" xml:space="preserve">
     <value>Havola orqali taklif qilish</value>
+  </data>
+  <data name="ChannelInviteViaLinkRestricted" xml:space="preserve">
+    <value>Havola yaratish imkonsiz</value>
+  </data>
+  <data name="ChannelInviteViaLinkRestricted2" xml:space="preserve">
+    <value>Bu foydalanuvchini taklif qilish imkonsiz</value>
+  </data>
+  <data name="ChannelInviteViaLinkRestricted3" xml:space="preserve">
+    <value>Bu foydalanuvchilarni taklif qilish imkonsiz</value>
   </data>
   <data name="ChannelJoin" xml:space="preserve">
     <value>QOʻSHILISH</value>
@@ -5173,10 +5212,10 @@ Kanalning barcha aʼzolari ushbu guruhdagi xabarlarni koʻra oladi.</value>
     <value>Tarjima qilinmasin</value>
   </data>
   <data name="DoNotTranslateLanguage" xml:space="preserve">
-    <value>{0} tarjima qilinmasin</value>
+    <value>{0} tili tarjima qilinmasin</value>
   </data>
   <data name="DoNotTranslateLanguageOther" xml:space="preserve">
-    <value>{0} tarjima qilinmasin</value>
+    <value>{0} tili tarjima qilinmasin</value>
   </data>
   <data name="DontAskAgain" xml:space="preserve">
     <value>Boshqa soʻralmasin</value>
@@ -5210,6 +5249,12 @@ Kanalning barcha aʼzolari ushbu guruhdagi xabarlarni koʻra oladi.</value>
   </data>
   <data name="Draft" xml:space="preserve">
     <value>Qoralama</value>
+  </data>
+  <data name="DynamicPackOrder" xml:space="preserve">
+    <value>Dinamik toʻplamlar tartibi</value>
+  </data>
+  <data name="DynamicPackOrderOff" xml:space="preserve">
+    <value>Dinamik tartib faolsizlantirildi</value>
   </data>
   <data name="Edit" xml:space="preserve">
     <value>Tahrirlash</value>
@@ -8107,6 +8152,72 @@ Tilni istalgan paytda Sozlamalarda oʻzgartirishingiz mumkin.</value>
   <data name="Listening" xml:space="preserve">
     <value>tinglamoqda</value>
   </data>
+  <data name="LiteBatteryAlwaysDisabled" xml:space="preserve">
+    <value>Har doim faolsizlantirilgan</value>
+  </data>
+  <data name="LiteBatteryAlwaysEnabled" xml:space="preserve">
+    <value>Har doim yoniq</value>
+  </data>
+  <data name="LiteBatteryDisabled" xml:space="preserve">
+    <value>Oʻchiq</value>
+  </data>
+  <data name="LiteBatteryEnabled" xml:space="preserve">
+    <value>Yoniq</value>
+  </data>
+  <data name="LiteBatteryTitle" xml:space="preserve">
+    <value>Quvvat tejash rejimi</value>
+  </data>
+  <data name="LiteBatteryWhenBelow" xml:space="preserve">
+    <value>{0} dan kamayganda</value>
+  </data>
+  <data name="LiteMode" xml:space="preserve">
+    <value>Animatsiyalar</value>
+  </data>
+  <data name="LiteModeInfo" xml:space="preserve">
+    <value>Quvvat tejash uchun harakat effektlarini kamaytirish.</value>
+  </data>
+  <data name="LiteOptionsAutoplayChat" xml:space="preserve">
+    <value>Chatda avtomatik ijro qilish</value>
+  </data>
+  <data name="LiteOptionsAutoplayGifs" xml:space="preserve">
+    <value>GIFlarni avtomatik ijro qilish</value>
+  </data>
+  <data name="LiteOptionsAutoplayKeyboard" xml:space="preserve">
+    <value>Klaviaturada avtomatik ijro qilish</value>
+  </data>
+  <data name="LiteOptionsAutoplayReactions" xml:space="preserve">
+    <value>Reaksiya menyusida avtomatik ijro qilish</value>
+  </data>
+  <data name="LiteOptionsAutoplayVideo" xml:space="preserve">
+    <value>Videolarni avtomatik ijro qilish</value>
+  </data>
+  <data name="LiteOptionsBackground" xml:space="preserve">
+    <value>Fonni burish</value>
+  </data>
+  <data name="LiteOptionsCalls" xml:space="preserve">
+    <value>Chaqiruvlardagi animatsiyalar</value>
+  </data>
+  <data name="LiteOptionsChat" xml:space="preserve">
+    <value>Chatlardagi animatsiyalar</value>
+  </data>
+  <data name="LiteOptionsEmoji" xml:space="preserve">
+    <value>Animatsiyali emojilar</value>
+  </data>
+  <data name="LiteOptionsScale" xml:space="preserve">
+    <value>Zum animatsiyalari</value>
+  </data>
+  <data name="LiteOptionsStickers" xml:space="preserve">
+    <value>Animatsiyali stikerlar</value>
+  </data>
+  <data name="LiteOptionsTitle" xml:space="preserve">
+    <value>Quvvat tejash parametrlari</value>
+  </data>
+  <data name="LiteOptionsTopics" xml:space="preserve">
+    <value>Mavzularda yon menyu</value>
+  </data>
+  <data name="LiteSmoothTransitions" xml:space="preserve">
+    <value>Ravon oʻtishlarni yoqish</value>
+  </data>
   <data name="LiveLocationAlertGroup" xml:space="preserve">
     <value>Bu chatdagi odamlar aniq joylashuvingizni qancha muddat, jumladan, ilova yopilganida koʻrishini tanlang.</value>
   </data>
@@ -8276,6 +8387,9 @@ Bu amalni bajarish uchun bir necha daqiqa ketishi mumkin.</value>
   </data>
   <data name="LowDiskSpaceTitle2" xml:space="preserve">
     <value>Mediafaylni avtomatik olib tashlash</value>
+  </data>
+  <data name="LowPowerEnabledSubtitle" xml:space="preserve">
+    <value>{0} batareya quvvati qoldi</value>
   </data>
   <data name="MainChannelProfilePhotoSetHint" xml:space="preserve">
     <value>Bu endi asosiy kanal rasmi.</value>
@@ -11463,6 +11577,9 @@ Biz joylashuv axborotingizdan siz tanlagan muddat davomida foydalanamiz va istal
   <data name="PlainTextRestrictedHint" xml:space="preserve">
     <value>Matn taqiqlangan</value>
   </data>
+  <data name="PlayEmojiInKeyboard" xml:space="preserve">
+    <value>Emoji paneli animatsiyalari</value>
+  </data>
   <data name="PlayFile" xml:space="preserve">
     <value>Faylni ijro etish</value>
   </data>
@@ -11565,6 +11682,9 @@ Biz joylashuv axborotingizdan siz tanlagan muddat davomida foydalanamiz va istal
   <data name="PostingMembers" xml:space="preserve">
     <value>Aʼzolar xabarlari</value>
   </data>
+  <data name="PowerUsage" xml:space="preserve">
+    <value>Quvvat tejash</value>
+  </data>
   <data name="PremiumMore" xml:space="preserve">
     <value>Yana</value>
   </data>
@@ -11614,7 +11734,7 @@ Biz joylashuv axborotingizdan siz tanlagan muddat davomida foydalanamiz va istal
     <value>Bu emoji toʻplamidan faqat **Telegram Premium** foydalanuvchilari foydalanishi mumkin.</value>
   </data>
   <data name="PremiumPreviewEmojiStatus" xml:space="preserve">
-    <value>Emoji status</value>
+    <value>Emoji statuslar</value>
   </data>
   <data name="PremiumPreviewEmojiStatusDescription" xml:space="preserve">
     <value>Ismingiz yonida joriy statusni aks ettirish uchun minglab emojilardan birini tanlang.</value>
@@ -11701,7 +11821,7 @@ Biz joylashuv axborotingizdan siz tanlagan muddat davomida foydalanamiz va istal
     <value>Oylik</value>
   </data>
   <data name="PremiumTierSemiannual" xml:space="preserve">
-    <value>Har yarim yilda</value>
+    <value>Yarim yillik</value>
   </data>
   <data name="PreviewFeedback" xml:space="preserve">
     <value>Bu koʻrib chiqishdagi xato haqida xabar qilish</value>
@@ -11734,10 +11854,10 @@ Biz joylashuv axborotingizdan siz tanlagan muddat davomida foydalanamiz va istal
     <value> {0} joylashuvlarni ulashish</value>
   </data>
   <data name="PreviewForwardMessagesCount_one" xml:space="preserve">
-    <value>Ulashilgan xabar</value>
+    <value>Uzatilgan xabar</value>
   </data>
   <data name="PreviewForwardMessagesCount_other" xml:space="preserve">
-    <value>Ulashilgan {0} xabarlar</value>
+    <value>Uzatilgan {0} ta xabar</value>
   </data>
   <data name="PreviewForwardMusic_one" xml:space="preserve">
     <value>Audio faylni ulashish</value>
@@ -13068,7 +13188,7 @@ Kanallar maxfiy boʻladi.</value>
     <value>Musiqalarga saqlash</value>
   </data>
   <data name="SavingContentTitle" xml:space="preserve">
-    <value>Kontent xavfsizligi</value>
+    <value>Kontentni himoyalash</value>
   </data>
   <data name="ScamMessage" xml:space="preserve">
     <value>FIRIBGAR</value>
@@ -13300,7 +13420,7 @@ Bu oʻzgarish kuchga kirishi uchun ilovani qayta ishga tushirishingiz kerak boʻ
     <value>oʻchib ketish taymeriga ega boʻladi</value>
   </data>
   <data name="SelectChatsForDisableAutoDelete" xml:space="preserve">
-    <value>oʻchib ketish taymerini faolsizlantirish uchun</value>
+    <value>avtomatik oʻchirish taymerini faolsizlantirish uchun</value>
   </data>
   <data name="SelectChatsForDisableAutoDelete2" xml:space="preserve">
     <value>oʻchib ketish taymeri faolsizlantiriladi</value>
@@ -13439,6 +13559,9 @@ Bu oʻzgarish kuchga kirishi uchun ilovani qayta ishga tushirishingiz kerak boʻ
   </data>
   <data name="SendingVideoStatus" xml:space="preserve">
     <value>video yubormoqda…</value>
+  </data>
+  <data name="SendInviteLink" xml:space="preserve">
+    <value>Taklif havolasini yuborish</value>
   </data>
   <data name="SendItems" xml:space="preserve">
     <value>Yuborish {0}</value>
@@ -14198,11 +14321,20 @@ Sekin rejim yoqilgan. Birdaniga bittadan ortiq xabar yubora olmaysiz.</value>
   <data name="SpeedFast" xml:space="preserve">
     <value>Tez</value>
   </data>
+  <data name="SpeedHint" xml:space="preserve">
+    <value>Yana boshqa tezlik qiymatlari uchun bosib turing.</value>
+  </data>
+  <data name="SpeedMedium" xml:space="preserve">
+    <value>Oʻrtacha</value>
+  </data>
   <data name="SpeedNormal" xml:space="preserve">
     <value>Normal</value>
   </data>
   <data name="SpeedSlow" xml:space="preserve">
     <value>Sekin</value>
+  </data>
+  <data name="SpeedSuperFast" xml:space="preserve">
+    <value>Super tez</value>
   </data>
   <data name="SpeedVeryFast" xml:space="preserve">
     <value>Juda tez</value>
@@ -14247,6 +14379,9 @@ Internetdagi reklamalar endi foydalanuvchi maxfiyligi buzilishi bilan sinonim bo
   </data>
   <data name="SponsoredMessageRecommended" xml:space="preserve">
     <value>tavsiya etiladi</value>
+  </data>
+  <data name="SponsoredMessageSponsor" xml:space="preserve">
+    <value>Reklama beruvchi haqida</value>
   </data>
   <data name="Start" xml:space="preserve">
     <value>Boshlash</value>
@@ -14371,6 +14506,9 @@ va telefon raqamingizni kiriting.</value>
   </data>
   <data name="StickersReorderHint" xml:space="preserve">
     <value>Stikerlarni qayta tartiblash uchun ularni ushlab torting.</value>
+  </data>
+  <data name="StickersSettings" xml:space="preserve">
+    <value>Sozlamalar</value>
   </data>
   <data name="StickersShare" xml:space="preserve">
     <value>Ulashish</value>
@@ -14525,7 +14663,7 @@ Obuna boʻlganingizdan keyin Telegram Premiumning imtiyozlaridan uni qoʻllab-qu
     <value>Taklif qilingan rasm</value>
   </data>
   <data name="SuggestedVideo" xml:space="preserve">
-    <value>Taklif qilingan video</value>
+    <value>Taklif qilingan rasm</value>
   </data>
   <data name="SuggestPhoto" xml:space="preserve">
     <value>Rasm taklif qilish</value>
@@ -15320,7 +15458,7 @@ Agar Telegramning eng oddiy ehtiyojlari sizni qoniqtirmasa, sizga ushbu xizmatni
     <value>Malay</value>
   </data>
   <data name="TranslateLanguageNL" xml:space="preserve">
-    <value>Nemis</value>
+    <value>Golland</value>
   </data>
   <data name="TranslateLanguageNO" xml:space="preserve">
     <value>Norveg</value>
@@ -16118,6 +16256,24 @@ Lekin qisqa kolleksiyalanadigan foydalanuvchi nomlarini, jumladan, buni xarid qi
   </data>
   <data name="VideoSavedToDownloadsHint" xml:space="preserve">
     <value>Video Yuklanmalar jildiga saqlandi.</value>
+  </data>
+  <data name="VideoSpeedCustom" xml:space="preserve">
+    <value>Maxsus {0}</value>
+  </data>
+  <data name="VideoSpeedFast" xml:space="preserve">
+    <value>Tez</value>
+  </data>
+  <data name="VideoSpeedNormal" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="VideoSpeedSlow" xml:space="preserve">
+    <value>Sekin</value>
+  </data>
+  <data name="VideoSpeedVeryFast" xml:space="preserve">
+    <value>Juda tez</value>
+  </data>
+  <data name="VideoSpeedVerySlow" xml:space="preserve">
+    <value>Juda sekin</value>
   </data>
   <data name="VideosSavedHint_one" xml:space="preserve">
     <value>Video galereyaga saqlandi.</value>

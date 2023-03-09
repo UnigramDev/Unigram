@@ -124,6 +124,12 @@
   <data name="AccAutoDeleteTimer" xml:space="preserve">
     <value>Auto-delete timer</value>
   </data>
+  <data name="AccDescrArchivedChatsHidden" xml:space="preserve">
+    <value>Archived chats hidden</value>
+  </data>
+  <data name="AccDescrArchivedChatsShown" xml:space="preserve">
+    <value>Archived chats shown</value>
+  </data>
   <data name="AccDescrAspectRatio" xml:space="preserve">
     <value>Aspect ratio</value>
   </data>
@@ -195,6 +201,9 @@
   </data>
   <data name="AccDescrCustomEmoji" xml:space="preserve">
     <value>Custom emoji</value>
+  </data>
+  <data name="AccDescrDocumentType" xml:space="preserve">
+    <value>, {0} file</value>
   </data>
   <data name="AccDescrDownloadProgress" xml:space="preserve">
     <value>Downloaded {0} of {1}</value>
@@ -285,6 +294,9 @@
   </data>
   <data name="AccDescrMyLocation" xml:space="preserve">
     <value>My location</value>
+  </data>
+  <data name="AccDescrNotificationsMuted" xml:space="preserve">
+    <value>Muted</value>
   </data>
   <data name="AccDescrNumberOfPeopleReactions_one" xml:space="preserve">
     <value>{0} person reacted with {1}</value>
@@ -454,6 +466,9 @@
   <data name="AccDescrShutter" xml:space="preserve">
     <value>Shutter</value>
   </data>
+  <data name="AccDescrSpeedSlider" xml:space="preserve">
+    <value>Choose speed</value>
+  </data>
   <data name="AccDescrStickers" xml:space="preserve">
     <value>Stickers</value>
   </data>
@@ -486,6 +501,9 @@
   </data>
   <data name="AccDescrUploadProgress" xml:space="preserve">
     <value>Uploaded {0} of {1}</value>
+  </data>
+  <data name="AccDescrUserOnline" xml:space="preserve">
+    <value>Online</value>
   </data>
   <data name="AccDescrUserOptions" xml:space="preserve">
     <value>User options</value>
@@ -659,7 +677,7 @@
     <value>un1 changed the group name to un2</value>
   </data>
   <data name="ActionChangedVideo" xml:space="preserve">
-    <value>un1 changed the group video</value>
+    <value>un1 changed the group photo</value>
   </data>
   <data name="ActionChannelCallEnded" xml:space="preserve">
     <value>Live stream ended ({0})</value>
@@ -677,7 +695,7 @@
     <value>Channel name changed to un2</value>
   </data>
   <data name="ActionChannelChangedVideo" xml:space="preserve">
-    <value>Channel video changed</value>
+    <value>Channel photo updated</value>
   </data>
   <data name="ActionChannelRemovedPhoto" xml:space="preserve">
     <value>Channel photo removed</value>
@@ -870,6 +888,9 @@ to: {1}</value>
   <data name="ActionsChartTitle" xml:space="preserve">
     <value>Actions</value>
   </data>
+  <data name="ActionSkip" xml:space="preserve">
+    <value>Skip</value>
+  </data>
   <data name="ActionSuggestPhoto" xml:space="preserve">
     <value>Suggested Photo</value>
   </data>
@@ -952,7 +973,7 @@ to: {1}</value>
     <value>You changed the group name to un2</value>
   </data>
   <data name="ActionYouChangedVideo" xml:space="preserve">
-    <value>You changed the group video</value>
+    <value>You changed the group photo</value>
   </data>
   <data name="ActionYouCreateGroup" xml:space="preserve">
     <value>You created the group</value>
@@ -1077,14 +1098,17 @@ to: {1}</value>
   <data name="AddedToDoNotTranslate" xml:space="preserve">
     <value>**{0}** added to your Do Not Translate list.</value>
   </data>
+  <data name="AddedToDoNotTranslateOther" xml:space="preserve">
+    <value>**{0}** is added to the Do Not Translate list.</value>
+  </data>
   <data name="AddedToFavorites" xml:space="preserve">
     <value>Sticker added to Favorites.</value>
   </data>
   <data name="AddEmailSubtitle" xml:space="preserve">
-    <value>Please enter your valid email address to protect your account.</value>
+    <value>You will now receive Telegram login codes via email and not SMS. Please enter an email address to which you have access.</value>
   </data>
   <data name="AddEmailTitle" xml:space="preserve">
-    <value>Add Email</value>
+    <value>Choose a login email</value>
   </data>
   <data name="AddEmojiInstalled" xml:space="preserve">
     <value>Emoji added.</value>
@@ -1114,10 +1138,10 @@ to: {1}</value>
     <value>Unlock a wider range of reactions on messages by subscribing to Telegram Premium.</value>
   </data>
   <data name="AddManyEmojiCount_one" xml:space="preserve">
-    <value>Add emoji</value>
+    <value>Add Emoji</value>
   </data>
   <data name="AddManyEmojiCount_other" xml:space="preserve">
-    <value>Add {0} emoji</value>
+    <value>Add {0} Emoji</value>
   </data>
   <data name="AddManyEmojiPacksCount_one" xml:space="preserve">
     <value>Add emoji pack</value>
@@ -1345,7 +1369,7 @@ to: {1}</value>
     <value>All websites disconnected.</value>
   </data>
   <data name="AlmostDone" xml:space="preserve">
-    <value>Almost done</value>
+    <value>Almost done!</value>
   </data>
   <data name="ALongTimeAgo" xml:space="preserve">
     <value>last seen a long time ago</value>
@@ -1699,7 +1723,7 @@ archived when new messages arrive.</value>
     <value>Are you sure you want to delete this message for everyone?</value>
   </data>
   <data name="AreYouSureDeleteThisChat" xml:space="preserve">
-    <value>Do you want to delete this chat?</value>
+    <value>Do you want to permanently delete this chat?</value>
   </data>
   <data name="AreYouSureDeleteThisChatSavedMessages" xml:space="preserve">
     <value>Are you sure you want to delete **Saved Messages**?</value>
@@ -1798,7 +1822,7 @@ Please take a look at the &lt;![CDATA[&lt;a href="https://telegram.org/faq#gener
     <value>Voice message</value>
   </data>
   <data name="AttachAudioRestricted" xml:space="preserve">
-    <value>The admins of this group have restricted you from sending music here until {0}</value>
+    <value>The admins of this group have restricted you from sending music here until {0}.</value>
   </data>
   <data name="AttachAudioRestrictedForever" xml:space="preserve">
     <value>The admins of this group have restricted you from sending music here.</value>
@@ -1819,7 +1843,7 @@ Please take a look at the &lt;![CDATA[&lt;a href="https://telegram.org/faq#gener
     <value>File</value>
   </data>
   <data name="AttachDocumentsRestricted" xml:space="preserve">
-    <value>The admins of this group have restricted you from sending documents here until {0}</value>
+    <value>The admins of this group have restricted you from sending documents here until {0}.</value>
   </data>
   <data name="AttachDocumentsRestrictedForever" xml:space="preserve">
     <value>The admins of this group have restricted you from sending documents here.</value>
@@ -1891,13 +1915,13 @@ Please take a look at the &lt;![CDATA[&lt;a href="https://telegram.org/faq#gener
     <value>Photo has expired</value>
   </data>
   <data name="AttachPhotoRestricted" xml:space="preserve">
-    <value>The admins of this group have restricted you from sending photos here until {0}</value>
+    <value>The admins of this group have restricted you from sending photos here until {0}.</value>
   </data>
   <data name="AttachPhotoRestrictedForever" xml:space="preserve">
     <value>The admins of this group have restricted you from sending photos here.</value>
   </data>
   <data name="AttachPlainRestricted" xml:space="preserve">
-    <value>The admins of this group have restricted you from sending text message here until {0}</value>
+    <value>The admins of this group have restricted you from sending text messages here until {0}</value>
   </data>
   <data name="AttachPlainRestrictedForever" xml:space="preserve">
     <value>The admins of this group have restricted you from sending text messages.</value>
@@ -1906,7 +1930,7 @@ Please take a look at the &lt;![CDATA[&lt;a href="https://telegram.org/faq#gener
     <value>Video message</value>
   </data>
   <data name="AttachRoundRestricted" xml:space="preserve">
-    <value>The admins of this group have restricted you from sending video messages here until {0}</value>
+    <value>The admins of this group have restricted you from sending video messages here until {0}.</value>
   </data>
   <data name="AttachRoundRestrictedForever" xml:space="preserve">
     <value>The admins of this group have restricted you from sending video messages here.</value>
@@ -1927,13 +1951,13 @@ Please take a look at the &lt;![CDATA[&lt;a href="https://telegram.org/faq#gener
     <value>Video has expired</value>
   </data>
   <data name="AttachVideoRestricted" xml:space="preserve">
-    <value>The admins of this group have restricted you from sending videos here until {0}</value>
+    <value>The admins of this group have restricted you from sending videos here until {0}.</value>
   </data>
   <data name="AttachVideoRestrictedForever" xml:space="preserve">
     <value>The admins of this group have restricted you from sending videos here.</value>
   </data>
   <data name="AttachVoiceRestricted" xml:space="preserve">
-    <value>The admins of this group have restricted you from sending voice messages here until {0}</value>
+    <value>The admins of this group have restricted you from sending voice messages here until {0}.</value>
   </data>
   <data name="AttachVoiceRestrictedForever" xml:space="preserve">
     <value>The admins of this group have restricted you from sending voice messages here.</value>
@@ -1944,8 +1968,14 @@ Please take a look at the &lt;![CDATA[&lt;a href="https://telegram.org/faq#gener
   <data name="AudioSavedHint" xml:space="preserve">
     <value>File saved to music.</value>
   </data>
+  <data name="AudioSpeedCustom" xml:space="preserve">
+    <value>Audio will play at {0}x speed.</value>
+  </data>
   <data name="AudioSpeedFast" xml:space="preserve">
     <value>Audio will play two times faster.</value>
+  </data>
+  <data name="AudioSpeedMedium" xml:space="preserve">
+    <value>Audio will play at 1.5x speed.</value>
   </data>
   <data name="AudioSpeedNormal" xml:space="preserve">
     <value>Audio will play at normal speed.</value>
@@ -2139,7 +2169,7 @@ deleted {0} after they are sent.</value>
     <value>Automatically delete messages for everyone after a period of time in all new chats you start.</value>
   </data>
   <data name="AutodeleteTimerDisabledForChats" xml:space="preserve">
-    <value>Self-destruct timer has been disabled in {0}.</value>
+    <value>Self-destruct timer disabled in {0}.</value>
   </data>
   <data name="AutodeleteTimerEnabledForChats" xml:space="preserve">
     <value>Self-destruct timer for **{0}** has been enabled in {1}.</value>
@@ -2289,7 +2319,7 @@ deleted {0} after they are sent.</value>
     <value>You can change your auto-download settings to reduce mobile data usage.</value>
   </data>
   <data name="AutomaticDownloadSettingsInfoRoaming" xml:space="preserve">
-    <value>You can change your auto-download settings for media to reduce data usage when roaming.</value>
+    <value>You can change your auto-download settings to reduce data usage when roaming.</value>
   </data>
   <data name="AutomaticDownloadSettingsInfoWiFi" xml:space="preserve">
     <value>You can change your auto-download settings to reduce data usage when connected to Wi-Fi.</value>
@@ -2335,6 +2365,9 @@ deleted {0} after they are sent.</value>
   </data>
   <data name="AutoNightSystemDefault" xml:space="preserve">
     <value>System Default</value>
+  </data>
+  <data name="AutoNightSystemModeOff" xml:space="preserve">
+    <value>System Default theme is now disabled.</value>
   </data>
   <data name="AutoNightTheme" xml:space="preserve">
     <value>Auto-Night Mode</value>
@@ -2668,6 +2701,11 @@ It will be able to access your **IP address** and basic device info.</value>
   <data name="BotStart" xml:space="preserve">
     <value>START</value>
   </data>
+  <data name="BotStartAppPermission" xml:space="preserve">
+    <value>Do you want to start app **{0}** from bot **{1}**?
+
+It will be able to access your **IP address** and basic device info.</value>
+  </data>
   <data name="BotStatusCantRead" xml:space="preserve">
     <value>has no access to messages</value>
   </data>
@@ -2675,7 +2713,7 @@ It will be able to access your **IP address** and basic device info.</value>
     <value>has access to messages</value>
   </data>
   <data name="BotStop" xml:space="preserve">
-    <value>Stop Bot</value>
+    <value>Block Bot</value>
   </data>
   <data name="BotUnblock" xml:space="preserve">
     <value>RESTART</value>
@@ -3262,6 +3300,15 @@ Note: if you forget your passcode, you'll need to log out or reinstall the app. 
   <data name="ChannelInviteViaLink" xml:space="preserve">
     <value>Invite via Link</value>
   </data>
+  <data name="ChannelInviteViaLinkRestricted" xml:space="preserve">
+    <value>You can't create a link</value>
+  </data>
+  <data name="ChannelInviteViaLinkRestricted2" xml:space="preserve">
+    <value>This user can't be invited</value>
+  </data>
+  <data name="ChannelInviteViaLinkRestricted3" xml:space="preserve">
+    <value>These users can't be invited</value>
+  </data>
   <data name="ChannelJoin" xml:space="preserve">
     <value>JOIN</value>
   </data>
@@ -3528,7 +3575,7 @@ Minimum length is 5 characters.</value>
     <value>Warning</value>
   </data>
   <data name="ChannelVideoEditNotification" xml:space="preserve">
-    <value>Channel {0} updated its video</value>
+    <value>{0} updated its photo</value>
   </data>
   <data name="Characters_one" xml:space="preserve">
     <value>{0} character</value>
@@ -3619,6 +3666,9 @@ Minimum length is 5 characters.</value>
   </data>
   <data name="ChatListSwipeGesture" xml:space="preserve">
     <value>Chat list swipe gesture</value>
+  </data>
+  <data name="ChatListSwipeGestureInfo" xml:space="preserve">
+    <value>Choose which action you want to perform when you swipe to the left in the chat list.</value>
   </data>
   <data name="ChatLocation" xml:space="preserve">
     <value>Location</value>
@@ -4335,7 +4385,7 @@ For more space and additional features, upgrade to a supergroup:
     <value>Create</value>
   </data>
   <data name="CreateChannelForThis" xml:space="preserve">
-    <value>Create a New Channel For This</value>
+    <value>Create a New Channel for This</value>
   </data>
   <data name="CreateContact" xml:space="preserve">
     <value>Create Contact</value>
@@ -4353,7 +4403,7 @@ For more space and additional features, upgrade to a supergroup:
     <value>Create a New Group to Import</value>
   </data>
   <data name="CreateGroupForThis" xml:space="preserve">
-    <value>Create a New Group For This</value>
+    <value>Create a New Group for This</value>
   </data>
   <data name="CreateLink" xml:space="preserve">
     <value>Create Link</value>
@@ -4601,7 +4651,7 @@ You can always switch back to the default Telegram theme here.</value>
     <value>Import Contacts</value>
   </data>
   <data name="DebugMenuReadAllDialogs" xml:space="preserve">
-    <value>Read all Chats</value>
+    <value>Mark all chats as read</value>
   </data>
   <data name="DebugMenuReloadContacts" xml:space="preserve">
     <value>Reload Contacts</value>
@@ -4730,7 +4780,7 @@ You can always switch back to the default Telegram theme here.</value>
     <value>Delete and leave group</value>
   </data>
   <data name="DeleteAndStop" xml:space="preserve">
-    <value>Delete and stop</value>
+    <value>Delete and block</value>
   </data>
   <data name="DeleteBackground_one" xml:space="preserve">
     <value>Delete background</value>
@@ -5212,6 +5262,18 @@ Anyone from the channel will be able to see messages in this group.</value>
   </data>
   <data name="Draft" xml:space="preserve">
     <value>Draft</value>
+  </data>
+  <data name="DynamicPackOrder" xml:space="preserve">
+    <value>Dynamic Pack Order</value>
+  </data>
+  <data name="DynamicPackOrderInfo" xml:space="preserve">
+    <value>Automatically place recently used sticker packs above others.</value>
+  </data>
+  <data name="DynamicPackOrderOff" xml:space="preserve">
+    <value>Dynamic Order off</value>
+  </data>
+  <data name="DynamicPackOrderOffInfo" xml:space="preserve">
+    <value>Sticker packs will no longer be rearranged when you send a sticker.</value>
   </data>
   <data name="Edit" xml:space="preserve">
     <value>Edit</value>
@@ -5852,7 +5914,7 @@ Please enter theme name:</value>
     <value>un1 renamed the channel to "{0}"</value>
   </data>
   <data name="EventLogEditedChannelVideo" xml:space="preserve">
-    <value>un1 set a new channel video</value>
+    <value>un1 set a new channel photo</value>
   </data>
   <data name="EventLogEditedGroupDescription" xml:space="preserve">
     <value>un1 edited the group description:</value>
@@ -5867,7 +5929,7 @@ Please enter theme name:</value>
     <value>un1 renamed the group to "{0}"</value>
   </data>
   <data name="EventLogEditedGroupVideo" xml:space="preserve">
-    <value>un1 set a new group video</value>
+    <value>un1 set a new group photo</value>
   </data>
   <data name="EventLogEditedMedia" xml:space="preserve">
     <value>un1 edited media:</value>
@@ -6841,7 +6903,7 @@ All secret chats will be lost.</value>
     <value>Сopying and forwarding is not allowed in this channel.</value>
   </data>
   <data name="ForwardsRestrictedInfoGroup" xml:space="preserve">
-    <value>Сopying and forwarding is not allowed in this group.</value>
+    <value>Сopying and forwarding is not allowed from this group.</value>
   </data>
   <data name="ForwardTo" xml:space="preserve">
     <value>Forward to...</value>
@@ -7047,7 +7109,7 @@ This action **can't** be undone.</value>
     <value>Sending text messages isn't allowed in this group.</value>
   </data>
   <data name="GlobalAttachRoundRestricted" xml:space="preserve">
-    <value>Sending round videos isn't allowed in this group.</value>
+    <value>Sending video messages isn't allowed here.</value>
   </data>
   <data name="GlobalAttachStickersRestricted" xml:space="preserve">
     <value>Stickers aren't allowed in this group.</value>
@@ -7559,6 +7621,24 @@ Messages will be imported into the current day but will also include their origi
   <data name="InviteByQRCode" xml:space="preserve">
     <value>Invite by QR Code</value>
   </data>
+  <data name="InviteChannelRestrictedUsers_one" xml:space="preserve">
+    <value>**{0} user** restricts adding them to channels. You can send them an invite link instead.</value>
+  </data>
+  <data name="InviteChannelRestrictedUsers_other" xml:space="preserve">
+    <value>**{0} users** restrict adding them to channels. You can send them an invite link instead.</value>
+  </data>
+  <data name="InviteChannelRestrictedUsers2_one" xml:space="preserve">
+    <value>**{0} user** can only be invited via link, but you don't have permission to share invite links to this channel.</value>
+  </data>
+  <data name="InviteChannelRestrictedUsers2_other" xml:space="preserve">
+    <value>**{0} users** can only be invited via link, but you don't have permission to share invite links to this channel.</value>
+  </data>
+  <data name="InviteChannelRestrictedUsers2One" xml:space="preserve">
+    <value>**{0}** can only be invited via link, but you don't have permission to share invite links to this channel.</value>
+  </data>
+  <data name="InviteChannelRestrictedUsersOne" xml:space="preserve">
+    <value>**{0}** restricts adding them to channels. You can send them an invite link instead.</value>
+  </data>
   <data name="Invited" xml:space="preserve">
     <value>invited</value>
   </data>
@@ -7582,6 +7662,33 @@ Messages will be imported into the current day but will also include their origi
   </data>
   <data name="InviteLinks" xml:space="preserve">
     <value>Invite Links</value>
+  </data>
+  <data name="InviteLinkSent_one" xml:space="preserve">
+    <value>Invite link sent to {0} user.</value>
+  </data>
+  <data name="InviteLinkSent_other" xml:space="preserve">
+    <value>Invite link sent to {0} users.</value>
+  </data>
+  <data name="InviteLinkSentSingle" xml:space="preserve">
+    <value>Invite link sent to **{0}**.</value>
+  </data>
+  <data name="InviteRestrictedUsers_one" xml:space="preserve">
+    <value>**{0} user** restricts adding them to groups. You can send them an invite link instead.</value>
+  </data>
+  <data name="InviteRestrictedUsers_other" xml:space="preserve">
+    <value>**{0} users** restrict adding them to groups. You can send them an invite link instead.</value>
+  </data>
+  <data name="InviteRestrictedUsers2_one" xml:space="preserve">
+    <value>**{0} user** can only be invited via link, but you don't have permission to share invite links to this group.</value>
+  </data>
+  <data name="InviteRestrictedUsers2_other" xml:space="preserve">
+    <value>**{0} users** can only be invited via link, but you don't have permission to share invite links to this group.</value>
+  </data>
+  <data name="InviteRestrictedUsers2One" xml:space="preserve">
+    <value>**{0}** can only be invited via link, but you don't have permission to share invite links to this group.</value>
+  </data>
+  <data name="InviteRestrictedUsersOne" xml:space="preserve">
+    <value>**{0}** restricts adding them to groups. You can send them an invite link instead.</value>
   </data>
   <data name="InviteRevokedHint" xml:space="preserve">
     <value>The invite link has been revoked.</value>
@@ -8166,6 +8273,99 @@ You can change your language back at any time in Settings.</value>
   <data name="Listening" xml:space="preserve">
     <value>listening</value>
   </data>
+  <data name="LiteBatteryAlwaysDisabled" xml:space="preserve">
+    <value>Always Disabled</value>
+  </data>
+  <data name="LiteBatteryAlwaysEnabled" xml:space="preserve">
+    <value>Always Enabled</value>
+  </data>
+  <data name="LiteBatteryDisabled" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="LiteBatteryEnabled" xml:space="preserve">
+    <value>On</value>
+  </data>
+  <data name="LiteBatteryInfoBelow" xml:space="preserve">
+    <value>Automatically reduce power usage and animations when your battery is below {0}.</value>
+  </data>
+  <data name="LiteBatteryInfoDisabled" xml:space="preserve">
+    <value>Never reduce power usage and keep all animations even when your battery is low.</value>
+  </data>
+  <data name="LiteBatteryInfoEnabled" xml:space="preserve">
+    <value>Always reduce power usage regardless of your battery level.</value>
+  </data>
+  <data name="LiteBatteryRestricted" xml:space="preserve">
+    <value>Please turn off Power Saving Mode to change these settings.</value>
+  </data>
+  <data name="LiteBatteryTitle" xml:space="preserve">
+    <value>Power Saving Mode</value>
+  </data>
+  <data name="LiteBatteryWhenBelow" xml:space="preserve">
+    <value>When below {0}</value>
+  </data>
+  <data name="LiteMode" xml:space="preserve">
+    <value>Animations</value>
+  </data>
+  <data name="LiteModeInfo" xml:space="preserve">
+    <value>Reduce motion effects to save power.</value>
+  </data>
+  <data name="LiteOptionsAutoplayChat" xml:space="preserve">
+    <value>Autoplay in chat</value>
+  </data>
+  <data name="LiteOptionsAutoplayGifs" xml:space="preserve">
+    <value>Autoplay GIFs</value>
+  </data>
+  <data name="LiteOptionsAutoplayKeyboard" xml:space="preserve">
+    <value>Autoplay in keyboard</value>
+  </data>
+  <data name="LiteOptionsAutoplayReactions" xml:space="preserve">
+    <value>Autoplay in reaction menu</value>
+  </data>
+  <data name="LiteOptionsAutoplayVideo" xml:space="preserve">
+    <value>Autoplay Videos</value>
+  </data>
+  <data name="LiteOptionsBackground" xml:space="preserve">
+    <value>Background rotation</value>
+  </data>
+  <data name="LiteOptionsBlur" xml:space="preserve">
+    <value>Night theme blur</value>
+  </data>
+  <data name="LiteOptionsCalls" xml:space="preserve">
+    <value>Animations in Calls</value>
+  </data>
+  <data name="LiteOptionsChat" xml:space="preserve">
+    <value>Animations in Chats</value>
+  </data>
+  <data name="LiteOptionsEmoji" xml:space="preserve">
+    <value>Animated Emoji</value>
+  </data>
+  <data name="LiteOptionsScale" xml:space="preserve">
+    <value>Zoom animations</value>
+  </data>
+  <data name="LiteOptionsSpoiler" xml:space="preserve">
+    <value>Animated spoiler effect</value>
+  </data>
+  <data name="LiteOptionsStickers" xml:space="preserve">
+    <value>Animated Stickers</value>
+  </data>
+  <data name="LiteOptionsTitle" xml:space="preserve">
+    <value>Power saving options</value>
+  </data>
+  <data name="LiteOptionsTopics" xml:space="preserve">
+    <value>Side menu in topics</value>
+  </data>
+  <data name="LitePowerSaver" xml:space="preserve">
+    <value>Save Power on Low Battery</value>
+  </data>
+  <data name="LitePowerSaverInfo" xml:space="preserve">
+    <value>Automatically switch to low power usage when your system is in Battery Saving Mode.</value>
+  </data>
+  <data name="LiteSmoothTransitions" xml:space="preserve">
+    <value>Enable Smooth Transitions</value>
+  </data>
+  <data name="LiteSmoothTransitionsInfo" xml:space="preserve">
+    <value>You can disable animated transitions between different sections of the app.</value>
+  </data>
   <data name="LiveLocationAlertGroup" xml:space="preserve">
     <value>Choose for how long people in this chat will see your accurate location, including when the app is closed.</value>
   </data>
@@ -8336,17 +8536,23 @@ This operation can take a few minutes to complete.</value>
   <data name="LowDiskSpaceTitle2" xml:space="preserve">
     <value>Remove media after</value>
   </data>
+  <data name="LowPowerEnabledSubtitle" xml:space="preserve">
+    <value>{0} battery remaining</value>
+  </data>
+  <data name="LowPowerEnabledTitle" xml:space="preserve">
+    <value>Power Saving Mode enabled</value>
+  </data>
   <data name="MainChannelProfilePhotoSetHint" xml:space="preserve">
     <value>This is the main channel photo now.</value>
   </data>
   <data name="MainChannelProfileVideoSetHint" xml:space="preserve">
-    <value>This is the main channel video now.</value>
+    <value>This is the main channel photo now.</value>
   </data>
   <data name="MainGroupProfilePhotoSetHint" xml:space="preserve">
     <value>This is the main group photo now.</value>
   </data>
   <data name="MainGroupProfileVideoSetHint" xml:space="preserve">
-    <value>This is the main group video now.</value>
+    <value>This is the main group photo now.</value>
   </data>
   <data name="MainProfilePhotoSetHint" xml:space="preserve">
     <value>This is your main profile photo now.</value>
@@ -9540,7 +9746,7 @@ Please make sure you entered the right Server URL and Stream Key in your app.</v
     <value>{0} changed the group photo for {1}</value>
   </data>
   <data name="NotificationEditedGroupVideo" xml:space="preserve">
-    <value>{0} changed the group video for {1}</value>
+    <value>{0} changed the group photo for {1}</value>
   </data>
   <data name="NotificationGroupAddMember" xml:space="preserve">
     <value>{0} invited {2} to the group {1}</value>
@@ -9669,7 +9875,7 @@ Please make sure you entered the right Server URL and Stream Key in your app.</v
     <value>{0} sent a photo to the group {1}</value>
   </data>
   <data name="NotificationMessageGroupPoll" xml:space="preserve">
-    <value>{0} sent a poll to the group {1}</value>
+    <value>{0} sent a poll to {1}</value>
   </data>
   <data name="NotificationMessageGroupPoll2" xml:space="preserve">
     <value>{0} sent a poll {2} to the group {1}</value>
@@ -11518,6 +11724,9 @@ We will access your location only for the duration you choose, and you can stop 
   <data name="PlainTextRestrictedHint" xml:space="preserve">
     <value>Text not allowed</value>
   </data>
+  <data name="PlayEmojiInKeyboard" xml:space="preserve">
+    <value>Emoji Panel Animations</value>
+  </data>
   <data name="PlayFile" xml:space="preserve">
     <value>Play File</value>
   </data>
@@ -11620,6 +11829,9 @@ We will access your location only for the duration you choose, and you can stop 
   <data name="PostingMembers" xml:space="preserve">
     <value>Posting Members</value>
   </data>
+  <data name="PowerUsage" xml:space="preserve">
+    <value>Power Saving</value>
+  </data>
   <data name="PremiumMore" xml:space="preserve">
     <value>More</value>
   </data>
@@ -11669,7 +11881,7 @@ We will access your location only for the duration you choose, and you can stop 
     <value>This emoji pack is available only to subscribers of **Telegram Premium**.</value>
   </data>
   <data name="PremiumPreviewEmojiStatus" xml:space="preserve">
-    <value>Emoji Status</value>
+    <value>Emoji Statuses</value>
   </data>
   <data name="PremiumPreviewEmojiStatusDescription" xml:space="preserve">
     <value>Choose from thousands of emoji to display current activity next to your name.</value>
@@ -12317,7 +12529,7 @@ We will access your location only for the duration you choose, and you can stop 
     <value>You missed the correct option.</value>
   </data>
   <data name="RaiseToSpeak" xml:space="preserve">
-    <value>Raise to Speak</value>
+    <value>Raise to Listen</value>
   </data>
   <data name="RateCallDistorted" xml:space="preserve">
     <value>Speech was distorted</value>
@@ -13052,7 +13264,7 @@ The channels will become private.</value>
     <value>Sign up for the annual payment plan for Telegram Premium now to get the discount.</value>
   </data>
   <data name="SaveOnAnnualPremiumTitle" xml:space="preserve">
-    <value>Save on your subscription up to **{0}%**</value>
+    <value>Save up to **{0}%** on your subscription</value>
   </data>
   <data name="SaveTheme" xml:space="preserve">
     <value>SAVE THEME</value>
@@ -13115,7 +13327,7 @@ The channels will become private.</value>
     <value>Videos up to {0}</value>
   </data>
   <data name="SaveToGIFs" xml:space="preserve">
-    <value>Save to GIFs</value>
+    <value>Add to GIFs</value>
   </data>
   <data name="SaveToMusic" xml:space="preserve">
     <value>Save to Music</value>
@@ -13490,6 +13702,9 @@ You may need to restart the app for this to take effect.</value>
   </data>
   <data name="SendingVideoStatus" xml:space="preserve">
     <value>sending a video...</value>
+  </data>
+  <data name="SendInviteLink" xml:space="preserve">
+    <value>Send Invite Link</value>
   </data>
   <data name="SendItems" xml:space="preserve">
     <value>Send {0}</value>
@@ -14250,11 +14465,20 @@ Slow Mode is active. You can't send more than one message at once.</value>
   <data name="SpeedFast" xml:space="preserve">
     <value>Fast</value>
   </data>
+  <data name="SpeedHint" xml:space="preserve">
+    <value>Long press for more speed options.</value>
+  </data>
+  <data name="SpeedMedium" xml:space="preserve">
+    <value>Medium</value>
+  </data>
   <data name="SpeedNormal" xml:space="preserve">
     <value>Normal</value>
   </data>
   <data name="SpeedSlow" xml:space="preserve">
     <value>Slow</value>
+  </data>
+  <data name="SpeedSuperFast" xml:space="preserve">
+    <value>Super Fast</value>
   </data>
   <data name="SpeedVeryFast" xml:space="preserve">
     <value>Very fast</value>
@@ -14300,6 +14524,9 @@ Online ads should no longer be synonymous with abuse of user privacy. Let us red
   </data>
   <data name="SponsoredMessageRecommended" xml:space="preserve">
     <value>recommended</value>
+  </data>
+  <data name="SponsoredMessageSponsor" xml:space="preserve">
+    <value>Advertiser Info</value>
   </data>
   <data name="Start" xml:space="preserve">
     <value>Start</value>
@@ -14410,6 +14637,9 @@ and enter your phone number.</value>
   <data name="StickersName" xml:space="preserve">
     <value>Stickers and Emoji</value>
   </data>
+  <data name="StickersNameInfo" xml:space="preserve">
+    <value>Manage your sticker packs, emoji and reactions.</value>
+  </data>
   <data name="StickersRemove" xml:space="preserve">
     <value>Remove</value>
   </data>
@@ -14424,6 +14654,9 @@ and enter your phone number.</value>
   </data>
   <data name="StickersReorderHint" xml:space="preserve">
     <value>Drag stickers to reorder your sets.</value>
+  </data>
+  <data name="StickersSettings" xml:space="preserve">
+    <value>Settings</value>
   </data>
   <data name="StickersShare" xml:space="preserve">
     <value>Share</value>
@@ -14578,7 +14811,7 @@ Once subscribed, you will be able to use the benefits of Telegram Premium in any
     <value>Suggested Photo</value>
   </data>
   <data name="SuggestedVideo" xml:space="preserve">
-    <value>Suggested Video</value>
+    <value>Suggested Photo</value>
   </data>
   <data name="SuggestPhoto" xml:space="preserve">
     <value>Suggest Photo</value>
@@ -15174,7 +15407,7 @@ Please try again in {0}.</value>
     <value>Topic closed</value>
   </data>
   <data name="TopicClosed2" xml:space="preserve">
-    <value>{0} closed topic</value>
+    <value>{0} closed the topic</value>
   </data>
   <data name="TopicClosedByAdmin" xml:space="preserve">
     <value>The topic is closed</value>
@@ -15201,7 +15434,7 @@ Please try again in {0}.</value>
     <value>Topic icon changed</value>
   </data>
   <data name="TopicIconChangedTo" xml:space="preserve">
-    <value>{0} changed topic icon to {1}</value>
+    <value>{0} changed the topic icon to {1}</value>
   </data>
   <data name="TopicIconChangedToInReply" xml:space="preserve">
     <value>changed topic icon to {0}</value>
@@ -15219,7 +15452,7 @@ Please try again in {0}.</value>
     <value>Topic renamed</value>
   </data>
   <data name="TopicRenamedTo" xml:space="preserve">
-    <value>{0} renamed topic to {1}</value>
+    <value>{0} renamed the topic to {1}</value>
   </data>
   <data name="TopicRenamedToInReply" xml:space="preserve">
     <value>renamed topic to {0}</value>
@@ -15440,13 +15673,13 @@ If you are not comfortable with Telegram's modest needs, it won't be possible fo
     <value>Translate to {0}</value>
   </data>
   <data name="TranslationBarHiddenForChannel" xml:space="preserve">
-    <value>The translation bar is now hidden for this channel.</value>
+    <value>Translation bar hidden for this channel.</value>
   </data>
   <data name="TranslationBarHiddenForChat" xml:space="preserve">
-    <value>The translation bar is now hidden for this chat.</value>
+    <value>Translation bar hidden for this chat.</value>
   </data>
   <data name="TranslationBarHiddenForGroup" xml:space="preserve">
-    <value>The translation bar is now hidden for this group.</value>
+    <value>Translation bar hidden for this group.</value>
   </data>
   <data name="TranslationFailedAlert1" xml:space="preserve">
     <value>Translation failed. Try again later.</value>
@@ -15680,7 +15913,7 @@ If you are not comfortable with Telegram's modest needs, it won't be possible fo
     <value>Upgrade to Supergroup</value>
   </data>
   <data name="UpgradePremiumMessage" xml:space="preserve">
-    <value>Upgrade to the annual payment plan of Telegram Premium now to enjoy the discount.</value>
+    <value>Upgrade to the annual payment plan for Telegram Premium now to get the discount.</value>
   </data>
   <data name="UpgradePremiumPerMonth" xml:space="preserve">
     <value>Upgrade for {0} per month</value>
@@ -15689,7 +15922,7 @@ If you are not comfortable with Telegram's modest needs, it won't be possible fo
     <value>Upgrade for {0} per year</value>
   </data>
   <data name="UpgradePremiumTitle" xml:space="preserve">
-    <value>Upgrade to Premium with a discount of **{0}%**</value>
+    <value>Upgrade to Premium with a **{0}%** discount</value>
   </data>
   <data name="UploadImage" xml:space="preserve">
     <value>Upload image</value>
@@ -15898,7 +16131,7 @@ However, short collectible usernames including this one are available for purcha
     <value>tap to edit</value>
   </data>
   <data name="UsernameLinkInactive" xml:space="preserve">
-    <value>not active</value>
+    <value>inactive</value>
   </data>
   <data name="UsernameLinkPlaceholder" xml:space="preserve">
     <value>username</value>
@@ -16015,7 +16248,7 @@ However, short collectible usernames including this one are available for purcha
     <value>no polls</value>
   </data>
   <data name="UserRestrictionsNoSendRound" xml:space="preserve">
-    <value>no round</value>
+    <value>no video messages</value>
   </data>
   <data name="UserRestrictionsNoSendStickers" xml:space="preserve">
     <value>no stickers &amp; GIFs</value>
@@ -16178,6 +16411,24 @@ However, short collectible usernames including this one are available for purcha
   </data>
   <data name="VideoSavedToDownloadsHint" xml:space="preserve">
     <value>Video saved to Downloads.</value>
+  </data>
+  <data name="VideoSpeedCustom" xml:space="preserve">
+    <value>Custom {0}</value>
+  </data>
+  <data name="VideoSpeedFast" xml:space="preserve">
+    <value>Fast</value>
+  </data>
+  <data name="VideoSpeedNormal" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="VideoSpeedSlow" xml:space="preserve">
+    <value>Slow</value>
+  </data>
+  <data name="VideoSpeedVeryFast" xml:space="preserve">
+    <value>Very fast</value>
+  </data>
+  <data name="VideoSpeedVerySlow" xml:space="preserve">
+    <value>Very slow</value>
   </data>
   <data name="VideosSavedHint_one" xml:space="preserve">
     <value>Video saved to gallery.</value>
@@ -18607,9 +18858,6 @@ You can return it from the context menu of the archive button.</value>
   </data>
   <data name="lng_context_hide_psa" xml:space="preserve">
     <value>Hide this announcement</value>
-  </data>
-  <data name="lng_context_mark_read_all" xml:space="preserve">
-    <value>Mark all chats as read</value>
   </data>
   <data name="lng_context_mark_read_all_sure" xml:space="preserve">
     <value>Are you sure you want to mark all chats as read?</value>

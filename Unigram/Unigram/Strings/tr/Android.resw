@@ -124,6 +124,12 @@
   <data name="AccAutoDeleteTimer" xml:space="preserve">
     <value>Otomatik silme zamanlayıcısı</value>
   </data>
+  <data name="AccDescrArchivedChatsHidden" xml:space="preserve">
+    <value>Arşivlenen sohbetler gizlendi</value>
+  </data>
+  <data name="AccDescrArchivedChatsShown" xml:space="preserve">
+    <value>Arşivlenen sohbetler gösteriliyor</value>
+  </data>
   <data name="AccDescrAspectRatio" xml:space="preserve">
     <value>Boy oranı</value>
   </data>
@@ -195,6 +201,9 @@
   </data>
   <data name="AccDescrCustomEmoji" xml:space="preserve">
     <value>Özel ifade</value>
+  </data>
+  <data name="AccDescrDocumentType" xml:space="preserve">
+    <value>, {0} dosya</value>
   </data>
   <data name="AccDescrDownloadProgress" xml:space="preserve">
     <value>{0}/{1} indirildi</value>
@@ -285,6 +294,9 @@
   </data>
   <data name="AccDescrMyLocation" xml:space="preserve">
     <value>Konumum</value>
+  </data>
+  <data name="AccDescrNotificationsMuted" xml:space="preserve">
+    <value>Sessiz</value>
   </data>
   <data name="AccDescrNumberOfPeopleReactions_one" xml:space="preserve">
     <value>{0} kişi {1} ile tepki verdi</value>
@@ -454,6 +466,9 @@
   <data name="AccDescrShutter" xml:space="preserve">
     <value>Shutter</value>
   </data>
+  <data name="AccDescrSpeedSlider" xml:space="preserve">
+    <value>Hız seçin</value>
+  </data>
   <data name="AccDescrStickers" xml:space="preserve">
     <value>Çıkartmalar</value>
   </data>
@@ -486,6 +501,9 @@
   </data>
   <data name="AccDescrUploadProgress" xml:space="preserve">
     <value>{0}/{1} yüklendi</value>
+  </data>
+  <data name="AccDescrUserOnline" xml:space="preserve">
+    <value>Çevrimiçi</value>
   </data>
   <data name="AccDescrUserOptions" xml:space="preserve">
     <value>Kullanıcı seçenekleri</value>
@@ -668,7 +686,7 @@
     <value>Canlı yayın başladı</value>
   </data>
   <data name="ActionChannelCallScheduled" xml:space="preserve">
-    <value>{0} için canlı yayın planlandı</value>
+    <value>Canlı yayın {0} için planlandı</value>
   </data>
   <data name="ActionChannelChangedPhoto" xml:space="preserve">
     <value>Kanal fotoğrafı güncellendi</value>
@@ -850,7 +868,7 @@ yeni: {1}</value>
     <value>un1 grup fotoğrafını kaldırdı</value>
   </data>
   <data name="ActionRequestedPeer" xml:space="preserve">
-    <value>un1 kullanıcısını un2 ile paylaştınız</value>
+    <value>un2 botu ile un1 sohbetini paylaştınız</value>
   </data>
   <data name="ActionRequestedPeerChannel" xml:space="preserve">
     <value>un2 ile bir kanal paylaştınız</value>
@@ -869,6 +887,9 @@ yeni: {1}</value>
   </data>
   <data name="ActionsChartTitle" xml:space="preserve">
     <value>Eylemler</value>
+  </data>
+  <data name="ActionSkip" xml:space="preserve">
+    <value>Atla</value>
   </data>
   <data name="ActionSuggestPhoto" xml:space="preserve">
     <value>Önerilen Fotoğraf</value>
@@ -1077,14 +1098,17 @@ yeni: {1}</value>
   <data name="AddedToDoNotTranslate" xml:space="preserve">
     <value>**{0}** dili Çeviri Yapma listenize eklendi.</value>
   </data>
+  <data name="AddedToDoNotTranslateOther" xml:space="preserve">
+    <value>**{0}** Çevirme listesine eklendi.</value>
+  </data>
   <data name="AddedToFavorites" xml:space="preserve">
     <value>Çıkartma favorilere eklendi.</value>
   </data>
   <data name="AddEmailSubtitle" xml:space="preserve">
-    <value>Hesabınızı korumak için lütfen geçerli e-posta adresinizi girin.</value>
+    <value>Artık Telegram giriş kodlarını SMS ile değil, e-posta ile alacaksınız. Lütfen erişiminiz olan bir e-posta adresi girin.</value>
   </data>
   <data name="AddEmailTitle" xml:space="preserve">
-    <value>E-posta Ekle </value>
+    <value>Bir giriş e-postası seçin</value>
   </data>
   <data name="AddEmojiInstalled" xml:space="preserve">
     <value>İfade eklendi.</value>
@@ -1114,10 +1138,10 @@ yeni: {1}</value>
     <value>Telegram Premium&apos;a abone olarak mesajlarda daha geniş bir tepki yelpazesinin kilidini açın.</value>
   </data>
   <data name="AddManyEmojiCount_one" xml:space="preserve">
-    <value>İfade ekle</value>
+    <value>İfade Ekle</value>
   </data>
   <data name="AddManyEmojiCount_other" xml:space="preserve">
-    <value>{0} ifadeyi ekle</value>
+    <value>{0} İfadeyi Ekle</value>
   </data>
   <data name="AddManyEmojiPacksCount_one" xml:space="preserve">
     <value>İfade paketi ekle</value>
@@ -1696,7 +1720,7 @@ geldiğinde arşivlenmiş halde kalır.</value>
     <value>Bu mesajı herkes için silmek istediğinize emin misiniz?</value>
   </data>
   <data name="AreYouSureDeleteThisChat" xml:space="preserve">
-    <value>Bu sohbeti silmek istiyor musunuz?</value>
+    <value>Bu sohbeti kalıcı olarak silmek istiyor musunuz?</value>
   </data>
   <data name="AreYouSureDeleteThisChatSavedMessages" xml:space="preserve">
     <value>**Kayıtlı Mesajlar**ı silmek istediğinizden emin misiniz?</value>
@@ -1742,10 +1766,10 @@ Telegram&apos;ı tüm cihazlarınızda aynı anda kullanabilir ve aynı uygulama
     <value>Bu ayrıca **{0}** kullanısını **{1}** sohbetine ekler.</value>
   </data>
   <data name="AreYouSureSendChatToBotAddRights" xml:space="preserve">
-    <value>Bu aynı zamanda **{0}** kullanıcısını **{1}** sohbetine şu haklarla ekleyecektir: {2}.</value>
+    <value>Bu aynı zamanda **{0}** botunu **{1}** sohbetine şu haklarla ekleyecektir: {2}.</value>
   </data>
   <data name="AreYouSureSendChatToBotMessage" xml:space="preserve">
-    <value>**{0}** kullanıcısını **{1}** sohbetine göndermek istediğinizden emin misiniz?</value>
+    <value>**{1}** botuna **{0}** sohbetini göndermek istediğinizden emin misiniz?</value>
   </data>
   <data name="AreYouSureSendChatToBotTitle" xml:space="preserve">
     <value>{0}, {1} sohbetine gönderilsin mi?</value>
@@ -1941,8 +1965,14 @@ Birçok sorunun cevabına ve &lt;![CDATA[&lt;a href=&quot;https://telegram.org/f
   <data name="AudioSavedHint" xml:space="preserve">
     <value>Dosya müziğe kaydedildi.</value>
   </data>
+  <data name="AudioSpeedCustom" xml:space="preserve">
+    <value>Ses {0}x hızında oynatılacak.</value>
+  </data>
   <data name="AudioSpeedFast" xml:space="preserve">
     <value>Ses iki kat daha hızlı oynatılacaktır.</value>
+  </data>
+  <data name="AudioSpeedMedium" xml:space="preserve">
+    <value>Ses 1,5X hızında oynatılacaktır.</value>
   </data>
   <data name="AudioSpeedNormal" xml:space="preserve">
     <value>Ses normal hızında oynatılacaktır.</value>
@@ -2135,7 +2165,7 @@ Bu sohbetteki tüm yeni mesajlar gönderildikten {0} sonra otomatik olarak silin
     <value>Başlattığınız tüm yeni sohbetlerde bir süre sonra mesajları herkesten otomatik olarak silin.</value>
   </data>
   <data name="AutodeleteTimerDisabledForChats" xml:space="preserve">
-    <value>Kendini yok etme zamanlayıcısı {0} için devre dışı bırakıldı.</value>
+    <value>Yok etme zamanlayıcısı {0} için devre dışı bırakıldı.</value>
   </data>
   <data name="AutodeleteTimerEnabledForChats" xml:space="preserve">
     <value>**{0}** için kendini yok etme zamanlayıcısı {1} olarak etkinleştirildi.</value>
@@ -2285,7 +2315,7 @@ Bu sohbetteki tüm yeni mesajlar gönderildikten {0} sonra otomatik olarak silin
     <value>Mobil veri kullanımını azaltmak için otomatik indirme ayarlarınızı değiştirebilirsiniz.</value>
   </data>
   <data name="AutomaticDownloadSettingsInfoRoaming" xml:space="preserve">
-    <value>Dolaşımdayken veri kullanımını azaltmak için medya otomatik indirme ayarlarınızı değiştirebilirsiniz.</value>
+    <value>Dolaşımdayken veri kullanımını azaltmak için otomatik indirme ayarlarınızı değiştirebilirsiniz.</value>
   </data>
   <data name="AutomaticDownloadSettingsInfoWiFi" xml:space="preserve">
     <value>Wi-Fi&apos;ye bağlandığınızda veri kullanımını azaltmak için otomatik indirme ayarlarınızı değiştirebilirsiniz.</value>
@@ -2331,6 +2361,9 @@ Bu sohbetteki tüm yeni mesajlar gönderildikten {0} sonra otomatik olarak silin
   </data>
   <data name="AutoNightSystemDefault" xml:space="preserve">
     <value>Sistem Varsayılanı</value>
+  </data>
+  <data name="AutoNightSystemModeOff" xml:space="preserve">
+    <value>Sistem Varsayılanı teması artık devre dışıdır.</value>
   </data>
   <data name="AutoNightTheme" xml:space="preserve">
     <value>Otomatik Gece Modu</value>
@@ -2664,6 +2697,11 @@ Gün doğumu: {1}</value>
   <data name="BotStart" xml:space="preserve">
     <value>BAŞLAT</value>
   </data>
+  <data name="BotStartAppPermission" xml:space="preserve">
+    <value>**{0}** uygulamasını **{1}** botundan başlatmak istiyor musunuz?
+
+Bot, **IP adresinize** ve temel cihaz bilgilerinize erişebilecek.</value>
+  </data>
   <data name="BotStatusCantRead" xml:space="preserve">
     <value>mesajlara erişimi yok</value>
   </data>
@@ -2671,7 +2709,7 @@ Gün doğumu: {1}</value>
     <value>mesajlara erişimi var</value>
   </data>
   <data name="BotStop" xml:space="preserve">
-    <value>Botu Durdur</value>
+    <value>Botu Engelle</value>
   </data>
   <data name="BotUnblock" xml:space="preserve">
     <value>YENİDEN BAŞLAT</value>
@@ -3258,6 +3296,15 @@ Not: Parolanızı unutursanız, oturumu kapatmanız veya uygulamayı yeniden yü
   <data name="ChannelInviteViaLink" xml:space="preserve">
     <value>Bağlantı ile davet et</value>
   </data>
+  <data name="ChannelInviteViaLinkRestricted" xml:space="preserve">
+    <value>Bağlantı oluşturamazsınız</value>
+  </data>
+  <data name="ChannelInviteViaLinkRestricted2" xml:space="preserve">
+    <value>Bu kullanıcı davet edilemez</value>
+  </data>
+  <data name="ChannelInviteViaLinkRestricted3" xml:space="preserve">
+    <value>Bu kullanıcılar davet edilemez</value>
+  </data>
   <data name="ChannelJoin" xml:space="preserve">
     <value>KATIL</value>
   </data>
@@ -3612,6 +3659,9 @@ Minimum uzunluk 5 karakterdir.</value>
   </data>
   <data name="ChatListSwipeGesture" xml:space="preserve">
     <value>Sohbet listesi kaydırma hareketi</value>
+  </data>
+  <data name="ChatListSwipeGestureInfo" xml:space="preserve">
+    <value>Sohbet listesinde sola kaydırdığınızda gerçekleştirmek istediğiniz eylemi seçin.</value>
   </data>
   <data name="ChatLocation" xml:space="preserve">
     <value>Konum</value>
@@ -4042,6 +4092,9 @@ Minimum uzunluk 5 karakterdir.</value>
   <data name="ClearStorageHintMessage" xml:space="preserve">
     <value>Telefonunuzdaki depolama alanını temizleyin</value>
   </data>
+  <data name="ClearStorageHintTitle" xml:space="preserve">
+    <value>**{0}**&apos;a kadar yer açın</value>
+  </data>
   <data name="ClearTelegramCache" xml:space="preserve">
     <value>Telegram Önbelleğini Temizle</value>
   </data>
@@ -4450,7 +4503,7 @@ Buradan her zaman varsayılan Telegram temasına geri dönebilirsiniz.</value>
     <value>Bu kullanıcılar, yukarıdaki ayarlardan bağımsız olarak sizi arayabilir veya arayamaz.</value>
   </data>
   <data name="CustomHelp" xml:space="preserve">
-    <value>Kendi durumunuzu paylaşmadığınız kişilerin Son Görülme veya Çevrimiçi durumlarını göremezsiniz. Bunun yerine yaklaşık son görülme süresi (yakınlarda, bir hafta içinde, bir ay içinde) gösterilir.</value>
+    <value>Son Görülme veya Çevrimiçi durumlarınızı paylaşmadığınız kişilerin Son Görülme veya Çevrimiçi durumlarını görmezsiniz. Bunun yerine yaklaşık süreler (son zamanlarda, bir hafta içinde, bir ay içinde) gösterilir.</value>
   </data>
   <data name="CustomNotifications" xml:space="preserve">
     <value>Özel Bildirimler</value>
@@ -4591,7 +4644,7 @@ Buradan her zaman varsayılan Telegram temasına geri dönebilirsiniz.</value>
     <value>Kişileri İçeri Aktar</value>
   </data>
   <data name="DebugMenuReadAllDialogs" xml:space="preserve">
-    <value>Tüm Sohbetleri Oku</value>
+    <value>Tüm Sohbetleri Okundu Olarak İşaretle</value>
   </data>
   <data name="DebugMenuReloadContacts" xml:space="preserve">
     <value>Kişileri Yeniden Yükle</value>
@@ -4720,7 +4773,7 @@ Buradan her zaman varsayılan Telegram temasına geri dönebilirsiniz.</value>
     <value>Sil ve gruptan ayrıl</value>
   </data>
   <data name="DeleteAndStop" xml:space="preserve">
-    <value>Sil ve durdur</value>
+    <value>Sil ve engelle</value>
   </data>
   <data name="DeleteBackground_one" xml:space="preserve">
     <value>Arka planı sil</value>
@@ -5202,6 +5255,18 @@ Kanaldaki herkes bu gruptaki mesajları görebilir.</value>
   </data>
   <data name="Draft" xml:space="preserve">
     <value>Taslak</value>
+  </data>
+  <data name="DynamicPackOrder" xml:space="preserve">
+    <value>Dinamik Paket Sırası</value>
+  </data>
+  <data name="DynamicPackOrderInfo" xml:space="preserve">
+    <value>Son kullanılan çıkartma paketlerini diğerlerinin üzerine otomatik olarak yerleştirin.</value>
+  </data>
+  <data name="DynamicPackOrderOff" xml:space="preserve">
+    <value>Dinamik Sıralama kapalı</value>
+  </data>
+  <data name="DynamicPackOrderOffInfo" xml:space="preserve">
+    <value>Bir çıkartma gönderdiğinizde çıkartma paketleri artık yeniden düzenlenmeyecek.</value>
   </data>
   <data name="Edit" xml:space="preserve">
     <value>Düzenle</value>
@@ -6774,7 +6839,7 @@ Tüm gizli sohbetleriniz kaybolur.</value>
     <value>Bu kanalda kopyalama ve iletmeye izin verilmiyor.</value>
   </data>
   <data name="ForwardsRestrictedInfoGroup" xml:space="preserve">
-    <value>Bu grupta kopyalama ve iletmeye izin verilmiyor.</value>
+    <value>Bu gruptan içeriğin kopyalanması ve iletilmesi yasaktır.</value>
   </data>
   <data name="ForwardTo" xml:space="preserve">
     <value>İlet…</value>
@@ -7494,6 +7559,24 @@ Mesajlar geçerli güne aktarılır, ancak orijinal zaman damgalarını da içer
   <data name="InviteByQRCode" xml:space="preserve">
     <value>QR Kodu ile Davet Et</value>
   </data>
+  <data name="InviteChannelRestrictedUsers_one" xml:space="preserve">
+    <value>**{0} kullanıcı**, kanallara eklenmeyi kısıtlamış. Bunun yerine ona davet bağlantısı gönderebilirsiniz.</value>
+  </data>
+  <data name="InviteChannelRestrictedUsers_other" xml:space="preserve">
+    <value>**{0} kullanıcı**, kanallara eklenmeyi kısıtlamış. Bunun yerine onlara davet bağlantısı gönderebilirsiniz.</value>
+  </data>
+  <data name="InviteChannelRestrictedUsers2_one" xml:space="preserve">
+    <value>**{0} kullanıcı** yalnızca bağlantı aracılığıyla davet edilebilir. Ancak bu kanalda davet bağlantısı paylaşma izniniz yok.</value>
+  </data>
+  <data name="InviteChannelRestrictedUsers2_other" xml:space="preserve">
+    <value>**{0} kullanıcı** yalnızca bağlantı aracılığıyla davet edilebilir. Ancak bu kanalda davet bağlantısı paylaşma izniniz yok.</value>
+  </data>
+  <data name="InviteChannelRestrictedUsers2One" xml:space="preserve">
+    <value>**{0}** yalnızca bağlantı yoluyla davet edilebilir. Ancak bu kanalda davet bağlantısı paylaşma izniniz yok.</value>
+  </data>
+  <data name="InviteChannelRestrictedUsersOne" xml:space="preserve">
+    <value>**{0}** kanallara eklenmeyi kısıtlamış. Bunun yerine ona bir davet bağlantısı gönderebilirsiniz.</value>
+  </data>
   <data name="Invited" xml:space="preserve">
     <value>davet edildi</value>
   </data>
@@ -7517,6 +7600,33 @@ Mesajlar geçerli güne aktarılır, ancak orijinal zaman damgalarını da içer
   </data>
   <data name="InviteLinks" xml:space="preserve">
     <value>Davet Bağlantıları</value>
+  </data>
+  <data name="InviteLinkSent_one" xml:space="preserve">
+    <value>{0} kullanıcıya davet bağlantısı gönderildi.</value>
+  </data>
+  <data name="InviteLinkSent_other" xml:space="preserve">
+    <value>{0} kullanıcıya davet bağlantısı gönderildi.</value>
+  </data>
+  <data name="InviteLinkSentSingle" xml:space="preserve">
+    <value>Davet bağlantısı **{0}** kişisine gönderildi.</value>
+  </data>
+  <data name="InviteRestrictedUsers_one" xml:space="preserve">
+    <value>**{0} kullanıcı**, gruplara eklenmeyi kısıtlamış. Bunun yerine ona davet bağlantısı gönderebilirsiniz.</value>
+  </data>
+  <data name="InviteRestrictedUsers_other" xml:space="preserve">
+    <value>**{0} kullanıcı**, gruplara eklenmeyi kısıtlamış. Bunun yerine onlara davet bağlantısı gönderebilirsiniz.</value>
+  </data>
+  <data name="InviteRestrictedUsers2_one" xml:space="preserve">
+    <value>**{0} kullanıcı** yalnızca bağlantı yoluyla davet edilebilir. Ancak bu grupta davet bağlantısı paylaşma izniniz yok.</value>
+  </data>
+  <data name="InviteRestrictedUsers2_other" xml:space="preserve">
+    <value>**{0} kullanıcı** yalnızca bağlantı yoluyla davet edilebilir. Ancak bu grupta davet bağlantısı paylaşma izniniz yok.</value>
+  </data>
+  <data name="InviteRestrictedUsers2One" xml:space="preserve">
+    <value>**{0}** yalnızca bağlantı yoluyla davet edilebilir. Ancak bu grupta davet bağlantısı paylaşma izniniz yok.</value>
+  </data>
+  <data name="InviteRestrictedUsersOne" xml:space="preserve">
+    <value>**{0}** gruplara eklemeyi kısıtlamış. Bunun yerine ona bir davet bağlantısı gönderebilirsiniz.</value>
   </data>
   <data name="InviteRevokedHint" xml:space="preserve">
     <value>Davet bağlantısı iptal edildi.</value>
@@ -8098,6 +8208,99 @@ Dilinizi Ayarlar bölümünden istediğiniz zaman değiştirebilirsiniz.</value>
   <data name="Listening" xml:space="preserve">
     <value>dinliyor</value>
   </data>
+  <data name="LiteBatteryAlwaysDisabled" xml:space="preserve">
+    <value>Her Zaman Kapalı</value>
+  </data>
+  <data name="LiteBatteryAlwaysEnabled" xml:space="preserve">
+    <value>Her Zaman Etkin</value>
+  </data>
+  <data name="LiteBatteryDisabled" xml:space="preserve">
+    <value>Kapalı</value>
+  </data>
+  <data name="LiteBatteryEnabled" xml:space="preserve">
+    <value>Açık</value>
+  </data>
+  <data name="LiteBatteryInfoBelow" xml:space="preserve">
+    <value>Piliniz {0} altına düştüğünde güç kullanımını ve animasyonları otomatik olarak azaltın.</value>
+  </data>
+  <data name="LiteBatteryInfoDisabled" xml:space="preserve">
+    <value>Güç kullanımını asla azaltmayın ve piliniz zayıf olsa bile tüm animasyonları koruyun.</value>
+  </data>
+  <data name="LiteBatteryInfoEnabled" xml:space="preserve">
+    <value>Pil seviyeniz ne olursa olsun güç kullanımını her zaman azaltın.</value>
+  </data>
+  <data name="LiteBatteryRestricted" xml:space="preserve">
+    <value>Bu ayarları değiştirmek için lütfen Güç Tasarrufu Modunu kapatın.</value>
+  </data>
+  <data name="LiteBatteryTitle" xml:space="preserve">
+    <value>Güç Tasarrufu Modu</value>
+  </data>
+  <data name="LiteBatteryWhenBelow" xml:space="preserve">
+    <value>{0} altında olduğunda</value>
+  </data>
+  <data name="LiteMode" xml:space="preserve">
+    <value>Animasyonlar</value>
+  </data>
+  <data name="LiteModeInfo" xml:space="preserve">
+    <value>Güçten tasarruf etmek için hareket efektlerini azaltın.</value>
+  </data>
+  <data name="LiteOptionsAutoplayChat" xml:space="preserve">
+    <value>Sohbette otomatik oynat</value>
+  </data>
+  <data name="LiteOptionsAutoplayGifs" xml:space="preserve">
+    <value>GIF&apos;leri Otomatik Oynat</value>
+  </data>
+  <data name="LiteOptionsAutoplayKeyboard" xml:space="preserve">
+    <value>Klavyede otomatik oynat</value>
+  </data>
+  <data name="LiteOptionsAutoplayReactions" xml:space="preserve">
+    <value>Tepkiler menüsünde otomatik oynat</value>
+  </data>
+  <data name="LiteOptionsAutoplayVideo" xml:space="preserve">
+    <value>Videoları Otomatik Oynat</value>
+  </data>
+  <data name="LiteOptionsBackground" xml:space="preserve">
+    <value>Arka planı döndürme</value>
+  </data>
+  <data name="LiteOptionsBlur" xml:space="preserve">
+    <value>Gece teması bulanıklığı</value>
+  </data>
+  <data name="LiteOptionsCalls" xml:space="preserve">
+    <value>Aramalardaki Animasyonlar</value>
+  </data>
+  <data name="LiteOptionsChat" xml:space="preserve">
+    <value>Sohbetlerdeki Animasyonlar</value>
+  </data>
+  <data name="LiteOptionsEmoji" xml:space="preserve">
+    <value>Hareketli İfadeler</value>
+  </data>
+  <data name="LiteOptionsScale" xml:space="preserve">
+    <value>Yakınlaştırma animasyonları</value>
+  </data>
+  <data name="LiteOptionsSpoiler" xml:space="preserve">
+    <value>Animasyonlu spoiler efekti</value>
+  </data>
+  <data name="LiteOptionsStickers" xml:space="preserve">
+    <value>Hareketli Çıkartmalar</value>
+  </data>
+  <data name="LiteOptionsTitle" xml:space="preserve">
+    <value>Güç tasarrufu seçenekleri</value>
+  </data>
+  <data name="LiteOptionsTopics" xml:space="preserve">
+    <value>Konulardaki yan menü</value>
+  </data>
+  <data name="LitePowerSaver" xml:space="preserve">
+    <value>Düşük Pilde Güç Tasarrufu</value>
+  </data>
+  <data name="LitePowerSaverInfo" xml:space="preserve">
+    <value>Sisteminiz Pil Tasarruf Modundayken otomatik olarak düşük güç kullanımına geçin.</value>
+  </data>
+  <data name="LiteSmoothTransitions" xml:space="preserve">
+    <value>Yumuşak Geçişleri Etkinleştir</value>
+  </data>
+  <data name="LiteSmoothTransitionsInfo" xml:space="preserve">
+    <value>Uygulamanın farklı bölümleri arasındaki animasyonlu geçişleri devre dışı bırakabilirsiniz.</value>
+  </data>
   <data name="LiveLocationAlertGroup" xml:space="preserve">
     <value>Uygulamanın kapalı olduğu zamanlar da dahil olmak üzere, bu sohbetteki kişilerin doğru konumunuzu ne kadar süreyle göreceğini seçin.</value>
   </data>
@@ -8267,17 +8470,23 @@ Bu işlemin tamamlanması birkaç dakika sürebilir.</value>
   <data name="LowDiskSpaceTitle2" xml:space="preserve">
     <value>Sonra medyayı kaldır</value>
   </data>
+  <data name="LowPowerEnabledSubtitle" xml:space="preserve">
+    <value>{0} pil kaldı.</value>
+  </data>
+  <data name="LowPowerEnabledTitle" xml:space="preserve">
+    <value>Güç Tasarrufu Modu etkin</value>
+  </data>
   <data name="MainChannelProfilePhotoSetHint" xml:space="preserve">
     <value>Bu, artık ana kanal fotoğrafı.</value>
   </data>
   <data name="MainChannelProfileVideoSetHint" xml:space="preserve">
-    <value>Bu, artık ana kanal videosu.</value>
+    <value>Bu artık ana kanal fotoğrafı.</value>
   </data>
   <data name="MainGroupProfilePhotoSetHint" xml:space="preserve">
     <value>Bu, artık ana grup fotoğrafı.</value>
   </data>
   <data name="MainGroupProfileVideoSetHint" xml:space="preserve">
-    <value>Bu, artık ana grup videosu.</value>
+    <value>Bu artık ana grup fotoğrafı.</value>
   </data>
   <data name="MainProfilePhotoSetHint" xml:space="preserve">
     <value>Bu, artık ana profil fotoğrafınız.</value>
@@ -11446,6 +11655,9 @@ Konumunuza yalnızca seçtiğiniz süre boyunca erişeceğiz ve istediğiniz zam
   <data name="PlainTextRestrictedHint" xml:space="preserve">
     <value>Metne izin verilmiyor</value>
   </data>
+  <data name="PlayEmojiInKeyboard" xml:space="preserve">
+    <value>İfade Paneli Animasyonları</value>
+  </data>
   <data name="PlayFile" xml:space="preserve">
     <value>Dosyayı Oynat</value>
   </data>
@@ -11548,6 +11760,9 @@ Konumunuza yalnızca seçtiğiniz süre boyunca erişeceğiz ve istediğiniz zam
   <data name="PostingMembers" xml:space="preserve">
     <value>Gönderi Paylaşan Üyeler</value>
   </data>
+  <data name="PowerUsage" xml:space="preserve">
+    <value>Güç Tasarrufu</value>
+  </data>
   <data name="PremiumMore" xml:space="preserve">
     <value>Daha Fazlası</value>
   </data>
@@ -11555,7 +11770,7 @@ Konumunuza yalnızca seçtiğiniz süre boyunca erişeceğiz ve istediğiniz zam
     <value>Gelişmiş Sohbet Yönetimi</value>
   </data>
   <data name="PremiumPreviewAdvancedChatManagementDescription" xml:space="preserve">
-    <value>Varsayılan klasörü ayarlamak, otomatik arşivlemek ve yeni sohbetleri kişilerden gizlemek için araçlar.</value>
+    <value>Varsayılan klasörü ayarlamak, otomatik arşivlemek ve kişilerde olmayanlardan gelen yeni sohbetleri gizlemek için araçlar.</value>
   </data>
   <data name="PremiumPreviewAdvancedChatManagementDescription2" xml:space="preserve">
     <value>Telegram Premium aboneleri; varsayılan bir klasör ayarlayabilir, otomatik arşivleyebilir ve yeni sohbetleri kişi listesinde olmayan kişilerden gizleyebilir.</value>
@@ -11597,7 +11812,7 @@ Konumunuza yalnızca seçtiğiniz süre boyunca erişeceğiz ve istediğiniz zam
     <value>Bu ifade paketi yalnızca **Telegram Premium** abonelerine açıktır.</value>
   </data>
   <data name="PremiumPreviewEmojiStatus" xml:space="preserve">
-    <value>İfade Durumu</value>
+    <value>İfade Durumları</value>
   </data>
   <data name="PremiumPreviewEmojiStatusDescription" xml:space="preserve">
     <value>Adınızın yanında mevcut etkinliğinizi göstermek için binlerce ifade arasından seçim yapın.</value>
@@ -12245,7 +12460,7 @@ Konumunuza yalnızca seçtiğiniz süre boyunca erişeceğiz ve istediğiniz zam
     <value>Yanlış cevabı seçtiniz.</value>
   </data>
   <data name="RaiseToSpeak" xml:space="preserve">
-    <value>Konuşmak için Kaldır</value>
+    <value>Dinlemek için Yükselt</value>
   </data>
   <data name="RateCallDistorted" xml:space="preserve">
     <value>Konuşma bozuldu</value>
@@ -13043,7 +13258,7 @@ Kanallar özel olacak.</value>
     <value>{0} kadar olan videolar</value>
   </data>
   <data name="SaveToGIFs" xml:space="preserve">
-    <value>GIF&apos;lere Kaydet</value>
+    <value>GIF&apos;lere Ekle</value>
   </data>
   <data name="SaveToMusic" xml:space="preserve">
     <value>Müziklere Kaydet</value>
@@ -13279,7 +13494,7 @@ Bunun etkili olması için uygulamayı yeniden başlatmanız gerekebilir.</value
     <value>kendini yok etme zamanlayıcısına sahip olacak</value>
   </data>
   <data name="SelectChatsForDisableAutoDelete" xml:space="preserve">
-    <value>yok etme zamanlayıcısını devre dışı bırakmak için</value>
+    <value>otomatik silme zamanlayıcısını devre dışı bırakmak için</value>
   </data>
   <data name="SelectChatsForDisableAutoDelete2" xml:space="preserve">
     <value>yok etme zamanlayıcısı devre dışı bırakılacak</value>
@@ -13418,6 +13633,9 @@ Bunun etkili olması için uygulamayı yeniden başlatmanız gerekebilir.</value
   </data>
   <data name="SendingVideoStatus" xml:space="preserve">
     <value>video gönderiyor…</value>
+  </data>
+  <data name="SendInviteLink" xml:space="preserve">
+    <value>Davet Bağlantısı Gönder</value>
   </data>
   <data name="SendItems" xml:space="preserve">
     <value>Gönder {0}</value>
@@ -14178,11 +14396,20 @@ Yavaş Mod etkin. Aynı anda birden fazla mesaj gönderemezsiniz.</value>
   <data name="SpeedFast" xml:space="preserve">
     <value>Hızlı</value>
   </data>
+  <data name="SpeedHint" xml:space="preserve">
+    <value>Daha fazla hız seçeneği için uzun basın.</value>
+  </data>
+  <data name="SpeedMedium" xml:space="preserve">
+    <value>Orta</value>
+  </data>
   <data name="SpeedNormal" xml:space="preserve">
     <value>Normal</value>
   </data>
   <data name="SpeedSlow" xml:space="preserve">
     <value>Yavaş</value>
+  </data>
+  <data name="SpeedSuperFast" xml:space="preserve">
+    <value>Çok Hızlı</value>
   </data>
   <data name="SpeedVeryFast" xml:space="preserve">
     <value>Çok hızlı</value>
@@ -14227,6 +14454,9 @@ Yavaş Mod etkin. Aynı anda birden fazla mesaj gönderemezsiniz.</value>
   </data>
   <data name="SponsoredMessageRecommended" xml:space="preserve">
     <value>önerilen</value>
+  </data>
+  <data name="SponsoredMessageSponsor" xml:space="preserve">
+    <value>Reklamveren Bilgisi</value>
   </data>
   <data name="Start" xml:space="preserve">
     <value>Başlat</value>
@@ -14336,6 +14566,9 @@ Yavaş Mod etkin. Aynı anda birden fazla mesaj gönderemezsiniz.</value>
   <data name="StickersName" xml:space="preserve">
     <value>Çıkartmalar ve İfade</value>
   </data>
+  <data name="StickersNameInfo" xml:space="preserve">
+    <value>Çıkartma paketlerinizi, ifadelerini ve tepkilerinizi yönetin.</value>
+  </data>
   <data name="StickersRemove" xml:space="preserve">
     <value>Kaldır</value>
   </data>
@@ -14350,6 +14583,9 @@ Yavaş Mod etkin. Aynı anda birden fazla mesaj gönderemezsiniz.</value>
   </data>
   <data name="StickersReorderHint" xml:space="preserve">
     <value>Paketlerinizi yeniden sıralamak için çıkartmaları sürükleyin.</value>
+  </data>
+  <data name="StickersSettings" xml:space="preserve">
+    <value>Ayarlar</value>
   </data>
   <data name="StickersShare" xml:space="preserve">
     <value>Paylaş</value>
@@ -14457,7 +14693,7 @@ Yavaş Mod etkin. Aynı anda birden fazla mesaj gönderemezsiniz.</value>
     <value>{0} abone</value>
   </data>
   <data name="SubscribeToPremium" xml:space="preserve">
-    <value>Aylık {0} ücretle abone ol</value>
+    <value>Aylık {0} karşılığında abone olun</value>
   </data>
   <data name="SubscribeToPremiumNoPrice" xml:space="preserve">
     <value>Abone ol</value>
@@ -14476,7 +14712,7 @@ Abone olduktan sonra, resmi olmayanlar da dahil Premium&apos;u destekleyen
 tüm uygulamalarda Telegram Premium&apos;un avantajlarını kullanabileceksiniz.</value>
   </data>
   <data name="SubscribeToPremiumPerYear" xml:space="preserve">
-    <value>Yılda {0} karşılığında abone olun</value>
+    <value>Yıllık {0} karşılığında abone olun</value>
   </data>
   <data name="SuggestAnimatedEmoji" xml:space="preserve">
     <value>Hareketli İfade Öner</value>
@@ -14506,7 +14742,7 @@ tüm uygulamalarda Telegram Premium&apos;un avantajlarını kullanabileceksiniz.
     <value>Önerilen Fotoğraf</value>
   </data>
   <data name="SuggestedVideo" xml:space="preserve">
-    <value>Önerilen Video</value>
+    <value>Önerilen Fotoğraf</value>
   </data>
   <data name="SuggestPhoto" xml:space="preserve">
     <value>Fotoğraf Öner</value>
@@ -15609,13 +15845,13 @@ Telegram&apos;ın mütevazı gereksinimlerinden memnun değilseniz, size bu hizm
     <value>Süper Gruba Yükselt</value>
   </data>
   <data name="UpgradePremiumMessage" xml:space="preserve">
-    <value>İndirimden yararlanmak için şimdi Telegram Premium&apos;un yıllık ödeme planına yükseltin.</value>
+    <value>İndirimden yararlanmak için şimdi yıllık Telegram Premium ödeme planına geçin.</value>
   </data>
   <data name="UpgradePremiumPerMonth" xml:space="preserve">
-    <value>Ayda {0} karşılığında yükselt</value>
+    <value>Aylık {0} karşılığında yükseltin</value>
   </data>
   <data name="UpgradePremiumPerYear" xml:space="preserve">
-    <value>Yılda {0} karşılığında yükseltin</value>
+    <value>Yıllık {0} karşılığında yükseltin</value>
   </data>
   <data name="UpgradePremiumTitle" xml:space="preserve">
     <value>**%{0}** indirimle Premium&apos;a yükseltin</value>
@@ -16101,6 +16337,24 @@ Ancak, bunun da dahil olduğu koleksiyonluk kısa kullanıcı adları satın al�
   </data>
   <data name="VideoSavedToDownloadsHint" xml:space="preserve">
     <value>Video, İndirilenler&apos;e kaydedildi</value>
+  </data>
+  <data name="VideoSpeedCustom" xml:space="preserve">
+    <value>Özel {0}</value>
+  </data>
+  <data name="VideoSpeedFast" xml:space="preserve">
+    <value>Hızlı</value>
+  </data>
+  <data name="VideoSpeedNormal" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="VideoSpeedSlow" xml:space="preserve">
+    <value>Yavaş</value>
+  </data>
+  <data name="VideoSpeedVeryFast" xml:space="preserve">
+    <value>Çok hızlı</value>
+  </data>
+  <data name="VideoSpeedVerySlow" xml:space="preserve">
+    <value>Çok yavaş</value>
   </data>
   <data name="VideosSavedHint_one" xml:space="preserve">
     <value>Video galeriye kaydedildi.</value>
