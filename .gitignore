@@ -271,3 +271,5 @@ _Pvt_Extensions
 /Unigram/Unigram.CodeGen
 /Unigram/Telegram.Native/Generated Files
 /Unigram/Telegram.Native.Calls/Generated Files
+/Telegram.Native/Generated Files
+/Telegram.Native.Calls/Generated Files

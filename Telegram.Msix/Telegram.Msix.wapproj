@@ -118,8 +118,8 @@
     <None Include="Package.StoreAssociation.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\UnigramBridge\Telegram.Stub.csproj" />
-    <ProjectReference Include="..\Unigram\Telegram.csproj" />
+    <ProjectReference Include="..\Telegram.Stub\Telegram.Stub.csproj" />
+    <ProjectReference Include="..\Telegram\Telegram.csproj" />
   </ItemGroup>
   <Import Project="$(WapProjPath)\Microsoft.DesktopBridge.targets" />
 </Project>

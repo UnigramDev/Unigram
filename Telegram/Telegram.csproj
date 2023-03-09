@@ -2611,11 +2611,11 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Unigram.Native.Calls\Telegram.Native.Calls.vcxproj">
+    <ProjectReference Include="..\Telegram.Native.Calls\Telegram.Native.Calls.vcxproj">
       <Project>{fdd3c45d-4cff-4a90-8fef-16ca70ab00be}</Project>
       <Name>Telegram.Native.Calls</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Unigram.Native\Telegram.Native.vcxproj">
+    <ProjectReference Include="..\Telegram.Native\Telegram.Native.vcxproj">
       <Project>{1b521e77-46bd-4d60-89f6-d68e9bb9abff}</Project>
       <Name>Telegram.Native</Name>
     </ProjectReference>
@@ -2657,9 +2657,9 @@
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>powershell.exe -NoProfile -ExecutionPolicy RemoteSigned -file "$(SolutionDir)\UpdateManifest.ps1" -path "$(ProjectDir)\" -config "$(ConfigurationName)" -store "$(AppxPackageIsForStore)" -sign "$(AppxPackageSigningEnabled)"
-powershell.exe -NoProfile -ExecutionPolicy RemoteSigned -file "$(SolutionDir)\UpdateManifest.ps1" -path "$(ProjectDir)..\UnigramPackage" -config "$(ConfigurationName)" -store "$(AppxPackageIsForStore)" -sign "$(AppxPackageSigningEnabled)"
-powershell.exe -NoProfile -ExecutionPolicy RemoteSigned -file "$(SolutionDir)\MergeResources.ps1" -path "$(ProjectDir)\" -compare</PreBuildEvent>
+    <PreBuildEvent>powershell.exe -NoProfile -ExecutionPolicy RemoteSigned -file "$(SolutionDir)UpdateManifest.ps1" -path "$(ProjectDir)" -config "$(ConfigurationName)" -store "$(AppxPackageIsForStore)" -sign "$(AppxPackageSigningEnabled)"
+powershell.exe -NoProfile -ExecutionPolicy RemoteSigned -file "$(SolutionDir)UpdateManifest.ps1" -path "$(ProjectDir)..\Telegram.Msix" -config "$(ConfigurationName)" -store "$(AppxPackageIsForStore)" -sign "$(AppxPackageSigningEnabled)"
+powershell.exe -NoProfile -ExecutionPolicy RemoteSigned -file "$(SolutionDir)MergeResources.ps1" -path "$(ProjectDir)" -compare</PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent>

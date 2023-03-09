@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telegram", "Unigram\Telegram.csproj", "{2235E8EE-374A-4E49-8050-9B701467775D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telegram", "Telegram\Telegram.csproj", "{2235E8EE-374A-4E49-8050-9B701467775D}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Telegram.Native", "Unigram.Native\Telegram.Native.vcxproj", "{1B521E77-46BD-4D60-89F6-D68E9BB9ABFF}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Telegram.Native", "Telegram.Native\Telegram.Native.vcxproj", "{1B521E77-46BD-4D60-89F6-D68E9BB9ABFF}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Telegram.Native.Calls", "Unigram.Native.Calls\Telegram.Native.Calls.vcxproj", "{FDD3C45D-4CFF-4A90-8FEF-16CA70AB00BE}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Telegram.Native.Calls", "Telegram.Native.Calls\Telegram.Native.Calls.vcxproj", "{FDD3C45D-4CFF-4A90-8FEF-16CA70AB00BE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telegram.Stub", "UnigramBridge\Telegram.Stub.csproj", "{3CAEF699-4E32-4DE0-9F77-0095D7DFD1C2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telegram.Stub", "Telegram.Stub\Telegram.Stub.csproj", "{3CAEF699-4E32-4DE0-9F77-0095D7DFD1C2}"
 EndProject
-Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "Telegram.Msix", "UnigramPackage\Telegram.Msix.wapproj", "{C7232C9F-B812-4073-8185-D524B6425B71}"
+Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "Telegram.Msix", "Telegram.Msix\Telegram.Msix.wapproj", "{C7232C9F-B812-4073-8185-D524B6425B71}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
