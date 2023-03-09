@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{3CAEF699-4E32-4DE0-9F77-0095D7DFD1C2}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>UnigramBridge</RootNamespace>
-    <AssemblyName>UnigramBridge</AssemblyName>
+    <RootNamespace>Telegram.Stub</RootNamespace>
+    <AssemblyName>Telegram.Stub</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

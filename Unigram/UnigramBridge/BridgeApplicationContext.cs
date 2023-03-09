@@ -1,4 +1,10 @@
-﻿using System;
+//
+// Copyright Fela Ameghino 2015-2023
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -8,7 +14,7 @@ using Windows.ApplicationModel.AppService;
 using Windows.Foundation.Collections;
 using Windows.Storage;
 
-namespace UnigramBridge
+namespace Telegram.Stub
 {
     class BridgeApplicationContext : ApplicationContext
     {
@@ -158,19 +164,19 @@ namespace UnigramBridge
         {
             if (args.Request.Message.TryGetValue("FlashWindow", out object flash))
             {
-//#if DEBUG
-//                var handle = FindWindow("ApplicationFrameWindow", "Telegram");
-//#else
-//                var handle = FindWindow("ApplicationFrameWindow", "Unigram");
-//#endif
+                //#if DEBUG
+                //                var handle = FindWindow("ApplicationFrameWindow", "Telegram");
+                //#else
+                //                var handle = FindWindow("ApplicationFrameWindow", "Unigram");
+                //#endif
 
-//                FLASHWINFO info = new FLASHWINFO();
-//                info.cbSize = Convert.ToUInt32(Marshal.SizeOf(info));
-//                info.hwnd = handle;
-//                info.dwFlags = FlashWindow.FLASHW_ALL;
-//                info.dwTimeout = 0;
-//                info.uCount = 1;
-//                FlashWindowEx(ref info);
+                //                FLASHWINFO info = new FLASHWINFO();
+                //                info.cbSize = Convert.ToUInt32(Marshal.SizeOf(info));
+                //                info.hwnd = handle;
+                //                info.dwFlags = FlashWindow.FLASHW_ALL;
+                //                info.dwTimeout = 0;
+                //                info.uCount = 1;
+                //                FlashWindowEx(ref info);
             }
             else if (args.Request.Message.TryGetValue("UnreadCount", out object unread) && args.Request.Message.TryGetValue("UnreadUnmutedCount", out object unreadUnmuted))
             {

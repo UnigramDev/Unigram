@@ -54,7 +54,7 @@
     <TargetPlatformVersion>10.0.22621.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.18362.0</TargetPlatformMinVersion>
     <DefaultLanguage>en-US</DefaultLanguage>
-    <PackageCertificateKeyFile>UnigramPackage_StoreKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateKeyFile>Telegram_StoreKey.pfx</PackageCertificateKeyFile>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
@@ -111,14 +111,14 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    <None Include="UnigramPackage_TemporaryKey.pfx" />
+    <None Include="Telegram_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="UnigramPackage_StoreKey.pfx" />
+    <None Include="Telegram_StoreKey.pfx" />
     <None Include="Package.StoreAssociation.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\UnigramBridge\UnigramBridge.csproj" />
+    <ProjectReference Include="..\UnigramBridge\Telegram.Stub.csproj" />
     <ProjectReference Include="..\Unigram\Telegram.csproj" />
   </ItemGroup>
   <Import Project="$(WapProjPath)\Microsoft.DesktopBridge.targets" />
