@@ -6,7 +6,6 @@
 //
 using System.Threading.Tasks;
 using Unigram.Common;
-using Unigram.Controls;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views.Settings.Password;
@@ -49,7 +48,7 @@ namespace Unigram.ViewModels.Settings.Password
 
             if (string.Equals(password, hint))
             {
-                await MessagePopup.ShowAsync(Strings.Resources.PasswordAsHintError, Strings.Resources.AppName, Strings.Resources.OK);
+                await ShowPopupAsync(Strings.Resources.PasswordAsHintError, Strings.Resources.AppName, Strings.Resources.OK);
                 return;
             }
 

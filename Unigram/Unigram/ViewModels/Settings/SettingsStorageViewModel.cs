@@ -117,7 +117,7 @@ namespace Unigram.ViewModels.Settings
 
             var dialog = new SettingsStorageOptimizationPage(ClientService, byChat);
 
-            var confirm = await dialog.ShowQueuedAsync();
+            var confirm = await ShowPopupAsync(dialog);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

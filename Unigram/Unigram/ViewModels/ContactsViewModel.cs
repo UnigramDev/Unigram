@@ -9,7 +9,6 @@ using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
-using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Services;
 
@@ -17,8 +16,8 @@ namespace Unigram.ViewModels
 {
     public class ContactsViewModel : TLViewModelBase
         , IChildViewModel
-        //, IHandle
-        //, IHandle<UpdateUserStatus>
+    //, IHandle
+    //, IHandle<UpdateUserStatus>
     {
         private readonly IContactsService _contactsService;
 
@@ -42,7 +41,7 @@ namespace Unigram.ViewModels
             {
                 Settings.IsContactsSyncRequested = true;
 
-                var confirm = await MessagePopup.ShowAsync(Strings.Resources.ContactsPermissionAlert, Strings.Resources.AppName, Strings.Resources.ContactsPermissionAlertContinue, Strings.Resources.ContactsPermissionAlertNotNow);
+                var confirm = await ShowPopupAsync(Strings.Resources.ContactsPermissionAlert, Strings.Resources.AppName, Strings.Resources.ContactsPermissionAlertContinue, Strings.Resources.ContactsPermissionAlertNotNow);
                 if (confirm != Windows.UI.Xaml.Controls.ContentDialogResult.Primary)
                 {
                     Settings.IsContactsSyncEnabled = false;

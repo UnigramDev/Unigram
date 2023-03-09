@@ -9,7 +9,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Windows.UI.Xaml.Controls;
@@ -112,7 +111,7 @@ namespace Unigram.ViewModels.Settings
 
             if (string.IsNullOrEmpty(_password))
             {
-                await MessagePopup.ShowAsync("Please enter your password.");
+                await ShowPopupAsync("Please enter your password.");
                 return;
             }
 
@@ -160,17 +159,17 @@ namespace Unigram.ViewModels.Settings
             //    var response = await ClientService.SendAsync(new RequestPasswordRecovery());
             //    if (response is PasswordRecoveryInfo info)
             //    {
-            //        await MessagePopup.ShowAsync(string.Format(Strings.Resources.RestoreEmailSent, info.RecoveryEmailAddressPattern), Strings.Resources.AppName, Strings.Resources.OK);
+            //        await ShowPopupAsync(string.Format(Strings.Resources.RestoreEmailSent, info.RecoveryEmailAddressPattern), Strings.Resources.AppName, Strings.Resources.OK);
             //    }
             //    else if (response is Error error)
             //    {
             //        IsLoading = false;
-            //        await new MessagePopup(error.Message ?? "Error message", error.Code.ToString()).ShowQueuedAsync();
+            //        await ShowPopupAsync(new MessagePopup(error.Message ?? "Error message", error.Code.ToString()));
             //    }
             //}
             //else
             //{
-            //    await MessagePopup.ShowAsync(Strings.Resources.RestorePasswordNoEmailText, Strings.Resources.RestorePasswordNoEmailTitle, Strings.Resources.OK);
+            //    await ShowPopupAsync(Strings.Resources.RestorePasswordNoEmailText, Strings.Resources.RestorePasswordNoEmailTitle, Strings.Resources.OK);
             //    //IsResettable = true;
             //}
         }
@@ -198,7 +197,7 @@ namespace Unigram.ViewModels.Settings
                 message += Environment.NewLine + Environment.NewLine + Strings.Resources.TurnPasswordOffPassport;
             }
 
-            var confirm = await MessagePopup.ShowAsync(message, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(message, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -276,7 +275,7 @@ namespace Unigram.ViewModels.Settings
                 if (!string.Equals(password, passwordRetype))
                 {
                     // Error
-                    await MessagePopup.ShowAsync(Strings.Resources.PasswordDoNotMatch, Strings.Resources.AppName, Strings.Resources.OK);
+                    await ShowPopupAsync(Strings.Resources.PasswordDoNotMatch, Strings.Resources.AppName, Strings.Resources.OK);
                     return;
                 }
 
@@ -285,7 +284,7 @@ namespace Unigram.ViewModels.Settings
                     emailValid = false;
                     emailAddress = string.Empty;
 
-                    var confirm = await MessagePopup.ShowAsync(Strings.Resources.YourEmailSkipWarningText, Strings.Resources.YourEmailSkipWarning, Strings.Resources.YourEmailSkip, Strings.Resources.Cancel);
+                    var confirm = await ShowPopupAsync(Strings.Resources.YourEmailSkipWarningText, Strings.Resources.YourEmailSkipWarning, Strings.Resources.YourEmailSkip, Strings.Resources.Cancel);
                     if (confirm != ContentDialogResult.Primary)
                     {
                         return;

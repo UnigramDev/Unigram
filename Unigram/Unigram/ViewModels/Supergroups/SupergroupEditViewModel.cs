@@ -23,11 +23,11 @@ namespace Unigram.ViewModels.Supergroups
     public class SupergroupEditViewModel : TLViewModelBase
         , IDelegable<ISupergroupEditDelegate>
         , IHandle
-        //, IHandle<UpdateChatPhoto>
-        //, IHandle<UpdateSupergroup>
-        //, IHandle<UpdateSupergroupFullInfo>
-        //, IHandle<UpdateBasicGroup>
-        //, IHandle<UpdateBasicGroupFullInfo>
+    //, IHandle<UpdateChatPhoto>
+    //, IHandle<UpdateSupergroup>
+    //, IHandle<UpdateSupergroupFullInfo>
+    //, IHandle<UpdateBasicGroup>
+    //, IHandle<UpdateBasicGroupFullInfo>
     {
         public ISupergroupEditDelegate Delegate { get; set; }
 
@@ -408,7 +408,7 @@ namespace Unigram.ViewModels.Supergroups
             var updated = await ClientService.SendAsync(new GetChat(chat.Id)) as Chat ?? chat;
             var dialog = new DeleteChatPopup(ClientService, updated, null, false, true);
 
-            var confirm = await dialog.ShowQueuedAsync();
+            var confirm = await ShowPopupAsync(dialog);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

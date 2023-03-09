@@ -7,7 +7,6 @@
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
@@ -18,8 +17,8 @@ namespace Unigram.ViewModels.Users
     public class UserEditViewModel : TLViewModelBase
         , IDelegable<IUserDelegate>
         , IHandle
-        //, IHandle<UpdateUser>
-        //, IHandle<UpdateUserFullInfo>
+    //, IHandle<UpdateUser>
+    //, IHandle<UpdateUserFullInfo>
     {
         public IUserDelegate Delegate { get; set; }
 
@@ -180,7 +179,7 @@ namespace Unigram.ViewModels.Users
         {
             if (ClientService.TryGetUser(_userId, out User user))
             {
-                var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.ResetToOriginalPhotoMessage, user.FirstName), Strings.Resources.ResetToOriginalPhotoTitle, Strings.Resources.Reset, Strings.Resources.Cancel);
+                var confirm = await ShowPopupAsync(string.Format(Strings.Resources.ResetToOriginalPhotoMessage, user.FirstName), Strings.Resources.ResetToOriginalPhotoTitle, Strings.Resources.Reset, Strings.Resources.Cancel);
                 if (confirm == Windows.UI.Xaml.Controls.ContentDialogResult.Primary)
                 {
                     ClientService.Send(new SetUserPersonalProfilePhoto(user.Id, null));

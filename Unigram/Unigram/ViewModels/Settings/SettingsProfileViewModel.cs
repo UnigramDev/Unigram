@@ -17,8 +17,8 @@ namespace Unigram.ViewModels.Settings
     public class SettingsProfileViewModel : TLViewModelBase
         , IDelegable<IUserDelegate>
         , IHandle
-        //, IHandle<UpdateUser>
-        //, IHandle<UpdateUserFullInfo>
+    //, IHandle<UpdateUser>
+    //, IHandle<UpdateUserFullInfo>
     {
         public IUserDelegate Delegate { get; set; }
 

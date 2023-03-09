@@ -101,11 +101,11 @@ namespace Unigram.ViewModels.Settings
 
                 if (error.TypeEquals(ErrorType.PHONE_NUMBER_FLOOD))
                 {
-                    await MessagePopup.ShowAsync("Sorry, you have deleted and re-created your account too many times recently. Please wait for a few days before signing up again.", "Telegram", "OK");
+                    await ShowPopupAsync(Strings.Resources.PhoneNumberFlood, Strings.Resources.AppName, Strings.Resources.OK);
                 }
                 else
                 {
-                    await new MessagePopup(error.Message ?? "Error message", error.Code.ToString()).ShowQueuedAsync();
+                    await ShowPopupAsync(new MessagePopup(error.Message ?? "Error message", error.Code.ToString()));
                 }
             }
         }

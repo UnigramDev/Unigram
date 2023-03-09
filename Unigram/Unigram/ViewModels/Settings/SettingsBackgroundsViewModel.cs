@@ -11,7 +11,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views;
@@ -113,7 +112,7 @@ namespace Unigram.ViewModels.Settings
                 if (file != null)
                 {
                     await file.CopyAsync(ApplicationData.Current.TemporaryFolder, Constants.WallpaperLocalFileName, NameCollisionOption.ReplaceExisting);
-                    await new BackgroundPopup(Constants.WallpaperLocalFileName).ShowQueuedAsync();
+                    await ShowPopupAsync(new BackgroundPopup(Constants.WallpaperLocalFileName));
                 }
             }
             catch { }
@@ -122,7 +121,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand ColorCommand { get; }
         private async void ColorExecute()
         {
-            var confirm = await new BackgroundPopup(Constants.WallpaperColorFileName).ShowQueuedAsync();
+            var confirm = await ShowPopupAsync(new BackgroundPopup(Constants.WallpaperColorFileName));
             if (confirm == ContentDialogResult.Primary)
             {
                 await OnNavigatedToAsync(null, NavigationMode.Refresh, null);
@@ -132,7 +131,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand ResetCommand { get; }
         private async void ResetExecute()
         {
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.ResetChatBackgroundsAlert, Strings.Resources.ResetChatBackgroundsAlertTitle, Strings.Resources.Reset, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.Resources.ResetChatBackgroundsAlert, Strings.Resources.ResetChatBackgroundsAlertTitle, Strings.Resources.Reset, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -172,7 +171,7 @@ namespace Unigram.ViewModels.Settings
                 return;
             }
 
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.DeleteChatBackgroundsAlert, Locale.Declension("DeleteBackground", 1), Strings.Resources.Delete, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.Resources.DeleteChatBackgroundsAlert, Locale.Declension("DeleteBackground", 1), Strings.Resources.Delete, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

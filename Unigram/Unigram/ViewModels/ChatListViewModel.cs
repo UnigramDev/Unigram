@@ -309,7 +309,7 @@ namespace Unigram.ViewModels
                 var mutedFor = Settings.Notifications.GetMutedFor(chat);
                 var popup = new ChatMutePopup(mutedFor);
 
-                var confirm = await popup.ShowQueuedAsync();
+                var confirm = await ShowPopupAsync(popup);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;
@@ -357,7 +357,7 @@ namespace Unigram.ViewModels
             var updated = await ClientService.SendAsync(new GetChat(chat.Id)) as Chat ?? chat;
             var dialog = new DeleteChatPopup(ClientService, updated, Items.ChatList, false);
 
-            var confirm = await dialog.ShowQueuedAsync();
+            var confirm = await ShowPopupAsync(dialog);
             if (confirm == ContentDialogResult.Primary)
             {
                 var check = dialog.IsChecked == true;
@@ -419,7 +419,7 @@ namespace Unigram.ViewModels
         {
             var chats = SelectedItems.ToList();
 
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.AreYouSureDeleteFewChats, Locale.Declension("ChatsSelected", chats.Count), Strings.Resources.Delete, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.Resources.AreYouSureDeleteFewChats, Locale.Declension("ChatsSelected", chats.Count), Strings.Resources.Delete, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 foreach (var chat in chats)
@@ -467,7 +467,7 @@ namespace Unigram.ViewModels
             var updated = await ClientService.SendAsync(new GetChat(chat.Id)) as Chat ?? chat;
             var dialog = new DeleteChatPopup(ClientService, updated, Items.ChatList, true);
 
-            var confirm = await dialog.ShowQueuedAsync();
+            var confirm = await ShowPopupAsync(dialog);
             if (confirm == ContentDialogResult.Primary)
             {
                 Delegate?.ShowChatsUndo(new[] { chat }, UndoType.Clear, items =>
@@ -499,7 +499,7 @@ namespace Unigram.ViewModels
         {
             var chats = SelectedItems.ToList();
 
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.AreYouSureClearHistoryFewChats, Locale.Declension("ChatsSelected", chats.Count), Strings.Resources.ClearHistory, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.Resources.AreYouSureClearHistoryFewChats, Locale.Declension("ChatsSelected", chats.Count), Strings.Resources.ClearHistory, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 Delegate?.ShowChatsUndo(chats, UndoType.Clear, items =>
@@ -545,7 +545,7 @@ namespace Unigram.ViewModels
         public RelayCommand ClearRecentChatsCommand { get; }
         private async void ClearRecentChatsExecute()
         {
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.ClearSearch, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.Resources.ClearSearch, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -568,7 +568,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.ChatHintsDelete, ClientService.GetTitle(chat)), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(string.Format(Strings.Resources.ChatHintsDelete, ClientService.GetTitle(chat)), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -594,7 +594,7 @@ namespace Unigram.ViewModels
             var total = filter.IncludedChatIds.Count + filter.PinnedChatIds.Count + 1;
             if (total > 99)
             {
-                await MessagePopup.ShowAsync(Strings.Resources.FilterAddToAlertFullText, Strings.Resources.FilterAddToAlertFullTitle, Strings.Resources.OK);
+                await ShowPopupAsync(Strings.Resources.FilterAddToAlertFullText, Strings.Resources.FilterAddToAlertFullTitle, Strings.Resources.OK);
                 return;
             }
 
@@ -626,7 +626,7 @@ namespace Unigram.ViewModels
             var total = filter.ExcludedChatIds.Count + 1;
             if (total > 99)
             {
-                await MessagePopup.ShowAsync(Strings.Resources.FilterRemoveFromAlertFullText, Strings.Resources.AppName, Strings.Resources.OK);
+                await ShowPopupAsync(Strings.Resources.FilterRemoveFromAlertFullText, Strings.Resources.AppName, Strings.Resources.OK);
                 return;
             }
 
@@ -664,10 +664,10 @@ namespace Unigram.ViewModels
 
         public class ItemsCollection : ObservableCollection<Chat>
             , ISupportIncrementalLoading
-            //, IHandle<UpdateAuthorizationState>
-            //, IHandle<UpdateChatDraftMessage>
-            //, IHandle<UpdateChatLastMessage>
-            //, IHandle<UpdateChatPosition>
+        //, IHandle<UpdateAuthorizationState>
+        //, IHandle<UpdateChatDraftMessage>
+        //, IHandle<UpdateChatLastMessage>
+        //, IHandle<UpdateChatPosition>
         {
             private readonly IClientService _clientService;
             private readonly IEventAggregator _aggregator;
@@ -863,28 +863,25 @@ namespace Unigram.ViewModels
                         var next = NextIndexOf(chat, order);
                         if (next >= 0)
                         {
-                            await _viewModel.Dispatcher.DispatchAsync(() =>
+                            Remove(chat);
+                            Insert(Math.Min(Count, next), chat);
+
+                            if (next == Count - 1)
                             {
-                                Remove(chat);
-                                Insert(Math.Min(Count, next), chat);
+                                _lastChatId = chat.Id;
+                                _lastOrder = order;
+                            }
 
-                                if (next == Count - 1)
-                                {
-                                    _lastChatId = chat.Id;
-                                    _lastOrder = order;
-                                }
+                            if (chat.Id == _viewModel._selectedItem)
+                            {
+                                _viewModel.Delegate?.SetSelectedItem(chat);
+                            }
+                            if (_viewModel.SelectedItems.Contains(chat))
+                            {
+                                _viewModel.Delegate?.SetSelectedItems(_viewModel.SelectedItems);
+                            }
 
-                                if (chat.Id == _viewModel._selectedItem)
-                                {
-                                    _viewModel.Delegate?.SetSelectedItem(chat);
-                                }
-                                if (_viewModel.SelectedItems.Contains(chat))
-                                {
-                                    _viewModel.Delegate?.SetSelectedItems(_viewModel.SelectedItems);
-                                }
-
-                                IsEmpty = Count == 0;
-                            });
+                            IsEmpty = Count == 0;
                         }
                         else if (lastMessage)
                         {
@@ -893,22 +890,19 @@ namespace Unigram.ViewModels
                     }
                     else if (Contains(chat))
                     {
-                        await _viewModel.Dispatcher.DispatchAsync(() =>
+                        Remove(chat);
+
+                        if (chat.Id == _viewModel._selectedItem)
                         {
-                            Remove(chat);
+                            _viewModel.Delegate?.SetSelectedItem(chat);
+                        }
+                        if (_viewModel.SelectedItems.Contains(chat))
+                        {
+                            _viewModel.SelectedItems.Remove(chat);
+                            _viewModel.Delegate?.SetSelectedItems(_viewModel.SelectedItems);
+                        }
 
-                            if (chat.Id == _viewModel._selectedItem)
-                            {
-                                _viewModel.Delegate?.SetSelectedItem(chat);
-                            }
-                            if (_viewModel.SelectedItems.Contains(chat))
-                            {
-                                _viewModel.SelectedItems.Remove(chat);
-                                _viewModel.Delegate?.SetSelectedItems(_viewModel.SelectedItems);
-                            }
-
-                            IsEmpty = Count == 0;
-                        });
+                        IsEmpty = Count == 0;
 
                         //if (!_hasMoreItems)
                         //{

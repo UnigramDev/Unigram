@@ -12,7 +12,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
@@ -268,7 +267,7 @@ namespace Unigram.ViewModels
 
                 var filters = chatFilters.ToList();
                 var index = Math.Min(mainChatListPosition, filters.Count);
-                
+
                 filters.Insert(index, new ChatFilterInfo { Id = Constants.ChatListMain, Title = Strings.Resources.FilterAllChats, IconName = "All" });
 
                 Merge(Filters, filters);
@@ -473,7 +472,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.AreYouSureSecretChat, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.Resources.AreYouSureSecretChat, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -511,7 +510,7 @@ namespace Unigram.ViewModels
         public RelayCommand<ChatFilterViewModel> FilterMarkAsReadCommand { get; }
         private async void FilterMarkAsReadExecute(ChatFilterViewModel filter)
         {
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.AreYouSure, Strings.Resources.AppName, Strings.Resources.MarkAsRead, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.Resources.AreYouSure, Strings.Resources.AppName, Strings.Resources.MarkAsRead, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -538,7 +537,7 @@ namespace Unigram.ViewModels
         public RelayCommand<ChatFilterViewModel> FilterDeleteCommand { get; }
         private async void FilterDeleteExecute(ChatFilterViewModel filter)
         {
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.FilterDeleteAlert, Strings.Resources.FilterDelete, Strings.Resources.Delete, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.Resources.FilterDeleteAlert, Strings.Resources.FilterDelete, Strings.Resources.Delete, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

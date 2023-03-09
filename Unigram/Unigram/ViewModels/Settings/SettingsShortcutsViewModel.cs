@@ -33,7 +33,7 @@ namespace Unigram.ViewModels.Settings
         {
             var dialog = new EditShortcutPopup(_shortcutsService, info);
 
-            var confirm = await dialog.ShowQueuedAsync();
+            var confirm = await ShowPopupAsync(dialog);
             if (confirm == ContentDialogResult.Primary)
             {
                 Items.ReplaceWith(_shortcutsService.Update(dialog.Shortcut, info.Command));

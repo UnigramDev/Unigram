@@ -17,7 +17,7 @@ namespace Unigram.ViewModels.Supergroups
 {
     public class SupergroupEditStickerSetViewModel : TLViewModelBase
         , IHandle
-        //, IHandle<UpdateSupergroupFullInfo>
+    //, IHandle<UpdateSupergroupFullInfo>
     {
         public SupergroupEditStickerSetViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

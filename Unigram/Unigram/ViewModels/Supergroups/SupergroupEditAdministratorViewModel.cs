@@ -9,7 +9,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
@@ -390,7 +389,7 @@ namespace Unigram.ViewModels.Supergroups
                     builder.AppendLine(Strings.Resources.EditAdminTransferAlertText3);
                 }
 
-                var confirm = await MessagePopup.ShowAsync(builder.ToString(), Strings.Resources.EditAdminTransferAlertTitle, primary, Strings.Resources.Cancel);
+                var confirm = await ShowPopupAsync(builder.ToString(), Strings.Resources.EditAdminTransferAlertTitle, primary, Strings.Resources.Cancel);
                 if (confirm == ContentDialogResult.Primary && canTransfer is CanTransferOwnershipResultPasswordNeeded)
                 {
                     NavigationService.Navigate(typeof(SettingsPasswordPage));
@@ -398,7 +397,7 @@ namespace Unigram.ViewModels.Supergroups
             }
             else if (canTransfer is CanTransferOwnershipResultOk)
             {
-                var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.EditAdminTransferReadyAlertText, chat.Title, user.FullName()), supergroup.IsChannel ? Strings.Resources.EditAdminChannelTransfer : Strings.Resources.EditAdminGroupTransfer, Strings.Resources.EditAdminTransferChangeOwner, Strings.Resources.Cancel);
+                var confirm = await ShowPopupAsync(string.Format(Strings.Resources.EditAdminTransferReadyAlertText, chat.Title, user.FullName()), supergroup.IsChannel ? Strings.Resources.EditAdminChannelTransfer : Strings.Resources.EditAdminGroupTransfer, Strings.Resources.EditAdminTransferChangeOwner, Strings.Resources.Cancel);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;
@@ -413,7 +412,7 @@ namespace Unigram.ViewModels.Supergroups
                     SecondaryButtonText = Strings.Resources.Cancel
                 };
 
-                var result = await popup.ShowQueuedAsync();
+                var result = await ShowPopupAsync(popup);
                 if (result != ContentDialogResult.Primary)
                 {
                     return;

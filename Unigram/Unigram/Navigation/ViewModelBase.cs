@@ -6,7 +6,11 @@
 //
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Telegram.Td.Api;
+using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Navigation.Services;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Navigation
@@ -34,5 +38,35 @@ namespace Unigram.Navigation
         public virtual IDispatcherContext Dispatcher { get; set; }
 
         public virtual IDictionary<string, object> SessionState { get; set; }
+
+        public Task<ContentDialogResult> ShowPopupAsync(ContentPopup popup)
+        {
+            return popup.ShowQueuedAsync();
+        }
+
+        public void ShowPopup(ContentPopup popup)
+        {
+            _ = popup.ShowQueuedAsync();
+        }
+
+        public Task<ContentDialogResult> ShowPopupAsync(string message, string title = null, string primary = null, string secondary = null, bool dangerous = false)
+        {
+            return MessagePopup.ShowAsync(message, title, primary, secondary, dangerous);
+        }
+
+        public Task<ContentDialogResult> ShowPopupAsync(FormattedText message, string title = null, string primary = null, string secondary = null, bool dangerous = false)
+        {
+            return MessagePopup.ShowAsync(message, title, primary, secondary, dangerous);
+        }
+
+        public void ShowPopup(string message, string title = null, string primary = null, string secondary = null, bool dangerous = false)
+        {
+            _ = MessagePopup.ShowAsync(message, title, primary, secondary, dangerous);
+        }
+
+        public void ShowPopup(FormattedText message, string title = null, string primary = null, string secondary = null, bool dangerous = false)
+        {
+            _ = MessagePopup.ShowAsync(message, title, primary, secondary, dangerous);
+        }
     }
 }

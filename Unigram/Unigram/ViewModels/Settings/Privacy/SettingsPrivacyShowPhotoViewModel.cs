@@ -6,12 +6,10 @@
 //
 using System.Threading.Tasks;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Controls;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
-using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings.Privacy
@@ -67,16 +65,8 @@ namespace Unigram.ViewModels.Settings.Privacy
 
         public async void RemovePhoto()
         {
-            var popup = new MessagePopup();
-            popup.Title = Strings.Resources.RemovePublicPhoto;
-            popup.Message = Strings.Resources.RemovePhotoForRestDescription;
-            popup.PrimaryButtonText = Strings.Resources.Remove;
-            popup.SecondaryButtonText = Strings.Resources.Cancel;
-            popup.PrimaryButtonStyle = App.Current.Resources["DangerButtonStyle"] as Style;
-            popup.DefaultButton = Windows.UI.Xaml.Controls.ContentDialogButton.None;
-
-            var confirm = await popup.ShowQueuedAsync();
-            if (confirm == Windows.UI.Xaml.Controls.ContentDialogResult.Primary)
+            var confirm = await ShowPopupAsync(Strings.Resources.RemovePhotoForRestDescription, Strings.Resources.RemovePhotoForRestDescription, Strings.Resources.Remove, Strings.Resources.Cancel, true);
+            if (confirm == ContentDialogResult.Primary)
             {
                 if (ClientService.TryGetUserFull(ClientService.Options.MyId, out UserFullInfo userFull))
                 {

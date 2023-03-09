@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Entities;
 using Unigram.Navigation;
@@ -376,7 +375,7 @@ namespace Unigram.ViewModels.Settings
             dataPackage.SetText(MeUrlPrefixConverter.Convert(ClientService, _username));
             ClipboardEx.TrySetContent(dataPackage);
 
-            await MessagePopup.ShowAsync(Strings.Resources.LinkCopied, Strings.Resources.AppName, Strings.Resources.OK);
+            await ShowPopupAsync(Strings.Resources.LinkCopied, Strings.Resources.AppName, Strings.Resources.OK);
         }
     }
 
@@ -437,7 +436,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public string DisplayValue => _tme? MeUrlPrefixConverter.Convert(_clientService, _value, true): $"@{_value}";
+        public string DisplayValue => _tme ? MeUrlPrefixConverter.Convert(_clientService, _value, true) : $"@{_value}";
 
         private bool _isActive;
         public bool IsActive

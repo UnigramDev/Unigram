@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
-using Unigram.Controls;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Windows.ApplicationModel.DataTransfer;
@@ -22,8 +21,8 @@ namespace Unigram.ViewModels.Chats
 {
     public class ChatInviteLinkViewModel : TLViewModelBase
         , IHandle
-        //, IHandle<UpdateBasicGroupFullInfo>
-        //, IHandle<UpdateSupergroupFullInfo>
+    //, IHandle<UpdateBasicGroupFullInfo>
+    //, IHandle<UpdateSupergroupFullInfo>
     {
         public ChatInviteLinkViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
@@ -175,7 +174,7 @@ namespace Unigram.ViewModels.Chats
             dataPackage.SetText(_inviteLink);
             ClipboardEx.TrySetContent(dataPackage);
 
-            await MessagePopup.ShowAsync(Strings.Resources.LinkCopied, Strings.Resources.AppName, Strings.Resources.OK);
+            await ShowPopupAsync(Strings.Resources.LinkCopied, Strings.Resources.AppName, Strings.Resources.OK);
         }
 
         public RelayCommand RevokeCommand { get; }
@@ -187,7 +186,7 @@ namespace Unigram.ViewModels.Chats
                 return;
             }
 
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.RevokeAlert, Strings.Resources.RevokeLink, Strings.Resources.RevokeButton, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.Resources.RevokeAlert, Strings.Resources.RevokeLink, Strings.Resources.RevokeButton, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

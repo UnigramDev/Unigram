@@ -8,7 +8,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views.Settings.Password;
@@ -63,7 +62,7 @@ namespace Unigram.ViewModels.Settings.Password
                 address = string.Empty;
                 addressValid = false;
 
-                var confirm = await MessagePopup.ShowAsync(Strings.Resources.YourEmailSkipWarningText, Strings.Resources.YourEmailSkipWarning, Strings.Resources.YourEmailSkip, Strings.Resources.Cancel);
+                var confirm = await ShowPopupAsync(Strings.Resources.YourEmailSkipWarningText, Strings.Resources.YourEmailSkipWarning, Strings.Resources.YourEmailSkip, Strings.Resources.Cancel);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;
@@ -93,7 +92,7 @@ namespace Unigram.ViewModels.Settings.Password
             {
                 if (error.TypeEquals(ErrorType.EMAIL_INVALID))
                 {
-                    await MessagePopup.ShowAsync(Strings.Resources.PasswordEmailInvalid, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+                    await ShowPopupAsync(Strings.Resources.PasswordEmailInvalid, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
                 }
             }
         }

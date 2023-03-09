@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
-using Unigram.Controls;
 using Unigram.Native;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
@@ -24,8 +23,8 @@ namespace Unigram.ViewModels.Settings
 {
     public class SettingsProxiesViewModel : TLViewModelBase
         , IHandle
-        //, IHandle<UpdateConnectionState>
-        //, IHandle<UpdateOption>
+    //, IHandle<UpdateConnectionState>
+    //, IHandle<UpdateOption>
     {
         private readonly INetworkService _networkService;
 
@@ -225,7 +224,7 @@ namespace Unigram.ViewModels.Settings
         private async void AddExecute()
         {
             var dialog = new ProxyPopup();
-            var confirm = await dialog.ShowQueuedAsync();
+            var confirm = await ShowPopupAsync(dialog);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -268,7 +267,7 @@ namespace Unigram.ViewModels.Settings
         private async void EditExecute(ConnectionViewModel connection)
         {
             var dialog = new ProxyPopup(connection as ProxyViewModel);
-            var confirm = await dialog.ShowQueuedAsync();
+            var confirm = await ShowPopupAsync(dialog);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -291,7 +290,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand<ProxyViewModel> RemoveCommand { get; }
         private async void RemoveExecute(ProxyViewModel proxy)
         {
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.DeleteProxy, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.Resources.DeleteProxy, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

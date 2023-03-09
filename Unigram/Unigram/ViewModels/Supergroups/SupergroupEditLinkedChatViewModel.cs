@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
-using Unigram.Controls;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
@@ -21,8 +20,8 @@ namespace Unigram.ViewModels.Supergroups
     public class SupergroupEditLinkedChatViewModel : TLViewModelBase
         , IDelegable<ISupergroupDelegate>
         , IHandle
-        //, IHandle<UpdateSupergroup>
-        //, IHandle<UpdateSupergroupFullInfo>
+    //, IHandle<UpdateSupergroup>
+    //, IHandle<UpdateSupergroupFullInfo>
     {
         public ISupergroupDelegate Delegate { get; set; }
 
@@ -249,7 +248,7 @@ namespace Unigram.ViewModels.Supergroups
                     history = true;
                 }
 
-                var confirm = await MessagePopup.ShowAsync(message, Strings.Resources.DiscussionLinkGroup, Strings.Resources.DiscussionLinkGroup, Strings.Resources.Cancel);
+                var confirm = await ShowPopupAsync(message, Strings.Resources.DiscussionLinkGroup, Strings.Resources.DiscussionLinkGroup, Strings.Resources.Cancel);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;
@@ -306,7 +305,7 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.DiscussionUnlinkChannelAlert, linkedChat.Title), Strings.Resources.DiscussionUnlinkGroup, Strings.Resources.DiscussionUnlink, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(string.Format(Strings.Resources.DiscussionUnlinkChannelAlert, linkedChat.Title), Strings.Resources.DiscussionUnlinkGroup, Strings.Resources.DiscussionUnlink, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

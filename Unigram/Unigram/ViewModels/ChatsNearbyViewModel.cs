@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
-using Unigram.Controls;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Windows.System;
@@ -23,7 +22,7 @@ namespace Unigram.ViewModels
 {
     public class ChatsNearbyViewModel : TLViewModelBase
         , IHandle
-        //, IHandle<UpdateUsersNearby>
+    //, IHandle<UpdateUsersNearby>
     {
         private readonly ILocationService _locationService;
 
@@ -65,7 +64,7 @@ namespace Unigram.ViewModels
             var location = await _locationService.GetPositionAsync();
             if (location == null)
             {
-                var confirm = await MessagePopup.ShowAsync(Strings.Resources.GpsDisabledAlert, Strings.Resources.AppName, Strings.Resources.ConnectingToProxyEnable, Strings.Resources.Cancel);
+                var confirm = await ShowPopupAsync(Strings.Resources.GpsDisabledAlert, Strings.Resources.AppName, Strings.Resources.ConnectingToProxyEnable, Strings.Resources.Cancel);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     await Launcher.LaunchUriAsync(new Uri("ms-settings:privacy-location"));

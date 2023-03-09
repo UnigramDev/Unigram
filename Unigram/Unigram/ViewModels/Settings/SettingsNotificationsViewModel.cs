@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
-using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Navigation.Services;
 using Unigram.Services;
@@ -23,7 +22,7 @@ namespace Unigram.ViewModels.Settings
 {
     public class SettingsNotificationsViewModel : TLMultipleViewModelBase
         , IHandle
-        //, IHandle<UpdateScopeNotificationSettings>
+    //, IHandle<UpdateScopeNotificationSettings>
     {
         public SettingsNotificationsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
@@ -105,7 +104,7 @@ namespace Unigram.ViewModels.Settings
             get => Scopes.All(x => !x.DisablePinnedMessage);
             set => SetPinnedEnabled(value);
         }
-        
+
         private async void SetPinnedEnabled(bool value)
         {
             foreach (var scope in Scopes)
@@ -167,7 +166,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand ResetCommand { get; }
         private async void ResetExecute()
         {
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.ResetNotificationsAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.Resources.ResetNotificationsAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 foreach (var scope in Scopes)

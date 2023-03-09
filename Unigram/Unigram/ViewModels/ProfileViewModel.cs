@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
-using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Navigation.Services;
 using Unigram.Services;
@@ -35,16 +34,16 @@ namespace Unigram.ViewModels
     public class ProfileViewModel : ChatSharedMediaViewModel
         , IDelegable<IProfileDelegate>
         , IHandle
-        //IHandle<UpdateUser>,
-        //IHandle<UpdateUserFullInfo>,
-        //IHandle<UpdateBasicGroup>,
-        //IHandle<UpdateBasicGroupFullInfo>,
-        //IHandle<UpdateSupergroup>,
-        //IHandle<UpdateSupergroupFullInfo>,
-        //IHandle<UpdateUserStatus>,
-        //IHandle<UpdateChatTitle>,
-        //IHandle<UpdateChatPhoto>,
-        //IHandle<UpdateChatNotificationSettings>
+    //IHandle<UpdateUser>,
+    //IHandle<UpdateUserFullInfo>,
+    //IHandle<UpdateBasicGroup>,
+    //IHandle<UpdateBasicGroupFullInfo>,
+    //IHandle<UpdateSupergroup>,
+    //IHandle<UpdateSupergroupFullInfo>,
+    //IHandle<UpdateUserStatus>,
+    //IHandle<UpdateChatTitle>,
+    //IHandle<UpdateChatPhoto>,
+    //IHandle<UpdateChatNotificationSettings>
     {
         public string LastSeen { get; internal set; }
 
@@ -455,7 +454,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.AreYouSureBlockContact, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.Resources.AreYouSureBlockContact, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -473,7 +472,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.AreYouSureUnblockContact, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.Resources.AreYouSureUnblockContact, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -538,7 +537,7 @@ namespace Unigram.ViewModels
             //    dialog.PrimaryButtonText = Strings.Resources.OK;
             //    dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
-            //    var dialogResult = await dialog.ShowQueuedAsync();
+            //    var dialogResult = await ShowPopupAsync(dialog);
             //    if (dialogResult == ContentDialogResult.Primary)
             //    {
             //        var reason = opt1.IsChecked == true
@@ -559,7 +558,7 @@ namespace Unigram.ViewModels
             //            input.PrimaryButtonText = Strings.Resources.OK;
             //            input.SecondaryButtonText = Strings.Resources.Cancel;
 
-            //            var inputResult = await input.ShowQueuedAsync();
+            //            var inputResult = await ShowPopupAsync(input);
             //            if (inputResult == ContentDialogResult.Primary)
             //            {
             //                other.Text = input.Text;
@@ -573,7 +572,7 @@ namespace Unigram.ViewModels
             //        var result = await LegacyService.ReportPeerAsync(user.ToInputPeer(), reason);
             //        if (result.IsSucceeded && result.Result)
             //        {
-            //            await new MessagePopup("Resources.ReportSpamNotification", "Unigram").ShowQueuedAsync();
+            //            await ShowPopupAsync(new MessagePopup("Resources.ReportSpamNotification", "Unigram"));
             //        }
             //    }
             //}
@@ -716,7 +715,7 @@ namespace Unigram.ViewModels
             if (ClientService.TryGetUser(chat, out User user)
                 && ClientService.TryGetUserFull(chat, out UserFullInfo userFull))
             {
-                await new GiftPopup(ClientService, NavigationService, user, userFull.PremiumGiftOptions).ShowQueuedAsync();
+                await ShowPopupAsync(new GiftPopup(ClientService, NavigationService, user, userFull.PremiumGiftOptions));
             }
         }
 
@@ -729,7 +728,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.AreYouSureSecretChat, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.Resources.AreYouSureSecretChat, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -754,7 +753,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            await new IdenticonPopup(SessionId, chat).ShowQueuedAsync();
+            await ShowPopupAsync(new IdenticonPopup(SessionId, chat));
         }
 
         public RelayCommand MigrateCommand { get; }
@@ -766,13 +765,13 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.ConvertGroupInfo2 + "\n\n" + Strings.Resources.ConvertGroupInfo3, Strings.Resources.ConvertGroup, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.Resources.ConvertGroupInfo2 + "\n\n" + Strings.Resources.ConvertGroupInfo3, Strings.Resources.ConvertGroup, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
             }
 
-            var warning = await MessagePopup.ShowAsync(Strings.Resources.ConvertGroupAlert, Strings.Resources.ConvertGroupAlertWarning, Strings.Resources.OK, Strings.Resources.Cancel);
+            var warning = await ShowPopupAsync(Strings.Resources.ConvertGroupAlert, Strings.Resources.ConvertGroupAlertWarning, Strings.Resources.OK, Strings.Resources.Cancel);
             if (warning != ContentDialogResult.Primary)
             {
                 return;
@@ -815,7 +814,7 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.AddToTheGroup, user.FullName()), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+                var confirm = await ShowPopupAsync(string.Format(Strings.Resources.AddToTheGroup, user.FullName()), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;
@@ -922,7 +921,7 @@ namespace Unigram.ViewModels
             {
                 var popup = new SupergroupTopicPopup(ClientService, _topic);
 
-                var confirm = await popup.ShowQueuedAsync();
+                var confirm = await ShowPopupAsync(popup);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     ClientService.Send(new EditForumTopic(chat.Id, _topic.MessageThreadId, popup.Name, true, popup.SelectedEmojiId));
@@ -990,7 +989,7 @@ namespace Unigram.ViewModels
                 message = super.IsChannel ? Strings.Resources.ChannelLeaveAlert : Strings.Resources.MegaLeaveAlert;
             }
 
-            var confirm = await MessagePopup.ShowAsync(message, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(message, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 if (chat.Type is ChatTypePrivate privata)
@@ -1018,7 +1017,7 @@ namespace Unigram.ViewModels
             //    return;
             //}
 
-            //var confirm = await MessagePopup.ShowAsync(Strings.Resources.AreYouSureDeleteContact, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            //var confirm = await ShowPopupAsync(Strings.Resources.AreYouSureDeleteContact, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             //if (confirm != ContentDialogResult.Primary)
             //{
             //    return;
@@ -1077,7 +1076,7 @@ namespace Unigram.ViewModels
                 var mutedFor = Settings.Notifications.GetMutedFor(chat);
                 var popup = new ChatMutePopup(mutedFor);
 
-                var confirm = await popup.ShowQueuedAsync();
+                var confirm = await ShowPopupAsync(popup);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;
@@ -1112,7 +1111,7 @@ namespace Unigram.ViewModels
                 var dialog = new ChatTtlPopup(chat.Type is ChatTypeSecret ? ChatTtlType.Secret : ChatTtlType.Normal);
                 dialog.Value = chat.MessageAutoDeleteTime;
 
-                var confirm = await dialog.ShowQueuedAsync();
+                var confirm = await ShowPopupAsync(dialog);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;

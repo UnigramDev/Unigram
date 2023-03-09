@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
-using Unigram.Controls;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views.Popups;
@@ -153,7 +152,7 @@ namespace Unigram.ViewModels.Settings
             popup.Text = session.DeviceModel;
             popup.MaxLength = 32;
 
-            var confirm = await popup.ShowQueuedAsync();
+            var confirm = await ShowPopupAsync(popup);
             if (confirm == ContentDialogResult.Primary && popup.Text != Settings.Diagnostics.DeviceName)
             {
                 session.DeviceModel = popup.Text;
@@ -166,7 +165,7 @@ namespace Unigram.ViewModels.Settings
 
         public async void TerminateOthers()
         {
-            var terminate = await MessagePopup.ShowAsync(Strings.Resources.AreYouSureSessions, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var terminate = await ShowPopupAsync(Strings.Resources.AreYouSureSessions, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (terminate == ContentDialogResult.Primary)
             {
                 var response = await ClientService.SendAsync(new TerminateAllOtherSessions());
@@ -191,7 +190,7 @@ namespace Unigram.ViewModels.Settings
 
             var dialog = new SettingsSessionPopup(session);
 
-            var confirm = await dialog.ShowQueuedAsync();
+            var confirm = await ShowPopupAsync(dialog);
             if (confirm != ContentDialogResult.Primary)
             {
                 if (session.CanAcceptCalls != dialog.CanAcceptCalls && confirm == ContentDialogResult.Secondary)
@@ -209,7 +208,7 @@ namespace Unigram.ViewModels.Settings
                 return;
             }
 
-            var terminate = await MessagePopup.ShowAsync(Strings.Resources.TerminateSessionQuestion, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var terminate = await ShowPopupAsync(Strings.Resources.TerminateSessionQuestion, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (terminate == ContentDialogResult.Primary)
             {
                 var response = await ClientService.SendAsync(new TerminateSession(session.Id));

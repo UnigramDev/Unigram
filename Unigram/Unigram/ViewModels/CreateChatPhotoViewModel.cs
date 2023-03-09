@@ -8,7 +8,6 @@ using Rg.DiffUtils;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
-using Unigram.Controls;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Windows.UI.Xaml.Controls;
@@ -109,7 +108,7 @@ namespace Unigram.ViewModels
                 {
                     if (_isPersonal)
                     {
-                        var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.SetUserPhotoAlertMessage, user.FirstName), Strings.Resources.AppName, Strings.Resources.SuggestPhotoShort, Strings.Resources.Cancel);
+                        var confirm = await ShowPopupAsync(string.Format(Strings.Resources.SetUserPhotoAlertMessage, user.FirstName), Strings.Resources.AppName, Strings.Resources.SuggestPhotoShort, Strings.Resources.Cancel);
                         if (confirm == ContentDialogResult.Primary)
                         {
                             ClientService.Send(new SetUserPersonalProfilePhoto(user.Id, inputPhoto));
@@ -122,7 +121,7 @@ namespace Unigram.ViewModels
                     }
                     else
                     {
-                        var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.SuggestPhotoAlertMessage, user.FirstName), Strings.Resources.AppName, Strings.Resources.SuggestPhotoShort, Strings.Resources.Cancel);
+                        var confirm = await ShowPopupAsync(string.Format(Strings.Resources.SuggestPhotoAlertMessage, user.FirstName), Strings.Resources.AppName, Strings.Resources.SuggestPhotoShort, Strings.Resources.Cancel);
                         if (confirm == ContentDialogResult.Primary)
                         {
                             ClientService.Send(new SuggestUserProfilePhoto(user.Id, inputPhoto));

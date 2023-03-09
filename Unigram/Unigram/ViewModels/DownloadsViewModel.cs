@@ -22,9 +22,9 @@ using Windows.UI.Xaml.Data;
 namespace Unigram.ViewModels
 {
     public class DownloadsViewModel : TLViewModelBase, IHandle
-        //IHandle<UpdateFileDownload>,
-        //IHandle<UpdateFileAddedToDownloads>,
-        //IHandle<UpdateFileRemovedFromDownloads>
+    //IHandle<UpdateFileDownload>,
+    //IHandle<UpdateFileAddedToDownloads>,
+    //IHandle<UpdateFileRemovedFromDownloads>
     {
         private readonly IStorageService _storageService;
 

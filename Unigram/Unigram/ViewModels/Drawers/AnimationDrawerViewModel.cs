@@ -21,7 +21,7 @@ using Windows.UI.Xaml.Data;
 namespace Unigram.ViewModels.Drawers
 {
     public class AnimationDrawerViewModel : TLViewModelBase
-        //IHandle<UpdateSavedAnimations>
+    //IHandle<UpdateSavedAnimations>
     {
         private bool _updated;
 

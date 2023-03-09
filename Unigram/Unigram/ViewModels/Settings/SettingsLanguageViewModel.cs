@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
-using Unigram.Controls;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Services;
@@ -127,7 +126,7 @@ namespace Unigram.ViewModels.Settings
 
             var popup = new DoNotTranslatePopup(_officialLanguages, exclude);
 
-            var confirm = await popup.ShowQueuedAsync();
+            var confirm = await ShowPopupAsync(popup);
             if (confirm == ContentDialogResult.Primary && popup.SelectedItems != null)
             {
                 var updated = popup.SelectedItems;
@@ -186,7 +185,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand<LanguagePackInfo> DeleteCommand { get; }
         private async void DeleteExecute(LanguagePackInfo info)
         {
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.DeleteLocalization, Strings.Resources.AppName, Strings.Resources.Delete, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.Resources.DeleteLocalization, Strings.Resources.AppName, Strings.Resources.Delete, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

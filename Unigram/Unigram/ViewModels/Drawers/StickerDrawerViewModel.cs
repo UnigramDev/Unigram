@@ -16,7 +16,6 @@ using Unigram.Services;
 using Unigram.Views;
 using Windows.Foundation;
 using Windows.Storage;
-using Windows.UI.Text.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;

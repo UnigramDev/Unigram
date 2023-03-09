@@ -12,7 +12,6 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Services.Settings;
@@ -36,9 +35,9 @@ namespace Unigram.ViewModels.Settings
     }
 
     public class SettingsStickersViewModel : TLViewModelBase, IHandle
-        //, IHandle<UpdateInstalledStickerSets>
-        //, IHandle<UpdateTrendingStickerSets>
-        //, IHandle<UpdateRecentStickers>
+    //, IHandle<UpdateInstalledStickerSets>
+    //, IHandle<UpdateTrendingStickerSets>
+    //, IHandle<UpdateRecentStickers>
     {
         private StickersType _type;
 
@@ -306,7 +305,7 @@ namespace Unigram.ViewModels.Settings
         {
             if (stickerSet.Name.Equals("tg/recentlyUsed"))
             {
-                var confirm = await MessagePopup.ShowAsync(Strings.Resources.ClearRecentEmoji, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+                var confirm = await ShowPopupAsync(Strings.Resources.ClearRecentEmoji, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;

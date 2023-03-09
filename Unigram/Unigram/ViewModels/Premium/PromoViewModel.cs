@@ -124,10 +124,10 @@ namespace Unigram.ViewModels.Premium
 
             if (feature is PremiumFeatureIncreasedLimits)
             {
-                var dialog = new LimitsPopup(ClientService, Option.PaymentOption, Limits);
-                await dialog.ShowQueuedAsync();
+                var popup = new LimitsPopup(ClientService, Option.PaymentOption, Limits);
+                await ShowPopupAsync(popup);
 
-                if (dialog.ShouldPurchase && !ClientService.IsPremium)
+                if (popup.ShouldPurchase && !ClientService.IsPremium)
                 {
                     Purchase();
                     return false;
@@ -137,10 +137,10 @@ namespace Unigram.ViewModels.Premium
             }
             else
             {
-                var dialog = new FeaturesPopup(ClientService, Option.PaymentOption, Features, _animations, _stickers, feature);
-                await dialog.ShowQueuedAsync();
+                var popup = new FeaturesPopup(ClientService, Option.PaymentOption, Features, _animations, _stickers, feature);
+                await ShowPopupAsync(popup);
 
-                if (dialog.ShouldPurchase && !ClientService.IsPremium)
+                if (popup.ShouldPurchase && !ClientService.IsPremium)
                 {
                     Purchase();
                     return false;

@@ -7,7 +7,6 @@
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Windows.UI.Xaml.Navigation;
@@ -111,11 +110,11 @@ namespace Unigram.ViewModels.Authorization
 
                 if (error.TypeEquals(ErrorType.EMAIL_VERIFY_EXPIRED))
                 {
-                    await MessagePopup.ShowAsync(Strings.Resources.CodeExpired, Strings.Resources.RestorePasswordNoEmailTitle, Strings.Resources.OK);
+                    await ShowPopupAsync(Strings.Resources.CodeExpired, Strings.Resources.RestorePasswordNoEmailTitle, Strings.Resources.OK);
                 }
                 else if (error.TypeEquals(ErrorType.CODE_INVALID))
                 {
-                    await MessagePopup.ShowAsync(Strings.Resources.InvalidCode, Strings.Resources.RestorePasswordNoEmailTitle, Strings.Resources.OK);
+                    await ShowPopupAsync(Strings.Resources.InvalidCode, Strings.Resources.RestorePasswordNoEmailTitle, Strings.Resources.OK);
                 }
 
                 Logs.Logger.Error(Logs.LogTarget.API, "account.signIn error " + error);

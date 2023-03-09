@@ -9,7 +9,6 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
-using Unigram.Controls;
 using Unigram.Services;
 using Unigram.Views.Popups;
 using Windows.Foundation;
@@ -55,7 +54,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand<MessageSender> UnblockCommand { get; }
         private async void UnblockExecute(MessageSender sender)
         {
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.AreYouSureUnblockContact, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.Resources.AreYouSureUnblockContact, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 Items.Remove(sender);

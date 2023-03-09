@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
-using Unigram.Controls;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Services;
@@ -196,7 +195,7 @@ namespace Unigram.ViewModels.Settings
                 var dialog = new ChooseColorPopup();
                 dialog.Color = accent;
 
-                var confirm = await dialog.ShowQueuedAsync();
+                var confirm = await ShowPopupAsync(dialog);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     await SetThemeAsync(ThemeAccentInfo.FromAccent(type, dialog.Color));
@@ -237,7 +236,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand<ThemeCustomInfo> ThemeDeleteCommand { get; }
         private async void ThemeDeleteExecute(ThemeCustomInfo theme)
         {
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.DeleteThemeAlert, Strings.Resources.AppName, Strings.Resources.Delete, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.Resources.DeleteThemeAlert, Strings.Resources.AppName, Strings.Resources.Delete, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

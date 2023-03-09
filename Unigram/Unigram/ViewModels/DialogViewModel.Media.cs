@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Entities;
 using Unigram.Services;
@@ -54,7 +53,7 @@ namespace Unigram.ViewModels
 
             if (sticker.FullType is StickerFullTypeRegular regular && regular.PremiumAnimation != null && ClientService.IsPremiumAvailable && !ClientService.IsPremium)
             {
-                await new UniqueStickersPopup(ClientService, sticker).ShowQueuedAsync();
+                await ShowPopupAsync(new UniqueStickersPopup(ClientService, sticker));
                 return;
             }
 
@@ -168,11 +167,11 @@ namespace Unigram.ViewModels
                 {
                     if (restricted.IsForever())
                     {
-                        await MessagePopup.ShowAsync(forever, Strings.Resources.AppName, Strings.Resources.OK);
+                        await ShowPopupAsync(forever, Strings.Resources.AppName, Strings.Resources.OK);
                     }
                     else
                     {
-                        await MessagePopup.ShowAsync(string.Format(temporary, Converter.BannedUntil(restricted.RestrictedUntilDate)), Strings.Resources.AppName, Strings.Resources.OK);
+                        await ShowPopupAsync(string.Format(temporary, Converter.BannedUntil(restricted.RestrictedUntilDate)), Strings.Resources.AppName, Strings.Resources.OK);
                     }
 
                     return true;
@@ -181,7 +180,7 @@ namespace Unigram.ViewModels
                 {
                     if (!permission(chat.Permissions))
                     {
-                        await MessagePopup.ShowAsync(global, Strings.Resources.AppName, Strings.Resources.OK);
+                        await ShowPopupAsync(global, Strings.Resources.AppName, Strings.Resources.OK);
                         return true;
                     }
                 }
@@ -190,7 +189,7 @@ namespace Unigram.ViewModels
             {
                 if (!permission(chat.Permissions))
                 {
-                    await MessagePopup.ShowAsync(global, Strings.Resources.AppName, Strings.Resources.OK);
+                    await ShowPopupAsync(global, Strings.Resources.AppName, Strings.Resources.OK);
                     return true;
                 }
             }
@@ -406,22 +405,22 @@ namespace Unigram.ViewModels
             {
                 if (item is StoragePhoto && !permissions.CanSendPhotos)
                 {
-                    await MessagePopup.ShowAsync(restricted ? Strings.Resources.ErrorSendRestrictedPhoto : Strings.Resources.ErrorSendRestrictedPhotoAll, Strings.Resources.AppName, Strings.Resources.OK);
+                    await ShowPopupAsync(restricted ? Strings.Resources.ErrorSendRestrictedPhoto : Strings.Resources.ErrorSendRestrictedPhotoAll, Strings.Resources.AppName, Strings.Resources.OK);
                     return;
                 }
                 else if (item is StorageVideo && !permissions.CanSendVideos)
                 {
-                    await MessagePopup.ShowAsync(restricted ? Strings.Resources.ErrorSendRestrictedVideo : Strings.Resources.ErrorSendRestrictedVideoAll, Strings.Resources.AppName, Strings.Resources.OK);
+                    await ShowPopupAsync(restricted ? Strings.Resources.ErrorSendRestrictedVideo : Strings.Resources.ErrorSendRestrictedVideoAll, Strings.Resources.AppName, Strings.Resources.OK);
                     return;
                 }
                 else if (item is StorageAudio && !permissions.CanSendAudios)
                 {
-                    await MessagePopup.ShowAsync(restricted ? Strings.Resources.ErrorSendRestrictedMusic : Strings.Resources.ErrorSendRestrictedMusicAll, Strings.Resources.AppName, Strings.Resources.OK);
+                    await ShowPopupAsync(restricted ? Strings.Resources.ErrorSendRestrictedMusic : Strings.Resources.ErrorSendRestrictedMusicAll, Strings.Resources.AppName, Strings.Resources.OK);
                     return;
                 }
                 else if (item is StorageDocument && !permissions.CanSendDocuments)
                 {
-                    await MessagePopup.ShowAsync(restricted ? Strings.Resources.ErrorSendRestrictedDocuments : Strings.Resources.ErrorSendRestrictedDocumentsAll, Strings.Resources.AppName, Strings.Resources.OK);
+                    await ShowPopupAsync(restricted ? Strings.Resources.ErrorSendRestrictedDocuments : Strings.Resources.ErrorSendRestrictedDocumentsAll, Strings.Resources.AppName, Strings.Resources.OK);
                     return;
                 }
             }
@@ -670,7 +669,7 @@ namespace Unigram.ViewModels
         //    if (_isSchedule)
         //    {
         //        var dialog = new SupergroupEditRestrictedUntilView(DateTime.Now.ToTimestamp());
-        //        var confirm = await dialog.ShowQueuedAsync();
+        //        var confirm = await ShowPopupAsync(dialog);
         //        if (confirm != ContentDialogResult.Primary)
         //        {
         //            return null;
@@ -705,7 +704,7 @@ namespace Unigram.ViewModels
                 }
 
                 var dialog = new ScheduleMessagePopup(user, until.AddMinutes(1), ClientService.IsSavedMessages(chat));
-                var confirm = await dialog.ShowQueuedAsync();
+                var confirm = await ShowPopupAsync(dialog);
 
                 if (confirm != ContentDialogResult.Primary)
                 {
@@ -742,7 +741,7 @@ namespace Unigram.ViewModels
                 }
                 else if (error.TypeEquals(ErrorType.SCHEDULE_TOO_MUCH))
                 {
-                    await MessagePopup.ShowAsync(Strings.Resources.MessageScheduledLimitReached, Strings.Resources.AppName, Strings.Resources.OK);
+                    await ShowPopupAsync(Strings.Resources.MessageScheduledLimitReached, Strings.Resources.AppName, Strings.Resources.OK);
                 }
             }
 
@@ -759,7 +758,7 @@ namespace Unigram.ViewModels
             }
 
             var popup = new SendLocationPopup();
-            var confirm = await popup.ShowQueuedAsync();
+            var confirm = await ShowPopupAsync(popup);
             if (confirm == ContentDialogResult.Primary)
             {
                 var options = await PickMessageSendOptionsAsync();
@@ -795,7 +794,7 @@ namespace Unigram.ViewModels
 
             var dialog = new CreatePollPopup(forceQuiz, forceRegular, forceAnonymous);
 
-            var confirm = await dialog.ShowQueuedAsync();
+            var confirm = await ShowPopupAsync(dialog);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

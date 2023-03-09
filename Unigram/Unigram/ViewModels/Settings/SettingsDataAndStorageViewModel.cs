@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls;
 using Unigram.Native.Calls;
 using Unigram.Services;
 using Unigram.Services.Settings;
@@ -155,7 +154,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand ResetAutoDownloadCommand { get; }
         private async void ResetAutoDownloadExecute()
         {
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.ResetAutomaticMediaDownloadAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.Resources.ResetAutomaticMediaDownloadAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 var response = await ClientService.SendAsync(new GetAutoDownloadSettingsPresets());

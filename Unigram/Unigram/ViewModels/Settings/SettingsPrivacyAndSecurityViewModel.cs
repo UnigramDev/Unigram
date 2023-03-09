@@ -25,7 +25,7 @@ namespace Unigram.ViewModels.Settings
 {
     public class SettingsPrivacyAndSecurityViewModel : TLMultipleViewModelBase
         , IHandle
-        //, IHandle<UpdateOption>
+    //, IHandle<UpdateOption>
     {
         private readonly IContactsService _contactsService;
         private readonly IPasscodeService _passcodeService;
@@ -289,7 +289,7 @@ namespace Unigram.ViewModels.Settings
         {
             if (!value)
             {
-                var confirm = await MessagePopup.ShowAsync(Strings.Resources.SuggestContactsAlert, Strings.Resources.AppName, Strings.Resources.MuteDisable, Strings.Resources.Cancel);
+                var confirm = await ShowPopupAsync(Strings.Resources.SuggestContactsAlert, Strings.Resources.AppName, Strings.Resources.MuteDisable, Strings.Resources.Cancel);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     RaisePropertyChanged(nameof(IsContactsSuggestEnabled));
@@ -344,14 +344,14 @@ namespace Unigram.ViewModels.Settings
             var response = await ClientService.SendAsync(new GetPasswordState());
             if (response is PasswordState passwordState)
             {
-                var confirm = await MessagePopup.ShowAsync(Strings.Resources.EmailLoginChangeMessage, passwordState.LoginEmailAddressPattern, Strings.Resources.ChangeEmail, Strings.Resources.Cancel);
+                var confirm = await ShowPopupAsync(Strings.Resources.EmailLoginChangeMessage, passwordState.LoginEmailAddressPattern, Strings.Resources.ChangeEmail, Strings.Resources.Cancel);
             }
         }
 
         public RelayCommand ClearDraftsCommand { get; }
         private async void ClearDraftsExecute()
         {
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.AreYouSureClearDrafts, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.Resources.AreYouSureClearDrafts, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -367,7 +367,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand ClearContactsCommand { get; }
         private async void ClearContactsExecute()
         {
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.SyncContactsDeleteInfo, Strings.Resources.Contacts, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.Resources.SyncContactsDeleteInfo, Strings.Resources.Contacts, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -419,7 +419,7 @@ namespace Unigram.ViewModels.Settings
             dialog.PrimaryButtonText = Strings.Resources.ClearButton;
             dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
-            var confirm = await dialog.ShowQueuedAsync();
+            var confirm = await ShowPopupAsync(dialog);
             if (confirm == ContentDialogResult.Primary)
             {
                 var info = checkShipping.IsChecked == true;

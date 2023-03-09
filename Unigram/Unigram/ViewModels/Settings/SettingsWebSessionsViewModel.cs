@@ -103,7 +103,7 @@ namespace Unigram.ViewModels.Settings
             dialog.SecondaryButtonText = Strings.Resources.Cancel;
             dialog.CheckBoxLabel = string.Format(Strings.Resources.TerminateWebSessionStop, bot.FullName());
 
-            var terminate = await dialog.ShowQueuedAsync();
+            var terminate = await ShowPopupAsync(dialog);
             if (terminate == ContentDialogResult.Primary)
             {
                 var response = await ClientService.SendAsync(new DisconnectWebsite(session.Id));
@@ -123,7 +123,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand TerminateOthersCommand { get; }
         private async void TerminateOtherExecute()
         {
-            var terminate = await MessagePopup.ShowAsync(Strings.Resources.AreYouSureWebSessions, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var terminate = await ShowPopupAsync(Strings.Resources.AreYouSureWebSessions, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (terminate == ContentDialogResult.Primary)
             {
                 var response = await ClientService.SendAsync(new DisconnectAllWebsites());

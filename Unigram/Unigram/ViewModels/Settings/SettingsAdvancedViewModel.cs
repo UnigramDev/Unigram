@@ -21,7 +21,7 @@ namespace Unigram.ViewModels.Settings
 {
     public class SettingsAdvancedViewModel : TLViewModelBase
         , IHandle
-        //, IHandle<UpdateAppVersion>
+    //, IHandle<UpdateAppVersion>
     {
         private readonly ICloudUpdateService _cloudUpdateService;
         private CloudUpdate _update;

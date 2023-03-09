@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
-using Unigram.Controls;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Services.Updates;
@@ -20,7 +19,7 @@ namespace Unigram.ViewModels.Folders
 {
     public class FoldersViewModel : TLViewModelBase
         , IHandle
-        //, IHandle<UpdateChatFilters>
+    //, IHandle<UpdateChatFilters>
     {
         public FoldersViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
@@ -148,7 +147,7 @@ namespace Unigram.ViewModels.Folders
         public RelayCommand<ChatFilterInfo> DeleteCommand { get; }
         private async void DeleteExecute(ChatFilterInfo filter)
         {
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.FilterDeleteAlert, Strings.Resources.FilterDelete, Strings.Resources.Delete, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.Resources.FilterDeleteAlert, Strings.Resources.FilterDelete, Strings.Resources.Delete, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

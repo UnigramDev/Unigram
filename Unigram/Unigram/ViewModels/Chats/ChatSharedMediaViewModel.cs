@@ -14,7 +14,6 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
-using Unigram.Controls;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
@@ -44,7 +43,7 @@ namespace Unigram.ViewModels.Chats
     public class ChatSharedMediaViewModel : TLMultipleViewModelBase
         , IMessageDelegate
         , IHandle
-        //, IHandle<UpdateDeleteMessages>
+    //, IHandle<UpdateDeleteMessages>
     {
         private readonly IPlaybackService _playbackService;
         private readonly IStorageService _storageService;
@@ -415,7 +414,7 @@ namespace Unigram.ViewModels.Chats
             var sameUser = messages.All(x => x.SenderId.AreTheSame(first.SenderId));
             var dialog = new DeleteMessagesPopup(ClientService, items.Where(x => x != null).ToArray());
 
-            var confirm = await dialog.ShowQueuedAsync();
+            var confirm = await ShowPopupAsync(dialog);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -681,7 +680,7 @@ namespace Unigram.ViewModels.Chats
                 {
                     if (untrust)
                     {
-                        var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.OpenUrlAlert, url), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+                        var confirm = await ShowPopupAsync(string.Format(Strings.Resources.OpenUrlAlert, url), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
                         if (confirm != ContentDialogResult.Primary)
                         {
                             return;

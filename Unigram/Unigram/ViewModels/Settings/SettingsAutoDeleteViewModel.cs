@@ -9,7 +9,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views.Popups;
@@ -46,7 +45,7 @@ namespace Unigram.ViewModels.Settings
         public async void SetCustomTime()
         {
             var popup = new ChatTtlPopup(ChatTtlType.Auto);
-            var confirm = await popup.ShowQueuedAsync();
+            var confirm = await ShowPopupAsync(popup);
 
             if (confirm == ContentDialogResult.Primary)
             {
@@ -64,7 +63,7 @@ namespace Unigram.ViewModels.Settings
 
             if (sync && value != 0 && selected?.Value == 0)
             {
-                var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.AutoDeleteConfirmMessage, Locale.FormatTtl(value)), Strings.Resources.MessageLifetime, Strings.Resources.AutoDeleteConfirm, Strings.Resources.Cancel);
+                var confirm = await ShowPopupAsync(string.Format(Strings.Resources.AutoDeleteConfirmMessage, Locale.FormatTtl(value)), Strings.Resources.MessageLifetime, Strings.Resources.AutoDeleteConfirm, Strings.Resources.Cancel);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;

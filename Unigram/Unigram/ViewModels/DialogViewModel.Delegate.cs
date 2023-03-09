@@ -11,7 +11,6 @@ using System.Linq;
 using System.Net;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls;
 using Unigram.Controls.Gallery;
 using Unigram.Controls.Messages;
 using Unigram.Services.Settings;
@@ -198,7 +197,7 @@ namespace Unigram.ViewModels
             {
                 if (file.Local.Path.EndsWith(".unigram-theme"))
                 {
-                    await new ThemePreviewPopup(local).ShowQueuedAsync();
+                    await ShowPopupAsync(new ThemePreviewPopup(local));
                 }
                 else
                 {
@@ -331,7 +330,7 @@ namespace Unigram.ViewModels
             }
             else
             {
-                await MessagePopup.ShowAsync(Strings.Resources.NoUsernameFound, Strings.Resources.AppName, Strings.Resources.OK);
+                await ShowPopupAsync(Strings.Resources.NoUsernameFound, Strings.Resources.AppName, Strings.Resources.OK);
             }
         }
 
@@ -432,7 +431,7 @@ namespace Unigram.ViewModels
 
                     if (untrust)
                     {
-                        var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.OpenUrlAlert, url), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+                        var confirm = await ShowPopupAsync(string.Format(Strings.Resources.OpenUrlAlert, url), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
                         if (confirm != ContentDialogResult.Primary)
                         {
                             return;
@@ -470,7 +469,7 @@ namespace Unigram.ViewModels
             }
             else if (message.Content is MessagePoll poll)
             {
-                await new PollResultsPopup(ClientService, Settings, Aggregator, this, message.ChatId, message.Id, poll.Poll).ShowQueuedAsync();
+                await ShowPopupAsync(new PollResultsPopup(ClientService, Settings, Aggregator, this, message.ChatId, message.Id, poll.Poll));
             }
             else if (message.Content is MessageGame game && message.ReplyMarkup is ReplyMarkupInlineKeyboard inline)
             {

@@ -134,7 +134,7 @@ namespace Unigram.ViewModels
                 CheckBoxLabel = Strings.Resources.DeleteCallsForEveryone
             };
 
-            var confirm = await popup.ShowQueuedAsync();
+            var confirm = await ShowPopupAsync(popup);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

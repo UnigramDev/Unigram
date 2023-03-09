@@ -122,7 +122,7 @@ namespace Unigram.ViewModels.Settings
                 {
                     key = value.Key.Substring(0, value.Key.Length - "Brush".Length) + suffix;
                 }
-                
+
                 if (theme.Values.TryGetValue(key, out Color custom))
                 {
                     _index[i] = new ThemeBrush(key, custom, value.Value.Color.A < 255);
@@ -149,7 +149,7 @@ namespace Unigram.ViewModels.Settings
             dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
-            var confirm = await dialog.ShowQueuedAsync();
+            var confirm = await ShowPopupAsync(dialog);
             if (confirm == ContentDialogResult.Primary)
             {
                 _theme.Name = dialog.Text;
@@ -169,7 +169,7 @@ namespace Unigram.ViewModels.Settings
             dialog.Title = brush.Key;
             dialog.Color = brush.Color;
 
-            var confirm = await dialog.ShowQueuedAsync();
+            var confirm = await ShowPopupAsync(dialog);
             if (confirm == ContentDialogResult.Primary)
             {
                 brush.Color = dialog.Color;

@@ -180,11 +180,11 @@ namespace Unigram.ViewModels
             //{
             //    if (channel.BannedRights.IsForever())
             //    {
-            //        await MessagePopup.ShowAsync(Strings.Resources.AttachMediaRestrictedForever, Strings.Resources.AppName, Strings.Resources.OK);
+            //        await ShowPopupAsync(Strings.Resources.AttachMediaRestrictedForever, Strings.Resources.AppName, Strings.Resources.OK);
             //    }
             //    else
             //    {
-            //        await MessagePopup.ShowAsync(string.Format(Strings.Resources.AttachMediaRestricted, BindConvert.Current.BannedUntil(channel.BannedRights.UntilDate)), Strings.Resources.AppName, Strings.Resources.OK);
+            //        await ShowPopupAsync(string.Format(Strings.Resources.AttachMediaRestricted, BindConvert.Current.BannedUntil(channel.BannedRights.UntilDate)), Strings.Resources.AppName, Strings.Resources.OK);
             //    }
 
             //    return;

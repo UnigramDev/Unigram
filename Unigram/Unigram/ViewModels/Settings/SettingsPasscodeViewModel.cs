@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unigram.Common;
-using Unigram.Controls;
 using Unigram.Services;
 using Unigram.Services.Updates;
 using Unigram.Views.Popups;
@@ -19,7 +18,7 @@ namespace Unigram.ViewModels.Settings
 {
     public class SettingsPasscodeViewModel : TLViewModelBase
         , IHandle
-        //, IHandle<UpdatePasscodeLock>
+    //, IHandle<UpdatePasscodeLock>
     {
         private readonly IPasscodeService _passcodeService;
 
@@ -106,7 +105,7 @@ namespace Unigram.ViewModels.Settings
         {
             if (_passcodeService.IsEnabled)
             {
-                var confirm = await MessagePopup.ShowAsync(Strings.Resources.DisablePasscodeConfirmMessage, Strings.Resources.DisablePasscode, Strings.Resources.DisablePasscodeTurnOff, Strings.Resources.Cancel, true);
+                var confirm = await ShowPopupAsync(Strings.Resources.DisablePasscodeConfirmMessage, Strings.Resources.DisablePasscode, Strings.Resources.DisablePasscodeTurnOff, Strings.Resources.Cancel, true);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     _passcodeService.Reset();
@@ -119,7 +118,7 @@ namespace Unigram.ViewModels.Settings
                 var popup = new SettingsPasscodeInputPopup();
                 popup.IsSimple = _passcodeService.IsSimple;
 
-                var confirm = await popup.ShowQueuedAsync();
+                var confirm = await ShowPopupAsync(popup);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     var passcode = popup.Passcode;
@@ -141,7 +140,7 @@ namespace Unigram.ViewModels.Settings
             var dialog = new SettingsPasscodeInputPopup();
             dialog.IsSimple = _passcodeService.IsSimple;
 
-            var confirm = await dialog.ShowQueuedAsync();
+            var confirm = await ShowPopupAsync(dialog);
             if (confirm == ContentDialogResult.Primary)
             {
                 var passcode = dialog.Passcode;

@@ -15,7 +15,6 @@ using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Common.Chats;
-using Unigram.Controls;
 using Unigram.Controls.Chats;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
@@ -1658,7 +1657,7 @@ namespace Unigram.ViewModels
             if (parameter is string pair)
             {
                 var split = pair.Split(';');
-                if (split.Length != 2) 
+                if (split.Length != 2)
                 {
                     return;
                 }
@@ -2487,7 +2486,7 @@ namespace Unigram.ViewModels
                             dialog.PrimaryButtonText = "More info";
                             dialog.SecondaryButtonText = "OK";
 
-                            var confirm = await dialog.ShowQueuedAsync();
+                            var confirm = await ShowPopupAsync(dialog);
                             if (confirm == ContentDialogResult.Primary)
                             {
                                 MessageHelper.HandleTelegramUrl("t.me/SpamBot");
@@ -2512,7 +2511,7 @@ namespace Unigram.ViewModels
 
             if (messageSender.NeedsPremium && !IsPremium)
             {
-                await MessagePopup.ShowAsync(Strings.Resources.SelectSendAsPeerPremiumHint, Strings.Resources.AppName, Strings.Resources.OK);
+                await ShowPopupAsync(Strings.Resources.SelectSendAsPeerPremiumHint, Strings.Resources.AppName, Strings.Resources.OK);
                 return;
             }
 
@@ -2625,7 +2624,7 @@ namespace Unigram.ViewModels
                 }
             }
 
-            var confirm = await MessagePopup.ShowAsync(message, title, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(message, title, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -2665,7 +2664,7 @@ namespace Unigram.ViewModels
             var updated = await ClientService.SendAsync(new GetChat(chat.Id)) as Chat ?? chat;
             var dialog = new DeleteChatPopup(ClientService, updated, null, false);
 
-            var confirm = await dialog.ShowQueuedAsync();
+            var confirm = await ShowPopupAsync(dialog);
             if (confirm == ContentDialogResult.Primary)
             {
                 var check = dialog.IsChecked == true;
@@ -2712,7 +2711,7 @@ namespace Unigram.ViewModels
             var updated = await ClientService.SendAsync(new GetChat(chat.Id)) as Chat ?? chat;
             var dialog = new DeleteChatPopup(ClientService, updated, null, true);
 
-            var confirm = await dialog.ShowQueuedAsync();
+            var confirm = await ShowPopupAsync(dialog);
             if (confirm == ContentDialogResult.Primary)
             {
                 ClientService.Send(new DeleteChatHistory(updated.Id, false, dialog.IsChecked));
@@ -2771,7 +2770,7 @@ namespace Unigram.ViewModels
                 basicGroup != null && basicGroup.CanPinMessages() ||
                 chat.Type is ChatTypePrivate privata)
             {
-                var confirm = await MessagePopup.ShowAsync(Strings.Resources.UnpinMessageAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+                var confirm = await ShowPopupAsync(Strings.Resources.UnpinMessageAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     ClientService.Send(new UnpinChatMessage(chat.Id, message.Id));
@@ -2836,7 +2835,7 @@ namespace Unigram.ViewModels
             }
             else
             {
-                var confirm = await MessagePopup.ShowAsync(Strings.Resources.AreYouSureUnblockContact, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+                var confirm = await ShowPopupAsync(Strings.Resources.AreYouSureUnblockContact, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;
@@ -2941,7 +2940,7 @@ namespace Unigram.ViewModels
                 var title = string.Format(Strings.Resources.AddMembersAlertTitle, count);
                 var message = string.Format(Strings.Resources.AddMembersAlertCountText, count, chat.Title);
 
-                var confirm = await MessagePopup.ShowAsync(message, title, Strings.Resources.Add, Strings.Resources.Cancel);
+                var confirm = await ShowPopupAsync(message, title, Strings.Resources.Add, Strings.Resources.Cancel);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;
@@ -3057,7 +3056,7 @@ namespace Unigram.ViewModels
             dialog.MaxDate = DateTimeOffset.Now.Date;
             //dialog.SelectedDates.Add(BindConvert.Current.DateTime(message.Date));
 
-            var confirm = await dialog.ShowQueuedAsync();
+            var confirm = await ShowPopupAsync(dialog);
             if (confirm == ContentDialogResult.Primary && dialog.SelectedDates.Count > 0)
             {
                 var first = dialog.SelectedDates.FirstOrDefault();
@@ -3140,7 +3139,7 @@ namespace Unigram.ViewModels
                 var mutedFor = Settings.Notifications.GetMutedFor(chat);
                 var popup = new ChatMutePopup(mutedFor);
 
-                var confirm = await popup.ShowQueuedAsync();
+                var confirm = await ShowPopupAsync(popup);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;
@@ -3187,7 +3186,7 @@ namespace Unigram.ViewModels
             dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
-            var confirm = await dialog.ShowQueuedAsync();
+            var confirm = await ShowPopupAsync(dialog);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -3207,7 +3206,7 @@ namespace Unigram.ViewModels
             input.PrimaryButtonText = Strings.Resources.OK;
             input.SecondaryButtonText = Strings.Resources.Cancel;
 
-            var inputResult = await input.ShowQueuedAsync();
+            var inputResult = await ShowPopupAsync(input);
 
             string text;
             if (inputResult == ContentDialogResult.Primary)
@@ -3244,7 +3243,7 @@ namespace Unigram.ViewModels
                 var dialog = new ChatTtlPopup(chat.Type is ChatTypeSecret ? ChatTtlType.Secret : ChatTtlType.Normal);
                 dialog.Value = chat.MessageAutoDeleteTime;
 
-                var confirm = await dialog.ShowQueuedAsync();
+                var confirm = await ShowPopupAsync(dialog);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;
@@ -3269,7 +3268,7 @@ namespace Unigram.ViewModels
 
             var dialog = new ChatThemePopup(ClientService, chat.ThemeName);
 
-            var confirm = await dialog.ShowQueuedAsync();
+            var confirm = await ShowPopupAsync(dialog);
             if (confirm == ContentDialogResult.Primary)
             {
                 ClientService.Send(new SetChatTheme(chat.Id, dialog.ThemeName));
@@ -3324,7 +3323,7 @@ namespace Unigram.ViewModels
                     basicGroup != null && basicGroup.CanPinMessages() ||
                     chat.Type is ChatTypePrivate privata)
                 {
-                    var confirm = await MessagePopup.ShowAsync(Strings.Resources.UnpinMessageAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+                    var confirm = await ShowPopupAsync(Strings.Resources.UnpinMessageAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
                     if (confirm == ContentDialogResult.Primary)
                     {
                         ClientService.Send(new UnpinAllChatMessages(chat.Id));
@@ -3416,7 +3415,7 @@ namespace Unigram.ViewModels
         public async void ShowJoinRequests()
         {
             var popup = new ChatJoinRequestsPopup(ClientService, Settings, Aggregator, _chat, string.Empty);
-            var confirm = await popup.ShowQueuedAsync();
+            var confirm = await ShowPopupAsync(popup);
         }
 
         #endregion

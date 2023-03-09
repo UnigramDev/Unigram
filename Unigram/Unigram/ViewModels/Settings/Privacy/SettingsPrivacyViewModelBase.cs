@@ -19,7 +19,7 @@ namespace Unigram.ViewModels.Settings
 {
     public class SettingsPrivacyViewModelBase : TLMultipleViewModelBase
         , IHandle
-        //, IHandle<UpdateUserPrivacySettingRules>
+    //, IHandle<UpdateUserPrivacySettingRules>
     {
         private readonly UserPrivacySetting _inputKey;
 

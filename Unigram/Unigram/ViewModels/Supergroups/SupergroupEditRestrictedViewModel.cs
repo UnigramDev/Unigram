@@ -423,7 +423,7 @@ namespace Unigram.ViewModels.Supergroups
         private async void EditUntilExecute()
         {
             var dialog = new SupergroupEditRestrictedUntilPopup(_untilDate);
-            var confirm = await dialog.ShowQueuedAsync();
+            var confirm = await ShowPopupAsync(dialog);
             if (confirm == ContentDialogResult.Primary)
             {
                 UntilDate = dialog.Value <= DateTime.Now ? 0 : dialog.Value.ToTimestamp();

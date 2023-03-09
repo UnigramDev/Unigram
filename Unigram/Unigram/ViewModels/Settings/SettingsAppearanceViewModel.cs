@@ -287,7 +287,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand EmojiSetCommand { get; }
         private async void EmojiSetExecute()
         {
-            await new SettingsEmojiSetPopup(ClientService, _emojiSetService, Aggregator).ShowQueuedAsync();
+            await ShowPopupAsync(new SettingsEmojiSetPopup(ClientService, _emojiSetService, Aggregator));
 
             var emojiSet = Settings.Appearance.EmojiSet;
             EmojiSet = emojiSet.Title;

@@ -20,7 +20,7 @@ namespace Unigram.ViewModels
 {
     public class ChooseSoundViewModel : TLViewModelBase
         , IHandle
-        //, IHandle<UpdateSavedNotificationSounds>
+    //, IHandle<UpdateSavedNotificationSounds>
     {
         public ChooseSoundViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

@@ -6,7 +6,6 @@
 //
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls;
 using Unigram.Services;
 using Windows.UI.Xaml.Controls;
 
@@ -54,14 +53,14 @@ namespace Unigram.ViewModels.Authorization
             {
                 async void CancelSignUp()
                 {
-                    var decline = await MessagePopup.ShowAsync(Strings.Resources.TosUpdateDecline, Strings.Resources.TermsOfService, Strings.Resources.DeclineDeactivate, Strings.Resources.Back);
+                    var decline = await ShowPopupAsync(Strings.Resources.TosUpdateDecline, Strings.Resources.TermsOfService, Strings.Resources.DeclineDeactivate, Strings.Resources.Back);
                     if (decline != ContentDialogResult.Primary)
                     {
                         SendExecute();
                         return;
                     }
 
-                    var delete = await MessagePopup.ShowAsync(Strings.Resources.TosDeclineDeleteAccount, Strings.Resources.AppName, Strings.Resources.Deactivate, Strings.Resources.Cancel);
+                    var delete = await ShowPopupAsync(Strings.Resources.TosDeclineDeleteAccount, Strings.Resources.AppName, Strings.Resources.Deactivate, Strings.Resources.Cancel);
                     if (delete != ContentDialogResult.Primary)
                     {
                         SendExecute();
@@ -71,7 +70,7 @@ namespace Unigram.ViewModels.Authorization
                     ClientService.Send(new LogOut());
                 }
 
-                var confirm = await MessagePopup.ShowAsync(waitRegistration.TermsOfService.Text, Strings.Resources.TermsOfService, Strings.Resources.SignUp, Strings.Resources.Decline);
+                var confirm = await ShowPopupAsync(waitRegistration.TermsOfService.Text, Strings.Resources.TermsOfService, Strings.Resources.SignUp, Strings.Resources.Decline);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     CancelSignUp();
@@ -80,7 +79,7 @@ namespace Unigram.ViewModels.Authorization
 
                 if (waitRegistration.TermsOfService.MinUserAge > 0)
                 {
-                    var age = await MessagePopup.ShowAsync(string.Format(Strings.Resources.TosAgeText, waitRegistration.TermsOfService.MinUserAge), Strings.Resources.TosAgeTitle, Strings.Resources.Agree, Strings.Resources.Cancel);
+                    var age = await ShowPopupAsync(string.Format(Strings.Resources.TosAgeText, waitRegistration.TermsOfService.MinUserAge), Strings.Resources.TosAgeTitle, Strings.Resources.Agree, Strings.Resources.Cancel);
                     if (age != ContentDialogResult.Primary)
                     {
                         CancelSignUp();
@@ -113,27 +112,27 @@ namespace Unigram.ViewModels.Authorization
 
             //    if (response.Error.TypeEquals(TLErrorType.PHONE_NUMBER_INVALID))
             //    {
-            //        await MessagePopup.ShowAsync(Strings.Resources.InvalidPhoneNumber, Strings.Resources.AppName, Strings.Resources.OK);
+            //        await ShowPopupAsync(Strings.Resources.InvalidPhoneNumber, Strings.Resources.AppName, Strings.Resources.OK);
             //    }
             //    else if (response.Error.TypeEquals(TLErrorType.PHONE_CODE_EMPTY) || response.Error.TypeEquals(TLErrorType.PHONE_CODE_INVALID))
             //    {
-            //        await MessagePopup.ShowAsync(Strings.Resources.InvalidCode, Strings.Resources.AppName, Strings.Resources.OK);
+            //        await ShowPopupAsync(Strings.Resources.InvalidCode, Strings.Resources.AppName, Strings.Resources.OK);
             //    }
             //    else if (response.Error.TypeEquals(TLErrorType.PHONE_CODE_EXPIRED))
             //    {
-            //        await MessagePopup.ShowAsync(Strings.Resources.CodeExpired, Strings.Resources.AppName, Strings.Resources.OK);
+            //        await ShowPopupAsync(Strings.Resources.CodeExpired, Strings.Resources.AppName, Strings.Resources.OK);
             //    }
             //    else if (response.Error.TypeEquals(TLErrorType.FIRSTNAME_INVALID))
             //    {
-            //        await MessagePopup.ShowAsync(Strings.Resources.InvalidFirstName, Strings.Resources.AppName, Strings.Resources.OK);
+            //        await ShowPopupAsync(Strings.Resources.InvalidFirstName, Strings.Resources.AppName, Strings.Resources.OK);
             //    }
             //    else if (response.Error.TypeEquals(TLErrorType.LASTNAME_INVALID))
             //    {
-            //        await MessagePopup.ShowAsync(Strings.Resources.InvalidLastName, Strings.Resources.AppName, Strings.Resources.OK);
+            //        await ShowPopupAsync(Strings.Resources.InvalidLastName, Strings.Resources.AppName, Strings.Resources.OK);
             //    }
             //    else
             //    {
-            //        await MessagePopup.ShowAsync(response.Error.ErrorMessage, Strings.Resources.AppName, Strings.Resources.OK);
+            //        await ShowPopupAsync(response.Error.ErrorMessage, Strings.Resources.AppName, Strings.Resources.OK);
             //    }
             //}
         }

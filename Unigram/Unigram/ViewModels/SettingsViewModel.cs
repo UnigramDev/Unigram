@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
-using Unigram.Controls;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
@@ -24,9 +23,9 @@ namespace Unigram.ViewModels
         , IChildViewModel
         , IDelegable<ISettingsDelegate>
         , IHandle
-        //IHandle<UpdateUser>,
-        //IHandle<UpdateUserFullInfo>,
-        //IHandle<UpdateOption>
+    //IHandle<UpdateUser>,
+    //IHandle<UpdateUserFullInfo>,
+    //IHandle<UpdateOption>
     {
         private readonly ISettingsSearchService _searchService;
         private readonly IStorageService _storageService;
@@ -147,7 +146,7 @@ namespace Unigram.ViewModels
         {
             var text = Regex.Replace(Strings.Resources.AskAQuestionInfo, "<!\\[CDATA\\[(.*?)\\]\\]>", "$1");
 
-            var confirm = await MessagePopup.ShowAsync(text, Strings.Resources.AskAQuestion, Strings.Resources.AskButton, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(text, Strings.Resources.AskAQuestion, Strings.Resources.AskButton, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 var response = await ClientService.SendAsync(new GetSupportUser());
