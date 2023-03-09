@@ -11,14 +11,14 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Collections;
+using Telegram.Common;
+using Telegram.Controls;
+using Telegram.Converters;
+using Telegram.Entities;
 using Telegram.Td.Api;
-using Unigram.Collections;
-using Unigram.Common;
-using Unigram.Controls;
-using Unigram.Converters;
-using Unigram.Entities;
-using Unigram.ViewModels;
-using Unigram.ViewModels.Drawers;
+using Telegram.ViewModels;
+using Telegram.ViewModels.Drawers;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
@@ -31,7 +31,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Input;
 
-namespace Unigram.Views.Popups
+namespace Telegram.Views.Popups
 {
     public sealed partial class SendFilesPopup : ContentPopup, IViewWithAutocomplete, INotifyPropertyChanged
     {

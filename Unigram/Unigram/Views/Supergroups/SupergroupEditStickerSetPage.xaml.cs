@@ -5,13 +5,13 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System.Linq;
+using Telegram.Common;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.ViewModels.Supergroups;
+using Telegram.ViewModels.Supergroups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Views.Supergroups
+namespace Telegram.Views.Supergroups
 {
     public sealed partial class SupergroupEditStickerSetPage : HostedPage
     {

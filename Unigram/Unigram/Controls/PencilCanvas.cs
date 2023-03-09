@@ -18,7 +18,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     [TemplatePart(Name = "Canvas", Type = typeof(CanvasControl))]
     public class PencilCanvas : Control

@@ -15,8 +15,8 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
-using Unigram.Common;
-using Unigram.Navigation;
+using Telegram.Common;
+using Telegram.Navigation;
 using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.Graphics;
@@ -26,7 +26,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media.Imaging;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     public interface IPlayerView
     {

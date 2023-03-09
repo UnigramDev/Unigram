@@ -12,7 +12,7 @@
 //           7.1.2-build.15+g2b49bb9edc
 //       
 //       Command:
-//           LottieGen -GenerateColorBindings -Language CSharp -MinimumUapVersion 8 -Namespace Unigram.Assets.Icons -Public -WinUIVersion 2.7 -InputFile VoiceVideo.json
+//           LottieGen -GenerateColorBindings -Language CSharp -MinimumUapVersion 8 -Namespace Telegram.Assets.Icons -Public -WinUIVersion 2.7 -InputFile VoiceVideo.json
 //       
 //       Input file:
 //           VoiceVideo.json (9204 bytes created 17:12+02:00 Jul 25 2022)
@@ -57,7 +57,7 @@ using Windows.Graphics;
 using Windows.UI;
 using Windows.UI.Composition;
 
-namespace Unigram.Assets.Icons
+namespace Telegram.Assets.Icons
 {
     // Name:        mic_cam_mic
     // Frame rate:  60 fps

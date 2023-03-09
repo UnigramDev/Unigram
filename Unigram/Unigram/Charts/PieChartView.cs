@@ -9,12 +9,12 @@ using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.Graphics.Canvas.Text;
 using System;
 using System.Numerics;
-using Unigram.Charts.Data;
-using Unigram.Charts.DataView;
+using Telegram.Charts.Data;
+using Telegram.Charts.DataView;
 using Windows.Foundation;
 using Windows.UI;
 
-namespace Unigram.Charts
+namespace Telegram.Charts
 {
     public class PieChartView : StackLinearChartView<PieChartViewData>
     {

@@ -10,16 +10,16 @@ using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Telegram.Collections;
+using Telegram.Common;
+using Telegram.Navigation;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Collections;
-using Unigram.Common;
-using Unigram.Navigation;
-using Unigram.Services;
-using Unigram.Views.Settings;
+using Telegram.Views.Settings;
 using Windows.Foundation;
 using Windows.UI.Xaml.Data;
 
-namespace Unigram.ViewModels
+namespace Telegram.ViewModels
 {
     public class DownloadsViewModel : TLViewModelBase, IHandle
     //IHandle<UpdateFileDownload>,

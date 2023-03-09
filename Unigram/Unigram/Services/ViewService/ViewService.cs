@@ -8,15 +8,15 @@ using System;
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
-using Unigram.Logs;
-using Unigram.Navigation;
-using Unigram.Views.Host;
+using Telegram.Logs;
+using Telegram.Navigation;
+using Telegram.Views.Host;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 
-namespace Unigram.Services.ViewService
+namespace Telegram.Services.ViewService
 {
     public interface IViewService
     {

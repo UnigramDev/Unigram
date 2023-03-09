@@ -5,14 +5,14 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using Unigram.Common;
-using Unigram.ViewModels.Authorization;
+using Telegram.Common;
+using Telegram.ViewModels.Authorization;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Views.Authorization
+namespace Telegram.Views.Authorization
 {
     public sealed partial class AuthorizationPasswordPage : Page
     {

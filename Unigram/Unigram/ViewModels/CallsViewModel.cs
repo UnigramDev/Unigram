@@ -9,15 +9,15 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Telegram.Collections;
+using Telegram.Common;
+using Telegram.Controls;
+using Telegram.Converters;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Collections;
-using Unigram.Common;
-using Unigram.Controls;
-using Unigram.Converters;
-using Unigram.Services;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.ViewModels
+namespace Telegram.ViewModels
 {
     public class CallsViewModel : TLViewModelBase
     {

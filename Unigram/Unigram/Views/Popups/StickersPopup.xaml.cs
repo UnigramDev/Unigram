@@ -9,12 +9,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Common;
+using Telegram.Controls;
+using Telegram.Converters;
+using Telegram.Navigation;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Controls;
-using Unigram.Converters;
-using Unigram.Navigation;
-using Unigram.ViewModels;
+using Telegram.ViewModels;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -22,7 +22,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Views.Popups
+namespace Telegram.Views.Popups
 {
     public sealed partial class StickersPopup : ContentPopup
     {

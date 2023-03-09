@@ -6,13 +6,13 @@
 //
 using System;
 using System.Threading.Tasks;
-using Telegram.Td.Api;
-using Unigram.Common;
+using Telegram.Common;
 using Telegram.Native;
+using Telegram.Td.Api;
 using Windows.Foundation;
 using Windows.Networking.Connectivity;
 
-namespace Unigram.Services
+namespace Telegram.Services
 {
     public interface INetworkService
     {

@@ -10,10 +10,10 @@ using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using Unigram.Controls;
-using Unigram.Converters;
-using Unigram.Entities;
-using Unigram.Services;
+using Telegram.Controls;
+using Telegram.Converters;
+using Telegram.Entities;
+using Telegram.Services;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Media.Core;
@@ -24,7 +24,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 
-namespace Unigram.Views.Popups
+namespace Telegram.Views.Popups
 {
     public sealed partial class EditMediaPopup : OverlayPage
     {

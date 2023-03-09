@@ -6,11 +6,11 @@
 //
 using System;
 using System.Threading.Tasks;
-using Unigram.Common;
+using Telegram.Common;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 
-namespace Unigram.Entities
+namespace Telegram.Entities
 {
     public class StoragePhoto : StorageMedia
     {

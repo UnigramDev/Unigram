@@ -1573,8 +1573,8 @@
     <PRIResource Include="Strings\hu\Resources.resw" />
     <PRIResource Include="Strings\fi\Resources.resw" />
     <PRIResource Include="Strings\cs\Resources.resw" />
-    <None Include="Unigram_StoreKey.pfx" />
-    <None Include="Unigram_TemporaryKey.pfx" />
+    <None Include="Telegram_StoreKey.pfx" />
+    <None Include="Telegram_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\JumpList\SavedMessages\SavedMessages.targetsize-16.png" />

@@ -8,13 +8,13 @@ using System;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
-using Unigram.Common;
-using Unigram.Services.Settings;
-using Unigram.Services.Updates;
-using Unigram.Views;
+using Telegram.Common;
+using Telegram.Services.Settings;
+using Telegram.Services.Updates;
+using Telegram.Views;
 using Windows.Security.Cryptography;
 
-namespace Unigram.Services
+namespace Telegram.Services
 {
     public interface IPasscodeService
     {

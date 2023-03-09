@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Windows.Foundation;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     [Flags]
     public enum MosaicItemPosition

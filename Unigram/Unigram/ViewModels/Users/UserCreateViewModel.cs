@@ -6,14 +6,14 @@
 //
 using System;
 using System.Threading.Tasks;
+using Telegram.Common;
+using Telegram.Entities;
+using Telegram.Navigation.Services;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Entities;
-using Unigram.Navigation.Services;
-using Unigram.Services;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels.Users
+namespace Telegram.ViewModels.Users
 {
     public class UserCreateViewModel : TLViewModelBase
     {

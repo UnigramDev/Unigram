@@ -8,26 +8,26 @@ using LinqToVisualTree;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Telegram.Controls;
+using Telegram.Navigation;
+using Telegram.Navigation.Services;
+using Telegram.Services;
+using Telegram.Services.ViewService;
 using Telegram.Td.Api;
-using Unigram.Controls;
-using Unigram.Navigation;
-using Unigram.Navigation.Services;
-using Unigram.Services;
-using Unigram.Services.ViewService;
-using Unigram.ViewModels;
-using Unigram.ViewModels.Settings;
-using Unigram.Views;
-using Unigram.Views.Payments;
-using Unigram.Views.Premium.Popups;
-using Unigram.Views.Settings;
-using Unigram.Views.Settings.Popups;
+using Telegram.ViewModels;
+using Telegram.ViewModels.Settings;
+using Telegram.Views;
+using Telegram.Views.Payments;
+using Telegram.Views.Premium.Popups;
+using Telegram.Views.Settings;
+using Telegram.Views.Settings.Popups;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.WindowManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     public class TLNavigationService : NavigationService
     {

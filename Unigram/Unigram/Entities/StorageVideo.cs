@@ -6,15 +6,15 @@
 //
 using System;
 using System.Threading.Tasks;
-using Unigram.Common;
-using Unigram.Converters;
+using Telegram.Common;
+using Telegram.Converters;
 using Windows.Foundation;
 using Windows.Media.Effects;
 using Windows.Media.MediaProperties;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 
-namespace Unigram.Entities
+namespace Telegram.Entities
 {
     public class StorageVideo : StorageMedia
     {

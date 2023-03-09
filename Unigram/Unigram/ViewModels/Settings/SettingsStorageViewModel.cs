@@ -7,15 +7,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Telegram.Common;
+using Telegram.Navigation.Services;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Navigation.Services;
-using Unigram.Services;
-using Unigram.Views.Settings;
+using Telegram.Views.Settings;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels.Settings
+namespace Telegram.ViewModels.Settings
 {
     public class SettingsStorageViewModel : TLViewModelBase
     {

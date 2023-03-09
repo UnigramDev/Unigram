@@ -8,11 +8,11 @@ using LinqToVisualTree;
 using Microsoft.UI.Xaml.Controls;
 using System.Linq;
 using System.Numerics;
+using Telegram.Common;
+using Telegram.Controls.Messages.Content;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Controls.Messages.Content;
-using Unigram.Services;
-using Unigram.ViewModels;
+using Telegram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
@@ -20,7 +20,7 @@ using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Controls.Messages
+namespace Telegram.Controls.Messages
 {
     public sealed partial class MessageSelector : CheckBox
     {

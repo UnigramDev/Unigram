@@ -9,22 +9,22 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net;
+using Telegram.Common;
+using Telegram.Controls.Gallery;
+using Telegram.Controls.Messages;
+using Telegram.Services.Settings;
+using Telegram.Services.Updates;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Controls.Gallery;
-using Unigram.Controls.Messages;
-using Unigram.Services.Settings;
-using Unigram.Services.Updates;
-using Unigram.ViewModels.Chats;
-using Unigram.ViewModels.Delegates;
-using Unigram.ViewModels.Gallery;
-using Unigram.Views;
-using Unigram.Views.Popups;
+using Telegram.ViewModels.Chats;
+using Telegram.ViewModels.Delegates;
+using Telegram.ViewModels.Gallery;
+using Telegram.Views;
+using Telegram.Views.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 
-namespace Unigram.ViewModels
+namespace Telegram.ViewModels
 {
     public partial class DialogViewModel : IMessageDelegate
     {

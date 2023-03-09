@@ -12,7 +12,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Shapes;
 using Point = Windows.Foundation.Point;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     public class ProgressVoice : ProgressBar
     {

@@ -6,8 +6,8 @@
 //
 using System;
 using System.Threading.Tasks;
-using Unigram.Controls;
-using Unigram.Services;
+using Telegram.Controls;
+using Telegram.Services;
 using Windows.Devices.Enumeration;
 using Windows.Media.Capture;
 using Windows.Media.Devices;
@@ -16,7 +16,7 @@ using Windows.System.Profile;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     public class MediaDeviceWatcher
     {

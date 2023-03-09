@@ -7,7 +7,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Unigram.Services.Stripe
+namespace Telegram.Services.Stripe
 {
     /// <summary>
     /// Utility class for static functions useful for networking and data transfer. You probably will

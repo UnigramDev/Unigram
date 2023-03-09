@@ -6,11 +6,11 @@
 //
 using System;
 using System.Numerics;
+using Telegram.Common;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Services;
-using Unigram.ViewModels.Delegates;
-using Unigram.ViewModels.Gallery;
+using Telegram.ViewModels.Delegates;
+using Telegram.ViewModels.Gallery;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
-namespace Unigram.Controls.Gallery
+namespace Telegram.Controls.Gallery
 {
     public sealed partial class GalleryContentView : AspectView
     {

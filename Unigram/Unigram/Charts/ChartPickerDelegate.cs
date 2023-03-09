@@ -8,7 +8,7 @@ using System;
 using Windows.Foundation;
 using Windows.UI.Input;
 
-namespace Unigram.Charts
+namespace Telegram.Charts
 {
     public class ChartPickerDelegate
     {

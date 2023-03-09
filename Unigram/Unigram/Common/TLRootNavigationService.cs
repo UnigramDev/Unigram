@@ -4,17 +4,17 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Telegram.Controls;
+using Telegram.Navigation.Services;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Controls;
-using Unigram.Navigation.Services;
-using Unigram.Services;
-using Unigram.ViewModels.Authorization;
-using Unigram.Views;
-using Unigram.Views.Authorization;
+using Telegram.ViewModels.Authorization;
+using Telegram.Views;
+using Telegram.Views.Authorization;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     public class TLRootNavigationService : NavigationService
     //, IHandle<UpdateAuthorizationState>

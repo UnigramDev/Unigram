@@ -6,17 +6,17 @@
 //
 using System;
 using System.Threading;
+using Telegram.Common;
+using Telegram.Controls.Chats;
+using Telegram.Navigation;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Controls.Chats;
-using Unigram.Navigation;
-using Unigram.ViewModels;
+using Telegram.ViewModels;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
 
-namespace Unigram.Controls.Messages.Content
+namespace Telegram.Controls.Messages.Content
 {
     public sealed class WebPageContent : WebPageContentBase, IContent, IContentWithPlayback
     {

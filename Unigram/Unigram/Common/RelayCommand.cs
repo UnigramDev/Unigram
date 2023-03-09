@@ -26,7 +26,7 @@ using System;
 using System.Diagnostics;
 using System.Windows.Input;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     public class RelayCommand : ICommand
     {

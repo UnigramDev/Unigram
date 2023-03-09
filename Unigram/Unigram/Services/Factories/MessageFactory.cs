@@ -7,19 +7,19 @@
 using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
+using Telegram.Common;
+using Telegram.Entities;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Entities;
-using Unigram.ViewModels;
-using Unigram.ViewModels.Delegates;
+using Telegram.ViewModels;
+using Telegram.ViewModels.Delegates;
 using Windows.Graphics.Imaging;
 using Windows.Media.Effects;
 using Windows.Media.MediaProperties;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
-using static Unigram.Services.GenerationService;
+using static Telegram.Services.GenerationService;
 
-namespace Unigram.Services.Factories
+namespace Telegram.Services.Factories
 {
     public interface IMessageFactory
     {

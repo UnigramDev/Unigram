@@ -6,16 +6,16 @@
 //
 using System;
 using System.Numerics;
-using Unigram.Common;
-using Unigram.ViewModels.Settings;
-using Unigram.ViewModels.Settings.Privacy;
+using Telegram.Common;
+using Telegram.ViewModels.Settings;
+using Telegram.ViewModels.Settings.Privacy;
 using Windows.Foundation.Metadata;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Views.Settings.Privacy
+namespace Telegram.Views.Settings.Privacy
 {
     public sealed partial class SettingsPrivacyShowForwardedPage : HostedPage
     {

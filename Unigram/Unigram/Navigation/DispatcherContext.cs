@@ -7,10 +7,10 @@
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using Unigram.Logs;
+using Telegram.Logs;
 using Windows.System;
 
-namespace Unigram.Navigation
+namespace Telegram.Navigation
 {
     public interface IDispatcherContext
     {

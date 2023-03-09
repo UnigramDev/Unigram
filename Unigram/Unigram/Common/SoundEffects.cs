@@ -13,7 +13,7 @@ using Windows.Media.Audio;
 using Windows.Media.Render;
 using Windows.Storage;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     public static class SoundEffects
     {

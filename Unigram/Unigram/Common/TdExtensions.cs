@@ -13,17 +13,17 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading;
-using Telegram.Td.Api;
-using Unigram.Common;
+using Telegram.Common;
 using Telegram.Native;
-using Unigram.ViewModels;
-using Unigram.ViewModels.Settings;
+using Telegram.Td.Api;
+using Telegram.ViewModels;
+using Telegram.ViewModels.Settings;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Xaml.Media;
 using Point = Windows.Foundation.Point;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     public static class TdExtensions
     {

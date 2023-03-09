@@ -5,11 +5,11 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System.Numerics;
+using Telegram.Common;
+using Telegram.Converters;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Converters;
-using Unigram.Services;
-using Unigram.ViewModels;
+using Telegram.ViewModels;
 using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     public enum ProfilePictureShape
     {

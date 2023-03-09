@@ -19,9 +19,9 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using Unigram.Common;
+using Telegram.Common;
 
-namespace Unigram.Collections
+namespace Telegram.Collections
 {
     public class MvxObservableCollection<T>
         : ObservableCollection<T>

@@ -7,18 +7,18 @@
 using System;
 using System.Linq;
 using System.Text;
+using Telegram.Charts;
+using Telegram.Common;
+using Telegram.Controls;
+using Telegram.Controls.Cells;
+using Telegram.Converters;
 using Telegram.Td.Api;
-using Unigram.Charts;
-using Unigram.Common;
-using Unigram.Controls;
-using Unigram.Controls.Cells;
-using Unigram.Converters;
-using Unigram.ViewModels.Chats;
+using Telegram.ViewModels.Chats;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 
-namespace Unigram.Views.Chats
+namespace Telegram.Views.Chats
 {
     public sealed partial class ChatStatisticsPage : HostedPage
     {

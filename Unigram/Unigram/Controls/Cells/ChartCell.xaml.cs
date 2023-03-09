@@ -6,17 +6,17 @@
 //
 using System;
 using System.Linq;
-using Unigram.Charts;
-using Unigram.Charts.Data;
-using Unigram.Charts.DataView;
-using Unigram.Common;
-using Unigram.Navigation;
-using Unigram.ViewModels.Chats;
+using Telegram.Charts;
+using Telegram.Charts.Data;
+using Telegram.Charts.DataView;
+using Telegram.Common;
+using Telegram.Navigation;
+using Telegram.ViewModels.Chats;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Controls.Cells
+namespace Telegram.Controls.Cells
 {
     public sealed partial class ChartCell : HeaderedControl
     {

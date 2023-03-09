@@ -7,7 +7,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Unigram.Navigation.Services
+namespace Telegram.Navigation.Services
 {
     public class NavigationServiceList : List<INavigationService>
     {

@@ -9,18 +9,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using Telegram.Collections;
+using Telegram.Common;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Collections;
-using Unigram.Common;
-using Unigram.Services;
-using Unigram.Views;
+using Telegram.Views;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
 
-namespace Unigram.ViewModels.Drawers
+namespace Telegram.ViewModels.Drawers
 {
     public class StickerDrawerViewModel : TLViewModelBase
     //, IHandle<UpdateRecentStickers>

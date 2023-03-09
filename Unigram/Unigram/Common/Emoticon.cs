@@ -6,9 +6,9 @@
 //
 using System.Collections.Generic;
 using System.Linq;
-using Unigram.Converters;
+using Telegram.Converters;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     public static partial class Emoji
     {

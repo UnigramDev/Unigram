@@ -5,10 +5,10 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using Unigram.Converters;
-using Unigram.ViewModels.Settings;
+using Telegram.Converters;
+using Telegram.ViewModels.Settings;
 
-namespace Unigram.Views.Settings
+namespace Telegram.Views.Settings
 {
     public sealed partial class SettingsNetworkPage : HostedPage
     {

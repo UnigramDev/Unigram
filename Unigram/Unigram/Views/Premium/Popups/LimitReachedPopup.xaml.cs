@@ -8,18 +8,18 @@ using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Telegram.Common;
+using Telegram.Controls;
+using Telegram.Converters;
+using Telegram.Navigation;
+using Telegram.Navigation.Services;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Controls;
-using Unigram.Converters;
-using Unigram.Navigation;
-using Unigram.Navigation.Services;
-using Unigram.Services;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 
-namespace Unigram.Views.Premium.Popups
+namespace Telegram.Views.Premium.Popups
 {
     public sealed partial class LimitReachedPopup : ContentPopup
     {

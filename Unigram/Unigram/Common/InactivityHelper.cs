@@ -9,7 +9,7 @@ using System.Threading;
 using Telegram.Native;
 using Windows.System.Profile;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     public static class InactivityHelper
     {

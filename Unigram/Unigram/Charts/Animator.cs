@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
-namespace Unigram.Charts
+namespace Telegram.Charts
 {
     public class AnimatorLoopThread
     {

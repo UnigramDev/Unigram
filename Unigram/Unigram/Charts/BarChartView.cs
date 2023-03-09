@@ -6,10 +6,10 @@
 //
 using Microsoft.Graphics.Canvas;
 using System.Numerics;
-using Unigram.Charts.Data;
-using Unigram.Charts.DataView;
+using Telegram.Charts.Data;
+using Telegram.Charts.DataView;
 
-namespace Unigram.Charts
+namespace Telegram.Charts
 {
     public class BarChartView : BaseChartView<ChartData, BarViewData>
     {

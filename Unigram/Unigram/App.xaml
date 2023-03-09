@@ -1,14 +1,14 @@
-<navigation:BootStrapper x:Class="Unigram.App"
+<navigation:BootStrapper x:Class="Telegram.App"
                          xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                          xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
                          xmlns:media="using:Microsoft.UI.Xaml.Media"
-                         xmlns:navigation="using:Unigram.Navigation"
-                         xmlns:themes="using:Unigram.Themes"
-                         xmlns:common="using:Unigram.Common"
-                         xmlns:views="using:Unigram.Views"
-                         xmlns:converters="using:Unigram.Converters"
-                         xmlns:local="using:Unigram">
+                         xmlns:navigation="using:Telegram.Navigation"
+                         xmlns:themes="using:Telegram.Themes"
+                         xmlns:common="using:Telegram.Common"
+                         xmlns:views="using:Telegram.Views"
+                         xmlns:converters="using:Telegram.Converters"
+                         xmlns:local="using:Telegram">
 
     <Application.Resources>
         <ResourceDictionary>

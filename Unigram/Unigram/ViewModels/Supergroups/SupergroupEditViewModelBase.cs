@@ -8,15 +8,15 @@ using Rg.DiffUtils;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Telegram.Common;
+using Telegram.Navigation.Services;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Navigation.Services;
-using Unigram.Services;
-using Unigram.ViewModels.Delegates;
-using Unigram.ViewModels.Settings;
+using Telegram.ViewModels.Delegates;
+using Telegram.ViewModels.Settings;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels.Supergroups
+namespace Telegram.ViewModels.Supergroups
 {
     public abstract class SupergroupEditViewModelBase : TLViewModelBase
         , IDelegable<ISupergroupEditDelegate>

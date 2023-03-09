@@ -6,7 +6,7 @@
 //
 using System;
 using System.Numerics;
-using Unigram.Common;
+using Telegram.Common;
 using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.Composition.Interactions;
@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     public enum CarouselDirection
     {

@@ -8,17 +8,17 @@ using Rg.DiffUtils;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Telegram.Common;
+using Telegram.Converters;
+using Telegram.Entities;
+using Telegram.Navigation;
+using Telegram.Navigation.Services;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Converters;
-using Unigram.Entities;
-using Unigram.Navigation;
-using Unigram.Navigation.Services;
-using Unigram.Services;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels.Settings
+namespace Telegram.ViewModels.Settings
 {
     public class SettingsUsernameViewModel : TLViewModelBase, IHandle
     {

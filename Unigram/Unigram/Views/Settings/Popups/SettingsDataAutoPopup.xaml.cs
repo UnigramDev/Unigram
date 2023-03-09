@@ -5,11 +5,11 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using Unigram.Controls;
-using Unigram.Converters;
-using Unigram.ViewModels.Settings;
+using Telegram.Controls;
+using Telegram.Converters;
+using Telegram.ViewModels.Settings;
 
-namespace Unigram.Views.Settings.Popups
+namespace Telegram.Views.Settings.Popups
 {
     public sealed partial class SettingsDataAutoPopup : ContentPopup
     {

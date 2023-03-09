@@ -9,14 +9,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Collections;
+using Telegram.Common;
+using Telegram.Navigation;
+using Telegram.Navigation.Services;
+using Telegram.Services;
 using Telegram.Td;
 using Telegram.Td.Api;
-using Unigram.Collections;
-using Unigram.Common;
-using Unigram.Navigation;
-using Unigram.Navigation.Services;
-using Unigram.Services;
-using Unigram.Views.Popups;
+using Telegram.Views.Popups;
 using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Devices.Enumeration;
@@ -26,7 +26,7 @@ using Windows.Storage;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels
+namespace Telegram.ViewModels
 {
     public class DiagnosticsViewModel : TLViewModelBase
     {

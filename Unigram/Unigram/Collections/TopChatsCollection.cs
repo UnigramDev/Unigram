@@ -5,12 +5,12 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System.Runtime.InteropServices.WindowsRuntime;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Services;
 using Windows.Foundation;
 using Windows.UI.Xaml.Data;
 
-namespace Unigram.Collections
+namespace Telegram.Collections
 {
     public class TopChatsCollection : MvxObservableCollection<Chat>, ISupportIncrementalLoading
     {

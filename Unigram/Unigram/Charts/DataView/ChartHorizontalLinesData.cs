@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 
-namespace Unigram.Charts.DataView
+namespace Telegram.Charts.DataView
 {
     public class ChartHorizontalLinesData
     {

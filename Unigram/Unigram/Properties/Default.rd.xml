@@ -22,174 +22,174 @@
 			the application package. The asterisks are not wildcards.
 		-->
 		<!--<Assembly Name="*Application*" Dynamic="Required All" />-->
-		<Type Name="Unigram.Services.IHandle`1" Dynamic="Required All">
+		<Type Name="Telegram.Services.IHandle`1" Dynamic="Required All">
 			<Method Name="Handle">
 				<TypeParameter Name="update" Dynamic="Required All"/>
 			</Method>
 		</Type>
 
-		<Type Name="Unigram.ViewModels.Drawers.SupergroupStickerSetViewModel" Dynamic="Required All"/>
+		<Type Name="Telegram.ViewModels.Drawers.SupergroupStickerSetViewModel" Dynamic="Required All"/>
 
-    <Type Name="Unigram.Controls.Messages.MessageSelector">
+    <Type Name="Telegram.Controls.Messages.MessageSelector">
       <Method Name="UpdateSelection" Dynamic="Required"/>
     </Type>
 
 
 
-		<Type Name="Unigram.Common.RemoteVideoSource">
+		<Type Name="Telegram.Common.RemoteVideoSource">
 			<Method Name="UpdateFile" Dynamic="Required"/>
 		</Type>
 
-		<Type Name="Unigram.Controls.Cells.SharedAudioCell">
+		<Type Name="Telegram.Controls.Cells.SharedAudioCell">
 			<Method Name="UpdateFile" Dynamic="Required"/>
 		</Type>
 
-		<Type Name="Unigram.Controls.Cells.SharedFileCell">
+		<Type Name="Telegram.Controls.Cells.SharedFileCell">
 			<Method Name="UpdateFile" Dynamic="Required"/>
 		</Type>
 
-		<Type Name="Unigram.Controls.Cells.SharedVoiceCell">
+		<Type Name="Telegram.Controls.Cells.SharedVoiceCell">
 			<Method Name="UpdateFile" Dynamic="Required"/>
 		</Type>
 
-		<Type Name="Unigram.Controls.Chats.ChatBackgroundRenderer">
+		<Type Name="Telegram.Controls.Chats.ChatBackgroundRenderer">
 			<Method Name="UpdateFile" Dynamic="Required"/>
 		</Type>
 
-		<Type Name="Unigram.Controls.Drawers.AnimationDrawer">
-			<Method Name="UpdateFile" Dynamic="Required"/>
-			<Method Name="UpdateThumbnail" Dynamic="Required"/>
-		</Type>
-
-		<Type Name="Unigram.Controls.Drawers.EmojiDrawer">
-			<Method Name="UpdateSticker" Dynamic="Required"/>
-			<Method Name="UpdateStickerSet" Dynamic="Required"/>
-		</Type>
-
-		<Type Name="Unigram.Controls.Drawers.StickerDrawer">
-			<Method Name="UpdateSticker" Dynamic="Required"/>
-			<Method Name="UpdateStickerSet" Dynamic="Required"/>
-		</Type>
-
-		<Type Name="Unigram.Controls.EmojiSearchBox">
-			<Method Name="UpdateFile" Dynamic="Required"/>
-		</Type>
-
-		<Type Name="Unigram.Controls.Gallery.GalleryContentView">
+		<Type Name="Telegram.Controls.Drawers.AnimationDrawer">
 			<Method Name="UpdateFile" Dynamic="Required"/>
 			<Method Name="UpdateThumbnail" Dynamic="Required"/>
 		</Type>
 
-		<Type Name="Unigram.Controls.ImageView">
+		<Type Name="Telegram.Controls.Drawers.EmojiDrawer">
+			<Method Name="UpdateSticker" Dynamic="Required"/>
+			<Method Name="UpdateStickerSet" Dynamic="Required"/>
+		</Type>
+
+		<Type Name="Telegram.Controls.Drawers.StickerDrawer">
+			<Method Name="UpdateSticker" Dynamic="Required"/>
+			<Method Name="UpdateStickerSet" Dynamic="Required"/>
+		</Type>
+
+		<Type Name="Telegram.Controls.EmojiSearchBox">
+			<Method Name="UpdateFile" Dynamic="Required"/>
+		</Type>
+
+		<Type Name="Telegram.Controls.Gallery.GalleryContentView">
+			<Method Name="UpdateFile" Dynamic="Required"/>
+			<Method Name="UpdateThumbnail" Dynamic="Required"/>
+		</Type>
+
+		<Type Name="Telegram.Controls.ImageView">
 			<Method Name="UpdateSource" Dynamic="Required"/>
 		</Type>
 
-		<Type Name="Unigram.Controls.InlineBotResultsView">
+		<Type Name="Telegram.Controls.InlineBotResultsView">
 			<Method Name="UpdateThumbnail" Dynamic="Required"/>
 			<Method Name="UpdateFile" Dynamic="Required"/>
 		</Type>
 
-		<Type Name="Unigram.Controls.Messages.Content.AnimatedStickerContent">
+		<Type Name="Telegram.Controls.Messages.Content.AnimatedStickerContent">
 			<Method Name="UpdateFile" Dynamic="Required"/>
 		</Type>
 
-		<Type Name="Unigram.Controls.Messages.Content.AnimationContent">
-			<Method Name="UpdateFile" Dynamic="Required"/>
-			<Method Name="UpdateThumbnail" Dynamic="Required"/>
-		</Type>
-
-		<Type Name="Unigram.Controls.Messages.Content.AudioContent">
-			<Method Name="UpdateThumbnail" Dynamic="Required"/>
-			<Method Name="UpdateFile" Dynamic="Required"/>
-		</Type>
-
-		<Type Name="Unigram.Controls.Messages.Content.DiceContent">
-			<Method Name="UpdateFile" Dynamic="Required"/>
-		</Type>
-
-		<Type Name="Unigram.Controls.Messages.Content.DocumentContent">
-			<Method Name="UpdateThumbnail" Dynamic="Required"/>
-			<Method Name="UpdateFile" Dynamic="Required"/>
-		</Type>
-
-		<Type Name="Unigram.Controls.Messages.Content.InvoicePhotoContent">
-			<Method Name="UpdateFile" Dynamic="Required"/>
-		</Type>
-
-		<Type Name="Unigram.Controls.Messages.Content.PhotoContent">
+		<Type Name="Telegram.Controls.Messages.Content.AnimationContent">
 			<Method Name="UpdateFile" Dynamic="Required"/>
 			<Method Name="UpdateThumbnail" Dynamic="Required"/>
 		</Type>
 
-		<Type Name="Unigram.Controls.Messages.Content.StickerContent">
+		<Type Name="Telegram.Controls.Messages.Content.AudioContent">
+			<Method Name="UpdateThumbnail" Dynamic="Required"/>
 			<Method Name="UpdateFile" Dynamic="Required"/>
 		</Type>
 
-		<Type Name="Unigram.Controls.Messages.Content.VideoContent">
+		<Type Name="Telegram.Controls.Messages.Content.DiceContent">
+			<Method Name="UpdateFile" Dynamic="Required"/>
+		</Type>
+
+		<Type Name="Telegram.Controls.Messages.Content.DocumentContent">
+			<Method Name="UpdateThumbnail" Dynamic="Required"/>
+			<Method Name="UpdateFile" Dynamic="Required"/>
+		</Type>
+
+		<Type Name="Telegram.Controls.Messages.Content.InvoicePhotoContent">
+			<Method Name="UpdateFile" Dynamic="Required"/>
+		</Type>
+
+		<Type Name="Telegram.Controls.Messages.Content.PhotoContent">
 			<Method Name="UpdateFile" Dynamic="Required"/>
 			<Method Name="UpdateThumbnail" Dynamic="Required"/>
 		</Type>
 
-		<Type Name="Unigram.Controls.Messages.Content.VideoNoteContent">
+		<Type Name="Telegram.Controls.Messages.Content.StickerContent">
+			<Method Name="UpdateFile" Dynamic="Required"/>
+		</Type>
+
+		<Type Name="Telegram.Controls.Messages.Content.VideoContent">
 			<Method Name="UpdateFile" Dynamic="Required"/>
 			<Method Name="UpdateThumbnail" Dynamic="Required"/>
 		</Type>
 
-		<Type Name="Unigram.Controls.Messages.Content.VideoStickerContent">
+		<Type Name="Telegram.Controls.Messages.Content.VideoNoteContent">
+			<Method Name="UpdateFile" Dynamic="Required"/>
+			<Method Name="UpdateThumbnail" Dynamic="Required"/>
+		</Type>
+
+		<Type Name="Telegram.Controls.Messages.Content.VideoStickerContent">
 			<Method Name="UpdateFile" Dynamic="Required"/>
 		</Type>
 
-		<Type Name="Unigram.Controls.Messages.Content.VoiceNoteContent">
+		<Type Name="Telegram.Controls.Messages.Content.VoiceNoteContent">
 			<Method Name="UpdateFile" Dynamic="Required"/>
 		</Type>
 
-		<Type Name="Unigram.Controls.Messages.Content.WebPageSmallPhotoContent">
+		<Type Name="Telegram.Controls.Messages.Content.WebPageSmallPhotoContent">
 			<Method Name="UpdateFile" Dynamic="Required"/>
 		</Type>
 
-		<Type Name="Unigram.Controls.Messages.ReactionButton">
+		<Type Name="Telegram.Controls.Messages.ReactionButton">
 			<Method Name="UpdateFile" Dynamic="Required"/>
 		</Type>
 
-		<Type Name="Unigram.Controls.ProfilePicture">
+		<Type Name="Telegram.Controls.ProfilePicture">
 			<Method Name="UpdateFile" Dynamic="Required"/>
 		</Type>
 
-		<Type Name="Unigram.Services.CloudUpdateService">
+		<Type Name="Telegram.Services.CloudUpdateService">
 			<Method Name="UpdateFile" Dynamic="Required"/>
 		</Type>
 
-		<Type Name="Unigram.ViewModels.ChooseSoundViewModel">
+		<Type Name="Telegram.ViewModels.ChooseSoundViewModel">
 			<Method Name="UpdateFile" Dynamic="Required"/>
 		</Type>
 
-		<Type Name="Unigram.ViewModels.Settings.SettingsAdvancedViewModel">
+		<Type Name="Telegram.ViewModels.Settings.SettingsAdvancedViewModel">
 			<Method Name="UpdateFile" Dynamic="Required"/>
 		</Type>
 
-		<Type Name="Unigram.Views.ChatView">
+		<Type Name="Telegram.Views.ChatView">
 			<Method Name="UpdateSticker" Dynamic="Required"/>
 		</Type>
 
-		<Type Name="Unigram.Views.Popups.SettingsEmojiSetPopup">
+		<Type Name="Telegram.Views.Popups.SettingsEmojiSetPopup">
 			<Method Name="UpdateFile" Dynamic="Required"/>
 			<Method Name="UpdateThumbnail" Dynamic="Required"/>
 		</Type>
 
-		<Type Name="Unigram.Views.Popups.StickersPopup">
+		<Type Name="Telegram.Views.Popups.StickersPopup">
 			<Method Name="UpdateFile" Dynamic="Required"/>
 		</Type>
 
-		<Type Name="Unigram.Views.Popups.ZoomableMediaPopup">
+		<Type Name="Telegram.Views.Popups.ZoomableMediaPopup">
 			<Method Name="UpdateFile" Dynamic="Required"/>
 			<Method Name="UpdateThumbnail" Dynamic="Required"/>
 		</Type>
 
-		<Type Name="Unigram.Views.Settings.SettingsStickersPage">
+		<Type Name="Telegram.Views.Settings.SettingsStickersPage">
 			<Method Name="UpdateFile" Dynamic="Required"/>
 		</Type>
 
-		<Type Name="Unigram.Views.Supergroups.SupergroupReactionsPage">
+		<Type Name="Telegram.Views.Supergroups.SupergroupReactionsPage">
 			<Method Name="UpdateFile" Dynamic="Required"/>
 		</Type>
 	</Application>

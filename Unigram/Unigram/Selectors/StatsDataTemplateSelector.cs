@@ -8,7 +8,7 @@ using Telegram.Td.Api;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Selectors
+namespace Telegram.Selectors
 {
     public class StatsDataTemplateSelector : DataTemplateSelector
     {

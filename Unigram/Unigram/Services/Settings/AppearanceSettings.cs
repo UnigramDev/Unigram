@@ -6,16 +6,16 @@
 //
 using System;
 using System.Threading;
+using Telegram.Common;
+using Telegram.Navigation;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Navigation;
-using Unigram.Views;
+using Telegram.Views;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 
-namespace Unigram.Services.Settings
+namespace Telegram.Services.Settings
 {
     public enum TelegramTheme
     {

@@ -8,25 +8,25 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Unigram.Services;
-using Unigram.Services.Factories;
-using Unigram.Services.ViewService;
-using Unigram.ViewModels;
-using Unigram.ViewModels.Authorization;
-using Unigram.ViewModels.BasicGroups;
-using Unigram.ViewModels.Channels;
-using Unigram.ViewModels.Chats;
-using Unigram.ViewModels.Drawers;
-using Unigram.ViewModels.Folders;
-using Unigram.ViewModels.Payments;
-using Unigram.ViewModels.Premium;
-using Unigram.ViewModels.Settings;
-using Unigram.ViewModels.Settings.Password;
-using Unigram.ViewModels.Settings.Privacy;
-using Unigram.ViewModels.Supergroups;
-using Unigram.ViewModels.Users;
+using Telegram.Services;
+using Telegram.Services.Factories;
+using Telegram.Services.ViewService;
+using Telegram.ViewModels;
+using Telegram.ViewModels.Authorization;
+using Telegram.ViewModels.BasicGroups;
+using Telegram.ViewModels.Channels;
+using Telegram.ViewModels.Chats;
+using Telegram.ViewModels.Drawers;
+using Telegram.ViewModels.Folders;
+using Telegram.ViewModels.Payments;
+using Telegram.ViewModels.Premium;
+using Telegram.ViewModels.Settings;
+using Telegram.ViewModels.Settings.Password;
+using Telegram.ViewModels.Settings.Privacy;
+using Telegram.ViewModels.Supergroups;
+using Telegram.ViewModels.Users;
 
-namespace Unigram
+namespace Telegram
 {
     public class TypeContainerGenerator
     {
@@ -224,7 +224,7 @@ namespace Unigram
             var singletonBucket = new Dictionary<Type, Type>();
 
             var builder = new FormattedBuilder();
-            builder.AppendLine("namespace Unigram.Views");
+            builder.AppendLine("namespace Telegram.Views");
             builder.AppendLine("{");
             builder.AppendLine("public class TLLocator");
             builder.AppendLine("{");

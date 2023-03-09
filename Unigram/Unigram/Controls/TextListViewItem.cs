@@ -6,12 +6,12 @@
 //
 using LinqToVisualTree;
 using System.Text;
-using Unigram.Controls.Cells;
+using Telegram.Controls.Cells;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     public class TextListView : ListView
     {

@@ -4,11 +4,11 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Unigram.Collections;
-using Unigram.Services;
-using Unigram.ViewModels.Gallery;
+using Telegram.Collections;
+using Telegram.Services;
+using Telegram.ViewModels.Gallery;
 
-namespace Unigram.ViewModels
+namespace Telegram.ViewModels
 {
     public class SingleGalleryViewModel : GalleryViewModelBase
     {

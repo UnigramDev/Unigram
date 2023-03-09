@@ -12,10 +12,10 @@ using System.IO.Compression;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using Telegram.Td.Api;
-using Unigram.Converters;
+using Telegram.Converters;
 using Telegram.Native;
-using Unigram.Services;
+using Telegram.Services;
+using Telegram.Td.Api;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Streams;
@@ -24,7 +24,7 @@ using Windows.UI.Composition;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     public static class PlaceholderHelper
     {

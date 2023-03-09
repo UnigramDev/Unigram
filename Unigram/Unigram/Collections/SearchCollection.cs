@@ -10,11 +10,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
-using Unigram.Common;
+using Telegram.Common;
 using Windows.Foundation;
 using Windows.UI.Xaml.Data;
 
-namespace Unigram.Collections
+namespace Telegram.Collections
 {
     public class SearchCollection<T, TSource> : DiffObservableCollection<T>, ISupportIncrementalLoading where TSource : IEnumerable<T>
     {

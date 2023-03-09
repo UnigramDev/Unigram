@@ -6,7 +6,7 @@
 //
 using Rg.DiffUtils;
 
-namespace Unigram
+namespace Telegram
 {
     public static partial class Constants
     {

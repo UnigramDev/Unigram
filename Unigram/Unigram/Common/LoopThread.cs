@@ -9,7 +9,7 @@ using System.Threading;
 using Windows.System.Threading;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     public class LoopThread
     {

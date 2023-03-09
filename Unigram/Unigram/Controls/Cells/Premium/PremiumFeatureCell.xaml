@@ -1,8 +1,8 @@
-﻿<UserControl x:Class="Unigram.Controls.Cells.Premium.PremiumFeatureCell"
+﻿<UserControl x:Class="Telegram.Controls.Cells.Premium.PremiumFeatureCell"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="using:Unigram.Controls.Cells.Premium"
-             xmlns:controls="using:Unigram.Controls"
+             xmlns:local="using:Telegram.Controls.Cells.Premium"
+             xmlns:controls="using:Telegram.Controls"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d">

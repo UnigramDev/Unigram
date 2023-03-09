@@ -5,7 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using Unigram.Common;
+using Telegram.Common;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Input;
@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     [TemplatePart(Name = "Spectrum", Type = typeof(Border))]
     [TemplatePart(Name = "SpectrumThumb", Type = typeof(UIElement))]

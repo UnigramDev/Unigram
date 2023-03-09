@@ -7,13 +7,13 @@
 using Rg.DiffUtils;
 using System.Collections.ObjectModel;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Telegram.Collections;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Collections;
-using Unigram.Services;
 using Windows.Foundation;
 using Windows.UI.Xaml.Data;
 
-namespace Unigram.ViewModels
+namespace Telegram.ViewModels
 {
     public class SendLocationViewModel : TLViewModelBase
     {

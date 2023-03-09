@@ -6,7 +6,7 @@
 //
 using Windows.Data.Json;
 
-namespace Unigram.Charts.Data
+namespace Telegram.Charts.Data
 {
     public class DoubleLinearChartData : ChartData
     {

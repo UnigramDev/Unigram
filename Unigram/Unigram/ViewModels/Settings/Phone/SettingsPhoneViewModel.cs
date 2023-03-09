@@ -6,17 +6,17 @@
 //
 using System;
 using System.Threading.Tasks;
+using Telegram.Common;
+using Telegram.Controls;
+using Telegram.Entities;
+using Telegram.Navigation;
+using Telegram.Navigation.Services;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Controls;
-using Unigram.Entities;
-using Unigram.Navigation;
-using Unigram.Navigation.Services;
-using Unigram.Services;
-using Unigram.Views.Settings;
+using Telegram.Views.Settings;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels.Settings
+namespace Telegram.ViewModels.Settings
 {
     public class SettingsPhoneViewModel : TLViewModelBase
     {

@@ -10,18 +10,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using Telegram.Td.Api;
-using Unigram.Collections;
-using Unigram.Common;
-using Unigram.Controls;
-using Unigram.Converters;
+using Telegram.Collections;
+using Telegram.Common;
+using Telegram.Controls;
+using Telegram.Converters;
 using Telegram.Native;
-using Unigram.Navigation;
-using Unigram.Navigation.Services;
-using Unigram.Services;
-using Unigram.Services.Settings;
-using Unigram.ViewModels;
-using Unigram.Views.Authorization;
+using Telegram.Navigation;
+using Telegram.Navigation.Services;
+using Telegram.Services;
+using Telegram.Services.Settings;
+using Telegram.Td.Api;
+using Telegram.ViewModels;
+using Telegram.Views.Authorization;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.UI.Composition;
@@ -35,7 +35,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Point = Windows.Foundation.Point;
 
-namespace Unigram.Views.Host
+namespace Telegram.Views.Host
 {
     public sealed partial class RootPage : Page
     {

@@ -12,12 +12,12 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Telegram.Controls.Messages;
+using Telegram.Entities;
+using Telegram.Native;
+using Telegram.Services;
 using Telegram.Td;
 using Telegram.Td.Api;
-using Unigram.Controls.Messages;
-using Unigram.Entities;
-using Telegram.Native;
-using Unigram.Services;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Calls;
 using Windows.ApplicationModel.DataTransfer;
@@ -35,10 +35,10 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
-using static Unigram.Services.GenerationService;
+using static Telegram.Services.GenerationService;
 using Point = Windows.Foundation.Point;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     public static class Extensions
     {

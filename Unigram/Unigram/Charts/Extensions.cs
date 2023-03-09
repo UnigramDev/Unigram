@@ -12,7 +12,7 @@ using System.Globalization;
 using Windows.Foundation;
 using Windows.UI;
 
-namespace Unigram.Charts
+namespace Telegram.Charts
 {
     public static class D2D1Extensions
     {

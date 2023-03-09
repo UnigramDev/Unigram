@@ -5,13 +5,13 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System.Linq;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Services;
-using Unigram.Views.Authorization;
+using Telegram.Views.Authorization;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Views
+namespace Telegram.Views
 {
     public sealed partial class BlankPage : Page
     {

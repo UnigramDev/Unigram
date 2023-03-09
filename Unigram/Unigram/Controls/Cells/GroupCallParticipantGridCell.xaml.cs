@@ -8,12 +8,12 @@ using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Numerics;
-using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Converters;
+using Telegram.Common;
+using Telegram.Converters;
 using Telegram.Native.Calls;
-using Unigram.Services;
-using Unigram.Views.Calls;
+using Telegram.Services;
+using Telegram.Td.Api;
+using Telegram.Views.Calls;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -24,7 +24,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Controls.Cells
+namespace Telegram.Controls.Cells
 {
     public sealed partial class GroupCallParticipantGridCell : HyperlinkButton
     {

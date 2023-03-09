@@ -5,11 +5,11 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System.Collections.Generic;
-using Unigram.Common;
-using Unigram.Services.Settings;
+using Telegram.Common;
+using Telegram.Services.Settings;
 using Windows.UI;
 
-namespace Unigram.Services
+namespace Telegram.Services
 {
     public partial class ThemeInfoBase
     {

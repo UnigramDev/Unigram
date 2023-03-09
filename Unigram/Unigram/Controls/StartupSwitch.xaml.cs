@@ -6,13 +6,13 @@
 //
 using System;
 using System.Threading.Tasks;
-using Unigram.Services;
+using Telegram.Services;
 using Windows.ApplicationModel;
 using Windows.Foundation.Metadata;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     public sealed partial class StartupSwitch : UserControl
     {

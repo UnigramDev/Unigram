@@ -7,13 +7,13 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
-using Unigram.Common;
-using Unigram.Converters;
+using Telegram.Common;
+using Telegram.Converters;
 using Windows.Data.Json;
 using Windows.Globalization.DateTimeFormatting;
 using Windows.UI;
 
-namespace Unigram.Charts.Data
+namespace Telegram.Charts.Data
 {
     public class ChartData
     {

@@ -5,14 +5,14 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System.Threading.Tasks;
+using Telegram.Common;
+using Telegram.Navigation.Services;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Navigation.Services;
-using Unigram.Services;
-using Unigram.Views.Supergroups;
+using Telegram.Views.Supergroups;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels.Supergroups
+namespace Telegram.ViewModels.Supergroups
 {
     public class SupergroupPermissionsViewModel : SupergroupMembersViewModelBase
     {

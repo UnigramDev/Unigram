@@ -9,15 +9,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Telegram.Collections;
+using Telegram.Common;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Collections;
-using Unigram.Common;
-using Unigram.Services;
-using Unigram.Views;
+using Telegram.Views;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 
-namespace Unigram.ViewModels.Drawers
+namespace Telegram.ViewModels.Drawers
 {
     public enum EmojiDrawerMode
     {

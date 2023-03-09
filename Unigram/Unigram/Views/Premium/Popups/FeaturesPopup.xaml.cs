@@ -7,16 +7,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Telegram.Common;
+using Telegram.Controls;
+using Telegram.Controls.Cells.Premium;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Controls;
-using Unigram.Controls.Cells.Premium;
-using Unigram.Services;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 
-namespace Unigram.Views.Premium.Popups
+namespace Telegram.Views.Premium.Popups
 {
     public sealed partial class FeaturesPopup : ContentPopup
     {

@@ -9,14 +9,14 @@ using System.Diagnostics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Threading.Tasks;
-using Telegram.Td.Api;
 using Telegram.Native;
-using Unigram.Services;
+using Telegram.Services;
+using Telegram.Td.Api;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Streams;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     public class RemoteFileStream : IRandomAccessStream
     {

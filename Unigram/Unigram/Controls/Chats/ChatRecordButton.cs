@@ -9,10 +9,10 @@ using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using Telegram.Common;
+using Telegram.Logs;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Logs;
-using Unigram.ViewModels;
+using Telegram.ViewModels;
 using Windows.Devices.Enumeration;
 using Windows.Foundation;
 using Windows.Media;
@@ -31,7 +31,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 
-namespace Unigram.Controls.Chats
+namespace Telegram.Controls.Chats
 {
     public enum ChatRecordMode
     {

@@ -5,15 +5,15 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
+using Telegram.Common;
+using Telegram.Controls.Cells;
+using Telegram.Navigation;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Controls.Cells;
-using Unigram.Navigation;
-using Unigram.ViewModels.Settings;
+using Telegram.ViewModels.Settings;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Views.Settings
+namespace Telegram.Views.Settings
 {
     public sealed partial class SettingsStoragePage : HostedPage
     {

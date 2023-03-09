@@ -8,7 +8,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     public class DisposableMutex : IDisposable
     {

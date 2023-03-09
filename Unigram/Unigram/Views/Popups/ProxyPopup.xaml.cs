@@ -6,16 +6,16 @@
 //
 using System;
 using System.Collections.Generic;
+using Telegram.Common;
+using Telegram.Controls;
+using Telegram.Converters;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Controls;
-using Unigram.Converters;
-using Unigram.Services;
-using Unigram.ViewModels.Settings;
+using Telegram.ViewModels.Settings;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Views.Popups
+namespace Telegram.Views.Popups
 {
     public sealed partial class ProxyPopup : ContentPopup
     {

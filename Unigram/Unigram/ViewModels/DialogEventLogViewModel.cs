@@ -9,16 +9,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Common;
+using Telegram.Converters;
+using Telegram.Services;
+using Telegram.Services.Factories;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Converters;
-using Unigram.Services;
-using Unigram.Services.Factories;
-using Unigram.Views.Popups;
+using Telegram.Views.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.ViewModels
+namespace Telegram.ViewModels
 {
     public class DialogEventLogViewModel : DialogViewModel
     {

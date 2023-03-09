@@ -4,14 +4,14 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Unigram.Common;
-using Unigram.Converters;
+using Telegram.Common;
+using Telegram.Converters;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 // The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
-namespace Unigram.Charts
+namespace Telegram.Charts
 {
     public sealed partial class ChartHeaderView : UserControl
     {

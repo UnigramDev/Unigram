@@ -57,7 +57,7 @@ using Windows.Graphics;
 using Windows.UI;
 using Windows.UI.Composition;
 
-namespace Unigram.Assets.Icons
+namespace Telegram.Assets.Icons
 {
     // Name:        u_profile
     // Frame rate:  60 fps

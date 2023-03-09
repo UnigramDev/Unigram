@@ -10,13 +10,13 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Telegram.Converters;
+using Telegram.Services;
+using Telegram.Services.Settings;
 using Telegram.Td.Api;
-using Unigram.Converters;
-using Unigram.Services;
-using Unigram.Services.Settings;
-using Unigram.ViewModels.Drawers;
+using Telegram.ViewModels.Drawers;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     public class EmojiSet
     {

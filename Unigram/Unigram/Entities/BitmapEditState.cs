@@ -6,11 +6,11 @@
 //
 using System;
 using System.Collections.Generic;
-using Unigram.Controls;
+using Telegram.Controls;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 
-namespace Unigram.Entities
+namespace Telegram.Entities
 {
     public class BitmapEditState
     {

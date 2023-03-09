@@ -6,10 +6,10 @@
 //
 using System;
 using Telegram.Td.Api;
-using Unigram.ViewModels.Settings;
+using Telegram.ViewModels.Settings;
 using Windows.UI.Xaml.Data;
 
-namespace Unigram.Converters
+namespace Telegram.Converters
 {
     public class FileTypeToStringConverter : IValueConverter
     {

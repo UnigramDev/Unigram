@@ -6,13 +6,13 @@
 //
 using System;
 using System.Linq;
+using Telegram.Controls;
+using Telegram.Converters;
 using Telegram.Native;
-using Unigram.Controls;
-using Unigram.Converters;
 using Windows.System.UserProfile;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Views.Popups
+namespace Telegram.Views.Popups
 {
     public sealed partial class SupergroupEditRestrictedUntilPopup : ContentPopup
     {

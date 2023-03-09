@@ -8,18 +8,18 @@ using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Telegram.Common;
+using Telegram.Converters;
+using Telegram.Navigation.Services;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Converters;
-using Unigram.Navigation.Services;
-using Unigram.Services;
-using Unigram.Views.Payments;
-using Unigram.Views.Popups;
+using Telegram.Views.Payments;
+using Telegram.Views.Popups;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels.Payments
+namespace Telegram.ViewModels.Payments
 {
     public class PaymentFormViewModel : TLViewModelBase
     {

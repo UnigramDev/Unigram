@@ -6,12 +6,12 @@
 //
 using System.Linq;
 using System.Threading.Tasks;
+using Telegram.Controls;
 using Telegram.Td.Api;
-using Unigram.Controls;
-using Unigram.ViewModels;
+using Telegram.ViewModels;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Views.Popups
+namespace Telegram.Views.Popups
 {
     public sealed partial class ChooseSoundPopup : ContentPopup
     {

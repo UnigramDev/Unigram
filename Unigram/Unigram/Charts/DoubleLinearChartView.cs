@@ -9,10 +9,10 @@ using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.Graphics.Canvas.Text;
 using System;
 using System.Numerics;
-using Unigram.Charts.Data;
-using Unigram.Charts.DataView;
+using Telegram.Charts.Data;
+using Telegram.Charts.DataView;
 
-namespace Unigram.Charts
+namespace Telegram.Charts
 {
     public class DoubleLinearChartView : BaseChartView<DoubleLinearChartData, LineViewData>
     {

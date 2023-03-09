@@ -7,8 +7,8 @@
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Numerics;
+using Telegram.Common;
 using Telegram.Td.Api;
-using Unigram.Common;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -16,7 +16,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Controls.Cells
+namespace Telegram.Controls.Cells
 {
     public sealed partial class VenueCell : Grid, IMultipleElement
     {

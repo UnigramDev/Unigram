@@ -7,9 +7,9 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using Unigram.Common;
-using Unigram.ViewModels.Authorization;
-using Unigram.ViewModels.Delegates;
+using Telegram.Common;
+using Telegram.ViewModels.Authorization;
+using Telegram.ViewModels.Delegates;
 using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Views.Authorization
+namespace Telegram.Views.Authorization
 {
     public sealed partial class AuthorizationPage : Page, ISignInDelegate
     {

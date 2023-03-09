@@ -6,11 +6,11 @@
 //
 using System.Collections.Generic;
 using System.Linq;
-using Unigram.Common;
-using Unigram.Controls;
+using Telegram.Common;
+using Telegram.Controls;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Views.Popups
+namespace Telegram.Views.Popups
 {
     public enum ChatTtlType
     {

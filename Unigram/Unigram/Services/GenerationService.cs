@@ -10,10 +10,10 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Entities;
+using Telegram.Common;
+using Telegram.Entities;
 using Telegram.Native.Opus;
+using Telegram.Td.Api;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Media.Effects;
@@ -24,7 +24,7 @@ using Windows.Storage.AccessCache;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
 
-namespace Unigram.Services
+namespace Telegram.Services
 {
     public interface IGenerationService
     {

@@ -6,10 +6,10 @@
 //
 using RLottie;
 using System;
+using Telegram.Common;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Services;
-using Unigram.ViewModels;
+using Telegram.ViewModels;
 using Windows.Foundation;
 using Windows.System;
 using Windows.UI.Composition;
@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 
-namespace Unigram.Controls.Messages.Content
+namespace Telegram.Controls.Messages.Content
 {
     public sealed class AnimatedStickerContent : HyperlinkButton, IContent, IPlayerView
     {

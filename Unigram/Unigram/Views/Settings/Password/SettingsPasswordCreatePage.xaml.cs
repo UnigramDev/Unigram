@@ -5,12 +5,12 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using Unigram.Common;
-using Unigram.ViewModels.Settings.Password;
+using Telegram.Common;
+using Telegram.ViewModels.Settings.Password;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Views.Settings.Password
+namespace Telegram.Views.Settings.Password
 {
     public sealed partial class SettingsPasswordCreatePage : HostedPage
     {

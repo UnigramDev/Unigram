@@ -13,7 +13,7 @@ using Windows.UI.Xaml.Controls;
 /// From https://github.com/Microsoft/UWPCommunityToolkit/tree/dev/Microsoft.Toolkit.Uwp.UI.Controls/WrapPanel
 /// Since they don't have it in nuget package yet
 /// </summary>
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     /// <summary>
     /// WrapPanel is a panel that position child control vertically or horizontally based on the orientation and when max width/ max height is recieved a new row(in case of horizontal) or column (in case of vertical) is created to fit new controls.

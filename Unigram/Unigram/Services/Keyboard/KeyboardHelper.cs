@@ -5,13 +5,13 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using Unigram.Navigation;
+using Telegram.Navigation;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Input;
 using Windows.UI.Xaml;
 
-namespace Unigram.Services.Keyboard
+namespace Telegram.Services.Keyboard
 {
     // DOCS: https://github.com/Windows-XAML/Template10/wiki/Docs-%7C-KeyboardService
     public class KeyboardHelper

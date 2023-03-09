@@ -10,14 +10,14 @@ using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Collections.Generic;
+using Telegram.Controls.Messages;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Controls.Messages;
-using Unigram.Services;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Xaml;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     public class CustomEmojiIcon : AnimatedControl<object>
     {

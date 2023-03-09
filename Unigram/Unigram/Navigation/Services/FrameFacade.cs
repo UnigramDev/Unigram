@@ -7,13 +7,13 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using Unigram.Logs;
-using Unigram.Views;
+using Telegram.Logs;
+using Telegram.Views;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Navigation.Services
+namespace Telegram.Navigation.Services
 {
     // DOCS: https://github.com/Windows-XAML/Template10/wiki/Docs-%7C-NavigationService
     public class FrameFacade
@@ -89,9 +89,9 @@ namespace Unigram.Navigation.Services
 
         private string GetFrameStateKey() => string.Format("{0}-PageState", FrameId);
 
-        private Unigram.Services.ISettingsLegacyService FrameStateSettingsService()
+        private Telegram.Services.ISettingsLegacyService FrameStateSettingsService()
         {
-            return Unigram.Services.SettingsLegacyService.Create(GetFrameStateKey(), true);
+            return Telegram.Services.SettingsLegacyService.Create(GetFrameStateKey(), true);
         }
 
         public void SetFrameState(string key, string value)
@@ -114,13 +114,13 @@ namespace Unigram.Navigation.Services
             return $"{frameId}-{type}-{parameter}";
         }
 
-        public Unigram.Services.ISettingsLegacyService PageStateSettingsService(Type type, int depth = 0, object parameter = null)
+        public Telegram.Services.ISettingsLegacyService PageStateSettingsService(Type type, int depth = 0, object parameter = null)
         {
             var key = GetPageStateKey(FrameId, type, BackStackDepth + depth, parameter);
             return FrameStateSettingsService().Open(key, true);
         }
 
-        public Unigram.Services.ISettingsLegacyService PageStateSettingsService(string key)
+        public Telegram.Services.ISettingsLegacyService PageStateSettingsService(string key)
         {
             return FrameStateSettingsService().Open(key, true);
         }

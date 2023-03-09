@@ -10,12 +10,12 @@ using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Linq;
 using System.Numerics;
+using Telegram.Common;
+using Telegram.Controls.Drawers;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Controls.Drawers;
-using Unigram.Services;
-using Unigram.ViewModels;
-using Unigram.ViewModels.Drawers;
+using Telegram.ViewModels;
+using Telegram.ViewModels.Drawers;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -26,7 +26,7 @@ using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 using Point = Windows.Foundation.Point;
 
-namespace Unigram.Controls.Messages
+namespace Telegram.Controls.Messages
 {
     public sealed partial class MenuFlyoutReactions : UserControl
     {

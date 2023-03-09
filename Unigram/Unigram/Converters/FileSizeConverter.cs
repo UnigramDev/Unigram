@@ -8,7 +8,7 @@ using System;
 using System.Globalization;
 using Windows.UI.Xaml.Data;
 
-namespace Unigram.Converters
+namespace Telegram.Converters
 {
     public class FileSizeConverter : IValueConverter
     {

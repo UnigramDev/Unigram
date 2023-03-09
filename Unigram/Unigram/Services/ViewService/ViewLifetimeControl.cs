@@ -28,13 +28,13 @@
 
 using System;
 using System.Collections.Concurrent;
-using Unigram.Logs;
-using Unigram.Navigation;
+using Telegram.Logs;
+using Telegram.Navigation;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 
-namespace Unigram.Services.ViewService
+namespace Telegram.Services.ViewService
 {
     // A custom event that fires whenever the secondary view is ready to be closed. You should
     // clean up any state (including deregistering for events) then close the window in this handler

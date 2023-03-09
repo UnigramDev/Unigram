@@ -6,11 +6,11 @@
 //
 using System.Collections.Generic;
 using System.Linq;
+using Telegram.Controls;
 using Telegram.Td.Api;
-using Unigram.Controls;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Views.Popups
+namespace Telegram.Views.Popups
 {
     public sealed partial class DoNotTranslatePopup : ContentPopup
     {

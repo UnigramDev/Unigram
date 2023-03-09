@@ -8,13 +8,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Unigram.Converters;
+using Telegram.Converters;
 using Telegram.Native;
-using Unigram.Services;
+using Telegram.Services;
 using Windows.ApplicationModel.Resources;
 using Windows.System.UserProfile;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     public static class Locale
     {

@@ -9,16 +9,16 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using Telegram.Collections;
+using Telegram.Common;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Collections;
-using Unigram.Common;
-using Unigram.Services;
-using Unigram.ViewModels.Delegates;
+using Telegram.ViewModels.Delegates;
 using Windows.Foundation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
 
-namespace Unigram.ViewModels
+namespace Telegram.ViewModels
 {
     public class TopicListViewModel : TLViewModelBase, IDelegable<IChatListDelegate>
     {

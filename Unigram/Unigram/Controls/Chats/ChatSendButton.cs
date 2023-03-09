@@ -8,7 +8,7 @@ using System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Controls.Chats
+namespace Telegram.Controls.Chats
 {
     public class ChatSendButton : GlyphButton
     {

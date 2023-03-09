@@ -8,7 +8,7 @@ using System;
 using Windows.System;
 using Windows.UI.Core;
 
-namespace Unigram.Services.Keyboard
+namespace Telegram.Services.Keyboard
 {
     // DOCS: https://github.com/Windows-XAML/Template10/wiki/Docs-%7C-KeyboardService
     public class KeyboardEventArgs : EventArgs

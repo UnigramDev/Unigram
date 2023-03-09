@@ -6,15 +6,15 @@
 //
 using System;
 using System.Collections.Generic;
-using Telegram.Td.Api;
-using Unigram.Common;
+using Telegram.Common;
 using Telegram.Native;
-using Unigram.Views.Popups;
+using Telegram.Td.Api;
+using Telegram.Views.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Views
+namespace Telegram.Views
 {
     public sealed partial class GamePage : HostedPage
     {

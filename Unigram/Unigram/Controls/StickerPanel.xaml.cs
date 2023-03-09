@@ -6,18 +6,18 @@
 //
 using System;
 using System.Collections.Generic;
+using Telegram.Common;
+using Telegram.Controls.Drawers;
+using Telegram.Services;
+using Telegram.Services.Settings;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Controls.Drawers;
-using Unigram.Services;
-using Unigram.Services.Settings;
-using Unigram.ViewModels;
-using Unigram.ViewModels.Drawers;
+using Telegram.ViewModels;
+using Telegram.ViewModels.Drawers;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     public sealed partial class StickerPanel : UserControl
     {

@@ -4,16 +4,15 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Unigram.Common;
-using Unigram.Controls;
-using Unigram.Converters;
-using Unigram.ViewModels.Settings;
-using Unigram.Views.Settings.Privacy;
+using Telegram.Common;
+using Telegram.Converters;
+using Telegram.ViewModels.Settings;
+using Telegram.Views.Settings.Privacy;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Views.Settings
+namespace Telegram.Views.Settings
 {
     public sealed partial class SettingsPrivacyAndSecurityPage : HostedPage
     {

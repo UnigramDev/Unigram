@@ -6,15 +6,15 @@
 //
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
+using Telegram.Common;
+using Telegram.Navigation.Services;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Navigation.Services;
-using Unigram.Services;
-using Unigram.Views.Settings.Password;
+using Telegram.Views.Settings.Password;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels.Settings.Password
+namespace Telegram.ViewModels.Settings.Password
 {
     public class SettingsPasswordEmailViewModel : TLViewModelBase
     {

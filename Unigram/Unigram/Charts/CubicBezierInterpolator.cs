@@ -7,7 +7,7 @@
 using System;
 using System.Numerics;
 
-namespace Unigram.Charts
+namespace Telegram.Charts
 {
     public class CubicBezierInterpolator //implements Interpolator
     {

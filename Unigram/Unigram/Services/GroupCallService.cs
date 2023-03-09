@@ -9,16 +9,16 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using Telegram.Td.Api;
-using Unigram.Collections;
-using Unigram.Common;
-using Unigram.Controls;
+using Telegram.Collections;
+using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Native.Calls;
-using Unigram.Services.Updates;
-using Unigram.Services.ViewService;
-using Unigram.ViewModels;
-using Unigram.Views.Calls;
-using Unigram.Views.Popups;
+using Telegram.Services.Updates;
+using Telegram.Services.ViewService;
+using Telegram.Td.Api;
+using Telegram.ViewModels;
+using Telegram.Views.Calls;
+using Telegram.Views.Popups;
 using Windows.ApplicationModel.Calls;
 using Windows.ApplicationModel.Core;
 using Windows.Data.Json;
@@ -30,7 +30,7 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Services
+namespace Telegram.Services
 {
     public interface IGroupCallService : INotifyPropertyChanged
     {

@@ -12,9 +12,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using Unigram.Charts.Data;
-using Unigram.Charts.DataView;
-using Unigram.Common;
+using Telegram.Charts.Data;
+using Telegram.Charts.DataView;
+using Telegram.Common;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Xaml;
@@ -24,7 +24,7 @@ using Windows.UI.Xaml.Media;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
-namespace Unigram.Charts
+namespace Telegram.Charts
 {
     public abstract class BaseChartView : Grid
     {

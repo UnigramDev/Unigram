@@ -10,15 +10,15 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Telegram.Common;
+using Telegram.Converters;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Converters;
-using Unigram.Services;
-using Unigram.ViewModels;
+using Telegram.ViewModels;
 using Windows.Foundation;
 using Windows.UI.Xaml.Data;
 
-namespace Unigram.Collections
+namespace Telegram.Collections
 {
     public class SearchChatsCollection : ObservableCollection<object>, ISupportIncrementalLoading
     {

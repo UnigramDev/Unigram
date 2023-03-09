@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Windows.Globalization.NumberFormatting;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     public class CurrencyNumberFormatter : INumberFormatter2, INumberParser
     {

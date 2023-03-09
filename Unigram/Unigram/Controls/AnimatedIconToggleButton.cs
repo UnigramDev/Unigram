@@ -8,7 +8,7 @@ using Microsoft.UI.Xaml.Controls;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     public class AnimatedIconToggleButton : AnimatedGlyphToggleButton
     {

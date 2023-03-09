@@ -6,12 +6,12 @@
 //
 using System.Collections.Generic;
 using System.Linq;
-using Unigram.Controls;
-using Unigram.Navigation;
+using Telegram.Controls;
+using Telegram.Navigation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Views.Popups
+namespace Telegram.Views.Popups
 {
     public sealed partial class ChooseOptionPopup : ContentPopup
     {

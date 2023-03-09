@@ -10,9 +10,9 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Threading.Tasks;
-using Unigram.Charts;
-using Unigram.Controls;
-using Unigram.Entities;
+using Telegram.Charts;
+using Telegram.Controls;
+using Telegram.Entities;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
@@ -21,7 +21,7 @@ using Windows.UI;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     public static class ImageHelper
     {

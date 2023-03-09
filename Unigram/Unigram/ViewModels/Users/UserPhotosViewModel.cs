@@ -5,14 +5,14 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
+using Telegram.Collections;
+using Telegram.Common;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Collections;
-using Unigram.Common;
-using Unigram.Services;
-using Unigram.ViewModels.Gallery;
+using Telegram.ViewModels.Gallery;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.ViewModels.Users
+namespace Telegram.ViewModels.Users
 {
     public class UserPhotosViewModel : GalleryViewModelBase
     {

@@ -9,17 +9,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Collections;
+using Telegram.Common;
+using Telegram.Controls;
+using Telegram.Controls.Cells;
+using Telegram.Converters;
+using Telegram.Navigation;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Collections;
-using Unigram.Common;
-using Unigram.Controls;
-using Unigram.Controls.Cells;
-using Unigram.Converters;
-using Unigram.Navigation;
-using Unigram.Services;
-using Unigram.ViewModels;
-using Unigram.ViewModels.Drawers;
-using Unigram.ViewModels.Folders;
+using Telegram.ViewModels;
+using Telegram.ViewModels.Drawers;
+using Telegram.ViewModels.Folders;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI;
 using Windows.UI.Core;
@@ -33,7 +33,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Views.Popups
+namespace Telegram.Views.Popups
 {
     public sealed partial class SharePopup : ContentPopup
     {

@@ -7,11 +7,11 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Telegram.Entities;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Entities;
-using Unigram.Services;
 
-namespace Unigram.ViewModels.Payments
+namespace Telegram.ViewModels.Payments
 {
     public class PaymentAddressViewModel : TLViewModelBase
     {

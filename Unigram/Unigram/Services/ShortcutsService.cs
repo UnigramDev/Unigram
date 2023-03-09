@@ -8,17 +8,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Unigram.Collections;
-using Unigram.Common;
-using Unigram.Navigation;
-using Unigram.ViewModels;
+using Telegram.Collections;
+using Telegram.Common;
+using Telegram.Navigation;
+using Telegram.ViewModels;
 using Windows.Data.Json;
 using Windows.Storage;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 
-namespace Unigram.Services
+namespace Telegram.Services
 {
     public interface IShortcutsService
     {

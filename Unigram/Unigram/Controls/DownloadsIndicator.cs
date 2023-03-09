@@ -5,15 +5,15 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.UI.Xaml.Controls;
-using Unigram.Assets.Icons;
-using Unigram.Common;
+using Telegram.Assets.Icons;
+using Telegram.Common;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     public class DownloadsIndicator : Control
     {

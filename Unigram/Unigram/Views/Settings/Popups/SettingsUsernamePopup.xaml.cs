@@ -5,17 +5,17 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.UI.Xaml.Controls;
-using Unigram.Common;
-using Unigram.Controls;
-using Unigram.Converters;
-using Unigram.Navigation;
-using Unigram.ViewModels.Settings;
+using Telegram.Common;
+using Telegram.Controls;
+using Telegram.Converters;
+using Telegram.Navigation;
+using Telegram.ViewModels.Settings;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 
-namespace Unigram.Views.Settings.Popups
+namespace Telegram.Views.Settings.Popups
 {
     public sealed partial class SettingsUsernamePopup : ContentPopup
     {

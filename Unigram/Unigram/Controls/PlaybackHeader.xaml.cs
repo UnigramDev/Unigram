@@ -6,12 +6,12 @@
 //
 using System;
 using System.Numerics;
+using Telegram.Common;
+using Telegram.Controls.Cells;
+using Telegram.Converters;
+using Telegram.Navigation.Services;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Controls.Cells;
-using Unigram.Converters;
-using Unigram.Navigation.Services;
-using Unigram.Services;
 using Windows.Media.Playback;
 using Windows.System;
 using Windows.UI.Composition;
@@ -22,7 +22,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     public sealed partial class PlaybackHeader : UserControl
     {

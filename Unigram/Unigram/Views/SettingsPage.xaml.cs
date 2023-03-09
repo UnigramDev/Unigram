@@ -6,20 +6,20 @@
 //
 using System;
 using System.Collections.Generic;
+using Telegram.Common;
+using Telegram.Controls;
+using Telegram.Controls.Gallery;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Controls;
-using Unigram.Controls.Gallery;
-using Unigram.ViewModels;
-using Unigram.ViewModels.Delegates;
-using Unigram.Views.Folders;
-using Unigram.Views.Settings;
+using Telegram.ViewModels;
+using Telegram.ViewModels.Delegates;
+using Telegram.Views.Folders;
+using Telegram.Views.Settings;
 using Windows.ApplicationModel;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Views
+namespace Telegram.Views
 {
     public sealed partial class SettingsPage : Page, ISettingsDelegate, IDisposable
     {

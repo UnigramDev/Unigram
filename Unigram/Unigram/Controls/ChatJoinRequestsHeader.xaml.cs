@@ -7,15 +7,15 @@
 using System;
 using System.Linq;
 using System.Numerics;
+using Telegram.Common;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Services;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     public sealed partial class ChatJoinRequestsHeader : HyperlinkButton
     {

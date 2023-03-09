@@ -6,7 +6,7 @@
 //
 using System;
 
-namespace Unigram.Charts
+namespace Telegram.Charts
 {
     public class SegmentTree
     {

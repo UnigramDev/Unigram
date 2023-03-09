@@ -12,7 +12,7 @@
 //           7.1.2-build.15+g2b49bb9edc
 //       
 //       Command:
-//           LottieGen -GenerateColorBindings -Language CSharp -MinimumUapVersion 8 -Namespace Unigram.Assets.Icons -Public -WinUIVersion 2.7 -InputFile MuteUnmute.json
+//           LottieGen -GenerateColorBindings -Language CSharp -MinimumUapVersion 8 -Namespace Telegram.Assets.Icons -Public -WinUIVersion 2.7 -InputFile MuteUnmute.json
 //       
 //       Input file:
 //           MuteUnmute.json (10743 bytes created 15:57+02:00 Jul 25 2022)
@@ -59,7 +59,7 @@ using Windows.Graphics;
 using Windows.UI;
 using Windows.UI.Composition;
 
-namespace Unigram.Assets.Icons
+namespace Telegram.Assets.Icons
 {
     // Name:        mute_unmute
     // Frame rate:  60 fps

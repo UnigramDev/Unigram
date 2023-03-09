@@ -5,11 +5,11 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
+using Telegram.Common;
 using Telegram.Td.Api;
-using Unigram.Common;
 using Windows.Storage;
 
-namespace Unigram.Services.Settings
+namespace Telegram.Services.Settings
 {
     [Flags]
     public enum AutoDownloadMode

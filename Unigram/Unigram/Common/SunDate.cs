@@ -6,7 +6,7 @@
 //
 using System;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     // https://github.com/DrKLO/Telegram/blob/master/TMessagesProj/src/main/java/org/telegram/messenger/time/SunDate.java
     public class SunDate

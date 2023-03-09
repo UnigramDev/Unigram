@@ -6,7 +6,7 @@
 //
 using Windows.UI.Xaml;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     public static class ControlProperties
     {

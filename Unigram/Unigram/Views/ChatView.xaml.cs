@@ -16,22 +16,22 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Common;
+using Telegram.Common.Chats;
+using Telegram.Controls;
+using Telegram.Controls.Cells;
+using Telegram.Controls.Chats;
+using Telegram.Controls.Gallery;
+using Telegram.Controls.Messages;
+using Telegram.Converters;
+using Telegram.Navigation;
+using Telegram.Services;
 using Telegram.Td;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Common.Chats;
-using Unigram.Controls;
-using Unigram.Controls.Cells;
-using Unigram.Controls.Chats;
-using Unigram.Controls.Gallery;
-using Unigram.Controls.Messages;
-using Unigram.Converters;
-using Unigram.Navigation;
-using Unigram.Services;
-using Unigram.ViewModels;
-using Unigram.ViewModels.Chats;
-using Unigram.ViewModels.Delegates;
-using Unigram.Views.Popups;
+using Telegram.ViewModels;
+using Telegram.ViewModels.Chats;
+using Telegram.ViewModels.Delegates;
+using Telegram.Views.Popups;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Devices.Input;
@@ -51,7 +51,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Point = Windows.Foundation.Point;
 
-namespace Unigram.Views
+namespace Telegram.Views
 {
     public sealed partial class ChatView : HostedPage, INavigablePage, ISearchablePage, IDialogDelegate, IActivablePage
     {
@@ -4910,7 +4910,7 @@ namespace Unigram.Views
                         {
                             wavesEnter = 1.0f;
                         }
-                        float interpolation = f7 * Unigram.Charts.CubicBezierInterpolator.EASE_OUT.getInterpolation(wavesEnter);
+                        float interpolation = f7 * Telegram.Charts.CubicBezierInterpolator.EASE_OUT.getInterpolation(wavesEnter);
                         //canvas.scale(interpolation, interpolation, f, f2);
                         canvas.Transform = Matrix3x2.CreateScale(interpolation, interpolation, new Vector2(x, y));
                         blobDrawable.Update(amplitude, 1.0f);
@@ -4940,7 +4940,7 @@ namespace Unigram.Views
                         }
                     }
                 }
-                float interpolation2 = f7 * Unigram.Charts.CubicBezierInterpolator.EASE_OUT.getInterpolation(wavesEnter);
+                float interpolation2 = f7 * Telegram.Charts.CubicBezierInterpolator.EASE_OUT.getInterpolation(wavesEnter);
                 //canvas.scale(interpolation2, interpolation2, f, f2);
                 canvas.Transform = Matrix3x2.CreateScale(interpolation2, interpolation2, new Vector2(x, y));
                 blobDrawable.Update(amplitude, 1.0f);
@@ -4962,7 +4962,7 @@ namespace Unigram.Views
         {
             get
             {
-                float interpolation = Unigram.Charts.CubicBezierInterpolator.EASE_OUT.getInterpolation(wavesEnter);
+                float interpolation = Telegram.Charts.CubicBezierInterpolator.EASE_OUT.getInterpolation(wavesEnter);
                 return (((amplitude * 0.2f) + 0.8f) * interpolation) + ((1.0f - interpolation) * 1.0f);
             }
         }
@@ -5129,7 +5129,7 @@ namespace Unigram.Views
 
         private Matrix3x2 SetRotate(float degree, float px, float py)
         {
-            return Matrix3x2.CreateRotation(Unigram.Charts.MathFEx.ToRadians(degree), new Vector2(px, py));
+            return Matrix3x2.CreateRotation(Telegram.Charts.MathFEx.ToRadians(degree), new Vector2(px, py));
         }
 
         public void GenerateBlob()

@@ -6,9 +6,9 @@
 //
 using System;
 using System.Threading;
-using Unigram.Logs;
+using Telegram.Logs;
 
-namespace Unigram.Services.ViewService
+namespace Telegram.Services.ViewService
 {
     class SecondaryViewSynchronizationContextDecorator : SynchronizationContext
     {

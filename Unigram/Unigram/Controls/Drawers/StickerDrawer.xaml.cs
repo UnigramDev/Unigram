@@ -8,11 +8,11 @@ using LinqToVisualTree;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Telegram.Common;
+using Telegram.Converters;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Converters;
-using Unigram.Services;
-using Unigram.ViewModels.Drawers;
+using Telegram.ViewModels.Drawers;
 using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -21,7 +21,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 
-namespace Unigram.Controls.Drawers
+namespace Telegram.Controls.Drawers
 {
     public sealed partial class StickerDrawer : UserControl, IDrawer
     {

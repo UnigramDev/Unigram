@@ -6,13 +6,13 @@
 //
 using System.Collections.Generic;
 using System.Linq;
+using Telegram.Collections;
+using Telegram.Common;
+using Telegram.Converters;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Collections;
-using Unigram.Common;
-using Unigram.Converters;
-using Unigram.Services;
 
-namespace Unigram.ViewModels
+namespace Telegram.ViewModels
 {
     public class ContactsViewModel : TLViewModelBase
         , IChildViewModel

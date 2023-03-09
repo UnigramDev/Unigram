@@ -8,10 +8,10 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Telegram.Common;
 using Telegram.Td.Api;
-using Unigram.Common;
 
-namespace Unigram.Services
+namespace Telegram.Services
 {
     public partial class ClientService
     {

@@ -6,7 +6,7 @@
 //
 using System;
 
-namespace Unigram.Services.Settings
+namespace Telegram.Services.Settings
 {
     public class PasscodeLockSettings : SettingsServiceBase
     {

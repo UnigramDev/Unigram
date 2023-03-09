@@ -10,7 +10,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     public class VisualUtilities
     {

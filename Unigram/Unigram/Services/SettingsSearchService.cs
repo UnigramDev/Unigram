@@ -8,15 +8,15 @@ using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using Telegram.Common;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.ViewModels.Settings;
-using Unigram.Views;
-using Unigram.Views.Folders;
-using Unigram.Views.Settings;
-using Unigram.Views.Settings.Privacy;
+using Telegram.ViewModels.Settings;
+using Telegram.Views;
+using Telegram.Views.Folders;
+using Telegram.Views.Settings;
+using Telegram.Views.Settings.Privacy;
 
-namespace Unigram.Services
+namespace Telegram.Services
 {
     public interface ISettingsSearchService
     {

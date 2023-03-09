@@ -8,20 +8,20 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Telegram.Common;
+using Telegram.Controls;
+using Telegram.Navigation.Services;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Controls;
-using Unigram.Navigation.Services;
-using Unigram.Services;
-using Unigram.ViewModels.Settings.Privacy;
-using Unigram.Views.Popups;
-using Unigram.Views.Settings;
-using Unigram.Views.Settings.Password;
+using Telegram.ViewModels.Settings.Privacy;
+using Telegram.Views.Popups;
+using Telegram.Views.Settings;
+using Telegram.Views.Settings.Password;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels.Settings
+namespace Telegram.ViewModels.Settings
 {
     public class SettingsPrivacyAndSecurityViewModel : TLMultipleViewModelBase
         , IHandle

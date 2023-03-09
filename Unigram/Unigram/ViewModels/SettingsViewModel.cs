@@ -6,18 +6,18 @@
 //
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Telegram.Collections;
+using Telegram.Common;
+using Telegram.Navigation.Services;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Collections;
-using Unigram.Common;
-using Unigram.Navigation.Services;
-using Unigram.Services;
-using Unigram.ViewModels.Delegates;
-using Unigram.Views;
-using Unigram.Views.Settings;
+using Telegram.ViewModels.Delegates;
+using Telegram.Views;
+using Telegram.Views.Settings;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels
+namespace Telegram.ViewModels
 {
     public class SettingsViewModel : TLViewModelBase
         , IChildViewModel

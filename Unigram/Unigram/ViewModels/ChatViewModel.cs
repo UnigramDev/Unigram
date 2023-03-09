@@ -5,11 +5,11 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System.Collections.Generic;
+using Telegram.Navigation;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Navigation;
-using Unigram.Services;
 
-namespace Unigram.ViewModels
+namespace Telegram.ViewModels
 {
     public class ChatViewModel : BindableBase
     {

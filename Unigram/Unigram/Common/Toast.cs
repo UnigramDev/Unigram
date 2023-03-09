@@ -13,7 +13,7 @@ using Windows.ApplicationModel.Background;
 using Windows.System.Profile;
 using Windows.UI.Notifications;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     public class Toast
     {
@@ -49,7 +49,7 @@ namespace Unigram.Common
 
                 //Register("InProcessNotificationTask", null, () => new PushNotificationTrigger());
                 Register("NewInteractiveTask", null, () => new ToastNotificationActionTrigger());
-                //BackgroundTaskManager.Register("InteractiveTask", "Unigram.Tasks.InteractiveTask", new ToastNotificationActionTrigger());
+                //BackgroundTaskManager.Register("InteractiveTask", "Telegram.Tasks.InteractiveTask", new ToastNotificationActionTrigger());
             }
             catch { }
         }

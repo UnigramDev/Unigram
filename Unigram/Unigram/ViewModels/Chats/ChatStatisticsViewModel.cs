@@ -8,17 +8,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Telegram.Charts.Data;
+using Telegram.Collections;
+using Telegram.Common;
+using Telegram.Navigation.Services;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Charts.Data;
-using Unigram.Collections;
-using Unigram.Common;
-using Unigram.Navigation.Services;
-using Unigram.Services;
-using Unigram.Views;
+using Telegram.Views;
 using Windows.Data.Json;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels.Chats
+namespace Telegram.ViewModels.Chats
 {
     public class ChatStatisticsViewModel : TLViewModelBase
     {

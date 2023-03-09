@@ -9,17 +9,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Windows.Input;
+using Telegram.Common;
+using Telegram.Navigation;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Navigation;
-using Unigram.Services;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     public sealed partial class GroupCallHeader : HyperlinkButton
     {

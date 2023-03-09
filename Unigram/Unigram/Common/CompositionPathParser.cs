@@ -11,12 +11,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Telegram.Td.Api;
-using Unigram.ViewModels.Drawers;
+using Telegram.ViewModels.Drawers;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     public class CompositionPathParser
     {

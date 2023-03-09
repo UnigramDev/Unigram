@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Data.Json;
 
-namespace Unigram.Services.Stripe
+namespace Telegram.Services.Stripe
 {
     public class StripeClient : IDisposable
     {

@@ -6,11 +6,11 @@
 //
 using System;
 using System.Collections;
+using Telegram.Collections;
+using Telegram.Common;
+using Telegram.Controls.Chats;
 using Telegram.Td.Api;
-using Unigram.Collections;
-using Unigram.Common;
-using Unigram.Controls.Chats;
-using Unigram.ViewModels;
+using Telegram.ViewModels;
 using Windows.System;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     public class CaptionTextBox : FormattedTextBox
     {

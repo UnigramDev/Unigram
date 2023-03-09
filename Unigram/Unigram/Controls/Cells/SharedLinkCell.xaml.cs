@@ -6,10 +6,10 @@
 //
 using System;
 using System.Collections.Generic;
+using Telegram.Common;
+using Telegram.Navigation.Services;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Navigation.Services;
-using Unigram.ViewModels;
+using Telegram.ViewModels;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Controls.Cells
+namespace Telegram.Controls.Cells
 {
     public sealed partial class SharedLinkCell : Grid
     {

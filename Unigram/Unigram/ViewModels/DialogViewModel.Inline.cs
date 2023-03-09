@@ -8,12 +8,12 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Telegram.Collections;
+using Telegram.Common;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Collections;
-using Unigram.Common;
-using Unigram.Services;
 
-namespace Unigram.ViewModels
+namespace Telegram.ViewModels
 {
     public partial class DialogViewModel
     {

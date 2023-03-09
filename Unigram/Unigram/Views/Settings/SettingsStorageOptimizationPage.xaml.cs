@@ -6,16 +6,16 @@
 //
 using System.Collections.Generic;
 using System.Linq;
+using Telegram.Common;
+using Telegram.Controls;
+using Telegram.Converters;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Controls;
-using Unigram.Converters;
-using Unigram.Services;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Views.Settings
+namespace Telegram.Views.Settings
 {
     public sealed partial class SettingsStorageOptimizationPage : ContentPopup
     {

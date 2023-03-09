@@ -8,14 +8,14 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
-using Unigram.Common;
-using Unigram.Navigation;
-using Unigram.Services.Settings;
+using Telegram.Common;
+using Telegram.Navigation;
+using Telegram.Services.Settings;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.ViewManagement;
 
-namespace Unigram.Services
+namespace Telegram.Services
 {
     public class ThemeCustomInfo : ThemeAccentInfo
     {

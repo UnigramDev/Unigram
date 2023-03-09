@@ -7,13 +7,13 @@
 using System;
 using System.Globalization;
 using System.Text;
-using Unigram.Common;
+using Telegram.Common;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     public class ColorTextBox : TextBox
     {

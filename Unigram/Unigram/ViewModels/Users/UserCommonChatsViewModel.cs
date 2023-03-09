@@ -7,15 +7,15 @@
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using Telegram.Collections;
+using Telegram.Navigation.Services;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Collections;
-using Unigram.Navigation.Services;
-using Unigram.Services;
 using Windows.Foundation;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels.Users
+namespace Telegram.ViewModels.Users
 {
     public class UserCommonChatsViewModel : TLViewModelBase
     {

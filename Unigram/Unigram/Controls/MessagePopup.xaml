@@ -1,9 +1,9 @@
 <local:ContentPopup
-    x:Class="Unigram.Controls.MessagePopup"
+    x:Class="Telegram.Controls.MessagePopup"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Unigram.Controls"
-    xmlns:common="using:Unigram.Common"
+    xmlns:local="using:Telegram.Controls"
+    xmlns:common="using:Telegram.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">

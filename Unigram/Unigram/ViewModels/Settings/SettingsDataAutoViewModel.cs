@@ -5,13 +5,13 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System.Threading.Tasks;
-using Unigram.Common;
-using Unigram.Navigation.Services;
-using Unigram.Services;
-using Unigram.Services.Settings;
+using Telegram.Common;
+using Telegram.Navigation.Services;
+using Telegram.Services;
+using Telegram.Services.Settings;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels.Settings
+namespace Telegram.ViewModels.Settings
 {
     public class SettingsDataAutoViewModel : TLViewModelBase
     {

@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Telegram.Td.Api;
 
-namespace Unigram.Common.Chats
+namespace Telegram.Common.Chats
 {
     public class InputChatActionManager
     {

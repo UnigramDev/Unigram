@@ -8,14 +8,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Unigram.Common;
-using Unigram.Navigation;
+using Telegram.Common;
+using Telegram.Navigation;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
-namespace Unigram.Entities
+namespace Telegram.Entities
 {
     public abstract class StorageMedia : BindableBase
     {

@@ -6,14 +6,14 @@
 //
 using System;
 using System.Collections.Generic;
-using Unigram.Converters;
-using Unigram.Navigation;
+using Telegram.Converters;
+using Telegram.Navigation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     public class RatingBar : Control
     {

@@ -12,7 +12,7 @@
 //           7.1.2-build.15+g2b49bb9edc
 //       
 //       Command:
-//           LottieGen -GenerateColorBindings -Language CSharp -MinimumUapVersion 8 -Namespace Unigram.Assets.Icons -Public -WinUIVersion 2.7 -InputFile StickerToGif.json
+//           LottieGen -GenerateColorBindings -Language CSharp -MinimumUapVersion 8 -Namespace Telegram.Assets.Icons -Public -WinUIVersion 2.7 -InputFile StickerToGif.json
 //       
 //       Input file:
 //           StickerToGif.json (11130 bytes created 15:57+02:00 Jul 25 2022)
@@ -59,7 +59,7 @@ using Windows.Graphics;
 using Windows.UI;
 using Windows.UI.Composition;
 
-namespace Unigram.Assets.Icons
+namespace Telegram.Assets.Icons
 {
     // Name:        sticker_to_gif
     // Frame rate:  60 fps

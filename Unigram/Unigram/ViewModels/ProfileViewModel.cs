@@ -8,28 +8,28 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Telegram.Collections;
+using Telegram.Common;
+using Telegram.Converters;
+using Telegram.Navigation.Services;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Collections;
-using Unigram.Common;
-using Unigram.Converters;
-using Unigram.Navigation.Services;
-using Unigram.Services;
-using Unigram.ViewModels.Chats;
-using Unigram.ViewModels.Delegates;
-using Unigram.ViewModels.Supergroups;
-using Unigram.ViewModels.Users;
-using Unigram.Views;
-using Unigram.Views.Chats;
-using Unigram.Views.Popups;
-using Unigram.Views.Premium.Popups;
-using Unigram.Views.Supergroups;
-using Unigram.Views.Supergroups.Popup;
-using Unigram.Views.Users;
+using Telegram.ViewModels.Chats;
+using Telegram.ViewModels.Delegates;
+using Telegram.ViewModels.Supergroups;
+using Telegram.ViewModels.Users;
+using Telegram.Views;
+using Telegram.Views.Chats;
+using Telegram.Views.Popups;
+using Telegram.Views.Premium.Popups;
+using Telegram.Views.Supergroups;
+using Telegram.Views.Supergroups.Popup;
+using Telegram.Views.Users;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels
+namespace Telegram.ViewModels
 {
     public class ProfileViewModel : ChatSharedMediaViewModel
         , IDelegable<IProfileDelegate>

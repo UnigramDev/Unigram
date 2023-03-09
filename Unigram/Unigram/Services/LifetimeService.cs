@@ -8,13 +8,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Unigram.Collections;
-using Unigram.Navigation;
-using Unigram.Views;
-using Unigram.Views.Host;
+using Telegram.Collections;
+using Telegram.Navigation;
+using Telegram.Views;
+using Telegram.Views.Host;
 using Windows.Storage;
 
-namespace Unigram.Services
+namespace Telegram.Services
 {
     public interface ILifetimeService
     {

@@ -14,7 +14,7 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Controls.Media
+namespace Telegram.Controls.Media
 {
     public class SolidGaussianBrush : XamlCompositionBrushBase
     {

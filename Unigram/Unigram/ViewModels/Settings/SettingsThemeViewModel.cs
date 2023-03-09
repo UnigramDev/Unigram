@@ -9,17 +9,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Unigram.Common;
-using Unigram.Navigation;
-using Unigram.Services;
-using Unigram.Services.Settings;
-using Unigram.Views.Popups;
+using Telegram.Common;
+using Telegram.Navigation;
+using Telegram.Services;
+using Telegram.Services.Settings;
+using Telegram.Views.Popups;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.ViewModels.Settings
+namespace Telegram.ViewModels.Settings
 {
     public class SettingsThemeViewModel : TLViewModelBase
     {

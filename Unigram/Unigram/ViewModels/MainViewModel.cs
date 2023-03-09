@@ -10,23 +10,23 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Telegram.Common;
+using Telegram.Converters;
+using Telegram.Navigation;
+using Telegram.Navigation.Services;
+using Telegram.Services;
+using Telegram.Services.Updates;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Converters;
-using Unigram.Navigation;
-using Unigram.Navigation.Services;
-using Unigram.Services;
-using Unigram.Services.Updates;
-using Unigram.ViewModels.Folders;
-using Unigram.Views;
-using Unigram.Views.Folders;
-using Unigram.Views.Popups;
+using Telegram.ViewModels.Folders;
+using Telegram.Views;
+using Telegram.Views.Folders;
+using Telegram.Views.Popups;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels
+namespace Telegram.ViewModels
 {
     public class MainViewModel : TLMultipleViewModelBase
         //IHandle<UpdateServiceNotification>,

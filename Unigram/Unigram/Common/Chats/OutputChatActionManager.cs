@@ -5,10 +5,10 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Services;
 
-namespace Unigram.Common.Chats
+namespace Telegram.Common.Chats
 {
     public class OutputChatActionManager
     {

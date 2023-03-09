@@ -8,15 +8,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Telegram.Collections;
+using Telegram.Common;
+using Telegram.Navigation.Services;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Collections;
-using Unigram.Common;
-using Unigram.Navigation.Services;
-using Unigram.Services;
-using Unigram.Views.Premium.Popups;
+using Telegram.Views.Premium.Popups;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels.Premium
+namespace Telegram.ViewModels.Premium
 {
     public class PromoViewModel : TLViewModelBase
     {

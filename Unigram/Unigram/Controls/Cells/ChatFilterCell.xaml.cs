@@ -6,12 +6,12 @@
 //
 using System;
 using System.Numerics;
-using Unigram.ViewModels;
+using Telegram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 
-namespace Unigram.Controls.Cells
+namespace Telegram.Controls.Cells
 {
     public sealed partial class ChatFilterCell : UserControl
     {

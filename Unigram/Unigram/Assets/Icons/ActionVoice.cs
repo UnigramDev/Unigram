@@ -12,7 +12,7 @@
 //           7.1.0+ge1fa92580f
 //       
 //       Command:
-//           LottieGen -Language CSharp -Namespace Unigram.Assets.Icons -Public -WinUIVersion 2.7 -InputFile ActionVoice.json
+//           LottieGen -Language CSharp -Namespace Telegram.Assets.Icons -Public -WinUIVersion 2.7 -InputFile ActionVoice.json
 //       
 //       Input file:
 //           ActionVoice.json (3579 bytes created 16:38+01:00 Dec 22 2021)
@@ -57,7 +57,7 @@ using Windows.Graphics;
 using Windows.UI;
 using Windows.UI.Composition;
 
-namespace Unigram.Assets.Icons
+namespace Telegram.Assets.Icons
 {
     // Name:        u_recording_voice
     // Frame rate:  60 fps

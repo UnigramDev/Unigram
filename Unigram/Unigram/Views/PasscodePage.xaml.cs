@@ -5,9 +5,9 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using Unigram.Common;
-using Unigram.Controls;
-using Unigram.Services;
+using Telegram.Common;
+using Telegram.Controls;
+using Telegram.Services;
 using Windows.ApplicationModel;
 using Windows.Security.Credentials;
 using Windows.Security.Cryptography;
@@ -17,7 +17,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
-namespace Unigram.Views
+namespace Telegram.Views
 {
     public sealed partial class PasscodePage : ContentPopup
     {

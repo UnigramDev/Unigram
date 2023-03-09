@@ -10,16 +10,16 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
-using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Common.Chats;
-using Unigram.Controls.Chats;
-using Unigram.Controls.Messages;
-using Unigram.Converters;
+using Telegram.Common;
+using Telegram.Common.Chats;
+using Telegram.Controls.Chats;
+using Telegram.Controls.Messages;
+using Telegram.Converters;
 using Telegram.Native;
-using Unigram.Navigation;
-using Unigram.Navigation.Services;
-using Unigram.Services;
+using Telegram.Navigation;
+using Telegram.Navigation.Services;
+using Telegram.Services;
+using Telegram.Td.Api;
 using Windows.Foundation;
 using Windows.Storage.Streams;
 using Windows.UI;
@@ -33,7 +33,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Shapes;
 
-namespace Unigram.Controls.Cells
+namespace Telegram.Controls.Cells
 {
     public enum MessageTicksState
     {

@@ -12,7 +12,7 @@
 //           7.1.0+ge1fa92580f
 //       
 //       Command:
-//           LottieGen -Language CSharp -Namespace Unigram.Assets.Icons -Public -WinUIVersion 2.7 -InputFile ActionTyping.json
+//           LottieGen -Language CSharp -Namespace Telegram.Assets.Icons -Public -WinUIVersion 2.7 -InputFile ActionTyping.json
 //       
 //       Input file:
 //           ActionTyping.json (3756 bytes created 16:38+01:00 Dec 22 2021)
@@ -57,7 +57,7 @@ using Windows.Graphics;
 using Windows.UI;
 using Windows.UI.Composition;
 
-namespace Unigram.Assets.Icons
+namespace Telegram.Assets.Icons
 {
     // Name:        u_typing_text
     // Frame rate:  60 fps

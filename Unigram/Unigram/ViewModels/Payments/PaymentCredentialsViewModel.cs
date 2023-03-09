@@ -5,12 +5,12 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System.Threading.Tasks;
+using Telegram.Entities;
+using Telegram.Services;
+using Telegram.Services.Stripe;
 using Telegram.Td.Api;
-using Unigram.Entities;
-using Unigram.Services;
-using Unigram.Services.Stripe;
 
-namespace Unigram.ViewModels.Payments
+namespace Telegram.ViewModels.Payments
 {
     public class PaymentCredentialsViewModel : TLViewModelBase
     {

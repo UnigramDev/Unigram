@@ -12,7 +12,7 @@
 //           7.1.0-build.5+g109463c06a
 //       
 //       Command:
-//           LottieGen -DisableTranslationOptimizer -GenerateColorBindings -Language CSharp -MinimumUapVersion 8 -Namespace Unigram.Assets.Icons -Public -WinUIVersion 2.7 -InputFile VoiceRecognition.json
+//           LottieGen -DisableTranslationOptimizer -GenerateColorBindings -Language CSharp -MinimumUapVersion 8 -Namespace Telegram.Assets.Icons -Public -WinUIVersion 2.7 -InputFile VoiceRecognition.json
 //       
 //       Input file:
 //           VoiceRecognition.json (10485 bytes created 14:27+02:00 Jun 12 2022)
@@ -57,7 +57,7 @@ using Windows.Graphics;
 using Windows.UI;
 using Windows.UI.Composition;
 
-namespace Unigram.Assets.Icons
+namespace Telegram.Assets.Icons
 {
     // Name:        Comp 7
     // Frame rate:  60 fps

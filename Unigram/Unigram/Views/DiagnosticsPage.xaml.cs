@@ -5,15 +5,15 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
+using Telegram.Converters;
 using Telegram.Td;
 using Telegram.Td.Api;
-using Unigram.Converters;
-using Unigram.ViewModels;
-using Unigram.Views.Popups;
+using Telegram.ViewModels;
+using Telegram.Views.Popups;
 using Windows.Storage;
 using Windows.UI.Xaml;
 
-namespace Unigram.Views
+namespace Telegram.Views
 {
     public sealed partial class DiagnosticsPage : HostedPage
     {

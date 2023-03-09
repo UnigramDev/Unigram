@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using Telegram.Td.Api;
 using Windows.Storage;
 
-namespace Unigram.Services.Settings
+namespace Telegram.Services.Settings
 {
     public class NotificationsSettings : SettingsServiceBase
     {

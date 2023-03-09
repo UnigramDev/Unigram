@@ -9,17 +9,17 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using Telegram.Common;
+using Telegram.Controls;
+using Telegram.Controls.Gallery;
+using Telegram.Controls.Messages.Content;
+using Telegram.Converters;
+using Telegram.Navigation;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Controls;
-using Unigram.Controls.Gallery;
-using Unigram.Controls.Messages.Content;
-using Unigram.Converters;
-using Unigram.Navigation;
-using Unigram.Services;
-using Unigram.ViewModels;
-using Unigram.ViewModels.Delegates;
-using Unigram.ViewModels.Gallery;
+using Telegram.ViewModels;
+using Telegram.ViewModels.Delegates;
+using Telegram.ViewModels.Gallery;
 using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.System;
@@ -34,7 +34,7 @@ using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
 
-namespace Unigram.Views
+namespace Telegram.Views
 {
     public sealed partial class InstantPage : HostedPage, IMessageDelegate
     {

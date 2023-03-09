@@ -6,11 +6,11 @@
 //
 using System;
 using System.Numerics;
+using Telegram.Common;
+using Telegram.Controls.Messages;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Controls.Messages;
-using Unigram.Services;
-using Unigram.ViewModels;
+using Telegram.ViewModels;
 using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.Composition.Interactions;
@@ -22,7 +22,7 @@ using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Controls.Chats
+namespace Telegram.Controls.Chats
 {
     public class ChatListViewItem : LazoListViewItem, IInteractionTrackerOwner
     {

@@ -10,13 +10,13 @@ using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Numerics;
 using System.Threading;
+using Telegram.Common;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Services;
 using Windows.Foundation;
 using Windows.UI;
 
-namespace Unigram.Controls.Chats
+namespace Telegram.Controls.Chats
 {
     public class ChatBackgroundRenderer : IndividualAnimatedControl<object>
     {

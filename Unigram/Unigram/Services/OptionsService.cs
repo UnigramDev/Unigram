@@ -14,7 +14,7 @@
 using System.Collections.Generic;
 using Telegram.Td.Api;
 
-namespace Unigram.Services
+namespace Telegram.Services
 {
     public interface IOptionsService
     {

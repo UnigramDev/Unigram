@@ -6,11 +6,11 @@
 //
 using System;
 using System.Numerics;
+using Telegram.Common;
+using Telegram.Controls.Cells;
+using Telegram.Converters;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Controls.Cells;
-using Unigram.Converters;
-using Unigram.ViewModels;
+using Telegram.ViewModels;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Controls.Messages
+namespace Telegram.Controls.Messages
 {
     public sealed class MessageFooter : Control
     {

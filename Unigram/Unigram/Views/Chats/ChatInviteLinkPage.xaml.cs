@@ -5,17 +5,17 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
+using Telegram.Common;
+using Telegram.Controls;
+using Telegram.Converters;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Controls;
-using Unigram.Converters;
-using Unigram.ViewModels.Chats;
+using Telegram.ViewModels.Chats;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Views.Chats
+namespace Telegram.Views.Chats
 {
     public sealed partial class ChatInviteLinkPage : HostedPage
     {

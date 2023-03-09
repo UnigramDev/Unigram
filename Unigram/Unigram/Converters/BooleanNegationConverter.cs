@@ -7,7 +7,7 @@
 using System;
 using Windows.UI.Xaml.Data;
 
-namespace Unigram.Converters
+namespace Telegram.Converters
 {
     public sealed class BooleanNegationConverter : IValueConverter
     {

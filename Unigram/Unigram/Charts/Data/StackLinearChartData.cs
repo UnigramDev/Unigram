@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using Windows.Data.Json;
 
-namespace Unigram.Charts.Data
+namespace Telegram.Charts.Data
 {
     public class StackLinearChartData : ChartData
     {

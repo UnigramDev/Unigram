@@ -8,7 +8,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     public class UniqueList<TKey, TValue> : IList<TValue>
     {

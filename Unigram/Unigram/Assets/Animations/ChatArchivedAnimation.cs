@@ -11,7 +11,7 @@ using System.Numerics;
 using Windows.UI;
 using Windows.UI.Composition;
 
-namespace Unigram.Assets.Animations
+namespace Telegram.Assets.Animations
 {
     sealed class ChatArchivedAnimation : IAnimatedVisualSource
     {

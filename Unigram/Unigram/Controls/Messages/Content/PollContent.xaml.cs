@@ -8,13 +8,13 @@ using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Telegram.Common;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.ViewModels;
+using Telegram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Controls.Messages.Content
+namespace Telegram.Controls.Messages.Content
 {
     public sealed class PollContent : Control, IContent
     {

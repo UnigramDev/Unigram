@@ -4,12 +4,12 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Telegram.Controls;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Controls;
-using Unigram.Services;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Views.Premium.Popups
+namespace Telegram.Views.Premium.Popups
 {
     public sealed partial class UniqueStickersPopup : ContentPopup
     {

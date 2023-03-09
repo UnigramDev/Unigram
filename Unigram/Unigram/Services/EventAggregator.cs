@@ -10,11 +10,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using Unigram.Navigation.Services;
+using Telegram.Navigation.Services;
 using Windows.System;
-using static Unigram.Services.EventAggregator;
+using static Telegram.Services.EventAggregator;
 
-namespace Unigram.Services
+namespace Telegram.Services
 {
     /// <summary>
     ///   A marker interface for classes that subscribe to messages.

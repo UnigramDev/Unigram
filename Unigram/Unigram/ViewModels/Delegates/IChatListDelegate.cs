@@ -6,10 +6,10 @@
 //
 using System;
 using System.Collections.Generic;
+using Telegram.Controls;
 using Telegram.Td.Api;
-using Unigram.Controls;
 
-namespace Unigram.ViewModels.Delegates
+namespace Telegram.ViewModels.Delegates
 {
     public interface IChatListDelegate : IViewModelDelegate
     {

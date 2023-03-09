@@ -8,10 +8,10 @@ using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Numerics;
-using Unigram.Charts.Data;
-using Unigram.Charts.DataView;
+using Telegram.Charts.Data;
+using Telegram.Charts.DataView;
 
-namespace Unigram.Charts
+namespace Telegram.Charts
 {
     public class LinearChartView : BaseChartView<ChartData, LineViewData>
     {

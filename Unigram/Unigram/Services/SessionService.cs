@@ -6,12 +6,12 @@
 //
 using System.ComponentModel;
 using System.Threading.Tasks;
+using Telegram.Common;
+using Telegram.Navigation;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Navigation;
-using Unigram.ViewModels;
+using Telegram.ViewModels;
 
-namespace Unigram.Services
+namespace Telegram.Services
 {
     public interface ISessionService : INotifyPropertyChanged
     {

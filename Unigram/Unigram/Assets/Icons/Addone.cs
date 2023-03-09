@@ -12,7 +12,7 @@
 //           7.1.0-build.5+g109463c06a
 //       
 //       Command:
-//           LottieGen -DisableTranslationOptimizer -GenerateColorBindings -Language CSharp -MinimumUapVersion 8 -Namespace Unigram.Assets.Icons -Public -WinUIVersion 2.7 -InputFile addone.json
+//           LottieGen -DisableTranslationOptimizer -GenerateColorBindings -Language CSharp -MinimumUapVersion 8 -Namespace Telegram.Assets.Icons -Public -WinUIVersion 2.7 -InputFile addone.json
 //       
 //       Input file:
 //           addone.json (10478 bytes created 15:50+02:00 Jun 14 2022)
@@ -59,7 +59,7 @@ using Windows.Graphics;
 using Windows.UI;
 using Windows.UI.Composition;
 
-namespace Unigram.Assets.Icons
+namespace Telegram.Assets.Icons
 {
     // Name:        addone
     // Frame rate:  60 fps

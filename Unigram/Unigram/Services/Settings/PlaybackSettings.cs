@@ -7,7 +7,7 @@
 using Windows.Media;
 using Windows.Storage;
 
-namespace Unigram.Services.Settings
+namespace Telegram.Services.Settings
 {
     public class PlaybackSettings : SettingsServiceBase
     {

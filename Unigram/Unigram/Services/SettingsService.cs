@@ -8,7 +8,7 @@ using System;
 using System.Linq;
 using System.Numerics;
 using Telegram.Native.Calls;
-using Unigram.Services.Settings;
+using Telegram.Services.Settings;
 using Windows.Globalization;
 using Windows.Storage;
 using Windows.System.Profile;
@@ -27,7 +27,7 @@ namespace Telegram.Native.Calls
 
 #endif
 
-namespace Unigram.Services
+namespace Telegram.Services
 {
     public interface ISettingsService
     {

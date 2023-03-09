@@ -7,13 +7,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Telegram.Collections;
+using Telegram.Common;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Collections;
-using Unigram.Common;
-using Unigram.Services;
-using Unigram.ViewModels.Gallery;
+using Telegram.ViewModels.Gallery;
 
-namespace Unigram.ViewModels
+namespace Telegram.ViewModels
 {
     public class InstantGalleryViewModel : GalleryViewModelBase
     {

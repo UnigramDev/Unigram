@@ -8,12 +8,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Telegram.Common;
+using Telegram.Services.Settings;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Services.Settings;
 using Windows.Storage;
 
-namespace Unigram.Services
+namespace Telegram.Services
 {
     public interface IEmojiSetService
     {

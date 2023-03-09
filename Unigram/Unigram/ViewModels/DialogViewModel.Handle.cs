@@ -8,18 +8,18 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using Telegram.Common;
+using Telegram.Controls.Messages;
+using Telegram.Controls.Messages.Content;
+using Telegram.Services;
+using Telegram.Services.Updates;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Controls.Messages;
-using Unigram.Controls.Messages.Content;
-using Unigram.Services;
-using Unigram.Services.Updates;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 
-namespace Unigram.ViewModels
+namespace Telegram.ViewModels
 {
     public partial class DialogViewModel : IHandle
     //IHandle<UpdateWindowActivated>,

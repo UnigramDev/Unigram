@@ -8,16 +8,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Telegram.Collections;
+using Telegram.Common;
+using Telegram.Converters;
+using Telegram.Navigation.Services;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Collections;
-using Unigram.Common;
-using Unigram.Converters;
-using Unigram.Navigation.Services;
-using Unigram.Services;
-using Unigram.Views.Popups;
+using Telegram.Views.Popups;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels.Folders
+namespace Telegram.ViewModels.Folders
 {
     public class FolderViewModel : TLViewModelBase
     {

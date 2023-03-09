@@ -8,7 +8,7 @@ using System;
 using System.Text;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Controls.Payments
+namespace Telegram.Controls.Payments
 {
     public class CardTextBox : TextBox
     {

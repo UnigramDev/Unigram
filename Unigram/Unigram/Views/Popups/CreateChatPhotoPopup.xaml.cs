@@ -6,17 +6,17 @@
 //
 using System;
 using System.Threading.Tasks;
+using Telegram.Common;
+using Telegram.Controls;
+using Telegram.Controls.Chats;
+using Telegram.Services;
+using Telegram.Services.Settings;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Controls;
-using Unigram.Controls.Chats;
-using Unigram.Services;
-using Unigram.Services.Settings;
-using Unigram.ViewModels;
-using Unigram.ViewModels.Drawers;
+using Telegram.ViewModels;
+using Telegram.ViewModels.Drawers;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Views.Popups
+namespace Telegram.Views.Popups
 {
     public sealed partial class CreateChatPhotoPopup : ContentPopup
     {

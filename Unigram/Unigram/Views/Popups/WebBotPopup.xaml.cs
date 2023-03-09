@@ -6,9 +6,9 @@
 //
 using System;
 using System.Globalization;
-using Telegram.Td.Api;
-using Unigram.Controls;
+using Telegram.Controls;
 using Telegram.Native;
+using Telegram.Td.Api;
 using Windows.Data.Json;
 using Windows.UI;
 using Windows.UI.Xaml.Controls;
@@ -16,7 +16,7 @@ using Windows.UI.Xaml.Media;
 
 // The Content Dialog item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
-namespace Unigram.Views.Popups
+namespace Telegram.Views.Popups
 {
     public sealed partial class WebBotPopup : ContentPopup
     {

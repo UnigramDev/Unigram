@@ -7,19 +7,19 @@
 using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
+using Telegram.Common;
+using Telegram.Controls;
+using Telegram.Entities;
+using Telegram.Navigation.Services;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Controls;
-using Unigram.Entities;
-using Unigram.Navigation.Services;
-using Unigram.ViewModels;
-using Unigram.Views.Popups;
+using Telegram.ViewModels;
+using Telegram.Views.Popups;
 using Windows.Foundation;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml.Controls;
-using static Unigram.Services.GenerationService;
+using static Telegram.Services.GenerationService;
 
-namespace Unigram.Services
+namespace Telegram.Services
 {
     public interface IProfilePhotoService
     {

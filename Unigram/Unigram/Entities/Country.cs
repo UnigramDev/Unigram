@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Windows.Globalization;
 
-namespace Unigram.Entities
+namespace Telegram.Entities
 {
     public class Country
     {

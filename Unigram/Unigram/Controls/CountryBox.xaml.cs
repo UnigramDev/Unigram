@@ -7,11 +7,11 @@
 using System;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Unigram.Entities;
+using Telegram.Entities;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     public sealed partial class CountryBox : Grid
     {

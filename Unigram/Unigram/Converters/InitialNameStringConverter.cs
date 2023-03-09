@@ -9,7 +9,7 @@ using System.Globalization;
 using Telegram.Td.Api;
 using Windows.UI.Xaml.Data;
 
-namespace Unigram.Converters
+namespace Telegram.Converters
 {
     public class InitialNameStringConverter : IValueConverter
     {

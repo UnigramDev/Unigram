@@ -12,7 +12,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Hosting;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     public class NumericTextBlock : Control
     {

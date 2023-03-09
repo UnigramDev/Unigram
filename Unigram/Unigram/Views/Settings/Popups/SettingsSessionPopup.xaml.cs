@@ -7,18 +7,18 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Telegram.Common;
+using Telegram.Controls;
+using Telegram.Controls.Cells;
+using Telegram.Converters;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Controls;
-using Unigram.Controls.Cells;
-using Unigram.Converters;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
-namespace Unigram.Views.Settings.Popups
+namespace Telegram.Views.Settings.Popups
 {
     public sealed partial class SettingsSessionPopup : ContentPopup
     {

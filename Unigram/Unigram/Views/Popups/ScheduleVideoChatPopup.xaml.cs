@@ -6,13 +6,13 @@
 //
 using System;
 using System.Linq;
+using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Native;
-using Unigram.Common;
-using Unigram.Controls;
 using Windows.System.UserProfile;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Views.Popups
+namespace Telegram.Views.Popups
 {
     public sealed partial class ScheduleVideoChatPopup : ContentPopup
     {

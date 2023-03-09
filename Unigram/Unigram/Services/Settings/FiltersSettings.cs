@@ -6,7 +6,7 @@
 //
 using Windows.Storage;
 
-namespace Unigram.Services.Settings
+namespace Telegram.Services.Settings
 {
     public class FiltersSettings : SettingsServiceBase
     {

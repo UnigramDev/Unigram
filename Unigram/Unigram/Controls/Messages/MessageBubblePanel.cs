@@ -7,15 +7,15 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using Telegram.Td.Api;
-using Unigram.Common;
+using Telegram.Common;
 using Telegram.Native;
-using Unigram.Navigation;
+using Telegram.Navigation;
+using Telegram.Td.Api;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Controls.Messages
+namespace Telegram.Controls.Messages
 {
     public class MessageBubblePanel : Panel
     {

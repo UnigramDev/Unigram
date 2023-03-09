@@ -6,18 +6,18 @@
 //
 using System;
 using System.Linq;
+using Telegram.Common;
+using Telegram.Controls;
+using Telegram.Converters;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Controls;
-using Unigram.Converters;
-using Unigram.ViewModels.Settings;
+using Telegram.ViewModels.Settings;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Views.Settings
+namespace Telegram.Views.Settings
 {
     public sealed partial class SettingsLanguagePage : HostedPage
     {

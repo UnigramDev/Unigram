@@ -10,14 +10,14 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Unigram.Common;
+using Telegram.Common;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Contacts;
 using Windows.ApplicationModel.UserDataAccounts;
 using Windows.Storage;
 using Windows.UI.StartScreen;
 
-namespace Unigram.Services
+namespace Telegram.Services
 {
     public interface IContactsService
     {

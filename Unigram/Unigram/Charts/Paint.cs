@@ -8,7 +8,7 @@ using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.Graphics.Canvas.Text;
 using Windows.UI;
 
-namespace Unigram.Charts
+namespace Telegram.Charts
 {
     public class Paint
     {

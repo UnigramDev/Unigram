@@ -6,16 +6,16 @@
 //
 using System.Linq;
 using System.Text;
+using Telegram.Controls.Messages;
+using Telegram.Converters;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Controls.Messages;
-using Unigram.Converters;
-using Unigram.Services;
-using Unigram.ViewModels;
+using Telegram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     public static class Automation
     {

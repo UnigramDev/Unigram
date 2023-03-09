@@ -11,17 +11,17 @@ using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Telegram.Common;
+using Telegram.Converters;
+using Telegram.Navigation;
+using Telegram.Services;
+using Telegram.Services.ViewService;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Converters;
-using Unigram.Navigation;
-using Unigram.Services;
-using Unigram.Services.ViewService;
-using Unigram.ViewModels.Chats;
-using Unigram.ViewModels.Delegates;
-using Unigram.ViewModels.Gallery;
-using Unigram.ViewModels.Users;
-using Unigram.Views;
+using Telegram.ViewModels.Chats;
+using Telegram.ViewModels.Delegates;
+using Telegram.ViewModels.Gallery;
+using Telegram.ViewModels.Users;
+using Telegram.Views;
 using Windows.Devices.Input;
 using Windows.Foundation;
 using Windows.Media.Core;
@@ -40,7 +40,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Controls.Gallery
+namespace Telegram.Controls.Gallery
 {
     public sealed partial class GalleryView : OverlayPage, IGalleryDelegate
     //, IHandle<UpdateDeleteMessages>

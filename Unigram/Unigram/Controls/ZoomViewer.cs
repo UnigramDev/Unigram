@@ -10,7 +10,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Point = Windows.Foundation.Point;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     public class ZoomViewer : ContentControl
     {

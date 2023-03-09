@@ -9,7 +9,7 @@ using Windows.ApplicationModel;
 using Windows.Foundation.Metadata;
 using Windows.System.Profile;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     public static class ApiInfo
     {

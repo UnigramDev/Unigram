@@ -7,10 +7,10 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using Telegram.Td.Api;
 using Telegram.Native;
+using Telegram.Td.Api;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     public class DateTimeParser
     {

@@ -8,18 +8,18 @@ using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Telegram.Collections;
+using Telegram.Common;
+using Telegram.Navigation.Services;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Collections;
-using Unigram.Common;
-using Unigram.Navigation.Services;
-using Unigram.Services;
-using Unigram.ViewModels.Delegates;
-using Unigram.Views.Popups;
+using Telegram.ViewModels.Delegates;
+using Telegram.Views.Popups;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels
+namespace Telegram.ViewModels
 {
     public class BackgroundViewModel : TLViewModelBase, IDelegable<IBackgroundDelegate>
     {

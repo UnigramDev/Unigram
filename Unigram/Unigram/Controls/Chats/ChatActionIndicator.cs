@@ -7,8 +7,8 @@
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Numerics;
+using Telegram.Assets.Icons;
 using Telegram.Td.Api;
-using Unigram.Assets.Icons;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -16,7 +16,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Controls.Chats
+namespace Telegram.Controls.Chats
 {
     public class ChatActionIndicator : FrameworkElement
     {

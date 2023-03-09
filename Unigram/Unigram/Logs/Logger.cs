@@ -8,7 +8,7 @@ using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
-namespace Unigram.Logs
+namespace Telegram.Logs
 {
     public sealed class Logger
     {

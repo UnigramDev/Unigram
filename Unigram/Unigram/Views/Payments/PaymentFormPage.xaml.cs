@@ -4,15 +4,15 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Telegram.Common;
+using Telegram.Converters;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Converters;
-using Unigram.ViewModels.Payments;
+using Telegram.ViewModels.Payments;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Views.Payments
+namespace Telegram.Views.Payments
 {
     public sealed partial class PaymentFormPage : HostedPage
     {

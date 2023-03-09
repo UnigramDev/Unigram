@@ -6,7 +6,7 @@
 //
 using System;
 
-namespace Unigram
+namespace Telegram
 {
     public class TdException : Exception
     {

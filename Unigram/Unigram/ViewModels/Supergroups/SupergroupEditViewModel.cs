@@ -7,18 +7,18 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Telegram.Common;
+using Telegram.Navigation.Services;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Navigation.Services;
-using Unigram.Services;
-using Unigram.ViewModels.Delegates;
-using Unigram.Views.Chats;
-using Unigram.Views.Popups;
-using Unigram.Views.Supergroups;
+using Telegram.ViewModels.Delegates;
+using Telegram.Views.Chats;
+using Telegram.Views.Popups;
+using Telegram.Views.Supergroups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels.Supergroups
+namespace Telegram.ViewModels.Supergroups
 {
     public class SupergroupEditViewModel : TLViewModelBase
         , IDelegable<ISupergroupEditDelegate>

@@ -10,7 +10,7 @@ using System.Collections.Specialized;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     public class FluidGridView
     {

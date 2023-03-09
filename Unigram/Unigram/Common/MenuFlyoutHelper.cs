@@ -7,8 +7,8 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Input;
-using Unigram.Controls.Drawers;
-using Unigram.Navigation;
+using Telegram.Controls.Drawers;
+using Telegram.Navigation;
 using Windows.Foundation;
 using Windows.System;
 using Windows.UI.Xaml;
@@ -16,7 +16,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     public static class MenuFlyoutHelper
     {

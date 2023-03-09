@@ -8,11 +8,11 @@ using LinqToVisualTree;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using Telegram.Common;
+using Telegram.Services;
+using Telegram.Services.Settings;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Services;
-using Unigram.Services.Settings;
-using Unigram.ViewModels.Drawers;
+using Telegram.ViewModels.Drawers;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -20,9 +20,9 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
-using StickerSetViewModel = Unigram.ViewModels.Drawers.StickerSetViewModel;
+using StickerSetViewModel = Telegram.ViewModels.Drawers.StickerSetViewModel;
 
-namespace Unigram.Controls.Drawers
+namespace Telegram.Controls.Drawers
 {
     public class TopicsEmojiDrawer : EmojiDrawer
     {

@@ -7,9 +7,9 @@
 using System;
 using System.Numerics;
 using System.Windows.Input;
+using Telegram.Navigation;
 using Telegram.Td.Api;
-using Unigram.Navigation;
-using Unigram.ViewModels;
+using Telegram.ViewModels;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Controls.Chats
+namespace Telegram.Controls.Chats
 {
     public sealed partial class ChatActionBarView : UserControl
     {

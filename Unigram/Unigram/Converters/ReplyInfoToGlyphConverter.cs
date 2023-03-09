@@ -7,9 +7,9 @@
 using System;
 using Telegram.Td;
 using Telegram.Td.Api;
-using Unigram.ViewModels;
+using Telegram.ViewModels;
 
-namespace Unigram.Converters
+namespace Telegram.Converters
 {
     public class Icons
     {

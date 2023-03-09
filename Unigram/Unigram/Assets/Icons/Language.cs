@@ -12,7 +12,7 @@
 //           7.1.0+ge1fa92580f
 //       
 //       Command:
-//           LottieGen -Language CSharp -Namespace Unigram.Assets.Icons -Public -WinUIVersion 2.7 -InputFile Language.json
+//           LottieGen -Language CSharp -Namespace Telegram.Assets.Icons -Public -WinUIVersion 2.7 -InputFile Language.json
 //       
 //       Input file:
 //           Language.json (5213 bytes created 17:41+01:00 Dec 21 2021)
@@ -59,7 +59,7 @@ using Windows.Graphics;
 using Windows.UI;
 using Windows.UI.Composition;
 
-namespace Unigram.Assets.Icons
+namespace Telegram.Assets.Icons
 {
     // Name:        u_language
     // Frame rate:  60 fps

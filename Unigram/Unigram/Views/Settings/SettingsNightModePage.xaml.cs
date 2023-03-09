@@ -6,18 +6,18 @@
 //
 using System;
 using System.Linq;
+using Telegram.Common;
+using Telegram.Converters;
+using Telegram.Services;
+using Telegram.Services.Settings;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Converters;
-using Unigram.Services;
-using Unigram.Services.Settings;
-using Unigram.ViewModels.Settings;
+using Telegram.ViewModels.Settings;
 using Windows.System.UserProfile;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
-namespace Unigram.Views.Settings
+namespace Telegram.Views.Settings
 {
     public sealed partial class SettingsNightModePage : HostedPage
     {

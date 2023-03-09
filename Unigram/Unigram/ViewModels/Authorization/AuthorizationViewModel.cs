@@ -7,17 +7,17 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Telegram.Common;
+using Telegram.Entities;
+using Telegram.Navigation.Services;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Entities;
-using Unigram.Navigation.Services;
-using Unigram.Services;
-using Unigram.ViewModels.Delegates;
-using Unigram.Views.Settings;
+using Telegram.ViewModels.Delegates;
+using Telegram.Views.Settings;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels.Authorization
+namespace Telegram.ViewModels.Authorization
 {
     public class AuthorizationViewModel : TLViewModelBase, IDelegable<ISignInDelegate>
     {

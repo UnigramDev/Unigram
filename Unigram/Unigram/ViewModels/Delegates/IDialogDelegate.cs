@@ -5,12 +5,12 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System.Collections.Generic;
+using Telegram.Controls.Chats;
 using Telegram.Td.Api;
-using Unigram.Controls.Chats;
-using Unigram.ViewModels.Chats;
+using Telegram.ViewModels.Chats;
 using Windows.UI.Xaml;
 
-namespace Unigram.ViewModels.Delegates
+namespace Telegram.ViewModels.Delegates
 {
     public interface IDialogDelegate : IProfileDelegate
     {

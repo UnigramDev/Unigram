@@ -11,17 +11,17 @@ using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using Unigram.Charts;
-using Unigram.Common;
+using Telegram.Charts;
+using Telegram.Common;
 using Telegram.Native.Calls;
-using Unigram.Services;
-using Unigram.Views;
+using Telegram.Services;
+using Telegram.Views;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     public sealed partial class GroupCallActiveHeader : UserControl
     {

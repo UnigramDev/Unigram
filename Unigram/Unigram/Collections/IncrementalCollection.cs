@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.UI.Xaml.Data;
 
-namespace Unigram.Collections
+namespace Telegram.Collections
 {
     public interface IGroupSupportIncrementalLoading : ISupportIncrementalLoading
     {

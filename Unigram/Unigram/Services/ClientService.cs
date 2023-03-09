@@ -11,16 +11,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Telegram.Common;
+using Telegram.Entities;
+using Telegram.Services.Updates;
 using Telegram.Td;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Entities;
-using Unigram.Services.Updates;
 using Windows.Storage;
 using Windows.Storage.AccessCache;
 using Windows.System.Profile;
 
-namespace Unigram.Services
+namespace Telegram.Services
 {
     public interface IClientService : ICacheService
     {

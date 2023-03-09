@@ -7,10 +7,10 @@
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
-using Unigram.Collections;
-using Unigram.Navigation;
-using Unigram.Navigation.Services;
-using Unigram.Views;
+using Telegram.Collections;
+using Telegram.Navigation;
+using Telegram.Navigation.Services;
+using Telegram.Views;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     public sealed class MasterDetailView : ContentControl, IDisposable
     {

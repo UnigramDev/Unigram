@@ -11,7 +11,7 @@ using Windows.Storage.Pickers;
 using Windows.System;
 using Path = System.IO.Path;
 
-namespace Unigram.Services
+namespace Telegram.Services
 {
     public interface IStorageService
     {

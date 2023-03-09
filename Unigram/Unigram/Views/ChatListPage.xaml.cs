@@ -8,10 +8,10 @@ using LinqToVisualTree;
 using System;
 using System.Linq;
 using System.Numerics;
+using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Controls;
-using Unigram.ViewModels;
+using Telegram.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Composition;
 using Windows.UI.Composition.Interactions;
@@ -21,7 +21,7 @@ using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Views
+namespace Telegram.Views
 {
     public sealed partial class ChatListPage : ChatListListView, IInteractionTrackerOwner
     {

@@ -7,13 +7,13 @@
 using System;
 using System.Linq;
 using Telegram.Td.Api;
-using Unigram.ViewModels;
+using Telegram.ViewModels;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     public class AspectView : Grid
     {

@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Windows.UI.Text;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     public enum AutocompleteEntity
     {

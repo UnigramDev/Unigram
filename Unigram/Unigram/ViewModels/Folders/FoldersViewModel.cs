@@ -5,17 +5,17 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System.Threading.Tasks;
+using Telegram.Collections;
+using Telegram.Common;
+using Telegram.Navigation.Services;
+using Telegram.Services;
+using Telegram.Services.Updates;
 using Telegram.Td.Api;
-using Unigram.Collections;
-using Unigram.Common;
-using Unigram.Navigation.Services;
-using Unigram.Services;
-using Unigram.Services.Updates;
-using Unigram.Views.Folders;
+using Telegram.Views.Folders;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels.Folders
+namespace Telegram.ViewModels.Folders
 {
     public class FoldersViewModel : TLViewModelBase
         , IHandle

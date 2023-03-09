@@ -5,12 +5,12 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System.Numerics;
-using Unigram.Common;
+using Telegram.Common;
 using Windows.UI.Composition;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 
-namespace Unigram.Controls.Chats
+namespace Telegram.Controls.Chats
 {
     /// <summary>
     /// This button is intended to be placed over the BubbleTextBox

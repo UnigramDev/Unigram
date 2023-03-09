@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Telegram.Td.Api;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     public class TextStyleRun
     {

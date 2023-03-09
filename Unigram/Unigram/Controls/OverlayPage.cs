@@ -8,13 +8,13 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
-using Unigram.Common;
-using Unigram.Navigation;
-using Unigram.Navigation.Services;
-using Unigram.Services;
-using Unigram.Services.Keyboard;
-using Unigram.Services.ViewService;
-using Unigram.Views.Host;
+using Telegram.Common;
+using Telegram.Navigation;
+using Telegram.Navigation.Services;
+using Telegram.Services;
+using Telegram.Services.Keyboard;
+using Telegram.Services.ViewService;
+using Telegram.Views.Host;
 using Windows.Devices.Input;
 using Windows.Foundation;
 using Windows.Graphics.Display;
@@ -28,7 +28,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     public class OverlayPage : ContentControl, INavigablePage
     {

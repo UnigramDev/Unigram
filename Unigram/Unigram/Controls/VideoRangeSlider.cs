@@ -9,7 +9,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     public class VideoRangeSlider : RangeBase
     {

@@ -6,11 +6,11 @@
 //
 using System;
 using System.Collections.Concurrent;
-using Unigram.Navigation.Services;
+using Telegram.Navigation.Services;
 using Windows.Foundation;
 using Windows.Storage;
 
-namespace Unigram.Services
+namespace Telegram.Services
 {
     public interface ISettingsLegacyService
     {

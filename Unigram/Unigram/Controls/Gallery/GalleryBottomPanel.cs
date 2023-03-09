@@ -9,7 +9,7 @@ using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Controls.Gallery
+namespace Telegram.Controls.Gallery
 {
     public class GalleryBottomPanel : Panel
     {

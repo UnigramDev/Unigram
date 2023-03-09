@@ -6,14 +6,14 @@
 //
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
-using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Controls;
-using Unigram.Converters;
+using Telegram.Common;
+using Telegram.Controls;
+using Telegram.Converters;
 using Telegram.Native.Calls;
-using Unigram.Navigation;
-using Unigram.Services;
-using Unigram.Views.Popups;
+using Telegram.Navigation;
+using Telegram.Services;
+using Telegram.Td.Api;
+using Telegram.Views.Popups;
 using Windows.Devices.Enumeration;
 using Windows.System.Display;
 using Windows.UI;
@@ -24,7 +24,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Views.Calls
+namespace Telegram.Views.Calls
 {
     public sealed partial class LiveStreamPage : Page
     {

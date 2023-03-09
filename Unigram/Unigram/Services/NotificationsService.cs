@@ -10,14 +10,14 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
+using Telegram.Common;
+using Telegram.Controls;
+using Telegram.Controls.Messages;
+using Telegram.Converters;
+using Telegram.Navigation;
 using Telegram.Td;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Controls;
-using Unigram.Controls.Messages;
-using Unigram.Converters;
-using Unigram.Navigation;
-using Unigram.Views;
+using Telegram.Views;
 using Windows.ApplicationModel.AppService;
 using Windows.Data.Xml.Dom;
 using Windows.Foundation.Collections;
@@ -26,7 +26,7 @@ using Windows.Storage;
 using Windows.UI.Notifications;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Services
+namespace Telegram.Services
 {
     public interface INotificationsService
     {

@@ -4,12 +4,12 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Unigram.Navigation;
-using Unigram.ViewModels;
-using Unigram.ViewModels.Delegates;
+using Telegram.Navigation;
+using Telegram.ViewModels;
+using Telegram.ViewModels.Delegates;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Views
+namespace Telegram.Views
 {
     public sealed partial class ChatEventLogPage : HostedPage, INavigablePage, ISearchablePage, IActivablePage
     {

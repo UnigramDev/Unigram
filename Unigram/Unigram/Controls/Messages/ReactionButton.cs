@@ -7,11 +7,11 @@
 using RLottie;
 using System;
 using System.Threading.Tasks;
+using Telegram.Common;
+using Telegram.Converters;
+using Telegram.Navigation;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Converters;
-using Unigram.Navigation;
-using Unigram.ViewModels;
+using Telegram.ViewModels;
 using Windows.Foundation;
 using Windows.System;
 using Windows.UI.Xaml.Automation;
@@ -20,7 +20,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
-namespace Unigram.Controls.Messages
+namespace Telegram.Controls.Messages
 {
     public class ReactionButton : ToggleButton
     {

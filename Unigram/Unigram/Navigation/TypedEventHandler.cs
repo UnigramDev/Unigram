@@ -6,7 +6,7 @@
 //
 using System.ComponentModel;
 
-namespace Unigram.Navigation
+namespace Telegram.Navigation
 {
     public class CancelEventArgs<T> : CancelEventArgs
     {

@@ -7,7 +7,7 @@
 using System;
 using Windows.UI.Xaml;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     public class DebouncedProperty<T>
     {

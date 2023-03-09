@@ -6,12 +6,12 @@
 //
 using System;
 using System.Numerics;
+using Telegram.Common;
+using Telegram.Controls;
+using Telegram.Controls.Cells;
+using Telegram.Navigation;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Controls;
-using Unigram.Controls.Cells;
-using Unigram.Navigation;
-using Unigram.ViewModels;
+using Telegram.ViewModels;
 using Windows.Devices.Geolocation;
 using Windows.Foundation;
 using Windows.UI.Composition;
@@ -20,7 +20,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media.Imaging;
 
-namespace Unigram.Views.Popups
+namespace Telegram.Views.Popups
 {
     public sealed partial class SendLocationPopup : ContentPopup
     {

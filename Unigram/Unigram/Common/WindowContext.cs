@@ -6,14 +6,14 @@
 //
 using System;
 using System.Linq;
+using Telegram.Controls;
+using Telegram.Navigation;
+using Telegram.Navigation.Services;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Controls;
-using Unigram.Navigation;
-using Unigram.Navigation.Services;
-using Unigram.Services;
-using Unigram.Views;
-using Unigram.Views.Authorization;
-using Unigram.Views.Popups;
+using Telegram.Views;
+using Telegram.Views.Authorization;
+using Telegram.Views.Popups;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Contacts;
@@ -28,7 +28,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     public class TLWindowContext : WindowContext
     {

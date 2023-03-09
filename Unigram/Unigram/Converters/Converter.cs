@@ -7,14 +7,14 @@
 using System;
 using System.Globalization;
 using System.Linq;
-using Telegram.Td.Api;
-using Unigram.Common;
+using Telegram.Common;
 using Telegram.Native;
-using Unigram.Services;
+using Telegram.Services;
+using Telegram.Td.Api;
 using Windows.Globalization.DateTimeFormatting;
 using Windows.System.UserProfile;
 
-namespace Unigram.Converters
+namespace Telegram.Converters
 {
     public static class Converter
     {

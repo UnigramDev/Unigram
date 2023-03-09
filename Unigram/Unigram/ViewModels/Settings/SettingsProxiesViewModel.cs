@@ -7,19 +7,19 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Telegram.Td.Api;
-using Unigram.Collections;
-using Unigram.Common;
+using Telegram.Collections;
+using Telegram.Common;
 using Telegram.Native;
-using Unigram.Navigation;
-using Unigram.Navigation.Services;
-using Unigram.Services;
-using Unigram.Views.Popups;
+using Telegram.Navigation;
+using Telegram.Navigation.Services;
+using Telegram.Services;
+using Telegram.Td.Api;
+using Telegram.Views.Popups;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels.Settings
+namespace Telegram.ViewModels.Settings
 {
     public class SettingsProxiesViewModel : TLViewModelBase
         , IHandle

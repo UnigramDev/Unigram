@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Unigram.Collections
+namespace Telegram.Collections
 {
     public class SortedObservableCollection<T> : MvxObservableCollection<T>
     {

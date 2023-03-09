@@ -9,14 +9,14 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
+using Telegram.Common;
+using Telegram.Controls.Messages.Content;
+using Telegram.Converters;
+using Telegram.Native.Composition;
+using Telegram.Services;
 using Telegram.Td;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Controls.Messages.Content;
-using Unigram.Converters;
-using Telegram.Native.Composition;
-using Unigram.Services;
-using Unigram.ViewModels;
+using Telegram.ViewModels;
 using Windows.Foundation;
 using Windows.Storage.Streams;
 using Windows.UI;
@@ -32,7 +32,7 @@ using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Controls.Messages
+namespace Telegram.Controls.Messages
 {
     public sealed class MessageBubble : Control, IPlayerView
     {

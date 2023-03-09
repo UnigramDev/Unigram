@@ -6,10 +6,10 @@
 //
 using System;
 using System.Collections.Generic;
-using Unigram.Services.Settings;
+using Telegram.Services.Settings;
 using Windows.UI;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     public class ThemeColorizer
     {

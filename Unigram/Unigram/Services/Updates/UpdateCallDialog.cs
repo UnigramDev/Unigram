@@ -6,7 +6,7 @@
 //
 using Telegram.Td.Api;
 
-namespace Unigram.Services.Updates
+namespace Telegram.Services.Updates
 {
     public class UpdateCallDialog
     {

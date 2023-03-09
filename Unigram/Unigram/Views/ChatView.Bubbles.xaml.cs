@@ -8,17 +8,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using Telegram.Common;
+using Telegram.Controls;
+using Telegram.Controls.Chats;
+using Telegram.Controls.Gallery;
+using Telegram.Controls.Messages;
+using Telegram.Converters;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Controls;
-using Unigram.Controls.Chats;
-using Unigram.Controls.Gallery;
-using Unigram.Controls.Messages;
-using Unigram.Converters;
-using Unigram.Services;
-using Unigram.ViewModels;
-using Unigram.ViewModels.Chats;
-using Unigram.ViewModels.Gallery;
+using Telegram.ViewModels;
+using Telegram.ViewModels.Chats;
+using Telegram.ViewModels.Gallery;
 using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.Core;
@@ -30,7 +30,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Point = Windows.Foundation.Point;
 
-namespace Unigram.Views
+namespace Telegram.Views
 {
     public partial class ChatView
     {

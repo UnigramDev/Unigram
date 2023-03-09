@@ -6,17 +6,17 @@
 //
 using System;
 using System.Collections.Generic;
-using Unigram.Common;
-using Unigram.Converters;
-using Unigram.Services;
-using Unigram.Services.Settings;
-using Unigram.ViewModels.Settings;
+using Telegram.Common;
+using Telegram.Converters;
+using Telegram.Services;
+using Telegram.Services.Settings;
+using Telegram.ViewModels.Settings;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Views.Settings
+namespace Telegram.Views.Settings
 {
     public sealed partial class SettingsThemesPage : HostedPage
     {

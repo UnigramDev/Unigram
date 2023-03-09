@@ -5,14 +5,14 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System.Threading.Tasks;
+using Telegram.Navigation.Services;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Navigation.Services;
-using Unigram.Services;
-using Unigram.ViewModels.Delegates;
+using Telegram.ViewModels.Delegates;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels.Settings.Privacy
+namespace Telegram.ViewModels.Settings.Privacy
 {
     public class SettingsPrivacyShowPhotoViewModel : SettingsPrivacyViewModelBase, IDelegable<IUserDelegate>, IHandle<UpdateUserFullInfo>
     {

@@ -6,12 +6,12 @@
 //
 using System;
 using System.Text;
-using Unigram.Common;
-using Unigram.Entities;
+using Telegram.Common;
+using Telegram.Entities;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     public class PhoneTextBox : TextBox
     {

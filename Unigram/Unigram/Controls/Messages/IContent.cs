@@ -5,10 +5,10 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Telegram.Td.Api;
-using Unigram.ViewModels;
+using Telegram.ViewModels;
 using Windows.UI.Composition;
 
-namespace Unigram.Controls.Messages
+namespace Telegram.Controls.Messages
 {
     public interface IContent
     {

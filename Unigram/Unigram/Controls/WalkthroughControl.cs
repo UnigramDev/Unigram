@@ -8,7 +8,7 @@ using System;
 using System.Windows.Input;
 using Windows.UI.Xaml;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     public class WalkthroughControl : ContentPageHeader
     {

@@ -6,11 +6,11 @@
 //
 using System;
 using Telegram.Td.Api;
-using Unigram.ViewModels.Drawers;
+using Telegram.ViewModels.Drawers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Selectors
+namespace Telegram.Selectors
 {
     public class StickerSetTemplateSelector : DataTemplateSelector
     {

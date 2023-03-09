@@ -8,10 +8,10 @@ using LinqToVisualTree;
 using System;
 using System.Runtime.CompilerServices;
 using System.Text;
-using Telegram.Td.Api;
-using Unigram.Common;
+using Telegram.Common;
 using Telegram.Native;
-using Unigram.ViewModels;
+using Telegram.Td.Api;
+using Telegram.ViewModels;
 using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
-namespace Unigram.Controls.Messages
+namespace Telegram.Controls.Messages
 {
     public abstract class MessageReferenceBase : HyperlinkButton
     {

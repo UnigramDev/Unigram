@@ -7,15 +7,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Telegram.Controls;
 using Telegram.Td.Api;
-using Unigram.Controls;
-using Unigram.ViewModels.Drawers;
+using Telegram.ViewModels.Drawers;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     public class AnimatedListHandler
     {

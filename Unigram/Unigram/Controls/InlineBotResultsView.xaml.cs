@@ -7,15 +7,15 @@
 using System;
 using System.Globalization;
 using System.Linq;
+using Telegram.Common;
+using Telegram.Converters;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Converters;
-using Unigram.ViewModels;
+using Telegram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     public sealed partial class InlineBotResultsView : UserControl
     {

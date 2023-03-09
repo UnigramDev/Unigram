@@ -6,15 +6,15 @@
 //
 using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Telegram.Controls.Chats;
+using Telegram.Services;
+using Telegram.Services.Settings;
 using Telegram.Td.Api;
-using Unigram.Controls.Chats;
-using Unigram.Services;
-using Unigram.Services.Settings;
 using Windows.Foundation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
 
-namespace Unigram.Collections
+namespace Telegram.Collections
 {
     public class SearchStickersCollection : MvxObservableCollection<Sticker>, IAutocompleteCollection, ISupportIncrementalLoading
     {

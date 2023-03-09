@@ -12,29 +12,29 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Controls;
-using Unigram.Controls.Gallery;
-using Unigram.Converters;
-using Unigram.Entities;
+using Telegram.Common;
+using Telegram.Controls;
+using Telegram.Controls.Gallery;
+using Telegram.Converters;
+using Telegram.Entities;
 using Telegram.Native;
-using Unigram.Services;
-using Unigram.ViewModels.Chats;
-using Unigram.Views;
-using Unigram.Views.Chats;
-using Unigram.Views.Popups;
-using Unigram.Views.Settings;
-using Unigram.Views.Users;
+using Telegram.Services;
+using Telegram.Td.Api;
+using Telegram.ViewModels.Chats;
+using Telegram.Views;
+using Telegram.Views.Chats;
+using Telegram.Views.Popups;
+using Telegram.Views.Settings;
+using Telegram.Views.Users;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Storage.Streams;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using static Unigram.Services.GenerationService;
+using static Telegram.Services.GenerationService;
 
-namespace Unigram.ViewModels
+namespace Telegram.ViewModels
 {
     public partial class DialogViewModel
     {

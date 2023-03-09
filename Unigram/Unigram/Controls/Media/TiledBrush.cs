@@ -12,7 +12,7 @@ using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Controls.Media
+namespace Telegram.Controls.Media
 {
     public class TiledBrush : XamlCompositionBrushBase
     {

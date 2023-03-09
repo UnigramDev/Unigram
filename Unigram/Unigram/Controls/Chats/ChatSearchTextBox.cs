@@ -5,11 +5,11 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Telegram.Td.Api;
-using Unigram.ViewModels.Chats;
+using Telegram.ViewModels.Chats;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Controls.Chats
+namespace Telegram.Controls.Chats
 {
     public class ChatSearchTextBox : TextBox
     {

@@ -15,16 +15,16 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Telegram.Td.Api;
-using Unigram.Common;
+using Telegram.Common;
 using Telegram.Native;
-using Unigram.Services;
+using Telegram.Services;
+using Telegram.Td.Api;
 using Windows.Foundation;
 using Windows.Storage.Streams;
 using Windows.System.Threading;
 using Windows.UI;
 
-namespace Unigram.Controls.Messages
+namespace Telegram.Controls.Messages
 {
     public class CustomEmojiCanvas : AnimatedControl<object>
     {

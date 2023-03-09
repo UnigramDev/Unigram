@@ -7,14 +7,14 @@
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Numerics;
-using Unigram.Converters;
+using Telegram.Converters;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     public enum MessageContentState
     {

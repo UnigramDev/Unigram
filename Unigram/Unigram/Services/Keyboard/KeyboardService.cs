@@ -6,11 +6,11 @@
 //
 using System;
 using System.Collections.Generic;
-using Unigram.Logs;
+using Telegram.Logs;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 
-namespace Unigram.Services.Keyboard
+namespace Telegram.Services.Keyboard
 {
     public class KeyboardService
     {

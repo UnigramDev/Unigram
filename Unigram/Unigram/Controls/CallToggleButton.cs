@@ -11,7 +11,7 @@ using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Shapes;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     public class CallToggleButton : AnimatedGlyphToggleButton
     {

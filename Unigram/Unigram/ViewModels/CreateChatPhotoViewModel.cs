@@ -7,13 +7,13 @@
 using Rg.DiffUtils;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using Telegram.Navigation.Services;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Navigation.Services;
-using Unigram.Services;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels
+namespace Telegram.ViewModels
 {
     public struct CreateChatPhotoParameters
     {

@@ -4,13 +4,13 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Telegram.Converters;
 using Telegram.Td.Api;
-using Unigram.Converters;
-using Unigram.ViewModels.Delegates;
-using Unigram.ViewModels.Supergroups;
+using Telegram.ViewModels.Delegates;
+using Telegram.ViewModels.Supergroups;
 using Windows.UI.Xaml;
 
-namespace Unigram.Views.Supergroups
+namespace Telegram.Views.Supergroups
 {
     public sealed partial class SupergroupEditRestrictedPage : HostedPage, IMemberDelegate
     {

@@ -11,7 +11,7 @@ using System.Buffers;
 using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
-using Unigram.Common;
+using Telegram.Common;
 using Windows.Foundation;
 using Windows.Graphics;
 using Windows.Graphics.DirectX;
@@ -25,7 +25,7 @@ using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     [TemplatePart(Name = "Canvas", Type = typeof(Image))]
     public abstract class AnimatedControl<TAnimation> : Control, IPlayerView

@@ -5,12 +5,12 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
+using Telegram.Common;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Services;
-using Unigram.Views.Supergroups;
+using Telegram.Views.Supergroups;
 
-namespace Unigram.ViewModels.Supergroups
+namespace Telegram.ViewModels.Supergroups
 {
     public class SupergroupBannedViewModel : SupergroupMembersViewModelBase
     {

@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     public class PhoneNumber
     {

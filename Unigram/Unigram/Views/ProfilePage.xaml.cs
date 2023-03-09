@@ -5,16 +5,16 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System.ComponentModel;
+using Telegram.Collections;
 using Telegram.Td.Api;
-using Unigram.Collections;
-using Unigram.ViewModels;
-using Unigram.ViewModels.Delegates;
-using Unigram.Views.Chats;
-using Unigram.Views.Users;
+using Telegram.ViewModels;
+using Telegram.ViewModels.Delegates;
+using Telegram.Views.Chats;
+using Telegram.Views.Users;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Views
+namespace Telegram.Views
 {
     public sealed partial class ProfilePage : HostedPage, IProfileDelegate
     {

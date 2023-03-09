@@ -7,7 +7,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Unigram.Common;
+using Telegram.Common;
 using Windows.Foundation;
 using Windows.Graphics;
 using Windows.Graphics.Display;
@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     // This is a lightweight fork of AnimatedControl
     // that just uses a WriteableBitmap rather than DirectX

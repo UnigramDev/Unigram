@@ -12,7 +12,7 @@
 //           7.1.2-build.19+gd2624816c7
 //       
 //       Command:
-//           LottieGen -GenerateColorBindings -Language CSharp -MinimumUapVersion 8 -Namespace Unigram.Assets.Icons -Public -WinUIVersion 2.7 -InputFile Sun.json
+//           LottieGen -GenerateColorBindings -Language CSharp -MinimumUapVersion 8 -Namespace Telegram.Assets.Icons -Public -WinUIVersion 2.7 -InputFile Sun.json
 //       
 //       Input file:
 //           Sun.json (22933 bytes created 3:00+01:00 Jan 1 1980)
@@ -57,7 +57,7 @@ using Windows.Graphics;
 using Windows.UI;
 using Windows.UI.Composition;
 
-namespace Unigram.Assets.Icons
+namespace Telegram.Assets.Icons
 {
     // Name:        Sun Lottie 2
     // Frame rate:  60 fps

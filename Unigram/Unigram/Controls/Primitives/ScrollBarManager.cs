@@ -8,7 +8,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Controls.Primitives
+namespace Telegram.Controls.Primitives
 {
     public class ScrollBarManager : VisualStateManager
     {

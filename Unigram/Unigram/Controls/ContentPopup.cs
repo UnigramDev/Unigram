@@ -7,10 +7,10 @@
 using System;
 using System.Text;
 using System.Threading.Tasks;
-using Unigram.Common;
-using Unigram.Navigation;
-using Unigram.Services;
-using Unigram.Views.Host;
+using Telegram.Common;
+using Telegram.Navigation;
+using Telegram.Services;
+using Telegram.Views.Host;
 using Windows.UI.Core;
 using Windows.UI.Input;
 using Windows.UI.ViewManagement;
@@ -22,7 +22,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Shapes;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     public class ContentPopup : ContentDialog
     {

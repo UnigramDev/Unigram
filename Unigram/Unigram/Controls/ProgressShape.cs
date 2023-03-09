@@ -7,7 +7,7 @@
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Shapes;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     public class ProgressShape : ProgressBar
     {

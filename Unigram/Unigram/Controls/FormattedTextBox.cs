@@ -11,15 +11,15 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Common;
+using Telegram.Controls.Messages;
+using Telegram.Converters;
+using Telegram.Navigation;
+using Telegram.Services;
 using Telegram.Td;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Controls.Messages;
-using Unigram.Converters;
-using Unigram.Navigation;
-using Unigram.Services;
-using Unigram.ViewModels;
-using Unigram.Views.Popups;
+using Telegram.ViewModels;
+using Telegram.Views.Popups;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Storage.Streams;
@@ -33,7 +33,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     public class FormattedTextBox : RichEditBox
     {

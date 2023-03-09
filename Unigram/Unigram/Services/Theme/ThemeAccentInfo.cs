@@ -5,13 +5,13 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System.Collections.Generic;
-using Unigram.Common;
-using Unigram.Navigation;
-using Unigram.Services.Settings;
+using Telegram.Common;
+using Telegram.Navigation;
+using Telegram.Services.Settings;
 using Windows.UI;
 using Windows.UI.ViewManagement;
 
-namespace Unigram.Services
+namespace Telegram.Services
 {
     public class ThemeAccentInfo : ThemeInfoBase
     {

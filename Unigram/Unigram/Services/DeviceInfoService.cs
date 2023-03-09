@@ -9,7 +9,7 @@ using Windows.Security.ExchangeActiveSyncProvisioning;
 using Windows.System.Profile;
 using Windows.System.UserProfile;
 
-namespace Unigram.Services
+namespace Telegram.Services
 {
     public interface IDeviceInfoService
     {

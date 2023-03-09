@@ -8,11 +8,11 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using Unigram.Services;
-using Unigram.ViewModels.Delegates;
+using Telegram.Services;
+using Telegram.ViewModels.Delegates;
 using Windows.Storage;
 
-namespace Unigram.Views
+namespace Telegram.Views
 {
     public class TLContainer
     {

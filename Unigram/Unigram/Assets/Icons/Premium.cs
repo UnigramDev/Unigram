@@ -12,7 +12,7 @@
 //           7.1.0-build.5+g109463c06a
 //       
 //       Command:
-//           LottieGen -Language CSharp -Namespace Unigram.Assets.Icons -Public -WinUIVersion 2.7 -InputFile Premium.json
+//           LottieGen -Language CSharp -Namespace Telegram.Assets.Icons -Public -WinUIVersion 2.7 -InputFile Premium.json
 //       
 //       Input file:
 //           Premium.json (2349 bytes created 13:21+02:00 Jun 12 2022)
@@ -57,7 +57,7 @@ using Windows.Graphics;
 using Windows.UI;
 using Windows.UI.Composition;
 
-namespace Unigram.Assets.Icons
+namespace Telegram.Assets.Icons
 {
     // Name:        u_premium
     // Frame rate:  60 fps

@@ -8,13 +8,13 @@ using Microsoft.Graphics.Canvas.Effects;
 using System;
 using System.Numerics;
 using System.Threading.Tasks;
-using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Controls;
-using Unigram.Converters;
+using Telegram.Common;
+using Telegram.Controls;
+using Telegram.Converters;
 using Telegram.Native.Calls;
-using Unigram.Navigation;
-using Unigram.Services;
+using Telegram.Navigation;
+using Telegram.Services;
+using Telegram.Td.Api;
 using Windows.Devices.Enumeration;
 using Windows.System;
 using Windows.System.Display;
@@ -30,7 +30,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Shapes;
 using Point = Windows.Foundation.Point;
 
-namespace Unigram.Views.Calls
+namespace Telegram.Views.Calls
 {
     public sealed partial class CallPage : Page, IDisposable
     {

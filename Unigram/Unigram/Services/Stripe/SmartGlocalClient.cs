@@ -13,7 +13,7 @@ using Telegram.Td.Api;
 using Windows.Data.Json;
 using JsonValue = Windows.Data.Json.JsonValue;
 
-namespace Unigram.Services.Stripe
+namespace Telegram.Services.Stripe
 {
     public class SmartGlocalClient : IDisposable
     {

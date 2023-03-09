@@ -7,7 +7,7 @@
 using LinqToVisualTree;
 using System.Linq;
 using System.Numerics;
-using Unigram.Common;
+using Telegram.Common;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Shapes;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     public class ScrollViewerScrim : Control
     {

@@ -5,15 +5,15 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System.Text;
-using Unigram.Common;
-using Unigram.Converters;
-using Unigram.Services.Settings;
-using Unigram.ViewModels.Settings;
-using Unigram.Views.Popups;
+using Telegram.Common;
+using Telegram.Converters;
+using Telegram.Services.Settings;
+using Telegram.ViewModels.Settings;
+using Telegram.Views.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Views.Settings
+namespace Telegram.Views.Settings
 {
     public sealed partial class SettingsDataAndStoragePage : HostedPage
     {

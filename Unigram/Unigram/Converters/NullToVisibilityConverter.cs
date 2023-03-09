@@ -8,7 +8,7 @@ using System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
 
-namespace Unigram.Converters
+namespace Telegram.Converters
 {
     public class NullToVisibilityConverter : IValueConverter
     {

@@ -5,14 +5,14 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System.Linq;
+using Telegram.Common;
+using Telegram.Converters;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Converters;
-using Unigram.ViewModels.Delegates;
-using Unigram.ViewModels.Supergroups;
+using Telegram.ViewModels.Delegates;
+using Telegram.ViewModels.Supergroups;
 using Windows.UI.Xaml;
 
-namespace Unigram.Views.Supergroups
+namespace Telegram.Views.Supergroups
 {
     public sealed partial class SupergroupEditPage : HostedPage, ISupergroupEditDelegate
     {

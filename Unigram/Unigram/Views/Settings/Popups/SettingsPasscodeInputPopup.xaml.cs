@@ -5,13 +5,13 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System.Linq;
-using Unigram.Common;
-using Unigram.Controls;
+using Telegram.Common;
+using Telegram.Controls;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
-namespace Unigram.Views.Settings.Popups
+namespace Telegram.Views.Settings.Popups
 {
     public sealed partial class SettingsPasscodeInputPopup : ContentPopup
     {

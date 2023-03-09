@@ -8,10 +8,10 @@ using LinqToVisualTree;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Unigram.Common;
-using Unigram.Controls.Messages;
-using Unigram.Logs;
-using Unigram.ViewModels;
+using Telegram.Common;
+using Telegram.Controls.Messages;
+using Telegram.Logs;
+using Telegram.ViewModels;
 using Windows.Devices.Input;
 using Windows.UI.Input;
 using Windows.UI.Xaml;
@@ -21,7 +21,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Point = Windows.Foundation.Point;
 
-namespace Unigram.Controls.Chats
+namespace Telegram.Controls.Chats
 {
     public class ChatListView : SelectListView
     {

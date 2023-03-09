@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 
-namespace Unigram.Entities
+namespace Telegram.Entities
 {
     public class StorageAudio : StorageMedia
     {

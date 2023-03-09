@@ -6,15 +6,15 @@
 //
 using System;
 using System.Threading.Tasks;
+using Telegram.Native;
 using Telegram.Td;
 using Telegram.Td.Api;
-using Telegram.Native;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     public class AnimationView30Fps : AnimationView
     {

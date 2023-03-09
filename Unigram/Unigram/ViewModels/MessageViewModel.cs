@@ -6,12 +6,12 @@
 //
 using System;
 using System.Collections.Generic;
+using Telegram.Common;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Services;
-using Unigram.ViewModels.Delegates;
+using Telegram.ViewModels.Delegates;
 
-namespace Unigram.ViewModels
+namespace Telegram.ViewModels
 {
     public class MessageViewModel : MessageWithOwner
     {

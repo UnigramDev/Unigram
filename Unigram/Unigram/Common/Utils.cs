@@ -9,7 +9,7 @@ using System.Runtime.CompilerServices;
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     public static class Utils
     {

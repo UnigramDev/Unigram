@@ -4,9 +4,9 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Unigram.ViewModels.Settings.Password;
+using Telegram.ViewModels.Settings.Password;
 
-namespace Unigram.Views.Settings.Password
+namespace Telegram.Views.Settings.Password
 {
     public sealed partial class SettingsPasswordHintPage : HostedPage
     {

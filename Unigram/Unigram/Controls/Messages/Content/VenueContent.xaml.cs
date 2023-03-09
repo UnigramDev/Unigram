@@ -6,15 +6,15 @@
 //
 using System;
 using System.Globalization;
+using Telegram.Common;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.ViewModels;
+using Telegram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Shapes;
 
-namespace Unigram.Controls.Messages.Content
+namespace Telegram.Controls.Messages.Content
 {
     public sealed class VenueContent : Control, IContent
     {

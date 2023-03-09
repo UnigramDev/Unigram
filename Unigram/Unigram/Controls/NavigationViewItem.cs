@@ -6,7 +6,7 @@
 //
 using Windows.UI.Xaml;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     public class NavigationViewItem : NavigationViewItemBase
     {

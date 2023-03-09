@@ -6,7 +6,7 @@
 //
 using System;
 
-namespace Unigram.Logs
+namespace Telegram.Logs
 {
     public static class LogHelper
     {

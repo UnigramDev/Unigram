@@ -5,12 +5,12 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System.Collections.Generic;
+using Telegram.Converters;
 using Telegram.Td.Api;
-using Unigram.Converters;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Controls.Payments
+namespace Telegram.Controls.Payments
 {
     public class LabeledPricesPanel : Grid
     {

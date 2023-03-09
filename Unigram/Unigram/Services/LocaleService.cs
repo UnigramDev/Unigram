@@ -13,15 +13,15 @@ using System.Linq;
 using System.Security;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Telegram.Common;
 using Telegram.Td;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Views;
+using Telegram.Views;
 using Windows.ApplicationModel.Resources;
 using Windows.Storage;
 using Windows.UI.Xaml;
 
-namespace Unigram.Services
+namespace Telegram.Services
 {
     public interface ILocaleService : IHandle<UpdateLanguagePackStrings>
     {

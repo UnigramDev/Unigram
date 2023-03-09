@@ -7,13 +7,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Telegram.Common;
+using Telegram.Controls.Gallery;
+using Telegram.Converters;
+using Telegram.Navigation;
 using Telegram.Td;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Controls.Gallery;
-using Unigram.Converters;
-using Unigram.Navigation;
-using Unigram.ViewModels;
+using Telegram.ViewModels;
 using Windows.Foundation;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
@@ -24,7 +24,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Point = Windows.Foundation.Point;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     public sealed partial class ProfileHeader : UserControl
     {

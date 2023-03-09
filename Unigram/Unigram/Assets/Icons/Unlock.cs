@@ -12,7 +12,7 @@
 //           7.1.0-build.5+g109463c06a
 //       
 //       Command:
-//           LottieGen -DisableTranslationOptimizer -GenerateColorBindings -Language CSharp -MinimumUapVersion 8 -Namespace Unigram.Assets.Icons -Public -WinUIVersion 2.7 -InputFile unlock.json
+//           LottieGen -DisableTranslationOptimizer -GenerateColorBindings -Language CSharp -MinimumUapVersion 8 -Namespace Telegram.Assets.Icons -Public -WinUIVersion 2.7 -InputFile unlock.json
 //       
 //       Input file:
 //           unlock.json (3591 bytes created 15:50+02:00 Jun 14 2022)
@@ -57,7 +57,7 @@ using Windows.Graphics;
 using Windows.UI;
 using Windows.UI.Composition;
 
-namespace Unigram.Assets.Icons
+namespace Telegram.Assets.Icons
 {
     // Name:        unlock
     // Frame rate:  60 fps

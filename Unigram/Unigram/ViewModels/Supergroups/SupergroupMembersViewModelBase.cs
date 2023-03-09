@@ -7,14 +7,14 @@
 using Rg.DiffUtils;
 using System;
 using System.Threading.Tasks;
+using Telegram.Collections;
+using Telegram.Navigation.Services;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Collections;
-using Unigram.Navigation.Services;
-using Unigram.Services;
-using Unigram.ViewModels.Delegates;
+using Telegram.ViewModels.Delegates;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels.Supergroups
+namespace Telegram.ViewModels.Supergroups
 {
     public class SupergroupMembersViewModelBase : TLViewModelBase, IDelegable<ISupergroupDelegate>
     {

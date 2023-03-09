@@ -5,13 +5,13 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using Unigram.Common;
-using Unigram.Services.ViewService;
+using Telegram.Common;
+using Telegram.Services.ViewService;
 using Windows.Media.Playback;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Controls.Gallery
+namespace Telegram.Controls.Gallery
 {
     public class GalleryCompactView : MediaPlayerElement
     {

@@ -5,13 +5,13 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using Unigram.Common;
-using Unigram.Controls;
-using Unigram.Controls.Chats;
-using Unigram.Controls.Messages;
-using Unigram.Converters;
-using Unigram.ViewModels;
-using Unigram.ViewModels.Chats;
+using Telegram.Common;
+using Telegram.Controls;
+using Telegram.Controls.Chats;
+using Telegram.Controls.Messages;
+using Telegram.Converters;
+using Telegram.ViewModels;
+using Telegram.ViewModels.Chats;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -20,7 +20,7 @@ using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media.Animation;
 
-namespace Unigram.Views.Chats
+namespace Telegram.Views.Chats
 {
     public class ChatSharedMediaPageBase : Page
     {

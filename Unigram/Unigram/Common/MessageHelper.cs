@@ -8,18 +8,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Telegram.Td.Api;
-using Unigram.Controls;
-using Unigram.Converters;
+using Telegram.Controls;
+using Telegram.Converters;
 using Telegram.Native;
-using Unigram.Navigation;
-using Unigram.Navigation.Services;
-using Unigram.Services;
-using Unigram.Views;
-using Unigram.Views.Folders;
-using Unigram.Views.Host;
-using Unigram.Views.Popups;
-using Unigram.Views.Settings;
+using Telegram.Navigation;
+using Telegram.Navigation.Services;
+using Telegram.Services;
+using Telegram.Td.Api;
+using Telegram.Views;
+using Telegram.Views.Folders;
+using Telegram.Views.Host;
+using Telegram.Views.Popups;
+using Telegram.Views.Settings;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.Resources.Core;
@@ -32,7 +32,7 @@ using Windows.UI.Xaml.Media;
 using Point = Windows.Foundation.Point;
 using User = Telegram.Td.Api.User;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     public class MessageHelper
     {

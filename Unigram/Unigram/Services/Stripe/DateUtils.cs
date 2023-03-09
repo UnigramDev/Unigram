@@ -6,7 +6,7 @@
 //
 using System;
 
-namespace Unigram.Services.Stripe
+namespace Telegram.Services.Stripe
 {
     public class DateUtils
     {

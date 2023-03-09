@@ -6,15 +6,15 @@
 //
 using System;
 using System.Numerics;
+using Telegram.Common;
+using Telegram.Converters;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Converters;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     public sealed partial class DownloadsFooter : HyperlinkButton
     {

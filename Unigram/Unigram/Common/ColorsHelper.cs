@@ -7,7 +7,7 @@
 using System;
 using Windows.UI;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     // ColorHelper is a set of color conversion utilities
     public static class ColorsHelper

@@ -6,16 +6,16 @@
 //
 using Microsoft.UI.Xaml.Controls;
 using System.Numerics;
-using Unigram.Assets.Icons;
-using Unigram.Converters;
-using Unigram.Services.Settings;
+using Telegram.Assets.Icons;
+using Telegram.Converters;
+using Telegram.Services.Settings;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Controls.Chats
+namespace Telegram.Controls.Chats
 {
     public class ChatStickerButton : AnimatedGlyphToggleButton
     {

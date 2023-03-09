@@ -11,21 +11,21 @@ using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Telegram.Collections;
+using Telegram.Common;
+using Telegram.Navigation.Services;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Collections;
-using Unigram.Common;
-using Unigram.Navigation.Services;
-using Unigram.Services;
-using Unigram.ViewModels.Delegates;
-using Unigram.Views;
-using Unigram.Views.Chats;
-using Unigram.Views.Popups;
-using Unigram.Views.Users;
+using Telegram.ViewModels.Delegates;
+using Telegram.Views;
+using Telegram.Views.Chats;
+using Telegram.Views.Popups;
+using Telegram.Views.Users;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels.Chats
+namespace Telegram.ViewModels.Chats
 {
     public class ProfileItem
     {

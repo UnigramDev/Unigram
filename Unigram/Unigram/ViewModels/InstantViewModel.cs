@@ -6,18 +6,18 @@
 //
 using System;
 using System.Threading.Tasks;
+using Telegram.Common;
+using Telegram.Navigation.Services;
+using Telegram.Services;
+using Telegram.Services.Factories;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Navigation.Services;
-using Unigram.Services;
-using Unigram.Services.Factories;
-using Unigram.ViewModels.Delegates;
-using Unigram.Views.Popups;
+using Telegram.ViewModels.Delegates;
+using Telegram.Views.Popups;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.System;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels
+namespace Telegram.ViewModels
 {
     public class InstantViewModel : TLViewModelBase
     {

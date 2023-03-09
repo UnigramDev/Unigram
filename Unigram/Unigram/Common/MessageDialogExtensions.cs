@@ -8,7 +8,7 @@ using System;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     /// <summary>
     /// MessageDialog extension methods

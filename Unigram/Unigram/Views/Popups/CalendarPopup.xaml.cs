@@ -7,14 +7,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Telegram.Controls;
 using Telegram.Native;
-using Unigram.Controls;
-using Unigram.Navigation;
+using Telegram.Navigation;
 using Windows.System.UserProfile;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Views.Popups
+namespace Telegram.Views.Popups
 {
     public sealed partial class CalendarPopup : ContentPopup
     {

@@ -10,11 +10,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using Unigram.Common;
+using Telegram.Common;
 using Windows.Foundation;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     public class MosaicLayout : VirtualizingLayout
     {

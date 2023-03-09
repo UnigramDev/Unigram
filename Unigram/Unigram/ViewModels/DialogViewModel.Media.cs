@@ -8,15 +8,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Telegram.Common;
+using Telegram.Converters;
+using Telegram.Entities;
+using Telegram.Services;
+using Telegram.Services.Factories;
 using Telegram.Td;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Converters;
-using Unigram.Entities;
-using Unigram.Services;
-using Unigram.Services.Factories;
-using Unigram.Views.Popups;
-using Unigram.Views.Premium.Popups;
+using Telegram.Views.Popups;
+using Telegram.Views.Premium.Popups;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Graphics.Imaging;
 using Windows.Media.Capture;
@@ -29,7 +29,7 @@ using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.ViewModels
+namespace Telegram.ViewModels
 {
     public partial class DialogViewModel
     {

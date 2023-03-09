@@ -13,16 +13,16 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Numerics;
-using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Controls;
-using Unigram.Controls.Cells;
-using Unigram.Converters;
+using Telegram.Common;
+using Telegram.Controls;
+using Telegram.Controls.Cells;
+using Telegram.Converters;
 using Telegram.Native.Calls;
-using Unigram.Navigation;
-using Unigram.Services;
-using Unigram.ViewModels.Delegates;
-using Unigram.Views.Popups;
+using Telegram.Navigation;
+using Telegram.Services;
+using Telegram.Td.Api;
+using Telegram.ViewModels.Delegates;
+using Telegram.Views.Popups;
 using Windows.Devices.Enumeration;
 using Windows.Foundation;
 using Windows.Graphics.Capture;
@@ -37,7 +37,7 @@ using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 using Point = Windows.Foundation.Point;
 
-namespace Unigram.Views.Calls
+namespace Telegram.Views.Calls
 {
     public sealed partial class GroupCallPage : Page, IGroupCallDelegate
     {

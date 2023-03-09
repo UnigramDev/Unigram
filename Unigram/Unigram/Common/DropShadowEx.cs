@@ -12,7 +12,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Shapes;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     public static class DropShadowEx
     {

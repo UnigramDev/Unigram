@@ -5,11 +5,11 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using Unigram.Common;
-using Unigram.Controls;
-using Unigram.Navigation;
-using Unigram.Navigation.Services;
-using Unigram.Services;
+using Telegram.Common;
+using Telegram.Controls;
+using Telegram.Navigation;
+using Telegram.Navigation.Services;
+using Telegram.Services;
 using Windows.ApplicationModel.Core;
 using Windows.System.Profile;
 using Windows.UI.Core;
@@ -18,7 +18,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Views.Host
+namespace Telegram.Views.Host
 {
     public sealed partial class StandalonePage : Page
     {

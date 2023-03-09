@@ -6,12 +6,12 @@
 //
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Services;
 using Windows.Foundation;
 using Windows.UI.Xaml.Data;
 
-namespace Unigram.Collections
+namespace Telegram.Collections
 {
     public class SearchChatMessagesCollection : MvxObservableCollection<Message>, ISupportIncrementalLoading
     {

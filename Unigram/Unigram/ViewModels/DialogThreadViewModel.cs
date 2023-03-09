@@ -4,10 +4,10 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Unigram.Services;
-using Unigram.Services.Factories;
+using Telegram.Services;
+using Telegram.Services.Factories;
 
-namespace Unigram.ViewModels
+namespace Telegram.ViewModels
 {
     public class DialogThreadViewModel : DialogViewModel
     {

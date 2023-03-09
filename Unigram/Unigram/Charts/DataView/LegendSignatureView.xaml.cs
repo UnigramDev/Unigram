@@ -7,13 +7,13 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using Unigram.Common;
-using Unigram.Converters;
+using Telegram.Common;
+using Telegram.Converters;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Charts.DataView
+namespace Telegram.Charts.DataView
 {
     public sealed partial class LegendSignatureView : StackPanel
     {

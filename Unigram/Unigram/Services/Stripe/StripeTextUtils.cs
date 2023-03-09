@@ -7,7 +7,7 @@
 using System;
 using System.Text.RegularExpressions;
 
-namespace Unigram.Services.Stripe
+namespace Telegram.Services.Stripe
 {
     public class StripeTextUtils
     {

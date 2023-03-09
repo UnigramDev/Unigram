@@ -7,7 +7,7 @@
 using System.Collections.Generic;
 using Telegram.Td.Api;
 
-namespace Unigram.Navigation.Services
+namespace Telegram.Navigation.Services
 {
     public class NavigationState : Dictionary<string, object>
     {

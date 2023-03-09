@@ -5,19 +5,19 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
+using Telegram.Common;
+using Telegram.Controls;
+using Telegram.Controls.Chats;
+using Telegram.Converters;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Controls;
-using Unigram.Controls.Chats;
-using Unigram.Converters;
-using Unigram.ViewModels;
-using Unigram.ViewModels.Delegates;
+using Telegram.ViewModels;
+using Telegram.ViewModels.Delegates;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Views
+namespace Telegram.Views
 {
     public sealed partial class BackgroundPopup : ContentPopup, IBackgroundDelegate
     {

@@ -5,14 +5,14 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Controls;
+using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Native;
-using Unigram.ViewModels.Payments;
+using Telegram.Td.Api;
+using Telegram.ViewModels.Payments;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Views.Payments
+namespace Telegram.Views.Payments
 {
     public sealed partial class PaymentCredentialsPopup : ContentPopup
     {

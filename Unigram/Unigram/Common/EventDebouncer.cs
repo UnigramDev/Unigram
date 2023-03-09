@@ -8,7 +8,7 @@ using System;
 using System.Threading;
 using Windows.UI.Xaml;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     public class EventDebouncer<TEventArgs>
     {

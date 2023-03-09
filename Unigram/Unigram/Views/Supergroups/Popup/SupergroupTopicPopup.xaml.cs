@@ -4,13 +4,13 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Telegram.Controls;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Controls;
-using Unigram.Services;
-using Unigram.ViewModels.Drawers;
+using Telegram.ViewModels.Drawers;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Views.Supergroups.Popup
+namespace Telegram.Views.Supergroups.Popup
 {
     public sealed partial class SupergroupTopicPopup : ContentPopup
     {

@@ -20,9 +20,9 @@
 // 	Generated: 02/04/2023 14:30:09
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
-namespace Unigram.Strings
+namespace Telegram.Strings
 {
-    using Unigram.Services;
+    using Telegram.Services;
 
 
     public sealed partial class Resources

@@ -9,7 +9,7 @@ using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     public class ConcurrentQueueWorker
     {

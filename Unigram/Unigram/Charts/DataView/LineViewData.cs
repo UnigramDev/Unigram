@@ -6,12 +6,12 @@
 //
 using Microsoft.Graphics.Canvas.Geometry;
 using System.Collections.Generic;
-using Unigram.Charts.Data;
-using Unigram.Common;
+using Telegram.Charts.Data;
+using Telegram.Common;
 using Windows.UI;
 using Windows.UI.Xaml;
 
-namespace Unigram.Charts.DataView
+namespace Telegram.Charts.DataView
 {
     public class LineViewData
     {

@@ -6,7 +6,7 @@
 //
 using Telegram.Td.Api;
 
-namespace Unigram.ViewModels.Delegates
+namespace Telegram.ViewModels.Delegates
 {
     public interface IProfileDelegate : IChatDelegate, IUserDelegate, ISupergroupDelegate, IBasicGroupDelegate
     {

@@ -11,7 +11,7 @@ using System.Diagnostics;
 using System.Numerics;
 using System.Windows.Input;
 using Telegram.Td.Api;
-using Unigram.ViewModels;
+using Telegram.ViewModels;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Controls.Messages
+namespace Telegram.Controls.Messages
 {
     public sealed partial class MessagePinned : MessageReferenceBase
     {

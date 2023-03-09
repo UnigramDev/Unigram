@@ -7,7 +7,7 @@
 using System;
 using Windows.UI.Xaml;
 
-namespace Unigram.Triggers
+namespace Telegram.Triggers
 {
     public class EnumTrigger : StateTriggerBase
     {

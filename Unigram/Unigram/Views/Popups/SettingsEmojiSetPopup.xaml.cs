@@ -6,13 +6,13 @@
 //
 using System;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Telegram.Collections;
+using Telegram.Common;
+using Telegram.Controls;
+using Telegram.Converters;
+using Telegram.Navigation;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Collections;
-using Unigram.Common;
-using Unigram.Controls;
-using Unigram.Converters;
-using Unigram.Navigation;
-using Unigram.Services;
 using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.UI.Xaml;
@@ -21,7 +21,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
-namespace Unigram.Views.Popups
+namespace Telegram.Views.Popups
 {
     public sealed partial class SettingsEmojiSetPopup : ContentPopup
     {

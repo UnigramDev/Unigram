@@ -7,15 +7,15 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Telegram.Navigation.Services;
 using Telegram.Td.Api;
-using Unigram.Navigation.Services;
-using Unigram.ViewModels;
-using Unigram.Views;
+using Telegram.ViewModels;
+using Telegram.Views;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     public static class UnigramNavigationServiceEx
     {

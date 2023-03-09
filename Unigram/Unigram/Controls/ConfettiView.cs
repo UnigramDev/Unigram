@@ -13,7 +13,7 @@ using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     [TemplatePart(Name = "Canvas", Type = typeof(CanvasAnimatedControl))]
     public class ConfettiView : Control

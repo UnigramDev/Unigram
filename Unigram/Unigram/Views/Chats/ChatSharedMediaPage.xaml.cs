@@ -4,17 +4,17 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Telegram.Common;
+using Telegram.Controls;
+using Telegram.Controls.Gallery;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Controls;
-using Unigram.Controls.Gallery;
-using Unigram.ViewModels;
-using Unigram.ViewModels.Chats;
+using Telegram.ViewModels;
+using Telegram.ViewModels.Chats;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Views.Chats
+namespace Telegram.Views.Chats
 {
     public sealed partial class ChatSharedMediaPage : ChatSharedMediaPageBase
     {

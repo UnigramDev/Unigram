@@ -6,18 +6,18 @@
 //
 using System;
 using System.Threading.Tasks;
+using Telegram.Common;
+using Telegram.Converters;
+using Telegram.Navigation.Services;
+using Telegram.Services;
+using Telegram.Services.Updates;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Converters;
-using Unigram.Navigation.Services;
-using Unigram.Services;
-using Unigram.Services.Updates;
 using Windows.ApplicationModel;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels.Settings
+namespace Telegram.ViewModels.Settings
 {
     public class SettingsAdvancedViewModel : TLViewModelBase
         , IHandle
@@ -89,7 +89,7 @@ namespace Unigram.ViewModels.Settings
                 IsUpdateEnabled = true;
 
                 UpdateText = "Check for Updates";
-                UpdateFooter = "You have the latest version of Unigram.";
+                UpdateFooter = "You have the latest version of Telegram.";
             }
             else if (update.File != null)
             {

@@ -12,7 +12,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Controls.Gallery
+namespace Telegram.Controls.Gallery
 {
     [ContentProperty(Name = "Content")]
     public class GalleryTransportControls : MediaTransportControls

@@ -6,14 +6,14 @@
 //
 using System;
 using System.Linq;
+using Telegram.Common;
 using Telegram.Td.Api;
-using Unigram.Common;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     public sealed partial class PollOptionControl : ToggleButton
     {

@@ -7,7 +7,7 @@
 using System;
 using Windows.UI;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     public struct HSV
     {

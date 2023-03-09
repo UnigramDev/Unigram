@@ -6,21 +6,21 @@
 //
 using System;
 using System.ComponentModel;
+using Telegram.Collections;
+using Telegram.Common;
+using Telegram.Controls;
+using Telegram.Converters;
+using Telegram.Navigation.Services;
 using Telegram.Td.Api;
-using Unigram.Collections;
-using Unigram.Common;
-using Unigram.Controls;
-using Unigram.Converters;
-using Unigram.Navigation.Services;
-using Unigram.ViewModels;
-using Unigram.ViewModels.Supergroups;
+using Telegram.ViewModels;
+using Telegram.ViewModels.Supergroups;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Views.Supergroups
+namespace Telegram.Views.Supergroups
 {
     public sealed partial class SupergroupAddAdministratorPage : HostedPage
     {

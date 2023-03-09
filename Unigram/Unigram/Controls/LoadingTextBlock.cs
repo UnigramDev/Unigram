@@ -9,7 +9,7 @@ using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using Unigram.Common;
+using Telegram.Common;
 using Telegram.Native;
 using Windows.Foundation;
 using Windows.UI;
@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     public class LoadingTextBlock : Control
     {

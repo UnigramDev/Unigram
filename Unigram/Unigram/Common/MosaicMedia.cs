@@ -11,7 +11,7 @@ using System.Linq;
 using Telegram.Td.Api;
 using Windows.Foundation;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     public class MosaicMediaPosition
     {

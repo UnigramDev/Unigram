@@ -6,18 +6,18 @@
 //
 using System;
 using System.Collections.Generic;
-using Telegram.Td.Api;
-using Unigram.Common;
+using Telegram.Common;
 using Telegram.Native.Calls;
-using Unigram.Services;
-using Unigram.Services.Settings;
-using Unigram.Views.Popups;
-using Unigram.Views.Settings.Popups;
+using Telegram.Services;
+using Telegram.Services.Settings;
+using Telegram.Td.Api;
+using Telegram.Views.Popups;
+using Telegram.Views.Settings.Popups;
 using Windows.Storage.AccessCache;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.ViewModels.Settings
+namespace Telegram.ViewModels.Settings
 {
     public class SettingsDataAndStorageViewModel : TLViewModelBase
     {

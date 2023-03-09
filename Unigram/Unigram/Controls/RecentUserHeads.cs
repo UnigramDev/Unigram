@@ -9,8 +9,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Numerics;
+using Telegram.Common;
 using Telegram.Td.Api;
-using Unigram.Common;
 using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Hosting;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     public delegate void RecentUserHeadChangedHandler(ProfilePicture sender, MessageSender messageSender);
 

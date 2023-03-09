@@ -7,15 +7,15 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Telegram.Controls;
 using Telegram.Td.Api;
-using Unigram.Controls;
 using Windows.ApplicationModel.ExtendedExecution;
 using Windows.Devices.Enumeration;
 using Windows.Devices.Geolocation;
 using Windows.System;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Services
+namespace Telegram.Services
 {
     public readonly struct GetVenuesResult
     {

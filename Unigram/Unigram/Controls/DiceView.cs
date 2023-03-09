@@ -16,8 +16,8 @@ using System.IO.Compression;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Telegram.Common;
 using Telegram.Td.Api;
-using Unigram.Common;
 using Windows.Data.Json;
 using Windows.Foundation;
 using Windows.Graphics;
@@ -26,7 +26,7 @@ using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     [TemplatePart(Name = "Canvas", Type = typeof(CanvasControl))]
     public class DiceView : Control, IPlayerView

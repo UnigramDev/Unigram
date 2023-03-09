@@ -10,23 +10,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Telegram.Collections;
+using Telegram.Common;
+using Telegram.Common.Chats;
+using Telegram.Controls.Chats;
+using Telegram.Navigation;
+using Telegram.Navigation.Services;
+using Telegram.Services;
+using Telegram.Services.Factories;
+using Telegram.Services.Updates;
 using Telegram.Td;
 using Telegram.Td.Api;
-using Unigram.Collections;
-using Unigram.Common;
-using Unigram.Common.Chats;
-using Unigram.Controls.Chats;
-using Unigram.Navigation;
-using Unigram.Navigation.Services;
-using Unigram.Services;
-using Unigram.Services.Factories;
-using Unigram.Services.Updates;
-using Unigram.ViewModels.Chats;
-using Unigram.ViewModels.Delegates;
-using Unigram.ViewModels.Drawers;
-using Unigram.Views;
-using Unigram.Views.Popups;
-using Unigram.Views.Users;
+using Telegram.ViewModels.Chats;
+using Telegram.ViewModels.Delegates;
+using Telegram.ViewModels.Drawers;
+using Telegram.Views;
+using Telegram.Views.Popups;
+using Telegram.Views.Users;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
@@ -34,7 +34,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using Point = Windows.Foundation.Point;
 
-namespace Unigram.ViewModels
+namespace Telegram.ViewModels
 {
     public partial class DialogViewModel : TLViewModelBase, IDelegable<IDialogDelegate>
     {

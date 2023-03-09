@@ -5,16 +5,16 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
+using Telegram.Common;
+using Telegram.Controls;
+using Telegram.Converters;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Controls;
-using Unigram.Converters;
-using Unigram.ViewModels.Premium;
+using Telegram.ViewModels.Premium;
 using Windows.UI;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Views.Premium.Popups
+namespace Telegram.Views.Premium.Popups
 {
     public sealed partial class PromoPopup : ContentPopup
     {

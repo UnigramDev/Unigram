@@ -6,16 +6,16 @@
 //
 using System.Collections.ObjectModel;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Telegram.Collections;
+using Telegram.Common;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Collections;
-using Unigram.Common;
-using Unigram.Services;
-using Unigram.Views.Popups;
+using Telegram.Views.Popups;
 using Windows.Foundation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
 
-namespace Unigram.ViewModels.Settings
+namespace Telegram.ViewModels.Settings
 {
     public class SettingsBlockedChatsViewModel : TLViewModelBase
     {

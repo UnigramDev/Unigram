@@ -7,11 +7,11 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Unigram.Common;
-using Unigram.Controls;
-using Unigram.Logs;
-using Unigram.Services.ViewService;
-using Unigram.Views;
+using Telegram.Common;
+using Telegram.Controls;
+using Telegram.Logs;
+using Telegram.Services.ViewService;
+using Telegram.Views;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.System;
@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Navigation.Services
+namespace Telegram.Navigation.Services
 {
     public interface INavigationService
     {

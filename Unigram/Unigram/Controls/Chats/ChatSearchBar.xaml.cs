@@ -6,19 +6,19 @@
 //
 using System;
 using System.Numerics;
+using Telegram.Common;
+using Telegram.Navigation;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Navigation;
-using Unigram.ViewModels;
-using Unigram.ViewModels.Chats;
+using Telegram.ViewModels;
+using Telegram.ViewModels.Chats;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
-using static Unigram.Controls.Chats.ChatTextBox;
+using static Telegram.Controls.Chats.ChatTextBox;
 
-namespace Unigram.Controls.Chats
+namespace Telegram.Controls.Chats
 {
     public sealed partial class ChatSearchBar : UserControl
     {

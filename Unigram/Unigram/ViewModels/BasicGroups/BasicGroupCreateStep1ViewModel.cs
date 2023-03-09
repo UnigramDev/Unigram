@@ -6,15 +6,15 @@
 //
 using System;
 using System.Linq;
+using Telegram.Collections;
+using Telegram.Common;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Collections;
-using Unigram.Common;
-using Unigram.Services;
-using Unigram.Views.Popups;
+using Telegram.Views.Popups;
 using Windows.Storage;
 using Windows.UI.Xaml.Media.Imaging;
 
-namespace Unigram.ViewModels.BasicGroups
+namespace Telegram.ViewModels.BasicGroups
 {
     public class BasicGroupCreateStep1ViewModel : TLViewModelBase
     {

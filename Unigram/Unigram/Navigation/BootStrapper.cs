@@ -9,9 +9,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using Unigram.Logs;
-using Unigram.Navigation.Services;
-using Unigram.Services.ViewService;
+using Telegram.Logs;
+using Telegram.Navigation.Services;
+using Telegram.Services.ViewService;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.ExtendedExecution;
@@ -22,7 +22,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Navigation
+namespace Telegram.Navigation
 {
     public abstract class BootStrapper : Application
     {
@@ -53,7 +53,7 @@ namespace Unigram.Navigation
             Logger.Info();
 
             // Hook up keyboard and mouse Back handler
-            var keyboard = Unigram.Services.Keyboard.KeyboardService.GetForCurrentView();
+            var keyboard = Telegram.Services.Keyboard.KeyboardService.GetForCurrentView();
             keyboard.AfterBackGesture = (key) =>
             {
                 Logger.Info(member: nameof(keyboard.AfterBackGesture));

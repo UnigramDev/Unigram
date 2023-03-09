@@ -7,15 +7,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Telegram.Converters;
+using Telegram.Navigation;
 using Telegram.Td.Api;
-using Unigram.Converters;
-using Unigram.Navigation;
-using Unigram.ViewModels;
+using Telegram.ViewModels;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     public class ReplyMarkupButtonClickEventArgs : EventArgs
     {

@@ -1,8 +1,8 @@
 ﻿<StackPanel
-    x:Class="Unigram.Charts.DataView.LegendSignatureView"
+    x:Class="Telegram.Charts.DataView.LegendSignatureView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Unigram.Charts.DataView"
+    xmlns:local="using:Telegram.Charts.DataView"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"

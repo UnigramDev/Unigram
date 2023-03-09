@@ -5,11 +5,11 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Telegram.Td.Api;
-using Unigram.ViewModels.Delegates;
-using Unigram.ViewModels.Users;
+using Telegram.ViewModels.Delegates;
+using Telegram.ViewModels.Users;
 using Windows.UI.Xaml;
 
-namespace Unigram.Views.Users
+namespace Telegram.Views.Users
 {
     public sealed partial class UserEditPage : HostedPage, IUserDelegate
     {

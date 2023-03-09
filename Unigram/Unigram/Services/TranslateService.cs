@@ -6,10 +6,10 @@
 //
 using System;
 using System.Threading.Tasks;
-using Telegram.Td.Api;
 using Telegram.Native;
+using Telegram.Td.Api;
 
-namespace Unigram.Services
+namespace Telegram.Services
 {
     public interface ITranslateService
     {

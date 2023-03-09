@@ -7,8 +7,8 @@
 using System;
 using System.Linq;
 using Telegram.Td.Api;
-using Unigram.ViewModels.Drawers;
-using Unigram.Views.Popups;
+using Telegram.ViewModels.Drawers;
+using Telegram.Views.Popups;
 using Windows.Devices.Input;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     public class ZoomableListHandler
     {

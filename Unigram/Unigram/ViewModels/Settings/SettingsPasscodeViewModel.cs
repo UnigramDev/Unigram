@@ -7,14 +7,14 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Unigram.Common;
-using Unigram.Services;
-using Unigram.Services.Updates;
-using Unigram.Views.Popups;
-using Unigram.Views.Settings.Popups;
+using Telegram.Common;
+using Telegram.Services;
+using Telegram.Services.Updates;
+using Telegram.Views.Popups;
+using Telegram.Views.Settings.Popups;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.ViewModels.Settings
+namespace Telegram.ViewModels.Settings
 {
     public class SettingsPasscodeViewModel : TLViewModelBase
         , IHandle

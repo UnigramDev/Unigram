@@ -7,9 +7,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Unigram.Common;
+using Telegram.Common;
 
-namespace Unigram.Services.Settings
+namespace Telegram.Services.Settings
 {
     public class EmojiSettings : SettingsServiceBase
     {

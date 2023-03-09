@@ -7,10 +7,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Telegram.Common;
+using Telegram.Controls.Messages;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Controls.Messages;
-using Unigram.Services;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Text;
@@ -21,7 +21,7 @@ using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Controls
+namespace Telegram.Controls
 {
     public class TextEntityClickEventArgs : EventArgs
     {

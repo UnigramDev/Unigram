@@ -11,15 +11,15 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Telegram.Common;
+using Telegram.Services;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Services;
-using Unigram.ViewModels.Delegates;
+using Telegram.ViewModels.Delegates;
 using Windows.Foundation;
 using Windows.System;
 using Windows.UI.Xaml.Data;
 
-namespace Unigram.Collections
+namespace Telegram.Collections
 {
     public class GroupCallParticipantsCollection : ObservableCollection<GroupCallParticipant>
         , ISupportIncrementalLoading

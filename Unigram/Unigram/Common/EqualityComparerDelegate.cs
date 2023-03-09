@@ -7,7 +7,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Unigram.Common
+namespace Telegram.Common
 {
     public class EqualityComparerDelegate<T> : IEqualityComparer<T>
     {

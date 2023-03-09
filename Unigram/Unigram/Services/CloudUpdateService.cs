@@ -8,13 +8,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Telegram.Common;
+using Telegram.Services.Updates;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Services.Updates;
 using Windows.ApplicationModel;
 using Windows.Storage;
 
-namespace Unigram.Services
+namespace Telegram.Services
 {
     public interface ICloudUpdateService
     {
