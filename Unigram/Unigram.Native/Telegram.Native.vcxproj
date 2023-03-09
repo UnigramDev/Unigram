@@ -133,15 +133,14 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>..\Libraries\libopus\include;..\Libraries\libogg\include;libyuv\include;..\Libraries\libwebp\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Libraries\libopus\include;..\Libraries\libogg\include;libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalDependencies>libwebp.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\$(MappedPlatform)\libwebp\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>Mfplat.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <ModuleDefinitionFile>Telegram.Native.def</ModuleDefinitionFile>
     </Link>
@@ -154,15 +153,14 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>..\Libraries\libopus\include;..\Libraries\libogg\include;libyuv\include;..\Libraries\libwebp\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Libraries\libopus\include;..\Libraries\libogg\include;libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalDependencies>libwebp.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\$(MappedPlatform)\libwebp\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>Mfplat.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <ModuleDefinitionFile>Telegram.Native.def</ModuleDefinitionFile>
     </Link>
@@ -175,15 +173,14 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>..\Libraries\libopus\include;..\Libraries\libogg\include;libyuv\include;..\Libraries\libwebp\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Libraries\libopus\include;..\Libraries\libogg\include;libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalDependencies>libwebp.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\$(MappedPlatform)\libwebp\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>Mfplat.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <ModuleDefinitionFile>Telegram.Native.def</ModuleDefinitionFile>
     </Link>
@@ -196,15 +193,14 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>..\Libraries\libopus\include;..\Libraries\libogg\include;libyuv\include;..\Libraries\libwebp\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Libraries\libopus\include;..\Libraries\libogg\include;libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalDependencies>libwebp.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\$(MappedPlatform)\libwebp\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>Mfplat.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <ModuleDefinitionFile>Telegram.Native.def</ModuleDefinitionFile>
     </Link>
@@ -217,15 +213,14 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>..\Libraries\libopus\include;..\Libraries\libogg\include;libyuv\include;..\Libraries\libwebp\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Libraries\libopus\include;..\Libraries\libogg\include;libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalDependencies>libwebp.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\$(MappedPlatform)\libwebp\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>Mfplat.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <ModuleDefinitionFile>Telegram.Native.def</ModuleDefinitionFile>
     </Link>
@@ -238,15 +233,14 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>..\Libraries\libopus\include;..\Libraries\libogg\include;libyuv\include;..\Libraries\libwebp\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Libraries\libopus\include;..\Libraries\libogg\include;libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalDependencies>libwebp.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\$(MappedPlatform)\libwebp\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>Mfplat.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <ModuleDefinitionFile>Telegram.Native.def</ModuleDefinitionFile>
     </Link>
@@ -789,9 +783,6 @@
     </ProjectReference>
     <ProjectReference Include="..\Libraries\libopus\libopus.vcxproj">
       <Project>{904ac506-51a0-474e-9f55-ec3febbcccd9}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Libraries\libwebp\libwebp.vcxproj">
-      <Project>{7789c8b7-887c-46b6-bd76-952c590b1853}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
