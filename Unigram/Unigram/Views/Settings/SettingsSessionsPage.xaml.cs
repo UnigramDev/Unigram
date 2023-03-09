@@ -6,7 +6,6 @@
 //
 using System.Linq;
 using Telegram.Td.Api;
-using Unigram.Common;
 using Unigram.Controls.Cells;
 using Unigram.ViewModels.Settings;
 using Windows.UI.Xaml;

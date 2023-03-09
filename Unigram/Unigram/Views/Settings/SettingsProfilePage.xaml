@@ -104,12 +104,12 @@
 
                 <controls:HeaderedControl>
                     <controls:BadgeButton x:Name="PhoneNumber"
-                                          Click="Phone_Click"
+                                          Click="{x:Bind ViewModel.ChangePhoneNumber}"
                                           Content="{CustomResource PhoneNumberChange2}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Glyph="&#xF61B;" />
                     <controls:BadgeButton x:Name="Username"
-                                          Click="Username_Click"
+                                          Click="{x:Bind ViewModel.ChangeUsername}"
                                           Content="{CustomResource Username}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Glyph="&#xE168;" />

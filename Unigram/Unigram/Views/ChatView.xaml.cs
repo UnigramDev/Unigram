@@ -40,7 +40,6 @@ using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.Text;
-using Windows.UI.ViewManagement.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
@@ -3638,7 +3637,7 @@ namespace Unigram.Views
 
             TextField.PlaceholderText = GetPlaceholder(chat, out bool readOnly);
             TextField.IsReadOnly = readOnly;
-            }
+        }
 
         public void UpdateChatActions(Chat chat, IDictionary<MessageSender, ChatAction> actions)
         {
@@ -3725,8 +3724,8 @@ namespace Unigram.Views
         {
             readOnly = false;
 
-                if (ViewModel.ClientService.TryGetSupergroup(chat, out Supergroup supergroup))
-                {
+            if (ViewModel.ClientService.TryGetSupergroup(chat, out Supergroup supergroup))
+            {
                 return GetPlaceholder(chat, supergroup, out readOnly);
             }
             else if (ViewModel.ClientService.TryGetBasicGroup(chat, out BasicGroup basicGroup))
@@ -3752,13 +3751,13 @@ namespace Unigram.Views
                 readOnly = true;
                 return Strings.Resources.PlainTextRestrictedHint;
             }
-                    else if (supergroup.Status is ChatMemberStatusCreator creator && creator.IsAnonymous || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.IsAnonymous)
-                    {
-                        return Strings.Resources.SendAnonymously;
-                    }
+            else if (supergroup.Status is ChatMemberStatusCreator creator && creator.IsAnonymous || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.IsAnonymous)
+            {
+                return Strings.Resources.SendAnonymously;
+            }
 
             return Strings.Resources.TypeMessage;
-                }
+        }
 
         private string GetPlaceholder(Chat chat, BasicGroup basicGroup, out bool readOnly)
         {
@@ -3770,8 +3769,8 @@ namespace Unigram.Views
                 return Strings.Resources.PlainTextRestrictedHint;
             }
 
-                return Strings.Resources.TypeMessage;
-            }
+            return Strings.Resources.TypeMessage;
+        }
 
         public void UpdateChatReplyMarkup(Chat chat, MessageViewModel message)
         {

@@ -10,6 +10,9 @@ using Unigram.Common;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
+using Unigram.Views.Settings;
+using Unigram.Views.Settings.Popups;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
@@ -185,6 +188,28 @@ namespace Unigram.ViewModels.Settings
         public async void CreatePhoto()
         {
             await _profilePhotoService.CreatePhotoAsync(NavigationService, null);
+        }
+
+        public async void ChangePhoneNumber()
+        {
+            var popup = new ChangePhoneNumberPopup();
+
+            var change = await ShowPopupAsync(popup);
+            if (change != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            var confirm = await ShowPopupAsync(Strings.Resources.PhoneNumberAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            if (confirm == ContentDialogResult.Primary)
+            {
+                NavigationService.Navigate(typeof(SettingsPhonePage));
+            }
+        }
+
+        public async void ChangeUsername()
+        {
+            await NavigationService.ShowAsync(typeof(SettingsUsernamePopup));
         }
     }
 }

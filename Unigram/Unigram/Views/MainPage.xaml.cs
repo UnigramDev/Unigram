@@ -911,7 +911,7 @@ namespace Unigram.Views
             {
                 SettingsService.Current.Diagnostics.IsLastErrorDiskFull = false;
 
-                var confirm = await MessagePopup.ShowAsync("Unigram has previously failed to launch because the device storage was full.\r\n\r\nMake sure there's enough storage space available and press **OK** to continue.", "Disk storage is full", Strings.Resources.OK, Strings.Resources.StorageUsage);
+                var confirm = await ViewModel.ShowPopupAsync("Unigram has previously failed to launch because the device storage was full.\r\n\r\nMake sure there's enough storage space available and press **OK** to continue.", "Disk storage is full", Strings.Resources.OK, Strings.Resources.StorageUsage);
                 if (confirm == ContentDialogResult.Secondary)
                 {
                     MasterDetail.NavigationService.Navigate(typeof(SettingsStoragePage));

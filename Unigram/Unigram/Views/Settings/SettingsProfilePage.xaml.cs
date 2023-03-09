@@ -4,13 +4,10 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Settings;
-using Unigram.Views.Settings.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -24,28 +21,6 @@ namespace Unigram.Views.Settings
         {
             InitializeComponent();
             Title = Strings.Resources.lng_settings_information;
-        }
-
-        private async void Phone_Click(object sender, RoutedEventArgs e)
-        {
-            var popup = new ChangePhoneNumberPopup();
-
-            var change = await popup.ShowQueuedAsync();
-            if (change != ContentDialogResult.Primary)
-            {
-                return;
-            }
-
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.PhoneNumberAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
-            if (confirm == ContentDialogResult.Primary)
-            {
-                Frame.Navigate(typeof(SettingsPhonePage));
-            }
-        }
-
-        private async void Username_Click(object sender, RoutedEventArgs e)
-        {
-            await ViewModel.NavigationService.ShowAsync(typeof(SettingsUsernamePopup));
         }
 
         private void LogOut_Click(object sender, RoutedEventArgs e)

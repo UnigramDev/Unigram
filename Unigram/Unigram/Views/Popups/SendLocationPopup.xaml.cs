@@ -55,7 +55,7 @@ namespace Unigram.Views.Popups
             _accuracy = ElementCompositionPreview.GetElementVisual(Accuracy);
             _position = ElementCompositionPreview.GetElementVisual(Position);
 
-            _position.CenterPoint = new Vector3(20, 48,0);
+            _position.CenterPoint = new Vector3(20, 48, 0);
             _position.Scale = Vector3.Zero;
 
             _previewShimmer = CompositionPathParser.CreateThumbnail(16, 9, 0, out ShapeVisual visual);
@@ -165,7 +165,7 @@ namespace Unigram.Views.Popups
                 anim.InsertKeyFrame(0, new Vector3(prev / next, 1));
                 anim.InsertKeyFrame(1, Vector3.One);
 
-                _accuracy.CenterPoint = new Vector3(next, 0); 
+                _accuracy.CenterPoint = new Vector3(next, 0);
                 _accuracy.StartAnimation("Scale", anim);
                 _accuracyRadius = radius;
             }

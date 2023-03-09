@@ -33,7 +33,7 @@ namespace Unigram.Views.Settings.Privacy
                 UpdatePhoto.Content = fullInfo.PublicPhoto == null
                     ? Strings.Resources.SetPhotoForRest
                     : Strings.Resources.UpdatePhotoForRest;
-                
+
                 RemovePhoto.Visibility = fullInfo.PublicPhoto == null
                     ? Visibility.Collapsed
                     : Visibility.Visible;

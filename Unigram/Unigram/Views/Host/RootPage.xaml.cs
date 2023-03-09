@@ -171,7 +171,7 @@ namespace Unigram.Views.Host
                 service = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Attach, BootStrapper.ExistingContent.Exclude, new Frame(), session.Id, $"{session.Id}", true) as NavigationService;
                 service.Frame.Navigating += OnNavigating;
                 service.Frame.Navigated += OnNavigated;
-                
+
                 _canGoBackToken = service.Frame.RegisterPropertyChangedCallback(Frame.CanGoBackProperty, OnCanGoBackChanged);
 
                 switch (session.ClientService.GetAuthorizationState())

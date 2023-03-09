@@ -88,7 +88,7 @@ namespace Unigram.Views.Supergroups
             }
 
             var content = args.ItemContainer.ContentTemplateRoot as Grid;
-            
+
             if (args.Item is string username)
             {
                 var active = ViewModel.Usernames != null

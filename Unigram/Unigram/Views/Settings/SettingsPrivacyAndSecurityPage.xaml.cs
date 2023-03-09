@@ -81,7 +81,7 @@ namespace Unigram.Views.Settings
             }
             else if (ViewModel.ClientService.IsPremiumAvailable)
             {
-                var confirm = await MessagePopup.ShowAsync(Strings.Resources.PrivacyVoiceMessagesPremiumOnly, Strings.Resources.PrivacyVoiceMessages, Strings.Resources.OK, Strings.Resources.Cancel);
+                var confirm = await ViewModel.ShowPopupAsync(Strings.Resources.PrivacyVoiceMessagesPremiumOnly, Strings.Resources.PrivacyVoiceMessages, Strings.Resources.OK, Strings.Resources.Cancel);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     ViewModel.NavigationService.ShowPromo(/*new PremiumSourceFeature(new PremiumFeaturePrivateVoiceAndVideoMessages)*/);

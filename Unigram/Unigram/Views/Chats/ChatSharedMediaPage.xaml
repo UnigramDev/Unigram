@@ -87,7 +87,7 @@
                 <selectors:MessageContentTemplateSelector>
                     <selectors:MessageContentTemplateSelector.PhotoTemplate>
                         <DataTemplate>
-                            <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
+                            <Grid Background="{ThemeResource SettingsItemBackground}">
                                 <controls:ImageView Click="Photo_Click"
                                                     Stretch="UniformToFill" />
                             </Grid>
@@ -95,7 +95,7 @@
                     </selectors:MessageContentTemplateSelector.PhotoTemplate>
                     <selectors:MessageContentTemplateSelector.VideoTemplate>
                         <DataTemplate>
-                            <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
+                            <Grid Background="{ThemeResource SettingsItemBackground}">
                                 <controls:ImageView Click="Photo_Click"
                                                     Stretch="UniformToFill" />
 

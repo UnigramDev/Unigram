@@ -38,13 +38,13 @@
                                           Content="{CustomResource ChangePhoneNumber}"
                                           Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
                                           Glyph="&#xF61B;"
-                                          Click="ChangePhoneNumber_Click" />
+                                          Click="{x:Bind ViewModel.ChangePhoneNumber}" />
 
                     <controls:BadgeButton Badge="{CustomResource ContactSupportInfo}"
                                           Content="{CustomResource ContactSupport}"
                                           Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
                                           Glyph="&#xED15;"
-                                          Command="{x:Bind ViewModel.AskCommand}" />
+                                          Click="{x:Bind ViewModel.Ask}" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Footer="{CustomResource LogOutInfo}">
@@ -52,7 +52,7 @@
                                           Foreground="{ThemeResource DangerButtonBackground}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Glyph="&#xF3B1;"
-                                          Command="{x:Bind ViewModel.LogoutCommand}" />
+                                          Click="{x:Bind ViewModel.Logout}" />
                 </controls:HeaderedControl>
             </StackPanel>
         </ScrollViewer>

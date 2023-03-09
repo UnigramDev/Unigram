@@ -29,7 +29,7 @@ namespace Unigram.Views.Settings.Popups
             var icon = SessionCell.IconForSession(session);
 
             IconBackground.Background = new SolidColorBrush(icon.Backgroud);
-            
+
             if (icon.Animation != null)
             {
                 Icon.ColorReplacements = new Dictionary<int, int> { { 0x000000, icon.Backgroud.ToValue() } };

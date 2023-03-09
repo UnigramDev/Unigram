@@ -290,7 +290,7 @@ namespace Unigram.Views.Popups
                 var username = title.Inlines[1] as Run;
 
                 name.Text = user.FullName();
-                
+
                 if (user.HasActiveUsername(out string usernameValue))
                 {
                     username.Text = $" @{usernameValue}";

@@ -7,6 +7,7 @@
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services;
+using Unigram.Views.Settings;
 using Windows.UI.Xaml.Controls;
 
 namespace Unigram.ViewModels
@@ -23,9 +24,6 @@ namespace Unigram.ViewModels
             _pushService = notificationsService;
             _contactsService = contactsService;
             _passcodeService = passcodeService;
-
-            AskCommand = new RelayCommand(AskExecute);
-            LogoutCommand = new RelayCommand(LogoutExecute);
         }
 
         public bool IsPasscodeEnabled
@@ -33,8 +31,24 @@ namespace Unigram.ViewModels
             get { return _passcodeService.IsEnabled; }
         }
 
-        public RelayCommand AskCommand { get; }
-        private async void AskExecute()
+        public async void ChangePhoneNumber()
+        {
+            var popup = new ChangePhoneNumberPopup();
+
+            var change = await ShowPopupAsync(popup);
+            if (change != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            var confirm = await ShowPopupAsync(Strings.Resources.PhoneNumberAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            if (confirm == ContentDialogResult.Primary)
+            {
+                NavigationService.Navigate(typeof(SettingsPhonePage));
+            }
+        }
+
+        public async void Ask()
         {
             var confirm = await ShowPopupAsync(Strings.Resources.AskAQuestionInfo, Strings.Resources.AskAQuestion, Strings.Resources.AskButton, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
@@ -51,8 +65,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand LogoutCommand { get; }
-        private async void LogoutExecute()
+        public async void Logout()
         {
             var confirm = await ShowPopupAsync(Strings.Resources.AreYouSureLogout, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)

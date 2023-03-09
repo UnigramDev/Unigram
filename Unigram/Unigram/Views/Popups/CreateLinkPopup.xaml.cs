@@ -5,11 +5,9 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.UI.Xaml.Controls;
-using System.ComponentModel;
 using System.Threading.Tasks;
 using Unigram.Common;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 
 namespace Unigram.Views.Popups

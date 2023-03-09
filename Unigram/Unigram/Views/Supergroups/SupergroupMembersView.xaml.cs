@@ -289,7 +289,7 @@ namespace Unigram.Views.Supergroups
             ViewModel.UpdateHiddenMembers(fullInfo.HasHiddenMembers);
             HideMembers.Visibility = fullInfo.CanHideMembers ? Visibility.Visible : Visibility.Collapsed;
         }
-        
+
         public void UpdateBasicGroupFullInfo(Chat chat, BasicGroup group, BasicGroupFullInfo fullInfo)
         {
             ViewModel.UpdateHiddenMembers(false);
