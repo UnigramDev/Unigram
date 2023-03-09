@@ -7,8 +7,8 @@
     <ProjectGuid>{2235E8EE-374A-4E49-8050-9B701467775D}</ProjectGuid>
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Unigram</RootNamespace>
-    <AssemblyName>Unigram</AssemblyName>
+    <RootNamespace>Telegram</RootNamespace>
+    <AssemblyName>Telegram</AssemblyName>
     <DefaultLanguage>en</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion>10.0.22621.0</TargetPlatformVersion>
@@ -32,7 +32,7 @@
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
     <LangVersion>10.0</LangVersion>
     <AppxPackageSigningEnabled>False</AppxPackageSigningEnabled>
-    <ProjectPriIndexName>Unigram</ProjectPriIndexName>
+    <ProjectPriIndexName>Telegram</ProjectPriIndexName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -1411,7 +1411,7 @@
     </PRIResource>
     <PRIResource Include="Strings\en\Resources.resw">
       <Generator>ReswFileCodeGenerator</Generator>
-      <CustomToolNamespace>Unigram.Strings</CustomToolNamespace>
+      <CustomToolNamespace>Telegram.Strings</CustomToolNamespace>
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.cs</LastGenOutput>
     </PRIResource>
