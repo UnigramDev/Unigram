@@ -7,7 +7,7 @@ namespace Telegram.Native
     {
 		static CachedVideoAnimation LoadFromFile(IVideoAnimationSource file, Int32 width, Int32 height, Boolean precache);
 
-        void SetTarget(Windows.UI.Xaml.Media.Imaging.WriteableBitmap bitmap);
+        void SetBitmap(Windows.UI.Xaml.Media.Imaging.WriteableBitmap bitmap);
 
         void RenderSync(out Int32 seconds, out Boolean completed);
         void RenderSync(Microsoft.Graphics.Canvas.CanvasBitmap bitmap, out Int32 seconds, out Boolean completed);

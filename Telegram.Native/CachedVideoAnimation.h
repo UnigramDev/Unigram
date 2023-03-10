@@ -44,7 +44,7 @@ namespace winrt::Telegram::Native::implementation
 
 		static winrt::Telegram::Native::CachedVideoAnimation LoadFromFile(IVideoAnimationSource file, int32_t width, int32_t height, bool precache);
 
-		void SetTarget(WriteableBitmap bitmap);
+		void SetBitmap(WriteableBitmap bitmap);
 
 		void RenderSync(int32_t& seconds, bool& completed);
 		void RenderSync(CanvasBitmap bitmap, int32_t& seconds, bool& completed);

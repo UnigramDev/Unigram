@@ -136,20 +136,24 @@ namespace winrt::Telegram::Native::implementation
         m_frameIndex = 0;
     }
 
-    void CachedVideoAnimation::SetTarget(WriteableBitmap bitmap) {
-        if (bitmap) {
+    void CachedVideoAnimation::SetBitmap(WriteableBitmap bitmap)
+    {
+        if (bitmap)
+        {
             m_bitmap = std::make_unique<uint8_t*>(bitmap.PixelBuffer().data());
             m_bitmapWidth = bitmap.PixelWidth();
             m_bitmapHeight = bitmap.PixelHeight();
         }
-        else {
+        else
+        {
             m_bitmap = nullptr;
         }
     }
 
     void CachedVideoAnimation::RenderSync(int32_t& seconds, bool& completed)
     {
-        if (m_bitmap == nullptr) {
+        if (m_bitmap == nullptr)
+        {
             return;
         }
 

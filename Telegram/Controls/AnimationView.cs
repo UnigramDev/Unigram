@@ -81,29 +81,29 @@ namespace Telegram.Controls
             _animation = null;
         }
 
-        protected override WriteableBitmap CreateBitmap(float dpi)
+        protected override bool CreateBitmap(float dpi, out int width, out int height)
         {
-            bool needsCreate = _bitmap == null;
-            needsCreate |= _bitmap?.PixelWidth != _animation?.PixelWidth || _bitmap?.PixelHeight != _animation?.PixelHeight;
-
-            if (needsCreate)
+            if (_animation != null)
             {
-                if (_animation != null)
-                {
-                    _bitmap = new WriteableBitmap(_animation.PixelWidth, _animation.PixelHeight);
-                    _animation.SetTarget(_bitmap);
-                    return _bitmap;
-                }
-
-                return null;
+                width = _animation.PixelWidth;
+                height = _animation.PixelHeight;
+                return true;
             }
 
-            return _bitmap;
+            width = 0;
+            height = 0;
+            return false;
         }
 
-        protected override void DrawFrame(WriteableBitmap args)
+        protected override void OnUpdateSource(WriteableBitmap bitmap)
         {
-            args.Invalidate();
+            _animation?.SetBitmap(bitmap);
+            base.OnUpdateSource(bitmap);
+        }
+
+        protected override void DrawFrame(WriteableBitmap bitmap)
+        {
+            _animation.SetBitmap(bitmap);
 
             if (_prevSeconds != _nextSeconds)
             {
@@ -124,7 +124,7 @@ namespace Telegram.Controls
         protected override void NextFrame()
         {
             var animation = _animation;
-            if (animation == null || animation.IsCaching || _bitmap == null || _unloaded)
+            if (animation == null || animation.IsCaching || _unloaded)
             {
                 return;
             }
@@ -178,8 +178,7 @@ namespace Telegram.Controls
             _animation = animation;
             _hideThumbnail = null;
 
-            _bitmap = new WriteableBitmap(animation.PixelWidth, animation.PixelHeight);
-            _animation.SetTarget(_bitmap);
+            CreateBitmap();
 
             if (Load())
             {

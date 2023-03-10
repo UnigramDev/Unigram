@@ -31,7 +31,15 @@ namespace Telegram.Controls
 
         private readonly bool _autoPause;
 
-        protected WriteableBitmap _bitmap;
+        private WriteableBitmap _bitmap0;
+        private WriteableBitmap _bitmap1;
+
+        private WriteableBitmap _current;
+
+        private readonly AutoResetEvent _foregroundLock = new(true);
+        private readonly AutoResetEvent _backgroundLock = new(false);
+
+        private bool _bitmapClean = true;
 
         protected Panel _layoutRoot;
         protected Image _canvas;
@@ -68,12 +76,12 @@ namespace Telegram.Controls
 
             _limitFps = limitFps ?? !Windows.UI.Composition.CompositionCapabilities.GetForCurrentView().AreEffectsFast();
             _dispatcher = DispatcherQueue.GetForCurrentThread();
-
-            RegisterEventHandlers();
         }
 
         protected override void OnApplyTemplate()
         {
+            RegisterEventHandlers();
+
             var canvas = GetTemplateChild("Canvas") as Image;
             if (canvas == null)
             {
@@ -81,7 +89,7 @@ namespace Telegram.Controls
             }
 
             _canvas = canvas;
-            _canvas.Source = _bitmap;
+            UpdateSource();
 
             _layoutRoot = GetTemplateChild("LayoutRoot") as Panel;
             _layoutRoot.Loaded += OnLoaded;
@@ -193,7 +201,7 @@ namespace Telegram.Controls
             {
                 var newDpi = _currentDpi;
 
-                bool needsCreate = _bitmap == null;
+                bool needsCreate = _bitmap0 == null;
                 needsCreate |= _currentDpi != newDpi;
                 needsCreate |= force;
 
@@ -218,7 +226,7 @@ namespace Telegram.Controls
         {
             if (_unloaded && _layoutRoot != null && _layoutRoot.IsLoaded)
             {
-                _canvas.Source = _bitmap;
+                UpdateSource();
                 Changed();
 
                 _unloaded = false;
@@ -228,6 +236,21 @@ namespace Telegram.Controls
             }
 
             return false;
+        }
+
+        private void UpdateSource()
+        {
+            if (_canvas == null || _canvas.Source == _current)
+            {
+                return;
+            }
+
+            OnUpdateSource(_current);
+        }
+
+        protected virtual void OnUpdateSource(WriteableBitmap bitmap)
+        {
+            _canvas.Source = _current;
         }
 
         protected virtual void OnLoaded()
@@ -293,7 +316,7 @@ namespace Telegram.Controls
 
             lock (_drawFrameLock)
             {
-                _bitmap = null;
+                _bitmap0 = null;
             }
         }
 
@@ -341,27 +364,45 @@ namespace Telegram.Controls
                 return;
             }
 
-            if (_bitmap == null)
+            if (_bitmap0 == null)
             {
                 CreateBitmap();
             }
             else
             {
-                DrawFrame(_bitmap);
+                if (_backgroundLock.WaitOne(0))
+                {
+                    _current.Invalidate();
+                    _current = _current == _bitmap0 ? _bitmap1 : _bitmap0;
+
+                    DrawFrame(_current);
+                }
+
+                _foregroundLock.Set();
             }
         }
 
-        private void CreateBitmap()
+        protected void CreateBitmap()
         {
-            _bitmap = CreateBitmap(_currentDpi);
+            var temp = CreateBitmap(_currentDpi, out int width, out int height);
 
-            if (_canvas != null)
+            var needsCreate = _bitmap0 == null || _bitmap1 == null;
+            needsCreate |= _bitmap0?.PixelWidth != width || _bitmap0?.PixelHeight != height;
+            needsCreate |= _bitmap1?.PixelWidth != width || _bitmap1?.PixelHeight != height;
+
+            if (temp && needsCreate && _animation != null)
             {
-                _canvas.Source = _bitmap;
+                _bitmap0 = new WriteableBitmap(width, height);
+                _bitmap1 = new WriteableBitmap(width, height);
+                _bitmapClean = true;
+
+                _current = _bitmap0;
             }
+
+            UpdateSource();
         }
 
-        protected abstract WriteableBitmap CreateBitmap(float dpi);
+        protected abstract bool CreateBitmap(float dpi, out int width, out int height);
 
         protected SizeInt32 GetDpiAwareSize(Size size)
         {
@@ -388,7 +429,14 @@ namespace Telegram.Controls
         {
             if (_nextFrameLock.Wait(0))
             {
-                NextFrame();
+                if (_foregroundLock.WaitOne(0))
+                {
+                    NextFrame();
+
+                    _bitmapClean = false;
+                    _backgroundLock.Set();
+                }
+
                 _nextFrameLock.Release();
             }
         }
@@ -397,7 +445,14 @@ namespace Telegram.Controls
         {
             if (_nextFrameLock.Wait(0))
             {
-                NextFrame();
+                if (_foregroundLock.WaitOne(0))
+                {
+                    NextFrame();
+
+                    _bitmapClean = false;
+                    _backgroundLock.Set();
+                }
+
                 _nextFrameLock.Release();
             }
         }
@@ -417,7 +472,7 @@ namespace Telegram.Controls
             {
                 Subscribe(false);
 
-                if (_playing == null && !_unloaded)
+                if (playing && _bitmapClean && !_unloaded)
                 {
                     CreateBitmap();
 

@@ -4,8 +4,6 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using RLottie;
 using System;
@@ -13,9 +11,8 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Numerics;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Telegram.Common;
 using Telegram.Navigation;
 using Windows.ApplicationModel;
 using Windows.Foundation;
@@ -50,7 +47,7 @@ namespace Telegram.Controls
     }
 
     [TemplatePart(Name = "Canvas", Type = typeof(CanvasControl))]
-    public class LottieView : IndividualAnimatedControl<LottieAnimation>
+    public class LottieView : AnimatedImage<LottieAnimation>
     {
         private bool? _hideThumbnail;
 
@@ -99,75 +96,85 @@ namespace Telegram.Controls
             _animation = null;
         }
 
-        protected override CanvasBitmap CreateBitmap(CanvasDevice device)
+        protected override bool CreateBitmap(float dpi, out int width, out int height)
         {
-            bool needsCreate = _bitmap == null;
-            needsCreate |= _bitmap?.Size.Width != _frameSize.Width || _bitmap?.Size.Height != _frameSize.Height;
-            needsCreate |= _bitmap?.Device != device;
-
-            if (needsCreate)
+            if (_animation != null)
             {
-                return CreateBitmap(device, _frameSize.Width, _frameSize.Height);
+                width = _frameSize.Width;
+                height = _frameSize.Height;
+                return true;
             }
 
-            return null;
+            width = 0;
+            height = 0;
+            return false;
         }
 
-        protected override void DrawFrame(CanvasImageSource sender, CanvasDrawingSession args)
+        protected override void OnUpdateSource(WriteableBitmap bitmap)
         {
-            if (_bitmap == null || _animation == null || _unloaded)
+            _animation?.SetBitmap(bitmap);
+            base.OnUpdateSource(bitmap);
+        }
+
+        protected override void DrawFrame(WriteableBitmap bitmap)
+        {
+            if (_animation == null || _unloaded)
             {
                 return;
             }
 
-            if (_flipped)
-            {
-                args.Transform = Matrix3x2.CreateScale(-1, 1, sender.Size.ToVector2() / 2);
-            }
+            //if (_flipped)
+            //{
+            //    args.Transform = Matrix3x2.CreateScale(-1, 1, sender.Size.ToVector2() / 2);
+            //}
 
-            double width = _bitmap.Size.Width;
-            double height = _bitmap.Size.Height;
+            //double width = _bitmap.Size.Width;
+            //double height = _bitmap.Size.Height;
 
-            double ratioX = (double)sender.Size.Width / width;
-            double ratioY = (double)sender.Size.Height / height;
+            //double ratioX = (double)sender.Size.Width / width;
+            //double ratioY = (double)sender.Size.Height / height;
 
-            if (ratioX > ratioY)
-            {
-                width = sender.Size.Width;
-                height *= ratioX;
-            }
-            else
-            {
-                width *= ratioY;
-                height = sender.Size.Height;
-            }
+            //if (ratioX > ratioY)
+            //{
+            //    width = sender.Size.Width;
+            //    height *= ratioX;
+            //}
+            //else
+            //{
+            //    width *= ratioY;
+            //    height = sender.Size.Height;
+            //}
 
-            var y = (sender.Size.Height - height) / 2;
-            var x = (sender.Size.Width - width) / 2;
+            //var y = (sender.Size.Height - height) / 2;
+            //var x = (sender.Size.Width - width) / 2;
 
-            ICanvasImage source = _bitmap;
-            if (TintColor.HasValue)
-            {
-                source = new TintEffect
-                {
-                    Source = _bitmap,
-                    Color = TintColor.Value
-                };
-            }
+            //ICanvasImage source = _bitmap;
+            //if (TintColor.HasValue)
+            //{
+            //    source = new TintEffect
+            //    {
+            //        Source = _bitmap,
+            //        Color = TintColor.Value
+            //    };
+            //}
 
-            if (sender.Size.Width >= _logicalSize.Width || sender.Size.Height >= _logicalSize.Height)
-            {
-                args.DrawImage(source,
-                    new Rect(x, y, width, height),
-                    new Rect(0, 0, _bitmap.Size.Width, _bitmap.Size.Height));
-            }
-            else
-            {
-                args.DrawImage(source,
-                    new Rect(x, y, width, height),
-                    new Rect(0, 0, _bitmap.Size.Width, _bitmap.Size.Height), 1,
-                    CanvasImageInterpolation.MultiSampleLinear);
-            }
+            //if (sender.Size.Width >= _logicalSize.Width || sender.Size.Height >= _logicalSize.Height)
+            //{
+            //    args.DrawImage(source,
+            //        new Rect(x, y, width, height),
+            //        new Rect(0, 0, _bitmap.Size.Width, _bitmap.Size.Height));
+            //}
+            //else
+            //{
+            //    args.DrawImage(source,
+            //        new Rect(x, y, width, height),
+            //        new Rect(0, 0, _bitmap.Size.Width, _bitmap.Size.Height), 1,
+            //        CanvasImageInterpolation.MultiSampleLinear);
+            //}
+
+            //_animation.Invalidate();
+
+            _animation?.SetBitmap(bitmap);
 
             if (_hideThumbnail == true)
             {
@@ -181,7 +188,7 @@ namespace Telegram.Controls
         protected override void NextFrame()
         {
             var animation = _animation;
-            if (animation == null || animation.IsCaching || _bitmap == null || _unloaded)
+            if (animation == null || animation.IsCaching || _unloaded)
             {
                 return;
             }
@@ -189,7 +196,7 @@ namespace Telegram.Controls
             var index = _index;
             var framesPerUpdate = _limitFps ? _animationFrameRate < 60 ? 1 : 2 : 1;
 
-            animation.RenderSync(_bitmap, index);
+            animation.RenderSync(index);
 
             IndexChanged?.Invoke(this, index);
             PositionChanged?.Invoke(this, Math.Min(1, Math.Max(0, (double)index / (_animationTotalFrame - 1))));
@@ -287,6 +294,8 @@ namespace Telegram.Controls
                 return;
             }
 
+            animation.SetColor(TintColor ?? default);
+
             var frameRate = Math.Clamp(animation.FrameRate, 30, _limitFps ? 30 : 60);
 
             _interval = TimeSpan.FromMilliseconds(Math.Floor(1000 / frameRate));
@@ -295,6 +304,8 @@ namespace Telegram.Controls
 
             _animationFrameRate = animation.FrameRate;
             _animationTotalFrame = animation.TotalFrame;
+
+            CreateBitmap();
 
             if (_backward)
             {
@@ -524,6 +535,13 @@ namespace Telegram.Controls
         public IReadOnlyDictionary<int, int> ColorReplacements { get; set; }
 
         public FitzModifier FitzModifier { get; set; }
+
+        //private Color? _tintColor;
+        //public Color? TintColor
+        //{
+        //    get => _tintColor;
+        //    set => _animation?.SetColor((_tintColor = value) ?? default);
+        //}
 
         public Color? TintColor { get; set; }
     }
