@@ -77,7 +77,7 @@ namespace Telegram.Services.Keyboard
                 var list = multicast.GetInvocationList();
                 for (int i = list.Length - 1; i >= 0; i--)
                 {
-                    list[i].DynamicInvoke(this, args);
+                    list[i].DynamicInvoke(_window, args);
 
                     if (args.Handled)
                     {

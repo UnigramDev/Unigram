@@ -584,6 +584,8 @@
     <Compile Include="Controls\WalkthroughControl.cs" />
     <Compile Include="Controls\WrapPanel.cs" />
     <Compile Include="Entities\StorageAudio.cs" />
+    <Compile Include="Navigation\InputKeyDownEventArgs.cs" />
+    <Compile Include="Navigation\InputListener.cs" />
     <Compile Include="Navigation\Services\FrameFacade.cs" />
     <Compile Include="Navigation\Services\INavigable.cs" />
     <Compile Include="Navigation\Services\NavigatedEventArgs.cs" />
@@ -814,8 +816,6 @@
     <Compile Include="Selectors\StorageStatisticsTemplateSelector.cs" />
     <Compile Include="Services\AlertsService.cs" />
     <Compile Include="Services\EmojiSetService.cs" />
-    <Compile Include="Services\Keyboard\InputKeyDownEventArgs.cs" />
-    <Compile Include="Services\Keyboard\InputListener.cs" />
     <Compile Include="Services\SettingsSearchService.cs" />
     <Compile Include="Services\SettingsLegacyService.cs" />
     <Compile Include="Services\Settings\AppearanceSettings.cs" />
