@@ -15,6 +15,7 @@ using Telegram.Services.ViewService;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.ExtendedExecution;
+using Windows.System;
 using Windows.System.Profile;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
@@ -48,31 +49,6 @@ namespace Telegram.Navigation
             Suspending += CallHandleSuspendingAsync;
         }
 
-        private void Loaded()
-        {
-            Logger.Info();
-
-            // Hook up keyboard and mouse Back handler
-            var keyboard = Telegram.Services.Keyboard.KeyboardService.GetForCurrentView();
-            keyboard.AfterBackGesture = (key) =>
-            {
-                Logger.Info(member: nameof(keyboard.AfterBackGesture));
-
-                var handled = false;
-                RaiseBackRequested(key, ref handled);
-            };
-
-            keyboard.AfterForwardGesture = () =>
-            {
-                Logger.Info(member: nameof(keyboard.AfterForwardGesture));
-
-                RaiseForwardRequested();
-            };
-
-            // Hook up the default Back handler
-            SystemNavigationManager.GetForCurrentView().BackRequested += BackHandler;
-        }
-
         protected override void OnWindowCreated(WindowCreatedEventArgs args)
         {
             Logger.Info();
@@ -82,7 +58,6 @@ namespace Telegram.Navigation
             //if (!WindowWrapper.ActiveWrappers.Any())
             // handle window
             CreateWindowWrapper(args.Window);
-            Loaded();
             ViewService.OnWindowCreated();
             base.OnWindowCreated(args);
         }
@@ -313,7 +288,13 @@ namespace Telegram.Navigation
         public void RaiseBackRequested()
         {
             var handled = false;
-            RaiseBackRequested(Windows.System.VirtualKey.GoBack, ref handled);
+            RaiseBackRequested(VirtualKey.GoBack, ref handled);
+        }
+
+        public void RaiseBackRequested(VirtualKey key)
+        {
+            var handled = false;
+            RaiseBackRequested(key, ref handled);
         }
 
         /// <summary>
@@ -322,7 +303,7 @@ namespace Telegram.Navigation
         /// Views or Viewodels can override this behavior by handling the BackRequested 
         /// event and setting the Handled property of the BackRequestedEventArgs to true.
         /// </summary>
-        private void RaiseBackRequested(Windows.System.VirtualKey key, ref bool handled)
+        private void RaiseBackRequested(VirtualKey key, ref bool handled)
         {
             Logger.Info();
 
@@ -376,7 +357,7 @@ namespace Telegram.Navigation
         // this event precedes the in-frame event by the same name
         public static event EventHandler<HandledEventArgs> BackRequested;
 
-        private void RaiseForwardRequested()
+        public void RaiseForwardRequested()
         {
             Logger.Info();
 
@@ -398,19 +379,6 @@ namespace Telegram.Navigation
 
             NavigationService?.GoForward();
         }
-
-        public void UpdateShellBackButton()
-        {
-            Logger.Info();
-
-            // show the shell back only if there is anywhere to go in the default frame
-            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
-                (ShowShellBackButton && (NavigationService.CanGoBack || ForceShowShellBackButton))
-                    ? AppViewBackButtonVisibility.Visible
-                    : AppViewBackButtonVisibility.Collapsed;
-            ShellBackButtonUpdated?.Invoke(this, EventArgs.Empty);
-        }
-        public event EventHandler ShellBackButtonUpdated;
 
         // this event precedes the in-frame event by the same name
         public static event EventHandler<HandledEventArgs> ForwardRequested;

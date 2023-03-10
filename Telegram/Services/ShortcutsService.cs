@@ -9,22 +9,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Telegram.Collections;
-using Telegram.Common;
 using Telegram.Navigation;
+using Telegram.Services.Keyboard;
 using Telegram.ViewModels;
 using Windows.Data.Json;
 using Windows.Storage;
 using Windows.System;
-using Windows.UI.Core;
-using Windows.UI.Xaml;
 
 namespace Telegram.Services
 {
     public interface IShortcutsService
     {
-        InvokedShortcut Process(AcceleratorKeyEventArgs args);
+        InvokedShortcut Process(InputKeyDownEventArgs args);
 
-        bool TryGetShortcut(AcceleratorKeyEventArgs args, out Shortcut shortcut);
+        bool TryGetShortcut(InputKeyDownEventArgs args, out Shortcut shortcut);
 
         IList<ShortcutList> GetShortcuts();
         IList<ShortcutList> Update(Shortcut shortcut, ShortcutCommand command);
@@ -182,27 +180,18 @@ namespace Telegram.Services
             InitializeCustom();
         }
 
-        public InvokedShortcut Process(AcceleratorKeyEventArgs args)
+        public InvokedShortcut Process(InputKeyDownEventArgs args)
         {
-            if (args.EventType is not CoreAcceleratorKeyEventType.KeyDown and not CoreAcceleratorKeyEventType.SystemKeyDown)
-            {
-                return new InvokedShortcut(VirtualKeyModifiers.None, VirtualKey.None, new ShortcutCommand[0]);
-            }
-
-            var alt = Window.Current.CoreWindow.IsKeyDown(VirtualKey.Menu);
-            var ctrl = Window.Current.CoreWindow.IsKeyDown(VirtualKey.Control);
-            var shift = Window.Current.CoreWindow.IsKeyDown(VirtualKey.Shift);
-
             var modifiers = VirtualKeyModifiers.None;
-            if (alt)
+            if (args.AltKey)
             {
                 modifiers |= VirtualKeyModifiers.Menu;
             }
-            if (ctrl)
+            if (args.ControlKey)
             {
                 modifiers |= VirtualKeyModifiers.Control;
             }
-            if (shift)
+            if (args.ShiftKey)
             {
                 modifiers |= VirtualKeyModifiers.Shift;
             }
@@ -232,28 +221,18 @@ namespace Telegram.Services
         //int nonVirtualKey = MapVirtualKey((uint)args.VirtualKey, 2);
         //char mappedChar = Convert.ToChar(nonVirtualKey);
 
-        public bool TryGetShortcut(AcceleratorKeyEventArgs args, out Shortcut shortcut)
+        public bool TryGetShortcut(InputKeyDownEventArgs args, out Shortcut shortcut)
         {
-            if (args.EventType is not CoreAcceleratorKeyEventType.KeyDown and not CoreAcceleratorKeyEventType.SystemKeyDown)
-            {
-                shortcut = null;
-                return false;
-            }
-
-            var alt = Window.Current.CoreWindow.IsKeyDown(VirtualKey.Menu);
-            var ctrl = Window.Current.CoreWindow.IsKeyDown(VirtualKey.Control);
-            var shift = Window.Current.CoreWindow.IsKeyDown(VirtualKey.Shift);
-
             var modifiers = VirtualKeyModifiers.None;
-            if (alt)
+            if (args.AltKey)
             {
                 modifiers |= VirtualKeyModifiers.Menu;
             }
-            if (ctrl)
+            if (args.ControlKey)
             {
                 modifiers |= VirtualKeyModifiers.Control;
             }
-            if (shift)
+            if (args.ShiftKey)
             {
                 modifiers |= VirtualKeyModifiers.Shift;
             }

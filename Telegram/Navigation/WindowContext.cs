@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Telegram.Common;
 using Telegram.Navigation.Services;
+using Telegram.Services.Keyboard;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Graphics.Display;
@@ -91,6 +92,15 @@ namespace Telegram.Navigation
         /// </summary>
         public double RasterizationScale { get; private set; }
 
+
+
+
+
+
+
+        private readonly InputListener _inputListener;
+        public InputListener InputListener => _inputListener;
+
         public WindowContext(Window window)
         {
             if (Current != null)
@@ -110,6 +120,8 @@ namespace Telegram.Navigation
             {
                 ActiveWrappers.Remove(this);
             };
+
+            _inputListener = new InputListener(window);
 
             window.Dispatcher.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
 

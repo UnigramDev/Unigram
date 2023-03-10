@@ -22,6 +22,7 @@ using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
+using Telegram.Services.Keyboard;
 using Telegram.Services.Updates;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -885,7 +886,7 @@ namespace Telegram.Views
 
             Subscribe();
             Window.Current.CoreWindow.CharacterReceived += OnCharacterReceived;
-            WindowContext.Current.AcceleratorKeyActivated += OnAcceleratorKeyActivated;
+            WindowContext.Current.InputListener.KeyDown += OnAcceleratorKeyActivated;
 
             OnStateChanged(null, null);
 
@@ -1032,7 +1033,7 @@ namespace Telegram.Views
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             Window.Current.CoreWindow.CharacterReceived -= OnCharacterReceived;
-            WindowContext.Current.AcceleratorKeyActivated -= OnAcceleratorKeyActivated;
+            WindowContext.Current.InputListener.KeyDown -= OnAcceleratorKeyActivated;
 
             var titleBar = CoreApplication.GetCurrentView().TitleBar;
             titleBar.IsVisibleChanged -= CoreTitleBar_LayoutMetricsChanged;
@@ -1074,7 +1075,7 @@ namespace Telegram.Views
             }
         }
 
-        private void OnAcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
+        private void OnAcceleratorKeyActivated(Window sender, InputKeyDownEventArgs args)
         {
             var invoked = ViewModel.ShortcutService.Process(args);
             foreach (var command in invoked.Commands)
@@ -1096,7 +1097,7 @@ namespace Telegram.Views
             }
         }
 
-        private async void ProcessAppCommands(ShortcutCommand command, AcceleratorKeyEventArgs args)
+        private async void ProcessAppCommands(ShortcutCommand command, InputKeyDownEventArgs args)
         {
             if (command is ShortcutCommand.SetStatus)
             {
@@ -1149,7 +1150,7 @@ namespace Telegram.Views
             }
         }
 
-        private void ProcessFolderCommands(ShortcutCommand command, AcceleratorKeyEventArgs args)
+        private void ProcessFolderCommands(ShortcutCommand command, InputKeyDownEventArgs args)
         {
             var folders = ViewModel.Filters;
             if (folders.IsEmpty())
@@ -1192,7 +1193,7 @@ namespace Telegram.Views
             }
         }
 
-        private async void ProcessChatCommands(ShortcutCommand command, AcceleratorKeyEventArgs args)
+        private async void ProcessChatCommands(ShortcutCommand command, InputKeyDownEventArgs args)
         {
             if (command == ShortcutCommand.ChatPrevious)
             {

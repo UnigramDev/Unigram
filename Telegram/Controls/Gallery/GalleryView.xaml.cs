@@ -15,6 +15,7 @@ using Telegram.Common;
 using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Services;
+using Telegram.Services.Keyboard;
 using Telegram.Services.ViewService;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Chats;
@@ -39,6 +40,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
+using VirtualKey = Windows.System.VirtualKey;
 
 namespace Telegram.Controls.Gallery
 {
@@ -802,7 +804,7 @@ namespace Telegram.Controls.Gallery
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            WindowContext.Current.AcceleratorKeyActivated += OnAcceleratorKeyActivated;
+            WindowContext.Current.InputListener.KeyDown += OnAcceleratorKeyActivated;
         }
 
         private void Load(object parameter)
@@ -820,7 +822,7 @@ namespace Telegram.Controls.Gallery
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             Unload();
-            WindowContext.Current.AcceleratorKeyActivated -= OnAcceleratorKeyActivated;
+            WindowContext.Current.InputListener.KeyDown -= OnAcceleratorKeyActivated;
         }
 
         private void Unload()
@@ -855,46 +857,37 @@ namespace Telegram.Controls.Gallery
             return false;
         }
 
-        private void OnAcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
+        private void OnAcceleratorKeyActivated(Window sender, InputKeyDownEventArgs args)
         {
-            if (args.EventType is not CoreAcceleratorKeyEventType.KeyDown and not CoreAcceleratorKeyEventType.SystemKeyDown)
-            {
-                return;
-            }
-
-            var alt = Window.Current.CoreWindow.IsKeyDown(Windows.System.VirtualKey.Menu);
-            var ctrl = Window.Current.CoreWindow.IsKeyDown(Windows.System.VirtualKey.Control);
-            var shift = Window.Current.CoreWindow.IsKeyDown(Windows.System.VirtualKey.Shift);
-
             var keyCode = (int)args.VirtualKey;
 
-            if (args.VirtualKey is Windows.System.VirtualKey.Left or Windows.System.VirtualKey.GamepadLeftShoulder)
+            if (args.VirtualKey is VirtualKey.Left or VirtualKey.GamepadLeftShoulder)
             {
                 ChangeView(CarouselDirection.Previous, false);
                 args.Handled = true;
             }
-            else if (args.VirtualKey is Windows.System.VirtualKey.Right or Windows.System.VirtualKey.GamepadRightShoulder)
+            else if (args.VirtualKey is VirtualKey.Right or VirtualKey.GamepadRightShoulder)
             {
                 ChangeView(CarouselDirection.Next, false);
                 args.Handled = true;
             }
-            else if (args.VirtualKey is Windows.System.VirtualKey.Space && !ctrl && !alt && !shift)
+            else if (args.VirtualKey is VirtualKey.Space && args.OnlyKey)
             {
                 args.Handled = TogglePlaybackState();
             }
-            else if (args.VirtualKey is Windows.System.VirtualKey.C && ctrl && !alt && !shift)
+            else if (args.VirtualKey is VirtualKey.C && args.OnlyControl)
             {
                 ViewModel?.CopyCommand.Execute();
                 args.Handled = true;
             }
-            else if (args.VirtualKey is Windows.System.VirtualKey.S && ctrl && !alt && !shift)
+            else if (args.VirtualKey is VirtualKey.S && args.OnlyControl)
             {
                 ViewModel?.SaveCommand.Execute();
                 args.Handled = true;
             }
-            else if (keyCode is 187 or 189 || args.VirtualKey is Windows.System.VirtualKey.Add or Windows.System.VirtualKey.Subtract)
+            else if (keyCode is 187 or 189 || args.VirtualKey is VirtualKey.Add or VirtualKey.Subtract)
             {
-                ScrollingHost.Zoom(keyCode is 187 || args.VirtualKey is Windows.System.VirtualKey.Add);
+                ScrollingHost.Zoom(keyCode is 187 || args.VirtualKey is VirtualKey.Add);
                 args.Handled = true;
             }
         }

@@ -7,7 +7,7 @@
 using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Services;
-using Windows.UI.Core;
+using Telegram.Services.Keyboard;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -36,15 +36,15 @@ namespace Telegram.Views.Popups
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            WindowContext.Current.AcceleratorKeyActivated += OnAcceleratorKeyActivated;
+            WindowContext.Current.InputListener.KeyDown += OnAcceleratorKeyActivated;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            WindowContext.Current.AcceleratorKeyActivated -= OnAcceleratorKeyActivated;
+            WindowContext.Current.InputListener.KeyDown -= OnAcceleratorKeyActivated;
         }
 
-        private void OnAcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
+        private void OnAcceleratorKeyActivated(Window sender, InputKeyDownEventArgs args)
         {
             if (TextField.FocusState != FocusState.Unfocused && _shortcutsService.TryGetShortcut(args, out Shortcut shortcut))
             {

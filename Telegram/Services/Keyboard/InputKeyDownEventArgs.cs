@@ -10,8 +10,7 @@ using Windows.UI.Core;
 
 namespace Telegram.Services.Keyboard
 {
-    // DOCS: https://github.com/Windows-XAML/Template10/wiki/Docs-%7C-KeyboardService
-    public class KeyboardEventArgs : EventArgs
+    public class InputKeyDownEventArgs : EventArgs
     {
         public bool Handled { get; set; } = false;
         public bool AltKey { get; set; }
@@ -25,6 +24,10 @@ namespace Telegram.Services.Keyboard
         public bool OnlyAlt => !WindowsKey & AltKey & !ControlKey & !ShiftKey;
         public bool OnlyControl => !WindowsKey & !AltKey & ControlKey & !ShiftKey;
         public bool OnlyShift => !WindowsKey & !AltKey & !ControlKey & ShiftKey;
+
+        public bool OnlyKey => !WindowsKey && !AltKey && !ControlKey && !ShiftKey;
+
+        public uint RepeatCount => EventArgs.KeyStatus.RepeatCount;
 
         public override string ToString()
         {

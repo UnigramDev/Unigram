@@ -10,9 +10,9 @@ using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
+using Telegram.Services.Keyboard;
 using Windows.ApplicationModel.Core;
 using Windows.System.Profile;
-using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -63,12 +63,12 @@ namespace Telegram.Views.Host
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            WindowContext.Current.AcceleratorKeyActivated += OnAcceleratorKeyActivated;
+            WindowContext.Current.InputListener.KeyDown += OnAcceleratorKeyActivated;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            WindowContext.Current.AcceleratorKeyActivated -= OnAcceleratorKeyActivated;
+            WindowContext.Current.InputListener.KeyDown -= OnAcceleratorKeyActivated;
         }
 
         private void OnNavigated(object sender, Windows.UI.Xaml.Navigation.NavigationEventArgs e)
@@ -120,7 +120,7 @@ namespace Telegram.Views.Host
             }
         }
 
-        private void OnAcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
+        private void OnAcceleratorKeyActivated(Window sender, InputKeyDownEventArgs args)
         {
             var invoked = _shortcutsService.Process(args);
 
@@ -130,7 +130,7 @@ namespace Telegram.Views.Host
             }
         }
 
-        private async void ProcessAppCommands(ShortcutCommand command, AcceleratorKeyEventArgs args)
+        private async void ProcessAppCommands(ShortcutCommand command, InputKeyDownEventArgs args)
         {
             if (command == ShortcutCommand.Search)
             {

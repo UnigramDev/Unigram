@@ -26,6 +26,7 @@ using Telegram.Controls.Messages;
 using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Services;
+using Telegram.Services.Keyboard;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -50,6 +51,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Point = Windows.Foundation.Point;
+using VirtualKey = Windows.System.VirtualKey;
 
 namespace Telegram.Views
 {
@@ -845,7 +847,7 @@ namespace Telegram.Views
             Window.Current.VisibilityChanged += Window_VisibilityChanged;
 
             Window.Current.CoreWindow.CharacterReceived += OnCharacterReceived;
-            WindowContext.Current.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
+            WindowContext.Current.InputListener.KeyDown += OnAcceleratorKeyActivated;
 
             ViewVisibleMessages(false);
 
@@ -864,7 +866,7 @@ namespace Telegram.Views
             Window.Current.VisibilityChanged -= Window_VisibilityChanged;
 
             Window.Current.CoreWindow.CharacterReceived -= OnCharacterReceived;
-            WindowContext.Current.AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
+            WindowContext.Current.InputListener.KeyDown -= OnAcceleratorKeyActivated;
         }
 
         private void Window_Activated(object sender, WindowActivatedEventArgs e)
@@ -935,18 +937,9 @@ namespace Telegram.Views
             }
         }
 
-        private void Dispatcher_AcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
+        private void OnAcceleratorKeyActivated(Window sender, InputKeyDownEventArgs args)
         {
-            if (args.EventType is not CoreAcceleratorKeyEventType.KeyDown and not CoreAcceleratorKeyEventType.SystemKeyDown)
-            {
-                return;
-            }
-
-            var alt = Window.Current.CoreWindow.IsKeyDown(Windows.System.VirtualKey.Menu);
-            var ctrl = Window.Current.CoreWindow.IsKeyDown(Windows.System.VirtualKey.Control);
-            var shift = Window.Current.CoreWindow.IsKeyDown(Windows.System.VirtualKey.Shift);
-
-            if (args.VirtualKey == Windows.System.VirtualKey.Delete)
+            if (args.VirtualKey == VirtualKey.Delete)
             {
                 if (ViewModel.IsSelectionEnabled && ViewModel.SelectedItems.Count > 0)
                 {
@@ -963,27 +956,27 @@ namespace Telegram.Views
                     }
                 }
             }
-            else if (args.VirtualKey == Windows.System.VirtualKey.C && ctrl && !alt && !shift && ViewModel.IsSelectionEnabled && ViewModel.SelectedItems.Count > 0)
+            else if (args.VirtualKey == VirtualKey.C && args.OnlyControl && ViewModel.IsSelectionEnabled && ViewModel.SelectedItems.Count > 0)
             {
                 ViewModel.MessagesCopyCommand.Execute();
                 args.Handled = true;
             }
-            else if (args.VirtualKey == Windows.System.VirtualKey.R && args.KeyStatus.RepeatCount == 1 && ctrl && !alt && !shift)
+            else if (args.VirtualKey == VirtualKey.R && args.RepeatCount == 1 && args.OnlyControl)
             {
                 btnVoiceMessage.ToggleRecording();
                 args.Handled = true;
             }
-            else if (args.VirtualKey == Windows.System.VirtualKey.D && args.KeyStatus.RepeatCount == 1 && ctrl && !alt && !shift)
+            else if (args.VirtualKey == VirtualKey.D && args.RepeatCount == 1 && args.OnlyControl)
             {
                 btnVoiceMessage.StopRecording(true);
                 args.Handled = true;
             }
-            else if (args.VirtualKey == Windows.System.VirtualKey.O && args.KeyStatus.RepeatCount == 1 && ctrl && !alt && !shift)
+            else if (args.VirtualKey == VirtualKey.O && args.RepeatCount == 1 && args.OnlyControl)
             {
                 ViewModel.SendDocumentCommand.Execute();
                 args.Handled = true;
             }
-            else if (args.VirtualKey == Windows.System.VirtualKey.PageUp && !ctrl && !alt && !shift && TextField.Document.Selection.StartPosition == 0 && ViewModel.Autocomplete == null)
+            else if (args.VirtualKey == VirtualKey.PageUp && args.OnlyKey && TextField.Document.Selection.StartPosition == 0 && ViewModel.Autocomplete == null)
             {
                 var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
                 if (popups.Count > 0)
@@ -997,7 +990,7 @@ namespace Telegram.Views
                     return;
                 }
 
-                if (args.VirtualKey == Windows.System.VirtualKey.Up && (focused is TextBox || focused is RichEditBox))
+                if (args.VirtualKey == VirtualKey.Up && (focused is TextBox || focused is RichEditBox))
                 {
                     return;
                 }
@@ -1009,7 +1002,7 @@ namespace Telegram.Views
                 }
 
                 SelectorItem target;
-                if (args.VirtualKey == Windows.System.VirtualKey.PageUp)
+                if (args.VirtualKey == VirtualKey.PageUp)
                 {
                     target = Messages.ContainerFromIndex(panel.FirstVisibleIndex) as SelectorItem;
                 }
@@ -1026,7 +1019,7 @@ namespace Telegram.Views
                 target.Focus(FocusState.Keyboard);
                 args.Handled = true;
             }
-            else if ((args.VirtualKey == Windows.System.VirtualKey.PageDown || args.VirtualKey == Windows.System.VirtualKey.Down) && !ctrl && !alt && !shift && TextField.Document.Selection.StartPosition == TextField.Document.GetRange(int.MaxValue, int.MaxValue).EndPosition && ViewModel.Autocomplete == null)
+            else if ((args.VirtualKey == VirtualKey.PageDown || args.VirtualKey == VirtualKey.Down) && args.OnlyKey && TextField.Document.Selection.StartPosition == TextField.Document.GetRange(int.MaxValue, int.MaxValue).EndPosition && ViewModel.Autocomplete == null)
             {
                 var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
                 if (popups.Count > 0)
@@ -1040,7 +1033,7 @@ namespace Telegram.Views
                     return;
                 }
 
-                if (args.VirtualKey == Windows.System.VirtualKey.Down && (focused is TextBox || focused is RichEditBox))
+                if (args.VirtualKey == VirtualKey.Down && (focused is TextBox || focused is RichEditBox))
                 {
                     return;
                 }
