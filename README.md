@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://www.microsoft.com/store/apps/9n97zckpd60q">
-    <img src="/Telegram/Telegram/Assets/Logos/StoreLogo.scale-200.png" width=80 height=80>
+    <img src="/Telegram/Assets/Logos/StoreLogo.scale-200.png" width=80 height=80>
   </a>
 
   <h3 align="center">Unigram</h3>
