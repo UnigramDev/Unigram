@@ -2135,9 +2135,9 @@ namespace Telegram.Views
             flyout.Items.Insert(0, final);
 
             var response = await message.ClientService.SendAsync(new GetMessageViewers(message.ChatId, message.Id));
-            if (response is Telegram.Td.Api.Users users && users.UserIds.Count > 0)
+            if (response is MessageViewers viewers && viewers.Viewers.Count > 0)
             {
-                var profiles = message.ClientService.GetUsers(users.UserIds);
+                var profiles = message.ClientService.GetUsers(viewers.Viewers.Select(x => x.UserId));
 
                 var pictures = new StackPanel();
                 pictures.Orientation = Orientation.Horizontal;
@@ -2159,14 +2159,14 @@ namespace Telegram.Views
                 {
                     //var final = new MenuFlyoutSubItem();
                     final.Style = App.Current.Resources["MessageSeenMenuFlyoutSubItemStyle"] as Style;
-                    final.Text = Locale.Declension(played ? "MessagePlayed" : "MessageSeen", users.UserIds.Count);
+                    final.Text = Locale.Declension(played ? "MessagePlayed" : "MessageSeen", viewers.Viewers.Count);
                     final.Icon = new FontIcon { Glyph = played ? Icons.Play : Icons.Seen, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
                     final.Tag = pictures;
 
                     // Width must be fixed because viewers are loaded asynchronously
                     final.Width = 240;
 
-                    foreach (var user in message.ClientService.GetUsers(users.UserIds))
+                    foreach (var user in profiles)
                     {
                         var picture = new ProfilePicture();
                         picture.Width = 24;
