@@ -4095,7 +4095,7 @@ namespace Telegram.Views
             }
             else
             {
-                ContentPanel.Margin = new Thickness(0, -48, 0, 0);
+                ContentPanel.Margin = new Thickness(0, -44, 0, 0);
             }
 
             if (show)
@@ -4255,12 +4255,12 @@ namespace Telegram.Views
             var messages = ElementCompositionPreview.GetElementVisual(Messages);
             if (messages.Clip is InsetClip messagesClip)
             {
-                messagesClip.TopInset = -48;
+                messagesClip.TopInset = -44;
                 messagesClip.BottomInset = -8 - radius;
             }
             else
             {
-                messages.Clip = Window.Current.Compositor.CreateInsetClip(0, -48, 0, -8 - radius);
+                messages.Clip = Window.Current.Compositor.CreateInsetClip(0, -44, 0, -8 - radius);
             }
         }
 
