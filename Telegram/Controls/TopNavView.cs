@@ -172,7 +172,7 @@ namespace Telegram.Controls
 
         private UIElement FindSelectionIndicator(object item, bool retry)
         {
-            var container = ContainerFromItem(item) as TopNavViewItem;
+            var container = (item is TopNavViewItem ? item : ContainerFromItem(item)) as TopNavViewItem;
             if (container == null)
             {
                 return null;
