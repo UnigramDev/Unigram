@@ -1,0 +1,13 @@
+namespace Telegram.Native
+{
+    [default_interface]
+    runtimeclass PixelBuffer : Windows.Storage.Streams.IBuffer
+    {
+        PixelBuffer(Windows.UI.Xaml.Media.Imaging.WriteableBitmap bitmap);
+
+        Int32 PixelWidth { get; };
+        Int32 PixelHeight { get; };
+
+        Windows.UI.Xaml.Media.Imaging.WriteableBitmap Visual { get; };
+    }
+}

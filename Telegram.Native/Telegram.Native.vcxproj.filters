@@ -407,6 +407,7 @@
       <Filter>libyuv\source</Filter>
     </ClCompile>
     <ClCompile Include="BufferSurface.cpp" />
+    <ClCompile Include="PixelBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -685,6 +686,7 @@
     </ClInclude>
     <ClInclude Include="qoi.h" />
     <ClInclude Include="BufferSurface.h" />
+    <ClInclude Include="PixelBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -713,5 +715,6 @@
     <Midl Include="Opus\OpusOutput.idl">
       <Filter>Opus</Filter>
     </Midl>
+    <Midl Include="PixelBuffer.idl" />
   </ItemGroup>
 </Project>

@@ -95,16 +95,8 @@ namespace Telegram.Controls
             return false;
         }
 
-        protected override void OnUpdateSource(WriteableBitmap bitmap)
-        {
-            _animation?.SetBitmap(bitmap);
-            base.OnUpdateSource(bitmap);
-        }
-
         protected override void DrawFrame(WriteableBitmap bitmap)
         {
-            _animation.SetBitmap(bitmap);
-
             if (_prevSeconds != _nextSeconds)
             {
                 _prevSeconds = _nextSeconds;
@@ -121,12 +113,12 @@ namespace Telegram.Controls
             }
         }
 
-        protected override void NextFrame()
+        protected override bool NextFrame(PixelBuffer pixels)
         {
             var animation = _animation;
             if (animation == null || animation.IsCaching || _unloaded)
             {
-                return;
+                return false;
             }
 
             if (_shouldStopNextFrame)
@@ -135,12 +127,10 @@ namespace Telegram.Controls
                 animation.Stop();
             }
 
-            animation.RenderSync(out _nextSeconds, out _);
+            animation.RenderSync(pixels, pixels.PixelWidth, pixels.PixelHeight, out _nextSeconds, out _);
 
-            if (_hideThumbnail == null)
-            {
-                _hideThumbnail = true;
-            }
+            _hideThumbnail ??= true;
+            return true;
         }
 
         private async void OnSourceChanged(IVideoAnimationSource newValue, IVideoAnimationSource oldValue)

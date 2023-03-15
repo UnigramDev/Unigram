@@ -506,7 +506,7 @@ namespace Telegram.Common
             }
 
             var bitmap = new WriteableBitmap(width, height);
-            animation.RenderSync(bitmap, frame);
+            animation.RenderSync(bitmap.PixelBuffer, bitmap.PixelWidth, bitmap.PixelHeight, frame);
             animation.Dispose();
 
             return bitmap;

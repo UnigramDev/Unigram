@@ -5,9 +5,11 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
+using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Native;
 using Windows.Foundation;
 using Windows.Graphics;
 using Windows.Graphics.Display;
@@ -34,10 +36,8 @@ namespace Telegram.Controls
         private WriteableBitmap _bitmap0;
         private WriteableBitmap _bitmap1;
 
-        private WriteableBitmap _current;
-
-        private readonly AutoResetEvent _foregroundLock = new(true);
-        private readonly AutoResetEvent _backgroundLock = new(false);
+        private PixelBuffer _foregroundFrame;
+        private readonly ConcurrentQueue<PixelBuffer> _backgroundQueue = new();
 
         private bool _bitmapClean = true;
 
@@ -240,17 +240,17 @@ namespace Telegram.Controls
 
         private void UpdateSource()
         {
-            if (_canvas == null || _canvas.Source == _current)
-            {
-                return;
-            }
+            //if (_canvas == null || _canvas.Source == _current)
+            //{
+            //    return;
+            //}
 
-            OnUpdateSource(_current);
+            //OnUpdateSource(_current);
         }
 
         protected virtual void OnUpdateSource(WriteableBitmap bitmap)
         {
-            _canvas.Source = _current;
+            //_canvas.Source = _current;
         }
 
         protected virtual void OnLoaded()
@@ -316,7 +316,11 @@ namespace Telegram.Controls
 
             lock (_drawFrameLock)
             {
+                _foregroundFrame = null;
+                _backgroundQueue.Clear();
+
                 _bitmap0 = null;
+                _bitmap1 = null;
             }
         }
 
@@ -370,15 +374,19 @@ namespace Telegram.Controls
             }
             else
             {
-                if (_backgroundLock.WaitOne(0))
+                var pixels = Interlocked.Exchange(ref _foregroundFrame, null);
+                if (pixels != null)
                 {
-                    _current.Invalidate();
-                    _current = _current == _bitmap0 ? _bitmap1 : _bitmap0;
+                    if (_canvas.Source is WriteableBitmap bitmap)
+                    {
+                        _backgroundQueue.Enqueue(new PixelBuffer(bitmap));
+                    }
 
-                    DrawFrame(_current);
+                    pixels.Visual.Invalidate();
+
+                    _canvas.Source = pixels.Visual;
+                    DrawFrame(pixels.Visual);
                 }
-
-                _foregroundLock.Set();
             }
         }
 
@@ -396,7 +404,11 @@ namespace Telegram.Controls
                 _bitmap1 = new WriteableBitmap(width, height);
                 _bitmapClean = true;
 
-                _current = _bitmap0;
+                _foregroundFrame = null;
+                _backgroundQueue.Clear();
+
+                _backgroundQueue.Enqueue(new PixelBuffer(_bitmap0));
+                _backgroundQueue.Enqueue(new PixelBuffer(_bitmap1));
             }
 
             UpdateSource();
@@ -427,37 +439,48 @@ namespace Telegram.Controls
 
         protected void PrepareNextFrame()
         {
-            if (_nextFrameLock.Wait(0))
-            {
-                if (_foregroundLock.WaitOne(0))
-                {
-                    NextFrame();
-
-                    _bitmapClean = false;
-                    _backgroundLock.Set();
-                }
-
-                _nextFrameLock.Release();
-            }
+            PrepareNextFrame(null, null);
         }
 
         private void PrepareNextFrame(object sender, object e)
         {
             if (_nextFrameLock.Wait(0))
             {
-                if (_foregroundLock.WaitOne(0))
+                if (TryDequeueOrExchange(out PixelBuffer frame))
                 {
-                    NextFrame();
+                    if (NextFrame(frame))
+                    {
+                        var dropped = Interlocked.Exchange(ref _foregroundFrame, frame);
+                        if (dropped != null)
+                        {
+                            _backgroundQueue.Enqueue(dropped);
+                        }
+                    }
+                    else
+                    {
+                        _backgroundQueue.Enqueue(frame);
+                    }
 
                     _bitmapClean = false;
-                    _backgroundLock.Set();
                 }
 
                 _nextFrameLock.Release();
             }
         }
 
-        protected abstract void NextFrame();
+        private bool TryDequeueOrExchange(out PixelBuffer frame)
+        {
+            if (_backgroundQueue.TryDequeue(out frame))
+            {
+                return true;
+            }
+
+            // TODO: this looks quite dangerous...
+            frame = Interlocked.Exchange(ref _foregroundFrame, null);
+            return frame != null;
+        }
+
+        protected abstract bool NextFrame(PixelBuffer pixels);
 
         protected abstract void SourceChanged();
 

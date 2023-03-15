@@ -13,6 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using Telegram.Native;
 using Telegram.Navigation;
 using Windows.ApplicationModel;
 using Windows.Foundation;
@@ -110,12 +111,6 @@ namespace Telegram.Controls
             return false;
         }
 
-        protected override void OnUpdateSource(WriteableBitmap bitmap)
-        {
-            _animation?.SetBitmap(bitmap);
-            base.OnUpdateSource(bitmap);
-        }
-
         protected override void DrawFrame(WriteableBitmap bitmap)
         {
             if (_animation == null || _unloaded)
@@ -174,8 +169,6 @@ namespace Telegram.Controls
 
             //_animation.Invalidate();
 
-            _animation?.SetBitmap(bitmap);
-
             if (_hideThumbnail == true)
             {
                 _hideThumbnail = false;
@@ -185,18 +178,18 @@ namespace Telegram.Controls
             }
         }
 
-        protected override void NextFrame()
+        protected override bool NextFrame(PixelBuffer pixels)
         {
             var animation = _animation;
             if (animation == null || animation.IsCaching || _unloaded)
             {
-                return;
+                return false;
             }
 
             var index = _index;
             var framesPerUpdate = _limitFps ? _animationFrameRate < 60 ? 1 : 2 : 1;
 
-            animation.RenderSync(index);
+            animation.RenderSync(pixels, pixels.PixelWidth, pixels.PixelHeight, index);
 
             IndexChanged?.Invoke(this, index);
             PositionChanged?.Invoke(this, Math.Min(1, Math.Max(0, (double)index / (_animationTotalFrame - 1))));
@@ -238,6 +231,8 @@ namespace Telegram.Controls
                     }
                 }
             }
+
+            return true;
         }
 
         public void Seek(double position)
@@ -322,21 +317,6 @@ namespace Telegram.Controls
             }
 
             OnSourceChanged();
-        }
-
-        public async Task UpdateColorsAsync(IReadOnlyDictionary<int, int> colorReplacements)
-        {
-            var newValue = _source;
-
-            var animation = await Task.Run(() => LottieAnimation.LoadFromFile(_source, _frameSize, _isCachingEnabled, colorReplacements, FitzModifier));
-            if (animation == null || !string.Equals(newValue, _source, StringComparison.OrdinalIgnoreCase))
-            {
-                // The app can't access the file specified
-                return;
-            }
-
-            _animation = animation;
-            ColorReplacements = colorReplacements;
         }
 
         public bool Play(bool backward = false)

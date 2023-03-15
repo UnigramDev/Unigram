@@ -305,6 +305,9 @@
       <DependentUpon>Opus\OpusOutput.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+	<ClInclude Include="PixelBuffer.h">
+	  <DependentUpon>PixelBuffer.idl</DependentUpon>
+	</ClInclude>
     <ClInclude Include="PlaceholderImageHelper.h">
       <DependentUpon>PlaceholderImageHelper.idl</DependentUpon>
     </ClInclude>
@@ -742,6 +745,9 @@
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="PixelBuffer.cpp">
+	  <DependentUpon>PixelBuffer.idl</DependentUpon>
+	</ClCompile>
     <ClCompile Include="PlaceholderImageHelper.cpp">
       <DependentUpon>PlaceholderImageHelper.idl</DependentUpon>
     </ClCompile>
@@ -801,6 +807,7 @@
     <Midl Include="Opus\OpusOutput.idl">
       <SubType>Designer</SubType>
     </Midl>
+    <Midl Include="PixelBuffer.idl" />
     <Midl Include="PlaceholderImageHelper.idl" />
     <Midl Include="QrBuffer.idl">
       <SubType>Designer</SubType>
