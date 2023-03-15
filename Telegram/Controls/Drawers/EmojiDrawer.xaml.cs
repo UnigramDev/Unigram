@@ -636,23 +636,11 @@ namespace Telegram.Controls.Drawers
             }
         }
 
-        private Color _currentReplacement = Colors.Black;
-        private readonly Dictionary<int, int> _colorReplacements = new()
-        {
-            { 0xFFFFFF, 0x000000 }
-        };
-
-        private IReadOnlyDictionary<int, int> GetColorReplacements(StickerFullType info)
+        private Color? GetTintColor(StickerFullType info)
         {
             if (info is StickerFullTypeCustomEmoji customEmoji && customEmoji.NeedsRepainting)
             {
-                if (_currentReplacement != Theme.Accent)
-                {
-                    _currentReplacement = Theme.Accent;
-                    _colorReplacements[0xFFFFFF] = Theme.Accent.ToValue();
-                }
-
-                return _colorReplacements;
+                return Theme.Accent;
             }
 
             return null;
@@ -708,7 +696,7 @@ namespace Telegram.Controls.Drawers
                         lottie.DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical;
                     }
 
-                    lottie.ColorReplacements = GetColorReplacements(sticker.FullType);
+                    lottie.TintColor = GetTintColor(sticker.FullType);
                     lottie.Source = UriEx.ToLocal(file.Local.Path);
                 }
                 else if (content.Children[0] is AnimationView video)
