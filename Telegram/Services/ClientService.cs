@@ -118,7 +118,7 @@ namespace Telegram.Services
         bool TryGetUserFull(long id, out UserFullInfo value);
         bool TryGetUserFull(Chat chat, out UserFullInfo value);
 
-        IList<User> GetUsers(IList<long> ids);
+        IList<User> GetUsers(IEnumerable<long> ids);
 
         BasicGroup GetBasicGroup(long id);
         BasicGroup GetBasicGroup(Chat chat);
@@ -1162,9 +1162,9 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             return result;
         }
 
-        public IList<User> GetUsers(IList<long> ids)
+        public IList<User> GetUsers(IEnumerable<long> ids)
         {
-            var result = new List<User>(ids.Count);
+            var result = new List<User>();
 
             foreach (var id in ids)
             {
