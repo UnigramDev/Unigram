@@ -98,7 +98,7 @@
                         </Button.CommandParameter>
                     </controls:BadgeButton>
 
-                    <controls:BadgeButton Command="{x:Bind ViewModel.ResetAutoDownloadCommand}"
+                    <controls:BadgeButton Click="{x:Bind ViewModel.ResetAutoDownload}"
                                           Content="{CustomResource ResetAutomaticMediaDownload}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Foreground="Red" />

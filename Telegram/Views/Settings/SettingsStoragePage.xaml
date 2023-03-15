@@ -62,7 +62,7 @@
                     <controls:HeaderedControl>
                         <controls:BadgeButton Content="{CustomResource LocalDatabase}"
                                               Badge="{x:Bind ViewModel.StatisticsFast.DatabaseSize, Mode=OneWay, Converter={StaticResource FileSizeConverter}}" />
-                        <controls:BadgeButton Command="{x:Bind ViewModel.ClearCacheCommand}"
+                        <controls:BadgeButton Click="{x:Bind ViewModel.ClearCache}"
                                               Content="{CustomResource ClearMediaCache}"
                                               Badge="{x:Bind ViewModel.Statistics.Size, Mode=OneWay, Converter={StaticResource FileSizeConverter}}"
                                               IsEnabled="{x:Bind ConvertEnabled(ViewModel.Statistics), Mode=OneWay}" />

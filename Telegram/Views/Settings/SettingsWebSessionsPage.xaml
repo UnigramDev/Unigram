@@ -27,7 +27,7 @@
                     <controls:HeaderedControl Footer="{CustomResource ClearOtherWebSessionsHelp}">
                         <controls:BadgeButton Content="{CustomResource TerminateAllWebSessions}"
                                               Foreground="Red"
-                                              Click="TerminateOthers_Click" />
+                                              Click="{x:Bind ViewModel.TerminateOthers}" />
                     </controls:HeaderedControl>
 
                     <TextBlock Text="{CustomResource OtherWebSessions}"

@@ -41,7 +41,7 @@
 
                     <controls:HeaderedControl Margin="0,0,0,16">
                         <controls:BadgeButton Content="{CustomResource BlockUser}"
-                                              Command="{x:Bind ViewModel.BlockCommand}"
+                                              Click="{x:Bind ViewModel.Block}"
                                               Style="{StaticResource GlyphBadgeButtonStyle}"
                                               Glyph="&#xE98B;" />
                     </controls:HeaderedControl>

@@ -16,7 +16,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsPasscodeViewModel : TLViewModelBase
+    public class SettingsPasscodeViewModel: TLViewModelBase
         , IHandle
     //, IHandle<UpdatePasscodeLock>
     {
@@ -26,9 +26,6 @@ namespace Telegram.ViewModels.Settings
             : base(clientService, settingsService, aggregator)
         {
             _passcodeService = passcodeService;
-
-            ToggleCommand = new RelayCommand(ToggleExecute);
-            EditCommand = new RelayCommand(EditExecute);
         }
 
         public override void Subscribe()
@@ -95,10 +92,9 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        public RelayCommand ToggleCommand { get; }
-        private async void ToggleExecute()
+        public void Toggle()
         {
-            await ToggleAsync();
+            _ = ToggleAsync();
         }
 
         public async Task<bool> ToggleAsync()
@@ -133,8 +129,7 @@ namespace Telegram.ViewModels.Settings
             return false;
         }
 
-        public RelayCommand EditCommand { get; }
-        private async void EditExecute()
+        public async void Edit()
         {
             var timeout = _passcodeService.AutolockTimeout + 0;
             var dialog = new SettingsPasscodeInputPopup();

@@ -25,9 +25,6 @@ namespace Telegram.ViewModels.Settings
             : base(clientService, settingsService, aggregator)
         {
             Items = new SortedObservableCollection<ConnectedWebsite>(new TLAuthorizationComparer());
-
-            TerminateCommand = new RelayCommand<ConnectedWebsite>(TerminateExecute);
-            TerminateOthersCommand = new RelayCommand(TerminateOtherExecute);
         }
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -87,8 +84,7 @@ namespace Telegram.ViewModels.Settings
 
         public ObservableCollection<ConnectedWebsite> Items { get; private set; }
 
-        public RelayCommand<ConnectedWebsite> TerminateCommand { get; }
-        private async void TerminateExecute(ConnectedWebsite session)
+        public async void Terminate(ConnectedWebsite session)
         {
             var bot = ClientService.GetUser(session.BotUserId);
             if (bot == null)
@@ -120,8 +116,7 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        public RelayCommand TerminateOthersCommand { get; }
-        private async void TerminateOtherExecute()
+        public async void TerminateOthers()
         {
             var terminate = await ShowPopupAsync(Strings.Resources.AreYouSureWebSessions, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (terminate == ContentDialogResult.Primary)

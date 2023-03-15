@@ -52,13 +52,6 @@ namespace Telegram.ViewModels.Settings
             _allowChatInvitesRules = chatInvite;
             _allowPrivateVoiceAndVideoNoteMessages = privateVoiceAndVideoNoteMessages;
 
-            PasscodeCommand = new RelayCommand(PasscodeExecute);
-            PasswordCommand = new RelayCommand(PasswordExecute);
-            ChangeEmailCommand = new RelayCommand(ChangeEmailExecute);
-            ClearDraftsCommand = new RelayCommand(ClearDraftsExecute);
-            ClearContactsCommand = new RelayCommand(ClearContactsExecute);
-            ClearPaymentsCommand = new RelayCommand(ClearPaymentsExecute);
-
             Children.Add(_showForwardedRules);
             Children.Add(_showPhotoRules);
             Children.Add(_showPhoneRules);
@@ -300,14 +293,12 @@ namespace Telegram.ViewModels.Settings
             ClientService.Options.DisableTopChats = !value;
         }
 
-        public RelayCommand PasscodeCommand { get; }
-        private void PasscodeExecute()
+        public void Passcode()
         {
             NavigationService.NavigateToPasscode();
         }
 
-        public RelayCommand PasswordCommand { get; }
-        private async void PasswordExecute()
+        public async void Password()
         {
             var response = await ClientService.SendAsync(new GetPasswordState());
             if (response is PasswordState passwordState)
@@ -338,8 +329,7 @@ namespace Telegram.ViewModels.Settings
             NavigationService.Navigate(typeof(SettingsAutoDeletePage));
         }
 
-        public RelayCommand ChangeEmailCommand { get; }
-        private async void ChangeEmailExecute()
+        public async void ChangeEmail()
         {
             var response = await ClientService.SendAsync(new GetPasswordState());
             if (response is PasswordState passwordState)
@@ -348,8 +338,7 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        public RelayCommand ClearDraftsCommand { get; }
-        private async void ClearDraftsExecute()
+        public async void ClearDrafts()
         {
             var confirm = await ShowPopupAsync(Strings.Resources.AreYouSureClearDrafts, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
@@ -364,8 +353,7 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        public RelayCommand ClearContactsCommand { get; }
-        private async void ClearContactsExecute()
+        public async void ClearContacts()
         {
             var confirm = await ShowPopupAsync(Strings.Resources.SyncContactsDeleteInfo, Strings.Resources.Contacts, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
@@ -392,8 +380,7 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        public RelayCommand ClearPaymentsCommand { get; }
-        private async void ClearPaymentsExecute()
+        public async void ClearPayments()
         {
             var dialog = new ContentPopup();
             var stack = new StackPanel();

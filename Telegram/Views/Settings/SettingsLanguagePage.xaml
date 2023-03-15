@@ -37,7 +37,7 @@
 
                     <controls:BadgeButton Content="{CustomResource DoNotTranslate}"
                                           Badge="{x:Bind ViewModel.DoNotTranslate, Mode=OneWay}"
-                                          Command="{x:Bind ViewModel.DoNotTranslateCommand}"
+                                          Click="{x:Bind ViewModel.ChangeDoNotTranslate}"
                                           Visibility="{x:Bind ViewModel.IsTranslateEnabled, Mode=OneWay}" />
                 </controls:HeaderedControl>
             </ListView.Header>

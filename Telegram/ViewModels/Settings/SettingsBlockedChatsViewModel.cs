@@ -24,14 +24,12 @@ namespace Telegram.ViewModels.Settings
         {
             Items = new ItemsCollection(clientService);
 
-            BlockCommand = new RelayCommand(BlockExecute);
             UnblockCommand = new RelayCommand<MessageSender>(UnblockExecute);
         }
 
         public ObservableCollection<MessageSender> Items { get; private set; }
 
-        public RelayCommand BlockCommand { get; }
-        private async void BlockExecute()
+        public async void Block()
         {
             var selected = await SharePopup.PickChatAsync(Strings.Resources.BlockUser);
             if (selected == null)

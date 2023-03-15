@@ -25,7 +25,6 @@ namespace Telegram.ViewModels.Settings
         public SettingsNotificationsExceptionsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            ChooseSoundCommand = new RelayCommand(ChooseSound);
             RemoveCommand = new RelayCommand<Chat>(RemoveExecute);
         }
 
@@ -103,8 +102,7 @@ namespace Telegram.ViewModels.Settings
             public bool HasMoreItems => _hasMoreItems;
         }
 
-        public RelayCommand ChooseSoundCommand { get; }
-        private async void ChooseSound()
+        public async void ChooseSound()
         {
             var tsc = new TaskCompletionSource<object>();
 

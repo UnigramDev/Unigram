@@ -25,7 +25,6 @@ namespace Telegram.ViewModels.Settings
             : base(clientService, settingsService, aggregator)
         {
             AutoDownloadCommand = new RelayCommand<AutoDownloadType>(AutoDownloadExecute);
-            ResetAutoDownloadCommand = new RelayCommand(ResetAutoDownloadExecute);
             StoragePathCommand = new RelayCommand<bool>(StoragePathExecute);
         }
 
@@ -151,8 +150,7 @@ namespace Telegram.ViewModels.Settings
             RaisePropertyChanged(nameof(AutoDownload));
         }
 
-        public RelayCommand ResetAutoDownloadCommand { get; }
-        private async void ResetAutoDownloadExecute()
+        public async void ResetAutoDownload()
         {
             var confirm = await ShowPopupAsync(Strings.Resources.ResetAutomaticMediaDownloadAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)

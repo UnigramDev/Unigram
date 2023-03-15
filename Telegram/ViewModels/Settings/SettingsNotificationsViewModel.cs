@@ -38,8 +38,6 @@ namespace Telegram.ViewModels.Settings
             {
                 Children.Add(scope);
             }
-
-            ResetCommand = new RelayCommand(ResetExecute);
         }
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -163,8 +161,7 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        public RelayCommand ResetCommand { get; }
-        private async void ResetExecute()
+        public async void Reset()
         {
             var confirm = await ShowPopupAsync(Strings.Resources.ResetNotificationsAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)

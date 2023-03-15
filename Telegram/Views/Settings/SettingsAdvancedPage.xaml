@@ -40,7 +40,7 @@
                 <controls:HeaderedControl x:Name="UpdatePanel"
                                           x:Load="False"
                                           Footer="{x:Bind ViewModel.UpdateFooter, Mode=OneWay}">
-                    <controls:BadgeButton Command="{x:Bind ViewModel.UpdateCommand}"
+                    <controls:BadgeButton Click="{x:Bind ViewModel.Update}"
                                           Content="{x:Bind ViewModel.UpdateText, Mode=OneWay}"
                                           IsEnabled="{x:Bind ViewModel.IsUpdateEnabled, Mode=OneWay}" />
                 </controls:HeaderedControl>

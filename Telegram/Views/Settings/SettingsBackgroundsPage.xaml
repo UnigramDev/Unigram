@@ -45,12 +45,12 @@
             <GridView.Header>
                 <controls:HeaderedControl Margin="-20,0,-20,8">
                     <controls:BadgeButton Content="{CustomResource SelectFromGallery}"
-                                          Command="{x:Bind ViewModel.LocalCommand}"
+                                          Click="{x:Bind ViewModel.ChangeToLocal}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Glyph="&#xEB9F;" />
 
                     <controls:BadgeButton Content="{CustomResource SetColor}"
-                                          Command="{x:Bind ViewModel.ColorCommand}"
+                                          Click="{x:Bind ViewModel.ChangeToColor}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Glyph="&#xE2B1;" />
                 </controls:HeaderedControl>
@@ -59,7 +59,7 @@
                 <controls:HeaderedControl Footer="{CustomResource ResetChatBackgroundsInfo}"
                                           Margin="-24,0,-24,32">
                     <controls:BadgeButton Content="{CustomResource ResetChatBackgrounds}"
-                                          Command="{x:Bind ViewModel.ResetCommand}"
+                                          Click="{x:Bind ViewModel.Reset}"
                                           Foreground="{ThemeResource DangerButtonBackground}" />
                 </controls:HeaderedControl>
             </GridView.Footer>

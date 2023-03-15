@@ -26,14 +26,14 @@
                     <controls:BadgeButton Content="{CustomResource Passcode}"
                                           Badge="{x:Bind ConvertOnOff(ViewModel.HasPasscode), Mode=OneWay}"
                                           Glyph="&#xE72E;"
-                                          Command="{x:Bind ViewModel.PasscodeCommand}"
+                                          Click="{x:Bind ViewModel.Passcode}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           IsChevronVisible="True" />
 
                     <controls:BadgeButton Content="{CustomResource TwoStepVerification}"
                                           Badge="{x:Bind ConvertOnOff(ViewModel.HasPassword), Mode=OneWay}"
                                           Glyph="&#xE192;"
-                                          Command="{x:Bind ViewModel.PasswordCommand}"
+                                          Click="{x:Bind ViewModel.Password}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           IsChevronVisible="True" />
 
@@ -48,7 +48,7 @@
                                           x:Load="{x:Bind ViewModel.HasEmailAddress, Mode=OneWay}"
                                           Content="{CustomResource EmailLogin}"
                                           Glyph="&#xE9F2;"
-                                          Command="{x:Bind ViewModel.ChangeEmailCommand}"
+                                          Click="{x:Bind ViewModel.ChangeEmail}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           IsChevronVisible="True" />
                 </controls:HeaderedControl>
@@ -118,7 +118,7 @@
                 <controls:HeaderedControl Header="{CustomResource PrivacyAdvanced}"
                                           Footer="{CustomResource DeleteAccountHelp}">
                     <controls:BadgeButton Content="{CustomResource PrivacyDeleteCloudDrafts}"
-                                          Command="{x:Bind ViewModel.ClearDraftsCommand}" />
+                                          Click="{x:Bind ViewModel.ClearDrafts}" />
 
                     <controls:BadgeButton Content="{CustomResource DeleteAccountIfAwayFor2}">
                         <controls:BadgeButton.Badge>
@@ -131,7 +131,7 @@
 
                 <controls:HeaderedControl Header="{CustomResource PrivacyBots}"
                                           Footer="{CustomResource PrivacyBotsInfo}">
-                    <controls:BadgeButton Command="{x:Bind ViewModel.ClearPaymentsCommand}"
+                    <controls:BadgeButton Click="{x:Bind ViewModel.ClearPayments}"
                                           Content="{CustomResource PrivacyPaymentsClear}" />
 
                     <controls:BadgeButton Click="WebSessions_Click"
@@ -141,7 +141,7 @@
 
                 <controls:HeaderedControl Header="{CustomResource Contacts}"
                                           Footer="{CustomResource SuggestContactsInfo}">
-                    <controls:BadgeButton Command="{x:Bind ViewModel.ClearContactsCommand}"
+                    <controls:BadgeButton Click="{x:Bind ViewModel.ClearContacts}"
                                           Content="{CustomResource SyncContactsDelete}" />
 
                     <CheckBox IsChecked="{x:Bind ViewModel.IsContactsSyncEnabled, Mode=TwoWay}"

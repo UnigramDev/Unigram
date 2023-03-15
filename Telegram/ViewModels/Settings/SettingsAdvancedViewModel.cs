@@ -32,14 +32,12 @@ namespace Telegram.ViewModels.Settings
             : base(clientService, settingsService, aggregator)
         {
             _cloudUpdateService = cloudUpdateService;
-
-            UpdateCommand = new RelayCommand(UpdateExecute);
         }
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             _update = _cloudUpdateService.NextUpdate;
-            UpdateExecute();
+            Update();
 
             return base.OnNavigatedToAsync(parameter, mode, state);
         }
@@ -118,8 +116,7 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        public RelayCommand UpdateCommand { get; }
-        private async void UpdateExecute()
+        public async void Update()
         {
             var update = _update;
             if (update == null)

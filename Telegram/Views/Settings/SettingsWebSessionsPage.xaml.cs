@@ -24,12 +24,11 @@ namespace Telegram.Views.Settings
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            ViewModel.TerminateCommand.Execute(e.ClickedItem);
+            ViewModel.Terminate(e.ClickedItem as ConnectedWebsite);
         }
 
         private void TerminateOthers_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.TerminateOthersCommand.Execute(null);
         }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)

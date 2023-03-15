@@ -22,7 +22,6 @@ namespace Telegram.ViewModels.Settings
         public SettingsStorageViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            ClearCacheCommand = new RelayCommand(ClearCacheExecute);
         }
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -96,8 +95,7 @@ namespace Telegram.ViewModels.Settings
             set => Set(ref _taskCompleted, value);
         }
 
-        public RelayCommand ClearCacheCommand { get; }
-        private void ClearCacheExecute()
+        public void ClearCache()
         {
             var statistics = _totalStatistics;
             if (statistics == null)

@@ -29,10 +29,6 @@ namespace Telegram.ViewModels.Settings
         {
             Items = new DiffObservableCollection<Background>(new BackgroundDiffHandler(), Constants.DiffOptions);
 
-            LocalCommand = new RelayCommand(LocalExecute);
-            ColorCommand = new RelayCommand(ColorExecute);
-            ResetCommand = new RelayCommand(ResetExecute);
-
             ShareCommand = new RelayCommand<Background>(ShareExecute);
             DeleteCommand = new RelayCommand<Background>(DeleteExecute);
         }
@@ -98,8 +94,7 @@ namespace Telegram.ViewModels.Settings
 
         public DiffObservableCollection<Background> Items { get; private set; }
 
-        public RelayCommand LocalCommand { get; }
-        private async void LocalExecute()
+        public async void ChangeToLocal()
         {
             try
             {
@@ -118,8 +113,7 @@ namespace Telegram.ViewModels.Settings
             catch { }
         }
 
-        public RelayCommand ColorCommand { get; }
-        private async void ColorExecute()
+        public async void ChangeToColor()
         {
             var confirm = await ShowPopupAsync(new BackgroundPopup(Constants.WallpaperColorFileName));
             if (confirm == ContentDialogResult.Primary)
@@ -128,8 +122,7 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        public RelayCommand ResetCommand { get; }
-        private async void ResetExecute()
+        public async void Reset()
         {
             var confirm = await ShowPopupAsync(Strings.Resources.ResetChatBackgroundsAlert, Strings.Resources.ResetChatBackgroundsAlertTitle, Strings.Resources.Reset, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)

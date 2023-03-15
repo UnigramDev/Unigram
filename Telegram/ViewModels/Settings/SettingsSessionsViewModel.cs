@@ -26,8 +26,6 @@ namespace Telegram.ViewModels.Settings
             : base(clientService, settingsService, aggregator)
         {
             Items = new MvxObservableCollection<KeyedList<SessionsGroup, Session>>();
-
-            TerminateCommand = new RelayCommand<Session>(TerminateExecute);
         }
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -180,8 +178,12 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        public RelayCommand<Session> TerminateCommand { get; }
-        private async void TerminateExecute(Session session)
+        public void TerminateCurrent()
+        {
+            Terminate(_current);
+        }
+
+        public async void Terminate(Session session)
         {
             if (session == null)
             {

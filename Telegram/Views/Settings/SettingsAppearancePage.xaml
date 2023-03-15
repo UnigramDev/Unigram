@@ -214,7 +214,7 @@
 
                     <controls:BadgeButtonWithImage Content="Emoji Set"
                                                    Badge="{x:Bind ViewModel.EmojiSet, Mode=OneWay}"
-                                                   Command="{x:Bind ViewModel.EmojiSetCommand}"
+                                                   Click="{x:Bind ViewModel.ChangeEmojiSet}"
                                                    Style="{StaticResource ImageSubbadgeBadgeButtonStyle}">
                         <controls:BadgeButtonWithImage.ImageSource>
                             <BitmapImage UriSource="{x:Bind ViewModel.EmojiSetId, Mode=OneWay}"

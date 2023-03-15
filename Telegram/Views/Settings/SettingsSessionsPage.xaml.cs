@@ -27,7 +27,7 @@ namespace Telegram.Views.Settings
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            ViewModel.TerminateCommand.Execute(e.ClickedItem);
+            ViewModel.Terminate(e.ClickedItem as Session);
         }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)

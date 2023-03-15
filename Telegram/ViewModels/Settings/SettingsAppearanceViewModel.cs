@@ -35,8 +35,6 @@ namespace Telegram.ViewModels.Settings
 
             ChatThemes = new ObservableCollection<ChatTheme>();
 
-            EmojiSetCommand = new RelayCommand(EmojiSetExecute);
-
             ThemeCreateCommand = new RelayCommand<ChatTheme>(ThemeCreateExecute);
         }
 
@@ -284,8 +282,7 @@ namespace Telegram.ViewModels.Settings
             new SettingsOptionItem<DistanceUnits>(DistanceUnits.Miles, Strings.Resources.DistanceUnitsMiles),
         };
 
-        public RelayCommand EmojiSetCommand { get; }
-        private async void EmojiSetExecute()
+        public async void ChangeEmojiSet()
         {
             await ShowPopupAsync(new SettingsEmojiSetPopup(ClientService, _emojiSetService, Aggregator));
 

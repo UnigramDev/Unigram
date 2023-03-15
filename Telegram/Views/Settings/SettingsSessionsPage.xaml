@@ -68,8 +68,7 @@
                 <Grid>
                     <controls:HeaderedControl Header="{CustomResource CurrentSession}"
                                               Footer="{CustomResource ClearOtherSessionsHelp}">
-                        <Button CommandParameter="{x:Bind ViewModel.Current, Mode=OneWay}"
-                                Command="{x:Bind ViewModel.TerminateCommand}"
+                        <Button Click="{x:Bind ViewModel.TerminateCurrent}"
                                 Style="{StaticResource EmptyButtonStyle}">
                             <cells:SessionCell Session="{x:Bind ViewModel.Current, Mode=OneWay}"
                                                Background="Transparent" />

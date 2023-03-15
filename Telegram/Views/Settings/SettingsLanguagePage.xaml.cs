@@ -31,10 +31,7 @@ namespace Telegram.Views.Settings
 
         private void List_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (e.ClickedItem is LanguagePackInfo)
-            {
-                ViewModel.ChangeCommand.Execute(e.ClickedItem);
-            }
+            ViewModel.Change(e.ClickedItem as LanguagePackInfo);
         }
 
         #region Context menu

@@ -36,9 +36,6 @@ namespace Telegram.ViewModels.Settings
 
             Items = new MvxObservableCollection<List<LanguagePackInfo>>();
 
-            DoNotTranslateCommand = new RelayCommand(DoNotTranslateExecute);
-
-            ChangeCommand = new RelayCommand<LanguagePackInfo>(ChangeExecute);
             DeleteCommand = new RelayCommand<LanguagePackInfo>(DeleteExecute);
         }
 
@@ -115,8 +112,7 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        public RelayCommand DoNotTranslateCommand { get; }
-        private async void DoNotTranslateExecute()
+        public async void ChangeDoNotTranslate()
         {
             var exclude = Settings.DoNotTranslate;
             if (exclude == null)
@@ -140,8 +136,7 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        public RelayCommand<LanguagePackInfo> ChangeCommand { get; }
-        private async void ChangeExecute(LanguagePackInfo info)
+        public async void Change(LanguagePackInfo info)
         {
             IsLoading = true;
 
@@ -213,7 +208,7 @@ namespace Telegram.ViewModels.Settings
             var fallback = Items.OfType<LanguagePackInfo>().FirstOrDefault(x => x.Id == ApplicationLanguages.Languages[0]);
             if (fallback != null)
             {
-                ChangeExecute(fallback);
+                Change(fallback);
             }
         }
     }
