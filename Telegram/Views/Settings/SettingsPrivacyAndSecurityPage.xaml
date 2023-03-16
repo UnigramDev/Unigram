@@ -19,7 +19,7 @@
                     <controls:BadgeButton Content="{CustomResource BlockedUsers}"
                                           Badge="{x:Bind ViewModel.BlockedUsers, Mode=OneWay}"
                                           Glyph="&#xE98B;"
-                                          Click="BlockedUsers_Click"
+                                          Click="{x:Bind ViewModel.OpenBlockedUsers}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           IsChevronVisible="True" />
 
@@ -58,42 +58,42 @@
                     <controls:BadgeButton Content="{CustomResource PrivacyPhone}"
                                           Badge="{x:Bind ViewModel.ShowPhoneRules.Badge, Mode=OneWay}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Click="ShowPhone_Click"
+                                          Click="{x:Bind ViewModel.OpenShowPhone}"
                                           IsChevronVisible="True"
                                           Glyph="&#xF61B;" />
 
                     <controls:BadgeButton Content="{CustomResource PrivacyLastSeen}"
                                           Badge="{x:Bind ViewModel.ShowStatusRules.Badge, Mode=OneWay}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Click="StatusTimestamp_Click"
+                                          Click="{x:Bind ViewModel.OpenStatusTimestamp}"
                                           IsChevronVisible="True"
                                           Glyph="&#xE9A8;" />
 
                     <controls:BadgeButton Content="{CustomResource PrivacyProfilePhoto}"
                                           Badge="{x:Bind ViewModel.ShowPhotoRules.Badge, Mode=OneWay}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Click="ProfilePhoto_Click"
+                                          Click="{x:Bind ViewModel.OpenProfilePhoto}"
                                           IsChevronVisible="True"
                                           Glyph="&#xE9A9;" />
 
                     <controls:BadgeButton Content="{CustomResource PrivacyForwards}"
                                           Badge="{x:Bind ViewModel.ShowForwardedRules.Badge, Mode=OneWay}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Click="Forwards_Click"
+                                          Click="{x:Bind ViewModel.OpenForwards}"
                                           IsChevronVisible="True"
                                           Glyph="&#xE72D;" />
 
                     <controls:BadgeButton Content="{CustomResource Calls}"
                                           Badge="{x:Bind ViewModel.AllowCallsRules.Badge, Mode=OneWay}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Click="PhoneCall_Click"
+                                          Click="{x:Bind ViewModel.OpenPhoneCall}"
                                           IsChevronVisible="True"
                                           Glyph="&#xE717;" />
 
                     <controls:BadgeButton Content="{CustomResource GroupsAndChannels}"
                                           Badge="{x:Bind ViewModel.AllowChatInvitesRules.Badge, Mode=OneWay}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Click="ChatInvite_Click"
+                                          Click="{x:Bind ViewModel.OpenChatInvite}"
                                           IsChevronVisible="True"
                                           Glyph="&#xE716;" />
 
@@ -103,7 +103,7 @@
                                           Badge="{x:Bind ViewModel.AllowPrivateVoiceAndVideoNoteMessages.Badge, Mode=OneWay}"
                                           ChevronGlyph="{x:Bind ConvertVoiceMessagesChevron(ViewModel.IsPremium), Mode=OneWay}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Click="VoiceMessages_Click"
+                                          Click="{x:Bind ViewModel.OpenVoiceMessages}"
                                           IsChevronVisible="True"
                                           Glyph="&#xE720;" />
                 </controls:HeaderedControl>
@@ -134,7 +134,7 @@
                     <controls:BadgeButton Click="{x:Bind ViewModel.ClearPayments}"
                                           Content="{CustomResource PrivacyPaymentsClear}" />
 
-                    <controls:BadgeButton Click="WebSessions_Click"
+                    <controls:BadgeButton Click="{x:Bind ViewModel.OpenWebSessions}"
                                           Content="{CustomResource WebSessionsTitle}"
                                           IsChevronVisible="True" />
                 </controls:HeaderedControl>

@@ -7,9 +7,6 @@
 using Telegram.Common;
 using Telegram.Converters;
 using Telegram.ViewModels.Settings;
-using Telegram.Views.Settings.Privacy;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Views.Settings
@@ -29,62 +26,6 @@ namespace Telegram.Views.Settings
             if (ApiInfo.IsPackagedRelease && ViewModel.ClientService.Options.CanIgnoreSensitiveContentRestrictions)
             {
                 FindName(nameof(SensitiveContent));
-            }
-        }
-
-        private void WebSessions_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(SettingsWebSessionsPage));
-        }
-
-        private void BlockedUsers_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(SettingsBlockedChatsPage));
-        }
-
-        private void ShowPhone_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(SettingsPrivacyPhonePage));
-        }
-
-        private void StatusTimestamp_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(SettingsPrivacyShowStatusPage));
-        }
-
-        private void ProfilePhoto_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(SettingsPrivacyShowPhotoPage));
-        }
-
-        private void Forwards_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(SettingsPrivacyShowForwardedPage));
-        }
-
-        private void PhoneCall_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(SettingsPrivacyAllowCallsPage));
-        }
-
-        private void ChatInvite_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(SettingsPrivacyAllowChatInvitesPage));
-        }
-
-        private async void VoiceMessages_Click(object sender, RoutedEventArgs e)
-        {
-            if (ViewModel.ClientService.IsPremium)
-            {
-                Frame.Navigate(typeof(SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesPage));
-            }
-            else if (ViewModel.ClientService.IsPremiumAvailable)
-            {
-                var confirm = await ViewModel.ShowPopupAsync(Strings.Resources.PrivacyVoiceMessagesPremiumOnly, Strings.Resources.PrivacyVoiceMessages, Strings.Resources.OK, Strings.Resources.Cancel);
-                if (confirm == ContentDialogResult.Primary)
-                {
-                    ViewModel.NavigationService.ShowPromo(/*new PremiumSourceFeature(new PremiumFeaturePrivateVoiceAndVideoMessages)*/);
-                }
             }
         }
 

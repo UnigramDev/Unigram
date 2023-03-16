@@ -18,7 +18,6 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media.Animation;
 
 namespace Telegram.Views.Settings
 {
@@ -44,41 +43,6 @@ namespace Telegram.Views.Settings
             _typeToTemplateMapping.Add("AnimatedItemTemplate", Resources["AnimatedItemTemplate"] as DataTemplate);
             _typeToTemplateMapping.Add("VideoItemTemplate", Resources["VideoItemTemplate"] as DataTemplate);
             _typeToTemplateMapping.Add("ItemTemplate", Resources["ItemTemplate"] as DataTemplate);
-        }
-
-        private void FeaturedStickers_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(SettingsStickersPage), (int)StickersType.Trending, new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
-        }
-
-        private void ArchivedStickers_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(SettingsStickersPage), (int)StickersType.Archived, new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
-        }
-
-        private void ArchivedMasks_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(SettingsStickersPage), (int)StickersType.MasksArchived, new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
-        }
-
-        private void Masks_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(SettingsStickersPage), (int)StickersType.Masks, new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
-        }
-
-        private void Emoji_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(SettingsStickersPage), (int)StickersType.Emoji, new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
-        }
-
-        private void ArchivedEmoji_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(SettingsStickersPage), (int)StickersType.EmojiArchived, new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
-        }
-
-        private void Reaction_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(SettingsQuickReactionPage), null, infoOverride: new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
         }
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)

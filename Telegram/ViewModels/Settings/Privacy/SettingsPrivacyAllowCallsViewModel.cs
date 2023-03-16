@@ -6,6 +6,7 @@
 //
 using Telegram.Services;
 using Telegram.Td.Api;
+using Telegram.Views.Settings.Privacy;
 
 namespace Telegram.ViewModels.Settings.Privacy
 {
@@ -23,5 +24,9 @@ namespace Telegram.ViewModels.Settings.Privacy
 
         public SettingsPrivacyAllowP2PCallsViewModel AllowP2PCallsRules => _allowP2PCallsRules;
 
+        public void OpenP2PCall()
+        {
+            NavigationService.Navigate(typeof(SettingsPrivacyAllowP2PCallsPage));
+        }
     }
 }

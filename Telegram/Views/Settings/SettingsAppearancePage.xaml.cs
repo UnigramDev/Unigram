@@ -47,21 +47,6 @@ namespace Telegram.Views.Settings
             ViewModel.PropertyChanged -= OnPropertyChanged;
         }
 
-        private void Wallpaper_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(SettingsBackgroundsPage));
-        }
-
-        private void NightMode_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(SettingsNightModePage));
-        }
-
-        private void Themes_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(SettingsThemesPage));
-        }
-
         #region Binding
 
         private string ConvertNightMode(NightMode mode)
@@ -146,6 +131,5 @@ namespace Telegram.Views.Settings
         }
 
         #endregion
-
     }
 }

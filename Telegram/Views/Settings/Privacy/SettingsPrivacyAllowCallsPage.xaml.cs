@@ -7,7 +7,6 @@
 using Telegram.ViewModels.Settings;
 using Telegram.ViewModels.Settings.Privacy;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Settings.Privacy
 {
@@ -34,10 +33,5 @@ namespace Telegram.Views.Settings.Privacy
         }
 
         #endregion
-
-        private void P2PCall_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(SettingsPrivacyAllowP2PCallsPage));
-        }
     }
 }

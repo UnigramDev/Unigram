@@ -175,7 +175,7 @@
 
                         <controls:HeaderedControl Footer="{CustomResource StickersBotInfo}">
                             <controls:BadgeButton Content="{CustomResource FeaturedStickers}"
-                                                  Click="FeaturedStickers_Click"
+                                                  Click="{x:Bind ViewModel.OpenFeaturedStickers}"
                                                   Badge="{x:Bind ViewModel.FeaturedStickersCount, Mode=OneWay}"
                                                   BadgeVisibility="{x:Bind ViewModel.FeaturedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                                   Style="{StaticResource GlyphBadgeButtonStyle}"
@@ -183,7 +183,7 @@
                                                   Glyph="&#xE989;" />
 
                             <controls:BadgeButton Content="{CustomResource ArchivedStickers}"
-                                                  Click="ArchivedStickers_Click"
+                                                  Click="{x:Bind ViewModel.OpenArchivedStickers}"
                                                   Badge="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay}"
                                                   Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                                   Style="{StaticResource GlyphBadgeButtonStyle}"
@@ -191,19 +191,19 @@
                                                   Glyph="&#xE7B8;" />
 
                             <controls:BadgeButton Content="{CustomResource Masks}"
-                                                  Click="Masks_Click"
+                                                  Click="{x:Bind ViewModel.OpenMasks}"
                                                   Style="{StaticResource GlyphBadgeButtonStyle}"
                                                   IsChevronVisible="True"
                                                   Glyph="&#xE997;" />
 
                             <controls:BadgeButton Content="{CustomResource Emoji}"
-                                                  Click="Emoji_Click"
+                                                  Click="{x:Bind ViewModel.OpenEmoji}"
                                                   Style="{StaticResource GlyphBadgeButtonStyle}"
                                                   IsChevronVisible="True"
                                                   Glyph="&#xE76E;" />
 
                             <controls:BadgeButton Content="{CustomResource DoubleTapSetting}"
-                                                  Click="Reaction_Click"
+                                                  Click="{x:Bind ViewModel.OpenReaction}"
                                                   Style="{StaticResource GlyphBadgeButtonStyle}"
                                                   IsChevronVisible="True"
                                                   Glyph="&#xE987;" />
@@ -215,7 +215,7 @@
                                 Spacing="16">
                         <controls:HeaderedControl Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <controls:BadgeButton Content="{CustomResource ArchivedMasks}"
-                                                  Click="ArchivedMasks_Click"
+                                                  Click="{x:Bind ViewModel.OpenArchivedMasks}"
                                                   Badge="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay}"
                                                   Style="{StaticResource GlyphBadgeButtonStyle}"
                                                   IsChevronVisible="True"
@@ -233,7 +233,7 @@
                                 Spacing="16">
                         <controls:HeaderedControl Footer="{CustomResource SuggestAnimatedEmojiInfo}">
                             <controls:BadgeButton Content="{CustomResource ArchivedEmojiPacks}"
-                                                  Click="ArchivedEmoji_Click"
+                                                  Click="{x:Bind ViewModel.OpenArchivedEmoji}"
                                                   Badge="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay}"
                                                   Style="{StaticResource GlyphBadgeButtonStyle}"
                                                   Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"

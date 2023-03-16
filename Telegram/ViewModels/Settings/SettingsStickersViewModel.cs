@@ -16,9 +16,11 @@ using Telegram.Services;
 using Telegram.Services.Settings;
 using Telegram.Td.Api;
 using Telegram.Views.Popups;
+using Telegram.Views.Settings;
 using Windows.Foundation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings
@@ -340,6 +342,46 @@ namespace Telegram.ViewModels.Settings
         }
 
         #endregion
+
+        public void OpenFeaturedStickers()
+        {
+            Open(StickersType.Trending);
+        }
+
+        public void OpenArchivedStickers()
+        {
+            Open(StickersType.Archived);
+        }
+
+        public void OpenArchivedMasks()
+        {
+            Open(StickersType.MasksArchived);
+        }
+
+        public void OpenMasks()
+        {
+            Open(StickersType.Masks);
+        }
+
+        public void OpenEmoji()
+        {
+            Open(StickersType.Emoji);
+        }
+
+        public void OpenArchivedEmoji()
+        {
+            Open(StickersType.EmojiArchived);
+        }
+
+        private void Open(StickersType type)
+        {
+            NavigationService.Navigate(typeof(SettingsStickersPage), (int)type, null, new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
+        }
+
+        public void OpenReaction()
+        {
+            NavigationService.Navigate(typeof(SettingsQuickReactionPage));
+        }
 
         public class ItemsCollection : DiffObservableCollection<StickerSetInfo>, ISupportIncrementalLoading
         {

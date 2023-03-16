@@ -12,6 +12,7 @@ using Telegram.Services;
 using Telegram.Services.Settings;
 using Telegram.Td.Api;
 using Telegram.Views.Popups;
+using Telegram.Views.Settings;
 using Telegram.Views.Settings.Popups;
 using Windows.Storage.AccessCache;
 using Windows.Storage.Pickers;
@@ -168,6 +169,26 @@ namespace Telegram.ViewModels.Settings
                 RaisePropertyChanged(nameof(AutoDownloadEnabled));
                 RaisePropertyChanged(nameof(AutoDownload));
             }
+        }
+
+        public void OpenStorage()
+        {
+            NavigationService.Navigate(typeof(SettingsStoragePage));
+        }
+
+        public void OpenStats()
+        {
+            NavigationService.Navigate(typeof(SettingsNetworkPage));
+        }
+
+        public async void OpenDownloads()
+        {
+            await new DownloadsPopup(SessionId, NavigationService).ShowQueuedAsync();
+        }
+
+        public void OpenProxy()
+        {
+            NavigationService.Navigate(typeof(SettingsProxiesPage));
         }
     }
 }

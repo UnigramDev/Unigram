@@ -5,13 +5,10 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System.Text;
-using Telegram.Common;
 using Telegram.Converters;
 using Telegram.Services.Settings;
 using Telegram.ViewModels.Settings;
-using Telegram.Views.Popups;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Settings
 {
@@ -23,26 +20,6 @@ namespace Telegram.Views.Settings
         {
             InitializeComponent();
             Title = Strings.Resources.DataSettings;
-        }
-
-        private void Storage_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(SettingsStoragePage));
-        }
-
-        private void Stats_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(SettingsNetworkPage));
-        }
-
-        private async void Downloads_Click(object sender, RoutedEventArgs e)
-        {
-            await new DownloadsPopup(ViewModel.SessionId, ViewModel.NavigationService).ShowQueuedAsync();
-        }
-
-        private void Proxy_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(SettingsProxiesPage));
         }
 
         #region Binding

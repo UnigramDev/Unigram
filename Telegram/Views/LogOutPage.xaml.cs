@@ -6,9 +6,7 @@
 //
 using Telegram.ViewModels;
 using Telegram.Views.Host;
-using Telegram.Views.Settings;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views
 {
@@ -33,16 +31,6 @@ namespace Telegram.Views
             {
                 root.Create();
             }
-        }
-
-        private void SetPasscode_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(SettingsPasscodePage));
-        }
-
-        private void ClearCache_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(SettingsStoragePage));
         }
     }
 }

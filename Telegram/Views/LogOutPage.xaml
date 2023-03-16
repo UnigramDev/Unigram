@@ -26,13 +26,13 @@
                                           Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
                                           Visibility="{x:Bind ViewModel.IsPasscodeEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
                                           Glyph="&#xE192;"
-                                          Click="SetPasscode_Click" />
+                                          Click="{x:Bind ViewModel.OpenPasscode}" />
 
                     <controls:BadgeButton Badge="{CustomResource ClearCacheInfo}"
                                           Content="{CustomResource ClearCache}"
                                           Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
                                           Glyph="&#xE74D;"
-                                          Click="ClearCache_Click" />
+                                          Click="{x:Bind ViewModel.OpenStorage}" />
 
                     <controls:BadgeButton Badge="{CustomResource ChangePhoneNumberInfo}"
                                           Content="{CustomResource ChangePhoneNumber}"

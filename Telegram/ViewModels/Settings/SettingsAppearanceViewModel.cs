@@ -15,6 +15,7 @@ using Telegram.Services;
 using Telegram.Services.Settings;
 using Telegram.Td.Api;
 using Telegram.Views.Popups;
+using Telegram.Views.Settings;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings
@@ -321,6 +322,26 @@ namespace Telegram.ViewModels.Settings
             var outgoing = settings.OutgoingMessageAccentColor.ToColor();
 
             await _themeService.CreateThemeAsync(ThemeAccentInfo.FromAccent(tint, accent, outgoing));
+        }
+
+        public void OpenWallpaper()
+        {
+            NavigationService.Navigate(typeof(SettingsBackgroundsPage));
+        }
+
+        public void OpenNightMode()
+        {
+            NavigationService.Navigate(typeof(SettingsNightModePage));
+        }
+
+        public void OpenThemes()
+        {
+            NavigationService.Navigate(typeof(SettingsThemesPage));
+        }
+
+        public void OpenStickers()
+        {
+            NavigationService.Navigate(typeof(SettingsStickersPage));
         }
     }
 }

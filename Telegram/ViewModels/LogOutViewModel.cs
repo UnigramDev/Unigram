@@ -84,5 +84,14 @@ namespace Telegram.ViewModels
                 // TODO:
             }
         }
+        public void OpenPasscode()
+        {
+            NavigationService.Navigate(typeof(SettingsPasscodePage));
+        }
+
+        public void OpenStorage()
+        {
+            NavigationService.Navigate(typeof(SettingsStoragePage));
+        }
     }
 }

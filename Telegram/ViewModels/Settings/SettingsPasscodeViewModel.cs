@@ -16,7 +16,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsPasscodeViewModel: TLViewModelBase
+    public class SettingsPasscodeViewModel : TLViewModelBase
         , IHandle
     //, IHandle<UpdatePasscodeLock>
     {

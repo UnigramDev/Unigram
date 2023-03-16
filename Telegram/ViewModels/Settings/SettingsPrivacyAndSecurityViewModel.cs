@@ -17,6 +17,7 @@ using Telegram.ViewModels.Settings.Privacy;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings;
 using Telegram.Views.Settings.Password;
+using Telegram.Views.Settings.Privacy;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -423,6 +424,63 @@ namespace Telegram.ViewModels.Settings
                 }
             }
         }
+
+        public void OpenWebSessions()
+        {
+            NavigationService.Navigate(typeof(SettingsWebSessionsPage));
+        }
+
+        public void OpenBlockedUsers()
+        {
+            NavigationService.Navigate(typeof(SettingsBlockedChatsPage));
+        }
+
+        public void OpenShowPhone()
+        {
+            NavigationService.Navigate(typeof(SettingsPrivacyPhonePage));
+        }
+
+        public void OpenStatusTimestamp()
+        {
+            NavigationService.Navigate(typeof(SettingsPrivacyShowStatusPage));
+        }
+
+        public void OpenProfilePhoto()
+        {
+            NavigationService.Navigate(typeof(SettingsPrivacyShowPhotoPage));
+        }
+
+        public void OpenForwards()
+        {
+            NavigationService.Navigate(typeof(SettingsPrivacyShowForwardedPage));
+        }
+
+        public void OpenPhoneCall()
+        {
+            NavigationService.Navigate(typeof(SettingsPrivacyAllowCallsPage));
+        }
+
+        public void OpenChatInvite()
+        {
+            NavigationService.Navigate(typeof(SettingsPrivacyAllowChatInvitesPage));
+        }
+
+        public async void OpenVoiceMessages()
+        {
+            if (ClientService.IsPremium)
+            {
+                NavigationService.Navigate(typeof(SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesPage));
+            }
+            else if (ClientService.IsPremiumAvailable)
+            {
+                var confirm = await ShowPopupAsync(Strings.Resources.PrivacyVoiceMessagesPremiumOnly, Strings.Resources.PrivacyVoiceMessages, Strings.Resources.OK, Strings.Resources.Cancel);
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    NavigationService.ShowPromo(/*new PremiumSourceFeature(new PremiumFeaturePrivateVoiceAndVideoMessages)*/);
+                }
+            }
+        }
+
 
         public override async void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {

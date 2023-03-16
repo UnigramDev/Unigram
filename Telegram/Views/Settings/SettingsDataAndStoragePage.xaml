@@ -19,19 +19,19 @@
                     <controls:BadgeButton Content="{CustomResource StorageUsage}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Glyph="&#xEB05;"
-                                          Click="Storage_Click"
+                                          Click="{x:Bind ViewModel.OpenStorage}"
                                           IsChevronVisible="True" />
 
                     <controls:BadgeButton Content="{CustomResource NetworkUsage}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Glyph="&#xE91F;"
-                                          Click="Stats_Click"
+                                          Click="{x:Bind ViewModel.OpenStats}"
                                           IsChevronVisible="True" />
 
                     <controls:BadgeButton Content="{CustomResource DownloadsTabs}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Glyph="&#xE118;"
-                                          Click="Downloads_Click" />
+                                          Click="{x:Bind ViewModel.OpenDownloads}" />
 
                     <Grid>
                         <controls:BadgeButton Command="{x:Bind ViewModel.StoragePathCommand}"
@@ -133,7 +133,7 @@
 
                 <controls:HeaderedControl Header="{CustomResource Proxy}">
                     <controls:BadgeButton Content="{CustomResource ProxySettings}"
-                                          Click="Proxy_Click"
+                                          Click="{x:Bind ViewModel.OpenProxy}"
                                           IsChevronVisible="True" />
                 </controls:HeaderedControl>
             </StackPanel>

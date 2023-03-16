@@ -107,13 +107,13 @@
 
                     <controls:BadgeButton Content="{CustomResource ShowAllThemes}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Click="Themes_Click"
+                                          Click="{x:Bind ViewModel.OpenThemes}"
                                           Glyph="&#xE90E;"
                                           IsChevronVisible="True" />
 
                     <controls:BadgeButton Content="{CustomResource ChatBackground}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Click="Wallpaper_Click"
+                                          Click="{x:Bind ViewModel.OpenWallpaper}"
                                           Glyph="&#xE9E7;"
                                           IsChevronVisible="True" />
                 </controls:HeaderedControl>
@@ -125,7 +125,7 @@
                     <controls:BadgeButton Content="{CustomResource AutoNightTheme}"
                                           Badge="{x:Bind ConvertNightMode(ViewModel.NightMode), Mode=OneWay}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Click="NightMode_Click"
+                                          Click="{x:Bind ViewModel.OpenNightMode}"
                                           Glyph="&#xE9EA;"
                                           IsChevronVisible="True" />
                 </controls:HeaderedControl>
@@ -189,6 +189,14 @@
                                 Margin="12,6,12,6"
                                 Grid.Column="2" />
                     </Grid>
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl Footer="{CustomResource StickersNameInfo}">
+                    <controls:BadgeButton Content="{CustomResource StickersName}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Click="{x:Bind ViewModel.OpenStickers}"
+                                          Glyph="&#xF4AA;"
+                                          IsChevronVisible="True" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="{CustomResource Settings}">
