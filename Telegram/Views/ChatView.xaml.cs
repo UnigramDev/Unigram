@@ -2640,17 +2640,14 @@ namespace Telegram.Views
             TextField.Focus(FocusState.Programmatic);
         }
 
-        private void Stickers_ItemClick(object sender, ItemClickEventArgs e)
+        public void Stickers_ItemClick(Sticker sticker)
         {
-            if (e.ClickedItem is Sticker sticker)
-            {
-                Stickers_ItemClick(sticker);
-            }
+            Stickers_ItemClick(sticker, false);
         }
 
-        public async void Stickers_ItemClick(Sticker sticker)
+        public async void Stickers_ItemClick(Sticker sticker, bool fromStickerSet)
         {
-            ViewModel.StickerSendCommand.Execute(sticker);
+            ViewModel.StickerSendExecute(sticker, null, null, null, fromStickerSet);
 
             if (_stickersMode == StickersPanelMode.Overlay)
             {

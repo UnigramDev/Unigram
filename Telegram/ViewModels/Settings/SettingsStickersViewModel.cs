@@ -251,6 +251,8 @@ namespace Telegram.ViewModels.Settings
         {
             _needReorder = true;
             _newOrder = Items.Where(x => x.Id != 0).Select(x => x.Id).ToList();
+
+            DynamicPackOrder = false;
         }
 
         public bool SuggestCustomEmoji
@@ -259,6 +261,26 @@ namespace Telegram.ViewModels.Settings
             set
             {
                 Settings.Stickers.SuggestCustomEmoji = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool LargeEmoji
+        {
+            get => Settings.Stickers.LargeEmoji;
+            set
+            {
+                Settings.Stickers.LargeEmoji = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool DynamicPackOrder
+        {
+            get => Settings.Stickers.DynamicPackOrder;
+            set
+            {
+                Settings.Stickers.DynamicPackOrder = value;
                 RaisePropertyChanged();
             }
         }

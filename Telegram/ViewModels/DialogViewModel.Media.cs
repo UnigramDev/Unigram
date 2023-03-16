@@ -35,13 +35,7 @@ namespace Telegram.ViewModels
     {
         #region Stickers
 
-        public RelayCommand<Sticker> StickerSendCommand { get; }
-        public void StickerSendExecute(Sticker sticker)
-        {
-            StickerSendExecute(sticker, null, null);
-        }
-
-        public async void StickerSendExecute(Sticker sticker, bool? schedule, bool? silent, string emoji = null)
+        public async void StickerSendExecute(Sticker sticker, bool? schedule, bool? silent, string emoji = null, bool reorder = false)
         {
             Delegate?.HideStickers();
 
@@ -63,7 +57,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var options = await PickMessageSendOptionsAsync(schedule, silent);
+            var options = await PickMessageSendOptionsAsync(schedule, silent, reorder);
             if (options == null)
             {
                 return;
@@ -681,7 +675,7 @@ namespace Telegram.ViewModels
         //    return await SendMessageAsync(replyToMessageId, inputMessageContent, options);
         //}
 
-        public async Task<MessageSendOptions> PickMessageSendOptionsAsync(bool? schedule = null, bool? silent = null)
+        public async Task<MessageSendOptions> PickMessageSendOptionsAsync(bool? schedule = null, bool? silent = null, bool reorder = false)
         {
             var chat = _chat;
             if (chat == null)
@@ -713,16 +707,16 @@ namespace Telegram.ViewModels
 
                 if (dialog.IsUntilOnline)
                 {
-                    return new MessageSendOptions(false, false, false, false, new MessageSchedulingStateSendWhenOnline(), 0);
+                    return new MessageSendOptions(false, false, false, reorder, new MessageSchedulingStateSendWhenOnline(), 0);
                 }
                 else
                 {
-                    return new MessageSendOptions(false, false, false, false, new MessageSchedulingStateSendAtDate(dialog.Value.ToTimestamp()), 0);
+                    return new MessageSendOptions(false, false, false, reorder, new MessageSchedulingStateSendAtDate(dialog.Value.ToTimestamp()), 0);
                 }
             }
             else
             {
-                return new MessageSendOptions(silent ?? false, false, false, false, null, 0);
+                return new MessageSendOptions(silent ?? false, false, false, reorder, null, 0);
             }
         }
 

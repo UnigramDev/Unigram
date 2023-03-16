@@ -61,11 +61,11 @@ namespace Telegram.Views.Popups
             }
             else if (e.ClickedItem is StickerViewModel sticker)
             {
-                Stickers_ItemClick(sticker);
+                Stickers_ItemClick(sticker, false);
             }
         }
 
-        private void Stickers_ItemClick(Sticker obj)
+        private void Stickers_ItemClick(Sticker obj, bool fromStickerSet)
         {
             ViewModel.SelectedForeground = obj;
         }

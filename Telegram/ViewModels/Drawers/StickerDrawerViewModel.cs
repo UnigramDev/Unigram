@@ -221,6 +221,7 @@ namespace Telegram.ViewModels.Drawers
             }
 
             _updated = false;
+            _installedSets = null;
             BeginOnUIThread(() => Update(null));
         }
 

@@ -26,7 +26,7 @@ namespace Telegram.Controls
 
         public Action<object> EmojiClick { get; set; }
 
-        public Action<Sticker> StickerClick { get; set; }
+        public Action<Sticker, bool> StickerClick { get; set; }
         public event TypedEventHandler<UIElement, ItemContextRequestedEventArgs<Sticker>> StickerContextRequested;
         public event EventHandler ChoosingSticker;
 
@@ -72,9 +72,9 @@ namespace Telegram.Controls
             }
         }
 
-        private void Stickers_ItemClick(Sticker obj)
+        private void Stickers_ItemClick(Sticker obj, bool fromStickerSet)
         {
-            StickerClick?.Invoke(obj);
+            StickerClick?.Invoke(obj, fromStickerSet);
         }
 
         private void Animations_ItemClick(Animation obj)

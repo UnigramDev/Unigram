@@ -168,7 +168,6 @@ namespace Telegram.ViewModels
             SendLocationCommand = new RelayCommand(SendLocationExecute);
             SendPollCommand = new RelayCommand(SendPollExecute);
 
-            StickerSendCommand = new RelayCommand<Sticker>(StickerSendExecute);
             StickerViewCommand = new RelayCommand<Sticker>(StickerViewExecute);
             StickerFaveCommand = new RelayCommand<Sticker>(StickerFaveExecute);
             StickerUnfaveCommand = new RelayCommand<Sticker>(StickerUnfaveExecute);
@@ -1532,7 +1531,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            if (message.Content is MessageText text && text.WebPage == null && !text.Text.Entities.Any(/*x => x.Type is not TextEntityTypeCustomEmoji*/))
+            if (Settings.Stickers.LargeEmoji && message.Content is MessageText text && text.WebPage == null && !text.Text.Entities.Any(/*x => x.Type is not TextEntityTypeCustomEmoji*/))
             {
                 if (Emoji.TryCountEmojis(text.Text.Text, out int count, 3))
                 {
@@ -1541,7 +1540,21 @@ namespace Telegram.ViewModels
             }
             else if (message.Content is MessageAnimatedEmoji animatedEmoji && animatedEmoji.AnimatedEmoji.Sticker != null)
             {
-                message.GeneratedContent = new MessageSticker(animatedEmoji.AnimatedEmoji.Sticker, false);
+                if (Settings.Stickers.LargeEmoji)
+                {
+                    message.GeneratedContent = new MessageSticker(animatedEmoji.AnimatedEmoji.Sticker, false);
+                }
+                else
+                {
+                    var entities = new List<TextEntity>();
+
+                    if (animatedEmoji.AnimatedEmoji.Sticker.FullType is StickerFullTypeCustomEmoji customEmoji)
+                    {
+                        entities.Add(new TextEntity(0, animatedEmoji.Emoji.Length, new TextEntityTypeCustomEmoji(customEmoji.CustomEmojiId)));
+                    }
+
+                    message.GeneratedContent = new MessageText(new FormattedText(animatedEmoji.Emoji, entities), null);
+                }
             }
             else
             {

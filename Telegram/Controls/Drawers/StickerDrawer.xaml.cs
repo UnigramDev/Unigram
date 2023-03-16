@@ -27,7 +27,7 @@ namespace Telegram.Controls.Drawers
     {
         public StickerDrawerViewModel ViewModel => DataContext as StickerDrawerViewModel;
 
-        public Action<Sticker> ItemClick { get; set; }
+        public Action<Sticker, bool> ItemClick { get; set; }
         public event TypedEventHandler<UIElement, ItemContextRequestedEventArgs<Sticker>> ItemContextRequested;
         public event EventHandler ChoosingItem;
 
@@ -182,7 +182,20 @@ namespace Telegram.Controls.Drawers
         {
             if (e.ClickedItem is StickerViewModel sticker && sticker.StickerValue != null)
             {
-                ItemClick?.Invoke(sticker);
+                var container = List.ContainerFromItem(e.ClickedItem);
+
+                var groupContainer = List.GroupHeaderContainerFromItemContainer(container) as GridViewHeaderItem;
+                if (groupContainer == null)
+                {
+                    ItemClick?.Invoke(sticker, false);
+                    return;
+                }
+
+                var stickerSet = groupContainer.Content as StickerSetViewModel;
+                if (stickerSet != null)
+                {
+                    ItemClick?.Invoke(sticker, stickerSet.Id != 0);
+                }
             }
         }
 

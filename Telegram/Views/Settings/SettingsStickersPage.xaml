@@ -159,16 +159,6 @@
                                 x:Load="{x:Bind IsType(ViewModel.Type, settings:StickersType.Installed)}"
                                 Margin="0,0,0,16"
                                 Spacing="16">
-                        <controls:HeaderedControl>
-                            <controls:BadgeButton Content="{CustomResource SuggestStickers}">
-                                <controls:BadgeButton.Badge>
-                                    <ComboBox ItemsSource="{x:Bind ViewModel.SuggestStickersOptions}"
-                                              SelectedIndex="{x:Bind ViewModel.SuggestStickers, Mode=TwoWay}"
-                                              DisplayMemberPath="Text" />
-                                </controls:BadgeButton.Badge>
-                            </controls:BadgeButton>
-                        </controls:HeaderedControl>
-
                         <controls:HeaderedControl Footer="{CustomResource StickersBotInfo}">
                             <controls:BadgeButton Content="{CustomResource FeaturedStickers}"
                                                   Click="{x:Bind ViewModel.OpenFeaturedStickers}"
@@ -186,11 +176,11 @@
                                                   IsChevronVisible="True"
                                                   Glyph="&#xE7B8;" />
 
-                            <controls:BadgeButton Content="{CustomResource Masks}"
+                            <!--<controls:BadgeButton Content="{CustomResource Masks}"
                                                   Click="{x:Bind ViewModel.OpenMasks}"
                                                   Style="{StaticResource GlyphBadgeButtonStyle}"
                                                   IsChevronVisible="True"
-                                                  Glyph="&#xE997;" />
+                                                  Glyph="&#xE997;" />-->
 
                             <controls:BadgeButton Content="{CustomResource Emoji}"
                                                   Click="{x:Bind ViewModel.OpenEmoji}"
@@ -203,6 +193,24 @@
                                                   Style="{StaticResource GlyphBadgeButtonStyle}"
                                                   IsChevronVisible="True"
                                                   Glyph="&#xE987;" />
+                        </controls:HeaderedControl>
+
+                        <controls:HeaderedControl Footer="{CustomResource DynamicPackOrderInfo}">
+                            <controls:BadgeButton Content="{CustomResource SuggestStickers}">
+                                <controls:BadgeButton.Badge>
+                                    <ComboBox ItemsSource="{x:Bind ViewModel.SuggestStickersOptions}"
+                                              SelectedIndex="{x:Bind ViewModel.SuggestStickers, Mode=TwoWay}"
+                                              DisplayMemberPath="Text" />
+                                </controls:BadgeButton.Badge>
+                            </controls:BadgeButton>
+
+                            <CheckBox IsChecked="{x:Bind ViewModel.LargeEmoji, Mode=TwoWay}"
+                                      Content="{CustomResource LargeEmoji}"
+                                      Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                            <CheckBox IsChecked="{x:Bind ViewModel.DynamicPackOrder, Mode=TwoWay}"
+                                      Content="{CustomResource DynamicPackOrder}"
+                                      Style="{StaticResource SettingsCheckBoxStyle}" />
                         </controls:HeaderedControl>
                     </StackPanel>
 
