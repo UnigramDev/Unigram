@@ -202,68 +202,68 @@ namespace Telegram.Services
                 System.IO.File.Delete(fileName);
 
                 var writer = new StreamWriter(new FileStream(fileName, FileMode.OpenOrCreate));
-                //writer.Write("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
-                //writer.Write("<resources>\n");
-                writer.Write("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
-                writer.Write("<root>\n");
-                writer.Write("  <xsd:schema id=\"root\" xmlns=\"\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\">\n");
-                writer.Write("    <xsd:import namespace=\"http://www.w3.org/XML/1998/namespace\" />\n");
-                writer.Write("    <xsd:element name=\"root\" msdata:IsDataSet=\"true\">\n");
-                writer.Write("      <xsd:complexType>\n");
-                writer.Write("        <xsd:choice maxOccurs=\"unbounded\">\n");
-                writer.Write("          <xsd:element name=\"metadata\">\n");
-                writer.Write("            <xsd:complexType>\n");
-                writer.Write("              <xsd:sequence>\n");
-                writer.Write("                <xsd:element name=\"value\" type=\"xsd:string\" minOccurs=\"0\" />\n");
-                writer.Write("              </xsd:sequence>\n");
-                writer.Write("              <xsd:attribute name=\"name\" use=\"required\" type=\"xsd:string\" />\n");
-                writer.Write("              <xsd:attribute name=\"type\" type=\"xsd:string\" />\n");
-                writer.Write("              <xsd:attribute name=\"mimetype\" type=\"xsd:string\" />\n");
-                writer.Write("              <xsd:attribute ref=\"xml:space\" />\n");
-                writer.Write("            </xsd:complexType>\n");
-                writer.Write("          </xsd:element>\n");
-                writer.Write("          <xsd:element name=\"assembly\">\n");
-                writer.Write("            <xsd:complexType>\n");
-                writer.Write("              <xsd:attribute name=\"alias\" type=\"xsd:string\" />\n");
-                writer.Write("              <xsd:attribute name=\"name\" type=\"xsd:string\" />\n");
-                writer.Write("            </xsd:complexType>\n");
-                writer.Write("          </xsd:element>\n");
-                writer.Write("          <xsd:element name=\"data\">\n");
-                writer.Write("            <xsd:complexType>\n");
-                writer.Write("              <xsd:sequence>\n");
-                writer.Write("                <xsd:element name=\"value\" type=\"xsd:string\" minOccurs=\"0\" msdata:Ordinal=\"1\" />\n");
-                writer.Write("                <xsd:element name=\"comment\" type=\"xsd:string\" minOccurs=\"0\" msdata:Ordinal=\"2\" />\n");
-                writer.Write("              </xsd:sequence>\n");
-                writer.Write("              <xsd:attribute name=\"name\" type=\"xsd:string\" use=\"required\" msdata:Ordinal=\"1\" />\n");
-                writer.Write("              <xsd:attribute name=\"type\" type=\"xsd:string\" msdata:Ordinal=\"3\" />\n");
-                writer.Write("              <xsd:attribute name=\"mimetype\" type=\"xsd:string\" msdata:Ordinal=\"4\" />\n");
-                writer.Write("              <xsd:attribute ref=\"xml:space\" />\n");
-                writer.Write("            </xsd:complexType>\n");
-                writer.Write("          </xsd:element>\n");
-                writer.Write("          <xsd:element name=\"resheader\">\n");
-                writer.Write("            <xsd:complexType>\n");
-                writer.Write("              <xsd:sequence>\n");
-                writer.Write("                <xsd:element name=\"value\" type=\"xsd:string\" minOccurs=\"0\" msdata:Ordinal=\"1\" />\n");
-                writer.Write("              </xsd:sequence>\n");
-                writer.Write("              <xsd:attribute name=\"name\" type=\"xsd:string\" use=\"required\" />\n");
-                writer.Write("            </xsd:complexType>\n");
-                writer.Write("          </xsd:element>\n");
-                writer.Write("        </xsd:choice>\n");
-                writer.Write("      </xsd:complexType>\n");
-                writer.Write("    </xsd:element>\n");
-                writer.Write("  </xsd:schema>\n");
-                writer.Write("  <resheader name=\"resmimetype\">\n");
-                writer.Write("    <value>text/microsoft-resx</value>\n");
-                writer.Write("  </resheader>\n");
-                writer.Write("  <resheader name=\"version\">\n");
-                writer.Write("    <value>2.0</value>\n");
-                writer.Write("  </resheader>\n");
-                writer.Write("  <resheader name=\"reader\">\n");
-                writer.Write("    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>\n");
-                writer.Write("  </resheader>\n");
-                writer.Write("  <resheader name=\"writer\">\n");
-                writer.Write("    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>\n");
-                writer.Write("  </resheader>\n");
+                //writer.Write("<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n");
+                //writer.Write("<resources>\r\n");
+                writer.Write("<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n");
+                writer.Write("<root>\r\n");
+                writer.Write("  <xsd:schema id=\"root\" xmlns=\"\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\">\r\n");
+                writer.Write("    <xsd:import namespace=\"http://www.w3.org/XML/1998/namespace\" />\r\n");
+                writer.Write("    <xsd:element name=\"root\" msdata:IsDataSet=\"true\">\r\n");
+                writer.Write("      <xsd:complexType>\r\n");
+                writer.Write("        <xsd:choice maxOccurs=\"unbounded\">\r\n");
+                writer.Write("          <xsd:element name=\"metadata\">\r\n");
+                writer.Write("            <xsd:complexType>\r\n");
+                writer.Write("              <xsd:sequence>\r\n");
+                writer.Write("                <xsd:element name=\"value\" type=\"xsd:string\" minOccurs=\"0\" />\r\n");
+                writer.Write("              </xsd:sequence>\r\n");
+                writer.Write("              <xsd:attribute name=\"name\" use=\"required\" type=\"xsd:string\" />\r\n");
+                writer.Write("              <xsd:attribute name=\"type\" type=\"xsd:string\" />\r\n");
+                writer.Write("              <xsd:attribute name=\"mimetype\" type=\"xsd:string\" />\r\n");
+                writer.Write("              <xsd:attribute ref=\"xml:space\" />\r\n");
+                writer.Write("            </xsd:complexType>\r\n");
+                writer.Write("          </xsd:element>\r\n");
+                writer.Write("          <xsd:element name=\"assembly\">\r\n");
+                writer.Write("            <xsd:complexType>\r\n");
+                writer.Write("              <xsd:attribute name=\"alias\" type=\"xsd:string\" />\r\n");
+                writer.Write("              <xsd:attribute name=\"name\" type=\"xsd:string\" />\r\n");
+                writer.Write("            </xsd:complexType>\r\n");
+                writer.Write("          </xsd:element>\r\n");
+                writer.Write("          <xsd:element name=\"data\">\r\n");
+                writer.Write("            <xsd:complexType>\r\n");
+                writer.Write("              <xsd:sequence>\r\n");
+                writer.Write("                <xsd:element name=\"value\" type=\"xsd:string\" minOccurs=\"0\" msdata:Ordinal=\"1\" />\r\n");
+                writer.Write("                <xsd:element name=\"comment\" type=\"xsd:string\" minOccurs=\"0\" msdata:Ordinal=\"2\" />\r\n");
+                writer.Write("              </xsd:sequence>\r\n");
+                writer.Write("              <xsd:attribute name=\"name\" type=\"xsd:string\" use=\"required\" msdata:Ordinal=\"1\" />\r\n");
+                writer.Write("              <xsd:attribute name=\"type\" type=\"xsd:string\" msdata:Ordinal=\"3\" />\r\n");
+                writer.Write("              <xsd:attribute name=\"mimetype\" type=\"xsd:string\" msdata:Ordinal=\"4\" />\r\n");
+                writer.Write("              <xsd:attribute ref=\"xml:space\" />\r\n");
+                writer.Write("            </xsd:complexType>\r\n");
+                writer.Write("          </xsd:element>\r\n");
+                writer.Write("          <xsd:element name=\"resheader\">\r\n");
+                writer.Write("            <xsd:complexType>\r\n");
+                writer.Write("              <xsd:sequence>\r\n");
+                writer.Write("                <xsd:element name=\"value\" type=\"xsd:string\" minOccurs=\"0\" msdata:Ordinal=\"1\" />\r\n");
+                writer.Write("              </xsd:sequence>\r\n");
+                writer.Write("              <xsd:attribute name=\"name\" type=\"xsd:string\" use=\"required\" />\r\n");
+                writer.Write("            </xsd:complexType>\r\n");
+                writer.Write("          </xsd:element>\r\n");
+                writer.Write("        </xsd:choice>\r\n");
+                writer.Write("      </xsd:complexType>\r\n");
+                writer.Write("    </xsd:element>\r\n");
+                writer.Write("  </xsd:schema>\r\n");
+                writer.Write("  <resheader name=\"resmimetype\">\r\n");
+                writer.Write("    <value>text/microsoft-resx</value>\r\n");
+                writer.Write("  </resheader>\r\n");
+                writer.Write("  <resheader name=\"version\">\r\n");
+                writer.Write("    <value>2.0</value>\r\n");
+                writer.Write("  </resheader>\r\n");
+                writer.Write("  <resheader name=\"reader\">\r\n");
+                writer.Write("    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>\r\n");
+                writer.Write("  </resheader>\r\n");
+                writer.Write("  <resheader name=\"writer\">\r\n");
+                writer.Write("    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>\r\n");
+                writer.Write("  </resheader>\r\n");
 
 
                 foreach (var entry in values.OrderBy(x => x.Key))
@@ -276,16 +276,16 @@ namespace Telegram.Services
                     already.Add(entry.Key.ToLower());
 
                     //writer.Write($"<string name=\"{entry.Key}\">{entry.Value}</string>\n");
-                    writer.Write($"  <data name=\"{entry.Key}\" xml:space=\"preserve\">\n");
+                    writer.Write($"  <data name=\"{entry.Key}\" xml:space=\"preserve\">\r\n");
                     if (string.IsNullOrEmpty(entry.Value))
                     {
-                        writer.Write($"    <value/>\n");
+                        writer.Write($"    <value/>\r\n");
                     }
                     else
                     {
-                        writer.Write($"    <value>{SecurityElement.Escape(entry.Value)}</value>\n");
+                        writer.Write($"    <value>{SecurityElement.Escape(entry.Value.Replace("\n", "\r\n"))}</value>\r\n");
                     }
-                    writer.Write($"  </data>\n");
+                    writer.Write($"  </data>\r\n");
                 }
 
                 writer.Write("</root>");

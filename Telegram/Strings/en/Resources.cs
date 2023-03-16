@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 03/09/2023 19:34:12
+// 	Generated: 03/16/2023 16:13:29
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Telegram.Strings
@@ -63679,7 +63679,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "This message provides you with a public service announcement in relation to the ongoing COVID-19 pandemic. To remove it from your chats list, right click it and select **Hide**."
+        /// Localized resource similar to "This message provides you with a public service announcement in relation to the ongoing COVID-19 pandemic. To remove it from your chat list, right click it and select **Hide**."
         /// </summary>
         public static string cloud_lng_about_psa_covid
         {
@@ -63701,7 +63701,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "This message provides you with a public service announcement. To remove it from your chats list, right click it and select **Hide**."
+        /// Localized resource similar to "This message provides you with a public service announcement. To remove it from your chat list, right click it and select **Hide**."
         /// </summary>
         public static string lng_about_psa_default
         {
@@ -63815,6 +63815,39 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "You have reached the limit of **{count}** connected account."
+        /// </summary>
+        public static string lng_accounts_limit1_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_accounts_limit1_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You have reached the limit of **{count}** connected accounts."
+        /// </summary>
+        public static string lng_accounts_limit1_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_accounts_limit1_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can free one place by subscribing to **Telegram Premium** with one of these connected accounts:"
+        /// </summary>
+        public static string lng_accounts_limit2
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_accounts_limit2");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "{from} added {user}"
         /// </summary>
         public static string lng_action_add_user
@@ -63881,6 +63914,17 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "You allowed this bot to message you when you added to your attachment menu."
+        /// </summary>
+        public static string lng_action_attach_menu_bot_allowed
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_attach_menu_bot_allowed");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "You allowed this bot to message you when you logged in on {domain}."
         /// </summary>
         public static string lng_action_bot_allowed_from_domain
@@ -63932,6 +63976,116 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_action_created_chat");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} scored {count}"
+        /// </summary>
+        public static string lng_action_game_score_no_game_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_game_score_no_game_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} scored {count}"
+        /// </summary>
+        public static string lng_action_game_score_no_game_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_game_score_no_game_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} scored {count} in {game}"
+        /// </summary>
+        public static string lng_action_game_score_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_game_score_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} scored {count} in {game}"
+        /// </summary>
+        public static string lng_action_game_score_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_game_score_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You scored {count}"
+        /// </summary>
+        public static string lng_action_game_you_scored_no_game_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_game_you_scored_no_game_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You scored {count}"
+        /// </summary>
+        public static string lng_action_game_you_scored_no_game_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_game_you_scored_no_game_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You scored {count} in {game}"
+        /// </summary>
+        public static string lng_action_game_you_scored_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_game_you_scored_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You scored {count} in {game}"
+        /// </summary>
+        public static string lng_action_game_you_scored_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_game_you_scored_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user} sent you a gift for {cost}"
+        /// </summary>
+        public static string lng_action_gift_received
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_gift_received");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You sent to {user} a gift for {cost}"
+        /// </summary>
+        public static string lng_action_gift_received_me
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_gift_received_me");
             }
         }
         
@@ -64101,6 +64255,39 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "You successfully transferred {amount} to {user} and allowed future recurring payments"
+        /// </summary>
+        public static string lng_action_payment_init_recurring
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_payment_init_recurring");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You successfully transferred {amount} to {user} for {invoice} and allowed future recurring payments"
+        /// </summary>
+        public static string lng_action_payment_init_recurring_for
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_payment_init_recurring_for");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You were charged {amount} via recurring payment"
+        /// </summary>
+        public static string lng_action_payment_used_recurring
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_payment_used_recurring");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "{from} pinned {media}"
         /// </summary>
         public static string lng_action_pinned_media
@@ -64244,13 +64431,57 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{from} pinned «{text}»"
+        /// Localized resource similar to "{from} pinned "{text}""
         /// </summary>
         public static string lng_action_pinned_message
         {
             get
             {
                 return resourceLoader.GetString("lng_action_pinned_message");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} km"
+        /// </summary>
+        public static string lng_action_proximity_distance_km_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_proximity_distance_km_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} km"
+        /// </summary>
+        public static string lng_action_proximity_distance_km_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_proximity_distance_km_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} meter"
+        /// </summary>
+        public static string lng_action_proximity_distance_m_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_proximity_distance_m_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} meters"
+        /// </summary>
+        public static string lng_action_proximity_distance_m_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_proximity_distance_m_other");
             }
         }
         
@@ -64365,6 +64596,61 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "You shared {chat} with {bot}"
+        /// </summary>
+        public static string lng_action_shared_chat_with_bot
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_shared_chat_with_bot");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user} suggests this photo for your Telegram profile."
+        /// </summary>
+        public static string lng_action_suggested_photo
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_suggested_photo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You suggested this photo for {user}'s Telegram profile."
+        /// </summary>
+        public static string lng_action_suggested_photo_me
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_suggested_photo_me");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user} suggests this photo for your Telegram profile."
+        /// </summary>
+        public static string lng_action_suggested_video
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_suggested_video");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You suggested this photo for {user}'s Telegram profile."
+        /// </summary>
+        public static string lng_action_suggested_video_me
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_suggested_video_me");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "{from} changed the chat theme to {emoji}"
         /// </summary>
         public static string lng_action_theme_changed
@@ -64398,6 +64684,127 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to ""{topic}" was closed"
+        /// </summary>
+        public static string lng_action_topic_closed
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_topic_closed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The topic "{topic}" was created"
+        /// </summary>
+        public static string lng_action_topic_created
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_topic_created");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""{topic}" was hidden"
+        /// </summary>
+        public static string lng_action_topic_hidden
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_topic_hidden");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Topic hidden"
+        /// </summary>
+        public static string lng_action_topic_hidden_inside
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_topic_hidden_inside");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} changed the {link} icon to {emoji}"
+        /// </summary>
+        public static string lng_action_topic_icon_changed
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_topic_icon_changed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} removed the {link} icon"
+        /// </summary>
+        public static string lng_action_topic_icon_removed
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_topic_icon_removed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "topic"
+        /// </summary>
+        public static string lng_action_topic_placeholder
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_topic_placeholder");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} renamed the {link} to "{title}""
+        /// </summary>
+        public static string lng_action_topic_renamed
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_topic_renamed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""{topic}" was reopened"
+        /// </summary>
+        public static string lng_action_topic_reopened
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_topic_reopened");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""{topic}" was unhidden"
+        /// </summary>
+        public static string lng_action_topic_unhidden
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_topic_unhidden");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Topic unhidden"
+        /// </summary>
+        public static string lng_action_topic_unhidden_inside
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_topic_unhidden_inside");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "{from} set messages to auto-delete in {duration}"
         /// </summary>
         public static string lng_action_ttl_changed
@@ -64427,6 +64834,28 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_action_ttl_changed_you");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} uses a self-destruct timer for all chats. All new messages in this chat will be automatically deleted after {duration} they are sent."
+        /// </summary>
+        public static string lng_action_ttl_global
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_ttl_global");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You set a self-destruct timer for all chats. All new messages in this chat will be automatically deleted after {duration} they’ve been sent."
+        /// </summary>
+        public static string lng_action_ttl_global_me
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_ttl_global_me");
             }
         }
         
@@ -64497,6 +64926,17 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Data from the "{text}" button was transferred to the bot."
+        /// </summary>
+        public static string lng_action_webview_data_done
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_webview_data_done");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "You are now within {distance} from {user}"
         /// </summary>
         public static string lng_action_you_proximity_reached
@@ -64537,6 +64977,17 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_admin_log_about_text");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} activated @{link} username"
+        /// </summary>
+        public static string lng_admin_log_activated_link
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_activated_link");
             }
         }
         
@@ -64596,6 +65047,50 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{from} disabled aggressive anti-spam"
+        /// </summary>
+        public static string lng_admin_log_antispam_disabled
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_antispam_disabled");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} enabled aggressive anti-spam"
+        /// </summary>
+        public static string lng_admin_log_antispam_enabled
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_antispam_enabled");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can manage anti-spam settings in {link}."
+        /// </summary>
+        public static string lng_admin_log_antispam_menu_report_toast
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_antispam_menu_report_toast");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Group Info > Administrators"
+        /// </summary>
+        public static string lng_admin_log_antispam_menu_report_toast_link
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_antispam_menu_report_toast_link");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "banned {user}"
         /// </summary>
         public static string lng_admin_log_banned
@@ -64603,6 +65098,72 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_admin_log_banned");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send files"
+        /// </summary>
+        public static string lng_admin_log_banned_send_files
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_banned_send_files");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send music"
+        /// </summary>
+        public static string lng_admin_log_banned_send_music
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_banned_send_music");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send photos"
+        /// </summary>
+        public static string lng_admin_log_banned_send_photos
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_banned_send_photos");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send video messages"
+        /// </summary>
+        public static string lng_admin_log_banned_send_video_messages
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_banned_send_video_messages");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send video files"
+        /// </summary>
+        public static string lng_admin_log_banned_send_videos
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_banned_send_videos");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send voice messages"
+        /// </summary>
+        public static string lng_admin_log_banned_send_voice_messages
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_banned_send_voice_messages");
             }
         }
         
@@ -64761,7 +65322,18 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{from} deleted invite link {link}"
+        /// Localized resource similar to "{from} deactivated @{link} username"
+        /// </summary>
+        public static string lng_admin_log_deactivated_link
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_deactivated_link");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} deleted the invite link {link}"
         /// </summary>
         public static string lng_admin_log_delete_invite_link
         {
@@ -64849,6 +65421,39 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{from} edited media:"
+        /// </summary>
+        public static string lng_admin_log_edited_media
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_edited_media");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} edited media and caption:"
+        /// </summary>
+        public static string lng_admin_log_edited_media_and_caption
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_edited_media_and_caption");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} edited media and removed caption:"
+        /// </summary>
+        public static string lng_admin_log_edited_media_and_removed_caption
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_edited_media_and_removed_caption");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "{from} edited message:"
         /// </summary>
         public static string lng_admin_log_edited_message
@@ -64882,7 +65487,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Leaving members"
+        /// Localized resource similar to "Members leaving"
         /// </summary>
         public static string lng_admin_log_filter_members_removed
         {
@@ -64937,7 +65542,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{from} restricted content copying"
+        /// Localized resource similar to "{from} restricted saving content"
         /// </summary>
         public static string lng_admin_log_forwards_disabled
         {
@@ -64948,7 +65553,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{from} allowed content copying"
+        /// Localized resource similar to "{from} allowed saving content"
         /// </summary>
         public static string lng_admin_log_forwards_enabled
         {
@@ -64959,7 +65564,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{from} made group history hidden for new members"
+        /// Localized resource similar to "{from} made the group history hidden for new members"
         /// </summary>
         public static string lng_admin_log_history_made_hidden
         {
@@ -65214,6 +65819,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{from} joined the group via public request, approved by {user}"
+        /// </summary>
+        public static string lng_admin_log_participant_approved_by_request
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_participant_approved_by_request");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} joined the channel via public request, approved by {user}"
+        /// </summary>
+        public static string lng_admin_log_participant_approved_by_request_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_participant_approved_by_request_channel");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "{from} joined the group"
         /// </summary>
         public static string lng_admin_log_participant_joined
@@ -65313,6 +65940,17 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Previous order"
+        /// </summary>
+        public static string lng_admin_log_previous_links_order
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_previous_links_order");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "changed privileges for {user}"
         /// </summary>
         public static string lng_admin_log_promoted
@@ -65320,6 +65958,28 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_admin_log_promoted");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} allowed all reactions"
+        /// </summary>
+        public static string lng_admin_log_reactions_allowed_all
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_reactions_allowed_all");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} allowed all official reactions"
+        /// </summary>
+        public static string lng_admin_log_reactions_allowed_official
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_reactions_allowed_official");
             }
         }
         
@@ -65478,6 +66138,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{from} reordered channel links:"
+        /// </summary>
+        public static string lng_admin_log_reordered_link_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_reordered_link_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} reordered group links:"
+        /// </summary>
+        public static string lng_admin_log_reordered_link_group
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_reordered_link_group");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "changed restrictions for {user} {until}"
         /// </summary>
         public static string lng_admin_log_restricted
@@ -65555,6 +66237,50 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{count} minute"
+        /// </summary>
+        public static string lng_admin_log_slow_mode_minutes_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_slow_mode_minutes_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} minutes"
+        /// </summary>
+        public static string lng_admin_log_slow_mode_minutes_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_slow_mode_minutes_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} second"
+        /// </summary>
+        public static string lng_admin_log_slow_mode_seconds_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_slow_mode_seconds_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} seconds"
+        /// </summary>
+        public static string lng_admin_log_slow_mode_seconds_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_slow_mode_seconds_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "{from} started a new video chat"
         /// </summary>
         public static string lng_admin_log_started_group_call
@@ -65595,6 +66321,127 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_admin_log_title_selected");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} renamed topic {topic} to {new_topic}"
+        /// </summary>
+        public static string lng_admin_log_topics_changed
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_topics_changed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} closed topic {topic}"
+        /// </summary>
+        public static string lng_admin_log_topics_closed
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_topics_closed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} created topic {topic}"
+        /// </summary>
+        public static string lng_admin_log_topics_created
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_topics_created");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} deleted topic {topic}"
+        /// </summary>
+        public static string lng_admin_log_topics_deleted
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_topics_deleted");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} disabled topics"
+        /// </summary>
+        public static string lng_admin_log_topics_disabled
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_topics_disabled");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} enabled topics"
+        /// </summary>
+        public static string lng_admin_log_topics_enabled
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_topics_enabled");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} hid topic {topic}"
+        /// </summary>
+        public static string lng_admin_log_topics_hidden
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_topics_hidden");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} pinned topic {topic}"
+        /// </summary>
+        public static string lng_admin_log_topics_pinned
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_topics_pinned");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} reopened topic {topic}"
+        /// </summary>
+        public static string lng_admin_log_topics_reopened
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_topics_reopened");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} unhid topic {topic}"
+        /// </summary>
+        public static string lng_admin_log_topics_unhidden
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_topics_unhidden");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} unpinned topic {topic}"
+        /// </summary>
+        public static string lng_admin_log_topics_unpinned
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_topics_unpinned");
             }
         }
         
@@ -65676,6 +66523,19 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{bot_name} would like to open its web app to proceed.
+        ///
+        ///It will be able to access your **IP address** and basic device info."
+        /// </summary>
+        public static string lng_allow_bot_webview
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_allow_bot_webview");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Chat archived.
         ///Muted chats stay archived when new messages arrive."
         /// </summary>
@@ -65688,6 +66548,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{count} chat"
+        /// </summary>
+        public static string lng_archived_chats_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_archived_chats_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} chats"
+        /// </summary>
+        public static string lng_archived_chats_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_archived_chats_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "{accumulated}, {chat}"
         /// </summary>
         public static string lng_archived_last_list
@@ -65695,6 +66577,28 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_archived_last_list");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{chats} and {count} more chat"
+        /// </summary>
+        public static string lng_archived_last_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_archived_last_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{chats} and {count} more chats"
+        /// </summary>
+        public static string lng_archived_last_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_archived_last_other");
             }
         }
         
@@ -65721,13 +66625,35 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{chat}, {second_chat}"
+        /// Localized resource similar to "{chat}, {second_chat} and {count} more unread chat"
         /// </summary>
-        public static string lng_archived_unread_two
+        public static string lng_archived_unread_one
         {
             get
             {
-                return resourceLoader.GetString("lng_archived_unread_two");
+                return resourceLoader.GetString("lng_archived_unread_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{chat}, {second_chat} and {count} more unread chats"
+        /// </summary>
+        public static string lng_archived_unread_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_archived_unread_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Document"
+        /// </summary>
+        public static string lng_attach_document
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_attach_document");
             }
         }
         
@@ -65743,6 +66669,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Photo or video"
+        /// </summary>
+        public static string lng_attach_photo_or_video
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_attach_photo_or_video");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Use an Emoji"
+        /// </summary>
+        public static string lng_attach_profile_emoji
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_attach_profile_emoji");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Reverse order"
         /// </summary>
         public static string lng_audio_player_reverse
@@ -65750,6 +66698,17 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_audio_player_reverse");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This voice message is too long."
+        /// </summary>
+        public static string lng_audio_transcribe_long
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_audio_transcribe_long");
             }
         }
         
@@ -65783,17 +66742,6 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_background_header");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Link copied to clipboard"
-        /// </summary>
-        public static string lng_background_link_copied
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_background_link_copied");
             }
         }
         
@@ -65842,7 +66790,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Please enter your first and last name."
+        /// Localized resource similar to "Enter your first and last name."
         /// </summary>
         public static string lng_bad_name
         {
@@ -65919,17 +66867,6 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Blocked users can't send you messages or add you to groups. They will not see your profile pictures, online and last seen status."
-        /// </summary>
-        public static string lng_blocked_list_about
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_blocked_list_about");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Select user to block"
         /// </summary>
         public static string lng_blocked_list_add_title
@@ -65985,6 +66922,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "You haven't blocked anyone yet."
+        /// </summary>
+        public static string lng_blocked_list_empty_description
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_blocked_list_empty_description");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No blocked users"
+        /// </summary>
+        public static string lng_blocked_list_empty_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_blocked_list_empty_title");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "No users found."
         /// </summary>
         public static string lng_blocked_list_not_found
@@ -66003,6 +66962,28 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_blocked_list_restart");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} blocked user"
+        /// </summary>
+        public static string lng_blocked_list_subtitle_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_blocked_list_subtitle_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} blocked users"
+        /// </summary>
+        public static string lng_blocked_list_subtitle_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_blocked_list_subtitle_other");
             }
         }
         
@@ -66040,6 +67021,50 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Add Bot as Admin"
+        /// </summary>
+        public static string lng_bot_add_as_admin
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_bot_add_as_admin");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add Bot as Member"
+        /// </summary>
+        public static string lng_bot_add_as_member
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_bot_add_as_member");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{bot} asks your permission to be added as an option to your attachment menu so you can access it from any chat."
+        /// </summary>
+        public static string lng_bot_add_to_menu
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_bot_add_to_menu");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Bot added to the menu."
+        /// </summary>
+        public static string lng_bot_add_to_menu_done
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_bot_add_to_menu_done");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "The bot is already a member of the group."
         /// </summary>
         public static string lng_bot_already_in_group
@@ -66047,6 +67072,17 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_bot_already_in_group");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Channels I manage"
+        /// </summary>
+        public static string lng_bot_channels_manage
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_bot_channels_manage");
             }
         }
         
@@ -66084,6 +67120,17 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Groups I manage"
+        /// </summary>
+        public static string lng_bot_groups_manage
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_bot_groups_manage");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "No groups found"
         /// </summary>
         public static string lng_bot_groups_not_found
@@ -66117,6 +67164,50 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Unfortunately, you can't open this menu with your current system configuration."
+        /// </summary>
+        public static string lng_bot_no_webview
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_bot_no_webview");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Remove from menu"
+        /// </summary>
+        public static string lng_bot_remove_from_menu
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_bot_remove_from_menu");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Bot removed from the menu."
+        /// </summary>
+        public static string lng_bot_remove_from_menu_done
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_bot_remove_from_menu_done");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Remove {bot} from the attachment menu?"
+        /// </summary>
+        public static string lng_bot_remove_from_menu_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_bot_remove_from_menu_sure");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Sorry, location sharing is currently unavailable in Telegram Desktop."
         /// </summary>
         public static string lng_bot_share_location_unavailable
@@ -66135,6 +67226,28 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_bot_share_phone");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to add this bot as an admin in the channel {group}?"
+        /// </summary>
+        public static string lng_bot_sure_add_text_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_bot_sure_add_text_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to add this bot as an admin in the group {group}?"
+        /// </summary>
+        public static string lng_bot_sure_add_text_group
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_bot_sure_add_text_group");
             }
         }
         
@@ -66168,28 +67281,6 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_bot_sure_share_game_group");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "You can finish this action only if you have:"
-        /// </summary>
-        public static string lng_bots_password_confirm_check_about
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_bots_password_confirm_check_about");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Please enter your password to confirm the action."
-        /// </summary>
-        public static string lng_bots_password_confirm_description
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_bots_password_confirm_description");
             }
         }
         
@@ -66234,6 +67325,28 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_calendar_beginning");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} day"
+        /// </summary>
+        public static string lng_calendar_days_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_calendar_days_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} days"
+        /// </summary>
+        public static string lng_calendar_days_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_calendar_days_other");
             }
         }
         
@@ -66337,7 +67450,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Cancelled call"
+        /// Localized resource similar to "Canceled call"
         /// </summary>
         public static string lng_call_cancelled
         {
@@ -66403,7 +67516,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{user}'s app does not support video calls. They need to update their app."
+        /// Localized resource similar to "{user}'s app does not support video calls. They need to update their app before you can call them."
         /// </summary>
         public static string lng_call_error_camera_outdated
         {
@@ -66425,7 +67538,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Sorry, you cannot call {user} because of their privacy settings."
+        /// Localized resource similar to "Sorry, you cannot call {user} because of their privacy settings. You can ask them to modify their setting or to call you instead."
         /// </summary>
         public static string lng_call_error_not_available
         {
@@ -66447,7 +67560,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "If emoji on {user}'s screen are the same, this call is 100% secure"
+        /// Localized resource similar to "If the emoji on {user}'s screen are the same, this call is 100% secure"
         /// </summary>
         public static string lng_call_fingerprint_tooltip
         {
@@ -66678,7 +67791,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Cancelled video call"
+        /// Localized resource similar to "Canceled video call"
         /// </summary>
         public static string lng_call_video_cancelled
         {
@@ -66755,7 +67868,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Sorry, only admin can add this user."
+        /// Localized resource similar to "Sorry, only admins can add this user."
         /// </summary>
         public static string lng_cant_invite_banned
         {
@@ -66786,17 +67899,6 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_cant_invite_not_contact");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Bots can only be added as administrators."
-        /// </summary>
-        public static string lng_cant_invite_offer_admin
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_cant_invite_offer_admin");
             }
         }
         
@@ -66847,6 +67949,72 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "You've reached the media caption limit. Please make the caption shorter by {count} character."
+        /// </summary>
+        public static string lng_caption_limit_reached_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_caption_limit_reached_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You've reached the media caption limit. Please make the caption shorter by {count} characters."
+        /// </summary>
+        public static string lng_caption_limit_reached_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_caption_limit_reached_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't use more than **{count}** character in media captions."
+        /// </summary>
+        public static string lng_caption_limit1_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_caption_limit1_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't use more than **{count}** characters in media captions."
+        /// </summary>
+        public static string lng_caption_limit1_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_caption_limit1_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Make the caption shorter or subscribe to **Telegram Premium** to double the limit to **{count}** character."
+        /// </summary>
+        public static string lng_caption_limit2_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_caption_limit2_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Make the caption shorter or subscribe to **Telegram Premium** to double the limit to **{count}** characters."
+        /// </summary>
+        public static string lng_caption_limit2_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_caption_limit2_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "You can change your Telegram number
         ///here. Your account and all your cloud data
         ///— messages, media, contacts, etc. will be
@@ -66886,17 +68054,6 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "We will send an SMS with a confirmation code to your new number."
-        /// </summary>
-        public static string lng_change_phone_new_description
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_change_phone_new_description");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Submit"
         /// </summary>
         public static string lng_change_phone_new_submit
@@ -66919,7 +68076,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "The number {phone} is already connected to a Telegram account. Please delete that account before migrating to the new number."
+        /// Localized resource similar to "The number {phone} is already connected to a Telegram account. Please delete that account before using this number."
         /// </summary>
         public static string lng_change_phone_occupied
         {
@@ -67007,6 +68164,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{count} administrator"
+        /// </summary>
+        public static string lng_channel_admins_link_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_channel_admins_link_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} administrators"
+        /// </summary>
+        public static string lng_channel_admins_link_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_channel_admins_link_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Removed by {user}"
         /// </summary>
         public static string lng_channel_banned_status_removed_by
@@ -67064,6 +68243,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{count} member"
+        /// </summary>
+        public static string lng_channel_members_link_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_channel_members_link_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} members"
+        /// </summary>
+        public static string lng_channel_members_link_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_channel_members_link_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Sorry, this channel is not accessible."
         /// </summary>
         public static string lng_channel_not_accessible
@@ -67075,13 +68276,123 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Users removed from the channel by admins cannot rejoin it via invite links."
+        /// Localized resource similar to "Sorry, you can't deactivate this link from the channel info page."
         /// </summary>
-        public static string lng_channel_removed_list_about
+        public static string lng_channel_usernames_deactivate_error
         {
             get
             {
-                return resourceLoader.GetString("lng_channel_removed_list_about");
+                return resourceLoader.GetString("lng_channel_usernames_deactivate_error");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You've left the selected communities."
+        /// </summary>
+        public static string lng_channels_leave_done
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_channels_leave_done");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Leave {count} community"
+        /// </summary>
+        public static string lng_channels_leave_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_channels_leave_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Leave {count} communities"
+        /// </summary>
+        public static string lng_channels_leave_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_channels_leave_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{type}, inactive {time}"
+        /// </summary>
+        public static string lng_channels_leave_status
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_channels_leave_status");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Least active communities"
+        /// </summary>
+        public static string lng_channels_leave_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_channels_leave_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You are a member of **{count}** group or channel."
+        /// </summary>
+        public static string lng_channels_limit1_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_channels_limit1_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You are a member of **{count}** groups and channels."
+        /// </summary>
+        public static string lng_channels_limit1_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_channels_limit1_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please leave some before joining a new one."
+        /// </summary>
+        public static string lng_channels_limit2_final
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_channels_limit2_final");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please leave some before joining a new one — or upgrade to **Telegram Premium** to double the limit to **{count}** group or channel."
+        /// </summary>
+        public static string lng_channels_limit2_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_channels_limit2_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please leave some before joining a new one — or upgrade to **Telegram Premium** to double the limit to **{count}** groups and channels."
+        /// </summary>
+        public static string lng_channels_limit2_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_channels_limit2_other");
             }
         }
         
@@ -67145,6 +68456,17 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{count} member"
+        /// </summary>
+        public static string lng_chat_status_members_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_chat_status_members_one");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "{members_count}, {online_count}"
         /// </summary>
         public static string lng_chat_status_members_online
@@ -67152,6 +68474,61 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_chat_status_members_online");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} members"
+        /// </summary>
+        public static string lng_chat_status_members_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_chat_status_members_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} online"
+        /// </summary>
+        public static string lng_chat_status_online_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_chat_status_online_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} online"
+        /// </summary>
+        public static string lng_chat_status_online_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_chat_status_online_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} subscriber"
+        /// </summary>
+        public static string lng_chat_status_subscribers_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_chat_status_subscribers_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} subscribers"
+        /// </summary>
+        public static string lng_chat_status_subscribers_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_chat_status_subscribers_other");
             }
         }
         
@@ -67212,7 +68589,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "This password will be asked when you log in on a new device in addition to the SMS code."
+        /// Localized resource similar to "This password will be asked when you log in on a new device in addition to the code you get via SMS."
         /// </summary>
         public static string lng_cloud_password_about
         {
@@ -67349,6 +68726,17 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Please re-enter your password."
+        /// </summary>
+        public static string lng_cloud_password_expired
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_cloud_password_expired");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Add a password hint"
         /// </summary>
         public static string lng_cloud_password_hint
@@ -67371,7 +68759,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Warning! All data saved in your Telegram Passport will be lost!"
+        /// Localized resource similar to "Warning! All data saved in your Telegram Passport will be lost."
         /// </summary>
         public static string lng_cloud_password_passport_losing
         {
@@ -67448,7 +68836,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "You recently requested a password reset that was cancelled. Please wait {duration} before making a new request."
+        /// Localized resource similar to "You recently requested a password reset that was canceled. Please wait {duration} before making a new request."
         /// </summary>
         public static string lng_cloud_password_reset_later
         {
@@ -67651,6 +69039,50 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{count} comment"
+        /// </summary>
+        public static string lng_comments_header_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_comments_header_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} comments"
+        /// </summary>
+        public static string lng_comments_header_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_comments_header_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} comment"
+        /// </summary>
+        public static string lng_comments_open_count_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_comments_open_count_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} comments"
+        /// </summary>
+        public static string lng_comments_open_count_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_comments_open_count_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Somebody with access to your phone number {phone} has requested to delete your Telegram account and reset your 2-Step Verification password.
         ///
         ///If this wasn't you, please enter the code we've just sent you via SMS to your number. You can also cancel this by changing your phone number to a number you control."
@@ -67688,7 +69120,7 @@ namespace Telegram.Strings
         /// <summary>
         /// Localized resource similar to "Success!
         ///
-        ///The deletion process was cancelled for your account {phone}. You may close this window now."
+        ///The deletion process was canceled for your account {phone}. You may close this window now."
         /// </summary>
         public static string lng_confirm_phone_success
         {
@@ -67888,7 +69320,84 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Move to chats list"
+        /// Localized resource similar to "This message contains emoji from **{name} pack**."
+        /// </summary>
+        public static string lng_context_animated_emoji
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_animated_emoji");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This message contains emoji from **{count} pack**."
+        /// </summary>
+        public static string lng_context_animated_emoji_many_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_animated_emoji_many_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This message contains emoji from **{count} packs**."
+        /// </summary>
+        public static string lng_context_animated_emoji_many_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_animated_emoji_many_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This reaction is from the **{name}** pack."
+        /// </summary>
+        public static string lng_context_animated_reaction
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_animated_reaction");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Reactions contain emoji from **{name} pack**."
+        /// </summary>
+        public static string lng_context_animated_reactions
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_animated_reactions");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Reactions contain emoji from **{count} pack**."
+        /// </summary>
+        public static string lng_context_animated_reactions_many_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_animated_reactions_many_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Reactions contain emoji from **{count} packs**."
+        /// </summary>
+        public static string lng_context_animated_reactions_many_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_animated_reactions_many_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Move to chat list"
         /// </summary>
         public static string lng_context_archive_to_list
         {
@@ -67911,7 +69420,7 @@ namespace Telegram.Strings
         
         /// <summary>
         /// Localized resource similar to "Archive moved to the main menu!
-        ///You can return it from the context menu of the archive button."
+        ///Right click the archive button to return the Archive to your chat list."
         /// </summary>
         public static string lng_context_archive_to_menu_info
         {
@@ -68076,6 +69585,39 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Copy Topic Link"
+        /// </summary>
+        public static string lng_context_copy_topic_link
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_copy_topic_link");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete all files"
+        /// </summary>
+        public static string lng_context_delete_all_files
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_delete_all_files");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete from disk"
+        /// </summary>
+        public static string lng_context_delete_from_disk
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_delete_from_disk");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Delete Selected"
         /// </summary>
         public static string lng_context_delete_selected
@@ -68083,6 +69625,17 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_context_delete_selected");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Remove Spoiler"
+        /// </summary>
+        public static string lng_context_disable_spoiler
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_disable_spoiler");
             }
         }
         
@@ -68142,6 +69695,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Mute notifications"
+        /// </summary>
+        public static string lng_context_mute
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_mute");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Open in new window"
+        /// </summary>
+        public static string lng_context_new_window
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_new_window");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Open GIF"
         /// </summary>
         public static string lng_context_open_gif
@@ -68186,7 +69761,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Save Voice Message As..."
+        /// Localized resource similar to "Save As..."
         /// </summary>
         public static string lng_context_save_audio
         {
@@ -68197,7 +69772,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Save Audio File As..."
+        /// Localized resource similar to "Save As..."
         /// </summary>
         public static string lng_context_save_audio_file
         {
@@ -68208,7 +69783,18 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Save File As..."
+        /// Localized resource similar to "Download Selected"
+        /// </summary>
+        public static string lng_context_save_documents_selected
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_save_documents_selected");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Save As..."
         /// </summary>
         public static string lng_context_save_file
         {
@@ -68219,18 +69805,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Save GIF"
-        /// </summary>
-        public static string lng_context_save_gif
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_context_save_gif");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Save Image As..."
+        /// Localized resource similar to "Save As..."
         /// </summary>
         public static string lng_context_save_image
         {
@@ -68241,7 +69816,18 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Save Video As..."
+        /// Localized resource similar to "Save Selected"
+        /// </summary>
+        public static string lng_context_save_images_selected
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_save_images_selected");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Save As..."
         /// </summary>
         public static string lng_context_save_video
         {
@@ -68259,6 +69845,28 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_context_seen_listened_none");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} Listened"
+        /// </summary>
+        public static string lng_context_seen_listened_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_seen_listened_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} Listened"
+        /// </summary>
+        public static string lng_context_seen_listened_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_seen_listened_other");
             }
         }
         
@@ -68285,6 +69893,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{count} Reacted"
+        /// </summary>
+        public static string lng_context_seen_reacted_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_seen_reacted_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} Reacted"
+        /// </summary>
+        public static string lng_context_seen_reacted_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_seen_reacted_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Nobody Viewed"
         /// </summary>
         public static string lng_context_seen_text_none
@@ -68292,6 +69922,28 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_context_seen_text_none");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} Seen"
+        /// </summary>
+        public static string lng_context_seen_text_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_seen_text_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} Seen"
+        /// </summary>
+        public static string lng_context_seen_text_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_seen_text_other");
             }
         }
         
@@ -68307,6 +69959,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{count} Listened"
+        /// </summary>
+        public static string lng_context_seen_watched_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_seen_watched_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} Listened"
+        /// </summary>
+        public static string lng_context_seen_watched_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_seen_watched_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Send selected now"
         /// </summary>
         public static string lng_context_send_now_selected
@@ -68314,6 +69988,17 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_context_send_now_selected");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Set As Quick"
+        /// </summary>
+        public static string lng_context_set_as_quick
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_set_as_quick");
             }
         }
         
@@ -68340,6 +70025,17 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Hide with Spoiler"
+        /// </summary>
+        public static string lng_context_spoiler_effect
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_spoiler_effect");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Go To Message"
         /// </summary>
         public static string lng_context_to_msg
@@ -68347,6 +70043,17 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_context_to_msg");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Translate Selected Text"
+        /// </summary>
+        public static string lng_context_translate_selected
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_translate_selected");
             }
         }
         
@@ -68380,6 +70087,17 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_context_view_profile");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "View topic info"
+        /// </summary>
+        public static string lng_context_view_topic
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_view_topic");
             }
         }
         
@@ -68450,17 +70168,6 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Link copied to clipboard"
-        /// </summary>
-        public static string lng_create_channel_link_copied
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_create_channel_link_copied");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "This link is invalid"
         /// </summary>
         public static string lng_create_channel_link_invalid
@@ -68479,6 +70186,17 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_create_channel_link_occupied");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Checking name..."
+        /// </summary>
+        public static string lng_create_channel_link_pending
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_create_channel_link_pending");
             }
         }
         
@@ -68538,18 +70256,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Permanent link"
-        /// </summary>
-        public static string lng_create_permanent_link_title
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_create_permanent_link_title");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Only people with a special invite link may join"
+        /// Localized resource similar to "Only people with an invite link can join."
         /// </summary>
         public static string lng_create_private_channel_about
         {
@@ -68593,6 +70300,50 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{count} emoji"
+        /// </summary>
+        public static string lng_custom_emoji_count_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_custom_emoji_count_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} emoji"
+        /// </summary>
+        public static string lng_custom_emoji_count_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_custom_emoji_count_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Remove Emoji"
+        /// </summary>
+        public static string lng_custom_emoji_remove_pack_button
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_custom_emoji_remove_pack_button");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sets of used emoji"
+        /// </summary>
+        public static string lng_custom_emoji_used_sets
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_custom_emoji_used_sets");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "{date}, {duration}"
         /// </summary>
         public static string lng_date_and_duration
@@ -68626,6 +70377,50 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{count} day"
+        /// </summary>
+        public static string lng_days_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_days_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} days"
+        /// </summary>
+        public static string lng_days_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_days_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count}d"
+        /// </summary>
+        public static string lng_days_tiny_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_days_tiny_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count}d"
+        /// </summary>
+        public static string lng_days_tiny_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_days_tiny_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Delete all from this user"
         /// </summary>
         public static string lng_delete_all_from
@@ -68633,6 +70428,94 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_delete_all_from");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete all from {user}"
+        /// </summary>
+        public static string lng_delete_all_from_user
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_delete_all_from_user");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This will clear history just for you, not for other participants of the chat."
+        /// </summary>
+        public static string lng_delete_clear_for_me
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_delete_clear_for_me");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This will delete it for everyone in this chat."
+        /// </summary>
+        public static string lng_delete_for_everyone_hint_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_delete_for_everyone_hint_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This will delete them for everyone in this chat."
+        /// </summary>
+        public static string lng_delete_for_everyone_hint_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_delete_for_everyone_hint_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This will delete it just for you, not for other participants of the chat."
+        /// </summary>
+        public static string lng_delete_for_me_chat_hint_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_delete_for_me_chat_hint_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This will delete them just for you, not for other participants of the chat."
+        /// </summary>
+        public static string lng_delete_for_me_chat_hint_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_delete_for_me_chat_hint_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This will delete it just for you."
+        /// </summary>
+        public static string lng_delete_for_me_hint_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_delete_for_me_hint_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This will delete them just for you."
+        /// </summary>
+        public static string lng_delete_for_me_hint_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_delete_for_me_hint_other");
             }
         }
         
@@ -68721,6 +70604,17 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_dialogs_skip_archive_in_search");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} {topic}"
+        /// </summary>
+        public static string lng_dialogs_text_from_in_topic
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_dialogs_text_from_in_topic");
             }
         }
         
@@ -68938,7 +70832,7 @@ namespace Telegram.Strings
         /// <summary>
         /// Localized resource similar to "File download could not be started.
         ///
-        ///This might be because the download location you've selected is invalid. Try changing it in Settings > Advanced > Download Path."
+        ///This might be because your selected download location is invalid. Try changing it in Settings > Advanced > Download Path."
         /// </summary>
         public static string lng_download_path_failed
         {
@@ -68989,6 +70883,96 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_download_path_temp_radio");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unset"
+        /// </summary>
+        public static string lng_download_path_unset
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_download_path_unset");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to stop downloading your files?
+        ///
+        ///If you do, you'll need to start over."
+        /// </summary>
+        public static string lng_download_sure_stop
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_download_sure_stop");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "They will be deleted from your disk, but will remain accessible in the cloud."
+        /// </summary>
+        public static string lng_downloads_delete_in_cloud
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_downloads_delete_in_cloud");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "It will be deleted from your disk, but will remain accessible in the cloud."
+        /// </summary>
+        public static string lng_downloads_delete_in_cloud_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_downloads_delete_in_cloud_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to delete all files?"
+        /// </summary>
+        public static string lng_downloads_delete_sure_all
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_downloads_delete_sure_all");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to delete {count} file?"
+        /// </summary>
+        public static string lng_downloads_delete_sure_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_downloads_delete_sure_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to delete {count} files?"
+        /// </summary>
+        public static string lng_downloads_delete_sure_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_downloads_delete_sure_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "View in downloads"
+        /// </summary>
+        public static string lng_downloads_view_in_section
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_downloads_view_in_section");
             }
         }
         
@@ -69070,6 +71054,50 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{count} min"
+        /// </summary>
+        public static string lng_duration_minsec_minutes_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_duration_minsec_minutes_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} min"
+        /// </summary>
+        public static string lng_duration_minsec_minutes_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_duration_minsec_minutes_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} s"
+        /// </summary>
+        public static string lng_duration_minsec_seconds_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_duration_minsec_seconds_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} s"
+        /// </summary>
+        public static string lng_duration_minsec_seconds_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_duration_minsec_seconds_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "{minutes_count} {seconds_count}"
         /// </summary>
         public static string lng_duration_minutes_seconds
@@ -69088,6 +71116,28 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_duration_played");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} second"
+        /// </summary>
+        public static string lng_duration_seconds_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_duration_seconds_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} seconds"
+        /// </summary>
+        public static string lng_duration_seconds_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_duration_seconds_other");
             }
         }
         
@@ -69202,6 +71252,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "You've reached the message text limit. Please make the text shorter by {count} character."
+        /// </summary>
+        public static string lng_edit_limit_reached_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_limit_reached_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You've reached the message text limit. Please make the text shorter by {count} characters."
+        /// </summary>
+        public static string lng_edit_limit_reached_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_limit_reached_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "This file cannot be saved as a part of an album."
         /// </summary>
         public static string lng_edit_media_album_error
@@ -69268,6 +71340,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Always allow {count} user"
+        /// </summary>
+        public static string lng_edit_privacy_calls_always_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_calls_always_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Always allow {count} users"
+        /// </summary>
+        public static string lng_edit_privacy_calls_always_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_calls_always_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Always allow"
         /// </summary>
         public static string lng_edit_privacy_calls_always_title
@@ -69308,6 +71402,28 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_edit_privacy_calls_never_empty");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Never allow {count} user"
+        /// </summary>
+        public static string lng_edit_privacy_calls_never_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_calls_never_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Never allow {count} users"
+        /// </summary>
+        public static string lng_edit_privacy_calls_never_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_calls_never_other");
             }
         }
         
@@ -69400,6 +71516,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{count} user"
+        /// </summary>
+        public static string lng_edit_privacy_exceptions_count_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_exceptions_count_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} users"
+        /// </summary>
+        public static string lng_edit_privacy_exceptions_count_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_exceptions_count_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Always allow"
         /// </summary>
         public static string lng_edit_privacy_forwards_always_empty
@@ -69429,6 +71567,28 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_edit_privacy_forwards_exceptions");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can add users or entire groups that will not see your profile photo."
+        /// </summary>
+        public static string lng_edit_privacy_forwards_exceptions_everyone
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_forwards_exceptions_everyone");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add users or entire groups which will still see your profile photo."
+        /// </summary>
+        public static string lng_edit_privacy_forwards_exceptions_nobody
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_forwards_exceptions_nobody");
             }
         }
         
@@ -69532,6 +71692,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Always allow {count} user"
+        /// </summary>
+        public static string lng_edit_privacy_groups_always_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_groups_always_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Always allow {count} users"
+        /// </summary>
+        public static string lng_edit_privacy_groups_always_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_groups_always_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Always allow"
         /// </summary>
         public static string lng_edit_privacy_groups_always_title
@@ -69576,6 +71758,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Never allow {count} user"
+        /// </summary>
+        public static string lng_edit_privacy_groups_never_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_groups_never_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Never allow {count} users"
+        /// </summary>
+        public static string lng_edit_privacy_groups_never_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_groups_never_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Never allow"
         /// </summary>
         public static string lng_edit_privacy_groups_never_title
@@ -69587,7 +71791,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Group invite settings"
+        /// Localized resource similar to "Groups & channels"
         /// </summary>
         public static string lng_edit_privacy_groups_title
         {
@@ -69605,6 +71809,28 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_edit_privacy_lastseen_always_empty");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Always share with {count} user"
+        /// </summary>
+        public static string lng_edit_privacy_lastseen_always_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_lastseen_always_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Always share with {count} users"
+        /// </summary>
+        public static string lng_edit_privacy_lastseen_always_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_lastseen_always_other");
             }
         }
         
@@ -69653,6 +71879,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Never share with {count} user"
+        /// </summary>
+        public static string lng_edit_privacy_lastseen_never_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_lastseen_never_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Never share with {count} users"
+        /// </summary>
+        public static string lng_edit_privacy_lastseen_never_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_lastseen_never_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Never share with"
         /// </summary>
         public static string lng_edit_privacy_lastseen_never_title
@@ -69671,17 +71919,6 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_edit_privacy_lastseen_title");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "You won't see Last Seen and Online statuses for people with whom you don't share yours. Approximate last seen will be shown instead (recently, within a week, within a month)."
-        /// </summary>
-        public static string lng_edit_privacy_lastseen_warning
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_edit_privacy_lastseen_warning");
             }
         }
         
@@ -69796,7 +72033,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Who can see my profile photo"
+        /// Localized resource similar to "Who can see my profile photos"
         /// </summary>
         public static string lng_edit_privacy_profile_photo_header
         {
@@ -69818,6 +72055,17 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "You can upload a public photo for users who are restricted from viewing your real profile photos."
+        /// </summary>
+        public static string lng_edit_privacy_profile_photo_public_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_profile_photo_public_about");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Profile Photo"
         /// </summary>
         public static string lng_edit_privacy_profile_photo_title
@@ -69825,6 +72073,72 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_edit_privacy_profile_photo_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Always allow"
+        /// </summary>
+        public static string lng_edit_privacy_voices_always_empty
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_voices_always_empty");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Always allow"
+        /// </summary>
+        public static string lng_edit_privacy_voices_always_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_voices_always_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "These users will or will not be able to send voice and video messages to you regardless of the settings above."
+        /// </summary>
+        public static string lng_edit_privacy_voices_exceptions
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_voices_exceptions");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Who can send me voice messages"
+        /// </summary>
+        public static string lng_edit_privacy_voices_header
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_voices_header");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Never allow"
+        /// </summary>
+        public static string lng_edit_privacy_voices_never_empty
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_voices_never_empty");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Never allow"
+        /// </summary>
+        public static string lng_edit_privacy_voices_never_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_voices_never_title");
             }
         }
         
@@ -69862,7 +72176,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "edited: {date}"
+        /// Localized resource similar to "Edited: {date}"
         /// </summary>
         public static string lng_edited_date
         {
@@ -69994,6 +72308,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Set Status for..."
+        /// </summary>
+        public static string lng_emoji_status_for_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_emoji_status_for_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Set Status for {duration}"
+        /// </summary>
+        public static string lng_emoji_status_menu_duration_any
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_emoji_status_menu_duration_any");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Enable notifications"
         /// </summary>
         public static string lng_enable_notifications_from_tray
@@ -70027,17 +72363,6 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Sorry, you can't add this user as an admin because they are not a member of this group and you are not allowed to invite them."
-        /// </summary>
-        public static string lng_error_cant_add_admin_invite
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_error_cant_add_admin_invite");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Sorry, you can't add this user as an admin because they are in the Removed Users list and you can't unban them."
         /// </summary>
         public static string lng_error_cant_add_admin_unban
@@ -70067,17 +72392,6 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_error_cant_add_member");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Sorry, you can't ban this user because they are an admin in this group and you are not allowed to demote them."
-        /// </summary>
-        public static string lng_error_cant_ban_admin
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_error_cant_ban_admin");
             }
         }
         
@@ -70126,13 +72440,24 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Unfortunately, you can't access this message. You are not a member of the chat where it was posted."
+        /// Localized resource similar to "Sorry, you can only pin {count} chat to the top."
         /// </summary>
-        public static string lng_error_post_link_invalid
+        public static string lng_error_pinned_max_one
         {
             get
             {
-                return resourceLoader.GetString("lng_error_post_link_invalid");
+                return resourceLoader.GetString("lng_error_pinned_max_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can only pin {count} chats to the top."
+        /// </summary>
+        public static string lng_error_pinned_max_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_error_pinned_max_other");
             }
         }
         
@@ -70280,6 +72605,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{count} hour"
+        /// </summary>
+        public static string lng_export_delay_hours_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_delay_hours_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} hours"
+        /// </summary>
+        public static string lng_export_delay_hours_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_delay_hours_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "less than an hour"
         /// </summary>
         public static string lng_export_delay_less_than_hour
@@ -70368,7 +72715,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Sorry, you have started a new data export, so this data export is now cancelled."
+        /// Localized resource similar to "Sorry, you started a new data export, so this data export has been canceled."
         /// </summary>
         public static string lng_export_invalid
         {
@@ -70467,7 +72814,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Your chosen screen name, username, phone number and profile pictures."
+        /// Localized resource similar to "Your chosen display name, username, phone number and profile photos."
         /// </summary>
         public static string lng_export_option_info_about
         {
@@ -70698,7 +73045,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Profile pictures"
+        /// Localized resource similar to "Profile photos"
         /// </summary>
         public static string lng_export_state_userpics
         {
@@ -70777,7 +73124,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Total files: {amount}."
+        /// Localized resource similar to "Total files: {amount}"
         /// </summary>
         public static string lng_export_total_amount
         {
@@ -70788,7 +73135,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Total files: {count}."
+        /// Localized resource similar to "Total files: {count}"
         /// </summary>
         public static string lng_export_total_files
         {
@@ -70799,7 +73146,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Total size: {size}."
+        /// Localized resource similar to "Total size: {size}"
         /// </summary>
         public static string lng_export_total_size
         {
@@ -70823,17 +73170,6 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Sorry, if a person left a channel, you need to be in their contact list to bring them back."
-        /// </summary>
-        public static string lng_failed_add_not_mutual_channel
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_failed_add_not_mutual_channel");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Could not add user. Please try again later."
         /// </summary>
         public static string lng_failed_add_participant
@@ -70845,6 +73181,63 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "increase the limit"
+        /// </summary>
+        public static string lng_fave_sticker_limit_link
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_fave_sticker_limit_link");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "An older sticker was replaced with this one.
+        ///You can {link} to {count} sticker."
+        /// </summary>
+        public static string lng_fave_sticker_limit_more_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_fave_sticker_limit_more_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "An older sticker was replaced with this one.
+        ///You can {link} to {count} stickers."
+        /// </summary>
+        public static string lng_fave_sticker_limit_more_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_fave_sticker_limit_more_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Limit of {count} Sticker Reached"
+        /// </summary>
+        public static string lng_fave_sticker_limit_title_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_fave_sticker_limit_title_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Limit of {count} Stickers Reached"
+        /// </summary>
+        public static string lng_fave_sticker_limit_title_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_fave_sticker_limit_title_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Remove from Favorites"
         /// </summary>
         public static string lng_faved_stickers_remove
@@ -70852,6 +73245,149 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_faved_stickers_remove");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} GB"
+        /// </summary>
+        public static string lng_file_size_limit_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_file_size_limit_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} GB"
+        /// </summary>
+        public static string lng_file_size_limit_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_file_size_limit_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The document can't be sent, because it is larger than {size}."
+        /// </summary>
+        public static string lng_file_size_limit1
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_file_size_limit1");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can double this limit to {size} per document by subscribing to **Telegram Premium**."
+        /// </summary>
+        public static string lng_file_size_limit2
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_file_size_limit2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't add more than **{count}** chat to a folder."
+        /// </summary>
+        public static string lng_filter_chats_limit1_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_filter_chats_limit1_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't add more than **{count}** chats to a folder."
+        /// </summary>
+        public static string lng_filter_chats_limit1_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_filter_chats_limit1_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can increase this limit to **{count}** by subscribing to **Telegram Premium**."
+        /// </summary>
+        public static string lng_filter_chats_limit2_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_filter_chats_limit2_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can increase this limit to **{count}** by subscribing to **Telegram Premium**."
+        /// </summary>
+        public static string lng_filter_chats_limit2_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_filter_chats_limit2_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't pin more than **{count}** chat to the top."
+        /// </summary>
+        public static string lng_filter_pin_limit1_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_filter_pin_limit1_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't pin more than **{count}** chats to the top."
+        /// </summary>
+        public static string lng_filter_pin_limit1_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_filter_pin_limit1_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unpin some of the currently pinned ones or subscribe to **Telegram Premium** to double the limit to **{count}** chat."
+        /// </summary>
+        public static string lng_filter_pin_limit2_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_filter_pin_limit2_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unpin some of the currently pinned ones or subscribe to **Telegram Premium** to double the limit to **{count}** chats."
+        /// </summary>
+        public static string lng_filter_pin_limit2_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_filter_pin_limit2_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add to..."
+        /// </summary>
+        public static string lng_filters_add_box_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_filters_add_box_title");
             }
         }
         
@@ -70878,13 +73414,24 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Edit Folder"
+        /// Localized resource similar to "{count} chat"
         /// </summary>
-        public static string lng_filters_context_edit
+        public static string lng_filters_chats_count_one
         {
             get
             {
-                return resourceLoader.GetString("lng_filters_context_edit");
+                return resourceLoader.GetString("lng_filters_chats_count_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} chats"
+        /// </summary>
+        public static string lng_filters_chats_count_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_filters_chats_count_other");
             }
         }
         
@@ -70933,17 +73480,6 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Choose chats and types of chats that will never appear in this folder."
-        /// </summary>
-        public static string lng_filters_exclude_about
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_filters_exclude_about");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Choose an icon"
         /// </summary>
         public static string lng_filters_icon_header
@@ -70955,17 +73491,6 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Choose chats and types of chats that will appear in this folder."
-        /// </summary>
-        public static string lng_filters_include_about
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_filters_include_about");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Sorry, you can't create more folders."
         /// </summary>
         public static string lng_filters_limit
@@ -70973,6 +73498,50 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_filters_limit");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You have reached the limit of **{count}** folder."
+        /// </summary>
+        public static string lng_filters_limit1_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_filters_limit1_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You have reached the limit of **{count}** folders."
+        /// </summary>
+        public static string lng_filters_limit1_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_filters_limit1_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can double the limit to **{count}** folder by subscribing to **Telegram Premium**."
+        /// </summary>
+        public static string lng_filters_limit2_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_filters_limit2_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can double the limit to **{count}** folders by subscribing to **Telegram Premium**."
+        /// </summary>
+        public static string lng_filters_limit2_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_filters_limit2_other");
             }
         }
         
@@ -71043,6 +73612,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{chat} added to {folder} folder"
+        /// </summary>
+        public static string lng_filters_toast_add
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_filters_toast_add");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{chat} removed from {folder} folder"
+        /// </summary>
+        public static string lng_filters_toast_remove
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_filters_toast_remove");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Too many tries. Please try again later."
         /// </summary>
         public static string lng_flood_error
@@ -71061,6 +73652,239 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_formatting_link_create_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to discard this topic?"
+        /// </summary>
+        public static string lng_forum_discard_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forum_discard_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} message"
+        /// </summary>
+        public static string lng_forum_messages_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forum_messages_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} messages"
+        /// </summary>
+        public static string lng_forum_messages_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forum_messages_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No messages"
+        /// </summary>
+        public static string lng_forum_no_messages
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forum_no_messages");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No topics currently created in this group."
+        /// </summary>
+        public static string lng_forum_no_topics
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forum_no_topics");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't pin more than **{count}** topic to the top."
+        /// </summary>
+        public static string lng_forum_pin_limit_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forum_pin_limit_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't pin more than **{count}** topics to the top."
+        /// </summary>
+        public static string lng_forum_pin_limit_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forum_pin_limit_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can reply to messages in topics."
+        /// </summary>
+        public static string lng_forum_replies_only
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forum_replies_only");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Show Topics List"
+        /// </summary>
+        public static string lng_forum_show_topics_list
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forum_show_topics_list");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Close Topic"
+        /// </summary>
+        public static string lng_forum_topic_close
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forum_topic_close");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This topic is closed."
+        /// </summary>
+        public static string lng_forum_topic_closed
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forum_topic_closed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send a message
+        ///to start the topic."
+        /// </summary>
+        public static string lng_forum_topic_created_body
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forum_topic_created_body");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send a message to
+        ///start the topic."
+        /// </summary>
+        public static string lng_forum_topic_created_body_my
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forum_topic_created_body_my");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Topic started!"
+        /// </summary>
+        public static string lng_forum_topic_created_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forum_topic_created_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to delete this topic?"
+        /// </summary>
+        public static string lng_forum_topic_delete_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forum_topic_delete_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Edit Topic"
+        /// </summary>
+        public static string lng_forum_topic_edit
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forum_topic_edit");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Reopen Topic"
+        /// </summary>
+        public static string lng_forum_topic_reopen
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forum_topic_reopen");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Topic Name"
+        /// </summary>
+        public static string lng_forum_topic_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forum_topic_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Only groups with more than **{count} member** can have topics enabled."
+        /// </summary>
+        public static string lng_forum_topics_not_enough_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forum_topics_not_enough_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Only groups with more than **{count} members** can have topics enabled."
+        /// </summary>
+        public static string lng_forum_topics_not_enough_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forum_topics_not_enough_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "View as Messages"
+        /// </summary>
+        public static string lng_forum_view_as_messages
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forum_view_as_messages");
             }
         }
         
@@ -71120,6 +73944,50 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Forward {count} Message"
+        /// </summary>
+        public static string lng_forward_many_title_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forward_many_title_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Forward {count} Messages"
+        /// </summary>
+        public static string lng_forward_many_title_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forward_many_title_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} forwarded message"
+        /// </summary>
+        public static string lng_forward_messages_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forward_messages_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} forwarded messages"
+        /// </summary>
+        public static string lng_forward_messages_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forward_messages_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Sorry, no way to send media here :("
         /// </summary>
         public static string lng_forward_send_files_cant
@@ -71175,7 +74043,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Show sender's name"
+        /// Localized resource similar to "Show sender name"
         /// </summary>
         public static string lng_forward_show_sender
         {
@@ -71186,7 +74054,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Show senders' names"
+        /// Localized resource similar to "Show sender names"
         /// </summary>
         public static string lng_forward_show_senders
         {
@@ -71307,13 +74175,46 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{user} and {second_user}"
+        /// Localized resource similar to "{user} and {count} other"
         /// </summary>
-        public static string lng_forwarding_from_two
+        public static string lng_forwarding_from_one
         {
             get
             {
-                return resourceLoader.GetString("lng_forwarding_from_two");
+                return resourceLoader.GetString("lng_forwarding_from_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user} and {count} others"
+        /// </summary>
+        public static string lng_forwarding_from_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forwarding_from_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Shares: {count}"
+        /// </summary>
+        public static string lng_forwards_tooltip_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forwards_tooltip_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Shares: {count}"
+        /// </summary>
+        public static string lng_forwards_tooltip_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forwards_tooltip_other");
             }
         }
         
@@ -71386,20 +74287,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Regular members of the group (non-admins) will **irrevocably** lose their right to post messages in the group.
-        ///
-        ///This action **can't** be undone."
-        /// </summary>
-        public static string lng_gigagroup_warning
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_gigagroup_warning");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "You have created a group."
+        /// Localized resource similar to "You created a group"
         /// </summary>
         public static string lng_group_about_header
         {
@@ -71620,13 +74508,101 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Are you sure you want to start a video chat in this channel as your personal account?"
+        /// Localized resource similar to "Are you sure you want to start a live stream in this channel as your personal account?"
         /// </summary>
         public static string lng_group_call_create_sure_channel
         {
             get
             {
                 return resourceLoader.GetString("lng_group_call_create_sure_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} day"
+        /// </summary>
+        public static string lng_group_call_duration_days_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_duration_days_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} days"
+        /// </summary>
+        public static string lng_group_call_duration_days_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_duration_days_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} hour"
+        /// </summary>
+        public static string lng_group_call_duration_hours_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_duration_hours_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} hours"
+        /// </summary>
+        public static string lng_group_call_duration_hours_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_duration_hours_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} minute"
+        /// </summary>
+        public static string lng_group_call_duration_minutes_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_duration_minutes_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} minutes"
+        /// </summary>
+        public static string lng_group_call_duration_minutes_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_duration_minutes_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} second"
+        /// </summary>
+        public static string lng_group_call_duration_seconds_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_duration_seconds_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} seconds"
+        /// </summary>
+        public static string lng_group_call_duration_seconds_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_duration_seconds_other");
             }
         }
         
@@ -71693,6 +74669,28 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_group_call_force_muted_sub");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You invited **{count} participant** to the video chat."
+        /// </summary>
+        public static string lng_group_call_invite_done_many_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_invite_done_many_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You invited **{count} participants** to the video chat."
+        /// </summary>
+        public static string lng_group_call_invite_done_many_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_invite_done_many_other");
             }
         }
         
@@ -71952,6 +74950,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{count} participant"
+        /// </summary>
+        public static string lng_group_call_members_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_members_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} participants"
+        /// </summary>
+        public static string lng_group_call_members_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_members_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Microphone"
         /// </summary>
         public static string lng_group_call_microphone
@@ -71959,17 +74979,6 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_group_call_microphone");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "muted by me"
-        /// </summary>
-        public static string lng_group_call_muted_by_me_status
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_group_call_muted_by_me_status");
             }
         }
         
@@ -72018,6 +75027,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{group} is currently not broadcasting live stream data to Telegram."
+        /// </summary>
+        public static string lng_group_call_no_stream
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_no_stream");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Oops! Telegram doesn't see any stream coming from your streaming app. Please make sure you entered the right Server URL and Stream Key in your app."
+        /// </summary>
+        public static string lng_group_call_no_stream_admin
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_no_stream_admin");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Enable Noise Suppression"
         /// </summary>
         public static string lng_group_call_noise_suppression
@@ -72040,6 +75071,30 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "The video chat is over {count} participant.
+        ///New participants only have access to audio stream."
+        /// </summary>
+        public static string lng_group_call_over_limit_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_over_limit_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The video chat is over {count} participants.
+        ///New participants only have access to audio stream."
+        /// </summary>
+        public static string lng_group_call_over_limit_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_over_limit_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "{user}'s video is pinned."
         /// </summary>
         public static string lng_group_call_pinned_camera
@@ -72058,6 +75113,17 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_group_call_pinned_camera_me");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Live stream is pinned on top."
+        /// </summary>
+        public static string lng_group_call_pinned_on_top
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_pinned_on_top");
             }
         }
         
@@ -72139,7 +75205,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Push to Talk Shortcut"
+        /// Localized resource similar to "Push-to-Talk Shortcut"
         /// </summary>
         public static string lng_group_call_push_to_talk
         {
@@ -72227,17 +75293,6 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Started recording the audio stream."
-        /// </summary>
-        public static string lng_group_call_recording_started
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_group_call_recording_started");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Live stream recording started."
         /// </summary>
         public static string lng_group_call_recording_started_channel
@@ -72315,6 +75370,162 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "To stream video with another app, enter these Server URL and Stream Key in your streaming app. Software encoding recommended (x264 in OBS).
+        ///
+        ///Once you start broadcasting in your streaming app, click Start Streaming below."
+        /// </summary>
+        public static string lng_group_call_rtmp_info
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_rtmp_info");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Stream Key copied to clipboard."
+        /// </summary>
+        public static string lng_group_call_rtmp_key_copied
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_rtmp_key_copied");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Copy Stream Key"
+        /// </summary>
+        public static string lng_group_call_rtmp_key_copy
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_rtmp_key_copy");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Stream Key"
+        /// </summary>
+        public static string lng_group_call_rtmp_key_subtitle
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_rtmp_key_subtitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "**Never share your Stream Key with anyone or show it on stream!**"
+        /// </summary>
+        public static string lng_group_call_rtmp_key_warning
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_rtmp_key_warning");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Revoke Stream Key"
+        /// </summary>
+        public static string lng_group_call_rtmp_revoke
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_rtmp_revoke");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to revoke your Stream Key?"
+        /// </summary>
+        public static string lng_group_call_rtmp_revoke_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_rtmp_revoke_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Start Streaming"
+        /// </summary>
+        public static string lng_group_call_rtmp_start
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_rtmp_start");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Stream with other apps"
+        /// </summary>
+        public static string lng_group_call_rtmp_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_rtmp_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Server URL copied to clipboard."
+        /// </summary>
+        public static string lng_group_call_rtmp_url_copied
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_rtmp_url_copied");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Copy Server URL"
+        /// </summary>
+        public static string lng_group_call_rtmp_url_copy
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_rtmp_url_copy");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Server URL"
+        /// </summary>
+        public static string lng_group_call_rtmp_url_subtitle
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_rtmp_url_subtitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} viewer"
+        /// </summary>
+        public static string lng_group_call_rtmp_viewers_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_rtmp_viewers_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} viewers"
+        /// </summary>
+        public static string lng_group_call_rtmp_viewers_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_rtmp_viewers_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "schedule a video chat"
         /// </summary>
         public static string lng_group_call_schedule
@@ -72337,7 +75548,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Subscribers of the channel will be notified that the live stream will start in {duration}."
+        /// Localized resource similar to "Subscribers of the channel will be notified that the live stream starts in {duration}."
         /// </summary>
         public static string lng_group_call_schedule_notified_channel
         {
@@ -72700,6 +75911,17 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Live stream is unpinned from top."
+        /// </summary>
+        public static string lng_group_call_unpinned_on_top
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_unpinned_on_top");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "{user}'s screencast is unpinned."
         /// </summary>
         public static string lng_group_call_unpinned_screen
@@ -72790,17 +76012,6 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "You can generate invite links that will expire after they've been used."
-        /// </summary>
-        public static string lng_group_invite_add_about
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_group_invite_add_about");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "This invite link is invalid or has expired."
         /// </summary>
         public static string lng_group_invite_bad_link
@@ -72808,6 +76019,50 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_group_invite_bad_link");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} can join"
+        /// </summary>
+        public static string lng_group_invite_can_join_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_invite_can_join_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} can join"
+        /// </summary>
+        public static string lng_group_invite_can_join_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_invite_can_join_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} person can join via this link."
+        /// </summary>
+        public static string lng_group_invite_can_join_via_link_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_invite_can_join_via_link_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} people can join via this link."
+        /// </summary>
+        public static string lng_group_invite_can_join_via_link_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_invite_can_join_via_link_other");
             }
         }
         
@@ -72856,6 +76111,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{count} day left"
+        /// </summary>
+        public static string lng_group_invite_days_left_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_invite_days_left_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} days left"
+        /// </summary>
+        public static string lng_group_invite_days_left_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_invite_days_left_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Are you sure you want to delete all revoked links? This action cannot be undone."
         /// </summary>
         public static string lng_group_invite_delete_all_sure
@@ -72867,7 +76144,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Are you sure you want to delete that revoked link?"
+        /// Localized resource similar to "Are you sure you want to delete this revoked link?"
         /// </summary>
         public static string lng_group_invite_delete_sure
         {
@@ -72911,6 +76188,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{count} joined"
+        /// </summary>
+        public static string lng_group_invite_joined_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_invite_joined_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} joined"
+        /// </summary>
+        public static string lng_group_invite_joined_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_invite_joined_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Link Name (optional)"
         /// </summary>
         public static string lng_group_invite_label_header
@@ -72922,7 +76221,29 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "You can create additional invite links that have limited time or number of usages."
+        /// Localized resource similar to "{count} link"
+        /// </summary>
+        public static string lng_group_invite_links_count_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_invite_links_count_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} links"
+        /// </summary>
+        public static string lng_group_invite_links_count_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_invite_links_count_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can create additional invite links that have limited time or number of users."
         /// </summary>
         public static string lng_group_invite_manage_about
         {
@@ -72933,13 +76254,46 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Unable to join this group because there are too many members in it already."
+        /// Localized resource similar to "{count} member, among them:"
         /// </summary>
-        public static string lng_group_invite_no_room
+        public static string lng_group_invite_members_one
         {
             get
             {
-                return resourceLoader.GetString("lng_group_invite_no_room");
+                return resourceLoader.GetString("lng_group_invite_members_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} members, among them:"
+        /// </summary>
+        public static string lng_group_invite_members_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_invite_members_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} invite link"
+        /// </summary>
+        public static string lng_group_invite_other_count_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_invite_other_count_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} invite links"
+        /// </summary>
+        public static string lng_group_invite_other_count_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_invite_other_count_other");
             }
         }
         
@@ -72999,6 +76353,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{count} remaining"
+        /// </summary>
+        public static string lng_group_invite_remaining_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_invite_remaining_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} remaining"
+        /// </summary>
+        public static string lng_group_invite_remaining_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_invite_remaining_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Request admin approval"
         /// </summary>
         public static string lng_group_invite_request_approve
@@ -73010,7 +76386,51 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Are you sure you want to revoke that invite link?"
+        /// Localized resource similar to "{count} join request"
+        /// </summary>
+        public static string lng_group_invite_requested_full_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_invite_requested_full_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} join requests"
+        /// </summary>
+        public static string lng_group_invite_requested_full_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_invite_requested_full_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} request"
+        /// </summary>
+        public static string lng_group_invite_requested_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_invite_requested_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} requests"
+        /// </summary>
+        public static string lng_group_invite_requested_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_invite_requested_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to revoke this invite link?"
         /// </summary>
         public static string lng_group_invite_revoke_about
         {
@@ -73032,28 +76452,6 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "You can make the link expire after it has been used for a certain number of times."
-        /// </summary>
-        public static string lng_group_invite_usage_about
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_group_invite_usage_about");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Limit number of uses"
-        /// </summary>
-        public static string lng_group_invite_usage_title
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_group_invite_usage_title");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Sorry, this group is not accessible."
         /// </summary>
         public static string lng_group_not_accessible
@@ -73061,28 +76459,6 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_group_not_accessible");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Users removed from the group by admins cannot rejoin it via invite links."
-        /// </summary>
-        public static string lng_group_removed_list_about
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_group_removed_list_about");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "You will be added to the group once its admins approve your request."
-        /// </summary>
-        public static string lng_group_request_sent
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_group_request_sent");
             }
         }
         
@@ -73098,26 +76474,24 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "You have no pending requests
-        ///to join your group."
+        /// Localized resource similar to "{count} join request"
         /// </summary>
-        public static string lng_group_requests_none
+        public static string lng_group_requests_pending_one
         {
             get
             {
-                return resourceLoader.GetString("lng_group_requests_none");
+                return resourceLoader.GetString("lng_group_requests_pending_one");
             }
         }
         
         /// <summary>
-        /// Localized resource similar to "You have no pending requests
-        ///to join your channel."
+        /// Localized resource similar to "{count} join requests"
         /// </summary>
-        public static string lng_group_requests_none_channel
+        public static string lng_group_requests_pending_other
         {
             get
             {
-                return resourceLoader.GetString("lng_group_requests_none_channel");
+                return resourceLoader.GetString("lng_group_requests_pending_other");
             }
         }
         
@@ -73221,6 +76595,50 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{count} hour"
+        /// </summary>
+        public static string lng_hours_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_hours_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} hours"
+        /// </summary>
+        public static string lng_hours_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_hours_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count}h"
+        /// </summary>
+        public static string lng_hours_tiny_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_hours_tiny_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count}h"
+        /// </summary>
+        public static string lng_hours_tiny_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_hours_tiny_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "imported"
         /// </summary>
         public static string lng_imported
@@ -73228,6 +76646,28 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_imported");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} audio"
+        /// </summary>
+        public static string lng_in_dlg_audio_count_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_in_dlg_audio_count_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} audio"
+        /// </summary>
+        public static string lng_in_dlg_audio_count_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_in_dlg_audio_count_other");
             }
         }
         
@@ -73243,6 +76683,72 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{count} file"
+        /// </summary>
+        public static string lng_in_dlg_file_count_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_in_dlg_file_count_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} files"
+        /// </summary>
+        public static string lng_in_dlg_file_count_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_in_dlg_file_count_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} media"
+        /// </summary>
+        public static string lng_in_dlg_media_count_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_in_dlg_media_count_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} media"
+        /// </summary>
+        public static string lng_in_dlg_media_count_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_in_dlg_media_count_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} photo"
+        /// </summary>
+        public static string lng_in_dlg_photo_count_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_in_dlg_photo_count_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} photos"
+        /// </summary>
+        public static string lng_in_dlg_photo_count_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_in_dlg_photo_count_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "{emoji} Sticker"
         /// </summary>
         public static string lng_in_dlg_sticker_emoji
@@ -73250,6 +76756,28 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_in_dlg_sticker_emoji");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} video"
+        /// </summary>
+        public static string lng_in_dlg_video_count_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_in_dlg_video_count_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} videos"
+        /// </summary>
+        public static string lng_in_dlg_video_count_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_in_dlg_video_count_other");
             }
         }
         
@@ -73298,6 +76826,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "This number is not tied to a SIM card and was acquired on {link}."
+        /// </summary>
+        public static string lng_info_mobile_context_menu_fragment_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_info_mobile_context_menu_fragment_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Fragment"
+        /// </summary>
+        public static string lng_info_mobile_context_menu_fragment_about_link
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_info_mobile_context_menu_fragment_about_link");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Share this contact"
         /// </summary>
         public static string lng_info_share_contact
@@ -73309,6 +76859,17 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Topic Info"
+        /// </summary>
+        public static string lng_info_topic_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_info_topic_title");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "User Info"
         /// </summary>
         public static string lng_info_user_title
@@ -73316,6 +76877,17 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_info_user_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "also"
+        /// </summary>
+        public static string lng_info_usernames_label
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_info_usernames_label");
             }
         }
         
@@ -73376,24 +76948,13 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "SIGN UP"
+        /// Localized resource similar to "Get the code for {phone_number} in the Anonymous Numbers section on Fragment."
         /// </summary>
-        public static string lng_intro_finish
+        public static string lng_intro_fragment_about
         {
             get
             {
-                return resourceLoader.GetString("lng_intro_finish");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "NEXT"
-        /// </summary>
-        public static string lng_intro_next
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_intro_next");
+                return resourceLoader.GetString("lng_intro_fragment_about");
             }
         }
         
@@ -73420,7 +76981,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Go to Settings > Devices > Scan QR"
+        /// Localized resource similar to "Go to Settings > Devices > Link Desktop Device"
         /// </summary>
         public static string lng_intro_qr_step2
         {
@@ -73453,7 +77014,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "SUBMIT"
+        /// Localized resource similar to "Submit"
         /// </summary>
         public static string lng_intro_submit
         {
@@ -73534,9 +77095,9 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "You are about to apply a custom language pack ({lang_name}) that is {percent}% complete.
+        /// Localized resource similar to "You are about to apply a custom language pack with the name "{lang_name}" that is {percent}% complete.
         ///
-        ///This will translate the entire interface. You can suggest corrections in the {link}.
+        ///This will translate the entire interface. You can suggest corrections on the {link}.
         ///
         ///You can change your language back at any time in Settings."
         /// </summary>
@@ -73556,6 +77117,39 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_language_switch_link");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} language"
+        /// </summary>
+        public static string lng_languages_count_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_languages_count_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} languages"
+        /// </summary>
+        public static string lng_languages_count_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_languages_count_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No languages found."
+        /// </summary>
+        public static string lng_languages_none
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_languages_none");
             }
         }
         
@@ -73606,6 +77200,72 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Too Many Public Links"
+        /// </summary>
+        public static string lng_links_limit_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_links_limit_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You have reserved **{count}** public link."
+        /// </summary>
+        public static string lng_links_limit1_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_links_limit1_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You have reserved **{count}** public links."
+        /// </summary>
+        public static string lng_links_limit1_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_links_limit1_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Try revoking the link from an older group or channel"
+        /// </summary>
+        public static string lng_links_limit2_final
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_links_limit2_final");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Try revoking the link from an older group or channel, or subscribe to **Telegram Premium** to double the limit to **{count}** public link."
+        /// </summary>
+        public static string lng_links_limit2_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_links_limit2_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Try revoking the link from an older group or channel, or subscribe to **Telegram Premium** to double the limit to **{count}** public links."
+        /// </summary>
+        public static string lng_links_limit2_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_links_limit2_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Redo"
         /// </summary>
         public static string lng_linux_menu_redo
@@ -73646,6 +77306,28 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_linux_no_audio_prefs");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} GIF animation"
+        /// </summary>
+        public static string lng_local_storage_animation_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_local_storage_animation_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} GIF animations"
+        /// </summary>
+        public static string lng_local_storage_animation_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_local_storage_animation_other");
             }
         }
         
@@ -73694,6 +77376,72 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{count} image"
+        /// </summary>
+        public static string lng_local_storage_image_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_local_storage_image_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} images"
+        /// </summary>
+        public static string lng_local_storage_image_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_local_storage_image_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} month"
+        /// </summary>
+        public static string lng_local_storage_limit_months_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_local_storage_limit_months_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} months"
+        /// </summary>
+        public static string lng_local_storage_limit_months_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_local_storage_limit_months_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} week"
+        /// </summary>
+        public static string lng_local_storage_limit_weeks_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_local_storage_limit_weeks_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} weeks"
+        /// </summary>
+        public static string lng_local_storage_limit_weeks_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_local_storage_limit_weeks_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Media cache"
         /// </summary>
         public static string lng_local_storage_media
@@ -73716,6 +77464,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{count} video message"
+        /// </summary>
+        public static string lng_local_storage_round_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_local_storage_round_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} video messages"
+        /// </summary>
+        public static string lng_local_storage_round_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_local_storage_round_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Total size limit: {size}"
         /// </summary>
         public static string lng_local_storage_size_limit
@@ -73723,6 +77493,28 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_local_storage_size_limit");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} sticker"
+        /// </summary>
+        public static string lng_local_storage_sticker_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_local_storage_sticker_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} stickers"
+        /// </summary>
+        public static string lng_local_storage_sticker_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_local_storage_sticker_other");
             }
         }
         
@@ -73756,6 +77548,28 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_local_storage_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} voice message"
+        /// </summary>
+        public static string lng_local_storage_voice_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_local_storage_voice_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} voice messages"
+        /// </summary>
+        public static string lng_local_storage_voice_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_local_storage_voice_other");
             }
         }
         
@@ -73822,6 +77636,17 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_mac_enable_filter");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Hold {text} to Quit"
+        /// </summary>
+        public static string lng_mac_hold_to_quit
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mac_hold_to_quit");
             }
         }
         
@@ -74200,17 +78025,6 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "All new messages posted in this channel are forwarded to the group."
-        /// </summary>
-        public static string lng_manage_linked_channel_posted
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_manage_linked_channel_posted");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Any member of this group will be able to see messages in the channel."
         /// </summary>
         public static string lng_manage_linked_channel_private
@@ -74251,6 +78065,39 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_manage_linked_channel_unlink");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Telegram will filter more spam but may occasionally affect ordinary messages. You can report False Positives in Recent Actions."
+        /// </summary>
+        public static string lng_manage_peer_antispam_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_manage_peer_antispam_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Aggressive filtering can be enabled only in groups with more than **{count} member**."
+        /// </summary>
+        public static string lng_manage_peer_antispam_not_enough_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_manage_peer_antispam_not_enough_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Aggressive filtering can be enabled only in groups with more than **{count} members**."
+        /// </summary>
+        public static string lng_manage_peer_antispam_not_enough_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_manage_peer_antispam_not_enough_other");
             }
         }
         
@@ -74310,35 +78157,24 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Members won't be able to forward messages from this group or save media files."
+        /// Localized resource similar to "Members of the group can't add any reactions to messages."
         /// </summary>
-        public static string lng_manage_peer_no_forwards_about
+        public static string lng_manage_peer_reactions_none_about
         {
             get
             {
-                return resourceLoader.GetString("lng_manage_peer_no_forwards_about");
+                return resourceLoader.GetString("lng_manage_peer_reactions_none_about");
             }
         }
         
         /// <summary>
-        /// Localized resource similar to "Subscribers won't be able to forward messages from this channel or save media files."
+        /// Localized resource similar to "You can select emoji that will allow members of your group to react to messages."
         /// </summary>
-        public static string lng_manage_peer_no_forwards_about_channel
+        public static string lng_manage_peer_reactions_some_about
         {
             get
             {
-                return resourceLoader.GetString("lng_manage_peer_no_forwards_about_channel");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Saving content"
-        /// </summary>
-        public static string lng_manage_peer_no_forwards_title
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_manage_peer_no_forwards_title");
+                return resourceLoader.GetString("lng_manage_peer_reactions_some_about");
             }
         }
         
@@ -74354,6 +78190,61 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Turn this on if you want users to join the group only after they are approved by an admin."
+        /// </summary>
+        public static string lng_manage_peer_send_approve_members_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_manage_peer_send_approve_members_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} person is playing a game"
+        /// </summary>
+        public static string lng_many_playing_game_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_many_playing_game_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} people are playing a game"
+        /// </summary>
+        public static string lng_many_playing_game_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_many_playing_game_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} person is typing"
+        /// </summary>
+        public static string lng_many_typing_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_many_typing_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} people are typing"
+        /// </summary>
+        public static string lng_many_typing_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_many_typing_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Archive Masks"
         /// </summary>
         public static string lng_masks_archive_pack
@@ -74361,6 +78252,28 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_masks_archive_pack");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} mask"
+        /// </summary>
+        public static string lng_masks_count_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_masks_count_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} masks"
+        /// </summary>
+        public static string lng_masks_count_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_masks_count_other");
             }
         }
         
@@ -74383,6 +78296,17 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_masks_installed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Remove Masks"
+        /// </summary>
+        public static string lng_masks_remove_pack_button
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_masks_remove_pack_button");
             }
         }
         
@@ -74607,6 +78531,160 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{count} Voice message"
+        /// </summary>
+        public static string lng_media_selected_audio_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_media_selected_audio_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} Voice messages"
+        /// </summary>
+        public static string lng_media_selected_audio_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_media_selected_audio_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} File"
+        /// </summary>
+        public static string lng_media_selected_file_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_media_selected_file_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} Files"
+        /// </summary>
+        public static string lng_media_selected_file_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_media_selected_file_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} GIF"
+        /// </summary>
+        public static string lng_media_selected_gif_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_media_selected_gif_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} GIFs"
+        /// </summary>
+        public static string lng_media_selected_gif_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_media_selected_gif_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} shared link"
+        /// </summary>
+        public static string lng_media_selected_link_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_media_selected_link_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} shared links"
+        /// </summary>
+        public static string lng_media_selected_link_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_media_selected_link_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} Photo"
+        /// </summary>
+        public static string lng_media_selected_photo_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_media_selected_photo_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} Photos"
+        /// </summary>
+        public static string lng_media_selected_photo_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_media_selected_photo_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} Audio file"
+        /// </summary>
+        public static string lng_media_selected_song_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_media_selected_song_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} Audio files"
+        /// </summary>
+        public static string lng_media_selected_song_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_media_selected_song_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} Video"
+        /// </summary>
+        public static string lng_media_selected_video_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_media_selected_video_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} Videos"
+        /// </summary>
+        public static string lng_media_selected_video_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_media_selected_video_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Limit by size"
         /// </summary>
         public static string lng_media_size_limit
@@ -74805,6 +78883,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Photo set by you"
+        /// </summary>
+        public static string lng_mediaview_profile_photo_by_you
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mediaview_profile_photo_by_you");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Public Photo"
+        /// </summary>
+        public static string lng_mediaview_profile_public_photo
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mediaview_profile_public_photo");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Rotate video"
         /// </summary>
         public static string lng_mediaview_rotate_video
@@ -74834,6 +78934,17 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_mediaview_saved");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Images were saved to your {downloads} folder"
+        /// </summary>
+        public static string lng_mediaview_saved_images_to
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mediaview_saved_images_to");
             }
         }
         
@@ -74915,6 +79026,17 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Change Emoji Status"
+        /// </summary>
+        public static string lng_menu_change_status
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_menu_change_status");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Formatting"
         /// </summary>
         public static string lng_menu_formatting
@@ -74926,7 +79048,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Plain text"
+        /// Localized resource similar to "Clear formatting"
         /// </summary>
         public static string lng_menu_formatting_clear
         {
@@ -74981,6 +79103,83 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Start video chat"
+        /// </summary>
+        public static string lng_menu_start_group_call
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_menu_start_group_call");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Start live stream"
+        /// </summary>
+        public static string lng_menu_start_group_call_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_menu_start_group_call_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Video chat"
+        /// </summary>
+        public static string lng_menu_start_group_call_options
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_menu_start_group_call_options");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Schedule video chat"
+        /// </summary>
+        public static string lng_menu_start_group_call_scheduled
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_menu_start_group_call_scheduled");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Schedule live stream"
+        /// </summary>
+        public static string lng_menu_start_group_call_scheduled_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_menu_start_group_call_scheduled_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Stream with..."
+        /// </summary>
+        public static string lng_menu_start_group_call_with
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_menu_start_group_call_with");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Stream with..."
+        /// </summary>
+        public static string lng_menu_start_group_call_with_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_menu_start_group_call_with_channel");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Update"
         /// </summary>
         public static string lng_menu_update
@@ -74999,6 +79198,17 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_message_empty");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Message doesn't exist."
+        /// </summary>
+        public static string lng_message_not_found
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_message_not_found");
             }
         }
         
@@ -75043,6 +79253,50 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_minimize_to_tray");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} minute"
+        /// </summary>
+        public static string lng_minutes_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_minutes_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} minutes"
+        /// </summary>
+        public static string lng_minutes_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_minutes_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count}m"
+        /// </summary>
+        public static string lng_minutes_tiny_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_minutes_tiny_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count}m"
+        /// </summary>
+        public static string lng_minutes_tiny_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_minutes_tiny_other");
             }
         }
         
@@ -75201,6 +79455,50 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{count} month"
+        /// </summary>
+        public static string lng_months_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_months_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} months"
+        /// </summary>
+        public static string lng_months_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_months_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count}m"
+        /// </summary>
+        public static string lng_months_tiny_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_months_tiny_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count}m"
+        /// </summary>
+        public static string lng_months_tiny_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_months_tiny_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Choose for how long you would like to turn off notifications for the following chat"
         /// </summary>
         public static string lng_mute_box_tip
@@ -75208,6 +79506,105 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_mute_box_tip");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "For {count} day"
+        /// </summary>
+        public static string lng_mute_duration_days_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mute_duration_days_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "For {count} days"
+        /// </summary>
+        public static string lng_mute_duration_days_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mute_duration_days_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "For {count} hour"
+        /// </summary>
+        public static string lng_mute_duration_hours_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mute_duration_hours_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "For {count} hours"
+        /// </summary>
+        public static string lng_mute_duration_hours_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mute_duration_hours_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Mute for {duration}"
+        /// </summary>
+        public static string lng_mute_menu_duration_any
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mute_menu_duration_any");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Mute forever"
+        /// </summary>
+        public static string lng_mute_menu_duration_forever
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mute_menu_duration_forever");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Mute for {count} hour"
+        /// </summary>
+        public static string lng_mute_menu_duration_hours_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mute_menu_duration_hours_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Mute for {count} hours"
+        /// </summary>
+        public static string lng_mute_menu_duration_hours_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mute_menu_duration_hours_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Select tone"
+        /// </summary>
+        public static string lng_mute_menu_sound_select
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mute_menu_sound_select");
             }
         }
         
@@ -75230,6 +79627,19 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_new_authorization");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This account uses {emoji} as a custom status next to its
+        ///name. Such emoji statuses are available to all
+        ///subscribers of {link}."
+        /// </summary>
+        public static string lng_new_contact_about_status
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_new_contact_about_status");
             }
         }
         
@@ -75415,6 +79825,17 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Dino Rex"
+        /// </summary>
+        public static string lng_notification_preview_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_notification_preview_title");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Reminder"
         /// </summary>
         public static string lng_notification_reminder
@@ -75514,6 +79935,76 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Show the last 100 messages"
+        /// </summary>
+        public static string lng_participant_invite_history
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_participant_invite_history");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can only add the first {count} subscriber to a channel personally.
+        ///
+        ///From now on, people will need to join via your invite link."
+        /// </summary>
+        public static string lng_participant_invite_sorry_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_participant_invite_sorry_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can only add the first {count} subscribers to a channel personally.
+        ///
+        ///From now on, people will need to join via your invite link."
+        /// </summary>
+        public static string lng_participant_invite_sorry_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_participant_invite_sorry_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to add **{user}** to **{group}**?"
+        /// </summary>
+        public static string lng_participant_invite_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_participant_invite_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to add {count} member to **{group}**?"
+        /// </summary>
+        public static string lng_participant_invite_sure_many_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_participant_invite_sure_many_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to add {count} members to **{group}**?"
+        /// </summary>
+        public static string lng_participant_invite_sure_many_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_participant_invite_sure_many_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "When a local passcode is set, a lock icon appears at the top of your chat list. Click it to lock Telegram Desktop.
         ///
         ///Note: if you forget your local passcode, you'll need to log out of Telegram Desktop and log in again."
@@ -75523,6 +80014,39 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_passcode_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "When a local passcode is set, a lock icon appears at the top of your chat list."
+        /// </summary>
+        public static string lng_passcode_about1
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passcode_about1");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Click it to lock Telegram Desktop."
+        /// </summary>
+        public static string lng_passcode_about2
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passcode_about2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Note: if you forget your passcode, you'll need to log out of Telegram Desktop and log in again."
+        /// </summary>
+        public static string lng_passcode_about3
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passcode_about3");
             }
         }
         
@@ -75560,6 +80084,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{count} hour"
+        /// </summary>
+        public static string lng_passcode_autolock_hours_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passcode_autolock_hours_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} hours"
+        /// </summary>
+        public static string lng_passcode_autolock_hours_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passcode_autolock_hours_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Auto-Lock if inactive for..."
         /// </summary>
         public static string lng_passcode_autolock_inactive
@@ -75571,6 +80117,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{count} minute"
+        /// </summary>
+        public static string lng_passcode_autolock_minutes_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passcode_autolock_minutes_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} minutes"
+        /// </summary>
+        public static string lng_passcode_autolock_minutes_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passcode_autolock_minutes_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Change passcode"
         /// </summary>
         public static string lng_passcode_change
@@ -75578,6 +80146,50 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_passcode_change");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Save Passcode"
+        /// </summary>
+        public static string lng_passcode_change_button
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passcode_change_button");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Enter Passcode"
+        /// </summary>
+        public static string lng_passcode_change_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passcode_change_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Submit"
+        /// </summary>
+        public static string lng_passcode_check_button
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passcode_check_button");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Enter Passcode"
+        /// </summary>
+        public static string lng_passcode_check_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passcode_check_title");
             }
         }
         
@@ -75600,6 +80212,28 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_passcode_create");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Save Passcode"
+        /// </summary>
+        public static string lng_passcode_create_button
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passcode_create_button");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Create Local Passcode"
+        /// </summary>
+        public static string lng_passcode_create_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passcode_create_title");
             }
         }
         
@@ -76972,7 +81606,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Your card {card} is on file. To pay with this card, please enter your 2-Step-Verification password."
+        /// Localized resource similar to "You saved the payment method {card}. To use it for payment, please enter your 2-Step-Verification password."
         /// </summary>
         public static string lng_payments_password_description
         {
@@ -77137,6 +81771,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "I agree to {link}"
+        /// </summary>
+        public static string lng_payments_terms_agree
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_terms_agree");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Subscribe and accept terms of service of {bot}?"
+        /// </summary>
+        public static string lng_payments_terms_text
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_terms_text");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Add Tip"
         /// </summary>
         public static string lng_payments_tips_box_title
@@ -77216,7 +81872,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Please install WebKitGTK 4 (webkit2gtk-4.0) using your package manager."
+        /// Localized resource similar to "Please install WebKitGTK (webkit2gtk-5.0/webkit2gtk-4.1/webkit2gtk-4.0) using your package manager."
         /// </summary>
         public static string lng_payments_webview_install_webkit
         {
@@ -77271,14 +81927,13 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Please confirm your country code and
-        ///enter your mobile phone number."
+        /// Localized resource similar to "Please update your system to Windows 8.1 or later."
         /// </summary>
-        public static string lng_phone_desc
+        public static string lng_payments_webview_update_windows
         {
             get
             {
-                return resourceLoader.GetString("lng_phone_desc");
+                return resourceLoader.GetString("lng_payments_webview_update_windows");
             }
         }
         
@@ -77361,6 +82016,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{count} pinned message"
+        /// </summary>
+        public static string lng_pinned_messages_title_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_pinned_messages_title_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} pinned messages"
+        /// </summary>
+        public static string lng_pinned_messages_title_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_pinned_messages_title_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Would you like to pin this message?"
         /// </summary>
         public static string lng_pinned_pin_sure
@@ -77390,6 +82067,28 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_pinned_quiz");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unpin {count} message"
+        /// </summary>
+        public static string lng_pinned_unpin_all_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_pinned_unpin_all_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unpin all {count} messages"
+        /// </summary>
+        public static string lng_pinned_unpin_all_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_pinned_unpin_all_other");
             }
         }
         
@@ -77456,6 +82155,28 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_playing_game");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} answer"
+        /// </summary>
+        public static string lng_polls_answers_count_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_polls_answers_count_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} answers"
+        /// </summary>
+        public static string lng_polls_answers_count_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_polls_answers_count_other");
             }
         }
         
@@ -77537,6 +82258,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "You can add {count} more option."
+        /// </summary>
+        public static string lng_polls_create_limit_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_polls_create_limit_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can add {count} more options."
+        /// </summary>
+        public static string lng_polls_create_limit_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_polls_create_limit_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Quiz has only one right answer."
         /// </summary>
         public static string lng_polls_create_one_answer
@@ -77603,6 +82346,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Show more ({count})"
+        /// </summary>
+        public static string lng_polls_show_more_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_polls_show_more_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Show more ({count})"
+        /// </summary>
+        public static string lng_polls_show_more_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_polls_show_more_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Users will see this comment after choosing a wrong answer, good for educational purposes."
         /// </summary>
         public static string lng_polls_solution_about
@@ -77654,6 +82419,648 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_polls_view_results");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} vote"
+        /// </summary>
+        public static string lng_polls_votes_count_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_polls_votes_count_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} votes"
+        /// </summary>
+        public static string lng_polls_votes_count_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_polls_votes_count_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Connect {count} account with different mobile numbers"
+        /// </summary>
+        public static string lng_premium_double_limits_about_accounts_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_double_limits_about_accounts_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Connect {count} accounts with different mobile numbers"
+        /// </summary>
+        public static string lng_premium_double_limits_about_accounts_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_double_limits_about_accounts_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Use more characters and add links in your bio"
+        /// </summary>
+        public static string lng_premium_double_limits_about_bio
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_double_limits_about_bio");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Join up to {count} channel or large group"
+        /// </summary>
+        public static string lng_premium_double_limits_about_channels_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_double_limits_about_channels_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Join up to {count} channels and large groups"
+        /// </summary>
+        public static string lng_premium_double_limits_about_channels_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_double_limits_about_channels_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add up to {count} chat into each of your folders"
+        /// </summary>
+        public static string lng_premium_double_limits_about_folder_chats_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_double_limits_about_folder_chats_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add up to {count} chats into each of your folders"
+        /// </summary>
+        public static string lng_premium_double_limits_about_folder_chats_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_double_limits_about_folder_chats_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Organize your chats into {count} folder"
+        /// </summary>
+        public static string lng_premium_double_limits_about_folders_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_double_limits_about_folders_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Organize your chats into {count} folders"
+        /// </summary>
+        public static string lng_premium_double_limits_about_folders_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_double_limits_about_folders_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Save up to {count} GIF in your Favorite GIFs"
+        /// </summary>
+        public static string lng_premium_double_limits_about_gifs_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_double_limits_about_gifs_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Save up to {count} GIFs in your Favorite GIFs"
+        /// </summary>
+        public static string lng_premium_double_limits_about_gifs_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_double_limits_about_gifs_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Reserve up to {count} t.me/username link"
+        /// </summary>
+        public static string lng_premium_double_limits_about_links_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_double_limits_about_links_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Reserve up to {count} t.me/username links"
+        /// </summary>
+        public static string lng_premium_double_limits_about_links_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_double_limits_about_links_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Pin up to {count} chat in your main chat list"
+        /// </summary>
+        public static string lng_premium_double_limits_about_pins_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_double_limits_about_pins_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Pin up to {count} chats in your main chat list"
+        /// </summary>
+        public static string lng_premium_double_limits_about_pins_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_double_limits_about_pins_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Save up to {count} sticker in your Favorite stickers"
+        /// </summary>
+        public static string lng_premium_double_limits_about_stickers_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_double_limits_about_stickers_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Save up to {count} stickers in your Favorite stickers"
+        /// </summary>
+        public static string lng_premium_double_limits_about_stickers_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_double_limits_about_stickers_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Emoji status is a premium feature. Other features included in **Telegram Premium**:"
+        /// </summary>
+        public static string lng_premium_emoji_status_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_emoji_status_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unlock Emoji Status"
+        /// </summary>
+        public static string lng_premium_emoji_status_button
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_emoji_status_button");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user} set this emoji from {link} as their current status."
+        /// </summary>
+        public static string lng_premium_emoji_status_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_emoji_status_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user} set this emoji as their current status."
+        /// </summary>
+        public static string lng_premium_emoji_status_title_colored
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_emoji_status_title_colored");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Give **{user}** access to exclusive features with **Telegram Premium**."
+        /// </summary>
+        public static string lng_premium_gift_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_gift_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Gift Subscription for {cost}"
+        /// </summary>
+        public static string lng_premium_gift_button
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_gift_button");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "for {count} month"
+        /// </summary>
+        public static string lng_premium_gift_duration_months_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_gift_duration_months_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "for {count} months"
+        /// </summary>
+        public static string lng_premium_gift_duration_months_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_gift_duration_months_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "for {count} year"
+        /// </summary>
+        public static string lng_premium_gift_duration_years_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_gift_duration_years_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "for {count} years"
+        /// </summary>
+        public static string lng_premium_gift_duration_years_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_gift_duration_years_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{cost} / month"
+        /// </summary>
+        public static string lng_premium_gift_per
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_gift_per");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can review the list of features and terms of use for Telegram Premium {link}."
+        /// </summary>
+        public static string lng_premium_gift_terms
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_gift_terms");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "here"
+        /// </summary>
+        public static string lng_premium_gift_terms_link
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_gift_terms_link");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Premium stickers"
+        /// </summary>
+        public static string lng_premium_stickers
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_stickers");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Subscribe for {cost} per month"
+        /// </summary>
+        public static string lng_premium_subscribe_button
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_subscribe_button");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{cost} per year"
+        /// </summary>
+        public static string lng_premium_subscribe_total
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_subscribe_total");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You've successfully subscribed to Telegram Premium!"
+        /// </summary>
+        public static string lng_premium_success
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_success");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Up to 1000 channels, 20 folders, 10 pins, 20 public links, 4 accounts and more."
+        /// </summary>
+        public static string lng_premium_summary_about_double_limits
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_summary_about_double_limits");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "React with thousands of emoji — with multiple reactions per message."
+        /// </summary>
+        public static string lng_premium_summary_about_infinite_reactions
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_summary_about_infinite_reactions");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Real-time translation of channels and chats into other languages."
+        /// </summary>
+        public static string lng_premium_summary_about_translation
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_summary_about_translation");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "While the free version of Telegram already gives its users more than any other messaging application, **Telegram Premium** pushes its capabilities even further.
+        ///
+        ///**Telegram Premium** is a paid option, because most Premium Features require additional expenses from Telegram to third parties such as data center providers and server manufacturers. Contributions from **Telegram Premium** users allow us to cover such costs and also help Telegram stay free for everyone."
+        /// </summary>
+        public static string lng_premium_summary_bottom_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_summary_bottom_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Subscribe for {cost} per month"
+        /// </summary>
+        public static string lng_premium_summary_button
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_summary_button");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You gifted {user} a {count}-month subscription to Telegram Premium."
+        /// </summary>
+        public static string lng_premium_summary_subtitle_gift_me_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_summary_subtitle_gift_me_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You gifted {user} a {count}-months subscription to Telegram Premium."
+        /// </summary>
+        public static string lng_premium_summary_subtitle_gift_me_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_summary_subtitle_gift_me_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user} has gifted you a {count}-month subscription to Telegram Premium."
+        /// </summary>
+        public static string lng_premium_summary_subtitle_gift_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_summary_subtitle_gift_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user} has gifted you a {count}-months subscription to Telegram Premium."
+        /// </summary>
+        public static string lng_premium_summary_subtitle_gift_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_summary_subtitle_gift_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Owners of Telegram Premium accounts have exclusive access to multiple additional features."
+        /// </summary>
+        public static string lng_premium_summary_user_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_summary_user_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Learn More"
+        /// </summary>
+        public static string lng_premium_summary_user_button
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_summary_user_button");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user} is a subscriber of Telegram Premium."
+        /// </summary>
+        public static string lng_premium_summary_user_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_summary_user_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This feature requires subscription to **Telegram Premium**.
+        ///
+        ///Unfortunately, **Telegram Premium** is not available in your region."
+        /// </summary>
+        public static string lng_premium_unavailable
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_unavailable");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unlock Animated Emoji"
+        /// </summary>
+        public static string lng_premium_unlock_emoji
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_unlock_emoji");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unlock Emoji Status"
+        /// </summary>
+        public static string lng_premium_unlock_status
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_premium_unlock_status");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user} suggests this photo for your Telegram profile."
+        /// </summary>
+        public static string lng_profile_accept_photo_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_accept_photo_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user} suggests this photo for your Telegram profile."
+        /// </summary>
+        public static string lng_profile_accept_video_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_accept_video_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You will be able to add up to {count} member after you upgrade your group to a supergroup."
+        /// </summary>
+        public static string lng_profile_add_more_after_upgrade_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_add_more_after_upgrade_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You will be able to add up to {count} members after you upgrade your group to a supergroup."
+        /// </summary>
+        public static string lng_profile_add_more_after_upgrade_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_add_more_after_upgrade_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Apply to Join Group"
+        /// </summary>
+        public static string lng_profile_apply_to_join_group
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_apply_to_join_group");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} voice message"
+        /// </summary>
+        public static string lng_profile_audios_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_audios_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} voice messages"
+        /// </summary>
+        public static string lng_profile_audios_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_audios_other");
             }
         }
         
@@ -77713,6 +83120,39 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Capture yourself"
+        /// </summary>
+        public static string lng_profile_camera_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_camera_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can change it in {link}."
+        /// </summary>
+        public static string lng_profile_changed_photo_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_changed_photo_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Photo updated"
+        /// </summary>
+        public static string lng_profile_changed_photo_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_changed_photo_title");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Delete and leave"
         /// </summary>
         public static string lng_profile_clear_and_exit
@@ -77731,6 +83171,28 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_profile_clear_history");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} group in common"
+        /// </summary>
+        public static string lng_profile_common_groups_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_common_groups_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} groups in common"
+        /// </summary>
+        public static string lng_profile_common_groups_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_common_groups_other");
             }
         }
         
@@ -77889,6 +83351,61 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{count} file"
+        /// </summary>
+        public static string lng_profile_files_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_files_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} files"
+        /// </summary>
+        public static string lng_profile_files_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_files_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} GIF"
+        /// </summary>
+        public static string lng_profile_gifs_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_gifs_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} GIFs"
+        /// </summary>
+        public static string lng_profile_gifs_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_gifs_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Switch this on to hide the list of members in this group. Admins will remain visible."
+        /// </summary>
+        public static string lng_profile_hide_participants_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_hide_participants_about");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Invite link"
         /// </summary>
         public static string lng_profile_invite_link_section
@@ -77896,6 +83413,28 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_profile_invite_link_section");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This bot is able to manage a channel."
+        /// </summary>
+        public static string lng_profile_invite_to_channel_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_invite_to_channel_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This bot is able to manage a group."
+        /// </summary>
+        public static string lng_profile_invite_to_group_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_invite_to_group_about");
             }
         }
         
@@ -77911,7 +83450,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Manage administrators"
+        /// Localized resource similar to "Manage admins"
         /// </summary>
         public static string lng_profile_manage_admins
         {
@@ -77966,6 +83505,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{count} member limit reached"
+        /// </summary>
+        public static string lng_profile_migrate_reached_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_migrate_reached_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} members limit reached"
+        /// </summary>
+        public static string lng_profile_migrate_reached_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_migrate_reached_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Mobile:"
         /// </summary>
         public static string lng_profile_mobile_number
@@ -77973,6 +83534,39 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_profile_mobile_number");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Reset to Original"
+        /// </summary>
+        public static string lng_profile_photo_reset
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_photo_reset");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} photo"
+        /// </summary>
+        public static string lng_profile_photos_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_photos_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} photos"
+        /// </summary>
+        public static string lng_profile_photos_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_photos_other");
             }
         }
         
@@ -78021,6 +83615,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "You will now always see this photo for {user}'s account."
+        /// </summary>
+        public static string lng_profile_set_for_done
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_set_for_done");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Only you will see this photo and it will replace any photo {user} sets for themselves."
+        /// </summary>
+        public static string lng_profile_set_personal_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_set_personal_sure");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Shared links"
         /// </summary>
         public static string lng_profile_shared_links_header
@@ -78032,6 +83648,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{count} shared link"
+        /// </summary>
+        public static string lng_profile_shared_links_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_shared_links_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} shared links"
+        /// </summary>
+        public static string lng_profile_shared_links_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_shared_links_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Shared media"
         /// </summary>
         public static string lng_profile_shared_media
@@ -78039,6 +83677,50 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_profile_shared_media");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} audio file"
+        /// </summary>
+        public static string lng_profile_songs_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_songs_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} audio files"
+        /// </summary>
+        public static string lng_profile_songs_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_songs_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Suggest Profile Photo"
+        /// </summary>
+        public static string lng_profile_suggest_photo
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_suggest_photo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can suggest {user} to set this photo for their page."
+        /// </summary>
+        public static string lng_profile_suggest_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_suggest_sure");
             }
         }
         
@@ -78094,6 +83776,28 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_profile_username");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} video"
+        /// </summary>
+        public static string lng_profile_videos_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_videos_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} videos"
+        /// </summary>
+        public static string lng_profile_videos_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_videos_other");
             }
         }
         
@@ -78164,7 +83868,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "checking"
+        /// Localized resource similar to "checking…"
         /// </summary>
         public static string lng_proxy_checking
         {
@@ -78175,7 +83879,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "connecting"
+        /// Localized resource similar to "connecting…"
         /// </summary>
         public static string lng_proxy_connecting
         {
@@ -78353,6 +84057,215 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{reaction} to your contact {name}"
+        /// </summary>
+        public static string lng_reaction_contact
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_reaction_contact");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{reaction} to your file"
+        /// </summary>
+        public static string lng_reaction_document
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_reaction_document");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{reaction} to your game"
+        /// </summary>
+        public static string lng_reaction_game
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_reaction_game");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{reaction} to your GIF"
+        /// </summary>
+        public static string lng_reaction_gif
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_reaction_gif");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{reaction} to your invoice"
+        /// </summary>
+        public static string lng_reaction_invoice
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_reaction_invoice");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{reaction} to your live location"
+        /// </summary>
+        public static string lng_reaction_live_location
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_reaction_live_location");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{reaction} to your map"
+        /// </summary>
+        public static string lng_reaction_location
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_reaction_location");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{reaction} to your message"
+        /// </summary>
+        public static string lng_reaction_notext
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_reaction_notext");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{reaction} to your photo"
+        /// </summary>
+        public static string lng_reaction_photo
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_reaction_photo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{reaction} to your poll "{title}""
+        /// </summary>
+        public static string lng_reaction_poll
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_reaction_poll");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Click on a reaction to preview the animation."
+        /// </summary>
+        public static string lng_reaction_premium_info
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_reaction_premium_info");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Some reactions are restricted in this channel."
+        /// </summary>
+        public static string lng_reaction_premium_no_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_reaction_premium_no_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Some reactions are restricted in this group."
+        /// </summary>
+        public static string lng_reaction_premium_no_group
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_reaction_premium_no_group");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{reaction} to your quiz "{title}""
+        /// </summary>
+        public static string lng_reaction_quiz
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_reaction_quiz");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{reaction} to your {emoji} sticker"
+        /// </summary>
+        public static string lng_reaction_sticker
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_reaction_sticker");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{reaction} to your "{text}""
+        /// </summary>
+        public static string lng_reaction_text
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_reaction_text");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{reaction} to your video"
+        /// </summary>
+        public static string lng_reaction_video
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_reaction_video");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{reaction} to your video message"
+        /// </summary>
+        public static string lng_reaction_video_message
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_reaction_video_message");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{reaction} to your voice message"
+        /// </summary>
+        public static string lng_reaction_voice_message
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_reaction_voice_message");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Recently used"
         /// </summary>
         public static string lng_recent_stickers
@@ -78360,6 +84273,28 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_recent_stickers");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Reconnect in {count} s..."
+        /// </summary>
+        public static string lng_reconnecting_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_reconnecting_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Reconnect in {count} s..."
+        /// </summary>
+        public static string lng_reconnecting_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_reconnecting_other");
             }
         }
         
@@ -78419,6 +84354,17 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Remember this choice"
+        /// </summary>
+        public static string lng_remember
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_remember");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Remind me on..."
         /// </summary>
         public static string lng_remind_title
@@ -78437,6 +84383,50 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_reminder_message");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} reply"
+        /// </summary>
+        public static string lng_replies_header_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_replies_header_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} replies"
+        /// </summary>
+        public static string lng_replies_header_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_replies_header_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "View {count} Reply"
+        /// </summary>
+        public static string lng_replies_view_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_replies_view_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "View {count} Replies"
+        /// </summary>
+        public static string lng_replies_view_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_replies_view_other");
             }
         }
         
@@ -78476,6 +84466,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Report channel photo"
+        /// </summary>
+        public static string lng_report_channel_photo_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_report_channel_photo_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Report channel photo"
+        /// </summary>
+        public static string lng_report_channel_video_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_report_channel_video_title");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Additional Details"
         /// </summary>
         public static string lng_report_details
@@ -78483,6 +84495,17 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_report_details");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Report group photo"
+        /// </summary>
+        public static string lng_report_group_photo_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_report_group_photo_title");
             }
         }
         
@@ -78498,6 +84521,17 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Report group photo"
+        /// </summary>
+        public static string lng_report_group_video_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_report_group_video_title");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Report message"
         /// </summary>
         public static string lng_report_message_title
@@ -78505,6 +84539,28 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_report_message_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Report {count} Message"
+        /// </summary>
+        public static string lng_report_messages_count_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_report_messages_count_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Report {count} Messages"
+        /// </summary>
+        public static string lng_report_messages_count_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_report_messages_count_other");
             }
         }
         
@@ -78527,6 +84583,39 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_report_please_select_messages");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Report profile photo"
+        /// </summary>
+        public static string lng_report_profile_photo_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_report_profile_photo_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Report profile photo"
+        /// </summary>
+        public static string lng_report_profile_video_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_report_profile_video_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Copyright"
+        /// </summary>
+        public static string lng_report_reason_copyright
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_report_reason_copyright");
             }
         }
         
@@ -78608,6 +84697,303 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "No bots"
+        /// </summary>
+        public static string lng_request_bot_no
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_request_bot_no");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You don't have any bots."
+        /// </summary>
+        public static string lng_request_bot_no_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_request_bot_no_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "add new admins"
+        /// </summary>
+        public static string lng_request_channel_add_admins
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_request_channel_add_admins");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "add subscribers"
+        /// </summary>
+        public static string lng_request_channel_add_subscribers
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_request_channel_add_subscribers");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "change channel info"
+        /// </summary>
+        public static string lng_request_channel_change_info
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_request_channel_change_info");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "delete messages"
+        /// </summary>
+        public static string lng_request_channel_delete_messages
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_request_channel_delete_messages");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "edit messages of others"
+        /// </summary>
+        public static string lng_request_channel_edit_messages
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_request_channel_edit_messages");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "manage live streams"
+        /// </summary>
+        public static string lng_request_channel_manage_livestreams
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_request_channel_manage_livestreams");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You don't have channels that meet the requirements for this bot."
+        /// </summary>
+        public static string lng_request_channel_no_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_request_channel_no_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "post messages"
+        /// </summary>
+        public static string lng_request_channel_post_messages
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_request_channel_post_messages");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "add new admins"
+        /// </summary>
+        public static string lng_request_group_add_admins
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_request_group_add_admins");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "remain anonymous"
+        /// </summary>
+        public static string lng_request_group_anonymous
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_request_group_anonymous");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "ban users"
+        /// </summary>
+        public static string lng_request_group_ban_users
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_request_group_ban_users");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "change group info"
+        /// </summary>
+        public static string lng_request_group_change_info
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_request_group_change_info");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "delete messages"
+        /// </summary>
+        public static string lng_request_group_delete_messages
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_request_group_delete_messages");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "invite users via link"
+        /// </summary>
+        public static string lng_request_group_invite
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_request_group_invite");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "manage topics"
+        /// </summary>
+        public static string lng_request_group_manage_topics
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_request_group_manage_topics");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "manage video chats"
+        /// </summary>
+        public static string lng_request_group_manage_video_chats
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_request_group_manage_video_chats");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You don't have groups that meet the requirements for this bot."
+        /// </summary>
+        public static string lng_request_group_no_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_request_group_no_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "pin messages"
+        /// </summary>
+        public static string lng_request_group_pin_messages
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_request_group_pin_messages");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to send {chat} to {bot}?"
+        /// </summary>
+        public static string lng_request_peer_confirm
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_request_peer_confirm");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This will also add {bot} to {chat}."
+        /// </summary>
+        public static string lng_request_peer_confirm_add
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_request_peer_confirm_add");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This will also add {bot} to {chat} with the following rights: {rights}."
+        /// </summary>
+        public static string lng_request_peer_confirm_rights
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_request_peer_confirm_rights");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You must have these admin rights: {rights}."
+        /// </summary>
+        public static string lng_request_peer_rights
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_request_peer_rights");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{rights} and {last}"
+        /// </summary>
+        public static string lng_request_peer_rights_and
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_request_peer_rights_and");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No users found that meet the requirements for this bot."
+        /// </summary>
+        public static string lng_request_user_no_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_request_user_no_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Choose User"
+        /// </summary>
+        public static string lng_request_user_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_request_user_title");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Restart"
         /// </summary>
         public static string lng_restart_button
@@ -78619,18 +85005,40 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "The admins of this group have restricted you from posting GIFs here."
+        /// Localized resource similar to "The admins of this group restricted you from sending files here."
         /// </summary>
-        public static string lng_restricted_send_gifs
+        public static string lng_restricted_send_files
         {
             get
             {
-                return resourceLoader.GetString("lng_restricted_send_gifs");
+                return resourceLoader.GetString("lng_restricted_send_files");
             }
         }
         
         /// <summary>
-        /// Localized resource similar to "Posting GIFs isn't allowed in this group."
+        /// Localized resource similar to "Sending files isn't allowed in this group."
+        /// </summary>
+        public static string lng_restricted_send_files_all
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_restricted_send_files_all");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The admins of this group restricted you from sending files here until {date}, {time}."
+        /// </summary>
+        public static string lng_restricted_send_files_until
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_restricted_send_files_until");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sending GIFs isn't allowed in this group."
         /// </summary>
         public static string lng_restricted_send_gifs_all
         {
@@ -78641,7 +85049,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "The admins of this group restricted you from posting GIFs here until {date}, {time}."
+        /// Localized resource similar to "The admins of this group have restricted your ability to send GIFs until {date}, {time}."
         /// </summary>
         public static string lng_restricted_send_gifs_until
         {
@@ -78652,29 +85060,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "The admins of this group restricted you from posting inline content here."
-        /// </summary>
-        public static string lng_restricted_send_inline
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_restricted_send_inline");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Posting inline content isn't allowed in this group."
-        /// </summary>
-        public static string lng_restricted_send_inline_all
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_restricted_send_inline_all");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "The admins of this group restricted you from posting inline content here until {date}, {time}."
+        /// Localized resource similar to "The admins of this group have restricted your ability to send inline content until {date}, {time}."
         /// </summary>
         public static string lng_restricted_send_inline_until
         {
@@ -78685,29 +85071,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "The admins of this group have restricted you from posting media here."
-        /// </summary>
-        public static string lng_restricted_send_media
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_restricted_send_media");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Posting media content isn't allowed in this group."
-        /// </summary>
-        public static string lng_restricted_send_media_all
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_restricted_send_media_all");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "The admins of this group restricted you from posting media content here until {date}, {time}."
+        /// Localized resource similar to "The admins of this group have restricted your ability to send media until {date}, {time}."
         /// </summary>
         public static string lng_restricted_send_media_until
         {
@@ -78718,29 +85082,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Group admins have restricted you from messaging."
-        /// </summary>
-        public static string lng_restricted_send_message
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_restricted_send_message");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Writing messages isn't allowed in this group."
-        /// </summary>
-        public static string lng_restricted_send_message_all
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_restricted_send_message_all");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "The admins of this group restricted you from writing here until {date}, {time}."
+        /// Localized resource similar to "The admins of this group have restricted you from sending messages until {date}, {time}."
         /// </summary>
         public static string lng_restricted_send_message_until
         {
@@ -78751,29 +85093,51 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "The admins of this group restricted you from posting polls here."
+        /// Localized resource similar to "The admins of this group restricted you from sending music here."
         /// </summary>
-        public static string lng_restricted_send_polls
+        public static string lng_restricted_send_music
         {
             get
             {
-                return resourceLoader.GetString("lng_restricted_send_polls");
+                return resourceLoader.GetString("lng_restricted_send_music");
             }
         }
         
         /// <summary>
-        /// Localized resource similar to "Posting polls isn't allowed in this group."
+        /// Localized resource similar to "The admins of this group restricted you from sending music here until {date}, {time}."
         /// </summary>
-        public static string lng_restricted_send_polls_all
+        public static string lng_restricted_send_music_until
         {
             get
             {
-                return resourceLoader.GetString("lng_restricted_send_polls_all");
+                return resourceLoader.GetString("lng_restricted_send_music_until");
             }
         }
         
         /// <summary>
-        /// Localized resource similar to "The admins of this group restricted you from posting polls here until {date}, {time}."
+        /// Localized resource similar to "The admins of this group restricted you from sending photos here."
+        /// </summary>
+        public static string lng_restricted_send_photos
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_restricted_send_photos");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The admins of this group restricted you from sending photos here until {date}, {time}."
+        /// </summary>
+        public static string lng_restricted_send_photos_until
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_restricted_send_photos_until");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The admins of this group have restricted your ability to send polls until {date}, {time}."
         /// </summary>
         public static string lng_restricted_send_polls_until
         {
@@ -78795,18 +85159,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "The admins of this group have restricted you from sending stickers."
-        /// </summary>
-        public static string lng_restricted_send_stickers
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_restricted_send_stickers");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Posting stickers isn't allowed in this group."
+        /// Localized resource similar to "Stickers aren’t allowed in this group."
         /// </summary>
         public static string lng_restricted_send_stickers_all
         {
@@ -78817,13 +85170,123 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "The admins of this group restricted you from posting stickers here until {date}, {time}."
+        /// Localized resource similar to "The admins of this group have restricted your ability to send stickers until {date}, {time}."
         /// </summary>
         public static string lng_restricted_send_stickers_until
         {
             get
             {
                 return resourceLoader.GetString("lng_restricted_send_stickers_until");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user} doesn't accept video messages."
+        /// </summary>
+        public static string lng_restricted_send_video_messages
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_restricted_send_video_messages");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sending video messages isn't allowed in this group."
+        /// </summary>
+        public static string lng_restricted_send_video_messages_all
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_restricted_send_video_messages_all");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The admins of this group restricted you from sending video messages here."
+        /// </summary>
+        public static string lng_restricted_send_video_messages_group
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_restricted_send_video_messages_group");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The admins of this group restricted you from sending video messages here until {date}, {time}."
+        /// </summary>
+        public static string lng_restricted_send_video_messages_until
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_restricted_send_video_messages_until");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The admins of this group restricted you from sending videos here."
+        /// </summary>
+        public static string lng_restricted_send_videos
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_restricted_send_videos");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The admins of this group restricted you from sending videos here until {date}, {time}."
+        /// </summary>
+        public static string lng_restricted_send_videos_until
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_restricted_send_videos_until");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user} doesn't accept voice messages."
+        /// </summary>
+        public static string lng_restricted_send_voice_messages
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_restricted_send_voice_messages");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sending voice messages isn't allowed in this group."
+        /// </summary>
+        public static string lng_restricted_send_voice_messages_all
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_restricted_send_voice_messages_all");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The admins of this group restricted you from sending voice messages here."
+        /// </summary>
+        public static string lng_restricted_send_voice_messages_group
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_restricted_send_voice_messages_group");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The admins of this group restricted you from sending voice messages here until {date}, {time}."
+        /// </summary>
+        public static string lng_restricted_send_voice_messages_until
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_restricted_send_voice_messages_until");
             }
         }
         
@@ -78839,24 +85302,13 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "This admin will be able to add new admins with the same (or more limited) permissions."
+        /// Localized resource similar to "This admin will be able to add new admins with equal or fewer rights."
         /// </summary>
         public static string lng_rights_about_add_admins_yes
         {
             get
             {
                 return resourceLoader.GetString("lng_rights_about_add_admins_yes");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "You cannot edit the rights of this admin."
-        /// </summary>
-        public static string lng_rights_about_admin_cant_edit
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_rights_about_admin_cant_edit");
             }
         }
         
@@ -78938,7 +85390,73 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "A custom title that will be shown to all members instead of '{title}'."
+        /// Localized resource similar to "For {count} day"
+        /// </summary>
+        public static string lng_rights_chat_banned_day_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_chat_banned_day_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "For {count} days"
+        /// </summary>
+        public static string lng_rights_chat_banned_day_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_chat_banned_day_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "For {count} week"
+        /// </summary>
+        public static string lng_rights_chat_banned_week_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_chat_banned_week_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "For {count} weeks"
+        /// </summary>
+        public static string lng_rights_chat_banned_week_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_chat_banned_week_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Stickers & GIFs"
+        /// </summary>
+        public static string lng_rights_chat_stickers
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_chat_stickers");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Video files"
+        /// </summary>
+        public static string lng_rights_chat_videos
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_chat_videos");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "A title that members will see instead of '{title}'."
         /// </summary>
         public static string lng_rights_edit_admin_rank_about
         {
@@ -78989,17 +85507,6 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_rights_group_invite_link");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "You cannot edit this permission."
-        /// </summary>
-        public static string lng_rights_permission_cant_edit
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_rights_permission_cant_edit");
             }
         }
         
@@ -79059,7 +85566,117 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "This will transfer the full **owner rights** for {group} to {user}."
+        /// Localized resource similar to "{count}h"
+        /// </summary>
+        public static string lng_rights_slowmode_hours_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_slowmode_hours_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count}h"
+        /// </summary>
+        public static string lng_rights_slowmode_hours_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_slowmode_hours_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "every {count} minute"
+        /// </summary>
+        public static string lng_rights_slowmode_interval_minutes_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_slowmode_interval_minutes_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "every {count} minutes"
+        /// </summary>
+        public static string lng_rights_slowmode_interval_minutes_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_slowmode_interval_minutes_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "every {count} second"
+        /// </summary>
+        public static string lng_rights_slowmode_interval_seconds_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_slowmode_interval_seconds_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "every {count} seconds"
+        /// </summary>
+        public static string lng_rights_slowmode_interval_seconds_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_slowmode_interval_seconds_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count}m"
+        /// </summary>
+        public static string lng_rights_slowmode_minutes_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_slowmode_minutes_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count}m"
+        /// </summary>
+        public static string lng_rights_slowmode_minutes_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_slowmode_minutes_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count}s"
+        /// </summary>
+        public static string lng_rights_slowmode_seconds_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_slowmode_seconds_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count}s"
+        /// </summary>
+        public static string lng_rights_slowmode_seconds_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_slowmode_seconds_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This will transfer the full **owner rights** for {group} to {user}. The new owner will be free to remove any of your admin privileges or even ban you."
         /// </summary>
         public static string lng_rights_transfer_about
         {
@@ -79213,6 +85830,83 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Right click on any short voice note or MP3 file in chat and select "Save for Notifications". It will appear here."
+        /// </summary>
+        public static string lng_ringtones_box_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_ringtones_box_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Choose your tone"
+        /// </summary>
+        public static string lng_ringtones_box_cloud_subtitle
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_ringtones_box_cloud_subtitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Upload Sound"
+        /// </summary>
+        public static string lng_ringtones_box_upload_button
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_ringtones_box_upload_button");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Choose a tone"
+        /// </summary>
+        public static string lng_ringtones_box_upload_choose
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_ringtones_box_upload_choose");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, but your file is too long. The maximum duration for ringtones is {duration}."
+        /// </summary>
+        public static string lng_ringtones_error_max_duration
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_ringtones_error_max_duration");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, but your file is too big. The maximum size for ringtones is {size}."
+        /// </summary>
+        public static string lng_ringtones_error_max_size
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_ringtones_error_max_size");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sound added!"
+        /// </summary>
+        public static string lng_ringtones_toast_added
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_ringtones_toast_added");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Save voice message"
         /// </summary>
         public static string lng_save_audio
@@ -79290,6 +85984,63 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "increase the limit"
+        /// </summary>
+        public static string lng_saved_gif_limit_link
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_saved_gif_limit_link");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "An older GIF was replaced with this one.
+        ///You can {link} to {count} GIF."
+        /// </summary>
+        public static string lng_saved_gif_limit_more_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_saved_gif_limit_more_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "An older GIF was replaced with this one.
+        ///You can {link} to {count} GIFs."
+        /// </summary>
+        public static string lng_saved_gif_limit_more_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_saved_gif_limit_more_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Limit of {count} GIF Reached"
+        /// </summary>
+        public static string lng_saved_gif_limit_title_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_saved_gif_limit_title_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Limit of {count} GIFs Reached"
+        /// </summary>
+        public static string lng_saved_gif_limit_title_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_saved_gif_limit_title_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Send this message on..."
         /// </summary>
         public static string lng_schedule_title
@@ -79323,6 +86074,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Send {count} message now?"
+        /// </summary>
+        public static string lng_scheduled_send_now_many_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_scheduled_send_now_many_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send {count} messages now?"
+        /// </summary>
+        public static string lng_scheduled_send_now_many_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_scheduled_send_now_many_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Send when online"
         /// </summary>
         public static string lng_scheduled_send_until_online
@@ -79330,6 +86103,28 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_scheduled_send_until_online");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Found {count} message"
+        /// </summary>
+        public static string lng_search_found_results_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_search_found_results_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Found {count} messages"
+        /// </summary>
+        public static string lng_search_found_results_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_search_found_results_other");
             }
         }
         
@@ -79356,6 +86151,17 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{n} of {amount}"
+        /// </summary>
+        public static string lng_search_messages_n_of_amount
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_search_messages_n_of_amount");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "No messages found"
         /// </summary>
         public static string lng_search_no_results
@@ -79367,6 +86173,50 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{count} second"
+        /// </summary>
+        public static string lng_seconds_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_seconds_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} seconds"
+        /// </summary>
+        public static string lng_seconds_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_seconds_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count}s"
+        /// </summary>
+        public static string lng_seconds_tiny_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_seconds_tiny_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count}s"
+        /// </summary>
+        public static string lng_seconds_tiny_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_seconds_tiny_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Cancel uploading?"
         /// </summary>
         public static string lng_selected_cancel_sure_this
@@ -79374,6 +86224,28 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_selected_cancel_sure_this");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to delete {count} message?"
+        /// </summary>
+        public static string lng_selected_delete_sure_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_selected_delete_sure_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to delete {count} messages?"
+        /// </summary>
+        public static string lng_selected_delete_sure_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_selected_delete_sure_other");
             }
         }
         
@@ -79400,7 +86272,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "You can also delete the message you sent from the inboxes of other group members by checking "Unsend my messages"."
+        /// Localized resource similar to "You can also delete the {count} message you sent from the inboxes of other group members by checking "Unsend my messages"."
         /// </summary>
         public static string lng_selected_unsend_about_group_one
         {
@@ -79411,13 +86283,35 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "You can also delete the message you sent from {user}'s inbox by checking "Unsend my messages"."
+        /// Localized resource similar to "You can also delete the {count} messages you sent from the inboxes of other group members by checking "Unsend my messages"."
+        /// </summary>
+        public static string lng_selected_unsend_about_group_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_selected_unsend_about_group_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can also delete the {count} message you sent from {user}'s inbox by checking "Unsend my messages"."
         /// </summary>
         public static string lng_selected_unsend_about_user_one
         {
             get
             {
                 return resourceLoader.GetString("lng_selected_unsend_about_user_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can also delete the {count} messages you sent from {user}'s inbox by checking "Unsend my messages"."
+        /// </summary>
+        public static string lng_selected_unsend_about_user_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_selected_unsend_about_user_other");
             }
         }
         
@@ -79429,6 +86323,28 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_self_destruct_description");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} month"
+        /// </summary>
+        public static string lng_self_destruct_months_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_self_destruct_months_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} months"
+        /// </summary>
+        public static string lng_self_destruct_months_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_self_destruct_months_other");
             }
         }
         
@@ -79462,6 +86378,50 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_self_destruct_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} week"
+        /// </summary>
+        public static string lng_self_destruct_weeks_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_self_destruct_weeks_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} weeks"
+        /// </summary>
+        public static string lng_self_destruct_weeks_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_self_destruct_weeks_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} year"
+        /// </summary>
+        public static string lng_self_destruct_years_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_self_destruct_years_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} years"
+        /// </summary>
+        public static string lng_self_destruct_years_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_self_destruct_years_other");
             }
         }
         
@@ -79598,6 +86558,17 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Subscribe to {link} to be able to comment on behalf of your channels in group chats."
+        /// </summary>
+        public static string lng_send_as_premium_required
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_send_as_premium_required");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Compress images"
         /// </summary>
         public static string lng_send_compressed
@@ -79605,6 +86576,17 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_send_compressed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Compress the image"
+        /// </summary>
+        public static string lng_send_compressed_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_send_compressed_one");
             }
         }
         
@@ -79620,6 +86602,50 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Send as {count} file"
+        /// </summary>
+        public static string lng_send_files_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_send_files_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send as {count} files"
+        /// </summary>
+        public static string lng_send_files_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_send_files_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} file selected"
+        /// </summary>
+        public static string lng_send_files_selected_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_send_files_selected_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} files selected"
+        /// </summary>
+        public static string lng_send_files_selected_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_send_files_selected_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Group items"
         /// </summary>
         public static string lng_send_grouped
@@ -79627,6 +86653,17 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_send_grouped");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send an image"
+        /// </summary>
+        public static string lng_send_image
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_send_image");
             }
         }
         
@@ -79655,6 +86692,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{count} image selected"
+        /// </summary>
+        public static string lng_send_images_selected_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_send_images_selected_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} images selected"
+        /// </summary>
+        public static string lng_send_images_selected_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_send_images_selected_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Sorry, no valid files found."
         /// </summary>
         public static string lng_send_media_invalid_files
@@ -79673,6 +86732,28 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_send_photo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send as {count} photo"
+        /// </summary>
+        public static string lng_send_photos_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_send_photos_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send as {count} photos"
+        /// </summary>
+        public static string lng_send_photos_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_send_photos_other");
             }
         }
         
@@ -79710,6 +86791,61 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Text not allowed."
+        /// </summary>
+        public static string lng_send_text_no
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_send_text_no");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The admins of this group only allow sending {types}."
+        /// </summary>
+        public static string lng_send_text_no_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_send_text_no_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{types} and {last}"
+        /// </summary>
+        public static string lng_send_text_type_and_last
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_send_text_type_and_last");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Stickers & GIFs"
+        /// </summary>
+        public static string lng_send_text_type_stickers
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_send_text_type_stickers");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send a video file"
+        /// </summary>
+        public static string lng_send_video
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_send_video");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Sent: {date}"
         /// </summary>
         public static string lng_sent_date
@@ -79721,24 +86857,24 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Current session"
-        /// </summary>
-        public static string lng_sessions_header
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_sessions_header");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "This location is based only on the IP address and may not always be accurate."
+        /// Localized resource similar to "This location estimate is based on the IP address and may not always be accurate."
         /// </summary>
         public static string lng_sessions_location_about
         {
             get
             {
                 return resourceLoader.GetString("lng_sessions_location_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Active Devices"
+        /// </summary>
+        public static string lng_sessions_other_header
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_sessions_other_header");
             }
         }
         
@@ -79929,6 +87065,28 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_settings_ask_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} voice message, {size}"
+        /// </summary>
+        public static string lng_settings_audios_cached_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_audios_cached_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} voice messages, {size}"
+        /// </summary>
+        public static string lng_settings_audios_cached_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_audios_cached_other");
             }
         }
         
@@ -80298,6 +87456,50 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Reaction button on messages"
+        /// </summary>
+        public static string lng_settings_chat_corner_reaction
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_chat_corner_reaction");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send reaction with double click"
+        /// </summary>
+        public static string lng_settings_chat_quick_action_react
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_chat_quick_action_react");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Reply with double click"
+        /// </summary>
+        public static string lng_settings_chat_quick_action_reply
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_chat_quick_action_reply");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Choose your favorite reaction"
+        /// </summary>
+        public static string lng_settings_chat_reactions_subtitle
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_chat_reactions_subtitle");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Check for updates"
         /// </summary>
         public static string lng_settings_check_now
@@ -80338,6 +87540,127 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_settings_close_to_taskbar");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please enter your new recovery email. It is the only way to recover a forgotten password."
+        /// </summary>
+        public static string lng_settings_cloud_password_email_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_cloud_password_email_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Confirm and Finish"
+        /// </summary>
+        public static string lng_settings_cloud_password_email_confirm
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_cloud_password_email_confirm");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add Recovery Email"
+        /// </summary>
+        public static string lng_settings_cloud_password_email_subtitle
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_cloud_password_email_subtitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can create a hint for your password."
+        /// </summary>
+        public static string lng_settings_cloud_password_hint_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_cloud_password_hint_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add Password Hint"
+        /// </summary>
+        public static string lng_settings_cloud_password_hint_subtitle
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_cloud_password_hint_subtitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This email is the only way to recover a forgotten password."
+        /// </summary>
+        public static string lng_settings_cloud_password_manage_about2
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_cloud_password_manage_about2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Create Password"
+        /// </summary>
+        public static string lng_settings_cloud_password_password_subtitle
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_cloud_password_password_subtitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can reset your password in {duration}."
+        /// </summary>
+        public static string lng_settings_cloud_password_reset_in
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_cloud_password_reset_in");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Save and Finish"
+        /// </summary>
+        public static string lng_settings_cloud_password_save
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_cloud_password_save");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Skip setting hint"
+        /// </summary>
+        public static string lng_settings_cloud_password_skip_hint
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_cloud_password_skip_hint");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Protect your Telegram account with an additional password."
+        /// </summary>
+        public static string lng_settings_cloud_password_start_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_cloud_password_start_about");
             }
         }
         
@@ -80529,6 +87852,17 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Hardware accelerated video decoding"
+        /// </summary>
+        public static string lng_settings_enable_hwaccel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_enable_hwaccel");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Enable night mode"
         /// </summary>
         public static string lng_settings_enable_night_theme
@@ -80547,6 +87881,50 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_settings_enable_opengl");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Experimental settings"
+        /// </summary>
+        public static string lng_settings_experimental
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_experimental");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Warning! Those are experimental settings. Some may not work. Others may break the app. Any of them may disappear in the next version without a trace. Use at your own risk."
+        /// </summary>
+        public static string lng_settings_experimental_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_experimental_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This option isn't relevant for your system."
+        /// </summary>
+        public static string lng_settings_experimental_irrelevant
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_experimental_irrelevant");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Restore default values"
+        /// </summary>
+        public static string lng_settings_experimental_restore
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_experimental_restore");
             }
         }
         
@@ -80584,17 +87962,6 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Change who can add you to groups and channels."
-        /// </summary>
-        public static string lng_settings_group_privacy_about
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_settings_group_privacy_about");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Groups & channels"
         /// </summary>
         public static string lng_settings_groups_invite
@@ -80613,6 +87980,28 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_settings_groups_invite_privacy");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} image, {size}"
+        /// </summary>
+        public static string lng_settings_images_cached_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_images_cached_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} images, {size}"
+        /// </summary>
+        public static string lng_settings_images_cached_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_images_cached_other");
             }
         }
         
@@ -80712,6 +88101,17 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_settings_loop_stickers");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Show warning before quitting with {text}"
+        /// </summary>
+        public static string lng_settings_mac_warn_before_quit
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_mac_warn_before_quit");
             }
         }
         
@@ -80870,6 +88270,17 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Are you sure you want to disable passcode?"
+        /// </summary>
+        public static string lng_settings_passcode_disable_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_passcode_disable_sure");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Local passcode"
         /// </summary>
         public static string lng_settings_passcode_title
@@ -80921,6 +88332,28 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_settings_performance");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Only subscribers of {link} can restrict receiving voice messages."
+        /// </summary>
+        public static string lng_settings_privacy_premium
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_privacy_premium");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Profile photos"
+        /// </summary>
+        public static string lng_settings_profile_photo_privacy
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_profile_photo_privacy");
             }
         }
         
@@ -80988,6 +88421,17 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_settings_reset_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Restart"
+        /// </summary>
+        public static string lng_settings_restart_now
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_restart_now");
             }
         }
         
@@ -81113,17 +88557,6 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Control your sessions on other devices."
-        /// </summary>
-        public static string lng_settings_sessions_about
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_settings_sessions_about");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Show sender's name"
         /// </summary>
         public static string lng_settings_show_name
@@ -81186,6 +88619,17 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_settings_stickers_emoji");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Suggest animated emoji"
+        /// </summary>
+        public static string lng_settings_suggest_animated_emoji
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_suggest_animated_emoji");
             }
         }
         
@@ -81307,6 +88751,281 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_settings_themes");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Show active account"
+        /// </summary>
+        public static string lng_settings_title_account_name
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_title_account_name");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Show chat name"
+        /// </summary>
+        public static string lng_settings_title_chat_name
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_title_chat_name");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Total unread count"
+        /// </summary>
+        public static string lng_settings_title_total_count
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_title_total_count");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "After {after_duration}"
+        /// </summary>
+        public static string lng_settings_ttl_after
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_ttl_after");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "If enabled, all new messages in chats you start will be automatically deleted for everyone at some point after they are sent. You can also {link}."
+        /// </summary>
+        public static string lng_settings_ttl_after_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_ttl_after_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "apply this setting for your existing chats"
+        /// </summary>
+        public static string lng_settings_ttl_after_about_link
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_ttl_after_about_link");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} day"
+        /// </summary>
+        public static string lng_settings_ttl_after_days_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_ttl_after_days_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} days"
+        /// </summary>
+        public static string lng_settings_ttl_after_days_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_ttl_after_days_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} hour"
+        /// </summary>
+        public static string lng_settings_ttl_after_hours_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_ttl_after_hours_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} hours"
+        /// </summary>
+        public static string lng_settings_ttl_after_hours_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_ttl_after_hours_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} month"
+        /// </summary>
+        public static string lng_settings_ttl_after_months_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_ttl_after_months_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} months"
+        /// </summary>
+        public static string lng_settings_ttl_after_months_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_ttl_after_months_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Self-destruct timer"
+        /// </summary>
+        public static string lng_settings_ttl_after_subtitle
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_ttl_after_subtitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want all messages in your new private chats and in new groups you create to be automatically deleted for everyone {after_duration} after they are sent?"
+        /// </summary>
+        public static string lng_settings_ttl_after_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_ttl_after_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Messages in all new chats you start will be automatically deleted after {after_duration}."
+        /// </summary>
+        public static string lng_settings_ttl_after_toast
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_ttl_after_toast");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} week"
+        /// </summary>
+        public static string lng_settings_ttl_after_weeks_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_ttl_after_weeks_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} weeks"
+        /// </summary>
+        public static string lng_settings_ttl_after_weeks_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_ttl_after_weeks_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} year"
+        /// </summary>
+        public static string lng_settings_ttl_after_years_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_ttl_after_years_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} years"
+        /// </summary>
+        public static string lng_settings_ttl_after_years_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_ttl_after_years_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Auto-delete timer has been disabled in {count} selected chat."
+        /// </summary>
+        public static string lng_settings_ttl_select_chats_disabled_toast_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_ttl_select_chats_disabled_toast_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Auto-delete timer has been disabled in {count} selected chats."
+        /// </summary>
+        public static string lng_settings_ttl_select_chats_disabled_toast_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_ttl_select_chats_disabled_toast_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't set a self-destruct timer in this chat."
+        /// </summary>
+        public static string lng_settings_ttl_select_chats_sorry
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_ttl_select_chats_sorry");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "auto-delete after {after_duration}"
+        /// </summary>
+        public static string lng_settings_ttl_select_chats_status
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_ttl_select_chats_status");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Self-destruct timer for {duration} has been enabled in {count} selected chat."
+        /// </summary>
+        public static string lng_settings_ttl_select_chats_toast_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_ttl_select_chats_toast_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Self-destruct timer for {duration} has been enabled in {count} selected chats."
+        /// </summary>
+        public static string lng_settings_ttl_select_chats_toast_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_ttl_select_chats_toast_other");
             }
         }
         
@@ -81439,6 +89158,17 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_settings_view_emojis");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Window title bar"
+        /// </summary>
+        public static string lng_settings_window_system
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_window_system");
             }
         }
         
@@ -81665,13 +89395,46 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Your recent attempts to reset this account have been cancelled by its active user. Please try again in 7 days."
+        /// Localized resource similar to "{count} day"
         /// </summary>
-        public static string lng_signin_reset_cancelled
+        public static string lng_signin_reset_days_one
         {
             get
             {
-                return resourceLoader.GetString("lng_signin_reset_cancelled");
+                return resourceLoader.GetString("lng_signin_reset_days_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} days"
+        /// </summary>
+        public static string lng_signin_reset_days_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_signin_reset_days_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} hour"
+        /// </summary>
+        public static string lng_signin_reset_hours_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_signin_reset_hours_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} hours"
+        /// </summary>
+        public static string lng_signin_reset_hours_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_signin_reset_hours_other");
             }
         }
         
@@ -81698,6 +89461,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{count} minute"
+        /// </summary>
+        public static string lng_signin_reset_minutes_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_signin_reset_minutes_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} minutes"
+        /// </summary>
+        public static string lng_signin_reset_minutes_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_signin_reset_minutes_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Since the account {phone_number} is active and protected by a password, it will be deleted in 1 week. This delay is required for security purposes. You can cancel this process anytime.
         ///
         ///You'll be able to reset your account in:
@@ -81712,9 +89497,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Warning!
-        ///
-        ///You will lose all your chats and messages, along with any media and files you shared!
+        /// Localized resource similar to "You will lose all your Telegram chats, messages, media and files if you proceed.
         ///
         ///Do you want to reset your account?"
         /// </summary>
@@ -81783,7 +89566,8 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Slow mode is enabled. You can send your next message in {left}."
+        /// Localized resource similar to "Slow Mode is active.
+        ///You can send your next message in {left}."
         /// </summary>
         public static string lng_slowmode_enabled
         {
@@ -81805,9 +89589,31 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Sorry, this text is too long to send as one message.
+        /// Localized resource similar to "{count} second"
+        /// </summary>
+        public static string lng_slowmode_seconds_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_slowmode_seconds_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} seconds"
+        /// </summary>
+        public static string lng_slowmode_seconds_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_slowmode_seconds_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This text is too long to send as one message.
         ///
-        ///Slow mode is enabled. You can't send more than one message at a time."
+        ///Slow mode is active. You can't send more than one message at once."
         /// </summary>
         public static string lng_slowmode_too_long
         {
@@ -81888,17 +89694,6 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "START MESSAGING"
-        /// </summary>
-        public static string lng_start_msgs
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_start_msgs");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "connecting..."
         /// </summary>
         public static string lng_status_connecting
@@ -81928,6 +89723,50 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_status_lastseen_date_time");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "last seen {count} hour ago"
+        /// </summary>
+        public static string lng_status_lastseen_hours_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_status_lastseen_hours_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "last seen {count} hours ago"
+        /// </summary>
+        public static string lng_status_lastseen_hours_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_status_lastseen_hours_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "last seen {count} minute ago"
+        /// </summary>
+        public static string lng_status_lastseen_minutes_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_status_lastseen_minutes_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "last seen {count} minutes ago"
+        /// </summary>
+        public static string lng_status_lastseen_minutes_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_status_lastseen_minutes_other");
             }
         }
         
@@ -81976,6 +89815,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "With Effects"
+        /// </summary>
+        public static string lng_sticker_premium_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_sticker_premium_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add emoji"
+        /// </summary>
+        public static string lng_stickers_add_emoji
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_stickers_add_emoji");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Add masks"
         /// </summary>
         public static string lng_stickers_add_masks
@@ -82016,6 +89877,39 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_stickers_attached_sets");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Emoji pack link copied to clipboard."
+        /// </summary>
+        public static string lng_stickers_copied_emoji
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_stickers_copied_emoji");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} sticker"
+        /// </summary>
+        public static string lng_stickers_count_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_stickers_count_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} stickers"
+        /// </summary>
+        public static string lng_stickers_count_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_stickers_count_other");
             }
         }
         
@@ -82108,13 +90002,24 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Remove «{sticker_pack}»?"
+        /// Localized resource similar to "Remove "{sticker_pack}"?"
         /// </summary>
         public static string lng_stickers_remove_pack
         {
             get
             {
                 return resourceLoader.GetString("lng_stickers_remove_pack");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Remove Stickers"
+        /// </summary>
+        public static string lng_stickers_remove_pack_button
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_stickers_remove_pack_button");
             }
         }
         
@@ -82126,6 +90031,17 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_stickers_return");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Share Emoji"
+        /// </summary>
+        public static string lng_stickers_share_emoji
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_stickers_share_emoji");
             }
         }
         
@@ -82347,7 +90263,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Are you sure you want to delete all message history in «{group}»?
+        /// Localized resource similar to "Are you sure you want to delete all messages in "{group}"?
         ///
         ///This action cannot be undone."
         /// </summary>
@@ -82382,6 +90298,28 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_sure_delete_saved_messages");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} selected day"
+        /// </summary>
+        public static string lng_sure_delete_selected_days_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_sure_delete_selected_days_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} selected days"
+        /// </summary>
+        public static string lng_sure_delete_selected_days_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_sure_delete_selected_days_other");
             }
         }
         
@@ -82469,6 +90407,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "I confirm that I am {count} or over"
+        /// </summary>
+        public static string lng_terms_age_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_terms_age_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "I confirm that I am {count} or over"
+        /// </summary>
+        public static string lng_terms_age_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_terms_age_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Agree & Continue"
         /// </summary>
         public static string lng_terms_agree
@@ -82480,7 +90440,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Please agree and proceed to {bot}."
+        /// Localized resource similar to "Agree and proceed to {bot}."
         /// </summary>
         public static string lng_terms_agree_to_proceed
         {
@@ -82502,19 +90462,6 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Warning, this will irreversibly delete your Telegram account along with all the data you store in the Telegram cloud.
-        ///
-        ///Important: You can cancel now and export your data before deleting your account instead of losing it all. (To do this, open the latest version of Telegram Desktop and go to Settings > Advanced > Export Telegram data.)"
-        /// </summary>
-        public static string lng_terms_delete_warning
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_terms_delete_warning");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "By signing up,
         ///you agree to the {link}."
         /// </summary>
@@ -82523,21 +90470,6 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_terms_signup");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "We're very sorry, but this means you can't sign up for Telegram.
-        ///
-        ///Unlike others, we don't use your data for ad targeting or other commercial purposes. Telegram only stores the information it needs to function as a secure and feature-rich cloud service. You can adjust how we use your data in the Privacy & Security settings.
-        ///
-        ///But if you're generally not OK with Telegram's modest requirements, it won't be possible for us to provide you with this service."
-        /// </summary>
-        public static string lng_terms_signup_sorry
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_terms_signup_sorry");
             }
         }
         
@@ -82621,7 +90553,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "New theme will be based on your currently selected colors and wallpaper. Alternatively, you can import existing theme or color palette from file."
+        /// Localized resource similar to "Your new theme will be based on your currently selected colors and wallpaper. Alternatively, you can import an existing theme or color palette from a file."
         /// </summary>
         public static string lng_theme_editor_create_description
         {
@@ -82942,6 +90874,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{count} person is using this theme"
+        /// </summary>
+        public static string lng_theme_preview_users_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_theme_preview_users_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} people are using this theme"
+        /// </summary>
+        public static string lng_theme_preview_users_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_theme_preview_users_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Revert"
         /// </summary>
         public static string lng_theme_revert
@@ -82953,6 +90907,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Reverting to the old theme in {count} second."
+        /// </summary>
+        public static string lng_theme_reverting_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_theme_reverting_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Reverting to the old theme in {count} seconds."
+        /// </summary>
+        public static string lng_theme_reverting_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_theme_reverting_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Keep this theme?"
         /// </summary>
         public static string lng_theme_sure_keep
@@ -82960,6 +90936,160 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_theme_sure_keep");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Topic Creator"
+        /// </summary>
+        public static string lng_topic_author_badge
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_topic_author_badge");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No topics found."
+        /// </summary>
+        public static string lng_topics_not_found
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_topics_not_found");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Translate to {name}"
+        /// </summary>
+        public static string lng_translate_bar_to
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_translate_bar_to");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Translate to {name}"
+        /// </summary>
+        public static string lng_translate_bar_to_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_translate_bar_to_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Translate failed."
+        /// </summary>
+        public static string lng_translate_box_error
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_translate_box_error");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{name} added to the Do Not Translate list."
+        /// </summary>
+        public static string lng_translate_dont_added
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_translate_dont_added");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Translation bar is now hidden for this channel."
+        /// </summary>
+        public static string lng_translate_hidden_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_translate_hidden_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Translation bar is now hidden for this group."
+        /// </summary>
+        public static string lng_translate_hidden_group
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_translate_hidden_group");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Translation bar is now hidden for this chat."
+        /// </summary>
+        public static string lng_translate_hidden_user
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_translate_hidden_user");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Don't translate {name}"
+        /// </summary>
+        public static string lng_translate_menu_dont
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_translate_menu_dont");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Don't translate {name}"
+        /// </summary>
+        public static string lng_translate_menu_dont_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_translate_menu_dont_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The 'Translate' button will appear when you open a context menu on a text message."
+        /// </summary>
+        public static string lng_translate_settings_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_translate_settings_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please choose at least one language so that it can be used as the "Translate to" language."
+        /// </summary>
+        public static string lng_translate_settings_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_translate_settings_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Undo"
+        /// </summary>
+        public static string lng_translate_undo
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_translate_undo");
             }
         }
         
@@ -82989,7 +91119,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "New messages in this chat will be automatically deleted in {duration}."
+        /// Localized resource similar to "New messages in this chat will be automatically deleted after {duration}."
         /// </summary>
         public static string lng_ttl_about_tooltip
         {
@@ -83000,7 +91130,7 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "New messages in this chat will be automatically deleted in {duration}."
+        /// Localized resource similar to "New messages in this chat will be automatically deleted after {duration}."
         /// </summary>
         public static string lng_ttl_about_tooltip_channel
         {
@@ -83011,13 +91141,35 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Automatically delete new messages after a certain period of time for you and {user}."
+        /// Localized resource similar to "Automatically delete new messages for you and {user} after a certain period of time."
         /// </summary>
         public static string lng_ttl_edit_about
         {
             get
             {
                 return resourceLoader.GetString("lng_ttl_edit_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can also set a default {link} for all your chats in Settings."
+        /// </summary>
+        public static string lng_ttl_edit_about2
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_ttl_edit_about2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "self-destruct timer"
+        /// </summary>
+        public static string lng_ttl_edit_about2_link
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_ttl_edit_about2_link");
             }
         }
         
@@ -83088,6 +91240,28 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{count} Unread Message"
+        /// </summary>
+        public static string lng_unread_bar_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_unread_bar_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} Unread Messages"
+        /// </summary>
+        public static string lng_unread_bar_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_unread_bar_other");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Unread messages"
         /// </summary>
         public static string lng_unread_bar_some
@@ -83095,6 +91269,30 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_unread_bar_some");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Show file"
+        /// </summary>
+        public static string lng_upload_show_file
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_upload_show_file");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to stop uploading your files?
+        ///
+        ///If you do, you'll need to start over."
+        /// </summary>
+        public static string lng_upload_sure_stop
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_upload_sure_stop");
             }
         }
         
@@ -83269,7 +91467,7 @@ namespace Telegram.Strings
         ///you by this username and contact you
         ///without needing your phone number.
         ///
-        ///You can use a-z, 0-9 and underscores.
+        ///You can use a–z, 0–9 and underscores.
         ///Minimum length is 5 characters."
         /// </summary>
         public static string lng_username_about
@@ -83303,6 +91501,17 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "User {phone} not found."
+        /// </summary>
+        public static string lng_username_by_phone_not_found
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_username_by_phone_not_found");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Choose your username."
         /// </summary>
         public static string lng_username_choose
@@ -83310,6 +91519,20 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_username_choose");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can choose a username on Telegram. If you do, other people will be able to find you by this username and contact you without knowing your phone number.
+        ///
+        ///You can use **a–z**, **0–9** and **underscores**.
+        ///Minimum length is **5 characters**."
+        /// </summary>
+        public static string lng_username_description
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_username_description");
             }
         }
         
@@ -83358,6 +91581,17 @@ namespace Telegram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Sorry, this link is taken. But it's available for purchase, see {link}."
+        /// </summary>
+        public static string lng_username_purchase_available
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_username_purchase_available");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "This username is too short."
         /// </summary>
         public static string lng_username_too_short
@@ -83365,6 +91599,72 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_username_too_short");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to show this username on your info page?"
+        /// </summary>
+        public static string lng_usernames_activate_description
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_usernames_activate_description");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't activate more than **{count}** usernames."
+        /// </summary>
+        public static string lng_usernames_activate_error_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_usernames_activate_error_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't activate more than **{count}** usernames."
+        /// </summary>
+        public static string lng_usernames_activate_error_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_usernames_activate_error_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to hide this username from your info page?"
+        /// </summary>
+        public static string lng_usernames_deactivate_description
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_usernames_deactivate_description");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "click to edit"
+        /// </summary>
+        public static string lng_usernames_edit
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_usernames_edit");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Choose sticker or emoji"
+        /// </summary>
+        public static string lng_userpic_builder_emoji_subtitle
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_userpic_builder_emoji_subtitle");
             }
         }
         
@@ -83468,17 +91768,6 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "View user"
-        /// </summary>
-        public static string lng_view_button_user
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_view_button_user");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Video chat"
         /// </summary>
         public static string lng_view_button_voice_chat
@@ -83497,6 +91786,28 @@ namespace Telegram.Strings
             get
             {
                 return resourceLoader.GetString("lng_view_button_voice_chat_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Views: {count}"
+        /// </summary>
+        public static string lng_views_tooltip_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_views_tooltip_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Views: {count}"
+        /// </summary>
+        public static string lng_views_tooltip_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_views_tooltip_other");
             }
         }
         
@@ -83578,13 +91889,46 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Subscribers will be notified when you post"
+        /// Localized resource similar to "{count} week"
         /// </summary>
-        public static string lng_will_be_notified
+        public static string lng_weeks_one
         {
             get
             {
-                return resourceLoader.GetString("lng_will_be_notified");
+                return resourceLoader.GetString("lng_weeks_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} weeks"
+        /// </summary>
+        public static string lng_weeks_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_weeks_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count}w"
+        /// </summary>
+        public static string lng_weeks_tiny_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_weeks_tiny_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count}w"
+        /// </summary>
+        public static string lng_weeks_tiny_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_weeks_tiny_other");
             }
         }
         
@@ -83633,13 +91977,46 @@ namespace Telegram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Subscribers will receive a silent notification"
+        /// Localized resource similar to "{count} year"
         /// </summary>
-        public static string lng_wont_be_notified
+        public static string lng_years_one
         {
             get
             {
-                return resourceLoader.GetString("lng_wont_be_notified");
+                return resourceLoader.GetString("lng_years_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} years"
+        /// </summary>
+        public static string lng_years_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_years_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count}y"
+        /// </summary>
+        public static string lng_years_tiny_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_years_tiny_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count}y"
+        /// </summary>
+        public static string lng_years_tiny_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_years_tiny_other");
             }
         }
     }
