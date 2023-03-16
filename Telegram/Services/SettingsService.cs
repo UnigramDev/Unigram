@@ -422,7 +422,7 @@ The letter also mentioned taking over the world and a puppy, but we hope the rea
         private static bool? _areMaterialsEnabled;
         public bool AreMaterialsEnabled
         {
-            get => _areMaterialsEnabled ??= GetValueOrDefault(_local, "AreMaterialsEnabled", false);
+            get => _areMaterialsEnabled ??= GetValueOrDefault(_local, "AreMaterialsEnabled", true);
             set => AddOrUpdateValue(ref _areMaterialsEnabled, _local, "AreMaterialsEnabled", value);
         }
 
