@@ -127,7 +127,12 @@ namespace Telegram.Controls
                 animation.Stop();
             }
 
-            animation.RenderSync(pixels, pixels.PixelWidth, pixels.PixelHeight, out _nextSeconds, out _);
+            animation.RenderSync(pixels, pixels.PixelWidth, pixels.PixelHeight, out _nextSeconds, out bool completed);
+
+            if (completed && !_isLoopingEnabled)
+            {
+                Pause();
+            }
 
             _hideThumbnail ??= true;
             return true;

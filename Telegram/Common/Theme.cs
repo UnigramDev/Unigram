@@ -294,6 +294,7 @@ namespace Telegram.Common
                             update.TintOpacity = tintOpacity;
                             update.TintLuminosityOpacity = tintLuminosityOpacity;
                             update.FallbackColor = fallbackColor;
+                            update.AlwaysUseFallback = !PowerSavingPolicy.AreMaterialsEnabled;
                         });
                     }
                 }

@@ -34,7 +34,8 @@ namespace Telegram.Views.Settings
         {
             InitializeComponent();
 
-            _handler = new AnimatedListHandler(List);
+            // TODO: this might need to change depending on context
+            _handler = new AnimatedListHandler(List, AnimatedListType.Stickers);
 
             _typeToItemHashSetMapping.Add("AnimatedItemTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("VideoItemTemplate", new HashSet<SelectorItem>());

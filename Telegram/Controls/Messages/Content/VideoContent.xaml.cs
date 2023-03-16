@@ -288,7 +288,7 @@ namespace Telegram.Controls.Messages.Content
 
         private void UpdateSource(MessageViewModel message, File file, int duration)
         {
-            if (message?.Delegate == null || file == null || !message.Delegate.Settings.IsAutoPlayVideosEnabled)
+            if (message?.Delegate == null || file == null || !PowerSavingPolicy.AutoPlayVideos)
             {
                 Player.Source = _source = null;
             }

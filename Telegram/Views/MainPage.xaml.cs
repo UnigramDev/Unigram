@@ -102,7 +102,7 @@ namespace Telegram.Views
             _clientService = ViewModel.ClientService;
             _viewModel = ViewModel;
 
-            _handler = new AnimatedListHandler(ChatsList);
+            _handler = new AnimatedListHandler(ChatsList, AnimatedListType.Other);
 
             ViewModel.Chats.Delegate = this;
             ViewModel.PlaybackService.PropertyChanged += OnCurrentItemChanged;

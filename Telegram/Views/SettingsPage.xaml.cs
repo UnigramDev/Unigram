@@ -37,11 +37,11 @@ namespace Telegram.Views
             _settings = new Dictionary<Type, object>
             {
                 { typeof(SettingsProfilePage), Profile },
+                { typeof(SettingsAppearancePage), Appearance },
+                { typeof(SettingsPrivacyAndSecurityPage), Privacy },
                 { typeof(SettingsNotificationsPage), Notifications },
                 { typeof(SettingsDataAndStoragePage), Data },
-                { typeof(SettingsPrivacyAndSecurityPage), Privacy },
-                { typeof(SettingsStickersPage), Stickers },
-                { typeof(SettingsAppearancePage), Appearance },
+                { typeof(SettingsPowerSavingPage), PowerSaving },
                 { typeof(FoldersPage), Folders },
                 { typeof(SettingsSessionsPage), Sessions },
                 { typeof(SettingsLanguagePage), Language },
@@ -134,9 +134,9 @@ namespace Telegram.Views
             UpdateSelection();
         }
 
-        private void Stickers_Click(object sender, RoutedEventArgs e)
+        private void PowerSaving_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(SettingsStickersPage));
+            MasterDetail.NavigationService.Navigate(typeof(SettingsPowerSavingPage));
             UpdateSelection();
         }
 

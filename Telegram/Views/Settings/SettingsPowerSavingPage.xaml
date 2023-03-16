@@ -1,0 +1,171 @@
+<local:HostedPage x:Class="Telegram.Views.Settings.SettingsPowerSavingPage"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:local="using:Telegram.Views"
+                  xmlns:controls="using:Telegram.Controls"
+                  xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  mc:Ignorable="d"
+                  IsNavigationRoot="True">
+
+    <Page.Resources>
+        <ResourceDictionary Source="ms-appx:///Themes/Expander_themeresources.xaml" />
+    </Page.Resources>
+
+    <Grid Background="{ThemeResource SettingsPageBackground}">
+        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto">
+            <StackPanel Spacing="16"
+                        Margin="0,0,0,32">
+                <controls:HeaderedControl x:Name="AutoPanel"
+                                          x:Load="{x:Bind ViewModel.IsAutoSupported}"
+                                          Footer="{CustomResource LitePowerSaverInfo}">
+                    <CheckBox IsChecked="{x:Bind ViewModel.IsAutoEnabled, Mode=TwoWay}"
+                              Content="{CustomResource LitePowerSaver}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl Header="{CustomResource LiteOptionsTitle}"
+                                          IsEnabled="{x:Bind ViewModel.IsAutoDisabled, Mode=OneWay}">
+                    <muxc:Expander Style="{StaticResource SettingsExpanderStyle}">
+                        <muxc:Expander.Header>
+                            <CheckBox IsChecked="{x:Bind ViewModel.AutoPlayStickersAll, Mode=TwoWay}"
+                                      Style="{StaticResource SettingsCheckBoxStyle}"
+                                      Background="Transparent"
+                                      CornerRadius="0">
+                                <TextBlock>
+                                        <Run Text="{CustomResource LiteOptionsStickers}" />
+                                        <Run Text="{x:Bind ViewModel.AutoPlayStickersCount, Mode=OneWay}"
+                                             FontWeight="SemiBold" />
+                                </TextBlock>
+                            </CheckBox>
+                        </muxc:Expander.Header>
+                        <StackPanel>
+                            <CheckBox IsChecked="{x:Bind ViewModel.AutoPlayStickers, Mode=TwoWay}"
+                                      Content="{CustomResource LiteOptionsAutoplayKeyboard}"
+                                      Style="{StaticResource SettingsCheckBoxStyle}"
+                                      Background="Transparent"
+                                      BorderThickness="0,0,0,1"
+                                      CornerRadius="0" />
+
+                            <CheckBox IsChecked="{x:Bind ViewModel.AutoPlayStickersInChats, Mode=TwoWay}"
+                                      Content="{CustomResource LiteOptionsAutoplayChat}"
+                                      Style="{StaticResource SettingsCheckBoxStyle}"
+                                      Background="Transparent"
+                                      CornerRadius="0" />
+                        </StackPanel>
+                    </muxc:Expander>
+
+                    <muxc:Expander Style="{StaticResource SettingsExpanderStyle}">
+                        <muxc:Expander.Header>
+                            <CheckBox IsChecked="{x:Bind ViewModel.AutoPlayEmojiAll, Mode=TwoWay}"
+                                      Style="{StaticResource SettingsCheckBoxStyle}"
+                                      Background="Transparent"
+                                      CornerRadius="0">
+                                <TextBlock>
+                                        <Run Text="{CustomResource LiteOptionsEmoji}" />
+                                        <Run Text="{x:Bind ViewModel.AutoPlayEmojiCount, Mode=OneWay}"
+                                             FontWeight="SemiBold" />
+                                </TextBlock>
+                            </CheckBox>
+                        </muxc:Expander.Header>
+                        <StackPanel>
+                            <CheckBox IsChecked="{x:Bind ViewModel.AutoPlayEmoji, Mode=TwoWay}"
+                                      Content="{CustomResource LiteOptionsAutoplayKeyboard}"
+                                      Style="{StaticResource SettingsCheckBoxStyle}"
+                                      Background="Transparent"
+                                      BorderThickness="0,0,0,1"
+                                      CornerRadius="0" />
+
+                            <!--<CheckBox IsChecked="{x:Bind ViewModel.AutoPlayEmoji, Mode=TwoWay}"
+                                      Content="{CustomResource LiteOptionsAutoplayReactions}"
+                                      Style="{StaticResource SettingsCheckBoxStyle}"
+                                      Background="Transparent"
+                                      BorderThickness="0,0,0,1"
+                                      CornerRadius="0" />-->
+
+                            <CheckBox IsChecked="{x:Bind ViewModel.AutoPlayEmojiInChats, Mode=TwoWay}"
+                                      Content="{CustomResource LiteOptionsAutoplayChat}"
+                                      Style="{StaticResource SettingsCheckBoxStyle}"
+                                      Background="Transparent"
+                                      CornerRadius="0" />
+                        </StackPanel>
+                    </muxc:Expander>
+
+                    <!--<muxc:Expander Style="{StaticResource SettingsExpanderStyle}">
+                        <muxc:Expander.Header>
+                            <CheckBox IsChecked="{x:Bind ViewModel.PreferIpv6, Mode=TwoWay}"
+                                      Style="{StaticResource SettingsCheckBoxStyle}"
+                                      Background="Transparent"
+                                      CornerRadius="0">
+                                <TextBlock>
+                                        <Run Text="{CustomResource LiteOptionsChat}" />
+                                        --><!--<Run Text="{x:Bind ConvertCanSendCount(ViewModel.CanSendCount), Mode=OneWay}"
+                                             FontWeight="SemiBold" />--><!--
+                                </TextBlock>
+                            </CheckBox>
+                        </muxc:Expander.Header>
+                        <StackPanel>
+                            <CheckBox IsChecked="{x:Bind ViewModel.PreferIpv6, Mode=TwoWay}"
+                                      Content="{CustomResource LiteOptionsBackground}"
+                                      Style="{StaticResource SettingsCheckBoxStyle}"
+                                      Background="Transparent"
+                                      BorderThickness="0,0,0,1"
+                                      CornerRadius="0" />
+
+                            <CheckBox IsChecked="{x:Bind ViewModel.PreferIpv6, Mode=TwoWay}"
+                                      Content="{CustomResource LiteOptionsTopics}"
+                                      Style="{StaticResource SettingsCheckBoxStyle}"
+                                      Background="Transparent"
+                                      BorderThickness="0,0,0,1"
+                                      CornerRadius="0" />
+
+                            <CheckBox IsChecked="{x:Bind ViewModel.PreferIpv6, Mode=TwoWay}"
+                                      Content="{CustomResource LiteOptionsSpoiler}"
+                                      Style="{StaticResource SettingsCheckBoxStyle}"
+                                      Background="Transparent"
+                                      BorderThickness="0,0,0,1"
+                                      CornerRadius="0" />
+
+                            <CheckBox IsChecked="{x:Bind ViewModel.PreferIpv6, Mode=TwoWay}"
+                                      Content="{CustomResource LiteOptionsBlur}"
+                                      Style="{StaticResource SettingsCheckBoxStyle}"
+                                      Background="Transparent"
+                                      BorderThickness="0,0,0,1"
+                                      CornerRadius="0" />
+
+                            <CheckBox IsChecked="{x:Bind ViewModel.PreferIpv6, Mode=TwoWay}"
+                                      Content="{CustomResource LiteOptionsScale}"
+                                      Style="{StaticResource SettingsCheckBoxStyle}"
+                                      Background="Transparent"
+                                      CornerRadius="0" />
+                        </StackPanel>
+                    </muxc:Expander>-->
+
+                    <!--<CheckBox IsChecked="{x:Bind ViewModel.PreferIpv6, Mode=TwoWay}"
+                              Content="{CustomResource LiteOptionsCalls}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />-->
+
+                    <CheckBox IsChecked="{x:Bind ViewModel.AutoPlayVideos, Mode=TwoWay}"
+                              Content="{CustomResource LiteOptionsAutoplayVideo}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                    <CheckBox IsChecked="{x:Bind ViewModel.AutoPlayAnimations, Mode=TwoWay}"
+                              Content="{CustomResource LiteOptionsAutoplayGifs}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                    <CheckBox IsChecked="{x:Bind ViewModel.AreMaterialsEnabled, Mode=TwoWay}"
+                              Content="Transparency Effects"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl Footer="{CustomResource LiteSmoothTransitionsInfo}">
+                    <CheckBox IsChecked="{x:Bind ViewModel.AreSmoothTransitionsEnabled, Mode=TwoWay}"
+                              Content="{CustomResource LiteSmoothTransitions}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+                </controls:HeaderedControl>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</local:HostedPage>

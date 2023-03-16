@@ -39,7 +39,8 @@ namespace Telegram.Views.Popups
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<StickersViewModel>();
 
-            _handler = new AnimatedListHandler(List);
+            // TODO: this might need to change depending on context
+            _handler = new AnimatedListHandler(List, AnimatedListType.Stickers);
 
             _zoomer = new ZoomableListHandler(List);
             _zoomer.Opening = _handler.UnloadVisibleItems;

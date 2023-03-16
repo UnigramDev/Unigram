@@ -28,7 +28,7 @@ namespace Telegram.Controls
         {
             InitializeComponent();
 
-            _handler = new AnimatedListHandler(ScrollingHost);
+            _handler = new AnimatedListHandler(ScrollingHost, AnimatedListType.Other);
 
             _zoomer = new ZoomableListHandler(ScrollingHost);
             _zoomer.Opening = _handler.UnloadVisibleItems;

@@ -6,6 +6,7 @@
 //
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,6 +51,8 @@ namespace Telegram.Views.Host
         {
             RequestedTheme = SettingsService.Current.Appearance.GetCalculatedElementTheme();
             InitializeComponent();
+
+            BackdropMaterial.SetApplyToRootOrPageBackground(this, PowerSavingPolicy.AreMaterialsEnabled);
 
             _lifetime = TLContainer.Current.Lifetime;
 

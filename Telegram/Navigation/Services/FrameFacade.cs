@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using Telegram.Common;
 using Telegram.Logs;
 using Telegram.Views;
 using Windows.UI.Xaml.Controls;
@@ -140,6 +141,11 @@ namespace Telegram.Navigation.Services
         public bool Navigate(Type page, object parameter, NavigationTransitionInfo infoOverride)
         {
             Logger.Info();
+
+            if (PowerSavingPolicy.AreSmoothTransitionsEnabled is false)
+            {
+                infoOverride = new SuppressNavigationTransitionInfo();
+            }
 
             if (Frame.Navigate(page, parameter, infoOverride))
             {

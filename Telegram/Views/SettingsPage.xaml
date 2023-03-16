@@ -149,12 +149,12 @@
                             <icons:Profile />
                         </controls:BadgeButton.IconSource>
                     </controls:BadgeButton>
-                    <controls:BadgeButton x:Name="Notifications"
-                                          Click="Notifications_Click"
-                                          Content="{CustomResource NotificationsAndSounds}"
+                    <controls:BadgeButton x:Name="Appearance"
+                                          Click="Appearance_Click"
+                                          Content="{CustomResource Appearance}"
                                           Style="{StaticResource IconBadgeButtonStyle}">
                         <controls:BadgeButton.IconSource>
-                            <icons:Notifications />
+                            <icons:Appearance />
                         </controls:BadgeButton.IconSource>
                     </controls:BadgeButton>
                     <controls:BadgeButton x:Name="Privacy"
@@ -165,6 +165,14 @@
                             <icons:Privacy />
                         </controls:BadgeButton.IconSource>
                     </controls:BadgeButton>
+                    <controls:BadgeButton x:Name="Notifications"
+                                          Click="Notifications_Click"
+                                          Content="{CustomResource NotificationsAndSounds}"
+                                          Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:BadgeButton.IconSource>
+                            <icons:Notifications />
+                        </controls:BadgeButton.IconSource>
+                    </controls:BadgeButton>
                     <controls:BadgeButton x:Name="Data"
                                           Click="Data_Click"
                                           Content="{CustomResource DataSettings}"
@@ -173,20 +181,12 @@
                             <icons:Data />
                         </controls:BadgeButton.IconSource>
                     </controls:BadgeButton>
-                    <controls:BadgeButton x:Name="Stickers"
-                                          Click="Stickers_Click"
-                                          Content="{CustomResource StickersName}"
+                    <controls:BadgeButton x:Name="PowerSaving"
+                                          Click="PowerSaving_Click"
+                                          Content="{CustomResource PowerUsage}"
                                           Style="{StaticResource IconBadgeButtonStyle}">
                         <controls:BadgeButton.IconSource>
-                            <icons:Stickers />
-                        </controls:BadgeButton.IconSource>
-                    </controls:BadgeButton>
-                    <controls:BadgeButton x:Name="Appearance"
-                                          Click="Appearance_Click"
-                                          Content="{CustomResource Appearance}"
-                                          Style="{StaticResource IconBadgeButtonStyle}">
-                        <controls:BadgeButton.IconSource>
-                            <icons:Appearance />
+                            <icons:PowerSaving />
                         </controls:BadgeButton.IconSource>
                     </controls:BadgeButton>
                     <controls:BadgeButton x:Name="Folders"

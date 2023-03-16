@@ -59,7 +59,7 @@ namespace Telegram.Controls.Drawers
         {
             InitializeComponent();
 
-            _handler = new AnimatedListHandler(List);
+            _handler = new AnimatedListHandler(List, AnimatedListType.Animations);
 
             _zoomer = new ZoomableListHandler(List);
             _zoomer.Opening = _handler.UnloadVisibleItems;

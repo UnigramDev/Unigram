@@ -11,7 +11,6 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:contract13NotPresent="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractNotPresent(Windows.Foundation.UniversalApiContract, 13)"
-      muxc:BackdropMaterial.ApplyToRootOrPageBackground="True"
       mc:Ignorable="d"
       d:DesignHeight="300"
       d:DesignWidth="400">

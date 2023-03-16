@@ -6,11 +6,9 @@
 //
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
-using Windows.System;
-using Windows.System.Power;
+using Telegram.Common;
 using Windows.UI;
 using Windows.UI.Composition;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 
@@ -19,93 +17,29 @@ namespace Telegram.Controls.Media
     public class SolidGaussianBrush : XamlCompositionBrushBase
     {
         private bool m_isConnected;
-        private bool m_isDisabledByPolicy;
         private CompositionBrush m_brush;
-
-        private readonly bool m_energySaverStatusChangedRevokerValid;
-        private readonly CompositionCapabilities m_compositionCapabilities;
-        private readonly UISettings m_uiSettings;
-
-        private readonly DispatcherQueue m_dispatcher;
 
         public SolidGaussianBrush()
         {
-            m_dispatcher = DispatcherQueue.GetForCurrentThread();
-
-            try
-            {
-                PowerManager.EnergySaverStatusChanged += PowerManager_EnergySaverStatusChanged;
-                m_energySaverStatusChangedRevokerValid = true;
-            }
-            catch
-            {
-
-            }
-
-            m_compositionCapabilities = CompositionCapabilities.GetForCurrentView();
-            m_compositionCapabilities.Changed += CompositionCapabilities_Changed;
-
-            m_uiSettings = new UISettings();
-            m_uiSettings.AdvancedEffectsEnabledChanged += UISettings_AdvancedEffectsEnabledChanged;
-
-            UpdatePolicy();
+            PowerSavingPolicy.Changed += PowerSavingPolicy_Changed;
         }
 
-        private void PowerManager_EnergySaverStatusChanged(object sender, object e)
+        private void PowerSavingPolicy_Changed(object sender, System.EventArgs e)
         {
-            UpdatePolicyByDispatcher();
-        }
-
-        private void CompositionCapabilities_Changed(CompositionCapabilities sender, object args)
-        {
-            UpdatePolicyByDispatcher();
-        }
-
-        private void UISettings_AdvancedEffectsEnabledChanged(UISettings sender, object args)
-        {
-            UpdatePolicyByDispatcher();
-        }
-
-        private void UpdatePolicyByDispatcher()
-        {
-            if (m_dispatcher.HasThreadAccess)
+            if (m_isConnected)
             {
-                UpdatePolicy();
-            }
-            else
-            {
-                m_dispatcher.TryEnqueue(DispatcherQueuePriority.Normal, UpdatePolicy);
-            }
-        }
-
-        // Internal MUX logic: https://github.com/microsoft/microsoft-ui-xaml/blob/main/dev/Lights/MaterialHelper.cpp
-        private void UpdatePolicy()
-        {
-            var isEnergySaverMode = m_energySaverStatusChangedRevokerValid ? PowerManager.EnergySaverStatus == EnergySaverStatus.On : true;
-            var areEffectsFast = m_compositionCapabilities != null && m_compositionCapabilities.AreEffectsFast();
-            var advancedEffectsEnabled = m_uiSettings == null || m_uiSettings.AdvancedEffectsEnabled;
-
-            var isDisabledByPolicy = isEnergySaverMode || !areEffectsFast || !advancedEffectsEnabled;
-
-            if (m_isConnected && m_isDisabledByPolicy != isDisabledByPolicy)
-            {
-                m_isDisabledByPolicy = isDisabledByPolicy;
                 UpdateBrush();
-            }
-            else
-            {
-                m_isDisabledByPolicy = isDisabledByPolicy;
             }
         }
 
         private void UpdateBrush()
         {
-            if (m_isDisabledByPolicy && m_brush is CompositionEffectBrush)
+            if (PowerSavingPolicy.Status == PowerSavingStatus.On && m_brush is CompositionEffectBrush)
             {
                 m_brush.Dispose();
                 m_brush = null;
             }
-            else if (m_brush is CompositionColorBrush && !m_isDisabledByPolicy)
+            else if (m_brush is CompositionColorBrush && PowerSavingPolicy.Status == PowerSavingStatus.Off)
             {
                 m_brush.Dispose();
                 m_brush = null;
@@ -113,7 +47,7 @@ namespace Telegram.Controls.Media
 
             if (m_brush == null)
             {
-                if (m_isDisabledByPolicy)
+                if (PowerSavingPolicy.Status == PowerSavingStatus.On)
                 {
                     m_brush = Window.Current.Compositor.CreateColorBrush(FallbackColor);
                     CompositionBrush = m_brush;

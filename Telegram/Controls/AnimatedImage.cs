@@ -22,10 +22,15 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Controls
 {
+    public abstract class AnimatedImage : Control
+    {
+        public abstract void Display();
+    }
+
     // This is a lightweight fork of AnimatedControl
     // that just uses a WriteableBitmap rather than DirectX
     [TemplatePart(Name = "Canvas", Type = typeof(Image))]
-    public abstract class AnimatedImage<TAnimation> : Control, IPlayerView
+    public abstract class AnimatedImage<TAnimation> : AnimatedImage, IPlayerView
     {
         protected float _currentDpi;
         protected bool _active = true;
@@ -484,7 +489,7 @@ namespace Telegram.Controls
 
         protected abstract void SourceChanged();
 
-        protected async void OnSourceChanged()
+        protected void OnSourceChanged()
         {
             var playing = AutoPlay ? _playing != false : _playing == true;
             if (playing && _active)
@@ -495,16 +500,24 @@ namespace Telegram.Controls
             {
                 Subscribe(false);
 
-                if (playing && _bitmapClean && !_unloaded)
+                if (playing)
                 {
-                    CreateBitmap();
-
-                    // Invalidate to render the first frame
-                    // Would be nice to move this to IndividualAnimatedImage
-                    // but this isn't currently possible
-                    await Task.Run(PrepareNextFrame);
-                    Invalidate();
+                    Display();
                 }
+            }
+        }
+
+        public override async void Display()
+        {
+            if (_bitmapClean && !_unloaded)
+            {
+                CreateBitmap();
+
+                // Invalidate to render the first frame
+                // Would be nice to move this to IndividualAnimatedImage
+                // but this isn't currently possible
+                await Task.Run(PrepareNextFrame);
+                Invalidate();
             }
         }
 
@@ -606,6 +619,8 @@ namespace Telegram.Controls
                 _timer = null;
             }
         }
+
+        public bool IsPlaying => _subscribed;
 
         #region IsLoopingEnabled
 

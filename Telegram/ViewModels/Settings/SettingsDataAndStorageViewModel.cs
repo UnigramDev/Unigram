@@ -69,27 +69,6 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-
-        public bool IsAutoPlayAnimationsEnabled
-        {
-            get => Settings.IsAutoPlayAnimationsEnabled;
-            set
-            {
-                Settings.IsAutoPlayAnimationsEnabled = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public bool IsAutoPlayVideosEnabled
-        {
-            get => Settings.IsAutoPlayVideosEnabled;
-            set
-            {
-                Settings.IsAutoPlayVideosEnabled = value;
-                RaisePropertyChanged();
-            }
-        }
-
         public bool IsStreamingEnabled
         {
             get => SettingsService.Current.IsStreamingEnabled;

@@ -572,6 +572,7 @@ namespace Telegram
                 Telegram.Views.Settings.SettingsStoragePage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.SettingsStorageViewModel>(sessionId),
                 Telegram.Views.Settings.SettingsProfilePage settingsProfilePage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.SettingsProfileViewModel, Telegram.ViewModels.Delegates.IUserDelegate>(settingsProfilePage, sessionId),
                 Telegram.Views.Settings.SettingsQuickReactionPage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.SettingsQuickReactionViewModel>(sessionId),
+                Telegram.Views.Settings.SettingsPowerSavingPage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.SettingsPowerSavingViewModel>(sessionId),
                 Telegram.Views.Settings.Privacy.SettingsPrivacyAllowCallsPage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.Privacy.SettingsPrivacyAllowCallsViewModel>(sessionId),
                 Telegram.Views.Settings.Privacy.SettingsPrivacyAllowChatInvitesPage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.Privacy.SettingsPrivacyAllowChatInvitesViewModel>(sessionId),
                 Telegram.Views.Settings.Privacy.SettingsPrivacyAllowP2PCallsPage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.Privacy.SettingsPrivacyAllowP2PCallsViewModel>(sessionId),

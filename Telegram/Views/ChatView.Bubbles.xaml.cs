@@ -255,7 +255,7 @@ namespace Telegram.Views
 
             if (animations.Count > 0 && !intermediate)
             {
-                Play(animations, ViewModel.Settings.IsAutoPlayAnimationsEnabled, false);
+                Play(animations);
             }
 
             // Pinned banner
@@ -346,7 +346,7 @@ namespace Telegram.Views
         {
             var text = message.Content as MessageText;
 
-            if (ViewModel.Settings.IsAutoPlayAnimationsEnabled && (message.Content is MessageAnimation || (text?.WebPage != null && text.WebPage.Animation != null) || (message.Content is MessageGame game && game.Game.Animation != null)))
+            if (PowerSavingPolicy.AutoPlayAnimations && (message.Content is MessageAnimation || (text?.WebPage != null && text.WebPage.Animation != null) || (message.Content is MessageGame game && game.Game.Animation != null)))
             {
                 if (_prev.TryGetValue(message.AnimationHash(), out WeakReference reference) && reference.Target is IPlayerView item)
                 {
@@ -371,7 +371,7 @@ namespace Telegram.Views
             {
                 if (_prev.ContainsKey(message.AnimationHash()))
                 {
-                    Play(new (SelectorItem, MessageViewModel)[0], false, false);
+                    Play(new (SelectorItem, MessageViewModel)[0]);
                 }
                 else
                 {
@@ -381,12 +381,12 @@ namespace Telegram.Views
                         return;
                     }
 
-                    Play(new (SelectorItem, MessageViewModel)[] { (container, message) }, true, true);
+                    Play(new (SelectorItem, MessageViewModel)[] { (container, message) });
                 }
             }
         }
 
-        public void Play(IEnumerable<(SelectorItem Container, MessageViewModel Message)> items, bool auto, bool audio)
+        public void Play(IEnumerable<(SelectorItem Container, MessageViewModel Message)> items)
         {
             var next = new Dictionary<long, IPlayerView>();
             var prev = new HashSet<long>();

@@ -17,16 +17,26 @@ using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Telegram.Common
 {
+    public enum AnimatedListType
+    {
+        Stickers,
+        Animations,
+        Emoji,
+        Other // Inline bots, chat list,
+    }
+
     public class AnimatedListHandler
     {
         private readonly ListViewBase _listView;
         private readonly DispatcherTimer _debouncer;
 
-        private readonly Dictionary<long, IPlayerView> _prev = new Dictionary<long, IPlayerView>();
+        private readonly AnimatedListType _type;
+
+        private readonly Dictionary<long, IPlayerView> _prev = new();
 
         private bool _unloaded;
 
-        public AnimatedListHandler(ListViewBase listView)
+        public AnimatedListHandler(ListViewBase listView, AnimatedListType type)
         {
             _listView = listView;
             _listView.SizeChanged += OnSizeChanged;
@@ -39,6 +49,8 @@ namespace Telegram.Common
                 _debouncer.Stop();
                 LoadVisibleItems(false);
             };
+
+            _type = type;
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
@@ -109,13 +121,19 @@ namespace Telegram.Common
             _debouncer.Start();
         }
 
+        public bool IsDisabledByPolicy
+        {
+            get => _type switch
+            {
+                AnimatedListType.Stickers => !PowerSavingPolicy.AutoPlayStickers,
+                AnimatedListType.Animations => !PowerSavingPolicy.AutoPlayAnimations,
+                AnimatedListType.Emoji => !PowerSavingPolicy.AutoPlayEmoji,
+                _ => false
+            };
+        }
+
         public void LoadVisibleItems(bool intermediate)
         {
-            //if (intermediate && _prev.Count < 1)
-            //{
-            //    return;
-            //}
-
             int lastVisibleIndex;
             int firstVisibleIndex;
 
@@ -209,12 +227,7 @@ namespace Telegram.Common
 
             foreach (var item in _prev.Keys.Except(next.Keys).ToList())
             {
-                var presenter = _prev[item];
-                if (presenter != null)
-                {
-                    presenter.Pause();
-                }
-
+                _prev[item]?.Pause();
                 _prev.Remove(item);
             }
 
@@ -230,9 +243,16 @@ namespace Telegram.Common
                 //    continue;
                 //}
 
-                if (item.Value != null)
+                if (IsDisabledByPolicy)
                 {
-                    item.Value.Play();
+                    if (item.Value is AnimatedImage image)
+                    {
+                        image.Display();
+                    }
+                }
+                else
+                {
+                    item.Value?.Play();
                 }
 
                 _prev[item.Key] = item.Value;

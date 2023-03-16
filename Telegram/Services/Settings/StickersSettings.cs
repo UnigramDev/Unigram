@@ -46,13 +46,6 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _suggestCustomEmoji, "SuggestCustomEmoji", value);
         }
 
-        private bool? _isLoopingEnabled;
-        public bool IsLoopingEnabled
-        {
-            get => _isLoopingEnabled ??= GetValueOrDefault("IsLoopingEnabled", true);
-            set => AddOrUpdateValue(ref _isLoopingEnabled, "IsLoopingEnabled", value);
-        }
-
         private int? _selectedTab;
         public StickersTab SelectedTab
         {

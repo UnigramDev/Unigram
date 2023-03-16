@@ -104,16 +104,6 @@
                                           Foreground="Red" />
                 </controls:HeaderedControl>
 
-                <controls:HeaderedControl Header="{CustomResource AutoplayMedia}">
-                    <CheckBox IsChecked="{x:Bind ViewModel.IsAutoPlayAnimationsEnabled, Mode=TwoWay}"
-                              Content="{CustomResource AutoplayGIF}"
-                              Style="{StaticResource SettingsCheckBoxStyle}" />
-
-                    <CheckBox IsChecked="{x:Bind ViewModel.IsAutoPlayVideosEnabled, Mode=TwoWay}"
-                              Content="{CustomResource AutoplayVideo}"
-                              Style="{StaticResource SettingsCheckBoxStyle}" />
-                </controls:HeaderedControl>
-
                 <controls:HeaderedControl Header="{CustomResource Streaming}"
                                           Footer="{CustomResource EnableAllStreamingInfo}">
                     <CheckBox IsChecked="{x:Bind ViewModel.IsStreamingEnabled, Mode=TwoWay}"

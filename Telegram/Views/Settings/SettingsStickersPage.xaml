@@ -159,7 +159,7 @@
                                 x:Load="{x:Bind IsType(ViewModel.Type, settings:StickersType.Installed)}"
                                 Margin="0,0,0,16"
                                 Spacing="16">
-                        <controls:HeaderedControl Footer="{CustomResource LoopAnimatedStickersInfo}">
+                        <controls:HeaderedControl>
                             <controls:BadgeButton Content="{CustomResource SuggestStickers}">
                                 <controls:BadgeButton.Badge>
                                     <ComboBox ItemsSource="{x:Bind ViewModel.SuggestStickersOptions}"
@@ -167,10 +167,6 @@
                                               DisplayMemberPath="Text" />
                                 </controls:BadgeButton.Badge>
                             </controls:BadgeButton>
-
-                            <CheckBox IsChecked="{x:Bind ViewModel.IsLoopingEnabled, Mode=TwoWay}"
-                                      Content="{CustomResource LoopAnimatedStickers}"
-                                      Style="{StaticResource SettingsCheckBoxStyle}" />
                         </controls:HeaderedControl>
 
                         <controls:HeaderedControl Footer="{CustomResource StickersBotInfo}">

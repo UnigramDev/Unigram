@@ -101,7 +101,8 @@ namespace Telegram.Views
             _getViewModel = getViewModel;
             _setTitle = setTitle;
 
-            _autocompleteHandler = new AnimatedListHandler(ListAutocomplete);
+            // TODO: this might need to change depending on context
+            _autocompleteHandler = new AnimatedListHandler(ListAutocomplete, AnimatedListType.Stickers);
 
             _autocompleteZoomer = new ZoomableListHandler(ListAutocomplete);
             _autocompleteZoomer.Opening = _autocompleteHandler.UnloadVisibleItems;

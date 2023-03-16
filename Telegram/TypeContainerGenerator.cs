@@ -169,6 +169,7 @@ namespace Telegram
                 typeof(SettingsNightModeViewModel),
                 typeof(SettingsBackgroundsViewModel),
                 typeof(SettingsShortcutsViewModel),
+                typeof(SettingsPowerSavingViewModel),
                 typeof(BackgroundViewModel),
                 typeof(StickersViewModel),
                 typeof(PaymentAddressViewModel),

@@ -7,7 +7,6 @@
 using RLottie;
 using System;
 using Telegram.Common;
-using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Foundation;
@@ -27,6 +26,8 @@ namespace Telegram.Controls.Messages.Content
 
         private string _fileToken;
         private string _interactionToken;
+
+        private bool _isEmoji;
 
         private CompositionAnimation _thumbnailShimmer;
 
@@ -99,6 +100,8 @@ namespace Telegram.Controls.Messages.Content
                 Player.IsFlipped = premium && premiumAnimation && !message.IsOutgoing;
             }
 
+            _isEmoji = message.Content is not MessageSticker;
+
             if (!sticker.StickerValue.Local.IsDownloadingCompleted)
             {
                 UpdateThumbnail(message, sticker);
@@ -137,7 +140,7 @@ namespace Telegram.Controls.Messages.Content
 
             if (file.Local.IsDownloadingCompleted)
             {
-                Player.IsLoopingEnabled = message.Content is MessageSticker && SettingsService.Current.Stickers.IsLoopingEnabled;
+                Player.IsLoopingEnabled = message.Content is MessageSticker && PowerSavingPolicy.AutoPlayStickersInChats;
                 Player.Source = UriEx.ToLocal(file.Local.Path);
 
                 message.Delegate.ViewVisibleMessages(false);
@@ -243,9 +246,13 @@ namespace Telegram.Controls.Messages.Content
                         PlayPremium(_message, sticker);
                     }
                 }
-                else
+                else if (PowerSavingPolicy.AutoPlayStickersInChats || Player.IsPlaying)
                 {
                     _message.Delegate.OpenSticker(sticker);
+                }
+                else
+                {
+                    Player.Play();
                 }
             }
         }
@@ -390,7 +397,17 @@ namespace Telegram.Controls.Messages.Content
 
         public bool Play()
         {
-            return Player?.Play() ?? false;
+            if (_isEmoji && PowerSavingPolicy.AutoPlayEmojiInChats)
+            {
+                return Player?.Play() ?? false;
+            }
+            else if (PowerSavingPolicy.AutoPlayStickersInChats)
+            {
+                return Player?.Play() ?? false;
+            }
+
+            Player?.Display();
+            return false;
         }
 
         public void Pause()

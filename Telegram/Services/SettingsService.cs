@@ -68,11 +68,13 @@ namespace Telegram.Services
         bool IsContactsSyncRequested { get; set; }
         bool IsContactsSortedByEpoch { get; set; }
         bool IsSecretPreviewsEnabled { get; set; }
-        bool IsAutoPlayAnimationsEnabled { get; set; }
-        bool IsAutoPlayVideosEnabled { get; set; }
+        bool AutoPlayAnimations { get; set; }
+        bool AutoPlayVideos { get; set; }
         bool IsSendGrouped { get; set; }
         bool IsAccountsSelectorExpanded { get; set; }
         bool IsAllAccountsNotifications { get; set; }
+        bool AreSmoothTransitionsEnabled { get; set; }
+        bool AreMaterialsEnabled { get; set; }
 
         bool UseSystemProxy { get; set; }
 
@@ -410,6 +412,20 @@ The letter also mentioned taking over the world and a puppy, but we hope the rea
             set => AddOrUpdateValue(ref _isAdaptiveWideEnabled, _local, "IsAdaptiveWideEnabled", value);
         }
 
+        private static bool? _areSmoothTransitionsEnabled;
+        public bool AreSmoothTransitionsEnabled
+        {
+            get => _areSmoothTransitionsEnabled ??= GetValueOrDefault(_local, "AreSmoothTransitionsEnabled", true);
+            set => AddOrUpdateValue(ref _areSmoothTransitionsEnabled, _local, "AreSmoothTransitionsEnabled", value);
+        }
+
+        private static bool? _areMaterialsEnabled;
+        public bool AreMaterialsEnabled
+        {
+            get => _areMaterialsEnabled ??= GetValueOrDefault(_local, "AreMaterialsEnabled", false);
+            set => AddOrUpdateValue(ref _areMaterialsEnabled, _local, "AreMaterialsEnabled", value);
+        }
+
         private static bool? _isTrayVisible;
         public bool IsTrayVisible
         {
@@ -549,18 +565,53 @@ The letter also mentioned taking over the world and a puppy, but we hope the rea
             set => AddOrUpdateValue(ref _isSecretPreviewsEnabled, "IsSecretPreviewsEnabled", value);
         }
 
-        private bool? _isAutoPlayAnimationsEnabled;
-        public bool IsAutoPlayAnimationsEnabled
+        private static bool? _isAutoPlayAnimationsEnabled;
+        public bool AutoPlayAnimations
         {
             get => _isAutoPlayAnimationsEnabled ??= GetValueOrDefault("IsAutoPlayEnabled", true);
             set => AddOrUpdateValue(ref _isAutoPlayAnimationsEnabled, "IsAutoPlayEnabled", value);
         }
 
-        private bool? _isAutoPlayVideosEnabled;
-        public bool IsAutoPlayVideosEnabled
+        private static bool? _isAutoPlayVideosEnabled;
+        public bool AutoPlayVideos
         {
             get => _isAutoPlayVideosEnabled ??= GetValueOrDefault("IsAutoPlayVideosEnabled", true);
             set => AddOrUpdateValue(ref _isAutoPlayVideosEnabled, "IsAutoPlayVideosEnabled", value);
+        }
+
+        private static bool? _autoPlayStickers;
+        public bool AutoPlayStickers
+        {
+            get => _autoPlayStickers ??= GetValueOrDefault("AutoPlayStickers", true);
+            set => AddOrUpdateValue(ref _autoPlayStickers, "AutoPlayStickers", value);
+        }
+
+        private static bool? _autoPlayStickersInChats;
+        public bool AutoPlayStickersInChats
+        {
+            get => _autoPlayStickersInChats ??= GetValueOrDefault("AutoPlayStickersInChats", true);
+            set => AddOrUpdateValue(ref _autoPlayStickersInChats, "AutoPlayStickersInChats", value);
+        }
+
+        private static bool? _autoPlayEmoji;
+        public bool AutoPlayEmoji
+        {
+            get => _autoPlayEmoji ??= GetValueOrDefault("AutoPlayEmoji", true);
+            set => AddOrUpdateValue(ref _autoPlayEmoji, "AutoPlayEmoji", value);
+        }
+
+        private static bool? _autoPlayEmojiInChats;
+        public bool AutoPlayEmojiInChats
+        {
+            get => _autoPlayEmojiInChats ??= GetValueOrDefault("AutoPlayEmojiInChats", true);
+            set => AddOrUpdateValue(ref _autoPlayEmojiInChats, "AutoPlayEmojiInChats", value);
+        }
+
+        private static bool? _isPowerSavingEnabled;
+        public bool IsPowerSavingEnabled
+        {
+            get => _isPowerSavingEnabled ??= GetValueOrDefault("IsPowerSavingEnabled", true);
+            set => AddOrUpdateValue(ref _isPowerSavingEnabled, "IsPowerSavingEnabled", value);
         }
 
         private bool? _isSendGrouped;

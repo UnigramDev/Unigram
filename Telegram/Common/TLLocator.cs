@@ -927,6 +927,13 @@ namespace Telegram.Views
                         _settingsService,
                         _eventAggregator));
             }
+            else if (type == typeof(Telegram.ViewModels.Settings.SettingsPowerSavingViewModel))
+            {
+                return (T)(object)new Telegram.ViewModels.Settings.SettingsPowerSavingViewModel(
+                    _clientService,
+                    _settingsService,
+                    _eventAggregator);
+            }
             else if (type == typeof(Telegram.ViewModels.BackgroundViewModel))
             {
                 return (T)(object)new Telegram.ViewModels.BackgroundViewModel(

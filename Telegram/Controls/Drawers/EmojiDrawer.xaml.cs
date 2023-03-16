@@ -75,8 +75,8 @@ namespace Telegram.Controls.Drawers
             var header = DropShadowEx.Attach(Separator);
             header.Clip = header.Compositor.CreateInsetClip(0, 40, 0, -40);
 
-            _handler = new AnimatedListHandler(List);
-            _toolbarHandler = new AnimatedListHandler(Toolbar2);
+            _handler = new AnimatedListHandler(List, AnimatedListType.Emoji);
+            _toolbarHandler = new AnimatedListHandler(Toolbar2, AnimatedListType.Emoji);
 
             _typeToItemHashSetMapping["EmojiSkinTemplate"] = new HashSet<SelectorItem>();
             _typeToItemHashSetMapping["EmojiTemplate"] = new HashSet<SelectorItem>();

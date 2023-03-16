@@ -145,6 +145,7 @@
     <Compile Include="Assets\Icons\Notifications.cs" />
     <Compile Include="Assets\Icons\PersonAdd.cs" />
     <Compile Include="Assets\Icons\Phone.cs" />
+    <Compile Include="Assets\Icons\PowerSaving.cs" />
     <Compile Include="Assets\Icons\Premium.cs" />
     <Compile Include="Assets\Icons\Privacy.cs" />
     <Compile Include="Assets\Icons\PrivacyPolicy.cs" />
@@ -213,6 +214,7 @@
     <Compile Include="Common\AsyncHelper.cs" />
     <Compile Include="Common\AutocompleteEntityFinder.cs" />
     <Compile Include="Common\Automation.cs" />
+    <Compile Include="Common\PowerSavingPolicy.cs" />
     <Compile Include="Common\Chats\InputChatActionManager.cs" />
     <Compile Include="Common\Chats\OutputChatActionManager.cs" />
     <Compile Include="Common\Colors.cs" />
@@ -400,6 +402,7 @@
       <DependentUpon>GalleryView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\CustomEmojiIcon.cs" />
+    <Compile Include="Controls\LottieView2.cs" />
     <Compile Include="Controls\Messages\Content\InvoicePreviewContent.xaml.cs">
       <DependentUpon>InvoicePreviewContent.xaml</DependentUpon>
     </Compile>
@@ -622,6 +625,7 @@
     <Compile Include="ViewModels\Authorization\AuthorizationRecoveryViewModel.cs" />
     <Compile Include="ViewModels\Authorization\AuthorizationRegistrationViewModel.cs" />
     <Compile Include="ViewModels\Authorization\AuthorizationViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsPowerSavingViewModel.cs" />
     <Compile Include="ViewModels\TopicListViewModel.cs" />
     <Compile Include="ViewModels\ChatListViewModel.cs" />
     <Compile Include="ViewModels\ChooseSoundViewModel.cs" />
@@ -1175,6 +1179,9 @@
     </Compile>
     <Compile Include="Views\Settings\Privacy\SettingsPrivacyShowStatusPage.xaml.cs">
       <DependentUpon>SettingsPrivacyShowStatusPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsPowerSavingPage.xaml.cs">
+      <DependentUpon>SettingsPowerSavingPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsAdvancedPage.xaml.cs">
       <DependentUpon>SettingsAdvancedPage.xaml</DependentUpon>
@@ -1918,6 +1925,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Themes\Expander_themeresources.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Themes\MenuFlyout_themeresources.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2403,6 +2414,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Settings\Privacy\SettingsPrivacyShowStatusPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\SettingsPowerSavingPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

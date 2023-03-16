@@ -290,16 +290,6 @@ namespace Telegram.ViewModels.Settings
             new SettingsOptionItem<StickersSuggestionMode>(StickersSuggestionMode.None, Strings.Resources.SuggestStickersNone),
         };
 
-        public bool IsLoopingEnabled
-        {
-            get => Settings.Stickers.IsLoopingEnabled;
-            set
-            {
-                Settings.Stickers.IsLoopingEnabled = value;
-                RaisePropertyChanged();
-            }
-        }
-
         #region Context menu
 
         public RelayCommand<StickerSetInfo> StickerSetOpenCommand { get; }

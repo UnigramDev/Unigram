@@ -47,8 +47,8 @@ namespace Telegram.Controls.Drawers
 
             ElementCompositionPreview.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
 
-            _handler = new AnimatedListHandler(List);
-            _toolbarHandler = new AnimatedListHandler(Toolbar);
+            _handler = new AnimatedListHandler(List, AnimatedListType.Stickers);
+            _toolbarHandler = new AnimatedListHandler(Toolbar, AnimatedListType.Stickers);
 
             _zoomer = new ZoomableListHandler(List);
             _zoomer.Opening = _handler.UnloadVisibleItems;
@@ -97,7 +97,7 @@ namespace Telegram.Controls.Drawers
             _handler.ThrottleVisibleItems();
             _toolbarHandler.ThrottleVisibleItems();
 
-            SearchField.SetType(ViewModel.ClientService, type);
+            //SearchField.SetType(ViewModel.ClientService, type);
             ViewModel.Update(chat);
         }
 

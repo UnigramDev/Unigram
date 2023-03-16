@@ -6,7 +6,6 @@
 //
 using System;
 using Telegram.Common;
-using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI.Composition;
@@ -108,7 +107,7 @@ namespace Telegram.Controls.Messages.Content
 
             if (file.Local.IsDownloadingCompleted)
             {
-                Player.IsLoopingEnabled = SettingsService.Current.Stickers.IsLoopingEnabled;
+                Player.IsLoopingEnabled = PowerSavingPolicy.AutoPlayStickersInChats;
                 Player.Source = new LocalVideoSource(file);
 
                 message.Delegate.ViewVisibleMessages(false);
@@ -169,7 +168,14 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
-            _message.Delegate.OpenSticker(sticker);
+            if (PowerSavingPolicy.AutoPlayStickersInChats || Player.IsPlaying)
+            {
+                _message.Delegate.OpenSticker(sticker);
+            }
+            else
+            {
+                Player.Play();
+            }
         }
 
         #region IPlaybackView
@@ -178,7 +184,13 @@ namespace Telegram.Controls.Messages.Content
 
         public bool Play()
         {
-            return Player?.Play() ?? false;
+            if (PowerSavingPolicy.AutoPlayStickersInChats)
+            {
+                return Player?.Play() ?? false;
+            }
+
+            Player?.Display();
+            return false;
         }
 
         public void Pause()
