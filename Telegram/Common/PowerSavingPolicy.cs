@@ -22,6 +22,7 @@ namespace Telegram.Common
     public class PowerSavingPolicy
     {
         private static bool m_isDisabledByPolicy;
+        private static bool m_isPowerSavingMode;
 
         private static readonly bool m_energySaverStatusChangedRevokerValid;
         private static readonly CompositionCapabilities m_compositionCapabilities;
@@ -49,6 +50,8 @@ namespace Telegram.Common
 
             m_uiSettings = new UISettings();
             m_uiSettings.AdvancedEffectsEnabledChanged += UISettings_AdvancedEffectsEnabledChanged;
+
+            m_areMaterialsEnabled = AreMaterialsEnabled;
 
             UpdatePolicy();
         }
@@ -87,24 +90,48 @@ namespace Telegram.Common
             var areEffectsFast = m_compositionCapabilities != null && m_compositionCapabilities.AreEffectsFast();
             var advancedEffectsEnabled = m_uiSettings == null || m_uiSettings.AdvancedEffectsEnabled;
 
+            // This applies only to visual effects
             var isDisabledByPolicy = Mode switch
             {
                 PowerSavingMode.Auto => isEnergySaverMode || !areEffectsFast || !advancedEffectsEnabled,
                 _ => false
             };
 
+            // This applies to all the rest
+            var isPowerSavingMode = Mode switch
+            {
+                PowerSavingMode.Auto => isEnergySaverMode,
+                _ => false
+            };
+
+#if !DEBUG
+            Microsoft.AppCenter.Analytics.Analytics.TrackEvent("Capabilities",
+                new System.Collections.Generic.Dictionary<string, string>
+                {
+                    { "InEnergySaverMode", isEnergySaverMode.ToString() },
+                    { "AreEffectsFast", areEffectsFast.ToString() },
+                    { "AdvancedEffectsEnabled", advancedEffectsEnabled.ToString() },
+                });
+#endif
+
             if (m_isDisabledByPolicy != isDisabledByPolicy)
             {
                 m_isDisabledByPolicy = isDisabledByPolicy;
+                m_isPowerSavingMode = isPowerSavingMode;
                 Changed?.Invoke(null, EventArgs.Empty);
 
                 RaiseAreMaterialsEnabledChanged();
+            }
+            else if (m_isPowerSavingMode != isPowerSavingMode)
+            {
+                m_isPowerSavingMode = isPowerSavingMode;
+                Changed?.Invoke(null, EventArgs.Empty);
             }
         }
 
         public static bool IsSupported => m_energySaverStatusChangedRevokerValid && PowerManager.BatteryStatus != BatteryStatus.NotPresent;
 
-        public static PowerSavingStatus Status => m_isDisabledByPolicy ? PowerSavingStatus.On : PowerSavingStatus.Off;
+        public static PowerSavingStatus Status => m_isPowerSavingMode ? PowerSavingStatus.On : PowerSavingStatus.Off;
 
         public static PowerSavingMode Mode
         {
@@ -140,7 +167,7 @@ namespace Telegram.Common
 
         public static bool AutoPlayVideos
         {
-            get => SettingsService.Current.AutoPlayVideos && !m_isDisabledByPolicy;
+            get => SettingsService.Current.AutoPlayVideos && !m_isPowerSavingMode;
             set
             {
                 SettingsService.Current.AutoPlayVideos = value;
@@ -150,7 +177,7 @@ namespace Telegram.Common
 
         public static bool AutoPlayAnimations
         {
-            get => SettingsService.Current.AutoPlayAnimations && !m_isDisabledByPolicy;
+            get => SettingsService.Current.AutoPlayAnimations && !m_isPowerSavingMode;
             set
             {
                 SettingsService.Current.AutoPlayAnimations = value;
@@ -160,7 +187,7 @@ namespace Telegram.Common
 
         public static bool AutoPlayStickers
         {
-            get => SettingsService.Current.AutoPlayStickers && !m_isDisabledByPolicy;
+            get => SettingsService.Current.AutoPlayStickers && !m_isPowerSavingMode;
             set
             {
                 SettingsService.Current.AutoPlayStickers = value;
@@ -170,7 +197,7 @@ namespace Telegram.Common
 
         public static bool AutoPlayStickersInChats
         {
-            get => SettingsService.Current.AutoPlayStickersInChats && !m_isDisabledByPolicy;
+            get => SettingsService.Current.AutoPlayStickersInChats && !m_isPowerSavingMode;
             set
             {
                 SettingsService.Current.AutoPlayStickersInChats = value;
@@ -180,7 +207,7 @@ namespace Telegram.Common
 
         public static bool AutoPlayEmoji
         {
-            get => SettingsService.Current.AutoPlayEmoji && !m_isDisabledByPolicy;
+            get => SettingsService.Current.AutoPlayEmoji && !m_isPowerSavingMode;
             set
             {
                 SettingsService.Current.AutoPlayEmoji = value;
@@ -190,7 +217,7 @@ namespace Telegram.Common
 
         public static bool AutoPlayEmojiInChats
         {
-            get => SettingsService.Current.AutoPlayEmojiInChats && !m_isDisabledByPolicy;
+            get => SettingsService.Current.AutoPlayEmojiInChats && !m_isPowerSavingMode;
             set
             {
                 SettingsService.Current.AutoPlayEmojiInChats = value;
@@ -200,7 +227,7 @@ namespace Telegram.Common
 
         public static bool AreSmoothTransitionsEnabled
         {
-            get => SettingsService.Current.AreSmoothTransitionsEnabled && !m_isDisabledByPolicy;
+            get => SettingsService.Current.AreSmoothTransitionsEnabled && !m_isPowerSavingMode;
             set
             {
                 SettingsService.Current.AreSmoothTransitionsEnabled = value;

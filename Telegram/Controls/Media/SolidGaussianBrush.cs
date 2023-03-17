@@ -34,12 +34,12 @@ namespace Telegram.Controls.Media
 
         private void UpdateBrush()
         {
-            if (PowerSavingPolicy.AreMaterialsEnabled && m_brush is CompositionEffectBrush)
+            if (!PowerSavingPolicy.AreMaterialsEnabled && m_brush is CompositionEffectBrush)
             {
                 m_brush.Dispose();
                 m_brush = null;
             }
-            else if (m_brush is CompositionColorBrush && !PowerSavingPolicy.AreMaterialsEnabled)
+            else if (m_brush is CompositionColorBrush && PowerSavingPolicy.AreMaterialsEnabled)
             {
                 m_brush.Dispose();
                 m_brush = null;
@@ -47,7 +47,7 @@ namespace Telegram.Controls.Media
 
             if (m_brush == null)
             {
-                if (PowerSavingPolicy.AreMaterialsEnabled)
+                if (!PowerSavingPolicy.AreMaterialsEnabled)
                 {
                     m_brush = Window.Current.Compositor.CreateColorBrush(FallbackColor);
                     CompositionBrush = m_brush;
