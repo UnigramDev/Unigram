@@ -20,6 +20,7 @@ using Telegram.Views.Settings;
 using Windows.Foundation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
@@ -57,6 +58,9 @@ namespace Telegram.ViewModels.Settings
             StickerSetRemoveCommand = new RelayCommand<StickerSetInfo>(StickerSetRemoveExecute);
             //StickerSetShareCommand = new RelayCommand<StickerSetInfo>(StickerSetShareExecute);
             //StickerSetCopyCommand = new RelayCommand<StickerSetInfo>(StickerSetCopyExecute);
+
+            var random = new Random();
+            EmojiStyleIcon = _emojiStyleIcons[random.Next(0, _emojiStyleIcons.Length)];
         }
 
         private class StickerSetInfoDiffHandler : IDiffHandler<StickerSetInfo>
@@ -285,6 +289,47 @@ namespace Telegram.ViewModels.Settings
                 RaisePropertyChanged();
             }
         }
+
+        private readonly string[] _emojiStyleIcons = new[] { "\U0001F603", "\U0001F604", "\U0001F601", "\U0001F607", "\U0001F60E", "\U0001F913", "\U0001F929", "\U0001F973", "\U0001F920" };
+        public string EmojiStyleIcon { get; }
+
+        public int EmojiStyle
+        {
+            get => Array.IndexOf(_emojiStyleIndexer, Settings.Appearance.EmojiSet);
+            set
+            {
+                if (value >= 0 && value < _emojiStyleIndexer.Length && Settings.Appearance.EmojiSet != _emojiStyleIndexer[value])
+                {
+                    switch (_emojiStyleIndexer[value])
+                    {
+                        case "microsoft":
+                            Theme.Current["EmojiThemeFontFamily"] = new FontFamily($"XamlAutoFontFamily");
+                            break;
+                        case "apple":
+                        default:
+                            Theme.Current["EmojiThemeFontFamily"] = new FontFamily($"ms-appx:///Assets/Emoji/apple.ttf#Segoe UI Emoji");
+                            break;
+                    }
+
+                    SettingsService.Current.Appearance.EmojiSet = _emojiStyleIndexer[value];
+                    SettingsService.Current.Appearance.UpdateNightMode(true);
+
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        private readonly string[] _emojiStyleIndexer = new[]
+        {
+            "apple",
+            "microsoft"
+        };
+
+        public List<SettingsOptionItem<string>> EmojiStyleOptions { get; } = new()
+        {
+            new SettingsOptionItem<string>("apple", "Apple"),
+            new SettingsOptionItem<string>("microsoft", "Microsoft"),
+        };
 
         public int SuggestStickers
         {

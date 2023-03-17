@@ -210,7 +210,7 @@ namespace Telegram.Controls.Drawers
                 return;
             }
 
-            var microsoft = string.Equals(SettingsService.Current.Appearance.EmojiSet.Id, "microsoft");
+            var microsoft = string.Equals(SettingsService.Current.Appearance.EmojiSet, "microsoft");
             var tone = SettingsService.Current.Stickers.SkinTone;
 
             if (Toolbar.ItemsSource is List<EmojiGroup> groups)

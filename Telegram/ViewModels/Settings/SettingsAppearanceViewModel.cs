@@ -23,16 +23,14 @@ namespace Telegram.ViewModels.Settings
     public class SettingsAppearanceViewModel : TLViewModelBase
     {
         private readonly IThemeService _themeService;
-        private readonly IEmojiSetService _emojiSetService;
 
         private readonly Dictionary<int, int> _indexToSize = new Dictionary<int, int> { { 0, 12 }, { 1, 13 }, { 2, 14 }, { 3, 15 }, { 4, 16 }, { 5, 17 }, { 6, 18 } };
         private readonly Dictionary<int, int> _sizeToIndex = new Dictionary<int, int> { { 12, 0 }, { 13, 1 }, { 14, 2 }, { 15, 3 }, { 16, 4 }, { 17, 5 }, { 18, 6 } };
 
-        public SettingsAppearanceViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IThemeService themeService, IEmojiSetService emojiSetService)
+        public SettingsAppearanceViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IThemeService themeService)
             : base(clientService, settingsService, aggregator)
         {
             _themeService = themeService;
-            _emojiSetService = emojiSetService;
 
             ChatThemes = new ObservableCollection<ChatTheme>();
 
@@ -72,23 +70,8 @@ namespace Telegram.ViewModels.Settings
 
             ChatThemes.AddRange(new[] { defaultTheme }.Union(themes));
 
-            _selectedChatTheme = ChatThemes.FirstOrDefault(x => x.Name == Settings.Appearance.ChatTheme?
-            .Name) ?? defaultTheme;
+            _selectedChatTheme = ChatThemes.FirstOrDefault(x => x.Name == Settings.Appearance.ChatTheme?.Name) ?? defaultTheme;
             RaisePropertyChanged(nameof(SelectedChatTheme));
-
-            var emojiSet = Settings.Appearance.EmojiSet;
-            EmojiSet = emojiSet.Title;
-
-            switch (emojiSet.Id)
-            {
-                case "microsoft":
-                case "apple":
-                    EmojiSetId = $"ms-appx:///Assets/Emoji/{emojiSet.Id}.png";
-                    break;
-                default:
-                    EmojiSetId = $"ms-appdata:///local/emoji/{emojiSet.Id}.png";
-                    break;
-            }
 
             return base.OnNavigatedToAsync(parameter, mode, state);
         }
@@ -272,25 +255,6 @@ namespace Telegram.ViewModels.Settings
             new SettingsOptionItem<DistanceUnits>(DistanceUnits.Kilometers, Strings.Resources.DistanceUnitsKilometers),
             new SettingsOptionItem<DistanceUnits>(DistanceUnits.Miles, Strings.Resources.DistanceUnitsMiles),
         };
-
-        public async void ChangeEmojiSet()
-        {
-            await ShowPopupAsync(new SettingsEmojiSetPopup(ClientService, _emojiSetService, Aggregator));
-
-            var emojiSet = Settings.Appearance.EmojiSet;
-            EmojiSet = emojiSet.Title;
-
-            switch (emojiSet.Id)
-            {
-                case "microsoft":
-                case "apple":
-                    EmojiSetId = $"ms-appx:///Assets/Emoji/{emojiSet.Id}.png";
-                    break;
-                default:
-                    EmojiSetId = $"ms-appdata:///local/emoji/{emojiSet.Id}.png";
-                    break;
-            }
-        }
 
         public RelayCommand<ChatTheme> ThemeCreateCommand { get; }
         private async void ThemeCreateExecute(ChatTheme theme)

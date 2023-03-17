@@ -822,7 +822,6 @@
     <Compile Include="Selectors\StorageMediaTemplateSelector.cs" />
     <Compile Include="Selectors\StorageStatisticsTemplateSelector.cs" />
     <Compile Include="Services\AlertsService.cs" />
-    <Compile Include="Services\EmojiSetService.cs" />
     <Compile Include="Services\SettingsSearchService.cs" />
     <Compile Include="Services\SettingsLegacyService.cs" />
     <Compile Include="Services\Settings\AppearanceSettings.cs" />
@@ -1077,9 +1076,6 @@
     </Compile>
     <Compile Include="Views\Popups\SendLocationPopup.xaml.cs">
       <DependentUpon>SendLocationPopup.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Popups\SettingsEmojiSetPopup.xaml.cs">
-      <DependentUpon>SettingsEmojiSetPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\SharePopup.xaml.cs">
       <DependentUpon>SharePopup.xaml</DependentUpon>
@@ -2281,10 +2277,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Popups\SendLocationPopup.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Popups\SettingsEmojiSetPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

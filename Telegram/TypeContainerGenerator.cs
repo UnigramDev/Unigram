@@ -59,7 +59,6 @@ namespace Telegram
             {
                 ( typeof(ISettingsService), typeof(SettingsService) ),
                 ( typeof(ISettingsSearchService), typeof(SettingsSearchService) ),
-                ( typeof(IEmojiSetService), typeof(EmojiSetService) ),
                 ( typeof(ICloudUpdateService), typeof(CloudUpdateService) ),
                 ( typeof(IShortcutsService), typeof(ShortcutsService) ),
                 ( typeof(IGroupCallService), typeof(GroupCallService) ),

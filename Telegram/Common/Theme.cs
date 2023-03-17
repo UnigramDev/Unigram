@@ -37,17 +37,14 @@ namespace Telegram.Common
 
                 this.Add("MessageFontSize", GetValueOrDefault("MessageFontSize", 14d));
 
-                var emojiSet = SettingsService.Current.Appearance.EmojiSet;
-                switch (emojiSet.Id)
+                switch (SettingsService.Current.Appearance.EmojiSet)
                 {
                     case "microsoft":
                         this.Add("EmojiThemeFontFamily", new FontFamily($"XamlAutoFontFamily"));
                         break;
                     case "apple":
-                        this.Add("EmojiThemeFontFamily", new FontFamily($"ms-appx:///Assets/Emoji/{emojiSet.Id}.ttf#Segoe UI Emoji"));
-                        break;
                     default:
-                        this.Add("EmojiThemeFontFamily", new FontFamily($"ms-appdata:///local/emoji/{emojiSet.Id}.{emojiSet.Version}.ttf#Segoe UI Emoji"));
+                        this.Add("EmojiThemeFontFamily", new FontFamily($"ms-appx:///Assets/Emoji/apple.ttf#Segoe UI Emoji"));
                         break;
                 }
 

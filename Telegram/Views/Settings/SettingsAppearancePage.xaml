@@ -216,17 +216,6 @@
                               Content="{CustomResource lng_settings_replace_emojis}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <controls:BadgeButtonWithImage Content="Emoji Set"
-                                                   Badge="{x:Bind ViewModel.EmojiSet, Mode=OneWay}"
-                                                   Click="{x:Bind ViewModel.ChangeEmojiSet}"
-                                                   Style="{StaticResource ImageSubbadgeBadgeButtonStyle}">
-                        <controls:BadgeButtonWithImage.ImageSource>
-                            <BitmapImage UriSource="{x:Bind ViewModel.EmojiSetId, Mode=OneWay}"
-                                         DecodePixelWidth="40"
-                                         DecodePixelHeight="40" />
-                        </controls:BadgeButtonWithImage.ImageSource>
-                    </controls:BadgeButtonWithImage>
-
                     <controls:BadgeButton Content="{CustomResource DistanceUnits}">
                         <controls:BadgeButton.Badge>
                             <ComboBox ItemsSource="{x:Bind ViewModel.DistanceUnitOptions}"

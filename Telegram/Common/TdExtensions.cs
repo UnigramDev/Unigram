@@ -17,7 +17,6 @@ using Telegram.Common;
 using Telegram.Native;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Telegram.ViewModels.Settings;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Xaml.Media;

@@ -230,40 +230,11 @@ namespace Telegram.Services.Settings
             }
         }
 
-        private InstalledEmojiSet _emojiSet;
-        public InstalledEmojiSet EmojiSet
+        private string _emojiSet;
+        public string EmojiSet
         {
-            get
-            {
-                if (_emojiSet == null)
-                {
-                    _emojiSet = new InstalledEmojiSet
-                    {
-                        Id = GetValueOrDefault(_container, "EmojiSetId", "apple"),
-                        Title = GetValueOrDefault(_container, "EmojiSet", "Apple"),
-                        Version = GetValueOrDefault(_container, "EmojiSetVersion", 1),
-                    };
-                }
-
-                return _emojiSet;
-            }
-            set
-            {
-                _emojiSet = value ?? GetDefaultEmojiSet();
-                AddOrUpdateValue(_container, "EmojiSetId", value?.Id ?? "apple");
-                AddOrUpdateValue(_container, "EmojiSet", value?.Title ?? "Apple");
-                AddOrUpdateValue(_container, "EmojiSetVersion", value?.Version ?? 1);
-            }
-        }
-
-        private InstalledEmojiSet GetDefaultEmojiSet()
-        {
-            return new InstalledEmojiSet
-            {
-                Id = "apple",
-                Title = "Apple",
-                Version = 1
-            };
+            get => _emojiSet ??= GetValueOrDefault(_container, "EmojiSetId", "apple");
+            set => AddOrUpdateValue(ref _emojiSet, _container, "EmojiSetId", value);
         }
 
         private void MigrateTheme()

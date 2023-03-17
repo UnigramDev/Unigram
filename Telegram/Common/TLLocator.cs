@@ -27,7 +27,6 @@ namespace Telegram.Views
         private readonly Telegram.Services.IVoipService _voipService;
 
         private Telegram.Services.ISettingsSearchService _settingsSearchService;
-        private Telegram.Services.IEmojiSetService _emojiSetService;
         private Telegram.Services.ICloudUpdateService _cloudUpdateService;
         private Telegram.Services.IShortcutsService _shortcutsService;
         private Telegram.Services.IGroupCallService _groupCallService;
@@ -163,10 +162,6 @@ namespace Telegram.Views
                         _eventAggregator,
                         _viewService),
                     _settingsSearchService ??= new Telegram.Services.SettingsSearchService(_clientService),
-                    _emojiSetService ??= new Telegram.Services.EmojiSetService(
-                        _clientService,
-                        _settingsService,
-                        _eventAggregator),
                     _cloudUpdateService ??= new Telegram.Services.CloudUpdateService(
                         _clientService,
                         _networkService,
@@ -869,10 +864,6 @@ namespace Telegram.Views
                     _themeService ??= new Telegram.Services.ThemeService(
                         _clientService,
                         _settingsService,
-                        _eventAggregator),
-                    _emojiSetService ??= new Telegram.Services.EmojiSetService(
-                        _clientService,
-                        _settingsService,
                         _eventAggregator));
             }
             else if (type == typeof(Telegram.ViewModels.Settings.SettingsThemesViewModel))
@@ -1056,13 +1047,6 @@ namespace Telegram.Views
             else if (type == typeof(Telegram.Services.ISettingsSearchService))
             {
                 return (T)(_settingsSearchService ??= new Telegram.Services.SettingsSearchService(_clientService));
-            }
-            else if (type == typeof(Telegram.Services.IEmojiSetService))
-            {
-                return (T)(_emojiSetService ??= new Telegram.Services.EmojiSetService(
-                    _clientService,
-                    _settingsService,
-                    _eventAggregator));
             }
             else if (type == typeof(Telegram.Services.ICloudUpdateService))
             {

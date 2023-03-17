@@ -46,14 +46,13 @@ namespace Telegram.ViewModels
         private readonly ISessionService _sessionService;
         private readonly IVoipService _voipService;
         private readonly IGroupCallService _groupCallService;
-        private readonly IEmojiSetService _emojiSetService;
         private readonly ICloudUpdateService _cloudUpdateService;
         private readonly IPlaybackService _playbackService;
         private readonly IShortcutsService _shortcutService;
 
         public bool Refresh { get; set; }
 
-        public MainViewModel(IClientService clientService, ISettingsService settingsService, IStorageService storageService, IEventAggregator aggregator, INotificationsService pushService, IContactsService contactsService, IPasscodeService passcodeService, ILifetimeService lifecycle, ISessionService session, IVoipService voipService, IGroupCallService groupCallService, ISettingsSearchService settingsSearchService, IEmojiSetService emojiSetService, ICloudUpdateService cloudUpdateService, IPlaybackService playbackService, IShortcutsService shortcutService)
+        public MainViewModel(IClientService clientService, ISettingsService settingsService, IStorageService storageService, IEventAggregator aggregator, INotificationsService pushService, IContactsService contactsService, IPasscodeService passcodeService, ILifetimeService lifecycle, ISessionService session, IVoipService voipService, IGroupCallService groupCallService, ISettingsSearchService settingsSearchService, ICloudUpdateService cloudUpdateService, IPlaybackService playbackService, IShortcutsService shortcutService)
             : base(clientService, settingsService, aggregator)
         {
             _pushService = pushService;
@@ -63,7 +62,6 @@ namespace Telegram.ViewModels
             _sessionService = session;
             _voipService = voipService;
             _groupCallService = groupCallService;
-            _emojiSetService = emojiSetService;
             _cloudUpdateService = cloudUpdateService;
             _playbackService = playbackService;
             _shortcutService = shortcutService;
@@ -427,7 +425,6 @@ namespace Telegram.ViewModels
                 _pushService.Register();
 
                 Task.Run(() => _contactsService.JumpListAsync());
-                Task.Run(() => _emojiSetService.UpdateAsync());
                 Task.Run(() => _cloudUpdateService.UpdateAsync(false));
             }
 

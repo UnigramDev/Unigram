@@ -243,6 +243,16 @@
                                                   Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                                   IsChevronVisible="True"
                                                   Glyph="&#xE7B8;" />
+                            <controls:BadgeButton Content="Emoji Style"
+                                                  Style="{StaticResource EmojiBadgeButtonStyle}"
+                                                  FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                                  Glyph="{x:Bind ViewModel.EmojiStyleIcon}">
+                                <controls:BadgeButton.Badge>
+                                    <ComboBox ItemsSource="{x:Bind ViewModel.EmojiStyleOptions}"
+                                              SelectedIndex="{x:Bind ViewModel.EmojiStyle, Mode=TwoWay}"
+                                              DisplayMemberPath="Text" />
+                                </controls:BadgeButton.Badge>
+                            </controls:BadgeButton>
                             <CheckBox Content="{CustomResource SuggestAnimatedEmoji}"
                                       IsChecked="{x:Bind ViewModel.SuggestCustomEmoji, Mode=TwoWay}"
                                       Style="{StaticResource SettingsCheckBoxStyle}" />
