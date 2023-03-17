@@ -218,9 +218,9 @@
 
                     <controls:BadgeButton Content="{CustomResource DistanceUnits}">
                         <controls:BadgeButton.Badge>
-                            <ComboBox ItemsSource="{x:Bind ViewModel.DistanceUnitOptions}"
-                                      SelectedIndex="{x:Bind ViewModel.DistanceUnit, Mode=TwoWay}"
-                                      DisplayMemberPath="Text" />
+                            <controls:SettingsComboBox ItemsSource="{x:Bind ViewModel.DistanceUnitOptions}"
+                                                       SelectedIndex="{x:Bind ViewModel.DistanceUnit, Mode=TwoWay}"
+                                                       DisplayMemberPath="Text" />
                         </controls:BadgeButton.Badge>
                     </controls:BadgeButton>
                 </controls:HeaderedControl>

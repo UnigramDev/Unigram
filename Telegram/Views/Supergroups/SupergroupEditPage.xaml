@@ -111,9 +111,9 @@
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Glyph="&#xE8BD;">
                         <controls:BadgeButton.Badge>
-                            <ComboBox ItemsSource="{x:Bind ViewModel.AllHistoryAvailableOptions}"
-                                      SelectedIndex="{x:Bind ViewModel.IsAllHistoryAvailable, Mode=TwoWay}"
-                                      DisplayMemberPath="Text" />
+                            <controls:SettingsComboBox ItemsSource="{x:Bind ViewModel.AllHistoryAvailableOptions}"
+                                                       SelectedIndex="{x:Bind ViewModel.IsAllHistoryAvailable, Mode=TwoWay}"
+                                                       DisplayMemberPath="Text" />
                         </controls:BadgeButton.Badge>
                     </controls:BadgeButton>
                 </controls:HeaderedControl>

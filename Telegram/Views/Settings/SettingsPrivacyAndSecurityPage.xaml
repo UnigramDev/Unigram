@@ -122,9 +122,9 @@
 
                     <controls:BadgeButton Content="{CustomResource DeleteAccountIfAwayFor2}">
                         <controls:BadgeButton.Badge>
-                            <ComboBox ItemsSource="{x:Bind ViewModel.AccountTtlOptions}"
-                                      SelectedIndex="{x:Bind ViewModel.AccountTtl, Mode=TwoWay}"
-                                      DisplayMemberPath="Text" />
+                            <controls:SettingsComboBox ItemsSource="{x:Bind ViewModel.AccountTtlOptions}"
+                                                       SelectedIndex="{x:Bind ViewModel.AccountTtl, Mode=TwoWay}"
+                                                       DisplayMemberPath="Text" />
                         </controls:BadgeButton.Badge>
                     </controls:BadgeButton>
                 </controls:HeaderedControl>

@@ -56,9 +56,9 @@
                                           Footer="**Warning**: TDLib Logs will contain **private data** if Verbosity Level was ever set to VERBOSE or higher value.&#x0a;&#x0a;Using high Verbosity Level will dramatically slow down the app as well.">
                     <controls:BadgeButton Content="Verbosity Level">
                         <controls:BadgeButton.Badge>
-                            <ComboBox ItemsSource="{x:Bind ViewModel.VerbosityOptions}"
-                                      SelectedIndex="{x:Bind ViewModel.Verbosity, Mode=TwoWay}"
-                                      DisplayMemberPath="Text" />
+                            <controls:SettingsComboBox ItemsSource="{x:Bind ViewModel.VerbosityOptions}"
+                                                       SelectedIndex="{x:Bind ViewModel.Verbosity, Mode=TwoWay}"
+                                                       DisplayMemberPath="Text" />
                         </controls:BadgeButton.Badge>
                     </controls:BadgeButton>
                     <controls:BadgeButton Content="tdlib_log.txt"

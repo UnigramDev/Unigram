@@ -114,9 +114,9 @@
                 <controls:HeaderedControl Header="{CustomResource Calls}">
                     <controls:BadgeButton Content="{CustomResource VoipUseLessData}">
                         <controls:BadgeButton.Badge>
-                            <ComboBox ItemsSource="{x:Bind ViewModel.UseLessDataOptions}"
-                                      SelectedIndex="{x:Bind ViewModel.UseLessData, Mode=TwoWay}"
-                                      DisplayMemberPath="Text" />
+                            <controls:SettingsComboBox ItemsSource="{x:Bind ViewModel.UseLessDataOptions}"
+                                                       SelectedIndex="{x:Bind ViewModel.UseLessData, Mode=TwoWay}"
+                                                       DisplayMemberPath="Text" />
                         </controls:BadgeButton.Badge>
                     </controls:BadgeButton>
                 </controls:HeaderedControl>

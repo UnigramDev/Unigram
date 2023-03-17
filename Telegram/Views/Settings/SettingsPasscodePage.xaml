@@ -61,9 +61,9 @@
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Glyph="&#xE916;">
                         <controls:BadgeButton.Badge>
-                            <ComboBox ItemsSource="{x:Bind ViewModel.AutolockTimeoutOptions}"
-                                      SelectedIndex="{x:Bind ViewModel.AutolockTimeout, Mode=TwoWay}"
-                                      DisplayMemberPath="Text" />
+                            <controls:SettingsComboBox ItemsSource="{x:Bind ViewModel.AutolockTimeoutOptions}"
+                                                       SelectedIndex="{x:Bind ViewModel.AutolockTimeout, Mode=TwoWay}"
+                                                       DisplayMemberPath="Text" />
                         </controls:BadgeButton.Badge>
                     </controls:BadgeButton>
                 </controls:HeaderedControl>
