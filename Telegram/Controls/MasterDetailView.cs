@@ -415,10 +415,29 @@ namespace Telegram.Controls
 
         private void OnViewStateChanged()
         {
-            VisualStateManager.GoToState(this, AdaptivePanel.CurrentState == MasterDetailState.Minimal ? "Minimal" : "Expanded", false);
+            if (AdaptivePanel == null)
+            {
+                return;
+            }
+
+            VisualStateManager.GoToState(this, AdaptivePanel.CurrentState == MasterDetailState.Minimal && IsOnlyChild ? "Minimal" : "Expanded", false);
             ViewStateChanged?.Invoke(this, EventArgs.Empty);
 
             UpdateMasterVisibility();
+        }
+
+        private bool _isOnlyChild = true;
+        public bool IsOnlyChild
+        {
+            get => _isOnlyChild;
+            set
+            {
+                if (_isOnlyChild != value)
+                {
+                    _isOnlyChild = value;
+                    OnViewStateChanged();
+                }
+            }
         }
 
         #region Public methods

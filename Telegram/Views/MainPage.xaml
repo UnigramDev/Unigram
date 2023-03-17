@@ -88,7 +88,7 @@
                                     </Grid.ColumnDefinitions>
                                     <muxc:BreadcrumbBar x:Name="DetailHeaderPresenter"
                                                         Visibility="Collapsed"
-                                                        Margin="0,-4,0,0"
+                                                        Margin="0,-6,0,0"
                                                         VerticalAlignment="Top">
                                         <muxc:BreadcrumbBar.ItemTemplate>
                                             <DataTemplate x:DataType="navigation:NavigationStackItem">
@@ -269,9 +269,20 @@
               x:Name="ChatTabsLeft"
               Grid.Row="1">
             <Grid.RowDefinitions>
-                <RowDefinition />
                 <RowDefinition Height="Auto" />
+                <RowDefinition />
             </Grid.RowDefinitions>
+            <controls:ProfilePicture x:Name="PhotoSide"
+                                     Click="Photo_Click"
+                                     HorizontalAlignment="Left"
+                                     VerticalAlignment="Bottom"
+                                     Margin="22,2,0,12"
+                                     Width="28"
+                                     Height="28"
+                                     AutomationProperties.LandmarkType="Navigation"
+                                     AutomationProperties.Name="{CustomResource AccDescrOpenMenu}"
+                                     ToolTipService.ToolTip="{CustomResource AccDescrOpenMenu}" />
+
             <controls:TopNavView x:Name="ChatFiltersSide"
                                  ItemsSource="{x:Bind NavigationResults.View}"
                                  SelectedItem="{x:Bind ConvertFilter(ViewModel.SelectedFilter), Mode=TwoWay, BindBack=ConvertFilterBack}"
@@ -290,7 +301,8 @@
                                  ScrollViewer.VerticalScrollBarVisibility="Hidden"
                                  ScrollViewer.VerticalScrollMode="Auto"
                                  Height="Auto"
-                                 Width="68">
+                                 Width="72"
+                                 Grid.Row="1">
                 <controls:TopNavView.ItemTemplate>
                     <DataTemplate>
                         <cells:ChatFilterCell />
@@ -359,7 +371,7 @@
                                         </VisualStateManager.VisualStateGroups>
                                         <Border x:Name="Plate"
                                                 Width="64"
-                                                Margin="4,0,0,0"
+                                                Margin="4,0,4,0"
                                                 CornerRadius="4" />
                                         <ContentPresenter x:Name="ContentPresenter"
                                                           Grid.Column="1"
@@ -374,7 +386,7 @@
                                                           VerticalAlignment="Center"
                                                           AutomationProperties.AccessibilityView="Raw" />
                                         <Grid x:Name="SelectionIndicatorGrid"
-                                              Margin="4,4,0,4"
+                                              Margin="4,4,4,4"
                                               HorizontalAlignment="Left"
                                               VerticalAlignment="Center">
                                             <Rectangle x:Name="SelectionIndicator"
@@ -411,18 +423,6 @@
                     </GroupStyle>
                 </controls:TopNavView.GroupStyle>
             </controls:TopNavView>
-
-            <controls:ProfilePicture x:Name="PhotoSide"
-                                     Click="Photo_Click"
-                                     HorizontalAlignment="Left"
-                                     VerticalAlignment="Bottom"
-                                     Margin="22,8,0,18"
-                                     Width="28"
-                                     Height="28"
-                                     AutomationProperties.LandmarkType="Navigation"
-                                     AutomationProperties.Name="{CustomResource AccDescrOpenMenu}"
-                                     ToolTipService.ToolTip="{CustomResource AccDescrOpenMenu}"
-                                     Grid.Row="1" />
         </Grid>
 
         <controls:MasterDetailView x:Name="MasterDetail"

@@ -706,6 +706,7 @@ namespace Telegram.Views
 
             _tabsLeftCollapsed = !show;
             Root?.SetSidebarEnabled(show);
+            MasterDetail.IsOnlyChild = !show;
 
             Photo.Visibility = show || rpMasterTitlebar.SelectedIndex == 3
                 ? Visibility.Collapsed
