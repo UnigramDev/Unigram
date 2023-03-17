@@ -1394,46 +1394,6 @@ namespace Telegram.Common
             return 0;
         }
 
-        public static TdNetworkType GetNetworkType(this NetworkStatisticsEntry entry)
-        {
-            return TdNetworkType.WiFi;
-
-            if (entry is NetworkStatisticsEntryCall call)
-            {
-                switch (call.NetworkType)
-                {
-                    case NetworkTypeMobile:
-                        return TdNetworkType.Mobile;
-                    case NetworkTypeMobileRoaming:
-                        return TdNetworkType.MobileRoaming;
-                    case NetworkTypeNone:
-                        return TdNetworkType.None;
-                    case NetworkTypeOther:
-                    //return TdNetworkType.Other;
-                    case NetworkTypeWiFi:
-                        return TdNetworkType.WiFi;
-                }
-            }
-            else if (entry is NetworkStatisticsEntryFile file)
-            {
-                switch (file.NetworkType)
-                {
-                    case NetworkTypeMobile:
-                        return TdNetworkType.Mobile;
-                    case NetworkTypeMobileRoaming:
-                        return TdNetworkType.MobileRoaming;
-                    case NetworkTypeNone:
-                        return TdNetworkType.None;
-                    case NetworkTypeOther:
-                    //return TdNetworkType.Other;
-                    case NetworkTypeWiFi:
-                        return TdNetworkType.WiFi;
-                }
-            }
-
-            return TdNetworkType.Other;
-        }
-
         public static bool AreTheSame(this MessageSender sender, MessageSender compare)
         {
             if (sender is MessageSenderUser user1 && compare is MessageSenderUser user2)

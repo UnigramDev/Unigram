@@ -117,6 +117,8 @@ namespace Telegram.Converters
 
         public const string Image = "\uEB9F";
 
+        public const string ArrowUpload = "\uEA01";
+
         public const string Sticker = "\uF4AA";
         public const string Sticker24 = "\uE9E2";
         public const string Gif = "\uF4A9";

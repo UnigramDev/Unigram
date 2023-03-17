@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Collections;
-using Telegram.Common;
 using Telegram.Converters;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -24,7 +23,7 @@ namespace Telegram.ViewModels.Settings
         public SettingsNetworkViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            Items = new MvxObservableCollection<NetworkStatisticsList>();
+            Items = new MvxObservableCollection<NetworkStatisticsItem>();
         }
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -34,71 +33,53 @@ namespace Telegram.ViewModels.Settings
             {
                 SinceDate = Converter.DateTime(statistics.SinceDate);
 
-                var groups = new Dictionary<TdNetworkType, List<NetworkStatisticsEntry>>();
+                var notes = new NetworkStatisticsEntryFile(new FileTypeNotes(), null, 0, 0);
+                var other = new NetworkStatisticsEntryFile(new FileTypeOther(), null, 0, 0);
+
+                var totalSent = 0l;
+                var totalReceived = 0l;
+
+                var results = new List<NetworkStatisticsEntry>
+                {
+                    notes,
+                    other
+                };
 
                 foreach (var entry in statistics.Entries)
                 {
-                    var type = entry.GetNetworkType();
-                    if (groups.TryGetValue(type, out List<NetworkStatisticsEntry> entries))
+                    if (entry is NetworkStatisticsEntryFile file)
                     {
-                        entries.Add(entry);
-                    }
-                    else
-                    {
-                        groups[type] = new List<NetworkStatisticsEntry>();
-                        groups[type].Add(entry);
-                    }
-                }
-
-                foreach (var group in groups.ToList())
-                {
-                    var notes = new NetworkStatisticsEntryFile(new FileTypeNotes(), null, 0, 0);
-                    var other = new NetworkStatisticsEntryFile(new FileTypeOther(), null, 0, 0);
-                    var total = new NetworkStatisticsEntryFile(new FileTypeTotal(), null, 0, 0);
-
-                    var results = new List<NetworkStatisticsEntry>
-                    {
-                        notes,
-                        other,
-                        total
-                    };
-
-                    foreach (var entry in group.Value)
-                    {
-                        if (entry is NetworkStatisticsEntryFile file)
+                        if (IsSecondaryType(file.FileType))
                         {
-                            if (IsSecondaryType(file.FileType))
-                            {
-                                other.SentBytes += file.SentBytes;
-                                other.ReceivedBytes += file.ReceivedBytes;
-                            }
-                            else if (IsNotesType(file.FileType))
-                            {
-                                notes.SentBytes += file.SentBytes;
-                                notes.ReceivedBytes += file.ReceivedBytes;
-                            }
-                            else
-                            {
-                                results.Add(entry);
-                            }
-
-                            total.SentBytes += file.SentBytes;
-                            total.ReceivedBytes += file.ReceivedBytes;
+                            other.SentBytes += file.SentBytes;
+                            other.ReceivedBytes += file.ReceivedBytes;
                         }
-                        else if (entry is NetworkStatisticsEntryCall call)
+                        else if (IsNotesType(file.FileType))
+                        {
+                            notes.SentBytes += file.SentBytes;
+                            notes.ReceivedBytes += file.ReceivedBytes;
+                        }
+                        else
                         {
                             results.Add(entry);
-
-                            total.SentBytes += call.SentBytes;
-                            total.ReceivedBytes += call.ReceivedBytes;
                         }
-                    }
 
-                    groups[group.Key] = results;
+                        totalSent += file.SentBytes;
+                        totalReceived += file.ReceivedBytes;
+                    }
+                    else if (entry is NetworkStatisticsEntryCall call)
+                    {
+                        results.Add(entry);
+
+                        totalSent += call.SentBytes;
+                        totalReceived += call.ReceivedBytes;
+                    }
                 }
 
-                Items.ReplaceWith(groups.Select(x => new NetworkStatisticsList(x.Key, x.Value.OrderBy(y => y, new NetworkStatisticsComparer()))));
-                SelectedItem = Items.FirstOrDefault();
+                Items.ReplaceWith(results.Select(x => new NetworkStatisticsItem(x)).OrderByDescending(x => x.TotalBytes));
+
+                TotalSentBytes = totalSent;
+                TotalReceivedBytes = totalReceived;
             }
         }
 
@@ -111,6 +92,7 @@ namespace Telegram.ViewModels.Settings
                 case FileTypeVideoNote:
                 case FileTypeVoiceNote:
                 case FileTypeDocument:
+                case FileTypeAudio:
                     return false;
                 default:
                     return true;
@@ -136,14 +118,21 @@ namespace Telegram.ViewModels.Settings
             set => Set(ref _sinceDate, value);
         }
 
-        private NetworkStatisticsList _selectedItem;
-        public NetworkStatisticsList SelectedItem
+        private long _totalSentBytes;
+        public long TotalSentBytes
         {
-            get => _selectedItem;
-            set => Set(ref _selectedItem, value);
+            get => _totalSentBytes;
+            set => Set(ref _totalSentBytes, value);
         }
 
-        public MvxObservableCollection<NetworkStatisticsList> Items { get; private set; }
+        private long _totalReceivedBytes;
+        public long TotalReceivedBytes
+        {
+            get => _totalReceivedBytes;
+            set => Set(ref _totalReceivedBytes, value);
+        }
+
+        public MvxObservableCollection<NetworkStatisticsItem> Items { get; private set; }
 
         public async void Reset()
         {
@@ -156,66 +145,64 @@ namespace Telegram.ViewModels.Settings
         }
     }
 
-    public class NetworkStatisticsList : KeyedList<TdNetworkType, NetworkStatisticsEntry>
+    public class NetworkStatisticsItem
     {
-        public NetworkStatisticsList(TdNetworkType key, IEnumerable<NetworkStatisticsEntry> source)
-            : base(key, source)
+        public NetworkStatisticsItem(NetworkStatisticsEntry entry)
+            : this(entry as NetworkStatisticsEntryFile)
         {
+
         }
 
-        public override string ToString()
+        public NetworkStatisticsItem(NetworkStatisticsEntryFile entry)
         {
-            switch (Key)
+            if (entry == null)
             {
-                case TdNetworkType.Mobile:
-                    return Strings.Resources.NetworkUsageMobileTab;
-                case TdNetworkType.MobileRoaming:
-                    return Strings.Resources.NetworkUsageRoamingTab;
-                case TdNetworkType.WiFi:
-                    return Strings.Resources.NetworkUsageWiFiTab;
-                default:
-                    return Key.ToString();
+                return;
             }
-        }
-    }
 
-    public class NetworkStatisticsComparer : IComparer<NetworkStatisticsEntry>
-    {
-        public int Compare(NetworkStatisticsEntry x, NetworkStatisticsEntry y)
-        {
-            var xv = GetValue(x);
-            var yv = GetValue(y);
+            TotalBytes = entry.SentBytes + entry.ReceivedBytes;
+            SentBytes = entry.SentBytes;
+            ReceivedBytes = entry.ReceivedBytes;
 
-            return xv.CompareTo(yv);
-        }
-
-        private int GetValue(NetworkStatisticsEntry x)
-        {
-            switch (x)
+            switch (entry.FileType)
             {
-                case NetworkStatisticsEntryCall:
-                    return 4;
-                case NetworkStatisticsEntryFile file:
-                    switch (file.FileType)
-                    {
-                        case FileTypePhoto:
-                            return 0;
-                        case FileTypeVideo:
-                            return 1;
-                        case FileTypeNotes:
-                            return 2;
-                        case FileTypeDocument:
-                            return 3;
-                        case FileTypeOther:
-                            return 5;
-                        case FileTypeTotal:
-                            return 6;
-                    }
+                case FileTypeNotes:
+                    Name = Strings.Resources.LocalAudioCache;
+                    Glyph = Icons.MicOn;
+                    break;
+                case FileTypeOther:
+                    Name = Strings.Resources.MessagesOverview;
+                    Glyph = Icons.ChatMultiple;
+                    break;
+                case FileTypeAudio:
+                    Name = Strings.Resources.LocalMusicCache;
+                    Glyph = Icons.PlayCircle;
+                    break;
+                case FileTypeDocument:
+                    Name = Strings.Resources.LocalDocumentCache;
+                    Glyph = Icons.Document;
+                    break;
+                case FileTypePhoto:
+                    Name = Strings.Resources.LocalPhotoCache;
+                    Glyph = Icons.Image;
+                    break;
+                case FileTypeVideo:
+                    Name = Strings.Resources.LocalVideoCache;
+                    Glyph = Icons.Video;
                     break;
             }
 
-            return int.MaxValue;
         }
+
+        public string Glyph { get; }
+
+        public string Name { get; }
+
+        public long TotalBytes { get; }
+
+        public long SentBytes { get; }
+
+        public long ReceivedBytes { get; }
     }
 
     public class FileTypeNotes : FileType
@@ -242,15 +229,6 @@ namespace Telegram.ViewModels.Settings
         }
     }
 
-    public enum TdNetworkType
-    {
-        Mobile,
-        MobileRoaming,
-        None,
-        Other,
-        WiFi
-    }
-
     public enum TdFileType
     {
         Animation,
@@ -269,72 +247,4 @@ namespace Telegram.ViewModels.Settings
         VoiceNote,
         Wallpaper
     }
-
-    //public class SettingsStatsNetwork : BindableBase
-    //{
-    //    private readonly IStatsService _statsService;
-
-    //    public SettingsStatsNetwork(IStatsService statsService, string title, NetworkType type)
-    //    {
-    //        _statsService = statsService;
-
-    //        Title = title;
-    //        Type = type;
-
-    //        Items = new MvxObservableCollection<SettingsStatsDataBase>
-    //        {
-    //            new SettingsStatsData(statsService, Strings.Resources.LocalPhotoCache, type, DataType.Photos),
-    //            new SettingsStatsData(statsService, Strings.Resources.LocalVideoCache, type, DataType.Videos),
-    //            new SettingsStatsData(statsService, Strings.Resources.LocalAudioCache, type, DataType.Audios),
-    //            new SettingsStatsData(statsService, Strings.Resources.FilesDataUsage, type, DataType.Files),
-    //            new SettingsStatsCallData(statsService, Strings.Resources.CallsDataUsage, type, DataType.Calls),
-    //            new SettingsStatsDataBase(statsService, Strings.Resources.MessagesValueUsage, type, DataType.Messages),
-    //            new SettingsStatsDataBase(statsService, Strings.Resources.TotalDataUsage, type, DataType.Total)
-    //        };
-
-    //        ResetCommand = new RelayCommand(ResetExecute);
-
-    //        Refresh();
-    //    }
-
-    //    public string Title { get; private set; }
-
-    //    public NetworkType Type { get; private set; }
-
-    //    public void Refresh()
-    //    {
-    //        ResetDate = Utils.UnixTimestampToDateTime(_statsService.GetResetStatsDate(Type) / 1000);
-
-    //        foreach (var item in Items)
-    //        {
-    //            item.Refresh();
-    //        }
-    //    }
-
-    //    private DateTime _resetDate;
-    //    public DateTime ResetDate
-    //    {
-    //        get
-    //        {
-    //            return _resetDate;
-    //        }
-    //        set
-    //        {
-    //            Set(ref _resetDate, value);
-    //        }
-    //    }
-
-    //    public MvxObservableCollection<SettingsStatsDataBase> Items { get; private set; }
-
-    //    public RelayCommand ResetCommand { get; }
-    //    private async void ResetExecute()
-    //    {
-    //        var confirm = await ShowPopupAsync(Strings.Resources.ResetStatisticsAlert, Strings.Resources.AppName, Strings.Resources.Reset, Strings.Resources.Cancel);
-    //        if (confirm == ContentDialogResult.Primary)
-    //        {
-    //            _statsService.ResetStats(Type);
-    //            Refresh();
-    //        }
-    //    }
-    //}
 }

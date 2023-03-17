@@ -4,6 +4,8 @@
                     xmlns:local="using:Microsoft.UI.Xaml.Controls"
                     xmlns:contract7Present="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract,7)">
 
+    <Thickness x:Key="ExpanderChevronMargin">8,0,8,0</Thickness>
+    
     <Style x:Key="SettingsExpanderStyle"
            TargetType="local:Expander">
         <!-- We won't make this control tab stoppable, since the tab focus should go
@@ -26,7 +28,7 @@
         <Setter Property="MinWidth"
                 Value="{ThemeResource FlyoutThemeMinWidth}" />
         <Setter Property="MinHeight"
-                Value="{StaticResource ExpanderMinHeight}" />
+                Value="44" />
         <Setter Property="BorderThickness"
                 Value="0,0,0,1" />
         <Setter Property="BorderBrush"
@@ -34,9 +36,9 @@
         <Setter Property="Padding"
                 Value="16,0,0,0" />
         <Setter Property="HorizontalContentAlignment"
-                Value="Stretch" />
+                Value="Left" />
         <Setter Property="VerticalContentAlignment"
-                Value="Stretch" />
+                Value="Center" />
         <Setter Property="HorizontalAlignment"
                 Value="Stretch" />
         <Setter Property="VerticalAlignment"
@@ -176,8 +178,8 @@
                                       Padding="0"
                                       Style="{StaticResource ExpanderHeaderDownStyle}"
                                       HorizontalAlignment="Stretch"
-                                      HorizontalContentAlignment="Left"
-                                      VerticalContentAlignment="{StaticResource ExpanderHeaderVerticalContentAlignment}"
+                                      HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                      VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                                       Content="{TemplateBinding Header}"
                                       ContentTemplate="{TemplateBinding HeaderTemplate}"
                                       ContentTemplateSelector="{TemplateBinding HeaderTemplateSelector}"
@@ -199,8 +201,8 @@
                                 <ContentPresenter Content="{TemplateBinding Content}"
                                                   ContentTemplate="{TemplateBinding ContentTemplate}"
                                                   ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
-                                                  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                                  HorizontalContentAlignment="Stretch"
+                                                  VerticalContentAlignment="Stretch" />
                                 <Border.RenderTransform>
                                     <CompositeTransform />
                                 </Border.RenderTransform>
