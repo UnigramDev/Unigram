@@ -76,7 +76,7 @@ namespace Telegram.Common
                 };
 
                 // Special case for emoji
-                if (entity == AutocompleteEntity.Emoji && result.Length == 1 && result[0] == char.ToLower(result[0]))
+                if (entity == AutocompleteEntity.Emoji && result.Length == 1 && char.IsUpper(result[0]))
                 {
                     entity = AutocompleteEntity.None;
                     result = string.Empty;
