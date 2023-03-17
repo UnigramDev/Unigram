@@ -212,10 +212,6 @@
                               Content="{CustomResource SendByEnter}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox IsChecked="{x:Bind ViewModel.IsLargeEmojiEnabled, Mode=TwoWay}"
-                              Content="{CustomResource LargeEmoji}"
-                              Style="{StaticResource SettingsCheckBoxStyle}" />
-
                     <CheckBox IsChecked="{x:Bind ViewModel.IsReplaceEmojiEnabled, Mode=TwoWay}"
                               Content="{CustomResource lng_settings_replace_emojis}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />

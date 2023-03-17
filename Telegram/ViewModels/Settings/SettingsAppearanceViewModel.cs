@@ -226,16 +226,6 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        public bool IsLargeEmojiEnabled
-        {
-            get => !ClientService.Options.DisableAnimatedEmoji;
-            set
-            {
-                ClientService.Options.DisableAnimatedEmoji = !value;
-                RaisePropertyChanged();
-            }
-        }
-
         public bool IsReplaceEmojiEnabled
         {
             get => Settings.IsReplaceEmojiEnabled;
