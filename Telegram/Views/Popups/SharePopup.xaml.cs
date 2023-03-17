@@ -500,7 +500,7 @@ namespace Telegram.Views.Popups
             }
             else if (args.ItemContainer.ContentTemplateRoot is ChatShareCell content)
             {
-                content.UpdateState(sender.SelectionMode == ListViewSelectionMode.Multiple && args.ItemContainer.IsSelected, false);
+                content.UpdateState(args.ItemContainer.IsSelected, false);
                 content.UpdateChat(ViewModel.ClientService, args, OnContainerContentChanging);
             }
         }

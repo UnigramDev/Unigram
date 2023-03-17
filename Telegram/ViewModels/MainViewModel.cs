@@ -254,6 +254,17 @@ namespace Telegram.ViewModels
             }
         }
 
+        public void Handle(UpdateAddChatMembersPrivacyForbidden update)
+        {
+            BeginOnUIThread(() => UpdateAddChatMembersPrivacyForbidden(update.ChatId, update.UserIds));
+        }
+
+        private async void UpdateAddChatMembersPrivacyForbidden(long chatId, IList<long> userIds)
+        {
+            var popup = new ChatInviteFallbackPopup(ClientService, chatId, userIds);
+            await ShowPopupAsync(popup);
+        }
+
         public void Handle(UpdateChatFilters update)
         {
             BeginOnUIThread(() => UpdateChatFilters(update.ChatFilters, update.MainChatListPosition));
@@ -430,6 +441,7 @@ namespace Telegram.ViewModels
                 .Subscribe<UpdateUnreadChatCount>(Handle)
                 .Subscribe<UpdateDeleteMessages>(Handle)
                 .Subscribe<UpdateChatFilters>(Handle)
+                .Subscribe<UpdateAddChatMembersPrivacyForbidden>(Handle)
                 .Subscribe<UpdateAppVersion>(Handle)
                 .Subscribe<UpdateWindowActivated>(Handle);
         }

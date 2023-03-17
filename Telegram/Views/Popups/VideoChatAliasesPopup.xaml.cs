@@ -98,7 +98,7 @@ namespace Telegram.Views.Popups
             }
             else if (args.ItemContainer.ContentTemplateRoot is ChatShareCell content)
             {
-                content.UpdateState(false, false);
+                content.UpdateState(args.ItemContainer.IsSelected, false);
                 content.UpdateMessageSender(_clientService, args, OnContainerContentChanging);
             }
         }
