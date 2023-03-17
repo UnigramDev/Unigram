@@ -728,6 +728,9 @@
     <Compile Include="Views\Popups\BackgroundPopup.xaml.cs">
       <DependentUpon>BackgroundPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Popups\ChatInviteFallbackPopup.xaml.cs">
+      <DependentUpon>ChatInviteFallbackPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Popups\ChatJoinRequestsPopup.xaml.cs">
       <DependentUpon>ChatJoinRequestsPopup.xaml</DependentUpon>
     </Compile>
@@ -2044,6 +2047,10 @@
     <Page Include="Views\Popups\BackgroundPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Popups\ChatInviteFallbackPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Popups\ChatJoinRequestsPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
