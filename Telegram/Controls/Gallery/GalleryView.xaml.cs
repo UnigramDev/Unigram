@@ -885,6 +885,11 @@ namespace Telegram.Controls.Gallery
                 ViewModel?.SaveCommand.Execute();
                 args.Handled = true;
             }
+            else if (args.VirtualKey is VirtualKey.F11 || (args.VirtualKey is VirtualKey.F && args.OnlyControl))
+            {
+                FullScreen_Click(null, null);
+                args.Handled = true;
+            }
             else if (keyCode is 187 or 189 || args.VirtualKey is VirtualKey.Add or VirtualKey.Subtract)
             {
                 ScrollingHost.Zoom(keyCode is 187 || args.VirtualKey is VirtualKey.Add);
