@@ -882,9 +882,13 @@ namespace Telegram.ViewModels
             {
                 _voipService.Start(chat.Id, video);
             }
-            else
+            else if (chat.VideoChat.GroupCallId == 0)
             {
                 await _groupCallService.CreateAsync(chat.Id);
+            }
+            else
+            {
+                await _groupCallService.JoinAsync(chat.Id);
             }
         }
 
