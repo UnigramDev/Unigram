@@ -4,7 +4,6 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Threading;
 using Telegram.Common;
@@ -15,7 +14,6 @@ using Windows.Storage;
 using Windows.UI;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Services.Settings
 {
@@ -203,8 +201,6 @@ namespace Telegram.Services.Settings
             {
                 if (force is not null)
                 {
-                    // TODO: maybe a better place?
-                    BackdropMaterial.SetApplyToRootOrPageBackground(window.Content as Control, PowerSavingPolicy.AreMaterialsEnabled);
                     Theme.Current.Update(theme);
                 }
 
