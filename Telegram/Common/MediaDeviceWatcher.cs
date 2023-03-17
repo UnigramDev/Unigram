@@ -228,10 +228,8 @@ namespace Telegram.Common
                 catch { }
                 finally
                 {
-                    if (capture != null)
-                    {
-                        capture.Dispose();
-                    }
+                    capture?.Dispose();
+                    success = !required;
                 }
 
                 return success;
