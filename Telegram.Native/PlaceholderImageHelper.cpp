@@ -784,22 +784,8 @@ namespace winrt::Telegram::Native::implementation
         HRESULT result;
         UINT creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
 
-        D3D_FEATURE_LEVEL featureLevels[] =
-        {
-            //D3D_FEATURE_LEVEL_12_2,
-            //D3D_FEATURE_LEVEL_12_1,
-            //D3D_FEATURE_LEVEL_12_0,
-            D3D_FEATURE_LEVEL_11_1,
-            D3D_FEATURE_LEVEL_11_0,
-            D3D_FEATURE_LEVEL_10_1,
-            D3D_FEATURE_LEVEL_10_0,
-            D3D_FEATURE_LEVEL_9_3,
-            D3D_FEATURE_LEVEL_9_2,
-            D3D_FEATURE_LEVEL_9_1
-        };
-
         winrt::com_ptr<ID3D11DeviceContext> context;
-        ReturnIfFailed(result, D3D11CreateDevice(nullptr,	// specify null to use the default adapter
+        if (FAILED(D3D11CreateDevice(nullptr,               // specify null to use the default adapter
             D3D_DRIVER_TYPE_HARDWARE, 0,
             creationFlags,									// optionally set debug and Direct2D compatibility flags
             NULL,											// list of feature levels this app can support
@@ -808,7 +794,20 @@ namespace winrt::Telegram::Native::implementation
             m_d3dDevice.put(),								// returns the Direct3D device created
             &m_featureLevel,								// returns feature level of device created
             context.put()									// returns the device immediate context
-        ));
+        )))
+        {
+            // Try again using WARP (software rendering)
+            ReturnIfFailed(result, D3D11CreateDevice(nullptr,
+                D3D_DRIVER_TYPE_WARP, 0,
+                creationFlags,
+                NULL,
+                0,
+                D3D11_SDK_VERSION,
+                m_d3dDevice.put(),
+                &m_featureLevel,
+                context.put()
+            ));
+        }
 
         winrt::com_ptr<IDXGIDevice> dxgiDevice = m_d3dDevice.as<IDXGIDevice>();
         ReturnIfFailed(result, m_d2dFactory->CreateDevice(dxgiDevice.get(), m_d2dDevice.put()));
