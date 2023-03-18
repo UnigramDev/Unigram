@@ -12,31 +12,28 @@
     <Grid>
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
-                      VerticalScrollMode="Auto"
-                      Margin="-24,-16,-24,0">
-            <StackPanel Spacing="16">
-                <controls:HeaderedControl Header="{x:Bind ViewModel.Header, Mode=OneWay}">
-                    <CheckBox IsChecked="{x:Bind ViewModel.Contacts, Mode=TwoWay}"
-                              Content="{CustomResource AutodownloadContacts}"
-                              Style="{StaticResource SettingsCheckBoxStyle}" />
+                      VerticalScrollMode="Auto">
+            <StackPanel Spacing="8">
+                <TextBlock Text="{x:Bind ViewModel.Header, Mode=OneWay}"
+                           Style="{StaticResource BaseTextBlockStyle}" />
 
-                    <CheckBox IsChecked="{x:Bind ViewModel.PrivateChats, Mode=TwoWay}"
-                              Content="{CustomResource AutodownloadPrivateChats}"
-                              Style="{StaticResource SettingsCheckBoxStyle}" />
+                <CheckBox IsChecked="{x:Bind ViewModel.Contacts, Mode=TwoWay}"
+                          Content="{CustomResource AutodownloadContacts}" />
 
-                    <CheckBox IsChecked="{x:Bind ViewModel.Groups, Mode=TwoWay}"
-                              Content="{CustomResource AutodownloadGroupChats}"
-                              Style="{StaticResource SettingsCheckBoxStyle}" />
+                <CheckBox IsChecked="{x:Bind ViewModel.PrivateChats, Mode=TwoWay}"
+                          Content="{CustomResource AutodownloadPrivateChats}" />
 
-                    <CheckBox IsChecked="{x:Bind ViewModel.Channels, Mode=TwoWay}"
-                              Content="{CustomResource AutodownloadChannels}"
-                              Style="{StaticResource SettingsCheckBoxStyle}" />
-                </controls:HeaderedControl>
+                <CheckBox IsChecked="{x:Bind ViewModel.Groups, Mode=TwoWay}"
+                          Content="{CustomResource AutodownloadGroupChats}" />
 
-                <controls:HeaderedControl Header="{CustomResource AutoDownloadMaxFileSize}"
-                                          Footer="{x:Bind ConvertUpTo(ViewModel.Limit), Mode=OneWay}"
-                                          Visibility="{x:Bind ViewModel.IsLimitSupported, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                          Background="{ThemeResource SettingsItemBackground}">
+                <CheckBox IsChecked="{x:Bind ViewModel.Channels, Mode=TwoWay}"
+                          Content="{CustomResource AutodownloadChannels}" />
+
+                <StackPanel Visibility="{x:Bind ViewModel.IsLimitSupported, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <TextBlock Text="{CustomResource AutoDownloadMaxFileSize}"
+                               Style="{StaticResource BaseTextBlockStyle}"
+                               Margin="0,16,0,0" />
+
                     <Slider Value="{x:Bind ConvertLimit(ViewModel.Limit), Mode=TwoWay, BindBack=ConvertLimitBack}"
                             Minimum="0"
                             Maximum="1"
@@ -46,8 +43,12 @@
                             TickFrequency="0.25"
                             TickPlacement="Outside"
                             IsThumbToolTipEnabled="False"
-                            Margin="12,6,12,6" />
-                </controls:HeaderedControl>
+                            Margin="0,8,0,8" />
+
+                    <TextBlock Text="{x:Bind ConvertUpTo(ViewModel.Limit), Mode=OneWay}"
+                               Style="{StaticResource InfoCaptionTextBlockStyle}"
+                               Margin="0,0,0,8" />
+                </StackPanel>
             </StackPanel>
         </ScrollViewer>
     </Grid>

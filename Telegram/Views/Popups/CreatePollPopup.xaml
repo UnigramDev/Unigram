@@ -127,6 +127,7 @@
 
                                 <TextBox Text="{x:Bind Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                          PlaceholderText="{CustomResource OptionHint}"
+                                         Style="{StaticResource NoDeleteTextBoxStyle}"
                                          MaxLength="100"
                                          Loaded="Option_Loaded"
                                          PreviewKeyDown="Option_PreviewKeyDown"
