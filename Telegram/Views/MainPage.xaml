@@ -70,9 +70,10 @@
                                             Canvas.ZIndex="2" />
 
                             <Grid x:Name="DetailHeaderPresenter2"
+                                  Background="{ThemeResource LayerFillColorDefaultBrush}"
                                   CornerRadius="{ThemeResource NavigationViewContentGridCornerRadius}">
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="40" />
+                                    <RowDefinition Height="56" />
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
 
@@ -88,7 +89,7 @@
                                     </Grid.ColumnDefinitions>
                                     <muxc:BreadcrumbBar x:Name="DetailHeaderPresenter"
                                                         Visibility="Collapsed"
-                                                        Margin="0,-6,0,0"
+                                                        Margin="0,12,0,0"
                                                         VerticalAlignment="Top">
                                         <muxc:BreadcrumbBar.ItemTemplate>
                                             <DataTemplate x:DataType="navigation:NavigationStackItem">
@@ -102,6 +103,7 @@
                                                     HorizontalContentAlignment="Right"
                                                     VerticalContentAlignment="Stretch"
                                                     VerticalAlignment="Top"
+                                                    Margin="0,16,0,0"
                                                     Canvas.ZIndex="1" />
                                 </Grid>
 

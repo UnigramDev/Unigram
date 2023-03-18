@@ -194,7 +194,6 @@ namespace Telegram.Controls
                     else
                     {
                         BackgroundPart.Visibility = Visibility.Collapsed;
-                        BorderPart.Visibility = Visibility.Collapsed;
                     }
                 };
 
@@ -207,7 +206,6 @@ namespace Telegram.Controls
                 fadeIn.InsertKeyFrame(show ? 1 : 0, 0);
 
                 visual.StartAnimation("Opacity", opacity);
-                border.StartAnimation("Opacity", opacity);
                 bread.StartAnimation("Opacity", fadeIn);
 
                 batch.End();
@@ -215,11 +213,9 @@ namespace Telegram.Controls
             else
             {
                 visual.Opacity = show ? 1 : 0;
-                border.Opacity = show ? 1 : 0;
                 bread.Opacity = show ? 0 : 1;
 
                 BackgroundPart.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
-                BorderPart.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
                 DetailHeaderPresenter.Visibility = show ? Visibility.Collapsed : Visibility.Visible;
             }
         }
@@ -245,7 +241,7 @@ namespace Telegram.Controls
             BorderPart.Visibility = _backgroundCollapsed ? Visibility.Collapsed : Visibility.Visible;
 
             var detailVisual = ElementCompositionPreview.GetElementVisual(DetailPresenter);
-            detailVisual.Clip = Window.Current.Compositor.CreateInsetClip(0, -40, 0, 0);
+            detailVisual.Clip = Window.Current.Compositor.CreateInsetClip(0, -56, 0, 0);
 
             if (DetailFrame != null)
             {

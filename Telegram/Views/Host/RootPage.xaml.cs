@@ -789,14 +789,6 @@ namespace Telegram.Views.Host
             if (_isSidebarEnabled != value)
             {
                 _isSidebarEnabled = value;
-
-                AccountsPlaceholder.Visibility = value
-                    ? Visibility.Collapsed
-                    : Visibility.Visible;
-
-                Accounts.VerticalAlignment = value
-                    ? VerticalAlignment.Bottom
-                    : VerticalAlignment.Top;
             }
         }
 
