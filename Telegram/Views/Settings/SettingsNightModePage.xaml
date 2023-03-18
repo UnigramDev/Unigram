@@ -21,9 +21,7 @@
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <ScrollViewer VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
-            <StackPanel Spacing="16"
-                        Margin="0,0,0,32">
-
+            <controls:SettingsPanel>
                 <controls:HeaderedControl>
                     <controls:PivotRadioButton Content="{CustomResource AutoNightDisabled}"
                                                SelectedValue="{x:Bind ConvertMode(ViewModel.Mode), BindBack=ConvertModeBack, Mode=TwoWay}"
@@ -162,7 +160,7 @@
                         </ListView.Footer>
                     </ListView>
                 </controls:HeaderedControl>
-            </StackPanel>
+            </controls:SettingsPanel>
         </ScrollViewer>
     </Grid>
 </local:HostedPage>

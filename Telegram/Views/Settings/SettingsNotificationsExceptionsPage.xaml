@@ -26,7 +26,7 @@
                                 ContainerContentChanging="OnContainerContentChanging"
                                 SelectionMode="None">
             <ListView.Header>
-                <StackPanel Spacing="16">
+                <controls:SettingsPanel IsHeader="True">
                     <controls:HeaderedControl>
                         <CheckBox x:Name="Alert"
                                   Click="{x:Bind ViewModel.Scope.SendExecute}"
@@ -53,7 +53,7 @@
                                Text="{CustomResource NotificationsExceptions}"
                                Style="{StaticResource BaseTextBlockStyle}"
                                Margin="24,16,24,8" />
-                </StackPanel>
+                </controls:SettingsPanel>
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate>

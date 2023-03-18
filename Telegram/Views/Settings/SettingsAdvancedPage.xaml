@@ -11,8 +11,7 @@
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <ScrollViewer VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
-            <StackPanel Spacing="16"
-                        Margin="0,0,0,32">
+            <controls:SettingsPanel>
                 <!--<controls:HeaderedControl>
                     <controls:BadgeButton
                         Content="Shortcuts"
@@ -44,7 +43,7 @@
                                           Content="{x:Bind ViewModel.UpdateText, Mode=OneWay}"
                                           IsEnabled="{x:Bind ViewModel.IsUpdateEnabled, Mode=OneWay}" />
                 </controls:HeaderedControl>
-            </StackPanel>
+            </controls:SettingsPanel>
         </ScrollViewer>
     </Grid>
 </local:HostedPage>

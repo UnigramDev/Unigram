@@ -18,7 +18,7 @@
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <ScrollViewer x:Name="ScrollingHost">
-            <StackPanel Margin="0,0,0,32">
+            <controls:SettingsPanel>
                 <controls:HeaderedControl x:Name="Enable"
                                           Footer="Quickly reply to a message by double clicking on it">
                     <CheckBox IsChecked="{x:Bind ViewModel.IsQuickReplySelected, Mode=TwoWay}"
@@ -40,7 +40,7 @@
                         </controls:BadgeButton.Badge>
                     </controls:BadgeButton>
                 </controls:HeaderedControl>
-            </StackPanel>
+            </controls:SettingsPanel>
         </ScrollViewer>
     </Grid>
 </local:HostedPage>

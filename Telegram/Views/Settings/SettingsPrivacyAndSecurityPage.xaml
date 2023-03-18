@@ -13,8 +13,7 @@
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
-            <StackPanel Spacing="16"
-                        Margin="0,0,0,32">
+            <controls:SettingsPanel>
                 <controls:HeaderedControl>
                     <controls:BadgeButton Content="{CustomResource BlockedUsers}"
                                           Badge="{x:Bind ViewModel.BlockedUsers, Mode=OneWay}"
@@ -168,7 +167,7 @@
                               Content="{CustomResource SecretWebPage}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
                 </controls:HeaderedControl>
-            </StackPanel>
+            </controls:SettingsPanel>
         </ScrollViewer>
     </Grid>
 </local:HostedPage>

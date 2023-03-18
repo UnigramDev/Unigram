@@ -3578,7 +3578,7 @@
                         <ContentControl x:Name="BadgePresenter"
                                         Content="{TemplateBinding Badge}"
                                         Visibility="{TemplateBinding BadgeVisibility}"
-                                        Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                                         Height="44"
                                         Padding="12,0,12,0"
                                         HorizontalContentAlignment="Right"

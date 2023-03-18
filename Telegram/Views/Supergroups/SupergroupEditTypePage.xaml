@@ -36,7 +36,7 @@
                                 CanDragItems="True"
                                 AllowDrop="True">
             <ListView.Header>
-                <StackPanel>
+                <controls:SettingsPanel IsHeader="True">
                     <controls:HeaderedControl x:Name="Subheader"
                                               Header="{CustomResource ChannelTypeHeader}"
                                               Footer="{x:Bind ConvertFooter(ViewModel.IsPublic), Mode=OneWay}">
@@ -95,7 +95,7 @@
                                Text="{CustomResource UsernamesChannelHeader}"
                                Style="{StaticResource BaseTextBlockStyle}"
                                Margin="24,16,0,8" />
-                </StackPanel>
+                </controls:SettingsPanel>
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="viewModels:UsernameInfo">
@@ -140,7 +140,6 @@
                     <ItemsStackPanel VerticalAlignment="Top" />
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
-
         </controls:TableListView>
     </Grid>
 </local:HostedPage>

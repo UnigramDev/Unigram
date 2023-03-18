@@ -26,7 +26,7 @@
                                 ChoosingItemContainer="OnChoosingItemContainer"
                                 VerticalContentAlignment="Top">
             <ListView.Header>
-                <StackPanel Spacing="16">
+                <controls:SettingsPanel IsHeader="True">
                     <controls:HeaderedControl>
                         <controls:BadgeButton Content="{CustomResource AddProxy}"
                                               Command="{x:Bind ViewModel.AddCommand}" />
@@ -35,7 +35,7 @@
                     <TextBlock Text="{CustomResource ProxyConnections}"
                                Style="{StaticResource BaseTextBlockStyle}"
                                Margin="24,16,24,8" />
-                </StackPanel>
+                </controls:SettingsPanel>
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="viewModels:ConnectionViewModel">

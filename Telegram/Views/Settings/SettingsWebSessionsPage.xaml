@@ -23,7 +23,7 @@
                                 ItemClick="ListView_ItemClick"
                                 ContainerContentChanging="OnContainerContentChanging">
             <ListView.Header>
-                <StackPanel Spacing="16">
+                <controls:SettingsPanel IsHeader="True">
                     <controls:HeaderedControl Footer="{CustomResource ClearOtherWebSessionsHelp}">
                         <controls:BadgeButton Content="{CustomResource TerminateAllWebSessions}"
                                               Foreground="Red"
@@ -33,7 +33,7 @@
                     <TextBlock Text="{CustomResource OtherWebSessions}"
                                Style="{StaticResource BaseTextBlockStyle}"
                                Margin="24,16,24,8" />
-                </StackPanel>
+                </controls:SettingsPanel>
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate>

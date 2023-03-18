@@ -43,8 +43,7 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.Header>
-                <StackPanel Spacing="16"
-                            Margin="0,0,0,16">
+                <controls:SettingsPanel>
                     <controls:HeaderedControl Header="{CustomResource ChannelPermissionsHeader}">
                         <CheckBox IsChecked="{x:Bind ViewModel.CanSendBasicMessages, Mode=TwoWay}"
                                   Content="{CustomResource UserRestrictionsSend}"
@@ -188,14 +187,14 @@
                              Margin="24,16,24,0" />
 
                     <controls:HeaderedControl x:Name="AddNew"
-                                              Margin="0,-16,0,0"
+                                              Margin="0,-16,0,-16"
                                               Visibility="Collapsed">
                         <controls:BadgeButton Content="{CustomResource ChannelAddException}"
                                               Command="{x:Bind ViewModel.AddCommand}"
                                               Style="{StaticResource GlyphBadgeButtonStyle}"
                                               Glyph="&#xF140;" />
                     </controls:HeaderedControl>
-                </StackPanel>
+                </controls:SettingsPanel>
             </ListView.Header>
             <ListView.Footer>
                 <TextBlock x:Name="Footer"

@@ -29,8 +29,7 @@
         <muxc:ItemsRepeaterScrollHost>
             <ScrollViewer VerticalScrollBarVisibility="Auto"
                           VerticalScrollMode="Auto">
-                <StackPanel Spacing="16"
-                            Margin="0,0,0,32">
+                <controls:SettingsPanel>
                     <Grid Margin="24,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition MaxWidth="1000" />
@@ -44,76 +43,70 @@
                                              Margin="0,24,0,0" />
                     </Grid>
 
-                    <StackPanel>
-                        <TextBlock Text="{CustomResource FilterNameHint}"
-                                   Style="{StaticResource BaseTextBlockStyle}"
-                                   Margin="24,16,24,8" />
-
-                        <Grid Margin="24,0,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="280" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
+                    <Grid>
+                        <controls:HeaderedControl Header="{CustomResource FilterNameHint}">
                             <TextBox x:Name="TitleField"
                                      Text="{x:Bind ViewModel.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                      FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                     VerticalAlignment="Top"
-                                     MaxLength="12" />
+                                     Style="{StaticResource NoDeleteTextBoxStyle}"
+                                     Padding="12,11,6,12" />
+                        </controls:HeaderedControl>
 
-                            <controls:AnimatedGlyphButton x:Name="EmojiButton"
-                                                          FontFamily="{StaticResource TelegramThemeFontFamily}"
-                                                          Glyph="{x:Bind ConvertEmoji(ViewModel.Icon), Mode=OneWay}"
-                                                          Click="Emoji_Click"
-                                                          Width="40"
-                                                          Height="40"
-                                                          Margin="0,-4,0,0"
-                                                          Grid.Column="1">
-                                <FlyoutBase.AttachedFlyout>
-                                    <Flyout>
-                                        <GridView x:Name="EmojiList"
-                                                  ItemClick="EmojiList_ItemClick"
-                                                  ContainerContentChanging="EmojiList_ContainerContentChanging"
-                                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                                  ScrollViewer.HorizontalScrollMode="Disabled"
-                                                  SelectionMode="Single"
-                                                  IsItemClickEnabled="True"
-                                                  Margin="-8,-7,-12,-23"
-                                                  Width="258">
-                                            <GridView.ItemTemplate>
-                                                <DataTemplate>
-                                                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                                              FontSize="20"
-                                                              Width="20"
-                                                              Height="20" />
-                                                </DataTemplate>
-                                            </GridView.ItemTemplate>
-                                            <GridView.ItemContainerStyle>
-                                                <Style TargetType="GridViewItem"
-                                                       BasedOn="{StaticResource DefaultGridViewItemStyle}">
-                                                    <Setter Property="FontFamily"
-                                                            Value="{StaticResource TelegramThemeFontFamily}" />
-                                                    <Setter Property="FontSize"
-                                                            Value="16" />
-                                                    <Setter Property="MinWidth"
-                                                            Value="0" />
-                                                    <Setter Property="MinHeight"
-                                                            Value="0" />
-                                                </Style>
-                                            </GridView.ItemContainerStyle>
-                                            <GridView.ItemsPanel>
-                                                <ItemsPanelTemplate>
-                                                    <ItemsWrapGrid ItemWidth="43"
-                                                                   ItemHeight="43"
-                                                                   MaximumRowsOrColumns="6"
-                                                                   Orientation="Horizontal" />
-                                                </ItemsPanelTemplate>
-                                            </GridView.ItemsPanel>
-                                        </GridView>
-                                    </Flyout>
-                                </FlyoutBase.AttachedFlyout>
-                            </controls:AnimatedGlyphButton>
-                        </Grid>
-                    </StackPanel>
+                        <controls:AnimatedGlyphButton x:Name="EmojiButton"
+                                                      FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                                      Glyph="{x:Bind ConvertEmoji(ViewModel.Icon), Mode=OneWay}"
+                                                      Click="Emoji_Click"
+                                                      Width="46"
+                                                      Height="42"
+                                                      HorizontalAlignment="Right"
+                                                      VerticalAlignment="Bottom"
+                                                      Margin="0,0,24,0"
+                                                      Grid.Column="1">
+                            <FlyoutBase.AttachedFlyout>
+                                <Flyout>
+                                    <GridView x:Name="EmojiList"
+                                              ItemClick="EmojiList_ItemClick"
+                                              ContainerContentChanging="EmojiList_ContainerContentChanging"
+                                              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                              ScrollViewer.HorizontalScrollMode="Disabled"
+                                              SelectionMode="Single"
+                                              IsItemClickEnabled="True"
+                                              Margin="-8,-7,-12,-23"
+                                              Width="258">
+                                        <GridView.ItemTemplate>
+                                            <DataTemplate>
+                                                <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                                          FontSize="20"
+                                                          Width="20"
+                                                          Height="20" />
+                                            </DataTemplate>
+                                        </GridView.ItemTemplate>
+                                        <GridView.ItemContainerStyle>
+                                            <Style TargetType="GridViewItem"
+                                                   BasedOn="{StaticResource DefaultGridViewItemStyle}">
+                                                <Setter Property="FontFamily"
+                                                        Value="{StaticResource TelegramThemeFontFamily}" />
+                                                <Setter Property="FontSize"
+                                                        Value="16" />
+                                                <Setter Property="MinWidth"
+                                                        Value="0" />
+                                                <Setter Property="MinHeight"
+                                                        Value="0" />
+                                            </Style>
+                                        </GridView.ItemContainerStyle>
+                                        <GridView.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <ItemsWrapGrid ItemWidth="43"
+                                                               ItemHeight="43"
+                                                               MaximumRowsOrColumns="6"
+                                                               Orientation="Horizontal" />
+                                            </ItemsPanelTemplate>
+                                        </GridView.ItemsPanel>
+                                    </GridView>
+                                </Flyout>
+                            </FlyoutBase.AttachedFlyout>
+                        </controls:AnimatedGlyphButton>
+                    </Grid>
 
                     <controls:HeaderedControl Header="{CustomResource FilterInclude}"
                                               Footer="{CustomResource FilterIncludeInfo}">
@@ -150,7 +143,7 @@
                             </muxc:ItemsRepeater.ItemTemplate>
                         </muxc:ItemsRepeater>
                     </controls:HeaderedControl>
-                </StackPanel>
+                </controls:SettingsPanel>
             </ScrollViewer>
         </muxc:ItemsRepeaterScrollHost>
     </Grid>

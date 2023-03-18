@@ -13,8 +13,7 @@
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
-            <StackPanel Spacing="16"
-                        Margin="0,0,0,32">
+            <controls:SettingsPanel>
                 <controls:HeaderedControl Header="{CustomResource DataUsage}">
                     <controls:BadgeButton Content="{CustomResource StorageUsage}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
@@ -126,7 +125,7 @@
                                           Click="{x:Bind ViewModel.OpenProxy}"
                                           IsChevronVisible="True" />
                 </controls:HeaderedControl>
-            </StackPanel>
+            </controls:SettingsPanel>
         </ScrollViewer>
     </Grid>
 </local:HostedPage>

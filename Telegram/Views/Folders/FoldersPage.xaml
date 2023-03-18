@@ -14,7 +14,7 @@
         <muxc:ItemsRepeaterScrollHost>
             <ScrollViewer VerticalScrollBarVisibility="Auto"
                           VerticalScrollMode="Auto">
-                <StackPanel>
+                <controls:SettingsPanel>
                     <Grid Margin="24,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition MaxWidth="1000" />
@@ -360,7 +360,7 @@
                             </StackPanel>
                         </ScrollViewer>
                     </controls:HeaderedControl>
-                </StackPanel>
+                </controls:SettingsPanel>
             </ScrollViewer>
         </muxc:ItemsRepeaterScrollHost>
     </Grid>

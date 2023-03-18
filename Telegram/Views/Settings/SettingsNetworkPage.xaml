@@ -28,7 +28,7 @@
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
-            <StackPanel Spacing="16">
+            <controls:SettingsPanel>
                 <controls:HeaderedControl ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="viewModels:NetworkStatisticsItem">
@@ -98,7 +98,7 @@
                                           Content="{CustomResource ResetStatistics}"
                                           Foreground="Red" />
                 </controls:HeaderedControl>
-            </StackPanel>
+            </controls:SettingsPanel>
         </ScrollViewer>
     </Grid>
 </local:HostedPage>

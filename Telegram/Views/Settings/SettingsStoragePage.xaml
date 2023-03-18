@@ -32,8 +32,7 @@
                                 SelectionMode="None"
                                 ContainerContentChanging="OnContainerContentChanging">
             <ListView.Header>
-                <StackPanel Spacing="16"
-                            Margin="0,0,0,16">
+                <controls:SettingsPanel>
                     <controls:HeaderedControl x:Name="KeepMediaPanel"
                                               Header="{CustomResource KeepMedia}"
                                               Footer="{CustomResource KeepMediaInfo}"
@@ -67,7 +66,7 @@
                                               Badge="{x:Bind ViewModel.Statistics.Size, Mode=OneWay, Converter={StaticResource FileSizeConverter}}"
                                               IsEnabled="{x:Bind ConvertEnabled(ViewModel.Statistics), Mode=OneWay}" />
                     </controls:HeaderedControl>
-                </StackPanel>
+                </controls:SettingsPanel>
             </ListView.Header>
             <ListView.Footer>
                 <Border Height="32" />

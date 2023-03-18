@@ -45,7 +45,7 @@
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
-            <StackPanel Margin="0,0,0,48">
+            <controls:SettingsPanel>
                 <controls:HeaderedControl Header="{CustomResource BuiltInThemes}"
                                           Background="{ThemeResource SettingsItemBackground}">
                     <ListView x:Name="List"
@@ -245,7 +245,7 @@
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Glyph="&#xE90E;" />
                 </controls:HeaderedControl>
-            </StackPanel>
+            </controls:SettingsPanel>
         </ScrollViewer>
     </Grid>
 </local:HostedPage>

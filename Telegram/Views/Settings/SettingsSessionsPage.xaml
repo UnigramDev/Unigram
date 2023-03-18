@@ -65,7 +65,7 @@
                 </GroupStyle>
             </ListView.GroupStyle>
             <ListView.Header>
-                <Grid>
+                <Grid Margin="0,0,0,16">
                     <controls:HeaderedControl Header="{CustomResource CurrentSession}"
                                               Footer="{CustomResource ClearOtherSessionsHelp}">
                         <Button Click="{x:Bind ViewModel.TerminateCurrent}"

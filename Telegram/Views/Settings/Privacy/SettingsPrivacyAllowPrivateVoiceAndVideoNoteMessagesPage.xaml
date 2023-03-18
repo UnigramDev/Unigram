@@ -25,8 +25,7 @@
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
-            <StackPanel Spacing="16"
-                        Margin="0,0,0,32">
+            <controls:SettingsPanel>
                 <controls:HeaderedControl Header="{CustomResource PrivacyVoiceMessagesTitle}"
                                           Footer="{CustomResource PrivacyVoiceMessagesInfo}">
                     <controls:PrivacyRadioButton Content="{CustomResource LastSeenEverybody}"
@@ -61,7 +60,7 @@
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Glyph="&#xE9D3;" />
                 </controls:HeaderedControl>
-            </StackPanel>
+            </controls:SettingsPanel>
         </ScrollViewer>
     </Grid>
 </local:HostedPage>

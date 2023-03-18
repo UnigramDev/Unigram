@@ -16,8 +16,7 @@
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <ScrollViewer VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
-            <StackPanel Spacing="16"
-                        Margin="0,0,0,32">
+            <controls:SettingsPanel>
                 <controls:HeaderedControl x:Name="AutoPanel"
                                           x:Load="{x:Bind ViewModel.IsAutoSupported}"
                                           Footer="{CustomResource LitePowerSaverInfo}">
@@ -165,7 +164,7 @@
                               Content="{CustomResource LiteSmoothTransitions}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
                 </controls:HeaderedControl>
-            </StackPanel>
+            </controls:SettingsPanel>
         </ScrollViewer>
     </Grid>
 </local:HostedPage>

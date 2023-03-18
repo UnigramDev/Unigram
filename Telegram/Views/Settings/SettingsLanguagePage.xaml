@@ -38,7 +38,9 @@
                     <controls:BadgeButton Content="{CustomResource DoNotTranslate}"
                                           Badge="{x:Bind ViewModel.DoNotTranslate, Mode=OneWay}"
                                           Click="{x:Bind ViewModel.ChangeDoNotTranslate}"
-                                          Visibility="{x:Bind ViewModel.IsTranslateEnabled, Mode=OneWay}" />
+                                          Visibility="{x:Bind ViewModel.IsTranslateEnabled, Mode=OneWay}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xE98B;" />
                 </controls:HeaderedControl>
             </ListView.Header>
             <ListView.GroupStyle>
@@ -68,7 +70,7 @@
                     </GroupStyle.HeaderContainerStyle>
                     <GroupStyle.HeaderTemplate>
                         <DataTemplate>
-                            <Border Height="16" />
+                            <Border Height="32" />
                         </DataTemplate>
                     </GroupStyle.HeaderTemplate>
                 </GroupStyle>
