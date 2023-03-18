@@ -421,9 +421,6 @@ namespace Telegram.ViewModels
 
             if (mode == NavigationMode.New)
             {
-                // Actually unregisters the app
-                _pushService.Register();
-
                 Task.Run(() => _contactsService.JumpListAsync());
                 Task.Run(() => _cloudUpdateService.UpdateAsync(false));
             }

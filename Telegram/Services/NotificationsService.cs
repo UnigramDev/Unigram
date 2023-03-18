@@ -30,7 +30,6 @@ namespace Telegram.Services
 {
     public interface INotificationsService
     {
-        void Register();
         Task CloseAsync();
 
         Task ProcessAsync(Dictionary<string, string> data);
@@ -732,37 +731,6 @@ namespace Telegram.Services
             }
 
             return string.Format(CultureInfo.InvariantCulture, "{0}&amp;session={1}", launch, _clientService.SessionId);
-        }
-
-        public void Register()
-        {
-            var userId = _clientService.Options.MyId;
-            if (userId == 0)
-            {
-                return;
-            }
-
-            if (_alreadyRegistered)
-            {
-                return;
-            }
-
-            _alreadyRegistered = true;
-
-            try
-            {
-                if (_settings.PushToken != null)
-                {
-                    _clientService.Send(new RegisterDevice(new DeviceTokenWindowsPush(string.Empty), new long[0]));
-                    _settings.PushReceiverId = 0;
-                    _settings.PushToken = null;
-                }
-            }
-            catch (Exception)
-            {
-                _alreadyRegistered = false;
-                _settings.PushToken = null;
-            }
         }
 
         private async void CreateToastCollection(User user)

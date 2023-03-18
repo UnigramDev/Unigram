@@ -266,9 +266,11 @@ namespace Telegram.Services
                 return null;
             }
 
+            var updateChannel = SettingsService.Current.UpdateChannel;
+
             await _clientService.SendAsync(new OpenChat(chat.Id));
 
-            var response = await _clientService.SendAsync(new SearchChatMessages(chat.Id, "#update", null, 0, 0, 10, new SearchMessagesFilterDocument(), 0)) as FoundChatMessages;
+            var response = await _clientService.SendAsync(new SearchChatMessages(chat.Id, updateChannel, null, 0, 0, 10, new SearchMessagesFilterDocument(), 0)) as FoundChatMessages;
             if (response == null)
             {
                 _clientService.Send(new CloseChat(chat.Id));
@@ -307,7 +309,7 @@ namespace Telegram.Services
                     }
                 }
 
-                if (!hashtags.Contains("#update") || !document.Document.FileName.Contains("x64") || !document.Document.FileName.EndsWith(".msixbundle"))
+                if (!hashtags.Contains(updateChannel) || !document.Document.FileName.Contains("x64") || !document.Document.FileName.EndsWith(".msixbundle"))
                 {
                     continue;
                 }

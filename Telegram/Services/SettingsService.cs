@@ -103,7 +103,7 @@ namespace Telegram.Services
 
         string[] DoNotTranslate { get; set; }
 
-        string PushToken { get; set; }
+        string UpdateChannel { get; set; }
 
         VoipDataSaving UseLessData { get; set; }
 
@@ -718,11 +718,11 @@ The letter also mentioned taking over the world and a puppy, but we hope the rea
             }
         }
 
-        private string _pushToken;
-        public string PushToken
+        private static string _updateChannel;
+        public string UpdateChannel
         {
-            get => _pushToken ??= GetValueOrDefault<string>("ChannelUri", null);
-            set => AddOrUpdateValue(ref _pushToken, "ChannelUri", value);
+            get => _updateChannel ??= GetValueOrDefault<string>("UpdateChannel", "#update");
+            set => AddOrUpdateValue(ref _updateChannel, "UpdateChannel", value);
         }
 
         private int? _useLessData;
