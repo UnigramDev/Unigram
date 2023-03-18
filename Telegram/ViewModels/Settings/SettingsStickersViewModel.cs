@@ -553,7 +553,7 @@ namespace Telegram.ViewModels.Settings
                 return AsyncInfo.Run(async token =>
                 {
                     var response = await _clientService.SendAsync(new GetTrendingStickerSets(_type, Count, 20));
-                    if (response is StickerSets stickerSets)
+                    if (response is TrendingStickerSets stickerSets)
                     {
                         foreach (var set in stickerSets.Sets)
                         {
