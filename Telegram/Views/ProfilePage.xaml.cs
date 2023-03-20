@@ -23,7 +23,6 @@ namespace Telegram.Views
         public ProfilePage()
         {
             InitializeComponent();
-            Title = Strings.Resources.Info;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -91,8 +90,6 @@ namespace Telegram.Views
 
         public void UpdateChatTitle(Chat chat)
         {
-            Title = ViewModel.ClientService.GetTitle(chat);
-
             ProfileHeader?.UpdateChatTitle(chat);
 
             if (MediaFrame.Content is ChatSharedMediaPageBase sharedMedia)

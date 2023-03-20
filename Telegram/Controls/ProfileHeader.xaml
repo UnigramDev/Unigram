@@ -23,7 +23,7 @@
 
             <Border Height="140"
                     Width="140"
-                    Margin="12,8">
+                    Margin="12,24,12,8">
                 <controls:ProfilePicture x:Name="Photo"
                                          Click="Photo_Click"
                                          AutomationProperties.Name="{CustomResource AccDescrProfilePicture}" />

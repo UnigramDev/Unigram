@@ -17,7 +17,8 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <Grid Background="{ThemeResource SettingsPageBackground}">
+    <Grid Background="{ThemeResource SettingsPageBackground}"
+          Margin="0,-56,0,0">
         <controls:ProfileHeader x:Name="ProfileHeader"
                                 x:Load="True" />
 
