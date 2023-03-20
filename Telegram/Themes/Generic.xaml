@@ -6478,6 +6478,8 @@
                 Value="{ThemeResource ListViewItemMinWidth}" />
         <Setter Property="MinHeight"
                 Value="0" />
+        <Setter Property="Height"
+                Value="64" />
         <Setter Property="AllowDrop"
                 Value="False" />
         <Setter Property="UseSystemFocusVisuals"
@@ -6697,12 +6699,22 @@
                                 <VisualState x:Name="DataPlaceholder">
 
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlaceholderTextBlock"
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlaceholderRect"
                                                                        Storyboard.TargetProperty="Visibility">
                                             <DiscreteObjectKeyFrame KeyTime="0"
                                                                     Value="Visible" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlaceholderRect"
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlaceholderRect1"
+                                                                       Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="Visible" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlaceholderRect2"
+                                                                       Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="Visible" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlaceholderRect3"
                                                                        Storyboard.TargetProperty="Visibility">
                                             <DiscreteObjectKeyFrame KeyTime="0"
                                                                     Value="Visible" />
@@ -6911,19 +6923,43 @@
                                               Margin="{TemplateBinding Padding}" />
 
                         </Grid>
-                        <!-- The 'Xg' text simulates the amount of space one line of text will occupy.
-                             In the DataPlaceholder state, the Content is not loaded yet so we
-                             approximate the size of the item using placeholder text. -->
-                        <TextBlock x:Name="PlaceholderTextBlock"
-                                   Opacity="0"
-                                   Text="Xg"
-                                   Foreground="{x:Null}"
-                                   Margin="{TemplateBinding Padding}"
-                                   IsHitTestVisible="False"
-                                   AutomationProperties.AccessibilityView="Raw" />
-                        <Rectangle x:Name="PlaceholderRect"
+                        <Ellipse x:Name="PlaceholderRect"
+                                 Visibility="Collapsed"
+                                 Fill="{ThemeResource NavigationViewItemBackgroundSelected}"
+                                 HorizontalAlignment="Left"
+                                 Margin="8,0"
+                                 Width="48"
+                                 Height="48" />
+                        <Rectangle x:Name="PlaceholderRect1"
                                    Visibility="Collapsed"
-                                   Fill="{ThemeResource ListViewItemPlaceholderBackground}" />
+                                   Fill="{ThemeResource NavigationViewItemBackgroundSelected}"
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Top"
+                                   Margin="68,14,0,0"
+                                   Width="100"
+                                   Height="16"
+                                   RadiusX="4"
+                                   RadiusY="4" />
+                        <Rectangle x:Name="PlaceholderRect2"
+                                   Visibility="Collapsed"
+                                   Fill="{ThemeResource NavigationViewItemBackgroundSelected}"
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Top"
+                                   Margin="68,36,0,0"
+                                   Width="224"
+                                   Height="16"
+                                   RadiusX="4"
+                                   RadiusY="4" />
+                        <Rectangle x:Name="PlaceholderRect3"
+                                   Visibility="Collapsed"
+                                   Fill="{ThemeResource NavigationViewItemBackgroundSelected}"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Top"
+                                   Margin="0,16,8,0"
+                                   Width="40"
+                                   Height="12"
+                                   RadiusX="4"
+                                   RadiusY="4" />
                         <Grid x:Name="SelectionIndicatorGrid"
                               HorizontalAlignment="Left"
                               VerticalAlignment="Center">

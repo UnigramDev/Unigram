@@ -37,13 +37,28 @@ namespace Telegram.Controls
 
             args.ItemContainer.Tag = args.Item;
 
+            if (args.Phase == 0)
+            {
+                VisualStateManager.GoToState(args.ItemContainer, "DataPlaceholder", false);
+            }
+
+            if (args.Phase < 2)
+            {
+                args.RegisterUpdateCallback(OnContainerContentChanging);
+                args.ItemContainer.ContentTemplateRoot.Opacity = 0;
+                return;
+            }
+
             var content = args.ItemContainer.ContentTemplateRoot as ChatCell;
             if (content != null && args.Item is Chat chat)
             {
                 content.UpdateViewState(chat, _viewState == MasterDetailState.Compact, false);
                 content.UpdateChat(ViewModel.ClientService, chat, ViewModel.Items.ChatList);
+                content.Opacity = 1;
                 args.Handled = true;
             }
+
+            VisualStateManager.GoToState(args.ItemContainer, "DataAvailable", false);
         }
 
         private void OnSelectionModeChanged(DependencyObject sender, DependencyProperty dp)
