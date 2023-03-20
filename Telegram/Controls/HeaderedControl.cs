@@ -7,6 +7,7 @@
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media.Animation;
 
 namespace Telegram.Controls
 {
@@ -15,6 +16,11 @@ namespace Telegram.Controls
         public HeaderedControl()
         {
             DefaultStyleKey = typeof(HeaderedControl);
+
+            ItemContainerTransitions = new TransitionCollection
+            {
+                new RepositionThemeTransition()
+            };
         }
 
         #region Header

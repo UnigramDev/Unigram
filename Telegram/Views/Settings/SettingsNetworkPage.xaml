@@ -20,10 +20,6 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <Page.Resources>
-        <ResourceDictionary Source="ms-appx:///Themes/Expander_themeresources.xaml" />
-    </Page.Resources>
-
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
@@ -32,10 +28,9 @@
                 <controls:HeaderedControl ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="viewModels:NetworkStatisticsItem">
-                            <muxc:Expander Style="{StaticResource SettingsExpanderStyle}"
-                                           HorizontalContentAlignment="Stretch"
-                                           BorderThickness="0">
-                                <muxc:Expander.Header>
+                            <controls:SettingsExpander HorizontalContentAlignment="Stretch"
+                                                       BorderThickness="0">
+                                <controls:SettingsExpander.Header>
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="40" />
@@ -58,7 +53,7 @@
                                                    Style="{StaticResource InfoBodyTextBlockStyle}"
                                                    Grid.Column="2" />
                                     </Grid>
-                                </muxc:Expander.Header>
+                                </controls:SettingsExpander.Header>
                                 <StackPanel>
                                     <controls:BadgeButton Content="{CustomResource BytesReceived}"
                                                           Badge="{x:Bind ReceivedBytes, Converter={StaticResource FileSizeConverter}}"
@@ -75,7 +70,7 @@
                                                           Background="Transparent"
                                                           CornerRadius="0" />
                                 </StackPanel>
-                            </muxc:Expander>
+                            </controls:SettingsExpander>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </controls:HeaderedControl>

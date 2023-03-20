@@ -383,6 +383,7 @@
       <DependentUpon>StickerDrawer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\EmojiSearchBox.cs" />
+    <Compile Include="Controls\SettingsExpander.cs" />
     <Compile Include="Controls\FauxRadioButton.cs" />
     <Compile Include="Controls\FauxCheckBox.cs" />
     <Compile Include="Controls\FileButton.cs" />

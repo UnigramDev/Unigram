@@ -17,10 +17,6 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <Page.Resources>
-        <ResourceDictionary Source="ms-appx:///Themes/Expander_themeresources.xaml" />
-    </Page.Resources>
-
     <local:HostedPage.Footer>
         <Button Content="{CustomResource Done}"
                 Command="{x:Bind ViewModel.SendCommand}"
@@ -46,8 +42,8 @@
                               Content="{CustomResource UserRestrictionsSend}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <muxc:Expander Style="{StaticResource SettingsExpanderStyle}">
-                        <muxc:Expander.Header>
+                    <controls:SettingsExpander>
+                        <controls:SettingsExpander.Header>
                             <CheckBox IsChecked="{x:Bind ViewModel.CanSendMediaMessages, Mode=TwoWay}"
                                       Style="{StaticResource SettingsCheckBoxStyle}"
                                       Background="Transparent"
@@ -59,7 +55,7 @@
                                 </TextBlock>
                             </CheckBox>
 
-                        </muxc:Expander.Header>
+                        </controls:SettingsExpander.Header>
                         <StackPanel>
                             <CheckBox IsChecked="{x:Bind ViewModel.CanSendPhotos, Mode=TwoWay}"
                                       Content="{CustomResource UserRestrictionsSendPhotos}"
@@ -123,7 +119,7 @@
                                       Background="Transparent"
                                       CornerRadius="0" />
                         </StackPanel>
-                    </muxc:Expander>
+                    </controls:SettingsExpander>
 
                     <CheckBox IsChecked="{x:Bind ViewModel.CanInviteUsers, Mode=TwoWay}"
                               Content="{CustomResource UserRestrictionsInviteUsers}"

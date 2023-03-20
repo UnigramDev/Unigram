@@ -3611,6 +3611,43 @@
         </Setter>
     </Style>
 
+    <Style TargetType="local:SettingsExpander">
+        <Setter Property="BorderBrush"
+                Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+        <Setter Property="HorizontalContentAlignment"
+                Value="Stretch" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:SettingsExpander">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Border x:Name="PopupHost"
+                                Background="{ThemeResource ExpanderContentBackground}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Padding="16,0,0,0"
+                                Grid.Row="1">
+                            <ContentPresenter x:Name="PopupRoot" />
+                        </Border>
+
+                        <ToggleButton x:Name="ActionButton"
+                                      Content="{TemplateBinding Header}"
+                                      Style="{StaticResource ExpanderHeaderDownStyle}"
+                                      BorderBrush="{TemplateBinding BorderBrush}"
+                                      BorderThickness="{TemplateBinding BorderThickness}"
+                                      CornerRadius="{TemplateBinding CornerRadius}"
+                                      Padding="0"
+                                      MinHeight="44"
+                                      HorizontalAlignment="Stretch" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="chats:ChatBottomButton">
         <Setter Property="Foreground"
                 Value="{ThemeResource TelegramForegroundAccentBrush}" />

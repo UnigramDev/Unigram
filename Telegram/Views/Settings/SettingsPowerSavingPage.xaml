@@ -9,10 +9,6 @@
                   mc:Ignorable="d"
                   IsNavigationRoot="True">
 
-    <Page.Resources>
-        <ResourceDictionary Source="ms-appx:///Themes/Expander_themeresources.xaml" />
-    </Page.Resources>
-
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <ScrollViewer VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
@@ -27,8 +23,8 @@
 
                 <controls:HeaderedControl Header="{CustomResource LiteOptionsTitle}"
                                           IsEnabled="{x:Bind ViewModel.IsAutoDisabled, Mode=OneWay}">
-                    <muxc:Expander Style="{StaticResource SettingsExpanderStyle}">
-                        <muxc:Expander.Header>
+                    <controls:SettingsExpander>
+                        <controls:SettingsExpander.Header>
                             <CheckBox IsChecked="{x:Bind ViewModel.AutoPlayStickersAll, Mode=TwoWay}"
                                       Style="{StaticResource SettingsCheckBoxStyle}"
                                       Background="Transparent"
@@ -39,7 +35,7 @@
                                              FontWeight="SemiBold" />
                                 </TextBlock>
                             </CheckBox>
-                        </muxc:Expander.Header>
+                        </controls:SettingsExpander.Header>
                         <StackPanel>
                             <CheckBox IsChecked="{x:Bind ViewModel.AutoPlayStickers, Mode=TwoWay}"
                                       Content="{CustomResource LiteOptionsAutoplayKeyboard}"
@@ -54,10 +50,10 @@
                                       Background="Transparent"
                                       CornerRadius="0" />
                         </StackPanel>
-                    </muxc:Expander>
+                    </controls:SettingsExpander>
 
-                    <muxc:Expander Style="{StaticResource SettingsExpanderStyle}">
-                        <muxc:Expander.Header>
+                    <controls:SettingsExpander>
+                        <controls:SettingsExpander.Header>
                             <CheckBox IsChecked="{x:Bind ViewModel.AutoPlayEmojiAll, Mode=TwoWay}"
                                       Style="{StaticResource SettingsCheckBoxStyle}"
                                       Background="Transparent"
@@ -68,7 +64,7 @@
                                              FontWeight="SemiBold" />
                                 </TextBlock>
                             </CheckBox>
-                        </muxc:Expander.Header>
+                        </controls:SettingsExpander.Header>
                         <StackPanel>
                             <CheckBox IsChecked="{x:Bind ViewModel.AutoPlayEmoji, Mode=TwoWay}"
                                       Content="{CustomResource LiteOptionsAutoplayKeyboard}"
@@ -90,7 +86,7 @@
                                       Background="Transparent"
                                       CornerRadius="0" />
                         </StackPanel>
-                    </muxc:Expander>
+                    </controls:SettingsExpander>
 
                     <!--<muxc:Expander Style="{StaticResource SettingsExpanderStyle}">
                         <muxc:Expander.Header>

@@ -7,11 +7,20 @@
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media.Animation;
 
 namespace Telegram.Controls
 {
     public class SettingsPanel : Panel
     {
+        public SettingsPanel()
+        {
+            ChildrenTransitions = new TransitionCollection
+            {
+                new RepositionThemeTransition()
+            };
+        }
+
         public bool IsHeader { get; set; }
 
         protected override Size MeasureOverride(Size availableSize)
