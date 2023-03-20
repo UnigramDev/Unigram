@@ -978,10 +978,6 @@
                                             </Grid>
                                         </ListView.Header>
                                     </local:ChatListPage>
-                                    <controls:ChatListSkeleton x:Name="Skeleton"
-                                                               x:Load="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
-                                                               Grid.Row="1" />
-
 
                                     <Grid x:Name="TopicListPresenter"
                                           x:Load="False"
