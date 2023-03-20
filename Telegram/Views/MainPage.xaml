@@ -70,12 +70,16 @@
                                             Canvas.ZIndex="2" />
 
                             <Grid x:Name="DetailHeaderPresenter2"
-                                  Background="{ThemeResource LayerFillColorDefaultBrush}"
                                   CornerRadius="{ThemeResource NavigationViewContentGridCornerRadius}">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="56" />
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
+
+                                <Border x:Name="MaterialPart"
+                                        Background="{ThemeResource LayerFillColorDefaultBrush}"
+                                        CornerRadius="{ThemeResource NavigationViewContentGridCornerRadius}"
+                                        Grid.RowSpan="2" />
 
                                 <chats:ChatBackgroundPresenter x:Name="BackgroundPart"
                                                                CornerRadius="9,0,0,0"
@@ -1253,6 +1257,6 @@
                                IsHitTestVisible="False"
                                Grid.ColumnSpan="2"
                                Grid.Row="1" />
-                               <!--Completed="Confetti_Completed"-->
+        <!--Completed="Confetti_Completed"-->
     </Grid>
 </Page>

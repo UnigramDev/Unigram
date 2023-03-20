@@ -20,6 +20,13 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Controls
 {
+    public enum BackgroundKind
+    {
+        None,
+        Material,
+        Background
+    }
+
     public sealed class MasterDetailView : ContentControl, IDisposable
     {
         private MasterDetailPanel AdaptivePanel;
@@ -29,6 +36,7 @@ namespace Telegram.Controls
         private BreadcrumbBar DetailHeaderPresenter;
         private FrameworkElement BackgroundPart;
         private Border BorderPart;
+        private Border MaterialPart;
 
         public NavigationService NavigationService { get; private set; }
         public Frame ParentFrame { get; private set; }
@@ -162,61 +170,105 @@ namespace Telegram.Controls
             }
         }
 
-        private bool _backgroundCollapsed;
+        private bool _materialCollapsed;
+        private BackgroundKind _backgroundType;
 
-        public void ShowHideBackground(bool show, bool animate)
+        public void ShowHideBackground(BackgroundKind show, bool animate)
         {
-            if (_backgroundCollapsed != show || BackgroundPart == null)
+            if (_backgroundType == show || BackgroundPart == null)
             {
                 return;
             }
 
-            _backgroundCollapsed = !show;
+            var type = _backgroundType;
+
+            _backgroundType = show;
 
             var visual = ElementCompositionPreview.GetElementVisual(BackgroundPart);
             var border = ElementCompositionPreview.GetElementVisual(BorderPart);
+            var material = ElementCompositionPreview.GetElementVisual(MaterialPart);
             var bread = ElementCompositionPreview.GetElementVisual(DetailHeaderPresenter);
 
             if (animate)
             {
                 BackgroundPart.Visibility = Visibility.Visible;
                 BorderPart.Visibility = Visibility.Visible;
+                MaterialPart.Visibility = Visibility.Visible;
                 DetailHeaderPresenter.Visibility = Visibility.Visible;
 
                 var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
                 batch.Completed += (s, args) =>
                 {
-                    if (show)
+                    BackgroundPart.Visibility = show == BackgroundKind.Background ? Visibility.Visible : Visibility.Collapsed;
+                    BorderPart.Visibility = show != BackgroundKind.None ? Visibility.Visible : Visibility.Collapsed;
+                    MaterialPart.Visibility = show == BackgroundKind.Material ? Visibility.Visible : Visibility.Collapsed;
+                    DetailHeaderPresenter.Visibility = show == BackgroundKind.Material ? Visibility.Visible : Visibility.Collapsed;
+                };
+
+                var fadeOut = visual.Compositor.CreateScalarKeyFrameAnimation();
+                fadeOut.InsertKeyFrame(0, 1);
+                fadeOut.InsertKeyFrame(1, 0);
+
+                var fadeIn = visual.Compositor.CreateScalarKeyFrameAnimation();
+                fadeIn.InsertKeyFrame(0, 0);
+                fadeIn.InsertKeyFrame(1, 1);
+
+                if (show == BackgroundKind.Background)
+                {
+                    visual.StartAnimation("Opacity", fadeIn);
+
+                    if (type == BackgroundKind.None)
                     {
-                        _backgroundCollapsed = false;
-                        DetailHeaderPresenter.Visibility = Visibility.Collapsed;
+                        border.StartAnimation("Opacity", fadeIn);
+                    }
+                    else if (type == BackgroundKind.Material)
+                    {
+                        material.StartAnimation("Opacity", fadeOut);
+                        bread.StartAnimation("Opacity", fadeOut);
+                    }
+                }
+                else if (show == BackgroundKind.Material)
+                {
+                    material.StartAnimation("Opacity", fadeIn);
+                    bread.StartAnimation("Opacity", fadeIn);
+
+                    if (type == BackgroundKind.None)
+                    {
+                        border.StartAnimation("Opacity", fadeIn);
+                    }
+                    else if (type == BackgroundKind.Background)
+                    {
+                        visual.StartAnimation("Opacity", fadeOut);
+                    }
+                }
+                else if (show == BackgroundKind.None)
+                {
+                    border.StartAnimation("Opacity", fadeOut);
+
+                    if (type == BackgroundKind.Background)
+                    {
+                        visual.StartAnimation("Opacity", fadeOut);
                     }
                     else
                     {
-                        BackgroundPart.Visibility = Visibility.Collapsed;
+                        material.StartAnimation("Opacity", fadeOut);
+                        bread.StartAnimation("Opacity", fadeOut);
                     }
-                };
-
-                var opacity = visual.Compositor.CreateScalarKeyFrameAnimation();
-                opacity.InsertKeyFrame(show ? 0 : 1, 0);
-                opacity.InsertKeyFrame(show ? 1 : 0, 1);
-
-                var fadeIn = visual.Compositor.CreateScalarKeyFrameAnimation();
-                fadeIn.InsertKeyFrame(show ? 0 : 1, 1);
-                fadeIn.InsertKeyFrame(show ? 1 : 0, 0);
-
-                visual.StartAnimation("Opacity", opacity);
-                bread.StartAnimation("Opacity", fadeIn);
+                }
 
                 batch.End();
             }
             else
             {
-                visual.Opacity = show ? 1 : 0;
-                bread.Opacity = show ? 0 : 1;
+                visual.Opacity = show == BackgroundKind.Background ? 1 : 0;
+                border.Opacity = show != BackgroundKind.None ? 1 : 0;
+                material.Opacity = show == BackgroundKind.Material ? 1 : 0;
+                bread.Opacity = show == BackgroundKind.Material ? 1 : 0;
 
-                BackgroundPart.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
-                DetailHeaderPresenter.Visibility = show ? Visibility.Collapsed : Visibility.Visible;
+                BackgroundPart.Visibility = show == BackgroundKind.Background ? Visibility.Visible : Visibility.Collapsed;
+                BorderPart.Visibility = show != BackgroundKind.None ? Visibility.Visible : Visibility.Collapsed;
+                MaterialPart.Visibility = show == BackgroundKind.Material ? Visibility.Visible : Visibility.Collapsed;
+                DetailHeaderPresenter.Visibility = show == BackgroundKind.Material ? Visibility.Visible : Visibility.Collapsed;
             }
         }
 
@@ -229,6 +281,7 @@ namespace Telegram.Controls
             DetailHeaderPresenter = GetTemplateChild(nameof(DetailHeaderPresenter)) as BreadcrumbBar;
             BackgroundPart = GetTemplateChild(nameof(BackgroundPart)) as FrameworkElement;
             BorderPart = GetTemplateChild(nameof(BorderPart)) as Border;
+            MaterialPart = GetTemplateChild(nameof(MaterialPart)) as Border;
             AdaptivePanel = GetTemplateChild(nameof(AdaptivePanel)) as MasterDetailPanel;
             AdaptivePanel.ViewStateChanged += OnViewStateChanged;
 
@@ -237,8 +290,10 @@ namespace Telegram.Controls
 
             MasterPresenter.RegisterPropertyChangedCallback(VisibilityProperty, OnVisibilityChanged);
 
-            BackgroundPart.Visibility = _backgroundCollapsed ? Visibility.Collapsed : Visibility.Visible;
-            BorderPart.Visibility = _backgroundCollapsed ? Visibility.Collapsed : Visibility.Visible;
+            BackgroundPart.Visibility = _backgroundType == BackgroundKind.Background ? Visibility.Visible : Visibility.Collapsed;
+            BorderPart.Visibility = _backgroundType != BackgroundKind.None ? Visibility.Visible : Visibility.Collapsed;
+            MaterialPart.Visibility = _backgroundType == BackgroundKind.Material ? Visibility.Visible : Visibility.Collapsed;
+            DetailHeaderPresenter.Visibility = _backgroundType == BackgroundKind.Material ? Visibility.Visible : Visibility.Collapsed;
 
             var detailVisual = ElementCompositionPreview.GetElementVisual(DetailPresenter);
             detailVisual.Clip = Window.Current.Compositor.CreateInsetClip(0, -56, 0, 0);
@@ -346,7 +401,7 @@ namespace Telegram.Controls
                 return;
             }
 
-            UpdateMasterVisibility();
+            OnViewStateChanged();
         }
 
         private void OnTitleChanged(DependencyObject sender, DependencyProperty dp)
@@ -416,11 +471,21 @@ namespace Telegram.Controls
                 return;
             }
 
-            VisualStateManager.GoToState(this, AdaptivePanel.CurrentState == MasterDetailState.Minimal && IsOnlyChild ? "Minimal" : "Expanded", false);
-            ViewStateChanged?.Invoke(this, EventArgs.Empty);
+            if (_isMinimal != IsMinimal)
+            {
+                _isMinimal = IsMinimal;
+
+                VisualStateManager.GoToState(this, IsMinimal ? "Minimal" : "Expanded", false);
+                ViewStateChanged?.Invoke(this, EventArgs.Empty);
+            }
 
             UpdateMasterVisibility();
         }
+
+        private bool _isMinimal = false;
+        private bool IsMinimal =>
+            AdaptivePanel?.CurrentState == MasterDetailState.Minimal
+            && IsOnlyChild;
 
         private bool _isOnlyChild = true;
         public bool IsOnlyChild

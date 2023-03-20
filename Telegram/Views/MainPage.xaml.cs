@@ -1458,14 +1458,16 @@ namespace Telegram.Views
                                                        //frame.CurrentSourcePageType == typeof(ChatEventLogPage) ||
                                                        //frame.CurrentSourcePageType == typeof(BlankPage);
 
-            if (MasterDetail.CurrentState == MasterDetailState.Minimal)
+            var type = allowed ? BackgroundKind.Background : BackgroundKind.Material;
+
+            if (MasterDetail.CurrentState == MasterDetailState.Minimal && e.SourcePageType == typeof(BlankPage))
             {
-                allowed &= e.SourcePageType != typeof(BlankPage);
+                type = BackgroundKind.None;
             }
 
             if (MasterDetail.CurrentState != MasterDetailState.Unknown)
             {
-                MasterDetail.ShowHideBackground(allowed, true);
+                MasterDetail.ShowHideBackground(type, true);
             }
         }
 
@@ -1523,14 +1525,16 @@ namespace Telegram.Views
                 frame.CurrentSourcePageType == typeof(ChatEventLogPage) ||
                 frame.CurrentSourcePageType == typeof(BlankPage);
 
-            if (MasterDetail.CurrentState == MasterDetailState.Minimal)
+            var type = allowed ? BackgroundKind.Background : BackgroundKind.Material;
+
+            if (MasterDetail.CurrentState == MasterDetailState.Minimal && frame.CurrentSourcePageType == typeof(BlankPage))
             {
-                allowed &= frame.CurrentSourcePageType != typeof(BlankPage);
+                type = BackgroundKind.None;
             }
 
             if (MasterDetail.CurrentState != MasterDetailState.Unknown)
             {
-                MasterDetail.ShowHideBackground(allowed, false);
+                MasterDetail.ShowHideBackground(type, false);
             }
         }
 
