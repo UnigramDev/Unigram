@@ -914,7 +914,7 @@ namespace Telegram.Controls.Cells
             }
         }
 
-        private void UpdateMinithumbnail(Chat chat, Message message)
+        private async void UpdateMinithumbnail(Chat chat, Message message)
         {
             if (chat.Type is ChatTypePrivate && message == null)
             {
@@ -936,14 +936,14 @@ namespace Telegram.Controls.Cells
 
                 var bitmap = new BitmapImage { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical };
 
+                Minithumbnail.Source = bitmap;
+                MinithumbnailPanel.Visibility = Visibility.Visible;
+
                 using (var stream = new InMemoryRandomAccessStream())
                 {
                     PlaceholderImageHelper.Current.WriteBytes(thumbnail.Data, stream);
-                    bitmap.SetSource(stream);
+                    await bitmap.SetSourceAsync(stream);
                 }
-
-                Minithumbnail.Source = bitmap;
-                MinithumbnailPanel.Visibility = Visibility.Visible;
             }
             else
             {
