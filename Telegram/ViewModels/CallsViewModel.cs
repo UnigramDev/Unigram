@@ -35,7 +35,7 @@ namespace Telegram.ViewModels
         {
             private readonly IClientService _clientService;
 
-            private string _nextOffset;
+            private string _nextOffset = string.Empty;
             private bool _hasMoreItems = true;
 
             public ItemsCollection(IClientService clientService)
