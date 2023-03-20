@@ -39,11 +39,7 @@ namespace Telegram.ViewModels.Settings
                 var totalSent = 0l;
                 var totalReceived = 0l;
 
-                var results = new List<NetworkStatisticsEntry>
-                {
-                    notes,
-                    other
-                };
+                var results = new List<NetworkStatisticsEntry>();
 
                 foreach (var entry in statistics.Entries)
                 {
@@ -74,6 +70,16 @@ namespace Telegram.ViewModels.Settings
                         totalSent += call.SentBytes;
                         totalReceived += call.ReceivedBytes;
                     }
+                }
+
+                if (notes.SentBytes > 0 || notes.ReceivedBytes > 0)
+                {
+                    results.Add(notes);
+                }
+
+                if (other.SentBytes > 0 || other.ReceivedBytes > 0)
+                {
+                    results.Add(other);
                 }
 
                 Items.ReplaceWith(results.Select(x => new NetworkStatisticsItem(x)).OrderByDescending(x => x.TotalBytes));
