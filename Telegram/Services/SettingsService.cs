@@ -239,24 +239,28 @@ namespace Telegram.Services
 
         #region App version
 
-        public const ulong CurrentVersion = (9UL << 48) | (3UL << 32) | (0UL << 16);
-        public const string CurrentChangelog = @"HIDDEN MEDIA, PROFILE PICTURES FOR YOUR CONTACTS, AND PUPPIES
+        public const ulong CurrentVersion = (9UL << 48) | (5UL << 32) | (0UL << 16);
+        public const string CurrentChangelog = @"POWER SAVING AND MORE
 
-We found someone's letter to Santa and implemented everything on the list:
+**Power Saving Mode**
+• One switch to disable all resource-intensive animations and autoplay for media, stickers and emoji.
+• Power saving mode turns on automatically based on battery charge.
 
-**Hidden Media**
-• Media with spoiler effects. You can wrap photos and videos you send in a fuzzy cover by selecting media in the attachment menu and tapping (⋯) > Hide With Spoiler.
+**Granular Playback Speed**
+• Fully flexible playback speed settings for videos, voice and video messages.
+• Tap the “2X” button to quickly switch between 1-1.5-2x speed – or hold it to set any speed between 0.2-2.5x.
 
-**Profile Pictures for Your Contacts**
-• Setting pictures for your contacts. You can choose your own picture for a contact – only you will see it on their profile.
-• Suggested profile pictures. When editing your contacts, you can suggest a photo for their profile. It will take them just two taps to add the picture you suggested.
-• Public profile pictures. If you only allow certain users to see your profile photos, you can set a public picture for everyone else.
-• Ultimate profile picture privacy. You can set 'Who can see my profile photos' to 'Nobody' and add some users or groups as exceptions.
+**Read Time in Small Groups**
+• Read receipts in groups under 100 members now show the time when your messages were read. 
 
-**Hiding Members in Large Groups**
-• Member list privacy. Owners of large groups can hide the list of members. 
+**Improved Group Invites**
+• When inviting people to groups, you can quickly send invite links to anyone who doesn't allow adding them directly.
+• Invite links now show previews in chats.
 
-The letter also mentioned taking over the world and a puppy, but we hope the real Santa will be able to handle that – now that we've done the rest.";
+**And More**
+• Toggle dynamic pack order. Choose if you want recently used sticker packs to be displayed above the older ones in the panel.
+• Fully translatable bots. Bot descriptions and “What can this bot do?” sections can now be translated.
+• Improved folder support. Mark all messages in a folder as read and use folders when forwarding.";
 
         public int Session => _session;
 
