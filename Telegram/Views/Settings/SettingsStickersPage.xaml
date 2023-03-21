@@ -239,7 +239,7 @@
                                                   Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                                   IsChevronVisible="True"
                                                   Glyph="&#xE7B8;" />
-                            <controls:BadgeButton Content="Emoji Style"
+                            <controls:BadgeButton Content="{CustomResource EmojiSet}"
                                                   Style="{StaticResource EmojiBadgeButtonStyle}"
                                                   FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                                   Glyph="{x:Bind ViewModel.EmojiStyleIcon}">

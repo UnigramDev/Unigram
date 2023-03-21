@@ -11,12 +11,12 @@
     <local:HeaderedControl x:Name="Headered">
         <CheckBox x:Name="Toggle"
                   x:Uid="StartupSwitch_Toggle"
-                  Content="{CustomResource lng_settings_auto_start}"
+                  Content="{CustomResource AutoStart}"
                   Style="{StaticResource SettingsCheckBoxStyle}" />
         <CheckBox x:Name="ToggleMinimized"
                   x:Uid="StartupSwitch_Toggle"
                   x:Load="False"
-                  Content="Launch minimized"
+                  Content="{CustomResource AutoStartMinized}"
                   Visibility="{x:Bind Toggle.IsChecked, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                   Style="{StaticResource SettingsCheckBoxStyle}" />
     </local:HeaderedControl>

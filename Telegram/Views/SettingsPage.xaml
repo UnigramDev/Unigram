@@ -142,7 +142,7 @@
                         </Style>
                     </controls:TopNavView.ItemContainerStyle>
                     <controls:BadgeButton x:Name="Profile"
-                                          Content="{CustomResource lng_settings_information}"
+                                          Content="{CustomResource EditProfile}"
                                           Style="{StaticResource IconBadgeButtonStyle}"
                                           Click="Profile_Click">
                         <controls:BadgeButton.IconSource>

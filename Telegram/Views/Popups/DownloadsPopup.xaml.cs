@@ -122,7 +122,7 @@ namespace Telegram.Views.Popups
             else
             {
                 flyout.CreateFlyoutItem(ViewModel.ViewFileDownloadCommand, fileDownload, Strings.Resources.ViewInChat, new FontIcon { Glyph = Icons.Comment });
-                flyout.CreateFlyoutItem(ViewModel.ShowFileDownloadCommand, fileDownload, Strings.Resources.lng_context_show_in_folder, new FontIcon { Glyph = Icons.FolderOpen });
+                flyout.CreateFlyoutItem(ViewModel.ShowFileDownloadCommand, fileDownload, Strings.Resources.ShowInFolder, new FontIcon { Glyph = Icons.FolderOpen });
 
                 flyout.CreateFlyoutItem(ViewModel.RemoveFileDownloadCommand, fileDownload, Strings.Resources.DeleteFromRecent, new FontIcon { Glyph = Icons.Delete });
 

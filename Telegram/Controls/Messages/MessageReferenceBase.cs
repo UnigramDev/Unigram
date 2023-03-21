@@ -686,7 +686,7 @@ namespace Telegram.Controls.Messages
             SetText(null,
                 null,
                 null,
-                Strings.Resources.lng_deleted_message,
+                Strings.Resources.DeletedMessage,
                 null);
 
             return true;

@@ -1581,6 +1581,11 @@
     <PRIResource Include="Strings\hu\Resources.resw" />
     <PRIResource Include="Strings\fi\Resources.resw" />
     <PRIResource Include="Strings\cs\Resources.resw" />
+    <PRIResource Include="Strings\he\Resources.resw" />
+    <PRIResource Include="Strings\hr\Resources.resw" />
+    <PRIResource Include="Strings\nb\Resources.resw" />
+    <PRIResource Include="Strings\sr\Resources.resw" />
+    <PRIResource Include="Strings\sv\Resources.resw" />
     <None Include="Telegram_StoreKey.pfx" />
     <None Include="Telegram_TemporaryKey.pfx" />
   </ItemGroup>

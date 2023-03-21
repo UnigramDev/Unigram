@@ -73,10 +73,9 @@ namespace Telegram.ViewModels.Settings
 
         public List<SettingsOptionItem<string>> UpdateFrequencyOptions { get; } = new()
         {
-            new SettingsOptionItem<string>("#daily", "Daily"),
-            new SettingsOptionItem<string>("#update", "Weekly"),
+            new SettingsOptionItem<string>("#daily", Strings.Resources.Daily),
+            new SettingsOptionItem<string>("#update", Strings.Resources.Weekly),
         };
-
 
         private bool _isUpdateEnabled = true;
         public bool IsUpdateEnabled
@@ -115,8 +114,8 @@ namespace Telegram.ViewModels.Settings
             {
                 IsUpdateEnabled = true;
 
-                UpdateText = "Check for Updates";
-                UpdateFooter = "You have the latest version of Telegram.";
+                UpdateText = Strings.Resources.CheckForUpdates;
+                UpdateFooter = Strings.Resources.CheckForUpdatesInfo;
             }
             else if (update.File != null)
             {
@@ -124,15 +123,15 @@ namespace Telegram.ViewModels.Settings
                 IsUpdateEnabled = true;
 
                 UpdateText = Strings.Resources.UpdateTelegram;
-                UpdateFooter = "Please update the app to get the latest features and improvements.";
+                UpdateFooter = Strings.Resources.UpdateTelegramInfo;
             }
             else if (file.Local.IsDownloadingActive)
             {
                 // Update is being downloaded
                 IsUpdateEnabled = false;
 
-                UpdateText = string.Format("Downloading... {0} / {1}", FileSizeConverter.Convert(update.Document.Local.DownloadedSize, update.Document.Size), FileSizeConverter.Convert(update.Document.Size));
-                UpdateFooter = "Please update the app to get the latest features and improvements.";
+                UpdateText = string.Format("{0}... {1} / {2}", Strings.Resources.Downloading, FileSizeConverter.Convert(update.Document.Local.DownloadedSize, update.Document.Size), FileSizeConverter.Convert(update.Document.Size));
+                UpdateFooter = Strings.Resources.UpdateTelegramInfo;
             }
             else if (file.Local.CanBeDownloaded)
             {
@@ -152,7 +151,7 @@ namespace Telegram.ViewModels.Settings
             {
                 IsUpdateEnabled = false;
 
-                UpdateText = "Retrieving Information...";
+                UpdateText = Strings.Resources.RetrievingInformation;
 
                 var ticks = Environment.TickCount;
 

@@ -58,7 +58,7 @@
         <StackPanel x:Name="TypeSocksPanel">
             <TextBox x:Name="FieldUsername"
                      PlaceholderText="{CustomResource UseProxyUsername}"
-                     Header="{CustomResource lng_proxy_credentials_optional}"
+                     Header="{CustomResource ProxyCredentialsOptional}"
                      Margin="0,4,0,8" />
             <PasswordBox x:Name="FieldPassword"
                          PlaceholderText="{CustomResource UseProxyPassword}"
@@ -68,7 +68,7 @@
                     Visibility="Collapsed">
             <TextBox x:Name="FieldSecret"
                      PlaceholderText="{CustomResource UseProxySecret}"
-                     Header="{CustomResource lng_proxy_credentials}"
+                     Header="{CustomResource ProxyCredentials}"
                      Margin="0,4,0,8" />
         </StackPanel>
         <StackPanel x:Name="TypeHttpPanel"

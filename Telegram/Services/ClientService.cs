@@ -423,7 +423,7 @@ namespace Telegram.Services
 
                 _client.Send(new SetOption("ignore_background_updates", new OptionValueBoolean(_settings.Diagnostics.DisableDatabase)));
                 _client.Send(new SetOption("language_pack_database_path", new OptionValueString(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "langpack"))));
-                _client.Send(new SetOption("localization_target", new OptionValueString("android")));
+                _client.Send(new SetOption("localization_target", new OptionValueString(LocaleService.LANGPACK)));
                 _client.Send(new SetOption("language_pack_id", new OptionValueString(SettingsService.Current.LanguagePackId)));
                 //_client.Send(new SetOption("online", new OptionValueBoolean(online)));
                 _client.Send(new SetOption("online", new OptionValueBoolean(false)));

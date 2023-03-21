@@ -200,11 +200,11 @@
 
                 <controls:HeaderedControl Header="{CustomResource Settings}">
                     <CheckBox IsChecked="{x:Bind ViewModel.FullScreenGallery, Mode=TwoWay}"
-                              Content="Enable full-screen gallery"
+                              Content="{CustomResource EnableFullScreenGallery}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
                     <CheckBox IsChecked="{x:Bind ViewModel.DisableHighlightWords, Mode=TwoWay}"
-                              Content="Disable misspelled words highlight"
+                              Content="{CustomResource DisableSpelling}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
                     <CheckBox IsChecked="{x:Bind ViewModel.IsSendByEnterEnabled, Mode=TwoWay}"
@@ -212,7 +212,7 @@
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
                     <CheckBox IsChecked="{x:Bind ViewModel.IsReplaceEmojiEnabled, Mode=TwoWay}"
-                              Content="{CustomResource lng_settings_replace_emojis}"
+                              Content="{CustomResource ReplaceEmoji}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
                     <controls:BadgeButton Content="{CustomResource DistanceUnits}">

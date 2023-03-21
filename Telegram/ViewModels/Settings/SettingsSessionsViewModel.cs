@@ -143,8 +143,8 @@ namespace Telegram.ViewModels.Settings
             }
 
             var popup = new InputPopup();
-            popup.Title = Strings.Resources.lng_settings_rename_device_title;
-            popup.PlaceholderText = Strings.Resources.lng_settings_device_name;
+            popup.Title = Strings.Resources.RenameCurrentDevice;
+            popup.PlaceholderText = Strings.Resources.DeviceName;
             popup.PrimaryButtonText = Strings.Resources.OK;
             popup.SecondaryButtonText = Strings.Resources.Cancel;
             popup.Text = session.DeviceModel;

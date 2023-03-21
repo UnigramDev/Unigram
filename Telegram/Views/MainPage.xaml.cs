@@ -2524,7 +2524,7 @@ namespace Telegram.Views
             //    flyout.CreateFlyoutItem(new RelayCommand(ToggleArchive), Strings.Resources.AccDescrCollapsePanel, new FontIcon { Glyph = Icons.Collapse });
             //}
 
-            flyout.CreateFlyoutItem(new RelayCommand(ToggleArchive), Strings.Resources.lng_context_archive_to_menu, new FontIcon { Glyph = Icons.Collapse });
+            flyout.CreateFlyoutItem(new RelayCommand(ToggleArchive), Strings.Resources.ArchiveMoveToMainMenu, new FontIcon { Glyph = Icons.Collapse });
             flyout.CreateFlyoutItem(ViewModel.FilterMarkAsReadCommand, ChatFilterViewModel.Archive, Strings.Resources.MarkAllAsRead, new FontIcon { Glyph = Icons.MarkAsRead });
 
             args.ShowAt(flyout, element);
@@ -2568,7 +2568,7 @@ namespace Telegram.Views
 
                 if (show is false)
                 {
-                    Window.Current.ShowTeachingTip(Photo, Strings.Resources.lng_context_archive_to_menu_info, Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode.BottomRight);
+                    Window.Current.ShowTeachingTip(Photo, Strings.Resources.ArchiveMoveToMainMenuInfo, Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode.BottomRight);
                 }
             };
 

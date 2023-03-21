@@ -78,7 +78,7 @@
                                               Foreground="Red"
                                               Click="{x:Bind ViewModel.TerminateOthers}" />
                     </controls:HeaderedControl>
-                    <HyperlinkButton Content="{CustomResource lng_settings_rename_device}"
+                    <HyperlinkButton Content="{CustomResource Rename}"
                                      Click="{x:Bind ViewModel.Rename}"
                                      VerticalAlignment="Top"
                                      HorizontalAlignment="Right"

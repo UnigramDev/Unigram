@@ -92,7 +92,7 @@
                 <HyperlinkButton x:Name="Switch2"
                                  Click="Switch2_Click"
                                  Command="{x:Bind ViewModel.SwitchCommand}"
-                                 Content="{CustomResource lng_phone_to_qr}"
+                                 Content="{CustomResource LoginWithQrCode}"
                                  HorizontalAlignment="Center"
                                  Grid.Row="7" />
             </StackPanel>
@@ -139,7 +139,7 @@
 
             <StackPanel x:Name="TokenInnerPanel"
                         Margin="0,12,0,0">
-                <TextBlock Text="{CustomResource lng_intro_qr_title}"
+                <TextBlock Text="{CustomResource LoginWithQrCodeTitle}"
                            Style="{StaticResource TitleTextBlockStyle}"
                            TextAlignment="Center" />
 
@@ -190,18 +190,18 @@
                                    Margin="6,2,6,0" />
                     </Border>
 
-                    <TextBlock Text="{CustomResource lng_intro_qr_step1}"
+                    <TextBlock Text="{CustomResource LoginWithQrCodeStep1}"
                                Style="{StaticResource BodyTextBlockStyle}"
                                VerticalAlignment="Top"
                                Grid.Column="1" />
 
-                    <TextBlock Text="{CustomResource lng_intro_qr_step2}"
+                    <TextBlock Text="{CustomResource LoginWithQrCodeStep2}"
                                Style="{StaticResource BodyTextBlockStyle}"
                                VerticalAlignment="Top"
                                Grid.Column="1"
                                Grid.Row="1" />
 
-                    <TextBlock Text="{CustomResource lng_intro_qr_step3}"
+                    <TextBlock Text="{CustomResource LoginWithQrCodeStep3}"
                                Style="{StaticResource BodyTextBlockStyle}"
                                VerticalAlignment="Top"
                                Grid.Column="1"
@@ -209,7 +209,7 @@
                 </Grid>
 
                 <HyperlinkButton Click="Switch1_Click"
-                                 Content="{CustomResource lng_intro_qr_skip}"
+                                 Content="{CustomResource LoginWithQrCodeSkip}"
                                  HorizontalAlignment="Center"
                                  Grid.Row="6" />
             </StackPanel>

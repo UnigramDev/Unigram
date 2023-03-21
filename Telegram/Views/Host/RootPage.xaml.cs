@@ -485,7 +485,7 @@ namespace Telegram.Views.Host
                 {
                     var flyout = new MenuFlyout();
 
-                    flyout.CreateFlyoutItem(new RelayCommand(() => { Navigation.IsPaneOpen = false; page.ToggleArchive(); }), Strings.Resources.lng_context_archive_to_list, new FontIcon { Glyph = Icons.Expand });
+                    flyout.CreateFlyoutItem(new RelayCommand(() => { Navigation.IsPaneOpen = false; page.ToggleArchive(); }), Strings.Resources.ArchiveMoveToChatList, new FontIcon { Glyph = Icons.Expand });
                     flyout.CreateFlyoutItem(page.ViewModel.FilterMarkAsReadCommand, ChatFilterViewModel.Archive, Strings.Resources.MarkAllAsRead, new FontIcon { Glyph = Icons.MarkAsRead });
 
                     args.ShowAt(flyout, container);

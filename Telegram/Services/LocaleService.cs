@@ -37,6 +37,8 @@ namespace Telegram.Services
 
     public class LocaleService : ILocaleService
     {
+        public const string LANGPACK = "unigram";
+
         private const int QUANTITY_OTHER = 0x0000;
         private const int QUANTITY_ZERO = 0x0001;
         private const int QUANTITY_ONE = 0x0002;
@@ -45,8 +47,6 @@ namespace Telegram.Services
         private const int QUANTITY_MANY = 0x0010;
 
         private readonly ResourceLoader _loader;
-
-        private readonly Regex _stringFormat = new Regex("%([0-9]*?)\\$[ds]", RegexOptions.Compiled);
 
         private readonly ConcurrentDictionary<string, ConcurrentDictionary<string, string>> _languagePack = new ConcurrentDictionary<string, ConcurrentDictionary<string, string>>();
         private string _languageCode;
@@ -157,11 +157,32 @@ namespace Telegram.Services
             return new Ok();
         }
 
-        public void SaveRemoteLocaleStrings(string lang, LanguagePackStrings difference)
+#if DEBUG
+        private void SaveRemoteLocaleStrings(string lang, LanguagePackStrings difference)
         {
-            var fileName = Path.Combine(ApplicationData.Current.LocalFolder.Path, "test", lang, "Android.resw");
+            var fileName = Path.Combine(ApplicationData.Current.LocalFolder.Path, "test", $"Strings.{lang}.resw");
             try
             {
+                var stringFormat = new Regex("%([0-9]*?)\\$[ds]", RegexOptions.Compiled);
+
+                string GetValue(string value)
+                {
+                    if (value.StartsWith("\"") && value.EndsWith("\""))
+                    {
+                        value = value.Trim('"');
+                    }
+
+                    value = value.Replace("%%", "%");
+                    value = value.Replace("%s", "{0}");
+                    value = value.Replace("%d", "{0}");
+
+                    return stringFormat.Replace(value, match =>
+                    {
+                        var index = int.Parse(match.Groups[1].Value);
+                        return $"{{{index - 1}}}";
+                    });
+                }
+
                 var values = new Dictionary<string, string>();
                 var already = new List<string>();
                 for (int a = 0; a < difference.Strings.Count; a++)
@@ -291,72 +312,13 @@ namespace Telegram.Services
                 writer.Write("</root>");
                 //writer.Write("</resources>");
                 writer.Dispose();
-
-                //var valuesToSet = getLocaleFileStrings(finalFile);
-                //{
-                //    LocaleInfo localeInfo = getLanguageFromDict(difference.lang_code);
-                //    if (localeInfo != null)
-                //    {
-                //        localeInfo.version = difference.version;
-                //    }
-                //    saveOtherLanguages();
-                //    if (currentLocaleInfo != null && currentLocaleInfo.isLocal())
-                //    {
-                //        return;
-                //    }
-                //    try
-                //    {
-                //        Locale newLocale;
-                //        String[] args = localeInfo.shortName.split("_");
-                //        if (args.length == 1)
-                //        {
-                //            newLocale = new Locale(localeInfo.shortName);
-                //        }
-                //        else
-                //        {
-                //            newLocale = new Locale(args[0], args[1]);
-                //        }
-                //        if (newLocale != null)
-                //        {
-                //            languageOverride = localeInfo.shortName;
-
-                //            SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("mainconfig", Activity.MODE_PRIVATE);
-                //            SharedPreferences.Editor editor = preferences.edit();
-                //            editor.putString("language", localeInfo.getKey());
-                //            editor.commit();
-                //        }
-                //        if (newLocale != null)
-                //        {
-                //            localeValues = valuesToSet;
-                //            currentLocale = newLocale;
-                //            currentLocaleInfo = localeInfo;
-                //            currentPluralRules = allRules.get(currentLocale.getLanguage());
-                //            if (currentPluralRules == null)
-                //            {
-                //                currentPluralRules = allRules.get("en");
-                //            }
-                //            changingConfiguration = true;
-                //            Locale.setDefault(currentLocale);
-                //            android.content.res.Configuration config = new android.content.res.Configuration();
-                //            config.locale = currentLocale;
-                //            ApplicationLoader.applicationContext.getResources().updateConfiguration(config, ApplicationLoader.applicationContext.getResources().getDisplayMetrics());
-                //            changingConfiguration = false;
-                //        }
-                //    }
-                //    catch (Exception e)
-                //    {
-                //        FileLog.e(e);
-                //        changingConfiguration = false;
-                //    }
-                //    recreateFormatters();
-                //    NotificationCenter.getInstance().postNotificationName(NotificationCenter.reloadInterface);
-                //}
             }
             catch (Exception ignore)
             {
 
             }
         }
+#endif
 
 
         public string GetString(string key)
@@ -367,10 +329,10 @@ namespace Telegram.Services
                 return value;
             }
 
-            var result = Client.Execute(new GetLanguagePackString(_languagePath, "android", _languageCode, key));
+            var result = Client.Execute(new GetLanguagePackString(_languagePath, LANGPACK, _languageCode, key));
             if (result is LanguagePackStringValueOrdinary ordinary)
             {
-                return values[key] = GetValue(ordinary.Value);
+                return values[key] = ordinary.Value;
             }
 
 #if zDEBUG
@@ -396,30 +358,30 @@ namespace Telegram.Services
                 return value;
             }
 
-            var result = Client.Execute(new GetLanguagePackString(_languagePath, "android", _languageCode, key));
+            var result = Client.Execute(new GetLanguagePackString(_languagePath, LANGPACK, _languageCode, key));
             if (result is LanguagePackStringValuePluralized pluralized)
             {
-                values[key + "_zero"] = GetValue(pluralized.ZeroValue);
-                values[key + "_one"] = GetValue(pluralized.OneValue);
-                values[key + "_two"] = GetValue(pluralized.TwoValue);
-                values[key + "_few"] = GetValue(pluralized.FewValue);
-                values[key + "_many"] = GetValue(pluralized.ManyValue);
-                values[key + "_other"] = GetValue(pluralized.OtherValue);
+                values[key + "_zero"] = pluralized.ZeroValue;
+                values[key + "_one"] = pluralized.OneValue;
+                values[key + "_two"] = pluralized.TwoValue;
+                values[key + "_few"] = pluralized.FewValue;
+                values[key + "_many"] = pluralized.ManyValue;
+                values[key + "_other"] = pluralized.OtherValue;
 
                 switch (quantity)
                 {
                     case QUANTITY_ZERO:
-                        return GetValue(pluralized.ZeroValue);
+                        return pluralized.ZeroValue;
                     case QUANTITY_ONE:
-                        return GetValue(pluralized.OneValue);
+                        return pluralized.OneValue;
                     case QUANTITY_TWO:
-                        return GetValue(pluralized.TwoValue);
+                        return pluralized.TwoValue;
                     case QUANTITY_FEW:
-                        return GetValue(pluralized.FewValue);
+                        return pluralized.FewValue;
                     case QUANTITY_MANY:
-                        return GetValue(pluralized.ManyValue);
+                        return pluralized.ManyValue;
                     default:
-                        return GetValue(pluralized.OtherValue);
+                        return pluralized.OtherValue;
                 }
             }
 
@@ -436,24 +398,6 @@ namespace Telegram.Services
 #endif
         }
 
-        private string GetValue(string value)
-        {
-            if (value.StartsWith("\"") && value.EndsWith("\""))
-            {
-                value = value.Trim('"');
-            }
-
-            value = value.Replace("%%", "%");
-            value = value.Replace("%s", "{0}");
-            value = value.Replace("%d", "{0}");
-
-            return _stringFormat.Replace(value, match =>
-            {
-                var index = int.Parse(match.Groups[1].Value);
-                return $"{{{index - 1}}}";
-            });
-        }
-
         #region Handle
 
         public void Handle(UpdateLanguagePackStrings update)
@@ -465,15 +409,15 @@ namespace Telegram.Services
                 switch (value.Value)
                 {
                     case LanguagePackStringValueOrdinary ordinary:
-                        values[value.Key] = GetValue(ordinary.Value);
+                        values[value.Key] = ordinary.Value;
                         break;
                     case LanguagePackStringValuePluralized pluralized:
-                        values[value.Key + "Zero"] = GetValue(pluralized.ZeroValue);
-                        values[value.Key + "One"] = GetValue(pluralized.OneValue);
-                        values[value.Key + "Two"] = GetValue(pluralized.TwoValue);
-                        values[value.Key + "Few"] = GetValue(pluralized.FewValue);
-                        values[value.Key + "Many"] = GetValue(pluralized.ManyValue);
-                        values[value.Key + "Other"] = GetValue(pluralized.OtherValue);
+                        values[value.Key + "Zero"] = pluralized.ZeroValue;
+                        values[value.Key + "One"] = pluralized.OneValue;
+                        values[value.Key + "Two"] = pluralized.TwoValue;
+                        values[value.Key + "Few"] = pluralized.FewValue;
+                        values[value.Key + "Many"] = pluralized.ManyValue;
+                        values[value.Key + "Other"] = pluralized.OtherValue;
                         break;
                     case LanguagePackStringValueDeleted:
                         values.TryRemove(value.Key, out _);

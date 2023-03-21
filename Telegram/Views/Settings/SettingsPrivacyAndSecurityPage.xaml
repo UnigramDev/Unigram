@@ -165,10 +165,10 @@
 
                 <controls:HeaderedControl x:Name="SensitiveContent"
                                           x:Load="False"
-                                          Header="{CustomResource lng_settings_sensitive_title}"
-                                          Footer="{CustomResource lng_settings_sensitive_about}">
+                                          Header="{CustomResource SensitiveTitle}"
+                                          Footer="{CustomResource SensitiveInfo}">
                     <CheckBox IsChecked="{x:Bind ViewModel.IgnoreSensitiveContentRestrictions, Mode=TwoWay}"
-                              Content="{CustomResource lng_settings_sensitive_disable_filtering}"
+                              Content="{CustomResource SensitiveDisableFiltering}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
                 </controls:HeaderedControl>
 

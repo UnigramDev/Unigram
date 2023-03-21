@@ -57,9 +57,7 @@ namespace Telegram.Controls
                     ToggleMinimized.Visibility = Visibility.Collapsed;
                 }
 
-                Headered.Footer = Strings.Resources.lng_settings_auto_start_disabled_uwp
-                    .Replace("Telegram Desktop", "Unigram");
-
+                Headered.Footer = Strings.Resources.AutoStartDisabledInfo;
                 Visibility = Visibility.Visible;
             }
             else if (task.State == StartupTaskState.Enabled)
