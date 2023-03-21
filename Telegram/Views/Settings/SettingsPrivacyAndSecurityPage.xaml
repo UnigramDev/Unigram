@@ -117,7 +117,10 @@
                 <controls:HeaderedControl Header="{CustomResource PrivacyAdvanced}"
                                           Footer="{CustomResource DeleteAccountHelp}">
                     <controls:BadgeButton Content="{CustomResource PrivacyDeleteCloudDrafts}"
-                                          Click="{x:Bind ViewModel.ClearDrafts}" />
+                                          Click="{x:Bind ViewModel.ClearDrafts}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Foreground="{ThemeResource DangerButtonBackground}"
+                                          Glyph="&#xE74D;" />
 
                     <controls:BadgeButton Content="{CustomResource DeleteAccountIfAwayFor2}">
                         <controls:BadgeButton.Badge>
@@ -131,17 +134,25 @@
                 <controls:HeaderedControl Header="{CustomResource PrivacyBots}"
                                           Footer="{CustomResource PrivacyBotsInfo}">
                     <controls:BadgeButton Click="{x:Bind ViewModel.ClearPayments}"
-                                          Content="{CustomResource PrivacyPaymentsClear}" />
+                                          Content="{CustomResource PrivacyPaymentsClear}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Foreground="{ThemeResource DangerButtonBackground}"
+                                          Glyph="&#xE74D;" />
 
                     <controls:BadgeButton Click="{x:Bind ViewModel.OpenWebSessions}"
                                           Content="{CustomResource WebSessionsTitle}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xE774;"
                                           IsChevronVisible="True" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="{CustomResource Contacts}"
                                           Footer="{CustomResource SuggestContactsInfo}">
                     <controls:BadgeButton Click="{x:Bind ViewModel.ClearContacts}"
-                                          Content="{CustomResource SyncContactsDelete}" />
+                                          Content="{CustomResource SyncContactsDelete}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Foreground="{ThemeResource DangerButtonBackground}"
+                                          Glyph="&#xE74D;" />
 
                     <CheckBox IsChecked="{x:Bind ViewModel.IsContactsSyncEnabled, Mode=TwoWay}"
                               Content="{CustomResource SyncContacts}"

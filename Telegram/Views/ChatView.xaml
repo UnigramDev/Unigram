@@ -303,7 +303,7 @@
           AllowDrop="True"
           DragOver="OnDragOver"
           Drop="OnDrop"
-          Margin="0,-56,0,0">
+          Margin="0,-50,0,0">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
                 <VisualState x:Name="FilledState" />

@@ -72,7 +72,7 @@
                             <Grid x:Name="DetailHeaderPresenter2"
                                   CornerRadius="{ThemeResource NavigationViewContentGridCornerRadius}">
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="56" />
+                                    <RowDefinition Height="50" />
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
 
