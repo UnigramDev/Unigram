@@ -246,6 +246,17 @@ namespace Telegram.Views.Popups
                 }
                 else if (args.Phase == 0 && content.Children[0] is LottieView lottie)
                 {
+                    if (sticker.FullType is StickerFullTypeCustomEmoji)
+                    {
+                        lottie.FrameSize = new Windows.Foundation.Size(100, 100);
+                        lottie.DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Physical;
+                    }
+                    else
+                    {
+                        lottie.FrameSize = new Windows.Foundation.Size(68, 68);
+                        lottie.DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical;
+                    }
+
                     lottie.Source = UriEx.ToLocal(file.Local.Path);
                 }
                 else if (args.Phase == 0 && content.Children[0] is AnimationView video)
@@ -263,6 +274,17 @@ namespace Telegram.Views.Popups
                 }
                 else if (args.Phase == 0 && content.Children[0] is LottieView lottie)
                 {
+                    if (sticker.FullType is StickerFullTypeCustomEmoji)
+                    {
+                        lottie.FrameSize = new Windows.Foundation.Size(100, 100);
+                        lottie.DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Physical;
+                    }
+                    else
+                    {
+                        lottie.FrameSize = new Windows.Foundation.Size(68, 68);
+                        lottie.DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical;
+                    }
+
                     lottie.Source = null;
                 }
                 else if (args.Phase == 0 && content.Children[0] is AnimationView video)
