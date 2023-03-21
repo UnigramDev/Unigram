@@ -60,13 +60,6 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _skinTone, "SkinTone", (int)value);
         }
 
-        private bool? _largeEmoji;
-        public bool LargeEmoji
-        {
-            get => _largeEmoji ??= GetValueOrDefault("LargeEmoji", true);
-            set => AddOrUpdateValue(ref _largeEmoji, "LargeEmoji", value);
-        }
-
         private bool? _dynamicPackOrder;
         public bool DynamicPackOrder
         {

@@ -269,13 +269,12 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        // TODO: should this affect ClientService.Options.DisableAnimatedEmoji as well?
         public bool LargeEmoji
         {
-            get => Settings.Stickers.LargeEmoji;
+            get => !ClientService.Options.DisableAnimatedEmoji;
             set
             {
-                Settings.Stickers.LargeEmoji = value;
+                ClientService.Options.DisableAnimatedEmoji = !value;
                 RaisePropertyChanged();
             }
         }
