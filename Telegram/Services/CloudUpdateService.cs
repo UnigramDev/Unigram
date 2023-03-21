@@ -175,7 +175,9 @@ namespace Telegram.Services
                 return null;
             }
 
+            var updateChannel = SettingsService.Current.UpdateChannel;
             var chatId = _chatId.Value;
+
             await _clientService.SendAsync(new OpenChat(chatId));
 
             var messages = await _clientService.SendAsync(new SearchChatMessages(chatId, string.Empty, null, 0, 0, 10, new SearchMessagesFilterDocument(), 0)) as FoundChatMessages;
@@ -210,7 +212,7 @@ namespace Telegram.Services
                     }
                 }
 
-                if (!hashtags.Contains("#update") || !document.Document.FileName.Contains("x64") || !document.Document.FileName.EndsWith(".msixbundle"))
+                if (!hashtags.Contains(updateChannel) || !document.Document.FileName.Contains("x64") || !document.Document.FileName.EndsWith(".msixbundle"))
                 {
                     continue;
                 }
@@ -260,24 +262,33 @@ namespace Telegram.Services
                 return null;
             }
 
-            var chat = await _clientService.SendAsync(new SearchPublicChat("cGFnbGlhY2Npb19kaV9naGlhY2Npbw")) as Chat;
-            if (chat == null)
+            if (_chatId == null)
+            {
+                var chat = await _clientService.SendAsync(new SearchPublicChat(Constants.AppChannel)) as Chat;
+                if (chat != null)
+                {
+                    _chatId = chat.Id;
+                }
+            }
+
+            if (_chatId == null)
             {
                 return null;
             }
 
             var updateChannel = SettingsService.Current.UpdateChannel;
+            var chatId = _chatId.Value;
 
-            await _clientService.SendAsync(new OpenChat(chat.Id));
+            await _clientService.SendAsync(new OpenChat(chatId));
 
-            var response = await _clientService.SendAsync(new SearchChatMessages(chat.Id, updateChannel, null, 0, 0, 10, new SearchMessagesFilterDocument(), 0)) as FoundChatMessages;
+            var response = await _clientService.SendAsync(new SearchChatMessages(chatId, updateChannel, null, 0, 0, 10, new SearchMessagesFilterDocument(), 0)) as FoundChatMessages;
             if (response == null)
             {
-                _clientService.Send(new CloseChat(chat.Id));
+                _clientService.Send(new CloseChat(chatId));
                 return null;
             }
 
-            _clientService.Send(new CloseChat(chat.Id));
+            _clientService.Send(new CloseChat(chatId));
 
             var folder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("updates", CreationCollisionOption.OpenIfExists);
 
