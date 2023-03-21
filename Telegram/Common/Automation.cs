@@ -160,18 +160,18 @@ namespace Telegram.Common
 
                     if (album.Messages.Count > 0 && album.Messages[0].Content is MessageVideo)
                     {
-                        return Locale.Declension("Videos", videos) + ", " + Locale.Declension("Photos", photos) + ", ";
+                        return Locale.Declension(Strings.R.Videos, videos) + ", " + Locale.Declension(Strings.R.Photos, photos) + ", ";
                     }
 
-                    return Locale.Declension("Photos", photos) + ", " + Locale.Declension("Videos", videos) + ", ";
+                    return Locale.Declension(Strings.R.Photos, photos) + ", " + Locale.Declension(Strings.R.Videos, videos) + ", ";
                 }
                 else if (album.Messages.Count > 0 && album.Messages[0].Content is MessageAudio)
                 {
-                    return Locale.Declension("MusicFiles", album.Messages.Count) + ", ";
+                    return Locale.Declension(Strings.R.MusicFiles, album.Messages.Count) + ", ";
                 }
                 else
                 {
-                    return Locale.Declension("Files", album.Messages.Count) + ", ";
+                    return Locale.Declension(Strings.R.Files, album.Messages.Count) + ", ";
                 }
             }
             else if (message.Content is MessageText text)

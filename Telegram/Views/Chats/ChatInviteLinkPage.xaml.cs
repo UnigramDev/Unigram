@@ -163,7 +163,7 @@ namespace Telegram.Views.Chats
             else if (phase == 1)
             {
                 var subtitle = content.Children[2] as TextBlock;
-                subtitle.Text = Locale.Declension("InviteLinkCount", count.InviteLinkCount);
+                subtitle.Text = Locale.Declension(Strings.R.InviteLinkCount, count.InviteLinkCount);
             }
             else if (phase == 2)
             {

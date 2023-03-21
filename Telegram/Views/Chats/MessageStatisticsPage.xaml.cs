@@ -78,7 +78,7 @@ namespace Telegram.Views.Chats
             }
 
             title.Text = chat.Title;
-            subtitle.Text = Locale.Declension("Views", message.InteractionInfo?.ViewCount ?? 0);
+            subtitle.Text = Locale.Declension(Strings.R.Views, message.InteractionInfo?.ViewCount ?? 0);
 
             photo.SetChat(ViewModel.ClientService, chat, 36);
 

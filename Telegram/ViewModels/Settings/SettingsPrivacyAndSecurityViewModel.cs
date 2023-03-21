@@ -175,10 +175,10 @@ namespace Telegram.ViewModels.Settings
 
         public List<SettingsOptionItem<int>> AccountTtlOptions { get; } = new()
         {
-            new SettingsOptionItem<int>(30, Locale.Declension("Months", 1)),
-            new SettingsOptionItem<int>(90, Locale.Declension("Months", 3)),
-            new SettingsOptionItem<int>(180, Locale.Declension("Months", 6)),
-            new SettingsOptionItem<int>(365, Locale.Declension("Years", 1))
+            new SettingsOptionItem<int>(30, Locale.Declension(Strings.R.Months, 1)),
+            new SettingsOptionItem<int>(90, Locale.Declension(Strings.R.Months, 3)),
+            new SettingsOptionItem<int>(180, Locale.Declension(Strings.R.Months, 6)),
+            new SettingsOptionItem<int>(365, Locale.Declension(Strings.R.Years, 1))
         };
 
         private int _blockedUsers;

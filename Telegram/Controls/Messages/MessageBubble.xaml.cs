@@ -377,7 +377,7 @@ namespace Telegram.Controls.Messages
             if (message.InteractionInfo?.ViewCount > 0)
             {
                 builder.Append(". ");
-                builder.Append(Locale.Declension("AccDescrNumberOfViews", message.InteractionInfo.ViewCount));
+                builder.Append(Locale.Declension(Strings.R.AccDescrNumberOfViews, message.InteractionInfo.ViewCount));
             }
 
             builder.Append(".");
@@ -592,7 +592,7 @@ namespace Telegram.Controls.Messages
                 Action.Visibility = Visibility.Visible;
 
                 Automation.SetToolTip(ActionButton, info.ReplyCount > 0
-                    ? Locale.Declension("Comments", info.ReplyCount)
+                    ? Locale.Declension(Strings.R.Comments, info.ReplyCount)
                     : Strings.LeaveAComment);
             }
             else if (message.ChatId == message.ClientService.Options.RepliesBotChatId && Action != null)
@@ -1234,12 +1234,10 @@ namespace Telegram.Controls.Messages
                     : Visibility.Visible;
 
                 ThreadLabel.Text = info.ReplyCount > 0
-                    ? Locale.Declension("Comments", info.ReplyCount)
+                    ? Locale.Declension(Strings.R.Comments, info.ReplyCount)
                     : Strings.LeaveAComment;
 
-                AutomationProperties.SetName(Thread, info.ReplyCount > 0
-                    ? Locale.Declension("Comments", info.ReplyCount)
-                    : Strings.LeaveAComment);
+                AutomationProperties.SetName(Thread, ThreadLabel.Text);
 
                 Thread.Visibility = Visibility.Visible;
             }

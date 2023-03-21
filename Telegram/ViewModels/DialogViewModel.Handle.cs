@@ -320,7 +320,7 @@ namespace Telegram.ViewModels
                 {
                     if (update.OnlineMemberCount > 1)
                     {
-                        OnlineCount = Locale.Declension("OnlineCount", update.OnlineMemberCount);
+                        OnlineCount = Locale.Declension(Strings.R.OnlineCount, update.OnlineMemberCount);
                     }
                     else
                     {

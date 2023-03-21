@@ -206,21 +206,21 @@ namespace Telegram.Common
         {
             if (duration > 3600)
             {
-                var result = Declension("Hours", duration / 3600);
+                var result = Declension(Strings.R.Hours, duration / 3600);
                 var minutes = duration % 3600 / 60;
                 if (minutes > 0)
                 {
-                    result += ", " + Declension("Minutes", minutes);
+                    result += ", " + Declension(Strings.R.Minutes, minutes);
                 }
                 return result;
             }
             else if (duration > 60)
             {
-                return Declension("Minutes", duration / 60);
+                return Declension(Strings.R.Minutes, duration / 60);
             }
             else
             {
-                return Declension("Seconds", duration);
+                return Declension(Strings.R.Seconds, duration);
             }
         }
 
@@ -240,39 +240,39 @@ namespace Telegram.Common
 
             if (ttl < 60)
             {
-                return Declension("Seconds", ttl);
+                return Declension(Strings.R.Seconds, ttl);
             }
             else if (ttl < 60 * 60)
             {
-                return Declension("Minutes", ttl / 60);
+                return Declension(Strings.R.Minutes, ttl / 60);
             }
             else if (ttl < 60 * 60 * 24)
             {
-                return Declension("Hours", ttl / 60 / 60);
+                return Declension(Strings.R.Hours, ttl / 60 / 60);
             }
             else if (ttl < 60 * 60 * 24 * 7)
             {
-                return Declension("Days", ttl / 60 / 60 / 24);
+                return Declension(Strings.R.Days, ttl / 60 / 60 / 24);
             }
             else if (ttl < 60 * 60 * 24 * 31)
             {
                 int days = ttl / 60 / 60 / 24;
                 if (ttl % 7 == 0)
                 {
-                    return Declension("Weeks", days / 7);
+                    return Declension(Strings.R.Weeks, days / 7);
                 }
                 else
                 {
-                    return string.Format("{0} {1}", Declension("Weeks", days / 7), Declension("Days", days % 7));
+                    return string.Format("{0} {1}", Declension(Strings.R.Weeks, days / 7), Declension(Strings.R.Days, days % 7));
                 }
             }
             else if (ttl < 60 * 60 * 24 * 365)
             {
-                return Declension("Months", ttl / 60 / 60 / 24 / 31);
+                return Declension(Strings.R.Months, ttl / 60 / 60 / 24 / 31);
             }
             else
             {
-                return Declension("Years", ttl / 60 / 60 / 24 / 365);
+                return Declension(Strings.R.Years, ttl / 60 / 60 / 24 / 365);
             }
         }
 
@@ -298,7 +298,7 @@ namespace Telegram.Common
                     }
                     else if (diff < 60)
                     {
-                        return Declension("UpdatedMinutes", diff);
+                        return Declension(Strings.R.UpdatedMinutes, diff);
                     }
 
                     var format = string.Format(Strings.TodayAtFormatted, Converter.ShortTime.Format(online)); //getInstance().formatterDay.format(new Date(date)));
@@ -366,15 +366,15 @@ namespace Telegram.Common
         {
             if (timeout == 0)
             {
-                return GetString("AutoLockDisabled");
+                return Strings.AutoLockDisabled;
             }
             else if (timeout < 60 * 60)
             {
-                return string.Format(GetString("AutoLockInTime"), Declension("Minutes", timeout / 60));
+                return string.Format(Strings.AutoLockInTime, Declension(Strings.R.Minutes, timeout / 60));
             }
             else /*if (timeout < 60 * 60 * 24)*/
             {
-                return string.Format(GetString("AutoLockInTime"), Declension("Hours", timeout / 60 / 60));
+                return string.Format(Strings.AutoLockInTime, Declension(Strings.R.Hours, timeout / 60 / 60));
             }
         }
 

@@ -57,10 +57,10 @@ namespace Telegram.ViewModels.Settings
 
         public List<SettingsOptionItem<int>> SessionTtlOptions { get; } = new()
         {
-            new SettingsOptionItem<int>(7, Locale.Declension("Weeks", 1)),
-            new SettingsOptionItem<int>(30, Locale.Declension("Months", 1)),
-            new SettingsOptionItem<int>(90, Locale.Declension("Months", 3)),
-            new SettingsOptionItem<int>(180, Locale.Declension("Months", 6)),
+            new SettingsOptionItem<int>(7, Locale.Declension(Strings.R.Weeks, 1)),
+            new SettingsOptionItem<int>(30, Locale.Declension(Strings.R.Months, 1)),
+            new SettingsOptionItem<int>(90, Locale.Declension(Strings.R.Months, 3)),
+            new SettingsOptionItem<int>(180, Locale.Declension(Strings.R.Months, 6)),
         };
 
         private async Task UpdateSessionsAsync()

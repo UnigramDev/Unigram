@@ -1289,11 +1289,11 @@ namespace Telegram.Controls.Messages
                 {
                     if (senderUser.Id == message.ClientService.Options.MyId)
                     {
-                        content = string.Format(Strings.ActionYouScored, Locale.Declension("Points", gameScore.Score));
+                        content = string.Format(Strings.ActionYouScored, Locale.Declension(Strings.R.Points, gameScore.Score));
                     }
                     else
                     {
-                        content = ReplaceWithLink(string.Format(Strings.ActionUserScored, Locale.Declension("Points", gameScore.Score)), "un1", senderUser, ref entities);
+                        content = ReplaceWithLink(string.Format(Strings.ActionUserScored, Locale.Declension(Strings.R.Points, gameScore.Score)), "un1", senderUser, ref entities);
                     }
                 }
             }
@@ -1303,11 +1303,11 @@ namespace Telegram.Controls.Messages
                 {
                     if (senderUser.Id == message.ClientService.Options.MyId)
                     {
-                        content = string.Format(Strings.ActionYouScoredInGame, Locale.Declension("Points", gameScore.Score));
+                        content = string.Format(Strings.ActionYouScoredInGame, Locale.Declension(Strings.R.Points, gameScore.Score));
                     }
                     else
                     {
-                        content = ReplaceWithLink(string.Format(Strings.ActionUserScoredInGame, Locale.Declension("Points", gameScore.Score)), "un1", senderUser, ref entities);
+                        content = ReplaceWithLink(string.Format(Strings.ActionUserScoredInGame, Locale.Declension(Strings.R.Points, gameScore.Score)), "un1", senderUser, ref entities);
                     }
                 }
 

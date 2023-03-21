@@ -64,7 +64,7 @@ namespace Telegram.Controls
                     _clientService.Send(new GetChatJoinRequests(chat.Id, string.Empty, string.Empty, null, 3));
                 }
 
-                Label.Text = Locale.Declension("JoinRequests", chat.PendingJoinRequests.TotalCount);
+                Label.Text = Locale.Declension(Strings.R.JoinRequests, chat.PendingJoinRequests.TotalCount);
 
                 var destination = RecentUsers.Items;
                 var origin = chat.PendingJoinRequests.UserIds;

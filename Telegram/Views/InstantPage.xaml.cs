@@ -133,7 +133,7 @@ namespace Telegram.Views
 
             if (instantView.ViewCount > 0)
             {
-                ViewsLabel.Text = Locale.Declension("Views", instantView.ViewCount);
+                ViewsLabel.Text = Locale.Declension(Strings.R.Views, instantView.ViewCount);
             }
             else
             {

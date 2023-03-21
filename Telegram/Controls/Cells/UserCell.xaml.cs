@@ -287,7 +287,7 @@ namespace Telegram.Controls.Cells
                     }
                     else if (supergroup.MemberCount > 0)
                     {
-                        SubtitleLabel.Text = Locale.Declension(supergroup.IsChannel ? "Subscribers" : "Members", supergroup.MemberCount);
+                        SubtitleLabel.Text = Locale.Declension(supergroup.IsChannel ? Strings.R.Subscribers : Strings.R.Members, supergroup.MemberCount);
                     }
                     else
                     {
@@ -299,7 +299,7 @@ namespace Telegram.Controls.Cells
                     var basicGroup = clientService.GetBasicGroup(basic.BasicGroupId);
                     if (basicGroup.MemberCount > 0)
                     {
-                        SubtitleLabel.Text = Locale.Declension("Members", basicGroup.MemberCount);
+                        SubtitleLabel.Text = Locale.Declension(Strings.R.Members, basicGroup.MemberCount);
                     }
                     else
                     {

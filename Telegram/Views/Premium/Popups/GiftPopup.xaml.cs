@@ -82,7 +82,7 @@ namespace Telegram.Views.Premium.Popups
 
             var monthlyAmount = option.Amount / option.MonthCount;
 
-            title.Text = Locale.Declension("Months", option.MonthCount);
+            title.Text = Locale.Declension(Strings.R.Months, option.MonthCount);
             subtitle.Text = string.Format(Strings.PricePerMonth, Locale.FormatCurrency(monthlyAmount, option.Currency));
             price.Text = Locale.FormatCurrency(option.Amount, option.Currency);
 

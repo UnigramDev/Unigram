@@ -32,7 +32,7 @@ namespace Telegram.Views.Popups
             _delegate = delegato;
 
             Title = Strings.PollResults;
-            Subtitle.Text = Locale.Declension(poll.Type is PollTypeQuiz ? "Answer" : "Vote", poll.TotalVoterCount);
+            Subtitle.Text = Locale.Declension(poll.Type is PollTypeQuiz ? Strings.R.Answer : Strings.R.Vote, poll.TotalVoterCount);
 
             PrimaryButtonText = Strings.OK;
 
@@ -70,7 +70,7 @@ namespace Telegram.Views.Popups
             {
                 var headered = args.Element as HeaderedControl;
                 headered.Header = $"{option.Text} — {option.VotePercentage}%";
-                headered.Footer = Locale.Declension(option.Type is PollTypeQuiz ? "Answer" : "Vote", option.VoterCount);
+                headered.Footer = Locale.Declension(option.Type is PollTypeQuiz ? Strings.R.Answer : Strings.R.Vote, option.VoterCount);
                 headered.Visibility = option.VoterCount > 0 ? Visibility.Visible : Visibility.Collapsed;
             }
         }
@@ -151,7 +151,7 @@ namespace Telegram.Views.Popups
             {
                 if (_remaining > 0)
                 {
-                    return Locale.Declension("ShowVotes", _remaining);
+                    return Locale.Declension(Strings.R.ShowVotes, _remaining);
                 }
 
                 return null;

@@ -29,7 +29,7 @@ namespace Telegram.Controls
             var results = poll.IsClosed || poll.Options.Any(x => x.IsChosen);
             var correct = poll.Type is PollTypeQuiz quiz && quiz.CorrectOptionId == poll.Options.IndexOf(option);
 
-            var votes = Locale.Declension(poll.Type is PollTypeQuiz ? "Answer" : "Vote", option.VoterCount);
+            var votes = Locale.Declension(poll.Type is PollTypeQuiz ? Strings.R.Answer : Strings.R.Vote, option.VoterCount);
 
             IsThreeState = results;
             IsChecked = results ? null : new bool?(false);

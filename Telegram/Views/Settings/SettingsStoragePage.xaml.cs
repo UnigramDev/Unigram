@@ -76,14 +76,14 @@ namespace Telegram.Views.Settings
             }
             else if (days < 7)
             {
-                return Locale.Declension("Days", days);
+                return Locale.Declension(Strings.R.Days, days);
             }
             else if (days < 30)
             {
-                return Locale.Declension("Weeks", 1);
+                return Locale.Declension(Strings.R.Weeks, 1);
             }
 
-            return Locale.Declension("Months", 1);
+            return Locale.Declension(Strings.R.Months, 1);
         }
 
         private bool ConvertEnabled(object value)
@@ -151,14 +151,14 @@ namespace Telegram.Views.Settings
             }
             else if (days < 7)
             {
-                return Locale.Declension("Days", days);
+                return Locale.Declension(Strings.R.Days, days);
             }
             else if (days < 30)
             {
-                return Locale.Declension("Weeks", 1);
+                return Locale.Declension(Strings.R.Weeks, 1);
             }
 
-            return Locale.Declension("Months", 1);
+            return Locale.Declension(Strings.R.Months, 1);
         }
 
         #endregion

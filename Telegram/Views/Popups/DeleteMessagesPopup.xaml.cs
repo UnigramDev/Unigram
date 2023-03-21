@@ -20,7 +20,9 @@ namespace Telegram.Views.Popups
         {
             InitializeComponent();
 
-            Title = messages.Count == 1 ? Strings.DeleteSingleMessagesTitle : string.Format(Strings.DeleteMessagesTitle, Locale.Declension("messages", messages.Count));
+            Title = messages.Count == 1
+                ? Strings.DeleteSingleMessagesTitle
+                : string.Format(Strings.DeleteMessagesTitle, Locale.Declension(Strings.R.messages, messages.Count));
             PrimaryButtonText = Strings.OK;
             SecondaryButtonText = Strings.Cancel;
 
@@ -99,8 +101,8 @@ namespace Telegram.Views.Popups
                     if (anyCanBeDeletedForAllUsers && !canBeDeletedForAllUsers)
                     {
                         TextBlockHelper.SetMarkdown(Message, chat.Type is ChatTypePrivate && user != null
-                            ? string.Format(Strings.DeleteMessagesText, Locale.Declension("messages", messages.Count), user.FirstName)
-                            : string.Format(Strings.DeleteMessagesTextGroup, Locale.Declension("messages", messages.Count)));
+                            ? string.Format(Strings.DeleteMessagesText, Locale.Declension(Strings.R.messages, messages.Count), user.FirstName)
+                            : string.Format(Strings.DeleteMessagesTextGroup, Locale.Declension(Strings.R.messages, messages.Count)));
 
                         RevokeCheck.IsChecked = true;
                         RevokeCheck.Visibility = Visibility.Visible;

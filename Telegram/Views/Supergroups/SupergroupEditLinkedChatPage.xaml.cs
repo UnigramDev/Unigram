@@ -43,7 +43,7 @@ namespace Telegram.Views.Supergroups
                 }
                 else
                 {
-                    subtitle.Text = Locale.Declension(supergroup.IsChannel ? "Subscribers" : "Members", supergroup.MemberCount);
+                    subtitle.Text = Locale.Declension(supergroup.IsChannel ? Strings.R.Subscribers : Strings.R.Members, supergroup.MemberCount);
                 }
             }
 

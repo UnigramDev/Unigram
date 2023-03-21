@@ -211,13 +211,13 @@ namespace Telegram.Controls.Cells
 
             if (topic.UnreadCount > 0)
             {
-                builder.Append(Locale.Declension("NewMessages", topic.UnreadCount));
+                builder.Append(Locale.Declension(Strings.R.NewMessages, topic.UnreadCount));
                 builder.Append(", ");
             }
 
             if (topic.UnreadMentionCount > 0)
             {
-                builder.Append(Locale.Declension("AccDescrMentionCount", topic.UnreadMentionCount));
+                builder.Append(Locale.Declension(Strings.R.AccDescrMentionCount, topic.UnreadMentionCount));
                 builder.Append(", ");
             }
 

@@ -2938,7 +2938,7 @@ namespace Telegram.ViewModels
                 }
 
                 var userIds = selected.Select(x => x.Id).ToArray();
-                var count = Locale.Declension("Users", selected.Count);
+                var count = Locale.Declension(Strings.R.Users, selected.Count);
 
                 var title = string.Format(Strings.AddMembersAlertTitle, count);
                 var message = string.Format(Strings.AddMembersAlertCountText, count, chat.Title);

@@ -31,7 +31,7 @@ namespace Telegram.Controls
                 ShowHide(true);
 
                 Icon.Progress = Math.Max((double)update.DownloadedSize / update.TotalSize, 0.05);
-                Count.Text = Locale.Declension("Files", update.TotalCount);
+                Count.Text = Locale.Declension(Strings.R.Files, update.TotalCount);
 
                 if (update.DownloadedSize < update.TotalSize)
                 {

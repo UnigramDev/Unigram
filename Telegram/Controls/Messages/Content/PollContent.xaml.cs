@@ -131,7 +131,7 @@ namespace Telegram.Controls.Messages.Content
 
             Question.Text = poll.Poll.Question;
             Votes.Text = poll.Poll.TotalVoterCount > 0
-                ? Locale.Declension(poll.Poll.Type is PollTypeQuiz ? "Answer" : "Vote", poll.Poll.TotalVoterCount)
+                ? Locale.Declension(poll.Poll.Type is PollTypeQuiz ? Strings.R.Answer : Strings.R.Vote, poll.Poll.TotalVoterCount)
                 : poll.Poll.Type is PollTypeQuiz
                 ? Strings.NoVotesQuiz
                 : Strings.NoVotes;

@@ -551,7 +551,7 @@ namespace Telegram.ViewModels
                                 {
                                     if (days != 0)
                                     {
-                                        addStr = Locale.Declension("Days", days);
+                                        addStr = Locale.Declension(Strings.R.Days, days);
                                         count++;
                                     }
                                 }
@@ -559,7 +559,7 @@ namespace Telegram.ViewModels
                                 {
                                     if (hours != 0)
                                     {
-                                        addStr = Locale.Declension("Hours", hours);
+                                        addStr = Locale.Declension(Strings.R.Hours, hours);
                                         count++;
                                     }
                                 }
@@ -567,7 +567,7 @@ namespace Telegram.ViewModels
                                 {
                                     if (minutes != 0)
                                     {
-                                        addStr = Locale.Declension("Minutes", minutes);
+                                        addStr = Locale.Declension(Strings.R.Minutes, minutes);
                                         count++;
                                     }
                                 }

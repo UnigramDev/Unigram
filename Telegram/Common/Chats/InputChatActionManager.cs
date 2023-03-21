@@ -181,7 +181,7 @@ namespace Telegram.Common.Chats
                         if (typingUsers.Count > 2)
                         {
                             commonAction = new ChatActionTyping();
-                            return string.Format("{0} {1}", label, Locale.Declension("AndMoreTyping", typingUsers.Count - 2).TrimEnd('.'));
+                            return string.Format("{0} {1}", label, Locale.Declension(Strings.R.AndMoreTyping, typingUsers.Count - 2).TrimEnd('.'));
                         }
                         else
                         {

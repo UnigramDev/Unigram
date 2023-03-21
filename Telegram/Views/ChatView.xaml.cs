@@ -1925,7 +1925,7 @@ namespace Telegram.Views
                     flyout.Items.Add(edit);
                 }
 
-                flyout.CreateFlyoutItem(MessageThread_Loaded, ViewModel.MessageThreadCommand, message, message.InteractionInfo?.ReplyInfo?.ReplyCount > 0 ? Locale.Declension("ViewReplies", message.InteractionInfo.ReplyInfo.ReplyCount) : Strings.ViewThread, new FontIcon { Glyph = Icons.ChatMultiple });
+                flyout.CreateFlyoutItem(MessageThread_Loaded, ViewModel.MessageThreadCommand, message, message.InteractionInfo?.ReplyInfo?.ReplyCount > 0 ? Locale.Declension(Strings.R.ViewReplies, message.InteractionInfo.ReplyInfo.ReplyCount) : Strings.ViewThread, new FontIcon { Glyph = Icons.ChatMultiple });
 
                 flyout.CreateFlyoutSeparator();
 
@@ -2078,7 +2078,7 @@ namespace Telegram.Views
 
                 if (sets.Count > 1)
                 {
-                    placeholder.Text = Locale.Declension("MessageContainsEmojiPacks", sets.Count);
+                    placeholder.Text = Locale.Declension(Strings.R.MessageContainsEmojiPacks, sets.Count);
                 }
                 else if (sets.Count > 0)
                 {
@@ -2160,7 +2160,7 @@ namespace Telegram.Views
                 {
                     //var final = new MenuFlyoutSubItem();
                     final.Style = App.Current.Resources["MessageSeenMenuFlyoutSubItemStyle"] as Style;
-                    final.Text = Locale.Declension(played ? "MessagePlayed" : "MessageSeen", viewers.Viewers.Count);
+                    final.Text = Locale.Declension(played ? Strings.R.MessagePlayed : Strings.R.MessageSeen, viewers.Viewers.Count);
                     final.Icon = new FontIcon { Glyph = played ? Icons.Play : Icons.Seen, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
                     final.Tag = pictures;
 
@@ -3081,7 +3081,7 @@ namespace Telegram.Views
 
         private string ConvertSelection(int count)
         {
-            return Locale.Declension("messages", count);
+            return Locale.Declension(Strings.R.messages, count);
         }
 
         public Visibility ConvertIsEmpty(bool empty, bool self, bool bot, bool should)
@@ -3558,16 +3558,16 @@ namespace Telegram.Views
                     {
                         if (senderChat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
                         {
-                            Title.Text = Locale.Declension("Comments", message.InteractionInfo.ReplyInfo.ReplyCount);
+                            Title.Text = Locale.Declension(Strings.R.Comments, message.InteractionInfo.ReplyInfo.ReplyCount);
                         }
                         else
                         {
-                            Title.Text = Locale.Declension("Replies", message.InteractionInfo.ReplyInfo.ReplyCount);
+                            Title.Text = Locale.Declension(Strings.R.Replies, message.InteractionInfo.ReplyInfo.ReplyCount);
                         }
                     }
                     else
                     {
-                        Title.Text = Locale.Declension("Replies", message.InteractionInfo.ReplyInfo.ReplyCount);
+                        Title.Text = Locale.Declension(Strings.R.Replies, message.InteractionInfo.ReplyInfo.ReplyCount);
                     }
                 }
             }
@@ -4438,13 +4438,13 @@ namespace Telegram.Views
                 TextField.PlaceholderText = GetPlaceholder(chat, group, out bool readOnly);
                 TextField.IsReadOnly = readOnly;
 
-                ViewModel.LastSeen = Locale.Declension("Members", group.MemberCount);
+                ViewModel.LastSeen = Locale.Declension(Strings.R.Members, group.MemberCount);
             }
         }
 
         public void UpdateBasicGroupFullInfo(Chat chat, BasicGroup group, BasicGroupFullInfo fullInfo)
         {
-            ViewModel.LastSeen = Locale.Declension("Members", fullInfo.Members.Count);
+            ViewModel.LastSeen = Locale.Declension(Strings.R.Members, fullInfo.Members.Count);
 
             btnVoiceMessage.IsRestricted = false;
 
@@ -4585,7 +4585,7 @@ namespace Telegram.Views
 
             if (ViewModel.Type == DialogType.History)
             {
-                ViewModel.LastSeen = Locale.Declension(group.IsChannel ? "Subscribers" : "Members", group.MemberCount);
+                ViewModel.LastSeen = Locale.Declension(group.IsChannel ? Strings.R.Subscribers : Strings.R.Members, group.MemberCount);
             }
             else if (ViewModel.Type == DialogType.Thread && ViewModel.Topic != null)
             {
@@ -4609,7 +4609,7 @@ namespace Telegram.Views
         {
             if (ViewModel.Type == DialogType.History)
             {
-                ViewModel.LastSeen = Locale.Declension(group.IsChannel ? "Subscribers" : "Members", fullInfo.MemberCount);
+                ViewModel.LastSeen = Locale.Declension(group.IsChannel ? Strings.R.Subscribers : Strings.R.Members, fullInfo.MemberCount);
             }
             else if (ViewModel.Type == DialogType.Thread && ViewModel.Topic != null)
             {
@@ -4764,7 +4764,7 @@ namespace Telegram.Views
 
                         if (ViewModel.ClientService.TryGetSupergroup(senderChat, out Supergroup supergroup))
                         {
-                            item.Info = Locale.Declension("Subscribers", supergroup.MemberCount);
+                            item.Info = Locale.Declension(Strings.R.Subscribers, supergroup.MemberCount);
                         }
                     }
 

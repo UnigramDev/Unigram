@@ -49,7 +49,7 @@ namespace Telegram.Views.Supergroups
             else if (args.Phase == 1)
             {
                 var subtitle = content.Children[2] as TextBlock;
-                subtitle.Text = Locale.Declension("Stickers", stickerSet.Size);
+                subtitle.Text = Locale.Declension(Strings.R.Stickers, stickerSet.Size);
             }
             else if (args.Phase == 2)
             {
@@ -106,7 +106,7 @@ namespace Telegram.Views.Supergroups
             }
 
             title.Text = stickerSet.Title;
-            subtitle.Text = Locale.Declension("Stickers", stickerSet.Size);
+            subtitle.Text = Locale.Declension(Strings.R.Stickers, stickerSet.Size);
 
             var cover = stickerSet.Thumbnail ?? stickerSet.Covers.FirstOrDefault()?.Thumbnail;
             if (cover == null)

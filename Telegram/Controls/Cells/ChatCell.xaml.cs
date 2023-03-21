@@ -384,13 +384,13 @@ namespace Telegram.Controls.Cells
 
             if (chat.UnreadCount > 0)
             {
-                builder.Append(Locale.Declension("NewMessages", chat.UnreadCount));
+                builder.Append(Locale.Declension(Strings.R.NewMessages, chat.UnreadCount));
                 builder.Append(", ");
             }
 
             if (chat.UnreadMentionCount > 0)
             {
-                builder.Append(Locale.Declension("AccDescrMentionCount", chat.UnreadMentionCount));
+                builder.Append(Locale.Declension(Strings.R.AccDescrMentionCount, chat.UnreadMentionCount));
                 builder.Append(", ");
             }
 

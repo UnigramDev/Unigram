@@ -288,7 +288,7 @@ namespace Telegram.Controls
 
         public void UpdateBasicGroup(Chat chat, BasicGroup group)
         {
-            Subtitle.Text = Locale.Declension("Members", group.MemberCount);
+            Subtitle.Text = Locale.Declension(Strings.R.Members, group.MemberCount);
 
             Description.Content = Strings.DescriptionPlaceholder;
 
@@ -372,7 +372,7 @@ namespace Telegram.Controls
             }
             else
             {
-                Subtitle.Text = Locale.Declension(group.IsChannel ? "Subscribers" : "Members", group.MemberCount);
+                Subtitle.Text = Locale.Declension(group.IsChannel ? Strings.R.Subscribers : Strings.R.Members, group.MemberCount);
             }
 
             Description.Content = Strings.DescriptionPlaceholder;
@@ -468,7 +468,7 @@ namespace Telegram.Controls
             }
             else
             {
-                Subtitle.Text = Locale.Declension(group.IsChannel ? "Subscribers" : "Members", fullInfo.MemberCount);
+                Subtitle.Text = Locale.Declension(group.IsChannel ? Strings.R.Subscribers : Strings.R.Members, fullInfo.MemberCount);
             }
 
             GetEntities(fullInfo.Description);

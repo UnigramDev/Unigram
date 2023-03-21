@@ -146,7 +146,7 @@ namespace Telegram.ViewModels
             {
                 if (_remainingUsers != null && _remainingUsers.Count > 0)
                 {
-                    return Locale.Declension("ShowVotes", _remainingUsers.Count);
+                    return Locale.Declension(Strings.R.ShowVotes, _remainingUsers.Count);
                 }
 
                 return null;

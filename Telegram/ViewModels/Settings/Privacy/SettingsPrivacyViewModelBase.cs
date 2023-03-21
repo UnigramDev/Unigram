@@ -179,8 +179,8 @@ namespace Telegram.ViewModels.Settings
                 SelectedItem = primary ?? PrivacyValue.DisallowAll;
 
                 Badge = badge;
-                AllowedBadge = allowed > 0 ? Locale.Declension("Users", allowed) : Strings.EmpryUsersPlaceholder;
-                RestrictedBadge = restricted > 0 ? Locale.Declension("Users", restricted) : Strings.EmpryUsersPlaceholder;
+                AllowedBadge = allowed > 0 ? Locale.Declension(Strings.R.Users, allowed) : Strings.EmpryUsersPlaceholder;
+                RestrictedBadge = restricted > 0 ? Locale.Declension(Strings.R.Users, restricted) : Strings.EmpryUsersPlaceholder;
             });
 
         }
@@ -436,7 +436,7 @@ namespace Telegram.ViewModels.Settings
                 }
             }
 
-            return count > 0 ? Locale.Declension("Users", count) : Strings.EmpryUsersPlaceholder;
+            return count > 0 ? Locale.Declension(Strings.R.Users, count) : Strings.EmpryUsersPlaceholder;
         }
     }
 

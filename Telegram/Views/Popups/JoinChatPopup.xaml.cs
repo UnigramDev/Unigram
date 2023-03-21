@@ -47,7 +47,7 @@ namespace Telegram.Views.Popups
 
         public string ConvertCount(int total, bool broadcast)
         {
-            return Locale.Declension(broadcast ? "Subscribers" : "Members", total);
+            return Locale.Declension(broadcast ? Strings.R.Subscribers : Strings.R.Members, total);
         }
 
         public Visibility ConvertMoreVisibility(int total, int count)

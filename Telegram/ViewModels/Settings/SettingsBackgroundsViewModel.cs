@@ -164,7 +164,7 @@ namespace Telegram.ViewModels.Settings
                 return;
             }
 
-            var confirm = await ShowPopupAsync(Strings.DeleteChatBackgroundsAlert, Locale.Declension("DeleteBackground", 1), Strings.Delete, Strings.Cancel);
+            var confirm = await ShowPopupAsync(Strings.DeleteChatBackgroundsAlert, Locale.Declension(Strings.R.DeleteBackground, 1), Strings.Delete, Strings.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

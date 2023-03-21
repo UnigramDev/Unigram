@@ -111,7 +111,7 @@ namespace Telegram.Views.Popups
                     return Items.Count == 1 ? Strings.SendAsFile : Strings.SendAsFiles;
                 }
 
-                return string.Format(Strings.SendItems, Locale.Declension("Files", Items.Count));
+                return string.Format(Strings.SendItems, Locale.Declension(Strings.R.Files, Items.Count));
             }
         }
 

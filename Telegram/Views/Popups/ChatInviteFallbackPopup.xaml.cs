@@ -34,7 +34,7 @@ namespace Telegram.Views.Popups
                 title = Strings.ChannelInviteViaLink;
                 message = users.Count == 1
                     ? string.Format(Strings.InviteChannelRestrictedUsersOne, users[0].FullName())
-                    : Locale.Declension("InviteChannelRestrictedUsers", users.Count);
+                    : Locale.Declension(Strings.R.InviteChannelRestrictedUsers, users.Count);
 
                 primary = Strings.SendInviteLink;
                 secondary = Strings.ActionSkip;
@@ -44,7 +44,7 @@ namespace Telegram.Views.Popups
                 title = Strings.ChannelInviteViaLinkRestricted;
                 message = users.Count == 1
                     ? string.Format(Strings.InviteChannelRestrictedUsers2One, users[0].FullName())
-                    : Locale.Declension("InviteChannelRestrictedUsers2", users.Count);
+                    : Locale.Declension(Strings.R.InviteChannelRestrictedUsers2, users.Count);
 
                 primary = Strings.Close;
                 secondary = null;

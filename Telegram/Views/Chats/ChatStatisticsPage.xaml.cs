@@ -42,7 +42,7 @@ namespace Telegram.Views.Chats
 
         private string ConvertShowMore(int count)
         {
-            return Locale.Declension("ShowVotes", count);
+            return Locale.Declension(Strings.R.ShowVotes, count);
         }
 
         #endregion
@@ -187,8 +187,8 @@ namespace Telegram.Views.Chats
 
                 subtitle.Text = Converter.DateAt(counters.Message.Date);
 
-                views.Text = Locale.Declension("Views", counters.ViewCount);
-                shares.Text = Locale.Declension("Shares", counters.ForwardCount);
+                views.Text = Locale.Declension(Strings.R.Views, counters.ViewCount);
+                shares.Text = Locale.Declension(Strings.R.Shares, counters.ForwardCount);
 
                 var thumbnail = counters.Message.GetMinithumbnail();
                 if (thumbnail != null)
@@ -236,7 +236,7 @@ namespace Telegram.Views.Chats
                     var stringBuilder = new StringBuilder();
                     if (senderInfo.SentMessageCount > 0)
                     {
-                        stringBuilder.Append(Locale.Declension("messages", senderInfo.SentMessageCount));
+                        stringBuilder.Append(Locale.Declension(Strings.R.messages, senderInfo.SentMessageCount));
                     }
 
                     if (senderInfo.AverageCharacterCount > 0)
@@ -245,7 +245,7 @@ namespace Telegram.Views.Chats
                         {
                             stringBuilder.Append(", ");
                         }
-                        stringBuilder.AppendFormat(Strings.CharactersPerMessage, Locale.Declension("Characters", senderInfo.AverageCharacterCount));
+                        stringBuilder.AppendFormat(Strings.CharactersPerMessage, Locale.Declension(Strings.R.Characters, senderInfo.AverageCharacterCount));
                     }
 
                     title.Text = user.FullName();
@@ -266,7 +266,7 @@ namespace Telegram.Views.Chats
                     var stringBuilder = new StringBuilder();
                     if (adminInfo.DeletedMessageCount > 0)
                     {
-                        stringBuilder.Append(Locale.Declension("Deletions", adminInfo.DeletedMessageCount));
+                        stringBuilder.Append(Locale.Declension(Strings.R.Deletions, adminInfo.DeletedMessageCount));
                     }
 
                     if (adminInfo.BannedUserCount > 0)
@@ -276,7 +276,7 @@ namespace Telegram.Views.Chats
                             stringBuilder.Append(", ");
                         }
 
-                        stringBuilder.Append(Locale.Declension("Bans", adminInfo.BannedUserCount));
+                        stringBuilder.Append(Locale.Declension(Strings.R.Bans, adminInfo.BannedUserCount));
                     }
 
                     if (adminInfo.RestrictedUserCount > 0)
@@ -286,7 +286,7 @@ namespace Telegram.Views.Chats
                             stringBuilder.Append(", ");
                         }
 
-                        stringBuilder.Append(Locale.Declension("Restrictions", adminInfo.RestrictedUserCount));
+                        stringBuilder.Append(Locale.Declension(Strings.R.Restrictions, adminInfo.RestrictedUserCount));
                     }
 
                     title.Text = user.FullName();
@@ -306,7 +306,7 @@ namespace Telegram.Views.Chats
 
                     if (inviterInfo.AddedMemberCount > 0)
                     {
-                        subtitle.Text = Locale.Declension("Invitations", inviterInfo.AddedMemberCount);
+                        subtitle.Text = Locale.Declension(Strings.R.Invitations, inviterInfo.AddedMemberCount);
                     }
                     else
                     {

@@ -90,7 +90,7 @@ namespace Telegram.Controls
                 ShowHide(true);
 
                 TitleLabel.Text = call.ScheduledStartDate > 0 && call.Title.Length > 0 ? call.Title : channel ? Strings.VoipChannelVoiceChat : Strings.VoipGroupVoiceChat;
-                ServiceLabel.Text = call.ParticipantCount > 0 ? Locale.Declension("Participants", call.ParticipantCount) : Strings.MembersTalkingNobody;
+                ServiceLabel.Text = call.ParticipantCount > 0 ? Locale.Declension(Strings.R.Participants, call.ParticipantCount) : Strings.MembersTalkingNobody;
 
                 if (call.ScheduledStartDate != 0)
                 {

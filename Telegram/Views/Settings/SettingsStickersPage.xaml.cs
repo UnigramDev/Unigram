@@ -137,7 +137,7 @@ namespace Telegram.Views.Settings
             title.Text = stickerSet.Title;
 
             var subtitle = content.Children[2] as TextBlock;
-            subtitle.Text = Locale.Declension("Stickers", stickerSet.Size);
+            subtitle.Text = Locale.Declension(Strings.R.Stickers, stickerSet.Size);
 
             var cover = stickerSet.GetThumbnail();
             if (cover == null)

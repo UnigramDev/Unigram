@@ -1599,11 +1599,11 @@ namespace Telegram.Common
 
             if (Math.Abs(duration.TotalDays) >= 7)
             {
-                return Locale.Declension("Weeks", 1);
+                return Locale.Declension(Strings.R.Weeks, 1);
             }
             if (Math.Abs(duration.TotalDays) >= 1)
             {
-                return Locale.Declension("Days", (int)duration.TotalDays);
+                return Locale.Declension(Strings.R.Days, (int)duration.TotalDays);
             }
             else if (Math.Abs(duration.TotalHours) >= 1)
             {
@@ -1620,7 +1620,7 @@ namespace Telegram.Common
             var duration = TimeSpan.FromSeconds(videoChatEnded.Duration);
             if (duration.TotalDays >= 1)
             {
-                return Locale.Declension("Days", (int)duration.TotalDays);
+                return Locale.Declension(Strings.R.Days, (int)duration.TotalDays);
             }
             else if (duration.TotalHours >= 1)
             {

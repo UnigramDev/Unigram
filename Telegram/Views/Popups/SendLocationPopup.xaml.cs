@@ -174,7 +174,7 @@ namespace Telegram.Views.Popups
                 latitude, longitude, 15, width, height, Constants.BingMapsApiKey)));
 
             CurrentLocation.Address = string.Format(Strings.AccurateTo,
-                Locale.Declension("Meters", (int)point.Coordinate.Accuracy));
+                Locale.Declension(Strings.R.Meters, (int)point.Coordinate.Accuracy));
 
             if (ScrollingHost.SelectedItem == null)
             {

@@ -63,7 +63,7 @@ namespace Telegram.Views
             if (_passcodeService.RetryIn > 0)
             {
                 RetryIn.Visibility = Visibility.Visible;
-                RetryIn.Text = string.Format(Strings.TooManyTries, Locale.Declension("Seconds", _passcodeService.RetryIn));
+                RetryIn.Text = string.Format(Strings.TooManyTries, Locale.Declension(Strings.R.Seconds, _passcodeService.RetryIn));
             }
             else
             {

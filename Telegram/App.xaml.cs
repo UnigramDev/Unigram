@@ -153,17 +153,6 @@ namespace Telegram
 
             CustomXamlResourceLoader.Current = new XamlResourceLoader();
             base.OnWindowCreated(args);
-
-#if !DEBUG
-            var capabilities = Windows.UI.Composition.CompositionCapabilities.GetForCurrentView();
-
-            Microsoft.AppCenter.Analytics.Analytics.TrackEvent("Capabilities",
-                new System.Collections.Generic.Dictionary<string, string>
-                {
-                    { "Supported", capabilities.AreEffectsSupported().ToString() },
-                    { "Fast", capabilities.AreEffectsFast().ToString() }
-                });
-#endif
         }
 
         protected override WindowContext CreateWindowWrapper(Window window)

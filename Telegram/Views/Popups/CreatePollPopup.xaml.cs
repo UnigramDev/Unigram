@@ -108,7 +108,8 @@ namespace Telegram.Views.Popups
             else
             {
                 AddAnOption.Visibility = Visibility.Visible;
-                AddInfo.Text = string.Format(Strings.AddAnOptionInfo, Locale.Declension("Option", MAXIMUM_OPTIONS - Items.Count - 1));
+                AddInfo.Text = string.Format(Strings.AddAnOptionInfo,
+                    Locale.Declension(Strings.R.Option, MAXIMUM_OPTIONS - Items.Count - 1));
             }
 
             UpdatePrimaryButton();

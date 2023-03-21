@@ -217,15 +217,15 @@ namespace Telegram.Views.Supergroups
             {
                 if (value < 60)
                 {
-                    return string.Format(Strings.SlowmodeInfoSelected, Locale.Declension("Seconds", value));
+                    return string.Format(Strings.SlowmodeInfoSelected, Locale.Declension(Strings.R.Seconds, value));
                 }
                 else if (value < 60 * 60)
                 {
-                    return string.Format(Strings.SlowmodeInfoSelected, Locale.Declension("Minutes", value / 60));
+                    return string.Format(Strings.SlowmodeInfoSelected, Locale.Declension(Strings.R.Minutes, value / 60));
                 }
                 else
                 {
-                    return string.Format(Strings.SlowmodeInfoSelected, Locale.Declension("Hours", value / 60 / 60));
+                    return string.Format(Strings.SlowmodeInfoSelected, Locale.Declension(Strings.R.Hours, value / 60 / 60));
                 }
             }
         }

@@ -98,7 +98,7 @@ namespace Telegram.ViewModels.Settings
                     }
                 }
 
-                return Locale.Declension("Languages", exclude.Length);
+                return Locale.Declension(Strings.R.Languages, exclude.Length);
             }
         }
 

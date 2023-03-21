@@ -322,7 +322,7 @@ namespace Telegram.Views.Calls
                     TitlePanel.Margin = new Thickness(padding > 0 ? padding - 8 : 0, 0, 0, 0);
                     SubtitleInfo.Margin = new Thickness(padding > 0 ? padding + 4 : 12, -8, 0, 12);
 
-                    SubtitleInfo.Text = Locale.Declension("Participants", call.ParticipantCount);
+                    SubtitleInfo.Text = Locale.Declension(Strings.R.Participants, call.ParticipantCount);
                     ParticipantsPanel.Visibility = Visibility.Visible;
                 }
 
