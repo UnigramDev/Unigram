@@ -17,22 +17,20 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 03/21/2023 18:23:53
+// 	Generated: 03/21/2023 18:26:25
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Telegram.Strings
 {
     using Telegram.Services;
 
-
     public sealed partial class Resources
     {
-
-        private static ILocaleService resourceLoader;
+        private static readonly ILocaleService Resource;
 
         static Resources()
         {
-            resourceLoader = LocaleService.Current;
+            Resource = LocaleService.Current;
         }
 
         /// <summary>
@@ -42,7 +40,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Abort");
+                return Resource.GetString("Abort");
             }
         }
         
@@ -53,7 +51,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AboutPremiumDescription");
+                return Resource.GetString("AboutPremiumDescription");
             }
         }
         
@@ -64,7 +62,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AboutPremiumDescription2");
+                return Resource.GetString("AboutPremiumDescription2");
             }
         }
         
@@ -75,7 +73,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AboutPremiumTitle");
+                return Resource.GetString("AboutPremiumTitle");
             }
         }
         
@@ -86,7 +84,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccActionCancelDownload");
+                return Resource.GetString("AccActionCancelDownload");
             }
         }
         
@@ -97,7 +95,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccActionDownload");
+                return Resource.GetString("AccActionDownload");
             }
         }
         
@@ -108,7 +106,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccActionOpenFile");
+                return Resource.GetString("AccActionOpenFile");
             }
         }
         
@@ -119,7 +117,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccActionPause");
+                return Resource.GetString("AccActionPause");
             }
         }
         
@@ -130,7 +128,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccActionPlay");
+                return Resource.GetString("AccActionPlay");
             }
         }
         
@@ -141,7 +139,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrAspectRatio");
+                return Resource.GetString("AccDescrAspectRatio");
             }
         }
         
@@ -152,7 +150,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrAttachButton");
+                return Resource.GetString("AccDescrAttachButton");
             }
         }
         
@@ -163,7 +161,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrBotCommands");
+                return Resource.GetString("AccDescrBotCommands");
             }
         }
         
@@ -174,7 +172,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrBotKeyboard");
+                return Resource.GetString("AccDescrBotKeyboard");
             }
         }
         
@@ -185,7 +183,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrCancelEdit");
+                return Resource.GetString("AccDescrCancelEdit");
             }
         }
         
@@ -196,7 +194,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrCancelReply");
+                return Resource.GetString("AccDescrCancelReply");
             }
         }
         
@@ -207,7 +205,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrChannel");
+                return Resource.GetString("AccDescrChannel");
             }
         }
         
@@ -218,7 +216,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrChanSilentOff");
+                return Resource.GetString("AccDescrChanSilentOff");
             }
         }
         
@@ -229,7 +227,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrChanSilentOn");
+                return Resource.GetString("AccDescrChanSilentOn");
             }
         }
         
@@ -240,7 +238,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrClosePlayer");
+                return Resource.GetString("AccDescrClosePlayer");
             }
         }
         
@@ -251,7 +249,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrCollapsePanel");
+                return Resource.GetString("AccDescrCollapsePanel");
             }
         }
         
@@ -262,7 +260,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrContactSorting");
+                return Resource.GetString("AccDescrContactSorting");
             }
         }
         
@@ -273,7 +271,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrEmojiButton");
+                return Resource.GetString("AccDescrEmojiButton");
             }
         }
         
@@ -284,7 +282,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrExpandPanel");
+                return Resource.GetString("AccDescrExpandPanel");
             }
         }
         
@@ -295,7 +293,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrForwarding");
+                return Resource.GetString("AccDescrForwarding");
             }
         }
         
@@ -306,7 +304,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrGIFs");
+                return Resource.GetString("AccDescrGIFs");
             }
         }
         
@@ -317,7 +315,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrGoBack");
+                return Resource.GetString("AccDescrGoBack");
             }
         }
         
@@ -328,7 +326,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrGroup");
+                return Resource.GetString("AccDescrGroup");
             }
         }
         
@@ -339,7 +337,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrHideAccounts");
+                return Resource.GetString("AccDescrHideAccounts");
             }
         }
         
@@ -350,7 +348,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrMentionCount_one");
+                return Resource.GetString("AccDescrMentionCount_one");
             }
         }
         
@@ -361,7 +359,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrMentionCount_other");
+                return Resource.GetString("AccDescrMentionCount_other");
             }
         }
         
@@ -372,7 +370,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrMentionDown");
+                return Resource.GetString("AccDescrMentionDown");
             }
         }
         
@@ -383,7 +381,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrMoreOptions");
+                return Resource.GetString("AccDescrMoreOptions");
             }
         }
         
@@ -394,7 +392,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrMsgNotPlayed");
+                return Resource.GetString("AccDescrMsgNotPlayed");
             }
         }
         
@@ -405,7 +403,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrMsgRead");
+                return Resource.GetString("AccDescrMsgRead");
             }
         }
         
@@ -416,7 +414,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrMsgUnread");
+                return Resource.GetString("AccDescrMsgUnread");
             }
         }
         
@@ -427,7 +425,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrNumberOfPeopleReactions_one");
+                return Resource.GetString("AccDescrNumberOfPeopleReactions_one");
             }
         }
         
@@ -438,7 +436,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrNumberOfPeopleReactions_other");
+                return Resource.GetString("AccDescrNumberOfPeopleReactions_other");
             }
         }
         
@@ -449,7 +447,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrNumberOfViews_one");
+                return Resource.GetString("AccDescrNumberOfViews_one");
             }
         }
         
@@ -460,7 +458,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrNumberOfViews_other");
+                return Resource.GetString("AccDescrNumberOfViews_other");
             }
         }
         
@@ -471,7 +469,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrOpenChat");
+                return Resource.GetString("AccDescrOpenChat");
             }
         }
         
@@ -482,7 +480,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrOpenMenu");
+                return Resource.GetString("AccDescrOpenMenu");
             }
         }
         
@@ -493,7 +491,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrPageDown");
+                return Resource.GetString("AccDescrPageDown");
             }
         }
         
@@ -504,7 +502,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrPasscodeLock");
+                return Resource.GetString("AccDescrPasscodeLock");
             }
         }
         
@@ -515,7 +513,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrPasscodeUnlock");
+                return Resource.GetString("AccDescrPasscodeUnlock");
             }
         }
         
@@ -526,7 +524,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrPhotoEditor");
+                return Resource.GetString("AccDescrPhotoEditor");
             }
         }
         
@@ -537,7 +535,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrPlayerSpeed");
+                return Resource.GetString("AccDescrPlayerSpeed");
             }
         }
         
@@ -548,7 +546,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrPrevious");
+                return Resource.GetString("AccDescrPrevious");
             }
         }
         
@@ -559,7 +557,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrProfilePicture");
+                return Resource.GetString("AccDescrProfilePicture");
             }
         }
         
@@ -570,7 +568,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrReceivedDate");
+                return Resource.GetString("AccDescrReceivedDate");
             }
         }
         
@@ -581,7 +579,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrRepeatList");
+                return Resource.GetString("AccDescrRepeatList");
             }
         }
         
@@ -592,7 +590,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrRepeatOff");
+                return Resource.GetString("AccDescrRepeatOff");
             }
         }
         
@@ -603,7 +601,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrRepeatOne");
+                return Resource.GetString("AccDescrRepeatOne");
             }
         }
         
@@ -614,7 +612,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrReplying");
+                return Resource.GetString("AccDescrReplying");
             }
         }
         
@@ -625,7 +623,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrRotate");
+                return Resource.GetString("AccDescrRotate");
             }
         }
         
@@ -636,7 +634,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrSearchByUser");
+                return Resource.GetString("AccDescrSearchByUser");
             }
         }
         
@@ -647,7 +645,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrSearchNext");
+                return Resource.GetString("AccDescrSearchNext");
             }
         }
         
@@ -658,7 +656,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrSearchPrev");
+                return Resource.GetString("AccDescrSearchPrev");
             }
         }
         
@@ -669,7 +667,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrSecretChat");
+                return Resource.GetString("AccDescrSecretChat");
             }
         }
         
@@ -680,7 +678,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrSentDate");
+                return Resource.GetString("AccDescrSentDate");
             }
         }
         
@@ -691,7 +689,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrShowAccounts");
+                return Resource.GetString("AccDescrShowAccounts");
             }
         }
         
@@ -702,7 +700,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrShowKeyboard");
+                return Resource.GetString("AccDescrShowKeyboard");
             }
         }
         
@@ -713,7 +711,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrStickers");
+                return Resource.GetString("AccDescrStickers");
             }
         }
         
@@ -724,7 +722,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrVideoMessage");
+                return Resource.GetString("AccDescrVideoMessage");
             }
         }
         
@@ -735,7 +733,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccDescrVoiceMessage");
+                return Resource.GetString("AccDescrVoiceMessage");
             }
         }
         
@@ -746,7 +744,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Accept");
+                return Resource.GetString("Accept");
             }
         }
         
@@ -757,7 +755,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AcceptCall");
+                return Resource.GetString("AcceptCall");
             }
         }
         
@@ -768,7 +766,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AcceptCalls");
+                return Resource.GetString("AcceptCalls");
             }
         }
         
@@ -779,7 +777,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AcceptSecretChats");
+                return Resource.GetString("AcceptSecretChats");
             }
         }
         
@@ -790,7 +788,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccountAlreadyLoggedIn");
+                return Resource.GetString("AccountAlreadyLoggedIn");
             }
         }
         
@@ -801,7 +799,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccountSwitch");
+                return Resource.GetString("AccountSwitch");
             }
         }
         
@@ -812,7 +810,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccPinnedMessagesList");
+                return Resource.GetString("AccPinnedMessagesList");
             }
         }
         
@@ -823,7 +821,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AccurateTo");
+                return Resource.GetString("AccurateTo");
             }
         }
         
@@ -834,7 +832,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionAddUser");
+                return Resource.GetString("ActionAddUser");
             }
         }
         
@@ -845,7 +843,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionAddUserSelf");
+                return Resource.GetString("ActionAddUserSelf");
             }
         }
         
@@ -856,7 +854,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionAddUserSelfMega");
+                return Resource.GetString("ActionAddUserSelfMega");
             }
         }
         
@@ -867,7 +865,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionAddUserSelfYou");
+                return Resource.GetString("ActionAddUserSelfYou");
             }
         }
         
@@ -878,7 +876,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionAddUserYou");
+                return Resource.GetString("ActionAddUserYou");
             }
         }
         
@@ -889,7 +887,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionBotAllowed");
+                return Resource.GetString("ActionBotAllowed");
             }
         }
         
@@ -900,7 +898,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionBotDocumentAddress");
+                return Resource.GetString("ActionBotDocumentAddress");
             }
         }
         
@@ -911,7 +909,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionBotDocumentBankStatement");
+                return Resource.GetString("ActionBotDocumentBankStatement");
             }
         }
         
@@ -922,7 +920,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionBotDocumentDriverLicence");
+                return Resource.GetString("ActionBotDocumentDriverLicence");
             }
         }
         
@@ -933,7 +931,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionBotDocumentEmail");
+                return Resource.GetString("ActionBotDocumentEmail");
             }
         }
         
@@ -944,7 +942,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionBotDocumentIdentity");
+                return Resource.GetString("ActionBotDocumentIdentity");
             }
         }
         
@@ -955,7 +953,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionBotDocumentIdentityCard");
+                return Resource.GetString("ActionBotDocumentIdentityCard");
             }
         }
         
@@ -966,7 +964,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionBotDocumentInternalPassport");
+                return Resource.GetString("ActionBotDocumentInternalPassport");
             }
         }
         
@@ -977,7 +975,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionBotDocumentPassport");
+                return Resource.GetString("ActionBotDocumentPassport");
             }
         }
         
@@ -988,7 +986,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionBotDocumentPassportRegistration");
+                return Resource.GetString("ActionBotDocumentPassportRegistration");
             }
         }
         
@@ -999,7 +997,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionBotDocumentPhone");
+                return Resource.GetString("ActionBotDocumentPhone");
             }
         }
         
@@ -1010,7 +1008,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionBotDocumentRentalAgreement");
+                return Resource.GetString("ActionBotDocumentRentalAgreement");
             }
         }
         
@@ -1021,7 +1019,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionBotDocuments");
+                return Resource.GetString("ActionBotDocuments");
             }
         }
         
@@ -1032,7 +1030,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionBotDocumentTemporaryRegistration");
+                return Resource.GetString("ActionBotDocumentTemporaryRegistration");
             }
         }
         
@@ -1043,7 +1041,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionBotDocumentUtilityBill");
+                return Resource.GetString("ActionBotDocumentUtilityBill");
             }
         }
         
@@ -1054,7 +1052,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionBotWebViewData");
+                return Resource.GetString("ActionBotWebViewData");
             }
         }
         
@@ -1065,7 +1063,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionChangedPhoto");
+                return Resource.GetString("ActionChangedPhoto");
             }
         }
         
@@ -1076,7 +1074,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionChangedTitle");
+                return Resource.GetString("ActionChangedTitle");
             }
         }
         
@@ -1087,7 +1085,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionChangedVideo");
+                return Resource.GetString("ActionChangedVideo");
             }
         }
         
@@ -1098,7 +1096,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionChannelCallJustStarted");
+                return Resource.GetString("ActionChannelCallJustStarted");
             }
         }
         
@@ -1109,7 +1107,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionChannelCallScheduled");
+                return Resource.GetString("ActionChannelCallScheduled");
             }
         }
         
@@ -1120,7 +1118,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionChannelChangedPhoto");
+                return Resource.GetString("ActionChannelChangedPhoto");
             }
         }
         
@@ -1131,7 +1129,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionChannelChangedTitle");
+                return Resource.GetString("ActionChannelChangedTitle");
             }
         }
         
@@ -1142,7 +1140,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionChannelChangedVideo");
+                return Resource.GetString("ActionChannelChangedVideo");
             }
         }
         
@@ -1153,7 +1151,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionChannelRemovedPhoto");
+                return Resource.GetString("ActionChannelRemovedPhoto");
             }
         }
         
@@ -1164,7 +1162,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionCreateChannel");
+                return Resource.GetString("ActionCreateChannel");
             }
         }
         
@@ -1175,7 +1173,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionCreateGroup");
+                return Resource.GetString("ActionCreateGroup");
             }
         }
         
@@ -1186,7 +1184,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionCreateMega");
+                return Resource.GetString("ActionCreateMega");
             }
         }
         
@@ -1197,7 +1195,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionDeletedInviteLink");
+                return Resource.GetString("ActionDeletedInviteLink");
             }
         }
         
@@ -1208,7 +1206,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionEditedInviteLinkToSame");
+                return Resource.GetString("ActionEditedInviteLinkToSame");
             }
         }
         
@@ -1219,7 +1217,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionForwardsEnabledChannel");
+                return Resource.GetString("ActionForwardsEnabledChannel");
             }
         }
         
@@ -1230,7 +1228,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionForwardsEnabledGroup");
+                return Resource.GetString("ActionForwardsEnabledGroup");
             }
         }
         
@@ -1241,7 +1239,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionForwardsRestrictedChannel");
+                return Resource.GetString("ActionForwardsRestrictedChannel");
             }
         }
         
@@ -1252,7 +1250,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionForwardsRestrictedGroup");
+                return Resource.GetString("ActionForwardsRestrictedGroup");
             }
         }
         
@@ -1263,7 +1261,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionGiftInbound");
+                return Resource.GetString("ActionGiftInbound");
             }
         }
         
@@ -1274,7 +1272,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionGiftOutbound");
+                return Resource.GetString("ActionGiftOutbound");
             }
         }
         
@@ -1285,7 +1283,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionGroupCallEnded");
+                return Resource.GetString("ActionGroupCallEnded");
             }
         }
         
@@ -1296,7 +1294,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionGroupCallEndedBy");
+                return Resource.GetString("ActionGroupCallEndedBy");
             }
         }
         
@@ -1307,7 +1305,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionGroupCallEndedByYou");
+                return Resource.GetString("ActionGroupCallEndedByYou");
             }
         }
         
@@ -1318,7 +1316,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionGroupCallInvited");
+                return Resource.GetString("ActionGroupCallInvited");
             }
         }
         
@@ -1329,7 +1327,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionGroupCallInvitedYou");
+                return Resource.GetString("ActionGroupCallInvitedYou");
             }
         }
         
@@ -1340,7 +1338,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionGroupCallScheduled");
+                return Resource.GetString("ActionGroupCallScheduled");
             }
         }
         
@@ -1351,7 +1349,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionGroupCallStarted");
+                return Resource.GetString("ActionGroupCallStarted");
             }
         }
         
@@ -1362,7 +1360,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionGroupCallStartedByYou");
+                return Resource.GetString("ActionGroupCallStartedByYou");
             }
         }
         
@@ -1373,7 +1371,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionGroupCallYouInvited");
+                return Resource.GetString("ActionGroupCallYouInvited");
             }
         }
         
@@ -1384,7 +1382,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionInviteUser");
+                return Resource.GetString("ActionInviteUser");
             }
         }
         
@@ -1395,7 +1393,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionInviteYou");
+                return Resource.GetString("ActionInviteYou");
             }
         }
         
@@ -1406,7 +1404,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionKickUser");
+                return Resource.GetString("ActionKickUser");
             }
         }
         
@@ -1417,7 +1415,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionKickUserYou");
+                return Resource.GetString("ActionKickUserYou");
             }
         }
         
@@ -1428,7 +1426,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionLeftUser");
+                return Resource.GetString("ActionLeftUser");
             }
         }
         
@@ -1439,7 +1437,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionMigrateFromGroup");
+                return Resource.GetString("ActionMigrateFromGroup");
             }
         }
         
@@ -1450,7 +1448,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionPinnedContact");
+                return Resource.GetString("ActionPinnedContact");
             }
         }
         
@@ -1461,7 +1459,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionPinnedFile");
+                return Resource.GetString("ActionPinnedFile");
             }
         }
         
@@ -1472,7 +1470,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionPinnedGame");
+                return Resource.GetString("ActionPinnedGame");
             }
         }
         
@@ -1483,7 +1481,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionPinnedGeo");
+                return Resource.GetString("ActionPinnedGeo");
             }
         }
         
@@ -1494,7 +1492,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionPinnedGeoLive");
+                return Resource.GetString("ActionPinnedGeoLive");
             }
         }
         
@@ -1505,7 +1503,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionPinnedGif");
+                return Resource.GetString("ActionPinnedGif");
             }
         }
         
@@ -1516,7 +1514,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionPinnedMusic");
+                return Resource.GetString("ActionPinnedMusic");
             }
         }
         
@@ -1527,7 +1525,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionPinnedNoText");
+                return Resource.GetString("ActionPinnedNoText");
             }
         }
         
@@ -1538,7 +1536,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionPinnedPhoto");
+                return Resource.GetString("ActionPinnedPhoto");
             }
         }
         
@@ -1549,7 +1547,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionPinnedPoll");
+                return Resource.GetString("ActionPinnedPoll");
             }
         }
         
@@ -1560,7 +1558,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionPinnedQuiz");
+                return Resource.GetString("ActionPinnedQuiz");
             }
         }
         
@@ -1571,7 +1569,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionPinnedRound");
+                return Resource.GetString("ActionPinnedRound");
             }
         }
         
@@ -1582,7 +1580,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionPinnedSticker");
+                return Resource.GetString("ActionPinnedSticker");
             }
         }
         
@@ -1593,7 +1591,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionPinnedText");
+                return Resource.GetString("ActionPinnedText");
             }
         }
         
@@ -1604,7 +1602,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionPinnedVideo");
+                return Resource.GetString("ActionPinnedVideo");
             }
         }
         
@@ -1615,7 +1613,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionPinnedVoice");
+                return Resource.GetString("ActionPinnedVoice");
             }
         }
         
@@ -1628,7 +1626,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionReactionsChanged");
+                return Resource.GetString("ActionReactionsChanged");
             }
         }
         
@@ -1639,7 +1637,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionRemovedPhoto");
+                return Resource.GetString("ActionRemovedPhoto");
             }
         }
         
@@ -1650,7 +1648,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionRevokedInviteLink");
+                return Resource.GetString("ActionRevokedInviteLink");
             }
         }
         
@@ -1661,7 +1659,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionsChartTitle");
+                return Resource.GetString("ActionsChartTitle");
             }
         }
         
@@ -1672,7 +1670,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionSkip");
+                return Resource.GetString("ActionSkip");
             }
         }
         
@@ -1683,7 +1681,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionSuggestPhotoFromYouDescription");
+                return Resource.GetString("ActionSuggestPhotoFromYouDescription");
             }
         }
         
@@ -1694,7 +1692,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionSuggestPhotoToYouDescription");
+                return Resource.GetString("ActionSuggestPhotoToYouDescription");
             }
         }
         
@@ -1705,7 +1703,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionTakeScreenshoot");
+                return Resource.GetString("ActionTakeScreenshoot");
             }
         }
         
@@ -1716,7 +1714,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionTakeScreenshootYou");
+                return Resource.GetString("ActionTakeScreenshootYou");
             }
         }
         
@@ -1727,7 +1725,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionTTLChanged");
+                return Resource.GetString("ActionTTLChanged");
             }
         }
         
@@ -1738,7 +1736,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionTTLChannelChanged");
+                return Resource.GetString("ActionTTLChannelChanged");
             }
         }
         
@@ -1749,7 +1747,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionTTLChannelDisabled");
+                return Resource.GetString("ActionTTLChannelDisabled");
             }
         }
         
@@ -1760,7 +1758,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionTTLDisabled");
+                return Resource.GetString("ActionTTLDisabled");
             }
         }
         
@@ -1771,7 +1769,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionTTLYouChanged");
+                return Resource.GetString("ActionTTLYouChanged");
             }
         }
         
@@ -1782,7 +1780,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionTTLYouDisabled");
+                return Resource.GetString("ActionTTLYouDisabled");
             }
         }
         
@@ -1793,7 +1791,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionUserScored");
+                return Resource.GetString("ActionUserScored");
             }
         }
         
@@ -1804,7 +1802,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionUserScoredInGame");
+                return Resource.GetString("ActionUserScoredInGame");
             }
         }
         
@@ -1815,7 +1813,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionUserWithinOtherRadius");
+                return Resource.GetString("ActionUserWithinOtherRadius");
             }
         }
         
@@ -1826,7 +1824,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionUserWithinRadius");
+                return Resource.GetString("ActionUserWithinRadius");
             }
         }
         
@@ -1837,7 +1835,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionUserWithinYouRadius");
+                return Resource.GetString("ActionUserWithinYouRadius");
             }
         }
         
@@ -1848,7 +1846,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionVolumeChanged");
+                return Resource.GetString("ActionVolumeChanged");
             }
         }
         
@@ -1859,7 +1857,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionYouAddUser");
+                return Resource.GetString("ActionYouAddUser");
             }
         }
         
@@ -1870,7 +1868,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionYouChangedPhoto");
+                return Resource.GetString("ActionYouChangedPhoto");
             }
         }
         
@@ -1881,7 +1879,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionYouChangedTitle");
+                return Resource.GetString("ActionYouChangedTitle");
             }
         }
         
@@ -1892,7 +1890,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionYouChangedVideo");
+                return Resource.GetString("ActionYouChangedVideo");
             }
         }
         
@@ -1903,7 +1901,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionYouCreateGroup");
+                return Resource.GetString("ActionYouCreateGroup");
             }
         }
         
@@ -1914,7 +1912,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionYouKickUser");
+                return Resource.GetString("ActionYouKickUser");
             }
         }
         
@@ -1925,7 +1923,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionYouLeftUser");
+                return Resource.GetString("ActionYouLeftUser");
             }
         }
         
@@ -1936,7 +1934,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionYouRemovedPhoto");
+                return Resource.GetString("ActionYouRemovedPhoto");
             }
         }
         
@@ -1947,7 +1945,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionYouScored");
+                return Resource.GetString("ActionYouScored");
             }
         }
         
@@ -1958,7 +1956,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ActionYouScoredInGame");
+                return Resource.GetString("ActionYouScoredInGame");
             }
         }
         
@@ -1969,7 +1967,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AdaptiveLayout");
+                return Resource.GetString("AdaptiveLayout");
             }
         }
         
@@ -1980,7 +1978,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Add");
+                return Resource.GetString("Add");
             }
         }
         
@@ -1991,7 +1989,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AddAccount");
+                return Resource.GetString("AddAccount");
             }
         }
         
@@ -2002,7 +2000,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AddAdminErrorBlacklisted");
+                return Resource.GetString("AddAdminErrorBlacklisted");
             }
         }
         
@@ -2013,7 +2011,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AddAdminErrorNotAMember");
+                return Resource.GetString("AddAdminErrorNotAMember");
             }
         }
         
@@ -2024,7 +2022,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AddAnExplanation");
+                return Resource.GetString("AddAnExplanation");
             }
         }
         
@@ -2035,7 +2033,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AddAnExplanationInfo");
+                return Resource.GetString("AddAnExplanationInfo");
             }
         }
         
@@ -2046,7 +2044,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AddAnOption");
+                return Resource.GetString("AddAnOption");
             }
         }
         
@@ -2057,7 +2055,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AddAnOptionInfo");
+                return Resource.GetString("AddAnOptionInfo");
             }
         }
         
@@ -2068,7 +2066,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AddAnOptionInfoMax");
+                return Resource.GetString("AddAnOptionInfoMax");
             }
         }
         
@@ -2079,7 +2077,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AddAnotherAccount");
+                return Resource.GetString("AddAnotherAccount");
             }
         }
         
@@ -2090,7 +2088,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AddAnotherAccountInfo");
+                return Resource.GetString("AddAnotherAccountInfo");
             }
         }
         
@@ -2101,7 +2099,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AddBannedErrorAdmin");
+                return Resource.GetString("AddBannedErrorAdmin");
             }
         }
         
@@ -2112,7 +2110,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AddCaption");
+                return Resource.GetString("AddCaption");
             }
         }
         
@@ -2123,7 +2121,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AddContact");
+                return Resource.GetString("AddContact");
             }
         }
         
@@ -2134,7 +2132,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AddContactChat");
+                return Resource.GetString("AddContactChat");
             }
         }
         
@@ -2145,7 +2143,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AddContactFullChat");
+                return Resource.GetString("AddContactFullChat");
             }
         }
         
@@ -2156,7 +2154,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AddContactTitle");
+                return Resource.GetString("AddContactTitle");
             }
         }
         
@@ -2167,7 +2165,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Added");
+                return Resource.GetString("Added");
             }
         }
         
@@ -2178,7 +2176,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AddEmailSubtitle");
+                return Resource.GetString("AddEmailSubtitle");
             }
         }
         
@@ -2189,7 +2187,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AddEmailTitle");
+                return Resource.GetString("AddEmailTitle");
             }
         }
         
@@ -2200,7 +2198,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AddExceptions");
+                return Resource.GetString("AddExceptions");
             }
         }
         
@@ -2211,7 +2209,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AddMasks");
+                return Resource.GetString("AddMasks");
             }
         }
         
@@ -2222,7 +2220,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AddMember");
+                return Resource.GetString("AddMember");
             }
         }
         
@@ -2233,7 +2231,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AddMembersAlertCountText");
+                return Resource.GetString("AddMembersAlertCountText");
             }
         }
         
@@ -2244,7 +2242,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AddMembersAlertTitle");
+                return Resource.GetString("AddMembersAlertTitle");
             }
         }
         
@@ -2255,7 +2253,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AddPeopleNearby");
+                return Resource.GetString("AddPeopleNearby");
             }
         }
         
@@ -2266,7 +2264,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AddProxy");
+                return Resource.GetString("AddProxy");
             }
         }
         
@@ -2277,7 +2275,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AddShortcut");
+                return Resource.GetString("AddShortcut");
             }
         }
         
@@ -2288,7 +2286,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AddStickers");
+                return Resource.GetString("AddStickers");
             }
         }
         
@@ -2299,7 +2297,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AddSubscriber");
+                return Resource.GetString("AddSubscriber");
             }
         }
         
@@ -2310,7 +2308,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AddToChannel");
+                return Resource.GetString("AddToChannel");
             }
         }
         
@@ -2321,7 +2319,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AddToContacts");
+                return Resource.GetString("AddToContacts");
             }
         }
         
@@ -2332,7 +2330,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AddToFavorites");
+                return Resource.GetString("AddToFavorites");
             }
         }
         
@@ -2343,7 +2341,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AddToGroup");
+                return Resource.GetString("AddToGroup");
             }
         }
         
@@ -2354,7 +2352,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AddToStickers");
+                return Resource.GetString("AddToStickers");
             }
         }
         
@@ -2365,7 +2363,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AddToTheGroup");
+                return Resource.GetString("AddToTheGroup");
             }
         }
         
@@ -2376,7 +2374,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Agree");
+                return Resource.GetString("Agree");
             }
         }
         
@@ -2387,7 +2385,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Album");
+                return Resource.GetString("Album");
             }
         }
         
@@ -2398,7 +2396,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Alert");
+                return Resource.GetString("Alert");
             }
         }
         
@@ -2409,7 +2407,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AllAccounts");
+                return Resource.GetString("AllAccounts");
             }
         }
         
@@ -2420,7 +2418,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Allow");
+                return Resource.GetString("Allow");
             }
         }
         
@@ -2431,7 +2429,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AllReactions");
+                return Resource.GetString("AllReactions");
             }
         }
         
@@ -2442,7 +2440,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ALongTimeAgo");
+                return Resource.GetString("ALongTimeAgo");
             }
         }
         
@@ -2453,7 +2451,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AlternativeOptions");
+                return Resource.GetString("AlternativeOptions");
             }
         }
         
@@ -2464,7 +2462,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AlwaysAllow");
+                return Resource.GetString("AlwaysAllow");
             }
         }
         
@@ -2475,7 +2473,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AlwaysShareWith");
+                return Resource.GetString("AlwaysShareWith");
             }
         }
         
@@ -2486,7 +2484,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AlwaysShareWithTitle");
+                return Resource.GetString("AlwaysShareWithTitle");
             }
         }
         
@@ -2497,7 +2495,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AndMoreTyping_one");
+                return Resource.GetString("AndMoreTyping_one");
             }
         }
         
@@ -2508,7 +2506,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AndMoreTyping_other");
+                return Resource.GetString("AndMoreTyping_other");
             }
         }
         
@@ -2519,7 +2517,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AnonymousNumber");
+                return Resource.GetString("AnonymousNumber");
             }
         }
         
@@ -2530,7 +2528,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AnonymousNumberNotice");
+                return Resource.GetString("AnonymousNumberNotice");
             }
         }
         
@@ -2541,7 +2539,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AnonymousPoll");
+                return Resource.GetString("AnonymousPoll");
             }
         }
         
@@ -2552,7 +2550,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AnonymousQuizPoll");
+                return Resource.GetString("AnonymousQuizPoll");
             }
         }
         
@@ -2563,7 +2561,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Answer_one");
+                return Resource.GetString("Answer_one");
             }
         }
         
@@ -2574,7 +2572,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Answer_other");
+                return Resource.GetString("Answer_other");
             }
         }
         
@@ -2585,7 +2583,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Appearance");
+                return Resource.GetString("Appearance");
             }
         }
         
@@ -2596,7 +2594,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Application");
+                return Resource.GetString("Application");
             }
         }
         
@@ -2607,7 +2605,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ApplyTheme");
+                return Resource.GetString("ApplyTheme");
             }
         }
         
@@ -2618,7 +2616,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AppName");
+                return Resource.GetString("AppName");
             }
         }
         
@@ -2629,7 +2627,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Archive");
+                return Resource.GetString("Archive");
             }
         }
         
@@ -2640,7 +2638,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ArchiveAndMute");
+                return Resource.GetString("ArchiveAndMute");
             }
         }
         
@@ -2651,7 +2649,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ArchiveAndMuteInfo");
+                return Resource.GetString("ArchiveAndMuteInfo");
             }
         }
         
@@ -2662,7 +2660,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ArchivedChats");
+                return Resource.GetString("ArchivedChats");
             }
         }
         
@@ -2673,7 +2671,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ArchivedEmojiPacks");
+                return Resource.GetString("ArchivedEmojiPacks");
             }
         }
         
@@ -2684,7 +2682,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ArchivedMasks");
+                return Resource.GetString("ArchivedMasks");
             }
         }
         
@@ -2696,7 +2694,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ArchivedMasksInfo");
+                return Resource.GetString("ArchivedMasksInfo");
             }
         }
         
@@ -2707,7 +2705,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ArchivedStickers");
+                return Resource.GetString("ArchivedStickers");
             }
         }
         
@@ -2719,7 +2717,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ArchivedStickersInfo");
+                return Resource.GetString("ArchivedStickersInfo");
             }
         }
         
@@ -2730,7 +2728,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ArchiveMoveToChatList");
+                return Resource.GetString("ArchiveMoveToChatList");
             }
         }
         
@@ -2741,7 +2739,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ArchiveMoveToMainMenu");
+                return Resource.GetString("ArchiveMoveToMainMenu");
             }
         }
         
@@ -2753,7 +2751,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ArchiveMoveToMainMenuInfo");
+                return Resource.GetString("ArchiveMoveToMainMenuInfo");
             }
         }
         
@@ -2764,7 +2762,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AreTyping");
+                return Resource.GetString("AreTyping");
             }
         }
         
@@ -2775,7 +2773,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AreYouSure");
+                return Resource.GetString("AreYouSure");
             }
         }
         
@@ -2786,7 +2784,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AreYouSureBlockContact");
+                return Resource.GetString("AreYouSureBlockContact");
             }
         }
         
@@ -2797,7 +2795,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AreYouSureClearDrafts");
+                return Resource.GetString("AreYouSureClearDrafts");
             }
         }
         
@@ -2808,7 +2806,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AreYouSureClearHistoryChannel");
+                return Resource.GetString("AreYouSureClearHistoryChannel");
             }
         }
         
@@ -2819,7 +2817,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AreYouSureClearHistoryFewChats");
+                return Resource.GetString("AreYouSureClearHistoryFewChats");
             }
         }
         
@@ -2830,7 +2828,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AreYouSureClearHistoryGroup");
+                return Resource.GetString("AreYouSureClearHistoryGroup");
             }
         }
         
@@ -2841,7 +2839,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AreYouSureClearHistorySavedMessages");
+                return Resource.GetString("AreYouSureClearHistorySavedMessages");
             }
         }
         
@@ -2852,7 +2850,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AreYouSureClearHistoryWithChat");
+                return Resource.GetString("AreYouSureClearHistoryWithChat");
             }
         }
         
@@ -2863,7 +2861,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AreYouSureClearHistoryWithSecretUser");
+                return Resource.GetString("AreYouSureClearHistoryWithSecretUser");
             }
         }
         
@@ -2874,7 +2872,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AreYouSureClearHistoryWithUser");
+                return Resource.GetString("AreYouSureClearHistoryWithUser");
             }
         }
         
@@ -2885,7 +2883,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AreYouSureDeleteAndExit");
+                return Resource.GetString("AreYouSureDeleteAndExit");
             }
         }
         
@@ -2896,7 +2894,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AreYouSureDeleteAndExitName");
+                return Resource.GetString("AreYouSureDeleteAndExitName");
             }
         }
         
@@ -2907,7 +2905,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AreYouSureDeleteContact");
+                return Resource.GetString("AreYouSureDeleteContact");
             }
         }
         
@@ -2918,7 +2916,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AreYouSureDeleteFewChats");
+                return Resource.GetString("AreYouSureDeleteFewChats");
             }
         }
         
@@ -2929,7 +2927,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AreYouSureDeleteFewMessages");
+                return Resource.GetString("AreYouSureDeleteFewMessages");
             }
         }
         
@@ -2940,7 +2938,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AreYouSureDeleteFewMessagesMega");
+                return Resource.GetString("AreYouSureDeleteFewMessagesMega");
             }
         }
         
@@ -2951,7 +2949,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AreYouSureDeletePhoto");
+                return Resource.GetString("AreYouSureDeletePhoto");
             }
         }
         
@@ -2962,7 +2960,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AreYouSureDeleteSingleMessage");
+                return Resource.GetString("AreYouSureDeleteSingleMessage");
             }
         }
         
@@ -2973,7 +2971,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AreYouSureDeleteSingleMessageMega");
+                return Resource.GetString("AreYouSureDeleteSingleMessageMega");
             }
         }
         
@@ -2984,7 +2982,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AreYouSureDeleteThisChatSavedMessages");
+                return Resource.GetString("AreYouSureDeleteThisChatSavedMessages");
             }
         }
         
@@ -2995,7 +2993,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AreYouSureDeleteThisChatWithSecretUser");
+                return Resource.GetString("AreYouSureDeleteThisChatWithSecretUser");
             }
         }
         
@@ -3006,7 +3004,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AreYouSureDeleteThisChatWithUser");
+                return Resource.GetString("AreYouSureDeleteThisChatWithUser");
             }
         }
         
@@ -3021,7 +3019,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AreYouSureLogout");
+                return Resource.GetString("AreYouSureLogout");
             }
         }
         
@@ -3032,7 +3030,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AreYouSureSecretChat");
+                return Resource.GetString("AreYouSureSecretChat");
             }
         }
         
@@ -3043,7 +3041,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AreYouSureSessions");
+                return Resource.GetString("AreYouSureSessions");
             }
         }
         
@@ -3054,7 +3052,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AreYouSureShareMyContactInfo");
+                return Resource.GetString("AreYouSureShareMyContactInfo");
             }
         }
         
@@ -3065,7 +3063,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AreYouSureShareMyContactInfoBot");
+                return Resource.GetString("AreYouSureShareMyContactInfoBot");
             }
         }
         
@@ -3076,7 +3074,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AreYouSureShareMyContactInfoUser");
+                return Resource.GetString("AreYouSureShareMyContactInfoUser");
             }
         }
         
@@ -3087,7 +3085,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AreYouSureUnblockContact");
+                return Resource.GetString("AreYouSureUnblockContact");
             }
         }
         
@@ -3098,7 +3096,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AreYouSureWebSessions");
+                return Resource.GetString("AreYouSureWebSessions");
             }
         }
         
@@ -3109,7 +3107,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ArticleByAuthor");
+                return Resource.GetString("ArticleByAuthor");
             }
         }
         
@@ -3120,7 +3118,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AskAQuestion");
+                return Resource.GetString("AskAQuestion");
             }
         }
         
@@ -3133,7 +3131,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AskAQuestionInfo");
+                return Resource.GetString("AskAQuestionInfo");
             }
         }
         
@@ -3144,7 +3142,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AskButton");
+                return Resource.GetString("AskButton");
             }
         }
         
@@ -3155,7 +3153,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AttachAudio");
+                return Resource.GetString("AttachAudio");
             }
         }
         
@@ -3166,7 +3164,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AttachContact");
+                return Resource.GetString("AttachContact");
             }
         }
         
@@ -3177,7 +3175,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AttachDestructingPhoto");
+                return Resource.GetString("AttachDestructingPhoto");
             }
         }
         
@@ -3188,7 +3186,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AttachDestructingVideo");
+                return Resource.GetString("AttachDestructingVideo");
             }
         }
         
@@ -3199,7 +3197,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AttachDocument");
+                return Resource.GetString("AttachDocument");
             }
         }
         
@@ -3210,7 +3208,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AttachGame");
+                return Resource.GetString("AttachGame");
             }
         }
         
@@ -3221,7 +3219,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AttachGif");
+                return Resource.GetString("AttachGif");
             }
         }
         
@@ -3232,7 +3230,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AttachGifRestricted");
+                return Resource.GetString("AttachGifRestricted");
             }
         }
         
@@ -3243,7 +3241,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AttachGifRestrictedForever");
+                return Resource.GetString("AttachGifRestrictedForever");
             }
         }
         
@@ -3254,7 +3252,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AttachInlineRestricted");
+                return Resource.GetString("AttachInlineRestricted");
             }
         }
         
@@ -3265,7 +3263,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AttachInlineRestrictedForever");
+                return Resource.GetString("AttachInlineRestrictedForever");
             }
         }
         
@@ -3276,7 +3274,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AttachLiveLocation");
+                return Resource.GetString("AttachLiveLocation");
             }
         }
         
@@ -3287,7 +3285,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AttachLocation");
+                return Resource.GetString("AttachLocation");
             }
         }
         
@@ -3298,7 +3296,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AttachMediaRestricted");
+                return Resource.GetString("AttachMediaRestricted");
             }
         }
         
@@ -3309,7 +3307,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AttachMediaRestrictedForever");
+                return Resource.GetString("AttachMediaRestrictedForever");
             }
         }
         
@@ -3320,7 +3318,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AttachMusic");
+                return Resource.GetString("AttachMusic");
             }
         }
         
@@ -3331,7 +3329,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AttachPhoto");
+                return Resource.GetString("AttachPhoto");
             }
         }
         
@@ -3342,7 +3340,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AttachPhotoExpired");
+                return Resource.GetString("AttachPhotoExpired");
             }
         }
         
@@ -3353,7 +3351,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AttachRound");
+                return Resource.GetString("AttachRound");
             }
         }
         
@@ -3364,7 +3362,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AttachSticker");
+                return Resource.GetString("AttachSticker");
             }
         }
         
@@ -3375,7 +3373,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AttachStickersRestricted");
+                return Resource.GetString("AttachStickersRestricted");
             }
         }
         
@@ -3386,7 +3384,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AttachStickersRestrictedForever");
+                return Resource.GetString("AttachStickersRestrictedForever");
             }
         }
         
@@ -3397,7 +3395,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AttachVideo");
+                return Resource.GetString("AttachVideo");
             }
         }
         
@@ -3408,7 +3406,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AttachVideoExpired");
+                return Resource.GetString("AttachVideoExpired");
             }
         }
         
@@ -3419,7 +3417,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AudioAutodownload");
+                return Resource.GetString("AudioAutodownload");
             }
         }
         
@@ -3430,7 +3428,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AudioUnknownArtist");
+                return Resource.GetString("AudioUnknownArtist");
             }
         }
         
@@ -3441,7 +3439,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AudioUnknownTitle");
+                return Resource.GetString("AudioUnknownTitle");
             }
         }
         
@@ -3452,7 +3450,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoDeleteConfirm");
+                return Resource.GetString("AutoDeleteConfirm");
             }
         }
         
@@ -3463,7 +3461,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoDeleteConfirmMessage");
+                return Resource.GetString("AutoDeleteConfirmMessage");
             }
         }
         
@@ -3475,7 +3473,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoDeleteGlobalAction");
+                return Resource.GetString("AutoDeleteGlobalAction");
             }
         }
         
@@ -3487,7 +3485,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoDeleteGlobalActionFromYou");
+                return Resource.GetString("AutoDeleteGlobalActionFromYou");
             }
         }
         
@@ -3498,7 +3496,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoDeleteIn");
+                return Resource.GetString("AutoDeleteIn");
             }
         }
         
@@ -3509,7 +3507,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoDeleteMessages");
+                return Resource.GetString("AutoDeleteMessages");
             }
         }
         
@@ -3520,7 +3518,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoDeletePopupTitle");
+                return Resource.GetString("AutoDeletePopupTitle");
             }
         }
         
@@ -3531,7 +3529,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoDownloadAudioInfo");
+                return Resource.GetString("AutoDownloadAudioInfo");
             }
         }
         
@@ -3542,7 +3540,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutodownloadChannels");
+                return Resource.GetString("AutodownloadChannels");
             }
         }
         
@@ -3553,7 +3551,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutodownloadContacts");
+                return Resource.GetString("AutodownloadContacts");
             }
         }
         
@@ -3564,7 +3562,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoDownloadCustom");
+                return Resource.GetString("AutoDownloadCustom");
             }
         }
         
@@ -3575,7 +3573,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoDownloadFiles");
+                return Resource.GetString("AutoDownloadFiles");
             }
         }
         
@@ -3586,7 +3584,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoDownloadFilesTitle");
+                return Resource.GetString("AutoDownloadFilesTitle");
             }
         }
         
@@ -3597,7 +3595,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutodownloadGroupChats");
+                return Resource.GetString("AutodownloadGroupChats");
             }
         }
         
@@ -3608,7 +3606,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoDownloadGroups");
+                return Resource.GetString("AutoDownloadGroups");
             }
         }
         
@@ -3619,7 +3617,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoDownloadMaxFileSize");
+                return Resource.GetString("AutoDownloadMaxFileSize");
             }
         }
         
@@ -3630,7 +3628,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoDownloadMedia");
+                return Resource.GetString("AutoDownloadMedia");
             }
         }
         
@@ -3641,7 +3639,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoDownloadOff");
+                return Resource.GetString("AutoDownloadOff");
             }
         }
         
@@ -3652,7 +3650,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoDownloadOnAllChats");
+                return Resource.GetString("AutoDownloadOnAllChats");
             }
         }
         
@@ -3663,7 +3661,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoDownloadOnFor");
+                return Resource.GetString("AutoDownloadOnFor");
             }
         }
         
@@ -3674,7 +3672,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoDownloadOnUpToFor");
+                return Resource.GetString("AutoDownloadOnUpToFor");
             }
         }
         
@@ -3685,7 +3683,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoDownloadPhotos");
+                return Resource.GetString("AutoDownloadPhotos");
             }
         }
         
@@ -3696,7 +3694,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoDownloadPhotosTitle");
+                return Resource.GetString("AutoDownloadPhotosTitle");
             }
         }
         
@@ -3707,7 +3705,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoDownloadPm");
+                return Resource.GetString("AutoDownloadPm");
             }
         }
         
@@ -3718,7 +3716,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutodownloadPrivateChats");
+                return Resource.GetString("AutodownloadPrivateChats");
             }
         }
         
@@ -3729,7 +3727,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoDownloadUpToOnAllChats");
+                return Resource.GetString("AutoDownloadUpToOnAllChats");
             }
         }
         
@@ -3740,7 +3738,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoDownloadVideos");
+                return Resource.GetString("AutoDownloadVideos");
             }
         }
         
@@ -3751,7 +3749,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoDownloadVideosTitle");
+                return Resource.GetString("AutoDownloadVideosTitle");
             }
         }
         
@@ -3762,7 +3760,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoLock");
+                return Resource.GetString("AutoLock");
             }
         }
         
@@ -3773,7 +3771,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoLockDisabled");
+                return Resource.GetString("AutoLockDisabled");
             }
         }
         
@@ -3784,7 +3782,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoLockInfo");
+                return Resource.GetString("AutoLockInfo");
             }
         }
         
@@ -3795,7 +3793,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoLockInTime");
+                return Resource.GetString("AutoLockInTime");
             }
         }
         
@@ -3806,7 +3804,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutomaticMediaDownload");
+                return Resource.GetString("AutomaticMediaDownload");
             }
         }
         
@@ -3817,7 +3815,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutomaticTranslation");
+                return Resource.GetString("AutomaticTranslation");
             }
         }
         
@@ -3828,7 +3826,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoNightAutomatic");
+                return Resource.GetString("AutoNightAutomatic");
             }
         }
         
@@ -3839,7 +3837,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoNightBrightnessInfo");
+                return Resource.GetString("AutoNightBrightnessInfo");
             }
         }
         
@@ -3850,7 +3848,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoNightDisabled");
+                return Resource.GetString("AutoNightDisabled");
             }
         }
         
@@ -3861,7 +3859,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoNightFrom");
+                return Resource.GetString("AutoNightFrom");
             }
         }
         
@@ -3872,7 +3870,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoNightLocation");
+                return Resource.GetString("AutoNightLocation");
             }
         }
         
@@ -3883,7 +3881,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoNightPreferred");
+                return Resource.GetString("AutoNightPreferred");
             }
         }
         
@@ -3894,7 +3892,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoNightSchedule");
+                return Resource.GetString("AutoNightSchedule");
             }
         }
         
@@ -3905,7 +3903,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoNightScheduled");
+                return Resource.GetString("AutoNightScheduled");
             }
         }
         
@@ -3916,7 +3914,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoNightSystemDefault");
+                return Resource.GetString("AutoNightSystemDefault");
             }
         }
         
@@ -3927,7 +3925,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoNightTheme");
+                return Resource.GetString("AutoNightTheme");
             }
         }
         
@@ -3938,7 +3936,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoNightTo");
+                return Resource.GetString("AutoNightTo");
             }
         }
         
@@ -3949,7 +3947,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoNightUpdateLocation");
+                return Resource.GetString("AutoNightUpdateLocation");
             }
         }
         
@@ -3963,7 +3961,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoNightUpdateLocationInfo");
+                return Resource.GetString("AutoNightUpdateLocationInfo");
             }
         }
         
@@ -3974,7 +3972,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoplayGifs");
+                return Resource.GetString("AutoplayGifs");
             }
         }
         
@@ -3985,7 +3983,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoplayMedia");
+                return Resource.GetString("AutoplayMedia");
             }
         }
         
@@ -3996,7 +3994,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoplayVideo");
+                return Resource.GetString("AutoplayVideo");
             }
         }
         
@@ -4007,7 +4005,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoStart");
+                return Resource.GetString("AutoStart");
             }
         }
         
@@ -4020,7 +4018,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoStartDisabledInfo");
+                return Resource.GetString("AutoStartDisabledInfo");
             }
         }
         
@@ -4031,7 +4029,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AutoStartMinized");
+                return Resource.GetString("AutoStartMinized");
             }
         }
         
@@ -4042,7 +4040,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Available");
+                return Resource.GetString("Available");
             }
         }
         
@@ -4053,7 +4051,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AvailableReactions");
+                return Resource.GetString("AvailableReactions");
             }
         }
         
@@ -4064,7 +4062,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("AwaitingEncryption");
+                return Resource.GetString("AwaitingEncryption");
             }
         }
         
@@ -4075,7 +4073,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Back");
+                return Resource.GetString("Back");
             }
         }
         
@@ -4086,7 +4084,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("BackgroundBlurred");
+                return Resource.GetString("BackgroundBlurred");
             }
         }
         
@@ -4097,7 +4095,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("BackgroundChoosePattern");
+                return Resource.GetString("BackgroundChoosePattern");
             }
         }
         
@@ -4108,7 +4106,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("BackgroundColor");
+                return Resource.GetString("BackgroundColor");
             }
         }
         
@@ -4119,7 +4117,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("BackgroundColorSinglePreviewLine1");
+                return Resource.GetString("BackgroundColorSinglePreviewLine1");
             }
         }
         
@@ -4130,7 +4128,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("BackgroundColorSinglePreviewLine2");
+                return Resource.GetString("BackgroundColorSinglePreviewLine2");
             }
         }
         
@@ -4141,7 +4139,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("BackgroundIntensity");
+                return Resource.GetString("BackgroundIntensity");
             }
         }
         
@@ -4152,7 +4150,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("BackgroundPattern");
+                return Resource.GetString("BackgroundPattern");
             }
         }
         
@@ -4163,7 +4161,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("BackgroundPreview");
+                return Resource.GetString("BackgroundPreview");
             }
         }
         
@@ -4174,7 +4172,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("BackgroundPreviewLine1");
+                return Resource.GetString("BackgroundPreviewLine1");
             }
         }
         
@@ -4185,7 +4183,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("BackgroundPreviewLine2");
+                return Resource.GetString("BackgroundPreviewLine2");
             }
         }
         
@@ -4196,7 +4194,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("BadgeNumber");
+                return Resource.GetString("BadgeNumber");
             }
         }
         
@@ -4207,7 +4205,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("BadgeNumberMutedChats");
+                return Resource.GetString("BadgeNumberMutedChats");
             }
         }
         
@@ -4218,7 +4216,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("BadgeNumberShow");
+                return Resource.GetString("BadgeNumberShow");
             }
         }
         
@@ -4229,7 +4227,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("BadgeNumberUnread");
+                return Resource.GetString("BadgeNumberUnread");
             }
         }
         
@@ -4240,7 +4238,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("BannedPhoneNumber");
+                return Resource.GetString("BannedPhoneNumber");
             }
         }
         
@@ -4251,7 +4249,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Bans_one");
+                return Resource.GetString("Bans_one");
             }
         }
         
@@ -4262,7 +4260,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Bans_other");
+                return Resource.GetString("Bans_other");
             }
         }
         
@@ -4273,7 +4271,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("BanUser");
+                return Resource.GetString("BanUser");
             }
         }
         
@@ -4284,7 +4282,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("BioLimitSubtitle");
+                return Resource.GetString("BioLimitSubtitle");
             }
         }
         
@@ -4295,7 +4293,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("BioLimitTitle");
+                return Resource.GetString("BioLimitTitle");
             }
         }
         
@@ -4306,7 +4304,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Black");
+                return Resource.GetString("Black");
             }
         }
         
@@ -4317,7 +4315,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Block");
+                return Resource.GetString("Block");
             }
         }
         
@@ -4328,7 +4326,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("BlockContact");
+                return Resource.GetString("BlockContact");
             }
         }
         
@@ -4339,7 +4337,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("BlockedUsers");
+                return Resource.GetString("BlockedUsers");
             }
         }
         
@@ -4350,7 +4348,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("BlockUser");
+                return Resource.GetString("BlockUser");
             }
         }
         
@@ -4361,7 +4359,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Blue");
+                return Resource.GetString("Blue");
             }
         }
         
@@ -4372,7 +4370,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Bold");
+                return Resource.GetString("Bold");
             }
         }
         
@@ -4383,7 +4381,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Bot");
+                return Resource.GetString("Bot");
             }
         }
         
@@ -4394,7 +4392,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("BotHelp");
+                return Resource.GetString("BotHelp");
             }
         }
         
@@ -4405,7 +4403,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("BotInfoTitle");
+                return Resource.GetString("BotInfoTitle");
             }
         }
         
@@ -4416,7 +4414,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("BotInvite");
+                return Resource.GetString("BotInvite");
             }
         }
         
@@ -4429,7 +4427,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("BotOpenPageMessage");
+                return Resource.GetString("BotOpenPageMessage");
             }
         }
         
@@ -4440,7 +4438,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("BotOpenPageTitle");
+                return Resource.GetString("BotOpenPageTitle");
             }
         }
         
@@ -4451,7 +4449,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("BotOwnershipTransfer");
+                return Resource.GetString("BotOwnershipTransfer");
             }
         }
         
@@ -4462,7 +4460,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("BotOwnershipTransferAlertText");
+                return Resource.GetString("BotOwnershipTransferAlertText");
             }
         }
         
@@ -4473,7 +4471,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("BotOwnershipTransferChangeOwner");
+                return Resource.GetString("BotOwnershipTransferChangeOwner");
             }
         }
         
@@ -4484,7 +4482,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("BotOwnershipTransferReadyAlertText");
+                return Resource.GetString("BotOwnershipTransferReadyAlertText");
             }
         }
         
@@ -4495,7 +4493,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("BotRestart");
+                return Resource.GetString("BotRestart");
             }
         }
         
@@ -4506,7 +4504,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("BotSettings");
+                return Resource.GetString("BotSettings");
             }
         }
         
@@ -4517,7 +4515,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("BotShare");
+                return Resource.GetString("BotShare");
             }
         }
         
@@ -4528,7 +4526,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("BotStart");
+                return Resource.GetString("BotStart");
             }
         }
         
@@ -4539,7 +4537,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("BotStatusCantRead");
+                return Resource.GetString("BotStatusCantRead");
             }
         }
         
@@ -4550,7 +4548,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("BotStatusRead");
+                return Resource.GetString("BotStatusRead");
             }
         }
         
@@ -4561,7 +4559,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("BotStop");
+                return Resource.GetString("BotStop");
             }
         }
         
@@ -4572,7 +4570,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("BotUnblock");
+                return Resource.GetString("BotUnblock");
             }
         }
         
@@ -4583,7 +4581,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("BubbleRadius");
+                return Resource.GetString("BubbleRadius");
             }
         }
         
@@ -4594,7 +4592,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("BuiltInThemes");
+                return Resource.GetString("BuiltInThemes");
             }
         }
         
@@ -4605,7 +4603,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("BytesReceived");
+                return Resource.GetString("BytesReceived");
             }
         }
         
@@ -4616,7 +4614,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("BytesSent");
+                return Resource.GetString("BytesSent");
             }
         }
         
@@ -4627,7 +4625,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CacheClear");
+                return Resource.GetString("CacheClear");
             }
         }
         
@@ -4638,7 +4636,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Calendar");
+                return Resource.GetString("Calendar");
             }
         }
         
@@ -4649,7 +4647,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Call");
+                return Resource.GetString("Call");
             }
         }
         
@@ -4660,7 +4658,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CallEmojiKeyTooltip");
+                return Resource.GetString("CallEmojiKeyTooltip");
             }
         }
         
@@ -4671,7 +4669,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Calling");
+                return Resource.GetString("Calling");
             }
         }
         
@@ -4682,7 +4680,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CallMessageIncoming");
+                return Resource.GetString("CallMessageIncoming");
             }
         }
         
@@ -4693,7 +4691,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CallMessageIncomingMissed");
+                return Resource.GetString("CallMessageIncomingMissed");
             }
         }
         
@@ -4704,7 +4702,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CallMessageOutgoing");
+                return Resource.GetString("CallMessageOutgoing");
             }
         }
         
@@ -4715,7 +4713,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CallMessageOutgoingMissed");
+                return Resource.GetString("CallMessageOutgoingMissed");
             }
         }
         
@@ -4726,7 +4724,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CallMessageVideoIncoming");
+                return Resource.GetString("CallMessageVideoIncoming");
             }
         }
         
@@ -4737,7 +4735,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CallMessageVideoIncomingMissed");
+                return Resource.GetString("CallMessageVideoIncomingMissed");
             }
         }
         
@@ -4748,7 +4746,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CallMessageVideoOutgoing");
+                return Resource.GetString("CallMessageVideoOutgoing");
             }
         }
         
@@ -4759,7 +4757,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CallMessageVideoOutgoingMissed");
+                return Resource.GetString("CallMessageVideoOutgoingMissed");
             }
         }
         
@@ -4770,7 +4768,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CallNotAvailable");
+                return Resource.GetString("CallNotAvailable");
             }
         }
         
@@ -4781,7 +4779,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CallReportHint");
+                return Resource.GetString("CallReportHint");
             }
         }
         
@@ -4792,7 +4790,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CallReportIncludeLogs");
+                return Resource.GetString("CallReportIncludeLogs");
             }
         }
         
@@ -4803,7 +4801,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CallReportLogsExplain");
+                return Resource.GetString("CallReportLogsExplain");
             }
         }
         
@@ -4814,7 +4812,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Calls");
+                return Resource.GetString("Calls");
             }
         }
         
@@ -4825,7 +4823,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CallsDataUsage");
+                return Resource.GetString("CallsDataUsage");
             }
         }
         
@@ -4836,7 +4834,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Cancel");
+                return Resource.GetString("Cancel");
             }
         }
         
@@ -4847,7 +4845,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CancelLinkExpired");
+                return Resource.GetString("CancelLinkExpired");
             }
         }
         
@@ -4858,7 +4856,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CanJoin_one");
+                return Resource.GetString("CanJoin_one");
             }
         }
         
@@ -4869,7 +4867,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CanJoin_other");
+                return Resource.GetString("CanJoin_other");
             }
         }
         
@@ -4880,7 +4878,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Caption");
+                return Resource.GetString("Caption");
             }
         }
         
@@ -4891,7 +4889,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CaptionsLimitSubtitle");
+                return Resource.GetString("CaptionsLimitSubtitle");
             }
         }
         
@@ -4902,7 +4900,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CaptionsLimitTitle");
+                return Resource.GetString("CaptionsLimitTitle");
             }
         }
         
@@ -4913,7 +4911,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Change");
+                return Resource.GetString("Change");
             }
         }
         
@@ -4924,7 +4922,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChangeColors");
+                return Resource.GetString("ChangeColors");
             }
         }
         
@@ -4935,7 +4933,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChangeEmail");
+                return Resource.GetString("ChangeEmail");
             }
         }
         
@@ -4946,7 +4944,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChangeEmojiStatus");
+                return Resource.GetString("ChangeEmojiStatus");
             }
         }
         
@@ -4957,7 +4955,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChangePasscode");
+                return Resource.GetString("ChangePasscode");
             }
         }
         
@@ -4970,7 +4968,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChangePasscodeInfo");
+                return Resource.GetString("ChangePasscodeInfo");
             }
         }
         
@@ -4981,7 +4979,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChangePassword");
+                return Resource.GetString("ChangePassword");
             }
         }
         
@@ -4992,7 +4990,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChangePhoneHelp");
+                return Resource.GetString("ChangePhoneHelp");
             }
         }
         
@@ -5003,7 +5001,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChangePhoneNewNumber");
+                return Resource.GetString("ChangePhoneNewNumber");
             }
         }
         
@@ -5014,7 +5012,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChangePhoneNumber");
+                return Resource.GetString("ChangePhoneNumber");
             }
         }
         
@@ -5025,7 +5023,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChangePhoneNumberInfo");
+                return Resource.GetString("ChangePhoneNumberInfo");
             }
         }
         
@@ -5036,7 +5034,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChangePhoneNumberOccupied");
+                return Resource.GetString("ChangePhoneNumberOccupied");
             }
         }
         
@@ -5047,7 +5045,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChangeRecoveryEmail");
+                return Resource.GetString("ChangeRecoveryEmail");
             }
         }
         
@@ -5058,7 +5056,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelAddAdmin");
+                return Resource.GetString("ChannelAddAdmin");
             }
         }
         
@@ -5069,7 +5067,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelAddedBy");
+                return Resource.GetString("ChannelAddedBy");
             }
         }
         
@@ -5080,7 +5078,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelAddException");
+                return Resource.GetString("ChannelAddException");
             }
         }
         
@@ -5091,7 +5089,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelAddMembers");
+                return Resource.GetString("ChannelAddMembers");
             }
         }
         
@@ -5102,7 +5100,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelAdmin");
+                return Resource.GetString("ChannelAdmin");
             }
         }
         
@@ -5113,7 +5111,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelAdministrators");
+                return Resource.GetString("ChannelAdministrators");
             }
         }
         
@@ -5124,7 +5122,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelAdminsInfo");
+                return Resource.GetString("ChannelAdminsInfo");
             }
         }
         
@@ -5135,7 +5133,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelAntiSpam");
+                return Resource.GetString("ChannelAntiSpam");
             }
         }
         
@@ -5146,7 +5144,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelAntiSpamFalsePositiveReported");
+                return Resource.GetString("ChannelAntiSpamFalsePositiveReported");
             }
         }
         
@@ -5157,7 +5155,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelAntiSpamInfo");
+                return Resource.GetString("ChannelAntiSpamInfo");
             }
         }
         
@@ -5168,7 +5166,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelAntiSpamInfo2");
+                return Resource.GetString("ChannelAntiSpamInfo2");
             }
         }
         
@@ -5179,7 +5177,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelBlacklist");
+                return Resource.GetString("ChannelBlacklist");
             }
         }
         
@@ -5190,7 +5188,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelBlockedUsers");
+                return Resource.GetString("ChannelBlockedUsers");
             }
         }
         
@@ -5201,7 +5199,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelBlockUser");
+                return Resource.GetString("ChannelBlockUser");
             }
         }
         
@@ -5212,7 +5210,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelBots");
+                return Resource.GetString("ChannelBots");
             }
         }
         
@@ -5223,7 +5221,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelBroadcast");
+                return Resource.GetString("ChannelBroadcast");
             }
         }
         
@@ -5234,7 +5232,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelCantOpenPrivate");
+                return Resource.GetString("ChannelCantOpenPrivate");
             }
         }
         
@@ -5245,7 +5243,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelCantSendMessage");
+                return Resource.GetString("ChannelCantSendMessage");
             }
         }
         
@@ -5256,7 +5254,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelCreator");
+                return Resource.GetString("ChannelCreator");
             }
         }
         
@@ -5267,7 +5265,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelDelete");
+                return Resource.GetString("ChannelDelete");
             }
         }
         
@@ -5278,7 +5276,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelDeleteAlert");
+                return Resource.GetString("ChannelDeleteAlert");
             }
         }
         
@@ -5289,7 +5287,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelDeletedUndo");
+                return Resource.GetString("ChannelDeletedUndo");
             }
         }
         
@@ -5300,7 +5298,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelDeleteInfo");
+                return Resource.GetString("ChannelDeleteInfo");
             }
         }
         
@@ -5311,7 +5309,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelDeleteMenu");
+                return Resource.GetString("ChannelDeleteMenu");
             }
         }
         
@@ -5322,7 +5320,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelEdit");
+                return Resource.GetString("ChannelEdit");
             }
         }
         
@@ -5333,7 +5331,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelHideMembers");
+                return Resource.GetString("ChannelHideMembers");
             }
         }
         
@@ -5344,7 +5342,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelHideMembersInfo");
+                return Resource.GetString("ChannelHideMembersInfo");
             }
         }
         
@@ -5355,7 +5353,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelInviteLinkTitle");
+                return Resource.GetString("ChannelInviteLinkTitle");
             }
         }
         
@@ -5366,7 +5364,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelInviteViaLink");
+                return Resource.GetString("ChannelInviteViaLink");
             }
         }
         
@@ -5377,7 +5375,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelInviteViaLinkRestricted");
+                return Resource.GetString("ChannelInviteViaLinkRestricted");
             }
         }
         
@@ -5388,7 +5386,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelJoin");
+                return Resource.GetString("ChannelJoin");
             }
         }
         
@@ -5399,7 +5397,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelJoined");
+                return Resource.GetString("ChannelJoined");
             }
         }
         
@@ -5410,7 +5408,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelLeaveAlert");
+                return Resource.GetString("ChannelLeaveAlert");
             }
         }
         
@@ -5421,7 +5419,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelLeaveAlertWithName");
+                return Resource.GetString("ChannelLeaveAlertWithName");
             }
         }
         
@@ -5432,7 +5430,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelLinkInfo");
+                return Resource.GetString("ChannelLinkInfo");
             }
         }
         
@@ -5443,7 +5441,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelLinkTitle");
+                return Resource.GetString("ChannelLinkTitle");
             }
         }
         
@@ -5454,7 +5452,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelMegaJoined");
+                return Resource.GetString("ChannelMegaJoined");
             }
         }
         
@@ -5465,7 +5463,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelMembers");
+                return Resource.GetString("ChannelMembers");
             }
         }
         
@@ -5476,7 +5474,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelMembersInfo");
+                return Resource.GetString("ChannelMembersInfo");
             }
         }
         
@@ -5487,7 +5485,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelMute");
+                return Resource.GetString("ChannelMute");
             }
         }
         
@@ -5498,7 +5496,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelOtherMembers");
+                return Resource.GetString("ChannelOtherMembers");
             }
         }
         
@@ -5509,7 +5507,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelPermissions");
+                return Resource.GetString("ChannelPermissions");
             }
         }
         
@@ -5520,7 +5518,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelPermissionsHeader");
+                return Resource.GetString("ChannelPermissionsHeader");
             }
         }
         
@@ -5531,7 +5529,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelPrivate");
+                return Resource.GetString("ChannelPrivate");
             }
         }
         
@@ -5542,7 +5540,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelPrivateInfo");
+                return Resource.GetString("ChannelPrivateInfo");
             }
         }
         
@@ -5553,7 +5551,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelPrivateLinkHelp");
+                return Resource.GetString("ChannelPrivateLinkHelp");
             }
         }
         
@@ -5564,7 +5562,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelPublic");
+                return Resource.GetString("ChannelPublic");
             }
         }
         
@@ -5575,7 +5573,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelPublicInfo");
+                return Resource.GetString("ChannelPublicInfo");
             }
         }
         
@@ -5586,7 +5584,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Channels_one");
+                return Resource.GetString("Channels_one");
             }
         }
         
@@ -5597,7 +5595,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Channels_other");
+                return Resource.GetString("Channels_other");
             }
         }
         
@@ -5608,7 +5606,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelSettings");
+                return Resource.GetString("ChannelSettings");
             }
         }
         
@@ -5619,7 +5617,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelSettingsJoinRequest");
+                return Resource.GetString("ChannelSettingsJoinRequest");
             }
         }
         
@@ -5630,7 +5628,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelSettingsJoinRequestInfo");
+                return Resource.GetString("ChannelSettingsJoinRequestInfo");
             }
         }
         
@@ -5641,7 +5639,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelSettingsJoinTitle");
+                return Resource.GetString("ChannelSettingsJoinTitle");
             }
         }
         
@@ -5652,7 +5650,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelSettingsJoinToSend");
+                return Resource.GetString("ChannelSettingsJoinToSend");
             }
         }
         
@@ -5663,7 +5661,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelSettingsJoinToSendInfo");
+                return Resource.GetString("ChannelSettingsJoinToSendInfo");
             }
         }
         
@@ -5674,7 +5672,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelSettingsTitle");
+                return Resource.GetString("ChannelSettingsTitle");
             }
         }
         
@@ -5685,7 +5683,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelSignMessages");
+                return Resource.GetString("ChannelSignMessages");
             }
         }
         
@@ -5696,7 +5694,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelSignMessagesInfo");
+                return Resource.GetString("ChannelSignMessagesInfo");
             }
         }
         
@@ -5707,7 +5705,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelSilentBroadcast");
+                return Resource.GetString("ChannelSilentBroadcast");
             }
         }
         
@@ -5718,7 +5716,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelSubscribers");
+                return Resource.GetString("ChannelSubscribers");
             }
         }
         
@@ -5729,7 +5727,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelType");
+                return Resource.GetString("ChannelType");
             }
         }
         
@@ -5740,7 +5738,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelTypeHeader");
+                return Resource.GetString("ChannelTypeHeader");
             }
         }
         
@@ -5751,7 +5749,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelUnmute");
+                return Resource.GetString("ChannelUnmute");
             }
         }
         
@@ -5762,7 +5760,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelUserAddLimit");
+                return Resource.GetString("ChannelUserAddLimit");
             }
         }
         
@@ -5773,7 +5771,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelUserCantAdd");
+                return Resource.GetString("ChannelUserCantAdd");
             }
         }
         
@@ -5784,7 +5782,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelUserCantAdmin");
+                return Resource.GetString("ChannelUserCantAdmin");
             }
         }
         
@@ -5795,7 +5793,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelUserCantBot");
+                return Resource.GetString("ChannelUserCantBot");
             }
         }
         
@@ -5808,7 +5806,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelUserLeftError");
+                return Resource.GetString("ChannelUserLeftError");
             }
         }
         
@@ -5822,7 +5820,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChannelUsernameHelp");
+                return Resource.GetString("ChannelUsernameHelp");
             }
         }
         
@@ -5833,7 +5831,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Characters_one");
+                return Resource.GetString("Characters_one");
             }
         }
         
@@ -5844,7 +5842,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Characters_other");
+                return Resource.GetString("Characters_other");
             }
         }
         
@@ -5855,7 +5853,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CharactersPerMessage");
+                return Resource.GetString("CharactersPerMessage");
             }
         }
         
@@ -5866,7 +5864,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChatAdmin");
+                return Resource.GetString("ChatAdmin");
             }
         }
         
@@ -5877,7 +5875,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChatApplyTheme");
+                return Resource.GetString("ChatApplyTheme");
             }
         }
         
@@ -5888,7 +5886,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChatArchived");
+                return Resource.GetString("ChatArchived");
             }
         }
         
@@ -5899,7 +5897,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChatBackground");
+                return Resource.GetString("ChatBackground");
             }
         }
         
@@ -5910,7 +5908,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChatCamera");
+                return Resource.GetString("ChatCamera");
             }
         }
         
@@ -5921,7 +5919,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChatDeletedUndo");
+                return Resource.GetString("ChatDeletedUndo");
             }
         }
         
@@ -5932,7 +5930,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChatDocument");
+                return Resource.GetString("ChatDocument");
             }
         }
         
@@ -5943,7 +5941,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChatGallery");
+                return Resource.GetString("ChatGallery");
             }
         }
         
@@ -5954,7 +5952,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChatHintsDelete");
+                return Resource.GetString("ChatHintsDelete");
             }
         }
         
@@ -5965,7 +5963,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChatHistory");
+                return Resource.GetString("ChatHistory");
             }
         }
         
@@ -5976,7 +5974,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChatHistoryHidden");
+                return Resource.GetString("ChatHistoryHidden");
             }
         }
         
@@ -5987,7 +5985,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChatHistoryHiddenInfo");
+                return Resource.GetString("ChatHistoryHiddenInfo");
             }
         }
         
@@ -5998,7 +5996,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChatHistoryVisible");
+                return Resource.GetString("ChatHistoryVisible");
             }
         }
         
@@ -6009,7 +6007,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChatHistoryVisibleInfo");
+                return Resource.GetString("ChatHistoryVisibleInfo");
             }
         }
         
@@ -6020,7 +6018,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChatList");
+                return Resource.GetString("ChatList");
             }
         }
         
@@ -6031,7 +6029,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChatLocation");
+                return Resource.GetString("ChatLocation");
             }
         }
         
@@ -6042,7 +6040,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChatNoTheme");
+                return Resource.GetString("ChatNoTheme");
             }
         }
         
@@ -6053,7 +6051,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChatPerFolderLimitSubtitle");
+                return Resource.GetString("ChatPerFolderLimitSubtitle");
             }
         }
         
@@ -6064,7 +6062,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChatPerFolderLimitTitle");
+                return Resource.GetString("ChatPerFolderLimitTitle");
             }
         }
         
@@ -6075,7 +6073,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChatResetTheme");
+                return Resource.GetString("ChatResetTheme");
             }
         }
         
@@ -6086,7 +6084,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Chats_one");
+                return Resource.GetString("Chats_one");
             }
         }
         
@@ -6097,7 +6095,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Chats_other");
+                return Resource.GetString("Chats_other");
             }
         }
         
@@ -6108,7 +6106,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChatsArchived");
+                return Resource.GetString("ChatsArchived");
             }
         }
         
@@ -6119,7 +6117,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChatSettings");
+                return Resource.GetString("ChatSettings");
             }
         }
         
@@ -6130,7 +6128,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChatsMute");
+                return Resource.GetString("ChatsMute");
             }
         }
         
@@ -6141,7 +6139,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChatsNearbyHeader");
+                return Resource.GetString("ChatsNearbyHeader");
             }
         }
         
@@ -6152,7 +6150,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChatsSelected_one");
+                return Resource.GetString("ChatsSelected_one");
             }
         }
         
@@ -6163,7 +6161,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChatsSelected_other");
+                return Resource.GetString("ChatsSelected_other");
             }
         }
         
@@ -6174,7 +6172,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChatsUnmute");
+                return Resource.GetString("ChatsUnmute");
             }
         }
         
@@ -6185,7 +6183,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChatThemeChangedTo");
+                return Resource.GetString("ChatThemeChangedTo");
             }
         }
         
@@ -6196,7 +6194,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChatThemeChangedYou");
+                return Resource.GetString("ChatThemeChangedYou");
             }
         }
         
@@ -6207,7 +6205,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChatThemeDisabled");
+                return Resource.GetString("ChatThemeDisabled");
             }
         }
         
@@ -6218,7 +6216,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChatThemeDisabledYou");
+                return Resource.GetString("ChatThemeDisabledYou");
             }
         }
         
@@ -6229,7 +6227,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChatVideo");
+                return Resource.GetString("ChatVideo");
             }
         }
         
@@ -6240,7 +6238,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChatYourSelf");
+                return Resource.GetString("ChatYourSelf");
             }
         }
         
@@ -6251,7 +6249,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChatYourSelfDescription1");
+                return Resource.GetString("ChatYourSelfDescription1");
             }
         }
         
@@ -6262,7 +6260,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChatYourSelfDescription2");
+                return Resource.GetString("ChatYourSelfDescription2");
             }
         }
         
@@ -6273,7 +6271,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChatYourSelfDescription3");
+                return Resource.GetString("ChatYourSelfDescription3");
             }
         }
         
@@ -6284,7 +6282,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChatYourSelfDescription4");
+                return Resource.GetString("ChatYourSelfDescription4");
             }
         }
         
@@ -6295,7 +6293,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChatYourSelfName");
+                return Resource.GetString("ChatYourSelfName");
             }
         }
         
@@ -6306,7 +6304,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChatYourSelfTitle");
+                return Resource.GetString("ChatYourSelfTitle");
             }
         }
         
@@ -6317,7 +6315,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CheckForUpdates");
+                return Resource.GetString("CheckForUpdates");
             }
         }
         
@@ -6328,7 +6326,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CheckForUpdatesInfo");
+                return Resource.GetString("CheckForUpdatesInfo");
             }
         }
         
@@ -6339,7 +6337,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Checking");
+                return Resource.GetString("Checking");
             }
         }
         
@@ -6350,7 +6348,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CheckYourEmail");
+                return Resource.GetString("CheckYourEmail");
             }
         }
         
@@ -6361,7 +6359,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CheckYourEmailSubtitle");
+                return Resource.GetString("CheckYourEmailSubtitle");
             }
         }
         
@@ -6372,7 +6370,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChooseCountry");
+                return Resource.GetString("ChooseCountry");
             }
         }
         
@@ -6383,7 +6381,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChooseFromYourStickers");
+                return Resource.GetString("ChooseFromYourStickers");
             }
         }
         
@@ -6394,7 +6392,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChoosePhotoOrVideo");
+                return Resource.GetString("ChoosePhotoOrVideo");
             }
         }
         
@@ -6405,7 +6403,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChooseStickerSetMy");
+                return Resource.GetString("ChooseStickerSetMy");
             }
         }
         
@@ -6416,7 +6414,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChooseStickerSetNotFound");
+                return Resource.GetString("ChooseStickerSetNotFound");
             }
         }
         
@@ -6427,7 +6425,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChooseStickerSetNotFoundInfo");
+                return Resource.GetString("ChooseStickerSetNotFoundInfo");
             }
         }
         
@@ -6438,7 +6436,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChooseStickerSetPlaceholder");
+                return Resource.GetString("ChooseStickerSetPlaceholder");
             }
         }
         
@@ -6449,7 +6447,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ChoosingSticker");
+                return Resource.GetString("ChoosingSticker");
             }
         }
         
@@ -6460,7 +6458,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Clear");
+                return Resource.GetString("Clear");
             }
         }
         
@@ -6471,7 +6469,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ClearButton");
+                return Resource.GetString("ClearButton");
             }
         }
         
@@ -6482,7 +6480,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ClearCache");
+                return Resource.GetString("ClearCache");
             }
         }
         
@@ -6493,7 +6491,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ClearCacheInfo");
+                return Resource.GetString("ClearCacheInfo");
             }
         }
         
@@ -6504,7 +6502,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ClearHistory");
+                return Resource.GetString("ClearHistory");
             }
         }
         
@@ -6515,7 +6513,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ClearHistoryOptionAlso");
+                return Resource.GetString("ClearHistoryOptionAlso");
             }
         }
         
@@ -6526,7 +6524,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ClearMediaCache");
+                return Resource.GetString("ClearMediaCache");
             }
         }
         
@@ -6537,7 +6535,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ClearOtherSessionsHelp");
+                return Resource.GetString("ClearOtherSessionsHelp");
             }
         }
         
@@ -6548,7 +6546,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ClearOtherWebSessionsHelp");
+                return Resource.GetString("ClearOtherWebSessionsHelp");
             }
         }
         
@@ -6559,7 +6557,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ClearRecentEmoji");
+                return Resource.GetString("ClearRecentEmoji");
             }
         }
         
@@ -6570,7 +6568,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ClearSearch");
+                return Resource.GetString("ClearSearch");
             }
         }
         
@@ -6581,7 +6579,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ClearSelection");
+                return Resource.GetString("ClearSelection");
             }
         }
         
@@ -6592,7 +6590,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Close");
+                return Resource.GetString("Close");
             }
         }
         
@@ -6603,7 +6601,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CloseTopic");
+                return Resource.GetString("CloseTopic");
             }
         }
         
@@ -6614,7 +6612,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Code");
+                return Resource.GetString("Code");
             }
         }
         
@@ -6625,7 +6623,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CodeExpired");
+                return Resource.GetString("CodeExpired");
             }
         }
         
@@ -6636,7 +6634,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ColorPickerBackground");
+                return Resource.GetString("ColorPickerBackground");
             }
         }
         
@@ -6647,7 +6645,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ColorPickerMainColor");
+                return Resource.GetString("ColorPickerMainColor");
             }
         }
         
@@ -6658,7 +6656,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ColorThemes");
+                return Resource.GetString("ColorThemes");
             }
         }
         
@@ -6669,7 +6667,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Comment");
+                return Resource.GetString("Comment");
             }
         }
         
@@ -6680,7 +6678,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Comments_one");
+                return Resource.GetString("Comments_one");
             }
         }
         
@@ -6691,7 +6689,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Comments_other");
+                return Resource.GetString("Comments_other");
             }
         }
         
@@ -6702,7 +6700,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Connected");
+                return Resource.GetString("Connected");
             }
         }
         
@@ -6713,7 +6711,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ConnectedAccountsLimitSubtitle");
+                return Resource.GetString("ConnectedAccountsLimitSubtitle");
             }
         }
         
@@ -6724,7 +6722,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ConnectedAccountsLimitTitle");
+                return Resource.GetString("ConnectedAccountsLimitTitle");
             }
         }
         
@@ -6735,7 +6733,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Connecting");
+                return Resource.GetString("Connecting");
             }
         }
         
@@ -6746,7 +6744,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ConnectingConnectProxy");
+                return Resource.GetString("ConnectingConnectProxy");
             }
         }
         
@@ -6757,7 +6755,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ConnectingToProxy");
+                return Resource.GetString("ConnectingToProxy");
             }
         }
         
@@ -6768,7 +6766,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ConnectingToProxyEnable");
+                return Resource.GetString("ConnectingToProxyEnable");
             }
         }
         
@@ -6779,7 +6777,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ConnectWithIPv6");
+                return Resource.GetString("ConnectWithIPv6");
             }
         }
         
@@ -6790,7 +6788,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ContactJoined");
+                return Resource.GetString("ContactJoined");
             }
         }
         
@@ -6801,7 +6799,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ContactNotRegistered");
+                return Resource.GetString("ContactNotRegistered");
             }
         }
         
@@ -6812,7 +6810,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Contacts");
+                return Resource.GetString("Contacts");
             }
         }
         
@@ -6823,7 +6821,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ContactsPermissionAlert");
+                return Resource.GetString("ContactsPermissionAlert");
             }
         }
         
@@ -6834,7 +6832,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ContactsPermissionAlertContinue");
+                return Resource.GetString("ContactsPermissionAlertContinue");
             }
         }
         
@@ -6845,7 +6843,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ContactsPermissionAlertNotNow");
+                return Resource.GetString("ContactsPermissionAlertNotNow");
             }
         }
         
@@ -6856,7 +6854,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ContactSupport");
+                return Resource.GetString("ContactSupport");
             }
         }
         
@@ -6867,7 +6865,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ContactSupportInfo");
+                return Resource.GetString("ContactSupportInfo");
             }
         }
         
@@ -6878,7 +6876,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Continue");
+                return Resource.GetString("Continue");
             }
         }
         
@@ -6889,7 +6887,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ConvertGroup");
+                return Resource.GetString("ConvertGroup");
             }
         }
         
@@ -6900,7 +6898,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ConvertGroupAlert");
+                return Resource.GetString("ConvertGroupAlert");
             }
         }
         
@@ -6911,7 +6909,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ConvertGroupAlertWarning");
+                return Resource.GetString("ConvertGroupAlertWarning");
             }
         }
         
@@ -6927,7 +6925,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ConvertGroupInfo2");
+                return Resource.GetString("ConvertGroupInfo2");
             }
         }
         
@@ -6938,7 +6936,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ConvertGroupInfo3");
+                return Resource.GetString("ConvertGroupInfo3");
             }
         }
         
@@ -6949,7 +6947,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Copy");
+                return Resource.GetString("Copy");
             }
         }
         
@@ -6960,7 +6958,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CopyImage");
+                return Resource.GetString("CopyImage");
             }
         }
         
@@ -6971,7 +6969,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CopyLink");
+                return Resource.GetString("CopyLink");
             }
         }
         
@@ -6982,7 +6980,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CopySelectedText");
+                return Resource.GetString("CopySelectedText");
             }
         }
         
@@ -6993,7 +6991,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Country");
+                return Resource.GetString("Country");
             }
         }
         
@@ -7004,7 +7002,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Create");
+                return Resource.GetString("Create");
             }
         }
         
@@ -7015,7 +7013,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CreateGroupError");
+                return Resource.GetString("CreateGroupError");
             }
         }
         
@@ -7026,7 +7024,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CreateLink");
+                return Resource.GetString("CreateLink");
             }
         }
         
@@ -7037,7 +7035,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CreateNewContact");
+                return Resource.GetString("CreateNewContact");
             }
         }
         
@@ -7048,7 +7046,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CreateNewFilter");
+                return Resource.GetString("CreateNewFilter");
             }
         }
         
@@ -7059,7 +7057,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CreateNewFilterInfo");
+                return Resource.GetString("CreateNewFilterInfo");
             }
         }
         
@@ -7070,7 +7068,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CreateNewLinkHelp");
+                return Resource.GetString("CreateNewLinkHelp");
             }
         }
         
@@ -7081,7 +7079,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CreateNewTheme");
+                return Resource.GetString("CreateNewTheme");
             }
         }
         
@@ -7094,7 +7092,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CreateNewThemeAlert");
+                return Resource.GetString("CreateNewThemeAlert");
             }
         }
         
@@ -7105,7 +7103,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CreateNewThemeMenu");
+                return Resource.GetString("CreateNewThemeMenu");
             }
         }
         
@@ -7116,7 +7114,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CreateTheme");
+                return Resource.GetString("CreateTheme");
             }
         }
         
@@ -7127,7 +7125,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CreateTopicTitle");
+                return Resource.GetString("CreateTopicTitle");
             }
         }
         
@@ -7138,7 +7136,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Crop");
+                return Resource.GetString("Crop");
             }
         }
         
@@ -7149,7 +7147,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CropImage");
+                return Resource.GetString("CropImage");
             }
         }
         
@@ -7160,7 +7158,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CropOriginal");
+                return Resource.GetString("CropOriginal");
             }
         }
         
@@ -7171,7 +7169,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CropSquare");
+                return Resource.GetString("CropSquare");
             }
         }
         
@@ -7182,7 +7180,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CurrentSession");
+                return Resource.GetString("CurrentSession");
             }
         }
         
@@ -7193,7 +7191,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CustomAvatarTooltip");
+                return Resource.GetString("CustomAvatarTooltip");
             }
         }
         
@@ -7204,7 +7202,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CustomCallInfo");
+                return Resource.GetString("CustomCallInfo");
             }
         }
         
@@ -7215,7 +7213,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CustomHelp");
+                return Resource.GetString("CustomHelp");
             }
         }
         
@@ -7226,7 +7224,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CustomP2PInfo");
+                return Resource.GetString("CustomP2PInfo");
             }
         }
         
@@ -7237,7 +7235,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CustomShareInfo");
+                return Resource.GetString("CustomShareInfo");
             }
         }
         
@@ -7248,7 +7246,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CustomShareSettingsHelp");
+                return Resource.GetString("CustomShareSettingsHelp");
             }
         }
         
@@ -7259,7 +7257,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("CustomThemes");
+                return Resource.GetString("CustomThemes");
             }
         }
         
@@ -7270,7 +7268,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Cut");
+                return Resource.GetString("Cut");
             }
         }
         
@@ -7281,7 +7279,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Daily");
+                return Resource.GetString("Daily");
             }
         }
         
@@ -7292,7 +7290,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DartInfo");
+                return Resource.GetString("DartInfo");
             }
         }
         
@@ -7303,7 +7301,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DataSettings");
+                return Resource.GetString("DataSettings");
             }
         }
         
@@ -7314,7 +7312,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DataUsage");
+                return Resource.GetString("DataUsage");
             }
         }
         
@@ -7325,7 +7323,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Days_one");
+                return Resource.GetString("Days_one");
             }
         }
         
@@ -7336,7 +7334,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Days_other");
+                return Resource.GetString("Days_other");
             }
         }
         
@@ -7347,7 +7345,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Deactivate");
+                return Resource.GetString("Deactivate");
             }
         }
         
@@ -7358,7 +7356,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Decline");
+                return Resource.GetString("Decline");
             }
         }
         
@@ -7369,7 +7367,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DeclineCall");
+                return Resource.GetString("DeclineCall");
             }
         }
         
@@ -7380,7 +7378,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DeclineDeactivate");
+                return Resource.GetString("DeclineDeactivate");
             }
         }
         
@@ -7391,7 +7389,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Default");
+                return Resource.GetString("Default");
             }
         }
         
@@ -7402,7 +7400,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Delete");
+                return Resource.GetString("Delete");
             }
         }
         
@@ -7413,7 +7411,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DeleteAccountHelp");
+                return Resource.GetString("DeleteAccountHelp");
             }
         }
         
@@ -7424,7 +7422,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DeleteAccountIfAwayFor2");
+                return Resource.GetString("DeleteAccountIfAwayFor2");
             }
         }
         
@@ -7435,7 +7433,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DeleteAll");
+                return Resource.GetString("DeleteAll");
             }
         }
         
@@ -7446,7 +7444,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DeleteAllFrom");
+                return Resource.GetString("DeleteAllFrom");
             }
         }
         
@@ -7457,7 +7455,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DeleteAndExit");
+                return Resource.GetString("DeleteAndExit");
             }
         }
         
@@ -7468,7 +7466,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DeleteBackground_one");
+                return Resource.GetString("DeleteBackground_one");
             }
         }
         
@@ -7479,7 +7477,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DeleteBackground_other");
+                return Resource.GetString("DeleteBackground_other");
             }
         }
         
@@ -7490,7 +7488,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DeleteBanUser");
+                return Resource.GetString("DeleteBanUser");
             }
         }
         
@@ -7501,7 +7499,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DeleteCalls");
+                return Resource.GetString("DeleteCalls");
             }
         }
         
@@ -7512,7 +7510,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DeleteCallsForEveryone");
+                return Resource.GetString("DeleteCallsForEveryone");
             }
         }
         
@@ -7523,7 +7521,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DeleteChat");
+                return Resource.GetString("DeleteChat");
             }
         }
         
@@ -7534,7 +7532,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DeleteChatBackgroundsAlert");
+                return Resource.GetString("DeleteChatBackgroundsAlert");
             }
         }
         
@@ -7545,7 +7543,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DeleteChatUser");
+                return Resource.GetString("DeleteChatUser");
             }
         }
         
@@ -7556,7 +7554,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DeleteContact");
+                return Resource.GetString("DeleteContact");
             }
         }
         
@@ -7567,7 +7565,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DeletedMessage");
+                return Resource.GetString("DeletedMessage");
             }
         }
         
@@ -7578,7 +7576,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DeleteForAll");
+                return Resource.GetString("DeleteForAll");
             }
         }
         
@@ -7589,7 +7587,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DeleteFromFavorites");
+                return Resource.GetString("DeleteFromFavorites");
             }
         }
         
@@ -7600,7 +7598,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DeleteFromRecent");
+                return Resource.GetString("DeleteFromRecent");
             }
         }
         
@@ -7611,7 +7609,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DeleteLocalization");
+                return Resource.GetString("DeleteLocalization");
             }
         }
         
@@ -7622,7 +7620,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DeleteMega");
+                return Resource.GetString("DeleteMega");
             }
         }
         
@@ -7633,7 +7631,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DeleteMegaMenu");
+                return Resource.GetString("DeleteMegaMenu");
             }
         }
         
@@ -7644,7 +7642,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DeleteMessagesOption");
+                return Resource.GetString("DeleteMessagesOption");
             }
         }
         
@@ -7655,7 +7653,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DeleteMessagesOptionAlso");
+                return Resource.GetString("DeleteMessagesOptionAlso");
             }
         }
         
@@ -7666,7 +7664,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DeleteMessagesText");
+                return Resource.GetString("DeleteMessagesText");
             }
         }
         
@@ -7677,7 +7675,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DeleteMessagesTextGroup");
+                return Resource.GetString("DeleteMessagesTextGroup");
             }
         }
         
@@ -7688,7 +7686,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DeleteMessagesTitle");
+                return Resource.GetString("DeleteMessagesTitle");
             }
         }
         
@@ -7699,7 +7697,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DeleteProxy");
+                return Resource.GetString("DeleteProxy");
             }
         }
         
@@ -7710,7 +7708,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DeleteReportSpam");
+                return Resource.GetString("DeleteReportSpam");
             }
         }
         
@@ -7721,7 +7719,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DeleteSelected");
+                return Resource.GetString("DeleteSelected");
             }
         }
         
@@ -7732,7 +7730,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DeleteSelectedCallsText");
+                return Resource.GetString("DeleteSelectedCallsText");
             }
         }
         
@@ -7743,7 +7741,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DeleteSingleMessagesTitle");
+                return Resource.GetString("DeleteSingleMessagesTitle");
             }
         }
         
@@ -7754,7 +7752,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DeleteThemeAlert");
+                return Resource.GetString("DeleteThemeAlert");
             }
         }
         
@@ -7765,7 +7763,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DeleteThisGroup");
+                return Resource.GetString("DeleteThisGroup");
             }
         }
         
@@ -7776,7 +7774,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Deletions_one");
+                return Resource.GetString("Deletions_one");
             }
         }
         
@@ -7787,7 +7785,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Deletions_other");
+                return Resource.GetString("Deletions_other");
             }
         }
         
@@ -7798,7 +7796,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DescriptionInfo");
+                return Resource.GetString("DescriptionInfo");
             }
         }
         
@@ -7809,7 +7807,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DescriptionOptionalPlaceholder");
+                return Resource.GetString("DescriptionOptionalPlaceholder");
             }
         }
         
@@ -7820,7 +7818,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DescriptionPlaceholder");
+                return Resource.GetString("DescriptionPlaceholder");
             }
         }
         
@@ -7831,7 +7829,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DeviceName");
+                return Resource.GetString("DeviceName");
             }
         }
         
@@ -7842,7 +7840,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Devices");
+                return Resource.GetString("Devices");
             }
         }
         
@@ -7853,7 +7851,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DiceEmojiInfo");
+                return Resource.GetString("DiceEmojiInfo");
             }
         }
         
@@ -7864,7 +7862,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DiceInfo2");
+                return Resource.GetString("DiceInfo2");
             }
         }
         
@@ -7875,7 +7873,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DidNotGetTheCode");
+                return Resource.GetString("DidNotGetTheCode");
             }
         }
         
@@ -7886,7 +7884,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Disable");
+                return Resource.GetString("Disable");
             }
         }
         
@@ -7897,7 +7895,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DisablePasscode");
+                return Resource.GetString("DisablePasscode");
             }
         }
         
@@ -7908,7 +7906,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DisablePasscodeConfirmMessage");
+                return Resource.GetString("DisablePasscodeConfirmMessage");
             }
         }
         
@@ -7919,7 +7917,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DisablePasscodeTurnOff");
+                return Resource.GetString("DisablePasscodeTurnOff");
             }
         }
         
@@ -7930,7 +7928,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DisablePhotoSpoiler");
+                return Resource.GetString("DisablePhotoSpoiler");
             }
         }
         
@@ -7941,7 +7939,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DisableReactionsInfo");
+                return Resource.GetString("DisableReactionsInfo");
             }
         }
         
@@ -7952,7 +7950,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DisableSpelling");
+                return Resource.GetString("DisableSpelling");
             }
         }
         
@@ -7963,7 +7961,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Discard");
+                return Resource.GetString("Discard");
             }
         }
         
@@ -7974,7 +7972,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DiscussChannel");
+                return Resource.GetString("DiscussChannel");
             }
         }
         
@@ -7985,7 +7983,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Discussion");
+                return Resource.GetString("Discussion");
             }
         }
         
@@ -7996,7 +7994,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DiscussionChannelGroupSetHelp");
+                return Resource.GetString("DiscussionChannelGroupSetHelp");
             }
         }
         
@@ -8007,7 +8005,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DiscussionChannelGroupSetHelp2");
+                return Resource.GetString("DiscussionChannelGroupSetHelp2");
             }
         }
         
@@ -8018,7 +8016,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DiscussionChannelHelp2");
+                return Resource.GetString("DiscussionChannelHelp2");
             }
         }
         
@@ -8029,7 +8027,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DiscussionCreateGroup");
+                return Resource.GetString("DiscussionCreateGroup");
             }
         }
         
@@ -8040,7 +8038,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DiscussionGroupHelp");
+                return Resource.GetString("DiscussionGroupHelp");
             }
         }
         
@@ -8051,7 +8049,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DiscussionInfo");
+                return Resource.GetString("DiscussionInfo");
             }
         }
         
@@ -8062,7 +8060,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DiscussionLinkGroup");
+                return Resource.GetString("DiscussionLinkGroup");
             }
         }
         
@@ -8073,7 +8071,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DiscussionLinkGroupAlertHistory");
+                return Resource.GetString("DiscussionLinkGroupAlertHistory");
             }
         }
         
@@ -8086,7 +8084,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DiscussionLinkGroupPrivateAlert");
+                return Resource.GetString("DiscussionLinkGroupPrivateAlert");
             }
         }
         
@@ -8097,7 +8095,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DiscussionLinkGroupPublicAlert");
+                return Resource.GetString("DiscussionLinkGroupPublicAlert");
             }
         }
         
@@ -8110,7 +8108,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DiscussionLinkGroupPublicPrivateAlert");
+                return Resource.GetString("DiscussionLinkGroupPublicPrivateAlert");
             }
         }
         
@@ -8121,7 +8119,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DiscussionStarted");
+                return Resource.GetString("DiscussionStarted");
             }
         }
         
@@ -8132,7 +8130,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DiscussionUnlink");
+                return Resource.GetString("DiscussionUnlink");
             }
         }
         
@@ -8143,7 +8141,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DiscussionUnlinkChannel");
+                return Resource.GetString("DiscussionUnlinkChannel");
             }
         }
         
@@ -8154,7 +8152,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DiscussionUnlinkChannelAlert");
+                return Resource.GetString("DiscussionUnlinkChannelAlert");
             }
         }
         
@@ -8165,7 +8163,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DiscussionUnlinkGroup");
+                return Resource.GetString("DiscussionUnlinkGroup");
             }
         }
         
@@ -8176,7 +8174,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Dismiss");
+                return Resource.GetString("Dismiss");
             }
         }
         
@@ -8187,7 +8185,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DistanceUnits");
+                return Resource.GetString("DistanceUnits");
             }
         }
         
@@ -8198,7 +8196,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DistanceUnitsAutomatic");
+                return Resource.GetString("DistanceUnitsAutomatic");
             }
         }
         
@@ -8209,7 +8207,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DistanceUnitsKilometers");
+                return Resource.GetString("DistanceUnitsKilometers");
             }
         }
         
@@ -8220,7 +8218,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DistanceUnitsMiles");
+                return Resource.GetString("DistanceUnitsMiles");
             }
         }
         
@@ -8231,7 +8229,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Done");
+                return Resource.GetString("Done");
             }
         }
         
@@ -8242,7 +8240,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DoNotTranslate");
+                return Resource.GetString("DoNotTranslate");
             }
         }
         
@@ -8253,7 +8251,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DoubledLimits");
+                return Resource.GetString("DoubledLimits");
             }
         }
         
@@ -8264,7 +8262,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DoubleTapSetting");
+                return Resource.GetString("DoubleTapSetting");
             }
         }
         
@@ -8275,7 +8273,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Downloading");
+                return Resource.GetString("Downloading");
             }
         }
         
@@ -8286,7 +8284,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DownloadsTabs");
+                return Resource.GetString("DownloadsTabs");
             }
         }
         
@@ -8297,7 +8295,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Draft");
+                return Resource.GetString("Draft");
             }
         }
         
@@ -8308,7 +8306,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DynamicPackOrder");
+                return Resource.GetString("DynamicPackOrder");
             }
         }
         
@@ -8319,7 +8317,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("DynamicPackOrderInfo");
+                return Resource.GetString("DynamicPackOrderInfo");
             }
         }
         
@@ -8330,7 +8328,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Edit");
+                return Resource.GetString("Edit");
             }
         }
         
@@ -8341,7 +8339,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EditAdmin");
+                return Resource.GetString("EditAdmin");
             }
         }
         
@@ -8352,7 +8350,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EditAdminAddAdmins");
+                return Resource.GetString("EditAdminAddAdmins");
             }
         }
         
@@ -8363,7 +8361,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EditAdminAddUsers");
+                return Resource.GetString("EditAdminAddUsers");
             }
         }
         
@@ -8374,7 +8372,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EditAdminAddUsersViaLink");
+                return Resource.GetString("EditAdminAddUsersViaLink");
             }
         }
         
@@ -8385,7 +8383,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EditAdminBanUsers");
+                return Resource.GetString("EditAdminBanUsers");
             }
         }
         
@@ -8396,7 +8394,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EditAdminCantEdit");
+                return Resource.GetString("EditAdminCantEdit");
             }
         }
         
@@ -8407,7 +8405,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EditAdminChangeChannelInfo");
+                return Resource.GetString("EditAdminChangeChannelInfo");
             }
         }
         
@@ -8418,7 +8416,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EditAdminChangeGroupInfo");
+                return Resource.GetString("EditAdminChangeGroupInfo");
             }
         }
         
@@ -8429,7 +8427,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EditAdminChannelTransfer");
+                return Resource.GetString("EditAdminChannelTransfer");
             }
         }
         
@@ -8440,7 +8438,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EditAdminDeleteMessages");
+                return Resource.GetString("EditAdminDeleteMessages");
             }
         }
         
@@ -8451,7 +8449,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EditAdminEditMessages");
+                return Resource.GetString("EditAdminEditMessages");
             }
         }
         
@@ -8462,7 +8460,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EditAdminGroupDeleteMessages");
+                return Resource.GetString("EditAdminGroupDeleteMessages");
             }
         }
         
@@ -8473,7 +8471,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EditAdminGroupTransfer");
+                return Resource.GetString("EditAdminGroupTransfer");
             }
         }
         
@@ -8484,7 +8482,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EditAdminPinMessages");
+                return Resource.GetString("EditAdminPinMessages");
             }
         }
         
@@ -8495,7 +8493,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EditAdminPostMessages");
+                return Resource.GetString("EditAdminPostMessages");
             }
         }
         
@@ -8506,7 +8504,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EditAdminPromotedBy");
+                return Resource.GetString("EditAdminPromotedBy");
             }
         }
         
@@ -8517,7 +8515,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EditAdminRank");
+                return Resource.GetString("EditAdminRank");
             }
         }
         
@@ -8528,7 +8526,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EditAdminRankInfo");
+                return Resource.GetString("EditAdminRankInfo");
             }
         }
         
@@ -8539,7 +8537,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EditAdminRemoveAdmin");
+                return Resource.GetString("EditAdminRemoveAdmin");
             }
         }
         
@@ -8550,7 +8548,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EditAdminSendAnonymously");
+                return Resource.GetString("EditAdminSendAnonymously");
             }
         }
         
@@ -8561,7 +8559,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EditAdminTransferAlertText");
+                return Resource.GetString("EditAdminTransferAlertText");
             }
         }
         
@@ -8572,7 +8570,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EditAdminTransferAlertText1");
+                return Resource.GetString("EditAdminTransferAlertText1");
             }
         }
         
@@ -8583,7 +8581,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EditAdminTransferAlertText2");
+                return Resource.GetString("EditAdminTransferAlertText2");
             }
         }
         
@@ -8594,7 +8592,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EditAdminTransferAlertText3");
+                return Resource.GetString("EditAdminTransferAlertText3");
             }
         }
         
@@ -8605,7 +8603,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EditAdminTransferAlertTitle");
+                return Resource.GetString("EditAdminTransferAlertTitle");
             }
         }
         
@@ -8616,7 +8614,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EditAdminTransferChangeOwner");
+                return Resource.GetString("EditAdminTransferChangeOwner");
             }
         }
         
@@ -8627,7 +8625,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EditAdminTransferReadyAlertText");
+                return Resource.GetString("EditAdminTransferReadyAlertText");
             }
         }
         
@@ -8638,7 +8636,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EditAdminTransferSetPassword");
+                return Resource.GetString("EditAdminTransferSetPassword");
             }
         }
         
@@ -8649,7 +8647,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EditChannelAdminTransferAlertText");
+                return Resource.GetString("EditChannelAdminTransferAlertText");
             }
         }
         
@@ -8660,7 +8658,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EditContact");
+                return Resource.GetString("EditContact");
             }
         }
         
@@ -8671,7 +8669,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EditedMessage");
+                return Resource.GetString("EditedMessage");
             }
         }
         
@@ -8682,7 +8680,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EditInformation");
+                return Resource.GetString("EditInformation");
             }
         }
         
@@ -8693,7 +8691,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EditLink");
+                return Resource.GetString("EditLink");
             }
         }
         
@@ -8704,7 +8702,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EditMessageError");
+                return Resource.GetString("EditMessageError");
             }
         }
         
@@ -8715,7 +8713,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EditMessageMedia");
+                return Resource.GetString("EditMessageMedia");
             }
         }
         
@@ -8726,7 +8724,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EditName");
+                return Resource.GetString("EditName");
             }
         }
         
@@ -8737,7 +8735,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EditNumber");
+                return Resource.GetString("EditNumber");
             }
         }
         
@@ -8752,7 +8750,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EditNumberInfo");
+                return Resource.GetString("EditNumberInfo");
             }
         }
         
@@ -8763,7 +8761,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EditProfile");
+                return Resource.GetString("EditProfile");
             }
         }
         
@@ -8774,7 +8772,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EditTopic");
+                return Resource.GetString("EditTopic");
             }
         }
         
@@ -8785,7 +8783,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EmailAddressInvalid");
+                return Resource.GetString("EmailAddressInvalid");
             }
         }
         
@@ -8796,7 +8794,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EmailLogin");
+                return Resource.GetString("EmailLogin");
             }
         }
         
@@ -8807,7 +8805,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EmailLoginChangeMessage");
+                return Resource.GetString("EmailLoginChangeMessage");
             }
         }
         
@@ -8818,7 +8816,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EmailNotAllowed");
+                return Resource.GetString("EmailNotAllowed");
             }
         }
         
@@ -8829,7 +8827,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Emoji");
+                return Resource.GetString("Emoji");
             }
         }
         
@@ -8840,7 +8838,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Emoji1");
+                return Resource.GetString("Emoji1");
             }
         }
         
@@ -8851,7 +8849,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Emoji2");
+                return Resource.GetString("Emoji2");
             }
         }
         
@@ -8862,7 +8860,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Emoji3");
+                return Resource.GetString("Emoji3");
             }
         }
         
@@ -8873,7 +8871,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Emoji4");
+                return Resource.GetString("Emoji4");
             }
         }
         
@@ -8884,7 +8882,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Emoji5");
+                return Resource.GetString("Emoji5");
             }
         }
         
@@ -8895,7 +8893,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Emoji6");
+                return Resource.GetString("Emoji6");
             }
         }
         
@@ -8906,7 +8904,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Emoji7");
+                return Resource.GetString("Emoji7");
             }
         }
         
@@ -8917,7 +8915,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Emoji8");
+                return Resource.GetString("Emoji8");
             }
         }
         
@@ -8928,7 +8926,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EmojiArchived");
+                return Resource.GetString("EmojiArchived");
             }
         }
         
@@ -8939,7 +8937,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EmojiSet");
+                return Resource.GetString("EmojiSet");
             }
         }
         
@@ -8950,7 +8948,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EmpryUsersPlaceholder");
+                return Resource.GetString("EmpryUsersPlaceholder");
             }
         }
         
@@ -8961,7 +8959,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Enable");
+                return Resource.GetString("Enable");
             }
         }
         
@@ -8972,7 +8970,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EnableAllReactionsInfo");
+                return Resource.GetString("EnableAllReactionsInfo");
             }
         }
         
@@ -8983,7 +8981,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EnableAllStreamingInfo");
+                return Resource.GetString("EnableAllStreamingInfo");
             }
         }
         
@@ -8994,7 +8992,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EnabledNotifications");
+                return Resource.GetString("EnabledNotifications");
             }
         }
         
@@ -9006,7 +9004,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EnabledPasswordText");
+                return Resource.GetString("EnabledPasswordText");
             }
         }
         
@@ -9017,7 +9015,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EnableFullScreenGallery");
+                return Resource.GetString("EnableFullScreenGallery");
             }
         }
         
@@ -9028,7 +9026,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EnablePhotoSpoiler");
+                return Resource.GetString("EnablePhotoSpoiler");
             }
         }
         
@@ -9039,7 +9037,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EnableProxyAlert");
+                return Resource.GetString("EnableProxyAlert");
             }
         }
         
@@ -9050,7 +9048,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EnableProxyAlert2");
+                return Resource.GetString("EnableProxyAlert2");
             }
         }
         
@@ -9061,7 +9059,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EnableReactions");
+                return Resource.GetString("EnableReactions");
             }
         }
         
@@ -9072,7 +9070,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EnableReactionsChannelInfo");
+                return Resource.GetString("EnableReactionsChannelInfo");
             }
         }
         
@@ -9083,7 +9081,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EnableSomeReactionsInfo");
+                return Resource.GetString("EnableSomeReactionsInfo");
             }
         }
         
@@ -9094,7 +9092,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EnableStreaming");
+                return Resource.GetString("EnableStreaming");
             }
         }
         
@@ -9105,7 +9103,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EncryptedChatStartedIncoming");
+                return Resource.GetString("EncryptedChatStartedIncoming");
             }
         }
         
@@ -9116,7 +9114,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EncryptedChatStartedOutgoing");
+                return Resource.GetString("EncryptedChatStartedOutgoing");
             }
         }
         
@@ -9127,7 +9125,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EncryptionKey");
+                return Resource.GetString("EncryptionKey");
             }
         }
         
@@ -9142,7 +9140,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EncryptionKeyDescription");
+                return Resource.GetString("EncryptionKeyDescription");
             }
         }
         
@@ -9153,7 +9151,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EncryptionRejected");
+                return Resource.GetString("EncryptionRejected");
             }
         }
         
@@ -9164,7 +9162,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EnjoyngAnimations");
+                return Resource.GetString("EnjoyngAnimations");
             }
         }
         
@@ -9175,7 +9173,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EnterChannelName");
+                return Resource.GetString("EnterChannelName");
             }
         }
         
@@ -9186,7 +9184,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EnterCurrentPasscode");
+                return Resource.GetString("EnterCurrentPasscode");
             }
         }
         
@@ -9197,7 +9195,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EnterGroupNamePlaceholder");
+                return Resource.GetString("EnterGroupNamePlaceholder");
             }
         }
         
@@ -9208,7 +9206,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EnterNewFirstPasscode");
+                return Resource.GetString("EnterNewFirstPasscode");
             }
         }
         
@@ -9219,7 +9217,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EnterThemeName");
+                return Resource.GetString("EnterThemeName");
             }
         }
         
@@ -9230,7 +9228,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EnterTopicName");
+                return Resource.GetString("EnterTopicName");
             }
         }
         
@@ -9241,7 +9239,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EnterYourPasscode");
+                return Resource.GetString("EnterYourPasscode");
             }
         }
         
@@ -9252,7 +9250,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ErrorOccurred");
+                return Resource.GetString("ErrorOccurred");
             }
         }
         
@@ -9263,7 +9261,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ErrorSendRestrictedDocuments");
+                return Resource.GetString("ErrorSendRestrictedDocuments");
             }
         }
         
@@ -9274,7 +9272,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ErrorSendRestrictedDocumentsAll");
+                return Resource.GetString("ErrorSendRestrictedDocumentsAll");
             }
         }
         
@@ -9285,7 +9283,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ErrorSendRestrictedMusic");
+                return Resource.GetString("ErrorSendRestrictedMusic");
             }
         }
         
@@ -9296,7 +9294,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ErrorSendRestrictedMusicAll");
+                return Resource.GetString("ErrorSendRestrictedMusicAll");
             }
         }
         
@@ -9307,7 +9305,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ErrorSendRestrictedPhoto");
+                return Resource.GetString("ErrorSendRestrictedPhoto");
             }
         }
         
@@ -9318,7 +9316,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ErrorSendRestrictedPhotoAll");
+                return Resource.GetString("ErrorSendRestrictedPhotoAll");
             }
         }
         
@@ -9329,7 +9327,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ErrorSendRestrictedVideo");
+                return Resource.GetString("ErrorSendRestrictedVideo");
             }
         }
         
@@ -9340,7 +9338,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ErrorSendRestrictedVideoAll");
+                return Resource.GetString("ErrorSendRestrictedVideoAll");
             }
         }
         
@@ -9351,7 +9349,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLog");
+                return Resource.GetString("EventLog");
             }
         }
         
@@ -9362,7 +9360,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogAllAdmins");
+                return Resource.GetString("EventLogAllAdmins");
             }
         }
         
@@ -9373,7 +9371,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogAllEvents");
+                return Resource.GetString("EventLogAllEvents");
             }
         }
         
@@ -9384,7 +9382,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogChangedGroupLink");
+                return Resource.GetString("EventLogChangedGroupLink");
             }
         }
         
@@ -9395,7 +9393,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogChangedLinkedChannel");
+                return Resource.GetString("EventLogChangedLinkedChannel");
             }
         }
         
@@ -9406,7 +9404,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogChangedLinkedGroup");
+                return Resource.GetString("EventLogChangedLinkedGroup");
             }
         }
         
@@ -9417,7 +9415,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogChangedLocation");
+                return Resource.GetString("EventLogChangedLocation");
             }
         }
         
@@ -9428,7 +9426,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogChangedOwnership");
+                return Resource.GetString("EventLogChangedOwnership");
             }
         }
         
@@ -9439,7 +9437,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogChangedStickersSet");
+                return Resource.GetString("EventLogChangedStickersSet");
             }
         }
         
@@ -9450,7 +9448,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogChannelJoined");
+                return Resource.GetString("EventLogChannelJoined");
             }
         }
         
@@ -9461,7 +9459,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogChannelRestricted");
+                return Resource.GetString("EventLogChannelRestricted");
             }
         }
         
@@ -9472,7 +9470,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogChannelUnrestricted");
+                return Resource.GetString("EventLogChannelUnrestricted");
             }
         }
         
@@ -9483,7 +9481,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogCreateTopic");
+                return Resource.GetString("EventLogCreateTopic");
             }
         }
         
@@ -9494,7 +9492,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogDefaultPermissions");
+                return Resource.GetString("EventLogDefaultPermissions");
             }
         }
         
@@ -9505,7 +9503,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogDeletedMessages");
+                return Resource.GetString("EventLogDeletedMessages");
             }
         }
         
@@ -9516,7 +9514,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogDeleteTopic");
+                return Resource.GetString("EventLogDeleteTopic");
             }
         }
         
@@ -9527,7 +9525,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogEditedCaption");
+                return Resource.GetString("EventLogEditedCaption");
             }
         }
         
@@ -9538,7 +9536,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogEditedChannelDescription");
+                return Resource.GetString("EventLogEditedChannelDescription");
             }
         }
         
@@ -9549,7 +9547,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogEditedGroupDescription");
+                return Resource.GetString("EventLogEditedGroupDescription");
             }
         }
         
@@ -9560,7 +9558,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogEditedMessages");
+                return Resource.GetString("EventLogEditedMessages");
             }
         }
         
@@ -9571,7 +9569,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogEditTopic");
+                return Resource.GetString("EventLogEditTopic");
             }
         }
         
@@ -9582,7 +9580,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogEndedLiveStream");
+                return Resource.GetString("EventLogEndedLiveStream");
             }
         }
         
@@ -9593,7 +9591,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogEndedVoiceChat");
+                return Resource.GetString("EventLogEndedVoiceChat");
             }
         }
         
@@ -9604,7 +9602,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogFilterAll");
+                return Resource.GetString("EventLogFilterAll");
             }
         }
         
@@ -9615,7 +9613,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogFilterCalls");
+                return Resource.GetString("EventLogFilterCalls");
             }
         }
         
@@ -9626,7 +9624,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogFilterDeletedMessages");
+                return Resource.GetString("EventLogFilterDeletedMessages");
             }
         }
         
@@ -9637,7 +9635,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogFilterEditedMessages");
+                return Resource.GetString("EventLogFilterEditedMessages");
             }
         }
         
@@ -9648,7 +9646,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogFilterGroupInfo");
+                return Resource.GetString("EventLogFilterGroupInfo");
             }
         }
         
@@ -9659,7 +9657,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogFilterInvites");
+                return Resource.GetString("EventLogFilterInvites");
             }
         }
         
@@ -9670,7 +9668,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogFilterLeavingMembers");
+                return Resource.GetString("EventLogFilterLeavingMembers");
             }
         }
         
@@ -9681,7 +9679,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogFilterNewAdmins");
+                return Resource.GetString("EventLogFilterNewAdmins");
             }
         }
         
@@ -9692,7 +9690,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogFilterNewMembers");
+                return Resource.GetString("EventLogFilterNewMembers");
             }
         }
         
@@ -9703,7 +9701,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogFilterNewRestrictions");
+                return Resource.GetString("EventLogFilterNewRestrictions");
             }
         }
         
@@ -9714,7 +9712,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogFilterPinnedMessages");
+                return Resource.GetString("EventLogFilterPinnedMessages");
             }
         }
         
@@ -9725,7 +9723,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogInfoDetail");
+                return Resource.GetString("EventLogInfoDetail");
             }
         }
         
@@ -9736,7 +9734,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogInfoDetailChannel");
+                return Resource.GetString("EventLogInfoDetailChannel");
             }
         }
         
@@ -9747,7 +9745,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogInfoTitle");
+                return Resource.GetString("EventLogInfoTitle");
             }
         }
         
@@ -9758,7 +9756,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogLeftChannel");
+                return Resource.GetString("EventLogLeftChannel");
             }
         }
         
@@ -9769,7 +9767,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogOriginalMessages");
+                return Resource.GetString("EventLogOriginalMessages");
             }
         }
         
@@ -9780,7 +9778,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogPinnedMessages");
+                return Resource.GetString("EventLogPinnedMessages");
             }
         }
         
@@ -9791,7 +9789,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogPinTopic");
+                return Resource.GetString("EventLogPinTopic");
             }
         }
         
@@ -9802,7 +9800,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogPreviousGroupDescription");
+                return Resource.GetString("EventLogPreviousGroupDescription");
             }
         }
         
@@ -9813,7 +9811,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogPreviousLink");
+                return Resource.GetString("EventLogPreviousLink");
             }
         }
         
@@ -9824,7 +9822,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogPromoted");
+                return Resource.GetString("EventLogPromoted");
             }
         }
         
@@ -9835,7 +9833,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogPromotedAddAdmins");
+                return Resource.GetString("EventLogPromotedAddAdmins");
             }
         }
         
@@ -9846,7 +9844,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogPromotedAddUsers");
+                return Resource.GetString("EventLogPromotedAddUsers");
             }
         }
         
@@ -9857,7 +9855,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogPromotedBanUsers");
+                return Resource.GetString("EventLogPromotedBanUsers");
             }
         }
         
@@ -9868,7 +9866,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogPromotedChangeChannelInfo");
+                return Resource.GetString("EventLogPromotedChangeChannelInfo");
             }
         }
         
@@ -9879,7 +9877,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogPromotedChangeGroupInfo");
+                return Resource.GetString("EventLogPromotedChangeGroupInfo");
             }
         }
         
@@ -9890,7 +9888,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogPromotedDeleteMessages");
+                return Resource.GetString("EventLogPromotedDeleteMessages");
             }
         }
         
@@ -9901,7 +9899,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogPromotedEditMessages");
+                return Resource.GetString("EventLogPromotedEditMessages");
             }
         }
         
@@ -9912,7 +9910,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogPromotedManageCall");
+                return Resource.GetString("EventLogPromotedManageCall");
             }
         }
         
@@ -9923,7 +9921,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogPromotedPinMessages");
+                return Resource.GetString("EventLogPromotedPinMessages");
             }
         }
         
@@ -9934,7 +9932,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogPromotedPostMessages");
+                return Resource.GetString("EventLogPromotedPostMessages");
             }
         }
         
@@ -9945,7 +9943,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogPromotedRemovedTitle");
+                return Resource.GetString("EventLogPromotedRemovedTitle");
             }
         }
         
@@ -9956,7 +9954,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogPromotedSendAnonymously");
+                return Resource.GetString("EventLogPromotedSendAnonymously");
             }
         }
         
@@ -9967,7 +9965,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogPromotedTitle");
+                return Resource.GetString("EventLogPromotedTitle");
             }
         }
         
@@ -9978,7 +9976,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogRemovedGroupLink");
+                return Resource.GetString("EventLogRemovedGroupLink");
             }
         }
         
@@ -9989,7 +9987,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogRemovedLinkedChannel");
+                return Resource.GetString("EventLogRemovedLinkedChannel");
             }
         }
         
@@ -10000,7 +9998,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogRemovedLinkedGroup");
+                return Resource.GetString("EventLogRemovedLinkedGroup");
             }
         }
         
@@ -10011,7 +10009,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogRemovedLocation");
+                return Resource.GetString("EventLogRemovedLocation");
             }
         }
         
@@ -10022,7 +10020,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogRemovedStickersSet");
+                return Resource.GetString("EventLogRemovedStickersSet");
             }
         }
         
@@ -10033,7 +10031,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogRestrictedChangeInfo");
+                return Resource.GetString("EventLogRestrictedChangeInfo");
             }
         }
         
@@ -10044,7 +10042,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogRestrictedPinMessages");
+                return Resource.GetString("EventLogRestrictedPinMessages");
             }
         }
         
@@ -10055,7 +10053,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogRestrictedReadMessages");
+                return Resource.GetString("EventLogRestrictedReadMessages");
             }
         }
         
@@ -10066,7 +10064,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogRestrictedSendEmbed");
+                return Resource.GetString("EventLogRestrictedSendEmbed");
             }
         }
         
@@ -10077,7 +10075,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogRestrictedSendMessages");
+                return Resource.GetString("EventLogRestrictedSendMessages");
             }
         }
         
@@ -10088,7 +10086,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogRestrictedSendPolls");
+                return Resource.GetString("EventLogRestrictedSendPolls");
             }
         }
         
@@ -10099,7 +10097,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogRestrictedSendStickers");
+                return Resource.GetString("EventLogRestrictedSendStickers");
             }
         }
         
@@ -10112,7 +10110,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogRestrictedUntil");
+                return Resource.GetString("EventLogRestrictedUntil");
             }
         }
         
@@ -10123,7 +10121,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogSelectedEvents");
+                return Resource.GetString("EventLogSelectedEvents");
             }
         }
         
@@ -10134,7 +10132,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogStartedLiveStream");
+                return Resource.GetString("EventLogStartedLiveStream");
             }
         }
         
@@ -10145,7 +10143,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogStartedVoiceChat");
+                return Resource.GetString("EventLogStartedVoiceChat");
             }
         }
         
@@ -10156,7 +10154,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogStopPoll");
+                return Resource.GetString("EventLogStopPoll");
             }
         }
         
@@ -10167,7 +10165,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogStopQuiz");
+                return Resource.GetString("EventLogStopQuiz");
             }
         }
         
@@ -10178,7 +10176,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogSwitchToForum");
+                return Resource.GetString("EventLogSwitchToForum");
             }
         }
         
@@ -10189,7 +10187,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogSwitchToGroup");
+                return Resource.GetString("EventLogSwitchToGroup");
             }
         }
         
@@ -10200,7 +10198,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogToggledInvitesHistoryOff");
+                return Resource.GetString("EventLogToggledInvitesHistoryOff");
             }
         }
         
@@ -10211,7 +10209,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogToggledInvitesHistoryOn");
+                return Resource.GetString("EventLogToggledInvitesHistoryOn");
             }
         }
         
@@ -10222,7 +10220,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogToggledInvitesOff");
+                return Resource.GetString("EventLogToggledInvitesOff");
             }
         }
         
@@ -10233,7 +10231,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogToggledInvitesOn");
+                return Resource.GetString("EventLogToggledInvitesOn");
             }
         }
         
@@ -10244,7 +10242,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogToggledSignaturesOff");
+                return Resource.GetString("EventLogToggledSignaturesOff");
             }
         }
         
@@ -10255,7 +10253,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogToggledSignaturesOn");
+                return Resource.GetString("EventLogToggledSignaturesOn");
             }
         }
         
@@ -10266,7 +10264,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogToggledSlowmodeOff");
+                return Resource.GetString("EventLogToggledSlowmodeOff");
             }
         }
         
@@ -10277,7 +10275,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogToggledSlowmodeOn");
+                return Resource.GetString("EventLogToggledSlowmodeOn");
             }
         }
         
@@ -10288,7 +10286,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogUnpinnedMessages");
+                return Resource.GetString("EventLogUnpinnedMessages");
             }
         }
         
@@ -10299,7 +10297,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogUnpinTopic");
+                return Resource.GetString("EventLogUnpinTopic");
             }
         }
         
@@ -10310,7 +10308,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogVoiceChatAllowedToSpeak");
+                return Resource.GetString("EventLogVoiceChatAllowedToSpeak");
             }
         }
         
@@ -10321,7 +10319,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogVoiceChatMuted");
+                return Resource.GetString("EventLogVoiceChatMuted");
             }
         }
         
@@ -10332,7 +10330,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogVoiceChatNotAllowedToSpeak");
+                return Resource.GetString("EventLogVoiceChatNotAllowedToSpeak");
             }
         }
         
@@ -10343,7 +10341,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("EventLogVoiceChatUnmuted");
+                return Resource.GetString("EventLogVoiceChatUnmuted");
             }
         }
         
@@ -10354,7 +10352,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Events");
+                return Resource.GetString("Events");
             }
         }
         
@@ -10365,7 +10363,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Exception_one");
+                return Resource.GetString("Exception_one");
             }
         }
         
@@ -10376,7 +10374,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Exception_other");
+                return Resource.GetString("Exception_other");
             }
         }
         
@@ -10387,7 +10385,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Expired");
+                return Resource.GetString("Expired");
             }
         }
         
@@ -10398,7 +10396,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Fade");
+                return Resource.GetString("Fade");
             }
         }
         
@@ -10409,7 +10407,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FallbackTooltip");
+                return Resource.GetString("FallbackTooltip");
             }
         }
         
@@ -10420,7 +10418,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FavoriteStickers");
+                return Resource.GetString("FavoriteStickers");
             }
         }
         
@@ -10431,7 +10429,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FavoriteStickersLimitSubtitle");
+                return Resource.GetString("FavoriteStickersLimitSubtitle");
             }
         }
         
@@ -10442,7 +10440,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FavoriteStickersLimitTitle");
+                return Resource.GetString("FavoriteStickersLimitTitle");
             }
         }
         
@@ -10453,7 +10451,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FeaturedGifs");
+                return Resource.GetString("FeaturedGifs");
             }
         }
         
@@ -10464,7 +10462,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FeaturedStickers");
+                return Resource.GetString("FeaturedStickers");
             }
         }
         
@@ -10475,7 +10473,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FeaturedStickersInfo");
+                return Resource.GetString("FeaturedStickersInfo");
             }
         }
         
@@ -10486,7 +10484,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Files_one");
+                return Resource.GetString("Files_one");
             }
         }
         
@@ -10497,7 +10495,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Files_other");
+                return Resource.GetString("Files_other");
             }
         }
         
@@ -10508,7 +10506,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FilesDataUsage");
+                return Resource.GetString("FilesDataUsage");
             }
         }
         
@@ -10519,7 +10517,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FilterAddChats");
+                return Resource.GetString("FilterAddChats");
             }
         }
         
@@ -10530,7 +10528,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FilterAddTo");
+                return Resource.GetString("FilterAddTo");
             }
         }
         
@@ -10541,7 +10539,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FilterAddToAlertFullText");
+                return Resource.GetString("FilterAddToAlertFullText");
             }
         }
         
@@ -10552,7 +10550,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FilterAddToAlertFullTitle");
+                return Resource.GetString("FilterAddToAlertFullTitle");
             }
         }
         
@@ -10563,7 +10561,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FilterAllChats");
+                return Resource.GetString("FilterAllChats");
             }
         }
         
@@ -10574,7 +10572,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FilterAlwaysShow");
+                return Resource.GetString("FilterAlwaysShow");
             }
         }
         
@@ -10585,7 +10583,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FilterArchived");
+                return Resource.GetString("FilterArchived");
             }
         }
         
@@ -10596,7 +10594,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FilterBots");
+                return Resource.GetString("FilterBots");
             }
         }
         
@@ -10607,7 +10605,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FilterChannels");
+                return Resource.GetString("FilterChannels");
             }
         }
         
@@ -10618,7 +10616,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FilterChats");
+                return Resource.GetString("FilterChats");
             }
         }
         
@@ -10629,7 +10627,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FilterChatTypes");
+                return Resource.GetString("FilterChatTypes");
             }
         }
         
@@ -10640,7 +10638,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FilterContacts");
+                return Resource.GetString("FilterContacts");
             }
         }
         
@@ -10651,7 +10649,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FilterDelete");
+                return Resource.GetString("FilterDelete");
             }
         }
         
@@ -10662,7 +10660,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FilterDeleteAlert");
+                return Resource.GetString("FilterDeleteAlert");
             }
         }
         
@@ -10673,7 +10671,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FilterDeleteItem");
+                return Resource.GetString("FilterDeleteItem");
             }
         }
         
@@ -10684,7 +10682,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FilterEdit");
+                return Resource.GetString("FilterEdit");
             }
         }
         
@@ -10695,7 +10693,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FilterEditAll");
+                return Resource.GetString("FilterEditAll");
             }
         }
         
@@ -10706,7 +10704,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FilterExclude");
+                return Resource.GetString("FilterExclude");
             }
         }
         
@@ -10717,7 +10715,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FilterExcludeInfo");
+                return Resource.GetString("FilterExcludeInfo");
             }
         }
         
@@ -10728,7 +10726,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FilterGroups");
+                return Resource.GetString("FilterGroups");
             }
         }
         
@@ -10739,7 +10737,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FilterInclude");
+                return Resource.GetString("FilterInclude");
             }
         }
         
@@ -10750,7 +10748,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FilterIncludeInfo");
+                return Resource.GetString("FilterIncludeInfo");
             }
         }
         
@@ -10761,7 +10759,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FilterMuted");
+                return Resource.GetString("FilterMuted");
             }
         }
         
@@ -10772,7 +10770,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FilterNameHint");
+                return Resource.GetString("FilterNameHint");
             }
         }
         
@@ -10783,7 +10781,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FilterNeverShow");
+                return Resource.GetString("FilterNeverShow");
             }
         }
         
@@ -10794,7 +10792,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FilterNew");
+                return Resource.GetString("FilterNew");
             }
         }
         
@@ -10805,7 +10803,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FilterNoChatsToDisplay");
+                return Resource.GetString("FilterNoChatsToDisplay");
             }
         }
         
@@ -10816,7 +10814,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FilterNoChatsToDisplayInfo");
+                return Resource.GetString("FilterNoChatsToDisplayInfo");
             }
         }
         
@@ -10827,7 +10825,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FilterNonContacts");
+                return Resource.GetString("FilterNonContacts");
             }
         }
         
@@ -10838,7 +10836,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FilterRead");
+                return Resource.GetString("FilterRead");
             }
         }
         
@@ -10849,7 +10847,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FilterRecommended");
+                return Resource.GetString("FilterRecommended");
             }
         }
         
@@ -10860,7 +10858,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FilterRemoveFrom");
+                return Resource.GetString("FilterRemoveFrom");
             }
         }
         
@@ -10871,7 +10869,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FilterRemoveFromAlertFullText");
+                return Resource.GetString("FilterRemoveFromAlertFullText");
             }
         }
         
@@ -10882,7 +10880,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Filters");
+                return Resource.GetString("Filters");
             }
         }
         
@@ -10893,7 +10891,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FinalResults");
+                return Resource.GetString("FinalResults");
             }
         }
         
@@ -10904,7 +10902,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FirstName");
+                return Resource.GetString("FirstName");
             }
         }
         
@@ -10915,7 +10913,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FirstNameSmall");
+                return Resource.GetString("FirstNameSmall");
             }
         }
         
@@ -10926,7 +10924,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FloodWait");
+                return Resource.GetString("FloodWait");
             }
         }
         
@@ -10937,7 +10935,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FloodWaitTime");
+                return Resource.GetString("FloodWaitTime");
             }
         }
         
@@ -10948,7 +10946,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Folder");
+                return Resource.GetString("Folder");
             }
         }
         
@@ -10959,7 +10957,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FoldersLimitSubtitle");
+                return Resource.GetString("FoldersLimitSubtitle");
             }
         }
         
@@ -10970,7 +10968,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FoldersLimitTitle");
+                return Resource.GetString("FoldersLimitTitle");
             }
         }
         
@@ -10981,7 +10979,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FollowersChartTitle");
+                return Resource.GetString("FollowersChartTitle");
             }
         }
         
@@ -10992,7 +10990,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FontSize");
+                return Resource.GetString("FontSize");
             }
         }
         
@@ -11003,7 +11001,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FontSizePreviewLine1");
+                return Resource.GetString("FontSizePreviewLine1");
             }
         }
         
@@ -11014,7 +11012,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FontSizePreviewLine2");
+                return Resource.GetString("FontSizePreviewLine2");
             }
         }
         
@@ -11025,7 +11023,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FontSizePreviewName");
+                return Resource.GetString("FontSizePreviewName");
             }
         }
         
@@ -11036,7 +11034,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FontSizePreviewReply");
+                return Resource.GetString("FontSizePreviewReply");
             }
         }
         
@@ -11047,7 +11045,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FootsAway");
+                return Resource.GetString("FootsAway");
             }
         }
         
@@ -11058,7 +11056,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FootsShort");
+                return Resource.GetString("FootsShort");
             }
         }
         
@@ -11069,7 +11067,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ForgotPassword");
+                return Resource.GetString("ForgotPassword");
             }
         }
         
@@ -11080,7 +11078,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("formatDateAtTime");
+                return Resource.GetString("formatDateAtTime");
             }
         }
         
@@ -11091,7 +11089,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("formatterBannedUntil12H");
+                return Resource.GetString("formatterBannedUntil12H");
             }
         }
         
@@ -11102,7 +11100,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("formatterBannedUntil24H");
+                return Resource.GetString("formatterBannedUntil24H");
             }
         }
         
@@ -11113,7 +11111,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("formatterBannedUntilThisYear12H");
+                return Resource.GetString("formatterBannedUntilThisYear12H");
             }
         }
         
@@ -11124,7 +11122,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("formatterBannedUntilThisYear24H");
+                return Resource.GetString("formatterBannedUntilThisYear24H");
             }
         }
         
@@ -11135,7 +11133,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("formatterMonth");
+                return Resource.GetString("formatterMonth");
             }
         }
         
@@ -11146,7 +11144,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("formatterYear");
+                return Resource.GetString("formatterYear");
             }
         }
         
@@ -11157,7 +11155,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Formatting");
+                return Resource.GetString("Formatting");
             }
         }
         
@@ -11168,7 +11166,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ForumReplyToMessagesInTopic");
+                return Resource.GetString("ForumReplyToMessagesInTopic");
             }
         }
         
@@ -11179,7 +11177,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Forward");
+                return Resource.GetString("Forward");
             }
         }
         
@@ -11190,7 +11188,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ForwardedMessage");
+                return Resource.GetString("ForwardedMessage");
             }
         }
         
@@ -11201,7 +11199,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ForwardSelected");
+                return Resource.GetString("ForwardSelected");
             }
         }
         
@@ -11212,7 +11210,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ForwardsRestrictedInfoChannel");
+                return Resource.GetString("ForwardsRestrictedInfoChannel");
             }
         }
         
@@ -11223,7 +11221,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ForwardsRestrictedInfoGroup");
+                return Resource.GetString("ForwardsRestrictedInfoGroup");
             }
         }
         
@@ -11234,7 +11232,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("From");
+                return Resource.GetString("From");
             }
         }
         
@@ -11245,7 +11243,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("FromYou");
+                return Resource.GetString("FromYou");
             }
         }
         
@@ -11256,7 +11254,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Gallery");
+                return Resource.GetString("Gallery");
             }
         }
         
@@ -11267,7 +11265,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("General");
+                return Resource.GetString("General");
             }
         }
         
@@ -11278,7 +11276,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("GIFs_one");
+                return Resource.GetString("GIFs_one");
             }
         }
         
@@ -11289,7 +11287,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("GIFs_other");
+                return Resource.GetString("GIFs_other");
             }
         }
         
@@ -11300,7 +11298,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("GiftPremium");
+                return Resource.GetString("GiftPremium");
             }
         }
         
@@ -11311,7 +11309,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("GiftPremiumListFeaturesAndTerms");
+                return Resource.GetString("GiftPremiumListFeaturesAndTerms");
             }
         }
         
@@ -11322,7 +11320,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("GiftPremiumOptionDiscount");
+                return Resource.GetString("GiftPremiumOptionDiscount");
             }
         }
         
@@ -11333,7 +11331,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("GiftSubscriptionFor");
+                return Resource.GetString("GiftSubscriptionFor");
             }
         }
         
@@ -11344,7 +11342,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("GiftTelegramPremiumDescription");
+                return Resource.GetString("GiftTelegramPremiumDescription");
             }
         }
         
@@ -11355,7 +11353,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("GiftTelegramPremiumTitle");
+                return Resource.GetString("GiftTelegramPremiumTitle");
             }
         }
         
@@ -11366,7 +11364,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("GlobalAttachGifRestricted");
+                return Resource.GetString("GlobalAttachGifRestricted");
             }
         }
         
@@ -11377,7 +11375,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("GlobalAttachInlineRestricted");
+                return Resource.GetString("GlobalAttachInlineRestricted");
             }
         }
         
@@ -11388,7 +11386,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("GlobalAttachMediaRestricted");
+                return Resource.GetString("GlobalAttachMediaRestricted");
             }
         }
         
@@ -11399,7 +11397,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("GlobalAttachStickersRestricted");
+                return Resource.GetString("GlobalAttachStickersRestricted");
             }
         }
         
@@ -11410,7 +11408,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("GlobalAutoDeleteInfo");
+                return Resource.GetString("GlobalAutoDeleteInfo");
             }
         }
         
@@ -11421,7 +11419,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("GlobalSearch");
+                return Resource.GetString("GlobalSearch");
             }
         }
         
@@ -11432,7 +11430,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("GlobalSendMessageRestricted");
+                return Resource.GetString("GlobalSendMessageRestricted");
             }
         }
         
@@ -11444,7 +11442,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("GotAQuestion");
+                return Resource.GetString("GotAQuestion");
             }
         }
         
@@ -11455,7 +11453,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("GpsDisabledAlert");
+                return Resource.GetString("GpsDisabledAlert");
             }
         }
         
@@ -11466,7 +11464,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Gray");
+                return Resource.GetString("Gray");
             }
         }
         
@@ -11477,7 +11475,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Green");
+                return Resource.GetString("Green");
             }
         }
         
@@ -11488,7 +11486,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("GroupAddMembers");
+                return Resource.GetString("GroupAddMembers");
             }
         }
         
@@ -11499,7 +11497,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("GroupChats");
+                return Resource.GetString("GroupChats");
             }
         }
         
@@ -11510,7 +11508,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("GroupContacts");
+                return Resource.GetString("GroupContacts");
             }
         }
         
@@ -11521,7 +11519,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("GroupDeletedUndo");
+                return Resource.GetString("GroupDeletedUndo");
             }
         }
         
@@ -11532,7 +11530,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("GroupMembersChartTitle");
+                return Resource.GetString("GroupMembersChartTitle");
             }
         }
         
@@ -11543,7 +11541,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("GroupName");
+                return Resource.GetString("GroupName");
             }
         }
         
@@ -11554,7 +11552,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Groups_one");
+                return Resource.GetString("Groups_one");
             }
         }
         
@@ -11565,7 +11563,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Groups_other");
+                return Resource.GetString("Groups_other");
             }
         }
         
@@ -11576,7 +11574,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("GroupsAndChannels");
+                return Resource.GetString("GroupsAndChannels");
             }
         }
         
@@ -11587,7 +11585,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("GroupsAndChannelsHelp");
+                return Resource.GetString("GroupsAndChannelsHelp");
             }
         }
         
@@ -11598,7 +11596,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("GroupsAndChannelsLimitSubtitle");
+                return Resource.GetString("GroupsAndChannelsLimitSubtitle");
             }
         }
         
@@ -11609,7 +11607,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("GroupsAndChannelsLimitTitle");
+                return Resource.GetString("GroupsAndChannelsLimitTitle");
             }
         }
         
@@ -11620,7 +11618,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("GroupSettingsTitle");
+                return Resource.GetString("GroupSettingsTitle");
             }
         }
         
@@ -11631,7 +11629,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("GroupStickers");
+                return Resource.GetString("GroupStickers");
             }
         }
         
@@ -11642,7 +11640,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("GroupStickersInfo");
+                return Resource.GetString("GroupStickersInfo");
             }
         }
         
@@ -11653,7 +11651,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("GroupType");
+                return Resource.GetString("GroupType");
             }
         }
         
@@ -11664,7 +11662,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("GroupTypeHeader");
+                return Resource.GetString("GroupTypeHeader");
             }
         }
         
@@ -11675,7 +11673,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("GroupUserAddLimit");
+                return Resource.GetString("GroupUserAddLimit");
             }
         }
         
@@ -11686,7 +11684,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("GroupUserCantAdd");
+                return Resource.GetString("GroupUserCantAdd");
             }
         }
         
@@ -11697,7 +11695,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("GroupUserCantAdmin");
+                return Resource.GetString("GroupUserCantAdmin");
             }
         }
         
@@ -11708,7 +11706,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("GroupUserCantBot");
+                return Resource.GetString("GroupUserCantBot");
             }
         }
         
@@ -11721,7 +11719,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("GroupUserLeftError");
+                return Resource.GetString("GroupUserLeftError");
             }
         }
         
@@ -11732,7 +11730,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("GrowthChartTitle");
+                return Resource.GetString("GrowthChartTitle");
             }
         }
         
@@ -11743,7 +11741,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Hashtags");
+                return Resource.GetString("Hashtags");
             }
         }
         
@@ -11754,7 +11752,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("HidAccount");
+                return Resource.GetString("HidAccount");
             }
         }
         
@@ -11765,7 +11763,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("HiddenName");
+                return Resource.GetString("HiddenName");
             }
         }
         
@@ -11776,7 +11774,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Hide");
+                return Resource.GetString("Hide");
             }
         }
         
@@ -11787,7 +11785,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("HideCaption");
+                return Resource.GetString("HideCaption");
             }
         }
         
@@ -11798,7 +11796,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("HideNewChatsAlertText");
+                return Resource.GetString("HideNewChatsAlertText");
             }
         }
         
@@ -11809,7 +11807,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("HideNewChatsAlertTitle");
+                return Resource.GetString("HideNewChatsAlertTitle");
             }
         }
         
@@ -11820,7 +11818,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("HideOnTop");
+                return Resource.GetString("HideOnTop");
             }
         }
         
@@ -11831,7 +11829,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("HidePinnedMessages");
+                return Resource.GetString("HidePinnedMessages");
             }
         }
         
@@ -11842,7 +11840,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("HideSenderNames");
+                return Resource.GetString("HideSenderNames");
             }
         }
         
@@ -11853,7 +11851,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("HistoryClearedUndo");
+                return Resource.GetString("HistoryClearedUndo");
             }
         }
         
@@ -11864,7 +11862,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Hours_one");
+                return Resource.GetString("Hours_one");
             }
         }
         
@@ -11875,7 +11873,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Hours_other");
+                return Resource.GetString("Hours_other");
             }
         }
         
@@ -11886,7 +11884,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("IfInactiveFor");
+                return Resource.GetString("IfInactiveFor");
             }
         }
         
@@ -11897,7 +11895,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Import");
+                return Resource.GetString("Import");
             }
         }
         
@@ -11908,7 +11906,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ImportContacts");
+                return Resource.GetString("ImportContacts");
             }
         }
         
@@ -11919,7 +11917,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("InAppNotifications");
+                return Resource.GetString("InAppNotifications");
             }
         }
         
@@ -11930,7 +11928,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("InAppPreview");
+                return Resource.GetString("InAppPreview");
             }
         }
         
@@ -11941,7 +11939,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("InAppSounds");
+                return Resource.GetString("InAppSounds");
             }
         }
         
@@ -11952,7 +11950,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("InAppVibrate");
+                return Resource.GetString("InAppVibrate");
             }
         }
         
@@ -11963,7 +11961,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("IncreaseLimit");
+                return Resource.GetString("IncreaseLimit");
             }
         }
         
@@ -11974,7 +11972,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Info");
+                return Resource.GetString("Info");
             }
         }
         
@@ -11985,7 +11983,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("InstantView");
+                return Resource.GetString("InstantView");
             }
         }
         
@@ -11996,7 +11994,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("InteractionsChartTitle");
+                return Resource.GetString("InteractionsChartTitle");
             }
         }
         
@@ -12007,7 +12005,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("InvalidCode");
+                return Resource.GetString("InvalidCode");
             }
         }
         
@@ -12018,7 +12016,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("InvalidFirstName");
+                return Resource.GetString("InvalidFirstName");
             }
         }
         
@@ -12029,7 +12027,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("InvalidLastName");
+                return Resource.GetString("InvalidLastName");
             }
         }
         
@@ -12040,7 +12038,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("InvalidPhoneNumber");
+                return Resource.GetString("InvalidPhoneNumber");
             }
         }
         
@@ -12051,7 +12049,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Invitations_one");
+                return Resource.GetString("Invitations_one");
             }
         }
         
@@ -12062,7 +12060,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Invitations_other");
+                return Resource.GetString("Invitations_other");
             }
         }
         
@@ -12073,7 +12071,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Invite");
+                return Resource.GetString("Invite");
             }
         }
         
@@ -12084,7 +12082,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("InviteChannelRestrictedUsers_one");
+                return Resource.GetString("InviteChannelRestrictedUsers_one");
             }
         }
         
@@ -12095,7 +12093,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("InviteChannelRestrictedUsers_other");
+                return Resource.GetString("InviteChannelRestrictedUsers_other");
             }
         }
         
@@ -12106,7 +12104,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("InviteChannelRestrictedUsers2_one");
+                return Resource.GetString("InviteChannelRestrictedUsers2_one");
             }
         }
         
@@ -12117,7 +12115,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("InviteChannelRestrictedUsers2_other");
+                return Resource.GetString("InviteChannelRestrictedUsers2_other");
             }
         }
         
@@ -12128,7 +12126,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("InviteChannelRestrictedUsers2One");
+                return Resource.GetString("InviteChannelRestrictedUsers2One");
             }
         }
         
@@ -12139,7 +12137,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("InviteChannelRestrictedUsersOne");
+                return Resource.GetString("InviteChannelRestrictedUsersOne");
             }
         }
         
@@ -12150,7 +12148,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("InviteLink");
+                return Resource.GetString("InviteLink");
             }
         }
         
@@ -12161,7 +12159,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("InviteLinkCount_one");
+                return Resource.GetString("InviteLinkCount_one");
             }
         }
         
@@ -12172,7 +12170,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("InviteLinkCount_other");
+                return Resource.GetString("InviteLinkCount_other");
             }
         }
         
@@ -12183,7 +12181,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("InviteLinks");
+                return Resource.GetString("InviteLinks");
             }
         }
         
@@ -12194,7 +12192,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("InviteToChannelError");
+                return Resource.GetString("InviteToChannelError");
             }
         }
         
@@ -12205,7 +12203,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("InviteToGroupError");
+                return Resource.GetString("InviteToGroupError");
             }
         }
         
@@ -12216,7 +12214,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("IpAddress");
+                return Resource.GetString("IpAddress");
             }
         }
         
@@ -12227,7 +12225,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("IsChoosingSticker");
+                return Resource.GetString("IsChoosingSticker");
             }
         }
         
@@ -12238,7 +12236,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("IsRecordingAudio");
+                return Resource.GetString("IsRecordingAudio");
             }
         }
         
@@ -12249,7 +12247,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("IsSendingAudio");
+                return Resource.GetString("IsSendingAudio");
             }
         }
         
@@ -12260,7 +12258,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("IsSendingFile");
+                return Resource.GetString("IsSendingFile");
             }
         }
         
@@ -12271,7 +12269,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("IsSendingGame");
+                return Resource.GetString("IsSendingGame");
             }
         }
         
@@ -12282,7 +12280,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("IsSendingPhoto");
+                return Resource.GetString("IsSendingPhoto");
             }
         }
         
@@ -12293,7 +12291,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("IsSendingVideo");
+                return Resource.GetString("IsSendingVideo");
             }
         }
         
@@ -12304,7 +12302,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("IsTyping");
+                return Resource.GetString("IsTyping");
             }
         }
         
@@ -12315,7 +12313,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Italic");
+                return Resource.GetString("Italic");
             }
         }
         
@@ -12326,7 +12324,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("items_one");
+                return Resource.GetString("items_one");
             }
         }
         
@@ -12337,7 +12335,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("items_other");
+                return Resource.GetString("items_other");
             }
         }
         
@@ -12348,7 +12346,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("IVInteractionsChartTitle");
+                return Resource.GetString("IVInteractionsChartTitle");
             }
         }
         
@@ -12359,7 +12357,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("JoinRequests_one");
+                return Resource.GetString("JoinRequests_one");
             }
         }
         
@@ -12370,7 +12368,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("JoinRequests_other");
+                return Resource.GetString("JoinRequests_other");
             }
         }
         
@@ -12381,7 +12379,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("JoinToGroupErrorFull");
+                return Resource.GetString("JoinToGroupErrorFull");
             }
         }
         
@@ -12392,7 +12390,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("JoinToGroupErrorNotExist");
+                return Resource.GetString("JoinToGroupErrorNotExist");
             }
         }
         
@@ -12403,7 +12401,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("KeepMedia");
+                return Resource.GetString("KeepMedia");
             }
         }
         
@@ -12414,7 +12412,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("KeepMediaForever");
+                return Resource.GetString("KeepMediaForever");
             }
         }
         
@@ -12427,7 +12425,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("KeepMediaInfo");
+                return Resource.GetString("KeepMediaInfo");
             }
         }
         
@@ -12438,7 +12436,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("KickFromGroup");
+                return Resource.GetString("KickFromGroup");
             }
         }
         
@@ -12449,7 +12447,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("KickFromSupergroup");
+                return Resource.GetString("KickFromSupergroup");
             }
         }
         
@@ -12460,7 +12458,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("KMetersAway2");
+                return Resource.GetString("KMetersAway2");
             }
         }
         
@@ -12471,7 +12469,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("KMetersShort");
+                return Resource.GetString("KMetersShort");
             }
         }
         
@@ -12482,7 +12480,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Language");
+                return Resource.GetString("Language");
             }
         }
         
@@ -12497,7 +12495,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LanguageAlert");
+                return Resource.GetString("LanguageAlert");
             }
         }
         
@@ -12512,7 +12510,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LanguageCustomAlert");
+                return Resource.GetString("LanguageCustomAlert");
             }
         }
         
@@ -12523,7 +12521,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LanguageName");
+                return Resource.GetString("LanguageName");
             }
         }
         
@@ -12534,7 +12532,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Languages_one");
+                return Resource.GetString("Languages_one");
             }
         }
         
@@ -12545,7 +12543,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Languages_other");
+                return Resource.GetString("Languages_other");
             }
         }
         
@@ -12556,7 +12554,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LanguageSame");
+                return Resource.GetString("LanguageSame");
             }
         }
         
@@ -12567,7 +12565,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LanguagesChartTitle");
+                return Resource.GetString("LanguagesChartTitle");
             }
         }
         
@@ -12578,7 +12576,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LanguageTitle");
+                return Resource.GetString("LanguageTitle");
             }
         }
         
@@ -12589,7 +12587,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LanguageUnknownCustomAlert");
+                return Resource.GetString("LanguageUnknownCustomAlert");
             }
         }
         
@@ -12600,7 +12598,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LanguageUnknownTitle");
+                return Resource.GetString("LanguageUnknownTitle");
             }
         }
         
@@ -12611,7 +12609,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LargeEmoji");
+                return Resource.GetString("LargeEmoji");
             }
         }
         
@@ -12622,7 +12620,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LastName");
+                return Resource.GetString("LastName");
             }
         }
         
@@ -12633,7 +12631,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LastNameSmall");
+                return Resource.GetString("LastNameSmall");
             }
         }
         
@@ -12644,7 +12642,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LastSeen");
+                return Resource.GetString("LastSeen");
             }
         }
         
@@ -12655,7 +12653,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LastSeenContacts");
+                return Resource.GetString("LastSeenContacts");
             }
         }
         
@@ -12666,7 +12664,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LastSeenDateFormatted");
+                return Resource.GetString("LastSeenDateFormatted");
             }
         }
         
@@ -12677,7 +12675,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LastSeenEverybody");
+                return Resource.GetString("LastSeenEverybody");
             }
         }
         
@@ -12688,7 +12686,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LastSeenFormatted");
+                return Resource.GetString("LastSeenFormatted");
             }
         }
         
@@ -12699,7 +12697,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LastSeenNobody");
+                return Resource.GetString("LastSeenNobody");
             }
         }
         
@@ -12710,7 +12708,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LastSeenTitle");
+                return Resource.GetString("LastSeenTitle");
             }
         }
         
@@ -12721,7 +12719,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Lately");
+                return Resource.GetString("Lately");
             }
         }
         
@@ -12732,7 +12730,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LeaveAComment");
+                return Resource.GetString("LeaveAComment");
             }
         }
         
@@ -12743,7 +12741,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LeaveChannelMenu");
+                return Resource.GetString("LeaveChannelMenu");
             }
         }
         
@@ -12754,7 +12752,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LeaveMegaMenu");
+                return Resource.GetString("LeaveMegaMenu");
             }
         }
         
@@ -12765,7 +12763,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LimitFree");
+                return Resource.GetString("LimitFree");
             }
         }
         
@@ -12776,7 +12774,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LimitPremium");
+                return Resource.GetString("LimitPremium");
             }
         }
         
@@ -12787,7 +12785,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LimitReached");
+                return Resource.GetString("LimitReached");
             }
         }
         
@@ -12798,7 +12796,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LimitReachedAccounts");
+                return Resource.GetString("LimitReachedAccounts");
             }
         }
         
@@ -12809,7 +12807,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LimitReachedAccountsPremium");
+                return Resource.GetString("LimitReachedAccountsPremium");
             }
         }
         
@@ -12820,7 +12818,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LimitReachedChatInFolders");
+                return Resource.GetString("LimitReachedChatInFolders");
             }
         }
         
@@ -12831,7 +12829,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LimitReachedChatInFoldersLocked");
+                return Resource.GetString("LimitReachedChatInFoldersLocked");
             }
         }
         
@@ -12842,7 +12840,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LimitReachedChatInFoldersPremium");
+                return Resource.GetString("LimitReachedChatInFoldersPremium");
             }
         }
         
@@ -12853,7 +12851,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LimitReachedCommunities");
+                return Resource.GetString("LimitReachedCommunities");
             }
         }
         
@@ -12864,7 +12862,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LimitReachedCommunitiesLocked");
+                return Resource.GetString("LimitReachedCommunitiesLocked");
             }
         }
         
@@ -12875,7 +12873,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LimitReachedCommunitiesPremium");
+                return Resource.GetString("LimitReachedCommunitiesPremium");
             }
         }
         
@@ -12886,7 +12884,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LimitReachedFolders");
+                return Resource.GetString("LimitReachedFolders");
             }
         }
         
@@ -12897,7 +12895,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LimitReachedFoldersLocked");
+                return Resource.GetString("LimitReachedFoldersLocked");
             }
         }
         
@@ -12908,7 +12906,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LimitReachedFoldersPremium");
+                return Resource.GetString("LimitReachedFoldersPremium");
             }
         }
         
@@ -12919,7 +12917,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LimitReachedPinDialogs");
+                return Resource.GetString("LimitReachedPinDialogs");
             }
         }
         
@@ -12930,7 +12928,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LimitReachedPinDialogsLocked");
+                return Resource.GetString("LimitReachedPinDialogsLocked");
             }
         }
         
@@ -12941,7 +12939,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LimitReachedPinDialogsPremium");
+                return Resource.GetString("LimitReachedPinDialogsPremium");
             }
         }
         
@@ -12952,7 +12950,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LimitReachedPublicLinks");
+                return Resource.GetString("LimitReachedPublicLinks");
             }
         }
         
@@ -12963,7 +12961,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LimitReachedPublicLinksLocked");
+                return Resource.GetString("LimitReachedPublicLinksLocked");
             }
         }
         
@@ -12974,7 +12972,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LimitReachedPublicLinksPremium");
+                return Resource.GetString("LimitReachedPublicLinksPremium");
             }
         }
         
@@ -12985,7 +12983,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LinkAvailable");
+                return Resource.GetString("LinkAvailable");
             }
         }
         
@@ -12996,7 +12994,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LinkChecking");
+                return Resource.GetString("LinkChecking");
             }
         }
         
@@ -13007,7 +13005,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LinkCopied");
+                return Resource.GetString("LinkCopied");
             }
         }
         
@@ -13018,7 +13016,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LinkCopiedPrivate");
+                return Resource.GetString("LinkCopiedPrivate");
             }
         }
         
@@ -13029,7 +13027,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LinkedChannel");
+                return Resource.GetString("LinkedChannel");
             }
         }
         
@@ -13040,7 +13038,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LinkInfo");
+                return Resource.GetString("LinkInfo");
             }
         }
         
@@ -13051,7 +13049,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LinkNotFound");
+                return Resource.GetString("LinkNotFound");
             }
         }
         
@@ -13062,7 +13060,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Links_one");
+                return Resource.GetString("Links_one");
             }
         }
         
@@ -13073,7 +13071,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Links_other");
+                return Resource.GetString("Links_other");
             }
         }
         
@@ -13084,7 +13082,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LinksCreatedByOtherAdmins");
+                return Resource.GetString("LinksCreatedByOtherAdmins");
             }
         }
         
@@ -13095,7 +13093,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Listening");
+                return Resource.GetString("Listening");
             }
         }
         
@@ -13106,7 +13104,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LiteOptionsAutoplayChat");
+                return Resource.GetString("LiteOptionsAutoplayChat");
             }
         }
         
@@ -13117,7 +13115,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LiteOptionsAutoplayGifs");
+                return Resource.GetString("LiteOptionsAutoplayGifs");
             }
         }
         
@@ -13128,7 +13126,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LiteOptionsAutoplayKeyboard");
+                return Resource.GetString("LiteOptionsAutoplayKeyboard");
             }
         }
         
@@ -13139,7 +13137,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LiteOptionsAutoplayReactions");
+                return Resource.GetString("LiteOptionsAutoplayReactions");
             }
         }
         
@@ -13150,7 +13148,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LiteOptionsAutoplayVideo");
+                return Resource.GetString("LiteOptionsAutoplayVideo");
             }
         }
         
@@ -13161,7 +13159,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LiteOptionsBackground");
+                return Resource.GetString("LiteOptionsBackground");
             }
         }
         
@@ -13172,7 +13170,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LiteOptionsBlur");
+                return Resource.GetString("LiteOptionsBlur");
             }
         }
         
@@ -13183,7 +13181,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LiteOptionsCalls");
+                return Resource.GetString("LiteOptionsCalls");
             }
         }
         
@@ -13194,7 +13192,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LiteOptionsChat");
+                return Resource.GetString("LiteOptionsChat");
             }
         }
         
@@ -13205,7 +13203,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LiteOptionsEmoji");
+                return Resource.GetString("LiteOptionsEmoji");
             }
         }
         
@@ -13216,7 +13214,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LiteOptionsScale");
+                return Resource.GetString("LiteOptionsScale");
             }
         }
         
@@ -13227,7 +13225,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LiteOptionsSpoiler");
+                return Resource.GetString("LiteOptionsSpoiler");
             }
         }
         
@@ -13238,7 +13236,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LiteOptionsStickers");
+                return Resource.GetString("LiteOptionsStickers");
             }
         }
         
@@ -13249,7 +13247,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LiteOptionsTitle");
+                return Resource.GetString("LiteOptionsTitle");
             }
         }
         
@@ -13260,7 +13258,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LiteOptionsTopics");
+                return Resource.GetString("LiteOptionsTopics");
             }
         }
         
@@ -13271,7 +13269,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LitePowerSaver");
+                return Resource.GetString("LitePowerSaver");
             }
         }
         
@@ -13282,7 +13280,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LitePowerSaverInfo");
+                return Resource.GetString("LitePowerSaverInfo");
             }
         }
         
@@ -13293,7 +13291,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LiteSmoothTransitions");
+                return Resource.GetString("LiteSmoothTransitions");
             }
         }
         
@@ -13304,7 +13302,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LiteSmoothTransitionsInfo");
+                return Resource.GetString("LiteSmoothTransitionsInfo");
             }
         }
         
@@ -13315,7 +13313,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Loading");
+                return Resource.GetString("Loading");
             }
         }
         
@@ -13326,7 +13324,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LocalAudioCache");
+                return Resource.GetString("LocalAudioCache");
             }
         }
         
@@ -13337,7 +13335,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LocalCache");
+                return Resource.GetString("LocalCache");
             }
         }
         
@@ -13348,7 +13346,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LocalDatabase");
+                return Resource.GetString("LocalDatabase");
             }
         }
         
@@ -13359,7 +13357,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LocalDocumentCache");
+                return Resource.GetString("LocalDocumentCache");
             }
         }
         
@@ -13370,7 +13368,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LocalGifCache");
+                return Resource.GetString("LocalGifCache");
             }
         }
         
@@ -13381,7 +13379,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LocalMusicCache");
+                return Resource.GetString("LocalMusicCache");
             }
         }
         
@@ -13392,7 +13390,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LocalPhotoCache");
+                return Resource.GetString("LocalPhotoCache");
             }
         }
         
@@ -13403,7 +13401,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LocalVideoCache");
+                return Resource.GetString("LocalVideoCache");
             }
         }
         
@@ -13414,7 +13412,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Location");
+                return Resource.GetString("Location");
             }
         }
         
@@ -13425,7 +13423,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LocationUpdatedFormatted");
+                return Resource.GetString("LocationUpdatedFormatted");
             }
         }
         
@@ -13436,7 +13434,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LocationUpdatedJustNow");
+                return Resource.GetString("LocationUpdatedJustNow");
             }
         }
         
@@ -13447,7 +13445,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LoginAttempts");
+                return Resource.GetString("LoginAttempts");
             }
         }
         
@@ -13458,7 +13456,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LoginAttemptsInfo");
+                return Resource.GetString("LoginAttemptsInfo");
             }
         }
         
@@ -13469,7 +13467,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LoginPassword");
+                return Resource.GetString("LoginPassword");
             }
         }
         
@@ -13480,7 +13478,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LoginPasswordText");
+                return Resource.GetString("LoginPasswordText");
             }
         }
         
@@ -13491,7 +13489,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LoginWithQrCode");
+                return Resource.GetString("LoginWithQrCode");
             }
         }
         
@@ -13502,7 +13500,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LoginWithQrCodeSkip");
+                return Resource.GetString("LoginWithQrCodeSkip");
             }
         }
         
@@ -13513,7 +13511,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LoginWithQrCodeStep1");
+                return Resource.GetString("LoginWithQrCodeStep1");
             }
         }
         
@@ -13524,7 +13522,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LoginWithQrCodeStep2");
+                return Resource.GetString("LoginWithQrCodeStep2");
             }
         }
         
@@ -13535,7 +13533,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LoginWithQrCodeStep3");
+                return Resource.GetString("LoginWithQrCodeStep3");
             }
         }
         
@@ -13546,7 +13544,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LoginWithQrCodeTitle");
+                return Resource.GetString("LoginWithQrCodeTitle");
             }
         }
         
@@ -13557,7 +13555,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LogOut");
+                return Resource.GetString("LogOut");
             }
         }
         
@@ -13568,7 +13566,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LogOutInfo");
+                return Resource.GetString("LogOutInfo");
             }
         }
         
@@ -13579,7 +13577,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("LogOutTitle");
+                return Resource.GetString("LogOutTitle");
             }
         }
         
@@ -13590,7 +13588,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Long");
+                return Resource.GetString("Long");
             }
         }
         
@@ -13601,7 +13599,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ManageChannelMenu");
+                return Resource.GetString("ManageChannelMenu");
             }
         }
         
@@ -13612,7 +13610,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ManageGroupMenu");
+                return Resource.GetString("ManageGroupMenu");
             }
         }
         
@@ -13623,7 +13621,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Map");
+                return Resource.GetString("Map");
             }
         }
         
@@ -13634,7 +13632,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MarkAllAsRead");
+                return Resource.GetString("MarkAllAsRead");
             }
         }
         
@@ -13645,7 +13643,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MarkAsRead");
+                return Resource.GetString("MarkAsRead");
             }
         }
         
@@ -13656,7 +13654,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MarkAsUnread");
+                return Resource.GetString("MarkAsUnread");
             }
         }
         
@@ -13667,7 +13665,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Masks");
+                return Resource.GetString("Masks");
             }
         }
         
@@ -13678,7 +13676,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MasksArchived");
+                return Resource.GetString("MasksArchived");
             }
         }
         
@@ -13689,7 +13687,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MasksInfo");
+                return Resource.GetString("MasksInfo");
             }
         }
         
@@ -13700,7 +13698,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Media_one");
+                return Resource.GetString("Media_one");
             }
         }
         
@@ -13711,7 +13709,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Media_other");
+                return Resource.GetString("Media_other");
             }
         }
         
@@ -13722,7 +13720,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MediaZoomIn");
+                return Resource.GetString("MediaZoomIn");
             }
         }
         
@@ -13733,7 +13731,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MediaZoomOut");
+                return Resource.GetString("MediaZoomOut");
             }
         }
         
@@ -13744,7 +13742,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MegaAddedBy");
+                return Resource.GetString("MegaAddedBy");
             }
         }
         
@@ -13755,7 +13753,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MegaAdminsInfo");
+                return Resource.GetString("MegaAdminsInfo");
             }
         }
         
@@ -13766,7 +13764,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MegaDeleteAlert");
+                return Resource.GetString("MegaDeleteAlert");
             }
         }
         
@@ -13777,7 +13775,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MegaDeleteInfo");
+                return Resource.GetString("MegaDeleteInfo");
             }
         }
         
@@ -13788,7 +13786,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MegaLeaveAlert");
+                return Resource.GetString("MegaLeaveAlert");
             }
         }
         
@@ -13799,7 +13797,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MegaLeaveAlertWithName");
+                return Resource.GetString("MegaLeaveAlertWithName");
             }
         }
         
@@ -13810,7 +13808,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MegaPrivate");
+                return Resource.GetString("MegaPrivate");
             }
         }
         
@@ -13821,7 +13819,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MegaPrivateInfo");
+                return Resource.GetString("MegaPrivateInfo");
             }
         }
         
@@ -13832,7 +13830,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MegaPrivateLinkHelp");
+                return Resource.GetString("MegaPrivateLinkHelp");
             }
         }
         
@@ -13843,7 +13841,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MegaPublic");
+                return Resource.GetString("MegaPublic");
             }
         }
         
@@ -13854,7 +13852,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MegaPublicInfo");
+                return Resource.GetString("MegaPublicInfo");
             }
         }
         
@@ -13868,7 +13866,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MegaUsernameHelp");
+                return Resource.GetString("MegaUsernameHelp");
             }
         }
         
@@ -13879,7 +13877,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MemberRequests");
+                return Resource.GetString("MemberRequests");
             }
         }
         
@@ -13890,7 +13888,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Members_one");
+                return Resource.GetString("Members_one");
             }
         }
         
@@ -13901,7 +13899,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Members_other");
+                return Resource.GetString("Members_other");
             }
         }
         
@@ -13912,7 +13910,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MembersLanguageChartTitle");
+                return Resource.GetString("MembersLanguageChartTitle");
             }
         }
         
@@ -13923,7 +13921,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MembersOverviewTitle");
+                return Resource.GetString("MembersOverviewTitle");
             }
         }
         
@@ -13934,7 +13932,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MembersTalkingNobody");
+                return Resource.GetString("MembersTalkingNobody");
             }
         }
         
@@ -13945,7 +13943,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Mention");
+                return Resource.GetString("Mention");
             }
         }
         
@@ -13956,7 +13954,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Message");
+                return Resource.GetString("Message");
             }
         }
         
@@ -13967,7 +13965,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MessageContainsEmojiPack");
+                return Resource.GetString("MessageContainsEmojiPack");
             }
         }
         
@@ -13978,7 +13976,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MessageContainsEmojiPacks_other");
+                return Resource.GetString("MessageContainsEmojiPacks_other");
             }
         }
         
@@ -13989,7 +13987,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MessageLifetime");
+                return Resource.GetString("MessageLifetime");
             }
         }
         
@@ -14000,7 +13998,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MessageLifetimeChanged");
+                return Resource.GetString("MessageLifetimeChanged");
             }
         }
         
@@ -14011,7 +14009,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MessageLifetimeChangedOutgoing");
+                return Resource.GetString("MessageLifetimeChangedOutgoing");
             }
         }
         
@@ -14022,7 +14020,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MessageLifetimePhoto");
+                return Resource.GetString("MessageLifetimePhoto");
             }
         }
         
@@ -14033,7 +14031,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MessageLifetimeRemoved");
+                return Resource.GetString("MessageLifetimeRemoved");
             }
         }
         
@@ -14044,7 +14042,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MessageLifetimeVideo");
+                return Resource.GetString("MessageLifetimeVideo");
             }
         }
         
@@ -14055,7 +14053,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MessageLifetimeYouRemoved");
+                return Resource.GetString("MessageLifetimeYouRemoved");
             }
         }
         
@@ -14066,7 +14064,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MessagePlayed_one");
+                return Resource.GetString("MessagePlayed_one");
             }
         }
         
@@ -14077,7 +14075,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MessagePlayed_other");
+                return Resource.GetString("MessagePlayed_other");
             }
         }
         
@@ -14088,7 +14086,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MessagePreview");
+                return Resource.GetString("MessagePreview");
             }
         }
         
@@ -14099,7 +14097,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("messages_one");
+                return Resource.GetString("messages_one");
             }
         }
         
@@ -14110,7 +14108,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("messages_other");
+                return Resource.GetString("messages_other");
             }
         }
         
@@ -14121,7 +14119,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MessagesChartTitle");
+                return Resource.GetString("MessagesChartTitle");
             }
         }
         
@@ -14132,7 +14130,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MessageScheduledBotAction");
+                return Resource.GetString("MessageScheduledBotAction");
             }
         }
         
@@ -14143,7 +14141,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MessageScheduledLimitReached");
+                return Resource.GetString("MessageScheduledLimitReached");
             }
         }
         
@@ -14154,7 +14152,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MessageScheduledOn");
+                return Resource.GetString("MessageScheduledOn");
             }
         }
         
@@ -14165,7 +14163,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MessageScheduledUntilOnline");
+                return Resource.GetString("MessageScheduledUntilOnline");
             }
         }
         
@@ -14176,7 +14174,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MessageScheduledVote");
+                return Resource.GetString("MessageScheduledVote");
             }
         }
         
@@ -14187,7 +14185,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MessageScheduleEditTime");
+                return Resource.GetString("MessageScheduleEditTime");
             }
         }
         
@@ -14198,7 +14196,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MessageScheduleSend");
+                return Resource.GetString("MessageScheduleSend");
             }
         }
         
@@ -14209,7 +14207,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MessageScheduleToday");
+                return Resource.GetString("MessageScheduleToday");
             }
         }
         
@@ -14220,7 +14218,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MessagesDataUsage");
+                return Resource.GetString("MessagesDataUsage");
             }
         }
         
@@ -14231,7 +14229,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MessageSeen_one");
+                return Resource.GetString("MessageSeen_one");
             }
         }
         
@@ -14242,7 +14240,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MessageSeen_other");
+                return Resource.GetString("MessageSeen_other");
             }
         }
         
@@ -14253,7 +14251,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MessagesOverview");
+                return Resource.GetString("MessagesOverview");
             }
         }
         
@@ -14264,7 +14262,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Meters_one");
+                return Resource.GetString("Meters_one");
             }
         }
         
@@ -14275,7 +14273,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Meters_other");
+                return Resource.GetString("Meters_other");
             }
         }
         
@@ -14286,7 +14284,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MetersAway2");
+                return Resource.GetString("MetersAway2");
             }
         }
         
@@ -14297,7 +14295,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MetersShort");
+                return Resource.GetString("MetersShort");
             }
         }
         
@@ -14308,7 +14306,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MilesAway");
+                return Resource.GetString("MilesAway");
             }
         }
         
@@ -14319,7 +14317,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MilesShort");
+                return Resource.GetString("MilesShort");
             }
         }
         
@@ -14330,7 +14328,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Minutes_one");
+                return Resource.GetString("Minutes_one");
             }
         }
         
@@ -14341,7 +14339,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Minutes_other");
+                return Resource.GetString("Minutes_other");
             }
         }
         
@@ -14352,7 +14350,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Mono");
+                return Resource.GetString("Mono");
             }
         }
         
@@ -14363,7 +14361,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Months_one");
+                return Resource.GetString("Months_one");
             }
         }
         
@@ -14374,7 +14372,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Months_other");
+                return Resource.GetString("Months_other");
             }
         }
         
@@ -14385,7 +14383,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MoreInfo");
+                return Resource.GetString("MoreInfo");
             }
         }
         
@@ -14396,7 +14394,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Music");
+                return Resource.GetString("Music");
             }
         }
         
@@ -14407,7 +14405,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MusicFiles_one");
+                return Resource.GetString("MusicFiles_one");
             }
         }
         
@@ -14418,7 +14416,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MusicFiles_other");
+                return Resource.GetString("MusicFiles_other");
             }
         }
         
@@ -14429,7 +14427,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Mute");
+                return Resource.GetString("Mute");
             }
         }
         
@@ -14440,7 +14438,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MuteDisable");
+                return Resource.GetString("MuteDisable");
             }
         }
         
@@ -14451,7 +14449,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MuteFor");
+                return Resource.GetString("MuteFor");
             }
         }
         
@@ -14462,7 +14460,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MuteFor1h");
+                return Resource.GetString("MuteFor1h");
             }
         }
         
@@ -14473,7 +14471,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MuteForAlert");
+                return Resource.GetString("MuteForAlert");
             }
         }
         
@@ -14484,7 +14482,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MuteForPopup");
+                return Resource.GetString("MuteForPopup");
             }
         }
         
@@ -14495,7 +14493,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("MuteNotifications");
+                return Resource.GetString("MuteNotifications");
             }
         }
         
@@ -14506,7 +14504,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NearbyCreateGroup");
+                return Resource.GetString("NearbyCreateGroup");
             }
         }
         
@@ -14517,7 +14515,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NearbyPlaces");
+                return Resource.GetString("NearbyPlaces");
             }
         }
         
@@ -14528,7 +14526,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NetworkUsage");
+                return Resource.GetString("NetworkUsage");
             }
         }
         
@@ -14539,7 +14537,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NetworkUsageSince");
+                return Resource.GetString("NetworkUsageSince");
             }
         }
         
@@ -14550,7 +14548,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NeverAllow");
+                return Resource.GetString("NeverAllow");
             }
         }
         
@@ -14561,7 +14559,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NeverShareWith");
+                return Resource.GetString("NeverShareWith");
             }
         }
         
@@ -14572,7 +14570,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NeverShareWithTitle");
+                return Resource.GetString("NeverShareWithTitle");
             }
         }
         
@@ -14583,7 +14581,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NewChannel");
+                return Resource.GetString("NewChannel");
             }
         }
         
@@ -14594,7 +14592,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NewChatsFromNonContacts");
+                return Resource.GetString("NewChatsFromNonContacts");
             }
         }
         
@@ -14605,7 +14603,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NewConversationShortcut");
+                return Resource.GetString("NewConversationShortcut");
             }
         }
         
@@ -14616,7 +14614,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NewFollowersBySourceChartTitle");
+                return Resource.GetString("NewFollowersBySourceChartTitle");
             }
         }
         
@@ -14627,7 +14625,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NewGroup");
+                return Resource.GetString("NewGroup");
             }
         }
         
@@ -14638,7 +14636,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NewMembersBySourceChartTitle");
+                return Resource.GetString("NewMembersBySourceChartTitle");
             }
         }
         
@@ -14649,7 +14647,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NewMessages_one");
+                return Resource.GetString("NewMessages_one");
             }
         }
         
@@ -14660,7 +14658,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NewMessages_other");
+                return Resource.GetString("NewMessages_other");
             }
         }
         
@@ -14671,7 +14669,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NewPoll");
+                return Resource.GetString("NewPoll");
             }
         }
         
@@ -14682,7 +14680,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NewSecretChat");
+                return Resource.GetString("NewSecretChat");
             }
         }
         
@@ -14693,7 +14691,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NewTheme");
+                return Resource.GetString("NewTheme");
             }
         }
         
@@ -14704,7 +14702,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NewTopic");
+                return Resource.GetString("NewTopic");
             }
         }
         
@@ -14715,7 +14713,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Next");
+                return Resource.GetString("Next");
             }
         }
         
@@ -14726,7 +14724,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NoBlockedChannel");
+                return Resource.GetString("NoBlockedChannel");
             }
         }
         
@@ -14737,7 +14735,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NoBlockedGroup");
+                return Resource.GetString("NoBlockedGroup");
             }
         }
         
@@ -14748,7 +14746,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NobodyLikesSpam1");
+                return Resource.GetString("NobodyLikesSpam1");
             }
         }
         
@@ -14759,7 +14757,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NobodyLikesSpam2");
+                return Resource.GetString("NobodyLikesSpam2");
             }
         }
         
@@ -14770,7 +14768,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NobodyViewed");
+                return Resource.GetString("NobodyViewed");
             }
         }
         
@@ -14781,7 +14779,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NoComments");
+                return Resource.GetString("NoComments");
             }
         }
         
@@ -14792,7 +14790,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NoMessages");
+                return Resource.GetString("NoMessages");
             }
         }
         
@@ -14803,7 +14801,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NoReactions");
+                return Resource.GetString("NoReactions");
             }
         }
         
@@ -14816,7 +14814,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NoRtmpStreamFromAppOwner");
+                return Resource.GetString("NoRtmpStreamFromAppOwner");
             }
         }
         
@@ -14827,7 +14825,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NoRtmpStreamFromAppViewer");
+                return Resource.GetString("NoRtmpStreamFromAppViewer");
             }
         }
         
@@ -14838,7 +14836,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NoSound");
+                return Resource.GetString("NoSound");
             }
         }
         
@@ -14849,7 +14847,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NotificationActionPinnedContactChannel");
+                return Resource.GetString("NotificationActionPinnedContactChannel");
             }
         }
         
@@ -14860,7 +14858,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NotificationActionPinnedFileChannel");
+                return Resource.GetString("NotificationActionPinnedFileChannel");
             }
         }
         
@@ -14871,7 +14869,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NotificationActionPinnedGameChannel");
+                return Resource.GetString("NotificationActionPinnedGameChannel");
             }
         }
         
@@ -14882,7 +14880,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NotificationActionPinnedGeoChannel");
+                return Resource.GetString("NotificationActionPinnedGeoChannel");
             }
         }
         
@@ -14893,7 +14891,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NotificationActionPinnedGeoLiveChannel");
+                return Resource.GetString("NotificationActionPinnedGeoLiveChannel");
             }
         }
         
@@ -14904,7 +14902,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NotificationActionPinnedGifChannel");
+                return Resource.GetString("NotificationActionPinnedGifChannel");
             }
         }
         
@@ -14915,7 +14913,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NotificationActionPinnedInvoiceChannel");
+                return Resource.GetString("NotificationActionPinnedInvoiceChannel");
             }
         }
         
@@ -14926,7 +14924,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NotificationActionPinnedMusicChannel");
+                return Resource.GetString("NotificationActionPinnedMusicChannel");
             }
         }
         
@@ -14937,7 +14935,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NotificationActionPinnedPhotoChannel");
+                return Resource.GetString("NotificationActionPinnedPhotoChannel");
             }
         }
         
@@ -14948,7 +14946,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NotificationActionPinnedPollChannel");
+                return Resource.GetString("NotificationActionPinnedPollChannel");
             }
         }
         
@@ -14959,7 +14957,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NotificationActionPinnedRoundChannel");
+                return Resource.GetString("NotificationActionPinnedRoundChannel");
             }
         }
         
@@ -14970,7 +14968,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NotificationActionPinnedStickerChannel");
+                return Resource.GetString("NotificationActionPinnedStickerChannel");
             }
         }
         
@@ -14981,7 +14979,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NotificationActionPinnedStickerEmojiChannel");
+                return Resource.GetString("NotificationActionPinnedStickerEmojiChannel");
             }
         }
         
@@ -14992,7 +14990,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NotificationActionPinnedVideoChannel");
+                return Resource.GetString("NotificationActionPinnedVideoChannel");
             }
         }
         
@@ -15003,7 +15001,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NotificationActionPinnedVoiceChannel");
+                return Resource.GetString("NotificationActionPinnedVoiceChannel");
             }
         }
         
@@ -15014,7 +15012,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NotificationContactJoined");
+                return Resource.GetString("NotificationContactJoined");
             }
         }
         
@@ -15025,7 +15023,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NotificationInvitedToGroup");
+                return Resource.GetString("NotificationInvitedToGroup");
             }
         }
         
@@ -15036,7 +15034,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NotificationMessageAlbum");
+                return Resource.GetString("NotificationMessageAlbum");
             }
         }
         
@@ -15047,7 +15045,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NotificationMessageForwardFew");
+                return Resource.GetString("NotificationMessageForwardFew");
             }
         }
         
@@ -15058,7 +15056,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NotificationMessageGame");
+                return Resource.GetString("NotificationMessageGame");
             }
         }
         
@@ -15069,7 +15067,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Notifications");
+                return Resource.GetString("Notifications");
             }
         }
         
@@ -15080,7 +15078,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NotificationsAndSounds");
+                return Resource.GetString("NotificationsAndSounds");
             }
         }
         
@@ -15091,7 +15089,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NotificationsChannels");
+                return Resource.GetString("NotificationsChannels");
             }
         }
         
@@ -15102,7 +15100,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NotificationsChartTitle");
+                return Resource.GetString("NotificationsChartTitle");
             }
         }
         
@@ -15113,7 +15111,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NotificationsExceptions");
+                return Resource.GetString("NotificationsExceptions");
             }
         }
         
@@ -15124,7 +15122,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NotificationsForChannels");
+                return Resource.GetString("NotificationsForChannels");
             }
         }
         
@@ -15135,7 +15133,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NotificationsForGroups");
+                return Resource.GetString("NotificationsForGroups");
             }
         }
         
@@ -15146,7 +15144,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NotificationsForPrivateChats");
+                return Resource.GetString("NotificationsForPrivateChats");
             }
         }
         
@@ -15157,7 +15155,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NotificationsGroups");
+                return Resource.GetString("NotificationsGroups");
             }
         }
         
@@ -15168,7 +15166,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NotificationsOff");
+                return Resource.GetString("NotificationsOff");
             }
         }
         
@@ -15179,7 +15177,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NotificationsOn");
+                return Resource.GetString("NotificationsOn");
             }
         }
         
@@ -15190,7 +15188,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NotificationsPrivateChats");
+                return Resource.GetString("NotificationsPrivateChats");
             }
         }
         
@@ -15201,7 +15199,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NotificationsService");
+                return Resource.GetString("NotificationsService");
             }
         }
         
@@ -15212,7 +15210,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NoUsernameFound");
+                return Resource.GetString("NoUsernameFound");
             }
         }
         
@@ -15223,7 +15221,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NoVotes");
+                return Resource.GetString("NoVotes");
             }
         }
         
@@ -15234,7 +15232,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NoVotesQuiz");
+                return Resource.GetString("NoVotesQuiz");
             }
         }
         
@@ -15245,7 +15243,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("NoWordsRecognized");
+                return Resource.GetString("NoWordsRecognized");
             }
         }
         
@@ -15256,7 +15254,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("October");
+                return Resource.GetString("October");
             }
         }
         
@@ -15267,7 +15265,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Of");
+                return Resource.GetString("Of");
             }
         }
         
@@ -15278,7 +15276,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("OK");
+                return Resource.GetString("OK");
             }
         }
         
@@ -15289,7 +15287,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Online");
+                return Resource.GetString("Online");
             }
         }
         
@@ -15300,7 +15298,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("OnlineCount_one");
+                return Resource.GetString("OnlineCount_one");
             }
         }
         
@@ -15311,7 +15309,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("OnlineCount_other");
+                return Resource.GetString("OnlineCount_other");
             }
         }
         
@@ -15322,7 +15320,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Open");
+                return Resource.GetString("Open");
             }
         }
         
@@ -15333,7 +15331,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("OpenBackground");
+                return Resource.GetString("OpenBackground");
             }
         }
         
@@ -15344,7 +15342,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("OpenChannel");
+                return Resource.GetString("OpenChannel");
             }
         }
         
@@ -15355,7 +15353,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("OpenFile");
+                return Resource.GetString("OpenFile");
             }
         }
         
@@ -15366,7 +15364,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("OpenFragment");
+                return Resource.GetString("OpenFragment");
             }
         }
         
@@ -15377,7 +15375,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("OpenGroup");
+                return Resource.GetString("OpenGroup");
             }
         }
         
@@ -15388,7 +15386,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("OpenInExternalApp");
+                return Resource.GetString("OpenInExternalApp");
             }
         }
         
@@ -15399,7 +15397,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("OpenMessage");
+                return Resource.GetString("OpenMessage");
             }
         }
         
@@ -15410,7 +15408,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("OpenProfile");
+                return Resource.GetString("OpenProfile");
             }
         }
         
@@ -15421,7 +15419,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("OpenUrlAlert");
+                return Resource.GetString("OpenUrlAlert");
             }
         }
         
@@ -15432,7 +15430,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("OpenUrlAlert2");
+                return Resource.GetString("OpenUrlAlert2");
             }
         }
         
@@ -15443,7 +15441,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("OpenUrlOption1");
+                return Resource.GetString("OpenUrlOption1");
             }
         }
         
@@ -15454,7 +15452,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("OpenUrlOption2");
+                return Resource.GetString("OpenUrlOption2");
             }
         }
         
@@ -15465,7 +15463,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("OpenUrlTitle");
+                return Resource.GetString("OpenUrlTitle");
             }
         }
         
@@ -15476,7 +15474,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("OpenWith");
+                return Resource.GetString("OpenWith");
             }
         }
         
@@ -15487,7 +15485,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Option_one");
+                return Resource.GetString("Option_one");
             }
         }
         
@@ -15498,7 +15496,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Option_other");
+                return Resource.GetString("Option_other");
             }
         }
         
@@ -15509,7 +15507,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("OptionHint");
+                return Resource.GetString("OptionHint");
             }
         }
         
@@ -15520,7 +15518,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Orange");
+                return Resource.GetString("Orange");
             }
         }
         
@@ -15533,7 +15531,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("OtherLoginCode");
+                return Resource.GetString("OtherLoginCode");
             }
         }
         
@@ -15544,7 +15542,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("OtherSessions");
+                return Resource.GetString("OtherSessions");
             }
         }
         
@@ -15555,7 +15553,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("OtherWebSessions");
+                return Resource.GetString("OtherWebSessions");
             }
         }
         
@@ -15566,7 +15564,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("P2PEnabledWith");
+                return Resource.GetString("P2PEnabledWith");
             }
         }
         
@@ -15578,7 +15576,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Page1Message");
+                return Resource.GetString("Page1Message");
             }
         }
         
@@ -15589,7 +15587,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Page1Title");
+                return Resource.GetString("Page1Title");
             }
         }
         
@@ -15601,7 +15599,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Page2Message");
+                return Resource.GetString("Page2Message");
             }
         }
         
@@ -15612,7 +15610,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Page2Title");
+                return Resource.GetString("Page2Title");
             }
         }
         
@@ -15624,7 +15622,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Page3Message");
+                return Resource.GetString("Page3Message");
             }
         }
         
@@ -15635,7 +15633,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Page3Title");
+                return Resource.GetString("Page3Title");
             }
         }
         
@@ -15647,7 +15645,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Page4Message");
+                return Resource.GetString("Page4Message");
             }
         }
         
@@ -15658,7 +15656,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Page4Title");
+                return Resource.GetString("Page4Title");
             }
         }
         
@@ -15670,7 +15668,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Page5Message");
+                return Resource.GetString("Page5Message");
             }
         }
         
@@ -15681,7 +15679,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Page5Title");
+                return Resource.GetString("Page5Title");
             }
         }
         
@@ -15693,7 +15691,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Page6Message");
+                return Resource.GetString("Page6Message");
             }
         }
         
@@ -15704,7 +15702,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Page6Title");
+                return Resource.GetString("Page6Title");
             }
         }
         
@@ -15715,7 +15713,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Participants_one");
+                return Resource.GetString("Participants_one");
             }
         }
         
@@ -15726,7 +15724,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Participants_other");
+                return Resource.GetString("Participants_other");
             }
         }
         
@@ -15737,7 +15735,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Passcode");
+                return Resource.GetString("Passcode");
             }
         }
         
@@ -15748,7 +15746,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PasscodePassword");
+                return Resource.GetString("PasscodePassword");
             }
         }
         
@@ -15759,7 +15757,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PasscodePIN");
+                return Resource.GetString("PasscodePIN");
             }
         }
         
@@ -15770,7 +15768,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PasswordAsHintError");
+                return Resource.GetString("PasswordAsHintError");
             }
         }
         
@@ -15781,7 +15779,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PasswordCode");
+                return Resource.GetString("PasswordCode");
             }
         }
         
@@ -15792,7 +15790,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PasswordDoNotMatch");
+                return Resource.GetString("PasswordDoNotMatch");
             }
         }
         
@@ -15803,7 +15801,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PasswordEmailInvalid");
+                return Resource.GetString("PasswordEmailInvalid");
             }
         }
         
@@ -15814,7 +15812,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PasswordHint");
+                return Resource.GetString("PasswordHint");
             }
         }
         
@@ -15825,7 +15823,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PasswordHintPlaceholder");
+                return Resource.GetString("PasswordHintPlaceholder");
             }
         }
         
@@ -15836,7 +15834,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PasswordHintText");
+                return Resource.GetString("PasswordHintText");
             }
         }
         
@@ -15847,7 +15845,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Paste");
+                return Resource.GetString("Paste");
             }
         }
         
@@ -15858,7 +15856,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PasteFromClipboard");
+                return Resource.GetString("PasteFromClipboard");
             }
         }
         
@@ -15869,7 +15867,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PauseAll");
+                return Resource.GetString("PauseAll");
             }
         }
         
@@ -15880,7 +15878,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentBillingAddress");
+                return Resource.GetString("PaymentBillingAddress");
             }
         }
         
@@ -15891,7 +15889,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentCardCvv");
+                return Resource.GetString("PaymentCardCvv");
             }
         }
         
@@ -15902,7 +15900,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentCardExpireDate");
+                return Resource.GetString("PaymentCardExpireDate");
             }
         }
         
@@ -15913,7 +15911,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentCardInfo");
+                return Resource.GetString("PaymentCardInfo");
             }
         }
         
@@ -15924,7 +15922,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentCardName");
+                return Resource.GetString("PaymentCardName");
             }
         }
         
@@ -15935,7 +15933,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentCardNumber");
+                return Resource.GetString("PaymentCardNumber");
             }
         }
         
@@ -15946,7 +15944,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentCardSavePaymentInformation");
+                return Resource.GetString("PaymentCardSavePaymentInformation");
             }
         }
         
@@ -15957,7 +15955,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentCardSavePaymentInformationInfoLine1");
+                return Resource.GetString("PaymentCardSavePaymentInformationInfoLine1");
             }
         }
         
@@ -15968,7 +15966,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentCardTitle");
+                return Resource.GetString("PaymentCardTitle");
             }
         }
         
@@ -15979,7 +15977,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentCheckout");
+                return Resource.GetString("PaymentCheckout");
             }
         }
         
@@ -15990,7 +15988,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentCheckoutEmail");
+                return Resource.GetString("PaymentCheckoutEmail");
             }
         }
         
@@ -16001,7 +15999,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentCheckoutMethod");
+                return Resource.GetString("PaymentCheckoutMethod");
             }
         }
         
@@ -16012,7 +16010,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentCheckoutMethodNewCard");
+                return Resource.GetString("PaymentCheckoutMethodNewCard");
             }
         }
         
@@ -16023,7 +16021,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentCheckoutName");
+                return Resource.GetString("PaymentCheckoutName");
             }
         }
         
@@ -16034,7 +16032,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentCheckoutPay");
+                return Resource.GetString("PaymentCheckoutPay");
             }
         }
         
@@ -16045,7 +16043,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentCheckoutPhoneNumber");
+                return Resource.GetString("PaymentCheckoutPhoneNumber");
             }
         }
         
@@ -16056,7 +16054,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentCheckoutShippingMethod");
+                return Resource.GetString("PaymentCheckoutShippingMethod");
             }
         }
         
@@ -16067,7 +16065,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentConfirmationMessage");
+                return Resource.GetString("PaymentConfirmationMessage");
             }
         }
         
@@ -16078,7 +16076,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentFailed");
+                return Resource.GetString("PaymentFailed");
             }
         }
         
@@ -16089,7 +16087,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentInvoice");
+                return Resource.GetString("PaymentInvoice");
             }
         }
         
@@ -16100,7 +16098,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentNoShippingMethod");
+                return Resource.GetString("PaymentNoShippingMethod");
             }
         }
         
@@ -16111,7 +16109,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentPrecheckoutFailed");
+                return Resource.GetString("PaymentPrecheckoutFailed");
             }
         }
         
@@ -16122,7 +16120,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentReceipt");
+                return Resource.GetString("PaymentReceipt");
             }
         }
         
@@ -16133,7 +16131,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentShippingAddress");
+                return Resource.GetString("PaymentShippingAddress");
             }
         }
         
@@ -16144,7 +16142,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentShippingAddress1Placeholder");
+                return Resource.GetString("PaymentShippingAddress1Placeholder");
             }
         }
         
@@ -16155,7 +16153,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentShippingAddress2Placeholder");
+                return Resource.GetString("PaymentShippingAddress2Placeholder");
             }
         }
         
@@ -16166,7 +16164,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentShippingCityPlaceholder");
+                return Resource.GetString("PaymentShippingCityPlaceholder");
             }
         }
         
@@ -16177,7 +16175,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentShippingCountry");
+                return Resource.GetString("PaymentShippingCountry");
             }
         }
         
@@ -16188,7 +16186,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentShippingEmailPlaceholder");
+                return Resource.GetString("PaymentShippingEmailPlaceholder");
             }
         }
         
@@ -16199,7 +16197,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentShippingInfo");
+                return Resource.GetString("PaymentShippingInfo");
             }
         }
         
@@ -16210,7 +16208,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentShippingName");
+                return Resource.GetString("PaymentShippingName");
             }
         }
         
@@ -16221,7 +16219,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentShippingPhoneNumber");
+                return Resource.GetString("PaymentShippingPhoneNumber");
             }
         }
         
@@ -16232,7 +16230,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentShippingReceiver");
+                return Resource.GetString("PaymentShippingReceiver");
             }
         }
         
@@ -16243,7 +16241,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentShippingSave");
+                return Resource.GetString("PaymentShippingSave");
             }
         }
         
@@ -16254,7 +16252,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentShippingSaveInfo");
+                return Resource.GetString("PaymentShippingSaveInfo");
             }
         }
         
@@ -16265,7 +16263,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentShippingStatePlaceholder");
+                return Resource.GetString("PaymentShippingStatePlaceholder");
             }
         }
         
@@ -16276,7 +16274,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentShippingZipPlaceholder");
+                return Resource.GetString("PaymentShippingZipPlaceholder");
             }
         }
         
@@ -16287,7 +16285,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentSuccessfullyPaid");
+                return Resource.GetString("PaymentSuccessfullyPaid");
             }
         }
         
@@ -16298,7 +16296,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentSuccessfullyPaidNoItem");
+                return Resource.GetString("PaymentSuccessfullyPaidNoItem");
             }
         }
         
@@ -16309,7 +16307,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentTestInvoice");
+                return Resource.GetString("PaymentTestInvoice");
             }
         }
         
@@ -16320,7 +16318,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentTipOptional");
+                return Resource.GetString("PaymentTipOptional");
             }
         }
         
@@ -16331,7 +16329,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentTransactionMessage");
+                return Resource.GetString("PaymentTransactionMessage");
             }
         }
         
@@ -16342,7 +16340,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentTransactionReview");
+                return Resource.GetString("PaymentTransactionReview");
             }
         }
         
@@ -16353,7 +16351,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentTransactionTotal");
+                return Resource.GetString("PaymentTransactionTotal");
             }
         }
         
@@ -16364,7 +16362,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentWarning");
+                return Resource.GetString("PaymentWarning");
             }
         }
         
@@ -16377,7 +16375,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PaymentWarningText");
+                return Resource.GetString("PaymentWarningText");
             }
         }
         
@@ -16388,7 +16386,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PeopleNearby");
+                return Resource.GetString("PeopleNearby");
             }
         }
         
@@ -16399,7 +16397,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PeopleNearbyEmpty");
+                return Resource.GetString("PeopleNearbyEmpty");
             }
         }
         
@@ -16410,7 +16408,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PeopleNearbyHeader");
+                return Resource.GetString("PeopleNearbyHeader");
             }
         }
         
@@ -16421,7 +16419,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PeopleNearbyInfo");
+                return Resource.GetString("PeopleNearbyInfo");
             }
         }
         
@@ -16432,7 +16430,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PermissionNoAudio");
+                return Resource.GetString("PermissionNoAudio");
             }
         }
         
@@ -16443,7 +16441,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PermissionNoAudioVideo");
+                return Resource.GetString("PermissionNoAudioVideo");
             }
         }
         
@@ -16454,7 +16452,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PermissionNoCamera");
+                return Resource.GetString("PermissionNoCamera");
             }
         }
         
@@ -16465,7 +16463,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PermissionNoLocationPosition");
+                return Resource.GetString("PermissionNoLocationPosition");
             }
         }
         
@@ -16476,7 +16474,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PermissionOpenSettings");
+                return Resource.GetString("PermissionOpenSettings");
             }
         }
         
@@ -16487,7 +16485,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Phone");
+                return Resource.GetString("Phone");
             }
         }
         
@@ -16498,7 +16496,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PhoneNumber");
+                return Resource.GetString("PhoneNumber");
             }
         }
         
@@ -16509,7 +16507,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PhoneNumberAlert");
+                return Resource.GetString("PhoneNumberAlert");
             }
         }
         
@@ -16520,7 +16518,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PhoneNumberChange2");
+                return Resource.GetString("PhoneNumberChange2");
             }
         }
         
@@ -16531,7 +16529,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PhoneNumberFlood");
+                return Resource.GetString("PhoneNumberFlood");
             }
         }
         
@@ -16542,7 +16540,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PhoneNumberHelp");
+                return Resource.GetString("PhoneNumberHelp");
             }
         }
         
@@ -16553,7 +16551,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PhotoForRestDescription");
+                return Resource.GetString("PhotoForRestDescription");
             }
         }
         
@@ -16564,7 +16562,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Photos_one");
+                return Resource.GetString("Photos_one");
             }
         }
         
@@ -16575,7 +16573,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Photos_other");
+                return Resource.GetString("Photos_other");
             }
         }
         
@@ -16586,7 +16584,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PinAlsoFor");
+                return Resource.GetString("PinAlsoFor");
             }
         }
         
@@ -16597,7 +16595,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PinChatsLimitSubtitle");
+                return Resource.GetString("PinChatsLimitSubtitle");
             }
         }
         
@@ -16608,7 +16606,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PinChatsLimitTitle");
+                return Resource.GetString("PinChatsLimitTitle");
             }
         }
         
@@ -16619,7 +16617,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Ping");
+                return Resource.GetString("Ping");
             }
         }
         
@@ -16630,7 +16628,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PinMessage");
+                return Resource.GetString("PinMessage");
             }
         }
         
@@ -16641,7 +16639,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PinMessageAlert");
+                return Resource.GetString("PinMessageAlert");
             }
         }
         
@@ -16652,7 +16650,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PinMessageAlertChannel");
+                return Resource.GetString("PinMessageAlertChannel");
             }
         }
         
@@ -16663,7 +16661,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PinMessageAlertChat");
+                return Resource.GetString("PinMessageAlertChat");
             }
         }
         
@@ -16674,7 +16672,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PinMessageAlertTitle");
+                return Resource.GetString("PinMessageAlertTitle");
             }
         }
         
@@ -16685,7 +16683,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PinnedMessage");
+                return Resource.GetString("PinnedMessage");
             }
         }
         
@@ -16696,7 +16694,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PinnedMessages");
+                return Resource.GetString("PinnedMessages");
             }
         }
         
@@ -16707,7 +16705,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PinNotify");
+                return Resource.GetString("PinNotify");
             }
         }
         
@@ -16718,7 +16716,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PinOldMessageAlert");
+                return Resource.GetString("PinOldMessageAlert");
             }
         }
         
@@ -16729,7 +16727,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PinToTop");
+                return Resource.GetString("PinToTop");
             }
         }
         
@@ -16740,7 +16738,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PlainTextRestrictedHint");
+                return Resource.GetString("PlainTextRestrictedHint");
             }
         }
         
@@ -16751,7 +16749,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PleaseEnterCurrentPasswordTransfer");
+                return Resource.GetString("PleaseEnterCurrentPasswordTransfer");
             }
         }
         
@@ -16762,7 +16760,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PleaseEnterFirstPassword");
+                return Resource.GetString("PleaseEnterFirstPassword");
             }
         }
         
@@ -16773,7 +16771,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PleaseReEnterPassword");
+                return Resource.GetString("PleaseReEnterPassword");
             }
         }
         
@@ -16784,7 +16782,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Points_one");
+                return Resource.GetString("Points_one");
             }
         }
         
@@ -16795,7 +16793,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Points_other");
+                return Resource.GetString("Points_other");
             }
         }
         
@@ -16806,7 +16804,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Poll");
+                return Resource.GetString("Poll");
             }
         }
         
@@ -16817,7 +16815,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PollMultiple");
+                return Resource.GetString("PollMultiple");
             }
         }
         
@@ -16828,7 +16826,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PollOptions");
+                return Resource.GetString("PollOptions");
             }
         }
         
@@ -16839,7 +16837,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PollQuiz");
+                return Resource.GetString("PollQuiz");
             }
         }
         
@@ -16850,7 +16848,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PollResults");
+                return Resource.GetString("PollResults");
             }
         }
         
@@ -16861,7 +16859,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PollSubmitVotes");
+                return Resource.GetString("PollSubmitVotes");
             }
         }
         
@@ -16872,7 +16870,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PollViewResults");
+                return Resource.GetString("PollViewResults");
             }
         }
         
@@ -16883,7 +16881,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PopularReactions");
+                return Resource.GetString("PopularReactions");
             }
         }
         
@@ -16894,7 +16892,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PostingMembers");
+                return Resource.GetString("PostingMembers");
             }
         }
         
@@ -16905,7 +16903,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PowerUsage");
+                return Resource.GetString("PowerUsage");
             }
         }
         
@@ -16916,7 +16914,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PremiumMore");
+                return Resource.GetString("PremiumMore");
             }
         }
         
@@ -16927,7 +16925,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PremiumPreviewAdvancedChatManagement");
+                return Resource.GetString("PremiumPreviewAdvancedChatManagement");
             }
         }
         
@@ -16938,7 +16936,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PremiumPreviewAdvancedChatManagementDescription");
+                return Resource.GetString("PremiumPreviewAdvancedChatManagementDescription");
             }
         }
         
@@ -16949,7 +16947,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PremiumPreviewAnimatedProfiles");
+                return Resource.GetString("PremiumPreviewAnimatedProfiles");
             }
         }
         
@@ -16960,7 +16958,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PremiumPreviewAnimatedProfilesDescription");
+                return Resource.GetString("PremiumPreviewAnimatedProfilesDescription");
             }
         }
         
@@ -16971,7 +16969,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PremiumPreviewAppIcon");
+                return Resource.GetString("PremiumPreviewAppIcon");
             }
         }
         
@@ -16982,7 +16980,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PremiumPreviewAppIconDescription");
+                return Resource.GetString("PremiumPreviewAppIconDescription");
             }
         }
         
@@ -16993,7 +16991,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PremiumPreviewDownloadSpeed");
+                return Resource.GetString("PremiumPreviewDownloadSpeed");
             }
         }
         
@@ -17004,7 +17002,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PremiumPreviewDownloadSpeedDescription");
+                return Resource.GetString("PremiumPreviewDownloadSpeedDescription");
             }
         }
         
@@ -17015,7 +17013,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PremiumPreviewEmoji");
+                return Resource.GetString("PremiumPreviewEmoji");
             }
         }
         
@@ -17026,7 +17024,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PremiumPreviewEmojiDescription");
+                return Resource.GetString("PremiumPreviewEmojiDescription");
             }
         }
         
@@ -17037,7 +17035,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PremiumPreviewEmojiStatus");
+                return Resource.GetString("PremiumPreviewEmojiStatus");
             }
         }
         
@@ -17048,7 +17046,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PremiumPreviewEmojiStatusDescription");
+                return Resource.GetString("PremiumPreviewEmojiStatusDescription");
             }
         }
         
@@ -17059,7 +17057,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PremiumPreviewLimits");
+                return Resource.GetString("PremiumPreviewLimits");
             }
         }
         
@@ -17070,7 +17068,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PremiumPreviewLimitsDescription");
+                return Resource.GetString("PremiumPreviewLimitsDescription");
             }
         }
         
@@ -17081,7 +17079,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PremiumPreviewNoAds");
+                return Resource.GetString("PremiumPreviewNoAds");
             }
         }
         
@@ -17092,7 +17090,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PremiumPreviewNoAdsDescription");
+                return Resource.GetString("PremiumPreviewNoAdsDescription");
             }
         }
         
@@ -17103,7 +17101,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PremiumPreviewProfileBadge");
+                return Resource.GetString("PremiumPreviewProfileBadge");
             }
         }
         
@@ -17114,7 +17112,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PremiumPreviewProfileBadgeDescription");
+                return Resource.GetString("PremiumPreviewProfileBadgeDescription");
             }
         }
         
@@ -17125,7 +17123,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PremiumPreviewReactions2");
+                return Resource.GetString("PremiumPreviewReactions2");
             }
         }
         
@@ -17136,7 +17134,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PremiumPreviewReactions2Description");
+                return Resource.GetString("PremiumPreviewReactions2Description");
             }
         }
         
@@ -17147,7 +17145,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PremiumPreviewStickers");
+                return Resource.GetString("PremiumPreviewStickers");
             }
         }
         
@@ -17158,7 +17156,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PremiumPreviewStickersDescription");
+                return Resource.GetString("PremiumPreviewStickersDescription");
             }
         }
         
@@ -17169,7 +17167,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PremiumPreviewUploads");
+                return Resource.GetString("PremiumPreviewUploads");
             }
         }
         
@@ -17180,7 +17178,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PremiumPreviewUploadsDescription");
+                return Resource.GetString("PremiumPreviewUploadsDescription");
             }
         }
         
@@ -17191,7 +17189,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PremiumPreviewVoiceToText");
+                return Resource.GetString("PremiumPreviewVoiceToText");
             }
         }
         
@@ -17202,7 +17200,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PremiumPreviewVoiceToTextDescription");
+                return Resource.GetString("PremiumPreviewVoiceToTextDescription");
             }
         }
         
@@ -17213,7 +17211,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PremiumStickers");
+                return Resource.GetString("PremiumStickers");
             }
         }
         
@@ -17224,7 +17222,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PreviewFeedback2");
+                return Resource.GetString("PreviewFeedback2");
             }
         }
         
@@ -17235,7 +17233,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PricePerMonth");
+                return Resource.GetString("PricePerMonth");
             }
         }
         
@@ -17246,7 +17244,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PrivacyAdvanced");
+                return Resource.GetString("PrivacyAdvanced");
             }
         }
         
@@ -17257,7 +17255,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PrivacyBots");
+                return Resource.GetString("PrivacyBots");
             }
         }
         
@@ -17268,7 +17266,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PrivacyBotsInfo");
+                return Resource.GetString("PrivacyBotsInfo");
             }
         }
         
@@ -17279,7 +17277,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PrivacyCallsP2PHelp");
+                return Resource.GetString("PrivacyCallsP2PHelp");
             }
         }
         
@@ -17290,7 +17288,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PrivacyClearPayment");
+                return Resource.GetString("PrivacyClearPayment");
             }
         }
         
@@ -17301,7 +17299,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PrivacyClearShipping");
+                return Resource.GetString("PrivacyClearShipping");
             }
         }
         
@@ -17312,7 +17310,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PrivacyDeleteCloudDrafts");
+                return Resource.GetString("PrivacyDeleteCloudDrafts");
             }
         }
         
@@ -17323,7 +17321,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PrivacyForwards");
+                return Resource.GetString("PrivacyForwards");
             }
         }
         
@@ -17334,7 +17332,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PrivacyForwardsContacts");
+                return Resource.GetString("PrivacyForwardsContacts");
             }
         }
         
@@ -17345,7 +17343,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PrivacyForwardsEverybody");
+                return Resource.GetString("PrivacyForwardsEverybody");
             }
         }
         
@@ -17356,7 +17354,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PrivacyForwardsInfo");
+                return Resource.GetString("PrivacyForwardsInfo");
             }
         }
         
@@ -17367,7 +17365,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PrivacyForwardsInfo2");
+                return Resource.GetString("PrivacyForwardsInfo2");
             }
         }
         
@@ -17378,7 +17376,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PrivacyForwardsMessageLine");
+                return Resource.GetString("PrivacyForwardsMessageLine");
             }
         }
         
@@ -17389,7 +17387,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PrivacyForwardsNobody");
+                return Resource.GetString("PrivacyForwardsNobody");
             }
         }
         
@@ -17400,7 +17398,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PrivacyForwardsTitle");
+                return Resource.GetString("PrivacyForwardsTitle");
             }
         }
         
@@ -17411,7 +17409,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PrivacyLastSeen");
+                return Resource.GetString("PrivacyLastSeen");
             }
         }
         
@@ -17422,7 +17420,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PrivacyP2P");
+                return Resource.GetString("PrivacyP2P");
             }
         }
         
@@ -17433,7 +17431,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PrivacyP2P2");
+                return Resource.GetString("PrivacyP2P2");
             }
         }
         
@@ -17444,7 +17442,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PrivacyP2PHeader");
+                return Resource.GetString("PrivacyP2PHeader");
             }
         }
         
@@ -17455,7 +17453,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PrivacyPayments");
+                return Resource.GetString("PrivacyPayments");
             }
         }
         
@@ -17466,7 +17464,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PrivacyPaymentsClear");
+                return Resource.GetString("PrivacyPaymentsClear");
             }
         }
         
@@ -17477,7 +17475,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PrivacyPhone");
+                return Resource.GetString("PrivacyPhone");
             }
         }
         
@@ -17488,7 +17486,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PrivacyPhoneInfo");
+                return Resource.GetString("PrivacyPhoneInfo");
             }
         }
         
@@ -17499,7 +17497,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PrivacyPhoneInfo2");
+                return Resource.GetString("PrivacyPhoneInfo2");
             }
         }
         
@@ -17510,7 +17508,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PrivacyPhoneInfo3");
+                return Resource.GetString("PrivacyPhoneInfo3");
             }
         }
         
@@ -17521,7 +17519,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PrivacyPhoneInfo4");
+                return Resource.GetString("PrivacyPhoneInfo4");
             }
         }
         
@@ -17532,7 +17530,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PrivacyPhoneTitle");
+                return Resource.GetString("PrivacyPhoneTitle");
             }
         }
         
@@ -17543,7 +17541,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PrivacyPhoneTitle2");
+                return Resource.GetString("PrivacyPhoneTitle2");
             }
         }
         
@@ -17554,7 +17552,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PrivacyPolicy");
+                return Resource.GetString("PrivacyPolicy");
             }
         }
         
@@ -17565,7 +17563,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PrivacyPolicyAndTerms");
+                return Resource.GetString("PrivacyPolicyAndTerms");
             }
         }
         
@@ -17576,7 +17574,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PrivacyPolicyUrl");
+                return Resource.GetString("PrivacyPolicyUrl");
             }
         }
         
@@ -17587,7 +17585,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PrivacyProfilePhoto");
+                return Resource.GetString("PrivacyProfilePhoto");
             }
         }
         
@@ -17598,7 +17596,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PrivacyProfilePhotoInfo");
+                return Resource.GetString("PrivacyProfilePhotoInfo");
             }
         }
         
@@ -17609,7 +17607,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PrivacyProfilePhotoInfo2");
+                return Resource.GetString("PrivacyProfilePhotoInfo2");
             }
         }
         
@@ -17620,7 +17618,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PrivacyProfilePhotoTitle");
+                return Resource.GetString("PrivacyProfilePhotoTitle");
             }
         }
         
@@ -17631,7 +17629,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PrivacySettings");
+                return Resource.GetString("PrivacySettings");
             }
         }
         
@@ -17642,7 +17640,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PrivacyTitle");
+                return Resource.GetString("PrivacyTitle");
             }
         }
         
@@ -17653,7 +17651,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PrivacyVoiceMessages");
+                return Resource.GetString("PrivacyVoiceMessages");
             }
         }
         
@@ -17664,7 +17662,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PrivacyVoiceMessagesInfo");
+                return Resource.GetString("PrivacyVoiceMessagesInfo");
             }
         }
         
@@ -17675,7 +17673,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PrivacyVoiceMessagesInfo2");
+                return Resource.GetString("PrivacyVoiceMessagesInfo2");
             }
         }
         
@@ -17686,7 +17684,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PrivacyVoiceMessagesPremiumOnly");
+                return Resource.GetString("PrivacyVoiceMessagesPremiumOnly");
             }
         }
         
@@ -17697,7 +17695,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PrivacyVoiceMessagesTitle");
+                return Resource.GetString("PrivacyVoiceMessagesTitle");
             }
         }
         
@@ -17708,7 +17706,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PrivateChats");
+                return Resource.GetString("PrivateChats");
             }
         }
         
@@ -17719,7 +17717,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PrivateShares");
+                return Resource.GetString("PrivateShares");
             }
         }
         
@@ -17730,7 +17728,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Proxy");
+                return Resource.GetString("Proxy");
             }
         }
         
@@ -17741,7 +17739,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ProxyConnections");
+                return Resource.GetString("ProxyConnections");
             }
         }
         
@@ -17752,7 +17750,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ProxyCredentials");
+                return Resource.GetString("ProxyCredentials");
             }
         }
         
@@ -17763,7 +17761,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ProxyCredentialsOptional");
+                return Resource.GetString("ProxyCredentialsOptional");
             }
         }
         
@@ -17774,7 +17772,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ProxyDetails");
+                return Resource.GetString("ProxyDetails");
             }
         }
         
@@ -17785,7 +17783,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ProxySettings");
+                return Resource.GetString("ProxySettings");
             }
         }
         
@@ -17796,7 +17794,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PsaHide");
+                return Resource.GetString("PsaHide");
             }
         }
         
@@ -17807,7 +17805,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PsaHideChatAlertText");
+                return Resource.GetString("PsaHideChatAlertText");
             }
         }
         
@@ -17818,7 +17816,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PsaHideChatAlertTitle");
+                return Resource.GetString("PsaHideChatAlertTitle");
             }
         }
         
@@ -17829,7 +17827,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PsaMessageDefault");
+                return Resource.GetString("PsaMessageDefault");
             }
         }
         
@@ -17840,7 +17838,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PsaMessageInfoDefault");
+                return Resource.GetString("PsaMessageInfoDefault");
             }
         }
         
@@ -17851,7 +17849,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PsaTypeDefault");
+                return Resource.GetString("PsaTypeDefault");
             }
         }
         
@@ -17862,7 +17860,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PublicLinksLimitSubtitle");
+                return Resource.GetString("PublicLinksLimitSubtitle");
             }
         }
         
@@ -17873,7 +17871,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PublicLinksLimitTitle");
+                return Resource.GetString("PublicLinksLimitTitle");
             }
         }
         
@@ -17884,7 +17882,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PublicPhoto");
+                return Resource.GetString("PublicPhoto");
             }
         }
         
@@ -17895,7 +17893,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PublicPoll");
+                return Resource.GetString("PublicPoll");
             }
         }
         
@@ -17906,7 +17904,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("PublicShares");
+                return Resource.GetString("PublicShares");
             }
         }
         
@@ -17917,7 +17915,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("QrCode");
+                return Resource.GetString("QrCode");
             }
         }
         
@@ -17928,7 +17926,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Question");
+                return Resource.GetString("Question");
             }
         }
         
@@ -17939,7 +17937,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("QuestionHint");
+                return Resource.GetString("QuestionHint");
             }
         }
         
@@ -17950,7 +17948,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("QuizInfo");
+                return Resource.GetString("QuizInfo");
             }
         }
         
@@ -17961,7 +17959,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("QuizPoll");
+                return Resource.GetString("QuizPoll");
             }
         }
         
@@ -17972,7 +17970,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Reactions");
+                return Resource.GetString("Reactions");
             }
         }
         
@@ -17983,7 +17981,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ReactionsOff");
+                return Resource.GetString("ReactionsOff");
             }
         }
         
@@ -17994,7 +17992,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Recent");
+                return Resource.GetString("Recent");
             }
         }
         
@@ -18005,7 +18003,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("RecentlyDownloaded");
+                return Resource.GetString("RecentlyDownloaded");
             }
         }
         
@@ -18016,7 +18014,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("RecentPosts");
+                return Resource.GetString("RecentPosts");
             }
         }
         
@@ -18027,7 +18025,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("RecentStickers");
+                return Resource.GetString("RecentStickers");
             }
         }
         
@@ -18038,7 +18036,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("RecordingAudio");
+                return Resource.GetString("RecordingAudio");
             }
         }
         
@@ -18049,7 +18047,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("RecordingRound");
+                return Resource.GetString("RecordingRound");
             }
         }
         
@@ -18060,7 +18058,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("RecoveryEmail");
+                return Resource.GetString("RecoveryEmail");
             }
         }
         
@@ -18071,7 +18069,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("RecoveryEmailTitle");
+                return Resource.GetString("RecoveryEmailTitle");
             }
         }
         
@@ -18082,7 +18080,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Red");
+                return Resource.GetString("Red");
             }
         }
         
@@ -18093,7 +18091,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Redo");
+                return Resource.GetString("Redo");
             }
         }
         
@@ -18104,7 +18102,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ReEnterYourPasscode");
+                return Resource.GetString("ReEnterYourPasscode");
             }
         }
         
@@ -18115,7 +18113,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("RegisterText");
+                return Resource.GetString("RegisterText");
             }
         }
         
@@ -18126,7 +18124,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("RegisterText2");
+                return Resource.GetString("RegisterText2");
             }
         }
         
@@ -18137,7 +18135,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Regular");
+                return Resource.GetString("Regular");
             }
         }
         
@@ -18148,7 +18146,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Reminders");
+                return Resource.GetString("Reminders");
             }
         }
         
@@ -18159,7 +18157,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Remove");
+                return Resource.GetString("Remove");
             }
         }
         
@@ -18170,7 +18168,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("RemovePhotoForRestDescription");
+                return Resource.GetString("RemovePhotoForRestDescription");
             }
         }
         
@@ -18181,7 +18179,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("RemovePublicPhoto");
+                return Resource.GetString("RemovePublicPhoto");
             }
         }
         
@@ -18192,7 +18190,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Rename");
+                return Resource.GetString("Rename");
             }
         }
         
@@ -18203,7 +18201,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("RenameCurrentDevice");
+                return Resource.GetString("RenameCurrentDevice");
             }
         }
         
@@ -18214,7 +18212,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ReplaceEmoji");
+                return Resource.GetString("ReplaceEmoji");
             }
         }
         
@@ -18225,7 +18223,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Replies_one");
+                return Resource.GetString("Replies_one");
             }
         }
         
@@ -18236,7 +18234,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Replies_other");
+                return Resource.GetString("Replies_other");
             }
         }
         
@@ -18247,7 +18245,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("RepliesTitle");
+                return Resource.GetString("RepliesTitle");
             }
         }
         
@@ -18258,7 +18256,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Reply");
+                return Resource.GetString("Reply");
             }
         }
         
@@ -18269,7 +18267,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ReportChat");
+                return Resource.GetString("ReportChat");
             }
         }
         
@@ -18280,7 +18278,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ReportChatChild");
+                return Resource.GetString("ReportChatChild");
             }
         }
         
@@ -18291,7 +18289,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ReportChatDescription");
+                return Resource.GetString("ReportChatDescription");
             }
         }
         
@@ -18302,7 +18300,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ReportChatIllegalDrugs");
+                return Resource.GetString("ReportChatIllegalDrugs");
             }
         }
         
@@ -18313,7 +18311,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ReportChatOther");
+                return Resource.GetString("ReportChatOther");
             }
         }
         
@@ -18324,7 +18322,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ReportChatPersonalDetails");
+                return Resource.GetString("ReportChatPersonalDetails");
             }
         }
         
@@ -18335,7 +18333,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ReportChatPornography");
+                return Resource.GetString("ReportChatPornography");
             }
         }
         
@@ -18346,7 +18344,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ReportChatSpam");
+                return Resource.GetString("ReportChatSpam");
             }
         }
         
@@ -18357,7 +18355,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ReportChatViolence");
+                return Resource.GetString("ReportChatViolence");
             }
         }
         
@@ -18368,7 +18366,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ReportFalsePositive");
+                return Resource.GetString("ReportFalsePositive");
             }
         }
         
@@ -18379,7 +18377,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ReportSpam");
+                return Resource.GetString("ReportSpam");
             }
         }
         
@@ -18390,7 +18388,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ReportSpamAlert");
+                return Resource.GetString("ReportSpamAlert");
             }
         }
         
@@ -18401,7 +18399,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ReportSpamAlertChannel");
+                return Resource.GetString("ReportSpamAlertChannel");
             }
         }
         
@@ -18412,7 +18410,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ReportSpamAlertGroup");
+                return Resource.GetString("ReportSpamAlertGroup");
             }
         }
         
@@ -18423,7 +18421,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ReportSpamAndLeave");
+                return Resource.GetString("ReportSpamAndLeave");
             }
         }
         
@@ -18434,7 +18432,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ReportSpamLocation");
+                return Resource.GetString("ReportSpamLocation");
             }
         }
         
@@ -18445,7 +18443,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ReportSpamUser");
+                return Resource.GetString("ReportSpamUser");
             }
         }
         
@@ -18456,7 +18454,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ReportUnrelatedGroup");
+                return Resource.GetString("ReportUnrelatedGroup");
             }
         }
         
@@ -18469,7 +18467,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ReportUnrelatedGroupText");
+                return Resource.GetString("ReportUnrelatedGroupText");
             }
         }
         
@@ -18480,7 +18478,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ReportUnrelatedGroupTextNoAddress");
+                return Resource.GetString("ReportUnrelatedGroupTextNoAddress");
             }
         }
         
@@ -18491,7 +18489,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Reset");
+                return Resource.GetString("Reset");
             }
         }
         
@@ -18502,7 +18500,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ResetAccountCancelledAlert");
+                return Resource.GetString("ResetAccountCancelledAlert");
             }
         }
         
@@ -18513,7 +18511,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ResetAllNotifications");
+                return Resource.GetString("ResetAllNotifications");
             }
         }
         
@@ -18524,7 +18522,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ResetAutomaticMediaDownload");
+                return Resource.GetString("ResetAutomaticMediaDownload");
             }
         }
         
@@ -18535,7 +18533,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ResetAutomaticMediaDownloadAlert");
+                return Resource.GetString("ResetAutomaticMediaDownloadAlert");
             }
         }
         
@@ -18546,7 +18544,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ResetChatBackgrounds");
+                return Resource.GetString("ResetChatBackgrounds");
             }
         }
         
@@ -18557,7 +18555,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ResetChatBackgroundsAlert");
+                return Resource.GetString("ResetChatBackgroundsAlert");
             }
         }
         
@@ -18568,7 +18566,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ResetChatBackgroundsAlertTitle");
+                return Resource.GetString("ResetChatBackgroundsAlertTitle");
             }
         }
         
@@ -18579,7 +18577,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ResetChatBackgroundsInfo");
+                return Resource.GetString("ResetChatBackgroundsInfo");
             }
         }
         
@@ -18590,7 +18588,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ResetMyAccount");
+                return Resource.GetString("ResetMyAccount");
             }
         }
         
@@ -18601,7 +18599,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ResetMyAccountText");
+                return Resource.GetString("ResetMyAccountText");
             }
         }
         
@@ -18612,7 +18610,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ResetMyAccountWarning");
+                return Resource.GetString("ResetMyAccountWarning");
             }
         }
         
@@ -18623,7 +18621,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ResetMyAccountWarningReset");
+                return Resource.GetString("ResetMyAccountWarningReset");
             }
         }
         
@@ -18634,7 +18632,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ResetMyAccountWarningText");
+                return Resource.GetString("ResetMyAccountWarningText");
             }
         }
         
@@ -18645,7 +18643,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ResetNotificationsAlert");
+                return Resource.GetString("ResetNotificationsAlert");
             }
         }
         
@@ -18656,7 +18654,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ResetStatistics");
+                return Resource.GetString("ResetStatistics");
             }
         }
         
@@ -18667,7 +18665,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ResetStatisticsAlert");
+                return Resource.GetString("ResetStatisticsAlert");
             }
         }
         
@@ -18678,7 +18676,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ResetToOriginalPhoto");
+                return Resource.GetString("ResetToOriginalPhoto");
             }
         }
         
@@ -18689,7 +18687,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ResetToOriginalPhotoMessage");
+                return Resource.GetString("ResetToOriginalPhotoMessage");
             }
         }
         
@@ -18700,7 +18698,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ResetToOriginalPhotoTitle");
+                return Resource.GetString("ResetToOriginalPhotoTitle");
             }
         }
         
@@ -18711,7 +18709,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("RestartTopic");
+                return Resource.GetString("RestartTopic");
             }
         }
         
@@ -18722,7 +18720,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Restore");
+                return Resource.GetString("Restore");
             }
         }
         
@@ -18735,7 +18733,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("RestoreEmailSent");
+                return Resource.GetString("RestoreEmailSent");
             }
         }
         
@@ -18746,7 +18744,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("RestoreEmailSentInfo");
+                return Resource.GetString("RestoreEmailSentInfo");
             }
         }
         
@@ -18757,7 +18755,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("RestoreEmailTrouble");
+                return Resource.GetString("RestoreEmailTrouble");
             }
         }
         
@@ -18768,7 +18766,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("RestorePasswordNoEmailText");
+                return Resource.GetString("RestorePasswordNoEmailText");
             }
         }
         
@@ -18779,7 +18777,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("RestorePasswordNoEmailTitle");
+                return Resource.GetString("RestorePasswordNoEmailTitle");
             }
         }
         
@@ -18790,7 +18788,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Restrictions_one");
+                return Resource.GetString("Restrictions_one");
             }
         }
         
@@ -18801,7 +18799,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Restrictions_other");
+                return Resource.GetString("Restrictions_other");
             }
         }
         
@@ -18812,7 +18810,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("RestrictSavingContent");
+                return Resource.GetString("RestrictSavingContent");
             }
         }
         
@@ -18823,7 +18821,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("RestrictSavingContentInfoChannel");
+                return Resource.GetString("RestrictSavingContentInfoChannel");
             }
         }
         
@@ -18834,7 +18832,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("RestrictSavingContentInfoGroup");
+                return Resource.GetString("RestrictSavingContentInfoGroup");
             }
         }
         
@@ -18845,7 +18843,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ResumeAll");
+                return Resource.GetString("ResumeAll");
             }
         }
         
@@ -18856,7 +18854,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("RetrievingInformation");
+                return Resource.GetString("RetrievingInformation");
             }
         }
         
@@ -18867,7 +18865,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Retry");
+                return Resource.GetString("Retry");
             }
         }
         
@@ -18878,7 +18876,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ReturnToCall");
+                return Resource.GetString("ReturnToCall");
             }
         }
         
@@ -18889,7 +18887,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("RevokeAlert");
+                return Resource.GetString("RevokeAlert");
             }
         }
         
@@ -18900,7 +18898,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("RevokeButton");
+                return Resource.GetString("RevokeButton");
             }
         }
         
@@ -18911,7 +18909,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Revoked");
+                return Resource.GetString("Revoked");
             }
         }
         
@@ -18922,7 +18920,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("RevokeLink");
+                return Resource.GetString("RevokeLink");
             }
         }
         
@@ -18935,7 +18933,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("RevokeLinkAlert");
+                return Resource.GetString("RevokeLinkAlert");
             }
         }
         
@@ -18948,7 +18946,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("RevokeLinkAlertChannel");
+                return Resource.GetString("RevokeLinkAlertChannel");
             }
         }
         
@@ -18959,7 +18957,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Saturation");
+                return Resource.GetString("Saturation");
             }
         }
         
@@ -18970,7 +18968,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Save");
+                return Resource.GetString("Save");
             }
         }
         
@@ -18981,7 +18979,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SaveAs");
+                return Resource.GetString("SaveAs");
             }
         }
         
@@ -18992,7 +18990,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SavedGifsLimitSubtitle");
+                return Resource.GetString("SavedGifsLimitSubtitle");
             }
         }
         
@@ -19003,7 +19001,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SavedGifsLimitTitle");
+                return Resource.GetString("SavedGifsLimitTitle");
             }
         }
         
@@ -19014,7 +19012,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SavedMessages");
+                return Resource.GetString("SavedMessages");
             }
         }
         
@@ -19025,7 +19023,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SaveForNotifications");
+                return Resource.GetString("SaveForNotifications");
             }
         }
         
@@ -19036,7 +19034,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SaveToDownloads");
+                return Resource.GetString("SaveToDownloads");
             }
         }
         
@@ -19047,7 +19045,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SaveToGIFs");
+                return Resource.GetString("SaveToGIFs");
             }
         }
         
@@ -19058,7 +19056,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SavingContentTitle");
+                return Resource.GetString("SavingContentTitle");
             }
         }
         
@@ -19069,7 +19067,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Schedule");
+                return Resource.GetString("Schedule");
             }
         }
         
@@ -19080,7 +19078,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ScheduledMessages");
+                return Resource.GetString("ScheduledMessages");
             }
         }
         
@@ -19091,7 +19089,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ScheduleMessage");
+                return Resource.GetString("ScheduleMessage");
             }
         }
         
@@ -19102,7 +19100,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Search");
+                return Resource.GetString("Search");
             }
         }
         
@@ -19113,7 +19111,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SearchAllChatsShort");
+                return Resource.GetString("SearchAllChatsShort");
             }
         }
         
@@ -19124,7 +19122,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SearchFrom");
+                return Resource.GetString("SearchFrom");
             }
         }
         
@@ -19135,7 +19133,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SearchInSettings");
+                return Resource.GetString("SearchInSettings");
             }
         }
         
@@ -19146,7 +19144,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SearchMembers");
+                return Resource.GetString("SearchMembers");
             }
         }
         
@@ -19157,7 +19155,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SearchMessages");
+                return Resource.GetString("SearchMessages");
             }
         }
         
@@ -19168,7 +19166,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SearchTipToday");
+                return Resource.GetString("SearchTipToday");
             }
         }
         
@@ -19179,7 +19177,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Seconds_one");
+                return Resource.GetString("Seconds_one");
             }
         }
         
@@ -19190,7 +19188,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Seconds_other");
+                return Resource.GetString("Seconds_other");
             }
         }
         
@@ -19201,7 +19199,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SecretChat");
+                return Resource.GetString("SecretChat");
             }
         }
         
@@ -19212,7 +19210,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SecretWebPage");
+                return Resource.GetString("SecretWebPage");
             }
         }
         
@@ -19223,7 +19221,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SecretWebPageInfo");
+                return Resource.GetString("SecretWebPageInfo");
             }
         }
         
@@ -19234,7 +19232,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Select");
+                return Resource.GetString("Select");
             }
         }
         
@@ -19245,7 +19243,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SelectAll");
+                return Resource.GetString("SelectAll");
             }
         }
         
@@ -19256,7 +19254,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SelectContact");
+                return Resource.GetString("SelectContact");
             }
         }
         
@@ -19267,7 +19265,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SelectContacts");
+                return Resource.GetString("SelectContacts");
             }
         }
         
@@ -19278,7 +19276,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SelectDays");
+                return Resource.GetString("SelectDays");
             }
         }
         
@@ -19289,7 +19287,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SelectFromGallery");
+                return Resource.GetString("SelectFromGallery");
             }
         }
         
@@ -19300,7 +19298,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SelectSendAsPeerPremiumHint");
+                return Resource.GetString("SelectSendAsPeerPremiumHint");
             }
         }
         
@@ -19311,7 +19309,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SelectTheme");
+                return Resource.GetString("SelectTheme");
             }
         }
         
@@ -19322,7 +19320,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Send");
+                return Resource.GetString("Send");
             }
         }
         
@@ -19333,7 +19331,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SendAnonymously");
+                return Resource.GetString("SendAnonymously");
             }
         }
         
@@ -19344,7 +19342,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SendAsFile");
+                return Resource.GetString("SendAsFile");
             }
         }
         
@@ -19355,7 +19353,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SendAsFiles");
+                return Resource.GetString("SendAsFiles");
             }
         }
         
@@ -19366,7 +19364,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SendByEnter");
+                return Resource.GetString("SendByEnter");
             }
         }
         
@@ -19377,7 +19375,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SendingAudio");
+                return Resource.GetString("SendingAudio");
             }
         }
         
@@ -19388,7 +19386,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SendingFile");
+                return Resource.GetString("SendingFile");
             }
         }
         
@@ -19399,7 +19397,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SendingGame");
+                return Resource.GetString("SendingGame");
             }
         }
         
@@ -19410,7 +19408,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SendingPhoto");
+                return Resource.GetString("SendingPhoto");
             }
         }
         
@@ -19421,7 +19419,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SendingVideoStatus");
+                return Resource.GetString("SendingVideoStatus");
             }
         }
         
@@ -19432,7 +19430,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SendInviteLink");
+                return Resource.GetString("SendInviteLink");
             }
         }
         
@@ -19443,7 +19441,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SendItems");
+                return Resource.GetString("SendItems");
             }
         }
         
@@ -19454,7 +19452,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SendLocation");
+                return Resource.GetString("SendLocation");
             }
         }
         
@@ -19465,7 +19463,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SendMessage");
+                return Resource.GetString("SendMessage");
             }
         }
         
@@ -19476,7 +19474,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SendMessageAsTitle");
+                return Resource.GetString("SendMessageAsTitle");
             }
         }
         
@@ -19487,7 +19485,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SendMessageRestricted");
+                return Resource.GetString("SendMessageRestricted");
             }
         }
         
@@ -19498,7 +19496,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SendMessageRestrictedForever");
+                return Resource.GetString("SendMessageRestrictedForever");
             }
         }
         
@@ -19509,7 +19507,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SendWithoutCompression");
+                return Resource.GetString("SendWithoutCompression");
             }
         }
         
@@ -19520,7 +19518,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SendWithoutSound");
+                return Resource.GetString("SendWithoutSound");
             }
         }
         
@@ -19531,7 +19529,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SensitiveDisableFiltering");
+                return Resource.GetString("SensitiveDisableFiltering");
             }
         }
         
@@ -19542,7 +19540,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SensitiveInfo");
+                return Resource.GetString("SensitiveInfo");
             }
         }
         
@@ -19553,7 +19551,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SensitiveTitle");
+                return Resource.GetString("SensitiveTitle");
             }
         }
         
@@ -19564,7 +19562,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SentAppCode");
+                return Resource.GetString("SentAppCode");
             }
         }
         
@@ -19575,7 +19573,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SentFragmentCode");
+                return Resource.GetString("SentFragmentCode");
             }
         }
         
@@ -19586,7 +19584,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SentSmsCode");
+                return Resource.GetString("SentSmsCode");
             }
         }
         
@@ -19597,7 +19595,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ServiceNotifications");
+                return Resource.GetString("ServiceNotifications");
             }
         }
         
@@ -19608,7 +19606,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SessionsListInfo");
+                return Resource.GetString("SessionsListInfo");
             }
         }
         
@@ -19619,7 +19617,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SessionsTitle");
+                return Resource.GetString("SessionsTitle");
             }
         }
         
@@ -19630,7 +19628,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Set");
+                return Resource.GetString("Set");
             }
         }
         
@@ -19641,7 +19639,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SetAdditionalPassword");
+                return Resource.GetString("SetAdditionalPassword");
             }
         }
         
@@ -19652,7 +19650,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SetAdditionalPasswordInfo");
+                return Resource.GetString("SetAdditionalPasswordInfo");
             }
         }
         
@@ -19663,7 +19661,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SetAsAdmin");
+                return Resource.GetString("SetAsAdmin");
             }
         }
         
@@ -19674,7 +19672,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SetBackground");
+                return Resource.GetString("SetBackground");
             }
         }
         
@@ -19685,7 +19683,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SetColor");
+                return Resource.GetString("SetColor");
             }
         }
         
@@ -19696,7 +19694,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SetCustomTime");
+                return Resource.GetString("SetCustomTime");
             }
         }
         
@@ -19707,7 +19705,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SetEmojiStatus");
+                return Resource.GetString("SetEmojiStatus");
             }
         }
         
@@ -19718,7 +19716,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SetPasscode");
+                return Resource.GetString("SetPasscode");
             }
         }
         
@@ -19729,7 +19727,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SetPasscodeInfo");
+                return Resource.GetString("SetPasscodeInfo");
             }
         }
         
@@ -19740,7 +19738,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SetPhoto");
+                return Resource.GetString("SetPhoto");
             }
         }
         
@@ -19751,7 +19749,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SetPhotoFor");
+                return Resource.GetString("SetPhotoFor");
             }
         }
         
@@ -19762,7 +19760,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SetPhotoForRest");
+                return Resource.GetString("SetPhotoForRest");
             }
         }
         
@@ -19773,7 +19771,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SetProfilePhoto");
+                return Resource.GetString("SetProfilePhoto");
             }
         }
         
@@ -19784,7 +19782,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SetReminder");
+                return Resource.GetString("SetReminder");
             }
         }
         
@@ -19795,7 +19793,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SetTimer");
+                return Resource.GetString("SetTimer");
             }
         }
         
@@ -19806,7 +19804,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Settings");
+                return Resource.GetString("Settings");
             }
         }
         
@@ -19817,7 +19815,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SettingsSearchFaq");
+                return Resource.GetString("SettingsSearchFaq");
             }
         }
         
@@ -19828,7 +19826,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SettingsSwitchToNightMode");
+                return Resource.GetString("SettingsSwitchToNightMode");
             }
         }
         
@@ -19839,7 +19837,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SetUrlPlaceholder");
+                return Resource.GetString("SetUrlPlaceholder");
             }
         }
         
@@ -19850,7 +19848,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SetUserPhotoAlertMessage");
+                return Resource.GetString("SetUserPhotoAlertMessage");
             }
         }
         
@@ -19861,7 +19859,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ShareComment");
+                return Resource.GetString("ShareComment");
             }
         }
         
@@ -19872,7 +19870,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ShareContact");
+                return Resource.GetString("ShareContact");
             }
         }
         
@@ -19883,7 +19881,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ShareContactTitle");
+                return Resource.GetString("ShareContactTitle");
             }
         }
         
@@ -19894,7 +19892,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Shared_one");
+                return Resource.GetString("Shared_one");
             }
         }
         
@@ -19905,7 +19903,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Shared_other");
+                return Resource.GetString("Shared_other");
             }
         }
         
@@ -19916,7 +19914,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SharedAudioFiles");
+                return Resource.GetString("SharedAudioFiles");
             }
         }
         
@@ -19927,7 +19925,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SharedFilesTab2");
+                return Resource.GetString("SharedFilesTab2");
             }
         }
         
@@ -19938,7 +19936,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SharedGroupsTab2");
+                return Resource.GetString("SharedGroupsTab2");
             }
         }
         
@@ -19949,7 +19947,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SharedLinks");
+                return Resource.GetString("SharedLinks");
             }
         }
         
@@ -19960,7 +19958,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SharedLinksTab2");
+                return Resource.GetString("SharedLinksTab2");
             }
         }
         
@@ -19971,7 +19969,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SharedMedia");
+                return Resource.GetString("SharedMedia");
             }
         }
         
@@ -19982,7 +19980,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SharedMediaTab2");
+                return Resource.GetString("SharedMediaTab2");
             }
         }
         
@@ -19993,7 +19991,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SharedMusicTab2");
+                return Resource.GetString("SharedMusicTab2");
             }
         }
         
@@ -20004,7 +20002,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SharedVoiceTab2");
+                return Resource.GetString("SharedVoiceTab2");
             }
         }
         
@@ -20015,7 +20013,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ShareFile");
+                return Resource.GetString("ShareFile");
             }
         }
         
@@ -20026,7 +20024,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ShareLink");
+                return Resource.GetString("ShareLink");
             }
         }
         
@@ -20037,7 +20035,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ShareMyContactInfo");
+                return Resource.GetString("ShareMyContactInfo");
             }
         }
         
@@ -20048,7 +20046,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ShareMyPhone");
+                return Resource.GetString("ShareMyPhone");
             }
         }
         
@@ -20059,7 +20057,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SharePhoneNumberWith");
+                return Resource.GetString("SharePhoneNumberWith");
             }
         }
         
@@ -20070,7 +20068,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Shares_one");
+                return Resource.GetString("Shares_one");
             }
         }
         
@@ -20081,7 +20079,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Shares_other");
+                return Resource.GetString("Shares_other");
             }
         }
         
@@ -20092,7 +20090,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ShareSendTo");
+                return Resource.GetString("ShareSendTo");
             }
         }
         
@@ -20103,7 +20101,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SharesPerPost");
+                return Resource.GetString("SharesPerPost");
             }
         }
         
@@ -20114,7 +20112,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ShareYouLocationInfo");
+                return Resource.GetString("ShareYouLocationInfo");
             }
         }
         
@@ -20125,7 +20123,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ShareYouLocationTitle");
+                return Resource.GetString("ShareYouLocationTitle");
             }
         }
         
@@ -20136,7 +20134,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ShareYouPhoneNumberTitle");
+                return Resource.GetString("ShareYouPhoneNumberTitle");
             }
         }
         
@@ -20147,7 +20145,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ShortMessageLifetimeForever");
+                return Resource.GetString("ShortMessageLifetimeForever");
             }
         }
         
@@ -20158,7 +20156,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Show");
+                return Resource.GetString("Show");
             }
         }
         
@@ -20169,7 +20167,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ShowAllThemes");
+                return Resource.GetString("ShowAllThemes");
             }
         }
         
@@ -20180,7 +20178,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ShowInChat");
+                return Resource.GetString("ShowInChat");
             }
         }
         
@@ -20191,7 +20189,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ShowInFolder");
+                return Resource.GetString("ShowInFolder");
             }
         }
         
@@ -20202,7 +20200,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ShowNotificationsFor");
+                return Resource.GetString("ShowNotificationsFor");
             }
         }
         
@@ -20213,7 +20211,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ShowNotificationsForInfo");
+                return Resource.GetString("ShowNotificationsForInfo");
             }
         }
         
@@ -20224,7 +20222,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ShowTranslateButton");
+                return Resource.GetString("ShowTranslateButton");
             }
         }
         
@@ -20235,7 +20233,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ShowTrayIcon");
+                return Resource.GetString("ShowTrayIcon");
             }
         }
         
@@ -20246,7 +20244,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ShowVotes_one");
+                return Resource.GetString("ShowVotes_one");
             }
         }
         
@@ -20257,7 +20255,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ShowVotes_other");
+                return Resource.GetString("ShowVotes_other");
             }
         }
         
@@ -20268,7 +20266,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Shuffle");
+                return Resource.GetString("Shuffle");
             }
         }
         
@@ -20279,7 +20277,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SignUp");
+                return Resource.GetString("SignUp");
             }
         }
         
@@ -20290,7 +20288,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SlideToCancel");
+                return Resource.GetString("SlideToCancel");
             }
         }
         
@@ -20301,7 +20299,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Slowmode");
+                return Resource.GetString("Slowmode");
             }
         }
         
@@ -20312,7 +20310,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SlowmodeHours");
+                return Resource.GetString("SlowmodeHours");
             }
         }
         
@@ -20323,7 +20321,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SlowmodeInfoOff");
+                return Resource.GetString("SlowmodeInfoOff");
             }
         }
         
@@ -20334,7 +20332,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SlowmodeInfoSelected");
+                return Resource.GetString("SlowmodeInfoSelected");
             }
         }
         
@@ -20345,7 +20343,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SlowmodeMinutes");
+                return Resource.GetString("SlowmodeMinutes");
             }
         }
         
@@ -20356,7 +20354,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SlowmodeOff");
+                return Resource.GetString("SlowmodeOff");
             }
         }
         
@@ -20367,7 +20365,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SlowmodeSeconds");
+                return Resource.GetString("SlowmodeSeconds");
             }
         }
         
@@ -20378,7 +20376,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SomeReactions");
+                return Resource.GetString("SomeReactions");
             }
         }
         
@@ -20389,7 +20387,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SortedByLastSeen");
+                return Resource.GetString("SortedByLastSeen");
             }
         }
         
@@ -20400,7 +20398,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SortedByName");
+                return Resource.GetString("SortedByName");
             }
         }
         
@@ -20411,7 +20409,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Sound");
+                return Resource.GetString("Sound");
             }
         }
         
@@ -20422,7 +20420,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SoundDefault");
+                return Resource.GetString("SoundDefault");
             }
         }
         
@@ -20433,7 +20431,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SoundOff");
+                return Resource.GetString("SoundOff");
             }
         }
         
@@ -20444,7 +20442,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SoundOn");
+                return Resource.GetString("SoundOn");
             }
         }
         
@@ -20455,7 +20453,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Speaking");
+                return Resource.GetString("Speaking");
             }
         }
         
@@ -20466,7 +20464,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SpeakingWithVolume");
+                return Resource.GetString("SpeakingWithVolume");
             }
         }
         
@@ -20477,7 +20475,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Speed");
+                return Resource.GetString("Speed");
             }
         }
         
@@ -20488,7 +20486,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SpeedFast");
+                return Resource.GetString("SpeedFast");
             }
         }
         
@@ -20499,7 +20497,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SpeedNormal");
+                return Resource.GetString("SpeedNormal");
             }
         }
         
@@ -20510,7 +20508,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SpeedSlow");
+                return Resource.GetString("SpeedSlow");
             }
         }
         
@@ -20521,7 +20519,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SpeedVeryFast");
+                return Resource.GetString("SpeedVeryFast");
             }
         }
         
@@ -20532,7 +20530,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SpeedVerySlow");
+                return Resource.GetString("SpeedVerySlow");
             }
         }
         
@@ -20543,7 +20541,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Spelling");
+                return Resource.GetString("Spelling");
             }
         }
         
@@ -20554,7 +20552,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Spoiler");
+                return Resource.GetString("Spoiler");
             }
         }
         
@@ -20565,7 +20563,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SponsoredMessage");
+                return Resource.GetString("SponsoredMessage");
             }
         }
         
@@ -20576,7 +20574,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Start");
+                return Resource.GetString("Start");
             }
         }
         
@@ -20587,7 +20585,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("StartEncryptedChat");
+                return Resource.GetString("StartEncryptedChat");
             }
         }
         
@@ -20598,7 +20596,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("StartMessaging");
+                return Resource.GetString("StartMessaging");
             }
         }
         
@@ -20610,7 +20608,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("StartText");
+                return Resource.GetString("StartText");
             }
         }
         
@@ -20621,7 +20619,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("StartVoipChannelTitle");
+                return Resource.GetString("StartVoipChannelTitle");
             }
         }
         
@@ -20632,7 +20630,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("StartVoipChatPermission");
+                return Resource.GetString("StartVoipChatPermission");
             }
         }
         
@@ -20643,7 +20641,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("StatisticOverview");
+                return Resource.GetString("StatisticOverview");
             }
         }
         
@@ -20654,7 +20652,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Statistics");
+                return Resource.GetString("Statistics");
             }
         }
         
@@ -20665,7 +20663,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("StatisticViews");
+                return Resource.GetString("StatisticViews");
             }
         }
         
@@ -20676,7 +20674,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Stickers_one");
+                return Resource.GetString("Stickers_one");
             }
         }
         
@@ -20687,7 +20685,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Stickers_other");
+                return Resource.GetString("Stickers_other");
             }
         }
         
@@ -20698,7 +20696,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("StickersAndMasks");
+                return Resource.GetString("StickersAndMasks");
             }
         }
         
@@ -20709,7 +20707,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("StickersBotInfo");
+                return Resource.GetString("StickersBotInfo");
             }
         }
         
@@ -20720,7 +20718,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("StickersCopy");
+                return Resource.GetString("StickersCopy");
             }
         }
         
@@ -20731,7 +20729,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("StickerSets_one");
+                return Resource.GetString("StickerSets_one");
             }
         }
         
@@ -20742,7 +20740,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("StickerSets_other");
+                return Resource.GetString("StickerSets_other");
             }
         }
         
@@ -20753,7 +20751,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("StickersHide");
+                return Resource.GetString("StickersHide");
             }
         }
         
@@ -20764,7 +20762,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("StickersName");
+                return Resource.GetString("StickersName");
             }
         }
         
@@ -20775,7 +20773,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("StickersNameInfo");
+                return Resource.GetString("StickersNameInfo");
             }
         }
         
@@ -20786,7 +20784,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("StickersRemove");
+                return Resource.GetString("StickersRemove");
             }
         }
         
@@ -20797,7 +20795,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("StickersSettings");
+                return Resource.GetString("StickersSettings");
             }
         }
         
@@ -20808,7 +20806,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("StickersShare");
+                return Resource.GetString("StickersShare");
             }
         }
         
@@ -20819,7 +20817,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Stop");
+                return Resource.GetString("Stop");
             }
         }
         
@@ -20830,7 +20828,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("StopPoll");
+                return Resource.GetString("StopPoll");
             }
         }
         
@@ -20841,7 +20839,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("StopPollAlertText");
+                return Resource.GetString("StopPollAlertText");
             }
         }
         
@@ -20852,7 +20850,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("StopPollAlertTitle");
+                return Resource.GetString("StopPollAlertTitle");
             }
         }
         
@@ -20863,7 +20861,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("StoragePath");
+                return Resource.GetString("StoragePath");
             }
         }
         
@@ -20874,7 +20872,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("StorageUsage");
+                return Resource.GetString("StorageUsage");
             }
         }
         
@@ -20885,7 +20883,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Streaming");
+                return Resource.GetString("Streaming");
             }
         }
         
@@ -20896,7 +20894,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Strike");
+                return Resource.GetString("Strike");
             }
         }
         
@@ -20907,7 +20905,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Subscribers_one");
+                return Resource.GetString("Subscribers_one");
             }
         }
         
@@ -20918,7 +20916,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Subscribers_other");
+                return Resource.GetString("Subscribers_other");
             }
         }
         
@@ -20929,7 +20927,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SubscribeToPremium");
+                return Resource.GetString("SubscribeToPremium");
             }
         }
         
@@ -20940,7 +20938,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SuggestAnimatedEmoji");
+                return Resource.GetString("SuggestAnimatedEmoji");
             }
         }
         
@@ -20951,7 +20949,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SuggestAnimatedEmojiInfo");
+                return Resource.GetString("SuggestAnimatedEmojiInfo");
             }
         }
         
@@ -20962,7 +20960,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SuggestContacts");
+                return Resource.GetString("SuggestContacts");
             }
         }
         
@@ -20973,7 +20971,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SuggestContactsAlert");
+                return Resource.GetString("SuggestContactsAlert");
             }
         }
         
@@ -20984,7 +20982,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SuggestContactsInfo");
+                return Resource.GetString("SuggestContactsInfo");
             }
         }
         
@@ -20995,7 +20993,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SuggestPhoto");
+                return Resource.GetString("SuggestPhoto");
             }
         }
         
@@ -21006,7 +21004,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SuggestPhotoAlertMessage");
+                return Resource.GetString("SuggestPhotoAlertMessage");
             }
         }
         
@@ -21017,7 +21015,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SuggestPhotoFor");
+                return Resource.GetString("SuggestPhotoFor");
             }
         }
         
@@ -21028,7 +21026,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SuggestPhotoShort");
+                return Resource.GetString("SuggestPhotoShort");
             }
         }
         
@@ -21039,7 +21037,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SuggestStickers");
+                return Resource.GetString("SuggestStickers");
             }
         }
         
@@ -21050,7 +21048,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SuggestStickersAll");
+                return Resource.GetString("SuggestStickersAll");
             }
         }
         
@@ -21061,7 +21059,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SuggestStickersInstalled");
+                return Resource.GetString("SuggestStickersInstalled");
             }
         }
         
@@ -21072,7 +21070,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SuggestStickersNone");
+                return Resource.GetString("SuggestStickersNone");
             }
         }
         
@@ -21083,7 +21081,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SupportStatus");
+                return Resource.GetString("SupportStatus");
             }
         }
         
@@ -21094,7 +21092,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SyncContacts");
+                return Resource.GetString("SyncContacts");
             }
         }
         
@@ -21105,7 +21103,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SyncContactsDelete");
+                return Resource.GetString("SyncContactsDelete");
             }
         }
         
@@ -21116,7 +21114,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SyncContactsDeleteInfo");
+                return Resource.GetString("SyncContactsDeleteInfo");
             }
         }
         
@@ -21127,7 +21125,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SyncContactsInfoOff");
+                return Resource.GetString("SyncContactsInfoOff");
             }
         }
         
@@ -21138,7 +21136,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SyncContactsInfoOn");
+                return Resource.GetString("SyncContactsInfoOn");
             }
         }
         
@@ -21149,7 +21147,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("SystemTones");
+                return Resource.GetString("SystemTones");
             }
         }
         
@@ -21160,7 +21158,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TelegramFAQ");
+                return Resource.GetString("TelegramFAQ");
             }
         }
         
@@ -21171,7 +21169,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TelegramFaqUrl");
+                return Resource.GetString("TelegramFaqUrl");
             }
         }
         
@@ -21182,7 +21180,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TelegramFeatures");
+                return Resource.GetString("TelegramFeatures");
             }
         }
         
@@ -21193,7 +21191,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TelegramFeaturesUrl");
+                return Resource.GetString("TelegramFeaturesUrl");
             }
         }
         
@@ -21204,7 +21202,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TelegramPremium");
+                return Resource.GetString("TelegramPremium");
             }
         }
         
@@ -21216,7 +21214,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TelegramPremiumSubscribedSubtitle");
+                return Resource.GetString("TelegramPremiumSubscribedSubtitle");
             }
         }
         
@@ -21227,7 +21225,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TelegramPremiumSubscribedTitle");
+                return Resource.GetString("TelegramPremiumSubscribedTitle");
             }
         }
         
@@ -21238,7 +21236,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TelegramPremiumSubtitle");
+                return Resource.GetString("TelegramPremiumSubtitle");
             }
         }
         
@@ -21249,7 +21247,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TelegramTones");
+                return Resource.GetString("TelegramTones");
             }
         }
         
@@ -21260,7 +21258,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Terminate");
+                return Resource.GetString("Terminate");
             }
         }
         
@@ -21271,7 +21269,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TerminateAllSessions");
+                return Resource.GetString("TerminateAllSessions");
             }
         }
         
@@ -21282,7 +21280,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TerminateAllWebSessions");
+                return Resource.GetString("TerminateAllWebSessions");
             }
         }
         
@@ -21293,7 +21291,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TerminateOldSessionHeader");
+                return Resource.GetString("TerminateOldSessionHeader");
             }
         }
         
@@ -21304,7 +21302,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TerminateSession");
+                return Resource.GetString("TerminateSession");
             }
         }
         
@@ -21315,7 +21313,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TerminateSessionQuestion");
+                return Resource.GetString("TerminateSessionQuestion");
             }
         }
         
@@ -21326,7 +21324,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TerminateWebSessionInfo");
+                return Resource.GetString("TerminateWebSessionInfo");
             }
         }
         
@@ -21337,7 +21335,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TerminateWebSessionQuestion");
+                return Resource.GetString("TerminateWebSessionQuestion");
             }
         }
         
@@ -21348,7 +21346,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TerminateWebSessionStop");
+                return Resource.GetString("TerminateWebSessionStop");
             }
         }
         
@@ -21359,7 +21357,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TermsOfService");
+                return Resource.GetString("TermsOfService");
             }
         }
         
@@ -21370,7 +21368,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TextSize");
+                return Resource.GetString("TextSize");
             }
         }
         
@@ -21381,7 +21379,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TextSizeHeader");
+                return Resource.GetString("TextSizeHeader");
             }
         }
         
@@ -21392,7 +21390,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Theme");
+                return Resource.GetString("Theme");
             }
         }
         
@@ -21403,7 +21401,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ThemeClassic");
+                return Resource.GetString("ThemeClassic");
             }
         }
         
@@ -21414,7 +21412,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ThemeDark");
+                return Resource.GetString("ThemeDark");
             }
         }
         
@@ -21425,7 +21423,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ThemeDay");
+                return Resource.GetString("ThemeDay");
             }
         }
         
@@ -21436,7 +21434,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ThemeNight");
+                return Resource.GetString("ThemeNight");
             }
         }
         
@@ -21447,7 +21445,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ThemeNotSupported");
+                return Resource.GetString("ThemeNotSupported");
             }
         }
         
@@ -21458,7 +21456,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ThemePreview");
+                return Resource.GetString("ThemePreview");
             }
         }
         
@@ -21469,7 +21467,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ThemePreviewLine1");
+                return Resource.GetString("ThemePreviewLine1");
             }
         }
         
@@ -21480,7 +21478,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ThemePreviewLine2");
+                return Resource.GetString("ThemePreviewLine2");
             }
         }
         
@@ -21491,7 +21489,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ThemePreviewLine3");
+                return Resource.GetString("ThemePreviewLine3");
             }
         }
         
@@ -21502,7 +21500,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ThemePreviewLine3Reply");
+                return Resource.GetString("ThemePreviewLine3Reply");
             }
         }
         
@@ -21513,7 +21511,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ThemePreviewLine4");
+                return Resource.GetString("ThemePreviewLine4");
             }
         }
         
@@ -21524,7 +21522,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ThemePreviewSongPerformer");
+                return Resource.GetString("ThemePreviewSongPerformer");
             }
         }
         
@@ -21535,7 +21533,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ThemePreviewSongTitle");
+                return Resource.GetString("ThemePreviewSongTitle");
             }
         }
         
@@ -21546,7 +21544,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ThemePreviewTitle");
+                return Resource.GetString("ThemePreviewTitle");
             }
         }
         
@@ -21557,7 +21555,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ThisIsYou");
+                return Resource.GetString("ThisIsYou");
             }
         }
         
@@ -21568,7 +21566,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Times_one");
+                return Resource.GetString("Times_one");
             }
         }
         
@@ -21579,7 +21577,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Times_other");
+                return Resource.GetString("Times_other");
             }
         }
         
@@ -21590,7 +21588,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TodayAt");
+                return Resource.GetString("TodayAt");
             }
         }
         
@@ -21601,7 +21599,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TodayAtFormatted");
+                return Resource.GetString("TodayAtFormatted");
             }
         }
         
@@ -21612,7 +21610,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TodayAtFormattedWithToday");
+                return Resource.GetString("TodayAtFormattedWithToday");
             }
         }
         
@@ -21624,7 +21622,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TooManyTries");
+                return Resource.GetString("TooManyTries");
             }
         }
         
@@ -21635,7 +21633,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TopAdmins");
+                return Resource.GetString("TopAdmins");
             }
         }
         
@@ -21646,7 +21644,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TopDaysOfWeekChartTitle");
+                return Resource.GetString("TopDaysOfWeekChartTitle");
             }
         }
         
@@ -21657,7 +21655,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TopHoursChartTitle");
+                return Resource.GetString("TopHoursChartTitle");
             }
         }
         
@@ -21668,7 +21666,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TopicClosed2");
+                return Resource.GetString("TopicClosed2");
             }
         }
         
@@ -21679,7 +21677,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TopicCreated");
+                return Resource.GetString("TopicCreated");
             }
         }
         
@@ -21690,7 +21688,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TopicProfileStatus");
+                return Resource.GetString("TopicProfileStatus");
             }
         }
         
@@ -21701,7 +21699,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TopicRestarted2");
+                return Resource.GetString("TopicRestarted2");
             }
         }
         
@@ -21712,7 +21710,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Topics");
+                return Resource.GetString("Topics");
             }
         }
         
@@ -21723,7 +21721,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TopicWasClosedAction");
+                return Resource.GetString("TopicWasClosedAction");
             }
         }
         
@@ -21734,7 +21732,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TopicWasCreatedAction");
+                return Resource.GetString("TopicWasCreatedAction");
             }
         }
         
@@ -21745,7 +21743,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TopicWasIconChangedToAction");
+                return Resource.GetString("TopicWasIconChangedToAction");
             }
         }
         
@@ -21756,7 +21754,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TopicWasRenamedToAction");
+                return Resource.GetString("TopicWasRenamedToAction");
             }
         }
         
@@ -21767,7 +21765,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TopicWasRenamedToAction2");
+                return Resource.GetString("TopicWasRenamedToAction2");
             }
         }
         
@@ -21778,7 +21776,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TopicWasReopenedAction");
+                return Resource.GetString("TopicWasReopenedAction");
             }
         }
         
@@ -21789,7 +21787,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TopInviters");
+                return Resource.GetString("TopInviters");
             }
         }
         
@@ -21800,7 +21798,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TopMembers");
+                return Resource.GetString("TopMembers");
             }
         }
         
@@ -21811,7 +21809,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TosAgeText");
+                return Resource.GetString("TosAgeText");
             }
         }
         
@@ -21822,7 +21820,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TosAgeTitle");
+                return Resource.GetString("TosAgeTitle");
             }
         }
         
@@ -21835,7 +21833,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TosDeclineDeleteAccount");
+                return Resource.GetString("TosDeclineDeleteAccount");
             }
         }
         
@@ -21848,7 +21846,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TosUpdateDecline");
+                return Resource.GetString("TosUpdateDecline");
             }
         }
         
@@ -21859,7 +21857,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TotalDataUsage");
+                return Resource.GetString("TotalDataUsage");
             }
         }
         
@@ -21870,7 +21868,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TotalNetworkUsage");
+                return Resource.GetString("TotalNetworkUsage");
             }
         }
         
@@ -21881,7 +21879,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TranslateMessage");
+                return Resource.GetString("TranslateMessage");
             }
         }
         
@@ -21892,7 +21890,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TranslateMessages");
+                return Resource.GetString("TranslateMessages");
             }
         }
         
@@ -21903,7 +21901,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TranslateMessagesInfo1");
+                return Resource.GetString("TranslateMessagesInfo1");
             }
         }
         
@@ -21914,7 +21912,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TranslateMessagesInfo2");
+                return Resource.GetString("TranslateMessagesInfo2");
             }
         }
         
@@ -21925,7 +21923,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TranslationFailedAlert1");
+                return Resource.GetString("TranslationFailedAlert1");
             }
         }
         
@@ -21936,7 +21934,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TranslationFailedAlert2");
+                return Resource.GetString("TranslationFailedAlert2");
             }
         }
         
@@ -21947,7 +21945,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TurnPasswordOff");
+                return Resource.GetString("TurnPasswordOff");
             }
         }
         
@@ -21958,7 +21956,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TurnPasswordOffPassport");
+                return Resource.GetString("TurnPasswordOffPassport");
             }
         }
         
@@ -21969,7 +21967,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TurnPasswordOffQuestion");
+                return Resource.GetString("TurnPasswordOffQuestion");
             }
         }
         
@@ -21980,7 +21978,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TwoStepVerification");
+                return Resource.GetString("TwoStepVerification");
             }
         }
         
@@ -21991,7 +21989,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TypeMessage");
+                return Resource.GetString("TypeMessage");
             }
         }
         
@@ -22002,7 +22000,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TypePrivate");
+                return Resource.GetString("TypePrivate");
             }
         }
         
@@ -22013,7 +22011,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TypePrivateGroup");
+                return Resource.GetString("TypePrivateGroup");
             }
         }
         
@@ -22024,7 +22022,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TypePrivateGroupRestrictedForwards");
+                return Resource.GetString("TypePrivateGroupRestrictedForwards");
             }
         }
         
@@ -22035,7 +22033,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TypePrivateRestrictedForwards");
+                return Resource.GetString("TypePrivateRestrictedForwards");
             }
         }
         
@@ -22046,7 +22044,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TypePublic");
+                return Resource.GetString("TypePublic");
             }
         }
         
@@ -22057,7 +22055,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("TypePublicGroup");
+                return Resource.GetString("TypePublicGroup");
             }
         }
         
@@ -22068,7 +22066,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Typing");
+                return Resource.GetString("Typing");
             }
         }
         
@@ -22079,7 +22077,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Unarchive");
+                return Resource.GetString("Unarchive");
             }
         }
         
@@ -22090,7 +22088,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Unavailable");
+                return Resource.GetString("Unavailable");
             }
         }
         
@@ -22101,7 +22099,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Unban");
+                return Resource.GetString("Unban");
             }
         }
         
@@ -22112,7 +22110,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Unblock");
+                return Resource.GetString("Unblock");
             }
         }
         
@@ -22123,7 +22121,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UnblockText");
+                return Resource.GetString("UnblockText");
             }
         }
         
@@ -22134,7 +22132,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Underline");
+                return Resource.GetString("Underline");
             }
         }
         
@@ -22145,7 +22143,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Undo");
+                return Resource.GetString("Undo");
             }
         }
         
@@ -22156,7 +22154,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UndoAllCustom");
+                return Resource.GetString("UndoAllCustom");
             }
         }
         
@@ -22167,7 +22165,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Unhide");
+                return Resource.GetString("Unhide");
             }
         }
         
@@ -22178,7 +22176,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UnhideFromTop");
+                return Resource.GetString("UnhideFromTop");
             }
         }
         
@@ -22189,7 +22187,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Unlock");
+                return Resource.GetString("Unlock");
             }
         }
         
@@ -22200,7 +22198,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UnlockFingerprint");
+                return Resource.GetString("UnlockFingerprint");
             }
         }
         
@@ -22211,7 +22209,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UnlockPremiumStickers");
+                return Resource.GetString("UnlockPremiumStickers");
             }
         }
         
@@ -22222,7 +22220,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Unmute");
+                return Resource.GetString("Unmute");
             }
         }
         
@@ -22233,7 +22231,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UnmuteNotifications");
+                return Resource.GetString("UnmuteNotifications");
             }
         }
         
@@ -22244,7 +22242,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UnpinAllMessages");
+                return Resource.GetString("UnpinAllMessages");
             }
         }
         
@@ -22255,7 +22253,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UnpinFromTop");
+                return Resource.GetString("UnpinFromTop");
             }
         }
         
@@ -22266,7 +22264,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UnpinMessage");
+                return Resource.GetString("UnpinMessage");
             }
         }
         
@@ -22277,7 +22275,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UnpinMessageAlert");
+                return Resource.GetString("UnpinMessageAlert");
             }
         }
         
@@ -22288,7 +22286,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UnpinMessageAlertTitle");
+                return Resource.GetString("UnpinMessageAlertTitle");
             }
         }
         
@@ -22299,7 +22297,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UnreadMessages");
+                return Resource.GetString("UnreadMessages");
             }
         }
         
@@ -22310,7 +22308,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UnsupportedAttachment");
+                return Resource.GetString("UnsupportedAttachment");
             }
         }
         
@@ -22321,7 +22319,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UnsupportedMedia");
+                return Resource.GetString("UnsupportedMedia");
             }
         }
         
@@ -22332,7 +22330,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Unvote");
+                return Resource.GetString("Unvote");
             }
         }
         
@@ -22343,7 +22341,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Update");
+                return Resource.GetString("Update");
             }
         }
         
@@ -22354,7 +22352,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UpdateApp");
+                return Resource.GetString("UpdateApp");
             }
         }
         
@@ -22365,7 +22363,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UpdatedMinutes_one");
+                return Resource.GetString("UpdatedMinutes_one");
             }
         }
         
@@ -22376,7 +22374,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UpdatedMinutes_other");
+                return Resource.GetString("UpdatedMinutes_other");
             }
         }
         
@@ -22387,7 +22385,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UpdatePhotoForRest");
+                return Resource.GetString("UpdatePhotoForRest");
             }
         }
         
@@ -22398,7 +22396,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UpdatesFrequency");
+                return Resource.GetString("UpdatesFrequency");
             }
         }
         
@@ -22409,7 +22407,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UpdateTelegram");
+                return Resource.GetString("UpdateTelegram");
             }
         }
         
@@ -22420,7 +22418,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UpdateTelegramInfo");
+                return Resource.GetString("UpdateTelegramInfo");
             }
         }
         
@@ -22431,7 +22429,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Updating");
+                return Resource.GetString("Updating");
             }
         }
         
@@ -22442,7 +22440,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UploadSound");
+                return Resource.GetString("UploadSound");
             }
         }
         
@@ -22453,7 +22451,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("URL");
+                return Resource.GetString("URL");
             }
         }
         
@@ -22464,7 +22462,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UseEmoji");
+                return Resource.GetString("UseEmoji");
             }
         }
         
@@ -22475,7 +22473,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UseLessDataAlways");
+                return Resource.GetString("UseLessDataAlways");
             }
         }
         
@@ -22486,7 +22484,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UseLessDataNever");
+                return Resource.GetString("UseLessDataNever");
             }
         }
         
@@ -22497,7 +22495,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UseLessDataOnMobile");
+                return Resource.GetString("UseLessDataOnMobile");
             }
         }
         
@@ -22508,7 +22506,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UseProxyAddress");
+                return Resource.GetString("UseProxyAddress");
             }
         }
         
@@ -22519,7 +22517,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UseProxyInfo");
+                return Resource.GetString("UseProxyInfo");
             }
         }
         
@@ -22530,7 +22528,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UseProxyPassword");
+                return Resource.GetString("UseProxyPassword");
             }
         }
         
@@ -22541,7 +22539,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UseProxyPort");
+                return Resource.GetString("UseProxyPort");
             }
         }
         
@@ -22552,7 +22550,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UseProxySecret");
+                return Resource.GetString("UseProxySecret");
             }
         }
         
@@ -22563,7 +22561,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UseProxySocks5");
+                return Resource.GetString("UseProxySocks5");
             }
         }
         
@@ -22574,7 +22572,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UseProxySponsor");
+                return Resource.GetString("UseProxySponsor");
             }
         }
         
@@ -22585,7 +22583,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UseProxyTelegram");
+                return Resource.GetString("UseProxyTelegram");
             }
         }
         
@@ -22596,7 +22594,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UseProxyTelegramInfo");
+                return Resource.GetString("UseProxyTelegramInfo");
             }
         }
         
@@ -22607,7 +22605,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UseProxyTelegramInfo2");
+                return Resource.GetString("UseProxyTelegramInfo2");
             }
         }
         
@@ -22618,7 +22616,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UseProxyUsername");
+                return Resource.GetString("UseProxyUsername");
             }
         }
         
@@ -22629,7 +22627,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UserAcceptedToGroupAction");
+                return Resource.GetString("UserAcceptedToGroupAction");
             }
         }
         
@@ -22640,7 +22638,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UserBio");
+                return Resource.GetString("UserBio");
             }
         }
         
@@ -22651,7 +22649,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UserBioInfo");
+                return Resource.GetString("UserBioInfo");
             }
         }
         
@@ -22662,7 +22660,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Username");
+                return Resource.GetString("Username");
             }
         }
         
@@ -22673,7 +22671,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UsernameActivateLink");
+                return Resource.GetString("UsernameActivateLink");
             }
         }
         
@@ -22684,7 +22682,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UsernameActivateLinkProfileMessage");
+                return Resource.GetString("UsernameActivateLinkProfileMessage");
             }
         }
         
@@ -22695,7 +22693,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UsernameAlso");
+                return Resource.GetString("UsernameAlso");
             }
         }
         
@@ -22706,7 +22704,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UsernameAvailable");
+                return Resource.GetString("UsernameAvailable");
             }
         }
         
@@ -22717,7 +22715,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UsernameChecking");
+                return Resource.GetString("UsernameChecking");
             }
         }
         
@@ -22728,7 +22726,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UsernameDeactivateLink");
+                return Resource.GetString("UsernameDeactivateLink");
             }
         }
         
@@ -22739,7 +22737,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UsernameDeactivateLinkProfileMessage");
+                return Resource.GetString("UsernameDeactivateLinkProfileMessage");
             }
         }
         
@@ -22750,7 +22748,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UsernameEmpty");
+                return Resource.GetString("UsernameEmpty");
             }
         }
         
@@ -22763,7 +22761,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UsernameHelp");
+                return Resource.GetString("UsernameHelp");
             }
         }
         
@@ -22775,7 +22773,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UsernameHelpLink");
+                return Resource.GetString("UsernameHelpLink");
             }
         }
         
@@ -22786,7 +22784,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UsernameInUse");
+                return Resource.GetString("UsernameInUse");
             }
         }
         
@@ -22798,7 +22796,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UsernameInUsePurchase");
+                return Resource.GetString("UsernameInUsePurchase");
             }
         }
         
@@ -22809,7 +22807,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UsernameInvalid");
+                return Resource.GetString("UsernameInvalid");
             }
         }
         
@@ -22820,7 +22818,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UsernameInvalidLong");
+                return Resource.GetString("UsernameInvalidLong");
             }
         }
         
@@ -22831,7 +22829,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UsernameInvalidShort");
+                return Resource.GetString("UsernameInvalidShort");
             }
         }
         
@@ -22842,7 +22840,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UsernameInvalidStartNumber");
+                return Resource.GetString("UsernameInvalidStartNumber");
             }
         }
         
@@ -22853,7 +22851,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UsernameLinkActive");
+                return Resource.GetString("UsernameLinkActive");
             }
         }
         
@@ -22864,7 +22862,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UsernameLinkInactive");
+                return Resource.GetString("UsernameLinkInactive");
             }
         }
         
@@ -22875,7 +22873,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UsernamePlaceholder");
+                return Resource.GetString("UsernamePlaceholder");
             }
         }
         
@@ -22886,7 +22884,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UsernamesChannelHeader");
+                return Resource.GetString("UsernamesChannelHeader");
             }
         }
         
@@ -22897,7 +22895,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UsernamesChannelHelp");
+                return Resource.GetString("UsernamesChannelHelp");
             }
         }
         
@@ -22908,7 +22906,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UsernamesProfileHeader");
+                return Resource.GetString("UsernamesProfileHeader");
             }
         }
         
@@ -22919,7 +22917,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UsernamesProfileHelp");
+                return Resource.GetString("UsernamesProfileHelp");
             }
         }
         
@@ -22930,7 +22928,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UserRestricted");
+                return Resource.GetString("UserRestricted");
             }
         }
         
@@ -22941,7 +22939,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UserRestrictions");
+                return Resource.GetString("UserRestrictions");
             }
         }
         
@@ -22952,7 +22950,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UserRestrictionsBlock");
+                return Resource.GetString("UserRestrictionsBlock");
             }
         }
         
@@ -22963,7 +22961,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UserRestrictionsBy");
+                return Resource.GetString("UserRestrictionsBy");
             }
         }
         
@@ -22974,7 +22972,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UserRestrictionsChangeInfo");
+                return Resource.GetString("UserRestrictionsChangeInfo");
             }
         }
         
@@ -22985,7 +22983,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UserRestrictionsDuration");
+                return Resource.GetString("UserRestrictionsDuration");
             }
         }
         
@@ -22996,7 +22994,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UserRestrictionsEmbedLinks");
+                return Resource.GetString("UserRestrictionsEmbedLinks");
             }
         }
         
@@ -23007,7 +23005,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UserRestrictionsInviteUsers");
+                return Resource.GetString("UserRestrictionsInviteUsers");
             }
         }
         
@@ -23018,7 +23016,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UserRestrictionsPinMessages");
+                return Resource.GetString("UserRestrictionsPinMessages");
             }
         }
         
@@ -23029,7 +23027,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UserRestrictionsSend");
+                return Resource.GetString("UserRestrictionsSend");
             }
         }
         
@@ -23040,7 +23038,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UserRestrictionsSendFiles");
+                return Resource.GetString("UserRestrictionsSendFiles");
             }
         }
         
@@ -23051,7 +23049,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UserRestrictionsSendMedia");
+                return Resource.GetString("UserRestrictionsSendMedia");
             }
         }
         
@@ -23062,7 +23060,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UserRestrictionsSendMusic");
+                return Resource.GetString("UserRestrictionsSendMusic");
             }
         }
         
@@ -23073,7 +23071,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UserRestrictionsSendPhotos");
+                return Resource.GetString("UserRestrictionsSendPhotos");
             }
         }
         
@@ -23084,7 +23082,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UserRestrictionsSendPolls");
+                return Resource.GetString("UserRestrictionsSendPolls");
             }
         }
         
@@ -23095,7 +23093,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UserRestrictionsSendRound");
+                return Resource.GetString("UserRestrictionsSendRound");
             }
         }
         
@@ -23106,7 +23104,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UserRestrictionsSendStickers");
+                return Resource.GetString("UserRestrictionsSendStickers");
             }
         }
         
@@ -23117,7 +23115,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UserRestrictionsSendVideos");
+                return Resource.GetString("UserRestrictionsSendVideos");
             }
         }
         
@@ -23128,7 +23126,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UserRestrictionsSendVoices");
+                return Resource.GetString("UserRestrictionsSendVoices");
             }
         }
         
@@ -23139,7 +23137,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UserRestrictionsUntil");
+                return Resource.GetString("UserRestrictionsUntil");
             }
         }
         
@@ -23150,7 +23148,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("UserRestrictionsUntilForever");
+                return Resource.GetString("UserRestrictionsUntilForever");
             }
         }
         
@@ -23161,7 +23159,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Users_one");
+                return Resource.GetString("Users_one");
             }
         }
         
@@ -23172,7 +23170,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Users_other");
+                return Resource.GetString("Users_other");
             }
         }
         
@@ -23183,7 +23181,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ViaBot");
+                return Resource.GetString("ViaBot");
             }
         }
         
@@ -23194,7 +23192,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VideoCall");
+                return Resource.GetString("VideoCall");
             }
         }
         
@@ -23205,7 +23203,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VideoMessagesAutodownload");
+                return Resource.GetString("VideoMessagesAutodownload");
             }
         }
         
@@ -23216,7 +23214,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VideoMessagesRestrictedByPrivacy");
+                return Resource.GetString("VideoMessagesRestrictedByPrivacy");
             }
         }
         
@@ -23227,7 +23225,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Videos_one");
+                return Resource.GetString("Videos_one");
             }
         }
         
@@ -23238,7 +23236,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Videos_other");
+                return Resource.GetString("Videos_other");
             }
         }
         
@@ -23249,7 +23247,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ViewChannelStats");
+                return Resource.GetString("ViewChannelStats");
             }
         }
         
@@ -23260,7 +23258,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ViewDetails");
+                return Resource.GetString("ViewDetails");
             }
         }
         
@@ -23271,7 +23269,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ViewDiscussion");
+                return Resource.GetString("ViewDiscussion");
             }
         }
         
@@ -23282,7 +23280,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ViewInChat");
+                return Resource.GetString("ViewInChat");
             }
         }
         
@@ -23293,7 +23291,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ViewingMembers");
+                return Resource.GetString("ViewingMembers");
             }
         }
         
@@ -23304,7 +23302,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ViewMessageStatistic");
+                return Resource.GetString("ViewMessageStatistic");
             }
         }
         
@@ -23315,7 +23313,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ViewPackPreview");
+                return Resource.GetString("ViewPackPreview");
             }
         }
         
@@ -23326,7 +23324,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ViewPhotoAction");
+                return Resource.GetString("ViewPhotoAction");
             }
         }
         
@@ -23337,7 +23335,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ViewReplies_one");
+                return Resource.GetString("ViewReplies_one");
             }
         }
         
@@ -23348,7 +23346,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ViewReplies_other");
+                return Resource.GetString("ViewReplies_other");
             }
         }
         
@@ -23359,7 +23357,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Views_one");
+                return Resource.GetString("Views_one");
             }
         }
         
@@ -23370,7 +23368,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Views_other");
+                return Resource.GetString("Views_other");
             }
         }
         
@@ -23381,7 +23379,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ViewsBySourceChartTitle");
+                return Resource.GetString("ViewsBySourceChartTitle");
             }
         }
         
@@ -23392,7 +23390,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ViewsPerPost");
+                return Resource.GetString("ViewsPerPost");
             }
         }
         
@@ -23403,7 +23401,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ViewThread");
+                return Resource.GetString("ViewThread");
             }
         }
         
@@ -23414,7 +23412,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ViewVideoAction");
+                return Resource.GetString("ViewVideoAction");
             }
         }
         
@@ -23425,7 +23423,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Voice_one");
+                return Resource.GetString("Voice_one");
             }
         }
         
@@ -23436,7 +23434,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Voice_other");
+                return Resource.GetString("Voice_other");
             }
         }
         
@@ -23447,7 +23445,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoiceMessagesRestrictedByPrivacy");
+                return Resource.GetString("VoiceMessagesRestrictedByPrivacy");
             }
         }
         
@@ -23458,7 +23456,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipBusy");
+                return Resource.GetString("VoipBusy");
             }
         }
         
@@ -23469,7 +23467,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipCallEnded");
+                return Resource.GetString("VoipCallEnded");
             }
         }
         
@@ -23480,7 +23478,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipChannelEditTitle");
+                return Resource.GetString("VoipChannelEditTitle");
             }
         }
         
@@ -23491,7 +23489,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipChannelEndAlertText");
+                return Resource.GetString("VoipChannelEndAlertText");
             }
         }
         
@@ -23502,7 +23500,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipChannelEndAlertTitle");
+                return Resource.GetString("VoipChannelEndAlertTitle");
             }
         }
         
@@ -23513,7 +23511,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipChannelEndChat");
+                return Resource.GetString("VoipChannelEndChat");
             }
         }
         
@@ -23524,7 +23522,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipChannelLeaveAlertEndChat");
+                return Resource.GetString("VoipChannelLeaveAlertEndChat");
             }
         }
         
@@ -23535,7 +23533,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipChannelLeaveAlertText");
+                return Resource.GetString("VoipChannelLeaveAlertText");
             }
         }
         
@@ -23546,7 +23544,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipChannelLeaveAlertTitle");
+                return Resource.GetString("VoipChannelLeaveAlertTitle");
             }
         }
         
@@ -23557,7 +23555,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipChannelScheduledVoiceChat");
+                return Resource.GetString("VoipChannelScheduledVoiceChat");
             }
         }
         
@@ -23568,7 +23566,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipChannelScheduleInfo");
+                return Resource.GetString("VoipChannelScheduleInfo");
             }
         }
         
@@ -23579,7 +23577,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipChannelScheduleVoiceChat");
+                return Resource.GetString("VoipChannelScheduleVoiceChat");
             }
         }
         
@@ -23590,7 +23588,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipChannelStopRecordingText");
+                return Resource.GetString("VoipChannelStopRecordingText");
             }
         }
         
@@ -23601,7 +23599,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipChannelTitle");
+                return Resource.GetString("VoipChannelTitle");
             }
         }
         
@@ -23612,7 +23610,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipChannelVoiceChat");
+                return Resource.GetString("VoipChannelVoiceChat");
             }
         }
         
@@ -23623,7 +23621,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipChatJoin");
+                return Resource.GetString("VoipChatJoin");
             }
         }
         
@@ -23634,7 +23632,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipChatLateBy");
+                return Resource.GetString("VoipChatLateBy");
             }
         }
         
@@ -23645,7 +23643,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipChatShare");
+                return Resource.GetString("VoipChatShare");
             }
         }
         
@@ -23656,7 +23654,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipChatStartScreenCapture");
+                return Resource.GetString("VoipChatStartScreenCapture");
             }
         }
         
@@ -23667,7 +23665,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipChatStartsIn");
+                return Resource.GetString("VoipChatStartsIn");
             }
         }
         
@@ -23678,7 +23676,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipChatStopScreenCapture");
+                return Resource.GetString("VoipChatStopScreenCapture");
             }
         }
         
@@ -23689,7 +23687,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipConnecting");
+                return Resource.GetString("VoipConnecting");
             }
         }
         
@@ -23700,7 +23698,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipEndCall");
+                return Resource.GetString("VoipEndCall");
             }
         }
         
@@ -23711,7 +23709,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipFailed");
+                return Resource.GetString("VoipFailed");
             }
         }
         
@@ -23722,7 +23720,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipFeedbackCommentHint");
+                return Resource.GetString("VoipFeedbackCommentHint");
             }
         }
         
@@ -23733,7 +23731,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupAllCanSpeak");
+                return Resource.GetString("VoipGroupAllCanSpeak");
             }
         }
         
@@ -23744,7 +23742,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupAllowToSpeak");
+                return Resource.GetString("VoipGroupAllowToSpeak");
             }
         }
         
@@ -23755,7 +23753,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupCancelRaiseHand");
+                return Resource.GetString("VoipGroupCancelRaiseHand");
             }
         }
         
@@ -23766,7 +23764,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupCancelReminder");
+                return Resource.GetString("VoipGroupCancelReminder");
             }
         }
         
@@ -23777,7 +23775,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupContinueAs");
+                return Resource.GetString("VoipGroupContinueAs");
             }
         }
         
@@ -23788,7 +23786,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupDisplayAs");
+                return Resource.GetString("VoipGroupDisplayAs");
             }
         }
         
@@ -23799,7 +23797,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupEditPermissions");
+                return Resource.GetString("VoipGroupEditPermissions");
             }
         }
         
@@ -23810,7 +23808,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupEditTitle");
+                return Resource.GetString("VoipGroupEditTitle");
             }
         }
         
@@ -23821,7 +23819,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupEnd");
+                return Resource.GetString("VoipGroupEnd");
             }
         }
         
@@ -23832,7 +23830,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupEndAlertText");
+                return Resource.GetString("VoipGroupEndAlertText");
             }
         }
         
@@ -23843,7 +23841,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupEndAlertTitle");
+                return Resource.GetString("VoipGroupEndAlertTitle");
             }
         }
         
@@ -23854,7 +23852,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupEndChat");
+                return Resource.GetString("VoipGroupEndChat");
             }
         }
         
@@ -23865,7 +23863,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupInviteText");
+                return Resource.GetString("VoipGroupInviteText");
             }
         }
         
@@ -23876,7 +23874,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupJoinAsLinstener");
+                return Resource.GetString("VoipGroupJoinAsLinstener");
             }
         }
         
@@ -23887,7 +23885,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupJoinAsSpeaker");
+                return Resource.GetString("VoipGroupJoinAsSpeaker");
             }
         }
         
@@ -23898,7 +23896,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupJoinCall");
+                return Resource.GetString("VoipGroupJoinCall");
             }
         }
         
@@ -23909,7 +23907,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupLeave");
+                return Resource.GetString("VoipGroupLeave");
             }
         }
         
@@ -23920,7 +23918,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupLeaveAlertEndChat");
+                return Resource.GetString("VoipGroupLeaveAlertEndChat");
             }
         }
         
@@ -23931,7 +23929,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupLeaveAlertText");
+                return Resource.GetString("VoipGroupLeaveAlertText");
             }
         }
         
@@ -23942,7 +23940,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupLeaveAlertTitle");
+                return Resource.GetString("VoipGroupLeaveAlertTitle");
             }
         }
         
@@ -23953,7 +23951,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupMute");
+                return Resource.GetString("VoipGroupMute");
             }
         }
         
@@ -23964,7 +23962,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupMutedForMe");
+                return Resource.GetString("VoipGroupMutedForMe");
             }
         }
         
@@ -23975,7 +23973,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupMuteForMe");
+                return Resource.GetString("VoipGroupMuteForMe");
             }
         }
         
@@ -23986,7 +23984,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupOnlyAdminsCanSpeak");
+                return Resource.GetString("VoipGroupOnlyAdminsCanSpeak");
             }
         }
         
@@ -23997,7 +23995,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupOpenChannel");
+                return Resource.GetString("VoipGroupOpenChannel");
             }
         }
         
@@ -24008,7 +24006,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupOpenChat");
+                return Resource.GetString("VoipGroupOpenChat");
             }
         }
         
@@ -24019,7 +24017,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupOpenGroup");
+                return Resource.GetString("VoipGroupOpenGroup");
             }
         }
         
@@ -24030,7 +24028,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupOpenProfile");
+                return Resource.GetString("VoipGroupOpenProfile");
             }
         }
         
@@ -24041,7 +24039,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupPersonalAccount");
+                return Resource.GetString("VoipGroupPersonalAccount");
             }
         }
         
@@ -24052,7 +24050,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupRecordCall");
+                return Resource.GetString("VoipGroupRecordCall");
             }
         }
         
@@ -24063,7 +24061,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupSaveFileHint");
+                return Resource.GetString("VoipGroupSaveFileHint");
             }
         }
         
@@ -24074,7 +24072,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupScheduledVoiceChat");
+                return Resource.GetString("VoipGroupScheduledVoiceChat");
             }
         }
         
@@ -24085,7 +24083,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupScheduleInfo");
+                return Resource.GetString("VoipGroupScheduleInfo");
             }
         }
         
@@ -24096,7 +24094,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupScheduleVoiceChat");
+                return Resource.GetString("VoipGroupScheduleVoiceChat");
             }
         }
         
@@ -24107,7 +24105,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupSetReminder");
+                return Resource.GetString("VoipGroupSetReminder");
             }
         }
         
@@ -24118,7 +24116,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupShareInviteLink");
+                return Resource.GetString("VoipGroupShareInviteLink");
             }
         }
         
@@ -24129,7 +24127,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupStartAs");
+                return Resource.GetString("VoipGroupStartAs");
             }
         }
         
@@ -24140,7 +24138,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupStartAsInfo");
+                return Resource.GetString("VoipGroupStartAsInfo");
             }
         }
         
@@ -24151,7 +24149,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupStartAsInfoGroup");
+                return Resource.GetString("VoipGroupStartAsInfoGroup");
             }
         }
         
@@ -24162,7 +24160,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupStartNow");
+                return Resource.GetString("VoipGroupStartNow");
             }
         }
         
@@ -24175,7 +24173,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupStartRecordingText");
+                return Resource.GetString("VoipGroupStartRecordingText");
             }
         }
         
@@ -24186,7 +24184,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupStartRecordingTitle");
+                return Resource.GetString("VoipGroupStartRecordingTitle");
             }
         }
         
@@ -24197,7 +24195,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupStopRecordCall");
+                return Resource.GetString("VoipGroupStopRecordCall");
             }
         }
         
@@ -24208,7 +24206,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupStopRecordingText");
+                return Resource.GetString("VoipGroupStopRecordingText");
             }
         }
         
@@ -24219,7 +24217,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupStopRecordingTitle");
+                return Resource.GetString("VoipGroupStopRecordingTitle");
             }
         }
         
@@ -24230,7 +24228,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupTitle");
+                return Resource.GetString("VoipGroupTitle");
             }
         }
         
@@ -24241,7 +24239,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupUnmute");
+                return Resource.GetString("VoipGroupUnmute");
             }
         }
         
@@ -24252,7 +24250,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupUnmuteForMe");
+                return Resource.GetString("VoipGroupUnmuteForMe");
             }
         }
         
@@ -24263,7 +24261,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupVoiceChat");
+                return Resource.GetString("VoipGroupVoiceChat");
             }
         }
         
@@ -24274,7 +24272,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipGroupVolume");
+                return Resource.GetString("VoipGroupVolume");
             }
         }
         
@@ -24285,7 +24283,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipHangingUp");
+                return Resource.GetString("VoipHangingUp");
             }
         }
         
@@ -24296,7 +24294,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipIncoming");
+                return Resource.GetString("VoipIncoming");
             }
         }
         
@@ -24307,7 +24305,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipMute");
+                return Resource.GetString("VoipMute");
             }
         }
         
@@ -24318,7 +24316,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipMutedByAdmin");
+                return Resource.GetString("VoipMutedByAdmin");
             }
         }
         
@@ -24329,7 +24327,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipMutedTapedForSpeak");
+                return Resource.GetString("VoipMutedTapedForSpeak");
             }
         }
         
@@ -24340,7 +24338,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipNoiseCancellation");
+                return Resource.GetString("VoipNoiseCancellation");
             }
         }
         
@@ -24351,7 +24349,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipOngoingAlert");
+                return Resource.GetString("VoipOngoingAlert");
             }
         }
         
@@ -24362,7 +24360,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipOngoingAlertTitle");
+                return Resource.GetString("VoipOngoingAlertTitle");
             }
         }
         
@@ -24373,7 +24371,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipOngoingChatAlert");
+                return Resource.GetString("VoipOngoingChatAlert");
             }
         }
         
@@ -24384,7 +24382,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipOngoingChatAlertTitle");
+                return Resource.GetString("VoipOngoingChatAlertTitle");
             }
         }
         
@@ -24395,7 +24393,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipPeerOutdated");
+                return Resource.GetString("VoipPeerOutdated");
             }
         }
         
@@ -24406,7 +24404,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipPeerVideoOutdated");
+                return Resource.GetString("VoipPeerVideoOutdated");
             }
         }
         
@@ -24417,7 +24415,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipRateCallAlert");
+                return Resource.GetString("VoipRateCallAlert");
             }
         }
         
@@ -24428,7 +24426,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipRecordAudio");
+                return Resource.GetString("VoipRecordAudio");
             }
         }
         
@@ -24439,7 +24437,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipRecordLandscape");
+                return Resource.GetString("VoipRecordLandscape");
             }
         }
         
@@ -24450,7 +24448,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipRecordPortrait");
+                return Resource.GetString("VoipRecordPortrait");
             }
         }
         
@@ -24461,7 +24459,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipRequesting");
+                return Resource.GetString("VoipRequesting");
             }
         }
         
@@ -24472,7 +24470,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipRinging");
+                return Resource.GetString("VoipRinging");
             }
         }
         
@@ -24483,7 +24481,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipStartVideo");
+                return Resource.GetString("VoipStartVideo");
             }
         }
         
@@ -24494,7 +24492,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipStopVideo");
+                return Resource.GetString("VoipStopVideo");
             }
         }
         
@@ -24505,7 +24503,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipTapToMute");
+                return Resource.GetString("VoipTapToMute");
             }
         }
         
@@ -24516,7 +24514,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipUnmute");
+                return Resource.GetString("VoipUnmute");
             }
         }
         
@@ -24527,7 +24525,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipUseLessData");
+                return Resource.GetString("VoipUseLessData");
             }
         }
         
@@ -24538,7 +24536,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipUserCameraIsOff");
+                return Resource.GetString("VoipUserCameraIsOff");
             }
         }
         
@@ -24549,7 +24547,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipUserMicrophoneIsOff");
+                return Resource.GetString("VoipUserMicrophoneIsOff");
             }
         }
         
@@ -24560,7 +24558,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipVideoOnPause");
+                return Resource.GetString("VoipVideoOnPause");
             }
         }
         
@@ -24571,7 +24569,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("VoipWaiting");
+                return Resource.GetString("VoipWaiting");
             }
         }
         
@@ -24582,7 +24580,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Vote_one");
+                return Resource.GetString("Vote_one");
             }
         }
         
@@ -24593,7 +24591,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Vote_other");
+                return Resource.GetString("Vote_other");
             }
         }
         
@@ -24604,7 +24602,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("WaitingForNetwork");
+                return Resource.GetString("WaitingForNetwork");
             }
         }
         
@@ -24615,7 +24613,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("WantsToSpeak");
+                return Resource.GetString("WantsToSpeak");
             }
         }
         
@@ -24626,7 +24624,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Warning");
+                return Resource.GetString("Warning");
             }
         }
         
@@ -24637,7 +24635,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("WebSessionsTitle");
+                return Resource.GetString("WebSessionsTitle");
             }
         }
         
@@ -24648,7 +24646,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Weekly");
+                return Resource.GetString("Weekly");
             }
         }
         
@@ -24659,7 +24657,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Weeks_one");
+                return Resource.GetString("Weeks_one");
             }
         }
         
@@ -24670,7 +24668,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Weeks_other");
+                return Resource.GetString("Weeks_other");
             }
         }
         
@@ -24681,7 +24679,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("White");
+                return Resource.GetString("White");
             }
         }
         
@@ -24692,7 +24690,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("WhoCanAddMe");
+                return Resource.GetString("WhoCanAddMe");
             }
         }
         
@@ -24703,7 +24701,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("WhoCanAddMeInfo");
+                return Resource.GetString("WhoCanAddMeInfo");
             }
         }
         
@@ -24714,7 +24712,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("WhoCanCallMe");
+                return Resource.GetString("WhoCanCallMe");
             }
         }
         
@@ -24725,7 +24723,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("WhoCanCallMeInfo");
+                return Resource.GetString("WhoCanCallMeInfo");
             }
         }
         
@@ -24736,7 +24734,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("WithinAMonth");
+                return Resource.GetString("WithinAMonth");
             }
         }
         
@@ -24747,7 +24745,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("WithinAWeek");
+                return Resource.GetString("WithinAWeek");
             }
         }
         
@@ -24758,7 +24756,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Years_one");
+                return Resource.GetString("Years_one");
             }
         }
         
@@ -24769,7 +24767,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Years_other");
+                return Resource.GetString("Years_other");
             }
         }
         
@@ -24780,7 +24778,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("Yellow");
+                return Resource.GetString("Yellow");
             }
         }
         
@@ -24791,7 +24789,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("YesterdayAtFormatted");
+                return Resource.GetString("YesterdayAtFormatted");
             }
         }
         
@@ -24802,7 +24800,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("YouBlockedUser");
+                return Resource.GetString("YouBlockedUser");
             }
         }
         
@@ -24813,7 +24811,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("YouHaveNewMessage");
+                return Resource.GetString("YouHaveNewMessage");
             }
         }
         
@@ -24824,7 +24822,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("YouLeft");
+                return Resource.GetString("YouLeft");
             }
         }
         
@@ -24835,7 +24833,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("YourCode");
+                return Resource.GetString("YourCode");
             }
         }
         
@@ -24846,7 +24844,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("YourEmail");
+                return Resource.GetString("YourEmail");
             }
         }
         
@@ -24857,7 +24855,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("YourEmailInfo");
+                return Resource.GetString("YourEmailInfo");
             }
         }
         
@@ -24868,7 +24866,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("YourEmailSkip");
+                return Resource.GetString("YourEmailSkip");
             }
         }
         
@@ -24879,7 +24877,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("YourEmailSkipWarning");
+                return Resource.GetString("YourEmailSkipWarning");
             }
         }
         
@@ -24892,7 +24890,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("YourEmailSkipWarningText");
+                return Resource.GetString("YourEmailSkipWarningText");
             }
         }
         
@@ -24903,7 +24901,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("YourName");
+                return Resource.GetString("YourName");
             }
         }
         
@@ -24914,7 +24912,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("YourPhone");
+                return Resource.GetString("YourPhone");
             }
         }
         
@@ -24925,7 +24923,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("YourPublicCommunities");
+                return Resource.GetString("YourPublicCommunities");
             }
         }
         
@@ -24936,7 +24934,7 @@ namespace Telegram.Strings
         {
             get
             {
-                return resourceLoader.GetString("ZoomOut");
+                return Resource.GetString("ZoomOut");
             }
         }
     }
