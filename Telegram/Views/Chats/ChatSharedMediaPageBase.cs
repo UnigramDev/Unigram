@@ -117,17 +117,17 @@ namespace Telegram.Views.Chats
                 }
                 else
                 {
-                    flyout.CreateFlyoutItem(MessageSelect_Loaded, ViewModel.MessageSelectCommand, message, Strings.Resources.Select, new FontIcon { Glyph = Icons.CheckmarkCircle });
+                    flyout.CreateFlyoutItem(MessageSelect_Loaded, ViewModel.MessageSelectCommand, message, Strings.Select, new FontIcon { Glyph = Icons.CheckmarkCircle });
                 }
             }
             else
             {
 
-                flyout.CreateFlyoutItem(MessageView_Loaded, ViewModel.MessageViewCommand, message, Strings.Resources.ShowInChat, new FontIcon { Glyph = Icons.Comment });
-                flyout.CreateFlyoutItem(MessageDelete_Loaded, ViewModel.MessageDeleteCommand, message, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
-                flyout.CreateFlyoutItem(MessageForward_Loaded, ViewModel.MessageForwardCommand, message, Strings.Resources.Forward, new FontIcon { Glyph = Icons.Share });
-                flyout.CreateFlyoutItem(MessageSelect_Loaded, ViewModel.MessageSelectCommand, message, Strings.Resources.Select, new FontIcon { Glyph = Icons.CheckmarkCircle });
-                flyout.CreateFlyoutItem(MessageSave_Loaded, ViewModel.MessageSaveCommand, message, Strings.Resources.SaveAs, new FontIcon { Glyph = Icons.SaveAs });
+                flyout.CreateFlyoutItem(MessageView_Loaded, ViewModel.MessageViewCommand, message, Strings.ShowInChat, new FontIcon { Glyph = Icons.Comment });
+                flyout.CreateFlyoutItem(MessageDelete_Loaded, ViewModel.MessageDeleteCommand, message, Strings.Delete, new FontIcon { Glyph = Icons.Delete });
+                flyout.CreateFlyoutItem(MessageForward_Loaded, ViewModel.MessageForwardCommand, message, Strings.Forward, new FontIcon { Glyph = Icons.Share });
+                flyout.CreateFlyoutItem(MessageSelect_Loaded, ViewModel.MessageSelectCommand, message, Strings.Select, new FontIcon { Glyph = Icons.CheckmarkCircle });
+                flyout.CreateFlyoutItem(MessageSave_Loaded, ViewModel.MessageSaveCommand, message, Strings.SaveAs, new FontIcon { Glyph = Icons.SaveAs });
             }
 
             args.ShowAt(flyout, element);

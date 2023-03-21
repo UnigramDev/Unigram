@@ -23,8 +23,8 @@ namespace Telegram.Views.Settings
         {
             InitializeComponent();
 
-            PrimaryButtonText = Strings.Resources.CacheClear;
-            SecondaryButtonText = Strings.Resources.Close;
+            PrimaryButtonText = Strings.CacheClear;
+            SecondaryButtonText = Strings.Close;
 
             var chat = clientService.GetChat(statistics.ChatId);
 

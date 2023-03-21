@@ -286,12 +286,12 @@ namespace Telegram.ViewModels.Payments
                 var credentials = form.SavedCredentials.Select(x => new ChooseOptionItem(x, x.Title, false));
                 var additional = form.AdditionalPaymentOptions.Select(x => new ChooseOptionItem(x, x.Title, false));
 
-                var items = new[] { new ChooseOptionItem(null, Strings.Resources.PaymentCheckoutMethodNewCard, false) };
+                var items = new[] { new ChooseOptionItem(null, Strings.PaymentCheckoutMethodNewCard, false) };
 
                 var choose = new ChooseOptionPopup(items.Union(credentials).Union(additional));
-                choose.Title = Strings.Resources.PaymentCheckoutMethod;
-                choose.PrimaryButtonText = Strings.Resources.OK;
-                choose.SecondaryButtonText = Strings.Resources.Cancel;
+                choose.Title = Strings.PaymentCheckoutMethod;
+                choose.PrimaryButtonText = Strings.OK;
+                choose.SecondaryButtonText = Strings.Cancel;
 
                 var confirm1 = await ShowPopupAsync(choose);
                 if (confirm1 == ContentDialogResult.Primary)
@@ -362,9 +362,9 @@ namespace Telegram.ViewModels.Payments
                 x => new ChooseOptionItem(x, Converter.ShippingOption(x, _paymentForm.Invoice.Currency), _shipping?.Id == x.Id));
 
             var popup = new ChooseOptionPopup(items);
-            popup.Title = Strings.Resources.PaymentCheckoutShippingMethod;
-            popup.PrimaryButtonText = Strings.Resources.OK;
-            popup.SecondaryButtonText = Strings.Resources.Cancel;
+            popup.Title = Strings.PaymentCheckoutShippingMethod;
+            popup.PrimaryButtonText = Strings.OK;
+            popup.SecondaryButtonText = Strings.Cancel;
 
             var confirm = await ShowPopupAsync(popup);
             if (confirm == ContentDialogResult.Primary && popup.SelectedIndex is ShippingOption index)
@@ -380,9 +380,9 @@ namespace Telegram.ViewModels.Payments
             popup.Maximum = Converter.Amount(_paymentForm.Invoice.MaxTipAmount, _paymentForm.Invoice.Currency);
             popup.Formatter = Locale.GetCurrencyFormatter(_paymentForm.Invoice.Currency);
 
-            popup.Title = Strings.Resources.SearchTipToday;
-            popup.PrimaryButtonText = Strings.Resources.OK;
-            popup.SecondaryButtonText = Strings.Resources.Cancel;
+            popup.Title = Strings.SearchTipToday;
+            popup.PrimaryButtonText = Strings.OK;
+            popup.SecondaryButtonText = Strings.Cancel;
 
             var confirm = await ShowPopupAsync(popup);
             if (confirm == ContentDialogResult.Primary)
@@ -421,9 +421,9 @@ namespace Telegram.ViewModels.Payments
             var bot = ClientService.GetUser(_paymentForm.SellerBotUserId);
             var provider = ClientService.GetUser(_paymentForm.PaymentProviderUserId);
 
-            var disclaimer = await ShowPopupAsync(string.Format(Strings.Resources.PaymentWarningText, bot.FirstName, provider.FirstName), Strings.Resources.PaymentWarning, Strings.Resources.OK);
+            var disclaimer = await ShowPopupAsync(string.Format(Strings.PaymentWarningText, bot.FirstName, provider.FirstName), Strings.PaymentWarning, Strings.OK);
 
-            var confirm = await ShowPopupAsync(string.Format(Strings.Resources.PaymentTransactionMessage, Locale.FormatCurrency(TotalAmount, _paymentForm.Invoice.Currency), bot.FirstName, _title), Strings.Resources.PaymentTransactionReview, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(string.Format(Strings.PaymentTransactionMessage, Locale.FormatCurrency(TotalAmount, _paymentForm.Invoice.Currency), bot.FirstName, _title), Strings.PaymentTransactionReview, Strings.OK, Strings.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -487,9 +487,9 @@ namespace Telegram.ViewModels.Payments
         private async Task<TemporaryPasswordState> CreateTemporaryPasswordAsync()
         {
             var popup = new InputPopup(InputPopupType.Password);
-            popup.Header = string.Format(Strings.Resources.PaymentConfirmationMessage, _paymentForm.SavedCredentials[0].Title);
-            popup.PrimaryButtonText = Strings.Resources.Continue;
-            popup.SecondaryButtonText = Strings.Resources.Cancel;
+            popup.Header = string.Format(Strings.PaymentConfirmationMessage, _paymentForm.SavedCredentials[0].Title);
+            popup.PrimaryButtonText = Strings.Continue;
+            popup.SecondaryButtonText = Strings.Cancel;
 
             var confirm = await ShowPopupAsync(popup);
             if (confirm != ContentDialogResult.Primary)

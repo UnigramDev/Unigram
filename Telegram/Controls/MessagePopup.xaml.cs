@@ -67,9 +67,9 @@ namespace Telegram.Controls
         {
             var popup = new MessagePopup
             {
-                Title = title ?? Strings.Resources.AppName,
+                Title = title ?? Strings.AppName,
                 Message = message,
-                PrimaryButtonText = primary ?? Strings.Resources.OK,
+                PrimaryButtonText = primary ?? Strings.OK,
                 SecondaryButtonText = secondary ?? string.Empty
             };
 
@@ -86,9 +86,9 @@ namespace Telegram.Controls
         {
             var popup = new MessagePopup
             {
-                Title = title ?? Strings.Resources.AppName,
+                Title = title ?? Strings.AppName,
                 FormattedMessage = message,
-                PrimaryButtonText = primary ?? Strings.Resources.OK,
+                PrimaryButtonText = primary ?? Strings.OK,
                 SecondaryButtonText = secondary ?? string.Empty
             };
 

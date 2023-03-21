@@ -24,7 +24,7 @@ namespace Telegram.Views.Settings.Privacy
         public SettingsPrivacyShowForwardedPage()
         {
             InitializeComponent();
-            Title = Strings.Resources.PrivacyForwards;
+            Title = Strings.PrivacyForwards;
 
             if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "Shadow"))
             {
@@ -42,7 +42,7 @@ namespace Telegram.Views.Settings.Privacy
             var user = ViewModel.ClientService.GetUser(ViewModel.ClientService.Options.MyId);
             if (user != null)
             {
-                MessagePreview.Mockup(Strings.Resources.PrivacyForwardsMessageLine, user.FullName(), true, false, DateTime.Now);
+                MessagePreview.Mockup(Strings.PrivacyForwardsMessageLine, user.FullName(), true, false, DateTime.Now);
             }
 
             BackgroundPresenter.Update(ViewModel.SessionId, ViewModel.ClientService, ViewModel.Aggregator);
@@ -52,7 +52,7 @@ namespace Telegram.Views.Settings.Privacy
 
         private string ConvertToolTip(PrivacyValue value)
         {
-            return value == PrivacyValue.AllowAll ? Strings.Resources.PrivacyForwardsEverybody : value == PrivacyValue.AllowContacts ? Strings.Resources.PrivacyForwardsContacts : Strings.Resources.PrivacyForwardsNobody;
+            return value == PrivacyValue.AllowAll ? Strings.PrivacyForwardsEverybody : value == PrivacyValue.AllowContacts ? Strings.PrivacyForwardsContacts : Strings.PrivacyForwardsNobody;
         }
 
         private Visibility ConvertNever(PrivacyValue value)

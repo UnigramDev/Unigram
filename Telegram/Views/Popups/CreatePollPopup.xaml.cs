@@ -27,9 +27,9 @@ namespace Telegram.Views.Popups
         {
             InitializeComponent();
 
-            Title = Strings.Resources.NewPoll;
-            PrimaryButtonText = Strings.Resources.OK;
-            SecondaryButtonText = Strings.Resources.Cancel;
+            Title = Strings.NewPoll;
+            PrimaryButtonText = Strings.OK;
+            SecondaryButtonText = Strings.Cancel;
 
             Items = new ObservableCollection<PollOptionViewModel>();
             Items.CollectionChanged += Items_CollectionChanged;
@@ -103,12 +103,12 @@ namespace Telegram.Views.Popups
             if (MAXIMUM_OPTIONS - Items.Count - 1 <= 0)
             {
                 AddAnOption.Visibility = Visibility.Collapsed;
-                AddInfo.Text = Strings.Resources.AddAnOptionInfoMax;
+                AddInfo.Text = Strings.AddAnOptionInfoMax;
             }
             else
             {
                 AddAnOption.Visibility = Visibility.Visible;
-                AddInfo.Text = string.Format(Strings.Resources.AddAnOptionInfo, Locale.Declension("Option", MAXIMUM_OPTIONS - Items.Count - 1));
+                AddInfo.Text = string.Format(Strings.AddAnOptionInfo, Locale.Declension("Option", MAXIMUM_OPTIONS - Items.Count - 1));
             }
 
             UpdatePrimaryButton();

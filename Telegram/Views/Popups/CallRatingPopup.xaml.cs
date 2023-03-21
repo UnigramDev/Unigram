@@ -16,9 +16,9 @@ namespace Telegram.Views.Popups
         {
             InitializeComponent();
 
-            Title = Strings.Resources.AppName;
-            PrimaryButtonText = Strings.Resources.OK;
-            SecondaryButtonText = Strings.Resources.Cancel;
+            Title = Strings.AppName;
+            PrimaryButtonText = Strings.OK;
+            SecondaryButtonText = Strings.Cancel;
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -36,7 +36,7 @@ namespace Telegram.Views.Popups
 
         private string ConvertPlaceholder(int rating)
         {
-            return rating < 3 ? Strings.Resources.CallReportIncludeLogs : Strings.Resources.VoipFeedbackCommentHint;
+            return rating < 3 ? Strings.CallReportIncludeLogs : Strings.VoipFeedbackCommentHint;
         }
 
         public int Rating => RatingBar.Value;
@@ -47,7 +47,7 @@ namespace Telegram.Views.Popups
 
         private void RatingBar_ValueChanged(object sender, RatingBarValueChangedEventArgs e)
         {
-            CommentField.PlaceholderText = e.NewValue < 4 ? Strings.Resources.CallReportHint : Strings.Resources.VoipFeedbackCommentHint;
+            CommentField.PlaceholderText = e.NewValue < 4 ? Strings.CallReportHint : Strings.VoipFeedbackCommentHint;
             CommentField.Visibility = e.NewValue < 5 ? Visibility.Visible : Visibility.Collapsed;
 
             Debug.Visibility = e.NewValue < 4 ? Visibility.Visible : Visibility.Collapsed;

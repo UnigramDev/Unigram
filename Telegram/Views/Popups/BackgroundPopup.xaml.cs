@@ -40,12 +40,12 @@ namespace Telegram.Views
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<BackgroundViewModel, IBackgroundDelegate>(this);
 
-            Title = Strings.Resources.BackgroundPreview;
-            PrimaryButtonText = Strings.Resources.Set;
-            SecondaryButtonText = Strings.Resources.Cancel;
+            Title = Strings.BackgroundPreview;
+            PrimaryButtonText = Strings.Set;
+            SecondaryButtonText = Strings.Cancel;
 
-            Message1.Mockup(Strings.Resources.BackgroundPreviewLine1, false, DateTime.Now.AddSeconds(-25));
-            Message2.Mockup(Strings.Resources.BackgroundPreviewLine2, true, DateTime.Now);
+            Message1.Mockup(Strings.BackgroundPreviewLine1, false, DateTime.Now.AddSeconds(-25));
+            Message2.Mockup(Strings.BackgroundPreviewLine2, true, DateTime.Now);
 
             ElementCompositionPreview.GetElementVisual(ContentPanel).Clip = Window.Current.Compositor.CreateInsetClip();
         }
@@ -87,8 +87,8 @@ namespace Telegram.Views
             {
                 Blur.Visibility = Visibility.Visible;
 
-                Message1.Mockup(Strings.Resources.BackgroundPreviewLine1, false, DateTime.Now.AddSeconds(-25));
-                Message2.Mockup(Strings.Resources.BackgroundPreviewLine2, true, DateTime.Now);
+                Message1.Mockup(Strings.BackgroundPreviewLine1, false, DateTime.Now.AddSeconds(-25));
+                Message2.Mockup(Strings.BackgroundPreviewLine2, true, DateTime.Now);
             }
             else
             {
@@ -100,8 +100,8 @@ namespace Telegram.Views
                     Color.Visibility = Visibility.Visible;
                 }
 
-                Message1.Mockup(Strings.Resources.BackgroundColorSinglePreviewLine1, false, DateTime.Now.AddSeconds(-25));
-                Message2.Mockup(Strings.Resources.BackgroundColorSinglePreviewLine2, true, DateTime.Now);
+                Message1.Mockup(Strings.BackgroundColorSinglePreviewLine1, false, DateTime.Now.AddSeconds(-25));
+                Message2.Mockup(Strings.BackgroundColorSinglePreviewLine2, true, DateTime.Now);
             }
         }
 

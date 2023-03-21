@@ -74,7 +74,7 @@ namespace Telegram.ViewModels
                 {
                     IsLoading = false;
 
-                    Title = Strings.Resources.Emoji;
+                    Title = Strings.Emoji;
                     IsInstalled = sets.All(x => x.IsInstalled);
                     IsArchived = sets.All(x => x.IsArchived);
                     IsOfficial = sets.All(x => x.IsOfficial);
@@ -99,7 +99,7 @@ namespace Telegram.ViewModels
             {
                 IsLoading = false;
 
-                Title = Strings.Resources.Emoji;
+                Title = Strings.Emoji;
                 IsInstalled = sets.Sets.All(x => x.IsInstalled);
                 IsArchived = sets.Sets.All(x => x.IsArchived);
                 IsOfficial = sets.Sets.All(x => x.IsOfficial);

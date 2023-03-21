@@ -57,7 +57,7 @@ namespace Telegram.Services
         public IList<ThemeInfoBase> GetThemes()
         {
             var result = new List<ThemeInfoBase>();
-            result.Add(new ThemeBundledInfo { Name = Strings.Resources.ThemeClassic, Parent = TelegramTheme.Light });
+            result.Add(new ThemeBundledInfo { Name = Strings.ThemeClassic, Parent = TelegramTheme.Light });
             result.Add(ThemeAccentInfo.FromAccent(TelegramThemeType.Day, _settingsService.Appearance.Accents[TelegramThemeType.Day]));
             result.Add(ThemeAccentInfo.FromAccent(TelegramThemeType.Tinted, _settingsService.Appearance.Accents[TelegramThemeType.Tinted]));
             result.Add(ThemeAccentInfo.FromAccent(TelegramThemeType.Night, _settingsService.Appearance.Accents[TelegramThemeType.Night]));
@@ -184,20 +184,20 @@ namespace Telegram.Services
 
         public async Task CreateThemeAsync(ThemeInfoBase theme)
         {
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.CreateNewThemeAlert, Strings.Resources.NewTheme, Strings.Resources.CreateTheme, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(Strings.CreateNewThemeAlert, Strings.NewTheme, Strings.CreateTheme, Strings.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
             }
 
             var input = new InputPopup();
-            input.Title = Strings.Resources.NewTheme;
-            input.Header = Strings.Resources.EnterThemeName;
+            input.Title = Strings.NewTheme;
+            input.Header = Strings.EnterThemeName;
             input.Text = $"{theme.Name} #2";
             input.IsPrimaryButtonEnabled = true;
             input.IsSecondaryButtonEnabled = true;
-            input.PrimaryButtonText = Strings.Resources.OK;
-            input.SecondaryButtonText = Strings.Resources.Cancel;
+            input.PrimaryButtonText = Strings.OK;
+            input.SecondaryButtonText = Strings.Cancel;
 
             confirm = await input.ShowQueuedAsync();
             if (confirm != ContentDialogResult.Primary)

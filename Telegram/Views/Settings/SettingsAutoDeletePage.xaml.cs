@@ -17,7 +17,7 @@ namespace Telegram.Views.Settings
         public SettingsAutoDeletePage()
         {
             InitializeComponent();
-            Title = Strings.Resources.AutoDeleteMessages;
+            Title = Strings.AutoDeleteMessages;
         }
 
         private void OnChecked(object sender, Windows.UI.Xaml.RoutedEventArgs e)

@@ -101,7 +101,7 @@ namespace Telegram.ViewModels.Settings
 
                 if (error.TypeEquals(ErrorType.PHONE_NUMBER_FLOOD))
                 {
-                    await ShowPopupAsync(Strings.Resources.PhoneNumberFlood, Strings.Resources.AppName, Strings.Resources.OK);
+                    await ShowPopupAsync(Strings.PhoneNumberFlood, Strings.AppName, Strings.OK);
                 }
                 else
                 {

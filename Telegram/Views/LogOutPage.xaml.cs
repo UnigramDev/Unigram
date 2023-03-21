@@ -17,7 +17,7 @@ namespace Telegram.Views
         public LogOutPage()
         {
             InitializeComponent();
-            Title = Strings.Resources.LogOutTitle;
+            Title = Strings.LogOutTitle;
 
             if (TLContainer.Current.Count < 3)
             {

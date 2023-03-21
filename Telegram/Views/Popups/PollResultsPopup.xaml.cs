@@ -31,10 +31,10 @@ namespace Telegram.Views.Popups
             _clientService = clientService;
             _delegate = delegato;
 
-            Title = Strings.Resources.PollResults;
+            Title = Strings.PollResults;
             Subtitle.Text = Locale.Declension(poll.Type is PollTypeQuiz ? "Answer" : "Vote", poll.TotalVoterCount);
 
-            PrimaryButtonText = Strings.Resources.OK;
+            PrimaryButtonText = Strings.OK;
 
             var options = new List<PollResultViewModel>();
             foreach (var option in poll.Options)

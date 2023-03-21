@@ -15,9 +15,9 @@ namespace Telegram.Views.Settings.Popups
         {
             this.InitializeComponent();
 
-            Title = Strings.Resources.Passcode;
-            PrimaryButtonText = Strings.Resources.Enable;
-            SecondaryButtonText = Strings.Resources.Cancel;
+            Title = Strings.Passcode;
+            PrimaryButtonText = Strings.Enable;
+            SecondaryButtonText = Strings.Cancel;
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

@@ -28,8 +28,8 @@ namespace Telegram.Views.Popups
 
             _completion = completion;
 
-            PrimaryButtonText = Strings.Resources.Save;
-            SecondaryButtonText = Strings.Resources.Cancel;
+            PrimaryButtonText = Strings.Save;
+            SecondaryButtonText = Strings.Cancel;
         }
 
         private readonly TaskCompletionSource<object> _completion;

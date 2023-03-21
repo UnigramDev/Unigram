@@ -143,7 +143,7 @@ namespace Telegram.Collections
                     var response = await _clientService.SendAsync(new GetForumTopics(_chat.Id, _query, 0, 0, 0, 100));
                     if (response is ForumTopics topics)
                     {
-                        Increase(new Header(Strings.Resources.Topics));
+                        Increase(new Header(Strings.Topics));
 
                         foreach (var topic in topics.Topics)
                         {
@@ -157,7 +157,7 @@ namespace Telegram.Collections
                 }
                 else if (_phase == Phase.Chats)
                 {
-                    if (_type != SearchChatsType.BasicAndSupergroups && _query.Length > 0 && Strings.Resources.SavedMessages.StartsWith(_query, StringComparison.OrdinalIgnoreCase))
+                    if (_type != SearchChatsType.BasicAndSupergroups && _query.Length > 0 && Strings.SavedMessages.StartsWith(_query, StringComparison.OrdinalIgnoreCase))
                     {
                         var savedMessages = await _clientService.SendAsync(new CreatePrivateChat(_clientService.Options.MyId, false));
                         if (savedMessages is Chat chat)
@@ -169,7 +169,7 @@ namespace Telegram.Collections
                                 //if (_createLocalHeader)
                                 //{
                                 //    _createLocalHeader = false;
-                                //    Add(new Header(Strings.Resources.SearchAllChatsShort));
+                                //    Add(new Header(Strings.SearchAllChatsShort));
                                 //}
 
                                 Increase(new SearchResult(chat, _query, false));
@@ -209,7 +209,7 @@ namespace Telegram.Collections
                                     //if (_createLocalHeader)
                                     //{
                                     //    _createLocalHeader = false;
-                                    //    Add(new Header(Strings.Resources.SearchAllChatsShort));
+                                    //    Add(new Header(Strings.SearchAllChatsShort));
                                     //}
 
                                     Increase(new SearchResult(chat, _query, false));
@@ -242,7 +242,7 @@ namespace Telegram.Collections
                                 //if (_createLocalHeader)
                                 //{
                                 //    _createLocalHeader = false;
-                                //    Add(new Header(Strings.Resources.SearchAllChatsShort));
+                                //    Add(new Header(Strings.SearchAllChatsShort));
                                 //}
 
                                 _users.Add(id);
@@ -286,7 +286,7 @@ namespace Telegram.Collections
                                     //if (_createLocalHeader)
                                     //{
                                     //    _createLocalHeader = false;
-                                    //    Add(new Header(Strings.Resources.SearchAllChatsShort));
+                                    //    Add(new Header(Strings.SearchAllChatsShort));
                                     //}
 
                                     Increase(new SearchResult(chat, _query, false));
@@ -319,7 +319,7 @@ namespace Telegram.Collections
                                 if (_createRemoteHeader)
                                 {
                                     _createRemoteHeader = false;
-                                    Increase(new Header(Strings.Resources.GlobalSearch));
+                                    Increase(new Header(Strings.GlobalSearch));
                                 }
 
                                 Increase(new SearchResult(chat, _query, true));
@@ -370,7 +370,7 @@ namespace Telegram.Collections
                         if (_createMessagesHeader)
                         {
                             _createMessagesHeader = false;
-                            Increase(new Header(Strings.Resources.SearchMessages));
+                            Increase(new Header(Strings.SearchMessages));
                         }
 
                         foreach (var message in messages.Messages)
@@ -383,7 +383,7 @@ namespace Telegram.Collections
                         if (_createMessagesHeader)
                         {
                             _createMessagesHeader = false;
-                            Increase(new Header(Strings.Resources.SearchMessages));
+                            Increase(new Header(Strings.SearchMessages));
                         }
 
                         _nextOffset = foundMessages.NextOffset;
@@ -487,11 +487,11 @@ namespace Telegram.Collections
 
         public string Text => _filter switch
         {
-            SearchMessagesFilterPhotoAndVideo => Strings.Resources.SharedMediaTab2,
-            SearchMessagesFilterDocument => Strings.Resources.SharedFilesTab2,
-            SearchMessagesFilterUrl => Strings.Resources.SharedLinksTab2,
-            SearchMessagesFilterAudio => Strings.Resources.SharedMusicTab2,
-            SearchMessagesFilterVoiceNote => Strings.Resources.SharedVoiceTab2,
+            SearchMessagesFilterPhotoAndVideo => Strings.SharedMediaTab2,
+            SearchMessagesFilterDocument => Strings.SharedFilesTab2,
+            SearchMessagesFilterUrl => Strings.SharedLinksTab2,
+            SearchMessagesFilterAudio => Strings.SharedMusicTab2,
+            SearchMessagesFilterVoiceNote => Strings.SharedVoiceTab2,
             _ => null,
         };
 

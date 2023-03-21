@@ -60,7 +60,7 @@ namespace Telegram.Controls
 
             if (type == UndoType.Archive)
             {
-                Text.Text = chats.Count > 1 ? Strings.Resources.ChatsArchived : Strings.Resources.ChatArchived;
+                Text.Text = chats.Count > 1 ? Strings.ChatsArchived : Strings.ChatArchived;
 
                 Remaining.Visibility = Visibility.Collapsed;
                 Slice.Visibility = Visibility.Collapsed;
@@ -72,22 +72,22 @@ namespace Telegram.Controls
             {
                 if (type == UndoType.Clear)
                 {
-                    Text.Text = Strings.Resources.HistoryClearedUndo;
+                    Text.Text = Strings.HistoryClearedUndo;
                 }
                 else if (chats.Count == 1 && chats[0] is Chat chat)
                 {
                     if (chat.Type is ChatTypeSupergroup super)
                     {
-                        Text.Text = super.IsChannel ? Strings.Resources.ChannelDeletedUndo : Strings.Resources.GroupDeletedUndo;
+                        Text.Text = super.IsChannel ? Strings.ChannelDeletedUndo : Strings.GroupDeletedUndo;
                     }
                     else
                     {
-                        Text.Text = chat.Type is ChatTypeBasicGroup ? Strings.Resources.GroupDeletedUndo : Strings.Resources.ChatDeletedUndo;
+                        Text.Text = chat.Type is ChatTypeBasicGroup ? Strings.GroupDeletedUndo : Strings.ChatDeletedUndo;
                     }
                 }
                 else
                 {
-                    Text.Text = Strings.Resources.ChatDeletedUndo;
+                    Text.Text = Strings.ChatDeletedUndo;
                 }
 
                 Remaining.Visibility = Visibility.Visible;

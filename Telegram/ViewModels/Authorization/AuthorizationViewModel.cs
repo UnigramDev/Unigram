@@ -188,7 +188,7 @@ namespace Telegram.ViewModels.Authorization
 
                 if (user.PhoneNumber.Contains(phoneNumber) || phoneNumber.Contains(user.PhoneNumber))
                 {
-                    var confirm = await ShowPopupAsync(Strings.Resources.AccountAlreadyLoggedIn, Strings.Resources.AppName, Strings.Resources.AccountSwitch, Strings.Resources.OK);
+                    var confirm = await ShowPopupAsync(Strings.AccountAlreadyLoggedIn, Strings.AppName, Strings.AccountSwitch, Strings.OK);
                     if (confirm == ContentDialogResult.Primary)
                     {
                         _lifetimeService.PreviousItem = session;
@@ -222,36 +222,36 @@ namespace Telegram.ViewModels.Authorization
                 if (error.TypeEquals(ErrorType.PHONE_NUMBER_INVALID))
                 {
                     //needShowInvalidAlert(req.phone_number, false);
-                    await ShowPopupAsync(Strings.Resources.InvalidPhoneNumber, Strings.Resources.AppName, Strings.Resources.OK);
+                    await ShowPopupAsync(Strings.InvalidPhoneNumber, Strings.AppName, Strings.OK);
                 }
                 else if (error.TypeEquals(ErrorType.PHONE_PASSWORD_FLOOD))
                 {
-                    await ShowPopupAsync(Strings.Resources.FloodWait, Strings.Resources.AppName, Strings.Resources.OK);
+                    await ShowPopupAsync(Strings.FloodWait, Strings.AppName, Strings.OK);
                 }
                 else if (error.TypeEquals(ErrorType.PHONE_NUMBER_FLOOD))
                 {
-                    await ShowPopupAsync(Strings.Resources.PhoneNumberFlood, Strings.Resources.AppName, Strings.Resources.OK);
+                    await ShowPopupAsync(Strings.PhoneNumberFlood, Strings.AppName, Strings.OK);
                 }
                 else if (error.TypeEquals(ErrorType.PHONE_NUMBER_BANNED))
                 {
                     //needShowInvalidAlert(req.phone_number, true);
-                    await ShowPopupAsync(Strings.Resources.BannedPhoneNumber, Strings.Resources.AppName, Strings.Resources.OK);
+                    await ShowPopupAsync(Strings.BannedPhoneNumber, Strings.AppName, Strings.OK);
                 }
                 else if (error.TypeEquals(ErrorType.PHONE_CODE_EMPTY) || error.TypeEquals(ErrorType.PHONE_CODE_INVALID))
                 {
-                    await ShowPopupAsync(Strings.Resources.InvalidCode, Strings.Resources.AppName, Strings.Resources.OK);
+                    await ShowPopupAsync(Strings.InvalidCode, Strings.AppName, Strings.OK);
                 }
                 else if (error.TypeEquals(ErrorType.PHONE_CODE_EXPIRED))
                 {
-                    await ShowPopupAsync(Strings.Resources.CodeExpired, Strings.Resources.AppName, Strings.Resources.OK);
+                    await ShowPopupAsync(Strings.CodeExpired, Strings.AppName, Strings.OK);
                 }
                 else if (error.Message.StartsWith("FLOOD_WAIT"))
                 {
-                    await ShowPopupAsync(Strings.Resources.FloodWait, Strings.Resources.AppName, Strings.Resources.OK);
+                    await ShowPopupAsync(Strings.FloodWait, Strings.AppName, Strings.OK);
                 }
                 else if (error.Code != -1000)
                 {
-                    await ShowPopupAsync(error.Message, Strings.Resources.AppName, Strings.Resources.OK);
+                    await ShowPopupAsync(error.Message, Strings.AppName, Strings.OK);
                 }
             }
         }

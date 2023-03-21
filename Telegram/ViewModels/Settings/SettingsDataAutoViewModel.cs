@@ -30,15 +30,15 @@ namespace Telegram.ViewModels.Settings
                 _type = type;
 
                 Title = type == AutoDownloadType.Photos
-                    ? Strings.Resources.AutoDownloadPhotos
+                    ? Strings.AutoDownloadPhotos
                     : type == AutoDownloadType.Videos
-                    ? Strings.Resources.AutoDownloadVideos
-                    : Strings.Resources.AutoDownloadFiles;
+                    ? Strings.AutoDownloadVideos
+                    : Strings.AutoDownloadFiles;
                 Header = type == AutoDownloadType.Photos
-                    ? Strings.Resources.AutoDownloadPhotosTitle
+                    ? Strings.AutoDownloadPhotosTitle
                     : type == AutoDownloadType.Videos
-                    ? Strings.Resources.AutoDownloadVideosTitle
-                    : Strings.Resources.AutoDownloadFilesTitle;
+                    ? Strings.AutoDownloadVideosTitle
+                    : Strings.AutoDownloadFilesTitle;
 
                 var preferences = Settings.AutoDownload;
                 var mode = type == AutoDownloadType.Photos

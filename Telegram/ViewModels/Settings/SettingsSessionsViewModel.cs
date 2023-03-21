@@ -107,15 +107,15 @@ namespace Telegram.ViewModels.Settings
                 {
                     Items.ReplaceWith(new[]
                     {
-                        new KeyedList<SessionsGroup, Session>(new SessionsGroup { Title = Strings.Resources.LoginAttempts }, pending.OrderByDescending(x => x.LastActiveDate)),
-                        new KeyedList<SessionsGroup, Session>(new SessionsGroup { Title = Strings.Resources.OtherSessions, Footer = Strings.Resources.LoginAttemptsInfo }, results.OrderByDescending(x => x.LastActiveDate))
+                        new KeyedList<SessionsGroup, Session>(new SessionsGroup { Title = Strings.LoginAttempts }, pending.OrderByDescending(x => x.LastActiveDate)),
+                        new KeyedList<SessionsGroup, Session>(new SessionsGroup { Title = Strings.OtherSessions, Footer = Strings.LoginAttemptsInfo }, results.OrderByDescending(x => x.LastActiveDate))
                     });
                 }
                 else if (results.Count > 0)
                 {
                     Items.ReplaceWith(new[]
                     {
-                        new KeyedList<SessionsGroup, Session>(new SessionsGroup { Title = Strings.Resources.OtherSessions }, results.OrderByDescending(x => x.LastActiveDate))
+                        new KeyedList<SessionsGroup, Session>(new SessionsGroup { Title = Strings.OtherSessions }, results.OrderByDescending(x => x.LastActiveDate))
                     });
                 }
                 else
@@ -143,10 +143,10 @@ namespace Telegram.ViewModels.Settings
             }
 
             var popup = new InputPopup();
-            popup.Title = Strings.Resources.RenameCurrentDevice;
-            popup.PlaceholderText = Strings.Resources.DeviceName;
-            popup.PrimaryButtonText = Strings.Resources.OK;
-            popup.SecondaryButtonText = Strings.Resources.Cancel;
+            popup.Title = Strings.RenameCurrentDevice;
+            popup.PlaceholderText = Strings.DeviceName;
+            popup.PrimaryButtonText = Strings.OK;
+            popup.SecondaryButtonText = Strings.Cancel;
             popup.Text = session.DeviceModel;
             popup.MaxLength = 32;
 
@@ -163,7 +163,7 @@ namespace Telegram.ViewModels.Settings
 
         public async void TerminateOthers()
         {
-            var terminate = await ShowPopupAsync(Strings.Resources.AreYouSureSessions, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var terminate = await ShowPopupAsync(Strings.AreYouSureSessions, Strings.AppName, Strings.OK, Strings.Cancel);
             if (terminate == ContentDialogResult.Primary)
             {
                 var response = await ClientService.SendAsync(new TerminateAllOtherSessions());
@@ -210,7 +210,7 @@ namespace Telegram.ViewModels.Settings
                 return;
             }
 
-            var terminate = await ShowPopupAsync(Strings.Resources.TerminateSessionQuestion, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var terminate = await ShowPopupAsync(Strings.TerminateSessionQuestion, Strings.AppName, Strings.OK, Strings.Cancel);
             if (terminate == ContentDialogResult.Primary)
             {
                 var response = await ClientService.SendAsync(new TerminateSession(session.Id));

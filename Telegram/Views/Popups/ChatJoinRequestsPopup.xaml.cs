@@ -28,8 +28,8 @@ namespace Telegram.Views.Popups
             InitializeComponent();
             DataContext = new ChatJoinRequestsViewModel(chat, inviteLink, clientService, settingsService, aggregator);
 
-            Title = Strings.Resources.MemberRequests;
-            PrimaryButtonText = Strings.Resources.Close;
+            Title = Strings.MemberRequests;
+            PrimaryButtonText = Strings.Close;
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -68,8 +68,8 @@ namespace Telegram.Views.Popups
                 secondary.Command = ViewModel.DismissCommand;
 
                 primary.Content = ViewModel.IsChannel
-                    ? Strings.Resources.AddToChannel
-                    : Strings.Resources.AddToGroup;
+                    ? Strings.AddToChannel
+                    : Strings.AddToGroup;
             }
             else if (args.Phase == 1)
             {

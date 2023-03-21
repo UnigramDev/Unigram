@@ -22,7 +22,7 @@ namespace Telegram.Views.Settings
         public SettingsStoragePage()
         {
             InitializeComponent();
-            Title = Strings.Resources.StorageUsage;
+            Title = Strings.StorageUsage;
 
             InitializeKeepMediaTicks();
         }
@@ -72,7 +72,7 @@ namespace Telegram.Views.Settings
         {
             if (days < 1)
             {
-                return Strings.Resources.KeepMediaForever;
+                return Strings.KeepMediaForever;
             }
             else if (days < 7)
             {
@@ -147,7 +147,7 @@ namespace Telegram.Views.Settings
 
             if (days < 1)
             {
-                return Strings.Resources.KeepMediaForever;
+                return Strings.KeepMediaForever;
             }
             else if (days < 7)
             {

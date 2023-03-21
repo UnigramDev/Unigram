@@ -19,7 +19,7 @@ namespace Telegram.Views.Settings.Privacy
         public SettingsPrivacyShowPhotoPage()
         {
             InitializeComponent();
-            Title = Strings.Resources.PrivacyProfilePhoto;
+            Title = Strings.PrivacyProfilePhoto;
         }
 
         #region Delegate
@@ -31,8 +31,8 @@ namespace Telegram.Views.Settings.Privacy
             if (fullInfo != null)
             {
                 UpdatePhoto.Content = fullInfo.PublicPhoto == null
-                    ? Strings.Resources.SetPhotoForRest
-                    : Strings.Resources.UpdatePhotoForRest;
+                    ? Strings.SetPhotoForRest
+                    : Strings.UpdatePhotoForRest;
 
                 RemovePhoto.Visibility = fullInfo.PublicPhoto == null
                     ? Visibility.Collapsed

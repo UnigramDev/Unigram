@@ -20,7 +20,7 @@ namespace Telegram.Views.Supergroups
         public SupergroupEditStickerSetPage()
         {
             InitializeComponent();
-            Title = Strings.Resources.GroupStickers;
+            Title = Strings.GroupStickers;
 
             var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => ShortName.TextChanged += new TextChangedEventHandler(handler));
             debouncer.Invoked += (s, args) =>
@@ -99,8 +99,8 @@ namespace Telegram.Views.Supergroups
 
             if (stickerSet == null)
             {
-                title.Text = Strings.Resources.ChooseStickerSetNotFound;
-                subtitle.Text = Strings.Resources.ChooseStickerSetNotFoundInfo;
+                title.Text = Strings.ChooseStickerSetNotFound;
+                subtitle.Text = Strings.ChooseStickerSetNotFoundInfo;
                 photo.Source = null;
                 return;
             }

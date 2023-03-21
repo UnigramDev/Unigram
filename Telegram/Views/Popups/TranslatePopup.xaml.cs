@@ -45,9 +45,9 @@ namespace Telegram.Views.Popups
             _chatId = chatId;
             _messageId = messageId;
 
-            Title = Strings.Resources.AutomaticTranslation;
-            PrimaryButtonText = Strings.Resources.Close;
-            //SecondaryButtonText = Strings.Resources.Language;
+            Title = Strings.AutomaticTranslation;
+            PrimaryButtonText = Strings.Close;
+            //SecondaryButtonText = Strings.Language;
 
             var fromName = LanguageName(fromLanguage, out bool rtl);
             var toName = LanguageName(toLanguage, out _);
@@ -117,11 +117,11 @@ namespace Telegram.Views.Popups
             {
                 if (error.Code == 429)
                 {
-                    block.Text = Strings.Resources.TranslationFailedAlert1;
+                    block.Text = Strings.TranslationFailedAlert1;
                 }
                 else
                 {
-                    block.Text = Strings.Resources.TranslationFailedAlert2;
+                    block.Text = Strings.TranslationFailedAlert2;
                 }
             }
 

@@ -60,9 +60,9 @@ namespace Telegram.Views.Settings
             switch (codeInfo.Type)
             {
                 case AuthenticationCodeTypeTelegramMessage:
-                    return Strings.Resources.SentAppCode;
+                    return Strings.SentAppCode;
                 case AuthenticationCodeTypeSms:
-                    return string.Format(Strings.Resources.SentSmsCode, PhoneNumber.Format(number));
+                    return string.Format(Strings.SentSmsCode, PhoneNumber.Format(number));
             }
 
             return null;

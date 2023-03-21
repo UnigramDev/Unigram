@@ -23,7 +23,7 @@ namespace Telegram.Views.Settings
         public SettingsBackgroundsPage()
         {
             InitializeComponent();
-            Title = Strings.Resources.ChatBackground;
+            Title = Strings.ChatBackground;
         }
 
         private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
@@ -51,8 +51,8 @@ namespace Telegram.Views.Settings
 
             var flyout = new MenuFlyout();
 
-            flyout.CreateFlyoutItem(ViewModel.ShareCommand, background, Strings.Resources.ShareFile, new FontIcon { Glyph = Icons.Share });
-            flyout.CreateFlyoutItem(ViewModel.DeleteCommand, background, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
+            flyout.CreateFlyoutItem(ViewModel.ShareCommand, background, Strings.ShareFile, new FontIcon { Glyph = Icons.Share });
+            flyout.CreateFlyoutItem(ViewModel.DeleteCommand, background, Strings.Delete, new FontIcon { Glyph = Icons.Delete });
 
             args.ShowAt(flyout, element);
         }

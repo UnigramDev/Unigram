@@ -18,7 +18,7 @@ namespace Telegram.Views.Users
         public UserCreatePage()
         {
             InitializeComponent();
-            Title = Strings.Resources.AddContactTitle;
+            Title = Strings.AddContactTitle;
         }
 
         private void FirstName_Loaded(object sender, RoutedEventArgs e)

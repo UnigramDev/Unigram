@@ -67,7 +67,7 @@ namespace Telegram.ViewModels.Supergroups
                 return;
             }
 
-            var selected = await SharePopup.PickChatAsync(Strings.Resources.SelectContact);
+            var selected = await SharePopup.PickChatAsync(Strings.SelectContact);
             var user = ClientService.GetUser(selected);
 
             if (user == null)
@@ -75,7 +75,7 @@ namespace Telegram.ViewModels.Supergroups
                 return;
             }
 
-            var confirm = await ShowPopupAsync(string.Format(Strings.Resources.AddToTheGroup, user.FullName()), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(string.Format(Strings.AddToTheGroup, user.FullName()), Strings.AppName, Strings.OK, Strings.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

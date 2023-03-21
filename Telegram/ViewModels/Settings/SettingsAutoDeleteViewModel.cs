@@ -36,7 +36,7 @@ namespace Telegram.ViewModels.Settings
 
         public ObservableCollection<SettingsOptionItem<int>> Items { get; } = new()
         {
-            new SettingsOptionItem<int>(0,                 Strings.Resources.ShortMessageLifetimeForever),
+            new SettingsOptionItem<int>(0,                 Strings.ShortMessageLifetimeForever),
             new SettingsOptionItem<int>(60 * 60 * 24,      Locale.FormatTtl(60 * 60 * 24)),
             new SettingsOptionItem<int>(60 * 60 * 24 * 7,  Locale.FormatTtl(60 * 60 * 24 * 7)),
             new SettingsOptionItem<int>(60 * 60 * 24 * 31, Locale.FormatTtl(60 * 60 * 24 * 31))
@@ -63,7 +63,7 @@ namespace Telegram.ViewModels.Settings
 
             if (sync && value != 0 && selected?.Value == 0)
             {
-                var confirm = await ShowPopupAsync(string.Format(Strings.Resources.AutoDeleteConfirmMessage, Locale.FormatTtl(value)), Strings.Resources.MessageLifetime, Strings.Resources.AutoDeleteConfirm, Strings.Resources.Cancel);
+                var confirm = await ShowPopupAsync(string.Format(Strings.AutoDeleteConfirmMessage, Locale.FormatTtl(value)), Strings.MessageLifetime, Strings.AutoDeleteConfirm, Strings.Cancel);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;

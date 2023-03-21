@@ -26,15 +26,15 @@ namespace Telegram.Services
             {
                 case TelegramThemeType.Day:
                     Parent = TelegramTheme.Light;
-                    Name = Strings.Resources.ThemeDay;
+                    Name = Strings.ThemeDay;
                     break;
                 case TelegramThemeType.Night:
                     Parent = TelegramTheme.Dark;
-                    Name = Strings.Resources.ThemeNight;
+                    Name = Strings.ThemeNight;
                     break;
                 case TelegramThemeType.Tinted:
                     Parent = TelegramTheme.Dark;
-                    Name = Strings.Resources.ThemeDark;
+                    Name = Strings.ThemeDark;
                     break;
             }
 

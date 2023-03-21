@@ -341,7 +341,7 @@ namespace Telegram.Views.Host
             }
 #endif
             Expanded.IsChecked = SettingsService.Current.IsAccountsSelectorExpanded;
-            Automation.SetToolTip(Accounts, SettingsService.Current.IsAccountsSelectorExpanded ? Strings.Resources.AccDescrHideAccounts : Strings.Resources.AccDescrShowAccounts);
+            Automation.SetToolTip(Accounts, SettingsService.Current.IsAccountsSelectorExpanded ? Strings.AccDescrHideAccounts : Strings.AccDescrShowAccounts);
         }
 
         private void InitializeSessions(bool show, IList<ISessionService> items)
@@ -485,8 +485,8 @@ namespace Telegram.Views.Host
                 {
                     var flyout = new MenuFlyout();
 
-                    flyout.CreateFlyoutItem(new RelayCommand(() => { Navigation.IsPaneOpen = false; page.ToggleArchive(); }), Strings.Resources.ArchiveMoveToChatList, new FontIcon { Glyph = Icons.Expand });
-                    flyout.CreateFlyoutItem(page.ViewModel.FilterMarkAsReadCommand, ChatFilterViewModel.Archive, Strings.Resources.MarkAllAsRead, new FontIcon { Glyph = Icons.MarkAsRead });
+                    flyout.CreateFlyoutItem(new RelayCommand(() => { Navigation.IsPaneOpen = false; page.ToggleArchive(); }), Strings.ArchiveMoveToChatList, new FontIcon { Glyph = Icons.Expand });
+                    flyout.CreateFlyoutItem(page.ViewModel.FilterMarkAsReadCommand, ChatFilterViewModel.Archive, Strings.MarkAllAsRead, new FontIcon { Glyph = Icons.MarkAsRead });
 
                     args.ShowAt(flyout, container);
                 }
@@ -541,46 +541,46 @@ namespace Telegram.Views.Host
                 switch (destination)
                 {
                     case RootDestination.AddAccount:
-                        content.Text = Strings.Resources.AddAccount;
+                        content.Text = Strings.AddAccount;
                         content.Glyph = Icons.PersonAdd;
                         break;
 
                     case RootDestination.Chats:
-                        content.Text = Strings.Resources.FilterChats;
+                        content.Text = Strings.FilterChats;
                         content.Glyph = Icons.ChatMultiple;
                         break;
                     case RootDestination.Contacts:
-                        content.Text = Strings.Resources.Contacts;
+                        content.Text = Strings.Contacts;
                         content.Glyph = Icons.People;
                         break;
                     case RootDestination.Calls:
-                        content.Text = Strings.Resources.Calls;
+                        content.Text = Strings.Calls;
                         content.Glyph = Icons.Phone;
                         break;
                     case RootDestination.Settings:
-                        content.Text = Strings.Resources.Settings;
+                        content.Text = Strings.Settings;
                         content.Glyph = Icons.Settings;
                         break;
 
                     case RootDestination.ArchivedChats:
-                        content.Text = Strings.Resources.ArchivedChats;
+                        content.Text = Strings.ArchivedChats;
                         content.Glyph = Icons.Archive;
                         break;
                     case RootDestination.SavedMessages:
-                        content.Text = Strings.Resources.SavedMessages;
+                        content.Text = Strings.SavedMessages;
                         content.Glyph = Icons.Bookmark;
                         break;
 
                     case RootDestination.Status:
                         if (page.ViewModel.ClientService.TryGetUser(page.ViewModel.ClientService.Options.MyId, out User user))
                         {
-                            content.Text = user.EmojiStatus == null ? Strings.Resources.SetEmojiStatus : Strings.Resources.ChangeEmojiStatus;
+                            content.Text = user.EmojiStatus == null ? Strings.SetEmojiStatus : Strings.ChangeEmojiStatus;
                             content.Glyph = user.EmojiStatus == null ? Icons.EmojiAdd : Icons.EmojiEdit;
                         }
                         break;
 
                     case RootDestination.Tips:
-                        content.Text = Strings.Resources.TelegramFeatures;
+                        content.Text = Strings.TelegramFeatures;
                         content.Glyph = Icons.QuestionCircle;
                         break;
                     case RootDestination.News:
@@ -600,7 +600,7 @@ namespace Telegram.Views.Host
             InitializeSessions(SettingsService.Current.IsAccountsSelectorExpanded, _lifetime.Items);
             Expanded.IsChecked = SettingsService.Current.IsAccountsSelectorExpanded;
 
-            Automation.SetToolTip(Accounts, SettingsService.Current.IsAccountsSelectorExpanded ? Strings.Resources.AccDescrHideAccounts : Strings.Resources.AccDescrShowAccounts);
+            Automation.SetToolTip(Accounts, SettingsService.Current.IsAccountsSelectorExpanded ? Strings.AccDescrHideAccounts : Strings.AccDescrShowAccounts);
         }
 
         private void OnItemClick(object sender, ItemClickEventArgs e)

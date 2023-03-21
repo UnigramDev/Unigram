@@ -470,10 +470,10 @@ namespace Telegram.Views.Calls
                 //}
 
                 FromLabel.Text = user.FullName();
-                DescriptionLabel.Text = string.Format(Strings.Resources.CallEmojiKeyTooltip, user.FirstName);
+                DescriptionLabel.Text = string.Format(Strings.CallEmojiKeyTooltip, user.FirstName);
 
-                AudioOffText.Text = string.Format(Strings.Resources.VoipUserMicrophoneIsOff, user.FirstName);
-                VideoOffText.Text = string.Format(Strings.Resources.VoipUserCameraIsOff, user.FirstName);
+                AudioOffText.Text = string.Format(Strings.VoipUserMicrophoneIsOff, user.FirstName);
+                VideoOffText.Text = string.Format(Strings.VoipUserCameraIsOff, user.FirstName);
             }
 
             if (call.State is CallStateReady ready)
@@ -535,22 +535,22 @@ namespace Telegram.Views.Calls
                 case CallStatePending pending:
                     StateLabel.Content = call.IsOutgoing
                         ? pending.IsReceived
-                        ? Strings.Resources.VoipRinging
+                        ? Strings.VoipRinging
                         : pending.IsCreated
-                        ? Strings.Resources.VoipWaiting
-                        : Strings.Resources.VoipRequesting
-                        : Strings.Resources.VoipIncoming;
+                        ? Strings.VoipWaiting
+                        : Strings.VoipRequesting
+                        : Strings.VoipIncoming;
                     break;
                 case CallStateExchangingKeys:
-                    StateLabel.Content = Strings.Resources.VoipConnecting;
+                    StateLabel.Content = Strings.VoipConnecting;
                     break;
                 case CallStateHangingUp:
-                    StateLabel.Content = Strings.Resources.VoipHangingUp;
+                    StateLabel.Content = Strings.VoipHangingUp;
                     break;
                 case CallStateDiscarded discarded:
                     StateLabel.Content = discarded.Reason is CallDiscardReasonDeclined
-                        ? Strings.Resources.VoipBusy
-                        : Strings.Resources.VoipCallEnded;
+                        ? Strings.VoipBusy
+                        : Strings.VoipCallEnded;
                     break;
             }
         }
@@ -580,7 +580,7 @@ namespace Telegram.Views.Calls
                     case VoipState.WaitInit:
                     case VoipState.WaitInitAck:
                         _state = newState;
-                        StateLabel.Content = Strings.Resources.VoipConnecting;
+                        StateLabel.Content = Strings.VoipConnecting;
                         break;
                     case VoipState.Established:
                         _state = newState;
@@ -598,7 +598,7 @@ namespace Telegram.Views.Calls
                         //    case libtgvoip.Error.Timeout:
                         //    case libtgvoip.Error.Unknown:
                         //        _state = newState;
-                        //        StateLabel.Content = Strings.Resources.VoipFailed;
+                        //        StateLabel.Content = Strings.VoipFailed;
                         //        break;
                         //}
                         break;
@@ -853,7 +853,7 @@ namespace Telegram.Views.Calls
             });
 
             var defaultInput = new ToggleMenuFlyoutItem();
-            defaultInput.Text = Strings.Resources.Default;
+            defaultInput.Text = Strings.Default;
             defaultInput.IsChecked = inputId == string.Empty;
             defaultInput.Click += (s, args) =>
             {
@@ -883,7 +883,7 @@ namespace Telegram.Views.Calls
             });
 
             var defaultOutput = new ToggleMenuFlyoutItem();
-            defaultOutput.Text = Strings.Resources.Default;
+            defaultOutput.Text = Strings.Default;
             defaultOutput.IsChecked = outputId == string.Empty;
             defaultOutput.Click += (s, args) =>
             {

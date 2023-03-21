@@ -23,9 +23,9 @@ namespace Telegram.Views.Payments
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<PaymentAddressViewModel>();
 
-            Title = Strings.Resources.PaymentShippingInfo;
-            PrimaryButtonText = Strings.Resources.OK;
-            SecondaryButtonText = Strings.Resources.Cancel;
+            Title = Strings.PaymentShippingInfo;
+            PrimaryButtonText = Strings.OK;
+            SecondaryButtonText = Strings.Cancel;
 
             ViewModel.Initialize(inputInvoice, invoice, info);
         }

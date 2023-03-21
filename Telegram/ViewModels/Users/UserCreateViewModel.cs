@@ -111,17 +111,17 @@ namespace Telegram.ViewModels.Users
                     }
                     else
                     {
-                        await ShowPopupAsync(Strings.Resources.ContactNotRegistered, Strings.Resources.AppName, Strings.Resources.Invite, Strings.Resources.Cancel);
+                        await ShowPopupAsync(Strings.ContactNotRegistered, Strings.AppName, Strings.Invite, Strings.Cancel);
                     }
                 }
                 else
                 {
-                    await ShowPopupAsync(Strings.Resources.ContactNotRegistered, Strings.Resources.AppName, Strings.Resources.Invite, Strings.Resources.Cancel);
+                    await ShowPopupAsync(Strings.ContactNotRegistered, Strings.AppName, Strings.Invite, Strings.Cancel);
                 }
             }
             else
             {
-                await ShowPopupAsync(Strings.Resources.ContactNotRegistered, Strings.Resources.AppName, Strings.Resources.Invite, Strings.Resources.Cancel);
+                await ShowPopupAsync(Strings.ContactNotRegistered, Strings.AppName, Strings.Invite, Strings.Cancel);
             }
         }
     }

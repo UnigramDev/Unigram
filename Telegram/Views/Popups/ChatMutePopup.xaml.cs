@@ -17,9 +17,9 @@ namespace Telegram.Views.Popups
         {
             InitializeComponent();
 
-            Title = Strings.Resources.MuteForAlert;
-            PrimaryButtonText = Strings.Resources.OK;
-            SecondaryButtonText = Strings.Resources.Cancel;
+            Title = Strings.MuteForAlert;
+            PrimaryButtonText = Strings.OK;
+            SecondaryButtonText = Strings.Cancel;
 
             var duration = TimeSpan.FromSeconds(mutedFor);
 

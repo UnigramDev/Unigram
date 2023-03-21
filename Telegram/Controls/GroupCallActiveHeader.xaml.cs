@@ -51,7 +51,7 @@ namespace Telegram.Controls
 
                 TitleInfo.Text = service.Call.Title.Length > 0 ? service.Call.Title : service.ClientService.GetTitle(service.Chat);
                 Audio.IsChecked = !_service.IsMuted;
-                Automation.SetToolTip(Audio, _service.IsMuted ? Strings.Resources.VoipGroupUnmute : Strings.Resources.VoipGroupMute);
+                Automation.SetToolTip(Audio, _service.IsMuted ? Strings.VoipGroupUnmute : Strings.VoipGroupMute);
             }
         }
 
@@ -62,7 +62,7 @@ namespace Telegram.Controls
                 this.BeginOnUIThread(() =>
                 {
                     Audio.IsChecked = !muted;
-                    Automation.SetToolTip(Audio, muted ? Strings.Resources.VoipGroupUnmute : Strings.Resources.VoipGroupMute);
+                    Automation.SetToolTip(Audio, muted ? Strings.VoipGroupUnmute : Strings.VoipGroupMute);
                 });
             }
         }

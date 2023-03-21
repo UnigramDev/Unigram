@@ -160,7 +160,7 @@ namespace Telegram.Controls
                 case MessageContentState.Download:
                     if (IsSmall)
                     {
-                        OnGlyphChanged(IsSmall ? Icons.DownloadSmall : Icons.ArrowDownload, Glyph, _state != state && _state != MessageContentState.None, Strings.Resources.AccActionDownload);
+                        OnGlyphChanged(IsSmall ? Icons.DownloadSmall : Icons.ArrowDownload, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionDownload);
                     }
                     else
                     {
@@ -170,7 +170,7 @@ namespace Telegram.Controls
                 case MessageContentState.Downloading:
                     if (IsSmall || (_state != MessageContentState.Download && _state != MessageContentState.Downloading))
                     {
-                        OnGlyphChanged(IsSmall ? Icons.CancelSmall : Icons.Cancel, Glyph, _state != state && _state != MessageContentState.None, Strings.Resources.AccActionCancelDownload, false);
+                        OnGlyphChanged(IsSmall ? Icons.CancelSmall : Icons.Cancel, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionCancelDownload, false);
                     }
                     else if (_state != MessageContentState.Downloading)
                     {
@@ -178,34 +178,34 @@ namespace Telegram.Controls
                     }
                     break;
                 case MessageContentState.Uploading:
-                    OnGlyphChanged(IsSmall ? Icons.CancelSmall : Icons.Cancel, Glyph, _state != state && _state != MessageContentState.None, Strings.Resources.AccActionCancelDownload);
+                    OnGlyphChanged(IsSmall ? Icons.CancelSmall : Icons.Cancel, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionCancelDownload);
                     break;
                 case MessageContentState.Confirm:
-                    OnGlyphChanged(Icons.Checkmark, Glyph, _state != state && _state != MessageContentState.None, Strings.Resources.AccActionCancelDownload);
+                    OnGlyphChanged(Icons.Checkmark, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionCancelDownload);
                     break;
                 case MessageContentState.Document:
-                    OnGlyphChanged(Icons.Document, Glyph, _state != state && _state != MessageContentState.None, Strings.Resources.AccActionOpenFile);
+                    OnGlyphChanged(Icons.Document, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionOpenFile);
                     break;
                 case MessageContentState.Animation:
-                    OnGlyphChanged(Icons.Animation, Glyph, _state != state && _state != MessageContentState.None, Strings.Resources.AccActionPlay);
+                    OnGlyphChanged(Icons.Animation, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionPlay);
                     break;
                 case MessageContentState.Photo:
-                    OnGlyphChanged(Icons.Image, Glyph, _state != state && _state != MessageContentState.None, Strings.Resources.AccActionOpenFile);
+                    OnGlyphChanged(Icons.Image, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionOpenFile);
                     break;
                 case MessageContentState.Play:
-                    OnGlyphChanged(Icons.Play, Glyph, _state != state && _state != MessageContentState.None, Strings.Resources.AccActionPlay);
+                    OnGlyphChanged(Icons.Play, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionPlay);
                     break;
                 case MessageContentState.Pause:
-                    OnGlyphChanged(Icons.Pause, Glyph, _state != state && _state != MessageContentState.None, Strings.Resources.AccActionPause);
+                    OnGlyphChanged(Icons.Pause, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionPause);
                     break;
                 case MessageContentState.Ttl:
-                    OnGlyphChanged(Icons.Ttl, Glyph, _state != state && _state != MessageContentState.None, Strings.Resources.AccActionOpenFile);
+                    OnGlyphChanged(Icons.Ttl, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionOpenFile);
                     break;
                 case MessageContentState.Unlock:
-                    OnGlyphChanged(Icons.LockClosed, Glyph, _state != state && _state != MessageContentState.None, Strings.Resources.AccActionOpenFile);
+                    OnGlyphChanged(Icons.LockClosed, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionOpenFile);
                     break;
                 case MessageContentState.Theme:
-                    OnGlyphChanged(Icons.Color, Glyph, _state != state && _state != MessageContentState.None, Strings.Resources.AccActionOpenFile);
+                    OnGlyphChanged(Icons.Color, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionOpenFile);
                     break;
             }
 
@@ -366,7 +366,7 @@ namespace Telegram.Controls
             //var anim11 = compositor.CreatePathKeyFrameAnimation();
             //anim11.InsertKeyFrame(1, GetLine(new Vector2(1, 18), new Vector2(1, 2)));
             //anim11.InsertKeyFrame(0, GetLine(new Vector2(1, 2), new Vector2(10, 2)));
-            OnGlyphChanged(string.Empty, Glyph, true, Strings.Resources.AccActionDownload, false);
+            OnGlyphChanged(string.Empty, Glyph, true, Strings.AccActionDownload, false);
 
             if (downloading)
             {
@@ -380,7 +380,7 @@ namespace Telegram.Controls
                 {
                     if (_state == MessageContentState.Downloading)
                     {
-                        OnGlyphChanged(Icons.Cancel, Icons.ArrowDownload, true, Strings.Resources.AccActionCancelDownload, false);
+                        OnGlyphChanged(Icons.Cancel, Icons.ArrowDownload, true, Strings.AccActionCancelDownload, false);
                         InternalProgress = _enqueuedProgress;
                     }
 

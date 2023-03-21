@@ -18,10 +18,10 @@ namespace Telegram.Views.Popups
         {
             InitializeComponent();
 
-            Title = Strings.Resources.OpenUrlTitle;
-            Message = string.Format(Strings.Resources.OpenUrlAlert2, requestConfirmation.Url);
-            PrimaryButtonText = Strings.Resources.Open;
-            SecondaryButtonText = Strings.Resources.Cancel;
+            Title = Strings.OpenUrlTitle;
+            Message = string.Format(Strings.OpenUrlAlert2, requestConfirmation.Url);
+            PrimaryButtonText = Strings.Open;
+            SecondaryButtonText = Strings.Cancel;
 
             var self = clientService.GetUser(clientService.Options.MyId);
             if (self == null)
@@ -29,7 +29,7 @@ namespace Telegram.Views.Popups
                 // ??
             }
 
-            TextBlockHelper.SetMarkdown(CheckLabel1, string.Format(Strings.Resources.OpenUrlOption1, requestConfirmation.Domain, self.FullName()));
+            TextBlockHelper.SetMarkdown(CheckLabel1, string.Format(Strings.OpenUrlOption1, requestConfirmation.Domain, self.FullName()));
 
             if (requestConfirmation.RequestWriteAccess)
             {
@@ -40,7 +40,7 @@ namespace Telegram.Views.Popups
                 }
 
                 CheckBox2.Visibility = Visibility.Visible;
-                TextBlockHelper.SetMarkdown(CheckLabel2, string.Format(Strings.Resources.OpenUrlOption2, bot.FullName()));
+                TextBlockHelper.SetMarkdown(CheckLabel2, string.Format(Strings.OpenUrlOption2, bot.FullName()));
             }
             else
             {

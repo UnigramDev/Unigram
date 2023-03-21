@@ -131,7 +131,7 @@ namespace Telegram.Services
             {
                 if (isPersonal)
                 {
-                    var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.SetUserPhotoAlertMessage, user.FirstName), Strings.Resources.AppName, Strings.Resources.SuggestPhotoShort, Strings.Resources.Cancel);
+                    var confirm = await MessagePopup.ShowAsync(string.Format(Strings.SetUserPhotoAlertMessage, user.FirstName), Strings.AppName, Strings.SuggestPhotoShort, Strings.Cancel);
                     if (confirm == ContentDialogResult.Primary)
                     {
                         _clientService.Send(new SetUserPersonalProfilePhoto(user.Id, inputPhoto));
@@ -140,7 +140,7 @@ namespace Telegram.Services
                 }
                 else
                 {
-                    var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.SuggestPhotoAlertMessage, user.FirstName), Strings.Resources.AppName, Strings.Resources.SuggestPhotoShort, Strings.Resources.Cancel);
+                    var confirm = await MessagePopup.ShowAsync(string.Format(Strings.SuggestPhotoAlertMessage, user.FirstName), Strings.AppName, Strings.SuggestPhotoShort, Strings.Cancel);
                     if (confirm == ContentDialogResult.Primary)
                     {
                         _clientService.Send(new SuggestUserProfilePhoto(user.Id, inputPhoto));

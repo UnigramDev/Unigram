@@ -31,7 +31,7 @@ namespace Telegram.Collections
             _query = query;
 
             _local = new KeyedList<string, object>(null as string);
-            _remote = new KeyedList<string, object>(Strings.Resources.GlobalSearch);
+            _remote = new KeyedList<string, object>(Strings.GlobalSearch);
 
             Add(_local);
             Add(_remote);

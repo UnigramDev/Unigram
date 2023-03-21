@@ -20,9 +20,9 @@ namespace Telegram.Views.Popups
         {
             InitializeComponent();
 
-            Title = messages.Count == 1 ? Strings.Resources.DeleteSingleMessagesTitle : string.Format(Strings.Resources.DeleteMessagesTitle, Locale.Declension("messages", messages.Count));
-            PrimaryButtonText = Strings.Resources.OK;
-            SecondaryButtonText = Strings.Resources.Cancel;
+            Title = messages.Count == 1 ? Strings.DeleteSingleMessagesTitle : string.Format(Strings.DeleteMessagesTitle, Locale.Declension("messages", messages.Count));
+            PrimaryButtonText = Strings.OK;
+            SecondaryButtonText = Strings.Cancel;
 
             var first = messages.FirstOrDefault();
             if (first == null)
@@ -54,17 +54,17 @@ namespace Telegram.Views.Popups
 
                 if (sender is User senderUser)
                 {
-                    deleteAllText = string.Format(Strings.Resources.DeleteAllFrom, senderUser.FullName());
+                    deleteAllText = string.Format(Strings.DeleteAllFrom, senderUser.FullName());
                 }
                 else if (sender is Chat senderChat)
                 {
-                    deleteAllText = string.Format(Strings.Resources.DeleteAllFrom, senderChat.Title);
+                    deleteAllText = string.Format(Strings.DeleteAllFrom, senderChat.Title);
                 }
 
                 DeleteAllCheck.Content = deleteAllText;
                 TextBlockHelper.SetMarkdown(Message, messages.Count == 1
-                    ? Strings.Resources.AreYouSureDeleteSingleMessage
-                    : Strings.Resources.AreYouSureDeleteFewMessages);
+                    ? Strings.AreYouSureDeleteSingleMessage
+                    : Strings.AreYouSureDeleteFewMessages);
 
                 // TODO: I don't like the UI moving around when the text appears
                 // also, the CheckBox looks misaligned on two lines, one more reason not to have this.
@@ -99,40 +99,40 @@ namespace Telegram.Views.Popups
                     if (anyCanBeDeletedForAllUsers && !canBeDeletedForAllUsers)
                     {
                         TextBlockHelper.SetMarkdown(Message, chat.Type is ChatTypePrivate && user != null
-                            ? string.Format(Strings.Resources.DeleteMessagesText, Locale.Declension("messages", messages.Count), user.FirstName)
-                            : string.Format(Strings.Resources.DeleteMessagesTextGroup, Locale.Declension("messages", messages.Count)));
+                            ? string.Format(Strings.DeleteMessagesText, Locale.Declension("messages", messages.Count), user.FirstName)
+                            : string.Format(Strings.DeleteMessagesTextGroup, Locale.Declension("messages", messages.Count)));
 
                         RevokeCheck.IsChecked = true;
                         RevokeCheck.Visibility = Visibility.Visible;
-                        RevokeCheck.Content = Strings.Resources.DeleteMessagesOption;
+                        RevokeCheck.Content = Strings.DeleteMessagesOption;
                     }
                     else
                     {
                         TextBlockHelper.SetMarkdown(Message, messages.Count == 1
-                            ? Strings.Resources.AreYouSureDeleteSingleMessage
-                            : Strings.Resources.AreYouSureDeleteFewMessages);
+                            ? Strings.AreYouSureDeleteSingleMessage
+                            : Strings.AreYouSureDeleteFewMessages);
 
                         if (canBeDeletedForAllUsers)
                         {
                             RevokeCheck.IsChecked = true;
                             RevokeCheck.Visibility = Visibility.Visible;
                             RevokeCheck.Content = chat.Type is ChatTypePrivate && user != null
-                                ? string.Format(Strings.Resources.DeleteMessagesOptionAlso, user.FirstName)
-                                : Strings.Resources.DeleteForAll;
+                                ? string.Format(Strings.DeleteMessagesOptionAlso, user.FirstName)
+                                : Strings.DeleteForAll;
                         }
                     }
                 }
                 else if (chat.Type is ChatTypeSupergroup super && !super.IsChannel)
                 {
                     TextBlockHelper.SetMarkdown(Message, messages.Count == 1
-                        ? Strings.Resources.AreYouSureDeleteSingleMessageMega
-                        : Strings.Resources.AreYouSureDeleteFewMessagesMega);
+                        ? Strings.AreYouSureDeleteSingleMessageMega
+                        : Strings.AreYouSureDeleteFewMessagesMega);
                 }
                 else
                 {
                     TextBlockHelper.SetMarkdown(Message, messages.Count == 1
-                        ? Strings.Resources.AreYouSureDeleteSingleMessage
-                        : Strings.Resources.AreYouSureDeleteFewMessages);
+                        ? Strings.AreYouSureDeleteSingleMessage
+                        : Strings.AreYouSureDeleteFewMessages);
                 }
             }
         }

@@ -78,7 +78,7 @@ namespace Telegram.Converters
             }
             else if (date.Date == now.Date)
             {
-                return Strings.Resources.MessageScheduleToday;
+                return Strings.MessageScheduleToday;
             }
 
             return DayMonthFull.Format(date);
@@ -108,7 +108,7 @@ namespace Telegram.Converters
                 distance *= 3.28084f;
                 if (distance < 1000)
                 {
-                    return string.Format(away ? Strings.Resources.FootsAway : Strings.Resources.FootsShort, string.Format("{0}", (int)Math.Max(1, distance)));
+                    return string.Format(away ? Strings.FootsAway : Strings.FootsShort, string.Format("{0}", (int)Math.Max(1, distance)));
                 }
                 else
                 {
@@ -122,14 +122,14 @@ namespace Telegram.Converters
                         arg = string.Format("{0:0.00}", distance / 5280.0f);
                     }
 
-                    return string.Format(away ? Strings.Resources.MilesAway : Strings.Resources.MilesShort, arg);
+                    return string.Format(away ? Strings.MilesAway : Strings.MilesShort, arg);
                 }
             }
             else
             {
                 if (distance < 1000)
                 {
-                    return string.Format(away ? Strings.Resources.MetersAway2 : Strings.Resources.MetersShort, string.Format("{0}", (int)Math.Max(1, distance)));
+                    return string.Format(away ? Strings.MetersAway2 : Strings.MetersShort, string.Format("{0}", (int)Math.Max(1, distance)));
                 }
                 else
                 {
@@ -143,7 +143,7 @@ namespace Telegram.Converters
                         arg = string.Format("{0:0.00}", distance / 1000.0f);
                     }
 
-                    return string.Format(away ? Strings.Resources.KMetersAway2 : Strings.Resources.KMetersShort, arg);
+                    return string.Format(away ? Strings.KMetersAway2 : Strings.KMetersShort, arg);
                 }
             }
         }
@@ -333,7 +333,7 @@ namespace Telegram.Converters
         public static string DateAt(int value)
         {
             var date = DateTime(value);
-            return string.Format(Strings.Resources.formatDateAtTime, ShortDate.Format(date), ShortTime.Format(date));
+            return string.Format(Strings.formatDateAtTime, ShortDate.Format(date), ShortTime.Format(date));
         }
 
         public static string ShortNumber(int number)

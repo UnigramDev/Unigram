@@ -30,12 +30,12 @@ namespace Telegram.Views.Popups
 
             if (start)
             {
-                PrimaryButtonText = Strings.Resources.Start;
-                SecondaryButtonText = Strings.Resources.Cancel;
+                PrimaryButtonText = Strings.Start;
+                SecondaryButtonText = Strings.Cancel;
             }
             else
             {
-                PrimaryButtonText = Strings.Resources.OK;
+                PrimaryButtonText = Strings.OK;
             }
         }
 

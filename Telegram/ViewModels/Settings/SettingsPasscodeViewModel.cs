@@ -101,7 +101,7 @@ namespace Telegram.ViewModels.Settings
         {
             if (_passcodeService.IsEnabled)
             {
-                var confirm = await ShowPopupAsync(Strings.Resources.DisablePasscodeConfirmMessage, Strings.Resources.DisablePasscode, Strings.Resources.DisablePasscodeTurnOff, Strings.Resources.Cancel, true);
+                var confirm = await ShowPopupAsync(Strings.DisablePasscodeConfirmMessage, Strings.DisablePasscode, Strings.DisablePasscodeTurnOff, Strings.Cancel, true);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     _passcodeService.Reset();

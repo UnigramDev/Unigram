@@ -174,7 +174,7 @@ namespace Telegram.ViewModels.Chats
             dataPackage.SetText(_inviteLink);
             ClipboardEx.TrySetContent(dataPackage);
 
-            await ShowPopupAsync(Strings.Resources.LinkCopied, Strings.Resources.AppName, Strings.Resources.OK);
+            await ShowPopupAsync(Strings.LinkCopied, Strings.AppName, Strings.OK);
         }
 
         public RelayCommand RevokeCommand { get; }
@@ -186,7 +186,7 @@ namespace Telegram.ViewModels.Chats
                 return;
             }
 
-            var confirm = await ShowPopupAsync(Strings.Resources.RevokeAlert, Strings.Resources.RevokeLink, Strings.Resources.RevokeButton, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.RevokeAlert, Strings.RevokeLink, Strings.RevokeButton, Strings.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -276,7 +276,7 @@ namespace Telegram.ViewModels.Chats
                                 Add(new CollectionSeparator
                                 {
                                     Footer = _stageFooter,
-                                    Header = _stage == ItemsStage.Links ? Strings.Resources.Abort : Strings.Resources.Expired
+                                    Header = _stage == ItemsStage.Links ? Strings.Abort : Strings.Expired
                                 });
                             }
 
@@ -295,7 +295,7 @@ namespace Telegram.ViewModels.Chats
                                 _offsetInviteLink = string.Empty;
 
                                 _stageHeader = true;
-                                _stageFooter = _stage == ItemsStage.Links ? Strings.Resources.CreateNewLinkHelp : null;
+                                _stageFooter = _stage == ItemsStage.Links ? Strings.CreateNewLinkHelp : null;
                                 _stage = _stage == ItemsStage.Links ? ItemsStage.ExpiredLinks : ItemsStage.Administrators;
                             }
                         }
@@ -305,7 +305,7 @@ namespace Telegram.ViewModels.Chats
                             _offsetInviteLink = string.Empty;
 
                             _stageHeader = true;
-                            _stageFooter = _stage == ItemsStage.Links ? Strings.Resources.CreateNewLinkHelp : null;
+                            _stageFooter = _stage == ItemsStage.Links ? Strings.CreateNewLinkHelp : null;
                             _stage = _stage == ItemsStage.Links ? ItemsStage.ExpiredLinks : ItemsStage.Administrators;
                         }
                     }
@@ -320,7 +320,7 @@ namespace Telegram.ViewModels.Chats
                                 Add(new CollectionSeparator
                                 {
                                     Footer = _stageFooter,
-                                    Header = Strings.Resources.LinksCreatedByOtherAdmins
+                                    Header = Strings.LinksCreatedByOtherAdmins
                                 });
                             }
 

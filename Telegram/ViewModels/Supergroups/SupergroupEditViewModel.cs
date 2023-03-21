@@ -104,8 +104,8 @@ namespace Telegram.ViewModels.Supergroups
 
         public List<SettingsOptionItem<bool>> AllHistoryAvailableOptions { get; } = new()
         {
-            new SettingsOptionItem<bool>(true, Strings.Resources.ChatHistoryVisible),
-            new SettingsOptionItem<bool>(false, Strings.Resources.ChatHistoryHidden)
+            new SettingsOptionItem<bool>(true, Strings.ChatHistoryVisible),
+            new SettingsOptionItem<bool>(false, Strings.ChatHistoryHidden)
         };
 
         #region Initialize

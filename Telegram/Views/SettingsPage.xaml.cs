@@ -184,13 +184,13 @@ namespace Telegram.Views
 
         private void Questions_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.NavigateToInstant(Strings.Resources.TelegramFaqUrl);
+            MasterDetail.NavigationService.NavigateToInstant(Strings.TelegramFaqUrl);
             UpdateSelection();
         }
 
         private void PrivacyPolicy_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.NavigateToInstant(Strings.Resources.PrivacyPolicyUrl);
+            MasterDetail.NavigationService.NavigateToInstant(Strings.PrivacyPolicyUrl);
             UpdateSelection();
         }
 

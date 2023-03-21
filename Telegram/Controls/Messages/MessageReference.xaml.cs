@@ -318,24 +318,24 @@ namespace Telegram.Controls.Messages
             }
             if (message.Content is MessageExpiredVideo)
             {
-                return Strings.Resources.AttachVideoExpired;
+                return Strings.AttachVideoExpired;
             }
             else if (message.Content is MessageExpiredPhoto)
             {
-                return Strings.Resources.AttachPhotoExpired;
+                return Strings.AttachPhotoExpired;
             }
             else if (message.Content is MessageVideoNote)
             {
-                return Strings.Resources.AttachRound;
+                return Strings.AttachRound;
             }
             else if (message.Content is MessageSticker sticker)
             {
                 if (string.IsNullOrEmpty(sticker.Sticker.Emoji))
                 {
-                    return Strings.Resources.AttachSticker;
+                    return Strings.AttachSticker;
                 }
 
-                return $"{sticker.Sticker.Emoji} {Strings.Resources.AttachSticker}";
+                return $"{sticker.Sticker.Emoji} {Strings.AttachSticker}";
             }
 
             static string GetCaption(string caption)
@@ -345,11 +345,11 @@ namespace Telegram.Controls.Messages
 
             if (message.Content is MessageVoiceNote voiceNote)
             {
-                return Strings.Resources.AttachAudio + GetCaption(voiceNote.Caption.Text);
+                return Strings.AttachAudio + GetCaption(voiceNote.Caption.Text);
             }
             else if (message.Content is MessageVideo video)
             {
-                return (video.IsSecret ? Strings.Resources.AttachDestructingVideo : Strings.Resources.AttachVideo) + GetCaption(video.Caption.Text);
+                return (video.IsSecret ? Strings.AttachDestructingVideo : Strings.AttachVideo) + GetCaption(video.Caption.Text);
             }
             else if (message.Content is MessageAnimatedEmoji animatedEmoji)
             {
@@ -357,7 +357,7 @@ namespace Telegram.Controls.Messages
             }
             else if (message.Content is MessageAnimation animation)
             {
-                return Strings.Resources.AttachGif + GetCaption(animation.Caption.Text);
+                return Strings.AttachGif + GetCaption(animation.Caption.Text);
             }
             else if (message.Content is MessageAudio audio)
             {
@@ -366,7 +366,7 @@ namespace Telegram.Controls.Messages
 
                 if (performer == null || title == null)
                 {
-                    return Strings.Resources.AttachMusic + GetCaption(audio.Caption.Text);
+                    return Strings.AttachMusic + GetCaption(audio.Caption.Text);
                 }
                 else
                 {
@@ -377,7 +377,7 @@ namespace Telegram.Controls.Messages
             {
                 if (string.IsNullOrEmpty(document.Document.FileName))
                 {
-                    return Strings.Resources.AttachDocument + GetCaption(document.Caption.Text);
+                    return Strings.AttachDocument + GetCaption(document.Caption.Text);
                 }
 
                 return document.Document.FileName + GetCaption(document.Caption.Text);
@@ -388,19 +388,19 @@ namespace Telegram.Controls.Messages
             }
             else if (message.Content is MessageContact)
             {
-                return Strings.Resources.AttachContact;
+                return Strings.AttachContact;
             }
             else if (message.Content is MessageLocation location)
             {
-                return location.LivePeriod > 0 ? Strings.Resources.AttachLiveLocation : Strings.Resources.AttachLocation;
+                return location.LivePeriod > 0 ? Strings.AttachLiveLocation : Strings.AttachLocation;
             }
             else if (message.Content is MessageVenue)
             {
-                return Strings.Resources.AttachLocation;
+                return Strings.AttachLocation;
             }
             else if (message.Content is MessagePhoto photo)
             {
-                return (photo.IsSecret ? Strings.Resources.AttachDestructingPhoto : Strings.Resources.AttachPhoto) + GetCaption(photo.Caption.Text);
+                return (photo.IsSecret ? Strings.AttachDestructingPhoto : Strings.AttachPhoto) + GetCaption(photo.Caption.Text);
             }
             else if (message.Content is MessagePoll poll)
             {
@@ -412,7 +412,7 @@ namespace Telegram.Controls.Messages
             }
             else if (message.Content is MessageUnsupported)
             {
-                return Strings.Resources.UnsupportedAttachment;
+                return Strings.UnsupportedAttachment;
             }
 
             return string.Empty;

@@ -20,7 +20,7 @@ namespace Telegram.Views.Settings
         public SettingsProfilePage()
         {
             InitializeComponent();
-            Title = Strings.Resources.EditInformation;
+            Title = Strings.EditInformation;
         }
 
         private void LogOut_Click(object sender, RoutedEventArgs e)
@@ -53,7 +53,7 @@ namespace Telegram.Views.Settings
             }
             else
             {
-                Username.Badge = Strings.Resources.UsernameEmpty;
+                Username.Badge = Strings.UsernameEmpty;
             }
         }
 

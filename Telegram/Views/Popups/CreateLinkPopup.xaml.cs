@@ -18,9 +18,9 @@ namespace Telegram.Views.Popups
         {
             InitializeComponent();
 
-            Title = Strings.Resources.CreateLink;
-            ActionButtonContent = Strings.Resources.OK;
-            CloseButtonContent = Strings.Resources.Cancel;
+            Title = Strings.CreateLink;
+            ActionButtonContent = Strings.OK;
+            CloseButtonContent = Strings.Cancel;
         }
 
         public string Text

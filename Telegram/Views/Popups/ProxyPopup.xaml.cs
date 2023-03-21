@@ -130,7 +130,7 @@ namespace Telegram.Views.Popups
             //    builder.Add("pass=" + Password);
             //}
 
-            var title = Strings.Resources.ProxySettings;
+            var title = Strings.ProxySettings;
             var link = new Uri(MeUrlPrefixConverter.Convert(TLContainer.Current.Resolve<IClientService>(), $"socks?{string.Join("&", builder)}"));
 
             await SharePopup.GetForCurrentView().ShowAsync(link, title);
@@ -156,9 +156,9 @@ namespace Telegram.Views.Popups
             if (FieldPanel != null)
             {
                 FieldPanel.Text = TypeSocks.IsChecked == true
-                    ? Strings.Resources.UseProxyInfo
+                    ? Strings.UseProxyInfo
                     : TypeProto.IsChecked == true
-                    ? Strings.Resources.UseProxyTelegramInfo + Environment.NewLine + Environment.NewLine + Strings.Resources.UseProxyTelegramInfo2
+                    ? Strings.UseProxyTelegramInfo + Environment.NewLine + Environment.NewLine + Strings.UseProxyTelegramInfo2
                     : TypeHttp.IsChecked == true
                     ? "Enable if server supports transparent TCP connections via HTTP CONNECT method." + Environment.NewLine + Environment.NewLine + "When supported, it may improve connection speed dramatically. Try changing this option if this proxy doesn't work."
                     : string.Empty;

@@ -23,7 +23,7 @@ namespace Telegram.Views.Channels
         public ChannelCreateStep1Page()
         {
             InitializeComponent();
-            Title = Strings.Resources.NewChannel;
+            Title = Strings.NewChannel;
         }
 
         private void Title_Loaded(object sender, RoutedEventArgs e)

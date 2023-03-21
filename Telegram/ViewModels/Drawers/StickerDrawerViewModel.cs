@@ -47,28 +47,28 @@ namespace Telegram.ViewModels.Drawers
         {
             _premiumSet = new StickerSetViewModel(ClientService, new StickerSetInfo
             {
-                Title = Strings.Resources.PremiumStickers,
+                Title = Strings.PremiumStickers,
                 Name = "tg/premiumStickers",
                 IsInstalled = true
             });
 
             _favoriteSet = new StickerSetViewModel(ClientService, new StickerSetInfo
             {
-                Title = Strings.Resources.FavoriteStickers,
+                Title = Strings.FavoriteStickers,
                 Name = "tg/favedStickers",
                 IsInstalled = true
             });
 
             _recentSet = new StickerSetViewModel(ClientService, new StickerSetInfo
             {
-                Title = Strings.Resources.RecentStickers,
+                Title = Strings.RecentStickers,
                 Name = "tg/recentlyUsed",
                 IsInstalled = true
             });
 
             _groupSet = new SupergroupStickerSetViewModel(ClientService, new StickerSetInfo
             {
-                Title = Strings.Resources.GroupStickers,
+                Title = Strings.GroupStickers,
                 Name = "tg/groupStickers",
                 IsInstalled = true
             });

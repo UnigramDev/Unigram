@@ -126,7 +126,7 @@ namespace Telegram.Controls.Messages.Content
                 if (result is SpeechRecognitionResultError)
                 {
                     RecognizedText.Style = App.Current.Resources["InfoCaptionTextBlockStyle"] as Style;
-                    RecognizedText.Text = Strings.Resources.NoWordsRecognized;
+                    RecognizedText.Text = Strings.NoWordsRecognized;
                 }
                 else if (result is SpeechRecognitionResultPending pending)
                 {

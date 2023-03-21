@@ -62,7 +62,7 @@ namespace Telegram.ViewModels.Settings.Password
                 address = string.Empty;
                 addressValid = false;
 
-                var confirm = await ShowPopupAsync(Strings.Resources.YourEmailSkipWarningText, Strings.Resources.YourEmailSkipWarning, Strings.Resources.YourEmailSkip, Strings.Resources.Cancel);
+                var confirm = await ShowPopupAsync(Strings.YourEmailSkipWarningText, Strings.YourEmailSkipWarning, Strings.YourEmailSkip, Strings.Cancel);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;
@@ -92,7 +92,7 @@ namespace Telegram.ViewModels.Settings.Password
             {
                 if (error.TypeEquals(ErrorType.EMAIL_INVALID))
                 {
-                    await ShowPopupAsync(Strings.Resources.PasswordEmailInvalid, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+                    await ShowPopupAsync(Strings.PasswordEmailInvalid, Strings.AppName, Strings.OK, Strings.Cancel);
                 }
             }
         }

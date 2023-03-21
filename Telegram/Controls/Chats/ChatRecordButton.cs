@@ -85,8 +85,8 @@ namespace Telegram.Controls.Chats
             {
                 IsChecked = value == ChatRecordMode.Video;
 
-                AutomationProperties.SetName(this, value == ChatRecordMode.Video ? Strings.Resources.AccDescrVideoMessage : Strings.Resources.AccDescrVoiceMessage);
-                ToolTipService.SetToolTip(this, value == ChatRecordMode.Video ? Strings.Resources.AccDescrVideoMessage : Strings.Resources.AccDescrVoiceMessage);
+                AutomationProperties.SetName(this, value == ChatRecordMode.Video ? Strings.AccDescrVideoMessage : Strings.AccDescrVoiceMessage);
+                ToolTipService.SetToolTip(this, value == ChatRecordMode.Video ? Strings.AccDescrVideoMessage : Strings.AccDescrVoiceMessage);
             }
         }
 
@@ -331,10 +331,10 @@ namespace Telegram.Controls.Chats
                 if (IsRestricted)
                 {
                     var message = Mode == ChatRecordMode.Video
-                        ? Strings.Resources.VideoMessagesRestrictedByPrivacy
-                        : Strings.Resources.VoiceMessagesRestrictedByPrivacy;
+                        ? Strings.VideoMessagesRestrictedByPrivacy
+                        : Strings.VoiceMessagesRestrictedByPrivacy;
 
-                    await MessagePopup.ShowAsync(string.Format(message, ViewModel.Chat.Title), Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(string.Format(message, ViewModel.Chat.Title), Strings.AppName, Strings.OK);
                     return;
                 }
 
@@ -360,7 +360,7 @@ namespace Telegram.Controls.Chats
                     return;
                 }
 
-                var restricted = await ViewModel.VerifyRightsAsync(chat, x => Mode == ChatRecordMode.Video ? x.CanSendVideoNotes : x.CanSendVoiceNotes, Strings.Resources.GlobalAttachMediaRestricted, Strings.Resources.AttachMediaRestrictedForever, Strings.Resources.AttachMediaRestricted);
+                var restricted = await ViewModel.VerifyRightsAsync(chat, x => Mode == ChatRecordMode.Video ? x.CanSendVideoNotes : x.CanSendVoiceNotes, Strings.GlobalAttachMediaRestricted, Strings.AttachMediaRestrictedForever, Strings.AttachMediaRestricted);
                 if (restricted)
                 {
                     return;
@@ -486,13 +486,13 @@ namespace Telegram.Controls.Chats
             {
                 var message = audio
                     ? mode == ChatRecordMode.Voice
-                    ? Strings.Resources.PermissionNoAudio
-                    : Strings.Resources.PermissionNoAudioVideo
-                    : Strings.Resources.PermissionNoCamera;
+                    ? Strings.PermissionNoAudio
+                    : Strings.PermissionNoAudioVideo
+                    : Strings.PermissionNoCamera;
 
                 this.BeginOnUIThread(async () =>
                 {
-                    var confirm = await MessagePopup.ShowAsync(message, Strings.Resources.AppName, Strings.Resources.PermissionOpenSettings, Strings.Resources.OK);
+                    var confirm = await MessagePopup.ShowAsync(message, Strings.AppName, Strings.PermissionOpenSettings, Strings.OK);
                     if (confirm == ContentDialogResult.Primary)
                     {
                         await Launcher.LaunchUriAsync(new Uri("ms-settings:appsfeatures-app"));
@@ -553,7 +553,7 @@ namespace Telegram.Controls.Chats
                     return;
                 }
 
-                var restricted = await ViewModel.VerifyRightsAsync(chat, x => Mode == ChatRecordMode.Video ? x.CanSendVideoNotes : x.CanSendVoiceNotes, Strings.Resources.GlobalAttachMediaRestricted, Strings.Resources.AttachMediaRestrictedForever, Strings.Resources.AttachMediaRestricted);
+                var restricted = await ViewModel.VerifyRightsAsync(chat, x => Mode == ChatRecordMode.Video ? x.CanSendVideoNotes : x.CanSendVoiceNotes, Strings.GlobalAttachMediaRestricted, Strings.AttachMediaRestrictedForever, Strings.AttachMediaRestricted);
                 if (restricted)
                 {
                     return;

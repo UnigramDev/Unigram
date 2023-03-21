@@ -114,7 +114,7 @@ namespace Telegram.ViewModels.Premium
                 var links = Limits.FirstOrDefault(x => x.Type is PremiumLimitTypeCreatedPublicChatCount)?.PremiumValue ?? 0;
                 var accounts = 4;
 
-                return string.Format(Strings.Resources.PremiumPreviewLimitsDescription, channels, folders, pinned, links, accounts);
+                return string.Format(Strings.PremiumPreviewLimitsDescription, channels, folders, pinned, links, accounts);
             }
         }
 

@@ -1464,7 +1464,7 @@ namespace Telegram.Views
                 return;
             }
 
-            //var restricted = await ViewModel.VerifyRightsAsync(chat, x => x.CanSendMediaMessages, Strings.Resources.AttachMediaRestrictedForever, Strings.Resources.AttachMediaRestricted);
+            //var restricted = await ViewModel.VerifyRightsAsync(chat, x => x.CanSendMediaMessages, Strings.AttachMediaRestrictedForever, Strings.AttachMediaRestricted);
             //if (restricted)
             //{
             //    return;
@@ -1583,7 +1583,7 @@ namespace Telegram.Views
             ReplyMarkupPanel.Visibility = Visibility.Collapsed;
 
             ButtonMarkup.Glyph = Icons.BotMarkup24;
-            Automation.SetToolTip(ButtonMarkup, Strings.Resources.AccDescrBotCommands);
+            Automation.SetToolTip(ButtonMarkup, Strings.AccDescrBotCommands);
 
             if (keyboard)
             {
@@ -1598,7 +1598,7 @@ namespace Telegram.Views
             ReplyMarkupPanel.Visibility = Visibility.Visible;
 
             ButtonMarkup.Glyph = Icons.ChevronDown;
-            Automation.SetToolTip(ButtonMarkup, Strings.Resources.AccDescrShowKeyboard);
+            Automation.SetToolTip(ButtonMarkup, Strings.AccDescrShowKeyboard);
 
             Focus(FocusState.Programmatic);
             TextField.Focus(FocusState.Programmatic);
@@ -1627,16 +1627,16 @@ namespace Telegram.Views
             var basicGroup = chat.Type is ChatTypeBasicGroup basicGroupType ? ViewModel.ClientService.GetBasicGroup(basicGroupType.BasicGroupId) : null;
             var supergroup = chat.Type is ChatTypeSupergroup supergroupType ? ViewModel.ClientService.GetSupergroup(supergroupType.SupergroupId) : null;
 
-            flyout.CreateFlyoutItem(ViewModel.SearchCommand, Strings.Resources.Search, new FontIcon { Glyph = Icons.Search }, Windows.System.VirtualKey.F);
+            flyout.CreateFlyoutItem(ViewModel.SearchCommand, Strings.Search, new FontIcon { Glyph = Icons.Search }, Windows.System.VirtualKey.F);
 
             if (user != null && !secret)
             {
-                flyout.CreateFlyoutItem(ViewModel.SetThemeCommand, Strings.Resources.ChangeColors, new FontIcon { Glyph = Icons.PaintBrush });
+                flyout.CreateFlyoutItem(ViewModel.SetThemeCommand, Strings.ChangeColors, new FontIcon { Glyph = Icons.PaintBrush });
             }
 
             if (supergroup != null && supergroup.Status is not ChatMemberStatusCreator && (supergroup.IsChannel || supergroup.HasActiveUsername()))
             {
-                flyout.CreateFlyoutItem(ViewModel.ReportCommand, Strings.Resources.ReportChat, new FontIcon { Glyph = Icons.ShieldError });
+                flyout.CreateFlyoutItem(ViewModel.ReportCommand, Strings.ReportChat, new FontIcon { Glyph = Icons.ShieldError });
             }
             if (user != null && user.Id != ViewModel.ClientService.Options.MyId)
             {
@@ -1644,11 +1644,11 @@ namespace Telegram.Views
                 {
                     if (!string.IsNullOrEmpty(user.PhoneNumber))
                     {
-                        flyout.CreateFlyoutItem(ViewModel.AddContactCommand, Strings.Resources.AddToContacts, new FontIcon { Glyph = Icons.PersonAdd });
+                        flyout.CreateFlyoutItem(ViewModel.AddContactCommand, Strings.AddToContacts, new FontIcon { Glyph = Icons.PersonAdd });
                     }
                     else
                     {
-                        flyout.CreateFlyoutItem(ViewModel.ShareContactCommand, Strings.Resources.ShareMyContactInfo, new FontIcon { Glyph = Icons.Share });
+                        flyout.CreateFlyoutItem(ViewModel.ShareContactCommand, Strings.ShareMyContactInfo, new FontIcon { Glyph = Icons.Share });
                     }
                 }
             }
@@ -1656,15 +1656,15 @@ namespace Telegram.Views
             {
                 if (user != null || basicGroup != null || (supergroup != null && !supergroup.IsChannel && !supergroup.HasActiveUsername()))
                 {
-                    flyout.CreateFlyoutItem(ViewModel.ChatClearCommand, Strings.Resources.ClearHistory, new FontIcon { Glyph = Icons.Broom });
+                    flyout.CreateFlyoutItem(ViewModel.ChatClearCommand, Strings.ClearHistory, new FontIcon { Glyph = Icons.Broom });
                 }
                 if (user != null)
                 {
-                    flyout.CreateFlyoutItem(ViewModel.ChatDeleteCommand, Strings.Resources.DeleteChatUser, new FontIcon { Glyph = Icons.Delete });
+                    flyout.CreateFlyoutItem(ViewModel.ChatDeleteCommand, Strings.DeleteChatUser, new FontIcon { Glyph = Icons.Delete });
                 }
                 if (basicGroup != null)
                 {
-                    flyout.CreateFlyoutItem(ViewModel.ChatDeleteCommand, Strings.Resources.DeleteAndExit, new FontIcon { Glyph = Icons.Delete });
+                    flyout.CreateFlyoutItem(ViewModel.ChatDeleteCommand, Strings.DeleteAndExit, new FontIcon { Glyph = Icons.Delete });
                 }
             }
             if ((user != null && user.Id != ViewModel.ClientService.Options.MyId) || basicGroup != null || (supergroup != null && !supergroup.IsChannel))
@@ -1673,22 +1673,22 @@ namespace Telegram.Views
                 var silent = chat.DefaultDisableNotification;
 
                 var mute = new MenuFlyoutSubItem();
-                mute.Text = Strings.Resources.Mute;
+                mute.Text = Strings.Mute;
                 mute.Icon = new FontIcon { Glyph = muted ? Icons.Alert : Icons.AlertOff, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
 
                 if (muted is false)
                 {
                     mute.CreateFlyoutItem(true, () => { },
-                        silent ? Strings.Resources.SoundOn : Strings.Resources.SoundOff,
+                        silent ? Strings.SoundOn : Strings.SoundOff,
                         new FontIcon { Glyph = silent ? Icons.MusicNote2 : Icons.MusicNoteOff2 });
                 }
 
-                mute.CreateFlyoutItem(ViewModel.MuteForCommand, 60 * 60, Strings.Resources.MuteFor1h, new FontIcon { Glyph = Icons.ClockAlarmHour });
-                mute.CreateFlyoutItem(ViewModel.MuteForCommand, null, Strings.Resources.MuteForPopup, new FontIcon { Glyph = Icons.AlertSnooze });
+                mute.CreateFlyoutItem(ViewModel.MuteForCommand, 60 * 60, Strings.MuteFor1h, new FontIcon { Glyph = Icons.ClockAlarmHour });
+                mute.CreateFlyoutItem(ViewModel.MuteForCommand, null, Strings.MuteForPopup, new FontIcon { Glyph = Icons.AlertSnooze });
 
                 var toggle = mute.CreateFlyoutItem(
                     muted ? ViewModel.UnmuteCommand : ViewModel.MuteCommand,
-                    muted ? Strings.Resources.UnmuteNotifications : Strings.Resources.MuteNotifications,
+                    muted ? Strings.UnmuteNotifications : Strings.MuteNotifications,
                     new FontIcon { Glyph = muted ? Icons.Speaker : Icons.SpeakerOff });
 
                 if (muted is false)
@@ -1705,7 +1705,7 @@ namespace Telegram.Views
             //}
             //else if (currentUser.IsSelf)
             //{
-            //    CreateFlyoutItem(ref flyout, null, Strings.Resources.AddShortcut);
+            //    CreateFlyoutItem(ref flyout, null, Strings.AddShortcut);
             //}
             if (user != null && user.Type is UserTypeBot)
             {
@@ -1714,12 +1714,12 @@ namespace Telegram.Views
                 {
                     if (fullInfo.BotInfo.Commands.Any(x => x.Command.Equals("Settings")))
                     {
-                        flyout.CreateFlyoutItem(() => { }, Strings.Resources.BotSettings);
+                        flyout.CreateFlyoutItem(() => { }, Strings.BotSettings);
                     }
 
                     if (fullInfo.BotInfo.Commands.Any(x => x.Command.Equals("help")))
                     {
-                        flyout.CreateFlyoutItem(() => { }, Strings.Resources.BotHelp);
+                        flyout.CreateFlyoutItem(() => { }, Strings.BotHelp);
                     }
                 }
             }
@@ -1727,7 +1727,7 @@ namespace Telegram.Views
             var hidden = ViewModel.Settings.GetChatPinnedMessage(chat.Id);
             if (hidden != 0)
             {
-                flyout.CreateFlyoutItem(ViewModel.PinnedShowCommand, Strings.Resources.PinnedMessages, new FontIcon { Glyph = Icons.Pin });
+                flyout.CreateFlyoutItem(ViewModel.PinnedShowCommand, Strings.PinnedMessages, new FontIcon { Glyph = Icons.Pin });
             }
 
             if (flyout.Items.Count > 0)
@@ -1752,8 +1752,8 @@ namespace Telegram.Views
             var self = ViewModel.ClientService.IsSavedMessages(chat);
 
             var flyout = new MenuFlyout();
-            flyout.CreateFlyoutItem(new RelayCommand(async () => await TextField.SendAsync(true)), Strings.Resources.SendWithoutSound, new FontIcon { Glyph = Icons.AlertOff });
-            flyout.CreateFlyoutItem(new RelayCommand(async () => await TextField.ScheduleAsync()), self ? Strings.Resources.SetReminder : Strings.Resources.ScheduleMessage, new FontIcon { Glyph = Icons.CalendarClock });
+            flyout.CreateFlyoutItem(new RelayCommand(async () => await TextField.SendAsync(true)), Strings.SendWithoutSound, new FontIcon { Glyph = Icons.AlertOff });
+            flyout.CreateFlyoutItem(new RelayCommand(async () => await TextField.ScheduleAsync()), self ? Strings.SetReminder : Strings.ScheduleMessage, new FontIcon { Glyph = Icons.CalendarClock });
 
             flyout.ShowAt(sender, new FlyoutShowOptions { Placement = FlyoutPlacementMode.TopEdgeAlignedRight });
         }
@@ -1865,24 +1865,24 @@ namespace Telegram.Views
                 }
                 else
                 {
-                    flyout.CreateFlyoutItem(MessageSelect_Loaded, ViewModel.MessageSelectCommand, message, Strings.Resources.Select, new FontIcon { Glyph = Icons.CheckmarkCircle });
+                    flyout.CreateFlyoutItem(MessageSelect_Loaded, ViewModel.MessageSelectCommand, message, Strings.Select, new FontIcon { Glyph = Icons.CheckmarkCircle });
                 }
             }
             else if (message.SendingState is MessageSendingStateFailed or MessageSendingStatePending)
             {
                 if (message.SendingState is MessageSendingStateFailed)
                 {
-                    flyout.CreateFlyoutItem(MessageRetry_Loaded, ViewModel.MessageRetryCommand, message, Strings.Resources.Retry, new FontIcon { Glyph = Icons.Retry });
+                    flyout.CreateFlyoutItem(MessageRetry_Loaded, ViewModel.MessageRetryCommand, message, Strings.Retry, new FontIcon { Glyph = Icons.Retry });
                 }
 
-                flyout.CreateFlyoutItem(MessageCopy_Loaded, ViewModel.MessageCopyCommand, message, Strings.Resources.Copy, new FontIcon { Glyph = Icons.DocumentCopy });
-                flyout.CreateFlyoutItem(MessageDelete_Loaded, ViewModel.MessageDeleteCommand, message, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
+                flyout.CreateFlyoutItem(MessageCopy_Loaded, ViewModel.MessageCopyCommand, message, Strings.Copy, new FontIcon { Glyph = Icons.DocumentCopy });
+                flyout.CreateFlyoutItem(MessageDelete_Loaded, ViewModel.MessageDeleteCommand, message, Strings.Delete, new FontIcon { Glyph = Icons.Delete });
             }
             else
             {
                 // Scheduled
-                flyout.CreateFlyoutItem(MessageSendNow_Loaded, ViewModel.MessageSendNowCommand, message, Strings.Resources.MessageScheduleSend, new FontIcon { Glyph = Icons.Send, FontFamily = new FontFamily("ms-appx:///Assets/Fonts/Telegram.ttf#Telegram") });
-                flyout.CreateFlyoutItem(MessageReschedule_Loaded, ViewModel.MessageRescheduleCommand, message, Strings.Resources.MessageScheduleEditTime, new FontIcon { Glyph = Icons.CalendarClock });
+                flyout.CreateFlyoutItem(MessageSendNow_Loaded, ViewModel.MessageSendNowCommand, message, Strings.MessageScheduleSend, new FontIcon { Glyph = Icons.Send, FontFamily = new FontFamily("ms-appx:///Assets/Fonts/Telegram.ttf#Telegram") });
+                flyout.CreateFlyoutItem(MessageReschedule_Loaded, ViewModel.MessageRescheduleCommand, message, Strings.MessageScheduleEditTime, new FontIcon { Glyph = Icons.CalendarClock });
 
                 if (message.CanGetViewers && CanGetMessageViewers(chat, message))
                 {
@@ -1890,16 +1890,16 @@ namespace Telegram.Views
                 }
 
                 // Generic
-                flyout.CreateFlyoutItem(MessageReply_Loaded, ViewModel.MessageReplyCommand, message, Strings.Resources.Reply, new FontIcon { Glyph = Icons.ArrowReply });
+                flyout.CreateFlyoutItem(MessageReply_Loaded, ViewModel.MessageReplyCommand, message, Strings.Reply, new FontIcon { Glyph = Icons.ArrowReply });
 
                 if (true /*message.Content is MessageText*/)
                 {
-                    flyout.CreateFlyoutItem(MessageEdit_Loaded, ViewModel.MessageEditCommand, message, Strings.Resources.Edit, new FontIcon { Glyph = Icons.Edit });
+                    flyout.CreateFlyoutItem(MessageEdit_Loaded, ViewModel.MessageEditCommand, message, Strings.Edit, new FontIcon { Glyph = Icons.Edit });
                 }
                 else if (MessageEdit_Loaded(message))
                 {
                     var edit = new MenuFlyoutSubItem();
-                    edit.Text = Strings.Resources.Edit;
+                    edit.Text = Strings.Edit;
                     edit.Icon = new FontIcon { Glyph = Icons.Edit };
 
                     var caption = message.Content.GetCaption();
@@ -1925,52 +1925,52 @@ namespace Telegram.Views
                     flyout.Items.Add(edit);
                 }
 
-                flyout.CreateFlyoutItem(MessageThread_Loaded, ViewModel.MessageThreadCommand, message, message.InteractionInfo?.ReplyInfo?.ReplyCount > 0 ? Locale.Declension("ViewReplies", message.InteractionInfo.ReplyInfo.ReplyCount) : Strings.Resources.ViewThread, new FontIcon { Glyph = Icons.ChatMultiple });
+                flyout.CreateFlyoutItem(MessageThread_Loaded, ViewModel.MessageThreadCommand, message, message.InteractionInfo?.ReplyInfo?.ReplyCount > 0 ? Locale.Declension("ViewReplies", message.InteractionInfo.ReplyInfo.ReplyCount) : Strings.ViewThread, new FontIcon { Glyph = Icons.ChatMultiple });
 
                 flyout.CreateFlyoutSeparator();
 
                 // Manage
-                flyout.CreateFlyoutItem(MessagePin_Loaded, ViewModel.MessagePinCommand, message, message.IsPinned ? Strings.Resources.UnpinMessage : Strings.Resources.PinMessage, new FontIcon { Glyph = message.IsPinned ? Icons.PinOff : Icons.Pin });
-                flyout.CreateFlyoutItem(MessageStatistics_Loaded, ViewModel.MessageStatisticsCommand, message, Strings.Resources.Statistics, new FontIcon { Glyph = Icons.DataUsage });
+                flyout.CreateFlyoutItem(MessagePin_Loaded, ViewModel.MessagePinCommand, message, message.IsPinned ? Strings.UnpinMessage : Strings.PinMessage, new FontIcon { Glyph = message.IsPinned ? Icons.PinOff : Icons.Pin });
+                flyout.CreateFlyoutItem(MessageStatistics_Loaded, ViewModel.MessageStatisticsCommand, message, Strings.Statistics, new FontIcon { Glyph = Icons.DataUsage });
 
-                flyout.CreateFlyoutItem(MessageForward_Loaded, ViewModel.MessageForwardCommand, message, Strings.Resources.Forward, new FontIcon { Glyph = Icons.Share });
-                flyout.CreateFlyoutItem(MessageReport_Loaded, ViewModel.MessageReportCommand, message, Strings.Resources.ReportChat, new FontIcon { Glyph = Icons.ShieldError });
-                flyout.CreateFlyoutItem(MessageReportFalsePositive_Loaded, ViewModel.MessageReportFalsePositiveCommand, message, Strings.Resources.ReportFalsePositive, new FontIcon { Glyph = Icons.ShieldError });
-                flyout.CreateFlyoutItem(MessageDelete_Loaded, ViewModel.MessageDeleteCommand, message, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
-                flyout.CreateFlyoutItem(MessageSelect_Loaded, ViewModel.MessageSelectCommand, message, Strings.Resources.Select, new FontIcon { Glyph = Icons.CheckmarkCircle });
+                flyout.CreateFlyoutItem(MessageForward_Loaded, ViewModel.MessageForwardCommand, message, Strings.Forward, new FontIcon { Glyph = Icons.Share });
+                flyout.CreateFlyoutItem(MessageReport_Loaded, ViewModel.MessageReportCommand, message, Strings.ReportChat, new FontIcon { Glyph = Icons.ShieldError });
+                flyout.CreateFlyoutItem(MessageReportFalsePositive_Loaded, ViewModel.MessageReportFalsePositiveCommand, message, Strings.ReportFalsePositive, new FontIcon { Glyph = Icons.ShieldError });
+                flyout.CreateFlyoutItem(MessageDelete_Loaded, ViewModel.MessageDeleteCommand, message, Strings.Delete, new FontIcon { Glyph = Icons.Delete });
+                flyout.CreateFlyoutItem(MessageSelect_Loaded, ViewModel.MessageSelectCommand, message, Strings.Select, new FontIcon { Glyph = Icons.CheckmarkCircle });
 
                 flyout.CreateFlyoutSeparator();
 
                 // Copy
-                flyout.CreateFlyoutItem(MessageCopy_Loaded, ViewModel.MessageCopyCommand, message, Strings.Resources.Copy, new FontIcon { Glyph = Icons.DocumentCopy });
-                flyout.CreateFlyoutItem(MessageCopyLink_Loaded, ViewModel.MessageCopyLinkCommand, message, Strings.Resources.CopyLink, new FontIcon { Glyph = Icons.Link });
-                flyout.CreateFlyoutItem(MessageCopyMedia_Loaded, ViewModel.MessageCopyMediaCommand, message, Strings.Resources.CopyImage, new FontIcon { Glyph = Icons.Image });
+                flyout.CreateFlyoutItem(MessageCopy_Loaded, ViewModel.MessageCopyCommand, message, Strings.Copy, new FontIcon { Glyph = Icons.DocumentCopy });
+                flyout.CreateFlyoutItem(MessageCopyLink_Loaded, ViewModel.MessageCopyLinkCommand, message, Strings.CopyLink, new FontIcon { Glyph = Icons.Link });
+                flyout.CreateFlyoutItem(MessageCopyMedia_Loaded, ViewModel.MessageCopyMediaCommand, message, Strings.CopyImage, new FontIcon { Glyph = Icons.Image });
 
-                flyout.CreateFlyoutItem(MessageTranslate_Loaded, ViewModel.MessageTranslateCommand, message, Strings.Resources.TranslateMessage, new FontIcon { Glyph = Icons.Translate });
+                flyout.CreateFlyoutItem(MessageTranslate_Loaded, ViewModel.MessageTranslateCommand, message, Strings.TranslateMessage, new FontIcon { Glyph = Icons.Translate });
 
                 flyout.CreateFlyoutSeparator();
 
                 // Stickers
-                flyout.CreateFlyoutItem(MessageAddSticker_Loaded, ViewModel.MessageAddStickerCommand, message, Strings.Resources.AddToStickers, new FontIcon { Glyph = Icons.Sticker });
-                flyout.CreateFlyoutItem(MessageFaveSticker_Loaded, ViewModel.MessageFaveStickerCommand, message, Strings.Resources.AddToFavorites, new FontIcon { Glyph = Icons.Star });
-                flyout.CreateFlyoutItem(MessageUnfaveSticker_Loaded, ViewModel.MessageUnfaveStickerCommand, message, Strings.Resources.DeleteFromFavorites, new FontIcon { Glyph = Icons.StarOff });
+                flyout.CreateFlyoutItem(MessageAddSticker_Loaded, ViewModel.MessageAddStickerCommand, message, Strings.AddToStickers, new FontIcon { Glyph = Icons.Sticker });
+                flyout.CreateFlyoutItem(MessageFaveSticker_Loaded, ViewModel.MessageFaveStickerCommand, message, Strings.AddToFavorites, new FontIcon { Glyph = Icons.Star });
+                flyout.CreateFlyoutItem(MessageUnfaveSticker_Loaded, ViewModel.MessageUnfaveStickerCommand, message, Strings.DeleteFromFavorites, new FontIcon { Glyph = Icons.StarOff });
 
                 flyout.CreateFlyoutSeparator();
 
                 // Files
-                flyout.CreateFlyoutItem(MessageSaveAnimation_Loaded, ViewModel.MessageSaveAnimationCommand, message, Strings.Resources.SaveToGIFs, new FontIcon { Glyph = Icons.Gif });
-                flyout.CreateFlyoutItem(MessageSaveSound_Loaded, ViewModel.MessageSaveSoundCommand, message, Strings.Resources.SaveForNotifications, new FontIcon { Glyph = Icons.MusicNote2 });
-                flyout.CreateFlyoutItem(MessageSaveMedia_Loaded, ViewModel.MessageSaveMediaCommand, message, Strings.Resources.SaveAs, new FontIcon { Glyph = Icons.SaveAs });
-                flyout.CreateFlyoutItem(MessageSaveMedia_Loaded, ViewModel.MessageOpenWithCommand, message, Strings.Resources.OpenWith, new FontIcon { Glyph = Icons.OpenIn });
-                flyout.CreateFlyoutItem(MessageSaveMedia_Loaded, ViewModel.MessageOpenFolderCommand, message, Strings.Resources.ShowInFolder, new FontIcon { Glyph = Icons.FolderOpen });
+                flyout.CreateFlyoutItem(MessageSaveAnimation_Loaded, ViewModel.MessageSaveAnimationCommand, message, Strings.SaveToGIFs, new FontIcon { Glyph = Icons.Gif });
+                flyout.CreateFlyoutItem(MessageSaveSound_Loaded, ViewModel.MessageSaveSoundCommand, message, Strings.SaveForNotifications, new FontIcon { Glyph = Icons.MusicNote2 });
+                flyout.CreateFlyoutItem(MessageSaveMedia_Loaded, ViewModel.MessageSaveMediaCommand, message, Strings.SaveAs, new FontIcon { Glyph = Icons.SaveAs });
+                flyout.CreateFlyoutItem(MessageSaveMedia_Loaded, ViewModel.MessageOpenWithCommand, message, Strings.OpenWith, new FontIcon { Glyph = Icons.OpenIn });
+                flyout.CreateFlyoutItem(MessageSaveMedia_Loaded, ViewModel.MessageOpenFolderCommand, message, Strings.ShowInFolder, new FontIcon { Glyph = Icons.FolderOpen });
 
                 // Contacts
-                flyout.CreateFlyoutItem(MessageAddContact_Loaded, ViewModel.MessageAddContactCommand, message, Strings.Resources.AddContactTitle, new FontIcon { Glyph = Icons.Person });
-                //CreateFlyoutItem(ref flyout, MessageSaveDownload_Loaded, ViewModel.MessageSaveDownloadCommand, messageCommon, Strings.Resources.SaveToDownloads);
+                flyout.CreateFlyoutItem(MessageAddContact_Loaded, ViewModel.MessageAddContactCommand, message, Strings.AddContactTitle, new FontIcon { Glyph = Icons.Person });
+                //CreateFlyoutItem(ref flyout, MessageSaveDownload_Loaded, ViewModel.MessageSaveDownloadCommand, messageCommon, Strings.SaveToDownloads);
 
                 // Polls
-                flyout.CreateFlyoutItem(MessageUnvotePoll_Loaded, ViewModel.MessageUnvotePollCommand, message, Strings.Resources.Unvote, new FontIcon { Glyph = Icons.ArrowUndo });
-                flyout.CreateFlyoutItem(MessageStopPoll_Loaded, ViewModel.MessageStopPollCommand, message, Strings.Resources.StopPoll, new FontIcon { Glyph = Icons.LockClosed });
+                flyout.CreateFlyoutItem(MessageUnvotePoll_Loaded, ViewModel.MessageUnvotePollCommand, message, Strings.Unvote, new FontIcon { Glyph = Icons.ArrowUndo });
+                flyout.CreateFlyoutItem(MessageStopPoll_Loaded, ViewModel.MessageStopPollCommand, message, Strings.StopPoll, new FontIcon { Glyph = Icons.LockClosed });
 
 #if DEBUG
                 var file = message.GetFile();
@@ -2003,8 +2003,8 @@ namespace Telegram.Views
                         Padding = new Thickness(12, 4, 12, 4),
                         MaxWidth = 180,
                         Text = message.IsChannelPost
-                            ? Strings.Resources.ForwardsRestrictedInfoChannel
-                            : Strings.Resources.ForwardsRestrictedInfoGroup
+                            ? Strings.ForwardsRestrictedInfoChannel
+                            : Strings.ForwardsRestrictedInfoGroup
                     });
                 }
             }
@@ -2085,13 +2085,13 @@ namespace Telegram.Views
                     var response2 = await message.ClientService.SendAsync(new GetStickerSet(sets.First()));
                     if (response2 is StickerSet set)
                     {
-                        placeholder.Text = string.Format(Strings.Resources.MessageContainsEmojiPack, set.Title);
+                        placeholder.Text = string.Format(Strings.MessageContainsEmojiPack, set.Title);
                     }
                 }
             }
             else
             {
-                placeholder.Text = Strings.Resources.NobodyViewed;
+                placeholder.Text = Strings.NobodyViewed;
             }
         }
 
@@ -2198,7 +2198,7 @@ namespace Telegram.Views
             }
             else
             {
-                placeholder.Text = Strings.Resources.NobodyViewed;
+                placeholder.Text = Strings.NobodyViewed;
             }
         }
 
@@ -3096,7 +3096,7 @@ namespace Telegram.Views
 
         public string ConvertEmptyText(long userId)
         {
-            return userId != 777000 && userId != 429000 && userId != 4244000 && (userId / 1000 == 333 || userId % 1000 == 0) ? Strings.Resources.GotAQuestion : Strings.Resources.NoMessages;
+            return userId != 777000 && userId != 429000 && userId != 4244000 && (userId / 1000 == 333 || userId % 1000 == 0) ? Strings.GotAQuestion : Strings.NoMessages;
         }
 
         #endregion
@@ -3573,7 +3573,7 @@ namespace Telegram.Views
             }
             else if (ViewModel.Type == DialogType.ScheduledMessages)
             {
-                Title.Text = ViewModel.ClientService.IsSavedMessages(chat) ? Strings.Resources.Reminders : Strings.Resources.ScheduledMessages;
+                Title.Text = ViewModel.ClientService.IsSavedMessages(chat) ? Strings.Reminders : Strings.ScheduledMessages;
             }
             else
             {
@@ -3623,7 +3623,7 @@ namespace Telegram.Views
             if (chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
             {
                 ButtonSilent.IsChecked = defaultDisableNotification;
-                Automation.SetToolTip(ButtonSilent, defaultDisableNotification ? Strings.Resources.AccDescrChanSilentOn : Strings.Resources.AccDescrChanSilentOff);
+                Automation.SetToolTip(ButtonSilent, defaultDisableNotification ? Strings.AccDescrChanSilentOn : Strings.AccDescrChanSilentOff);
             }
 
             TextField.PlaceholderText = GetPlaceholder(chat, out bool readOnly);
@@ -3678,7 +3678,7 @@ namespace Telegram.Views
                 }
                 else
                 {
-                    ShowAction(ViewModel.ClientService.Notifications.GetMutedFor(chat) > 0 ? Strings.Resources.ChannelUnmute : Strings.Resources.ChannelMute, true);
+                    ShowAction(ViewModel.ClientService.Notifications.GetMutedFor(chat) > 0 ? Strings.ChannelUnmute : Strings.ChannelMute, true);
                 }
             }
         }
@@ -3724,7 +3724,7 @@ namespace Telegram.Views
                 return GetPlaceholder(chat, basicGroup, out readOnly);
             }
 
-            return Strings.Resources.TypeMessage;
+            return Strings.TypeMessage;
         }
 
         private string GetPlaceholder(Chat chat, Supergroup supergroup, out bool readOnly)
@@ -3734,20 +3734,20 @@ namespace Telegram.Views
             if (supergroup.IsChannel)
             {
                 return chat.DefaultDisableNotification
-                    ? Strings.Resources.ChannelSilentBroadcast
-                    : Strings.Resources.ChannelBroadcast;
+                    ? Strings.ChannelSilentBroadcast
+                    : Strings.ChannelBroadcast;
             }
             else if (chat.Permissions.CanSendBasicMessages is false && supergroup.Status is not ChatMemberStatusCreator and not ChatMemberStatusAdministrator)
             {
                 readOnly = true;
-                return Strings.Resources.PlainTextRestrictedHint;
+                return Strings.PlainTextRestrictedHint;
             }
             else if (supergroup.Status is ChatMemberStatusCreator creator && creator.IsAnonymous || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.IsAnonymous)
             {
-                return Strings.Resources.SendAnonymously;
+                return Strings.SendAnonymously;
             }
 
-            return Strings.Resources.TypeMessage;
+            return Strings.TypeMessage;
         }
 
         private string GetPlaceholder(Chat chat, BasicGroup basicGroup, out bool readOnly)
@@ -3757,10 +3757,10 @@ namespace Telegram.Views
             if (chat.Permissions.CanSendBasicMessages is false && basicGroup.Status is not ChatMemberStatusCreator and not ChatMemberStatusAdministrator)
             {
                 readOnly = true;
-                return Strings.Resources.PlainTextRestrictedHint;
+                return Strings.PlainTextRestrictedHint;
             }
 
-            return Strings.Resources.TypeMessage;
+            return Strings.TypeMessage;
         }
 
         public void UpdateChatReplyMarkup(Chat chat, MessageViewModel message)
@@ -3849,7 +3849,7 @@ namespace Telegram.Views
                 var photoRights = ViewModel.VerifyRights(chat, x => x.CanSendPhotos);
                 var videoRights = ViewModel.VerifyRights(chat, x => x.CanSendVideos);
                 var documentRights = ViewModel.VerifyRights(chat, x => x.CanSendDocuments);
-                var pollRights = ViewModel.VerifyRights(chat, x => x.CanSendPolls, Strings.Resources.GlobalAttachMediaRestricted, Strings.Resources.AttachMediaRestrictedForever, Strings.Resources.AttachMediaRestricted, out string pollsLabel);
+                var pollRights = ViewModel.VerifyRights(chat, x => x.CanSendPolls, Strings.GlobalAttachMediaRestricted, Strings.AttachMediaRestrictedForever, Strings.AttachMediaRestricted, out string pollsLabel);
 
                 var pollsAllowed = chat.Type is ChatTypeSupergroup or ChatTypeBasicGroup;
                 if (!pollsAllowed && ViewModel.ClientService.TryGetUser(chat, out User user))
@@ -3917,7 +3917,7 @@ namespace Telegram.Views
 
                     ComposerHeaderGlyph.Glyph = Icons.Edit;
 
-                    Automation.SetToolTip(ComposerHeaderCancel, Strings.Resources.AccDescrCancelEdit);
+                    Automation.SetToolTip(ComposerHeaderCancel, Strings.AccDescrCancelEdit);
 
                     SecondaryButtonsPanel.Visibility = Visibility.Collapsed;
                     //ButtonRecord.Visibility = Visibility.Collapsed;
@@ -3933,7 +3933,7 @@ namespace Telegram.Views
                     var photoRights = ViewModel.VerifyRights(chat, x => x.CanSendPhotos);
                     var videoRights = ViewModel.VerifyRights(chat, x => x.CanSendVideos);
                     var documentRights = ViewModel.VerifyRights(chat, x => x.CanSendDocuments);
-                    var pollRights = ViewModel.VerifyRights(chat, x => x.CanSendPolls, Strings.Resources.GlobalAttachMediaRestricted, Strings.Resources.AttachMediaRestrictedForever, Strings.Resources.AttachMediaRestricted, out string pollsLabel);
+                    var pollRights = ViewModel.VerifyRights(chat, x => x.CanSendPolls, Strings.GlobalAttachMediaRestricted, Strings.AttachMediaRestrictedForever, Strings.AttachMediaRestricted, out string pollsLabel);
 
                     var pollsAllowed = chat.Type is ChatTypeSupergroup or ChatTypeBasicGroup;
                     if (!pollsAllowed && ViewModel.ClientService.TryGetUser(chat, out User user))
@@ -3964,7 +3964,7 @@ namespace Telegram.Views
                         ComposerHeaderGlyph.Glyph = Icons.Loading;
                     }
 
-                    Automation.SetToolTip(ComposerHeaderCancel, Strings.Resources.AccDescrCancelReply);
+                    Automation.SetToolTip(ComposerHeaderCancel, Strings.AccDescrCancelReply);
 
                     SecondaryButtonsPanel.Visibility = Visibility.Visible;
                     //ButtonRecord.Visibility = Visibility.Visible;
@@ -4321,19 +4321,19 @@ namespace Telegram.Views
         {
             if (ViewModel.Type == DialogType.Pinned)
             {
-                ShowAction(Strings.Resources.UnpinAllMessages, true);
+                ShowAction(Strings.UnpinAllMessages, true);
             }
             else if (ViewModel.ClientService.IsRepliesChat(chat))
             {
-                ShowAction(ViewModel.ClientService.Notifications.GetMutedFor(chat) > 0 ? Strings.Resources.ChannelUnmute : Strings.Resources.ChannelMute, true);
+                ShowAction(ViewModel.ClientService.Notifications.GetMutedFor(chat) > 0 ? Strings.ChannelUnmute : Strings.ChannelMute, true);
             }
             else if (chat.IsBlocked)
             {
-                ShowAction(user.Type is UserTypeBot ? Strings.Resources.BotUnblock : Strings.Resources.Unblock, true);
+                ShowAction(user.Type is UserTypeBot ? Strings.BotUnblock : Strings.Unblock, true);
             }
             else if (user.Type is UserTypeBot && (accessToken || chat?.LastMessage == null))
             {
-                ShowAction(Strings.Resources.BotStart, true);
+                ShowAction(Strings.BotStart, true);
             }
             else if (!secret)
             {
@@ -4353,7 +4353,7 @@ namespace Telegram.Views
                 ShowHideBotCommands(false);
             }
 
-            Automation.SetToolTip(Call, Strings.Resources.Call);
+            Automation.SetToolTip(Call, Strings.Call);
 
             btnVoiceMessage.IsRestricted = fullInfo.HasRestrictedVoiceAndVideoNoteMessages
                 && user.Id != ViewModel.ClientService.Options.MyId;
@@ -4393,11 +4393,11 @@ namespace Telegram.Views
             }
             else if (secretChat.State is SecretChatStatePending)
             {
-                ShowAction(string.Format(Strings.Resources.AwaitingEncryption, ViewModel.ClientService.GetTitle(chat)), false);
+                ShowAction(string.Format(Strings.AwaitingEncryption, ViewModel.ClientService.GetTitle(chat)), false);
             }
             else if (secretChat.State is SecretChatStateClosed)
             {
-                ShowAction(Strings.Resources.EncryptionRejected, false);
+                ShowAction(Strings.EncryptionRejected, false);
             }
         }
 
@@ -4409,13 +4409,13 @@ namespace Telegram.Views
 
             if (group.Status is ChatMemberStatusLeft or ChatMemberStatusBanned)
             {
-                ShowAction(Strings.Resources.DeleteThisGroup, true);
+                ShowAction(Strings.DeleteThisGroup, true);
 
-                ViewModel.LastSeen = Strings.Resources.YouLeft;
+                ViewModel.LastSeen = Strings.YouLeft;
             }
             else if (group.Status is ChatMemberStatusCreator creator && !creator.IsMember)
             {
-                ShowAction(Strings.Resources.ChannelJoin, true);
+                ShowAction(Strings.ChannelJoin, true);
             }
             else
             {
@@ -4423,11 +4423,11 @@ namespace Telegram.Views
                 {
                     if (group.CanPinMessages())
                     {
-                        ShowAction(Strings.Resources.UnpinAllMessages, true);
+                        ShowAction(Strings.UnpinAllMessages, true);
                     }
                     else
                     {
-                        ShowAction(Strings.Resources.HidePinnedMessages, true);
+                        ShowAction(Strings.HidePinnedMessages, true);
                     }
                 }
                 else
@@ -4471,7 +4471,7 @@ namespace Telegram.Views
 
             if (ViewModel.Type == DialogType.EventLog)
             {
-                ShowAction(Strings.Resources.Settings, true);
+                ShowAction(Strings.Settings, true);
                 return;
             }
 
@@ -4479,18 +4479,18 @@ namespace Telegram.Views
             {
                 if (group.CanPinMessages())
                 {
-                    ShowAction(Strings.Resources.UnpinAllMessages, true);
+                    ShowAction(Strings.UnpinAllMessages, true);
                 }
                 else
                 {
-                    ShowAction(Strings.Resources.HidePinnedMessages, true);
+                    ShowAction(Strings.HidePinnedMessages, true);
                 }
             }
             else if (group.IsChannel || group.IsBroadcastGroup)
             {
                 if ((group.Status is ChatMemberStatusLeft && (group.HasActiveUsername() || ViewModel.ClientService.IsChatAccessible(chat))) || (group.Status is ChatMemberStatusCreator creator && !creator.IsMember))
                 {
-                    ShowAction(Strings.Resources.ChannelJoin, true);
+                    ShowAction(Strings.ChannelJoin, true);
                 }
                 else if (group.Status is ChatMemberStatusCreator || group.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanPostMessages)
                 {
@@ -4498,11 +4498,11 @@ namespace Telegram.Views
                 }
                 else if (group.Status is ChatMemberStatusLeft or ChatMemberStatusBanned)
                 {
-                    ShowAction(Strings.Resources.DeleteChat, true);
+                    ShowAction(Strings.DeleteChat, true);
                 }
                 else
                 {
-                    ShowAction(ViewModel.ClientService.Notifications.GetMutedFor(chat) > 0 ? Strings.Resources.ChannelUnmute : Strings.Resources.ChannelMute, true);
+                    ShowAction(ViewModel.ClientService.Notifications.GetMutedFor(chat) > 0 ? Strings.ChannelUnmute : Strings.ChannelMute, true);
                 }
             }
             else
@@ -4513,7 +4513,7 @@ namespace Telegram.Views
                     {
                         if (!chat.Permissions.CanSendBasicMessages)
                         {
-                            ShowAction(Strings.Resources.GlobalSendMessageRestricted, false);
+                            ShowAction(Strings.GlobalSendMessageRestricted, false);
                         }
                         else
                         {
@@ -4522,14 +4522,14 @@ namespace Telegram.Views
                     }
                     else
                     {
-                        ShowAction(Strings.Resources.ChannelJoin, true);
+                        ShowAction(Strings.ChannelJoin, true);
                     }
                 }
                 else if (group.Status is ChatMemberStatusCreator || group.Status is ChatMemberStatusAdministrator administrator)
                 {
                     if (ViewModel.Type != DialogType.Thread && group.IsForum)
                     {
-                        ShowAction(Strings.Resources.ForumReplyToMessagesInTopic, false, true);
+                        ShowAction(Strings.ForumReplyToMessagesInTopic, false, true);
                     }
                     else
                     {
@@ -4540,22 +4540,22 @@ namespace Telegram.Views
                 {
                     if (!restrictedSend.IsMember && group.HasActiveUsername())
                     {
-                        ShowAction(Strings.Resources.ChannelJoin, true);
+                        ShowAction(Strings.ChannelJoin, true);
                     }
                     else if (!restrictedSend.Permissions.CanSendBasicMessages)
                     {
                         if (restrictedSend.IsForever())
                         {
-                            ShowAction(Strings.Resources.SendMessageRestrictedForever, false);
+                            ShowAction(Strings.SendMessageRestrictedForever, false);
                         }
                         else
                         {
-                            ShowAction(string.Format(Strings.Resources.SendMessageRestricted, Converter.BannedUntil(restrictedSend.RestrictedUntilDate)), false);
+                            ShowAction(string.Format(Strings.SendMessageRestricted, Converter.BannedUntil(restrictedSend.RestrictedUntilDate)), false);
                         }
                     }
                     else if (ViewModel.Type != DialogType.Thread && group.IsForum)
                     {
-                        ShowAction(Strings.Resources.ForumReplyToMessagesInTopic, false, true);
+                        ShowAction(Strings.ForumReplyToMessagesInTopic, false, true);
                     }
                     else
                     {
@@ -4564,15 +4564,15 @@ namespace Telegram.Views
                 }
                 else if (group.Status is ChatMemberStatusLeft or ChatMemberStatusBanned)
                 {
-                    ShowAction(Strings.Resources.DeleteChat, true);
+                    ShowAction(Strings.DeleteChat, true);
                 }
                 else if (!chat.Permissions.CanSendBasicMessages)
                 {
-                    ShowAction(Strings.Resources.GlobalSendMessageRestricted, false);
+                    ShowAction(Strings.GlobalSendMessageRestricted, false);
                 }
                 else if (ViewModel.Type != DialogType.Thread && group.IsForum)
                 {
-                    ShowAction(Strings.Resources.ForumReplyToMessagesInTopic, false, true);
+                    ShowAction(Strings.ForumReplyToMessagesInTopic, false, true);
                 }
                 else
                 {
@@ -4589,7 +4589,7 @@ namespace Telegram.Views
             }
             else if (ViewModel.Type == DialogType.Thread && ViewModel.Topic != null)
             {
-                ViewModel.LastSeen = string.Format(Strings.Resources.TopicProfileStatus, chat.Title);
+                ViewModel.LastSeen = string.Format(Strings.TopicProfileStatus, chat.Title);
             }
             else
             {
@@ -4613,7 +4613,7 @@ namespace Telegram.Views
             }
             else if (ViewModel.Type == DialogType.Thread && ViewModel.Topic != null)
             {
-                ViewModel.LastSeen = string.Format(Strings.Resources.TopicProfileStatus, chat.Title);
+                ViewModel.LastSeen = string.Format(Strings.TopicProfileStatus, chat.Title);
             }
             else
             {
@@ -4655,7 +4655,7 @@ namespace Telegram.Views
             }
             else
             {
-                Automation.SetToolTip(Call, Strings.Resources.VoipGroupJoinCall);
+                Automation.SetToolTip(Call, Strings.VoipGroupJoinCall);
 
                 Call.Glyph = Icons.VideoChat;
                 Call.Visibility = Visibility.Visible;
@@ -4724,7 +4724,7 @@ namespace Telegram.Views
             }
 
             var flyout = new MenuFlyout();
-            flyout.Items.Add(new MenuFlyoutLabel { Text = Strings.Resources.SendMessageAsTitle });
+            flyout.Items.Add(new MenuFlyoutLabel { Text = Strings.SendMessageAsTitle });
             flyout.Closing += (s, args) =>
             {
                 ButtonMore.IsChecked = false;
@@ -4754,7 +4754,7 @@ namespace Telegram.Views
                         picture.SetUser(ViewModel.ClientService, senderUser, 36);
 
                         item.Text = senderUser.FullName();
-                        item.Info = Strings.Resources.VoipGroupPersonalAccount;
+                        item.Info = Strings.VoipGroupPersonalAccount;
                     }
                     else if (ViewModel.ClientService.TryGetChat(messageSender.Sender, out Chat senderChat))
                     {

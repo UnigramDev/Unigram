@@ -34,10 +34,10 @@ namespace Telegram.Controls.Messages
         {
             if (receipt)
             {
-                return "  " + Strings.Resources.PaymentReceipt.ToUpper();
+                return "  " + Strings.PaymentReceipt.ToUpper();
             }
 
-            return "  " + (test ? Strings.Resources.PaymentTestInvoice : Strings.Resources.PaymentInvoice).ToUpper();
+            return "  " + (test ? Strings.PaymentTestInvoice : Strings.PaymentInvoice).ToUpper();
         }
     }
 }

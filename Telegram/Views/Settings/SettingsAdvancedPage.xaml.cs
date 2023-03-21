@@ -18,7 +18,7 @@ namespace Telegram.Views.Settings
         public SettingsAdvancedPage()
         {
             InitializeComponent();
-            Title = Strings.Resources.PrivacyAdvanced;
+            Title = Strings.PrivacyAdvanced;
 
             if (ApiInfo.IsPackagedRelease)
             {

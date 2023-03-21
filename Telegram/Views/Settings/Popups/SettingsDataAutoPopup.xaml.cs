@@ -19,8 +19,8 @@ namespace Telegram.Views.Settings.Popups
         {
             InitializeComponent();
 
-            PrimaryButtonText = Strings.Resources.Done;
-            SecondaryButtonText = Strings.Resources.Cancel;
+            PrimaryButtonText = Strings.Done;
+            SecondaryButtonText = Strings.Cancel;
         }
 
         #region Binding

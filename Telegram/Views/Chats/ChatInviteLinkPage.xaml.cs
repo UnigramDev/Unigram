@@ -24,7 +24,7 @@ namespace Telegram.Views.Chats
         public ChatInviteLinkPage()
         {
             InitializeComponent();
-            Title = Strings.Resources.InviteLink;
+            Title = Strings.InviteLink;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)

@@ -1411,51 +1411,6 @@
     <Content Include="Assets\Animations\TwoFactorSetupMonkeyCloseAndPeekToIdle.tgs" />
     <Content Include="Assets\Animations\Compass.tgs" />
     <Content Include="Assets\Animations\ChatListFolders.tgs" />
-    <PRIResource Include="Strings\ar\Resources.resw">
-      <SubType>Designer</SubType>
-    </PRIResource>
-    <PRIResource Include="Strings\de\Resources.resw">
-      <SubType>Designer</SubType>
-    </PRIResource>
-    <PRIResource Include="Strings\en\Resources.resw">
-      <Generator>ReswFileCodeGenerator</Generator>
-      <CustomToolNamespace>Telegram.Strings</CustomToolNamespace>
-      <SubType>Designer</SubType>
-      <LastGenOutput>Resources.cs</LastGenOutput>
-    </PRIResource>
-    <PRIResource Include="Strings\es\Resources.resw">
-      <SubType>Designer</SubType>
-    </PRIResource>
-    <PRIResource Include="Strings\fa\Resources.resw">
-      <SubType>Designer</SubType>
-    </PRIResource>
-    <PRIResource Include="Strings\fr\Resources.resw">
-      <SubType>Designer</SubType>
-    </PRIResource>
-    <PRIResource Include="Strings\id\Resources.resw">
-      <SubType>Designer</SubType>
-    </PRIResource>
-    <PRIResource Include="Strings\it\Resources.resw">
-      <SubType>Designer</SubType>
-    </PRIResource>
-    <PRIResource Include="Strings\ko\Resources.resw">
-      <SubType>Designer</SubType>
-    </PRIResource>
-    <PRIResource Include="Strings\ms\Resources.resw">
-      <SubType>Designer</SubType>
-    </PRIResource>
-    <PRIResource Include="Strings\nl\Resources.resw">
-      <SubType>Designer</SubType>
-    </PRIResource>
-    <PRIResource Include="Strings\pt-BR\Resources.resw">
-      <SubType>Designer</SubType>
-    </PRIResource>
-    <PRIResource Include="Strings\ru\Resources.resw">
-      <SubType>Designer</SubType>
-    </PRIResource>
-    <PRIResource Include="Strings\uk\Resources.resw">
-      <SubType>Designer</SubType>
-    </PRIResource>
     <Content Include="Assets\Fonts\Telegram.ttf" />
     <Content Include="Assets\Animations\DeviceAndroid.json" />
     <Content Include="Assets\Animations\DeviceChrome.json" />
@@ -1541,12 +1496,7 @@
     <Content Include="Assets\Logos\Wide310x150Logo.scale-200.png" />
     <Content Include="Assets\Logos\Wide310x150Logo.scale-400.png" />
     <Content Include="Assets\Mockup\theme_preview_image.jpg" />
-    <PRIResource Include="Strings\tr\Resources.resw" />
-    <PRIResource Include="Strings\ca\Resources.resw" />
-    <PRIResource Include="Strings\pl\Resources.resw" />
-    <PRIResource Include="Strings\uz\Resources.resw" />
     <Content Include="Assets\Animations\ChatListNewFolder.tgs" />
-    <PRIResource Include="Strings\be\Resources.resw" />
     <Content Include="Assets\Animations\DiscussionGroupSetup.tgs" />
     <Content Include="Assets\Animations\VoiceHandOff.tgs" />
     <Content Include="Assets\Animations\VoiceHandOff2.tgs" />
@@ -1575,17 +1525,39 @@
     <Content Include="Assets\Animations\VoiceUnmuteToRaiseHand.tgs" />
     <Content Include="Assets\i420.bin" />
     <None Include=".editorconfig" />
-    <PRIResource Include="Strings\sk\Resources.resw">
+    <PRIResource Include="Strings\en\Resources.resw">
+      <CustomToolNamespace>Telegram</CustomToolNamespace>
       <SubType>Designer</SubType>
+      <Generator>ReswFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.cs</LastGenOutput>
     </PRIResource>
-    <PRIResource Include="Strings\hu\Resources.resw" />
-    <PRIResource Include="Strings\fi\Resources.resw" />
+    <PRIResource Include="Strings\ar\Resources.resw" />
+    <PRIResource Include="Strings\be\Resources.resw" />
+    <PRIResource Include="Strings\ca\Resources.resw" />
     <PRIResource Include="Strings\cs\Resources.resw" />
+    <PRIResource Include="Strings\de\Resources.resw" />
+    <PRIResource Include="Strings\es\Resources.resw" />
+    <PRIResource Include="Strings\fa\Resources.resw" />
+    <PRIResource Include="Strings\fi\Resources.resw" />
+    <PRIResource Include="Strings\fr\Resources.resw" />
     <PRIResource Include="Strings\he\Resources.resw" />
     <PRIResource Include="Strings\hr\Resources.resw" />
+    <PRIResource Include="Strings\hu\Resources.resw" />
+    <PRIResource Include="Strings\id\Resources.resw" />
+    <PRIResource Include="Strings\it\Resources.resw" />
+    <PRIResource Include="Strings\ko\Resources.resw" />
+    <PRIResource Include="Strings\ms\Resources.resw" />
     <PRIResource Include="Strings\nb\Resources.resw" />
-    <PRIResource Include="Strings\sr\Resources.resw" />
+    <PRIResource Include="Strings\nl\Resources.resw" />
+    <PRIResource Include="Strings\pl\Resources.resw" />
+    <PRIResource Include="Strings\pt-br\Resources.resw" />
+    <PRIResource Include="Strings\ru\Resources.resw" />
+    <PRIResource Include="Strings\sk\Resources.resw" />
     <PRIResource Include="Strings\sv\Resources.resw" />
+    <PRIResource Include="Strings\tr\Resources.resw" />
+    <PRIResource Include="Strings\uk\Resources.resw" />
+    <PRIResource Include="Strings\uz\Resources.resw" />
+    <PRIResource Include="Strings\sr-cyrl\Resources.resw" />
     <None Include="Telegram_StoreKey.pfx" />
     <None Include="Telegram_TemporaryKey.pfx" />
   </ItemGroup>

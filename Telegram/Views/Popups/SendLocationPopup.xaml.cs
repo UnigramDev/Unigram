@@ -40,10 +40,10 @@ namespace Telegram.Views.Popups
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<SendLocationViewModel>();
 
-            Title = Strings.Resources.AttachLocation;
+            Title = Strings.AttachLocation;
 
-            PrimaryButtonText = Strings.Resources.Send;
-            SecondaryButtonText = Strings.Resources.Cancel;
+            PrimaryButtonText = Strings.Send;
+            SecondaryButtonText = Strings.Cancel;
 
             MapPresenter.Constraint = new Size(16, 9);
 
@@ -173,7 +173,7 @@ namespace Telegram.Views.Popups
             Map.Source = new BitmapImage(new Uri(string.Format("https://dev.virtualearth.net/REST/v1/Imagery/Map/Road/{0},{1}/{2}?mapSize={3:F0},{4:F0}&key={5}",
                 latitude, longitude, 15, width, height, Constants.BingMapsApiKey)));
 
-            CurrentLocation.Address = string.Format(Strings.Resources.AccurateTo,
+            CurrentLocation.Address = string.Format(Strings.AccurateTo,
                 Locale.Declension("Meters", (int)point.Coordinate.Accuracy));
 
             if (ScrollingHost.SelectedItem == null)

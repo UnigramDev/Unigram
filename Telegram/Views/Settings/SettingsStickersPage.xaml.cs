@@ -252,14 +252,14 @@ namespace Telegram.Views.Settings
 
             if (stickerSet.IsOfficial)
             {
-                flyout.CreateFlyoutItem(ViewModel.StickerSetHideCommand, stickerSet, Strings.Resources.StickersHide, new FontIcon { Glyph = Icons.Archive });
+                flyout.CreateFlyoutItem(ViewModel.StickerSetHideCommand, stickerSet, Strings.StickersHide, new FontIcon { Glyph = Icons.Archive });
             }
             else
             {
-                flyout.CreateFlyoutItem(ViewModel.StickerSetHideCommand, stickerSet, Strings.Resources.StickersHide, new FontIcon { Glyph = Icons.Archive });
-                flyout.CreateFlyoutItem(ViewModel.StickerSetRemoveCommand, stickerSet, Strings.Resources.StickersRemove, new FontIcon { Glyph = Icons.Delete });
-                //CreateFlyoutItem(ref flyout, ViewModel.StickerSetShareCommand, stickerSet, Strings.Resources.StickersShare);
-                //CreateFlyoutItem(ref flyout, ViewModel.StickerSetCopyCommand, stickerSet, Strings.Resources.StickersCopy);
+                flyout.CreateFlyoutItem(ViewModel.StickerSetHideCommand, stickerSet, Strings.StickersHide, new FontIcon { Glyph = Icons.Archive });
+                flyout.CreateFlyoutItem(ViewModel.StickerSetRemoveCommand, stickerSet, Strings.StickersRemove, new FontIcon { Glyph = Icons.Delete });
+                //CreateFlyoutItem(ref flyout, ViewModel.StickerSetShareCommand, stickerSet, Strings.StickersShare);
+                //CreateFlyoutItem(ref flyout, ViewModel.StickerSetCopyCommand, stickerSet, Strings.StickersCopy);
             }
 
             args.ShowAt(flyout, element);

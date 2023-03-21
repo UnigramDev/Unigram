@@ -29,10 +29,10 @@ namespace Telegram.Views.Payments
         {
             if (receipt)
             {
-                return Strings.Resources.PaymentReceipt + (test ? " (Test)" : string.Empty);
+                return Strings.PaymentReceipt + (test ? " (Test)" : string.Empty);
             }
 
-            return Strings.Resources.PaymentCheckout + (test ? " (Test)" : string.Empty);
+            return Strings.PaymentCheckout + (test ? " (Test)" : string.Empty);
         }
 
         private ImageSource ConvertPhoto(Photo photo)
@@ -88,10 +88,10 @@ namespace Telegram.Views.Payments
         {
             if (receipt)
             {
-                return Strings.Resources.Close.ToUpper();
+                return Strings.Close.ToUpper();
             }
 
-            return string.Format(Strings.Resources.PaymentCheckoutPay, Locale.FormatCurrency(amount, currency));
+            return string.Format(Strings.PaymentCheckoutPay, Locale.FormatCurrency(amount, currency));
         }
 
         private void SuggestedTipAmounts_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)

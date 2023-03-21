@@ -56,7 +56,7 @@ namespace Telegram.Views.Popups
             _typeToTemplateMapping.Add("VideoItemTemplate", Resources["VideoItemTemplate"] as DataTemplate);
             _typeToTemplateMapping.Add("ItemTemplate", Resources["ItemTemplate"] as DataTemplate);
 
-            SecondaryButtonText = Strings.Resources.Close;
+            SecondaryButtonText = Strings.Close;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -327,13 +327,13 @@ namespace Telegram.Views.Popups
             if (installed && !archived)
             {
                 return official
-                    ? string.Format(masks ? Strings.Resources.StickersRemove : Strings.Resources.StickersRemove, ViewModel.Count)
-                    : string.Format(masks ? Strings.Resources.StickersRemove : Strings.Resources.StickersRemove, ViewModel.Count);
+                    ? string.Format(masks ? Strings.StickersRemove : Strings.StickersRemove, ViewModel.Count)
+                    : string.Format(masks ? Strings.StickersRemove : Strings.StickersRemove, ViewModel.Count);
             }
 
             return official || archived
-                ? string.Format(masks ? Strings.Resources.AddMasks : Strings.Resources.AddStickers, ViewModel.Count)
-                : string.Format(masks ? Strings.Resources.AddMasks : Strings.Resources.AddStickers, ViewModel.Count);
+                ? string.Format(masks ? Strings.AddMasks : Strings.AddStickers, ViewModel.Count)
+                : string.Format(masks ? Strings.AddMasks : Strings.AddStickers, ViewModel.Count);
         }
 
         private Style ConvertIsInstalledStyle(bool installed, bool archived)

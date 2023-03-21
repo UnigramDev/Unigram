@@ -53,14 +53,14 @@ namespace Telegram.ViewModels.Authorization
             {
                 async void CancelSignUp()
                 {
-                    var decline = await ShowPopupAsync(Strings.Resources.TosUpdateDecline, Strings.Resources.TermsOfService, Strings.Resources.DeclineDeactivate, Strings.Resources.Back);
+                    var decline = await ShowPopupAsync(Strings.TosUpdateDecline, Strings.TermsOfService, Strings.DeclineDeactivate, Strings.Back);
                     if (decline != ContentDialogResult.Primary)
                     {
                         SendExecute();
                         return;
                     }
 
-                    var delete = await ShowPopupAsync(Strings.Resources.TosDeclineDeleteAccount, Strings.Resources.AppName, Strings.Resources.Deactivate, Strings.Resources.Cancel);
+                    var delete = await ShowPopupAsync(Strings.TosDeclineDeleteAccount, Strings.AppName, Strings.Deactivate, Strings.Cancel);
                     if (delete != ContentDialogResult.Primary)
                     {
                         SendExecute();
@@ -70,7 +70,7 @@ namespace Telegram.ViewModels.Authorization
                     ClientService.Send(new LogOut());
                 }
 
-                var confirm = await ShowPopupAsync(waitRegistration.TermsOfService.Text, Strings.Resources.TermsOfService, Strings.Resources.SignUp, Strings.Resources.Decline);
+                var confirm = await ShowPopupAsync(waitRegistration.TermsOfService.Text, Strings.TermsOfService, Strings.SignUp, Strings.Decline);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     CancelSignUp();
@@ -79,7 +79,7 @@ namespace Telegram.ViewModels.Authorization
 
                 if (waitRegistration.TermsOfService.MinUserAge > 0)
                 {
-                    var age = await ShowPopupAsync(string.Format(Strings.Resources.TosAgeText, waitRegistration.TermsOfService.MinUserAge), Strings.Resources.TosAgeTitle, Strings.Resources.Agree, Strings.Resources.Cancel);
+                    var age = await ShowPopupAsync(string.Format(Strings.TosAgeText, waitRegistration.TermsOfService.MinUserAge), Strings.TosAgeTitle, Strings.Agree, Strings.Cancel);
                     if (age != ContentDialogResult.Primary)
                     {
                         CancelSignUp();
@@ -112,27 +112,27 @@ namespace Telegram.ViewModels.Authorization
 
             //    if (response.Error.TypeEquals(TLErrorType.PHONE_NUMBER_INVALID))
             //    {
-            //        await ShowPopupAsync(Strings.Resources.InvalidPhoneNumber, Strings.Resources.AppName, Strings.Resources.OK);
+            //        await ShowPopupAsync(Strings.InvalidPhoneNumber, Strings.AppName, Strings.OK);
             //    }
             //    else if (response.Error.TypeEquals(TLErrorType.PHONE_CODE_EMPTY) || response.Error.TypeEquals(TLErrorType.PHONE_CODE_INVALID))
             //    {
-            //        await ShowPopupAsync(Strings.Resources.InvalidCode, Strings.Resources.AppName, Strings.Resources.OK);
+            //        await ShowPopupAsync(Strings.InvalidCode, Strings.AppName, Strings.OK);
             //    }
             //    else if (response.Error.TypeEquals(TLErrorType.PHONE_CODE_EXPIRED))
             //    {
-            //        await ShowPopupAsync(Strings.Resources.CodeExpired, Strings.Resources.AppName, Strings.Resources.OK);
+            //        await ShowPopupAsync(Strings.CodeExpired, Strings.AppName, Strings.OK);
             //    }
             //    else if (response.Error.TypeEquals(TLErrorType.FIRSTNAME_INVALID))
             //    {
-            //        await ShowPopupAsync(Strings.Resources.InvalidFirstName, Strings.Resources.AppName, Strings.Resources.OK);
+            //        await ShowPopupAsync(Strings.InvalidFirstName, Strings.AppName, Strings.OK);
             //    }
             //    else if (response.Error.TypeEquals(TLErrorType.LASTNAME_INVALID))
             //    {
-            //        await ShowPopupAsync(Strings.Resources.InvalidLastName, Strings.Resources.AppName, Strings.Resources.OK);
+            //        await ShowPopupAsync(Strings.InvalidLastName, Strings.AppName, Strings.OK);
             //    }
             //    else
             //    {
-            //        await ShowPopupAsync(response.Error.ErrorMessage, Strings.Resources.AppName, Strings.Resources.OK);
+            //        await ShowPopupAsync(response.Error.ErrorMessage, Strings.AppName, Strings.OK);
             //    }
             //}
         }

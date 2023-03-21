@@ -197,7 +197,7 @@ namespace Telegram.ViewModels.Settings
                 switch (state)
                 {
                     case ConnectionStateWaitingForNetwork:
-                        //ShowStatus(Strings.Resources.WaitingForNetwork);
+                        //ShowStatus(Strings.WaitingForNetwork);
                         break;
                     case ConnectionStateConnecting:
                     case ConnectionStateConnectingToProxy:
@@ -290,7 +290,7 @@ namespace Telegram.ViewModels.Settings
         public RelayCommand<ProxyViewModel> RemoveCommand { get; }
         private async void RemoveExecute(ProxyViewModel proxy)
         {
-            var confirm = await ShowPopupAsync(Strings.Resources.DeleteProxy, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.DeleteProxy, Strings.AppName, Strings.OK, Strings.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -311,7 +311,7 @@ namespace Telegram.ViewModels.Settings
             var response = await ClientService.SendAsync(new GetProxyLink(proxy.Id));
             if (response is HttpUrl httpUrl && Uri.TryCreate(httpUrl.Url, UriKind.Absolute, out Uri uri))
             {
-                await SharePopup.GetForCurrentView().ShowAsync(uri, Strings.Resources.Proxy);
+                await SharePopup.GetForCurrentView().ShowAsync(uri, Strings.Proxy);
             }
         }
 

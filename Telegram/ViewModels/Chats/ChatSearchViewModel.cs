@@ -101,14 +101,14 @@ namespace Telegram.ViewModels.Chats
             {
                 return new List<ChatSearchMediaFilter>
                 {
-                    new ChatSearchMediaFilter(new SearchMessagesFilterPhoto(), Icons.Image, Strings.Resources.AutoDownloadPhotos),
-                    new ChatSearchMediaFilter(new SearchMessagesFilterVideo(), Icons.Play, Strings.Resources.AutoDownloadVideos),
-                    new ChatSearchMediaFilter(new SearchMessagesFilterDocument(), Icons.Document, Strings.Resources.AutoDownloadFiles),
-                    new ChatSearchMediaFilter(new SearchMessagesFilterUrl(), Icons.Link, Strings.Resources.SharedLinks),
-                    new ChatSearchMediaFilter(new SearchMessagesFilterAudio(), Icons.MusicNote, Strings.Resources.SharedAudioFiles),
-                    new ChatSearchMediaFilter(new SearchMessagesFilterVoiceNote(), Icons.MicOn, Strings.Resources.AudioAutodownload),
-                    new ChatSearchMediaFilter(new SearchMessagesFilterVideoNote(), "\uE612", Strings.Resources.VideoMessagesAutodownload),
-                    new ChatSearchMediaFilter(new SearchMessagesFilterAnimation(), Icons.Gif, Strings.Resources.AccDescrGIFs)
+                    new ChatSearchMediaFilter(new SearchMessagesFilterPhoto(), Icons.Image, Strings.AutoDownloadPhotos),
+                    new ChatSearchMediaFilter(new SearchMessagesFilterVideo(), Icons.Play, Strings.AutoDownloadVideos),
+                    new ChatSearchMediaFilter(new SearchMessagesFilterDocument(), Icons.Document, Strings.AutoDownloadFiles),
+                    new ChatSearchMediaFilter(new SearchMessagesFilterUrl(), Icons.Link, Strings.SharedLinks),
+                    new ChatSearchMediaFilter(new SearchMessagesFilterAudio(), Icons.MusicNote, Strings.SharedAudioFiles),
+                    new ChatSearchMediaFilter(new SearchMessagesFilterVoiceNote(), Icons.MicOn, Strings.AudioAutodownload),
+                    new ChatSearchMediaFilter(new SearchMessagesFilterVideoNote(), "\uE612", Strings.VideoMessagesAutodownload),
+                    new ChatSearchMediaFilter(new SearchMessagesFilterAnimation(), Icons.Gif, Strings.AccDescrGIFs)
                     //new SearchMessagesFilterCall(),
                     //new SearchMessagesFilterChatPhoto(),
                     //new SearchMessagesFilterMention(),

@@ -164,26 +164,10 @@ namespace Telegram.Controls
                             Source = _bitmap,
                             ColorMatrix = new Matrix5x4
                             {
-                                M11 = 0,
-                                M12 = 0,
-                                M13 = 0,
-                                M14 = 0,
-                                M21 = 0,
-                                M22 = 0,
-                                M23 = 0,
-                                M24 = 0,
-                                M31 = 0,
-                                M32 = 0,
-                                M33 = 0,
-                                M34 = 0,
-                                M41 = 0,
-                                M42 = 0,
-                                M43 = 0,
                                 M44 = 1,
                                 M51 = r,
                                 M52 = g,
                                 M53 = b,
-                                M54 = 0
                             }
                         })
                         {

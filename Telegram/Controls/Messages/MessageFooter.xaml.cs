@@ -209,7 +209,7 @@ namespace Telegram.Controls.Messages
                 bot = senderUser.Type is UserTypeBot;
             }
 
-            EditedLabel.Text = message.EditDate != 0 && message.ViaBotUserId == 0 && !bot && message.ReplyMarkup is not ReplyMarkupInlineKeyboard ? $"{Strings.Resources.EditedMessage}\u00A0\u2009" : string.Empty;
+            EditedLabel.Text = message.EditDate != 0 && message.ViaBotUserId == 0 && !bot && message.ReplyMarkup is not ReplyMarkupInlineKeyboard ? $"{Strings.EditedMessage}\u00A0\u2009" : string.Empty;
         }
 
         public void UpdateMessageIsPinned(MessageViewModel message)
@@ -322,7 +322,7 @@ namespace Telegram.Controls.Messages
             }
             else if (message.SchedulingState is MessageSchedulingStateSendWhenOnline)
             {
-                text = Strings.Resources.MessageScheduledUntilOnline;
+                text = Strings.MessageScheduledUntilOnline;
             }
             else
             {
@@ -345,7 +345,7 @@ namespace Telegram.Controls.Messages
                 var editDate = Converter.LongDate.Format(edit);
                 var editTime = Converter.LongTime.Format(edit);
 
-                text += $"\r\n{Strings.Resources.EditedMessage}: {editDate} {editTime}";
+                text += $"\r\n{Strings.EditedMessage}: {editDate} {editTime}";
             }
 
             DateTime? original = null;
@@ -359,7 +359,7 @@ namespace Telegram.Controls.Messages
                 var originalDate = Converter.LongDate.Format(original.Value);
                 var originalTime = Converter.LongTime.Format(original.Value);
 
-                text += $"\r\n{Strings.Resources.CropOriginal}: {originalDate} {originalTime}";
+                text += $"\r\n{Strings.CropOriginal}: {originalDate} {originalTime}";
             }
 
             tooltip.Content = text;

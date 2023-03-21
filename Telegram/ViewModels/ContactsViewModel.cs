@@ -41,7 +41,7 @@ namespace Telegram.ViewModels
             {
                 Settings.IsContactsSyncRequested = true;
 
-                var confirm = await ShowPopupAsync(Strings.Resources.ContactsPermissionAlert, Strings.Resources.AppName, Strings.Resources.ContactsPermissionAlertContinue, Strings.Resources.ContactsPermissionAlertNotNow);
+                var confirm = await ShowPopupAsync(Strings.ContactsPermissionAlert, Strings.AppName, Strings.ContactsPermissionAlertContinue, Strings.ContactsPermissionAlertNotNow);
                 if (confirm != Windows.UI.Xaml.Controls.ContentDialogResult.Primary)
                 {
                     Settings.IsContactsSyncEnabled = false;

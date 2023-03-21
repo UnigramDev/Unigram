@@ -16,7 +16,7 @@ namespace Telegram.Views.Settings
         public SettingsPasswordPage()
         {
             InitializeComponent();
-            Title = Strings.Resources.TwoStepVerification;
+            Title = Strings.TwoStepVerification;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)

@@ -18,7 +18,7 @@ namespace Telegram.Views.Settings
         public SettingsPasscodePage()
         {
             InitializeComponent();
-            Title = Strings.Resources.Passcode;
+            Title = Strings.Passcode;
         }
 
         private async void OnLoaded(object sender, RoutedEventArgs e)

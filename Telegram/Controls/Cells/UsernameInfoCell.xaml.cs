@@ -26,7 +26,7 @@ namespace Telegram.Controls.Cells
         private void SetValue(string value)
         {
             Placeholder.Text = string.IsNullOrEmpty(value)
-                ? Strings.Resources.Username.ToLower()
+                ? Strings.Username.ToLower()
                 : string.Empty;
         }
 
@@ -51,8 +51,8 @@ namespace Telegram.Controls.Cells
             SubtitleLabel.Style = BootStrapper.Current.Resources[value ? "AccentCaptionTextBlockStyle" : "InfoCaptionTextBlockStyle"] as Style;
 
             SubtitleLabel.Text = value
-                ? Strings.Resources.UsernameLinkActive
-                : Strings.Resources.UsernameLinkInactive;
+                ? Strings.UsernameLinkActive
+                : Strings.UsernameLinkInactive;
             BadgeIcon.Text = value
                 ? Icons.LinkSide
                 : Icons.LinkSideBroken;

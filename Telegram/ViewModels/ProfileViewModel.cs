@@ -454,7 +454,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var confirm = await ShowPopupAsync(Strings.Resources.AreYouSureBlockContact, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.AreYouSureBlockContact, Strings.AppName, Strings.OK, Strings.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -472,7 +472,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var confirm = await ShowPopupAsync(Strings.Resources.AreYouSureUnblockContact, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.AreYouSureUnblockContact, Strings.AppName, Strings.OK, Strings.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -518,10 +518,10 @@ namespace Telegram.ViewModels
             //var user = Item as TLUser;
             //if (user != null)
             //{
-            //    var opt1 = new RadioButton { Content = Strings.Resources.ReportChatSpam, Margin = new Thickness(0, 8, 0, 8), HorizontalAlignment = HorizontalAlignment.Stretch };
-            //    var opt2 = new RadioButton { Content = Strings.Resources.ReportChatViolence, Margin = new Thickness(0, 8, 0, 8), HorizontalAlignment = HorizontalAlignment.Stretch };
-            //    var opt3 = new RadioButton { Content = Strings.Resources.ReportChatPornography, Margin = new Thickness(0, 8, 0, 8), HorizontalAlignment = HorizontalAlignment.Stretch };
-            //    var opt4 = new RadioButton { Content = Strings.Resources.ReportChatOther, Margin = new Thickness(0, 8, 0, 8), HorizontalAlignment = HorizontalAlignment.Stretch, IsChecked = true };
+            //    var opt1 = new RadioButton { Content = Strings.ReportChatSpam, Margin = new Thickness(0, 8, 0, 8), HorizontalAlignment = HorizontalAlignment.Stretch };
+            //    var opt2 = new RadioButton { Content = Strings.ReportChatViolence, Margin = new Thickness(0, 8, 0, 8), HorizontalAlignment = HorizontalAlignment.Stretch };
+            //    var opt3 = new RadioButton { Content = Strings.ReportChatPornography, Margin = new Thickness(0, 8, 0, 8), HorizontalAlignment = HorizontalAlignment.Stretch };
+            //    var opt4 = new RadioButton { Content = Strings.ReportChatOther, Margin = new Thickness(0, 8, 0, 8), HorizontalAlignment = HorizontalAlignment.Stretch, IsChecked = true };
             //    var stack = new StackPanel();
             //    stack.Children.Add(opt1);
             //    stack.Children.Add(opt2);
@@ -531,11 +531,11 @@ namespace Telegram.ViewModels
 
             //    var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
             //    dialog.Content = stack;
-            //    dialog.Title = Strings.Resources.ReportChat;
+            //    dialog.Title = Strings.ReportChat;
             //    dialog.IsPrimaryButtonEnabled = true;
             //    dialog.IsSecondaryButtonEnabled = true;
-            //    dialog.PrimaryButtonText = Strings.Resources.OK;
-            //    dialog.SecondaryButtonText = Strings.Resources.Cancel;
+            //    dialog.PrimaryButtonText = Strings.OK;
+            //    dialog.SecondaryButtonText = Strings.Cancel;
 
             //    var dialogResult = await ShowPopupAsync(dialog);
             //    if (dialogResult == ContentDialogResult.Primary)
@@ -551,12 +551,12 @@ namespace Telegram.ViewModels
             //        if (reason is TLInputReportReasonOther other)
             //        {
             //            var input = new InputDialog();
-            //            input.Title = Strings.Resources.ReportChat;
-            //            input.PlaceholderText = Strings.Resources.ReportChatDescription;
+            //            input.Title = Strings.ReportChat;
+            //            input.PlaceholderText = Strings.ReportChatDescription;
             //            input.IsPrimaryButtonEnabled = true;
             //            input.IsSecondaryButtonEnabled = true;
-            //            input.PrimaryButtonText = Strings.Resources.OK;
-            //            input.SecondaryButtonText = Strings.Resources.Cancel;
+            //            input.PrimaryButtonText = Strings.OK;
+            //            input.SecondaryButtonText = Strings.Cancel;
 
             //            var inputResult = await ShowPopupAsync(input);
             //            if (inputResult == ContentDialogResult.Primary)
@@ -728,7 +728,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var confirm = await ShowPopupAsync(Strings.Resources.AreYouSureSecretChat, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.AreYouSureSecretChat, Strings.AppName, Strings.OK, Strings.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -765,13 +765,13 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var confirm = await ShowPopupAsync(Strings.Resources.ConvertGroupInfo2 + "\n\n" + Strings.Resources.ConvertGroupInfo3, Strings.Resources.ConvertGroup, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.ConvertGroupInfo2 + "\n\n" + Strings.ConvertGroupInfo3, Strings.ConvertGroup, Strings.OK, Strings.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
             }
 
-            var warning = await ShowPopupAsync(Strings.Resources.ConvertGroupAlert, Strings.Resources.ConvertGroupAlertWarning, Strings.Resources.OK, Strings.Resources.Cancel);
+            var warning = await ShowPopupAsync(Strings.ConvertGroupAlert, Strings.ConvertGroupAlertWarning, Strings.OK, Strings.Cancel);
             if (warning != ContentDialogResult.Primary)
             {
                 return;
@@ -806,7 +806,7 @@ namespace Telegram.ViewModels
             }
             else
             {
-                var selected = await SharePopup.PickChatAsync(Strings.Resources.SelectContact);
+                var selected = await SharePopup.PickChatAsync(Strings.SelectContact);
                 var user = ClientService.GetUser(selected);
 
                 if (user == null)
@@ -814,7 +814,7 @@ namespace Telegram.ViewModels
                     return;
                 }
 
-                var confirm = await ShowPopupAsync(string.Format(Strings.Resources.AddToTheGroup, user.FullName()), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+                var confirm = await ShowPopupAsync(string.Format(Strings.AddToTheGroup, user.FullName()), Strings.AppName, Strings.OK, Strings.Cancel);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;
@@ -983,17 +983,17 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var message = Strings.Resources.AreYouSureDeleteAndExit;
+            var message = Strings.AreYouSureDeleteAndExit;
             if (chat.Type is ChatTypePrivate or ChatTypeSecret)
             {
-                message = Strings.Resources.AreYouSureDeleteContact;
+                message = Strings.AreYouSureDeleteContact;
             }
             else if (chat.Type is ChatTypeSupergroup super)
             {
-                message = super.IsChannel ? Strings.Resources.ChannelLeaveAlert : Strings.Resources.MegaLeaveAlert;
+                message = super.IsChannel ? Strings.ChannelLeaveAlert : Strings.MegaLeaveAlert;
             }
 
-            var confirm = await ShowPopupAsync(message, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(message, Strings.AppName, Strings.OK, Strings.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 if (chat.Type is ChatTypePrivate privata)
@@ -1021,7 +1021,7 @@ namespace Telegram.ViewModels
             //    return;
             //}
 
-            //var confirm = await ShowPopupAsync(Strings.Resources.AreYouSureDeleteContact, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            //var confirm = await ShowPopupAsync(Strings.AreYouSureDeleteContact, Strings.AppName, Strings.OK, Strings.Cancel);
             //if (confirm != ContentDialogResult.Primary)
             //{
             //    return;
@@ -1387,16 +1387,16 @@ namespace Telegram.ViewModels
                             switch (_filter)
                             {
                                 case SupergroupMembersFilterContacts contacts:
-                                    title = Strings.Resources.GroupContacts;
+                                    title = Strings.GroupContacts;
                                     break;
                                 case SupergroupMembersFilterBots bots:
-                                    title = Strings.Resources.ChannelBots;
+                                    title = Strings.ChannelBots;
                                     break;
                                 case SupergroupMembersFilterAdministrators administrators:
-                                    title = Strings.Resources.ChannelAdministrators;
+                                    title = Strings.ChannelAdministrators;
                                     break;
                                 case SupergroupMembersFilterRecent recent:
-                                    title = Strings.Resources.ChannelOtherMembers;
+                                    title = Strings.ChannelOtherMembers;
                                     break;
                             }
                         }

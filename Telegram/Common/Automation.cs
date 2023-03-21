@@ -31,7 +31,7 @@ namespace Telegram.Common
 
             if (message.Content is MessagePhoto photo)
             {
-                builder.Append($"{Strings.Resources.AttachPhoto}");
+                builder.Append($"{Strings.AttachPhoto}");
 
                 if (photo.Caption != null && !string.IsNullOrEmpty(photo.Caption.Text))
                 {
@@ -40,7 +40,7 @@ namespace Telegram.Common
             }
             else if (message.Content is MessageVoiceNote voiceNote)
             {
-                builder.Append($"{Strings.Resources.AttachAudio}");
+                builder.Append($"{Strings.AttachAudio}");
 
                 if (voiceNote.Caption != null && !string.IsNullOrEmpty(voiceNote.Caption.Text))
                 {
@@ -49,7 +49,7 @@ namespace Telegram.Common
             }
             else if (message.Content is MessageVideo video)
             {
-                builder.Append($"{Strings.Resources.AttachVideo}");
+                builder.Append($"{Strings.AttachVideo}");
 
                 if (video.Caption != null && !string.IsNullOrEmpty(video.Caption.Text))
                 {
@@ -58,11 +58,11 @@ namespace Telegram.Common
             }
             else if (message.Content is MessageVideoNote)
             {
-                builder.Append($"{Strings.Resources.AttachRound}");
+                builder.Append($"{Strings.AttachRound}");
             }
             else if (message.Content is MessageAnimation animation)
             {
-                builder.Append($". {Strings.Resources.AttachGif}");
+                builder.Append($". {Strings.AttachGif}");
 
                 if (animation.Caption != null && !string.IsNullOrEmpty(animation.Caption.Text))
                 {
@@ -73,16 +73,16 @@ namespace Telegram.Common
             {
                 if (!string.IsNullOrEmpty(sticker.Sticker.Emoji))
                 {
-                    builder.Append($"{sticker.Sticker.Emoji} {Strings.Resources.AttachSticker}");
+                    builder.Append($"{sticker.Sticker.Emoji} {Strings.AttachSticker}");
                 }
                 else
                 {
-                    builder.Append($"{Strings.Resources.AttachSticker}");
+                    builder.Append($"{Strings.AttachSticker}");
                 }
             }
             else if (message.Content is MessageAudio audio)
             {
-                builder.Append($"{Strings.Resources.AttachMusic}");
+                builder.Append($"{Strings.AttachMusic}");
 
                 if (audio.Caption != null && !string.IsNullOrEmpty(audio.Caption.Text))
                 {
@@ -91,23 +91,23 @@ namespace Telegram.Common
             }
             else if (message.Content is MessageLocation)
             {
-                builder.Append($"{Strings.Resources.AttachLocation}");
+                builder.Append($"{Strings.AttachLocation}");
             }
             else if (message.Content is MessageVenue venue)
             {
-                builder.Append($"{Strings.Resources.AttachLocation}");
+                builder.Append($"{Strings.AttachLocation}");
                 builder.Append(venue.Venue.Title);
                 builder.Append(venue.Venue.Address);
             }
             else if (message.Content is MessageContact contact)
             {
-                builder.Append($"{Strings.Resources.AttachContact}");
+                builder.Append($"{Strings.AttachContact}");
                 builder.Append(contact.Contact.GetFullName());
                 builder.Append(PhoneNumber.Format(contact.Contact.PhoneNumber));
             }
             else if (message.Content is MessagePoll poll)
             {
-                builder.Append($"{Strings.Resources.Poll}. ");
+                builder.Append($"{Strings.Poll}. ");
                 builder.Append($"{poll.Poll.Question}");
             }
             else if (message.Content is MessageCall call)
@@ -188,19 +188,19 @@ namespace Telegram.Common
             }
             else if (message.Content is MessageGame gameMedia)
             {
-                return Strings.Resources.AttachGame + ", " + gameMedia.Game.Title + ", ";
+                return Strings.AttachGame + ", " + gameMedia.Game.Title + ", ";
             }
             else if (message.Content is MessageExpiredVideo)
             {
-                return Strings.Resources.AttachVideoExpired + ", ";
+                return Strings.AttachVideoExpired + ", ";
             }
             else if (message.Content is MessageExpiredPhoto)
             {
-                return Strings.Resources.AttachPhotoExpired + ", ";
+                return Strings.AttachPhotoExpired + ", ";
             }
             else if (message.Content is MessageVideoNote videoNote)
             {
-                var result = Strings.Resources.AttachRound + ", " + (videoNote.IsViewed ? "" : Strings.Resources.AccDescrMsgNotPlayed + ", ");
+                var result = Strings.AttachRound + ", " + (videoNote.IsViewed ? "" : Strings.AccDescrMsgNotPlayed + ", ");
 
                 if (details)
                 {
@@ -213,10 +213,10 @@ namespace Telegram.Common
             {
                 if (string.IsNullOrEmpty(sticker.Sticker.Emoji))
                 {
-                    return Strings.Resources.AttachSticker + ", ";
+                    return Strings.AttachSticker + ", ";
                 }
 
-                return $"{sticker.Sticker.Emoji} {Strings.Resources.AttachSticker}" + ", ";
+                return $"{sticker.Sticker.Emoji} {Strings.AttachSticker}" + ", ";
             }
 
             string GetCaption(string caption)
@@ -226,7 +226,7 @@ namespace Telegram.Common
 
             if (message.Content is MessageVoiceNote voiceNote)
             {
-                var result = Strings.Resources.AttachAudio + GetCaption(voiceNote.Caption.Text) + ", " + (voiceNote.IsListened ? "" : Strings.Resources.AccDescrMsgNotPlayed + ", ");
+                var result = Strings.AttachAudio + GetCaption(voiceNote.Caption.Text) + ", " + (voiceNote.IsListened ? "" : Strings.AccDescrMsgNotPlayed + ", ");
 
                 if (details)
                 {
@@ -237,7 +237,7 @@ namespace Telegram.Common
             }
             else if (message.Content is MessageVideo video)
             {
-                var result = (video.IsSecret ? Strings.Resources.AttachDestructingVideo : Strings.Resources.AttachVideo) + GetCaption(video.Caption.Text) + ", ";
+                var result = (video.IsSecret ? Strings.AttachDestructingVideo : Strings.AttachVideo) + GetCaption(video.Caption.Text) + ", ";
 
                 if (details)
                 {
@@ -253,7 +253,7 @@ namespace Telegram.Common
             }
             else if (message.Content is MessageAnimation animation)
             {
-                var result = Strings.Resources.AttachGif + GetCaption(animation.Caption.Text) + ", ";
+                var result = Strings.AttachGif + GetCaption(animation.Caption.Text) + ", ";
                 if (details)
                 {
                     result += FileSizeConverter.Convert(animation.Animation.AnimationValue.Size) + ", ";
@@ -269,11 +269,11 @@ namespace Telegram.Common
                 string result;
                 if (performer == null && title == null)
                 {
-                    result = Strings.Resources.AttachMusic + GetCaption(audio.Caption.Text) + ", ";
+                    result = Strings.AttachMusic + GetCaption(audio.Caption.Text) + ", ";
                 }
                 else
                 {
-                    result = $"{performer ?? Strings.Resources.AudioUnknownArtist} - {title ?? Strings.Resources.AudioUnknownTitle}" + GetCaption(audio.Caption.Text) + ", ";
+                    result = $"{performer ?? Strings.AudioUnknownArtist} - {title ?? Strings.AudioUnknownTitle}" + GetCaption(audio.Caption.Text) + ", ";
                 }
 
                 if (details)
@@ -293,7 +293,7 @@ namespace Telegram.Common
                 string result;
                 if (string.IsNullOrEmpty(document.Document.FileName))
                 {
-                    result = Strings.Resources.AttachDocument + GetCaption(document.Caption.Text) + ", ";
+                    result = Strings.AttachDocument + GetCaption(document.Caption.Text) + ", ";
                 }
                 else
                 {
@@ -309,23 +309,23 @@ namespace Telegram.Common
             }
             else if (message.Content is MessageInvoice invoice)
             {
-                return Strings.Resources.PaymentInvoice + ", " + invoice.Title + ", ";
+                return Strings.PaymentInvoice + ", " + invoice.Title + ", ";
             }
             else if (message.Content is MessageContact)
             {
-                return Strings.Resources.AttachContact + ", ";
+                return Strings.AttachContact + ", ";
             }
             else if (message.Content is MessageLocation location)
             {
-                return (location.LivePeriod > 0 ? Strings.Resources.AttachLiveLocation : Strings.Resources.AttachLocation) + ", ";
+                return (location.LivePeriod > 0 ? Strings.AttachLiveLocation : Strings.AttachLocation) + ", ";
             }
             else if (message.Content is MessageVenue)
             {
-                return Strings.Resources.AttachLocation + ", ";
+                return Strings.AttachLocation + ", ";
             }
             else if (message.Content is MessagePhoto photo)
             {
-                return (photo.IsSecret ? Strings.Resources.AttachDestructingPhoto : Strings.Resources.AttachPhoto) + GetCaption(photo.Caption.Text) + ", ";
+                return (photo.IsSecret ? Strings.AttachDestructingPhoto : Strings.AttachPhoto) + GetCaption(photo.Caption.Text) + ", ";
             }
             else if (message.Content is MessagePoll poll)
             {
@@ -334,11 +334,11 @@ namespace Telegram.Common
                     string type = null;
                     if (poll.Poll.Type is PollTypeRegular)
                     {
-                        type = poll.Poll.IsClosed ? Strings.Resources.FinalResults : poll.Poll.IsAnonymous ? Strings.Resources.AnonymousPoll : Strings.Resources.PublicPoll;
+                        type = poll.Poll.IsClosed ? Strings.FinalResults : poll.Poll.IsAnonymous ? Strings.AnonymousPoll : Strings.PublicPoll;
                     }
                     else if (poll.Poll.Type is PollTypeQuiz)
                     {
-                        type = poll.Poll.IsClosed ? Strings.Resources.FinalResults : poll.Poll.IsAnonymous ? Strings.Resources.AnonymousQuizPoll : Strings.Resources.QuizPoll;
+                        type = poll.Poll.IsClosed ? Strings.FinalResults : poll.Poll.IsAnonymous ? Strings.AnonymousQuizPoll : Strings.QuizPoll;
                     }
 
                     if (type != null)
@@ -347,7 +347,7 @@ namespace Telegram.Common
                     }
                 }
 
-                return Strings.Resources.Poll + ", " + poll.Poll.Question + ", ";
+                return Strings.Poll + ", " + poll.Poll.Question + ", ";
             }
             else if (message.Content is MessageCall call)
             {
@@ -355,7 +355,7 @@ namespace Telegram.Common
             }
             else if (message.Content is MessageUnsupported)
             {
-                return Strings.Resources.UnsupportedAttachment + ", ";
+                return Strings.UnsupportedAttachment + ", ";
             }
 
             return null;
@@ -402,20 +402,20 @@ namespace Telegram.Common
             //    var user = message.ClientService.GetUser(message.ReplyToMessage.SenderUserId);
             //    if (user != null)
             //    {
-            //        builder.AppendLine($"{Strings.Resources.AccDescrReplying} {user.GetFullName()}. ");
+            //        builder.AppendLine($"{Strings.AccDescrReplying} {user.GetFullName()}. ");
             //    }
             //}
 
             builder.Append(GetSummary(clientService, message));
 
-            var date = string.Format(Strings.Resources.TodayAtFormatted, Converter.ShortTime.Format(Utils.UnixTimestampToDateTime(message.Date)));
+            var date = string.Format(Strings.TodayAtFormatted, Converter.ShortTime.Format(Utils.UnixTimestampToDateTime(message.Date)));
             if (message.IsOutgoing)
             {
-                builder.Append(string.Format(Strings.Resources.AccDescrSentDate, date));
+                builder.Append(string.Format(Strings.AccDescrSentDate, date));
             }
             else
             {
-                builder.Append(string.Format(Strings.Resources.AccDescrReceivedDate, date));
+                builder.Append(string.Format(Strings.AccDescrReceivedDate, date));
             }
 
             builder.Append(". ");
@@ -434,11 +434,11 @@ namespace Telegram.Common
             }
             else if (message.Id <= maxId && message.IsOutgoing && !message.IsChannelPost)
             {
-                builder.Append(Strings.Resources.AccDescrMsgRead);
+                builder.Append(Strings.AccDescrMsgRead);
             }
             else if (message.IsOutgoing && !message.IsChannelPost)
             {
-                builder.Append(Strings.Resources.AccDescrMsgUnread);
+                builder.Append(Strings.AccDescrMsgUnread);
             }
 
             builder.Append(".");

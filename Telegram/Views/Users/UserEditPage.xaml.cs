@@ -18,7 +18,7 @@ namespace Telegram.Views.Users
         public UserEditPage()
         {
             InitializeComponent();
-            Title = Strings.Resources.EditContact;
+            Title = Strings.EditContact;
         }
 
         #region Delegate
@@ -27,10 +27,10 @@ namespace Telegram.Views.Users
         {
             Photo.SetUser(ViewModel.ClientService, user, 140);
 
-            SuggestPhoto.Content = string.Format(Strings.Resources.SuggestPhotoFor, user.FirstName);
-            PersonalPhoto.Content = string.Format(Strings.Resources.SetPhotoFor, user.FirstName);
+            SuggestPhoto.Content = string.Format(Strings.SuggestPhotoFor, user.FirstName);
+            PersonalPhoto.Content = string.Format(Strings.SetPhotoFor, user.FirstName);
 
-            SharePhoneCheck.Content = string.Format(Strings.Resources.SharePhoneNumberWith, user.FirstName);
+            SharePhoneCheck.Content = string.Format(Strings.SharePhoneNumberWith, user.FirstName);
         }
 
         public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret, bool accessToken)

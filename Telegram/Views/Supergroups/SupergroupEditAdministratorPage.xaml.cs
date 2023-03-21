@@ -20,7 +20,7 @@ namespace Telegram.Views.Supergroups
         public SupergroupEditAdministratorPage()
         {
             InitializeComponent();
-            Title = Strings.Resources.EditAdmin;
+            Title = Strings.EditAdmin;
         }
 
         public void UpdateChat(Chat chat)
@@ -57,9 +57,9 @@ namespace Telegram.Views.Supergroups
 
                 Done.Visibility = canBeEdited ? Visibility.Visible : Visibility.Collapsed;
                 Dismiss.Visibility = member.Status is ChatMemberStatusAdministrator && canBeEdited ? Visibility.Visible : Visibility.Collapsed;
-                PermissionsRoot.Footer = canBeEdited ? null : Strings.Resources.EditAdminCantEdit;
-                EditRankField.PlaceholderText = member.Status is ChatMemberStatusCreator ? Strings.Resources.ChannelCreator : Strings.Resources.ChannelAdmin;
-                EditRankPanel.Footer = string.Format(Strings.Resources.EditAdminRankInfo, member.Status is ChatMemberStatusCreator ? Strings.Resources.ChannelCreator : Strings.Resources.ChannelAdmin);
+                PermissionsRoot.Footer = canBeEdited ? null : Strings.EditAdminCantEdit;
+                EditRankField.PlaceholderText = member.Status is ChatMemberStatusCreator ? Strings.ChannelCreator : Strings.ChannelAdmin;
+                EditRankPanel.Footer = string.Format(Strings.EditAdminRankInfo, member.Status is ChatMemberStatusCreator ? Strings.ChannelCreator : Strings.ChannelAdmin);
 
                 ChangeInfo.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited;
                 PostMessages.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited;
@@ -77,30 +77,30 @@ namespace Telegram.Views.Supergroups
                 Done.Visibility = Visibility.Visible;
                 Dismiss.Visibility = Visibility.Collapsed;
                 PermissionsRoot.Footer = null;
-                EditRankField.PlaceholderText = Strings.Resources.ChannelAdmin;
-                EditRankPanel.Footer = string.Format(Strings.Resources.EditAdminRankInfo, Strings.Resources.ChannelAdmin);
+                EditRankField.PlaceholderText = Strings.ChannelAdmin;
+                EditRankPanel.Footer = string.Format(Strings.EditAdminRankInfo, Strings.ChannelAdmin);
             }
 
             if (chat.Type is ChatTypeSupergroup group)
             {
                 PermissionsRoot.Visibility = Visibility.Visible;
 
-                ChangeInfo.Content = group.IsChannel ? Strings.Resources.EditAdminChangeChannelInfo : Strings.Resources.EditAdminChangeGroupInfo;
+                ChangeInfo.Content = group.IsChannel ? Strings.EditAdminChangeChannelInfo : Strings.EditAdminChangeGroupInfo;
                 PostMessages.Visibility = group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
                 EditMessages.Visibility = group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
-                DeleteMessages.Content = group.IsChannel ? Strings.Resources.EditAdminDeleteMessages : Strings.Resources.EditAdminGroupDeleteMessages;
+                DeleteMessages.Content = group.IsChannel ? Strings.EditAdminDeleteMessages : Strings.EditAdminGroupDeleteMessages;
                 BanUsers.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
                 PinMessages.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
                 ManageVideoChats.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
                 IsAnonymous.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
-                AddUsers.Content = chat.Permissions.CanInviteUsers ? Strings.Resources.EditAdminAddUsersViaLink : Strings.Resources.EditAdminAddUsers;
+                AddUsers.Content = chat.Permissions.CanInviteUsers ? Strings.EditAdminAddUsersViaLink : Strings.EditAdminAddUsers;
             }
             else
             {
                 PermissionsRoot.Visibility = Visibility.Collapsed;
             }
 
-            //TransferOwnership.Content = group.IsChannel ? Strings.Resources.EditAdminChannelTransfer : Strings.Resources.EditAdminGroupTransfer;
+            //TransferOwnership.Content = group.IsChannel ? Strings.EditAdminChannelTransfer : Strings.EditAdminGroupTransfer;
         }
 
         #region Binding

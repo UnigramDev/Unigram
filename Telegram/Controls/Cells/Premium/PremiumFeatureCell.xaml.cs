@@ -56,52 +56,52 @@ namespace Telegram.Controls.Cells.Premium
             switch (feature)
             {
                 case PremiumFeatureAdvancedChatManagement:
-                    titleValue = Strings.Resources.PremiumPreviewAdvancedChatManagement;
-                    subtitleValue = Strings.Resources.PremiumPreviewAdvancedChatManagementDescription;
+                    titleValue = Strings.PremiumPreviewAdvancedChatManagement;
+                    subtitleValue = Strings.PremiumPreviewAdvancedChatManagementDescription;
                     break;
                 case PremiumFeatureAnimatedProfilePhoto:
-                    titleValue = Strings.Resources.PremiumPreviewAnimatedProfiles;
-                    subtitleValue = Strings.Resources.PremiumPreviewAnimatedProfilesDescription;
+                    titleValue = Strings.PremiumPreviewAnimatedProfiles;
+                    subtitleValue = Strings.PremiumPreviewAnimatedProfilesDescription;
                     break;
                 case PremiumFeatureAppIcons:
-                    titleValue = Strings.Resources.PremiumPreviewAppIcon;
-                    subtitleValue = Strings.Resources.PremiumPreviewAppIconDescription;
+                    titleValue = Strings.PremiumPreviewAppIcon;
+                    subtitleValue = Strings.PremiumPreviewAppIconDescription;
                     break;
                 case PremiumFeatureCustomEmoji:
-                    titleValue = Strings.Resources.PremiumPreviewEmoji;
-                    subtitleValue = Strings.Resources.PremiumPreviewEmojiDescription;
+                    titleValue = Strings.PremiumPreviewEmoji;
+                    subtitleValue = Strings.PremiumPreviewEmojiDescription;
                     break;
                 case PremiumFeatureDisabledAds:
-                    titleValue = Strings.Resources.PremiumPreviewNoAds;
-                    subtitleValue = Strings.Resources.PremiumPreviewNoAdsDescription;
+                    titleValue = Strings.PremiumPreviewNoAds;
+                    subtitleValue = Strings.PremiumPreviewNoAdsDescription;
                     break;
                 case PremiumFeatureEmojiStatus:
-                    titleValue = Strings.Resources.PremiumPreviewEmojiStatus;
-                    subtitleValue = Strings.Resources.PremiumPreviewEmojiStatusDescription;
+                    titleValue = Strings.PremiumPreviewEmojiStatus;
+                    subtitleValue = Strings.PremiumPreviewEmojiStatusDescription;
                     break;
                 case PremiumFeatureImprovedDownloadSpeed:
-                    titleValue = Strings.Resources.PremiumPreviewDownloadSpeed;
-                    subtitleValue = Strings.Resources.PremiumPreviewDownloadSpeedDescription;
+                    titleValue = Strings.PremiumPreviewDownloadSpeed;
+                    subtitleValue = Strings.PremiumPreviewDownloadSpeedDescription;
                     break;
                 case PremiumFeatureIncreasedUploadFileSize:
-                    titleValue = Strings.Resources.PremiumPreviewUploads;
-                    subtitleValue = Strings.Resources.PremiumPreviewUploadsDescription;
+                    titleValue = Strings.PremiumPreviewUploads;
+                    subtitleValue = Strings.PremiumPreviewUploadsDescription;
                     break;
                 case PremiumFeatureProfileBadge:
-                    titleValue = Strings.Resources.PremiumPreviewProfileBadge;
-                    subtitleValue = Strings.Resources.PremiumPreviewProfileBadgeDescription;
+                    titleValue = Strings.PremiumPreviewProfileBadge;
+                    subtitleValue = Strings.PremiumPreviewProfileBadgeDescription;
                     break;
                 case PremiumFeatureUniqueReactions:
-                    titleValue = Strings.Resources.PremiumPreviewReactions2;
-                    subtitleValue = Strings.Resources.PremiumPreviewReactions2Description;
+                    titleValue = Strings.PremiumPreviewReactions2;
+                    subtitleValue = Strings.PremiumPreviewReactions2Description;
                     break;
                 case PremiumFeatureUniqueStickers:
-                    titleValue = Strings.Resources.PremiumPreviewStickers;
-                    subtitleValue = Strings.Resources.PremiumPreviewStickersDescription;
+                    titleValue = Strings.PremiumPreviewStickers;
+                    subtitleValue = Strings.PremiumPreviewStickersDescription;
                     break;
                 case PremiumFeatureVoiceRecognition:
-                    titleValue = Strings.Resources.PremiumPreviewVoiceToText;
-                    subtitleValue = Strings.Resources.PremiumPreviewVoiceToTextDescription;
+                    titleValue = Strings.PremiumPreviewVoiceToText;
+                    subtitleValue = Strings.PremiumPreviewVoiceToTextDescription;
                     break;
             }
 

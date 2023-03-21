@@ -69,7 +69,7 @@ namespace Telegram.Controls
 
         public void UpdateChatPermissions(Chat chat)
         {
-            var rights = ViewModel.VerifyRights(chat, x => x.CanSendOtherMessages, Strings.Resources.GlobalAttachInlineRestricted, Strings.Resources.AttachInlineRestrictedForever, Strings.Resources.AttachInlineRestricted, out string label);
+            var rights = ViewModel.VerifyRights(chat, x => x.CanSendOtherMessages, Strings.GlobalAttachInlineRestricted, Strings.AttachInlineRestrictedForever, Strings.AttachInlineRestricted, out string label);
 
             LayoutRoot.Visibility = rights ? Visibility.Collapsed : Visibility.Visible;
             PermissionsPanel.Visibility = rights ? Visibility.Visible : Visibility.Collapsed;

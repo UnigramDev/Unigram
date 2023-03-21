@@ -57,7 +57,7 @@ namespace Telegram.Controls
                     ToggleMinimized.Visibility = Visibility.Collapsed;
                 }
 
-                Headered.Footer = Strings.Resources.AutoStartDisabledInfo;
+                Headered.Footer = Strings.AutoStartDisabledInfo;
                 Visibility = Visibility.Visible;
             }
             else if (task.State == StartupTaskState.Enabled)

@@ -37,8 +37,8 @@ namespace Telegram.Views.Popups
 
             var multiple = true;
 
-            PrimaryButtonText = multiple ? Strings.Resources.SelectDays : Strings.Resources.OK;
-            SecondaryButtonText = Strings.Resources.Close;
+            PrimaryButtonText = multiple ? Strings.SelectDays : Strings.OK;
+            SecondaryButtonText = Strings.Close;
         }
 
         private void OnSelectedDatesChanged(CalendarView sender, CalendarViewSelectedDatesChangedEventArgs args)
@@ -115,8 +115,8 @@ namespace Telegram.Views.Popups
             {
                 SetValue(PrimaryButtonStyleProperty, BootStrapper.Current.Resources["DangerButtonStyle"] as Style);
 
-                PrimaryButtonText = Strings.Resources.ClearHistory;
-                SecondaryButtonText = Strings.Resources.Cancel;
+                PrimaryButtonText = Strings.ClearHistory;
+                SecondaryButtonText = Strings.Cancel;
 
                 DefaultButton = ContentDialogButton.None;
 
@@ -136,8 +136,8 @@ namespace Telegram.Views.Popups
             {
                 ClearValue(PrimaryButtonStyleProperty);
 
-                PrimaryButtonText = Strings.Resources.SelectDays;
-                SecondaryButtonText = Strings.Resources.Close;
+                PrimaryButtonText = Strings.SelectDays;
+                SecondaryButtonText = Strings.Close;
 
                 DefaultButton = ContentDialogButton.Primary;
 

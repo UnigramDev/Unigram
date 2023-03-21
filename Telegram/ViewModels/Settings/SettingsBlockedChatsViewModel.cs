@@ -31,7 +31,7 @@ namespace Telegram.ViewModels.Settings
 
         public async void Block()
         {
-            var selected = await SharePopup.PickChatAsync(Strings.Resources.BlockUser);
+            var selected = await SharePopup.PickChatAsync(Strings.BlockUser);
             if (selected == null)
             {
                 return;
@@ -52,7 +52,7 @@ namespace Telegram.ViewModels.Settings
         public RelayCommand<MessageSender> UnblockCommand { get; }
         private async void UnblockExecute(MessageSender sender)
         {
-            var confirm = await ShowPopupAsync(Strings.Resources.AreYouSureUnblockContact, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.AreYouSureUnblockContact, Strings.AppName, Strings.OK, Strings.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 Items.Remove(sender);

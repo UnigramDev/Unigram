@@ -341,7 +341,7 @@ namespace Telegram.ViewModels
             }
             else
             {
-                var confirm = await ShowPopupAsync("If you disable the messages database some **features** might **stop to work** as expected, **secret chats** will become **inaccessible** and app won't recognize downloaded files after download.\r\n\r\nAre you sure you want to proceed? You can re-enable messages database anytime from here.", Strings.Resources.Warning, Strings.Resources.OK, Strings.Resources.Cancel);
+                var confirm = await ShowPopupAsync("If you disable the messages database some **features** might **stop to work** as expected, **secret chats** will become **inaccessible** and app won't recognize downloaded files after download.\r\n\r\nAre you sure you want to proceed? You can re-enable messages database anytime from here.", Strings.Warning, Strings.OK, Strings.Cancel);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     Settings.Diagnostics.DisableDatabase = true;
@@ -413,8 +413,8 @@ namespace Telegram.ViewModels
 
             var dialog = new ChooseOptionPopup(items);
             dialog.Title = Name;
-            dialog.PrimaryButtonText = Strings.Resources.OK;
-            dialog.SecondaryButtonText = Strings.Resources.Cancel;
+            dialog.PrimaryButtonText = Strings.OK;
+            dialog.SecondaryButtonText = Strings.Cancel;
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary && dialog.SelectedIndex is VerbosityLevel index)

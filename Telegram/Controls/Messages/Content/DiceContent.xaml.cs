@@ -228,13 +228,13 @@ namespace Telegram.Controls.Messages.Content
             switch (dice.Emoji)
             {
                 case "\uD83C\uDFB2":
-                    text = Strings.Resources.DiceInfo2;
+                    text = Strings.DiceInfo2;
                     break;
                 case "\uD83C\uDFAF":
-                    text = Strings.Resources.DartInfo;
+                    text = Strings.DartInfo;
                     break;
                 default:
-                    text = string.Format(Strings.Resources.DiceEmojiInfo, dice.Emoji);
+                    text = string.Format(Strings.DiceEmojiInfo, dice.Emoji);
                     break;
             }
 

@@ -57,16 +57,16 @@ namespace Telegram.Controls.Chats
                 var user = ViewModel.ClientService.GetUser(chat);
                 if (user != null)
                 {
-                    CreateButton(string.Format(Strings.Resources.AddContactFullChat, user.FirstName.ToUpper()), ViewModel.AddContactCommand);
+                    CreateButton(string.Format(Strings.AddContactFullChat, user.FirstName.ToUpper()), ViewModel.AddContactCommand);
                 }
                 else
                 {
-                    CreateButton(Strings.Resources.AddContactChat, ViewModel.AddContactCommand);
+                    CreateButton(Strings.AddContactChat, ViewModel.AddContactCommand);
                 }
             }
             else if (chat.ActionBar is ChatActionBarInviteMembers)
             {
-                CreateButton(Strings.Resources.GroupAddMembers.ToUpper(), ViewModel.InviteCommand);
+                CreateButton(Strings.GroupAddMembers.ToUpper(), ViewModel.InviteCommand);
             }
             else if (chat.ActionBar is ChatActionBarJoinRequest joinRequest)
             {
@@ -76,13 +76,13 @@ namespace Telegram.Controls.Chats
             {
                 if (reportAddBlock.CanUnarchive)
                 {
-                    CreateButton(Strings.Resources.Unarchive.ToUpper(), ViewModel.UnarchiveCommand);
-                    CreateButton(Strings.Resources.ReportSpamUser, ViewModel.ReportSpamCommand, column: 1, danger: true);
+                    CreateButton(Strings.Unarchive.ToUpper(), ViewModel.UnarchiveCommand);
+                    CreateButton(Strings.ReportSpamUser, ViewModel.ReportSpamCommand, column: 1, danger: true);
                 }
                 else
                 {
-                    CreateButton(Strings.Resources.ReportSpamUser, ViewModel.ReportSpamCommand, danger: true);
-                    CreateButton(Strings.Resources.AddContactChat, ViewModel.AddContactCommand, column: 1);
+                    CreateButton(Strings.ReportSpamUser, ViewModel.ReportSpamCommand, danger: true);
+                    CreateButton(Strings.AddContactChat, ViewModel.AddContactCommand, column: 1);
                 }
             }
             else if (chat.ActionBar is ChatActionBarReportSpam reportSpam)
@@ -90,20 +90,20 @@ namespace Telegram.Controls.Chats
                 var user = ViewModel.ClientService.GetUser(chat);
                 if (user != null)
                 {
-                    CreateButton(Strings.Resources.ReportSpamUser, ViewModel.ReportSpamCommand, danger: true);
+                    CreateButton(Strings.ReportSpamUser, ViewModel.ReportSpamCommand, danger: true);
                 }
                 else
                 {
-                    CreateButton(Strings.Resources.ReportSpamAndLeave, ViewModel.ReportSpamCommand, new ChatReportReasonSpam(), danger: true);
+                    CreateButton(Strings.ReportSpamAndLeave, ViewModel.ReportSpamCommand, new ChatReportReasonSpam(), danger: true);
                 }
             }
             else if (chat.ActionBar is ChatActionBarReportUnrelatedLocation)
             {
-                CreateButton(Strings.Resources.ReportSpamLocation, ViewModel.ReportSpamCommand, new ChatReportReasonUnrelatedLocation(), danger: true);
+                CreateButton(Strings.ReportSpamLocation, ViewModel.ReportSpamCommand, new ChatReportReasonUnrelatedLocation(), danger: true);
             }
             else if (chat.ActionBar is ChatActionBarSharePhoneNumber)
             {
-                CreateButton(Strings.Resources.ShareMyPhone, ViewModel.ShareContactCommand);
+                CreateButton(Strings.ShareMyPhone, ViewModel.ShareContactCommand);
             }
 
             ShowHide(chat.ActionBar != null);

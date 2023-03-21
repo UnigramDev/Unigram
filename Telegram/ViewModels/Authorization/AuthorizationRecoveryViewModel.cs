@@ -104,12 +104,12 @@ namespace Telegram.ViewModels.Authorization
                 if (response is Error error)
                 {
                     IsLoading = false;
-                    await ShowPopupAsync(error.Message, Strings.Resources.AppName, Strings.Resources.OK);
+                    await ShowPopupAsync(error.Message, Strings.AppName, Strings.OK);
                 }
             }
             else
             {
-                await ShowPopupAsync(Strings.Resources.RestorePasswordNoEmailText, Strings.Resources.RestorePasswordNoEmailTitle, Strings.Resources.OK);
+                await ShowPopupAsync(Strings.RestorePasswordNoEmailText, Strings.RestorePasswordNoEmailTitle, Strings.OK);
                 IsResettable = true;
             }
         }
@@ -117,7 +117,7 @@ namespace Telegram.ViewModels.Authorization
         public RelayCommand ResetCommand { get; }
         private async void ResetExecute()
         {
-            var confirm = await ShowPopupAsync(Strings.Resources.ResetMyAccountWarningText, Strings.Resources.ResetMyAccountWarning, Strings.Resources.ResetMyAccountWarningReset, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.ResetMyAccountWarningText, Strings.ResetMyAccountWarning, Strings.ResetMyAccountWarningReset, Strings.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 IsLoading = true;
@@ -142,7 +142,7 @@ namespace Telegram.ViewModels.Authorization
 
                     if (error.Message.Contains("2FA_RECENT_CONFIRM"))
                     {
-                        await ShowPopupAsync(Strings.Resources.ResetAccountCancelledAlert, Strings.Resources.AppName, Strings.Resources.OK);
+                        await ShowPopupAsync(Strings.ResetAccountCancelledAlert, Strings.AppName, Strings.OK);
                     }
                     else if (error.Message.StartsWith("2FA_CONFIRM_WAIT_"))
                     {
@@ -150,7 +150,7 @@ namespace Telegram.ViewModels.Authorization
                     }
                     else
                     {
-                        await ShowPopupAsync(error.Message, Strings.Resources.AppName, Strings.Resources.OK);
+                        await ShowPopupAsync(error.Message, Strings.AppName, Strings.OK);
                     }
                 }
             }

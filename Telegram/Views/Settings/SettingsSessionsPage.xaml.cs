@@ -22,7 +22,7 @@ namespace Telegram.Views.Settings
         public SettingsSessionsPage()
         {
             InitializeComponent();
-            Title = Strings.Resources.SessionsTitle;
+            Title = Strings.SessionsTitle;
         }
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)

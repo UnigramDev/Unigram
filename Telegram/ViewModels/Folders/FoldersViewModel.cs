@@ -147,7 +147,7 @@ namespace Telegram.ViewModels.Folders
         public RelayCommand<ChatFilterInfo> DeleteCommand { get; }
         private async void DeleteExecute(ChatFilterInfo filter)
         {
-            var confirm = await ShowPopupAsync(Strings.Resources.FilterDeleteAlert, Strings.Resources.FilterDelete, Strings.Resources.Delete, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.FilterDeleteAlert, Strings.FilterDelete, Strings.Delete, Strings.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

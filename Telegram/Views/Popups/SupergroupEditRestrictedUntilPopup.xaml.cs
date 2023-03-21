@@ -32,10 +32,10 @@ namespace Telegram.Views.Popups
 
             Date.MinYear = DateTime.Today;
 
-            Title = Strings.Resources.UserRestrictionsUntil;
-            PrimaryButtonText = Strings.Resources.OK;
-            SecondaryButtonText = Strings.Resources.UserRestrictionsUntilForever;
-            CloseButtonText = Strings.Resources.Cancel;
+            Title = Strings.UserRestrictionsUntil;
+            PrimaryButtonText = Strings.OK;
+            SecondaryButtonText = Strings.UserRestrictionsUntilForever;
+            CloseButtonText = Strings.Cancel;
 
             DefaultButton = ContentDialogButton.Primary;
         }

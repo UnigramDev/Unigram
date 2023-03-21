@@ -72,9 +72,9 @@ namespace Telegram.ViewModels
                 Filters,
                 new ChatFilterViewModel[]
                 {
-                    new ChatFilterViewModel(int.MaxValue - 1, Strings.Resources.Contacts, "\uE95E", "\uE95D"),
-                    new ChatFilterViewModel(int.MaxValue - 2, Strings.Resources.Calls, "\uE991", "\uE990"),
-                    new ChatFilterViewModel(int.MaxValue - 3, Strings.Resources.Settings, "\uE98F", "\uE98E"),
+                    new ChatFilterViewModel(int.MaxValue - 1, Strings.Contacts, "\uE95E", "\uE95D"),
+                    new ChatFilterViewModel(int.MaxValue - 2, Strings.Calls, "\uE991", "\uE990"),
+                    new ChatFilterViewModel(int.MaxValue - 3, Strings.Settings, "\uE98F", "\uE98E"),
                 }
             };
 
@@ -277,7 +277,7 @@ namespace Telegram.ViewModels
                 var filters = chatFilters.ToList();
                 var index = Math.Min(mainChatListPosition, filters.Count);
 
-                filters.Insert(index, new ChatFilterInfo { Id = Constants.ChatListMain, Title = Strings.Resources.FilterAllChats, IconName = "All" });
+                filters.Insert(index, new ChatFilterInfo { Id = Constants.ChatListMain, Title = Strings.FilterAllChats, IconName = "All" });
 
                 Merge(Filters, filters);
 
@@ -470,7 +470,7 @@ namespace Telegram.ViewModels
         public RelayCommand CreateSecretChatCommand { get; }
         private async void CreateSecretChatExecute()
         {
-            var selected = await SharePopup.PickChatAsync(Strings.Resources.NewSecretChat);
+            var selected = await SharePopup.PickChatAsync(Strings.NewSecretChat);
             var user = ClientService.GetUser(selected);
 
             if (user == null)
@@ -478,7 +478,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var confirm = await ShowPopupAsync(Strings.Resources.AreYouSureSecretChat, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.AreYouSureSecretChat, Strings.AppName, Strings.OK, Strings.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -516,7 +516,7 @@ namespace Telegram.ViewModels
         public RelayCommand<ChatFilterViewModel> FilterMarkAsReadCommand { get; }
         private async void FilterMarkAsReadExecute(ChatFilterViewModel filter)
         {
-            var confirm = await ShowPopupAsync(Strings.Resources.AreYouSure, Strings.Resources.AppName, Strings.Resources.MarkAsRead, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.AreYouSure, Strings.AppName, Strings.MarkAsRead, Strings.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -543,7 +543,7 @@ namespace Telegram.ViewModels
         public RelayCommand<ChatFilterViewModel> FilterDeleteCommand { get; }
         private async void FilterDeleteExecute(ChatFilterViewModel filter)
         {
-            var confirm = await ShowPopupAsync(Strings.Resources.FilterDeleteAlert, Strings.Resources.FilterDelete, Strings.Resources.Delete, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.FilterDeleteAlert, Strings.FilterDelete, Strings.Delete, Strings.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -558,13 +558,13 @@ namespace Telegram.ViewModels
         public static ChatFilterViewModel Main => new ChatFilterViewModel(new ChatListMain())
         {
             ChatFilterId = Constants.ChatListMain,
-            Title = Strings.Resources.FilterAllChats
+            Title = Strings.FilterAllChats
         };
 
         public static ChatFilterViewModel Archive => new ChatFilterViewModel(new ChatListArchive())
         {
             ChatFilterId = Constants.ChatListArchive,
-            Title = Strings.Resources.ArchivedChats
+            Title = Strings.ArchivedChats
         };
 
         public bool IsNavigationItem { get; }

@@ -20,7 +20,7 @@ namespace Telegram.Views
         public ChatsNearbyPage()
         {
             InitializeComponent();
-            Title = Strings.Resources.PeopleNearby;
+            Title = Strings.PeopleNearby;
         }
 
         private void OnElementPrepared(Microsoft.UI.Xaml.Controls.ItemsRepeater sender, Microsoft.UI.Xaml.Controls.ItemsRepeaterElementPreparedEventArgs args)

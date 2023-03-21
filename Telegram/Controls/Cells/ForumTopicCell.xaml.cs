@@ -197,11 +197,11 @@ namespace Telegram.Controls.Cells
             {
                 //if (topic.Type is ForumTopicTypeSupergroup super && super.IsChannel)
                 //{
-                //    builder.Append(Strings.Resources.AccDescrChannel);
+                //    builder.Append(Strings.AccDescrChannel);
                 //}
                 //else
                 //{
-                //    builder.Append(Strings.Resources.AccDescrGroup);
+                //    builder.Append(Strings.AccDescrGroup);
                 //}
 
                 builder.Append(", ");
@@ -234,7 +234,7 @@ namespace Telegram.Controls.Cells
                 {
                     //if (!(topic.Type is ForumTopicTypePrivate priv && priv.UserId == fromUser?.Id) && !message.IsChannelPost)
                     {
-                        builder.Append(Strings.Resources.FromYou);
+                        builder.Append(Strings.FromYou);
                         builder.Append(": ");
                     }
                 }
@@ -255,11 +255,11 @@ namespace Telegram.Controls.Cells
             var date = Locale.FormatDateAudio(message.Date);
             if (message.IsOutgoing)
             {
-                builder.Append(string.Format(Strings.Resources.AccDescrSentDate, date));
+                builder.Append(string.Format(Strings.AccDescrSentDate, date));
             }
             else
             {
-                builder.Append(string.Format(Strings.Resources.AccDescrReceivedDate, date));
+                builder.Append(string.Format(Strings.AccDescrReceivedDate, date));
             }
 
             //AutomationProperties.SetName(this, builder.ToString());
@@ -696,7 +696,7 @@ namespace Telegram.Controls.Cells
 
             if (!showContent)
             {
-                return new FormattedText(Strings.Resources.Message, new TextEntity[0]);
+                return new FormattedText(Strings.Message, new TextEntity[0]);
             }
 
             return value.Content switch
@@ -729,7 +729,7 @@ namespace Telegram.Controls.Cells
                 switch (topic.DraftMessage.InputMessageText)
                 {
                     case InputMessageText:
-                        return string.Format("{0}: ", Strings.Resources.Draft);
+                        return string.Format("{0}: ", Strings.Draft);
                 }
             }
 
@@ -774,7 +774,7 @@ namespace Telegram.Controls.Cells
                 }
                 else if (message.IsOutgoing)
                 {
-                    result = string.Format(format, Strings.Resources.FromYou);
+                    result = string.Format(format, Strings.FromYou);
                 }
                 else if (fromUser != null)
                 {
@@ -788,7 +788,7 @@ namespace Telegram.Controls.Cells
                     }
                     else if (fromUser.Type is UserTypeDeleted)
                     {
-                        result = string.Format(format, Strings.Resources.HiddenName);
+                        result = string.Format(format, Strings.HiddenName);
                     }
                     else
                     {
@@ -807,24 +807,24 @@ namespace Telegram.Controls.Cells
             }
             if (message.Content is MessageExpiredVideo)
             {
-                return result + Strings.Resources.AttachVideoExpired;
+                return result + Strings.AttachVideoExpired;
             }
             else if (message.Content is MessageExpiredPhoto)
             {
-                return result + Strings.Resources.AttachPhotoExpired;
+                return result + Strings.AttachPhotoExpired;
             }
             else if (message.Content is MessageVideoNote)
             {
-                return result + Strings.Resources.AttachRound;
+                return result + Strings.AttachRound;
             }
             else if (message.Content is MessageSticker sticker)
             {
                 if (string.IsNullOrEmpty(sticker.Sticker.Emoji))
                 {
-                    return result + Strings.Resources.AttachSticker;
+                    return result + Strings.AttachSticker;
                 }
 
-                return result + $"{sticker.Sticker.Emoji} {Strings.Resources.AttachSticker}";
+                return result + $"{sticker.Sticker.Emoji} {Strings.AttachSticker}";
             }
 
             static string GetCaption(string caption)
@@ -834,15 +834,15 @@ namespace Telegram.Controls.Cells
 
             if (message.Content is MessageVoiceNote voiceNote)
             {
-                return result + Strings.Resources.AttachAudio + GetCaption(voiceNote.Caption.Text);
+                return result + Strings.AttachAudio + GetCaption(voiceNote.Caption.Text);
             }
             else if (message.Content is MessageVideo video)
             {
-                return result + (video.IsSecret ? Strings.Resources.AttachDestructingVideo : Strings.Resources.AttachVideo) + GetCaption(video.Caption.Text);
+                return result + (video.IsSecret ? Strings.AttachDestructingVideo : Strings.AttachVideo) + GetCaption(video.Caption.Text);
             }
             else if (message.Content is MessageAnimation animation)
             {
-                return result + Strings.Resources.AttachGif + GetCaption(animation.Caption.Text);
+                return result + Strings.AttachGif + GetCaption(animation.Caption.Text);
             }
             else if (message.Content is MessageAudio audio)
             {
@@ -851,7 +851,7 @@ namespace Telegram.Controls.Cells
 
                 if (performer == null || title == null)
                 {
-                    return result + Strings.Resources.AttachMusic + GetCaption(audio.Caption.Text);
+                    return result + Strings.AttachMusic + GetCaption(audio.Caption.Text);
                 }
                 else
                 {
@@ -862,7 +862,7 @@ namespace Telegram.Controls.Cells
             {
                 if (string.IsNullOrEmpty(document.Document.FileName))
                 {
-                    return result + Strings.Resources.AttachDocument + GetCaption(document.Caption.Text);
+                    return result + Strings.AttachDocument + GetCaption(document.Caption.Text);
                 }
 
                 return result + document.Document.FileName + GetCaption(document.Caption.Text);
@@ -878,19 +878,19 @@ namespace Telegram.Controls.Cells
             }
             else if (message.Content is MessageContact)
             {
-                return result + Strings.Resources.AttachContact;
+                return result + Strings.AttachContact;
             }
             else if (message.Content is MessageLocation location)
             {
-                return result + (location.LivePeriod > 0 ? Strings.Resources.AttachLiveLocation : Strings.Resources.AttachLocation);
+                return result + (location.LivePeriod > 0 ? Strings.AttachLiveLocation : Strings.AttachLocation);
             }
             else if (message.Content is MessageVenue)
             {
-                return result + Strings.Resources.AttachLocation;
+                return result + Strings.AttachLocation;
             }
             else if (message.Content is MessagePhoto photo)
             {
-                return result + (photo.IsSecret ? Strings.Resources.AttachDestructingPhoto : Strings.Resources.AttachPhoto) + GetCaption(photo.Caption.Text);
+                return result + (photo.IsSecret ? Strings.AttachDestructingPhoto : Strings.AttachPhoto) + GetCaption(photo.Caption.Text);
             }
             else if (message.Content is MessagePoll poll)
             {
@@ -902,7 +902,7 @@ namespace Telegram.Controls.Cells
             }
             else if (message.Content is MessageUnsupported)
             {
-                return result + Strings.Resources.UnsupportedAttachment;
+                return result + Strings.UnsupportedAttachment;
             }
 
             return result;

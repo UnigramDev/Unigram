@@ -17,9 +17,9 @@ namespace Telegram.Views.Popups
         {
             InitializeComponent();
 
-            Title = Strings.Resources.ColorPickerMainColor;
-            PrimaryButtonText = Strings.Resources.OK;
-            SecondaryButtonText = Strings.Resources.Cancel;
+            Title = Strings.ColorPickerMainColor;
+            PrimaryButtonText = Strings.OK;
+            SecondaryButtonText = Strings.Cancel;
         }
 
         private Color _color;

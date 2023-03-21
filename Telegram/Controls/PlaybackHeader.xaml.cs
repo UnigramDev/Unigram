@@ -154,7 +154,7 @@ namespace Telegram.Controls
             VolumeSlider.Value = _playbackService.Volume * 100;
 
             PlaybackButton.Glyph = _playbackService.PlaybackState == MediaPlaybackState.Paused ? Icons.Play : Icons.Pause;
-            Automation.SetToolTip(PlaybackButton, _playbackService.PlaybackState == MediaPlaybackState.Paused ? Strings.Resources.AccActionPlay : Strings.Resources.AccActionPause);
+            Automation.SetToolTip(PlaybackButton, _playbackService.PlaybackState == MediaPlaybackState.Paused ? Strings.AccActionPlay : Strings.AccActionPause);
 
             var webPage = message.Content is MessageText text ? text.WebPage : null;
 
@@ -165,14 +165,14 @@ namespace Telegram.Controls
 
                 if (_clientService.TryGetUser(message.SenderId, out Telegram.Td.Api.User senderUser))
                 {
-                    title = senderUser.Id == _clientService.Options.MyId ? Strings.Resources.ChatYourSelfName : senderUser.FullName();
+                    title = senderUser.Id == _clientService.Options.MyId ? Strings.ChatYourSelfName : senderUser.FullName();
                 }
                 else if (_clientService.TryGetChat(message.SenderId, out Chat senderChat))
                 {
                     title = _clientService.GetTitle(senderChat);
                 }
 
-                var subtitle = string.Format(Strings.Resources.formatDateAtTime, Converter.ShortDate.Format(date), Converter.ShortTime.Format(date));
+                var subtitle = string.Format(Strings.formatDateAtTime, Converter.ShortDate.Format(date), Converter.ShortTime.Format(date));
 
                 UpdateText(message.ChatId, message.Id, title, subtitle);
 
@@ -266,10 +266,10 @@ namespace Telegram.Controls
         {
             RepeatButton.IsChecked = _playbackService.IsRepeatEnabled;
             Automation.SetToolTip(RepeatButton, _playbackService.IsRepeatEnabled == null
-                ? Strings.Resources.AccDescrRepeatOne
+                ? Strings.AccDescrRepeatOne
                 : _playbackService.IsRepeatEnabled == true
-                ? Strings.Resources.AccDescrRepeatList
-                : Strings.Resources.AccDescrRepeatOff);
+                ? Strings.AccDescrRepeatList
+                : Strings.AccDescrRepeatOff);
         }
 
         private void UpdateRate(int duration)
@@ -367,7 +367,7 @@ namespace Telegram.Controls
         {
             var flyout = new MenuFlyout();
             var rates = new double[] { 0.25, 0.5, 1, 1.5, 2 };
-            var labels = new string[] { Strings.Resources.SpeedVerySlow, Strings.Resources.SpeedSlow, Strings.Resources.SpeedNormal, Strings.Resources.SpeedFast, Strings.Resources.SpeedVeryFast };
+            var labels = new string[] { Strings.SpeedVerySlow, Strings.SpeedSlow, Strings.SpeedNormal, Strings.SpeedFast, Strings.SpeedVeryFast };
 
             for (int i = 0; i < rates.Length; i++)
             {
@@ -494,7 +494,7 @@ namespace Telegram.Controls
                 {
                     if (_clientService.TryGetUser(message.SenderId, out Telegram.Td.Api.User senderUser))
                     {
-                        AutomationProperties.SetName(args.ItemContainer, senderUser.Id == _clientService.Options.MyId ? Strings.Resources.ChatYourSelfName : senderUser.FullName());
+                        AutomationProperties.SetName(args.ItemContainer, senderUser.Id == _clientService.Options.MyId ? Strings.ChatYourSelfName : senderUser.FullName());
                     }
                     else if (_clientService.TryGetChat(message.SenderId, out Chat senderChat))
                     {

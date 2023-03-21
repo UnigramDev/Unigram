@@ -238,16 +238,16 @@ namespace Telegram.Common
             {
                 var message = audio
                     ? video
-                    ? Strings.Resources.PermissionNoAudio
-                    : Strings.Resources.PermissionNoAudioVideo
-                    : Strings.Resources.PermissionNoCamera;
+                    ? Strings.PermissionNoAudio
+                    : Strings.PermissionNoAudioVideo
+                    : Strings.PermissionNoCamera;
 
                 var popup = new MessagePopup
                 {
-                    Title = Strings.Resources.AppName,
+                    Title = Strings.AppName,
                     Message = message,
-                    PrimaryButtonText = Strings.Resources.Settings,
-                    SecondaryButtonText = Strings.Resources.OK,
+                    PrimaryButtonText = Strings.Settings,
+                    SecondaryButtonText = Strings.OK,
                     RequestedTheme = requestedTheme
                 };
 

@@ -111,11 +111,11 @@ namespace Telegram.Views.Calls
             {
                 if (_clientService.TryGetSupergroup(_service.Chat, out Supergroup supergroup))
                 {
-                    TextBlockHelper.SetMarkdown(NoStream, supergroup.Status is ChatMemberStatusCreator ? Strings.Resources.NoRtmpStreamFromAppOwner : string.Format(Strings.Resources.NoRtmpStreamFromAppViewer, _service.Chat.Title));
+                    TextBlockHelper.SetMarkdown(NoStream, supergroup.Status is ChatMemberStatusCreator ? Strings.NoRtmpStreamFromAppOwner : string.Format(Strings.NoRtmpStreamFromAppViewer, _service.Chat.Title));
                 }
                 else if (_clientService.TryGetBasicGroup(_service.Chat, out BasicGroup basicGroup))
                 {
-                    TextBlockHelper.SetMarkdown(NoStream, basicGroup.Status is ChatMemberStatusCreator ? Strings.Resources.NoRtmpStreamFromAppOwner : string.Format(Strings.Resources.NoRtmpStreamFromAppViewer, _service.Chat.Title));
+                    TextBlockHelper.SetMarkdown(NoStream, basicGroup.Status is ChatMemberStatusCreator ? Strings.NoRtmpStreamFromAppOwner : string.Format(Strings.NoRtmpStreamFromAppViewer, _service.Chat.Title));
                 }
 
                 NoStream.Visibility = Visibility.Visible;
@@ -265,9 +265,9 @@ namespace Telegram.Views.Calls
                     }
 
                     FindName(nameof(ScheduledPanel));
-                    SubtitleInfo.Text = _service.IsChannel ? Strings.Resources.VoipChannelScheduledVoiceChat : Strings.Resources.VoipGroupScheduledVoiceChat;
+                    SubtitleInfo.Text = _service.IsChannel ? Strings.VoipChannelScheduledVoiceChat : Strings.VoipGroupScheduledVoiceChat;
                     ParticipantsPanel.Visibility = Visibility.Collapsed;
-                    ScheduledInfo.Text = duration < TimeSpan.Zero ? Strings.Resources.VoipChatLateBy : Strings.Resources.VoipChatStartsIn;
+                    ScheduledInfo.Text = duration < TimeSpan.Zero ? Strings.VoipChatLateBy : Strings.VoipChatStartsIn;
                     StartsAt.Text = call.GetStartsAt();
                     StartsIn.Text = call.GetStartsIn();
 
@@ -351,11 +351,11 @@ namespace Telegram.Views.Calls
                 var popup = new MessagePopup
                 {
                     RequestedTheme = ElementTheme.Dark,
-                    Title = _service.IsChannel ? Strings.Resources.VoipChannelLeaveAlertTitle : Strings.Resources.VoipGroupLeaveAlertTitle,
-                    Message = _service.IsChannel ? Strings.Resources.VoipChannelLeaveAlertText : Strings.Resources.VoipGroupLeaveAlertText,
-                    PrimaryButtonText = Strings.Resources.VoipGroupLeave,
-                    SecondaryButtonText = Strings.Resources.Cancel,
-                    CheckBoxLabel = _service.IsChannel ? Strings.Resources.VoipChannelLeaveAlertEndChat : Strings.Resources.VoipGroupLeaveAlertEndChat
+                    Title = _service.IsChannel ? Strings.VoipChannelLeaveAlertTitle : Strings.VoipGroupLeaveAlertTitle,
+                    Message = _service.IsChannel ? Strings.VoipChannelLeaveAlertText : Strings.VoipGroupLeaveAlertText,
+                    PrimaryButtonText = Strings.VoipGroupLeave,
+                    SecondaryButtonText = Strings.Cancel,
+                    CheckBoxLabel = _service.IsChannel ? Strings.VoipChannelLeaveAlertEndChat : Strings.VoipGroupLeaveAlertEndChat
                 };
 
                 var confirm = await popup.ShowQueuedAsync();
@@ -385,10 +385,10 @@ namespace Telegram.Views.Calls
 
             var popup = new MessagePopup();
             popup.RequestedTheme = ElementTheme.Dark;
-            popup.Title = _service.IsChannel ? Strings.Resources.VoipChannelEndAlertTitle : Strings.Resources.VoipGroupEndAlertTitle;
-            popup.Message = _service.IsChannel ? Strings.Resources.VoipChannelEndAlertText : Strings.Resources.VoipGroupEndAlertText;
-            popup.PrimaryButtonText = Strings.Resources.VoipGroupEnd;
-            popup.SecondaryButtonText = Strings.Resources.Cancel;
+            popup.Title = _service.IsChannel ? Strings.VoipChannelEndAlertTitle : Strings.VoipGroupEndAlertTitle;
+            popup.Message = _service.IsChannel ? Strings.VoipChannelEndAlertText : Strings.VoipGroupEndAlertText;
+            popup.PrimaryButtonText = Strings.VoipGroupEnd;
+            popup.SecondaryButtonText = Strings.Cancel;
 
             var confirm = await popup.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
@@ -417,18 +417,18 @@ namespace Telegram.Views.Calls
 
             if (call.CanBeManaged)
             {
-                flyout.CreateFlyoutItem(SetTitle, _service.IsChannel ? Strings.Resources.VoipChannelEditTitle : Strings.Resources.VoipGroupEditTitle, new FontIcon { Glyph = Icons.Edit });
+                flyout.CreateFlyoutItem(SetTitle, _service.IsChannel ? Strings.VoipChannelEditTitle : Strings.VoipGroupEditTitle, new FontIcon { Glyph = Icons.Edit });
             }
 
             if (call.CanBeManaged && call.ScheduledStartDate == 0)
             {
                 if (call.RecordDuration > 0)
                 {
-                    flyout.CreateFlyoutItem(StopRecording, Strings.Resources.VoipGroupStopRecordCall, new FontIcon { Glyph = Icons.Record });
+                    flyout.CreateFlyoutItem(StopRecording, Strings.VoipGroupStopRecordCall, new FontIcon { Glyph = Icons.Record });
                 }
                 else
                 {
-                    flyout.CreateFlyoutItem(StartRecording, Strings.Resources.VoipGroupRecordCall, new FontIcon { Glyph = Icons.Record });
+                    flyout.CreateFlyoutItem(StartRecording, Strings.VoipGroupRecordCall, new FontIcon { Glyph = Icons.Record });
                 }
             }
 
@@ -439,7 +439,7 @@ namespace Telegram.Views.Calls
                 var outputId = _service.CurrentAudioOutput;
 
                 var defaultOutput = new ToggleMenuFlyoutItem();
-                defaultOutput.Text = Strings.Resources.Default;
+                defaultOutput.Text = Strings.Default;
                 defaultOutput.IsChecked = outputId == string.Empty;
                 defaultOutput.Click += (s, args) =>
                 {
@@ -468,7 +468,7 @@ namespace Telegram.Views.Calls
                 flyout.Items.Add(output);
             }
 
-            //flyout.CreateFlyoutItem(ShareInviteLink, Strings.Resources.VoipGroupShareInviteLink, new FontIcon { Glyph = Icons.Link });
+            //flyout.CreateFlyoutItem(ShareInviteLink, Strings.VoipGroupShareInviteLink, new FontIcon { Glyph = Icons.Link });
 
             if (chat.Type is ChatTypeSupergroup && _clientService.TryGetSupergroup(chat, out Supergroup supergroup))
             {
@@ -491,7 +491,7 @@ namespace Telegram.Views.Calls
             {
                 flyout.CreateFlyoutSeparator();
 
-                var discard = flyout.CreateFlyoutItem(Discard, _service.IsChannel ? Strings.Resources.VoipChannelEndChat : Strings.Resources.VoipGroupEndChat, new FontIcon { Glyph = Icons.Dismiss });
+                var discard = flyout.CreateFlyoutItem(Discard, _service.IsChannel ? Strings.VoipChannelEndChat : Strings.VoipGroupEndChat, new FontIcon { Glyph = Icons.Dismiss });
                 discard.Foreground = new SolidColorBrush(Colors.IndianRed);
             }
 
@@ -521,9 +521,9 @@ namespace Telegram.Views.Calls
 
             var input = new InputPopup();
             input.RequestedTheme = ElementTheme.Dark;
-            input.Title = _service.IsChannel ? Strings.Resources.VoipChannelTitle : Strings.Resources.VoipGroupTitle;
-            input.PrimaryButtonText = Strings.Resources.Save;
-            input.SecondaryButtonText = Strings.Resources.Cancel;
+            input.Title = _service.IsChannel ? Strings.VoipChannelTitle : Strings.VoipGroupTitle;
+            input.PrimaryButtonText = Strings.Save;
+            input.SecondaryButtonText = Strings.Cancel;
             input.PlaceholderText = chat.Title;
             input.Text = call.Title;
             input.MaxLength = 64;
@@ -566,10 +566,10 @@ namespace Telegram.Views.Calls
 
             var popup = new MessagePopup();
             popup.RequestedTheme = ElementTheme.Dark;
-            popup.Title = Strings.Resources.VoipGroupStopRecordingTitle;
-            popup.Message = _service.IsChannel ? Strings.Resources.VoipChannelStopRecordingText : Strings.Resources.VoipGroupStopRecordingText;
-            popup.PrimaryButtonText = Strings.Resources.Stop;
-            popup.SecondaryButtonText = Strings.Resources.Cancel;
+            popup.Title = Strings.VoipGroupStopRecordingTitle;
+            popup.Message = _service.IsChannel ? Strings.VoipChannelStopRecordingText : Strings.VoipGroupStopRecordingText;
+            popup.PrimaryButtonText = Strings.Stop;
+            popup.SecondaryButtonText = Strings.Cancel;
 
             var confirm = await popup.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)

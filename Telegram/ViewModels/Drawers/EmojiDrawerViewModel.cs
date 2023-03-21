@@ -51,7 +51,7 @@ namespace Telegram.ViewModels.Drawers
 
             _reactionRecentSet = new StickerSetViewModel(ClientService, new StickerSetInfo
             {
-                Title = Strings.Resources.RecentStickers,
+                Title = Strings.RecentStickers,
                 Name = "tg/recentlyUsed",
                 IsInstalled = true
             });
@@ -550,7 +550,7 @@ namespace Telegram.ViewModels.Drawers
 
         public RecentEmoji(List<object> items)
         {
-            Title = Strings.Resources.RecentStickers;
+            Title = Strings.RecentStickers;
             Stickers = new MvxObservableCollection<object>(items);
         }
     }

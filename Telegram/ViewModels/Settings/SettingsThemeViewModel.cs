@@ -144,10 +144,10 @@ namespace Telegram.ViewModels.Settings
         private async void EditTitleExecute()
         {
             var dialog = new InputPopup();
-            dialog.Title = Strings.Resources.EditName;
+            dialog.Title = Strings.EditName;
             dialog.Text = _theme.Name;
-            dialog.PrimaryButtonText = Strings.Resources.OK;
-            dialog.SecondaryButtonText = Strings.Resources.Cancel;
+            dialog.PrimaryButtonText = Strings.OK;
+            dialog.SecondaryButtonText = Strings.Cancel;
 
             var confirm = await ShowPopupAsync(dialog);
             if (confirm == ContentDialogResult.Primary)

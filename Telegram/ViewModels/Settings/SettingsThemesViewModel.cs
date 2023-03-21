@@ -236,7 +236,7 @@ namespace Telegram.ViewModels.Settings
         public RelayCommand<ThemeCustomInfo> ThemeDeleteCommand { get; }
         private async void ThemeDeleteExecute(ThemeCustomInfo theme)
         {
-            var confirm = await ShowPopupAsync(Strings.Resources.DeleteThemeAlert, Strings.Resources.AppName, Strings.Resources.Delete, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.DeleteThemeAlert, Strings.AppName, Strings.Delete, Strings.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

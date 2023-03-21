@@ -65,7 +65,7 @@ namespace Telegram.ViewModels.Settings.Privacy
 
         public async void RemovePhoto()
         {
-            var confirm = await ShowPopupAsync(Strings.Resources.RemovePhotoForRestDescription, Strings.Resources.RemovePhotoForRestDescription, Strings.Resources.Remove, Strings.Resources.Cancel, true);
+            var confirm = await ShowPopupAsync(Strings.RemovePhotoForRestDescription, Strings.RemovePhotoForRestDescription, Strings.Remove, Strings.Cancel, true);
             if (confirm == ContentDialogResult.Primary)
             {
                 if (ClientService.TryGetUserFull(ClientService.Options.MyId, out UserFullInfo userFull))

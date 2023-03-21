@@ -273,11 +273,11 @@ namespace Telegram.Common
 
             if (call.IsVideo)
             {
-                return missed ? (outgoing ? Strings.Resources.CallMessageVideoOutgoingMissed : Strings.Resources.CallMessageVideoIncomingMissed) : (outgoing ? Strings.Resources.CallMessageVideoOutgoing : Strings.Resources.CallMessageVideoIncoming);
+                return missed ? (outgoing ? Strings.CallMessageVideoOutgoingMissed : Strings.CallMessageVideoIncomingMissed) : (outgoing ? Strings.CallMessageVideoOutgoing : Strings.CallMessageVideoIncoming);
             }
             else
             {
-                return missed ? (outgoing ? Strings.Resources.CallMessageOutgoingMissed : Strings.Resources.CallMessageIncomingMissed) : (outgoing ? Strings.Resources.CallMessageOutgoing : Strings.Resources.CallMessageIncoming);
+                return missed ? (outgoing ? Strings.CallMessageOutgoingMissed : Strings.CallMessageIncomingMissed) : (outgoing ? Strings.CallMessageOutgoing : Strings.CallMessageIncoming);
             }
         }
 
@@ -1461,7 +1461,7 @@ namespace Telegram.Common
         {
             if (user == null || user.Type is UserTypeDeleted)
             {
-                return Strings.Resources.HiddenName;
+                return Strings.HiddenName;
             }
 
             if (user.FirstName.Length > 0 && user.LastName.Length > 0)
@@ -1547,7 +1547,7 @@ namespace Telegram.Common
         public static string GetStartsAt(this MessageVideoChatScheduled messageVideoChatScheduled)
         {
             var date = Converters.Converter.DateTime(messageVideoChatScheduled.StartDate);
-            return string.Format(Strings.Resources.formatDateAtTime, Converters.Converter.ShortDate.Format(date), Converters.Converter.ShortTime.Format(date));
+            return string.Format(Strings.formatDateAtTime, Converters.Converter.ShortDate.Format(date), Converters.Converter.ShortTime.Format(date));
         }
 
         public static string GetStartsAt(this GroupCall groupCall)
@@ -1555,14 +1555,14 @@ namespace Telegram.Common
             var date = Converters.Converter.DateTime(groupCall.ScheduledStartDate);
             if (date.Date == DateTime.Today)
             {
-                return string.Format(Strings.Resources.TodayAtFormattedWithToday, Converters.Converter.ShortTime.Format(date));
+                return string.Format(Strings.TodayAtFormattedWithToday, Converters.Converter.ShortTime.Format(date));
             }
             else if (date.Date.AddDays(1) == DateTime.Today)
             {
-                return string.Format(Strings.Resources.YesterdayAtFormatted, Converters.Converter.ShortTime.Format(date));
+                return string.Format(Strings.YesterdayAtFormatted, Converters.Converter.ShortTime.Format(date));
             }
 
-            return string.Format(Strings.Resources.formatDateAtTime, Converters.Converter.ShortDate.Format(date), Converters.Converter.ShortTime.Format(date));
+            return string.Format(Strings.formatDateAtTime, Converters.Converter.ShortDate.Format(date), Converters.Converter.ShortTime.Format(date));
         }
 
         public static void Discern(this IEnumerable<ReactionType> reactions, out HashSet<string> emoji, out HashSet<long> customEmoji)

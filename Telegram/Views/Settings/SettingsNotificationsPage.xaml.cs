@@ -15,7 +15,7 @@ namespace Telegram.Views.Settings
         public SettingsNotificationsPage()
         {
             InitializeComponent();
-            Title = Strings.Resources.NotificationsAndSounds;
+            Title = Strings.NotificationsAndSounds;
         }
 
         #region Binding

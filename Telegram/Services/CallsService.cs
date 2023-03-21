@@ -260,7 +260,7 @@ namespace Telegram.Services
                 var callUser = ClientService.GetUser(call.UserId);
                 if (callUser != null && callUser.Id != user.Id)
                 {
-                    var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.VoipOngoingAlert, callUser.FullName(), user.FullName()), Strings.Resources.VoipOngoingAlertTitle, Strings.Resources.OK, Strings.Resources.Cancel);
+                    var confirm = await MessagePopup.ShowAsync(string.Format(Strings.VoipOngoingAlert, callUser.FullName(), user.FullName()), Strings.VoipOngoingAlertTitle, Strings.OK, Strings.Cancel);
                     if (confirm == ContentDialogResult.Primary)
                     {
 
@@ -277,7 +277,7 @@ namespace Telegram.Services
             var fullInfo = ClientService.GetUserFull(user.Id);
             if (fullInfo != null && fullInfo.HasPrivateCalls)
             {
-                await MessagePopup.ShowAsync(string.Format(Strings.Resources.CallNotAvailable, user.FirstName), Strings.Resources.VoipFailed, Strings.Resources.OK);
+                await MessagePopup.ShowAsync(string.Format(Strings.CallNotAvailable, user.FirstName), Strings.VoipFailed, Strings.OK);
                 return;
             }
 
@@ -295,13 +295,13 @@ namespace Telegram.Services
                 if (error.Code == 400 && error.Message.Equals("PARTICIPANT_VERSION_OUTDATED"))
                 {
                     var message = video
-                        ? Strings.Resources.VoipPeerVideoOutdated
-                        : Strings.Resources.VoipPeerOutdated;
-                    await MessagePopup.ShowAsync(string.Format(message, user.FirstName), Strings.Resources.AppName, Strings.Resources.OK);
+                        ? Strings.VoipPeerVideoOutdated
+                        : Strings.VoipPeerOutdated;
+                    await MessagePopup.ShowAsync(string.Format(message, user.FirstName), Strings.AppName, Strings.OK);
                 }
                 else if (error.Code == 400 && error.Message.Equals("USER_PRIVACY_RESTRICTED"))
                 {
-                    await MessagePopup.ShowAsync(string.Format(Strings.Resources.CallNotAvailable, user.FullName()), Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(string.Format(Strings.CallNotAvailable, user.FullName()), Strings.AppName, Strings.OK);
                 }
             }
         }
@@ -344,7 +344,7 @@ namespace Telegram.Services
                         _systemCall = _coordinator.RequestNewOutgoingCall(
                             $"{user.Id}",
                             user.FullName(),
-                            Strings.Resources.AppName,
+                            Strings.AppName,
                             VoipPhoneCallMedia.Audio | VoipPhoneCallMedia.Video);
                         //_systemCall.TryNotifyCallActive();
                     }
@@ -365,7 +365,7 @@ namespace Telegram.Services
                             user.FullName(),
                             user.PhoneNumber,
                             GetPhoto(user),
-                            Strings.Resources.AppName,
+                            Strings.AppName,
                             new Uri(Path.Combine(Package.Current.InstalledLocation.Path, "Assets\\Logos\\LockScreenLogo.png")),
                             string.Empty,
                             null,
@@ -552,9 +552,9 @@ namespace Telegram.Services
                         }
 
                         var message = update.Call.IsVideo
-                            ? Strings.Resources.VoipPeerVideoOutdated
-                            : Strings.Resources.VoipPeerOutdated;
-                        BeginOnUIThread(async () => await MessagePopup.ShowAsync(string.Format(message, user.FirstName), Strings.Resources.AppName, Strings.Resources.OK));
+                            ? Strings.VoipPeerVideoOutdated
+                            : Strings.VoipPeerOutdated;
+                        BeginOnUIThread(async () => await MessagePopup.ShowAsync(string.Format(message, user.FirstName), Strings.AppName, Strings.OK));
                     }
 
                     _call = null;

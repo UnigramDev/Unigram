@@ -31,22 +31,22 @@ namespace Telegram.Views.Popups
 
             if (_inviteLink != null)
             {
-                title = Strings.Resources.ChannelInviteViaLink;
+                title = Strings.ChannelInviteViaLink;
                 message = users.Count == 1
-                    ? string.Format(Strings.Resources.InviteChannelRestrictedUsersOne, users[0].FullName())
+                    ? string.Format(Strings.InviteChannelRestrictedUsersOne, users[0].FullName())
                     : Locale.Declension("InviteChannelRestrictedUsers", users.Count);
 
-                primary = Strings.Resources.SendInviteLink;
-                secondary = Strings.Resources.ActionSkip;
+                primary = Strings.SendInviteLink;
+                secondary = Strings.ActionSkip;
             }
             else
             {
-                title = Strings.Resources.ChannelInviteViaLinkRestricted;
+                title = Strings.ChannelInviteViaLinkRestricted;
                 message = users.Count == 1
-                    ? string.Format(Strings.Resources.InviteChannelRestrictedUsers2One, users[0].FullName())
+                    ? string.Format(Strings.InviteChannelRestrictedUsers2One, users[0].FullName())
                     : Locale.Declension("InviteChannelRestrictedUsers2", users.Count);
 
-                primary = Strings.Resources.Close;
+                primary = Strings.Close;
                 secondary = null;
             }
 

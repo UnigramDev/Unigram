@@ -18,9 +18,9 @@ namespace Telegram.Views.Popups
         {
             InitializeComponent();
 
-            Title = Strings.Resources.DoNotTranslate;
-            PrimaryButtonText = Strings.Resources.OK;
-            SecondaryButtonText = Strings.Resources.Cancel;
+            Title = Strings.DoNotTranslate;
+            PrimaryButtonText = Strings.OK;
+            SecondaryButtonText = Strings.Cancel;
 
             ScrollingHost.ItemsSource = languages;
 

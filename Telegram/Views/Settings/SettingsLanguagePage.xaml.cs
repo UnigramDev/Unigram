@@ -26,7 +26,7 @@ namespace Telegram.Views.Settings
         public SettingsLanguagePage()
         {
             InitializeComponent();
-            Title = Strings.Resources.Language;
+            Title = Strings.Language;
         }
 
         private void List_ItemClick(object sender, ItemClickEventArgs e)
@@ -48,7 +48,7 @@ namespace Telegram.Views.Settings
                 return;
             }
 
-            flyout.CreateFlyoutItem(ViewModel.DeleteCommand, info, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
+            flyout.CreateFlyoutItem(ViewModel.DeleteCommand, info, Strings.Delete, new FontIcon { Glyph = Icons.Delete });
 
             args.ShowAt(flyout, element);
         }
@@ -107,7 +107,7 @@ namespace Telegram.Views.Settings
 
         private string ConvertTranslateInfo(bool enabled)
         {
-            return enabled ? Strings.Resources.TranslateMessagesInfo1 : Strings.Resources.TranslateMessagesInfo1 + Environment.NewLine + Environment.NewLine + Strings.Resources.TranslateMessagesInfo2;
+            return enabled ? Strings.TranslateMessagesInfo1 : Strings.TranslateMessagesInfo1 + Environment.NewLine + Environment.NewLine + Strings.TranslateMessagesInfo2;
         }
 
         #endregion

@@ -17,7 +17,7 @@ namespace Telegram.Converters
             var seconds = (int)value;
             if (seconds == 0)
             {
-                return parameter == null ? (object)seconds ?? 0 : Strings.Resources.ShortMessageLifetimeForever;
+                return parameter == null ? (object)seconds ?? 0 : Strings.ShortMessageLifetimeForever;
             }
             else if (seconds is >= 1 and < 21)
             {
@@ -33,7 +33,7 @@ namespace Telegram.Converters
         {
             if (index == 0)
             {
-                return Strings.Resources.ShortMessageLifetimeForever;
+                return Strings.ShortMessageLifetimeForever;
             }
             else if (index is >= 1 and < 21)
             {

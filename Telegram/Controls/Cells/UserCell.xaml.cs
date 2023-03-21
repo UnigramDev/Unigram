@@ -264,7 +264,7 @@ namespace Telegram.Controls.Cells
                     }
                     else if (clientService.IsSavedMessages(user))
                     {
-                        SubtitleLabel.Text = Strings.Resources.ThisIsYou;
+                        SubtitleLabel.Text = Strings.ThisIsYou;
                     }
                     else
                     {
@@ -379,7 +379,7 @@ namespace Telegram.Controls.Cells
                         FindName(nameof(InfoLabel));
                     }
 
-                    InfoLabel.Text = string.IsNullOrEmpty(administrator.CustomTitle) ? Strings.Resources.ChannelAdmin : administrator.CustomTitle;
+                    InfoLabel.Text = string.IsNullOrEmpty(administrator.CustomTitle) ? Strings.ChannelAdmin : administrator.CustomTitle;
                 }
                 else if (member.Status is ChatMemberStatusCreator creator)
                 {
@@ -388,7 +388,7 @@ namespace Telegram.Controls.Cells
                         FindName(nameof(InfoLabel));
                     }
 
-                    InfoLabel.Text = string.IsNullOrEmpty(creator.CustomTitle) ? Strings.Resources.ChannelCreator : creator.CustomTitle;
+                    InfoLabel.Text = string.IsNullOrEmpty(creator.CustomTitle) ? Strings.ChannelCreator : creator.CustomTitle;
                 }
                 else if (InfoLabel != null)
                 {
@@ -557,29 +557,29 @@ namespace Telegram.Controls.Cells
                 switch (flag.Flag)
                 {
                     case ChatListFilterFlags.IncludeContacts:
-                        TitleLabel.Text = Strings.Resources.FilterContacts;
+                        TitleLabel.Text = Strings.FilterContacts;
                         break;
                     case ChatListFilterFlags.IncludeNonContacts:
-                        TitleLabel.Text = Strings.Resources.FilterNonContacts;
+                        TitleLabel.Text = Strings.FilterNonContacts;
                         break;
                     case ChatListFilterFlags.IncludeGroups:
-                        TitleLabel.Text = Strings.Resources.FilterGroups;
+                        TitleLabel.Text = Strings.FilterGroups;
                         break;
                     case ChatListFilterFlags.IncludeChannels:
-                        TitleLabel.Text = Strings.Resources.FilterChannels;
+                        TitleLabel.Text = Strings.FilterChannels;
                         break;
                     case ChatListFilterFlags.IncludeBots:
-                        TitleLabel.Text = Strings.Resources.FilterBots;
+                        TitleLabel.Text = Strings.FilterBots;
                         break;
 
                     case ChatListFilterFlags.ExcludeMuted:
-                        TitleLabel.Text = Strings.Resources.FilterMuted;
+                        TitleLabel.Text = Strings.FilterMuted;
                         break;
                     case ChatListFilterFlags.ExcludeRead:
-                        TitleLabel.Text = Strings.Resources.FilterRead;
+                        TitleLabel.Text = Strings.FilterRead;
                         break;
                     case ChatListFilterFlags.ExcludeArchived:
-                        TitleLabel.Text = Strings.Resources.FilterArchived;
+                        TitleLabel.Text = Strings.FilterArchived;
                         break;
                 }
 

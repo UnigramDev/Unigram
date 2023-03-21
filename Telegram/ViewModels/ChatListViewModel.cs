@@ -419,7 +419,7 @@ namespace Telegram.ViewModels
         {
             var chats = SelectedItems.ToList();
 
-            var confirm = await ShowPopupAsync(Strings.Resources.AreYouSureDeleteFewChats, Locale.Declension("ChatsSelected", chats.Count), Strings.Resources.Delete, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.AreYouSureDeleteFewChats, Locale.Declension("ChatsSelected", chats.Count), Strings.Delete, Strings.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 foreach (var chat in chats)
@@ -499,7 +499,7 @@ namespace Telegram.ViewModels
         {
             var chats = SelectedItems.ToList();
 
-            var confirm = await ShowPopupAsync(Strings.Resources.AreYouSureClearHistoryFewChats, Locale.Declension("ChatsSelected", chats.Count), Strings.Resources.ClearHistory, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.AreYouSureClearHistoryFewChats, Locale.Declension("ChatsSelected", chats.Count), Strings.ClearHistory, Strings.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 Delegate?.ShowChatsUndo(chats, UndoType.Clear, items =>
@@ -545,7 +545,7 @@ namespace Telegram.ViewModels
         public RelayCommand ClearRecentChatsCommand { get; }
         private async void ClearRecentChatsExecute()
         {
-            var confirm = await ShowPopupAsync(Strings.Resources.ClearSearch, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.ClearSearch, Strings.AppName, Strings.OK, Strings.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -568,7 +568,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var confirm = await ShowPopupAsync(string.Format(Strings.Resources.ChatHintsDelete, ClientService.GetTitle(chat)), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(string.Format(Strings.ChatHintsDelete, ClientService.GetTitle(chat)), Strings.AppName, Strings.OK, Strings.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -594,7 +594,7 @@ namespace Telegram.ViewModels
             var total = filter.IncludedChatIds.Count + filter.PinnedChatIds.Count + 1;
             if (total > 99)
             {
-                await ShowPopupAsync(Strings.Resources.FilterAddToAlertFullText, Strings.Resources.FilterAddToAlertFullTitle, Strings.Resources.OK);
+                await ShowPopupAsync(Strings.FilterAddToAlertFullText, Strings.FilterAddToAlertFullTitle, Strings.OK);
                 return;
             }
 
@@ -626,7 +626,7 @@ namespace Telegram.ViewModels
             var total = filter.ExcludedChatIds.Count + 1;
             if (total > 99)
             {
-                await ShowPopupAsync(Strings.Resources.FilterRemoveFromAlertFullText, Strings.Resources.AppName, Strings.Resources.OK);
+                await ShowPopupAsync(Strings.FilterRemoveFromAlertFullText, Strings.AppName, Strings.OK);
                 return;
             }
 

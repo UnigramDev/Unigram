@@ -27,7 +27,7 @@ namespace Telegram.Views.Supergroups
         public SupergroupEditTypePage()
         {
             InitializeComponent();
-            Title = Strings.Resources.ChannelSettings;
+            Title = Strings.ChannelSettings;
         }
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
@@ -46,14 +46,14 @@ namespace Telegram.Views.Supergroups
 
             var popup = new TeachingTip();
             popup.Title = username.IsActive
-                ? Strings.Resources.UsernameDeactivateLink
-                : Strings.Resources.UsernameActivateLink;
+                ? Strings.UsernameDeactivateLink
+                : Strings.UsernameActivateLink;
             popup.Subtitle = username.IsActive
-                ? Strings.Resources.UsernameDeactivateLinkProfileMessage
-                : Strings.Resources.UsernameActivateLinkProfileMessage;
-            popup.ActionButtonContent = username.IsActive ? Strings.Resources.Hide : Strings.Resources.Show;
+                ? Strings.UsernameDeactivateLinkProfileMessage
+                : Strings.UsernameActivateLinkProfileMessage;
+            popup.ActionButtonContent = username.IsActive ? Strings.Hide : Strings.Show;
             popup.ActionButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
-            popup.CloseButtonContent = Strings.Resources.Cancel;
+            popup.CloseButtonContent = Strings.Cancel;
             popup.PreferredPlacement = TeachingTipPlacementMode.Top;
             popup.Width = popup.MinWidth = popup.MaxWidth = 314;
             popup.Target = /*badge ??*/ container;
@@ -104,8 +104,8 @@ namespace Telegram.Views.Supergroups
 
                 title.Text = MeUrlPrefixConverter.Convert(ViewModel.ClientService, username, true);
                 subtitle.Text = active
-                    ? Strings.Resources.UsernameLinkActive
-                    : Strings.Resources.UsernameLinkInactive;
+                    ? Strings.UsernameLinkActive
+                    : Strings.UsernameLinkInactive;
 
                 handle.Visibility = active ? Visibility.Visible : Visibility.Collapsed;
             }
@@ -149,24 +149,24 @@ namespace Telegram.Views.Supergroups
 
         public void UpdateSupergroup(Chat chat, Supergroup group)
         {
-            Title = group.IsChannel ? Strings.Resources.ChannelSettingsTitle : Strings.Resources.GroupSettingsTitle;
-            Subheader.Header = group.IsChannel ? Strings.Resources.ChannelTypeHeader : Strings.Resources.GroupTypeHeader;
+            Title = group.IsChannel ? Strings.ChannelSettingsTitle : Strings.GroupSettingsTitle;
+            Subheader.Header = group.IsChannel ? Strings.ChannelTypeHeader : Strings.GroupTypeHeader;
             Subheader.Footer = group.Usernames?.EditableUsername.Length > 0
                 ? group.IsChannel
-                ? Strings.Resources.ChannelPublicInfo
-                : Strings.Resources.MegaPublicInfo
+                ? Strings.ChannelPublicInfo
+                : Strings.MegaPublicInfo
                 : group.IsChannel
-                ? Strings.Resources.ChannelPrivateInfo
-                : Strings.Resources.MegaPrivateInfo;
+                ? Strings.ChannelPrivateInfo
+                : Strings.MegaPrivateInfo;
 
-            Public.Content = group.IsChannel ? Strings.Resources.ChannelPublic : Strings.Resources.MegaPublic;
-            Private.Content = group.IsChannel ? Strings.Resources.ChannelPrivate : Strings.Resources.MegaPrivate;
+            Public.Content = group.IsChannel ? Strings.ChannelPublic : Strings.MegaPublic;
+            Private.Content = group.IsChannel ? Strings.ChannelPrivate : Strings.MegaPrivate;
 
-            UsernameHelp.Footer = group.IsChannel ? Strings.Resources.ChannelUsernameHelp : Strings.Resources.MegaUsernameHelp;
-            PrivateLinkHelp.Footer = group.IsChannel ? Strings.Resources.ChannelPrivateLinkHelp : Strings.Resources.MegaPrivateLinkHelp;
+            UsernameHelp.Footer = group.IsChannel ? Strings.ChannelUsernameHelp : Strings.MegaUsernameHelp;
+            PrivateLinkHelp.Footer = group.IsChannel ? Strings.ChannelPrivateLinkHelp : Strings.MegaPrivateLinkHelp;
 
             JoinToSendMessages.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
-            RestrictSavingContent.Footer = group.IsChannel ? Strings.Resources.RestrictSavingContentInfoChannel : Strings.Resources.RestrictSavingContentInfoGroup;
+            RestrictSavingContent.Footer = group.IsChannel ? Strings.RestrictSavingContentInfoChannel : Strings.RestrictSavingContentInfoGroup;
 
             ViewModel.Username = group.Usernames?.EditableUsername ?? string.Empty;
             ViewModel.IsPublic = group.Usernames?.EditableUsername.Length > 0;
@@ -184,18 +184,18 @@ namespace Telegram.Views.Supergroups
 
         public void UpdateBasicGroup(Chat chat, BasicGroup group)
         {
-            Title = Strings.Resources.GroupSettingsTitle;
-            Subheader.Header = Strings.Resources.GroupTypeHeader;
-            Subheader.Footer = Strings.Resources.MegaPrivateInfo;
+            Title = Strings.GroupSettingsTitle;
+            Subheader.Header = Strings.GroupTypeHeader;
+            Subheader.Footer = Strings.MegaPrivateInfo;
 
-            Public.Content = Strings.Resources.MegaPublic;
-            Private.Content = Strings.Resources.MegaPrivate;
+            Public.Content = Strings.MegaPublic;
+            Private.Content = Strings.MegaPrivate;
 
-            UsernameHelp.Footer = Strings.Resources.MegaUsernameHelp;
-            PrivateLinkHelp.Footer = Strings.Resources.MegaPrivateLinkHelp;
+            UsernameHelp.Footer = Strings.MegaUsernameHelp;
+            PrivateLinkHelp.Footer = Strings.MegaPrivateLinkHelp;
 
             JoinToSendMessages.Visibility = Visibility.Visible;
-            RestrictSavingContent.Footer = Strings.Resources.RestrictSavingContentInfoGroup;
+            RestrictSavingContent.Footer = Strings.RestrictSavingContentInfoGroup;
 
             ViewModel.Username = string.Empty;
             ViewModel.IsPublic = false;
@@ -230,22 +230,22 @@ namespace Telegram.Views.Supergroups
 
         private string ConvertAvailable(string username)
         {
-            return string.Format(Strings.Resources.LinkAvailable, username);
+            return string.Format(Strings.LinkAvailable, username);
         }
 
         private string ConvertFooter(bool pubblico)
         {
             if (ViewModel.Chat?.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
             {
-                return pubblico ? Strings.Resources.ChannelPublicInfo : Strings.Resources.ChannelPrivateInfo;
+                return pubblico ? Strings.ChannelPublicInfo : Strings.ChannelPrivateInfo;
             }
 
-            return pubblico ? Strings.Resources.MegaPublicInfo : Strings.Resources.MegaPrivateInfo;
+            return pubblico ? Strings.MegaPublicInfo : Strings.MegaPrivateInfo;
         }
 
         private string ConvertJoinToSendMessages(bool joinToSendMessages)
         {
-            return joinToSendMessages ? Strings.Resources.ChannelSettingsJoinRequestInfo : Strings.Resources.ChannelSettingsJoinToSendInfo;
+            return joinToSendMessages ? Strings.ChannelSettingsJoinRequestInfo : Strings.ChannelSettingsJoinToSendInfo;
         }
 
         #endregion

@@ -17,7 +17,7 @@ namespace Telegram.Views.Settings.Privacy
         public SettingsPrivacyAllowChatInvitesPage()
         {
             InitializeComponent();
-            Title = Strings.Resources.GroupsAndChannels;
+            Title = Strings.GroupsAndChannels;
         }
 
         #region Binding

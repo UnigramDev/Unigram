@@ -164,7 +164,7 @@ namespace Telegram.Controls
 
                                 if (receipt)
                                 {
-                                    button.Content = Strings.Resources.PaymentReceipt;
+                                    button.Content = Strings.PaymentReceipt;
                                 }
                             }
                             else if (inlineButton.Type is InlineKeyboardButtonTypeWebApp)

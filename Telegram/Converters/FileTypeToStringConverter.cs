@@ -18,25 +18,25 @@ namespace Telegram.Converters
             switch (value)
             {
                 case FileTypeNotes:
-                    return Strings.Resources.LocalAudioCache;
+                    return Strings.LocalAudioCache;
                 case FileTypeOther:
-                    return Strings.Resources.MessagesDataUsage;
+                    return Strings.MessagesDataUsage;
                 case FileTypeTotal:
-                    return Strings.Resources.TotalDataUsage;
+                    return Strings.TotalDataUsage;
                 case FileTypeAnimation:
-                    return Strings.Resources.LocalGifCache;
+                    return Strings.LocalGifCache;
                 case FileTypeAudio:
-                    return Strings.Resources.LocalMusicCache;
+                    return Strings.LocalMusicCache;
                 case FileTypeDocument:
-                    return Strings.Resources.FilesDataUsage;
+                    return Strings.FilesDataUsage;
                 case FileTypePhoto:
-                    return Strings.Resources.LocalPhotoCache;
+                    return Strings.LocalPhotoCache;
                 case FileTypeVideo:
-                    return Strings.Resources.LocalVideoCache;
+                    return Strings.LocalVideoCache;
                 case FileTypeVideoNote:
-                    return Strings.Resources.VideoMessagesAutodownload;
+                    return Strings.VideoMessagesAutodownload;
                 case FileTypeVoiceNote:
-                    return Strings.Resources.AudioAutodownload;
+                    return Strings.AudioAutodownload;
                 case FileTypeNone:
                     return "Other";
                 case FileTypeProfilePhoto:

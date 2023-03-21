@@ -33,11 +33,11 @@ namespace Telegram.Views.Popups
             Date.MinDate = DateTime.Today;
             Date.MaxDate = DateTime.Today.AddDays(7);
 
-            Title = channel ? Strings.Resources.VoipChannelScheduleVoiceChat : Strings.Resources.VoipGroupScheduleVoiceChat;
-            PrimaryButtonText = Strings.Resources.Schedule;
-            SecondaryButtonText = Strings.Resources.Cancel;
+            Title = channel ? Strings.VoipChannelScheduleVoiceChat : Strings.VoipGroupScheduleVoiceChat;
+            PrimaryButtonText = Strings.Schedule;
+            SecondaryButtonText = Strings.Cancel;
 
-            Message.Text = string.Format(channel ? Strings.Resources.VoipChannelScheduleInfo : Strings.Resources.VoipGroupScheduleInfo, "yolo");
+            Message.Text = string.Format(channel ? Strings.VoipChannelScheduleInfo : Strings.VoipGroupScheduleInfo, "yolo");
 
             DefaultButton = ContentDialogButton.Primary;
         }

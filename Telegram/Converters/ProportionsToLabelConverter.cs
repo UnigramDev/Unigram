@@ -24,9 +24,9 @@ namespace Telegram.Converters
                 case BitmapProportions.Custom:
                     return "Custom";
                 case BitmapProportions.Original:
-                    return Strings.Resources.CropOriginal;
+                    return Strings.CropOriginal;
                 case BitmapProportions.Square:
-                    return Strings.Resources.CropSquare;
+                    return Strings.CropSquare;
                 // Portrait
                 case BitmapProportions.TwoOverThree:
                     return "2:3";

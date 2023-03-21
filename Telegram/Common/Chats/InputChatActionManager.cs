@@ -25,41 +25,41 @@ namespace Telegram.Common.Chats
                     //    return "";
                     case ChatActionStartPlayingGame gamePlay:
                         commonAction = gamePlay;
-                        return Strings.Resources.SendingGame.TrimEnd('.');
+                        return Strings.SendingGame.TrimEnd('.');
                     //case TLSendMessageGeoLocationAction geoLocation:
                     //    return "";
                     case ChatActionRecordingVoiceNote recordAudio:
                         commonAction = recordAudio;
-                        return Strings.Resources.RecordingAudio.TrimEnd('.');
+                        return Strings.RecordingAudio.TrimEnd('.');
                     case ChatActionRecordingVideoNote:
                     case ChatActionUploadingVideoNote:
                         commonAction = new ChatActionRecordingVideoNote();
-                        return Strings.Resources.RecordingRound.TrimEnd('.');
+                        return Strings.RecordingRound.TrimEnd('.');
                     //case TLSendMessageTypingAction typing:
-                    //    return Strings.Resources.Typing;
+                    //    return Strings.Typing;
                     case ChatActionUploadingVoiceNote uploadAudio:
                         commonAction = uploadAudio;
-                        return Strings.Resources.SendingAudio.TrimEnd('.');
+                        return Strings.SendingAudio.TrimEnd('.');
                     case ChatActionUploadingDocument uploadDocument:
                         commonAction = uploadDocument;
-                        return Strings.Resources.SendingFile.TrimEnd('.');
+                        return Strings.SendingFile.TrimEnd('.');
                     case ChatActionUploadingPhoto uploadPhoto:
                         commonAction = uploadPhoto;
-                        return Strings.Resources.SendingPhoto.TrimEnd('.');
+                        return Strings.SendingPhoto.TrimEnd('.');
                     case ChatActionRecordingVideo:
                     case ChatActionUploadingVideo:
                         commonAction = new ChatActionUploadingVideo();
-                        return Strings.Resources.SendingVideoStatus.TrimEnd('.');
+                        return Strings.SendingVideoStatus.TrimEnd('.');
                     case ChatActionChoosingSticker choosingSticker:
                         commonAction = choosingSticker;
-                        return Strings.Resources.ChoosingSticker.Replace("**", "").TrimEnd('.');
+                        return Strings.ChoosingSticker.Replace("**", "").TrimEnd('.');
                     case ChatActionWatchingAnimations watchingAnimations:
                         commonAction = watchingAnimations;
-                        return string.Format(Strings.Resources.EnjoyngAnimations.Replace("**oo**", string.Empty).Trim(' '), watchingAnimations.Emoji);
+                        return string.Format(Strings.EnjoyngAnimations.Replace("**oo**", string.Empty).Trim(' '), watchingAnimations.Emoji);
                 }
 
                 commonAction = new ChatActionTyping();
-                return Strings.Resources.Typing.TrimEnd('.');
+                return Strings.Typing.TrimEnd('.');
             }
 
             if (typingUsers.Count == 1)
@@ -97,38 +97,38 @@ namespace Telegram.Common.Chats
                     //    return "";
                     case ChatActionStartPlayingGame gamePlay:
                         commonAction = gamePlay;
-                        return string.Format(Strings.Resources.IsSendingGame.TrimEnd('.'), userName);
+                        return string.Format(Strings.IsSendingGame.TrimEnd('.'), userName);
                     //case TLSendMessageGeoLocationAction geoLocation:
                     //    return "";
                     case ChatActionRecordingVoiceNote recordAudio:
                         commonAction = recordAudio;
-                        return string.Format(Strings.Resources.IsRecordingAudio.TrimEnd('.'), userName);
+                        return string.Format(Strings.IsRecordingAudio.TrimEnd('.'), userName);
                     case ChatActionRecordingVideoNote:
                     case ChatActionUploadingVideoNote:
                         commonAction = new ChatActionRecordingVideoNote();
-                        return string.Format(Strings.Resources.IsSendingVideo.TrimEnd('.'), userName);
+                        return string.Format(Strings.IsSendingVideo.TrimEnd('.'), userName);
                     //case TLSendMessageTypingAction typing:
-                    //    return string.Format(Strings.Resources.IsTyping, userName);
+                    //    return string.Format(Strings.IsTyping, userName);
                     case ChatActionUploadingVoiceNote uploadAudio:
                         commonAction = uploadAudio;
-                        return string.Format(Strings.Resources.IsSendingAudio.TrimEnd('.'), userName);
+                        return string.Format(Strings.IsSendingAudio.TrimEnd('.'), userName);
                     case ChatActionUploadingDocument uploadDocument:
                         commonAction = uploadDocument;
-                        return string.Format(Strings.Resources.IsSendingFile.TrimEnd('.'), userName);
+                        return string.Format(Strings.IsSendingFile.TrimEnd('.'), userName);
                     case ChatActionUploadingPhoto uploadPhoto:
                         commonAction = uploadPhoto;
-                        return string.Format(Strings.Resources.IsSendingPhoto.TrimEnd('.'), userName);
+                        return string.Format(Strings.IsSendingPhoto.TrimEnd('.'), userName);
                     case ChatActionRecordingVideo:
                     case ChatActionUploadingVideo:
                         commonAction = new ChatActionUploadingVideo();
-                        return string.Format(Strings.Resources.IsSendingVideo.TrimEnd('.'), userName);
+                        return string.Format(Strings.IsSendingVideo.TrimEnd('.'), userName);
                     case ChatActionChoosingSticker choosingSticker:
                         commonAction = choosingSticker;
-                        return string.Format(Strings.Resources.IsChoosingSticker.Replace("**", "").TrimEnd('.'), userName);
+                        return string.Format(Strings.IsChoosingSticker.Replace("**", "").TrimEnd('.'), userName);
                 }
 
                 commonAction = new ChatActionTyping();
-                return string.Format("{0} {1}", userName, Strings.Resources.IsTyping.TrimEnd('.'));
+                return string.Format("{0} {1}", userName, Strings.IsTyping.TrimEnd('.'));
             }
             else
             {
@@ -174,7 +174,7 @@ namespace Telegram.Common.Chats
                     if (count == 1)
                     {
                         commonAction = new ChatActionTyping();
-                        return string.Format("{0} {1}", label, Strings.Resources.IsTyping);
+                        return string.Format("{0} {1}", label, Strings.IsTyping);
                     }
                     else
                     {
@@ -186,7 +186,7 @@ namespace Telegram.Common.Chats
                         else
                         {
                             commonAction = new ChatActionTyping();
-                            return string.Format("{0} {1}", label, Strings.Resources.AreTyping.TrimEnd('.'));
+                            return string.Format("{0} {1}", label, Strings.AreTyping.TrimEnd('.'));
                         }
                     }
                 }

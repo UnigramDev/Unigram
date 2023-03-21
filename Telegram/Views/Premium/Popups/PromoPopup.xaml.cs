@@ -24,7 +24,7 @@ namespace Telegram.Views.Premium.Popups
         {
             InitializeComponent();
 
-            Title = Strings.Resources.TelegramPremium;
+            Title = Strings.TelegramPremium;
         }
 
         private async void OnItemClick(object sender, ItemClickEventArgs e)
@@ -75,67 +75,67 @@ namespace Telegram.Views.Premium.Popups
             {
                 case PremiumFeatureAdvancedChatManagement:
                     iconValue = Icons.ChatFilled24;
-                    titleValue = Strings.Resources.PremiumPreviewAdvancedChatManagement;
-                    subtitleValue = Strings.Resources.PremiumPreviewAdvancedChatManagementDescription;
+                    titleValue = Strings.PremiumPreviewAdvancedChatManagement;
+                    subtitleValue = Strings.PremiumPreviewAdvancedChatManagementDescription;
                     break;
                 case PremiumFeatureAnimatedProfilePhoto:
                     iconValue = Icons.PlayCircleFilled24;
-                    titleValue = Strings.Resources.PremiumPreviewAnimatedProfiles;
-                    subtitleValue = Strings.Resources.PremiumPreviewAnimatedProfilesDescription;
+                    titleValue = Strings.PremiumPreviewAnimatedProfiles;
+                    subtitleValue = Strings.PremiumPreviewAnimatedProfilesDescription;
                     break;
                 case PremiumFeatureAppIcons:
-                    titleValue = Strings.Resources.PremiumPreviewAppIcon;
-                    subtitleValue = Strings.Resources.PremiumPreviewAppIconDescription;
+                    titleValue = Strings.PremiumPreviewAppIcon;
+                    subtitleValue = Strings.PremiumPreviewAppIconDescription;
                     break;
                 case PremiumFeatureCustomEmoji:
                     iconValue = Icons.EmojiFilled24;
-                    titleValue = Strings.Resources.PremiumPreviewEmoji;
-                    subtitleValue = Strings.Resources.PremiumPreviewEmojiDescription;
+                    titleValue = Strings.PremiumPreviewEmoji;
+                    subtitleValue = Strings.PremiumPreviewEmojiDescription;
                     break;
                 case PremiumFeatureDisabledAds:
                     iconValue = Icons.MegaphoneFilled24;
-                    titleValue = Strings.Resources.PremiumPreviewNoAds;
-                    subtitleValue = Strings.Resources.PremiumPreviewNoAdsDescription;
+                    titleValue = Strings.PremiumPreviewNoAds;
+                    subtitleValue = Strings.PremiumPreviewNoAdsDescription;
                     break;
                 case PremiumFeatureEmojiStatus:
                     iconValue = Icons.ReactionFilled24;
-                    titleValue = Strings.Resources.PremiumPreviewEmojiStatus;
-                    subtitleValue = Strings.Resources.PremiumPreviewEmojiStatusDescription;
+                    titleValue = Strings.PremiumPreviewEmojiStatus;
+                    subtitleValue = Strings.PremiumPreviewEmojiStatusDescription;
                     break;
                 case PremiumFeatureImprovedDownloadSpeed:
                     iconValue = Icons.TopSpeedFilled24;
-                    titleValue = Strings.Resources.PremiumPreviewDownloadSpeed;
-                    subtitleValue = Strings.Resources.PremiumPreviewDownloadSpeedDescription;
+                    titleValue = Strings.PremiumPreviewDownloadSpeed;
+                    subtitleValue = Strings.PremiumPreviewDownloadSpeedDescription;
                     break;
                 case PremiumFeatureIncreasedLimits:
                     iconValue = Icons.Multiplier2xFilled24;
-                    titleValue = Strings.Resources.PremiumPreviewLimits;
+                    titleValue = Strings.PremiumPreviewLimits;
                     subtitleValue = ViewModel.PremiumPreviewLimitsDescription;
                     break;
                 case PremiumFeatureIncreasedUploadFileSize:
                     iconValue = Icons.DocumentFilled24;
-                    titleValue = Strings.Resources.PremiumPreviewUploads;
-                    subtitleValue = Strings.Resources.PremiumPreviewUploadsDescription;
+                    titleValue = Strings.PremiumPreviewUploads;
+                    subtitleValue = Strings.PremiumPreviewUploadsDescription;
                     break;
                 case PremiumFeatureProfileBadge:
                     iconValue = Icons.PremiumFilled24;
-                    titleValue = Strings.Resources.PremiumPreviewProfileBadge;
-                    subtitleValue = Strings.Resources.PremiumPreviewProfileBadgeDescription;
+                    titleValue = Strings.PremiumPreviewProfileBadge;
+                    subtitleValue = Strings.PremiumPreviewProfileBadgeDescription;
                     break;
                 case PremiumFeatureUniqueReactions:
                     iconValue = Icons.HeartFilled24;
-                    titleValue = Strings.Resources.PremiumPreviewReactions2;
-                    subtitleValue = Strings.Resources.PremiumPreviewReactions2Description;
+                    titleValue = Strings.PremiumPreviewReactions2;
+                    subtitleValue = Strings.PremiumPreviewReactions2Description;
                     break;
                 case PremiumFeatureUniqueStickers:
                     iconValue = Icons.StickerFilled24;
-                    titleValue = Strings.Resources.PremiumPreviewStickers;
-                    subtitleValue = Strings.Resources.PremiumPreviewStickersDescription;
+                    titleValue = Strings.PremiumPreviewStickers;
+                    subtitleValue = Strings.PremiumPreviewStickersDescription;
                     break;
                 case PremiumFeatureVoiceRecognition:
                     iconValue = Icons.MicFilled24;
-                    titleValue = Strings.Resources.PremiumPreviewVoiceToText;
-                    subtitleValue = Strings.Resources.PremiumPreviewVoiceToTextDescription;
+                    titleValue = Strings.PremiumPreviewVoiceToText;
+                    subtitleValue = Strings.PremiumPreviewVoiceToTextDescription;
                     break;
             }
 
@@ -156,20 +156,20 @@ namespace Telegram.Views.Premium.Popups
         {
             if (title)
             {
-                return premium ? Strings.Resources.TelegramPremiumSubscribedTitle : Strings.Resources.TelegramPremium;
+                return premium ? Strings.TelegramPremiumSubscribedTitle : Strings.TelegramPremium;
             }
 
-            return premium ? Strings.Resources.TelegramPremiumSubscribedSubtitle : Strings.Resources.TelegramPremiumSubtitle;
+            return premium ? Strings.TelegramPremiumSubscribedSubtitle : Strings.TelegramPremiumSubtitle;
         }
 
         public string ConvertPurchase(bool premium, PremiumStatePaymentOption option)
         {
             if (premium || option == null)
             {
-                return Strings.Resources.OK;
+                return Strings.OK;
             }
 
-            return string.Format(Strings.Resources.SubscribeToPremium,
+            return string.Format(Strings.SubscribeToPremium,
                 Locale.FormatCurrency(option.PaymentOption.Amount / option.PaymentOption.MonthCount, option.PaymentOption.Currency));
         }
 

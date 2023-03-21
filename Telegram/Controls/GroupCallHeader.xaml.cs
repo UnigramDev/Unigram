@@ -89,8 +89,8 @@ namespace Telegram.Controls
             {
                 ShowHide(true);
 
-                TitleLabel.Text = call.ScheduledStartDate > 0 && call.Title.Length > 0 ? call.Title : channel ? Strings.Resources.VoipChannelVoiceChat : Strings.Resources.VoipGroupVoiceChat;
-                ServiceLabel.Text = call.ParticipantCount > 0 ? Locale.Declension("Participants", call.ParticipantCount) : Strings.Resources.MembersTalkingNobody;
+                TitleLabel.Text = call.ScheduledStartDate > 0 && call.Title.Length > 0 ? call.Title : channel ? Strings.VoipChannelVoiceChat : Strings.VoipGroupVoiceChat;
+                ServiceLabel.Text = call.ParticipantCount > 0 ? Locale.Declension("Participants", call.ParticipantCount) : Strings.MembersTalkingNobody;
 
                 if (call.ScheduledStartDate != 0)
                 {
@@ -106,7 +106,7 @@ namespace Telegram.Controls
                         _scheduledTimer.Stop();
                     }
 
-                    TitleLabel.Text = call.Title.Length > 0 ? call.Title : channel ? Strings.Resources.VoipChannelScheduledVoiceChat : Strings.Resources.VoipGroupScheduledVoiceChat;
+                    TitleLabel.Text = call.Title.Length > 0 ? call.Title : channel ? Strings.VoipChannelScheduledVoiceChat : Strings.VoipGroupScheduledVoiceChat;
 
                     JoinButton.Background = BootStrapper.Current.Resources["VideoChatPurpleBrush"] as Brush;
                     JoinButton.Content = call.GetStartsIn();
@@ -115,10 +115,10 @@ namespace Telegram.Controls
                 {
                     _scheduledTimer.Stop();
 
-                    TitleLabel.Text = channel ? Strings.Resources.VoipChannelVoiceChat : Strings.Resources.VoipGroupVoiceChat;
+                    TitleLabel.Text = channel ? Strings.VoipChannelVoiceChat : Strings.VoipGroupVoiceChat;
 
                     JoinButton.Background = BootStrapper.Current.Resources["StartButtonBackground"] as Brush;
-                    JoinButton.Content = Strings.Resources.VoipChatJoin;
+                    JoinButton.Content = Strings.VoipChatJoin;
                 }
 
                 if (call.HasHiddenListeners)

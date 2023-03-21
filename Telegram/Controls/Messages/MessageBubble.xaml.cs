@@ -302,11 +302,11 @@ namespace Telegram.Controls.Messages
             {
                 if (message.ClientService.TryGetUser(message.ReplyToMessage.SenderId, out User replyUser))
                 {
-                    builder.AppendLine($"{Strings.Resources.AccDescrReplying} {replyUser.FullName()}. ");
+                    builder.AppendLine($"{Strings.AccDescrReplying} {replyUser.FullName()}. ");
                 }
                 else if (message.ClientService.TryGetChat(message.ReplyToMessage.SenderId, out Chat replyChat))
                 {
-                    builder.AppendLine($"{Strings.Resources.AccDescrReplying} {message.ClientService.GetTitle(replyChat)}. ");
+                    builder.AppendLine($"{Strings.AccDescrReplying} {message.ClientService.GetTitle(replyChat)}. ");
                 }
             }
 
@@ -315,17 +315,17 @@ namespace Telegram.Controls.Messages
                 if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
                 {
                     title = message.ClientService.GetUser(fromUser.SenderUserId)?.FullName();
-                    builder.AppendLine($"{Strings.Resources.AccDescrForwarding} {title}. ");
+                    builder.AppendLine($"{Strings.AccDescrForwarding} {title}. ");
                 }
                 if (message.ForwardInfo?.Origin is MessageForwardOriginChat fromChat)
                 {
                     title = message.ClientService.GetTitle(message.ClientService.GetChat(fromChat.SenderChatId));
-                    builder.AppendLine($"{Strings.Resources.AccDescrForwarding} {title}. ");
+                    builder.AppendLine($"{Strings.AccDescrForwarding} {title}. ");
                 }
                 else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel)
                 {
                     title = message.ClientService.GetTitle(message.ClientService.GetChat(fromChannel.ChatId));
-                    builder.AppendLine($"{Strings.Resources.AccDescrForwarding} {title}. ");
+                    builder.AppendLine($"{Strings.AccDescrForwarding} {title}. ");
                 }
             }
 
@@ -338,17 +338,17 @@ namespace Telegram.Controls.Messages
 
             if (message.EditDate != 0 && message.ViaBotUserId == 0 && !senderBot && message.ReplyMarkup is not ReplyMarkupInlineKeyboard)
             {
-                builder.Append($"{Strings.Resources.EditedMessage}, ");
+                builder.Append($"{Strings.EditedMessage}, ");
             }
 
-            var date = string.Format(Strings.Resources.TodayAtFormatted, Converter.ShortTime.Format(Utils.UnixTimestampToDateTime(message.Date)));
+            var date = string.Format(Strings.TodayAtFormatted, Converter.ShortTime.Format(Utils.UnixTimestampToDateTime(message.Date)));
             if (message.IsOutgoing)
             {
-                builder.Append(string.Format(Strings.Resources.AccDescrSentDate, date));
+                builder.Append(string.Format(Strings.AccDescrSentDate, date));
             }
             else
             {
-                builder.Append(string.Format(Strings.Resources.AccDescrReceivedDate, date));
+                builder.Append(string.Format(Strings.AccDescrReceivedDate, date));
             }
 
             builder.Append(". ");
@@ -367,11 +367,11 @@ namespace Telegram.Controls.Messages
             }
             else if (message.Id <= maxId && message.IsOutgoing && !message.IsChannelPost)
             {
-                builder.Append(Strings.Resources.AccDescrMsgRead);
+                builder.Append(Strings.AccDescrMsgRead);
             }
             else if (message.IsOutgoing && !message.IsChannelPost)
             {
-                builder.Append(Strings.Resources.AccDescrMsgUnread);
+                builder.Append(Strings.AccDescrMsgUnread);
             }
 
             if (message.InteractionInfo?.ViewCount > 0)
@@ -541,8 +541,8 @@ namespace Telegram.Controls.Messages
                 }
                 else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser)
                 {
-                    Window.Current.ShowTeachingTip(sender as FrameworkElement, Strings.Resources.HidAccount);
-                    //await MessagePopup.ShowAsync(Strings.Resources.HidAccount, Strings.Resources.AppName, Strings.Resources.OK);
+                    Window.Current.ShowTeachingTip(sender as FrameworkElement, Strings.HidAccount);
+                    //await MessagePopup.ShowAsync(Strings.HidAccount, Strings.AppName, Strings.OK);
                 }
             }
             else if (message.ClientService.TryGetChat(message.SenderId, out Chat senderChat))
@@ -593,7 +593,7 @@ namespace Telegram.Controls.Messages
 
                 Automation.SetToolTip(ActionButton, info.ReplyCount > 0
                     ? Locale.Declension("Comments", info.ReplyCount)
-                    : Strings.Resources.LeaveAComment);
+                    : Strings.LeaveAComment);
             }
             else if (message.ChatId == message.ClientService.Options.RepliesBotChatId && Action != null)
             {
@@ -618,7 +618,7 @@ namespace Telegram.Controls.Messages
                     ActionButton.Glyph = Icons.ArrowRight;
                     Action.Visibility = Visibility.Visible;
 
-                    Automation.SetToolTip(ActionButton, Strings.Resources.AccDescrOpenChat);
+                    Automation.SetToolTip(ActionButton, Strings.AccDescrOpenChat);
                 }
             }
             else if (message.IsShareable)
@@ -634,7 +634,7 @@ namespace Telegram.Controls.Messages
                 ActionButton.Glyph = Icons.Share;
                 Action.Visibility = Visibility.Visible;
 
-                Automation.SetToolTip(ActionButton, Strings.Resources.ShareFile);
+                Automation.SetToolTip(ActionButton, Strings.ShareFile);
             }
             else if (Action != null)
             {
@@ -881,7 +881,7 @@ namespace Telegram.Controls.Messages
                     }
                     else
                     {
-                        ForwardLabel.Inlines.Add(CreateRun(Strings.Resources.PsaMessageDefault, FontWeights.Normal));
+                        ForwardLabel.Inlines.Add(CreateRun(Strings.PsaMessageDefault, FontWeights.Normal));
                     }
 
                     if (PsaInfo == null)
@@ -894,7 +894,7 @@ namespace Telegram.Controls.Messages
                 }
                 else
                 {
-                    ForwardLabel.Inlines.Add(CreateRun(Strings.Resources.ForwardedMessage, FontWeights.Normal));
+                    ForwardLabel.Inlines.Add(CreateRun(Strings.ForwardedMessage, FontWeights.Normal));
 
                     if (PsaInfo != null)
                     {
@@ -903,7 +903,7 @@ namespace Telegram.Controls.Messages
                 }
 
                 ForwardLabel.Inlines.Add(new LineBreak());
-                ForwardLabel.Inlines.Add(CreateRun($"{Strings.Resources.From} ", FontWeights.Normal));
+                ForwardLabel.Inlines.Add(CreateRun($"{Strings.From} ", FontWeights.Normal));
 
                 var title = string.Empty;
                 var bold = true;
@@ -980,7 +980,7 @@ namespace Telegram.Controls.Messages
                 else if (shown && !message.IsChannelPost && message.SenderId is MessageSenderChat && message.ForwardInfo != null)
                 {
                     LoadObject(ref AdminLabel, nameof(AdminLabel));
-                    AdminLabel.Text = Strings.Resources.DiscussChannel;
+                    AdminLabel.Text = Strings.DiscussChannel;
                 }
                 else if (AdminLabel != null)
                 {
@@ -1057,7 +1057,7 @@ namespace Telegram.Controls.Messages
             }
             else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser)
             {
-                Window.Current.ShowTeachingTip(HeaderLabel, Strings.Resources.HidAccount);
+                Window.Current.ShowTeachingTip(HeaderLabel, Strings.HidAccount);
             }
         }
 
@@ -1179,9 +1179,9 @@ namespace Telegram.Controls.Messages
 
                     RecentRepliers.Children.Clear();
                     ThreadGlyph.Visibility = Visibility.Visible;
-                    ThreadLabel.Text = Strings.Resources.ViewInChat;
+                    ThreadLabel.Text = Strings.ViewInChat;
 
-                    AutomationProperties.SetName(Thread, Strings.Resources.ViewInChat);
+                    AutomationProperties.SetName(Thread, Strings.ViewInChat);
 
                     Thread.Visibility = Visibility.Visible;
                 }
@@ -1235,11 +1235,11 @@ namespace Telegram.Controls.Messages
 
                 ThreadLabel.Text = info.ReplyCount > 0
                     ? Locale.Declension("Comments", info.ReplyCount)
-                    : Strings.Resources.LeaveAComment;
+                    : Strings.LeaveAComment;
 
                 AutomationProperties.SetName(Thread, info.ReplyCount > 0
                     ? Locale.Declension("Comments", info.ReplyCount)
-                    : Strings.Resources.LeaveAComment);
+                    : Strings.LeaveAComment);
 
                 Thread.Visibility = Visibility.Visible;
             }
@@ -1422,6 +1422,11 @@ namespace Telegram.Controls.Messages
             }
             else
             {
+                if (Media.Child is StickerContent or AnimatedStickerContent or VideoStickerContent or VideoNoteContent)
+                {
+                    UpdateAttach(message);
+                }
+
                 if (content is MessageText textMessage && textMessage.WebPage != null)
                 {
                     if (textMessage.WebPage.IsSmallPhoto())
@@ -1611,7 +1616,7 @@ namespace Telegram.Controls.Messages
             }
             else if (content is MessageUnsupported)
             {
-                result = GetEntities(message, Strings.Resources.UnsupportedMedia);
+                result = GetEntities(message, Strings.UnsupportedMedia);
                 cleanup = true;
             }
             else if (content is MessageVenue venue)
@@ -2172,7 +2177,7 @@ namespace Telegram.Controls.Messages
             var type = LocaleService.Current.GetString("PsaMessageInfo_" + message.ForwardInfo.PublicServiceAnnouncementType);
             if (string.IsNullOrEmpty(type))
             {
-                type = Strings.Resources.PsaMessageInfoDefault;
+                type = Strings.PsaMessageInfoDefault;
             }
 
             var entities = Client.Execute(new GetTextEntities(type)) as TextEntities;
@@ -2278,9 +2283,9 @@ namespace Telegram.Controls.Messages
             LoadObject(ref HeaderPanel, nameof(HeaderPanel));
             LoadObject(ref HeaderLabel, nameof(HeaderLabel));
 
-            HeaderLabel.Inlines.Add(new Run { Text = Strings.Resources.ForwardedMessage, FontWeight = FontWeights.Normal });
+            HeaderLabel.Inlines.Add(new Run { Text = Strings.ForwardedMessage, FontWeight = FontWeights.Normal });
             HeaderLabel.Inlines.Add(new LineBreak());
-            HeaderLabel.Inlines.Add(new Run { Text = Strings.Resources.From + " ", FontWeight = FontWeights.Normal });
+            HeaderLabel.Inlines.Add(new Run { Text = Strings.From + " ", FontWeight = FontWeights.Normal });
 
             var hyperlink = new Hyperlink();
             hyperlink.Inlines.Add(new Run { Text = forwarded });

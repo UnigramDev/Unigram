@@ -159,7 +159,7 @@ namespace Telegram.ViewModels.Settings
             //    var response = await ClientService.SendAsync(new RequestPasswordRecovery());
             //    if (response is PasswordRecoveryInfo info)
             //    {
-            //        await ShowPopupAsync(string.Format(Strings.Resources.RestoreEmailSent, info.RecoveryEmailAddressPattern), Strings.Resources.AppName, Strings.Resources.OK);
+            //        await ShowPopupAsync(string.Format(Strings.RestoreEmailSent, info.RecoveryEmailAddressPattern), Strings.AppName, Strings.OK);
             //    }
             //    else if (response is Error error)
             //    {
@@ -169,7 +169,7 @@ namespace Telegram.ViewModels.Settings
             //}
             //else
             //{
-            //    await ShowPopupAsync(Strings.Resources.RestorePasswordNoEmailText, Strings.Resources.RestorePasswordNoEmailTitle, Strings.Resources.OK);
+            //    await ShowPopupAsync(Strings.RestorePasswordNoEmailText, Strings.RestorePasswordNoEmailTitle, Strings.OK);
             //    //IsResettable = true;
             //}
         }
@@ -191,13 +191,13 @@ namespace Telegram.ViewModels.Settings
                 return;
             }
 
-            var message = Strings.Resources.TurnPasswordOffQuestion;
+            var message = Strings.TurnPasswordOffQuestion;
             if (state.HasPassportData)
             {
-                message += Environment.NewLine + Environment.NewLine + Strings.Resources.TurnPasswordOffPassport;
+                message += Environment.NewLine + Environment.NewLine + Strings.TurnPasswordOffPassport;
             }
 
-            var confirm = await ShowPopupAsync(message, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(message, Strings.AppName, Strings.OK, Strings.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -275,7 +275,7 @@ namespace Telegram.ViewModels.Settings
                 if (!string.Equals(password, passwordRetype))
                 {
                     // Error
-                    await ShowPopupAsync(Strings.Resources.PasswordDoNotMatch, Strings.Resources.AppName, Strings.Resources.OK);
+                    await ShowPopupAsync(Strings.PasswordDoNotMatch, Strings.AppName, Strings.OK);
                     return;
                 }
 
@@ -284,7 +284,7 @@ namespace Telegram.ViewModels.Settings
                     emailValid = false;
                     emailAddress = string.Empty;
 
-                    var confirm = await ShowPopupAsync(Strings.Resources.YourEmailSkipWarningText, Strings.Resources.YourEmailSkipWarning, Strings.Resources.YourEmailSkip, Strings.Resources.Cancel);
+                    var confirm = await ShowPopupAsync(Strings.YourEmailSkipWarningText, Strings.YourEmailSkipWarning, Strings.YourEmailSkip, Strings.Cancel);
                     if (confirm != ContentDialogResult.Primary)
                     {
                         return;

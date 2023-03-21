@@ -35,15 +35,15 @@ namespace Telegram.ViewModels.Settings
                 switch (scope)
                 {
                     case SettingsNotificationsExceptionsScope.PrivateChats:
-                        Scope = new SettingsNotificationsScope(ClientService, typeof(NotificationSettingsScopePrivateChats), Strings.Resources.NotificationsPrivateChats, Icons.Person);
+                        Scope = new SettingsNotificationsScope(ClientService, typeof(NotificationSettingsScopePrivateChats), Strings.NotificationsPrivateChats, Icons.Person);
                         Items = new ItemsCollection(ClientService, new NotificationSettingsScopePrivateChats());
                         break;
                     case SettingsNotificationsExceptionsScope.GroupChats:
-                        Scope = new SettingsNotificationsScope(ClientService, typeof(NotificationSettingsScopeGroupChats), Strings.Resources.NotificationsGroups, Icons.People);
+                        Scope = new SettingsNotificationsScope(ClientService, typeof(NotificationSettingsScopeGroupChats), Strings.NotificationsGroups, Icons.People);
                         Items = new ItemsCollection(ClientService, new NotificationSettingsScopeGroupChats());
                         break;
                     case SettingsNotificationsExceptionsScope.ChannelChats:
-                        Scope = new SettingsNotificationsScope(ClientService, typeof(NotificationSettingsScopeChannelChats), Strings.Resources.NotificationsChannels, Icons.Megaphone);
+                        Scope = new SettingsNotificationsScope(ClientService, typeof(NotificationSettingsScopeChannelChats), Strings.NotificationsChannels, Icons.Megaphone);
                         Items = new ItemsCollection(ClientService, new NotificationSettingsScopeChannelChats());
                         break;
                 }

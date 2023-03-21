@@ -26,10 +26,10 @@ namespace Telegram.Views.Settings
         public SettingsNightModePage()
         {
             InitializeComponent();
-            Title = Strings.Resources.AutoNightTheme;
+            Title = Strings.AutoNightTheme;
 
             // We have to do this as english copy contains a randomic \n at the end of the string.
-            AutoNightLocation.Content = Strings.Resources.AutoNightLocation.TrimEnd('\n');
+            AutoNightLocation.Content = Strings.AutoNightLocation.TrimEnd('\n');
 
             FromPicker.ClockIdentifier = GlobalizationPreferences.Clocks.FirstOrDefault();
             ToPicker.ClockIdentifier = GlobalizationPreferences.Clocks.FirstOrDefault();
@@ -92,14 +92,14 @@ namespace Telegram.Views.Settings
             var theme = List.ItemFromContainer(element) as ThemeInfoBase;
 
             var flyout = new MenuFlyout();
-            flyout.CreateFlyoutItem(ViewModel.ThemeCreateCommand, theme, Strings.Resources.CreateNewThemeMenu, new FontIcon { Glyph = Icons.Color });
+            flyout.CreateFlyoutItem(ViewModel.ThemeCreateCommand, theme, Strings.CreateNewThemeMenu, new FontIcon { Glyph = Icons.Color });
 
             if (!theme.IsOfficial)
             {
                 flyout.CreateFlyoutSeparator();
-                flyout.CreateFlyoutItem(ViewModel.ThemeShareCommand, theme, Strings.Resources.ShareFile, new FontIcon { Glyph = Icons.Share });
-                flyout.CreateFlyoutItem(ViewModel.ThemeEditCommand, theme, Strings.Resources.Edit, new FontIcon { Glyph = Icons.Edit });
-                flyout.CreateFlyoutItem(ViewModel.ThemeDeleteCommand, theme, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
+                flyout.CreateFlyoutItem(ViewModel.ThemeShareCommand, theme, Strings.ShareFile, new FontIcon { Glyph = Icons.Share });
+                flyout.CreateFlyoutItem(ViewModel.ThemeEditCommand, theme, Strings.Edit, new FontIcon { Glyph = Icons.Edit });
+                flyout.CreateFlyoutItem(ViewModel.ThemeDeleteCommand, theme, Strings.Delete, new FontIcon { Glyph = Icons.Delete });
             }
 
             args.ShowAt(flyout, element);
@@ -196,14 +196,14 @@ namespace Telegram.Views.Settings
             start = start.Add(sunset);
             end = end.Add(sunrise);
 
-            return string.Format(Strings.Resources.AutoNightUpdateLocationInfo,
+            return string.Format(Strings.AutoNightUpdateLocationInfo,
                 Converter.ShortTime.Format(start),
                 Converter.ShortTime.Format(end));
         }
 
         private string ConvertBrightness(float value)
         {
-            return string.Format(Strings.Resources.AutoNightBrightnessInfo, value);
+            return string.Format(Strings.AutoNightBrightnessInfo, value);
         }
 
         #endregion

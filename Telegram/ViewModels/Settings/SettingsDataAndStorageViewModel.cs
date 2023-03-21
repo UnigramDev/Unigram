@@ -51,9 +51,9 @@ namespace Telegram.ViewModels.Settings
 
         public List<SettingsOptionItem<VoipDataSaving>> UseLessDataOptions { get; } = new()
         {
-            new SettingsOptionItem<VoipDataSaving>(VoipDataSaving.Never, Strings.Resources.UseLessDataNever),
-            new SettingsOptionItem<VoipDataSaving>(VoipDataSaving.Mobile, Strings.Resources.UseLessDataOnMobile),
-            new SettingsOptionItem<VoipDataSaving>(VoipDataSaving.Always, Strings.Resources.UseLessDataAlways),
+            new SettingsOptionItem<VoipDataSaving>(VoipDataSaving.Never, Strings.UseLessDataNever),
+            new SettingsOptionItem<VoipDataSaving>(VoipDataSaving.Mobile, Strings.UseLessDataOnMobile),
+            new SettingsOptionItem<VoipDataSaving>(VoipDataSaving.Always, Strings.UseLessDataAlways),
         };
 
 
@@ -132,7 +132,7 @@ namespace Telegram.ViewModels.Settings
 
         public async void ResetAutoDownload()
         {
-            var confirm = await ShowPopupAsync(Strings.Resources.ResetAutomaticMediaDownloadAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.ResetAutomaticMediaDownloadAlert, Strings.AppName, Strings.OK, Strings.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 var response = await ClientService.SendAsync(new GetAutoDownloadSettingsPresets());

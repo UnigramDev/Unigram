@@ -25,9 +25,9 @@ namespace Telegram.Views.Settings.Popups
         {
             InitializeComponent();
 
-            Title = Strings.Resources.Username;
-            PrimaryButtonText = Strings.Resources.Done;
-            SecondaryButtonText = Strings.Resources.Cancel;
+            Title = Strings.Username;
+            PrimaryButtonText = Strings.Done;
+            SecondaryButtonText = Strings.Cancel;
 
             var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => Username.TextChanged += new TextChangedEventHandler(handler));
             debouncer.Invoked += (s, args) =>
@@ -49,7 +49,7 @@ namespace Telegram.Views.Settings.Popups
 
         private string ConvertAvailable(string username)
         {
-            return string.Format(Strings.Resources.UsernameAvailable, username);
+            return string.Format(Strings.UsernameAvailable, username);
         }
 
         private string ConvertUsername(string username)
@@ -61,7 +61,7 @@ namespace Telegram.Views.Settings.Popups
         {
             get
             {
-                return string.Format(Strings.Resources.UsernameHelpLink, string.Empty).TrimEnd();
+                return string.Format(Strings.UsernameHelpLink, string.Empty).TrimEnd();
             }
         }
 
@@ -92,14 +92,14 @@ namespace Telegram.Views.Settings.Popups
 
             var popup = new TeachingTip();
             popup.Title = username.IsActive
-                ? Strings.Resources.UsernameDeactivateLink
-                : Strings.Resources.UsernameActivateLink;
+                ? Strings.UsernameDeactivateLink
+                : Strings.UsernameActivateLink;
             popup.Subtitle = username.IsActive
-                ? Strings.Resources.UsernameDeactivateLinkProfileMessage
-                : Strings.Resources.UsernameActivateLinkProfileMessage;
-            popup.ActionButtonContent = username.IsActive ? Strings.Resources.Hide : Strings.Resources.Show;
+                ? Strings.UsernameDeactivateLinkProfileMessage
+                : Strings.UsernameActivateLinkProfileMessage;
+            popup.ActionButtonContent = username.IsActive ? Strings.Hide : Strings.Show;
             popup.ActionButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
-            popup.CloseButtonContent = Strings.Resources.Cancel;
+            popup.CloseButtonContent = Strings.Cancel;
             popup.PreferredPlacement = TeachingTipPlacementMode.Top;
             popup.Width = popup.MinWidth = popup.MaxWidth = 314;
             popup.Target = /*badge ??*/ container;

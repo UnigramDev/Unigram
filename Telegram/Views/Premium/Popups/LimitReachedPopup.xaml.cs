@@ -34,7 +34,7 @@ namespace Telegram.Views.Premium.Popups
             InitializeComponent();
             InitializeLimit(clientService, type);
 
-            Title = Strings.Resources.LimitReached;
+            Title = Strings.LimitReached;
         }
 
         private async void InitializeLimit(IClientService clientService, PremiumLimitType type)
@@ -53,40 +53,40 @@ namespace Telegram.Views.Premium.Popups
                 {
                     case PremiumLimitTypeChatFilterChosenChatCount:
                         iconValue = Icons.ChatFilled;
-                        freeValue = Strings.Resources.LimitReachedChatInFolders;
-                        lockedValue = Strings.Resources.LimitReachedChatInFoldersLocked;
-                        premiumValue = Strings.Resources.LimitReachedChatInFoldersPremium;
+                        freeValue = Strings.LimitReachedChatInFolders;
+                        lockedValue = Strings.LimitReachedChatInFoldersLocked;
+                        premiumValue = Strings.LimitReachedChatInFoldersPremium;
                         break;
                     case PremiumLimitTypeChatFilterCount:
                         iconValue = Icons.FolderFilled;
-                        freeValue = Strings.Resources.LimitReachedFolders;
-                        lockedValue = Strings.Resources.LimitReachedFoldersLocked;
-                        premiumValue = Strings.Resources.LimitReachedFoldersPremium;
+                        freeValue = Strings.LimitReachedFolders;
+                        lockedValue = Strings.LimitReachedFoldersLocked;
+                        premiumValue = Strings.LimitReachedFoldersPremium;
                         break;
                     case PremiumLimitTypeCreatedPublicChatCount:
                         iconValue = Icons.LinkFilled;
-                        freeValue = Strings.Resources.LimitReachedPublicLinks;
-                        lockedValue = Strings.Resources.LimitReachedPublicLinksLocked;
-                        premiumValue = Strings.Resources.LimitReachedPublicLinksPremium;
+                        freeValue = Strings.LimitReachedPublicLinks;
+                        lockedValue = Strings.LimitReachedPublicLinksLocked;
+                        premiumValue = Strings.LimitReachedPublicLinksPremium;
                         break;
                     case PremiumLimitTypePinnedArchivedChatCount:
                     case PremiumLimitTypePinnedChatCount:
                         iconValue = Icons.PinFilled;
-                        freeValue = Strings.Resources.LimitReachedPinDialogs;
-                        lockedValue = Strings.Resources.LimitReachedPinDialogsLocked;
-                        premiumValue = Strings.Resources.LimitReachedPinDialogsPremium;
+                        freeValue = Strings.LimitReachedPinDialogs;
+                        lockedValue = Strings.LimitReachedPinDialogsLocked;
+                        premiumValue = Strings.LimitReachedPinDialogsPremium;
                         break;
                     case PremiumLimitTypeSupergroupCount:
                         iconValue = Icons.PeopleFilled;
-                        freeValue = Strings.Resources.LimitReachedCommunities;
-                        lockedValue = Strings.Resources.LimitReachedCommunitiesLocked;
-                        premiumValue = Strings.Resources.LimitReachedCommunitiesPremium;
+                        freeValue = Strings.LimitReachedCommunities;
+                        lockedValue = Strings.LimitReachedCommunitiesLocked;
+                        premiumValue = Strings.LimitReachedCommunitiesPremium;
                         break;
                     case PremiumLimitTypeConnectedAccounts:
                         iconValue = Icons.PersonFilled;
-                        freeValue = Strings.Resources.LimitReachedAccounts;
-                        lockedValue = Strings.Resources.LimitReachedAccountsPremium;
-                        premiumValue = Strings.Resources.LimitReachedAccountsPremium;
+                        freeValue = Strings.LimitReachedAccounts;
+                        lockedValue = Strings.LimitReachedAccountsPremium;
+                        premiumValue = Strings.LimitReachedAccountsPremium;
 
                         animatedValue = new Uri("ms-appx:///Assets/Animations/AddOne.json");
                         break;
@@ -112,7 +112,7 @@ namespace Telegram.Views.Premium.Popups
                     };
 
                     PurchaseIcon.Source = animatedValue;
-                    PurchaseLabel.Text = Strings.Resources.IncreaseLimit;
+                    PurchaseLabel.Text = Strings.IncreaseLimit;
                 }
                 else if (clientService.IsPremiumAvailable)
                 {
@@ -134,7 +134,7 @@ namespace Telegram.Views.Premium.Popups
                     };
 
                     PurchaseIcon.Source = animatedValue;
-                    PurchaseLabel.Text = Strings.Resources.IncreaseLimit;
+                    PurchaseLabel.Text = Strings.IncreaseLimit;
                 }
                 else
                 {
@@ -145,7 +145,7 @@ namespace Telegram.Views.Premium.Popups
 
                     PurchaseCommand.Style = App.Current.Resources["AccentButtonStyle"] as Style;
                     PurchaseIcon.Visibility = Visibility.Collapsed;
-                    PurchaseLabel.Text = Strings.Resources.OK;
+                    PurchaseLabel.Text = Strings.OK;
                 }
 
                 if (type is PremiumLimitTypeCreatedPublicChatCount)
@@ -301,11 +301,11 @@ namespace Telegram.Views.Premium.Popups
             }
 
             var popup = new TeachingTip();
-            popup.Title = Strings.Resources.AppName;
-            popup.Subtitle = string.Format(supergroup.IsChannel ? Strings.Resources.RevokeLinkAlertChannel : Strings.Resources.RevokeLinkAlert, MeUrlPrefixConverter.Convert(_clientService, supergroup.ActiveUsername(), true), chat.Title);
-            popup.ActionButtonContent = Strings.Resources.RevokeButton;
+            popup.Title = Strings.AppName;
+            popup.Subtitle = string.Format(supergroup.IsChannel ? Strings.RevokeLinkAlertChannel : Strings.RevokeLinkAlert, MeUrlPrefixConverter.Convert(_clientService, supergroup.ActiveUsername(), true), chat.Title);
+            popup.ActionButtonContent = Strings.RevokeButton;
             popup.ActionButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
-            popup.CloseButtonContent = Strings.Resources.Cancel;
+            popup.CloseButtonContent = Strings.Cancel;
             popup.PreferredPlacement = TeachingTipPlacementMode.Top;
             popup.Width = popup.MinWidth = popup.MaxWidth = 314;
             popup.Target = /*badge ??*/ container;

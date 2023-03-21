@@ -251,32 +251,32 @@ namespace Telegram.Controls
             switch (statistics.FileType)
             {
                 case FileTypePhoto:
-                    Name = Strings.Resources.LocalPhotoCache;
+                    Name = Strings.LocalPhotoCache;
                     Stroke = Color.FromArgb(0xFF, 0x32, 0x7F, 0xE5);
                     break;
                 case FileTypeVideo:
-                    Name = Strings.Resources.LocalVideoCache;
+                    Name = Strings.LocalVideoCache;
                     Stroke = Color.FromArgb(0xFF, 0xDE, 0xBA, 0x08);
                     break;
                 case FileTypeDocument:
-                    Name = Strings.Resources.LocalDocumentCache;
+                    Name = Strings.LocalDocumentCache;
                     Stroke = Color.FromArgb(0xFF, 0x61, 0xC7, 0x52);
                     break;
                 case FileTypeAudio:
-                    Name = Strings.Resources.LocalMusicCache;
+                    Name = Strings.LocalMusicCache;
                     Stroke = Color.FromArgb(0xFF, 0x7F, 0x79, 0xF3);
                     break;
                 case FileTypeVideoNote:
                 case FileTypeVoiceNote:
-                    Name = Strings.Resources.LocalAudioCache;
+                    Name = Strings.LocalAudioCache;
                     Stroke = Color.FromArgb(0xFF, 0xE0, 0x53, 0x56);
                     break;
                 case FileTypeSticker:
-                    Name = Strings.Resources.AccDescrStickers;
+                    Name = Strings.AccDescrStickers;
                     Stroke = Color.FromArgb(0xFF, 0x8F, 0xCF, 0x39);
                     break;
                 default:
-                    Name = Strings.Resources.LocalCache;
+                    Name = Strings.LocalCache;
                     Stroke = Color.FromArgb(0xFF, 0x58, 0xA8, 0xED);
                     break;
             }

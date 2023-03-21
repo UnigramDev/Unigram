@@ -142,7 +142,7 @@ namespace Telegram.ViewModels.Settings
 
         public async void Reset()
         {
-            var confirm = await ShowPopupAsync(Strings.Resources.ResetStatisticsAlert, Strings.Resources.AppName, Strings.Resources.Reset, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.ResetStatisticsAlert, Strings.AppName, Strings.Reset, Strings.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 await ClientService.SendAsync(new ResetNetworkStatistics());
@@ -173,27 +173,27 @@ namespace Telegram.ViewModels.Settings
             switch (entry.FileType)
             {
                 case FileTypeNotes:
-                    Name = Strings.Resources.LocalAudioCache;
+                    Name = Strings.LocalAudioCache;
                     Glyph = Icons.MicOn;
                     break;
                 case FileTypeOther:
-                    Name = Strings.Resources.MessagesOverview;
+                    Name = Strings.MessagesOverview;
                     Glyph = Icons.ChatMultiple;
                     break;
                 case FileTypeAudio:
-                    Name = Strings.Resources.LocalMusicCache;
+                    Name = Strings.LocalMusicCache;
                     Glyph = Icons.PlayCircle;
                     break;
                 case FileTypeDocument:
-                    Name = Strings.Resources.LocalDocumentCache;
+                    Name = Strings.LocalDocumentCache;
                     Glyph = Icons.Document;
                     break;
                 case FileTypePhoto:
-                    Name = Strings.Resources.LocalPhotoCache;
+                    Name = Strings.LocalPhotoCache;
                     Glyph = Icons.Image;
                     break;
                 case FileTypeVideo:
-                    Name = Strings.Resources.LocalVideoCache;
+                    Name = Strings.LocalVideoCache;
                     Glyph = Icons.Video;
                     break;
             }

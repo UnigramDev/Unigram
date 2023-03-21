@@ -29,7 +29,7 @@ namespace Telegram.Views.Supergroups
         public SupergroupAddAdministratorPage()
         {
             InitializeComponent();
-            Title = Strings.Resources.ChannelAddAdmin;
+            Title = Strings.ChannelAddAdmin;
 
             var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
             debouncer.Invoked += async (s, args) =>

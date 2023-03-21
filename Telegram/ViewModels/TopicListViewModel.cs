@@ -323,7 +323,7 @@ namespace Telegram.ViewModels
         {
             //var chats = SelectedItems.ToList();
 
-            //var confirm = await ShowPopupAsync(Strings.Resources.AreYouSureDeleteFewChats, Locale.Declension("ChatsSelected", chats.Count), Strings.Resources.Delete, Strings.Resources.Cancel);
+            //var confirm = await ShowPopupAsync(Strings.AreYouSureDeleteFewChats, Locale.Declension("ChatsSelected", chats.Count), Strings.Delete, Strings.Cancel);
             //if (confirm == ContentDialogResult.Primary)
             //{
             //    foreach (var chat in chats)
@@ -403,7 +403,7 @@ namespace Telegram.ViewModels
         {
             //var chats = SelectedItems.ToList();
 
-            //var confirm = await ShowPopupAsync(Strings.Resources.AreYouSureClearHistoryFewChats, Locale.Declension("ChatsSelected", chats.Count), Strings.Resources.ClearHistory, Strings.Resources.Cancel);
+            //var confirm = await ShowPopupAsync(Strings.AreYouSureClearHistoryFewChats, Locale.Declension("ChatsSelected", chats.Count), Strings.ClearHistory, Strings.Cancel);
             //if (confirm == ContentDialogResult.Primary)
             //{
             //    Delegate?.ShowChatsUndo(chats, UndoType.Clear, items =>

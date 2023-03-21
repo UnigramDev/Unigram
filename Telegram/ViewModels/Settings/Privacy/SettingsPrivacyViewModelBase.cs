@@ -79,17 +79,17 @@ namespace Telegram.ViewModels.Settings
                 if (current is UserPrivacySettingRuleAllowAll && primary == null)
                 {
                     primary = PrivacyValue.AllowAll;
-                    badge = Strings.Resources.LastSeenEverybody;
+                    badge = Strings.LastSeenEverybody;
                 }
                 else if (current is UserPrivacySettingRuleAllowContacts && primary == null)
                 {
                     primary = PrivacyValue.AllowContacts;
-                    badge = Strings.Resources.LastSeenContacts;
+                    badge = Strings.LastSeenContacts;
                 }
                 else if (current is UserPrivacySettingRuleRestrictAll && primary == null)
                 {
                     primary = PrivacyValue.DisallowAll;
-                    badge = Strings.Resources.LastSeenNobody;
+                    badge = Strings.LastSeenNobody;
                 }
                 else if (current is UserPrivacySettingRuleRestrictUsers disallowUsers)
                 {
@@ -150,7 +150,7 @@ namespace Telegram.ViewModels.Settings
             if (primary == null)
             {
                 primary = PrivacyValue.DisallowAll;
-                badge = Strings.Resources.LastSeenNobody;
+                badge = Strings.LastSeenNobody;
             }
 
             var list = new List<string>();
@@ -179,8 +179,8 @@ namespace Telegram.ViewModels.Settings
                 SelectedItem = primary ?? PrivacyValue.DisallowAll;
 
                 Badge = badge;
-                AllowedBadge = allowed > 0 ? Locale.Declension("Users", allowed) : Strings.Resources.EmpryUsersPlaceholder;
-                RestrictedBadge = restricted > 0 ? Locale.Declension("Users", restricted) : Strings.Resources.EmpryUsersPlaceholder;
+                AllowedBadge = allowed > 0 ? Locale.Declension("Users", allowed) : Strings.EmpryUsersPlaceholder;
+                RestrictedBadge = restricted > 0 ? Locale.Declension("Users", restricted) : Strings.EmpryUsersPlaceholder;
             });
 
         }
@@ -247,7 +247,7 @@ namespace Telegram.ViewModels.Settings
             }
 
             var dialog = SharePopup.GetForCurrentView();
-            dialog.PrimaryButtonText = Strings.Resources.OK;
+            dialog.PrimaryButtonText = Strings.OK;
             dialog.ViewModel.AllowEmptySelection = true;
 
             switch (_inputKey)
@@ -258,10 +258,10 @@ namespace Telegram.ViewModels.Settings
                 case UserPrivacySettingShowProfilePhoto:
                 case UserPrivacySettingShowLinkInForwardedMessages:
                 default:
-                    dialog.ViewModel.Title = Strings.Resources.AlwaysAllow;
+                    dialog.ViewModel.Title = Strings.AlwaysAllow;
                     break;
                 case UserPrivacySettingShowStatus:
-                    dialog.ViewModel.Title = Strings.Resources.AlwaysShareWithTitle;
+                    dialog.ViewModel.Title = Strings.AlwaysShareWithTitle;
                     break;
             }
 
@@ -318,7 +318,7 @@ namespace Telegram.ViewModels.Settings
             }
 
             var dialog = SharePopup.GetForCurrentView();
-            dialog.PrimaryButtonText = Strings.Resources.OK;
+            dialog.PrimaryButtonText = Strings.OK;
             dialog.ViewModel.AllowEmptySelection = true;
 
             switch (_inputKey)
@@ -329,10 +329,10 @@ namespace Telegram.ViewModels.Settings
                 case UserPrivacySettingShowProfilePhoto:
                 case UserPrivacySettingShowLinkInForwardedMessages:
                 default:
-                    dialog.ViewModel.Title = Strings.Resources.NeverAllow;
+                    dialog.ViewModel.Title = Strings.NeverAllow;
                     break;
                 case UserPrivacySettingShowStatus:
-                    dialog.ViewModel.Title = Strings.Resources.NeverShareWithTitle;
+                    dialog.ViewModel.Title = Strings.NeverShareWithTitle;
                     break;
             }
 
@@ -436,7 +436,7 @@ namespace Telegram.ViewModels.Settings
                 }
             }
 
-            return count > 0 ? Locale.Declension("Users", count) : Strings.Resources.EmpryUsersPlaceholder;
+            return count > 0 ? Locale.Declension("Users", count) : Strings.EmpryUsersPlaceholder;
         }
     }
 

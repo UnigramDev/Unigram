@@ -29,7 +29,7 @@ namespace Telegram.Controls.Messages.Content
             if (string.Equals(webPage.Type, "telegram_background", StringComparison.OrdinalIgnoreCase))
             {
                 empty = false;
-                title.Text = Strings.Resources.ChatBackground;
+                title.Text = Strings.ChatBackground;
                 subtitle.Text = string.Empty;
                 content.Text = string.Empty;
             }
@@ -102,7 +102,7 @@ namespace Telegram.Controls.Messages.Content
                     if (run1 != null)
                     {
                         run1.Text = run3.Text = "\uE611";
-                        run2.Text = $"  {Strings.Resources.InstantView}  ";
+                        run2.Text = $"  {Strings.InstantView}  ";
                         run3.Foreground = null;
                     }
 
@@ -114,7 +114,7 @@ namespace Telegram.Controls.Messages.Content
                 if (run1 != null)
                 {
                     run1.Text = run3.Text = string.Empty;
-                    run2.Text = Strings.Resources.OpenGroup;
+                    run2.Text = Strings.OpenGroup;
                     run3.Foreground = null;
                 }
 
@@ -125,7 +125,7 @@ namespace Telegram.Controls.Messages.Content
                 if (run1 != null)
                 {
                     run1.Text = run3.Text = string.Empty;
-                    run2.Text = Strings.Resources.OpenChannel;
+                    run2.Text = Strings.OpenChannel;
                     run3.Foreground = null;
                 }
 
@@ -136,7 +136,7 @@ namespace Telegram.Controls.Messages.Content
                 if (run1 != null)
                 {
                     run1.Text = run3.Text = string.Empty;
-                    run2.Text = Strings.Resources.OpenMessage;
+                    run2.Text = Strings.OpenMessage;
                     run3.Foreground = null;
                 }
 
@@ -147,7 +147,7 @@ namespace Telegram.Controls.Messages.Content
                 if (run1 != null)
                 {
                     run1.Text = run3.Text = string.Empty;
-                    run2.Text = webPage.Url.Contains("?voicechat=") ? Strings.Resources.VoipGroupJoinAsSpeaker : Strings.Resources.VoipGroupJoinAsLinstener;
+                    run2.Text = webPage.Url.Contains("?voicechat=") ? Strings.VoipGroupJoinAsSpeaker : Strings.VoipGroupJoinAsLinstener;
                     run3.Foreground = null;
                 }
 
@@ -158,7 +158,7 @@ namespace Telegram.Controls.Messages.Content
                 if (run1 != null)
                 {
                     run1.Text = run3.Text = string.Empty;
-                    run2.Text = Strings.Resources.OpenBackground;
+                    run2.Text = Strings.OpenBackground;
                     run3.Foreground = null;
                 }
 
@@ -180,7 +180,7 @@ namespace Telegram.Controls.Messages.Content
                     var count = CountWebPageMedia(instantView);
 
                     border.Visibility = Visibility.Visible;
-                    label.Text = string.Format(Strings.Resources.Of, 1, count);
+                    label.Text = string.Format(Strings.Of, 1, count);
                 }
                 else
                 {

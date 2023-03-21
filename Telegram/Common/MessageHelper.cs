@@ -322,7 +322,7 @@ namespace Telegram.Common
             var response = await clientService.SendAsync(new GetDeepLinkInfo(url));
             if (response is DeepLinkInfo info)
             {
-                var confirm = await MessagePopup.ShowAsync(info.Text, Strings.Resources.AppName, Strings.Resources.OK, info.NeedUpdateApplication ? Strings.Resources.UpdateApp : null);
+                var confirm = await MessagePopup.ShowAsync(info.Text, Strings.AppName, Strings.OK, info.NeedUpdateApplication ? Strings.UpdateApp : null);
                 if (confirm == ContentDialogResult.Secondary)
                 {
                     await Launcher.LaunchUriAsync(new Uri("ms-windows-store://pdp/?PFN=" + Package.Current.Id.FamilyName));
@@ -364,13 +364,13 @@ namespace Telegram.Common
             }
             else
             {
-                await MessagePopup.ShowAsync(Strings.Resources.LinkNotFound, Strings.Resources.AppName, Strings.Resources.OK);
+                await MessagePopup.ShowAsync(Strings.LinkNotFound, Strings.AppName, Strings.OK);
             }
         }
 
         private static async void NavigateToTheme(IClientService clientService, string slug)
         {
-            await MessagePopup.ShowAsync(Strings.Resources.ThemeNotSupported, Strings.Resources.Theme, Strings.Resources.OK);
+            await MessagePopup.ShowAsync(Strings.ThemeNotSupported, Strings.Theme, Strings.OK);
         }
 
         private static void NavigateToInvoice(INavigationService navigation, string invoiceName)
@@ -385,7 +385,7 @@ namespace Telegram.Common
             {
                 if (info.Id == SettingsService.Current.LanguagePackId)
                 {
-                    var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.LanguageSame, info.Name), Strings.Resources.Language, Strings.Resources.OK, Strings.Resources.Settings);
+                    var confirm = await MessagePopup.ShowAsync(string.Format(Strings.LanguageSame, info.Name), Strings.Language, Strings.OK, Strings.Settings);
                     if (confirm != ContentDialogResult.Secondary)
                     {
                         return;
@@ -395,13 +395,13 @@ namespace Telegram.Common
                 }
                 else if (info.TotalStringCount == 0)
                 {
-                    await MessagePopup.ShowAsync(string.Format(Strings.Resources.LanguageUnknownCustomAlert, info.Name), Strings.Resources.LanguageUnknownTitle, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(string.Format(Strings.LanguageUnknownCustomAlert, info.Name), Strings.LanguageUnknownTitle, Strings.OK);
                 }
                 else
                 {
                     var message = info.IsOfficial
-                        ? Strings.Resources.LanguageAlert
-                        : Strings.Resources.LanguageCustomAlert;
+                        ? Strings.LanguageAlert
+                        : Strings.LanguageCustomAlert;
 
                     var start = message.IndexOf('[');
                     var end = message.IndexOf(']');
@@ -410,7 +410,7 @@ namespace Telegram.Common
                         message = message.Insert(end + 1, $"({info.TranslationUrl})");
                     }
 
-                    var confirm = await MessagePopup.ShowAsync(string.Format(message, info.Name, (int)Math.Ceiling(info.TranslatedStringCount / (float)info.TotalStringCount * 100)), Strings.Resources.LanguageTitle, Strings.Resources.Change, Strings.Resources.Cancel);
+                    var confirm = await MessagePopup.ShowAsync(string.Format(message, info.Name, (int)Math.Ceiling(info.TranslatedStringCount / (float)info.TotalStringCount * 100)), Strings.LanguageTitle, Strings.Change, Strings.Cancel);
                     if (confirm != ContentDialogResult.Primary)
                     {
                         return;
@@ -470,31 +470,31 @@ namespace Telegram.Common
                 {
                     if (error.TypeEquals(ErrorType.PHONE_NUMBER_INVALID))
                     {
-                        await MessagePopup.ShowAsync(error.Message, Strings.Resources.InvalidPhoneNumber, Strings.Resources.OK);
+                        await MessagePopup.ShowAsync(error.Message, Strings.InvalidPhoneNumber, Strings.OK);
                     }
                     else if (error.TypeEquals(ErrorType.PHONE_CODE_EMPTY) || error.TypeEquals(ErrorType.PHONE_CODE_INVALID))
                     {
-                        await MessagePopup.ShowAsync(error.Message, Strings.Resources.InvalidCode, Strings.Resources.OK);
+                        await MessagePopup.ShowAsync(error.Message, Strings.InvalidCode, Strings.OK);
                     }
                     else if (error.TypeEquals(ErrorType.PHONE_CODE_EXPIRED))
                     {
-                        await MessagePopup.ShowAsync(error.Message, Strings.Resources.CodeExpired, Strings.Resources.OK);
+                        await MessagePopup.ShowAsync(error.Message, Strings.CodeExpired, Strings.OK);
                     }
                     else if (error.TypeEquals(ErrorType.FIRSTNAME_INVALID))
                     {
-                        await MessagePopup.ShowAsync(error.Message, Strings.Resources.InvalidFirstName, Strings.Resources.OK);
+                        await MessagePopup.ShowAsync(error.Message, Strings.InvalidFirstName, Strings.OK);
                     }
                     else if (error.TypeEquals(ErrorType.LASTNAME_INVALID))
                     {
-                        await MessagePopup.ShowAsync(error.Message, Strings.Resources.InvalidLastName, Strings.Resources.OK);
+                        await MessagePopup.ShowAsync(error.Message, Strings.InvalidLastName, Strings.OK);
                     }
                     else if (error.Message.StartsWith("FLOOD_WAIT"))
                     {
-                        await MessagePopup.ShowAsync(Strings.Resources.FloodWait, Strings.Resources.AppName, Strings.Resources.OK);
+                        await MessagePopup.ShowAsync(Strings.FloodWait, Strings.AppName, Strings.OK);
                     }
                     else if (error.Code != -1000)
                     {
-                        await MessagePopup.ShowAsync(error.Message, Strings.Resources.AppName, Strings.Resources.OK);
+                        await MessagePopup.ShowAsync(error.Message, Strings.AppName, Strings.OK);
                     }
 
                     Logs.Logger.Warning(Logs.LogTarget.API, "account.signIn error " + error);
@@ -507,7 +507,7 @@ namespace Telegram.Common
                     phoneCode = phoneCode.Substring(0, 3) + "-" + phoneCode.Substring(3);
                 }
 
-                await MessagePopup.ShowAsync(string.Format(Strings.Resources.OtherLoginCode, phoneCode), Strings.Resources.AppName, Strings.Resources.OK);
+                await MessagePopup.ShowAsync(string.Format(Strings.OtherLoginCode, phoneCode), Strings.AppName, Strings.OK);
             }
         }
 
@@ -525,21 +525,21 @@ namespace Telegram.Common
 
             if (type is ProxyTypeHttp http)
             {
-                userText = !string.IsNullOrEmpty(http.Username) ? $"{Strings.Resources.UseProxyUsername}: {http.Username}\n" : string.Empty;
-                passText = !string.IsNullOrEmpty(http.Password) ? $"{Strings.Resources.UseProxyPassword}: {http.Password}\n" : string.Empty;
+                userText = !string.IsNullOrEmpty(http.Username) ? $"{Strings.UseProxyUsername}: {http.Username}\n" : string.Empty;
+                passText = !string.IsNullOrEmpty(http.Password) ? $"{Strings.UseProxyPassword}: {http.Password}\n" : string.Empty;
             }
             else if (type is ProxyTypeSocks5 socks5)
             {
-                userText = !string.IsNullOrEmpty(socks5.Username) ? $"{Strings.Resources.UseProxyUsername}: {socks5.Username}\n" : string.Empty;
-                passText = !string.IsNullOrEmpty(socks5.Password) ? $"{Strings.Resources.UseProxyPassword}: {socks5.Password}\n" : string.Empty;
+                userText = !string.IsNullOrEmpty(socks5.Username) ? $"{Strings.UseProxyUsername}: {socks5.Username}\n" : string.Empty;
+                passText = !string.IsNullOrEmpty(socks5.Password) ? $"{Strings.UseProxyPassword}: {socks5.Password}\n" : string.Empty;
             }
             else if (type is ProxyTypeMtproto mtproto)
             {
-                secretText = !string.IsNullOrEmpty(mtproto.Secret) ? $"{Strings.Resources.UseProxySecret}: {mtproto.Secret}\n" : string.Empty;
-                secretInfo = !string.IsNullOrEmpty(mtproto.Secret) ? $"\n\n{Strings.Resources.UseProxyTelegramInfo2}" : string.Empty;
+                secretText = !string.IsNullOrEmpty(mtproto.Secret) ? $"{Strings.UseProxySecret}: {mtproto.Secret}\n" : string.Empty;
+                secretInfo = !string.IsNullOrEmpty(mtproto.Secret) ? $"\n\n{Strings.UseProxyTelegramInfo2}" : string.Empty;
             }
 
-            var confirm = await MessagePopup.ShowAsync($"{Strings.Resources.EnableProxyAlert}\n\n{Strings.Resources.UseProxyAddress}: {server}\n{Strings.Resources.UseProxyPort}: {port}\n{userText}{passText}{secretText}\n{Strings.Resources.EnableProxyAlert2}{secretInfo}", Strings.Resources.Proxy, Strings.Resources.ConnectingConnectProxy, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync($"{Strings.EnableProxyAlert}\n\n{Strings.UseProxyAddress}: {server}\n{Strings.UseProxyPort}: {port}\n{userText}{passText}{secretText}\n{Strings.EnableProxyAlert2}{secretInfo}", Strings.Proxy, Strings.ConnectingConnectProxy, Strings.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 clientService.Send(new AddProxy(server ?? string.Empty, port, true, type));
@@ -605,12 +605,12 @@ namespace Telegram.Common
                 }
                 else
                 {
-                    await MessagePopup.ShowAsync(Strings.Resources.NoUsernameFound, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(Strings.NoUsernameFound, Strings.AppName, Strings.OK);
                 }
             }
             else
             {
-                await MessagePopup.ShowAsync(Strings.Resources.NoUsernameFound, Strings.Resources.AppName, Strings.Resources.OK);
+                await MessagePopup.ShowAsync(Strings.NoUsernameFound, Strings.AppName, Strings.OK);
             }
         }
 
@@ -635,7 +635,7 @@ namespace Telegram.Common
             }
             else
             {
-                await MessagePopup.ShowAsync(Strings.Resources.NoUsernameFound, Strings.Resources.AppName, Strings.Resources.OK);
+                await MessagePopup.ShowAsync(Strings.NoUsernameFound, Strings.AppName, Strings.OK);
             }
         }
 
@@ -670,7 +670,7 @@ namespace Telegram.Common
             }
             else
             {
-                await MessagePopup.ShowAsync(Strings.Resources.NoUsernameFound, Strings.Resources.AppName, Strings.Resources.OK);
+                await MessagePopup.ShowAsync(Strings.NoUsernameFound, Strings.AppName, Strings.OK);
             }
         }
 
@@ -702,15 +702,15 @@ namespace Telegram.Common
                     {
                         if (error.TypeEquals(ErrorType.FLOOD_WAIT))
                         {
-                            await MessagePopup.ShowAsync(Strings.Resources.FloodWait, Strings.Resources.AppName, Strings.Resources.OK);
+                            await MessagePopup.ShowAsync(Strings.FloodWait, Strings.AppName, Strings.OK);
                         }
                         else if (error.TypeEquals(ErrorType.USERS_TOO_MUCH))
                         {
-                            await MessagePopup.ShowAsync(Strings.Resources.JoinToGroupErrorFull, Strings.Resources.AppName, Strings.Resources.OK);
+                            await MessagePopup.ShowAsync(Strings.JoinToGroupErrorFull, Strings.AppName, Strings.OK);
                         }
                         else
                         {
-                            await MessagePopup.ShowAsync(Strings.Resources.JoinToGroupErrorNotExist, Strings.Resources.AppName, Strings.Resources.OK);
+                            await MessagePopup.ShowAsync(Strings.JoinToGroupErrorNotExist, Strings.AppName, Strings.OK);
                         }
                     }
                 }
@@ -719,11 +719,11 @@ namespace Telegram.Common
             {
                 if (error.TypeEquals(ErrorType.FLOOD_WAIT))
                 {
-                    await MessagePopup.ShowAsync(Strings.Resources.FloodWait, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(Strings.FloodWait, Strings.AppName, Strings.OK);
                 }
                 else
                 {
-                    await MessagePopup.ShowAsync(Strings.Resources.JoinToGroupErrorNotExist, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(Strings.JoinToGroupErrorNotExist, Strings.AppName, Strings.OK);
                 }
             }
         }
@@ -787,7 +787,7 @@ namespace Telegram.Common
 
                     if (untrust)
                     {
-                        var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.OpenUrlAlert, url), Strings.Resources.OpenUrlTitle, Strings.Resources.Open, Strings.Resources.Cancel);
+                        var confirm = await MessagePopup.ShowAsync(string.Format(Strings.OpenUrlAlert, url), Strings.OpenUrlTitle, Strings.Open, Strings.Cancel);
                         if (confirm != ContentDialogResult.Primary)
                         {
                             return;
@@ -849,14 +849,14 @@ namespace Telegram.Common
             {
                 var link = text.SelectedText;
 
-                var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.DocumentCopy, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
+                var copy = new MenuFlyoutItem { Text = Strings.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.DocumentCopy, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
                 copy.Click += LinkCopy_Click;
 
                 items.Add(copy);
 
                 if (service != null && service.CanTranslate(link))
                 {
-                    var translate = new MenuFlyoutItem { Text = Strings.Resources.TranslateMessage, DataContext = link, Tag = service, Icon = new FontIcon { Glyph = Icons.Translate, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
+                    var translate = new MenuFlyoutItem { Text = Strings.TranslateMessage, DataContext = link, Tag = service, Icon = new FontIcon { Glyph = Icons.Translate, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
                     translate.Click += LinkTranslate_Click;
 
                     items.Add(translate);
@@ -879,7 +879,7 @@ namespace Telegram.Common
                 var type = GetEntityType(hyperlink);
                 if (type is null or TextEntityTypeUrl or TextEntityTypeTextUrl)
                 {
-                    var open = new MenuFlyoutItem { Text = Strings.Resources.Open, DataContext = link, Icon = new FontIcon { Glyph = Icons.OpenIn, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
+                    var open = new MenuFlyoutItem { Text = Strings.Open, DataContext = link, Icon = new FontIcon { Glyph = Icons.OpenIn, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
 
                     var action = GetEntityAction(hyperlink);
                     if (action != null)
@@ -894,7 +894,7 @@ namespace Telegram.Common
                     items.Add(open);
                 }
 
-                var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.DocumentCopy, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
+                var copy = new MenuFlyoutItem { Text = Strings.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.DocumentCopy, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
                 copy.Click += LinkCopy_Click;
 
                 items.Add(copy);
@@ -912,8 +912,8 @@ namespace Telegram.Common
                     point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
                 }
 
-                var open = new MenuFlyoutItem { Text = Strings.Resources.Open, DataContext = link, Icon = new FontIcon { Glyph = Icons.OpenIn, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
-                var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.DocumentCopy, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
+                var open = new MenuFlyoutItem { Text = Strings.Open, DataContext = link, Icon = new FontIcon { Glyph = Icons.OpenIn, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
+                var copy = new MenuFlyoutItem { Text = Strings.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.DocumentCopy, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
 
                 open.Click += LinkOpen_Click;
                 copy.Click += LinkCopy_Click;

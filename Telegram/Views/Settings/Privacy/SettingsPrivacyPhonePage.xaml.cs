@@ -17,7 +17,7 @@ namespace Telegram.Views.Settings.Privacy
         public SettingsPrivacyPhonePage()
         {
             InitializeComponent();
-            Title = Strings.Resources.PrivacyPhone;
+            Title = Strings.PrivacyPhone;
         }
 
         #region Binding
@@ -61,10 +61,10 @@ namespace Telegram.Views.Settings.Privacy
         {
             if (value == PrivacyValue.AllowAll)
             {
-                return Strings.Resources.PrivacyPhoneInfo2;
+                return Strings.PrivacyPhoneInfo2;
             }
 
-            return Strings.Resources.PrivacyPhoneInfo3;
+            return Strings.PrivacyPhoneInfo3;
         }
 
         #endregion

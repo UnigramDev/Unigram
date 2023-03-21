@@ -52,7 +52,7 @@ namespace Telegram.Views.Folders
             var element = sender as FrameworkElement;
             var chat = element.DataContext as ChatFilterElement;
 
-            flyout.CreateFlyoutItem(viewModel.RemoveIncludeCommand, chat, Strings.Resources.StickersRemove, new FontIcon { Glyph = Icons.Delete });
+            flyout.CreateFlyoutItem(viewModel.RemoveIncludeCommand, chat, Strings.StickersRemove, new FontIcon { Glyph = Icons.Delete });
 
             args.ShowAt(flyout, element);
         }
@@ -70,7 +70,7 @@ namespace Telegram.Views.Folders
             var element = sender as FrameworkElement;
             var chat = element.DataContext as ChatFilterElement;
 
-            flyout.CreateFlyoutItem(viewModel.RemoveExcludeCommand, chat, Strings.Resources.StickersRemove, new FontIcon { Glyph = Icons.Delete });
+            flyout.CreateFlyoutItem(viewModel.RemoveExcludeCommand, chat, Strings.StickersRemove, new FontIcon { Glyph = Icons.Delete });
 
             args.ShowAt(flyout, element);
         }
@@ -111,7 +111,7 @@ namespace Telegram.Views.Folders
 
         private string ConvertTitle(ChatFilter filter)
         {
-            return filter == null ? Strings.Resources.FilterNew : filter.Title;
+            return filter == null ? Strings.FilterNew : filter.Title;
         }
 
         private string ConvertEmoji(ChatFilterIcon icon)

@@ -26,20 +26,20 @@ namespace Telegram.Views
             }
 
             var flyout = new MenuFlyout();
-            flyout.CreateFlyoutItem(ViewModel.StickerViewCommand, sticker, Strings.Resources.ViewPackPreview, new FontIcon { Glyph = Icons.Sticker });
+            flyout.CreateFlyoutItem(ViewModel.StickerViewCommand, sticker, Strings.ViewPackPreview, new FontIcon { Glyph = Icons.Sticker });
 
             if (ViewModel.ClientService.IsStickerFavorite(sticker.StickerValue.Id))
             {
-                flyout.CreateFlyoutItem(ViewModel.StickerUnfaveCommand, sticker, Strings.Resources.DeleteFromFavorites, new FontIcon { Glyph = Icons.StarOff });
+                flyout.CreateFlyoutItem(ViewModel.StickerUnfaveCommand, sticker, Strings.DeleteFromFavorites, new FontIcon { Glyph = Icons.StarOff });
             }
             else
             {
-                flyout.CreateFlyoutItem(ViewModel.StickerFaveCommand, sticker, Strings.Resources.AddToFavorites, new FontIcon { Glyph = Icons.Star });
+                flyout.CreateFlyoutItem(ViewModel.StickerFaveCommand, sticker, Strings.AddToFavorites, new FontIcon { Glyph = Icons.Star });
             }
 
             if (ViewModel.ClientService.IsStickerRecent(sticker.StickerValue.Id))
             {
-                flyout.CreateFlyoutItem(ViewModel.StickerDeleteCommand, sticker, Strings.Resources.DeleteFromRecent, new FontIcon { Glyph = Icons.Delete });
+                flyout.CreateFlyoutItem(ViewModel.StickerDeleteCommand, sticker, Strings.DeleteFromRecent, new FontIcon { Glyph = Icons.Delete });
             }
 
             if (ViewModel.Type == ViewModels.DialogType.History)
@@ -53,8 +53,8 @@ namespace Telegram.Views
                 var self = ViewModel.ClientService.IsSavedMessages(chat);
 
                 flyout.CreateFlyoutSeparator();
-                flyout.CreateFlyoutItem(new RelayCommand<Sticker>(anim => ViewModel.StickerSendExecute(anim, null, true)), sticker, Strings.Resources.SendWithoutSound, new FontIcon { Glyph = Icons.AlertOff });
-                flyout.CreateFlyoutItem(new RelayCommand<Sticker>(anim => ViewModel.StickerSendExecute(anim, true, null)), sticker, self ? Strings.Resources.SetReminder : Strings.Resources.ScheduleMessage, new FontIcon { Glyph = Icons.CalendarClock });
+                flyout.CreateFlyoutItem(new RelayCommand<Sticker>(anim => ViewModel.StickerSendExecute(anim, null, true)), sticker, Strings.SendWithoutSound, new FontIcon { Glyph = Icons.AlertOff });
+                flyout.CreateFlyoutItem(new RelayCommand<Sticker>(anim => ViewModel.StickerSendExecute(anim, true, null)), sticker, self ? Strings.SetReminder : Strings.ScheduleMessage, new FontIcon { Glyph = Icons.CalendarClock });
             }
 
             args.ShowAt(flyout, element);
@@ -74,11 +74,11 @@ namespace Telegram.Views
 
             if (ViewModel.ClientService.IsAnimationSaved(animation.AnimationValue.Id))
             {
-                flyout.CreateFlyoutItem(ViewModel.AnimationDeleteCommand, animation, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
+                flyout.CreateFlyoutItem(ViewModel.AnimationDeleteCommand, animation, Strings.Delete, new FontIcon { Glyph = Icons.Delete });
             }
             else
             {
-                flyout.CreateFlyoutItem(ViewModel.AnimationSaveCommand, animation, Strings.Resources.SaveToGIFs, new FontIcon { Glyph = Icons.Gif });
+                flyout.CreateFlyoutItem(ViewModel.AnimationSaveCommand, animation, Strings.SaveToGIFs, new FontIcon { Glyph = Icons.Gif });
             }
 
             if (ViewModel.Type == ViewModels.DialogType.History)
@@ -92,8 +92,8 @@ namespace Telegram.Views
                 var self = ViewModel.ClientService.IsSavedMessages(chat);
 
                 flyout.CreateFlyoutSeparator();
-                flyout.CreateFlyoutItem(new RelayCommand<Animation>(anim => ViewModel.AnimationSendExecute(anim, null, true)), animation, Strings.Resources.SendWithoutSound, new FontIcon { Glyph = Icons.AlertOff });
-                flyout.CreateFlyoutItem(new RelayCommand<Animation>(anim => ViewModel.AnimationSendExecute(anim, true, null)), animation, self ? Strings.Resources.SetReminder : Strings.Resources.ScheduleMessage, new FontIcon { Glyph = Icons.CalendarClock });
+                flyout.CreateFlyoutItem(new RelayCommand<Animation>(anim => ViewModel.AnimationSendExecute(anim, null, true)), animation, Strings.SendWithoutSound, new FontIcon { Glyph = Icons.AlertOff });
+                flyout.CreateFlyoutItem(new RelayCommand<Animation>(anim => ViewModel.AnimationSendExecute(anim, true, null)), animation, self ? Strings.SetReminder : Strings.ScheduleMessage, new FontIcon { Glyph = Icons.CalendarClock });
             }
 
             args.ShowAt(flyout, element);

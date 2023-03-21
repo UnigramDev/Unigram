@@ -75,7 +75,7 @@ namespace Telegram.Views.Settings
                 return;
             }
 
-            flyout.CreateFlyoutItem(ViewModel.RemoveCommand, exception, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
+            flyout.CreateFlyoutItem(ViewModel.RemoveCommand, exception, Strings.Delete, new FontIcon { Glyph = Icons.Delete });
 
             args.ShowAt(flyout, element);
         }

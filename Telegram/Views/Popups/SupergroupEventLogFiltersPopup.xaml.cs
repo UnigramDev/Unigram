@@ -28,9 +28,9 @@ namespace Telegram.Views.Popups
         {
             InitializeComponent();
 
-            Title = Strings.Resources.Settings;
-            PrimaryButtonText = Strings.Resources.OK;
-            SecondaryButtonText = Strings.Resources.Cancel;
+            Title = Strings.Settings;
+            PrimaryButtonText = Strings.OK;
+            SecondaryButtonText = Strings.Cancel;
         }
 
         public Task<ContentDialogResult> ShowAsync(IClientService clientService, long supergroupId, ChatEventLogFilters filters, IList<long> userIds)

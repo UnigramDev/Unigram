@@ -48,10 +48,10 @@ namespace Telegram.ViewModels.Authorization
             {
                 args.Cancel = true;
 
-                var message = string.Format(Strings.Resources.EditNumberInfo, Common.PhoneNumber.Format(waitCode.CodeInfo.PhoneNumber));
-                var title = Strings.Resources.EditNumber;
+                var message = string.Format(Strings.EditNumberInfo, Common.PhoneNumber.Format(waitCode.CodeInfo.PhoneNumber));
+                var title = Strings.EditNumber;
 
-                var confirm = await ShowPopupAsync(message, title, Strings.Resources.Edit, Strings.Resources.Close);
+                var confirm = await ShowPopupAsync(message, title, Strings.Edit, Strings.Close);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     _confirmedGoBack = true;
@@ -124,40 +124,40 @@ namespace Telegram.ViewModels.Authorization
 
                 if (error.TypeEquals(ErrorType.PHONE_NUMBER_INVALID))
                 {
-                    await ShowPopupAsync(error.Message, Strings.Resources.InvalidPhoneNumber, Strings.Resources.OK);
+                    await ShowPopupAsync(error.Message, Strings.InvalidPhoneNumber, Strings.OK);
                 }
                 else if (error.TypeEquals(ErrorType.PHONE_CODE_EMPTY) || error.TypeEquals(ErrorType.PHONE_CODE_INVALID))
                 {
-                    await ShowPopupAsync(error.Message, Strings.Resources.InvalidCode, Strings.Resources.OK);
+                    await ShowPopupAsync(error.Message, Strings.InvalidCode, Strings.OK);
                 }
                 else if (error.TypeEquals(ErrorType.PHONE_CODE_EXPIRED))
                 {
                     NavigationService.GoBack();
                     NavigationService.Frame.ForwardStack.Clear();
 
-                    await ShowPopupAsync(error.Message, Strings.Resources.CodeExpired, Strings.Resources.OK);
+                    await ShowPopupAsync(error.Message, Strings.CodeExpired, Strings.OK);
                 }
                 else if (error.TypeEquals(ErrorType.FIRSTNAME_INVALID))
                 {
                     NavigationService.GoBack();
                     NavigationService.Frame.ForwardStack.Clear();
 
-                    await ShowPopupAsync(error.Message, Strings.Resources.InvalidFirstName, Strings.Resources.OK);
+                    await ShowPopupAsync(error.Message, Strings.InvalidFirstName, Strings.OK);
                 }
                 else if (error.TypeEquals(ErrorType.LASTNAME_INVALID))
                 {
                     NavigationService.GoBack();
                     NavigationService.Frame.ForwardStack.Clear();
 
-                    await ShowPopupAsync(error.Message, Strings.Resources.InvalidLastName, Strings.Resources.OK);
+                    await ShowPopupAsync(error.Message, Strings.InvalidLastName, Strings.OK);
                 }
                 else if (error.Message.StartsWith("FLOOD_WAIT"))
                 {
-                    await ShowPopupAsync(Strings.Resources.FloodWait, Strings.Resources.AppName, Strings.Resources.OK);
+                    await ShowPopupAsync(Strings.FloodWait, Strings.AppName, Strings.OK);
                 }
                 else if (error.Code != -1000)
                 {
-                    await ShowPopupAsync(error.Message, Strings.Resources.AppName, Strings.Resources.OK);
+                    await ShowPopupAsync(error.Message, Strings.AppName, Strings.OK);
                 }
 
                 Logs.Logger.Error(Logs.LogTarget.API, "account.signIn error " + error);

@@ -127,11 +127,11 @@ namespace Telegram.ViewModels
         {
             var popup = new MessagePopup
             {
-                Title = Strings.Resources.DeleteCalls,
-                Message = Strings.Resources.DeleteSelectedCallsText,
-                PrimaryButtonText = Strings.Resources.Delete,
-                SecondaryButtonText = Strings.Resources.Cancel,
-                CheckBoxLabel = Strings.Resources.DeleteCallsForEveryone
+                Title = Strings.DeleteCalls,
+                Message = Strings.DeleteSelectedCallsText,
+                PrimaryButtonText = Strings.Delete,
+                SecondaryButtonText = Strings.Cancel,
+                CheckBoxLabel = Strings.DeleteCallsForEveryone
             };
 
             var confirm = await ShowPopupAsync(popup);
@@ -206,7 +206,7 @@ namespace Telegram.ViewModels
         {
             if (IsFailed)
             {
-                return Strings.Resources.CallMessageIncomingMissed;
+                return Strings.CallMessageIncomingMissed;
             }
 
             var finalType = string.Empty;
@@ -277,13 +277,13 @@ namespace Telegram.ViewModels
             switch (type)
             {
                 case TLCallDisplayType.Outgoing:
-                    return Strings.Resources.CallMessageOutgoing;
+                    return Strings.CallMessageOutgoing;
                 case TLCallDisplayType.Incoming:
-                    return Strings.Resources.CallMessageIncoming;
+                    return Strings.CallMessageIncoming;
                 case TLCallDisplayType.Cancelled:
-                    return Strings.Resources.CallMessageOutgoingMissed;
+                    return Strings.CallMessageOutgoingMissed;
                 case TLCallDisplayType.Missed:
-                    return Strings.Resources.CallMessageIncomingMissed;
+                    return Strings.CallMessageIncomingMissed;
                 default:
                     return null;
             }

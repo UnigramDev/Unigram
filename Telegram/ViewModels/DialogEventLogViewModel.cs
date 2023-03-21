@@ -65,10 +65,10 @@ namespace Telegram.ViewModels
                     && _filters.MessageEdits
                     && _userIds.IsEmpty())
                 {
-                    return Strings.Resources.EventLogAllEvents;
+                    return Strings.EventLogAllEvents;
                 }
 
-                return Strings.Resources.EventLogSelectedEvents;
+                return Strings.EventLogSelectedEvents;
             }
         }
 
@@ -109,7 +109,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            await ShowPopupAsync(chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel ? Strings.Resources.EventLogInfoDetailChannel : Strings.Resources.EventLogInfoDetail, Strings.Resources.EventLogInfoTitle, Strings.Resources.OK);
+            await ShowPopupAsync(chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel ? Strings.EventLogInfoDetailChannel : Strings.EventLogInfoDetail, Strings.EventLogInfoTitle, Strings.OK);
         }
 
         public override async Task LoadEventLogSliceAsync(string query = "")
@@ -375,7 +375,7 @@ namespace Telegram.ViewModels
             if (item.Action is ChatEventDescriptionChanged descriptionChanged)
             {
                 var text = new FormattedText(descriptionChanged.NewDescription, new TextEntity[0]);
-                var webPage = string.IsNullOrEmpty(descriptionChanged.OldDescription) ? null : new WebPage { SiteName = Strings.Resources.EventLogPreviousGroupDescription, Description = new FormattedText { Text = descriptionChanged.OldDescription } };
+                var webPage = string.IsNullOrEmpty(descriptionChanged.OldDescription) ? null : new WebPage { SiteName = Strings.EventLogPreviousGroupDescription, Description = new FormattedText { Text = descriptionChanged.OldDescription } };
 
                 return new MessageText(text, webPage);
             }
@@ -384,7 +384,7 @@ namespace Telegram.ViewModels
                 var link = string.IsNullOrEmpty(usernameChanged.NewUsername) ? string.Empty : MeUrlPrefixConverter.Convert(ClientService, usernameChanged.NewUsername);
 
                 var text = new FormattedText(link, new[] { new TextEntity(0, link.Length, new TextEntityTypeUrl()) });
-                var webPage = string.IsNullOrEmpty(usernameChanged.OldUsername) ? null : new WebPage { SiteName = Strings.Resources.EventLogPreviousLink, Description = new FormattedText { Text = MeUrlPrefixConverter.Convert(ClientService, usernameChanged.OldUsername) } };
+                var webPage = string.IsNullOrEmpty(usernameChanged.OldUsername) ? null : new WebPage { SiteName = Strings.EventLogPreviousLink, Description = new FormattedText { Text = MeUrlPrefixConverter.Convert(ClientService, usernameChanged.OldUsername) } };
 
                 return new MessageText(text, webPage);
             }
@@ -404,7 +404,7 @@ namespace Telegram.ViewModels
                     n = new ChatPermissions();
                 }
 
-                var rights = new StringBuilder(Strings.Resources.EventLogDefaultPermissions);
+                var rights = new StringBuilder(Strings.EventLogDefaultPermissions);
                 var added = false;
 
                 void AppendChange(bool value, string label)
@@ -421,63 +421,63 @@ namespace Telegram.ViewModels
 
                 //if (o.IsViewMessages != n.IsViewMessages)
                 //{
-                //    AppendChange(n.IsViewMessages, Strings.Resources.EventLogRestrictedReadMessages);
+                //    AppendChange(n.IsViewMessages, Strings.EventLogRestrictedReadMessages);
                 //}
                 if (o.CanSendBasicMessages != n.CanSendBasicMessages)
                 {
-                    AppendChange(n.CanSendBasicMessages, Strings.Resources.EventLogRestrictedSendMessages);
+                    AppendChange(n.CanSendBasicMessages, Strings.EventLogRestrictedSendMessages);
                 }
                 if (o.CanSendOtherMessages != n.CanSendOtherMessages)
                 {
-                    AppendChange(n.CanSendOtherMessages, Strings.Resources.EventLogRestrictedSendStickers);
+                    AppendChange(n.CanSendOtherMessages, Strings.EventLogRestrictedSendStickers);
                 }
                 if (o.CanSendPhotos != n.CanSendPhotos)
                 {
-                    AppendChange(n.CanSendPhotos, Strings.Resources.UserRestrictionsSendPhotos);
+                    AppendChange(n.CanSendPhotos, Strings.UserRestrictionsSendPhotos);
                 }
                 if (o.CanSendVideos != n.CanSendVideos)
                 {
-                    AppendChange(n.CanSendVideos, Strings.Resources.UserRestrictionsSendVideos);
+                    AppendChange(n.CanSendVideos, Strings.UserRestrictionsSendVideos);
                 }
                 if (o.CanSendOtherMessages != n.CanSendOtherMessages)
                 {
-                    AppendChange(n.CanSendOtherMessages, Strings.Resources.UserRestrictionsSendStickers);
+                    AppendChange(n.CanSendOtherMessages, Strings.UserRestrictionsSendStickers);
                 }
                 if (o.CanSendAudios != n.CanSendAudios)
                 {
-                    AppendChange(n.CanSendAudios, Strings.Resources.UserRestrictionsSendMusic);
+                    AppendChange(n.CanSendAudios, Strings.UserRestrictionsSendMusic);
                 }
                 if (o.CanSendDocuments != n.CanSendDocuments)
                 {
-                    AppendChange(n.CanSendDocuments, Strings.Resources.UserRestrictionsSendFiles);
+                    AppendChange(n.CanSendDocuments, Strings.UserRestrictionsSendFiles);
                 }
                 if (o.CanSendVoiceNotes != n.CanSendVoiceNotes)
                 {
-                    AppendChange(n.CanSendVoiceNotes, Strings.Resources.UserRestrictionsSendVoices);
+                    AppendChange(n.CanSendVoiceNotes, Strings.UserRestrictionsSendVoices);
                 }
                 if (o.CanSendVideoNotes != n.CanSendVideoNotes)
                 {
-                    AppendChange(n.CanSendVideoNotes, Strings.Resources.UserRestrictionsSendRound);
+                    AppendChange(n.CanSendVideoNotes, Strings.UserRestrictionsSendRound);
                 }
                 if (o.CanSendPolls != n.CanSendPolls)
                 {
-                    AppendChange(n.CanSendPolls, Strings.Resources.EventLogRestrictedSendPolls);
+                    AppendChange(n.CanSendPolls, Strings.EventLogRestrictedSendPolls);
                 }
                 if (o.CanAddWebPagePreviews != n.CanAddWebPagePreviews)
                 {
-                    AppendChange(n.CanAddWebPagePreviews, Strings.Resources.EventLogRestrictedSendEmbed);
+                    AppendChange(n.CanAddWebPagePreviews, Strings.EventLogRestrictedSendEmbed);
                 }
                 if (o.CanChangeInfo != n.CanChangeInfo)
                 {
-                    AppendChange(n.CanChangeInfo, Strings.Resources.EventLogRestrictedChangeInfo);
+                    AppendChange(n.CanChangeInfo, Strings.EventLogRestrictedChangeInfo);
                 }
                 if (o.CanInviteUsers != n.CanInviteUsers)
                 {
-                    AppendChange(n.CanInviteUsers, Strings.Resources.EventLogRestrictedSendEmbed);
+                    AppendChange(n.CanInviteUsers, Strings.EventLogRestrictedSendEmbed);
                 }
                 if (o.CanPinMessages != n.CanPinMessages)
                 {
-                    AppendChange(n.CanPinMessages, Strings.Resources.EventLogRestrictedPinMessages);
+                    AppendChange(n.CanPinMessages, Strings.EventLogRestrictedPinMessages);
                 }
 
                 string text = rights.ToString();
@@ -493,11 +493,11 @@ namespace Telegram.ViewModels
 
                 if (memberRestricted.NewStatus is ChatMemberStatusBanned)
                 {
-                    text = string.Format(Strings.Resources.EventLogChannelRestricted, GetUserName(whoUser, entities, Strings.Resources.EventLogChannelRestricted.IndexOf("{0}")));
+                    text = string.Format(Strings.EventLogChannelRestricted, GetUserName(whoUser, entities, Strings.EventLogChannelRestricted.IndexOf("{0}")));
                 }
                 else if (memberRestricted.NewStatus is ChatMemberStatusMember && memberRestricted.OldStatus is ChatMemberStatusBanned)
                 {
-                    text = string.Format(Strings.Resources.EventLogChannelUnrestricted, GetUserName(whoUser, entities, Strings.Resources.EventLogChannelUnrestricted.IndexOf("{0}")));
+                    text = string.Format(Strings.EventLogChannelUnrestricted, GetUserName(whoUser, entities, Strings.EventLogChannelUnrestricted.IndexOf("{0}")));
                 }
                 else
                 {
@@ -587,10 +587,10 @@ namespace Telegram.ViewModels
                         }
                         else
                         {
-                            bannedDuration = Strings.Resources.UserRestrictionsUntilForever;
+                            bannedDuration = Strings.UserRestrictionsUntilForever;
                         }
 
-                        var str = Strings.Resources.EventLogRestrictedUntil;
+                        var str = Strings.EventLogRestrictedUntil;
                         rights = new StringBuilder(string.Format(str, GetUserName(whoUser, entities, str.IndexOf("{0}")), bannedDuration));
                         var added = false;
                         if (o == null)
@@ -616,63 +616,63 @@ namespace Telegram.ViewModels
 
                         //if (o.IsViewMessages != n.IsViewMessages)
                         //{
-                        //    AppendChange(n.IsViewMessages, Strings.Resources.EventLogRestrictedReadMessages);
+                        //    AppendChange(n.IsViewMessages, Strings.EventLogRestrictedReadMessages);
                         //}
                         if (o.Permissions.CanSendBasicMessages != n.Permissions.CanSendBasicMessages)
                         {
-                            AppendChange(n.Permissions.CanSendBasicMessages, Strings.Resources.EventLogRestrictedSendMessages);
+                            AppendChange(n.Permissions.CanSendBasicMessages, Strings.EventLogRestrictedSendMessages);
                         }
                         if (o.Permissions.CanSendOtherMessages != n.Permissions.CanSendOtherMessages)
                         {
-                            AppendChange(n.Permissions.CanSendOtherMessages, Strings.Resources.EventLogRestrictedSendStickers);
+                            AppendChange(n.Permissions.CanSendOtherMessages, Strings.EventLogRestrictedSendStickers);
                         }
                         if (o.Permissions.CanSendPhotos != n.Permissions.CanSendPhotos)
                         {
-                            AppendChange(n.Permissions.CanSendPhotos, Strings.Resources.UserRestrictionsSendPhotos);
+                            AppendChange(n.Permissions.CanSendPhotos, Strings.UserRestrictionsSendPhotos);
                         }
                         if (o.Permissions.CanSendVideos != n.Permissions.CanSendVideos)
                         {
-                            AppendChange(n.Permissions.CanSendVideos, Strings.Resources.UserRestrictionsSendVideos);
+                            AppendChange(n.Permissions.CanSendVideos, Strings.UserRestrictionsSendVideos);
                         }
                         if (o.Permissions.CanSendOtherMessages != n.Permissions.CanSendOtherMessages)
                         {
-                            AppendChange(n.Permissions.CanSendOtherMessages, Strings.Resources.UserRestrictionsSendStickers);
+                            AppendChange(n.Permissions.CanSendOtherMessages, Strings.UserRestrictionsSendStickers);
                         }
                         if (o.Permissions.CanSendAudios != n.Permissions.CanSendAudios)
                         {
-                            AppendChange(n.Permissions.CanSendAudios, Strings.Resources.UserRestrictionsSendMusic);
+                            AppendChange(n.Permissions.CanSendAudios, Strings.UserRestrictionsSendMusic);
                         }
                         if (o.Permissions.CanSendDocuments != n.Permissions.CanSendDocuments)
                         {
-                            AppendChange(n.Permissions.CanSendDocuments, Strings.Resources.UserRestrictionsSendFiles);
+                            AppendChange(n.Permissions.CanSendDocuments, Strings.UserRestrictionsSendFiles);
                         }
                         if (o.Permissions.CanSendVoiceNotes != n.Permissions.CanSendVoiceNotes)
                         {
-                            AppendChange(n.Permissions.CanSendVoiceNotes, Strings.Resources.UserRestrictionsSendVoices);
+                            AppendChange(n.Permissions.CanSendVoiceNotes, Strings.UserRestrictionsSendVoices);
                         }
                         if (o.Permissions.CanSendVideoNotes != n.Permissions.CanSendVideoNotes)
                         {
-                            AppendChange(n.Permissions.CanSendVideoNotes, Strings.Resources.UserRestrictionsSendRound);
+                            AppendChange(n.Permissions.CanSendVideoNotes, Strings.UserRestrictionsSendRound);
                         }
                         if (o.Permissions.CanSendPolls != n.Permissions.CanSendPolls)
                         {
-                            AppendChange(n.Permissions.CanSendPolls, Strings.Resources.EventLogRestrictedSendPolls);
+                            AppendChange(n.Permissions.CanSendPolls, Strings.EventLogRestrictedSendPolls);
                         }
                         if (o.Permissions.CanAddWebPagePreviews != n.Permissions.CanAddWebPagePreviews)
                         {
-                            AppendChange(n.Permissions.CanAddWebPagePreviews, Strings.Resources.EventLogRestrictedSendEmbed);
+                            AppendChange(n.Permissions.CanAddWebPagePreviews, Strings.EventLogRestrictedSendEmbed);
                         }
                         if (o.Permissions.CanChangeInfo != n.Permissions.CanChangeInfo)
                         {
-                            AppendChange(n.Permissions.CanChangeInfo, Strings.Resources.EventLogRestrictedChangeInfo);
+                            AppendChange(n.Permissions.CanChangeInfo, Strings.EventLogRestrictedChangeInfo);
                         }
                         if (o.Permissions.CanInviteUsers != n.Permissions.CanInviteUsers)
                         {
-                            AppendChange(n.Permissions.CanInviteUsers, Strings.Resources.EventLogRestrictedSendEmbed);
+                            AppendChange(n.Permissions.CanInviteUsers, Strings.EventLogRestrictedSendEmbed);
                         }
                         if (o.Permissions.CanPinMessages != n.Permissions.CanPinMessages)
                         {
-                            AppendChange(n.Permissions.CanPinMessages, Strings.Resources.EventLogRestrictedPinMessages);
+                            AppendChange(n.Permissions.CanPinMessages, Strings.EventLogRestrictedPinMessages);
                         }
 
                         text = rights.ToString();
@@ -682,11 +682,11 @@ namespace Telegram.ViewModels
                         string str;
                         if (o == null || memberRestricted.NewStatus is ChatMemberStatusBanned)
                         {
-                            str = Strings.Resources.EventLogChannelRestricted;
+                            str = Strings.EventLogChannelRestricted;
                         }
                         else
                         {
-                            str = Strings.Resources.EventLogChannelUnrestricted;
+                            str = Strings.EventLogChannelUnrestricted;
                         }
 
                         text = string.Format(str, GetUserName(whoUser, entities, str.IndexOf("{0}")));
@@ -701,8 +701,8 @@ namespace Telegram.ViewModels
 
                 var whoUser = ClientService.GetUser(memberPromoted.UserId);
                 var str = memberPromoted.NewStatus is ChatMemberStatusCreator
-                    ? Strings.Resources.EventLogChangedOwnership
-                    : Strings.Resources.EventLogPromoted;
+                    ? Strings.EventLogChangedOwnership
+                    : Strings.EventLogPromoted;
                 var userName = GetUserName(whoUser, entities, str.IndexOf("{0}"));
                 var builder = new StringBuilder(string.Format(str, userName));
                 var added = false;
@@ -748,12 +748,12 @@ namespace Telegram.ViewModels
                     if (string.IsNullOrEmpty(newTitle))
                     {
                         builder.Append('\n').Append('-').Append(' ');
-                        builder.Append(Strings.Resources.EventLogPromotedRemovedTitle);
+                        builder.Append(Strings.EventLogPromotedRemovedTitle);
                     }
                     else
                     {
                         builder.Append('\n').Append('+').Append(' ');
-                        builder.AppendFormat(Strings.Resources.EventLogPromotedTitle, newTitle);
+                        builder.AppendFormat(Strings.EventLogPromotedTitle, newTitle);
                     }
                 }
 
@@ -771,52 +771,52 @@ namespace Telegram.ViewModels
 
                 if (o.CanChangeInfo != n.CanChangeInfo)
                 {
-                    AppendChange(n.CanChangeInfo, channel ? Strings.Resources.EventLogPromotedChangeChannelInfo : Strings.Resources.EventLogPromotedChangeGroupInfo);
+                    AppendChange(n.CanChangeInfo, channel ? Strings.EventLogPromotedChangeChannelInfo : Strings.EventLogPromotedChangeGroupInfo);
                 }
 
                 if (channel)
                 {
                     if (o.CanPostMessages != n.CanPostMessages)
                     {
-                        AppendChange(n.CanPostMessages, Strings.Resources.EventLogPromotedPostMessages);
+                        AppendChange(n.CanPostMessages, Strings.EventLogPromotedPostMessages);
                     }
                     if (o.CanEditMessages != n.CanEditMessages)
                     {
-                        AppendChange(n.CanEditMessages, Strings.Resources.EventLogPromotedEditMessages);
+                        AppendChange(n.CanEditMessages, Strings.EventLogPromotedEditMessages);
                     }
                 }
                 if (o.CanDeleteMessages != n.CanDeleteMessages)
                 {
-                    AppendChange(n.CanDeleteMessages, Strings.Resources.EventLogPromotedDeleteMessages);
+                    AppendChange(n.CanDeleteMessages, Strings.EventLogPromotedDeleteMessages);
                 }
                 if (o.CanPromoteMembers != n.CanPromoteMembers)
                 {
-                    AppendChange(n.CanPromoteMembers, Strings.Resources.EventLogPromotedAddAdmins);
+                    AppendChange(n.CanPromoteMembers, Strings.EventLogPromotedAddAdmins);
                 }
                 if (!channel)
                 {
                     if (o.IsAnonymous != n.IsAnonymous)
                     {
-                        AppendChange(n.IsAnonymous, Strings.Resources.EventLogPromotedSendAnonymously);
+                        AppendChange(n.IsAnonymous, Strings.EventLogPromotedSendAnonymously);
                     }
                     if (o.CanRestrictMembers != n.CanRestrictMembers)
                     {
-                        AppendChange(n.CanRestrictMembers, Strings.Resources.EventLogPromotedBanUsers);
+                        AppendChange(n.CanRestrictMembers, Strings.EventLogPromotedBanUsers);
                     }
                 }
                 if (o.CanInviteUsers != n.CanInviteUsers)
                 {
-                    AppendChange(n.CanInviteUsers, Strings.Resources.EventLogPromotedAddUsers);
+                    AppendChange(n.CanInviteUsers, Strings.EventLogPromotedAddUsers);
                 }
                 if (!channel)
                 {
                     if (o.CanPinMessages != n.CanPinMessages)
                     {
-                        AppendChange(n.CanPinMessages, Strings.Resources.EventLogPromotedPinMessages);
+                        AppendChange(n.CanPinMessages, Strings.EventLogPromotedPinMessages);
                     }
                     if (o.CanManageVideoChats != n.CanManageVideoChats)
                     {
-                        AppendChange(n.CanManageVideoChats, Strings.Resources.EventLogPromotedManageCall);
+                        AppendChange(n.CanManageVideoChats, Strings.EventLogPromotedManageCall);
                     }
                 }
 
@@ -832,7 +832,7 @@ namespace Telegram.ViewModels
                 {
                     editedText.WebPage = new WebPage
                     {
-                        SiteName = Strings.Resources.EventLogOriginalMessages,
+                        SiteName = Strings.EventLogOriginalMessages,
                         Description = oldText.Text
                     };
                 }

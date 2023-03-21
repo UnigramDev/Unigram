@@ -131,14 +131,14 @@ namespace Telegram.Services
             {
                 async void DeleteAccount()
                 {
-                    var decline = await MessagePopup.ShowAsync(Strings.Resources.TosUpdateDecline, Strings.Resources.TermsOfService, Strings.Resources.DeclineDeactivate, Strings.Resources.Back);
+                    var decline = await MessagePopup.ShowAsync(Strings.TosUpdateDecline, Strings.TermsOfService, Strings.DeclineDeactivate, Strings.Back);
                     if (decline != ContentDialogResult.Primary)
                     {
                         Handle(update);
                         return;
                     }
 
-                    var delete = await MessagePopup.ShowAsync(Strings.Resources.TosDeclineDeleteAccount, Strings.Resources.AppName, Strings.Resources.Deactivate, Strings.Resources.Cancel);
+                    var delete = await MessagePopup.ShowAsync(Strings.TosDeclineDeleteAccount, Strings.AppName, Strings.Deactivate, Strings.Cancel);
                     if (delete != ContentDialogResult.Primary)
                     {
                         Handle(update);
@@ -151,7 +151,7 @@ namespace Telegram.Services
                 await Task.Delay(2000);
                 BeginOnUIThread(async () =>
                 {
-                    var confirm = await MessagePopup.ShowAsync(terms.Text, Strings.Resources.PrivacyPolicyAndTerms, Strings.Resources.Agree, Strings.Resources.Cancel);
+                    var confirm = await MessagePopup.ShowAsync(terms.Text, Strings.PrivacyPolicyAndTerms, Strings.Agree, Strings.Cancel);
                     if (confirm != ContentDialogResult.Primary)
                     {
                         DeleteAccount();
@@ -160,7 +160,7 @@ namespace Telegram.Services
 
                     if (terms.MinUserAge > 0)
                     {
-                        var age = await MessagePopup.ShowAsync(string.Format(Strings.Resources.TosAgeText, terms.MinUserAge), Strings.Resources.TosAgeTitle, Strings.Resources.Agree, Strings.Resources.Cancel);
+                        var age = await MessagePopup.ShowAsync(string.Format(Strings.TosAgeText, terms.MinUserAge), Strings.TosAgeTitle, Strings.Agree, Strings.Cancel);
                         if (age != ContentDialogResult.Primary)
                         {
                             DeleteAccount();
@@ -181,7 +181,7 @@ namespace Telegram.Services
                 {
                     if (action is SuggestedActionEnableArchiveAndMuteNewChats)
                     {
-                        var confirm = await MessagePopup.ShowAsync(Strings.Resources.HideNewChatsAlertText, Strings.Resources.HideNewChatsAlertTitle, Strings.Resources.OK, Strings.Resources.Cancel);
+                        var confirm = await MessagePopup.ShowAsync(Strings.HideNewChatsAlertText, Strings.HideNewChatsAlertTitle, Strings.OK, Strings.Cancel);
                         if (confirm == ContentDialogResult.Primary)
                         {
                             _clientService.Options.ArchiveAndMuteNewChatsFromUnknownUsers = true;
@@ -211,7 +211,7 @@ namespace Telegram.Services
             {
                 if (update.Type.StartsWith("AUTH_KEY_DROP_"))
                 {
-                    var confirm = await MessagePopup.ShowAsync(text, Strings.Resources.AppName, Strings.Resources.LogOut, Strings.Resources.Cancel);
+                    var confirm = await MessagePopup.ShowAsync(text, Strings.AppName, Strings.LogOut, Strings.Cancel);
                     if (confirm == ContentDialogResult.Primary)
                     {
                         _clientService.Send(new Destroy());
@@ -219,7 +219,7 @@ namespace Telegram.Services
                 }
                 else
                 {
-                    await MessagePopup.ShowAsync(text, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(text, Strings.AppName, Strings.OK);
                 }
             });
         }
@@ -467,8 +467,8 @@ namespace Telegram.Services
 
             if (chat.Type is ChatTypeSecret || !showPreview || TLContainer.Current.Passcode.IsLockscreenRequired)
             {
-                caption = Strings.Resources.AppName;
-                content = Strings.Resources.YouHaveNewMessage;
+                caption = Strings.AppName;
+                content = Strings.YouHaveNewMessage;
                 picture = string.Empty;
 
                 canReply = false;
@@ -519,8 +519,8 @@ namespace Telegram.Services
 
             if (chat.Type is ChatTypeSecret || !showPreview || TLContainer.Current.Passcode.IsLockscreenRequired)
             {
-                caption = Strings.Resources.AppName;
-                content = Strings.Resources.YouHaveNewMessage;
+                caption = Strings.AppName;
+                content = Strings.YouHaveNewMessage;
                 picture = string.Empty;
 
                 canReply = false;
@@ -570,12 +570,12 @@ namespace Telegram.Services
             string actions = "";
             if (!string.IsNullOrEmpty(group) && canReply)
             {
-                actions = string.Format("<actions><input id='input' type='text' placeHolderContent='{0}' /><action activationType='background' arguments='action=markAsRead&amp;", Strings.Resources.Reply);
+                actions = string.Format("<actions><input id='input' type='text' placeHolderContent='{0}' /><action activationType='background' arguments='action=markAsRead&amp;", Strings.Reply);
                 actions += launch;
                 //actions += L"' hint-inputId='QuickMessage' content='ms-resource:Send' imageUri='ms-appx:///Assets/Icons/Toast/Send.png'/></actions>";
-                actions += string.Format("' content='{0}'/><action activationType='background' arguments='action=reply&amp;", Strings.Resources.MarkAsRead);
+                actions += string.Format("' content='{0}'/><action activationType='background' arguments='action=reply&amp;", Strings.MarkAsRead);
                 actions += launch;
-                actions += string.Format("' hint-inputId='input' content='{0}'/></actions>", Strings.Resources.Send);
+                actions += string.Format("' hint-inputId='input' content='{0}'/></actions>", Strings.Send);
             }
 
             string audio = "";
@@ -875,7 +875,7 @@ namespace Telegram.Services
         {
             if (chat.Type is ChatTypeSecret)
             {
-                return Strings.Resources.AppName;
+                return Strings.AppName;
             }
 
             return _clientService.GetTitle(chat);
@@ -885,7 +885,7 @@ namespace Telegram.Services
         {
             if (chat.Type is ChatTypeSecret)
             {
-                return Strings.Resources.YouHaveNewMessage;
+                return Strings.YouHaveNewMessage;
             }
 
             return UpdateFromLabel(chat, message) + GetBriefLabel(chat, message);
@@ -895,7 +895,7 @@ namespace Telegram.Services
         {
             if (chat.Type is ChatTypeSecret)
             {
-                return Strings.Resources.YouHaveNewMessage;
+                return Strings.YouHaveNewMessage;
             }
 
             return UpdateFromLabel(chat, message) + GetBriefLabel(chat, message);
@@ -982,7 +982,7 @@ namespace Telegram.Services
                 }
                 else if (from.Type is UserTypeDeleted)
                 {
-                    result = $"{Strings.Resources.HiddenName}: ";
+                    result = $"{Strings.HiddenName}: ";
                 }
                 else
                 {
@@ -996,24 +996,24 @@ namespace Telegram.Services
             }
             if (message.Content is MessageExpiredVideo)
             {
-                return result + Strings.Resources.AttachVideoExpired;
+                return result + Strings.AttachVideoExpired;
             }
             else if (message.Content is MessageExpiredPhoto)
             {
-                return result + Strings.Resources.AttachPhotoExpired;
+                return result + Strings.AttachPhotoExpired;
             }
             else if (message.Content is MessageVideoNote)
             {
-                return result + Strings.Resources.AttachRound;
+                return result + Strings.AttachRound;
             }
             else if (message.Content is MessageSticker sticker)
             {
                 if (string.IsNullOrEmpty(sticker.Sticker.Emoji))
                 {
-                    return result + Strings.Resources.AttachSticker;
+                    return result + Strings.AttachSticker;
                 }
 
-                return result + $"{sticker.Sticker.Emoji} {Strings.Resources.AttachSticker}";
+                return result + $"{sticker.Sticker.Emoji} {Strings.AttachSticker}";
             }
 
             string GetCaption(string caption)
@@ -1023,15 +1023,15 @@ namespace Telegram.Services
 
             if (message.Content is MessageVoiceNote voiceNote)
             {
-                return result + Strings.Resources.AttachAudio + GetCaption(voiceNote.Caption.Text);
+                return result + Strings.AttachAudio + GetCaption(voiceNote.Caption.Text);
             }
             else if (message.Content is MessageVideo video)
             {
-                return result + (video.IsSecret ? Strings.Resources.AttachDestructingVideo : Strings.Resources.AttachVideo) + GetCaption(video.Caption.Text);
+                return result + (video.IsSecret ? Strings.AttachDestructingVideo : Strings.AttachVideo) + GetCaption(video.Caption.Text);
             }
             else if (message.Content is MessageAnimation animation)
             {
-                return result + Strings.Resources.AttachGif + GetCaption(animation.Caption.Text);
+                return result + Strings.AttachGif + GetCaption(animation.Caption.Text);
             }
             else if (message.Content is MessageAudio audio)
             {
@@ -1040,18 +1040,18 @@ namespace Telegram.Services
 
                 if (performer == null && title == null)
                 {
-                    return result + Strings.Resources.AttachMusic + GetCaption(audio.Caption.Text);
+                    return result + Strings.AttachMusic + GetCaption(audio.Caption.Text);
                 }
                 else
                 {
-                    return $"{result}{performer ?? Strings.Resources.AudioUnknownArtist} - {title ?? Strings.Resources.AudioUnknownTitle}" + GetCaption(audio.Caption.Text);
+                    return $"{result}{performer ?? Strings.AudioUnknownArtist} - {title ?? Strings.AudioUnknownTitle}" + GetCaption(audio.Caption.Text);
                 }
             }
             else if (message.Content is MessageDocument document)
             {
                 if (string.IsNullOrEmpty(document.Document.FileName))
                 {
-                    return result + Strings.Resources.AttachDocument + GetCaption(document.Caption.Text);
+                    return result + Strings.AttachDocument + GetCaption(document.Caption.Text);
                 }
 
                 return result + document.Document.FileName + GetCaption(document.Caption.Text);
@@ -1062,19 +1062,19 @@ namespace Telegram.Services
             }
             else if (message.Content is MessageContact)
             {
-                return result + Strings.Resources.AttachContact;
+                return result + Strings.AttachContact;
             }
             else if (message.Content is MessageLocation location)
             {
-                return result + (location.LivePeriod > 0 ? Strings.Resources.AttachLiveLocation : Strings.Resources.AttachLocation);
+                return result + (location.LivePeriod > 0 ? Strings.AttachLiveLocation : Strings.AttachLocation);
             }
             else if (message.Content is MessageVenue)
             {
-                return result + Strings.Resources.AttachLocation;
+                return result + Strings.AttachLocation;
             }
             else if (message.Content is MessagePhoto photo)
             {
-                return result + (photo.IsSecret ? Strings.Resources.AttachDestructingPhoto : Strings.Resources.AttachPhoto) + GetCaption(photo.Caption.Text);
+                return result + (photo.IsSecret ? Strings.AttachDestructingPhoto : Strings.AttachPhoto) + GetCaption(photo.Caption.Text);
             }
             else if (message.Content is MessagePoll poll)
             {
@@ -1086,7 +1086,7 @@ namespace Telegram.Services
             }
             else if (message.Content is MessageUnsupported)
             {
-                return result + Strings.Resources.UnsupportedAttachment;
+                return result + Strings.UnsupportedAttachment;
             }
 
             return result;
@@ -1115,7 +1115,7 @@ namespace Telegram.Services
                     }
                     else if (senderUser.Type is UserTypeDeleted)
                     {
-                        result = $"{Strings.Resources.HiddenName}: ";
+                        result = $"{Strings.HiddenName}: ";
                     }
                     else
                     {
@@ -1142,7 +1142,7 @@ namespace Telegram.Services
             {
                 if (gameMedia.IsPinned)
                 {
-                    return FormatPinned(Strings.Resources.NotificationActionPinnedGameChannel);
+                    return FormatPinned(Strings.NotificationActionPinnedGameChannel);
                 }
 
                 return result + "\uD83C\uDFAE " + gameMedia.Title;
@@ -1151,10 +1151,10 @@ namespace Telegram.Services
             {
                 if (videoNote.IsPinned)
                 {
-                    return FormatPinned(Strings.Resources.NotificationActionPinnedRoundChannel);
+                    return FormatPinned(Strings.NotificationActionPinnedRoundChannel);
                 }
 
-                return result + Strings.Resources.AttachRound;
+                return result + Strings.AttachRound;
             }
             else if (message.Content is PushMessageContentSticker sticker)
             {
@@ -1162,18 +1162,18 @@ namespace Telegram.Services
                 {
                     if (string.IsNullOrEmpty(sticker.Sticker?.Emoji))
                     {
-                        return FormatPinned(Strings.Resources.NotificationActionPinnedStickerChannel);
+                        return FormatPinned(Strings.NotificationActionPinnedStickerChannel);
                     }
 
-                    return FormatPinned(string.Format(Strings.Resources.NotificationActionPinnedStickerEmojiChannel, "{0}", sticker.Emoji));
+                    return FormatPinned(string.Format(Strings.NotificationActionPinnedStickerEmojiChannel, "{0}", sticker.Emoji));
                 }
 
                 if (string.IsNullOrEmpty(sticker.Sticker?.Emoji))
                 {
-                    return result + Strings.Resources.AttachSticker;
+                    return result + Strings.AttachSticker;
                 }
 
-                return result + $"{sticker.Sticker.Emoji} {Strings.Resources.AttachSticker}";
+                return result + $"{sticker.Sticker.Emoji} {Strings.AttachSticker}";
             }
 
             string GetCaption(string caption)
@@ -1185,34 +1185,34 @@ namespace Telegram.Services
             {
                 if (voiceNote.IsPinned)
                 {
-                    return FormatPinned(Strings.Resources.NotificationActionPinnedVoiceChannel);
+                    return FormatPinned(Strings.NotificationActionPinnedVoiceChannel);
                 }
 
-                return result + Strings.Resources.AttachAudio;
+                return result + Strings.AttachAudio;
             }
             else if (message.Content is PushMessageContentVideo video)
             {
                 if (video.IsPinned)
                 {
-                    return FormatPinned(Strings.Resources.NotificationActionPinnedVideoChannel);
+                    return FormatPinned(Strings.NotificationActionPinnedVideoChannel);
                 }
 
-                return result + (video.IsSecret ? Strings.Resources.AttachDestructingVideo : Strings.Resources.AttachVideo) + GetCaption(video.Caption);
+                return result + (video.IsSecret ? Strings.AttachDestructingVideo : Strings.AttachVideo) + GetCaption(video.Caption);
             }
             else if (message.Content is PushMessageContentAnimation animation)
             {
                 if (animation.IsPinned)
                 {
-                    return FormatPinned(Strings.Resources.NotificationActionPinnedGifChannel);
+                    return FormatPinned(Strings.NotificationActionPinnedGifChannel);
                 }
 
-                return result + Strings.Resources.AttachGif + GetCaption(animation.Caption);
+                return result + Strings.AttachGif + GetCaption(animation.Caption);
             }
             else if (message.Content is PushMessageContentAudio audio)
             {
                 if (audio.IsPinned)
                 {
-                    return FormatPinned(Strings.Resources.NotificationActionPinnedMusicChannel);
+                    return FormatPinned(Strings.NotificationActionPinnedMusicChannel);
                 }
 
                 var performer = string.IsNullOrEmpty(audio.Audio?.Performer) ? null : audio.Audio.Performer;
@@ -1220,7 +1220,7 @@ namespace Telegram.Services
 
                 if (performer == null || title == null)
                 {
-                    return result + Strings.Resources.AttachMusic;
+                    return result + Strings.AttachMusic;
                 }
                 else
                 {
@@ -1231,12 +1231,12 @@ namespace Telegram.Services
             {
                 if (document.IsPinned)
                 {
-                    return FormatPinned(Strings.Resources.NotificationActionPinnedFileChannel);
+                    return FormatPinned(Strings.NotificationActionPinnedFileChannel);
                 }
 
                 if (string.IsNullOrEmpty(document.Document?.FileName))
                 {
-                    return result + Strings.Resources.AttachDocument;
+                    return result + Strings.AttachDocument;
                 }
 
                 return result + document.Document.FileName;
@@ -1245,7 +1245,7 @@ namespace Telegram.Services
             {
                 if (invoice.IsPinned)
                 {
-                    return FormatPinned(Strings.Resources.NotificationActionPinnedInvoiceChannel);
+                    return FormatPinned(Strings.NotificationActionPinnedInvoiceChannel);
                 }
 
                 return result + invoice.Price;
@@ -1254,34 +1254,34 @@ namespace Telegram.Services
             {
                 if (contact.IsPinned)
                 {
-                    return FormatPinned(Strings.Resources.NotificationActionPinnedContactChannel);
+                    return FormatPinned(Strings.NotificationActionPinnedContactChannel);
                 }
 
-                return result + Strings.Resources.AttachContact;
+                return result + Strings.AttachContact;
             }
             else if (message.Content is PushMessageContentLocation location)
             {
                 if (location.IsPinned)
                 {
-                    return FormatPinned(location.IsLive ? Strings.Resources.NotificationActionPinnedGeoLiveChannel : Strings.Resources.NotificationActionPinnedGeoChannel);
+                    return FormatPinned(location.IsLive ? Strings.NotificationActionPinnedGeoLiveChannel : Strings.NotificationActionPinnedGeoChannel);
                 }
 
-                return result + (location.IsLive ? Strings.Resources.AttachLiveLocation : Strings.Resources.AttachLocation);
+                return result + (location.IsLive ? Strings.AttachLiveLocation : Strings.AttachLocation);
             }
             else if (message.Content is PushMessageContentPhoto photo)
             {
                 if (photo.IsPinned)
                 {
-                    return FormatPinned(Strings.Resources.NotificationActionPinnedPhotoChannel);
+                    return FormatPinned(Strings.NotificationActionPinnedPhotoChannel);
                 }
 
-                return result + (photo.IsSecret ? Strings.Resources.AttachDestructingPhoto : Strings.Resources.AttachPhoto) + GetCaption(photo.Caption);
+                return result + (photo.IsSecret ? Strings.AttachDestructingPhoto : Strings.AttachPhoto) + GetCaption(photo.Caption);
             }
             else if (message.Content is PushMessageContentPoll poll)
             {
                 if (poll.IsPinned)
                 {
-                    return FormatPinned(Strings.Resources.NotificationActionPinnedPollChannel);
+                    return FormatPinned(Strings.NotificationActionPinnedPollChannel);
                 }
 
                 return result + "\uD83D\uDCCA " + poll.Question;
@@ -1289,7 +1289,7 @@ namespace Telegram.Services
             // Service messages
             else if (message.Content is PushMessageContentBasicGroupChatCreate)
             {
-                return Strings.Resources.NotificationInvitedToGroup;
+                return Strings.NotificationInvitedToGroup;
             }
             else if (message.Content is PushMessageContentChatAddMembers)
             {
@@ -1299,20 +1299,20 @@ namespace Telegram.Services
             {
                 if (chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
                 {
-                    return Strings.Resources.ActionChannelChangedPhoto;
+                    return Strings.ActionChannelChangedPhoto;
                 }
 
-                //Strings.Resources.NotificationMessageAlbum
-                //return Strings.Resources.ActionChangedPhoto.Replace("un1", from.GetFullName());
+                //Strings.NotificationMessageAlbum
+                //return Strings.ActionChangedPhoto.Replace("un1", from.GetFullName());
             }
             else if (message.Content is PushMessageContentChatChangeTitle chatChangeTitle)
             {
                 if (chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
                 {
-                    return Strings.Resources.ActionChannelChangedTitle.Replace("un2", chatChangeTitle.Title);
+                    return Strings.ActionChannelChangedTitle.Replace("un2", chatChangeTitle.Title);
                 }
 
-                //return Strings.Resources.ActionChangedTitle.Replace("un1", from.GetFullName()).Replace("un2", chatChangeTitle.Title);
+                //return Strings.ActionChangedTitle.Replace("un1", from.GetFullName()).Replace("un2", chatChangeTitle.Title);
             }
             else if (message.Content is PushMessageContentChatDeleteMember)
             {
@@ -1320,31 +1320,31 @@ namespace Telegram.Services
             }
             else if (message.Content is PushMessageContentChatJoinByLink)
             {
-                //return Strings.Resources.ActionInviteUser.Replace("un1", from.GetFullName());
+                //return Strings.ActionInviteUser.Replace("un1", from.GetFullName());
             }
             else if (message.Content is PushMessageContentContactRegistered)
             {
-                //return string.Format(Strings.Resources.NotificationContactJoined, from.GetFullName());
+                //return string.Format(Strings.NotificationContactJoined, from.GetFullName());
             }
             else if (message.Content is PushMessageContentGameScore)
             {
-                return Strings.Resources.NotificationMessageGame;
+                return Strings.NotificationMessageGame;
             }
             else if (message.Content is PushMessageContentHidden)
             {
-                return Strings.Resources.YouHaveNewMessage;
+                return Strings.YouHaveNewMessage;
             }
             else if (message.Content is PushMessageContentMediaAlbum)
             {
-                return Strings.Resources.NotificationMessageAlbum;
+                return Strings.NotificationMessageAlbum;
             }
             else if (message.Content is PushMessageContentMessageForwards)
             {
-                //return string.Format(Strings.Resources.NotificationMessageForwardFew, Locale.Declension("messages", forwards.TotalCount));
+                //return string.Format(Strings.NotificationMessageForwardFew, Locale.Declension("messages", forwards.TotalCount));
             }
             else if (message.Content is PushMessageContentScreenshotTaken)
             {
-                return Strings.Resources.ActionTakeScreenshoot;
+                return Strings.ActionTakeScreenshoot;
             }
 
             return result;

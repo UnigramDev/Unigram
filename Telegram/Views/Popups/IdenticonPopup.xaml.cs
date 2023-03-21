@@ -20,9 +20,9 @@ namespace Telegram.Views.Popups
         public IdenticonPopup(int sessionId, Chat chat)
         {
             InitializeComponent();
-            Title = Strings.Resources.EncryptionKey;
+            Title = Strings.EncryptionKey;
 
-            PrimaryButtonText = Strings.Resources.Close;
+            PrimaryButtonText = Strings.Close;
 
             if (chat.Type is ChatTypeSecret secret)
             {
@@ -70,7 +70,7 @@ namespace Telegram.Views.Popups
                 Texture.Source = PlaceholderHelper.GetIdenticon(hash, 192);
                 Hash.Text = builder.ToString();
 
-                TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.Resources.EncryptionKeyDescription, user.FirstName, user.FirstName));
+                TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.EncryptionKeyDescription, user.FirstName, user.FirstName));
             }
         }
     }

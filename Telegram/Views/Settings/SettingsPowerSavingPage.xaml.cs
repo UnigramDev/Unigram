@@ -15,7 +15,7 @@ namespace Telegram.Views.Settings
         public SettingsPowerSavingPage()
         {
             InitializeComponent();
-            Title = Strings.Resources.PowerUsage;
+            Title = Strings.PowerUsage;
         }
     }
 }

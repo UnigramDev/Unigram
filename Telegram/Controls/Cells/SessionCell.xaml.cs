@@ -42,7 +42,7 @@ namespace Telegram.Controls.Cells
 
             Name.Text = session.DeviceModel;
             Title.Text = string.Format("{0} {1}", session.ApplicationName, session.ApplicationVersion);
-            Subtitle.Text = string.Format("{0} \u2022 {1}", session.Country, session.IsCurrent ? Strings.Resources.Online : Converter.DateExtended(session.LastActiveDate));
+            Subtitle.Text = string.Format("{0} \u2022 {1}", session.Country, session.IsCurrent ? Strings.Online : Converter.DateExtended(session.LastActiveDate));
         }
 
         public static (string Glyph, Color Backgroud, string Animation) IconForSession(Session session)

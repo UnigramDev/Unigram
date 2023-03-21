@@ -21,7 +21,7 @@ namespace Telegram.Views.Supergroups
         public SupergroupEditLinkedChatPage()
         {
             InitializeComponent();
-            Title = Strings.Resources.Discussion;
+            Title = Strings.Discussion;
         }
 
         private void OnElementPrepared(Microsoft.UI.Xaml.Controls.ItemsRepeater sender, Microsoft.UI.Xaml.Controls.ItemsRepeaterElementPreparedEventArgs args)
@@ -58,11 +58,11 @@ namespace Telegram.Views.Supergroups
 
         public void UpdateSupergroup(Chat chat, Supergroup group)
         {
-            TextBlockHelper.SetMarkdown(Headline, string.Format(Strings.Resources.DiscussionChannelGroupSetHelp2, chat.Title));
+            TextBlockHelper.SetMarkdown(Headline, string.Format(Strings.DiscussionChannelGroupSetHelp2, chat.Title));
 
             Create.Visibility = group.HasLinkedChat ? Visibility.Collapsed : Visibility.Visible;
             Unlink.Visibility = group.HasLinkedChat ? Visibility.Visible : Visibility.Collapsed;
-            Unlink.Content = group.IsChannel ? Strings.Resources.DiscussionUnlinkGroup : Strings.Resources.DiscussionUnlinkChannel;
+            Unlink.Content = group.IsChannel ? Strings.DiscussionUnlinkGroup : Strings.DiscussionUnlinkChannel;
         }
 
         public void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo)
@@ -72,13 +72,13 @@ namespace Telegram.Views.Supergroups
             {
                 if (group.IsChannel)
                 {
-                    TextBlockHelper.SetMarkdown(Headline, string.Format(Strings.Resources.DiscussionChannelGroupSetHelp2, linkedChat.Title));
-                    LayoutRoot.Footer = Strings.Resources.DiscussionChannelHelp2;
+                    TextBlockHelper.SetMarkdown(Headline, string.Format(Strings.DiscussionChannelGroupSetHelp2, linkedChat.Title));
+                    LayoutRoot.Footer = Strings.DiscussionChannelHelp2;
                 }
                 else
                 {
-                    TextBlockHelper.SetMarkdown(Headline, string.Format(Strings.Resources.DiscussionGroupHelp, linkedChat.Title));
-                    LayoutRoot.Footer = Strings.Resources.DiscussionChannelHelp2;
+                    TextBlockHelper.SetMarkdown(Headline, string.Format(Strings.DiscussionGroupHelp, linkedChat.Title));
+                    LayoutRoot.Footer = Strings.DiscussionChannelHelp2;
                 }
 
                 JoinToSendMessages.Visibility = group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
@@ -99,7 +99,7 @@ namespace Telegram.Views.Supergroups
 
         private string ConvertJoinToSendMessages(bool joinToSendMessages)
         {
-            return joinToSendMessages ? Strings.Resources.ChannelSettingsJoinRequestInfo : Strings.Resources.ChannelSettingsJoinToSendInfo;
+            return joinToSendMessages ? Strings.ChannelSettingsJoinRequestInfo : Strings.ChannelSettingsJoinToSendInfo;
         }
 
         #endregion

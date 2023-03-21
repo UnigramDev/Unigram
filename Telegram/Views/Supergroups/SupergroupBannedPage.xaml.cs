@@ -25,7 +25,7 @@ namespace Telegram.Views.Supergroups
         public SupergroupBannedPage()
         {
             InitializeComponent();
-            Title = Strings.Resources.ChannelBlockedUsers;
+            Title = Strings.ChannelBlockedUsers;
         }
 
         public void Search()
@@ -60,7 +60,7 @@ namespace Telegram.Views.Supergroups
             var element = sender as FrameworkElement;
             var member = element.Tag as ChatMember;
 
-            flyout.CreateFlyoutItem(ViewModel.MemberUnbanCommand, member, Strings.Resources.Unban);
+            flyout.CreateFlyoutItem(ViewModel.MemberUnbanCommand, member, Strings.Unban);
 
             args.ShowAt(flyout, element);
         }
@@ -72,7 +72,7 @@ namespace Telegram.Views.Supergroups
         public void UpdateSupergroup(Chat chat, Supergroup group)
         {
             AddNewPanel.Visibility = group.CanRestrictMembers() ? Visibility.Visible : Visibility.Collapsed;
-            Footer.Text = group.IsChannel ? Strings.Resources.NoBlockedChannel : Strings.Resources.NoBlockedGroup;
+            Footer.Text = group.IsChannel ? Strings.NoBlockedChannel : Strings.NoBlockedGroup;
         }
 
         public void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo) { }

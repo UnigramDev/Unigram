@@ -25,7 +25,7 @@ namespace Telegram.Views.Payments
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<PaymentCredentialsViewModel>();
 
-            Title = Strings.Resources.PaymentCardInfo;
+            Title = Strings.PaymentCardInfo;
 
             var url = ViewModel.Initialize(paymentForm);
             if (url != null)
@@ -35,8 +35,8 @@ namespace Telegram.Views.Payments
             }
             else
             {
-                PrimaryButtonText = Strings.Resources.OK;
-                SecondaryButtonText = Strings.Resources.Cancel;
+                PrimaryButtonText = Strings.OK;
+                SecondaryButtonText = Strings.Cancel;
             }
         }
 
@@ -45,7 +45,7 @@ namespace Telegram.Views.Payments
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<PaymentCredentialsViewModel>();
 
-            Title = Strings.Resources.PaymentCardInfo;
+            Title = Strings.PaymentCardInfo;
 
             var url = ViewModel.Initialize(paymentForm, paymentOption);
             if (url != null)
@@ -55,7 +55,7 @@ namespace Telegram.Views.Payments
             }
             else
             {
-                SecondaryButtonText = Strings.Resources.Cancel;
+                SecondaryButtonText = Strings.Cancel;
             }
         }
 

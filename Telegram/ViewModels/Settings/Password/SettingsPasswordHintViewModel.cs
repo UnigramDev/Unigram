@@ -48,7 +48,7 @@ namespace Telegram.ViewModels.Settings.Password
 
             if (string.Equals(password, hint))
             {
-                await ShowPopupAsync(Strings.Resources.PasswordAsHintError, Strings.Resources.AppName, Strings.Resources.OK);
+                await ShowPopupAsync(Strings.PasswordAsHintError, Strings.AppName, Strings.OK);
                 return;
             }
 

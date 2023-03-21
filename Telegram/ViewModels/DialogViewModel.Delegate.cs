@@ -330,7 +330,7 @@ namespace Telegram.ViewModels
             }
             else
             {
-                await ShowPopupAsync(Strings.Resources.NoUsernameFound, Strings.Resources.AppName, Strings.Resources.OK);
+                await ShowPopupAsync(Strings.NoUsernameFound, Strings.AppName, Strings.OK);
             }
         }
 
@@ -431,7 +431,7 @@ namespace Telegram.ViewModels
 
                     if (untrust)
                     {
-                        var confirm = await ShowPopupAsync(string.Format(Strings.Resources.OpenUrlAlert, url), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+                        var confirm = await ShowPopupAsync(string.Format(Strings.OpenUrlAlert, url), Strings.AppName, Strings.OK, Strings.Cancel);
                         if (confirm != ContentDialogResult.Primary)
                         {
                             return;
@@ -564,10 +564,10 @@ namespace Telegram.ViewModels
                     {
                         if (admin.IsOwner)
                         {
-                            return Strings.Resources.ChannelCreator;
+                            return Strings.ChannelCreator;
                         }
 
-                        return Strings.Resources.ChannelAdmin;
+                        return Strings.ChannelAdmin;
                     }
 
                     return admin.CustomTitle;

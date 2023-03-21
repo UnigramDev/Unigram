@@ -193,7 +193,7 @@ namespace Telegram.ViewModels
             set => Set(ref _allowEmptySelection, value);
         }
 
-        private string _title = Strings.Resources.ShareSendTo;
+        private string _title = Strings.ShareSendTo;
         public string Title
         {
             get => _title;
@@ -478,7 +478,7 @@ namespace Telegram.ViewModels
                 var response = await ClientService.SendAsync(new GetGroupCallInviteLink(_groupCall.Id, _isSpeakerLink));
                 if (response is HttpUrl httpUrl)
                 {
-                    var formatted = new FormattedText(string.Format(Strings.Resources.VoipGroupInviteText, httpUrl.Url), new TextEntity[0]);
+                    var formatted = new FormattedText(string.Format(Strings.VoipGroupInviteText, httpUrl.Url), new TextEntity[0]);
 
                     foreach (var chat in chats)
                     {

@@ -61,7 +61,7 @@ namespace Telegram.Views.Authorization
 
         private string ConvertForgot(string pattern)
         {
-            return string.Format(Strings.Resources.RestoreEmailTrouble, pattern);
+            return string.Format(Strings.RestoreEmailTrouble, pattern);
         }
 
         private string ConvertTrouble(string pattern)

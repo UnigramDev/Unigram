@@ -180,7 +180,7 @@ namespace Telegram.ViewModels.Settings
         public RelayCommand<LanguagePackInfo> DeleteCommand { get; }
         private async void DeleteExecute(LanguagePackInfo info)
         {
-            var confirm = await ShowPopupAsync(Strings.Resources.DeleteLocalization, Strings.Resources.AppName, Strings.Resources.Delete, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.DeleteLocalization, Strings.AppName, Strings.Delete, Strings.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

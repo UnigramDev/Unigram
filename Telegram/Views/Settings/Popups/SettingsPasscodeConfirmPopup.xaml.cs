@@ -34,9 +34,9 @@ namespace Telegram.Views.Settings.Popups
                 _retryTimer.Start();
             }
 
-            Title = Strings.Resources.Passcode;
-            PrimaryButtonText = Strings.Resources.OK;
-            SecondaryButtonText = Strings.Resources.Cancel;
+            Title = Strings.Passcode;
+            PrimaryButtonText = Strings.OK;
+            SecondaryButtonText = Strings.Cancel;
 
             var confirmScope = new InputScope();
             confirmScope.Names.Add(new InputScopeName(_passcodeService.IsSimple ? InputScopeNameValue.NumericPin : InputScopeNameValue.Password));
@@ -49,7 +49,7 @@ namespace Telegram.Views.Settings.Popups
             if (_passcodeService.RetryIn > 0)
             {
                 RetryIn.Visibility = Visibility.Visible;
-                RetryIn.Text = string.Format(Strings.Resources.TooManyTries, Locale.Declension("Seconds", _passcodeService.RetryIn));
+                RetryIn.Text = string.Format(Strings.TooManyTries, Locale.Declension("Seconds", _passcodeService.RetryIn));
             }
             else
             {

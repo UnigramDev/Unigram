@@ -17,13 +17,13 @@ namespace Telegram.Converters
             switch (member.Status)
             {
                 case ChatMemberStatusCreator:
-                    return Strings.Resources.ChannelCreator;
+                    return Strings.ChannelCreator;
                 case ChatMemberStatusAdministrator:
-                    return string.Format(Strings.Resources.EditAdminPromotedBy, clientService.GetUser(member.InviterUserId).FullName());
+                    return string.Format(Strings.EditAdminPromotedBy, clientService.GetUser(member.InviterUserId).FullName());
                 case ChatMemberStatusRestricted:
-                    return string.Format(Strings.Resources.UserRestrictionsBy, clientService.GetUser(member.InviterUserId).FullName());
+                    return string.Format(Strings.UserRestrictionsBy, clientService.GetUser(member.InviterUserId).FullName());
                 case ChatMemberStatusBanned:
-                    return string.Format(Strings.Resources.UserRestrictionsBy, clientService.GetUser(member.InviterUserId).FullName());
+                    return string.Format(Strings.UserRestrictionsBy, clientService.GetUser(member.InviterUserId).FullName());
                 default:
                     return LastSeenConverter.GetLabel(clientService.GetMessageSender(member.MemberId) as User, false);
             }

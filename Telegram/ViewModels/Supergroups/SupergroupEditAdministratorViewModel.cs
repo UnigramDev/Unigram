@@ -371,25 +371,25 @@ namespace Telegram.ViewModels.Supergroups
             var canTransfer = await ClientService.SendAsync(new CanTransferOwnership());
             if (canTransfer is CanTransferOwnershipResultPasswordNeeded or CanTransferOwnershipResultPasswordTooFresh or CanTransferOwnershipResultSessionTooFresh)
             {
-                var primary = Strings.Resources.OK;
+                var primary = Strings.OK;
 
                 var builder = new StringBuilder();
-                builder.AppendFormat(supergroup.IsChannel ? Strings.Resources.EditChannelAdminTransferAlertText : Strings.Resources.EditAdminTransferAlertText, user.FirstName);
+                builder.AppendFormat(supergroup.IsChannel ? Strings.EditChannelAdminTransferAlertText : Strings.EditAdminTransferAlertText, user.FirstName);
                 builder.AppendLine();
-                builder.AppendLine($"\u2022 {Strings.Resources.EditAdminTransferAlertText1}");
-                builder.AppendLine($"\u2022 {Strings.Resources.EditAdminTransferAlertText2}");
+                builder.AppendLine($"\u2022 {Strings.EditAdminTransferAlertText1}");
+                builder.AppendLine($"\u2022 {Strings.EditAdminTransferAlertText2}");
 
                 if (canTransfer is CanTransferOwnershipResultPasswordNeeded)
                 {
-                    primary = Strings.Resources.EditAdminTransferSetPassword;
+                    primary = Strings.EditAdminTransferSetPassword;
                 }
                 else
                 {
                     builder.AppendLine();
-                    builder.AppendLine(Strings.Resources.EditAdminTransferAlertText3);
+                    builder.AppendLine(Strings.EditAdminTransferAlertText3);
                 }
 
-                var confirm = await ShowPopupAsync(builder.ToString(), Strings.Resources.EditAdminTransferAlertTitle, primary, Strings.Resources.Cancel);
+                var confirm = await ShowPopupAsync(builder.ToString(), Strings.EditAdminTransferAlertTitle, primary, Strings.Cancel);
                 if (confirm == ContentDialogResult.Primary && canTransfer is CanTransferOwnershipResultPasswordNeeded)
                 {
                     NavigationService.Navigate(typeof(SettingsPasswordPage));
@@ -397,7 +397,7 @@ namespace Telegram.ViewModels.Supergroups
             }
             else if (canTransfer is CanTransferOwnershipResultOk)
             {
-                var confirm = await ShowPopupAsync(string.Format(Strings.Resources.EditAdminTransferReadyAlertText, chat.Title, user.FullName()), supergroup.IsChannel ? Strings.Resources.EditAdminChannelTransfer : Strings.Resources.EditAdminGroupTransfer, Strings.Resources.EditAdminTransferChangeOwner, Strings.Resources.Cancel);
+                var confirm = await ShowPopupAsync(string.Format(Strings.EditAdminTransferReadyAlertText, chat.Title, user.FullName()), supergroup.IsChannel ? Strings.EditAdminChannelTransfer : Strings.EditAdminGroupTransfer, Strings.EditAdminTransferChangeOwner, Strings.Cancel);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;
@@ -405,11 +405,11 @@ namespace Telegram.ViewModels.Supergroups
 
                 var popup = new InputPopup(InputPopupType.Password)
                 {
-                    Title = Strings.Resources.TwoStepVerification,
-                    Header = Strings.Resources.PleaseEnterCurrentPasswordTransfer,
-                    PlaceholderText = Strings.Resources.LoginPassword,
-                    PrimaryButtonText = Strings.Resources.OK,
-                    SecondaryButtonText = Strings.Resources.Cancel
+                    Title = Strings.TwoStepVerification,
+                    Header = Strings.PleaseEnterCurrentPasswordTransfer,
+                    PlaceholderText = Strings.LoginPassword,
+                    PrimaryButtonText = Strings.OK,
+                    SecondaryButtonText = Strings.Cancel
                 };
 
                 var result = await ShowPopupAsync(popup);

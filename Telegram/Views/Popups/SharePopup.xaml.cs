@@ -44,9 +44,9 @@ namespace Telegram.Views.Popups
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<ShareViewModel>();
 
-            //Title = Strings.Resources.ShareSendTo;
-            PrimaryButtonText = Strings.Resources.Send;
-            SecondaryButtonText = Strings.Resources.Close;
+            //Title = Strings.ShareSendTo;
+            PrimaryButtonText = Strings.Send;
+            SecondaryButtonText = Strings.Close;
 
             EmojiPanel.DataContext = EmojiDrawerViewModel.GetForCurrentView(ViewModel.SessionId);
             CaptionInput.CustomEmoji = CustomEmoji;
@@ -81,8 +81,8 @@ namespace Telegram.Views.Popups
         private void PrimaryButton_ContextRequested(object sender, RoutedEventArgs args)
         {
             var flyout = new MenuFlyout();
-            flyout.CreateFlyoutItem(new RelayCommand(() => { ViewModel.SendAsCopy = true; Hide(ContentDialogResult.Primary); }), Strings.Resources.HideSenderNames.Replace("\\’", "’"), new FontIcon { Glyph = Icons.DocumentCopy });
-            flyout.CreateFlyoutItem(new RelayCommand(() => { ViewModel.RemoveCaptions = true; Hide(ContentDialogResult.Primary); }), Strings.Resources.HideCaption, new FontIcon { Glyph = Icons.Block });
+            flyout.CreateFlyoutItem(new RelayCommand(() => { ViewModel.SendAsCopy = true; Hide(ContentDialogResult.Primary); }), Strings.HideSenderNames.Replace("\\’", "’"), new FontIcon { Glyph = Icons.DocumentCopy });
+            flyout.CreateFlyoutItem(new RelayCommand(() => { ViewModel.RemoveCaptions = true; Hide(ContentDialogResult.Primary); }), Strings.HideCaption, new FontIcon { Glyph = Icons.Block });
 
             flyout.ShowAt(sender as FrameworkElement, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedRight });
         }
@@ -381,7 +381,7 @@ namespace Telegram.Views.Popups
             {
                 Child = new TextBlock
                 {
-                    Text = Strings.Resources.FilterChatTypes,
+                    Text = Strings.FilterChatTypes,
                     Padding = new Thickness(12, 16, 0, 8),
                     Style = BootStrapper.Current.Resources["BaseTextBlockStyle"] as Style
                 }
@@ -391,17 +391,17 @@ namespace Telegram.Views.Popups
             {
                 Child = new TextBlock
                 {
-                    Text = Strings.Resources.FilterChats,
+                    Text = Strings.FilterChats,
                     Padding = new Thickness(12, 16, 0, 8),
                     Style = BootStrapper.Current.Resources["BaseTextBlockStyle"] as Style
                 }
             });
 
             var dialog = GetForCurrentView();
-            dialog.ViewModel.Title = include ? Strings.Resources.FilterAlwaysShow : Strings.Resources.FilterNeverShow;
+            dialog.ViewModel.Title = include ? Strings.FilterAlwaysShow : Strings.FilterNeverShow;
             dialog.ViewModel.AllowEmptySelection = true;
             dialog.Header = panel;
-            dialog.PrimaryButtonText = Strings.Resources.OK;
+            dialog.PrimaryButtonText = Strings.OK;
             dialog.IsPrimaryButtonEnabled = true;
 
             var confirm = await dialog.PickAsync(target.OfType<FilterChat>().Select(x => x.Chat.Id).ToArray(), SearchChatsType.All);
@@ -446,29 +446,29 @@ namespace Telegram.Views.Popups
             switch (filter.Flag)
             {
                 case ChatListFilterFlags.IncludeContacts:
-                    title.Text = Strings.Resources.FilterContacts;
+                    title.Text = Strings.FilterContacts;
                     break;
                 case ChatListFilterFlags.IncludeNonContacts:
-                    title.Text = Strings.Resources.FilterNonContacts;
+                    title.Text = Strings.FilterNonContacts;
                     break;
                 case ChatListFilterFlags.IncludeGroups:
-                    title.Text = Strings.Resources.FilterGroups;
+                    title.Text = Strings.FilterGroups;
                     break;
                 case ChatListFilterFlags.IncludeChannels:
-                    title.Text = Strings.Resources.FilterChannels;
+                    title.Text = Strings.FilterChannels;
                     break;
                 case ChatListFilterFlags.IncludeBots:
-                    title.Text = Strings.Resources.FilterBots;
+                    title.Text = Strings.FilterBots;
                     break;
 
                 case ChatListFilterFlags.ExcludeMuted:
-                    title.Text = Strings.Resources.FilterMuted;
+                    title.Text = Strings.FilterMuted;
                     break;
                 case ChatListFilterFlags.ExcludeRead:
-                    title.Text = Strings.Resources.FilterRead;
+                    title.Text = Strings.FilterRead;
                     break;
                 case ChatListFilterFlags.ExcludeArchived:
-                    title.Text = Strings.Resources.FilterArchived;
+                    title.Text = Strings.FilterArchived;
                     break;
             }
 

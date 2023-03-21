@@ -17,7 +17,7 @@ namespace Telegram.Views.Settings.Privacy
         public SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesPage()
         {
             InitializeComponent();
-            Title = Strings.Resources.PrivacyVoiceMessages;
+            Title = Strings.PrivacyVoiceMessages;
         }
 
         #region Binding

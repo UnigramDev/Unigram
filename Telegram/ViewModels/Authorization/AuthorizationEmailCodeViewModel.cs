@@ -110,11 +110,11 @@ namespace Telegram.ViewModels.Authorization
 
                 if (error.TypeEquals(ErrorType.EMAIL_VERIFY_EXPIRED))
                 {
-                    await ShowPopupAsync(Strings.Resources.CodeExpired, Strings.Resources.RestorePasswordNoEmailTitle, Strings.Resources.OK);
+                    await ShowPopupAsync(Strings.CodeExpired, Strings.RestorePasswordNoEmailTitle, Strings.OK);
                 }
                 else if (error.TypeEquals(ErrorType.CODE_INVALID))
                 {
-                    await ShowPopupAsync(Strings.Resources.InvalidCode, Strings.Resources.RestorePasswordNoEmailTitle, Strings.Resources.OK);
+                    await ShowPopupAsync(Strings.InvalidCode, Strings.RestorePasswordNoEmailTitle, Strings.OK);
                 }
 
                 Logs.Logger.Error(Logs.LogTarget.API, "account.signIn error " + error);

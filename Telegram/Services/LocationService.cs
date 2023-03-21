@@ -136,9 +136,9 @@ namespace Telegram.Services
             }
             else if (access.CurrentStatus != DeviceAccessStatus.Allowed)
             {
-                var message = Strings.Resources.PermissionNoLocationPosition;
+                var message = Strings.PermissionNoLocationPosition;
 
-                var confirm = await MessagePopup.ShowAsync(message, Strings.Resources.AppName, Strings.Resources.PermissionOpenSettings, Strings.Resources.OK);
+                var confirm = await MessagePopup.ShowAsync(message, Strings.AppName, Strings.PermissionOpenSettings, Strings.OK);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     await Launcher.LaunchUriAsync(new Uri("ms-settings:appsfeatures-app"));

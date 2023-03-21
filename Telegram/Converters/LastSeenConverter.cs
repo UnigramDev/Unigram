@@ -71,28 +71,28 @@ namespace Telegram.Converters
 
             if (IsServiceUser(user))
             {
-                return Strings.Resources.ServiceNotifications;
+                return Strings.ServiceNotifications;
             }
             else if (IsSupportUser(user))
             {
-                return Strings.Resources.SupportStatus;
+                return Strings.SupportStatus;
             }
             else if (user.Type is UserTypeBot bot)
             {
                 if (details)
                 {
-                    return Strings.Resources.Bot;
+                    return Strings.Bot;
                 }
 
-                return bot.CanReadAllGroupMessages ? Strings.Resources.BotStatusRead : Strings.Resources.BotStatusCantRead;
+                return bot.CanReadAllGroupMessages ? Strings.BotStatusRead : Strings.BotStatusCantRead;
             }
             //else if (clientService.IsUserSavedMessages(user))
             //{
-            //    return Strings.Resources.ChatYourSelf;
+            //    return Strings.ChatYourSelf;
             //}
             //else if (user.IsSelf && details)
             //{
-            //    return Strings.Resources.ChatYourSelf;
+            //    return Strings.ChatYourSelf;
             //}
 
             if (user.Status is UserStatusOffline offline)
@@ -103,7 +103,7 @@ namespace Telegram.Converters
             {
                 if (online.Expires > DateTime.Now.ToTimestamp() / 1000)
                 {
-                    return Strings.Resources.Online;
+                    return Strings.Online;
                 }
                 else
                 {
@@ -112,19 +112,19 @@ namespace Telegram.Converters
             }
             else if (user.Status is UserStatusRecently)
             {
-                return Strings.Resources.Lately;
+                return Strings.Lately;
             }
             else if (user.Status is UserStatusLastWeek)
             {
-                return Strings.Resources.WithinAWeek;
+                return Strings.WithinAWeek;
             }
             else if (user.Status is UserStatusLastMonth)
             {
-                return Strings.Resources.WithinAMonth;
+                return Strings.WithinAMonth;
             }
             else
             {
-                return Strings.Resources.ALongTimeAgo;
+                return Strings.ALongTimeAgo;
             }
         }
 
@@ -142,21 +142,21 @@ namespace Telegram.Converters
 
                 if (dateDay == day && year == dateYear)
                 {
-                    return string.Format(Strings.Resources.LastSeenFormatted, string.Format(Strings.Resources.TodayAtFormatted, Converter.ShortTime.Format(online)));
+                    return string.Format(Strings.LastSeenFormatted, string.Format(Strings.TodayAtFormatted, Converter.ShortTime.Format(online)));
                 }
                 else if (dateDay + 1 == day && year == dateYear)
                 {
-                    return string.Format(Strings.Resources.LastSeenFormatted, string.Format(Strings.Resources.YesterdayAtFormatted, Converter.ShortTime.Format(online)));
+                    return string.Format(Strings.LastSeenFormatted, string.Format(Strings.YesterdayAtFormatted, Converter.ShortTime.Format(online)));
                 }
                 else if (Math.Abs(DateTime.Now.ToTimestamp() / 1000 - date) < 31536000000L)
                 {
-                    string format = string.Format(Strings.Resources.formatDateAtTime, online.ToString(Strings.Resources.formatterMonth), Converter.ShortTime.Format(online));
-                    return string.Format(Strings.Resources.LastSeenDateFormatted, format);
+                    string format = string.Format(Strings.formatDateAtTime, online.ToString(Strings.formatterMonth), Converter.ShortTime.Format(online));
+                    return string.Format(Strings.LastSeenDateFormatted, format);
                 }
                 else
                 {
-                    string format = string.Format(Strings.Resources.formatDateAtTime, online.ToString(Strings.Resources.formatterYear), Converter.ShortTime.Format(online));
-                    return string.Format(Strings.Resources.LastSeenDateFormatted, format);
+                    string format = string.Format(Strings.formatDateAtTime, online.ToString(Strings.formatterYear), Converter.ShortTime.Format(online));
+                    return string.Format(Strings.LastSeenDateFormatted, format);
                 }
             }
             catch (Exception)

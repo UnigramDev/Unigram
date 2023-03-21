@@ -63,7 +63,7 @@ namespace Telegram.Views
             if (_passcodeService.RetryIn > 0)
             {
                 RetryIn.Visibility = Visibility.Visible;
-                RetryIn.Text = string.Format(Strings.Resources.TooManyTries, Locale.Declension("Seconds", _passcodeService.RetryIn));
+                RetryIn.Text = string.Format(Strings.TooManyTries, Locale.Declension("Seconds", _passcodeService.RetryIn));
             }
             else
             {
@@ -211,7 +211,7 @@ namespace Telegram.Views
         {
             try
             {
-                var result = await KeyCredentialManager.OpenAsync(Strings.Resources.AppName);
+                var result = await KeyCredentialManager.OpenAsync(Strings.AppName);
                 if (result.Credential != null)
                 {
                     var signResult = await result.Credential.RequestSignAsync(CryptographicBuffer.ConvertStringToBinary(Package.Current.Id.Name, BinaryStringEncoding.Utf8));
@@ -226,7 +226,7 @@ namespace Telegram.Views
                 }
                 else
                 {
-                    var creationResult = await KeyCredentialManager.RequestCreateAsync(Strings.Resources.AppName, KeyCredentialCreationOption.ReplaceExisting);
+                    var creationResult = await KeyCredentialManager.RequestCreateAsync(Strings.AppName, KeyCredentialCreationOption.ReplaceExisting);
                     if (creationResult.Status == KeyCredentialStatus.Success)
                     {
                         Unlock();

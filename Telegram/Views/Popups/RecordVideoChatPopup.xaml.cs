@@ -15,11 +15,11 @@ namespace Telegram.Views.Popups
         {
             InitializeComponent();
 
-            Title = Strings.Resources.VoipGroupStartRecordingTitle;
-            MessageLabel.Text = Strings.Resources.VoipGroupStartRecordingText;
-            PrimaryButtonText = Strings.Resources.Start;
-            SecondaryButtonText = Strings.Resources.Cancel;
-            Label.PlaceholderText = Strings.Resources.VoipGroupSaveFileHint;
+            Title = Strings.VoipGroupStartRecordingTitle;
+            MessageLabel.Text = Strings.VoipGroupStartRecordingText;
+            PrimaryButtonText = Strings.Start;
+            SecondaryButtonText = Strings.Cancel;
+            Label.PlaceholderText = Strings.VoipGroupSaveFileHint;
             Label.Text = title;
         }
 

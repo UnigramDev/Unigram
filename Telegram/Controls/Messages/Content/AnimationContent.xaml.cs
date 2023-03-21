@@ -127,7 +127,7 @@ namespace Telegram.Controls.Messages.Content
                 Button.SetGlyph(file.Id, MessageContentState.Download);
                 Button.Progress = 0;
 
-                Subtitle.Text = Strings.Resources.AttachGif + ", " + FileSizeConverter.Convert(size);
+                Subtitle.Text = Strings.AttachGif + ", " + FileSizeConverter.Convert(size);
                 Overlay.Opacity = 1;
 
                 Player.Source = null;
@@ -156,7 +156,7 @@ namespace Telegram.Controls.Messages.Content
                     Button.SetGlyph(file.Id, MessageContentState.Animation);
                     Button.Progress = 1;
 
-                    Subtitle.Text = Strings.Resources.AttachGif;
+                    Subtitle.Text = Strings.AttachGif;
                     Overlay.Opacity = 1;
 
                     Player.Source = new LocalVideoSource(file);

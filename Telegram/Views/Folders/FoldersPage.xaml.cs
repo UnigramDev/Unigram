@@ -22,7 +22,7 @@ namespace Telegram.Views.Folders
         public FoldersPage()
         {
             InitializeComponent();
-            Title = Strings.Resources.Filters;
+            Title = Strings.Filters;
         }
 
         private void Items_ElementPrepared(Microsoft.UI.Xaml.Controls.ItemsRepeater sender, Microsoft.UI.Xaml.Controls.ItemsRepeaterElementPreparedEventArgs args)
@@ -72,7 +72,7 @@ namespace Telegram.Views.Folders
             var element = sender as FrameworkElement;
             var chat = element.DataContext as ChatFilterInfo;
 
-            flyout.CreateFlyoutItem(ViewModel.DeleteCommand, chat, Strings.Resources.FilterDeleteItem, new FontIcon { Glyph = Icons.Delete });
+            flyout.CreateFlyoutItem(ViewModel.DeleteCommand, chat, Strings.FilterDeleteItem, new FontIcon { Glyph = Icons.Delete });
 
             args.ShowAt(flyout, element);
         }

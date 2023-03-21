@@ -57,11 +57,11 @@ namespace Telegram.ViewModels.Authorization
 
                 if (error.TypeEquals(ErrorType.EMAIL_INVALID))
                 {
-                    await ShowPopupAsync(Strings.Resources.EmailAddressInvalid, Strings.Resources.RestorePasswordNoEmailTitle, Strings.Resources.OK);
+                    await ShowPopupAsync(Strings.EmailAddressInvalid, Strings.RestorePasswordNoEmailTitle, Strings.OK);
                 }
                 else if (error.TypeEquals(ErrorType.EMAIL_NOT_ALLOWED))
                 {
-                    await ShowPopupAsync(Strings.Resources.EmailNotAllowed, Strings.Resources.RestorePasswordNoEmailTitle, Strings.Resources.OK);
+                    await ShowPopupAsync(Strings.EmailNotAllowed, Strings.RestorePasswordNoEmailTitle, Strings.OK);
                 }
 
                 Logs.Logger.Error(Logs.LogTarget.API, "account.signIn error " + error);

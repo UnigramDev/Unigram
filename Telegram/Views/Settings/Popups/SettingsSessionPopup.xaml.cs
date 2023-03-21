@@ -56,8 +56,8 @@ namespace Telegram.Views.Settings.Popups
                 ? Visibility.Collapsed
                 : Visibility.Visible;
 
-            PrimaryButtonText = Strings.Resources.Terminate;
-            SecondaryButtonText = Strings.Resources.Done;
+            PrimaryButtonText = Strings.Terminate;
+            SecondaryButtonText = Strings.Done;
         }
 
         public bool CanAcceptCalls => AcceptCalls.IsChecked == true;

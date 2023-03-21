@@ -117,7 +117,7 @@ namespace Telegram.ViewModels
             dataPackage.SetText(link.AbsoluteUri);
             ClipboardEx.TrySetContent(dataPackage);
 
-            await ShowPopupAsync(Strings.Resources.LinkCopied, Strings.Resources.AppName, Strings.Resources.OK);
+            await ShowPopupAsync(Strings.LinkCopied, Strings.AppName, Strings.OK);
         }
     }
 }

@@ -35,13 +35,13 @@ namespace Telegram.Views.Popups
             Date.MinDate = DateTime.Today;
             Date.MaxDate = DateTime.Today.AddYears(1);
 
-            Title = reminder ? Strings.Resources.SetReminder : Strings.Resources.ScheduleMessage;
-            PrimaryButtonText = Strings.Resources.OK;
-            SecondaryButtonText = Strings.Resources.Cancel;
+            Title = reminder ? Strings.SetReminder : Strings.ScheduleMessage;
+            PrimaryButtonText = Strings.OK;
+            SecondaryButtonText = Strings.Cancel;
 
             if (user != null && user.Type is UserTypeRegular && user.Status is not UserStatusRecently && !reminder)
             {
-                Online.Content = string.Format(Strings.Resources.MessageScheduledUntilOnline, user.FirstName);
+                Online.Content = string.Format(Strings.MessageScheduledUntilOnline, user.FirstName);
             }
             else
             {

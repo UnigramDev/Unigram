@@ -17,7 +17,7 @@ namespace Telegram.Views.Settings.Privacy
         public SettingsPrivacyAllowCallsPage()
         {
             InitializeComponent();
-            Title = Strings.Resources.Calls;
+            Title = Strings.Calls;
         }
 
         #region Binding

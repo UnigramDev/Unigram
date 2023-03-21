@@ -200,7 +200,7 @@ namespace Telegram.ViewModels.Settings
                 return;
             }
 
-            var confirm = await ShowPopupAsync(Strings.Resources.PhoneNumberAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.PhoneNumberAlert, Strings.AppName, Strings.OK, Strings.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 NavigationService.Navigate(typeof(SettingsPhonePage));

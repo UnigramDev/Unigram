@@ -24,7 +24,7 @@ namespace Telegram.Views.BasicGroups
         public BasicGroupCreateStep1Page()
         {
             InitializeComponent();
-            Title = Strings.Resources.NewGroup;
+            Title = Strings.NewGroup;
         }
 
         private void Title_Loaded(object sender, RoutedEventArgs e)

@@ -17,18 +17,18 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 03/21/2023 18:26:25
+// 	Generated: 03/21/2023 19:14:55
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
-namespace Telegram.Strings
+namespace Telegram
 {
     using Telegram.Services;
 
-    public sealed partial class Resources
+    public sealed partial class Strings
     {
         private static readonly ILocaleService Resource;
 
-        static Resources()
+        static Strings()
         {
             Resource = LocaleService.Current;
         }

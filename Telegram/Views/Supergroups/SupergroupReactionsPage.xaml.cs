@@ -22,7 +22,7 @@ namespace Telegram.Views.Supergroups
         public SupergroupReactionsPage()
         {
             InitializeComponent();
-            Title = Strings.Resources.Reactions;
+            Title = Strings.Reactions;
         }
 
         private void OnContainerContentChanged(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -107,9 +107,9 @@ namespace Telegram.Views.Supergroups
         {
             return value switch
             {
-                SupergroupAvailableReactions.All => Strings.Resources.EnableAllReactionsInfo,
-                SupergroupAvailableReactions.None => Strings.Resources.DisableReactionsInfo,
-                _ => Strings.Resources.EnableSomeReactionsInfo
+                SupergroupAvailableReactions.All => Strings.EnableAllReactionsInfo,
+                SupergroupAvailableReactions.None => Strings.DisableReactionsInfo,
+                _ => Strings.EnableSomeReactionsInfo
             };
         }
 

@@ -41,7 +41,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var confirm = await ShowPopupAsync(Strings.Resources.PhoneNumberAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.PhoneNumberAlert, Strings.AppName, Strings.OK, Strings.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 NavigationService.Navigate(typeof(SettingsPhonePage));
@@ -50,7 +50,7 @@ namespace Telegram.ViewModels
 
         public async void Ask()
         {
-            var confirm = await ShowPopupAsync(Strings.Resources.AskAQuestionInfo, Strings.Resources.AskAQuestion, Strings.Resources.AskButton, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.AskAQuestionInfo, Strings.AskAQuestion, Strings.AskButton, Strings.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 var response = await ClientService.SendAsync(new GetSupportUser());
@@ -67,7 +67,7 @@ namespace Telegram.ViewModels
 
         public async void Logout()
         {
-            var confirm = await ShowPopupAsync(Strings.Resources.AreYouSureLogout, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.AreYouSureLogout, Strings.AppName, Strings.OK, Strings.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

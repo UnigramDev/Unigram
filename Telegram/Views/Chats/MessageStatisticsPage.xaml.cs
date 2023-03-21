@@ -22,7 +22,7 @@ namespace Telegram.Views.Chats
         public MessageStatisticsPage()
         {
             InitializeComponent();
-            Title = Strings.Resources.ViewMessageStatistic;
+            Title = Strings.ViewMessageStatistic;
         }
 
         #region Binding

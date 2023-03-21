@@ -21,7 +21,7 @@ namespace Telegram.Views.Channels
         public ChannelCreateStep2Page()
         {
             InitializeComponent();
-            Title = Strings.Resources.ChannelSettings;
+            Title = Strings.ChannelSettings;
 
             var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => Username.TextChanged += new TextChangedEventHandler(handler));
             debouncer.Invoked += (s, args) =>
@@ -92,15 +92,15 @@ namespace Telegram.Views.Channels
         {
             var username = group.EditableUsername();
 
-            Title = group.IsChannel ? Strings.Resources.ChannelSettingsTitle : Strings.Resources.GroupSettingsTitle;
-            Subheader.Header = group.IsChannel ? Strings.Resources.ChannelTypeHeader : Strings.Resources.GroupTypeHeader;
-            Subheader.Footer = username.Length > 0 ? group.IsChannel ? Strings.Resources.ChannelPublicInfo : Strings.Resources.MegaPublicInfo : group.IsChannel ? Strings.Resources.ChannelPrivateInfo : Strings.Resources.MegaPrivateInfo;
+            Title = group.IsChannel ? Strings.ChannelSettingsTitle : Strings.GroupSettingsTitle;
+            Subheader.Header = group.IsChannel ? Strings.ChannelTypeHeader : Strings.GroupTypeHeader;
+            Subheader.Footer = username.Length > 0 ? group.IsChannel ? Strings.ChannelPublicInfo : Strings.MegaPublicInfo : group.IsChannel ? Strings.ChannelPrivateInfo : Strings.MegaPrivateInfo;
 
-            Public.Content = group.IsChannel ? Strings.Resources.ChannelPublic : Strings.Resources.MegaPublic;
-            Private.Content = group.IsChannel ? Strings.Resources.ChannelPrivate : Strings.Resources.MegaPrivate;
+            Public.Content = group.IsChannel ? Strings.ChannelPublic : Strings.MegaPublic;
+            Private.Content = group.IsChannel ? Strings.ChannelPrivate : Strings.MegaPrivate;
 
-            UsernameHelp.Footer = group.IsChannel ? Strings.Resources.ChannelUsernameHelp : Strings.Resources.MegaUsernameHelp;
-            PrivateLinkHelp.Footer = group.IsChannel ? Strings.Resources.ChannelPrivateLinkHelp : Strings.Resources.MegaPrivateLinkHelp;
+            UsernameHelp.Footer = group.IsChannel ? Strings.ChannelUsernameHelp : Strings.MegaUsernameHelp;
+            PrivateLinkHelp.Footer = group.IsChannel ? Strings.ChannelPrivateLinkHelp : Strings.MegaPrivateLinkHelp;
 
 
 
@@ -120,15 +120,15 @@ namespace Telegram.Views.Channels
 
         public void UpdateBasicGroup(Chat chat, BasicGroup group)
         {
-            Title = Strings.Resources.GroupSettingsTitle;
-            Subheader.Header = Strings.Resources.GroupTypeHeader;
-            Subheader.Footer = Strings.Resources.MegaPrivateInfo;
+            Title = Strings.GroupSettingsTitle;
+            Subheader.Header = Strings.GroupTypeHeader;
+            Subheader.Footer = Strings.MegaPrivateInfo;
 
-            Public.Content = Strings.Resources.MegaPublic;
-            Private.Content = Strings.Resources.MegaPrivate;
+            Public.Content = Strings.MegaPublic;
+            Private.Content = Strings.MegaPrivate;
 
-            UsernameHelp.Footer = Strings.Resources.MegaUsernameHelp;
-            PrivateLinkHelp.Footer = Strings.Resources.MegaPrivateLinkHelp;
+            UsernameHelp.Footer = Strings.MegaUsernameHelp;
+            PrivateLinkHelp.Footer = Strings.MegaPrivateLinkHelp;
 
 
 
@@ -160,17 +160,17 @@ namespace Telegram.Views.Channels
 
         private string ConvertAvailable(string username)
         {
-            return string.Format(Strings.Resources.LinkAvailable, username);
+            return string.Format(Strings.LinkAvailable, username);
         }
 
         private string ConvertFooter(bool pubblico)
         {
             if (ViewModel.Chat?.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
             {
-                return pubblico ? Strings.Resources.ChannelPublicInfo : Strings.Resources.ChannelPrivateInfo;
+                return pubblico ? Strings.ChannelPublicInfo : Strings.ChannelPrivateInfo;
             }
 
-            return pubblico ? Strings.Resources.MegaPublicInfo : Strings.Resources.MegaPrivateInfo;
+            return pubblico ? Strings.MegaPublicInfo : Strings.MegaPrivateInfo;
         }
 
         #endregion

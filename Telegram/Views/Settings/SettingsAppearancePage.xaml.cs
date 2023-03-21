@@ -26,13 +26,13 @@ namespace Telegram.Views.Settings
         public SettingsAppearancePage()
         {
             InitializeComponent();
-            Title = Strings.Resources.Appearance;
+            Title = Strings.Appearance;
 
             var preview = ElementCompositionPreview.GetElementVisual(Preview);
             preview.Clip = preview.Compositor.CreateInsetClip();
 
-            Message1.Mockup(Strings.Resources.FontSizePreviewLine1, Strings.Resources.FontSizePreviewName, Strings.Resources.FontSizePreviewReply, false, DateTime.Now.AddSeconds(-25));
-            Message2.Mockup(Strings.Resources.FontSizePreviewLine2, true, DateTime.Now);
+            Message1.Mockup(Strings.FontSizePreviewLine1, Strings.FontSizePreviewName, Strings.FontSizePreviewReply, false, DateTime.Now.AddSeconds(-25));
+            Message2.Mockup(Strings.FontSizePreviewLine2, true, DateTime.Now);
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -52,12 +52,12 @@ namespace Telegram.Views.Settings
         private string ConvertNightMode(NightMode mode)
         {
             return mode == NightMode.Scheduled
-                ? Strings.Resources.AutoNightScheduled
+                ? Strings.AutoNightScheduled
                 : mode == NightMode.Automatic
-                ? Strings.Resources.AutoNightAutomatic
+                ? Strings.AutoNightAutomatic
                 : mode == NightMode.System
-                ? Strings.Resources.AutoNightSystemDefault
-                : Strings.Resources.AutoNightDisabled;
+                ? Strings.AutoNightSystemDefault
+                : Strings.AutoNightDisabled;
         }
 
         #endregion
@@ -84,14 +84,14 @@ namespace Telegram.Views.Settings
             var theme = List.ItemFromContainer(element) as ChatTheme;
 
             var flyout = new MenuFlyout();
-            flyout.CreateFlyoutItem(ViewModel.ThemeCreateCommand, theme, Strings.Resources.CreateNewThemeMenu, new FontIcon { Glyph = Icons.Color });
+            flyout.CreateFlyoutItem(ViewModel.ThemeCreateCommand, theme, Strings.CreateNewThemeMenu, new FontIcon { Glyph = Icons.Color });
 
             //if (!theme.IsOfficial)
             //{
             //    flyout.CreateFlyoutSeparator();
-            //    flyout.CreateFlyoutItem(ViewModel.ThemeShareCommand, theme, Strings.Resources.ShareFile, new FontIcon { Glyph = Icons.Share });
-            //    flyout.CreateFlyoutItem(ViewModel.ThemeEditCommand, theme, Strings.Resources.Edit, new FontIcon { Glyph = Icons.Edit });
-            //    flyout.CreateFlyoutItem(ViewModel.ThemeDeleteCommand, theme, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
+            //    flyout.CreateFlyoutItem(ViewModel.ThemeShareCommand, theme, Strings.ShareFile, new FontIcon { Glyph = Icons.Share });
+            //    flyout.CreateFlyoutItem(ViewModel.ThemeEditCommand, theme, Strings.Edit, new FontIcon { Glyph = Icons.Edit });
+            //    flyout.CreateFlyoutItem(ViewModel.ThemeDeleteCommand, theme, Strings.Delete, new FontIcon { Glyph = Icons.Delete });
             //}
 
             args.ShowAt(flyout, element);

@@ -96,7 +96,7 @@ namespace Telegram.Controls.Messages.Content
 
                     PinPhoto.SetMessageSender(message.ClientService, message.SenderId, 32);
 
-                    Title.Text = Strings.Resources.AttachLiveLocation;
+                    Title.Text = Strings.AttachLiveLocation;
                     Subtitle.Text = Locale.FormatLocationUpdateDate(message.EditDate > 0 ? message.EditDate : message.Date);
                 }
             }

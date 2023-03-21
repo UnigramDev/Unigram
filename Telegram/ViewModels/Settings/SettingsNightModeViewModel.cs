@@ -34,7 +34,7 @@ namespace Telegram.ViewModels.Settings
             var location = await _locationService.GetPositionAsync();
             if (location == null)
             {
-                var confirm = await ShowPopupAsync(Strings.Resources.GpsDisabledAlert, Strings.Resources.AppName, Strings.Resources.ConnectingToProxyEnable, Strings.Resources.Cancel);
+                var confirm = await ShowPopupAsync(Strings.GpsDisabledAlert, Strings.AppName, Strings.ConnectingToProxyEnable, Strings.Cancel);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     await Launcher.LaunchUriAsync(new Uri("ms-settings:privacy-location"));

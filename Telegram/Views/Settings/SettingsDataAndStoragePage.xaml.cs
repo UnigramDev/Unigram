@@ -19,7 +19,7 @@ namespace Telegram.Views.Settings
         public SettingsDataAndStoragePage()
         {
             InitializeComponent();
-            Title = Strings.Resources.DataSettings;
+            Title = Strings.DataSettings;
         }
 
         #region Binding
@@ -28,7 +28,7 @@ namespace Telegram.Views.Settings
         {
             if (string.IsNullOrEmpty(path))
             {
-                return Strings.Resources.Default;
+                return Strings.Default;
             }
 
             return path;
@@ -68,16 +68,16 @@ namespace Telegram.Views.Settings
                     switch (a)
                     {
                         case 0:
-                            builder.Append(Strings.Resources.AutodownloadContacts);
+                            builder.Append(Strings.AutodownloadContacts);
                             break;
                         case 1:
-                            builder.Append(Strings.Resources.AutoDownloadPm);
+                            builder.Append(Strings.AutoDownloadPm);
                             break;
                         case 2:
-                            builder.Append(Strings.Resources.AutoDownloadGroups);
+                            builder.Append(Strings.AutoDownloadGroups);
                             break;
                         case 3:
-                            builder.Append(Strings.Resources.AutodownloadChannels);
+                            builder.Append(Strings.AutodownloadChannels);
                             break;
                     }
                     count++;
@@ -90,26 +90,26 @@ namespace Telegram.Views.Settings
 
                 if (type == AutoDownloadType.Photos)
                 {
-                    builder.Append(Strings.Resources.AutoDownloadOnAllChats);
+                    builder.Append(Strings.AutoDownloadOnAllChats);
                 }
                 else
                 {
-                    builder.AppendFormat(Strings.Resources.AutoDownloadUpToOnAllChats, FileSizeConverter.Convert(limit, true));
+                    builder.AppendFormat(Strings.AutoDownloadUpToOnAllChats, FileSizeConverter.Convert(limit, true));
                 }
             }
             else if (count == 0)
             {
-                builder.Append(Strings.Resources.AutoDownloadOff);
+                builder.Append(Strings.AutoDownloadOff);
             }
             else
             {
                 if (type == AutoDownloadType.Photos)
                 {
-                    builder = new StringBuilder(string.Format(Strings.Resources.AutoDownloadOnFor, builder.ToString()));
+                    builder = new StringBuilder(string.Format(Strings.AutoDownloadOnFor, builder.ToString()));
                 }
                 else
                 {
-                    builder = new StringBuilder(string.Format(Strings.Resources.AutoDownloadOnUpToFor, FileSizeConverter.Convert(limit, true), builder.ToString()));
+                    builder = new StringBuilder(string.Format(Strings.AutoDownloadOnUpToFor, FileSizeConverter.Convert(limit, true), builder.ToString()));
                 }
             }
 

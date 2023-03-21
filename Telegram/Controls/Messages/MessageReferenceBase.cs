@@ -95,7 +95,7 @@ namespace Telegram.Controls.Messages
             else if (embedded.EditingMessage != null)
             {
                 MessageId = embedded.EditingMessage.Id;
-                GetMessageTemplate(embedded.EditingMessage, Strings.Resources.Edit, true);
+                GetMessageTemplate(embedded.EditingMessage, Strings.Edit, true);
             }
             else if (embedded.ReplyToMessage != null)
             {
@@ -375,7 +375,7 @@ namespace Telegram.Controls.Messages
             SetText(message,
                 outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
-                Strings.Resources.AttachPhoto,
+                Strings.AttachPhoto,
                 photo.Caption);
 
             if (message.SelfDestructTime > 0)
@@ -426,7 +426,7 @@ namespace Telegram.Controls.Messages
             SetText(message,
                 outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
-                location.LivePeriod > 0 ? Strings.Resources.AttachLiveLocation : Strings.Resources.AttachLocation,
+                location.LivePeriod > 0 ? Strings.AttachLiveLocation : Strings.AttachLocation,
                 null);
 
             return true;
@@ -441,7 +441,7 @@ namespace Telegram.Controls.Messages
             SetText(message,
                 outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
-                Strings.Resources.AttachLocation,
+                Strings.AttachLocation,
                 new FormattedText(venue.Venue.Title, null));
 
             return true;
@@ -486,7 +486,7 @@ namespace Telegram.Controls.Messages
             SetText(message,
                 outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
-                Strings.Resources.AttachContact,
+                Strings.AttachContact,
                 null);
 
             return true;
@@ -504,7 +504,7 @@ namespace Telegram.Controls.Messages
             string service;
             if (performer == null || audioTitle == null)
             {
-                service = Strings.Resources.AttachMusic;
+                service = Strings.AttachMusic;
             }
             else
             {
@@ -544,7 +544,7 @@ namespace Telegram.Controls.Messages
             SetText(message,
                 outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
-                Strings.Resources.AttachAudio,
+                Strings.AttachAudio,
                 voiceNote.Caption);
 
             return true;
@@ -557,7 +557,7 @@ namespace Telegram.Controls.Messages
             SetText(message,
                 outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
-                Strings.Resources.AttachVideo,
+                Strings.AttachVideo,
                 video.Caption);
 
             if (message.SelfDestructTime > 0)
@@ -579,7 +579,7 @@ namespace Telegram.Controls.Messages
             SetText(message,
                 outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
-                Strings.Resources.AttachRound,
+                Strings.AttachRound,
                 null);
 
             UpdateThumbnail(message, videoNote.VideoNote.Thumbnail, videoNote.VideoNote.Minithumbnail, new CornerRadius(18));
@@ -609,7 +609,7 @@ namespace Telegram.Controls.Messages
             SetText(message,
                 outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
-                Strings.Resources.AttachGif,
+                Strings.AttachGif,
                 animation.Caption);
 
             UpdateThumbnail(message, animation.Animation.Thumbnail, animation.Animation.Minithumbnail);
@@ -626,7 +626,7 @@ namespace Telegram.Controls.Messages
             SetText(message,
                 outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
-                string.IsNullOrEmpty(sticker.Sticker.Emoji) ? Strings.Resources.AttachSticker : $"{sticker.Sticker.Emoji} {Strings.Resources.AttachSticker}",
+                string.IsNullOrEmpty(sticker.Sticker.Emoji) ? Strings.AttachSticker : $"{sticker.Sticker.Emoji} {Strings.AttachSticker}",
                 null);
 
             return true;
@@ -671,7 +671,7 @@ namespace Telegram.Controls.Messages
             SetText(null,
                 outgoing ? null : message?.SenderId,
                 title,
-                Strings.Resources.Loading,
+                Strings.Loading,
                 null);
 
             return true;
@@ -686,7 +686,7 @@ namespace Telegram.Controls.Messages
             SetText(null,
                 null,
                 null,
-                Strings.Resources.DeletedMessage,
+                Strings.DeletedMessage,
                 null);
 
             return true;
@@ -701,7 +701,7 @@ namespace Telegram.Controls.Messages
             SetText(message,
                 outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
-                Strings.Resources.UnsupportedAttachment,
+                Strings.UnsupportedAttachment,
                 null);
 
             return true;

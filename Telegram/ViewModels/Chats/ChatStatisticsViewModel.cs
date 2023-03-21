@@ -123,15 +123,15 @@ namespace Telegram.ViewModels.Chats
 
                     stats = new List<ChartViewData>(9)
                     {
-                        ChartViewData.Create(channelStats.MemberCountGraph, Strings.Resources.GrowthChartTitle, 0),
-                        ChartViewData.Create(channelStats.JoinGraph, Strings.Resources.FollowersChartTitle, 0),
-                        ChartViewData.Create(channelStats.MuteGraph, Strings.Resources.NotificationsChartTitle, 0),
-                        ChartViewData.Create(channelStats.ViewCountByHourGraph, Strings.Resources.TopHoursChartTitle, /*0*/5),
-                        ChartViewData.Create(channelStats.ViewCountBySourceGraph, Strings.Resources.ViewsBySourceChartTitle, 2),
-                        ChartViewData.Create(channelStats.JoinBySourceGraph, Strings.Resources.NewFollowersBySourceChartTitle, 2),
-                        ChartViewData.Create(channelStats.LanguageGraph, Strings.Resources.LanguagesChartTitle, 4),
-                        ChartViewData.Create(channelStats.MessageInteractionGraph, Strings.Resources.InteractionsChartTitle, /*1*/6),
-                        ChartViewData.Create(channelStats.InstantViewInteractionGraph, Strings.Resources.IVInteractionsChartTitle, /*1*/6)
+                        ChartViewData.Create(channelStats.MemberCountGraph, Strings.GrowthChartTitle, 0),
+                        ChartViewData.Create(channelStats.JoinGraph, Strings.FollowersChartTitle, 0),
+                        ChartViewData.Create(channelStats.MuteGraph, Strings.NotificationsChartTitle, 0),
+                        ChartViewData.Create(channelStats.ViewCountByHourGraph, Strings.TopHoursChartTitle, /*0*/5),
+                        ChartViewData.Create(channelStats.ViewCountBySourceGraph, Strings.ViewsBySourceChartTitle, 2),
+                        ChartViewData.Create(channelStats.JoinBySourceGraph, Strings.NewFollowersBySourceChartTitle, 2),
+                        ChartViewData.Create(channelStats.LanguageGraph, Strings.LanguagesChartTitle, 4),
+                        ChartViewData.Create(channelStats.MessageInteractionGraph, Strings.InteractionsChartTitle, /*1*/6),
+                        ChartViewData.Create(channelStats.InstantViewInteractionGraph, Strings.IVInteractionsChartTitle, /*1*/6)
                     };
 
                     var messages = await ClientService.SendAsync(new GetMessages(chatId, channelStats.RecentMessageInteractions.Select(x => x.MessageId).ToArray())) as Messages;
@@ -165,14 +165,14 @@ namespace Telegram.ViewModels.Chats
 
                     stats = new List<ChartViewData>(8)
                     {
-                        ChartViewData.Create(groupStats.MemberCountGraph, Strings.Resources.GrowthChartTitle, 0),
-                        ChartViewData.Create(groupStats.JoinGraph, Strings.Resources.GroupMembersChartTitle, 0),
-                        ChartViewData.Create(groupStats.JoinBySourceGraph, Strings.Resources.NewMembersBySourceChartTitle, 2),
-                        ChartViewData.Create(groupStats.LanguageGraph, Strings.Resources.MembersLanguageChartTitle, 4),
-                        ChartViewData.Create(groupStats.MessageContentGraph, Strings.Resources.MessagesChartTitle, 2),
-                        ChartViewData.Create(groupStats.ActionGraph, Strings.Resources.ActionsChartTitle, 1),
-                        ChartViewData.Create(groupStats.DayGraph, Strings.Resources.TopHoursChartTitle, /*0*/5),
-                        ChartViewData.Create(groupStats.WeekGraph, Strings.Resources.TopDaysOfWeekChartTitle, 4)
+                        ChartViewData.Create(groupStats.MemberCountGraph, Strings.GrowthChartTitle, 0),
+                        ChartViewData.Create(groupStats.JoinGraph, Strings.GroupMembersChartTitle, 0),
+                        ChartViewData.Create(groupStats.JoinBySourceGraph, Strings.NewMembersBySourceChartTitle, 2),
+                        ChartViewData.Create(groupStats.LanguageGraph, Strings.MembersLanguageChartTitle, 4),
+                        ChartViewData.Create(groupStats.MessageContentGraph, Strings.MessagesChartTitle, 2),
+                        ChartViewData.Create(groupStats.ActionGraph, Strings.ActionsChartTitle, 1),
+                        ChartViewData.Create(groupStats.DayGraph, Strings.TopHoursChartTitle, /*0*/5),
+                        ChartViewData.Create(groupStats.WeekGraph, Strings.TopDaysOfWeekChartTitle, 4)
                     };
 
                     if (stats[7] != null)

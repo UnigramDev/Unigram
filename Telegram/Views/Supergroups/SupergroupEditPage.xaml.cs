@@ -21,7 +21,7 @@ namespace Telegram.Views.Supergroups
         public SupergroupEditPage()
         {
             InitializeComponent();
-            Title = Strings.Resources.ChannelEdit;
+            Title = Strings.ChannelEdit;
         }
 
         #region Binding
@@ -29,8 +29,8 @@ namespace Telegram.Views.Supergroups
         private string ConvertHistory(int available)
         {
             return ViewModel.AllHistoryAvailableOptions[available].Value
-                ? Strings.Resources.ChatHistoryVisibleInfo
-                : Strings.Resources.ChatHistoryHiddenInfo;
+                ? Strings.ChatHistoryVisibleInfo
+                : Strings.ChatHistoryHiddenInfo;
         }
 
         #endregion
@@ -44,7 +44,7 @@ namespace Telegram.Views.Supergroups
 
             if (chat.AvailableReactions is ChatAvailableReactionsAll)
             {
-                Reactions.Badge = Strings.Resources.AllReactions;
+                Reactions.Badge = Strings.AllReactions;
             }
             else if (chat.AvailableReactions is ChatAvailableReactionsSome some)
             {
@@ -54,7 +54,7 @@ namespace Telegram.Views.Supergroups
                 }
                 else
                 {
-                    Reactions.Badge = Strings.Resources.ReactionsOff;
+                    Reactions.Badge = Strings.ReactionsOff;
                 }
             }
         }
@@ -71,12 +71,12 @@ namespace Telegram.Views.Supergroups
 
         public void UpdateSupergroup(Chat chat, Supergroup group)
         {
-            TitleLabel.PlaceholderText = group.IsChannel ? Strings.Resources.EnterChannelName : Strings.Resources.GroupName;
+            TitleLabel.PlaceholderText = group.IsChannel ? Strings.EnterChannelName : Strings.GroupName;
 
-            Delete.Content = group.IsChannel ? Strings.Resources.ChannelDelete : Strings.Resources.DeleteMega;
-            DeletePanel.Footer = group.IsChannel ? Strings.Resources.ChannelDeleteInfo : Strings.Resources.MegaDeleteInfo;
+            Delete.Content = group.IsChannel ? Strings.ChannelDelete : Strings.DeleteMega;
+            DeletePanel.Footer = group.IsChannel ? Strings.ChannelDeleteInfo : Strings.MegaDeleteInfo;
 
-            Members.Content = group.IsChannel ? Strings.Resources.ChannelSubscribers : Strings.Resources.ChannelMembers;
+            Members.Content = group.IsChannel ? Strings.ChannelSubscribers : Strings.ChannelMembers;
 
             ViewModel.Title = chat.Title;
             ViewModel.IsSignatures = group.SignMessages;
@@ -87,20 +87,20 @@ namespace Telegram.Views.Supergroups
             TitleLabel.IsReadOnly = !group.CanChangeInfo();
             About.IsReadOnly = !group.CanChangeInfo();
 
-            ChatType.Content = group.IsChannel ? Strings.Resources.ChannelType : Strings.Resources.GroupType;
+            ChatType.Content = group.IsChannel ? Strings.ChannelType : Strings.GroupType;
             ChatType.Glyph = group.IsChannel ? Icons.Megaphone : Icons.People;
             ChatType.Visibility = Visibility.Collapsed;
             ChatType.Badge = group.HasActiveUsername()
                 ? group.IsChannel
-                    ? Strings.Resources.TypePublic
-                    : Strings.Resources.TypePublicGroup
+                    ? Strings.TypePublic
+                    : Strings.TypePublicGroup
                 : group.IsChannel
                     ? chat.HasProtectedContent
-                        ? Strings.Resources.TypePrivateRestrictedForwards
-                        : Strings.Resources.TypePrivate
+                        ? Strings.TypePrivateRestrictedForwards
+                        : Strings.TypePrivate
                     : chat.HasProtectedContent
-                        ? Strings.Resources.TypePrivateGroupRestrictedForwards
-                        : Strings.Resources.TypePrivateGroup;
+                        ? Strings.TypePrivateGroupRestrictedForwards
+                        : Strings.TypePrivateGroup;
 
             ChatHistory.Visibility = group.CanChangeInfo() && !group.HasActiveUsername() && !group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
 
@@ -109,9 +109,9 @@ namespace Telegram.Views.Supergroups
             GroupStickersPanel.Visibility = Visibility.Collapsed;
 
             ChatLinked.Visibility = group.IsChannel ? Visibility.Visible : group.HasLinkedChat ? Visibility.Visible : Visibility.Collapsed;
-            ChatLinked.Content = group.IsChannel ? Strings.Resources.Discussion : Strings.Resources.LinkedChannel;
+            ChatLinked.Content = group.IsChannel ? Strings.Discussion : Strings.LinkedChannel;
             ChatLinked.Glyph = group.IsChannel ? Icons.Comment : Icons.Megaphone;
-            ChatLinked.Badge = group.HasLinkedChat ? string.Empty : Strings.Resources.DiscussionInfo;
+            ChatLinked.Badge = group.HasLinkedChat ? string.Empty : Strings.DiscussionInfo;
 
             Permissions.Badge = string.Format("{0}/{1}", chat.Permissions.Count(), chat.Permissions.Total());
             Permissions.Visibility = group.IsChannel || !group.CanRestrictMembers() ? Visibility.Collapsed : Visibility.Visible;
@@ -143,7 +143,7 @@ namespace Telegram.Views.Supergroups
             }
             else
             {
-                ChatLinked.Badge = Strings.Resources.DiscussionInfo;
+                ChatLinked.Badge = Strings.DiscussionInfo;
             }
 
             Admins.Badge = fullInfo.AdministratorCount;
@@ -202,12 +202,12 @@ namespace Telegram.Views.Supergroups
 
         public void UpdateBasicGroup(Chat chat, BasicGroup group)
         {
-            TitleLabel.PlaceholderText = Strings.Resources.GroupName;
+            TitleLabel.PlaceholderText = Strings.GroupName;
 
-            Delete.Content = Strings.Resources.DeleteMega;
-            DeletePanel.Footer = Strings.Resources.MegaDeleteInfo;
+            Delete.Content = Strings.DeleteMega;
+            DeletePanel.Footer = Strings.MegaDeleteInfo;
 
-            Members.Content = Strings.Resources.ChannelMembers;
+            Members.Content = Strings.ChannelMembers;
 
             ViewModel.Title = chat.Title;
             ViewModel.IsSignatures = false;
@@ -218,8 +218,8 @@ namespace Telegram.Views.Supergroups
             //Title.IsReadOnly = !group.CanChangeInfo();
             //About.IsReadOnly = !group.CanChangeInfo();
 
-            ChatType.Content = Strings.Resources.GroupType;
-            ChatType.Badge = Strings.Resources.TypePrivateGroup;
+            ChatType.Content = Strings.GroupType;
+            ChatType.Badge = Strings.TypePrivateGroup;
             ChatType.Visibility = group.Status is ChatMemberStatusCreator ? Visibility.Visible : Visibility.Collapsed;
 
             ChatHistory.Visibility = group.Status is ChatMemberStatusCreator ? Visibility.Visible : Visibility.Collapsed;

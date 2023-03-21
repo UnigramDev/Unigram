@@ -25,7 +25,7 @@ namespace Telegram.Views.Settings
         public SettingsThemesPage()
         {
             InitializeComponent();
-            Title = Strings.Resources.ColorThemes;
+            Title = Strings.ColorThemes;
         }
 
         private async void Switch_Click(object sender, RoutedEventArgs e)
@@ -58,14 +58,14 @@ namespace Telegram.Views.Settings
             var theme = element.Tag as ThemeInfoBase;
 
             var flyout = new MenuFlyout();
-            flyout.CreateFlyoutItem(ViewModel.ThemeCreateCommand, theme, Strings.Resources.CreateNewThemeMenu, new FontIcon { Glyph = Icons.Color });
+            flyout.CreateFlyoutItem(ViewModel.ThemeCreateCommand, theme, Strings.CreateNewThemeMenu, new FontIcon { Glyph = Icons.Color });
 
             if (!theme.IsOfficial)
             {
                 flyout.CreateFlyoutSeparator();
-                flyout.CreateFlyoutItem(ViewModel.ThemeShareCommand, theme, Strings.Resources.ShareFile, new FontIcon { Glyph = Icons.Share });
-                flyout.CreateFlyoutItem(ViewModel.ThemeEditCommand, theme, Strings.Resources.Edit, new FontIcon { Glyph = Icons.Edit });
-                flyout.CreateFlyoutItem(ViewModel.ThemeDeleteCommand, theme, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
+                flyout.CreateFlyoutItem(ViewModel.ThemeShareCommand, theme, Strings.ShareFile, new FontIcon { Glyph = Icons.Share });
+                flyout.CreateFlyoutItem(ViewModel.ThemeEditCommand, theme, Strings.Edit, new FontIcon { Glyph = Icons.Edit });
+                flyout.CreateFlyoutItem(ViewModel.ThemeDeleteCommand, theme, Strings.Delete, new FontIcon { Glyph = Icons.Delete });
             }
 
             args.ShowAt(flyout, element);

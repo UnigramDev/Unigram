@@ -28,8 +28,8 @@ namespace Telegram.Views.Popups
             Title.Text = info.Title;
             Subtitle.Text = ConvertCount(info.MemberCount, info.MemberUserIds.Count == 0);
 
-            PrimaryButtonText = Strings.Resources.ChannelJoin;
-            SecondaryButtonText = Strings.Resources.Cancel;
+            PrimaryButtonText = Strings.ChannelJoin;
+            SecondaryButtonText = Strings.Cancel;
 
             if (info.MemberUserIds.Count > 0)
             {

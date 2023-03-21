@@ -23,7 +23,7 @@ namespace Telegram.Views.Settings
         public SettingsBlockedChatsPage()
         {
             InitializeComponent();
-            Title = Strings.Resources.BlockedUsers;
+            Title = Strings.BlockedUsers;
         }
 
         private async void ListView_ItemClick(object sender, ItemClickEventArgs e)
@@ -81,7 +81,7 @@ namespace Telegram.Views.Settings
             var element = sender as FrameworkElement;
             var messageSender = ScrollingHost.ItemFromContainer(element) as MessageSender;
 
-            flyout.Items.Add(new MenuFlyoutItem { Text = Strings.Resources.Unblock, Command = ViewModel.UnblockCommand, CommandParameter = messageSender });
+            flyout.Items.Add(new MenuFlyoutItem { Text = Strings.Unblock, Command = ViewModel.UnblockCommand, CommandParameter = messageSender });
 
             if (args.TryGetPosition(sender, out Point point))
             {

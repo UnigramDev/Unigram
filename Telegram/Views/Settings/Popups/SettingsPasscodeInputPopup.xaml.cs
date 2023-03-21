@@ -19,9 +19,9 @@ namespace Telegram.Views.Settings.Popups
         {
             InitializeComponent();
 
-            Title = Strings.Resources.Passcode;
-            PrimaryButtonText = Strings.Resources.OK;
-            SecondaryButtonText = Strings.Resources.Cancel;
+            Title = Strings.Passcode;
+            PrimaryButtonText = Strings.OK;
+            SecondaryButtonText = Strings.Cancel;
         }
 
         public bool IsSimple

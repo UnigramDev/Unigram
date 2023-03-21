@@ -219,7 +219,7 @@ namespace Telegram.ViewModels.Drawers
     public class AnimationsCollection : MvxObservableCollection<Animation>/*, IKeyIndexMapping*/
     {
         public virtual string Name => "tg/recentlyUsed";
-        public virtual string Title => Strings.Resources.RecentStickers;
+        public virtual string Title => Strings.RecentStickers;
 
         public string KeyFromIndex(int index)
         {
@@ -247,7 +247,7 @@ namespace Telegram.ViewModels.Drawers
         }
 
         public override string Name => "tg/trending";
-        public override string Title => Strings.Resources.FeaturedGifs;
+        public override string Title => Strings.FeaturedGifs;
     }
 
     public class SearchAnimationsCollection : AnimationsCollection, ISupportIncrementalLoading

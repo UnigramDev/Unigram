@@ -380,19 +380,19 @@ namespace Telegram.ViewModels.Supergroups
             {
                 IsLoading = false;
                 IsAvailable = false;
-                ErrorMessage = Strings.Resources.UsernameInvalid;
+                ErrorMessage = Strings.UsernameInvalid;
             }
             else if (response is CheckChatUsernameResultUsernameOccupied)
             {
                 IsLoading = false;
                 IsAvailable = false;
-                ErrorMessage = Strings.Resources.UsernameInUse;
+                ErrorMessage = Strings.UsernameInUse;
             }
             else if (response is CheckChatUsernameResultUsernamePurchasable)
             {
                 IsLoading = false;
                 IsAvailable = false;
-                ErrorMessage = Strings.Resources.UsernameInUsePurchase;
+                ErrorMessage = Strings.UsernameInUsePurchase;
             }
             else if (response is CheckChatUsernameResultPublicChatsTooMany)
             {
@@ -423,19 +423,19 @@ namespace Telegram.ViewModels.Supergroups
                 }
                 else if (username.Length < 5)
                 {
-                    ErrorMessage = Strings.Resources.UsernameInvalidShort;
+                    ErrorMessage = Strings.UsernameInvalidShort;
                 }
                 else if (username.Length > 32)
                 {
-                    ErrorMessage = Strings.Resources.UsernameInvalidLong;
+                    ErrorMessage = Strings.UsernameInvalidLong;
                 }
                 else if (username[0] is >= '0' and <= '9')
                 {
-                    ErrorMessage = Strings.Resources.UsernameInvalidStartNumber;
+                    ErrorMessage = Strings.UsernameInvalidStartNumber;
                 }
                 else
                 {
-                    ErrorMessage = Strings.Resources.UsernameInvalid;
+                    ErrorMessage = Strings.UsernameInvalid;
                 }
             }
             else

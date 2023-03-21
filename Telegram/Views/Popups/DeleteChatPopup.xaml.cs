@@ -24,17 +24,17 @@ namespace Telegram.Views.Popups
             var position = chat.GetPosition(chatList);
             if (position?.Source is ChatSourcePublicServiceAnnouncement)
             {
-                Title = Strings.Resources.PsaHideChatAlertTitle;
-                Subtitle.Text = Strings.Resources.PsaHideChatAlertText;
+                Title = Strings.PsaHideChatAlertTitle;
+                Subtitle.Text = Strings.PsaHideChatAlertText;
                 CheckBox.Visibility = Visibility.Collapsed;
 
-                PrimaryButtonText = Strings.Resources.PsaHide;
-                SecondaryButtonText = Strings.Resources.Cancel;
+                PrimaryButtonText = Strings.PsaHide;
+                SecondaryButtonText = Strings.Cancel;
 
                 return;
             }
 
-            Title = clear ? Strings.Resources.ClearHistory : Strings.Resources.DeleteChatUser; // clientService.GetTitle(chat);
+            Title = clear ? Strings.ClearHistory : Strings.DeleteChatUser; // clientService.GetTitle(chat);
 
             var user = clientService.GetUser(chat);
             var basicGroup = clientService.GetBasicGroup(chat);
@@ -53,11 +53,11 @@ namespace Telegram.Views.Popups
 
                 if (clear)
                 {
-                    CheckBox.Content = string.Format(Strings.Resources.ClearHistoryOptionAlso, name);
+                    CheckBox.Content = string.Format(Strings.ClearHistoryOptionAlso, name);
                 }
                 else
                 {
-                    CheckBox.Content = string.Format(Strings.Resources.DeleteMessagesOptionAlso, name);
+                    CheckBox.Content = string.Format(Strings.DeleteMessagesOptionAlso, name);
                 }
             }
 
@@ -67,34 +67,34 @@ namespace Telegram.Views.Popups
                 {
                     if (chat.Type is ChatTypeSecret)
                     {
-                        TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.Resources.AreYouSureClearHistoryWithSecretUser, user.FullName()));
+                        TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.AreYouSureClearHistoryWithSecretUser, user.FullName()));
                     }
                     else if (user.Id == clientService.Options.MyId)
                     {
-                        TextBlockHelper.SetMarkdown(Subtitle, Strings.Resources.AreYouSureClearHistorySavedMessages);
+                        TextBlockHelper.SetMarkdown(Subtitle, Strings.AreYouSureClearHistorySavedMessages);
                     }
                     else
                     {
-                        TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.Resources.AreYouSureClearHistoryWithUser, user.FullName()));
+                        TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.AreYouSureClearHistoryWithUser, user.FullName()));
                     }
                 }
                 else if (basicGroup != null)
                 {
-                    TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.Resources.AreYouSureClearHistoryGroup));
+                    TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.AreYouSureClearHistoryGroup));
                 }
                 else if (supergroup != null)
                 {
                     if (supergroup.IsChannel)
                     {
-                        TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.Resources.AreYouSureClearHistoryChannel));
+                        TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.AreYouSureClearHistoryChannel));
                     }
                     else if (supergroup.HasActiveUsername())
                     {
-                        TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.Resources.AreYouSureClearHistoryGroup));
+                        TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.AreYouSureClearHistoryGroup));
                     }
                     else
                     {
-                        TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.Resources.AreYouSureClearHistoryWithChat, chat.Title));
+                        TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.AreYouSureClearHistoryWithChat, chat.Title));
                     }
                 }
             }
@@ -102,26 +102,26 @@ namespace Telegram.Views.Popups
             {
                 if (chat.Type is ChatTypeSecret)
                 {
-                    TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.Resources.AreYouSureDeleteThisChatWithSecretUser, user.FullName()));
+                    TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.AreYouSureDeleteThisChatWithSecretUser, user.FullName()));
                 }
                 else if (user.Id == clientService.Options.MyId)
                 {
-                    TextBlockHelper.SetMarkdown(Subtitle, Strings.Resources.AreYouSureDeleteThisChatSavedMessages);
+                    TextBlockHelper.SetMarkdown(Subtitle, Strings.AreYouSureDeleteThisChatSavedMessages);
                 }
                 else
                 {
-                    TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.Resources.AreYouSureDeleteThisChatWithUser, user.FullName()));
+                    TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.AreYouSureDeleteThisChatWithUser, user.FullName()));
                 }
 
                 if (user.Type is UserTypeBot)
                 {
                     CheckBox.Visibility = Visibility.Visible;
-                    CheckBox.Content = Strings.Resources.BotStop;
+                    CheckBox.Content = Strings.BotStop;
                 }
             }
             else if (basicGroup != null)
             {
-                TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.Resources.AreYouSureDeleteAndExitName, chat.Title));
+                TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.AreYouSureDeleteAndExitName, chat.Title));
             }
             else if (supergroup != null)
             {
@@ -129,44 +129,44 @@ namespace Telegram.Views.Popups
                 {
                     if (supergroup.IsChannel)
                     {
-                        Subtitle.Text = Strings.Resources.ChannelDeleteAlert;
+                        Subtitle.Text = Strings.ChannelDeleteAlert;
                     }
                     else
                     {
-                        Subtitle.Text = Strings.Resources.MegaDeleteAlert;
+                        Subtitle.Text = Strings.MegaDeleteAlert;
                     }
                 }
                 else if (supergroup.IsChannel)
                 {
-                    TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.Resources.ChannelLeaveAlertWithName, chat.Title));
+                    TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.ChannelLeaveAlertWithName, chat.Title));
                 }
                 else
                 {
-                    TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.Resources.MegaLeaveAlertWithName, chat.Title));
+                    TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.MegaLeaveAlertWithName, chat.Title));
                 }
             }
 
             if (clear)
             {
-                PrimaryButtonText = Strings.Resources.ClearHistory;
+                PrimaryButtonText = Strings.ClearHistory;
             }
             else if (user != null || basicGroup != null)
             {
-                PrimaryButtonText = Strings.Resources.DeleteChatUser;
+                PrimaryButtonText = Strings.DeleteChatUser;
             }
             else if (supergroup != null)
             {
                 if (supergroup.IsChannel)
                 {
-                    PrimaryButtonText = asOwner ? Strings.Resources.ChannelDeleteMenu : Strings.Resources.LeaveChannelMenu;
+                    PrimaryButtonText = asOwner ? Strings.ChannelDeleteMenu : Strings.LeaveChannelMenu;
                 }
                 else
                 {
-                    PrimaryButtonText = asOwner ? Strings.Resources.DeleteMegaMenu : Strings.Resources.LeaveMegaMenu;
+                    PrimaryButtonText = asOwner ? Strings.DeleteMegaMenu : Strings.LeaveMegaMenu;
                 }
             }
 
-            SecondaryButtonText = Strings.Resources.Cancel;
+            SecondaryButtonText = Strings.Cancel;
         }
 
         public bool IsChecked => CheckBox.Visibility == Visibility.Visible && CheckBox.IsChecked == true;

@@ -29,9 +29,9 @@ namespace Telegram.ViewModels.Settings
         {
             Scopes = new MvxObservableCollection<SettingsNotificationsScope>
             {
-                new SettingsNotificationsScope(clientService, typeof(NotificationSettingsScopePrivateChats), Strings.Resources.NotificationsPrivateChats, Icons.Person),
-                new SettingsNotificationsScope(clientService, typeof(NotificationSettingsScopeGroupChats), Strings.Resources.NotificationsGroups, Icons.People),
-                new SettingsNotificationsScope(clientService, typeof(NotificationSettingsScopeChannelChats), Strings.Resources.NotificationsChannels, Icons.Megaphone),
+                new SettingsNotificationsScope(clientService, typeof(NotificationSettingsScopePrivateChats), Strings.NotificationsPrivateChats, Icons.Person),
+                new SettingsNotificationsScope(clientService, typeof(NotificationSettingsScopeGroupChats), Strings.NotificationsGroups, Icons.People),
+                new SettingsNotificationsScope(clientService, typeof(NotificationSettingsScopeChannelChats), Strings.NotificationsChannels, Icons.Megaphone),
             };
 
             foreach (var scope in Scopes)
@@ -163,7 +163,7 @@ namespace Telegram.ViewModels.Settings
 
         public async void Reset()
         {
-            var confirm = await ShowPopupAsync(Strings.Resources.ResetNotificationsAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.ResetNotificationsAlert, Strings.AppName, Strings.OK, Strings.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 foreach (var scope in Scopes)
@@ -280,7 +280,7 @@ namespace Telegram.ViewModels.Settings
             var chats = await ClientService.SendAsync(new GetChatNotificationSettingsExceptions(GetScope(), false)) as Telegram.Td.Api.Chats;
             if (chats != null)
             {
-                ExceptionsCount = string.Format("{0}, {1}", Alert ? Strings.Resources.NotificationsOn : Strings.Resources.NotificationsOff, Locale.Declension("Exception", chats.ChatIds.Count));
+                ExceptionsCount = string.Format("{0}, {1}", Alert ? Strings.NotificationsOn : Strings.NotificationsOff, Locale.Declension("Exception", chats.ChatIds.Count));
             }
         }
 
@@ -338,12 +338,12 @@ namespace Telegram.ViewModels.Settings
                 }
                 else
                 {
-                    SoundTitle = Strings.Resources.SoundDefault;
+                    SoundTitle = Strings.SoundDefault;
                 }
             }
             else
             {
-                SoundTitle = Strings.Resources.NoSound;
+                SoundTitle = Strings.NoSound;
             }
         }
     }

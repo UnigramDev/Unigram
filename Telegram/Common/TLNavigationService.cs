@@ -95,7 +95,7 @@ namespace Telegram.Common
         {
             var parameters = new ViewServiceParams
             {
-                Title = message.Content is MessageInvoice invoice && invoice.ReceiptMessageId == 0 ? Strings.Resources.PaymentCheckout : Strings.Resources.PaymentReceipt,
+                Title = message.Content is MessageInvoice invoice && invoice.ReceiptMessageId == 0 ? Strings.PaymentCheckout : Strings.PaymentReceipt,
                 Width = 380,
                 Height = 580,
                 PersistentId = "Payments",
@@ -116,7 +116,7 @@ namespace Telegram.Common
         {
             var parameters = new ViewServiceParams
             {
-                Title = Strings.Resources.PaymentCheckout,
+                Title = Strings.PaymentCheckout,
                 Width = 380,
                 Height = 580,
                 PersistentId = "Payments",
@@ -166,21 +166,21 @@ namespace Telegram.Common
 
                 if (user.RestrictionReason.Length > 0)
                 {
-                    await MessagePopup.ShowAsync(user.RestrictionReason, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(user.RestrictionReason, Strings.AppName, Strings.OK);
                     return;
                 }
                 else if (user.Id == _clientService.Options.AntiSpamBotUserId)
                 {
-                    var groupInfo = Strings.Resources.EventLogFilterGroupInfo;
-                    var administrators = Strings.Resources.ChannelAdministrators;
+                    var groupInfo = Strings.EventLogFilterGroupInfo;
+                    var administrators = Strings.ChannelAdministrators;
                     var path = $"{groupInfo} > {administrators}";
 
-                    var text = string.Format(Strings.Resources.ChannelAntiSpamInfo2, path);
-                    var index = Strings.Resources.ChannelAntiSpamInfo2.IndexOf("{0}");
+                    var text = string.Format(Strings.ChannelAntiSpamInfo2, path);
+                    var index = Strings.ChannelAntiSpamInfo2.IndexOf("{0}");
 
                     var formatted = new FormattedText(text, new[] { new TextEntity(index, path.Length, new TextEntityTypeTextUrl("tg://")) });
 
-                    await MessagePopup.ShowAsync(formatted, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(formatted, Strings.AppName, Strings.OK);
                     return;
                 }
             }
@@ -194,13 +194,13 @@ namespace Telegram.Common
 
                 if (supergroup.Status is ChatMemberStatusLeft && !supergroup.IsPublic() && !_clientService.IsChatAccessible(chat))
                 {
-                    await MessagePopup.ShowAsync(Strings.Resources.ChannelCantOpenPrivate, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(Strings.ChannelCantOpenPrivate, Strings.AppName, Strings.OK);
                     return;
                 }
 
                 if (supergroup.RestrictionReason.Length > 0)
                 {
-                    await MessagePopup.ShowAsync(supergroup.RestrictionReason, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(supergroup.RestrictionReason, Strings.AppName, Strings.OK);
                     return;
                 }
             }

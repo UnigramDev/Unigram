@@ -23,15 +23,15 @@ namespace Telegram.Services
         //    {
         //        if (error.Message.Contains("PHONE_NUMBER_INVALID"))
         //        {
-        //            ShowSimpleAlert(fragment, Strings.Resources.InvalidPhoneNumber);
+        //            ShowSimpleAlert(fragment, Strings.InvalidPhoneNumber);
         //        }
         //        else if (error.Message.StartsWith("FLOOD_WAIT"))
         //        {
-        //            ShowSimpleAlert(fragment, Strings.Resources.FloodWait);
+        //            ShowSimpleAlert(fragment, Strings.FloodWait);
         //        }
         //        else
         //        {
-        //            ShowSimpleAlert(fragment, Strings.Resources.ErrorOccurred + "\n" + error.Message);
+        //            ShowSimpleAlert(fragment, Strings.ErrorOccurred + "\n" + error.Message);
         //        }
         //    }
         //    else if (request is TL_channels_joinChannel ||
@@ -81,11 +81,11 @@ namespace Telegram.Services
         //        {
         //            if (fragment != null)
         //            {
-        //                ShowSimpleAlert(fragment, Strings.Resources.EditMessageError);
+        //                ShowSimpleAlert(fragment, Strings.EditMessageError);
         //            }
         //            else
         //            {
-        //                ShowSimpleToast(fragment, Strings.Resources.EditMessageError);
+        //                ShowSimpleToast(fragment, Strings.EditMessageError);
         //            }
         //        }
         //    }
@@ -106,37 +106,37 @@ namespace Telegram.Services
         //    {
         //        if (error.Message.StartsWith("FLOOD_WAIT"))
         //        {
-        //            ShowSimpleAlert(fragment, Strings.Resources.FloodWait);
+        //            ShowSimpleAlert(fragment, Strings.FloodWait);
         //        }
         //        else if (error.Message.Equals("USERS_TOO_MUCH"))
         //        {
-        //            ShowSimpleAlert(fragment, Strings.Resources.JoinToGroupErrorFull);
+        //            ShowSimpleAlert(fragment, Strings.JoinToGroupErrorFull);
         //        }
         //        else
         //        {
-        //            ShowSimpleAlert(fragment, Strings.Resources.JoinToGroupErrorNotExist);
+        //            ShowSimpleAlert(fragment, Strings.JoinToGroupErrorNotExist);
         //        }
         //    }
         //    else if (request is TL_messages_getAttachedStickers)
         //    {
         //        if (fragment != null && fragment.getParentActivity() != null)
         //        {
-        //            Toast.makeText(fragment.getParentActivity(), Strings.Resources.ErrorOccurred + "\n" + error.text, Toast.LENGTH_SHORT).show();
+        //            Toast.makeText(fragment.getParentActivity(), Strings.ErrorOccurred + "\n" + error.text, Toast.LENGTH_SHORT).show();
         //        }
         //    }
         //    else if (request is TL_account_confirmPhone || request is TL_account_verifyPhone || request is TL_account_verifyEmail)
         //    {
         //        if (error.Message.Contains("PHONE_CODE_EMPTY") || error.Message.Contains("PHONE_CODE_INVALID") || error.Message.Contains("CODE_INVALID") || error.Message.Contains("CODE_EMPTY"))
         //        {
-        //            ShowSimpleAlert(fragment, Strings.Resources.InvalidCode);
+        //            ShowSimpleAlert(fragment, Strings.InvalidCode);
         //        }
         //        else if (error.Message.Contains("PHONE_CODE_EXPIRED") || error.Message.Contains("EMAIL_VERIFY_EXPIRED"))
         //        {
-        //            ShowSimpleAlert(fragment, Strings.Resources.CodeExpired);
+        //            ShowSimpleAlert(fragment, Strings.CodeExpired);
         //        }
         //        else if (error.Message.StartsWith("FLOOD_WAIT"))
         //        {
-        //            ShowSimpleAlert(fragment, Strings.Resources.FloodWait);
+        //            ShowSimpleAlert(fragment, Strings.FloodWait);
         //        }
         //        else
         //        {
@@ -147,40 +147,40 @@ namespace Telegram.Services
         //    {
         //        if (error.Message.Contains("PHONE_NUMBER_INVALID"))
         //        {
-        //            ShowSimpleAlert(fragment, Strings.Resources.InvalidPhoneNumber);
+        //            ShowSimpleAlert(fragment, Strings.InvalidPhoneNumber);
         //        }
         //        else if (error.Message.Contains("PHONE_CODE_EMPTY") || error.Message.Contains("PHONE_CODE_INVALID"))
         //        {
-        //            ShowSimpleAlert(fragment, Strings.Resources.InvalidCode);
+        //            ShowSimpleAlert(fragment, Strings.InvalidCode);
         //        }
         //        else if (error.Message.Contains("PHONE_CODE_EXPIRED"))
         //        {
-        //            ShowSimpleAlert(fragment, Strings.Resources.CodeExpired);
+        //            ShowSimpleAlert(fragment, Strings.CodeExpired);
         //        }
         //        else if (error.Message.StartsWith("FLOOD_WAIT"))
         //        {
-        //            ShowSimpleAlert(fragment, Strings.Resources.FloodWait);
+        //            ShowSimpleAlert(fragment, Strings.FloodWait);
         //        }
         //        else if (error.Code != -1000)
         //        {
-        //            ShowSimpleAlert(fragment, Strings.Resources.ErrorOccurred + "\n" + error.Message);
+        //            ShowSimpleAlert(fragment, Strings.ErrorOccurred + "\n" + error.Message);
         //        }
         //    }
         //    else if (request is TL_account_sendConfirmPhoneCode)
         //    {
         //        if (error.Code == 400)
         //        {
-        //            return ShowSimpleAlert(fragment, Strings.Resources.CancelLinkExpired);
+        //            return ShowSimpleAlert(fragment, Strings.CancelLinkExpired);
         //        }
         //        else if (error.Message != null)
         //        {
         //            if (error.Message.StartsWith("FLOOD_WAIT"))
         //            {
-        //                return ShowSimpleAlert(fragment, Strings.Resources.FloodWait);
+        //                return ShowSimpleAlert(fragment, Strings.FloodWait);
         //            }
         //            else
         //            {
-        //                return ShowSimpleAlert(fragment, Strings.Resources.ErrorOccurred);
+        //                return ShowSimpleAlert(fragment, Strings.ErrorOccurred);
         //            }
         //        }
         //    }
@@ -188,19 +188,19 @@ namespace Telegram.Services
         //    {
         //        if (error.Message.Contains("PHONE_NUMBER_INVALID"))
         //        {
-        //            ShowSimpleAlert(fragment, Strings.Resources.InvalidPhoneNumber);
+        //            ShowSimpleAlert(fragment, Strings.InvalidPhoneNumber);
         //        }
         //        else if (error.Message.Contains("PHONE_CODE_EMPTY") || error.Message.Contains("PHONE_CODE_INVALID"))
         //        {
-        //            ShowSimpleAlert(fragment, Strings.Resources.InvalidCode);
+        //            ShowSimpleAlert(fragment, Strings.InvalidCode);
         //        }
         //        else if (error.Message.Contains("PHONE_CODE_EXPIRED"))
         //        {
-        //            ShowSimpleAlert(fragment, Strings.Resources.CodeExpired);
+        //            ShowSimpleAlert(fragment, Strings.CodeExpired);
         //        }
         //        else if (error.Message.StartsWith("FLOOD_WAIT"))
         //        {
-        //            ShowSimpleAlert(fragment, Strings.Resources.FloodWait);
+        //            ShowSimpleAlert(fragment, Strings.FloodWait);
         //        }
         //        else
         //        {
@@ -211,19 +211,19 @@ namespace Telegram.Services
         //    {
         //        if (error.Message.Contains("PHONE_NUMBER_INVALID"))
         //        {
-        //            ShowSimpleAlert(fragment, Strings.Resources.InvalidPhoneNumber);
+        //            ShowSimpleAlert(fragment, Strings.InvalidPhoneNumber);
         //        }
         //        else if (error.Message.Contains("PHONE_CODE_EMPTY") || error.Message.Contains("PHONE_CODE_INVALID"))
         //        {
-        //            ShowSimpleAlert(fragment, Strings.Resources.InvalidCode);
+        //            ShowSimpleAlert(fragment, Strings.InvalidCode);
         //        }
         //        else if (error.Message.Contains("PHONE_CODE_EXPIRED"))
         //        {
-        //            ShowSimpleAlert(fragment, Strings.Resources.CodeExpired);
+        //            ShowSimpleAlert(fragment, Strings.CodeExpired);
         //        }
         //        else if (error.Message.StartsWith("FLOOD_WAIT"))
         //        {
-        //            ShowSimpleAlert(fragment, Strings.Resources.FloodWait);
+        //            ShowSimpleAlert(fragment, Strings.FloodWait);
         //        }
         //        else if (error.Message.StartsWith("PHONE_NUMBER_OCCUPIED"))
         //        {
@@ -231,7 +231,7 @@ namespace Telegram.Services
         //        }
         //        else
         //        {
-        //            ShowSimpleAlert(fragment, Strings.Resources.ErrorOccurred);
+        //            ShowSimpleAlert(fragment, Strings.ErrorOccurred);
         //        }
         //    }
         //    else if (request is TL_updateUserName)
@@ -239,13 +239,13 @@ namespace Telegram.Services
         //        switch (error.Message)
         //        {
         //            case "USERNAME_INVALID":
-        //                ShowSimpleAlert(fragment, Strings.Resources.UsernameInvalid);
+        //                ShowSimpleAlert(fragment, Strings.UsernameInvalid);
         //                break;
         //            case "USERNAME_OCCUPIED":
-        //                ShowSimpleAlert(fragment, Strings.Resources.UsernameInUse);
+        //                ShowSimpleAlert(fragment, Strings.UsernameInUse);
         //                break;
         //            default:
-        //                ShowSimpleAlert(fragment, Strings.Resources.ErrorOccurred);
+        //                ShowSimpleAlert(fragment, Strings.ErrorOccurred);
         //                break;
         //        }
         //    }
@@ -253,11 +253,11 @@ namespace Telegram.Services
         //    {
         //        if (error == null || error.Message.StartsWith("FLOOD_WAIT"))
         //        {
-        //            ShowSimpleAlert(fragment, Strings.Resources.FloodWait);
+        //            ShowSimpleAlert(fragment, Strings.FloodWait);
         //        }
         //        else
         //        {
-        //            ShowSimpleAlert(fragment, Strings.Resources.ErrorOccurred + "\n" + error.Message);
+        //            ShowSimpleAlert(fragment, Strings.ErrorOccurred + "\n" + error.Message);
         //        }
         //    }
         //    else if (request is TL_account_getPassword || request is TL_account_getTmpPassword)
@@ -276,10 +276,10 @@ namespace Telegram.Services
         //        switch (error.Message)
         //        {
         //            case "BOT_PRECHECKOUT_FAILED":
-        //                ShowSimpleToast(fragment, Strings.Resources.PaymentPrecheckoutFailed);
+        //                ShowSimpleToast(fragment, Strings.PaymentPrecheckoutFailed);
         //                break;
         //            case "PAYMENT_FAILED":
-        //                ShowSimpleToast(fragment, Strings.Resources.PaymentFailed);
+        //                ShowSimpleToast(fragment, Strings.PaymentFailed);
         //                break;
         //            default:
         //                ShowSimpleToast(fragment, error.Message);
@@ -291,7 +291,7 @@ namespace Telegram.Services
         //        switch (error.Message)
         //        {
         //            case "SHIPPING_NOT_AVAILABLE":
-        //                ShowSimpleToast(fragment, Strings.Resources.PaymentNoShippingMethod);
+        //                ShowSimpleToast(fragment, Strings.PaymentNoShippingMethod);
         //                break;
         //            default:
         //                ShowSimpleToast(fragment, error.Message);
@@ -303,12 +303,12 @@ namespace Telegram.Services
         private static async void ShowPeerFloodAlert(IDispatcherContext fragment, int reason)
         {
             var dialog = new MessagePopup();
-            dialog.Title = Strings.Resources.AppName;
-            dialog.PrimaryButtonText = Strings.Resources.OK;
+            dialog.Title = Strings.AppName;
+            dialog.PrimaryButtonText = Strings.OK;
 
             if (reason != 2)
             {
-                dialog.SecondaryButtonText = Strings.Resources.MoreInfo;
+                dialog.SecondaryButtonText = Strings.MoreInfo;
                 dialog.SecondaryButtonClick += (s, args) =>
                 {
                     MessageHelper.NavigateToUsername(null, null, "spambot", null, null);
@@ -317,11 +317,11 @@ namespace Telegram.Services
 
             if (reason == 0)
             {
-                dialog.Message = Strings.Resources.NobodyLikesSpam1;
+                dialog.Message = Strings.NobodyLikesSpam1;
             }
             else if (reason == 1)
             {
-                dialog.Message = Strings.Resources.NobodyLikesSpam2;
+                dialog.Message = Strings.NobodyLikesSpam2;
             }
             else if (reason == 2)
             {
@@ -354,9 +354,9 @@ namespace Telegram.Services
             }
 
             var dialog = new MessagePopup();
-            dialog.Title = Strings.Resources.AppName;
+            dialog.Title = Strings.AppName;
             dialog.Message = text;
-            dialog.PrimaryButtonText = Strings.Resources.OK;
+            dialog.PrimaryButtonText = Strings.OK;
 
             await dialog.ShowQueuedAsync();
         }
@@ -364,7 +364,7 @@ namespace Telegram.Services
         private static string GetFloodWaitString(string error)
         {
             var time = error.ToInt32();
-            return string.Format(Strings.Resources.FloodWaitTime, Locale.FormatCallDuration(time));
+            return string.Format(Strings.FloodWaitTime, Locale.FormatCallDuration(time));
         }
 
         public static void ShowFloodWaitAlert(string error)
@@ -385,14 +385,14 @@ namespace Telegram.Services
             }
 
             var dialog = new MessagePopup();
-            dialog.Title = Strings.Resources.AppName;
-            dialog.PrimaryButtonText = Strings.Resources.OK;
+            dialog.Title = Strings.AppName;
+            dialog.PrimaryButtonText = Strings.OK;
 
             switch (error)
             {
                 case "PEER_FLOOD":
-                    dialog.Message = Strings.Resources.NobodyLikesSpam2;
-                    dialog.SecondaryButtonText = Strings.Resources.MoreInfo;
+                    dialog.Message = Strings.NobodyLikesSpam2;
+                    dialog.SecondaryButtonText = Strings.MoreInfo;
                     dialog.SecondaryButtonClick += (s, args) =>
                     {
                         MessageHelper.NavigateToUsername(null, null, "spambot", null, null);
@@ -401,44 +401,44 @@ namespace Telegram.Services
                 case "USER_BLOCKED":
                 case "USER_BOT":
                 case "USER_ID_INVALID":
-                    dialog.Message = channel ? Strings.Resources.ChannelUserCantAdd : Strings.Resources.GroupUserCantAdd;
+                    dialog.Message = channel ? Strings.ChannelUserCantAdd : Strings.GroupUserCantAdd;
                     break;
                 case "USERS_TOO_MUCH":
-                    dialog.Message = channel ? Strings.Resources.ChannelUserAddLimit : Strings.Resources.GroupUserAddLimit;
+                    dialog.Message = channel ? Strings.ChannelUserAddLimit : Strings.GroupUserAddLimit;
                     break;
                 case "USER_NOT_MUTUAL_CONTACT":
-                    dialog.Message = channel ? Strings.Resources.ChannelUserLeftError : Strings.Resources.GroupUserLeftError;
+                    dialog.Message = channel ? Strings.ChannelUserLeftError : Strings.GroupUserLeftError;
                     break;
                 case "ADMINS_TOO_MUCH":
-                    dialog.Message = channel ? Strings.Resources.ChannelUserCantAdmin : Strings.Resources.GroupUserCantAdmin;
+                    dialog.Message = channel ? Strings.ChannelUserCantAdmin : Strings.GroupUserCantAdmin;
                     break;
                 case "BOTS_TOO_MUCH":
-                    dialog.Message = channel ? Strings.Resources.ChannelUserCantBot : Strings.Resources.GroupUserCantBot;
+                    dialog.Message = channel ? Strings.ChannelUserCantBot : Strings.GroupUserCantBot;
                     break;
                 case "USER_PRIVACY_RESTRICTED":
-                    dialog.Message = channel ? Strings.Resources.InviteToChannelError : Strings.Resources.InviteToGroupError;
+                    dialog.Message = channel ? Strings.InviteToChannelError : Strings.InviteToGroupError;
                     break;
                 case "USERS_TOO_FEW":
-                    dialog.Message = Strings.Resources.CreateGroupError;
+                    dialog.Message = Strings.CreateGroupError;
                     break;
                 case "USER_RESTRICTED":
-                    dialog.Message = Strings.Resources.UserRestricted;
+                    dialog.Message = Strings.UserRestricted;
                     break;
                 case "YOU_BLOCKED_USER":
-                    dialog.Message = Strings.Resources.YouBlockedUser;
+                    dialog.Message = Strings.YouBlockedUser;
                     break;
                 case "CHAT_ADMIN_BAN_REQUIRED":
                 case "USER_KICKED":
-                    dialog.Message = Strings.Resources.AddAdminErrorBlacklisted;
+                    dialog.Message = Strings.AddAdminErrorBlacklisted;
                     break;
                 case "CHAT_ADMIN_INVITE_REQUIRED":
-                    dialog.Message = Strings.Resources.AddAdminErrorNotAMember;
+                    dialog.Message = Strings.AddAdminErrorNotAMember;
                     break;
                 case "USER_ADMIN_INVALID":
-                    dialog.Message = Strings.Resources.AddBannedErrorAdmin;
+                    dialog.Message = Strings.AddBannedErrorAdmin;
                     break;
                 default:
-                    dialog.Message = Strings.Resources.ErrorOccurred + "\n" + error;
+                    dialog.Message = Strings.ErrorOccurred + "\n" + error;
                     break;
             }
 

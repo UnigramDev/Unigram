@@ -21,7 +21,7 @@ namespace Telegram.Views.Settings
         public SettingsQuickReactionPage()
         {
             InitializeComponent();
-            Title = Strings.Resources.DoubleTapSetting;
+            Title = Strings.DoubleTapSetting;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)

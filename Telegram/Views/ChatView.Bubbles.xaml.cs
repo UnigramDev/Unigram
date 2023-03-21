@@ -142,12 +142,12 @@ namespace Telegram.Views
                         if (message.SchedulingState is MessageSchedulingStateSendAtDate sendAtDate)
                         {
                             DateHeader.CommandParameter = null;
-                            DateHeaderLabel.Text = string.Format(Strings.Resources.MessageScheduledOn, Converter.DayGrouping(Utils.UnixTimestampToDateTime(sendAtDate.SendDate)));
+                            DateHeaderLabel.Text = string.Format(Strings.MessageScheduledOn, Converter.DayGrouping(Utils.UnixTimestampToDateTime(sendAtDate.SendDate)));
                         }
                         else if (message.SchedulingState is MessageSchedulingStateSendWhenOnline)
                         {
                             DateHeader.CommandParameter = null;
-                            DateHeaderLabel.Text = Strings.Resources.MessageScheduledUntilOnline;
+                            DateHeaderLabel.Text = Strings.MessageScheduledUntilOnline;
                         }
                         else if (message.Date > 0)
                         {
@@ -577,8 +577,8 @@ namespace Telegram.Views
                     if (view != null)
                     {
                         view.Text = chatChangePhoto.Photo.Animation != null
-                            ? Strings.Resources.ViewVideoAction
-                            : Strings.Resources.ViewPhotoAction;
+                            ? Strings.ViewVideoAction
+                            : Strings.ViewPhotoAction;
                     }
                 }
                 else if (message.Content is MessageSuggestProfilePhoto suggestProfilePhoto)
@@ -590,8 +590,8 @@ namespace Telegram.Views
                     if (view != null)
                     {
                         view.Text = suggestProfilePhoto.Photo.Animation != null
-                            ? Strings.Resources.ViewVideoAction
-                            : Strings.Resources.ViewPhotoAction;
+                            ? Strings.ViewVideoAction
+                            : Strings.ViewPhotoAction;
                     }
                 }
             }

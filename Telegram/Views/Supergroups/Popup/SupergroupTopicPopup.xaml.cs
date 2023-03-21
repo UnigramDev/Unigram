@@ -21,10 +21,10 @@ namespace Telegram.Views.Supergroups.Popup
             InitializeComponent();
 
             _clientService = clientService;
-            Title = topic == null ? Strings.Resources.NewTopic : Strings.Resources.EditTopic;
+            Title = topic == null ? Strings.NewTopic : Strings.EditTopic;
 
-            PrimaryButtonText = topic == null ? Strings.Resources.Create : Strings.Resources.Done;
-            SecondaryButtonText = Strings.Resources.Cancel;
+            PrimaryButtonText = topic == null ? Strings.Create : Strings.Done;
+            SecondaryButtonText = Strings.Cancel;
 
             NameLabel.Text = topic?.Name ?? string.Empty;
             Identity.SetStatus(clientService, topic.Icon);

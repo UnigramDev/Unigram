@@ -51,7 +51,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var restricted = await VerifyRightsAsync(chat, x => x.CanSendOtherMessages, Strings.Resources.GlobalAttachStickersRestricted, Strings.Resources.AttachStickersRestrictedForever, Strings.Resources.AttachStickersRestricted);
+            var restricted = await VerifyRightsAsync(chat, x => x.CanSendOtherMessages, Strings.GlobalAttachStickersRestricted, Strings.AttachStickersRestrictedForever, Strings.AttachStickersRestricted);
             if (restricted)
             {
                 return;
@@ -115,7 +115,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var restricted = await VerifyRightsAsync(chat, x => x.CanSendOtherMessages, Strings.Resources.GlobalAttachGifRestricted, Strings.Resources.AttachGifRestrictedForever, Strings.Resources.AttachGifRestricted);
+            var restricted = await VerifyRightsAsync(chat, x => x.CanSendOtherMessages, Strings.GlobalAttachGifRestricted, Strings.AttachGifRestrictedForever, Strings.AttachGifRestricted);
             if (restricted)
             {
                 return;
@@ -161,11 +161,11 @@ namespace Telegram.ViewModels
                 {
                     if (restricted.IsForever())
                     {
-                        await ShowPopupAsync(forever, Strings.Resources.AppName, Strings.Resources.OK);
+                        await ShowPopupAsync(forever, Strings.AppName, Strings.OK);
                     }
                     else
                     {
-                        await ShowPopupAsync(string.Format(temporary, Converter.BannedUntil(restricted.RestrictedUntilDate)), Strings.Resources.AppName, Strings.Resources.OK);
+                        await ShowPopupAsync(string.Format(temporary, Converter.BannedUntil(restricted.RestrictedUntilDate)), Strings.AppName, Strings.OK);
                     }
 
                     return true;
@@ -174,7 +174,7 @@ namespace Telegram.ViewModels
                 {
                     if (!permission(chat.Permissions))
                     {
-                        await ShowPopupAsync(global, Strings.Resources.AppName, Strings.Resources.OK);
+                        await ShowPopupAsync(global, Strings.AppName, Strings.OK);
                         return true;
                     }
                 }
@@ -183,7 +183,7 @@ namespace Telegram.ViewModels
             {
                 if (!permission(chat.Permissions))
                 {
-                    await ShowPopupAsync(global, Strings.Resources.AppName, Strings.Resources.OK);
+                    await ShowPopupAsync(global, Strings.AppName, Strings.OK);
                     return true;
                 }
             }
@@ -245,7 +245,7 @@ namespace Telegram.ViewModels
             {
                 if (chat.Type is ChatTypeSupergroup super && super.IsChannel)
                 {
-                    label = Strings.Resources.ChannelCantSendMessage;
+                    label = Strings.ChannelCantSendMessage;
                     return true;
                 }
 
@@ -347,9 +347,9 @@ namespace Telegram.ViewModels
             }
 
             var restricted = await VerifyRightsAsync(chat, x => x.CanSendDocuments,
-                Strings.Resources.ErrorSendRestrictedDocumentsAll,
-                Strings.Resources.ErrorSendRestrictedDocuments,
-                Strings.Resources.ErrorSendRestrictedDocuments);
+                Strings.ErrorSendRestrictedDocumentsAll,
+                Strings.ErrorSendRestrictedDocuments,
+                Strings.ErrorSendRestrictedDocuments);
             if (restricted)
             {
                 return;
@@ -399,22 +399,22 @@ namespace Telegram.ViewModels
             {
                 if (item is StoragePhoto && !permissions.CanSendPhotos)
                 {
-                    await ShowPopupAsync(restricted ? Strings.Resources.ErrorSendRestrictedPhoto : Strings.Resources.ErrorSendRestrictedPhotoAll, Strings.Resources.AppName, Strings.Resources.OK);
+                    await ShowPopupAsync(restricted ? Strings.ErrorSendRestrictedPhoto : Strings.ErrorSendRestrictedPhotoAll, Strings.AppName, Strings.OK);
                     return;
                 }
                 else if (item is StorageVideo && !permissions.CanSendVideos)
                 {
-                    await ShowPopupAsync(restricted ? Strings.Resources.ErrorSendRestrictedVideo : Strings.Resources.ErrorSendRestrictedVideoAll, Strings.Resources.AppName, Strings.Resources.OK);
+                    await ShowPopupAsync(restricted ? Strings.ErrorSendRestrictedVideo : Strings.ErrorSendRestrictedVideoAll, Strings.AppName, Strings.OK);
                     return;
                 }
                 else if (item is StorageAudio && !permissions.CanSendAudios)
                 {
-                    await ShowPopupAsync(restricted ? Strings.Resources.ErrorSendRestrictedMusic : Strings.Resources.ErrorSendRestrictedMusicAll, Strings.Resources.AppName, Strings.Resources.OK);
+                    await ShowPopupAsync(restricted ? Strings.ErrorSendRestrictedMusic : Strings.ErrorSendRestrictedMusicAll, Strings.AppName, Strings.OK);
                     return;
                 }
                 else if (item is StorageDocument && !permissions.CanSendDocuments)
                 {
-                    await ShowPopupAsync(restricted ? Strings.Resources.ErrorSendRestrictedDocuments : Strings.Resources.ErrorSendRestrictedDocumentsAll, Strings.Resources.AppName, Strings.Resources.OK);
+                    await ShowPopupAsync(restricted ? Strings.ErrorSendRestrictedDocuments : Strings.ErrorSendRestrictedDocumentsAll, Strings.AppName, Strings.OK);
                     return;
                 }
             }
@@ -627,7 +627,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var user = await SharePopup.PickUserAsync(ClientService, Strings.Resources.ShareContactTitle, true);
+            var user = await SharePopup.PickUserAsync(ClientService, Strings.ShareContactTitle, true);
             if (user == null)
             {
                 return;
@@ -735,7 +735,7 @@ namespace Telegram.ViewModels
                 }
                 else if (error.TypeEquals(ErrorType.SCHEDULE_TOO_MUCH))
                 {
-                    await ShowPopupAsync(Strings.Resources.MessageScheduledLimitReached, Strings.Resources.AppName, Strings.Resources.OK);
+                    await ShowPopupAsync(Strings.MessageScheduledLimitReached, Strings.AppName, Strings.OK);
                 }
             }
 

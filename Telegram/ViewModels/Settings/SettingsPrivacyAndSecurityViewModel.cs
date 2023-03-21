@@ -283,7 +283,7 @@ namespace Telegram.ViewModels.Settings
         {
             if (!value)
             {
-                var confirm = await ShowPopupAsync(Strings.Resources.SuggestContactsAlert, Strings.Resources.AppName, Strings.Resources.MuteDisable, Strings.Resources.Cancel);
+                var confirm = await ShowPopupAsync(Strings.SuggestContactsAlert, Strings.AppName, Strings.MuteDisable, Strings.Cancel);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     RaisePropertyChanged(nameof(IsContactsSuggestEnabled));
@@ -335,13 +335,13 @@ namespace Telegram.ViewModels.Settings
             var response = await ClientService.SendAsync(new GetPasswordState());
             if (response is PasswordState passwordState)
             {
-                var confirm = await ShowPopupAsync(Strings.Resources.EmailLoginChangeMessage, passwordState.LoginEmailAddressPattern, Strings.Resources.ChangeEmail, Strings.Resources.Cancel);
+                var confirm = await ShowPopupAsync(Strings.EmailLoginChangeMessage, passwordState.LoginEmailAddressPattern, Strings.ChangeEmail, Strings.Cancel);
             }
         }
 
         public async void ClearDrafts()
         {
-            var confirm = await ShowPopupAsync(Strings.Resources.AreYouSureClearDrafts, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.AreYouSureClearDrafts, Strings.AppName, Strings.OK, Strings.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -356,7 +356,7 @@ namespace Telegram.ViewModels.Settings
 
         public async void ClearContacts()
         {
-            var confirm = await ShowPopupAsync(Strings.Resources.SyncContactsDeleteInfo, Strings.Resources.Contacts, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.SyncContactsDeleteInfo, Strings.Contacts, Strings.OK, Strings.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -385,8 +385,8 @@ namespace Telegram.ViewModels.Settings
         {
             var dialog = new ContentPopup();
             var stack = new StackPanel();
-            var checkShipping = new CheckBox { Content = Strings.Resources.PrivacyClearShipping, IsChecked = true };
-            var checkPayment = new CheckBox { Content = Strings.Resources.PrivacyClearPayment, IsChecked = true };
+            var checkShipping = new CheckBox { Content = Strings.PrivacyClearShipping, IsChecked = true };
+            var checkPayment = new CheckBox { Content = Strings.PrivacyClearPayment, IsChecked = true };
 
             var toggle = new RoutedEventHandler((s, args) =>
             {
@@ -402,10 +402,10 @@ namespace Telegram.ViewModels.Settings
             stack.Children.Add(checkShipping);
             stack.Children.Add(checkPayment);
 
-            dialog.Title = Strings.Resources.PrivacyPayments;
+            dialog.Title = Strings.PrivacyPayments;
             dialog.Content = stack;
-            dialog.PrimaryButtonText = Strings.Resources.ClearButton;
-            dialog.SecondaryButtonText = Strings.Resources.Cancel;
+            dialog.PrimaryButtonText = Strings.ClearButton;
+            dialog.SecondaryButtonText = Strings.Cancel;
 
             var confirm = await ShowPopupAsync(dialog);
             if (confirm == ContentDialogResult.Primary)
@@ -473,7 +473,7 @@ namespace Telegram.ViewModels.Settings
             }
             else if (ClientService.IsPremiumAvailable)
             {
-                var confirm = await ShowPopupAsync(Strings.Resources.PrivacyVoiceMessagesPremiumOnly, Strings.Resources.PrivacyVoiceMessages, Strings.Resources.OK, Strings.Resources.Cancel);
+                var confirm = await ShowPopupAsync(Strings.PrivacyVoiceMessagesPremiumOnly, Strings.PrivacyVoiceMessages, Strings.OK, Strings.Cancel);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     NavigationService.ShowPromo(/*new PremiumSourceFeature(new PremiumFeaturePrivateVoiceAndVideoMessages)*/);

@@ -89,7 +89,7 @@ namespace Telegram.Services
                 current.SystemGroupKind = JumpListSystemGroupKind.None;
                 current.Items.Clear();
 
-                var cloud = JumpListItem.CreateWithArguments(string.Format("from_id={0}", _clientService.Options.MyId), Strings.Resources.SavedMessages);
+                var cloud = JumpListItem.CreateWithArguments(string.Format("from_id={0}", _clientService.Options.MyId), Strings.SavedMessages);
                 cloud.Logo = new Uri("ms-appx:///Assets/JumpList/SavedMessages/SavedMessages.png");
 
                 current.Items.Add(cloud);

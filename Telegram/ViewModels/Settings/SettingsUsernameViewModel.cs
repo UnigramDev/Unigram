@@ -192,7 +192,7 @@ namespace Telegram.ViewModels.Settings
                 {
                     IsLoading = false;
                     IsAvailable = false;
-                    ErrorMessage = Strings.Resources.UsernameInUse;
+                    ErrorMessage = Strings.UsernameInUse;
                 }
             }
             else if (response is Error error)
@@ -201,13 +201,13 @@ namespace Telegram.ViewModels.Settings
                 {
                     IsLoading = false;
                     IsAvailable = false;
-                    ErrorMessage = Strings.Resources.UsernameInvalid;
+                    ErrorMessage = Strings.UsernameInvalid;
                 }
                 else if (error.TypeEquals(ErrorType.USERNAME_OCCUPIED))
                 {
                     IsLoading = false;
                     IsAvailable = false;
-                    ErrorMessage = Strings.Resources.UsernameInUse;
+                    ErrorMessage = Strings.UsernameInUse;
                 }
                 else if (error.TypeEquals(ErrorType.USERNAME_NOT_OCCUPIED))
                 {
@@ -234,19 +234,19 @@ namespace Telegram.ViewModels.Settings
                 }
                 else if (username.Length < 5)
                 {
-                    ErrorMessage = Strings.Resources.UsernameInvalidShort;
+                    ErrorMessage = Strings.UsernameInvalidShort;
                 }
                 else if (username.Length > 32)
                 {
-                    ErrorMessage = Strings.Resources.UsernameInvalidLong;
+                    ErrorMessage = Strings.UsernameInvalidLong;
                 }
                 else if (username[0] is >= '0' and <= '9')
                 {
-                    ErrorMessage = Strings.Resources.UsernameInvalidStartNumber;
+                    ErrorMessage = Strings.UsernameInvalidStartNumber;
                 }
                 else
                 {
-                    ErrorMessage = Strings.Resources.UsernameInvalid;
+                    ErrorMessage = Strings.UsernameInvalid;
                 }
             }
             else
@@ -375,7 +375,7 @@ namespace Telegram.ViewModels.Settings
             dataPackage.SetText(MeUrlPrefixConverter.Convert(ClientService, _username));
             ClipboardEx.TrySetContent(dataPackage);
 
-            await ShowPopupAsync(Strings.Resources.LinkCopied, Strings.Resources.AppName, Strings.Resources.OK);
+            await ShowPopupAsync(Strings.LinkCopied, Strings.AppName, Strings.OK);
         }
     }
 

@@ -29,21 +29,21 @@ namespace Telegram.Views.Popups
             var channel = chat.Type is ChatTypeSupergroup super && super.IsChannel;
 
             Title = chat.VideoChat.GroupCallId != 0
-                ? Strings.Resources.VoipGroupDisplayAs
+                ? Strings.VoipGroupDisplayAs
                 : channel
-                ? Strings.Resources.StartVoipChannelTitle
-                : Strings.Resources.VoipGroupStartAs;
+                ? Strings.StartVoipChannelTitle
+                : Strings.VoipGroupStartAs;
 
             MessageLabel.Text = channel
-                ? Strings.Resources.VoipGroupStartAsInfo
-                : Strings.Resources.VoipGroupStartAsInfoGroup;
+                ? Strings.VoipGroupStartAsInfo
+                : Strings.VoipGroupStartAsInfoGroup;
 
             List.ItemsSource = senders;
             List.SelectedItem = already ?? senders.FirstOrDefault();
 
             Schedule.Content = channel
-                ? Strings.Resources.VoipChannelScheduleVoiceChat
-                : Strings.Resources.VoipGroupScheduleVoiceChat;
+                ? Strings.VoipChannelScheduleVoiceChat
+                : Strings.VoipGroupScheduleVoiceChat;
 
             Schedule.Visibility = canSchedule
                 ? Visibility.Visible
@@ -66,8 +66,8 @@ namespace Telegram.Views.Popups
                 StartWith.Visibility = Visibility.Collapsed;
             }
 
-            PrimaryButtonText = Strings.Resources.Start;
-            SecondaryButtonText = Strings.Resources.Close;
+            PrimaryButtonText = Strings.Start;
+            SecondaryButtonText = Strings.Close;
         }
 
         public bool IsScheduleSelected { get; private set; }
@@ -111,11 +111,11 @@ namespace Telegram.Views.Popups
             {
                 //if (_clientService.TryGetUser(messageSender, out User user))
                 //{
-                //    PrimaryButtonText = string.Format(Strings.Resources.VoipGroupContinueAs, user.GetFullName());
+                //    PrimaryButtonText = string.Format(Strings.VoipGroupContinueAs, user.GetFullName());
                 //}
                 //else if (_clientService.TryGetChat(messageSender, out Chat chat))
                 //{
-                //    PrimaryButtonText = string.Format(Strings.Resources.VoipGroupContinueAs, _clientService.GetTitle(chat));
+                //    PrimaryButtonText = string.Format(Strings.VoipGroupContinueAs, _clientService.GetTitle(chat));
                 //}
 
                 IsPrimaryButtonEnabled = true;

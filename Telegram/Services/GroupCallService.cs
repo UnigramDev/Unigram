@@ -226,7 +226,7 @@ namespace Telegram.Services
             //    var callUser = ClientService.GetUser(call.UserId);
             //    if (callUser != null && callUser.Id != user.Id)
             //    {
-            //        var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.VoipOngoingAlert, callUser.GetFullName(), user.GetFullName()), Strings.Resources.VoipOngoingAlertTitle, Strings.Resources.OK, Strings.Resources.Cancel);
+            //        var confirm = await MessagePopup.ShowAsync(string.Format(Strings.VoipOngoingAlert, callUser.GetFullName(), user.GetFullName()), Strings.VoipOngoingAlertTitle, Strings.OK, Strings.Cancel);
             //        if (confirm == ContentDialogResult.Primary)
             //        {
 
@@ -328,7 +328,7 @@ namespace Telegram.Services
                 }
                 else
                 {
-                    var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.VoipOngoingChatAlert, _chat.Title, chat.Title), Strings.Resources.VoipOngoingChatAlertTitle, Strings.Resources.OK, Strings.Resources.Cancel);
+                    var confirm = await MessagePopup.ShowAsync(string.Format(Strings.VoipOngoingChatAlert, _chat.Title, chat.Title), Strings.VoipOngoingChatAlertTitle, Strings.OK, Strings.Cancel);
                     if (confirm != ContentDialogResult.Primary)
                     {
                         return;
@@ -434,7 +434,7 @@ namespace Telegram.Services
                     _coordinator.MuteStateChanged += OnMuteStateChanged;
 
                     // I'm not sure if RequestNewOutgoingCall is the right method to call, but it seem to work.
-                    _systemCall = _coordinator.RequestNewOutgoingCall($"{chat.Id}", chat.Title, Strings.Resources.AppName, VoipPhoneCallMedia.Audio | VoipPhoneCallMedia.Video);
+                    _systemCall = _coordinator.RequestNewOutgoingCall($"{chat.Id}", chat.Title, Strings.AppName, VoipPhoneCallMedia.Audio | VoipPhoneCallMedia.Video);
                     _systemCall.TryNotifyCallActive();
                     _systemCall.EndRequested += OnEndRequested;
                 }
@@ -1153,7 +1153,7 @@ namespace Telegram.Services
 
                     var parameters = new ViewServiceParams
                     {
-                        Title = IsChannel ? Strings.Resources.VoipChannelVoiceChat : Strings.Resources.VoipGroupVoiceChat,
+                        Title = IsChannel ? Strings.VoipChannelVoiceChat : Strings.VoipGroupVoiceChat,
                         Width = call.IsRtmpStream ? 580 : 380,
                         Height = call.IsRtmpStream ? 380 : 580,
                         PersistentId = call.IsRtmpStream ? "LiveStream" : "VideoChat",

@@ -219,7 +219,7 @@ namespace Telegram.Common
             var results = new List<EmojiGroup>();
             var recent = new EmojiGroup
             {
-                Title = Strings.Resources.RecentStickers,
+                Title = Strings.RecentStickers,
                 Glyph = Icons.EmojiRecents,
                 SkinTone = skin,
                 Stickers = SettingsService.Current.Emoji.RecentEmoji.Select(x =>

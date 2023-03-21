@@ -26,7 +26,7 @@ namespace Telegram.Views.Supergroups
         public SupergroupPermissionsPage()
         {
             InitializeComponent();
-            Title = Strings.Resources.ChannelPermissions;
+            Title = Strings.ChannelPermissions;
 
             InitializeTicks();
         }
@@ -89,7 +89,7 @@ namespace Telegram.Views.Supergroups
         public void UpdateSupergroup(Chat chat, Supergroup group)
         {
             AddNew.Visibility = group.CanRestrictMembers() ? Visibility.Visible : Visibility.Collapsed;
-            Footer.Text = group.IsChannel ? Strings.Resources.NoBlockedChannel : Strings.Resources.NoBlockedGroup;
+            Footer.Text = group.IsChannel ? Strings.NoBlockedChannel : Strings.NoBlockedGroup;
         }
 
         public void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo)
@@ -98,8 +98,8 @@ namespace Telegram.Views.Supergroups
             ViewModel.SlowModeDelay = fullInfo.SlowModeDelay;
 
             SlowmodePanel.Footer = fullInfo.SlowModeDelay > 0
-                ? string.Format(Strings.Resources.SlowmodeInfoSelected, fullInfo.SlowModeDelay)
-                : Strings.Resources.SlowmodeInfoOff;
+                ? string.Format(Strings.SlowmodeInfoSelected, fullInfo.SlowModeDelay)
+                : Strings.SlowmodeInfoOff;
         }
 
         public void UpdateChat(Chat chat) { }
@@ -188,21 +188,21 @@ namespace Telegram.Views.Supergroups
 
             if (seconds == 0)
             {
-                return Strings.Resources.SlowmodeOff;
+                return Strings.SlowmodeOff;
             }
             else
             {
                 if (seconds < 60)
                 {
-                    return string.Format(Strings.Resources.SlowmodeSeconds, seconds);
+                    return string.Format(Strings.SlowmodeSeconds, seconds);
                 }
                 else if (seconds < 60 * 60)
                 {
-                    return string.Format(Strings.Resources.SlowmodeMinutes, seconds / 60);
+                    return string.Format(Strings.SlowmodeMinutes, seconds / 60);
                 }
                 else
                 {
-                    return string.Format(Strings.Resources.SlowmodeHours, seconds / 60 / 60);
+                    return string.Format(Strings.SlowmodeHours, seconds / 60 / 60);
                 }
             }
         }
@@ -211,21 +211,21 @@ namespace Telegram.Views.Supergroups
         {
             if (value == 0)
             {
-                return Strings.Resources.SlowmodeInfoOff;
+                return Strings.SlowmodeInfoOff;
             }
             else
             {
                 if (value < 60)
                 {
-                    return string.Format(Strings.Resources.SlowmodeInfoSelected, Locale.Declension("Seconds", value));
+                    return string.Format(Strings.SlowmodeInfoSelected, Locale.Declension("Seconds", value));
                 }
                 else if (value < 60 * 60)
                 {
-                    return string.Format(Strings.Resources.SlowmodeInfoSelected, Locale.Declension("Minutes", value / 60));
+                    return string.Format(Strings.SlowmodeInfoSelected, Locale.Declension("Minutes", value / 60));
                 }
                 else
                 {
-                    return string.Format(Strings.Resources.SlowmodeInfoSelected, Locale.Declension("Hours", value / 60 / 60));
+                    return string.Format(Strings.SlowmodeInfoSelected, Locale.Declension("Hours", value / 60 / 60));
                 }
             }
         }

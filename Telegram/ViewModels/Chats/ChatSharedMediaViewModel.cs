@@ -138,7 +138,7 @@ namespace Telegram.ViewModels.Chats
 
             if (Chat.Type is ChatTypeBasicGroup || Chat.Type is ChatTypeSupergroup supergroup && !supergroup.IsChannel)
             {
-                Items.Add(new ProfileItem(Strings.Resources.ChannelMembers, typeof(ChatSharedMembersPage)));
+                Items.Add(new ProfileItem(Strings.ChannelMembers, typeof(ChatSharedMembersPage)));
                 HasSharedMembers = Topic == null;
                 SelectedItem = Items.FirstOrDefault();
             }
@@ -192,23 +192,23 @@ namespace Telegram.ViewModels.Chats
 
             if (SharedCount[0] > 0)
             {
-                Items.Add(new ProfileItem(Strings.Resources.SharedMediaTab2, typeof(ChatSharedMediaPage)));
+                Items.Add(new ProfileItem(Strings.SharedMediaTab2, typeof(ChatSharedMediaPage)));
             }
             if (SharedCount[1] > 0)
             {
-                Items.Add(new ProfileItem(Strings.Resources.SharedFilesTab2, typeof(ChatSharedFilesPage)));
+                Items.Add(new ProfileItem(Strings.SharedFilesTab2, typeof(ChatSharedFilesPage)));
             }
             if (SharedCount[2] > 0)
             {
-                Items.Add(new ProfileItem(Strings.Resources.SharedLinksTab2, typeof(ChatSharedLinksPage)));
+                Items.Add(new ProfileItem(Strings.SharedLinksTab2, typeof(ChatSharedLinksPage)));
             }
             if (SharedCount[3] > 0)
             {
-                Items.Add(new ProfileItem(Strings.Resources.SharedMusicTab2, typeof(ChatSharedMusicPage)));
+                Items.Add(new ProfileItem(Strings.SharedMusicTab2, typeof(ChatSharedMusicPage)));
             }
             if (SharedCount[4] > 0)
             {
-                Items.Add(new ProfileItem(Strings.Resources.SharedVoiceTab2, typeof(ChatSharedVoicePage)));
+                Items.Add(new ProfileItem(Strings.SharedVoiceTab2, typeof(ChatSharedVoicePage)));
             }
 
             if (chat.Type is ChatTypePrivate or ChatTypeSecret)
@@ -224,7 +224,7 @@ namespace Telegram.ViewModels.Chats
 
                 if (cached.GroupInCommonCount > 0)
                 {
-                    Items.Add(new ProfileItem(Strings.Resources.SharedGroupsTab2, typeof(UserCommonChatsPage)));
+                    Items.Add(new ProfileItem(Strings.SharedGroupsTab2, typeof(UserCommonChatsPage)));
                     HasSharedGroups = true;
                 }
             }
@@ -680,7 +680,7 @@ namespace Telegram.ViewModels.Chats
                 {
                     if (untrust)
                     {
-                        var confirm = await ShowPopupAsync(string.Format(Strings.Resources.OpenUrlAlert, url), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+                        var confirm = await ShowPopupAsync(string.Format(Strings.OpenUrlAlert, url), Strings.AppName, Strings.OK, Strings.Cancel);
                         if (confirm != ContentDialogResult.Primary)
                         {
                             return;

@@ -124,7 +124,7 @@ namespace Telegram.ViewModels.Settings
 
         public async void Reset()
         {
-            var confirm = await ShowPopupAsync(Strings.Resources.ResetChatBackgroundsAlert, Strings.Resources.ResetChatBackgroundsAlertTitle, Strings.Resources.Reset, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.ResetChatBackgroundsAlert, Strings.ResetChatBackgroundsAlertTitle, Strings.Reset, Strings.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -164,7 +164,7 @@ namespace Telegram.ViewModels.Settings
                 return;
             }
 
-            var confirm = await ShowPopupAsync(Strings.Resources.DeleteChatBackgroundsAlert, Locale.Declension("DeleteBackground", 1), Strings.Resources.Delete, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(Strings.DeleteChatBackgroundsAlert, Locale.Declension("DeleteBackground", 1), Strings.Delete, Strings.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

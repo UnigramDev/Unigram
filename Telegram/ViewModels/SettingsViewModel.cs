@@ -144,9 +144,9 @@ namespace Telegram.ViewModels
         public RelayCommand AskCommand { get; }
         private async void AskExecute()
         {
-            var text = Regex.Replace(Strings.Resources.AskAQuestionInfo, "<!\\[CDATA\\[(.*?)\\]\\]>", "$1");
+            var text = Regex.Replace(Strings.AskAQuestionInfo, "<!\\[CDATA\\[(.*?)\\]\\]>", "$1");
 
-            var confirm = await ShowPopupAsync(text, Strings.Resources.AskAQuestion, Strings.Resources.AskButton, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(text, Strings.AskAQuestion, Strings.AskButton, Strings.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 var response = await ClientService.SendAsync(new GetSupportUser());
@@ -177,7 +177,7 @@ namespace Telegram.ViewModels
                 }
                 else if (page.Page == typeof(InstantPage))
                 {
-                    NavigationService.NavigateToInstant(Strings.Resources.TelegramFaqUrl);
+                    NavigationService.NavigateToInstant(Strings.TelegramFaqUrl);
                 }
                 //else if (page.Page == typeof(WalletPage))
                 //{

@@ -632,21 +632,21 @@ namespace Telegram.Controls.Gallery
         private string ConvertDate(int value)
         {
             var date = Converter.DateTime(value);
-            return string.Format(Strings.Resources.formatDateAtTime, Converter.ShortDate.Format(date), Converter.ShortTime.Format(date));
+            return string.Format(Strings.formatDateAtTime, Converter.ShortDate.Format(date), Converter.ShortTime.Format(date));
         }
 
         private string ConvertOf(GalleryContent item, int index, int count)
         {
             if (item.IsPersonal)
             {
-                return Strings.Resources.CustomAvatarTooltip;
+                return Strings.CustomAvatarTooltip;
             }
             else if (item.IsPublic)
             {
-                return Strings.Resources.FallbackTooltip;
+                return Strings.FallbackTooltip;
             }
 
-            return string.Format(Strings.Resources.Of, index, count);
+            return string.Format(Strings.Of, index, count);
         }
 
         private Visibility ConvertCompactVisibility(GalleryContent item)
@@ -1103,7 +1103,7 @@ namespace Telegram.Controls.Gallery
             if (item.IsVideo && !item.IsLoop && _mediaPlayer != null)
             {
                 var rates = new double[] { 0.25, 0.5, 1, 1.5, 2 };
-                var labels = new string[] { Strings.Resources.SpeedVerySlow, Strings.Resources.SpeedSlow, Strings.Resources.SpeedNormal, Strings.Resources.SpeedFast, Strings.Resources.SpeedVeryFast };
+                var labels = new string[] { Strings.SpeedVerySlow, Strings.SpeedSlow, Strings.SpeedNormal, Strings.SpeedFast, Strings.SpeedVeryFast };
 
                 var command = new RelayCommand<double>(rate =>
                 {
@@ -1111,7 +1111,7 @@ namespace Telegram.Controls.Gallery
                 });
 
                 var speed = new MenuFlyoutSubItem();
-                speed.Text = Strings.Resources.Speed;
+                speed.Text = Strings.Speed;
                 speed.Icon = new FontIcon { Glyph = Icons.TopSpeed, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
 
                 for (int i = 0; i < rates.Length; i++)
@@ -1132,12 +1132,12 @@ namespace Telegram.Controls.Gallery
                 flyout.CreateFlyoutSeparator();
             }
 
-            flyout.CreateFlyoutItem(x => item.CanView, viewModel.ViewCommand, item, Strings.Resources.ShowInChat, new FontIcon { Glyph = Icons.Comment });
-            flyout.CreateFlyoutItem(x => item.CanShare, viewModel.ForwardCommand, item, Strings.Resources.Forward, new FontIcon { Glyph = Icons.Share });
-            flyout.CreateFlyoutItem(x => item.CanCopy, viewModel.CopyCommand, item, Strings.Resources.Copy, new FontIcon { Glyph = Icons.DocumentCopy }, Windows.System.VirtualKey.C);
-            flyout.CreateFlyoutItem(x => item.CanSave, viewModel.SaveCommand, item, Strings.Resources.SaveAs, new FontIcon { Glyph = Icons.SaveAs }, Windows.System.VirtualKey.S);
-            flyout.CreateFlyoutItem(x => viewModel.CanOpenWith, viewModel.OpenWithCommand, item, Strings.Resources.OpenInExternalApp, new FontIcon { Glyph = Icons.OpenIn });
-            flyout.CreateFlyoutItem(x => viewModel.CanDelete, viewModel.DeleteCommand, item, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
+            flyout.CreateFlyoutItem(x => item.CanView, viewModel.ViewCommand, item, Strings.ShowInChat, new FontIcon { Glyph = Icons.Comment });
+            flyout.CreateFlyoutItem(x => item.CanShare, viewModel.ForwardCommand, item, Strings.Forward, new FontIcon { Glyph = Icons.Share });
+            flyout.CreateFlyoutItem(x => item.CanCopy, viewModel.CopyCommand, item, Strings.Copy, new FontIcon { Glyph = Icons.DocumentCopy }, Windows.System.VirtualKey.C);
+            flyout.CreateFlyoutItem(x => item.CanSave, viewModel.SaveCommand, item, Strings.SaveAs, new FontIcon { Glyph = Icons.SaveAs }, Windows.System.VirtualKey.S);
+            flyout.CreateFlyoutItem(x => viewModel.CanOpenWith, viewModel.OpenWithCommand, item, Strings.OpenInExternalApp, new FontIcon { Glyph = Icons.OpenIn });
+            flyout.CreateFlyoutItem(x => viewModel.CanDelete, viewModel.DeleteCommand, item, Strings.Delete, new FontIcon { Glyph = Icons.Delete });
         }
 
         #endregion

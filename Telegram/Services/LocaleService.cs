@@ -160,7 +160,7 @@ namespace Telegram.Services
 #if DEBUG
         private void SaveRemoteLocaleStrings(string lang, LanguagePackStrings difference)
         {
-            var fileName = Path.Combine(ApplicationData.Current.LocalFolder.Path, "test", $"Strings.{lang}.resw");
+            var fileName = Path.Combine(ApplicationData.Current.LocalFolder.Path, "test", lang, "Resources.resw");
             try
             {
                 var stringFormat = new Regex("%([0-9]*?)\\$[ds]", RegexOptions.Compiled);

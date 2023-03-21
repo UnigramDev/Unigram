@@ -179,7 +179,7 @@ namespace Telegram.ViewModels.Users
         {
             if (ClientService.TryGetUser(_userId, out User user))
             {
-                var confirm = await ShowPopupAsync(string.Format(Strings.Resources.ResetToOriginalPhotoMessage, user.FirstName), Strings.Resources.ResetToOriginalPhotoTitle, Strings.Resources.Reset, Strings.Resources.Cancel);
+                var confirm = await ShowPopupAsync(string.Format(Strings.ResetToOriginalPhotoMessage, user.FirstName), Strings.ResetToOriginalPhotoTitle, Strings.Reset, Strings.Cancel);
                 if (confirm == Windows.UI.Xaml.Controls.ContentDialogResult.Primary)
                 {
                     ClientService.Send(new SetUserPersonalProfilePhoto(user.Id, null));

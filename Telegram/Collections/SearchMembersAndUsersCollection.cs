@@ -36,8 +36,8 @@ namespace Telegram.Collections
             _query = query;
 
             _chat = new KeyedList<string, object>(null as string);
-            _local = new KeyedList<string, object>(Strings.Resources.Contacts.ToUpper());
-            _remote = new KeyedList<string, object>(Strings.Resources.GlobalSearch);
+            _local = new KeyedList<string, object>(Strings.Contacts.ToUpper());
+            _remote = new KeyedList<string, object>(Strings.GlobalSearch);
 
             Add(_chat);
             Add(_local);

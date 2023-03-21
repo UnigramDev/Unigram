@@ -133,12 +133,12 @@ namespace Telegram.Controls.Messages.Content
             Votes.Text = poll.Poll.TotalVoterCount > 0
                 ? Locale.Declension(poll.Poll.Type is PollTypeQuiz ? "Answer" : "Vote", poll.Poll.TotalVoterCount)
                 : poll.Poll.Type is PollTypeQuiz
-                ? Strings.Resources.NoVotesQuiz
-                : Strings.Resources.NoVotes;
+                ? Strings.NoVotesQuiz
+                : Strings.NoVotes;
 
             if (poll.Poll.Type is PollTypeRegular reg)
             {
-                Type.Text = poll.Poll.IsClosed ? Strings.Resources.FinalResults : poll.Poll.IsAnonymous ? Strings.Resources.AnonymousPoll : Strings.Resources.PublicPoll;
+                Type.Text = poll.Poll.IsClosed ? Strings.FinalResults : poll.Poll.IsAnonymous ? Strings.AnonymousPoll : Strings.PublicPoll;
                 View.Visibility = results && poll.Poll.TotalVoterCount > 0 && !poll.Poll.IsAnonymous
                     ? Visibility.Visible
                     : Visibility.Collapsed;
@@ -149,7 +149,7 @@ namespace Telegram.Controls.Messages.Content
             }
             else if (poll.Poll.Type is PollTypeQuiz quiz)
             {
-                Type.Text = poll.Poll.IsClosed ? Strings.Resources.FinalResults : poll.Poll.IsAnonymous ? Strings.Resources.AnonymousQuizPoll : Strings.Resources.QuizPoll;
+                Type.Text = poll.Poll.IsClosed ? Strings.FinalResults : poll.Poll.IsAnonymous ? Strings.AnonymousQuizPoll : Strings.QuizPoll;
                 View.Visibility = results && poll.Poll.TotalVoterCount > 0 && !poll.Poll.IsAnonymous
                     ? Visibility.Visible
                     : Visibility.Collapsed;
@@ -296,7 +296,7 @@ namespace Telegram.Controls.Messages.Content
         {
             if (_message?.SchedulingState != null)
             {
-                await MessagePopup.ShowAsync(Strings.Resources.MessageScheduledVote, Strings.Resources.AppName, Strings.Resources.OK);
+                await MessagePopup.ShowAsync(Strings.MessageScheduledVote, Strings.AppName, Strings.OK);
                 return;
             }
 

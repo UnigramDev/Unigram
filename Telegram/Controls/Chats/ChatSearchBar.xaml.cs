@@ -179,7 +179,7 @@ namespace Telegram.Controls.Chats
 
         private void OnTextChanged(object sender, TextChangedEventArgs e)
         {
-            if (string.Equals(Field.Text, Strings.Resources.SearchFrom) && ViewModel.IsFromEnabled && Field.State == ChatSearchState.Text)
+            if (string.Equals(Field.Text, Strings.SearchFrom) && ViewModel.IsFromEnabled && Field.State == ChatSearchState.Text)
             {
                 SetState(ChatSearchState.Members);
             }

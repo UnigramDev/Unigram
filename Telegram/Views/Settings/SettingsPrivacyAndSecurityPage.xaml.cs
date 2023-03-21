@@ -18,7 +18,7 @@ namespace Telegram.Views.Settings
         public SettingsPrivacyAndSecurityPage()
         {
             InitializeComponent();
-            Title = Strings.Resources.PrivacySettings;
+            Title = Strings.PrivacySettings;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -38,12 +38,12 @@ namespace Telegram.Views.Settings
 
         private string ConvertOnOff(bool value)
         {
-            return value ? Strings.Resources.NotificationsOn : Strings.Resources.NotificationsOff;
+            return value ? Strings.NotificationsOn : Strings.NotificationsOff;
         }
 
         private string ConvertSync(bool sync)
         {
-            return sync ? Strings.Resources.SyncContactsInfoOn : Strings.Resources.SyncContactsInfoOff;
+            return sync ? Strings.SyncContactsInfoOn : Strings.SyncContactsInfoOff;
         }
 
         private string ConvertP2P(int mode)
@@ -52,11 +52,11 @@ namespace Telegram.Views.Settings
             {
                 case 0:
                 default:
-                    return Strings.Resources.LastSeenEverybody;
+                    return Strings.LastSeenEverybody;
                 case 1:
-                    return Strings.Resources.LastSeenContacts;
+                    return Strings.LastSeenContacts;
                 case 2:
-                    return Strings.Resources.LastSeenNobody;
+                    return Strings.LastSeenNobody;
             }
         }
 
@@ -64,7 +64,7 @@ namespace Telegram.Views.Settings
         {
             if (days == 0)
             {
-                return Strings.Resources.NotificationsOff;
+                return Strings.NotificationsOff;
             }
 
             return Locale.FormatTtl(days);

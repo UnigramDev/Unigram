@@ -28,8 +28,8 @@ namespace Telegram.Views.Popups
             Title = info.Command;
             TextField.Text = info.Shortcut.ToString();
 
-            PrimaryButtonText = Strings.Resources.OK;
-            SecondaryButtonText = Strings.Resources.Cancel;
+            PrimaryButtonText = Strings.OK;
+            SecondaryButtonText = Strings.Cancel;
         }
 
         public Shortcut Shortcut { get; private set; }

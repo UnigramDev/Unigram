@@ -108,10 +108,10 @@ namespace Telegram.Views.Popups
             {
                 if (IsMediaSelected)
                 {
-                    return Items.Count == 1 ? Strings.Resources.SendAsFile : Strings.Resources.SendAsFiles;
+                    return Items.Count == 1 ? Strings.SendAsFile : Strings.SendAsFiles;
                 }
 
-                return string.Format(Strings.Resources.SendItems, Locale.Declension("Files", Items.Count));
+                return string.Format(Strings.SendItems, Locale.Declension("Files", Items.Count));
             }
         }
 
@@ -150,8 +150,8 @@ namespace Telegram.Views.Popups
         {
             InitializeComponent();
 
-            PrimaryButtonText = Strings.Resources.Send;
-            SecondaryButtonText = Strings.Resources.Cancel;
+            PrimaryButtonText = Strings.Send;
+            SecondaryButtonText = Strings.Cancel;
 
             IsTtlAvailable = ttl;
             IsSavedMessages = savedMessages;
@@ -593,8 +593,8 @@ namespace Telegram.Views.Popups
             text.Style = Navigation.BootStrapper.Current.Resources["InfoCaptionTextBlockStyle"] as Style;
             text.TextWrapping = TextWrapping.Wrap;
             text.Text = media is StoragePhoto
-                ? Strings.Resources.MessageLifetimePhoto
-                : Strings.Resources.MessageLifetimeVideo;
+                ? Strings.MessageLifetimePhoto
+                : Strings.MessageLifetimeVideo;
 
             var stack = new StackPanel();
             stack.Width = 260;
@@ -663,12 +663,12 @@ namespace Telegram.Views.Popups
             var media = Items.All(x => x is StoragePhoto or StorageVideo);
             if (media && !IsFilesSelected)
             {
-                flyout.CreateFlyoutItem(new RelayCommand(() => Spoiler = !Spoiler), Spoiler ? Strings.Resources.DisablePhotoSpoiler : Strings.Resources.EnablePhotoSpoiler, new FontIcon { Glyph = Icons.TabInPrivate });
+                flyout.CreateFlyoutItem(new RelayCommand(() => Spoiler = !Spoiler), Spoiler ? Strings.DisablePhotoSpoiler : Strings.EnablePhotoSpoiler, new FontIcon { Glyph = Icons.TabInPrivate });
                 flyout.CreateFlyoutSeparator();
             }
 
-            flyout.CreateFlyoutItem(new RelayCommand(() => { Silent = true; Hide(ContentDialogResult.Primary); }), Strings.Resources.SendWithoutSound, new FontIcon { Glyph = Icons.AlertOff });
-            flyout.CreateFlyoutItem(new RelayCommand(() => { Schedule = true; Hide(ContentDialogResult.Primary); }), self ? Strings.Resources.SetReminder : Strings.Resources.ScheduleMessage, new FontIcon { Glyph = Icons.CalendarClock });
+            flyout.CreateFlyoutItem(new RelayCommand(() => { Silent = true; Hide(ContentDialogResult.Primary); }), Strings.SendWithoutSound, new FontIcon { Glyph = Icons.AlertOff });
+            flyout.CreateFlyoutItem(new RelayCommand(() => { Schedule = true; Hide(ContentDialogResult.Primary); }), self ? Strings.SetReminder : Strings.ScheduleMessage, new FontIcon { Glyph = Icons.CalendarClock });
 
             flyout.ShowAt(sender as FrameworkElement, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedRight });
         }

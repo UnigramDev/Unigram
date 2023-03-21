@@ -67,7 +67,7 @@ namespace Telegram.Views.Authorization
                 return null;
             }
 
-            return string.Format(Strings.Resources.CheckYourEmailSubtitle, codeInfo.EmailAddressPattern);
+            return string.Format(Strings.CheckYourEmailSubtitle, codeInfo.EmailAddressPattern);
         }
 
         #endregion

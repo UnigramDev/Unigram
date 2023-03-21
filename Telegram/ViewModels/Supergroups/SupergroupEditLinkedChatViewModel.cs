@@ -224,31 +224,31 @@ namespace Telegram.ViewModels.Supergroups
                     {
                         if (supergroup.HasActiveUsername())
                         {
-                            message = string.Format(Strings.Resources.DiscussionLinkGroupPublicAlert, linkedChat.Title, chat.Title);
+                            message = string.Format(Strings.DiscussionLinkGroupPublicAlert, linkedChat.Title, chat.Title);
                         }
                         else
                         {
-                            message = string.Format(Strings.Resources.DiscussionLinkGroupPrivateAlert, linkedChat.Title, chat.Title);
+                            message = string.Format(Strings.DiscussionLinkGroupPrivateAlert, linkedChat.Title, chat.Title);
                         }
                     }
                     else
                     {
-                        message = string.Format(Strings.Resources.DiscussionLinkGroupPublicPrivateAlert, linkedChat.Title, chat.Title);
+                        message = string.Format(Strings.DiscussionLinkGroupPublicPrivateAlert, linkedChat.Title, chat.Title);
                     }
 
                     if (!linkedFullInfo.IsAllHistoryAvailable)
                     {
-                        message += "\r\n\r\n" + Strings.Resources.DiscussionLinkGroupAlertHistory;
+                        message += "\r\n\r\n" + Strings.DiscussionLinkGroupAlertHistory;
                         history = true;
                     }
                 }
                 else
                 {
-                    message = string.Format(Strings.Resources.DiscussionLinkGroupPublicPrivateAlert, linkedChat.Title, chat.Title);
+                    message = string.Format(Strings.DiscussionLinkGroupPublicPrivateAlert, linkedChat.Title, chat.Title);
                     history = true;
                 }
 
-                var confirm = await ShowPopupAsync(message, Strings.Resources.DiscussionLinkGroup, Strings.Resources.DiscussionLinkGroup, Strings.Resources.Cancel);
+                var confirm = await ShowPopupAsync(message, Strings.DiscussionLinkGroup, Strings.DiscussionLinkGroup, Strings.Cancel);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;
@@ -305,7 +305,7 @@ namespace Telegram.ViewModels.Supergroups
                 return;
             }
 
-            var confirm = await ShowPopupAsync(string.Format(Strings.Resources.DiscussionUnlinkChannelAlert, linkedChat.Title), Strings.Resources.DiscussionUnlinkGroup, Strings.Resources.DiscussionUnlink, Strings.Resources.Cancel);
+            var confirm = await ShowPopupAsync(string.Format(Strings.DiscussionUnlinkChannelAlert, linkedChat.Title), Strings.DiscussionUnlinkGroup, Strings.DiscussionUnlink, Strings.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

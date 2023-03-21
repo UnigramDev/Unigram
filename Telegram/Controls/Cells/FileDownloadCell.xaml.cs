@@ -40,7 +40,7 @@ namespace Telegram.Controls.Cells
                     FindName(nameof(Header));
                 }
 
-                Header.Text = completeDate != 0 ? Strings.Resources.RecentlyDownloaded : Strings.Resources.Downloading;
+                Header.Text = completeDate != 0 ? Strings.RecentlyDownloaded : Strings.Downloading;
             }
             else if (value is false && Header != null)
             {

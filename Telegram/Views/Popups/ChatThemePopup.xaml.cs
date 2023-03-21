@@ -24,9 +24,9 @@ namespace Telegram.Views.Popups
 
             _clientService = clientService;
 
-            Title = Strings.Resources.SelectTheme;
-            PrimaryButtonText = Strings.Resources.ChatApplyTheme;
-            SecondaryButtonText = Strings.Resources.Cancel;
+            Title = Strings.SelectTheme;
+            PrimaryButtonText = Strings.ChatApplyTheme;
+            SecondaryButtonText = Strings.Cancel;
 
             var items = new List<ChatTheme>(clientService.GetChatThemes());
             items.Insert(0, new ChatTheme("\u274C", null, null));
@@ -65,11 +65,11 @@ namespace Telegram.Views.Popups
         {
             if (List.SelectedItem is ChatTheme theme && theme.LightSettings == null)
             {
-                PrimaryButtonText = Strings.Resources.ChatResetTheme;
+                PrimaryButtonText = Strings.ChatResetTheme;
             }
             else
             {
-                PrimaryButtonText = Strings.Resources.ChatApplyTheme;
+                PrimaryButtonText = Strings.ChatApplyTheme;
             }
         }
     }

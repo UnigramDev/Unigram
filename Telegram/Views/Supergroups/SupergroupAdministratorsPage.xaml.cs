@@ -24,7 +24,7 @@ namespace Telegram.Views.Supergroups
         public SupergroupAdministratorsPage()
         {
             InitializeComponent();
-            Title = Strings.Resources.ChannelAdministrators;
+            Title = Strings.ChannelAdministrators;
         }
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
@@ -90,13 +90,13 @@ namespace Telegram.Views.Supergroups
 
         public void UpdateSupergroup(Chat chat, Supergroup group)
         {
-            HeaderPanel.Footer = group.CanDeleteMessages() && !group.IsChannel ? Strings.Resources.ChannelAntiSpamInfo : string.Empty;
+            HeaderPanel.Footer = group.CanDeleteMessages() && !group.IsChannel ? Strings.ChannelAntiSpamInfo : string.Empty;
             AntiSpam.Visibility = group.CanDeleteMessages() && !group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
 
             EventLog.Visibility = Visibility.Visible;
             AddNew.Visibility = group.CanPromoteMembers() ? Visibility.Visible : Visibility.Collapsed;
             Footer.Visibility = group.CanPromoteMembers() ? Visibility.Visible : Visibility.Collapsed;
-            Footer.Text = group.IsChannel ? Strings.Resources.ChannelAdminsInfo : Strings.Resources.MegaAdminsInfo;
+            Footer.Text = group.IsChannel ? Strings.ChannelAdminsInfo : Strings.MegaAdminsInfo;
 
             HeaderPanel.Visibility = Visibility.Visible;
         }
@@ -115,7 +115,7 @@ namespace Telegram.Views.Supergroups
             EventLog.Visibility = Visibility.Collapsed;
             AddNew.Visibility = group.CanPromoteMembers() ? Visibility.Visible : Visibility.Collapsed;
             Footer.Visibility = group.CanPromoteMembers() ? Visibility.Visible : Visibility.Collapsed;
-            Footer.Text = Strings.Resources.MegaAdminsInfo;
+            Footer.Text = Strings.MegaAdminsInfo;
 
             HeaderPanel.Visibility = EventLog.Visibility == Visibility.Visible || AddNew.Visibility == Visibility.Visible
                 ? Visibility.Visible

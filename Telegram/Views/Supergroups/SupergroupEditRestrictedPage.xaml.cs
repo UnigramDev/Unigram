@@ -19,7 +19,7 @@ namespace Telegram.Views.Supergroups
         public SupergroupEditRestrictedPage()
         {
             InitializeComponent();
-            Title = Strings.Resources.UserRestrictions;
+            Title = Strings.UserRestrictions;
         }
 
         #region Binding
@@ -28,7 +28,7 @@ namespace Telegram.Views.Supergroups
         {
             if (date == 0)
             {
-                return Strings.Resources.UserRestrictionsUntilForever;
+                return Strings.UserRestrictionsUntilForever;
             }
 
             var dateTime = Converter.DateTime(date);
@@ -73,12 +73,12 @@ namespace Telegram.Views.Supergroups
 
             PermissionsPanel.Visibility = Visibility.Visible;
 
-            //ChangeInfo.Header = group.IsChannel ? Strings.Resources.EditAdminChangeChannelInfo : Strings.Resources.EditAdminChangeGroupInfo;
+            //ChangeInfo.Header = group.IsChannel ? Strings.EditAdminChangeChannelInfo : Strings.EditAdminChangeGroupInfo;
             //PostMessages.Visibility = group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
             //EditMessages.Visibility = group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
-            //DeleteMessages.Header = group.IsChannel ? Strings.Resources.EditAdminDeleteMessages : Strings.Resources.EditAdminGroupDeleteMessages;
+            //DeleteMessages.Header = group.IsChannel ? Strings.EditAdminDeleteMessages : Strings.EditAdminGroupDeleteMessages;
             //BanUsers.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
-            //AddUsers.Header = group.AnyoneCanInvite ? Strings.Resources.EditAdminAddUsersViaLink : Strings.Resources.EditAdminAddUsers;
+            //AddUsers.Header = group.AnyoneCanInvite ? Strings.EditAdminAddUsersViaLink : Strings.EditAdminAddUsers;
         }
 
         #endregion

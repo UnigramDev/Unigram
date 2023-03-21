@@ -9,6 +9,7 @@ using System;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Converters;
+using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -224,11 +225,8 @@ namespace Telegram.Controls.Messages
             width = (int)(width * dpi);
             height = (int)(height * dpi);
 
-            var cache = $"{path}.{width}x{height}.png";
-            if (System.IO.File.Exists(cache))
-            {
-                return new BitmapImage(UriEx.ToLocal(cache));
-            }
+            var bitmap = new WriteableBitmap(width, height);
+            var buffer = new PixelBuffer(bitmap);
 
             await Task.Run(() =>
             {
@@ -237,12 +235,12 @@ namespace Telegram.Controls.Messages
                 var animation = LottieAnimation.LoadFromFile(path, frameSize, false, null);
                 if (animation != null)
                 {
-                    animation.RenderSync(cache, frame);
+                    animation.RenderSync(buffer, width, height, frame);
                     animation.Dispose();
                 }
             });
 
-            return new BitmapImage(UriEx.ToLocal(cache));
+            return bitmap;
         }
 
         protected override void OnApplyTemplate()

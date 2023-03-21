@@ -180,11 +180,11 @@ namespace Telegram.ViewModels
             //{
             //    if (channel.BannedRights.IsForever())
             //    {
-            //        await ShowPopupAsync(Strings.Resources.AttachMediaRestrictedForever, Strings.Resources.AppName, Strings.Resources.OK);
+            //        await ShowPopupAsync(Strings.AttachMediaRestrictedForever, Strings.AppName, Strings.OK);
             //    }
             //    else
             //    {
-            //        await ShowPopupAsync(string.Format(Strings.Resources.AttachMediaRestricted, BindConvert.Current.BannedUntil(channel.BannedRights.UntilDate)), Strings.Resources.AppName, Strings.Resources.OK);
+            //        await ShowPopupAsync(string.Format(Strings.AttachMediaRestricted, BindConvert.Current.BannedUntil(channel.BannedRights.UntilDate)), Strings.AppName, Strings.OK);
             //    }
 
             //    return;

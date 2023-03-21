@@ -35,13 +35,13 @@ namespace Telegram.Views.Premium.Popups
         {
             InitializeComponent();
 
-            Title = Strings.Resources.DoubledLimits;
+            Title = Strings.DoubledLimits;
 
             ScrollingHost.ItemsSource = limits;
 
             PurchaseCommand.Content = clientService.IsPremium
-                ? Strings.Resources.OK
-                : string.Format(Strings.Resources.SubscribeToPremium, Locale.FormatCurrency(option.Amount / option.MonthCount, option.Currency));
+                ? Strings.OK
+                : string.Format(Strings.SubscribeToPremium, Locale.FormatCurrency(option.Amount / option.MonthCount, option.Currency));
         }
 
         public bool ShouldPurchase { get; private set; }
@@ -68,48 +68,48 @@ namespace Telegram.Views.Premium.Popups
             switch (limit.Type)
             {
                 case PremiumLimitTypeBioLength:
-                    titleValue = Strings.Resources.BioLimitTitle;
-                    subtitleValue = Strings.Resources.BioLimitSubtitle;
+                    titleValue = Strings.BioLimitTitle;
+                    subtitleValue = Strings.BioLimitSubtitle;
                     break;
                 case PremiumLimitTypeCaptionLength:
-                    titleValue = Strings.Resources.CaptionsLimitTitle;
-                    subtitleValue = Strings.Resources.CaptionsLimitSubtitle;
+                    titleValue = Strings.CaptionsLimitTitle;
+                    subtitleValue = Strings.CaptionsLimitSubtitle;
                     break;
                 case PremiumLimitTypeChatFilterChosenChatCount:
-                    titleValue = Strings.Resources.ChatPerFolderLimitTitle;
-                    subtitleValue = Strings.Resources.ChatPerFolderLimitSubtitle;
+                    titleValue = Strings.ChatPerFolderLimitTitle;
+                    subtitleValue = Strings.ChatPerFolderLimitSubtitle;
                     break;
                 case PremiumLimitTypeChatFilterCount:
-                    titleValue = Strings.Resources.FoldersLimitTitle;
-                    subtitleValue = Strings.Resources.FoldersLimitSubtitle;
+                    titleValue = Strings.FoldersLimitTitle;
+                    subtitleValue = Strings.FoldersLimitSubtitle;
                     break;
                 case PremiumLimitTypeCreatedPublicChatCount:
-                    titleValue = Strings.Resources.PublicLinksLimitTitle;
-                    subtitleValue = Strings.Resources.PublicLinksLimitSubtitle;
+                    titleValue = Strings.PublicLinksLimitTitle;
+                    subtitleValue = Strings.PublicLinksLimitSubtitle;
                     break;
                 case PremiumLimitTypeFavoriteStickerCount:
-                    titleValue = Strings.Resources.FavoriteStickersLimitTitle;
-                    subtitleValue = Strings.Resources.FavoriteStickersLimitSubtitle;
+                    titleValue = Strings.FavoriteStickersLimitTitle;
+                    subtitleValue = Strings.FavoriteStickersLimitSubtitle;
                     break;
                 case PremiumLimitTypePinnedArchivedChatCount:
                     titleValue = "";
                     subtitleValue = "";
                     break;
                 case PremiumLimitTypePinnedChatCount:
-                    titleValue = Strings.Resources.PinChatsLimitTitle;
-                    subtitleValue = Strings.Resources.PinChatsLimitSubtitle;
+                    titleValue = Strings.PinChatsLimitTitle;
+                    subtitleValue = Strings.PinChatsLimitSubtitle;
                     break;
                 case PremiumLimitTypeSavedAnimationCount:
-                    titleValue = Strings.Resources.SavedGifsLimitTitle;
-                    subtitleValue = Strings.Resources.SavedGifsLimitSubtitle;
+                    titleValue = Strings.SavedGifsLimitTitle;
+                    subtitleValue = Strings.SavedGifsLimitSubtitle;
                     break;
                 case PremiumLimitTypeSupergroupCount:
-                    titleValue = Strings.Resources.GroupsAndChannelsLimitTitle;
-                    subtitleValue = Strings.Resources.GroupsAndChannelsLimitSubtitle;
+                    titleValue = Strings.GroupsAndChannelsLimitTitle;
+                    subtitleValue = Strings.GroupsAndChannelsLimitSubtitle;
                     break;
                 case PremiumLimitTypeConnectedAccounts:
-                    titleValue = Strings.Resources.ConnectedAccountsLimitTitle;
-                    subtitleValue = Strings.Resources.ConnectedAccountsLimitSubtitle;
+                    titleValue = Strings.ConnectedAccountsLimitTitle;
+                    subtitleValue = Strings.ConnectedAccountsLimitSubtitle;
                     break;
             }
 

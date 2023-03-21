@@ -17,7 +17,7 @@ namespace Telegram.Views.Settings.Privacy
         public SettingsPrivacyShowStatusPage()
         {
             InitializeComponent();
-            Title = Strings.Resources.PrivacyLastSeen;
+            Title = Strings.PrivacyLastSeen;
         }
 
         #region Binding

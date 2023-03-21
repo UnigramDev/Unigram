@@ -17,7 +17,7 @@ namespace Telegram.Views.Settings
         public SettingsNetworkPage()
         {
             InitializeComponent();
-            Title = Strings.Resources.NetworkUsage;
+            Title = Strings.NetworkUsage;
         }
 
         #region Binding
@@ -29,7 +29,7 @@ namespace Telegram.Views.Settings
                 return null;
             }
 
-            return string.Format(Strings.Resources.NetworkUsageSince, string.Format(Strings.Resources.formatDateAtTime, Converter.ShortDate.Format(sinceDate), Converter.ShortTime.Format(sinceDate)));
+            return string.Format(Strings.NetworkUsageSince, string.Format(Strings.formatDateAtTime, Converter.ShortDate.Format(sinceDate), Converter.ShortTime.Format(sinceDate)));
         }
 
         #endregion

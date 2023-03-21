@@ -80,14 +80,14 @@ namespace Telegram.ViewModels.Settings
 
         public string Title => _type switch
         {
-            StickersType.Installed => Strings.Resources.StickersName,
-            StickersType.Archived => Strings.Resources.ArchivedStickers,
-            StickersType.Trending => Strings.Resources.FeaturedStickers,
-            StickersType.Masks => Strings.Resources.Masks,
-            StickersType.MasksArchived => Strings.Resources.ArchivedMasks,
-            StickersType.Emoji => Strings.Resources.Emoji,
-            StickersType.EmojiArchived => Strings.Resources.ArchivedEmojiPacks,
-            _ => Strings.Resources.StickersName
+            StickersType.Installed => Strings.StickersName,
+            StickersType.Archived => Strings.ArchivedStickers,
+            StickersType.Trending => Strings.FeaturedStickers,
+            StickersType.Masks => Strings.Masks,
+            StickersType.MasksArchived => Strings.ArchivedMasks,
+            StickersType.Emoji => Strings.Emoji,
+            StickersType.EmojiArchived => Strings.ArchivedEmojiPacks,
+            _ => Strings.StickersName
         };
 
         public StickerType StickerType => _type switch
@@ -179,7 +179,7 @@ namespace Telegram.ViewModels.Settings
                     var union = await ClientService.SendAsync(new GetRecentStickers(_type == StickersType.Masks));
                     if (union is Stickers recents && recents.StickersValue.Count > 0)
                     {
-                        BeginOnUIThread(() => Items.ReplaceDiff(new[] { new StickerSetInfo(0, Strings.Resources.RecentStickers, "tg/recentlyUsed", null, new ClosedVectorPath[0], false, false, false, null, StickerType, false, recents.StickersValue.Count, recents.StickersValue) }.Union(stickerSets.Sets)));
+                        BeginOnUIThread(() => Items.ReplaceDiff(new[] { new StickerSetInfo(0, Strings.RecentStickers, "tg/recentlyUsed", null, new ClosedVectorPath[0], false, false, false, null, StickerType, false, recents.StickersValue.Count, recents.StickersValue) }.Union(stickerSets.Sets)));
                     }
                     else
                     {
@@ -223,7 +223,7 @@ namespace Telegram.ViewModels.Settings
                     {
                         if (resultRecent is Stickers recents && recents.StickersValue.Count > 0)
                         {
-                            BeginOnUIThread(() => Items.ReplaceDiff(new[] { new StickerSetInfo(0, Strings.Resources.RecentStickers, "tg/recentlyUsed", null, new ClosedVectorPath[0], false, false, false, null, StickerType, false, recents.StickersValue.Count, recents.StickersValue) }.Union(stickerSets.Sets)));
+                            BeginOnUIThread(() => Items.ReplaceDiff(new[] { new StickerSetInfo(0, Strings.RecentStickers, "tg/recentlyUsed", null, new ClosedVectorPath[0], false, false, false, null, StickerType, false, recents.StickersValue.Count, recents.StickersValue) }.Union(stickerSets.Sets)));
                         }
                         else
                         {
@@ -352,9 +352,9 @@ namespace Telegram.ViewModels.Settings
 
         public List<SettingsOptionItem<StickersSuggestionMode>> SuggestStickersOptions { get; } = new()
         {
-            new SettingsOptionItem<StickersSuggestionMode>(StickersSuggestionMode.All, Strings.Resources.SuggestStickersAll),
-            new SettingsOptionItem<StickersSuggestionMode>(StickersSuggestionMode.Installed, Strings.Resources.SuggestStickersInstalled),
-            new SettingsOptionItem<StickersSuggestionMode>(StickersSuggestionMode.None, Strings.Resources.SuggestStickersNone),
+            new SettingsOptionItem<StickersSuggestionMode>(StickersSuggestionMode.All, Strings.SuggestStickersAll),
+            new SettingsOptionItem<StickersSuggestionMode>(StickersSuggestionMode.Installed, Strings.SuggestStickersInstalled),
+            new SettingsOptionItem<StickersSuggestionMode>(StickersSuggestionMode.None, Strings.SuggestStickersNone),
         };
 
         #region Context menu
@@ -364,7 +364,7 @@ namespace Telegram.ViewModels.Settings
         {
             if (stickerSet.Name.Equals("tg/recentlyUsed"))
             {
-                var confirm = await ShowPopupAsync(Strings.Resources.ClearRecentEmoji, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+                var confirm = await ShowPopupAsync(Strings.ClearRecentEmoji, Strings.AppName, Strings.OK, Strings.Cancel);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;
@@ -463,7 +463,7 @@ namespace Telegram.ViewModels.Settings
                         var recentResponse = await _clientService.SendAsync(new GetRecentStickers(_type is StickerTypeMask));
                         if (recentResponse is Stickers stickers && stickers.StickersValue.Count > 0)
                         {
-                            Add(new StickerSetInfo(0, Strings.Resources.RecentStickers, "tg/recentlyUsed", null, new ClosedVectorPath[0], false, false, false, null, _type, false, stickers.StickersValue.Count, stickers.StickersValue));
+                            Add(new StickerSetInfo(0, Strings.RecentStickers, "tg/recentlyUsed", null, new ClosedVectorPath[0], false, false, false, null, _type, false, stickers.StickersValue.Count, stickers.StickersValue));
                         }
                     }
 

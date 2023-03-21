@@ -24,7 +24,7 @@ namespace Telegram.Views.Supergroups
         public SupergroupMembersPage()
         {
             InitializeComponent();
-            Title = Strings.Resources.ChannelSubscribers;
+            Title = Strings.ChannelSubscribers;
         }
 
         public void Search()
@@ -98,11 +98,11 @@ namespace Telegram.Views.Supergroups
 
             if (chat.Type is ChatTypeSupergroup)
             {
-                flyout.CreateFlyoutItem(MemberPromote_Loaded, ViewModel.MemberPromoteCommand, chat.Type, status, member, Strings.Resources.SetAsAdmin, new FontIcon { Glyph = Icons.Star });
-                flyout.CreateFlyoutItem(MemberRestrict_Loaded, ViewModel.MemberRestrictCommand, chat.Type, status, member, Strings.Resources.KickFromSupergroup, new FontIcon { Glyph = Icons.LockClosed });
+                flyout.CreateFlyoutItem(MemberPromote_Loaded, ViewModel.MemberPromoteCommand, chat.Type, status, member, Strings.SetAsAdmin, new FontIcon { Glyph = Icons.Star });
+                flyout.CreateFlyoutItem(MemberRestrict_Loaded, ViewModel.MemberRestrictCommand, chat.Type, status, member, Strings.KickFromSupergroup, new FontIcon { Glyph = Icons.LockClosed });
             }
 
-            flyout.CreateFlyoutItem(MemberRemove_Loaded, ViewModel.MemberRemoveCommand, chat.Type, status, member, Strings.Resources.KickFromGroup, new FontIcon { Glyph = Icons.Block });
+            flyout.CreateFlyoutItem(MemberRemove_Loaded, ViewModel.MemberRemoveCommand, chat.Type, status, member, Strings.KickFromGroup, new FontIcon { Glyph = Icons.Block });
 
             args.ShowAt(flyout, element);
         }
@@ -228,11 +228,11 @@ namespace Telegram.Views.Supergroups
 
                     if (member.Status is ChatMemberStatusAdministrator administrator)
                     {
-                        label.Text = string.IsNullOrEmpty(administrator.CustomTitle) ? Strings.Resources.ChannelAdmin : administrator.CustomTitle;
+                        label.Text = string.IsNullOrEmpty(administrator.CustomTitle) ? Strings.ChannelAdmin : administrator.CustomTitle;
                     }
                     else if (member.Status is ChatMemberStatusCreator creator)
                     {
-                        label.Text = string.IsNullOrEmpty(creator.CustomTitle) ? Strings.Resources.ChannelCreator : creator.CustomTitle;
+                        label.Text = string.IsNullOrEmpty(creator.CustomTitle) ? Strings.ChannelCreator : creator.CustomTitle;
                     }
                     else
                     {
@@ -265,10 +265,10 @@ namespace Telegram.Views.Supergroups
 
         public void UpdateSupergroup(Chat chat, Supergroup group)
         {
-            Title = group.IsChannel ? Strings.Resources.ChannelSubscribers : Strings.Resources.ChannelMembers;
-            SearchField.PlaceholderText = group.IsChannel ? Strings.Resources.ChannelSubscribers : Strings.Resources.ChannelMembers;
+            Title = group.IsChannel ? Strings.ChannelSubscribers : Strings.ChannelMembers;
+            SearchField.PlaceholderText = group.IsChannel ? Strings.ChannelSubscribers : Strings.ChannelMembers;
 
-            AddNew.Content = group.IsChannel ? Strings.Resources.AddSubscriber : Strings.Resources.AddMember;
+            AddNew.Content = group.IsChannel ? Strings.AddSubscriber : Strings.AddMember;
             AddNewPanel.Visibility = group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
 
             Footer.Visibility = group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
@@ -276,9 +276,9 @@ namespace Telegram.Views.Supergroups
 
         public void UpdateBasicGroup(Chat chat, BasicGroup group)
         {
-            SearchField.PlaceholderText = Strings.Resources.ChannelMembers;
+            SearchField.PlaceholderText = Strings.ChannelMembers;
 
-            AddNew.Content = Strings.Resources.AddMember;
+            AddNew.Content = Strings.AddMember;
             AddNewPanel.Visibility = group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
 
             Footer.Visibility = Visibility.Collapsed;

@@ -35,12 +35,12 @@ namespace Telegram.Views.Premium.Popups
 
             _selectedOption = options.FirstOrDefault();
 
-            Title = Strings.Resources.GiftTelegramPremiumTitle;
-            TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.Resources.GiftTelegramPremiumDescription, user.FirstName));
+            Title = Strings.GiftTelegramPremiumTitle;
+            TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.GiftTelegramPremiumDescription, user.FirstName));
 
             ScrollingHost.ItemsSource = options;
 
-            var footer = Strings.Resources.GiftPremiumListFeaturesAndTerms;
+            var footer = Strings.GiftPremiumListFeaturesAndTerms;
             var hereBegin = footer.IndexOf('*');
             var hereEnd = footer.IndexOf('*', hereBegin + 1);
 
@@ -83,12 +83,12 @@ namespace Telegram.Views.Premium.Popups
             var monthlyAmount = option.Amount / option.MonthCount;
 
             title.Text = Locale.Declension("Months", option.MonthCount);
-            subtitle.Text = string.Format(Strings.Resources.PricePerMonth, Locale.FormatCurrency(monthlyAmount, option.Currency));
+            subtitle.Text = string.Format(Strings.PricePerMonth, Locale.FormatCurrency(monthlyAmount, option.Currency));
             price.Text = Locale.FormatCurrency(option.Amount, option.Currency);
 
             if (option.DiscountPercentage > 0)
             {
-                icon.Text = string.Format(Strings.Resources.GiftPremiumOptionDiscount, option.DiscountPercentage);
+                icon.Text = string.Format(Strings.GiftPremiumOptionDiscount, option.DiscountPercentage);
                 iconPanel.Background = new SolidColorBrush(_gradient[args.ItemIndex]);
                 iconPanel.Visibility = Visibility.Visible;
             }
@@ -107,7 +107,7 @@ namespace Telegram.Views.Premium.Popups
             if (sender is FrameworkElement element && element.Tag is PremiumPaymentOption option)
             {
                 _selectedOption = option;
-                PurchaseCommand.Content = string.Format(Strings.Resources.GiftSubscriptionFor, Locale.FormatCurrency(option.Amount, option.Currency));
+                PurchaseCommand.Content = string.Format(Strings.GiftSubscriptionFor, Locale.FormatCurrency(option.Amount, option.Currency));
             }
         }
 

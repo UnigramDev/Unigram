@@ -251,9 +251,9 @@ namespace Telegram.ViewModels.Settings
 
         public List<SettingsOptionItem<DistanceUnits>> DistanceUnitOptions { get; } = new()
         {
-            new SettingsOptionItem<DistanceUnits>(DistanceUnits.Automatic, Strings.Resources.DistanceUnitsAutomatic),
-            new SettingsOptionItem<DistanceUnits>(DistanceUnits.Kilometers, Strings.Resources.DistanceUnitsKilometers),
-            new SettingsOptionItem<DistanceUnits>(DistanceUnits.Miles, Strings.Resources.DistanceUnitsMiles),
+            new SettingsOptionItem<DistanceUnits>(DistanceUnits.Automatic, Strings.DistanceUnitsAutomatic),
+            new SettingsOptionItem<DistanceUnits>(DistanceUnits.Kilometers, Strings.DistanceUnitsKilometers),
+            new SettingsOptionItem<DistanceUnits>(DistanceUnits.Miles, Strings.DistanceUnitsMiles),
         };
 
         public RelayCommand<ChatTheme> ThemeCreateCommand { get; }

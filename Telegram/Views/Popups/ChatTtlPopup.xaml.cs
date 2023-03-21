@@ -27,9 +27,9 @@ namespace Telegram.Views.Popups
         {
             InitializeComponent();
 
-            Title = Strings.Resources.MessageLifetime;
-            PrimaryButtonText = Strings.Resources.OK;
-            SecondaryButtonText = Strings.Resources.Cancel;
+            Title = Strings.MessageLifetime;
+            PrimaryButtonText = Strings.OK;
+            SecondaryButtonText = Strings.Cancel;
 
             int[] seconds;
             if (type == ChatTtlType.Secret)
@@ -96,7 +96,7 @@ namespace Telegram.Views.Popups
 
             foreach (var option in seconds)
             {
-                items.Add(new SettingsOptionItem<int>(option, option == 0 ? Strings.Resources.ShortMessageLifetimeForever : Locale.FormatTtl(option)));
+                items.Add(new SettingsOptionItem<int>(option, option == 0 ? Strings.ShortMessageLifetimeForever : Locale.FormatTtl(option)));
             }
 
             _items = items;
@@ -128,7 +128,7 @@ namespace Telegram.Views.Popups
         {
             if (value == 0)
             {
-                return Strings.Resources.ShortMessageLifetimeForever;
+                return Strings.ShortMessageLifetimeForever;
             }
 
             return Locale.FormatTtl(value);

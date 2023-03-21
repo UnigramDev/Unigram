@@ -27,7 +27,7 @@ namespace Telegram.Views.Chats
         public ChatStatisticsPage()
         {
             InitializeComponent();
-            Title = Strings.Resources.Statistics;
+            Title = Strings.Statistics;
         }
 
         #region Binding
@@ -108,15 +108,15 @@ namespace Telegram.Views.Chats
                     var message = counters.Message;
                     if (message.Content is MessageVoiceNote)
                     {
-                        title.Text = Strings.Resources.AttachAudio;
+                        title.Text = Strings.AttachAudio;
                     }
                     else if (message.Content is MessageVideo)
                     {
-                        title.Text = Strings.Resources.AttachVideo;
+                        title.Text = Strings.AttachVideo;
                     }
                     else if (message.Content is MessageAnimation)
                     {
-                        title.Text = Strings.Resources.AttachGif;
+                        title.Text = Strings.AttachGif;
                     }
                     else if (message.Content is MessageAudio audio)
                     {
@@ -125,7 +125,7 @@ namespace Telegram.Views.Chats
 
                         if (performer == null || titloe == null)
                         {
-                            title.Text = Strings.Resources.AttachMusic;
+                            title.Text = Strings.AttachMusic;
                         }
                         else
                         {
@@ -136,7 +136,7 @@ namespace Telegram.Views.Chats
                     {
                         if (string.IsNullOrEmpty(document.Document.FileName))
                         {
-                            title.Text = Strings.Resources.AttachDocument;
+                            title.Text = Strings.AttachDocument;
                         }
                         else
                         {
@@ -149,7 +149,7 @@ namespace Telegram.Views.Chats
                     }
                     else if (message.Content is MessageContact)
                     {
-                        title.Text = Strings.Resources.AttachContact;
+                        title.Text = Strings.AttachContact;
                     }
                     else if (message.Content is MessageAnimatedEmoji animatedEmoji)
                     {
@@ -157,15 +157,15 @@ namespace Telegram.Views.Chats
                     }
                     else if (message.Content is MessageLocation location)
                     {
-                        title.Text = location.LivePeriod > 0 ? Strings.Resources.AttachLiveLocation : Strings.Resources.AttachLocation;
+                        title.Text = location.LivePeriod > 0 ? Strings.AttachLiveLocation : Strings.AttachLocation;
                     }
                     else if (message.Content is MessageVenue)
                     {
-                        title.Text = Strings.Resources.AttachLocation;
+                        title.Text = Strings.AttachLocation;
                     }
                     else if (message.Content is MessagePhoto)
                     {
-                        title.Text = Strings.Resources.AttachPhoto;
+                        title.Text = Strings.AttachPhoto;
                     }
                     else if (message.Content is MessagePoll poll)
                     {
@@ -177,7 +177,7 @@ namespace Telegram.Views.Chats
                     }
                     else if (message.Content is MessageUnsupported)
                     {
-                        title.Text = Strings.Resources.UnsupportedAttachment;
+                        title.Text = Strings.UnsupportedAttachment;
                     }
                 }
                 else
@@ -245,7 +245,7 @@ namespace Telegram.Views.Chats
                         {
                             stringBuilder.Append(", ");
                         }
-                        stringBuilder.AppendFormat(Strings.Resources.CharactersPerMessage, Locale.Declension("Characters", senderInfo.AverageCharacterCount));
+                        stringBuilder.AppendFormat(Strings.CharactersPerMessage, Locale.Declension("Characters", senderInfo.AverageCharacterCount));
                     }
 
                     title.Text = user.FullName();

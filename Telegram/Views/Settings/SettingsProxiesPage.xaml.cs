@@ -22,7 +22,7 @@ namespace Telegram.Views.Settings
         public SettingsProxiesPage()
         {
             InitializeComponent();
-            Title = Strings.Resources.ProxySettings;
+            Title = Strings.ProxySettings;
         }
 
         private void List_ItemClick(object sender, ItemClickEventArgs e)
@@ -45,11 +45,11 @@ namespace Telegram.Views.Settings
 
             if (proxy.Type is ProxyTypeMtproto or ProxyTypeSocks5)
             {
-                flyout.CreateFlyoutItem(ViewModel.ShareCommand, proxy, Strings.Resources.ShareFile, new FontIcon { Glyph = Icons.Share });
+                flyout.CreateFlyoutItem(ViewModel.ShareCommand, proxy, Strings.ShareFile, new FontIcon { Glyph = Icons.Share });
             }
 
-            flyout.CreateFlyoutItem(ViewModel.EditCommand, proxy, Strings.Resources.Edit, new FontIcon { Glyph = Icons.Edit });
-            flyout.CreateFlyoutItem(ViewModel.RemoveCommand, proxy, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
+            flyout.CreateFlyoutItem(ViewModel.EditCommand, proxy, Strings.Edit, new FontIcon { Glyph = Icons.Edit });
+            flyout.CreateFlyoutItem(ViewModel.RemoveCommand, proxy, Strings.Delete, new FontIcon { Glyph = Icons.Delete });
 
             args.ShowAt(flyout, element);
         }

@@ -64,9 +64,9 @@ namespace Telegram.Views.Authorization
         {
             return codeInfo?.Type switch
             {
-                AuthenticationCodeTypeTelegramMessage => Strings.Resources.SentAppCode,
-                AuthenticationCodeTypeFragment => string.Format(Strings.Resources.SentFragmentCode, PhoneNumber.Format(codeInfo.PhoneNumber)),
-                AuthenticationCodeTypeSms => string.Format(Strings.Resources.SentSmsCode, PhoneNumber.Format(codeInfo.PhoneNumber)),
+                AuthenticationCodeTypeTelegramMessage => Strings.SentAppCode,
+                AuthenticationCodeTypeFragment => string.Format(Strings.SentFragmentCode, PhoneNumber.Format(codeInfo.PhoneNumber)),
+                AuthenticationCodeTypeSms => string.Format(Strings.SentSmsCode, PhoneNumber.Format(codeInfo.PhoneNumber)),
                 _ => string.Empty
             };
         }
@@ -77,12 +77,12 @@ namespace Telegram.Views.Authorization
             {
                 return codeInfo?.Type switch
                 {
-                    AuthenticationCodeTypeFragment => Strings.Resources.OpenFragment,
-                    _ => Strings.Resources.OK
+                    AuthenticationCodeTypeFragment => Strings.OpenFragment,
+                    _ => Strings.OK
                 };
             }
 
-            return Strings.Resources.OK;
+            return Strings.OK;
         }
 
         #endregion
