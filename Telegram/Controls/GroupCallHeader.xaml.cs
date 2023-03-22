@@ -70,7 +70,7 @@ namespace Telegram.Controls
             }
             else
             {
-                photo.Source = null;
+                photo.Clear();
             }
         }
 

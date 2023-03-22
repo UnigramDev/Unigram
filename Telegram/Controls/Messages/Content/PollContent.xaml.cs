@@ -249,7 +249,7 @@ namespace Telegram.Controls.Messages.Content
             }
             else
             {
-                photo.Source = null;
+                photo.Clear();
             }
         }
 

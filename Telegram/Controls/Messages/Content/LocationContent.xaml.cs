@@ -87,7 +87,7 @@ namespace Telegram.Controls.Messages.Content
                 {
                     LivePanel.Visibility = Visibility.Collapsed;
                     PinDot.Visibility = Visibility.Visible;
-                    PinPhoto.Source = null;
+                    PinPhoto.Clear();
                 }
                 else
                 {
@@ -104,7 +104,7 @@ namespace Telegram.Controls.Messages.Content
             {
                 LivePanel.Visibility = Visibility.Collapsed;
                 PinDot.Visibility = Visibility.Visible;
-                PinPhoto.Source = null;
+                PinPhoto.Clear();
             }
         }
 

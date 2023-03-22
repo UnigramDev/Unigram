@@ -523,7 +523,7 @@ namespace Telegram.Controls.Cells
             {
                 if (statistics.ChatId == 0)
                 {
-                    Photo.Source = null;
+                    Photo.Clear();
                     Photo.Visibility = Visibility.Collapsed;
                 }
                 else

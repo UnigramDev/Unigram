@@ -214,7 +214,7 @@ namespace Telegram.Controls.Messages
             }
             else
             {
-                photo.Source = null;
+                photo.Clear();
             }
         }
 

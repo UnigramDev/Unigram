@@ -4,17 +4,14 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System.Numerics;
 using Telegram.Common;
 using Telegram.Converters;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Foundation;
-using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls
@@ -33,37 +30,30 @@ namespace Telegram.Controls
 
         private object _parameters;
 
-        private readonly CompositionRoundedRectangleGeometry _clip;
-
-        private Image LayoutRoot;
+        private Border LayoutRoot;
+        private ImageBrush Texture;
 
         public ProfilePicture()
         {
-            _clip = Window.Current.Compositor.CreateRoundedRectangleGeometry();
             DefaultStyleKey = typeof(ProfilePicture);
         }
 
         protected override void OnApplyTemplate()
         {
-            LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as Image;
+            LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as Border;
+            LayoutRoot.CornerRadius = new CornerRadius(Shape == ProfilePictureShape.Superellipse ? ActualWidth / 4 : ActualWidth / 2);
 
-            var visual = ElementCompositionPreview.GetElementVisual(LayoutRoot);
-            visual.Clip = visual.Compositor.CreateGeometricClip(_clip);
+            Texture = GetTemplateChild(nameof(Texture)) as ImageBrush;
+            Texture.ImageSource = Source;
 
             base.OnApplyTemplate();
         }
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            _clip.Size = finalSize.ToVector2();
-
-            if (Shape == ProfilePictureShape.Superellipse)
+            if (LayoutRoot != null)
             {
-                _clip.CornerRadius = new Vector2(_clip.Size.X / 4);
-            }
-            else
-            {
-                _clip.CornerRadius = new Vector2(_clip.Size.Y / 2);
+                LayoutRoot.CornerRadius = new CornerRadius(Shape == ProfilePictureShape.Superellipse ? finalSize.Width / 4 : finalSize.Width / 2);
             }
 
             return base.ArrangeOverride(finalSize);
@@ -87,49 +77,11 @@ namespace Telegram.Controls
 
         private void OnShapeChanged(ProfilePictureShape newValue, ProfilePictureShape oldValue)
         {
-            if (newValue != oldValue)
+            if (newValue != oldValue && LayoutRoot != null && !double.IsNaN(ActualWidth))
             {
-                if (IsAnimated && !double.IsNaN(ActualWidth))
-                {
-                    var visual = ElementCompositionPreview.GetElementVisual(this);
-
-                    var compositor = Window.Current.Compositor;
-                    var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-                    batch.Completed += (s, args) =>
-                    {
-                        InvalidateArrange();
-                    };
-
-                    var ellipse = newValue == ProfilePictureShape.Ellipse;
-
-                    var anim = compositor.CreateVector2KeyFrameAnimation();
-                    anim.InsertKeyFrame(0, new Vector2(ellipse ? ActualSize.X / 4 : ActualSize.X / 2));
-                    anim.InsertKeyFrame(1, new Vector2(ellipse ? ActualSize.X / 2 : ActualSize.X / 4));
-
-                    _clip.Size = ActualSize;
-                    _clip.StartAnimation("CornerRadius", anim);
-
-                    batch.End();
-                }
-                else
-                {
-                    InvalidateArrange();
-                }
+                LayoutRoot.CornerRadius = new CornerRadius(Shape == ProfilePictureShape.Superellipse ? ActualWidth / 4 : ActualWidth / 2);
             }
         }
-
-        #endregion
-
-        #region IsAnimated
-
-        public bool IsAnimated
-        {
-            get { return (bool)GetValue(IsAnimatedProperty); }
-            set { SetValue(IsAnimatedProperty, value); }
-        }
-
-        public static readonly DependencyProperty IsAnimatedProperty =
-            DependencyProperty.Register("IsAnimated", typeof(bool), typeof(ProfilePicture), new PropertyMetadata(false));
 
         #endregion
 
@@ -158,7 +110,20 @@ namespace Telegram.Controls
         }
 
         public static readonly DependencyProperty SourceProperty =
-            DependencyProperty.Register("Source", typeof(ImageSource), typeof(ProfilePicture), new PropertyMetadata(null));
+            DependencyProperty.Register("Source", typeof(ImageSource), typeof(ProfilePicture), new PropertyMetadata(null, OnSourceChanged));
+
+        private static void OnSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((ProfilePicture)d).OnSourceChanged((ImageSource)e.NewValue);
+        }
+
+        private void OnSourceChanged(ImageSource newValue)
+        {
+            if (Texture != null)
+            {
+                Texture.ImageSource = newValue;
+            }
+        }
 
         #endregion
 

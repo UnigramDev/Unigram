@@ -382,7 +382,6 @@
                 </Grid.ColumnDefinitions>
                 <controls:ProfilePicture x:Name="Photo"
                                          Click="Photo_Click"
-                                         IsAnimated="True"
                                          AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"
                                          Width="36"
                                          Height="36"

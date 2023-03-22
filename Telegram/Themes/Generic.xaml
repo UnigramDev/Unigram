@@ -3465,10 +3465,13 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ProfilePicture">
-                    <Image x:Name="LayoutRoot"
-                           Source="{TemplateBinding Source}"
-                           Stretch="UniformToFill"
-                           AutomationProperties.AccessibilityView="Raw" />
+                    <Border x:Name="LayoutRoot"
+                            AutomationProperties.AccessibilityView="Raw">
+                        <Border.Background>
+                            <ImageBrush x:Name="Texture"
+                                        Stretch="UniformToFill" />
+                        </Border.Background>
+                    </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

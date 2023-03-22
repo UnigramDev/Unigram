@@ -446,7 +446,7 @@ namespace Telegram.Controls.Cells
 
         public void UpdateChatLastMessage(Chat chat, ChatPosition position = null)
         {
-            if (chat == null || !_templateApplied)
+            if (chat == null || _clientService == null || !_templateApplied)
             {
                 return;
             }
@@ -467,7 +467,7 @@ namespace Telegram.Controls.Cells
 
         public void UpdateChatReadInbox(Chat chat, ChatPosition position = null)
         {
-            if (!_templateApplied)
+            if (_clientService == null || !_templateApplied)
             {
                 return;
             }
@@ -492,7 +492,7 @@ namespace Telegram.Controls.Cells
 
         public void UpdateChatReadOutbox(Chat chat)
         {
-            if (!_templateApplied)
+            if (_clientService == null || !_templateApplied)
             {
                 return;
             }
@@ -507,7 +507,7 @@ namespace Telegram.Controls.Cells
 
         public void UpdateChatUnreadMentionCount(Chat chat, ChatPosition position = null)
         {
-            if (!_templateApplied)
+            if (_clientService == null || !_templateApplied)
             {
                 return;
             }
@@ -519,7 +519,7 @@ namespace Telegram.Controls.Cells
 
         public void UpdateNotificationSettings(Chat chat)
         {
-            if (!_templateApplied)
+            if (_clientService == null || !_templateApplied)
             {
                 return;
             }
@@ -531,7 +531,7 @@ namespace Telegram.Controls.Cells
 
         public void UpdateChatTitle(Chat chat)
         {
-            if (!_templateApplied)
+            if (_clientService == null || !_templateApplied)
             {
                 return;
             }
@@ -541,7 +541,7 @@ namespace Telegram.Controls.Cells
 
         public void UpdateChatPhoto(Chat chat)
         {
-            if (!_templateApplied)
+            if (_clientService == null || !_templateApplied)
             {
                 return;
             }
@@ -554,7 +554,7 @@ namespace Telegram.Controls.Cells
 
         public void UpdateChatActions(Chat chat, IDictionary<MessageSender, ChatAction> actions)
         {
-            if (!_templateApplied)
+            if (_clientService == null || !_templateApplied)
             {
                 return;
             }
@@ -589,7 +589,7 @@ namespace Telegram.Controls.Cells
 
         public void UpdateChatVideoChat(Chat chat)
         {
-            if (!_templateApplied)
+            if (_clientService == null || !_templateApplied)
             {
                 return;
             }
@@ -599,7 +599,7 @@ namespace Telegram.Controls.Cells
 
         public void UpdateUserStatus(Chat chat, UserStatus status)
         {
-            if (!_templateApplied)
+            if (_clientService == null || !_templateApplied)
             {
                 return;
             }
