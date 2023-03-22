@@ -211,7 +211,6 @@
     <Compile Include="Common\AlbumLayout.cs" />
     <Compile Include="Common\AnimatedListHandler.cs" />
     <Compile Include="Common\ApiInfo.cs" />
-    <Compile Include="Common\AsyncHelper.cs" />
     <Compile Include="Common\AutocompleteEntityFinder.cs" />
     <Compile Include="Common\Automation.cs" />
     <Compile Include="Common\PowerSavingPolicy.cs" />
@@ -221,7 +220,6 @@
     <Compile Include="Common\ColorsHelper.cs" />
     <Compile Include="Common\CompositionPathParser.cs" />
     <Compile Include="Common\ConcurrentQueueWorker.cs" />
-    <Compile Include="Common\ControlProperties.cs" />
     <Compile Include="Common\CurrencyNumberFormatter.cs" />
     <Compile Include="Common\DateTimeParser.cs" />
     <Compile Include="Common\DebouncedProperty.cs" />
@@ -245,7 +243,6 @@
     <Compile Include="Common\TLContainer.cs" />
     <Compile Include="Common\InactivityHelper.cs" />
     <Compile Include="Common\Locale.cs" />
-    <Compile Include="Common\MosaicMedia.cs" />
     <Compile Include="Common\MessageDialogExtensions.cs" />
     <Compile Include="Common\PhoneNumber.cs" />
     <Compile Include="Common\PlaceholderHelper.cs" />
@@ -263,7 +260,6 @@
     <Compile Include="Common\XamlResourceLoader.cs" />
     <Compile Include="Common\ZoomableListHandler.cs" />
     <Compile Include="Constants.Secret.cs" />
-    <Compile Include="Controls\AnimatedBitmapButton.cs" />
     <Compile Include="Controls\AnimatedIconButton.cs" />
     <Compile Include="Controls\AnimatedImage.cs" />
     <Compile Include="Controls\AnimatedControl.cs" />
@@ -403,7 +399,6 @@
       <DependentUpon>GalleryView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\CustomEmojiIcon.cs" />
-    <Compile Include="Controls\LottieView2.cs" />
     <Compile Include="Controls\Messages\Content\InvoicePreviewContent.xaml.cs">
       <DependentUpon>InvoicePreviewContent.xaml</DependentUpon>
     </Compile>
@@ -528,7 +523,6 @@
     <Compile Include="Controls\Messages\ReactionButton.cs" />
     <Compile Include="Controls\Messages\ReactionsPanel.cs" />
     <Compile Include="Controls\MoreButton.cs" />
-    <Compile Include="Controls\MosaicLayout.cs" />
     <Compile Include="Controls\MultipleListView.cs" />
     <Compile Include="Controls\NavigationView.cs" />
     <Compile Include="Controls\NavigationViewItem.cs" />
@@ -538,7 +532,6 @@
     <Compile Include="Controls\OverlayPage.cs" />
     <Compile Include="Controls\PageHeader.cs" />
     <Compile Include="Controls\BadgeButton.cs" />
-    <Compile Include="Controls\GlyphRadioButton.cs" />
     <Compile Include="Controls\Payments\CardTextBox.cs" />
     <Compile Include="Controls\Payments\DateTextBox.cs" />
     <Compile Include="Controls\Payments\LabeledPricesPanel.cs" />
@@ -2150,10 +2143,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Themes\Messages.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Themes\ThemeGreen.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

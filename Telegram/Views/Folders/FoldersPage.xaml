@@ -65,20 +65,16 @@
                                             ElementPrepared="Recommended_ElementPrepared">
                             <muxc:ItemsRepeater.ItemTemplate>
                                 <DataTemplate>
-                                    <StackPanel>
-                                        <Grid>
-                                            <controls:BadgeButton Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}" />
+                                    <Grid>
+                                        <controls:BadgeButton Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}" />
 
-                                            <controls:BadgeButton Content="{CustomResource Add}"
-                                                                  Style="{StaticResource StartButtonStyle}"
-                                                                  Background="#2ca5e0"
-                                                                  HorizontalAlignment="Right"
-                                                                  VerticalAlignment="Center"
-                                                                  Margin="0,0,12,0" />
-                                        </Grid>
-
-                                        <Rectangle Style="{StaticResource Separator}" />
-                                    </StackPanel>
+                                        <controls:BadgeButton Content="{CustomResource Add}"
+                                                              Style="{StaticResource StartButtonStyle}"
+                                                              Background="#2ca5e0"
+                                                              HorizontalAlignment="Right"
+                                                              VerticalAlignment="Center"
+                                                              Margin="0,0,12,0" />
+                                    </Grid>
                                 </DataTemplate>
                             </muxc:ItemsRepeater.ItemTemplate>
                         </muxc:ItemsRepeater>

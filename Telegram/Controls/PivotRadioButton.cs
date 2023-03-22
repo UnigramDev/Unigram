@@ -9,7 +9,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls
 {
-    public class PivotRadioButton : GlyphRadioButton
+    public class PivotRadioButton : RadioButton
     {
         public PivotRadioButton()
         {

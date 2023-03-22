@@ -19,12 +19,6 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <!--<local:HostedPage.Header>
-        <controls:PageHeader
-            Text="{CustomResource StorageUsage}" 
-            IsLoading="{x:Bind ViewModel.IsLoading, Mode=OneWay}"/>
-    </local:HostedPage.Header>-->
-
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <controls:TableListView ItemsSource="{x:Bind ViewModel.Statistics.ByChat, Mode=OneWay}"
                                 ItemClick="ListView_ItemClick"

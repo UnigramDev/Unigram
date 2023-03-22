@@ -90,14 +90,6 @@
                     </controls:HeaderedControl.ItemTemplate>
                 </controls:HeaderedControl>
 
-                <!--<controls:HeaderedControl
-                    Header="{CustomResource PrivacyAdvanced}">
-                    <ToggleSwitch
-                        IsOn="{x:Bind ViewModel.UseTestDc, Mode=TwoWay}"
-                        Header="Use test data centers"
-                        Style="{StaticResource CheckButtonStyle}"/>
-                </controls:HeaderedControl>-->
-
                 <controls:HeaderedControl Header="Options"
                                           ItemsSource="{x:Bind ViewModel.Options}">
                     <controls:HeaderedControl.ItemTemplate>

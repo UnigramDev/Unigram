@@ -15,11 +15,6 @@
                               IsSourceGrouped="True" />
     </Page.Resources>
 
-    <!--<local:HostedPage.Header>
-        <controls:PageHeader Text="{CustomResource Language}"
-                             IsLoading="{x:Bind ViewModel.IsLoading, Mode=OneWay}" />
-    </local:HostedPage.Header>-->
-
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <controls:TableListView x:Name="List"
                                 ItemsSource="{x:Bind ItemsSource.View}"

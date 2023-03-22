@@ -16,11 +16,11 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <controls:ButtonPageHeader
+        <!--<controls:ButtonPageHeader
             x:Name="Header"
             Command="{x:Bind ViewModel.SendCommand}"
             Text="{CustomResource YourCode}"
-            Glyph="&#xE10B;"/>
+            Glyph="&#xE10B;"/>-->
 
         <Grid x:Name="ContentPanel" Padding="12,20" MaxWidth="360" Grid.Row="1">
             <Grid.RowDefinitions>

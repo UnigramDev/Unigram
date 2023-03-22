@@ -103,8 +103,6 @@
                 </DataTemplate>
             </local:InlineQueryTemplateSelector.MediaTemplate>
         </local:InlineQueryTemplateSelector>
-
-        <controls:MosaicLayout x:Key="MosaicLayout" />
     </UserControl.Resources>
 
     <Grid x:Name="Root"
