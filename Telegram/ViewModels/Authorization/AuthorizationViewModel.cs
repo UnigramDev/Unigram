@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Entities;
+using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -19,7 +20,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Authorization
 {
-    public class AuthorizationViewModel : TLViewModelBase, IDelegable<ISignInDelegate>
+    public class AuthorizationViewModel : TLViewModelBase, IDelegable<ISignInDelegate>, IHandle
     {
         private readonly ISessionService _sessionService;
         private readonly ILifetimeService _lifetimeService;
@@ -109,6 +110,16 @@ namespace Telegram.ViewModels.Authorization
             }
 
             return Task.CompletedTask;
+        }
+
+        public override void Subscribe()
+        {
+            Aggregator.Subscribe<UpdateLanguagePackStrings>(this, Handle);
+        }
+
+        public void Handle(UpdateLanguagePackStrings update)
+        {
+            BeginOnUIThread(() => S.Handle(update));
         }
 
         private void GotUserCountry(string code)
@@ -261,5 +272,51 @@ namespace Telegram.ViewModels.Authorization
         {
             NavigationService.Navigate(typeof(SettingsProxiesPage));
         }
+
+        #region Strings
+
+        public Resources S { get; } = new();
+
+        public class Resources : BindableBase
+        {
+            public string YourPhone => Strings.YourPhone;
+            public string StartText => Strings.StartText;
+            public string OK => Strings.OK;
+            public string LoginWithQrCode => Strings.LoginWithQrCode;
+            public string LoginWithQrCodeTitle => Strings.LoginWithQrCodeTitle;
+            public string LoginWithQrCodeStep1 => Strings.LoginWithQrCodeStep1;
+            public string LoginWithQrCodeStep2 => Strings.LoginWithQrCodeStep2;
+            public string LoginWithQrCodeStep3 => Strings.LoginWithQrCodeStep3;
+            public string LoginWithQrCodeSkip => Strings.LoginWithQrCodeSkip;
+            public string ProxySettings => Strings.ProxySettings;
+
+            private readonly string[] _keys = new[]
+            {
+                nameof(Strings.YourPhone),
+                nameof(Strings.StartText),
+                nameof(Strings.OK),
+                nameof(Strings.LoginWithQrCode),
+                nameof(Strings.LoginWithQrCodeTitle),
+                nameof(Strings.LoginWithQrCodeStep1),
+                nameof(Strings.LoginWithQrCodeStep2),
+                nameof(Strings.LoginWithQrCodeStep3),
+                nameof(Strings.LoginWithQrCodeSkip),
+                nameof(Strings.ProxySettings)
+            };
+
+            public void Handle(UpdateLanguagePackStrings update)
+            {
+                foreach (var key in update.Strings)
+                {
+                    var index = Array.IndexOf(_keys, key.Key);
+                    if (index != -1)
+                    {
+                        RaisePropertyChanged(key.Key);
+                    }
+                }
+            }
+        }
+
+        #endregion
     }
 }

@@ -4,14 +4,9 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Security;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Td;
@@ -23,7 +18,7 @@ using Windows.UI.Xaml;
 
 namespace Telegram.Services
 {
-    public interface ILocaleService : IHandle<UpdateLanguagePackStrings>
+    public interface ILocaleService
     {
         Task<BaseObject> SetLanguageAsync(LanguagePackInfo info, bool refresh);
 
@@ -33,6 +28,8 @@ namespace Telegram.Services
 
         string GetString(string key);
         string GetString(string key, int quantity);
+
+        void Handle(UpdateLanguagePackStrings update);
     }
 
     public class LocaleService : ILocaleService
@@ -161,162 +158,156 @@ namespace Telegram.Services
         private void SaveRemoteLocaleStrings(string lang, LanguagePackStrings difference)
         {
             var fileName = Path.Combine(ApplicationData.Current.LocalFolder.Path, "test", lang, "Resources.resw");
-            try
+            var stringFormat = new System.Text.RegularExpressions.Regex("%([0-9]*?)\\$[ds]",
+                System.Text.RegularExpressions.RegexOptions.Compiled);
+
+            string GetValue(string value)
             {
-                var stringFormat = new Regex("%([0-9]*?)\\$[ds]", RegexOptions.Compiled);
-
-                string GetValue(string value)
+                if (value.StartsWith("\"") && value.EndsWith("\""))
                 {
-                    if (value.StartsWith("\"") && value.EndsWith("\""))
-                    {
-                        value = value.Trim('"');
-                    }
-
-                    value = value.Replace("%%", "%");
-                    value = value.Replace("%s", "{0}");
-                    value = value.Replace("%d", "{0}");
-
-                    return stringFormat.Replace(value, match =>
-                    {
-                        var index = int.Parse(match.Groups[1].Value);
-                        return $"{{{index - 1}}}";
-                    });
+                    value = value.Trim('"');
                 }
 
-                var values = new Dictionary<string, string>();
-                var already = new List<string>();
-                for (int a = 0; a < difference.Strings.Count; a++)
+                value = value.Replace("%%", "%");
+                value = value.Replace("%s", "{0}");
+                value = value.Replace("%d", "{0}");
+
+                return stringFormat.Replace(value, match =>
                 {
-                    if (difference.Strings[a].Value is LanguagePackStringValueOrdinary single)
-                    {
-                        if (difference.Strings[a].Key == difference.Strings[a].Key.ToLower())
-                        {
-                            continue;
-                        }
-                        //else if (difference.Strings[a].Key == difference.Strings[a].Key.ToUpper())
-                        //{
-                        //    continue;
-                        //}
-                        else if (difference.Strings[a].Key.StartsWith('_'))
-                        {
-                            continue;
-                        }
+                    var index = int.Parse(match.Groups[1].Value);
+                    return $"{{{index - 1}}}";
+                });
+            }
 
-                        values[difference.Strings[a].Key] = GetValue(single.Value);
-                    }
-                    else if (difference.Strings[a].Value is LanguagePackStringValuePluralized pluralized)
-                    {
-                        values[difference.Strings[a].Key + "_zero"] = GetValue(pluralized.ZeroValue ?? string.Empty);
-                        values[difference.Strings[a].Key + "_one"] = GetValue(pluralized.OneValue ?? string.Empty);
-                        values[difference.Strings[a].Key + "_two"] = GetValue(pluralized.TwoValue ?? string.Empty);
-                        values[difference.Strings[a].Key + "_few"] = GetValue(pluralized.FewValue ?? string.Empty);
-                        values[difference.Strings[a].Key + "_many"] = GetValue(pluralized.ManyValue ?? string.Empty);
-                        values[difference.Strings[a].Key + "_other"] = GetValue(pluralized.OtherValue ?? string.Empty);
-                    }
-                    else if (difference.Strings[a].Value is LanguagePackStringValueDeleted deleted)
-                    {
-                        values.Remove(difference.Strings[a].Key);
-                    }
-                }
-
-                Directory.CreateDirectory(Path.GetDirectoryName(fileName));
-                System.IO.File.Delete(fileName);
-
-                var writer = new StreamWriter(new FileStream(fileName, FileMode.OpenOrCreate));
-                //writer.Write("<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n");
-                //writer.Write("<resources>\r\n");
-                writer.Write("<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n");
-                writer.Write("<root>\r\n");
-                writer.Write("  <xsd:schema id=\"root\" xmlns=\"\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\">\r\n");
-                writer.Write("    <xsd:import namespace=\"http://www.w3.org/XML/1998/namespace\" />\r\n");
-                writer.Write("    <xsd:element name=\"root\" msdata:IsDataSet=\"true\">\r\n");
-                writer.Write("      <xsd:complexType>\r\n");
-                writer.Write("        <xsd:choice maxOccurs=\"unbounded\">\r\n");
-                writer.Write("          <xsd:element name=\"metadata\">\r\n");
-                writer.Write("            <xsd:complexType>\r\n");
-                writer.Write("              <xsd:sequence>\r\n");
-                writer.Write("                <xsd:element name=\"value\" type=\"xsd:string\" minOccurs=\"0\" />\r\n");
-                writer.Write("              </xsd:sequence>\r\n");
-                writer.Write("              <xsd:attribute name=\"name\" use=\"required\" type=\"xsd:string\" />\r\n");
-                writer.Write("              <xsd:attribute name=\"type\" type=\"xsd:string\" />\r\n");
-                writer.Write("              <xsd:attribute name=\"mimetype\" type=\"xsd:string\" />\r\n");
-                writer.Write("              <xsd:attribute ref=\"xml:space\" />\r\n");
-                writer.Write("            </xsd:complexType>\r\n");
-                writer.Write("          </xsd:element>\r\n");
-                writer.Write("          <xsd:element name=\"assembly\">\r\n");
-                writer.Write("            <xsd:complexType>\r\n");
-                writer.Write("              <xsd:attribute name=\"alias\" type=\"xsd:string\" />\r\n");
-                writer.Write("              <xsd:attribute name=\"name\" type=\"xsd:string\" />\r\n");
-                writer.Write("            </xsd:complexType>\r\n");
-                writer.Write("          </xsd:element>\r\n");
-                writer.Write("          <xsd:element name=\"data\">\r\n");
-                writer.Write("            <xsd:complexType>\r\n");
-                writer.Write("              <xsd:sequence>\r\n");
-                writer.Write("                <xsd:element name=\"value\" type=\"xsd:string\" minOccurs=\"0\" msdata:Ordinal=\"1\" />\r\n");
-                writer.Write("                <xsd:element name=\"comment\" type=\"xsd:string\" minOccurs=\"0\" msdata:Ordinal=\"2\" />\r\n");
-                writer.Write("              </xsd:sequence>\r\n");
-                writer.Write("              <xsd:attribute name=\"name\" type=\"xsd:string\" use=\"required\" msdata:Ordinal=\"1\" />\r\n");
-                writer.Write("              <xsd:attribute name=\"type\" type=\"xsd:string\" msdata:Ordinal=\"3\" />\r\n");
-                writer.Write("              <xsd:attribute name=\"mimetype\" type=\"xsd:string\" msdata:Ordinal=\"4\" />\r\n");
-                writer.Write("              <xsd:attribute ref=\"xml:space\" />\r\n");
-                writer.Write("            </xsd:complexType>\r\n");
-                writer.Write("          </xsd:element>\r\n");
-                writer.Write("          <xsd:element name=\"resheader\">\r\n");
-                writer.Write("            <xsd:complexType>\r\n");
-                writer.Write("              <xsd:sequence>\r\n");
-                writer.Write("                <xsd:element name=\"value\" type=\"xsd:string\" minOccurs=\"0\" msdata:Ordinal=\"1\" />\r\n");
-                writer.Write("              </xsd:sequence>\r\n");
-                writer.Write("              <xsd:attribute name=\"name\" type=\"xsd:string\" use=\"required\" />\r\n");
-                writer.Write("            </xsd:complexType>\r\n");
-                writer.Write("          </xsd:element>\r\n");
-                writer.Write("        </xsd:choice>\r\n");
-                writer.Write("      </xsd:complexType>\r\n");
-                writer.Write("    </xsd:element>\r\n");
-                writer.Write("  </xsd:schema>\r\n");
-                writer.Write("  <resheader name=\"resmimetype\">\r\n");
-                writer.Write("    <value>text/microsoft-resx</value>\r\n");
-                writer.Write("  </resheader>\r\n");
-                writer.Write("  <resheader name=\"version\">\r\n");
-                writer.Write("    <value>2.0</value>\r\n");
-                writer.Write("  </resheader>\r\n");
-                writer.Write("  <resheader name=\"reader\">\r\n");
-                writer.Write("    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>\r\n");
-                writer.Write("  </resheader>\r\n");
-                writer.Write("  <resheader name=\"writer\">\r\n");
-                writer.Write("    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>\r\n");
-                writer.Write("  </resheader>\r\n");
-
-
-                foreach (var entry in values.OrderBy(x => x.Key))
+            var values = new System.Collections.Generic.Dictionary<string, string>();
+            var already = new System.Collections.Generic.HashSet<string>();
+            for (int a = 0; a < difference.Strings.Count; a++)
+            {
+                if (difference.Strings[a].Value is LanguagePackStringValueOrdinary single)
                 {
-                    if (string.IsNullOrEmpty(entry.Value) || already.Contains(entry.Key.ToLower()))
+                    if (difference.Strings[a].Key == difference.Strings[a].Key.ToLower())
+                    {
+                        continue;
+                    }
+                    //else if (difference.Strings[a].Key == difference.Strings[a].Key.ToUpper())
+                    //{
+                    //    continue;
+                    //}
+                    else if (difference.Strings[a].Key.StartsWith('_'))
                     {
                         continue;
                     }
 
-                    already.Add(entry.Key.ToLower());
+                    values[difference.Strings[a].Key] = GetValue(single.Value);
+                }
+                else if (difference.Strings[a].Value is LanguagePackStringValuePluralized pluralized)
+                {
+                    values[difference.Strings[a].Key + "_zero"] = GetValue(pluralized.ZeroValue ?? string.Empty);
+                    values[difference.Strings[a].Key + "_one"] = GetValue(pluralized.OneValue ?? string.Empty);
+                    values[difference.Strings[a].Key + "_two"] = GetValue(pluralized.TwoValue ?? string.Empty);
+                    values[difference.Strings[a].Key + "_few"] = GetValue(pluralized.FewValue ?? string.Empty);
+                    values[difference.Strings[a].Key + "_many"] = GetValue(pluralized.ManyValue ?? string.Empty);
+                    values[difference.Strings[a].Key + "_other"] = GetValue(pluralized.OtherValue ?? string.Empty);
+                }
+                else if (difference.Strings[a].Value is LanguagePackStringValueDeleted deleted)
+                {
+                    values.Remove(difference.Strings[a].Key);
+                }
+            }
 
-                    //writer.Write($"<string name=\"{entry.Key}\">{entry.Value}</string>\n");
-                    writer.Write($"  <data name=\"{entry.Key}\" xml:space=\"preserve\">\r\n");
-                    if (string.IsNullOrEmpty(entry.Value))
-                    {
-                        writer.Write($"    <value/>\r\n");
-                    }
-                    else
-                    {
-                        writer.Write($"    <value>{SecurityElement.Escape(entry.Value.Replace("\n", "\r\n"))}</value>\r\n");
-                    }
-                    writer.Write($"  </data>\r\n");
+            Directory.CreateDirectory(Path.GetDirectoryName(fileName));
+            System.IO.File.Delete(fileName);
+
+            var writer = new StreamWriter(new FileStream(fileName, FileMode.OpenOrCreate));
+            //writer.Write("<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n");
+            //writer.Write("<resources>\r\n");
+            writer.Write("<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n");
+            writer.Write("<root>\r\n");
+            writer.Write("  <xsd:schema id=\"root\" xmlns=\"\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\">\r\n");
+            writer.Write("    <xsd:import namespace=\"http://www.w3.org/XML/1998/namespace\" />\r\n");
+            writer.Write("    <xsd:element name=\"root\" msdata:IsDataSet=\"true\">\r\n");
+            writer.Write("      <xsd:complexType>\r\n");
+            writer.Write("        <xsd:choice maxOccurs=\"unbounded\">\r\n");
+            writer.Write("          <xsd:element name=\"metadata\">\r\n");
+            writer.Write("            <xsd:complexType>\r\n");
+            writer.Write("              <xsd:sequence>\r\n");
+            writer.Write("                <xsd:element name=\"value\" type=\"xsd:string\" minOccurs=\"0\" />\r\n");
+            writer.Write("              </xsd:sequence>\r\n");
+            writer.Write("              <xsd:attribute name=\"name\" use=\"required\" type=\"xsd:string\" />\r\n");
+            writer.Write("              <xsd:attribute name=\"type\" type=\"xsd:string\" />\r\n");
+            writer.Write("              <xsd:attribute name=\"mimetype\" type=\"xsd:string\" />\r\n");
+            writer.Write("              <xsd:attribute ref=\"xml:space\" />\r\n");
+            writer.Write("            </xsd:complexType>\r\n");
+            writer.Write("          </xsd:element>\r\n");
+            writer.Write("          <xsd:element name=\"assembly\">\r\n");
+            writer.Write("            <xsd:complexType>\r\n");
+            writer.Write("              <xsd:attribute name=\"alias\" type=\"xsd:string\" />\r\n");
+            writer.Write("              <xsd:attribute name=\"name\" type=\"xsd:string\" />\r\n");
+            writer.Write("            </xsd:complexType>\r\n");
+            writer.Write("          </xsd:element>\r\n");
+            writer.Write("          <xsd:element name=\"data\">\r\n");
+            writer.Write("            <xsd:complexType>\r\n");
+            writer.Write("              <xsd:sequence>\r\n");
+            writer.Write("                <xsd:element name=\"value\" type=\"xsd:string\" minOccurs=\"0\" msdata:Ordinal=\"1\" />\r\n");
+            writer.Write("                <xsd:element name=\"comment\" type=\"xsd:string\" minOccurs=\"0\" msdata:Ordinal=\"2\" />\r\n");
+            writer.Write("              </xsd:sequence>\r\n");
+            writer.Write("              <xsd:attribute name=\"name\" type=\"xsd:string\" use=\"required\" msdata:Ordinal=\"1\" />\r\n");
+            writer.Write("              <xsd:attribute name=\"type\" type=\"xsd:string\" msdata:Ordinal=\"3\" />\r\n");
+            writer.Write("              <xsd:attribute name=\"mimetype\" type=\"xsd:string\" msdata:Ordinal=\"4\" />\r\n");
+            writer.Write("              <xsd:attribute ref=\"xml:space\" />\r\n");
+            writer.Write("            </xsd:complexType>\r\n");
+            writer.Write("          </xsd:element>\r\n");
+            writer.Write("          <xsd:element name=\"resheader\">\r\n");
+            writer.Write("            <xsd:complexType>\r\n");
+            writer.Write("              <xsd:sequence>\r\n");
+            writer.Write("                <xsd:element name=\"value\" type=\"xsd:string\" minOccurs=\"0\" msdata:Ordinal=\"1\" />\r\n");
+            writer.Write("              </xsd:sequence>\r\n");
+            writer.Write("              <xsd:attribute name=\"name\" type=\"xsd:string\" use=\"required\" />\r\n");
+            writer.Write("            </xsd:complexType>\r\n");
+            writer.Write("          </xsd:element>\r\n");
+            writer.Write("        </xsd:choice>\r\n");
+            writer.Write("      </xsd:complexType>\r\n");
+            writer.Write("    </xsd:element>\r\n");
+            writer.Write("  </xsd:schema>\r\n");
+            writer.Write("  <resheader name=\"resmimetype\">\r\n");
+            writer.Write("    <value>text/microsoft-resx</value>\r\n");
+            writer.Write("  </resheader>\r\n");
+            writer.Write("  <resheader name=\"version\">\r\n");
+            writer.Write("    <value>2.0</value>\r\n");
+            writer.Write("  </resheader>\r\n");
+            writer.Write("  <resheader name=\"reader\">\r\n");
+            writer.Write("    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>\r\n");
+            writer.Write("  </resheader>\r\n");
+            writer.Write("  <resheader name=\"writer\">\r\n");
+            writer.Write("    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>\r\n");
+            writer.Write("  </resheader>\r\n");
+
+
+            foreach (var entry in System.Linq.Enumerable.OrderBy(values, x => x.Key))
+            {
+                if (string.IsNullOrEmpty(entry.Value) || already.Contains(entry.Key.ToLower()))
+                {
+                    continue;
                 }
 
-                writer.Write("</root>");
-                //writer.Write("</resources>");
-                writer.Dispose();
-            }
-            catch (Exception ignore)
-            {
+                already.Add(entry.Key.ToLower());
 
+                //writer.Write($"<string name=\"{entry.Key}\">{entry.Value}</string>\n");
+                writer.Write($"  <data name=\"{entry.Key}\" xml:space=\"preserve\">\r\n");
+                if (string.IsNullOrEmpty(entry.Value))
+                {
+                    writer.Write($"    <value/>\r\n");
+                }
+                else
+                {
+                    writer.Write($"    <value>{System.Security.SecurityElement.Escape(entry.Value.Replace("\n", "\r\n"))}</value>\r\n");
+                }
+                writer.Write($"  </data>\r\n");
             }
+
+            writer.Write("</root>");
+            //writer.Write("</resources>");
+            writer.Dispose();
         }
 #endif
 

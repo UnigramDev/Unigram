@@ -31,7 +31,8 @@
                     Padding="12,0,12,20"
                     MaxWidth="360"
                     Grid.Row="1"
-                    Grid.RowSpan="2">
+                    Grid.RowSpan="2"
+                    Canvas.ZIndex="1">
             <Border x:Name="Logo2Panel"
                     Width="160"
                     Height="160">
@@ -49,11 +50,11 @@
             <StackPanel x:Name="PhoneInnerPanel"
                         Margin="0,32,0,0">
                 <TextBlock x:Name="TitleLabel"
-                           Text="{CustomResource YourPhone}"
+                           Text="{x:Bind ViewModel.S.YourPhone, Mode=OneWay}"
                            Style="{StaticResource TitleTextBlockStyle}"
                            TextAlignment="Center"
                            Grid.Row="1" />
-                <TextBlock Text="{CustomResource StartText}"
+                <TextBlock Text="{x:Bind ViewModel.S.StartText, Mode=OneWay}"
                            Style="{StaticResource BodyTextBlockStyle}"
                            TextAlignment="Center"
                            Padding="0,8,0,16"
@@ -82,7 +83,7 @@
                                        Grid.Row="5" />
 
                 <Button x:Name="NextButton"
-                        Content="{CustomResource OK}"
+                        Content="{x:Bind ViewModel.S.OK, Mode=OneWay}"
                         Command="{x:Bind ViewModel.SendCommand}"
                         Style="{StaticResource AccentButtonStyle}"
                         HorizontalAlignment="Stretch"
@@ -92,7 +93,7 @@
                 <HyperlinkButton x:Name="Switch2"
                                  Click="Switch2_Click"
                                  Command="{x:Bind ViewModel.SwitchCommand}"
-                                 Content="{CustomResource LoginWithQrCode}"
+                                 Content="{x:Bind ViewModel.S.LoginWithQrCode, Mode=OneWay}"
                                  HorizontalAlignment="Center"
                                  Grid.Row="7" />
             </StackPanel>
@@ -139,7 +140,7 @@
 
             <StackPanel x:Name="TokenInnerPanel"
                         Margin="0,12,0,0">
-                <TextBlock Text="{CustomResource LoginWithQrCodeTitle}"
+                <TextBlock Text="{x:Bind ViewModel.S.LoginWithQrCodeTitle, Mode=OneWay}"
                            Style="{StaticResource TitleTextBlockStyle}"
                            TextAlignment="Center" />
 
@@ -154,54 +155,30 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <Border Background="{ThemeResource ChatUnreadBadgeBrush}"
-                            MinWidth="20"
-                            Height="20"
-                            CornerRadius="10"
-                            Margin="0,0,8,8">
-                        <TextBlock Text="1"
-                                   Style="{StaticResource CaptionTextBlockStyle}"
-                                   Foreground="{ThemeResource ChatUnreadLabelBrush}"
-                                   TextAlignment="Center"
-                                   Margin="6,2,6,0" />
-                    </Border>
-                    <Border Background="{ThemeResource ChatUnreadBadgeBrush}"
-                            MinWidth="20"
-                            Height="20"
-                            CornerRadius="10"
-                            Margin="0,0,8,8"
-                            Grid.Row="1">
-                        <TextBlock Text="2"
-                                   Style="{StaticResource CaptionTextBlockStyle}"
-                                   Foreground="{ThemeResource ChatUnreadLabelBrush}"
-                                   TextAlignment="Center"
-                                   Margin="6,2,6,0" />
-                    </Border>
-                    <Border Background="{ThemeResource ChatUnreadBadgeBrush}"
-                            MinWidth="20"
-                            Height="20"
-                            CornerRadius="10"
-                            Margin="0,0,8,8"
-                            Grid.Row="3">
-                        <TextBlock Text="3"
-                                   Style="{StaticResource CaptionTextBlockStyle}"
-                                   Foreground="{ThemeResource ChatUnreadLabelBrush}"
-                                   TextAlignment="Center"
-                                   Margin="6,2,6,0" />
-                    </Border>
+                    <TextBlock Text="1."
+                               FontWeight="SemiBold"
+                               Margin="0,0,8,8" />
+                    <TextBlock Text="2."
+                               FontWeight="SemiBold"
+                               Margin="0,0,8,8"
+                               Grid.Row="1" />
+                    <TextBlock Text="3."
+                               FontWeight="SemiBold"
+                               Margin="0,0,8,8"
+                               Grid.Row="2" />
 
-                    <TextBlock Text="{CustomResource LoginWithQrCodeStep1}"
+                    <TextBlock Text="{x:Bind ViewModel.S.LoginWithQrCodeStep1, Mode=OneWay}"
                                Style="{StaticResource BodyTextBlockStyle}"
                                VerticalAlignment="Top"
                                Grid.Column="1" />
 
-                    <TextBlock Text="{CustomResource LoginWithQrCodeStep2}"
+                    <TextBlock Text="{x:Bind ViewModel.S.LoginWithQrCodeStep2, Mode=OneWay}"
                                Style="{StaticResource BodyTextBlockStyle}"
                                VerticalAlignment="Top"
                                Grid.Column="1"
                                Grid.Row="1" />
 
-                    <TextBlock Text="{CustomResource LoginWithQrCodeStep3}"
+                    <TextBlock Text="{x:Bind ViewModel.S.LoginWithQrCodeStep3, Mode=OneWay}"
                                Style="{StaticResource BodyTextBlockStyle}"
                                VerticalAlignment="Top"
                                Grid.Column="1"
@@ -209,7 +186,7 @@
                 </Grid>
 
                 <HyperlinkButton Click="Switch1_Click"
-                                 Content="{CustomResource LoginWithQrCodeSkip}"
+                                 Content="{x:Bind ViewModel.S.LoginWithQrCodeSkip, Mode=OneWay}"
                                  HorizontalAlignment="Center"
                                  Grid.Row="6" />
             </StackPanel>
@@ -229,7 +206,7 @@
         </Grid>
 
         <HyperlinkButton Command="{x:Bind ViewModel.ProxyCommand}"
-                         Content="{CustomResource ProxySettings}"
+                         Content="{x:Bind ViewModel.S.ProxySettings, Mode=OneWay}"
                          HorizontalAlignment="Right"
                          VerticalAlignment="Center"
                          Margin="12,0"
