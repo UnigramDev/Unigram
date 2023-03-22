@@ -63,17 +63,24 @@
                     Margin="0,-120,0,0"
                     Grid.Row="1">
 
-            <controls:ProfilePicture x:Name="Photo"
-                                     Width="120"
-                                     Height="120"
-                                     Margin="0,0,0,12"
-                                     HorizontalAlignment="Center">
-                <controls:ProfilePicture.Source>
-                    <BitmapImage UriSource="ms-appx:///Assets/Images/BoxArt.png"
-                                 DecodePixelWidth="120"
-                                 DecodePixelHeight="120" />
-                </controls:ProfilePicture.Source>
-            </controls:ProfilePicture>
+            <Border x:Name="Photo"
+                    Width="120"
+                    Height="120"
+                    Margin="0,0,0,12"
+                    HorizontalAlignment="Center">
+                <Border Background="#2AABEE"
+                        Width="120"
+                        Height="120"
+                        CornerRadius="60">
+                    <Path Fill="White"
+                          StrokeThickness="0"
+                          Data="M27.2,59.4c17.5-7.6,29.2-12.6,35-15.1c16.7-6.9,20.1-8.1,22.4-8.2c0.5,0,1.6,0.1,2.3,0.7
+		                        c0.6,0.5,0.8,1.2,0.9,1.6c0.1,0.5,0.2,1.5,0.1,2.4C86.9,50.3,83,73.3,81,83.9c-0.8,4.5-2.5,6-4.1,6.2c-3.5,0.3-6.1-2.3-9.5-4.5
+		                        c-5.3-3.5-8.3-5.6-13.4-9c-5.9-3.9-2.1-6,1.3-9.6c0.9-0.9,16.2-14.9,16.5-16.2c0-0.2,0.1-0.7-0.3-1.1s-0.9-0.2-1.2-0.1
+		                        c-0.5,0.1-9,5.7-25.3,16.7c-2.4,1.6-4.6,2.4-6.5,2.4c-2.1,0-6.3-1.2-9.3-2.2c-3.8-1.2-6.7-1.9-6.5-3.9
+		                        C22.8,61.6,24.3,60.5,27.2,59.4z" />
+                </Border>
+            </Border>
 
             <TextBlock x:Name="FullName"
                        Text="{CustomResource AppName}"

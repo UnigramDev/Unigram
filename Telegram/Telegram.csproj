@@ -1297,8 +1297,6 @@
     <Content Include="Assets\Audio\voip_failed.mp3" />
     <Content Include="Assets\Audio\voip_incoming.mp3" />
     <Content Include="Assets\Audio\voip_ringback.mp3" />
-    <Content Include="Assets\Emoji\apple.png" />
-    <Content Include="Assets\Emoji\microsoft.png" />
     <Compile Include="Controls\GlyphToggleButton.cs" />
     <Compile Include="Controls\ProgressShape.cs" />
     <Compile Include="Controls\ProgressVoice.cs" />
@@ -1441,7 +1439,6 @@
     <Content Include="Assets\Animations\AutoDelete.tgs" />
     <Content Include="Assets\Animations\Premium.tgs" />
     <None Include="Assets\i420.hlsl" />
-    <Content Include="Assets\Images\BoxArt.png" />
     <Content Include="Assets\Images\Reply.scale-100.png" />
     <Content Include="Assets\Images\Reply.scale-125.png" />
     <Content Include="Assets\Images\Reply.scale-150.png" />
