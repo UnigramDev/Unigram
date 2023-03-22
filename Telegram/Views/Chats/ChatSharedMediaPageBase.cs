@@ -203,6 +203,12 @@ namespace Telegram.Views.Chats
         private TextBlock _dateHeaderLabel;
         public TextBlock DateHeaderLabel => _dateHeaderLabel ??= FindName(nameof(DateHeaderLabel)) as TextBlock;
 
+        private Border _cardBackground;
+        public Border CardBackground => _cardBackground ??= FindName(nameof(CardBackground)) as Border;
+
+        private Border _clipperBackground;
+        public Border ClipperBackground => _clipperBackground ??= FindName(nameof(ClipperBackground)) as Border;
+
         protected virtual float TopPadding => 48;
 
         protected void List_Loaded(object sender, RoutedEventArgs e)
@@ -210,15 +216,13 @@ namespace Telegram.Views.Chats
             var scrollingHost = ScrollingHost.GetScrollViewer();
             if (scrollingHost != null)
             {
-                //ScrollingHost.ItemsPanelRoot.SizeChanged += ItemsPanelRoot_SizeChanged;
-                //ScrollingHost.ItemsPanelRoot.MinHeight = ActualHeight + ProfileHeader.ActualHeight;
                 Canvas.SetZIndex(ScrollingHost.ItemsPanelRoot, -1);
 
                 var properties = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(scrollingHost);
                 var visual = ElementCompositionPreview.GetElementVisual(HeaderPanel);
                 var panel = ElementCompositionPreview.GetElementVisual(ScrollingHost.ItemsPanelRoot);
-
-                panel.Clip = panel.Compositor.CreateInsetClip();
+                var border = ElementCompositionPreview.GetElementVisual(CardBackground);
+                var clipper = ElementCompositionPreview.GetElementVisual(ClipperBackground);
 
                 ElementCompositionPreview.SetIsTranslationEnabled(HeaderPanel, true);
 
@@ -227,18 +231,24 @@ namespace Telegram.Views.Chats
                 _properties.InsertScalar("TopPadding", TopPadding);
 
                 var translation = visual.Compositor.CreateExpressionAnimation(
-                    "scrollViewer.Translation.Y > -properties.ActualHeight ? 0 : -scrollViewer.Translation.Y - properties.ActualHeight");
+                    "properties.ActualHeight > 16 ? scrollViewer.Translation.Y > -properties.ActualHeight ? 0 : -scrollViewer.Translation.Y - properties.ActualHeight : -scrollViewer.Translation.Y");
                 translation.SetReferenceParameter("scrollViewer", properties);
                 translation.SetReferenceParameter("properties", _properties);
 
+                var fadeOut = visual.Compositor.CreateExpressionAnimation(
+                    "properties.ActualHeight > 16 ? scrollViewer.Translation.Y > -(properties.ActualHeight - 16) ? 1 : 1 - ((-scrollViewer.Translation.Y - (properties.ActualHeight - 16)) / 16) : 0");
+                fadeOut.SetReferenceParameter("scrollViewer", properties);
+                fadeOut.SetReferenceParameter("properties", _properties);
+
+                var fadeIn = visual.Compositor.CreateExpressionAnimation(
+                    "properties.ActualHeight > 16 ? scrollViewer.Translation.Y > -(properties.ActualHeight - 16) ? 0 : ((-scrollViewer.Translation.Y - (properties.ActualHeight - 16)) / 16) : 1");
+                fadeIn.SetReferenceParameter("scrollViewer", properties);
+                fadeIn.SetReferenceParameter("properties", _properties);
+
                 visual.StartAnimation("Translation.Y", translation);
 
-                var clip = visual.Compositor.CreateExpressionAnimation(
-                    "scrollViewer.Translation.Y > -properties.ActualHeight ? 0 : -scrollViewer.Translation.Y - properties.ActualHeight - properties.TopPadding");
-                clip.SetReferenceParameter("scrollViewer", properties);
-                clip.SetReferenceParameter("properties", _properties);
-
-                panel.Clip.StartAnimation("TopInset", clip);
+                border.StartAnimation("Opacity", fadeOut);
+                clipper.StartAnimation("Opacity", fadeIn);
 
                 //void handler(object _, object args)
                 //{
