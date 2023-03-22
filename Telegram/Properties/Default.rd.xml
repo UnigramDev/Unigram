@@ -22,17 +22,11 @@
 			the application package. The asterisks are not wildcards.
 		-->
 		<!--<Assembly Name="*Application*" Dynamic="Required All" />-->
-		<Type Name="Telegram.Services.IHandle`1" Dynamic="Required All">
-			<Method Name="Handle">
-				<TypeParameter Name="update" Dynamic="Required All"/>
-			</Method>
-		</Type>
-
 		<Type Name="Telegram.ViewModels.Drawers.SupergroupStickerSetViewModel" Dynamic="Required All"/>
 
-    <Type Name="Telegram.Controls.Messages.MessageSelector">
-      <Method Name="UpdateSelection" Dynamic="Required"/>
-    </Type>
+		<Type Name="Telegram.Controls.Messages.MessageSelector">
+		  <Method Name="UpdateSelection" Dynamic="Required"/>
+		</Type>
 
 
 
@@ -169,11 +163,6 @@
 
 		<Type Name="Telegram.Views.ChatView">
 			<Method Name="UpdateSticker" Dynamic="Required"/>
-		</Type>
-
-		<Type Name="Telegram.Views.Popups.SettingsEmojiSetPopup">
-			<Method Name="UpdateFile" Dynamic="Required"/>
-			<Method Name="UpdateThumbnail" Dynamic="Required"/>
 		</Type>
 
 		<Type Name="Telegram.Views.Popups.StickersPopup">

@@ -22,25 +22,12 @@ namespace Telegram.Services
     public interface IHandle { }
 
     /// <summary>
-    ///   Denotes a class which can handle a particular type of message.
-    /// </summary>
-    /// <typeparam name = "TMessage">The type of message to handle.</typeparam>
-    public interface IHandle<TMessage> : IHandle
-    {  //don't use contravariance here
-        /// <summary>
-        ///   Handles the message.
-        /// </summary>
-        /// <param name = "message">The message.</param>
-        void Handle(TMessage update);
-    }
-
-    /// <summary>
     ///   Enables loosely-coupled publication of and subscription to events.
     /// </summary>
     public interface IEventAggregator
     {
         /// <summary>
-        ///   Subscribes an instance to all events declared through implementations of <see cref = "IHandle{T}" />
+        ///   Subscribes an instance to all events declared through implementations of <see cref = "IHandle" />
         /// </summary>
         /// <param name = "subscriber">The instance to subscribe for event publication.</param>
         SubscriptionBuilder Subscribe<T>(object subscriber, Action<T> action);
