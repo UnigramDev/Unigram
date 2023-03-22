@@ -620,7 +620,11 @@ namespace Telegram.ViewModels
                 System.Diagnostics.Debug.WriteLine("DialogViewModel: LoadNextSliceAsync: Begin request");
 
                 Function func;
-                if (_threadId != 0)
+                if (_topic != null)
+                {
+                    func = new GetMessageThreadHistory(chat.Id, _topic.Info.MessageThreadId, maxId.Value, 0, 50);
+                }
+                else if (_threadId != 0)
                 {
                     func = new GetMessageThreadHistory(chat.Id, _threadId, maxId.Value, 0, 50);
                 }
@@ -717,7 +721,11 @@ namespace Telegram.ViewModels
                 }
 
                 Function func;
-                if (_threadId != 0)
+                if (_topic != null)
+                {
+                    func = new GetMessageThreadHistory(chat.Id, _topic.Info.MessageThreadId, maxId.Value, -49, 50);
+                }
+                else if (_threadId != 0)
                 {
                     func = new GetMessageThreadHistory(chat.Id, _threadId, maxId.Value, -49, 50);
                 }
@@ -1125,13 +1133,13 @@ namespace Telegram.ViewModels
                 System.Diagnostics.Debug.WriteLine("DialogViewModel: LoadMessageSliceAsync");
 
                 Function func;
-                if (_threadId != 0)
+                if (_topic != null)
                 {
-                    if (_topic?.LastMessage != null)
-                    {
-                        func = new GetMessageThreadHistory(chat.Id, _topic.LastMessage.Id, maxId, -25, 50);
-                    }
-                    else if (_thread != null && _thread.Messages.Any(x => x.Id == maxId))
+                    func = new GetMessageThreadHistory(chat.Id, _topic.Info.MessageThreadId, maxId, -25, 50);
+                }
+                else if (_threadId != 0)
+                {
+                    if (_thread != null && _thread.Messages.Any(x => x.Id == maxId))
                     {
                         func = new GetMessageThreadHistory(chat.Id, _threadId, 1, -25, 50);
                     }
