@@ -296,7 +296,7 @@ namespace Telegram.Controls
             DetailHeaderPresenter.Visibility = _backgroundType == BackgroundKind.Material ? Visibility.Visible : Visibility.Collapsed;
 
             var detailVisual = ElementCompositionPreview.GetElementVisual(DetailPresenter);
-            detailVisual.Clip = Window.Current.Compositor.CreateInsetClip(0, -50, 0, 0);
+            detailVisual.Clip = Window.Current.Compositor.CreateInsetClip(0, -56, 0, 0);
 
             if (DetailFrame != null)
             {
