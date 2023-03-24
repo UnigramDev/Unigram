@@ -81,36 +81,28 @@
                 </Grid.ColumnDefinitions>
                 <controls:BadgeButton x:Name="OpenChat"
                                       Content="{CustomResource VoipGroupOpenChat}"
-                                      Command="{x:Bind ViewModel.SendMessageCommand}"
+                                      Click="{x:Bind ViewModel.SendMessage}"
                                       Style="{StaticResource GlyphGridBadgeButtonStyle}"
                                       Glyph="&#xE8BD;" />
 
                 <!-- User -->
                 <controls:BadgeButton x:Name="Call"
                                       Content="{CustomResource Call}"
-                                      Command="{x:Bind ViewModel.CallCommand}"
+                                      Click="{x:Bind ViewModel.VoiceCall}"
                                       Style="{StaticResource GlyphGridBadgeButtonStyle}"
                                       Glyph="&#xE717;"
-                                      Grid.Column="1">
-                    <Button.CommandParameter>
-                        <x:Boolean>True</x:Boolean>
-                    </Button.CommandParameter>
-                </controls:BadgeButton>
+                                      Grid.Column="1" />
 
                 <controls:BadgeButton x:Name="VideoCall"
                                       Content="{CustomResource VideoCall}"
-                                      Command="{x:Bind ViewModel.CallCommand}"
+                                      Click="{x:Bind ViewModel.VideoCall}"
                                       Style="{StaticResource GlyphGridBadgeButtonStyle}"
                                       Glyph="&#xE714;"
-                                      Grid.Column="2">
-                    <Button.CommandParameter>
-                        <x:Boolean>True</x:Boolean>
-                    </Button.CommandParameter>
-                </controls:BadgeButton>
+                                      Grid.Column="2" />
 
                 <controls:BadgeButton x:Name="Search"
                                       Content="{CustomResource Search}"
-                                      Command="{x:Bind ViewModel.SearchCommand}"
+                                      Click="{x:Bind ViewModel.Search}"
                                       Style="{StaticResource GlyphGridBadgeButtonStyle}"
                                       Glyph="&#xE721;"
                                       Grid.Column="2" />
@@ -118,12 +110,17 @@
                 <!-- Channel -->
                 <controls:BadgeButton x:Name="Edit"
                                       Glyph="&#xE713;"
-                                      Command="{x:Bind ViewModel.EditCommand}"
+                                      Click="{x:Bind ViewModel.Edit}"
                                       Style="{StaticResource GlyphGridBadgeButtonStyle}"
                                       Grid.Column="2" />
                 <controls:BadgeButton x:Name="Join"
                                       Glyph="&#xE99B;"
-                                      Command="{x:Bind ViewModel.EditCommand}"
+                                      Click="{x:Bind ViewModel.Join}"
+                                      Style="{StaticResource GlyphGridBadgeButtonStyle}"
+                                      Grid.Column="2" /> 
+                <controls:BadgeButton x:Name="Leave"
+                                      Glyph="&#xE999;"
+                                      Click="{x:Bind ViewModel.Delete}"
                                       Style="{StaticResource GlyphGridBadgeButtonStyle}"
                                       Grid.Column="2" />
 
@@ -164,7 +161,7 @@
                 <Button.ContextFlyout>
                     <MenuFlyout>
                         <MenuFlyoutItem Text="{CustomResource Copy}"
-                                        Command="{x:Bind ViewModel.CopyDescriptionCommand}">
+                                        Click="{x:Bind ViewModel.CopyDescription}">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE8C8;"
                                           Style="{StaticResource DefaultFontIconStyle}" />
@@ -182,7 +179,7 @@
                 <Button.ContextFlyout>
                     <MenuFlyout>
                         <MenuFlyoutItem Text="{CustomResource Copy}"
-                                        Command="{x:Bind ViewModel.CopyPhoneCommand}">
+                                        Click="{x:Bind ViewModel.CopyPhone}">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE8C8;"
                                           Style="{StaticResource DefaultFontIconStyle}" />
@@ -207,14 +204,14 @@
                 <Button.ContextFlyout>
                     <MenuFlyout>
                         <MenuFlyoutItem Text="{CustomResource Copy}"
-                                        Command="{x:Bind ViewModel.CopyUsernameCommand}">
+                                        Click="{x:Bind ViewModel.CopyUsername}">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE8C8;"
                                           Style="{StaticResource DefaultFontIconStyle}" />
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
                         <MenuFlyoutItem Text="{CustomResource CopyLink}"
-                                        Command="{x:Bind ViewModel.CopyUsernameLinkCommand}">
+                                        Click="{x:Bind ViewModel.CopyUsernameLink}">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE71B;"
                                           Style="{StaticResource DefaultFontIconStyle}" />
@@ -237,7 +234,7 @@
                 <Button.ContextFlyout>
                     <MenuFlyout>
                         <MenuFlyoutItem Text="{CustomResource Copy}"
-                                        Command="{x:Bind ViewModel.CopyUsernameCommand}">
+                                        Click="{x:Bind ViewModel.CopyUsername}">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE8C8;"
                                           Style="{StaticResource DefaultFontIconStyle}" />
@@ -253,17 +250,17 @@
                                   Visibility="Collapsed">
             <controls:BadgeButton x:Name="Members"
                                   Content="{CustomResource ChannelSubscribers}"
-                                  Command="{x:Bind ViewModel.MembersCommand}"
+                                  Click="{x:Bind ViewModel.OpenMembers}"
                                   Style="{StaticResource GlyphBadgeButtonStyle}"
                                   Glyph="&#xE716;" />
             <controls:BadgeButton x:Name="Admins"
                                   Content="{CustomResource ChannelAdministrators}"
-                                  Command="{x:Bind ViewModel.AdminsCommand}"
+                                  Click="{x:Bind ViewModel.OpenAdmins}"
                                   Style="{StaticResource GlyphBadgeButtonStyle}"
                                   Glyph="&#xE734;" />
             <controls:BadgeButton x:Name="Banned"
                                   Content="{CustomResource ChannelBlockedUsers}"
-                                  Command="{x:Bind ViewModel.BannedCommand}"
+                                  Click="{x:Bind ViewModel.OpenBanned}"
                                   Style="{StaticResource GlyphBadgeButtonStyle}"
                                   Glyph="&#xF140;" />
         </controls:HeaderedControl>
@@ -281,7 +278,7 @@
             <controls:BadgeButton x:Name="SecretHashKey"
                                   Visibility="Collapsed"
                                   Content="{CustomResource EncryptionKey}"
-                                  Command="{x:Bind ViewModel.IdenticonCommand}">
+                                  Click="{x:Bind ViewModel.ShowIdenticon}">
                 <!--<controls:BadgeButton.Badge>
                                     <Image x:Name="SecretIdenticon" Width="24" Height="24"/>
                                     </controls:BadgeButton.Badge>-->

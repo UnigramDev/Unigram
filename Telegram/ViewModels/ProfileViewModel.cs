@@ -69,41 +69,15 @@ namespace Telegram.ViewModels
             _supergroupMembersVieModel = supergroupMembersViewModel;
             _supergroupMembersVieModel.IsEmbedded = true;
 
-            SendMessageCommand = new RelayCommand(SendMessageExecute);
-            SearchCommand = new RelayCommand(SearchExecute);
             SystemCallCommand = new RelayCommand(SystemCallExecute);
-            BlockCommand = new RelayCommand(BlockExecute);
-            UnblockCommand = new RelayCommand(UnblockExecute);
             ReportCommand = new RelayCommand(ReportExecute);
-            CallCommand = new RelayCommand<bool>(CallExecute);
-            CopyPhoneCommand = new RelayCommand(CopyPhoneExecute);
-            CopyDescriptionCommand = new RelayCommand(CopyDescriptionExecute);
-            CopyUsernameCommand = new RelayCommand(CopyUsernameExecute);
-            CopyUsernameLinkCommand = new RelayCommand(CopyUsernameLinkExecute);
-            GiftPremiumCommand = new RelayCommand(GiftPremiumExecute);
-            AddCommand = new RelayCommand(AddExecute);
-            DiscussCommand = new RelayCommand(DiscussExecute);
-            EditCommand = new RelayCommand(EditExecute);
-            JoinCommand = new RelayCommand(JoinExecute);
-            DeleteCommand = new RelayCommand(DeleteExecute);
-            ShareCommand = new RelayCommand(ShareExecute);
-            SecretChatCommand = new RelayCommand(SecretChatExecute);
             MuteForCommand = new RelayCommand<int?>(MuteForExecute);
             SetTimerCommand = new RelayCommand<int?>(SetTimerExecute);
-            IdenticonCommand = new RelayCommand(IdenticonExecute);
-            MigrateCommand = new RelayCommand(MigrateExecute);
-            InviteCommand = new RelayCommand(InviteExecute);
             ToggleMuteCommand = new RelayCommand(ToggleMuteExecute);
-            StatisticsCommand = new RelayCommand(StatisticsExecute);
 
             MemberPromoteCommand = new RelayCommand<ChatMember>(MemberPromoteExecute);
             MemberRestrictCommand = new RelayCommand<ChatMember>(MemberRestrictExecute);
             MemberRemoveCommand = new RelayCommand<ChatMember>(MemberRemoveExecute);
-
-            MembersCommand = new RelayCommand(MembersExecute);
-            AdminsCommand = new RelayCommand(AdminsExecute);
-            BannedCommand = new RelayCommand(BannedExecute);
-            KickedCommand = new RelayCommand(KickedExecute);
 
             Children.Add(userCommonChatsViewModel);
             Children.Add(supergroupMembersViewModel);
@@ -377,8 +351,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public RelayCommand SendMessageCommand { get; }
-        private void SendMessageExecute()
+        public void SendMessage()
         {
             var chat = _chat;
             if (chat == null)
@@ -404,8 +377,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public RelayCommand StatisticsCommand { get; }
-        private void StatisticsExecute()
+        public void OpenStatistics()
         {
             var chat = _chat;
             if (chat == null)
@@ -445,8 +417,7 @@ namespace Telegram.ViewModels
             //}
         }
 
-        public RelayCommand BlockCommand { get; }
-        private async void BlockExecute()
+        public async void Block()
         {
             var chat = _chat;
             if (chat == null)
@@ -463,8 +434,7 @@ namespace Telegram.ViewModels
             ToggleIsBlocked(chat, true);
         }
 
-        public RelayCommand UnblockCommand { get; }
-        private async void UnblockExecute()
+        public async void Unblock()
         {
             var chat = _chat;
             if (chat == null)
@@ -493,8 +463,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public RelayCommand ShareCommand { get; }
-        private async void ShareExecute()
+        public async void Share()
         {
             var chat = _chat;
             if (chat == null)
@@ -578,8 +547,7 @@ namespace Telegram.ViewModels
             //}
         }
 
-        public RelayCommand CopyPhoneCommand { get; }
-        private void CopyPhoneExecute()
+        public void CopyPhone()
         {
             var chat = _chat;
             if (chat == null)
@@ -598,8 +566,7 @@ namespace Telegram.ViewModels
             ClipboardEx.TrySetContent(dataPackage);
         }
 
-        public RelayCommand CopyDescriptionCommand { get; }
-        private void CopyDescriptionExecute()
+        public void CopyDescription()
         {
             var chat = _chat;
             if (chat == null)
@@ -633,8 +600,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public RelayCommand CopyUsernameCommand { get; }
-        private void CopyUsernameExecute()
+        public void CopyUsername()
         {
             var chat = _chat;
             if (chat == null)
@@ -668,8 +634,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public RelayCommand CopyUsernameLinkCommand { get; }
-        private void CopyUsernameLinkExecute()
+        public void CopyUsernameLink()
         {
             var chat = _chat;
             if (chat == null)
@@ -703,8 +668,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public RelayCommand GiftPremiumCommand { get; }
-        private async void GiftPremiumExecute()
+        public async void GiftPremium()
         {
             var chat = _chat;
             if (chat == null)
@@ -719,8 +683,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public RelayCommand SecretChatCommand { get; }
-        private async void SecretChatExecute()
+        public async void CreateSecretChat()
         {
             var chat = _chat;
             if (chat == null)
@@ -744,8 +707,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public RelayCommand IdenticonCommand { get; }
-        private async void IdenticonExecute()
+        public async void ShowIdenticon()
         {
             var chat = _chat;
             if (chat == null)
@@ -756,37 +718,7 @@ namespace Telegram.ViewModels
             await ShowPopupAsync(new IdenticonPopup(SessionId, chat));
         }
 
-        public RelayCommand MigrateCommand { get; }
-        private async void MigrateExecute()
-        {
-            var chat = _chat;
-            if (chat == null)
-            {
-                return;
-            }
-
-            var confirm = await ShowPopupAsync(Strings.ConvertGroupInfo2 + "\n\n" + Strings.ConvertGroupInfo3, Strings.ConvertGroup, Strings.OK, Strings.Cancel);
-            if (confirm != ContentDialogResult.Primary)
-            {
-                return;
-            }
-
-            var warning = await ShowPopupAsync(Strings.ConvertGroupAlert, Strings.ConvertGroupAlertWarning, Strings.OK, Strings.Cancel);
-            if (warning != ContentDialogResult.Primary)
-            {
-                return;
-            }
-
-            var response = await ClientService.SendAsync(new UpgradeBasicGroupChatToSupergroupChat(chat.Id));
-            if (response is Chat upgraded)
-            {
-                NavigationService.NavigateToChat(upgraded);
-                NavigationService.RemoveSkip(1);
-            }
-        }
-
-        public RelayCommand InviteCommand { get; }
-        private async void InviteExecute()
+        public async void Invite()
         {
             var chat = _chat;
             if (chat == null)
@@ -842,8 +774,7 @@ namespace Telegram.ViewModels
 
         #region Search
 
-        public RelayCommand SearchCommand { get; }
-        private void SearchExecute()
+        public void Search()
         {
             var chat = _chat;
             if (chat == null)
@@ -869,8 +800,17 @@ namespace Telegram.ViewModels
 
         #region Call
 
-        public RelayCommand<bool> CallCommand { get; }
-        private async void CallExecute(bool video)
+        public void VoiceCall()
+        {
+            Call(false);
+        }
+
+        public void VideoCall()
+        {
+            Call(true);
+        }
+
+        private async void Call(bool video)
         {
             var chat = _chat;
             if (chat == null)
@@ -894,8 +834,7 @@ namespace Telegram.ViewModels
 
         #endregion
 
-        public RelayCommand AddCommand { get; }
-        private void AddExecute()
+        public void AddToContacts()
         {
             var chat = _chat;
             if (chat == null)
@@ -912,8 +851,7 @@ namespace Telegram.ViewModels
             NavigationService.Navigate(typeof(UserEditPage), user.Id);
         }
 
-        public RelayCommand EditCommand { get; }
-        private async void EditExecute()
+        public async void Edit()
         {
             var chat = _chat;
             if (chat == null)
@@ -937,12 +875,11 @@ namespace Telegram.ViewModels
             }
             else if (chat.Type is ChatTypePrivate or ChatTypeSecret)
             {
-                AddExecute();
+                AddToContacts();
             }
         }
 
-        public RelayCommand DiscussCommand { get; }
-        private void DiscussExecute()
+        public void Discuss()
         {
             var chat = _chat;
             if (chat == null)
@@ -962,8 +899,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public RelayCommand JoinCommand { get; }
-        private void JoinExecute()
+        public void Join()
         {
             var chat = _chat;
             if (chat == null)
@@ -974,8 +910,7 @@ namespace Telegram.ViewModels
             ClientService.Send(new JoinChat(chat.Id));
         }
 
-        public RelayCommand DeleteCommand { get; }
-        private async void DeleteExecute()
+        public async void Delete()
         {
             var chat = _chat;
             if (chat == null)
@@ -1129,8 +1064,7 @@ namespace Telegram.ViewModels
 
         #region Supergroup
 
-        public RelayCommand AdminsCommand { get; }
-        private void AdminsExecute()
+        public void OpenAdmins()
         {
             var chat = _chat;
             if (chat == null)
@@ -1141,8 +1075,7 @@ namespace Telegram.ViewModels
             NavigationService.Navigate(typeof(SupergroupAdministratorsPage), chat.Id);
         }
 
-        public RelayCommand BannedCommand { get; }
-        private void BannedExecute()
+        public void OpenBanned()
         {
             var chat = _chat;
             if (chat == null)
@@ -1153,8 +1086,7 @@ namespace Telegram.ViewModels
             NavigationService.Navigate(typeof(SupergroupBannedPage), chat.Id);
         }
 
-        public RelayCommand KickedCommand { get; }
-        private void KickedExecute()
+        public void OpenKicked()
         {
             var chat = _chat;
             if (chat == null)
@@ -1165,8 +1097,7 @@ namespace Telegram.ViewModels
             NavigationService.Navigate(typeof(SupergroupPermissionsPage), chat.Id);
         }
 
-        public RelayCommand MembersCommand { get; }
-        private void MembersExecute()
+        public void OpenMembers()
         {
             var chat = _chat;
             if (chat == null)
