@@ -26,6 +26,7 @@ using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Drawers;
 using Telegram.Views;
 using Telegram.Views.Popups;
+using Telegram.Views.Premium.Popups;
 using Telegram.Views.Users;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Text;
@@ -2527,6 +2528,25 @@ namespace Telegram.ViewModels
             }
 
             ClientService.Send(new SetChatMessageSender(chat.Id, messageSender.Sender));
+        }
+
+        #endregion
+
+        #region Gift premium
+
+        public async void GiftPremium()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            if (ClientService.TryGetUser(chat, out User user)
+                && ClientService.TryGetUserFull(chat, out UserFullInfo userFull))
+            {
+                await ShowPopupAsync(new GiftPopup(ClientService, NavigationService, user, userFull.PremiumGiftOptions));
+            }
         }
 
         #endregion

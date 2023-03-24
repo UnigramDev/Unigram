@@ -1470,6 +1470,17 @@ namespace Telegram.Views
             //    return;
             //}
 
+            if (ViewModel.IsPremium
+                && ViewModel.ClientService.Options.GiftPremiumFromAttachmentMenu
+                && ViewModel.ClientService.TryGetUserFull(chat, out UserFullInfo fullInfo) && fullInfo.PremiumGiftOptions.Count > 0)
+            {
+                AttachGift.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                AttachGift.Visibility = Visibility.Collapsed;
+            }
+
             var flyout = FlyoutBase.GetAttachedFlyout(ButtonAttach) as MenuFlyout;
             if (flyout != null)
             {

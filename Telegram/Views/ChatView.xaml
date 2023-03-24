@@ -1239,6 +1239,14 @@
                                                   Style="{StaticResource DefaultFontIconStyle}" />
                                     </MenuFlyoutItem.Icon>
                                 </MenuFlyoutItem>
+                                <MenuFlyoutItem x:Name="AttachGift"
+                                                Text="{CustomResource GiftPremium}"
+                                                Click="{x:Bind ViewModel.GiftPremium}">
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon Glyph="&#xE9D4;"
+                                                  Style="{StaticResource DefaultFontIconStyle}" />
+                                    </MenuFlyoutItem.Icon>
+                                </MenuFlyoutItem>
                             </MenuFlyout>
                         </FlyoutBase.AttachedFlyout>
                     </controls:GlyphButton>
