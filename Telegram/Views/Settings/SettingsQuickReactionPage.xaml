@@ -20,9 +20,9 @@
         <ScrollViewer x:Name="ScrollingHost">
             <controls:SettingsPanel>
                 <controls:HeaderedControl x:Name="Enable"
-                                          Footer="Quickly reply to a message by double clicking on it">
+                                          Footer="{CustomResource QuickReactionInfo}">
                     <CheckBox IsChecked="{x:Bind ViewModel.IsQuickReplySelected, Mode=TwoWay}"
-                              Content="Double click to reply"
+                              Content="{CustomResource QuickReaction}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
                 </controls:HeaderedControl>
 

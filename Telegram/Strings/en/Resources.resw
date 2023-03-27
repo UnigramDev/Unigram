@@ -4797,6 +4797,12 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="PremiumPreviewStickersDescription" xml:space="preserve">
     <value>Exclusive enlarged stickers featuring additional effects, updated monthly.</value>
   </data>
+  <data name="PremiumPreviewTranslations" xml:space="preserve">
+    <value>Real-Time Translation</value>
+  </data>
+  <data name="PremiumPreviewTranslationsDescription" xml:space="preserve">
+    <value>Real-time translation of chats and channels into other languages.</value>
+  </data>
   <data name="PremiumPreviewUploads" xml:space="preserve">
     <value>4 GB Upload Size</value>
   </data>
@@ -5009,6 +5015,12 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   </data>
   <data name="QuestionHint" xml:space="preserve">
     <value>Ask a question</value>
+  </data>
+  <data name="QuickReaction" xml:space="preserve">
+    <value>Double click to reply</value>
+  </data>
+  <data name="QuickReactionInfo" xml:space="preserve">
+    <value>Quickly reply to a message by double clicking on it.</value>
   </data>
   <data name="QuitTelegram" xml:space="preserve">
     <value>Quit Telegram</value>
