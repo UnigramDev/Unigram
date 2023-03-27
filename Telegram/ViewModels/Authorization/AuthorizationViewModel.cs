@@ -42,6 +42,8 @@ namespace Telegram.ViewModels.Authorization
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
+            LocaleService.Current.Changed += OnLocaleChanged;
+
             ClientService.Send(new GetCountryCode(), result =>
             {
                 if (result is Text text)
@@ -112,14 +114,15 @@ namespace Telegram.ViewModels.Authorization
             return Task.CompletedTask;
         }
 
-        public override void Subscribe()
+        protected override Task OnNavigatedFromAsync(NavigationState suspensionState, bool suspending)
         {
-            Aggregator.Subscribe<UpdateLanguagePackStrings>(this, Handle);
+            LocaleService.Current.Changed -= OnLocaleChanged;
+            return Task.CompletedTask;
         }
 
-        public void Handle(UpdateLanguagePackStrings update)
+        private void OnLocaleChanged(object sender, LocaleChangedEventArgs e)
         {
-            BeginOnUIThread(() => S.Handle(update));
+            BeginOnUIThread(() => S.Handle(e));
         }
 
         private void GotUserCountry(string code)
@@ -304,14 +307,24 @@ namespace Telegram.ViewModels.Authorization
                 nameof(Strings.ProxySettings)
             };
 
-            public void Handle(UpdateLanguagePackStrings update)
+            public void Handle(LocaleChangedEventArgs update)
             {
-                foreach (var key in update.Strings)
+                if (update.Strings.Count > 0)
                 {
-                    var index = Array.IndexOf(_keys, key.Key);
-                    if (index != -1)
+                    foreach (var key in update.Strings)
                     {
-                        RaisePropertyChanged(key.Key);
+                        var index = Array.IndexOf(_keys, key.Key);
+                        if (index != -1)
+                        {
+                            RaisePropertyChanged(key.Key);
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var key in _keys)
+                    {
+                        RaisePropertyChanged(key);
                     }
                 }
             }

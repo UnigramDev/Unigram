@@ -4,7 +4,9 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
@@ -30,6 +32,18 @@ namespace Telegram.Services
         string GetString(string key, int quantity);
 
         void Handle(UpdateLanguagePackStrings update);
+
+        event EventHandler<LocaleChangedEventArgs> Changed;
+    }
+
+    public class LocaleChangedEventArgs : EventArgs
+    {
+        public IList<LanguagePackString> Strings { get; }
+
+        public LocaleChangedEventArgs(IList<LanguagePackString> strings)
+        {
+            Strings = strings;
+        }
     }
 
     public class LocaleService : ILocaleService
@@ -66,6 +80,8 @@ namespace Telegram.Services
 
             LoadCurrentCulture();
         }
+
+        public event EventHandler<LocaleChangedEventArgs> Changed;
 
         private void LoadCurrentCulture()
         {
@@ -395,26 +411,35 @@ namespace Telegram.Services
         {
             var values = GetLanguagePack(update.LanguagePackId);
 
-            foreach (var value in update.Strings)
+            if (update.Strings.Count > 0)
             {
-                switch (value.Value)
+                foreach (var value in update.Strings)
                 {
-                    case LanguagePackStringValueOrdinary ordinary:
-                        values[value.Key] = ordinary.Value;
-                        break;
-                    case LanguagePackStringValuePluralized pluralized:
-                        values[value.Key + "Zero"] = pluralized.ZeroValue;
-                        values[value.Key + "One"] = pluralized.OneValue;
-                        values[value.Key + "Two"] = pluralized.TwoValue;
-                        values[value.Key + "Few"] = pluralized.FewValue;
-                        values[value.Key + "Many"] = pluralized.ManyValue;
-                        values[value.Key + "Other"] = pluralized.OtherValue;
-                        break;
-                    case LanguagePackStringValueDeleted:
-                        values.TryRemove(value.Key, out _);
-                        break;
+                    switch (value.Value)
+                    {
+                        case LanguagePackStringValueOrdinary ordinary:
+                            values[value.Key] = ordinary.Value;
+                            break;
+                        case LanguagePackStringValuePluralized pluralized:
+                            values[value.Key + "Zero"] = pluralized.ZeroValue;
+                            values[value.Key + "One"] = pluralized.OneValue;
+                            values[value.Key + "Two"] = pluralized.TwoValue;
+                            values[value.Key + "Few"] = pluralized.FewValue;
+                            values[value.Key + "Many"] = pluralized.ManyValue;
+                            values[value.Key + "Other"] = pluralized.OtherValue;
+                            break;
+                        case LanguagePackStringValueDeleted:
+                            values.TryRemove(value.Key, out _);
+                            break;
+                    }
                 }
             }
+            else
+            {
+                values.Clear();
+            }
+
+            Changed?.Invoke(this, new LocaleChangedEventArgs(update.Strings));
         }
 
         #endregion
