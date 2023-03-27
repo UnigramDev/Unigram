@@ -80,6 +80,7 @@ namespace Telegram.Controls.Chats
         {
             _clientService = clientService;
             _aggregator = aggregator;
+            _aggregator?.Subscribe<UpdateSelectedBackground>(this, Handle);
 
             UpdateBackground(clientService.SelectedBackground, IsDarkTheme);
         }
