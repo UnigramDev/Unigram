@@ -2422,6 +2422,16 @@ namespace Telegram.Views
             {
                 return !string.IsNullOrEmpty(text.Text.Text);
             }
+            else if (message.Content is MessageVoiceNote voiceNote
+                && voiceNote.VoiceNote.SpeechRecognitionResult is SpeechRecognitionResultText speechVoiceText)
+            {
+                return !string.IsNullOrEmpty(speechVoiceText.Text);
+            }
+            else if (message.Content is MessageVideoNote videoNote
+                && videoNote.VideoNote.SpeechRecognitionResult is SpeechRecognitionResultText speechVideoText)
+            {
+                return !string.IsNullOrEmpty(speechVideoText.Text);
+            }
             else if (message.Content is MessageContact or MessageAnimatedEmoji)
             {
                 return true;
