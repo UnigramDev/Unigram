@@ -2471,6 +2471,16 @@ namespace Telegram.Views
             {
                 return ViewModel.TranslateService.CanTranslate(caption.Text);
             }
+            else if (message.Content is MessageVoiceNote voiceNote
+                && voiceNote.VoiceNote.SpeechRecognitionResult is SpeechRecognitionResultText speechVoiceText)
+            {
+                return ViewModel.TranslateService.CanTranslate(speechVoiceText.Text);
+            }
+            else if (message.Content is MessageVideoNote videoNote
+                && videoNote.VideoNote.SpeechRecognitionResult is SpeechRecognitionResultText speechVideoText)
+            {
+                return ViewModel.TranslateService.CanTranslate(speechVideoText.Text);
+            }
 
             return false;
         }
