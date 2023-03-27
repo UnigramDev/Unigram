@@ -241,7 +241,7 @@
 
                 <controls:HeaderedControl>
                     <controls:BadgeButton Content="{CustomResource CreateNewTheme}"
-                                          Command="{x:Bind ViewModel.NewThemeCommand}"
+                                          Click="{x:Bind ViewModel.NewTheme}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Glyph="&#xE90E;" />
                 </controls:HeaderedControl>

@@ -1217,7 +1217,7 @@
                         <!-- Button to change self-destructing timer, secret chats only -->
                         <controls:GlyphButton x:Name="ButtonTimer"
                                               Glyph="&#xE9DB;"
-                                              Command="{x:Bind ViewModel.SetTimerCommand}"
+                                              Click="{x:Bind ViewModel.SetTimer}"
                                               FontSize="{StaticResource GlyphLargeFontSize}"
                                               VerticalAlignment="Bottom"
                                               Grid.Column="1" />
