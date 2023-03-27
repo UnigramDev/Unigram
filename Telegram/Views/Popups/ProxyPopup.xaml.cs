@@ -160,7 +160,7 @@ namespace Telegram.Views.Popups
                     : TypeProto.IsChecked == true
                     ? Strings.UseProxyTelegramInfo + Environment.NewLine + Environment.NewLine + Strings.UseProxyTelegramInfo2
                     : TypeHttp.IsChecked == true
-                    ? "Enable if server supports transparent TCP connections via HTTP CONNECT method." + Environment.NewLine + Environment.NewLine + "When supported, it may improve connection speed dramatically. Try changing this option if this proxy doesn't work."
+                    ? Strings.TransparentTcpConnectionInfo + Environment.NewLine + Environment.NewLine + Strings.TransparentTcpConnectionInfo2
                     : string.Empty;
             }
         }

@@ -80,8 +80,8 @@
                         </muxc:ItemsRepeater>
                     </controls:HeaderedControl>
 
-                    <controls:HeaderedControl Header="Tabs view"
-                                              Footer="If you have many folders, try moving tabs on the left."
+                    <controls:HeaderedControl Header="{CustomResource TabsView}"
+                                              Footer="{CustomResource TabsViewInfo}"
                                               Background="{ThemeResource SettingsItemBackground}">
                         <ScrollViewer HorizontalScrollBarVisibility="Auto"
                                       HorizontalScrollMode="Auto"
@@ -195,7 +195,7 @@
                                             </Grid>
                                         </StackPanel>
                                     </RadioButton>
-                                    <TextBlock Text="Tabs at the top"
+                                    <TextBlock Text="{CustomResource TabsViewOnTop}"
                                                Margin="0,8,0,0"
                                                Style="{StaticResource CaptionTextBlockStyle}" />
                                 </StackPanel>
@@ -349,7 +349,7 @@
                                             </StackPanel>
                                         </Grid>
                                     </RadioButton>
-                                    <TextBlock Text="Tabs on the left"
+                                    <TextBlock Text="{CustomResource TabsViewOnLeft}"
                                                Margin="0,8,0,0"
                                                Style="{StaticResource CaptionTextBlockStyle}" />
                                 </StackPanel>

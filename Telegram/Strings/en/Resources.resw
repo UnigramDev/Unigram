@@ -3711,6 +3711,9 @@ You can change your language back at any time in Settings.</value>
   <data name="LiteOptionsTopics" xml:space="preserve">
     <value>Side menu in topics</value>
   </data>
+  <data name="LiteOptionsTransparencyEffects" xml:space="preserve">
+    <value>Transparency Effects</value>
+  </data>
   <data name="LitePowerSaver" xml:space="preserve">
     <value>Save Power on Low Battery</value>
   </data>
@@ -4098,6 +4101,9 @@ Minimum length is 5 characters.</value>
   <data name="NewPoll" xml:space="preserve">
     <value>New Poll</value>
   </data>
+  <data name="News" xml:space="preserve">
+    <value>News</value>
+  </data>
   <data name="NewSecretChat" xml:space="preserve">
     <value>New Secret Chat</value>
   </data>
@@ -4295,11 +4301,17 @@ Please make sure you entered the right Server URL and Stream Key in your app.</v
   <data name="OpenInExternalApp" xml:space="preserve">
     <value>Open in...</value>
   </data>
+  <data name="OpenInNewWindow" xml:space="preserve">
+    <value>Open in new window</value>
+  </data>
   <data name="OpenMessage" xml:space="preserve">
     <value>VIEW MESSAGE</value>
   </data>
   <data name="OpenProfile" xml:space="preserve">
     <value>Open Profile</value>
+  </data>
+  <data name="OpenTelegram" xml:space="preserve">
+    <value>Open Telegram</value>
   </data>
   <data name="OpenUrlAlert" xml:space="preserve">
     <value>Open this link: {0}?</value>
@@ -4997,6 +5009,9 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   </data>
   <data name="QuestionHint" xml:space="preserve">
     <value>Ask a question</value>
+  </data>
+  <data name="QuitTelegram" xml:space="preserve">
+    <value>Quit Telegram</value>
   </data>
   <data name="QuizInfo" xml:space="preserve">
     <value>Polls in Quiz Mode have one correct answer. Users can&apos;t revoke their answers.</value>
@@ -5880,6 +5895,18 @@ and enter your phone number.</value>
   <data name="SystemTones" xml:space="preserve">
     <value>System tones</value>
   </data>
+  <data name="TabsView" xml:space="preserve">
+    <value>Tabs view</value>
+  </data>
+  <data name="TabsViewInfo" xml:space="preserve">
+    <value>If you have many folders, try moving tabs on the left.</value>
+  </data>
+  <data name="TabsViewOnLeft" xml:space="preserve">
+    <value>Tabs on the left</value>
+  </data>
+  <data name="TabsViewOnTop" xml:space="preserve">
+    <value>Tabs at the top</value>
+  </data>
   <data name="TelegramFAQ" xml:space="preserve">
     <value>Telegram FAQ</value>
   </data>
@@ -6098,6 +6125,15 @@ If you are not comfortable with Telegram&apos;s modest needs, it won&apos;t be p
   </data>
   <data name="TranslationFailedAlert2" xml:space="preserve">
     <value>Translation failed.</value>
+  </data>
+  <data name="TransparentTcpConnection" xml:space="preserve">
+    <value>Transparent TCP connection</value>
+  </data>
+  <data name="TransparentTcpConnectionInfo" xml:space="preserve">
+    <value>Enable if server supports transparent TCP connections via HTTP CONNECT method.</value>
+  </data>
+  <data name="TransparentTcpConnectionInfo2" xml:space="preserve">
+    <value>When supported, it may improve connection speed dramatically. Try changing this option if this proxy doesn&apos;t work.</value>
   </data>
   <data name="TurnPasswordOff" xml:space="preserve">
     <value>Disable Password</value>

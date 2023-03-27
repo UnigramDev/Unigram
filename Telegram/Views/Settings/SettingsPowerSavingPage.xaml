@@ -151,7 +151,7 @@
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
                     <CheckBox IsChecked="{x:Bind ViewModel.AreMaterialsEnabled, Mode=TwoWay}"
-                              Content="Transparency Effects"
+                              Content="{CustomResource LiteOptionsTransparencyEffects}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
                 </controls:HeaderedControl>
 
