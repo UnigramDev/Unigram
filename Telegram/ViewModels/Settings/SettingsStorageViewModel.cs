@@ -36,7 +36,7 @@ namespace Telegram.ViewModels.Settings
                 }
             });
 
-            ClientService.Send(new GetStorageStatistics(25), result =>
+            ClientService.Send(new GetStorageStatistics(int.MaxValue), result =>
             {
                 if (result is StorageStatistics stats)
                 {
