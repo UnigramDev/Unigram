@@ -142,7 +142,7 @@
     </Page.Resources>
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
-        <controls:TableListView x:Name="List"
+        <controls:TableListView x:Name="ScrollingHost"
                                 ItemsSource="{x:Bind ViewModel.Items}"
                                 ItemClick="ListView_ItemClick"
                                 IsItemClickEnabled="True"
@@ -259,19 +259,19 @@
                                x:Load="{x:Bind IsType(ViewModel.Type, settings:StickersType.Trending)}"
                                Text="{CustomResource FeaturedStickersInfo}"
                                Style="{StaticResource InfoCaptionTextBlockStyle}"
-                               Margin="24,16,24,8" />
+                               Margin="24,80,24,8" />
 
                     <TextBlock x:Name="ArchivedPanel"
                                x:Load="{x:Bind IsType(ViewModel.Type, settings:StickersType.Archived)}"
                                Text="{CustomResource ArchivedMasksInfo}"
                                Style="{StaticResource InfoCaptionTextBlockStyle}"
-                               Margin="24,16,24,8" />
+                               Margin="24,80,24,8" />
 
                     <TextBlock x:Name="MasksArchivedPanel"
                                x:Load="{x:Bind IsType(ViewModel.Type, settings:StickersType.MasksArchived)}"
                                Text="{CustomResource ArchivedStickersInfo}"
                                Style="{StaticResource InfoCaptionTextBlockStyle}"
-                               Margin="24,16,24,8" />
+                               Margin="24,80,24,8" />
                 </Grid>
             </ListView.Header>
             <ListView.Footer>

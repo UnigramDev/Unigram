@@ -505,7 +505,7 @@
     </ContentDialog.Resources>
 
     <Grid Margin="-12,-8,-24,-24">
-        <ListView x:Name="List"
+        <ListView x:Name="ScrollingHost"
                   SelectionMode="Multiple"
                   SelectionChanged="Admin_Toggled"
                   ContainerContentChanging="OnContainerContentChanging"
@@ -568,6 +568,6 @@
         </ListView>
 
         <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
-                                    ScrollingHost="{x:Bind List}" />
+                                    ScrollingHost="{x:Bind ScrollingHost}" />
     </Grid>
 </controls:ContentPopup>

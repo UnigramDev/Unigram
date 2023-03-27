@@ -8,6 +8,7 @@ using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using Telegram.Collections;
+using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Views;
@@ -34,6 +35,7 @@ namespace Telegram.Controls
         private ContentPresenter MasterPresenter;
         private Grid DetailPresenter;
         private BreadcrumbBar DetailHeaderPresenter;
+        private Border DetailHeaderBackground;
         private FrameworkElement BackgroundPart;
         private Border BorderPart;
         private Border MaterialPart;
@@ -170,7 +172,6 @@ namespace Telegram.Controls
             }
         }
 
-        private bool _materialCollapsed;
         private BackgroundKind _backgroundType;
 
         public void ShowHideBackground(BackgroundKind show, bool animate)
@@ -188,6 +189,8 @@ namespace Telegram.Controls
             var border = ElementCompositionPreview.GetElementVisual(BorderPart);
             var material = ElementCompositionPreview.GetElementVisual(MaterialPart);
             var bread = ElementCompositionPreview.GetElementVisual(DetailHeaderPresenter);
+
+            DetailHeaderBackground.Visibility = show == BackgroundKind.Material ? Visibility.Visible : Visibility.Collapsed;
 
             if (animate)
             {
@@ -279,6 +282,7 @@ namespace Telegram.Controls
             MasterPresenter = GetTemplateChild("MasterFrame") as ContentPresenter;
             DetailPresenter = GetTemplateChild(nameof(DetailPresenter)) as Grid;
             DetailHeaderPresenter = GetTemplateChild(nameof(DetailHeaderPresenter)) as BreadcrumbBar;
+            DetailHeaderBackground = GetTemplateChild(nameof(DetailHeaderBackground)) as Border;
             BackgroundPart = GetTemplateChild(nameof(BackgroundPart)) as FrameworkElement;
             BorderPart = GetTemplateChild(nameof(BorderPart)) as Border;
             MaterialPart = GetTemplateChild(nameof(MaterialPart)) as Border;
@@ -296,7 +300,7 @@ namespace Telegram.Controls
             DetailHeaderPresenter.Visibility = _backgroundType == BackgroundKind.Material ? Visibility.Visible : Visibility.Collapsed;
 
             var detailVisual = ElementCompositionPreview.GetElementVisual(DetailPresenter);
-            detailVisual.Clip = Window.Current.Compositor.CreateInsetClip(0, -56, 0, 0);
+            detailVisual.Clip = Window.Current.Compositor.CreateInsetClip();
 
             if (DetailFrame != null)
             {
@@ -357,6 +361,12 @@ namespace Telegram.Controls
             if (e.Content is HostedPage hosted)
             {
                 hosted.UnregisterPropertyChangedCallback(HostedPage.TitleProperty, _titleToken);
+
+                var scrollingHost = hosted.FindName("ScrollingHost");
+                if (scrollingHost is ListViewBase list)
+                {
+                    list.Loaded -= SetScrollingHost;
+                }
             }
         }
 
@@ -367,7 +377,7 @@ namespace Telegram.Controls
                 DetailHeader = hosted.Header;
                 DetailFooter = hosted.Footer;
 
-                if (hosted.Header == null)
+                if (hosted.ShowHeader)
                 {
                     _titleToken = hosted.RegisterPropertyChangedCallback(HostedPage.TitleProperty, OnTitleChanged);
 
@@ -387,6 +397,25 @@ namespace Telegram.Controls
                 {
                     _backStack.Clear();
                 }
+
+                if (_backStack.Count > 0)
+                {
+                    var scrollingHost = hosted.FindName("ScrollingHost");
+                    if (scrollingHost is ListViewBase list)
+                    {
+                        list.Loaded += SetScrollingHost;
+                    }
+                    else if (scrollingHost is ScrollViewer scroll)
+                    {
+                        SetScrollingHost(scroll);
+                    }
+
+                    DetailHeaderBackground.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    DetailHeaderBackground.Visibility = Visibility.Collapsed;
+                }
             }
             else
             {
@@ -394,6 +423,7 @@ namespace Telegram.Controls
                 DetailFooter = null;
 
                 _backStack.Clear();
+                DetailHeaderBackground.Visibility = Visibility.Collapsed;
             }
 
             if (AdaptivePanel == null)
@@ -402,6 +432,51 @@ namespace Telegram.Controls
             }
 
             OnViewStateChanged();
+        }
+
+        private void SetScrollingHost(object sender, RoutedEventArgs e)
+        {
+            if (sender is ListViewBase list)
+            {
+                var scroller = list.GetScrollViewer();
+                if (scroller != null)
+                {
+                    SetScrollingHost(scroller);
+                }
+            }
+        }
+
+        private void SetScrollingHost(ScrollViewer scroller)
+        {
+            var visual1 = ElementCompositionPreview.GetElementVisual(DetailHeaderBackground);
+            var visual2 = ElementCompositionPreview.GetElementVisual(DetailHeaderPresenter);
+
+            visual2.CenterPoint = new System.Numerics.Vector3(0, -16, 0);
+            visual1.Scale = System.Numerics.Vector3.One;
+
+            var properties = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(scroller);
+
+            // min out: 0.583
+            // max out: 1
+
+            // min in:  1
+            // max in:  1.714
+
+            var expOut = "max(0.583, 1 - ((-scrollViewer.Translation.Y / 32) * 0.417))";
+            var slideOut = visual1.Compositor.CreateExpressionAnimation($"vector3({expOut}, {expOut}, 1)");
+            slideOut.SetReferenceParameter("scrollViewer", properties);
+
+            var expIn = "max(1, 1.357 - ((-scrollViewer.Translation.Y / 32) * 0.357))";
+            var slideIn = visual1.Compositor.CreateExpressionAnimation($"vector3({expIn}, {expIn}, 1)");
+            slideIn.SetReferenceParameter("scrollViewer", properties);
+
+            visual1.StartAnimation("Scale", slideIn);
+            visual2.StartAnimation("Scale", slideOut);
+
+            var fadeIn = visual1.Compositor.CreateExpressionAnimation("scrollViewer.Translation.Y < -16 ? -(scrollViewer.Translation.Y + 16) / 16 : 0");
+            fadeIn.SetReferenceParameter("scrollViewer", properties);
+
+            visual1.StartAnimation("Opacity", fadeIn);
         }
 
         private void OnTitleChanged(DependencyObject sender, DependencyProperty dp)

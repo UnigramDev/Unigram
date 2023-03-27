@@ -18,7 +18,7 @@
     </Page.Transitions>
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
-        <controls:TableListView x:Name="List"
+        <controls:TableListView x:Name="ScrollingHost"
                                 ItemsSource="{x:Bind ViewModel.Items}"
                                 ItemClick="List_ItemClick"
                                 IsItemClickEnabled="True"

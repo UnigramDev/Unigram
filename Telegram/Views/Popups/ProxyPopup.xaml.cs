@@ -22,9 +22,13 @@ namespace Telegram.Views.Popups
         public ProxyPopup()
         {
             InitializeComponent();
+
+            PrimaryButtonText = Strings.OK;
+            SecondaryButtonText = Strings.Cancel;
         }
 
         public ProxyPopup(ProxyViewModel proxy)
+            : this()
         {
             InitializeComponent();
 

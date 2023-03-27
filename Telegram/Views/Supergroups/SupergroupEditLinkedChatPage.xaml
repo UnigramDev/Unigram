@@ -53,10 +53,10 @@
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <microsoft:ItemsRepeaterScrollHost>
-            <ScrollViewer VerticalScrollBarVisibility="Auto"
+            <ScrollViewer x:Name="ScrollingHost"
+                          VerticalScrollBarVisibility="Auto"
                           VerticalScrollMode="Auto">
-                <StackPanel Margin="0,0,0,32"
-                            Spacing="16">
+                <controls:SettingsPanel>
                     <Grid Margin="24,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition MaxWidth="1000" />
@@ -113,7 +113,7 @@
                                   Content="{CustomResource ChannelSettingsJoinRequest}"
                                   Style="{StaticResource SettingsCheckBoxStyle}" />
                     </controls:HeaderedControl>
-                </StackPanel>
+                </controls:SettingsPanel>
             </ScrollViewer>
         </microsoft:ItemsRepeaterScrollHost>
     </Grid>

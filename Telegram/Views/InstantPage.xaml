@@ -282,7 +282,8 @@
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <ListView x:Name="ScrollingHost"
-                  SelectionMode="None">
+                  SelectionMode="None"
+                  Padding="0,64,0,0">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment"

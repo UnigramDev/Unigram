@@ -42,7 +42,7 @@ namespace Telegram.Views.Settings
         private void OnContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
             var element = sender as FrameworkElement;
-            var background = List.ItemFromContainer(sender) as Background;
+            var background = ScrollingHost.ItemFromContainer(sender) as Background;
 
             if (background == null || background.Id == Constants.WallpaperLocalId)
             {

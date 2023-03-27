@@ -69,7 +69,7 @@ namespace Telegram.Views.Settings
             var flyout = new MenuFlyout();
             var element = sender as FrameworkElement;
 
-            var exception = List.ItemFromContainer(element) as Chat;
+            var exception = ScrollingHost.ItemFromContainer(element) as Chat;
             if (exception is null)
             {
                 return;

@@ -302,8 +302,7 @@
           Background="Transparent"
           AllowDrop="True"
           DragOver="OnDragOver"
-          Drop="OnDrop"
-          Margin="0,-50,0,0">
+          Drop="OnDrop">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
                 <VisualState x:Name="FilledState" />
@@ -373,6 +372,7 @@
 
         <controls:ContentPageHeader x:Name="Header"
                                     Background="Transparent"
+                                    BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
                                     Canvas.ZIndex="3">
             <Grid x:Name="InfoPanel">
                 <Grid.ColumnDefinitions>

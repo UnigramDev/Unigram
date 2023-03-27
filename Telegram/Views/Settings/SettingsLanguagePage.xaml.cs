@@ -41,7 +41,7 @@ namespace Telegram.Views.Settings
             var flyout = new MenuFlyout();
 
             var element = sender as FrameworkElement;
-            var info = List.ItemFromContainer(element) as LanguagePackInfo;
+            var info = ScrollingHost.ItemFromContainer(element) as LanguagePackInfo;
 
             if (!info.IsInstalled)
             {

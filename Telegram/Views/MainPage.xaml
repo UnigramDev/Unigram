@@ -72,7 +72,7 @@
                             <Grid x:Name="DetailHeaderPresenter2"
                                   CornerRadius="{ThemeResource NavigationViewContentGridCornerRadius}">
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="50" />
+                                    <RowDefinition Height="64" />
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
 
@@ -86,6 +86,18 @@
                                                                Loading="ChatBackgroundPresenter_Loading"
                                                                Grid.RowSpan="2" />
 
+                                <Grid x:Name="DetailPresenter"
+                                      Grid.RowSpan="2" />
+
+                                <Border x:Name="DetailHeaderBackground"
+                                        Visibility="Collapsed"
+                                        Height="48"
+                                        Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
+                                        BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
+                                        BorderThickness="0,0,0,1"
+                                        BackgroundSizing="InnerBorderEdge"
+                                        VerticalAlignment="Top" />
+
                                 <Grid Margin="24,0">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition MaxWidth="1000" />
@@ -93,7 +105,7 @@
                                     </Grid.ColumnDefinitions>
                                     <muxc:BreadcrumbBar x:Name="DetailHeaderPresenter"
                                                         Visibility="Collapsed"
-                                                        Margin="0,12,0,0"
+                                                        Margin="0,20,0,0"
                                                         VerticalAlignment="Top">
                                         <muxc:BreadcrumbBar.ItemTemplate>
                                             <DataTemplate x:DataType="navigation:NavigationStackItem">
@@ -110,9 +122,6 @@
                                                     Margin="0,16,0,0"
                                                     Canvas.ZIndex="1" />
                                 </Grid>
-
-                                <Grid x:Name="DetailPresenter"
-                                      Grid.Row="1" />
 
                                 <Border x:Name="BorderPart"
                                         BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"

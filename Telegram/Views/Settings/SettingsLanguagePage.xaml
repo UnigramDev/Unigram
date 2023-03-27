@@ -16,7 +16,7 @@
     </Page.Resources>
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
-        <controls:TableListView x:Name="List"
+        <controls:TableListView x:Name="ScrollingHost"
                                 ItemsSource="{x:Bind ItemsSource.View}"
                                 ChoosingItemContainer="OnChoosingItemContainer"
                                 ContainerContentChanging="OnContainerContentChanging"
@@ -25,7 +25,8 @@
                                 SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=OneWay}">
             <ListView.Header>
                 <controls:HeaderedControl Header="{CustomResource TranslateMessages}"
-                                          Footer="{x:Bind ConvertTranslateInfo(ViewModel.IsTranslateEnabled), Mode=OneWay}">
+                                          Footer="{x:Bind ConvertTranslateInfo(ViewModel.IsTranslateEnabled), Mode=OneWay}"
+                                          Margin="0,64,0,0">
                     <CheckBox IsChecked="{x:Bind ViewModel.IsTranslateEnabled, Mode=TwoWay}"
                               Content="{CustomResource ShowTranslateButton}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />

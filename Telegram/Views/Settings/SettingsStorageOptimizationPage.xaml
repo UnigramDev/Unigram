@@ -579,7 +579,7 @@
 
     <Grid Background="{ThemeResource PageBackgroundDarkBrush}"
           Margin="0,0,0,-24">
-        <controls:TableListView x:Name="List"
+        <controls:TableListView x:Name="ScrollingHost"
                                 ContainerContentChanging="OnContainerContentChanging"
                                 SelectionMode="None"
                                 Margin="-24,0,-24,0"
@@ -629,6 +629,6 @@
         </controls:TableListView>
 
         <controls:ScrollViewerScrim Background="{ThemeResource PageBackgroundDarkBrush}"
-                                    ScrollingHost="{x:Bind List}" />
+                                    ScrollingHost="{x:Bind ScrollingHost}" />
     </Grid>
 </controls:ContentPopup>

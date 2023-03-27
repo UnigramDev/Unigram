@@ -98,7 +98,7 @@ namespace Telegram.Views.Calls
             {
                 _service.Participants.Delegate = this;
                 _service.Participants.LoadVideoInfo();
-                List.ItemsSource = _service.Participants;
+                ScrollingHost.ItemsSource = _service.Participants;
             }
 
             var titleBar = ApplicationView.GetForCurrentView().TitleBar;
@@ -242,7 +242,7 @@ namespace Telegram.Views.Calls
 
             _service.Participants.Delegate = this;
             _service.Participants.LoadVideoInfo();
-            this.BeginOnUIThread(() => List.ItemsSource = _service.Participants);
+            this.BeginOnUIThread(() => ScrollingHost.ItemsSource = _service.Participants);
         }
 
         private void OnClosed(object sender, Windows.UI.Core.CoreWindowEventArgs e)
@@ -393,12 +393,12 @@ namespace Telegram.Views.Calls
 
                 Grid.SetRowSpan(ParticipantsPanel, 2);
 
-                Grid.SetColumn(List, 1);
+                Grid.SetColumn(ScrollingHost, 1);
 
                 Viewport.Mode = mode;
                 ParticipantsPanel.ColumnDefinitions[1].Width = new GridLength(224, GridUnitType.Pixel);
                 ParticipantsPanel.Margin = new Thickness();
-                List.Padding = new Thickness(8, 0, 12, 8);
+                ScrollingHost.Padding = new Thickness(8, 0, 12, 8);
 
                 if (ListHeader.Children.Contains(ViewportAspect))
                 {
@@ -409,13 +409,13 @@ namespace Telegram.Views.Calls
                 if (mode == ParticipantsGridMode.Docked)
                 {
                     ViewportAspect.Margin = new Thickness(10, -2, 0, 8);
-                    List.Margin = new Thickness();
+                    ScrollingHost.Margin = new Thickness();
                     BottomPanel.Padding = new Thickness(8, 8, 224, 42);
                 }
                 else
                 {
                     ViewportAspect.Margin = new Thickness(10, -2, 10, 8);
-                    List.Margin = new Thickness(216, 0, -216, 0);
+                    ScrollingHost.Margin = new Thickness(216, 0, -216, 0);
                     BottomPanel.Padding = new Thickness(8, 8, 8, 42);
                 }
 
@@ -474,14 +474,14 @@ namespace Telegram.Views.Calls
 
                 Grid.SetRowSpan(ParticipantsPanel, 1);
 
-                Grid.SetColumn(List, 0);
+                Grid.SetColumn(ScrollingHost, 0);
 
                 Viewport.Mode = mode;
                 ViewportAspect.Margin = new Thickness(-2, -2, -2, Viewport.Children.Count > 0 ? 4 : 0);
                 ParticipantsPanel.ColumnDefinitions[1].Width = new GridLength(1, GridUnitType.Auto);
                 ParticipantsPanel.Margin = new Thickness(0, 0, 0, -56);
-                List.Padding = new Thickness(12, 0, 12, 72);
-                List.Margin = new Thickness();
+                ScrollingHost.Padding = new Thickness(12, 0, 12, 72);
+                ScrollingHost.Margin = new Thickness();
 
                 if (ParticipantsPanel.Children.Contains(ViewportAspect))
                 {
@@ -614,7 +614,7 @@ namespace Telegram.Views.Calls
 
         private void ShowHideParticipantsWithVideo(bool show)
         {
-            var panel = List.ItemsPanelRoot;
+            var panel = ScrollingHost.ItemsPanelRoot;
             if (panel == null)
             {
                 return;
@@ -622,7 +622,7 @@ namespace Telegram.Views.Calls
 
             foreach (var row in panel.Children.OfType<SelectorItem>())
             {
-                var participant = List.ItemFromContainer(row) as GroupCallParticipant;
+                var participant = ScrollingHost.ItemFromContainer(row) as GroupCallParticipant;
                 if (participant != null && !show && participant.HasVideoInfo())
                 {
                     row.IsEnabled = false;
@@ -639,10 +639,10 @@ namespace Telegram.Views.Calls
         private void TransformDocked()
         {
             var root = ElementCompositionPreview.GetElementVisual(BottomRoot);
-            var list = ElementCompositionPreview.GetElementVisual(List);
+            var list = ElementCompositionPreview.GetElementVisual(ScrollingHost);
 
             ElementCompositionPreview.SetIsTranslationEnabled(BottomRoot, true);
-            ElementCompositionPreview.SetIsTranslationEnabled(List, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(ScrollingHost, true);
 
             // Root offset
             var rootOffset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
@@ -658,7 +658,7 @@ namespace Telegram.Views.Calls
 
             rootOffset.InsertKeyFrame(1, Vector3.Zero);
 
-            // List offset
+            // ScrollingHost offset
             var listOffset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
 
             if (_mode == ParticipantsGridMode.Docked)
@@ -712,7 +712,7 @@ namespace Telegram.Views.Calls
             }
 
             var root = ElementCompositionPreview.GetElementVisual(BottomRoot);
-            var list = ElementCompositionPreview.GetElementVisual(List);
+            var list = ElementCompositionPreview.GetElementVisual(ScrollingHost);
             var audio1 = ElementCompositionPreview.GetElementVisual(AudioCanvas);
             var audio2 = ElementCompositionPreview.GetElementVisual(Lottie);
             var audioInfo = ElementCompositionPreview.GetElementVisual(AudioInfo);
@@ -737,7 +737,7 @@ namespace Telegram.Views.Calls
             settingsInfo.CenterPoint = new Vector3(SettingsInfo.ActualSize / 2, 0);
 
             ElementCompositionPreview.SetIsTranslationEnabled(BottomRoot, true);
-            ElementCompositionPreview.SetIsTranslationEnabled(List, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(ScrollingHost, true);
             ElementCompositionPreview.SetIsTranslationEnabled(AudioCanvas, true);
             ElementCompositionPreview.SetIsTranslationEnabled(Lottie, true);
             ElementCompositionPreview.SetIsTranslationEnabled(AudioInfo, true);
@@ -768,7 +768,7 @@ namespace Telegram.Views.Calls
             rootOffset.InsertKeyFrame(0, new Vector3(prevCenter - nextCenter, 0, 0));
             rootOffset.InsertKeyFrame(1, Vector3.Zero);
 
-            // List offset
+            // ScrollingHost offset
             var listOffset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
 
             if (next == ParticipantsGridMode.Docked)
@@ -1047,7 +1047,7 @@ namespace Telegram.Views.Calls
             {
                 foreach (var level in validLevels)
                 {
-                    var container = List.ContainerFromItem(level.Key) as SelectorItem;
+                    var container = ScrollingHost.ContainerFromItem(level.Key) as SelectorItem;
                     var content = container?.ContentTemplateRoot as Grid;
 
                     if (content == null)
@@ -1761,7 +1761,7 @@ namespace Telegram.Views.Calls
                     }
                 }
 
-                var container = List.ContainerFromItem(participant) as SelectorItem;
+                var container = ScrollingHost.ContainerFromItem(participant) as SelectorItem;
                 var content = container?.ContentTemplateRoot as Grid;
 
                 if (content == null)
@@ -2069,7 +2069,7 @@ namespace Telegram.Views.Calls
 
             if (_mode == ParticipantsGridMode.Compact)
             {
-                var scrollingHost = List.GetScrollViewer();
+                var scrollingHost = ScrollingHost.GetScrollViewer();
                 if (scrollingHost != null)
                 {
                     scrollingHost.ChangeView(null, 0, null, false);
@@ -2082,7 +2082,7 @@ namespace Telegram.Views.Calls
             var flyout = new MenuFlyout();
 
             var element = sender as FrameworkElement;
-            var participant = (element.Tag ?? List.ItemFromContainer(sender)) as GroupCallParticipant;
+            var participant = (element.Tag ?? ScrollingHost.ItemFromContainer(sender)) as GroupCallParticipant;
 
             var call = _service.Call;
 
@@ -2185,14 +2185,14 @@ namespace Telegram.Views.Calls
 
         private void List_Loaded(object sender, RoutedEventArgs e)
         {
-            var scrollingHost = List.GetScrollViewer();
+            var scrollingHost = ScrollingHost.GetScrollViewer();
             if (scrollingHost != null)
             {
                 _scrollingHost = scrollingHost;
                 _scrollingHost.ViewChanged += OnParticipantsViewChanged;
             }
 
-            var panel = List.ItemsPanelRoot;
+            var panel = ScrollingHost.ItemsPanelRoot;
             if (panel != null)
             {
                 panel.SizeChanged += OnParticipantsSizeChanged;
@@ -2395,13 +2395,13 @@ namespace Telegram.Views.Calls
                 return;
             }
 
-            var scrollingHost = List.GetScrollViewer();
+            var scrollingHost = ScrollingHost.GetScrollViewer();
             if (scrollingHost == null || scrollingHost.VerticalOffset > Math.Max(e.NewSize.Height, e.PreviousSize.Height))
             {
                 return;
             }
 
-            var panel = List.ItemsPanelRoot;
+            var panel = ScrollingHost.ItemsPanelRoot;
             if (panel == null)
             {
                 return;

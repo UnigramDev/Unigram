@@ -20,7 +20,7 @@
     </Page.Transitions>
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
-        <GridView x:Name="List"
+        <GridView x:Name="ScrollingHost"
                   ItemsSource="{x:Bind ViewModel.Items}"
                   ItemClick="List_ItemClick"
                   IsItemClickEnabled="True"
@@ -43,7 +43,7 @@
                 </ItemsPanelTemplate>
             </GridView.ItemsPanel>
             <GridView.Header>
-                <controls:HeaderedControl Margin="-20,0,-20,8">
+                <controls:HeaderedControl Margin="-20,64,-20,8">
                     <controls:BadgeButton Content="{CustomResource SelectFromGallery}"
                                           Click="{x:Bind ViewModel.ChangeToLocal}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"

@@ -23,13 +23,14 @@
     </local:HostedPage.Footer>
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
-        <controls:TableListView ItemsSource="{x:Bind ViewModel.Items}"
+        <controls:TableListView x:Name="ScrollingHost"
+                                ItemsSource="{x:Bind ViewModel.Items}"
                                 ItemTemplate="{StaticResource StickerSetItemTemplate}"
                                 SelectedItem="{x:Bind ViewModel.ListSelectedItem, Mode=TwoWay}"
                                 ContainerContentChanging="OnContainerContentChanging"
                                 SelectionMode="Single">
             <ListView.Header>
-                <StackPanel>
+                <controls:SettingsPanel IsHeader="True">
                     <controls:HeaderedControl Footer="{CustomResource ChooseStickerSetMy}">
                         <controls:PrefixTextBox x:Name="ShortName"
                                                 Value="{x:Bind ViewModel.ShortName, Mode=TwoWay}"
@@ -176,12 +177,10 @@
                                 BorderThickness="0,0,0,1" />
                     </controls:HeaderedControl>
 
-                    <Border MaxWidth="640">
-                        <TextBlock Text="{CustomResource ChooseFromYourStickers}"
-                                   Margin="12,16,12,8"
-                                   Style="{StaticResource SettingsGroupTextBlockStyle}" />
-                    </Border>
-                </StackPanel>
+                    <TextBlock Text="{CustomResource ChooseFromYourStickers}"
+                               Style="{StaticResource BaseTextBlockStyle}"
+                               Margin="24,16,24,8" />
+                </controls:SettingsPanel>
             </ListView.Header>
         </controls:TableListView>
     </Grid>

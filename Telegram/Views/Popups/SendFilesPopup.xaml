@@ -194,7 +194,7 @@
         </Grid.RowDefinitions>
         <Grid x:Name="ListPanel"
               x:Load="False">
-            <ListView x:Name="List"
+            <ListView x:Name="ScrollingHost"
                       ItemsSource="{x:Bind Items}"
                       ItemsPanel="{StaticResource FilesPanelTemplate}"
                       ContainerContentChanging="OnContainerContentChanging"
@@ -222,7 +222,7 @@
             </ListView>
 
             <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
-                                        ScrollingHost="{x:Bind List}" />
+                                        ScrollingHost="{x:Bind ScrollingHost}" />
         </Grid>
         <Grid x:Name="AlbumPanel"
               x:Load="False">

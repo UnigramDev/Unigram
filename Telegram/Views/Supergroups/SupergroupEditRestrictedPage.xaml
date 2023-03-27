@@ -28,7 +28,7 @@
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
-            <StackPanel Margin="0,0,0,24">
+            <controls:SettingsPanel>
                 <controls:HeaderedControl>
                     <cells:UserCell x:Name="Cell"
                                     Background="{ThemeResource SettingsItemBackground}"
@@ -148,7 +148,7 @@
                                           Content="{CustomResource UserRestrictionsBlock}"
                                           Foreground="Red" />
                 </controls:HeaderedControl>
-            </StackPanel>
+            </controls:SettingsPanel>
         </ScrollViewer>
 
     </Grid>

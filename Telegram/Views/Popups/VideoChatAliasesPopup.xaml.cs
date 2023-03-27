@@ -38,8 +38,8 @@ namespace Telegram.Views.Popups
                 ? Strings.VoipGroupStartAsInfo
                 : Strings.VoipGroupStartAsInfoGroup;
 
-            List.ItemsSource = senders;
-            List.SelectedItem = already ?? senders.FirstOrDefault();
+            ScrollingHost.ItemsSource = senders;
+            ScrollingHost.SelectedItem = already ?? senders.FirstOrDefault();
 
             Schedule.Content = channel
                 ? Strings.VoipChannelScheduleVoiceChat
@@ -74,7 +74,7 @@ namespace Telegram.Views.Popups
 
         public bool IsStartWithSelected { get; private set; }
 
-        public MessageSender SelectedSender => List.SelectedItem as MessageSender;
+        public MessageSender SelectedSender => ScrollingHost.SelectedItem as MessageSender;
 
         #region Recycle
 
@@ -83,8 +83,8 @@ namespace Telegram.Views.Popups
             if (args.ItemContainer == null)
             {
                 args.ItemContainer = new MultipleListViewItem(false);
-                args.ItemContainer.Style = List.ItemContainerStyle;
-                args.ItemContainer.ContentTemplate = List.ItemTemplate;
+                args.ItemContainer.Style = ScrollingHost.ItemContainerStyle;
+                args.ItemContainer.ContentTemplate = ScrollingHost.ItemTemplate;
             }
 
             args.IsContainerPrepared = true;
@@ -107,7 +107,7 @@ namespace Telegram.Views.Popups
 
         private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (List.SelectedItem is MessageSender)
+            if (ScrollingHost.SelectedItem is MessageSender)
             {
                 //if (_clientService.TryGetUser(messageSender, out User user))
                 //{

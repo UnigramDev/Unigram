@@ -73,15 +73,15 @@
                                 SelectionMode="None"
                                 Grid.Row="1">
             <ListView.Header>
-                <StackPanel x:Name="ListHeader"
-                            Margin="0,0,0,16">
+                <controls:SettingsPanel x:Name="ListHeader"
+                                        IsHeader="True">
                     <TextBox x:Name="SearchField"
                              Text="{x:Bind ViewModel.Members.Query, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              PlaceholderText="{CustomResource Search}"
                              PreventKeyboardDisplayOnProgrammaticFocus="True"
                              HorizontalAlignment="Left"
                              Width="280"
-                             Margin="24,0" />
+                             Margin="24,16,24,0" />
 
                     <controls:HeaderedControl x:Name="HideMembers"
                                               Footer="{CustomResource ChannelHideMembersInfo}"
@@ -99,7 +99,7 @@
                                               Style="{StaticResource GlyphBadgeButtonStyle}"
                                               Glyph="&#xE8FA;" />
                     </controls:HeaderedControl>
-                </StackPanel>
+                </controls:SettingsPanel>
             </ListView.Header>
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem"

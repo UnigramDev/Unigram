@@ -30,7 +30,7 @@
                                 ContainerContentChanging="OnContainerContentChanged"
                                 Grid.Row="1">
             <ListView.Header>
-                <StackPanel Margin="0,0,0,32">
+                <controls:SettingsPanel>
                     <controls:HeaderedControl x:Name="Group"
                                               x:Load="{x:Bind ConvertType(ViewModel.Chat.Type, x:False)}"
                                               Footer="{x:Bind ConvertFooter(ViewModel.Available), Mode=OneWay}">
@@ -53,7 +53,7 @@
                                   Style="{StaticResource SettingsCheckBoxStyle}" />
                     </controls:HeaderedControl>
 
-                </StackPanel>
+                </controls:SettingsPanel>
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="viewModels:SupergroupReactionOption">

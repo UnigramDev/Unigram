@@ -72,7 +72,7 @@ namespace Telegram.Views.Settings
             }
 
             var items = new[] { photo, video, document, audio, voice, stickers, local }.Where(x => x != null).ToList();
-            List.ItemsSource = items;
+            ScrollingHost.ItemsSource = items;
             Chart.Items = items;
 
             var size = Chart.Items.Where(x => x.IsVisible).Sum(x => x.Size);
@@ -118,7 +118,7 @@ namespace Telegram.Views.Settings
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            var items = List.ItemsSource as IList<StorageChartItem>;
+            var items = ScrollingHost.ItemsSource as IList<StorageChartItem>;
             if (items != null)
             {
                 SelectedItems = items.Where(x => x.IsVisible).SelectMany(x => x.Types).ToList();

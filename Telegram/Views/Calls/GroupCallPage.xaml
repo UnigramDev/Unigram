@@ -201,7 +201,7 @@
                 <ColumnDefinition />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <controls:TableListView x:Name="List"
+            <controls:TableListView x:Name="ScrollingHost"
                                     Loaded="List_Loaded"
                                     SelectionMode="None"
                                     ChoosingItemContainer="OnChoosingItemContainer"

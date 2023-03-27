@@ -3565,6 +3565,19 @@ namespace Telegram.Views
 
         #endregion
 
+        #region HasHeader
+
+        public bool ShowHeader
+        {
+            get { return (bool)GetValue(HasHeaderProperty); }
+            set { SetValue(HasHeaderProperty, value); }
+        }
+
+        public static readonly DependencyProperty HasHeaderProperty =
+            DependencyProperty.Register("ShowHeader", typeof(bool), typeof(HostedPage), new PropertyMetadata(true));
+
+        #endregion
+
         #region Footer
 
         public UIElement Footer

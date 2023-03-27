@@ -25,7 +25,7 @@ namespace Telegram.Controls
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            var accumulated = 0d;
+            var accumulated = 64d;
 
             foreach (UIElement child in Children)
             {
@@ -50,7 +50,7 @@ namespace Telegram.Controls
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            var accumulated = 0d;
+            var accumulated = 64d;
 
             foreach (var child in Children)
             {

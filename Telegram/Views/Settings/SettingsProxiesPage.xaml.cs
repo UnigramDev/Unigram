@@ -37,7 +37,7 @@ namespace Telegram.Views.Settings
             var flyout = new MenuFlyout();
             var element = sender as FrameworkElement;
 
-            var proxy = List.ItemFromContainer(element) as ProxyViewModel;
+            var proxy = ScrollingHost.ItemFromContainer(element) as ProxyViewModel;
             if (proxy is null or SystemProxyViewModel)
             {
                 return;

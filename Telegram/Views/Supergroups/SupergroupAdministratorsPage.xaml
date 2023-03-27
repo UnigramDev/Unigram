@@ -25,27 +25,29 @@
                                 ContainerContentChanging="OnContainerContentChanging"
                                 SelectionMode="None">
             <ListView.Header>
-                <controls:HeaderedControl x:Name="HeaderPanel"
-                                          Footer="{CustomResource ChannelAntiSpamInfo}"
-                                          Margin="0,0,0,16">
-                    <controls:BadgeButton x:Name="EventLog"
-                                          Content="{CustomResource EventLog}"
-                                          Command="{x:Bind ViewModel.EventLogCommand}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xE81C;" />
+                <controls:SettingsPanel IsHeader="True">
+                    <controls:HeaderedControl x:Name="HeaderPanel"
+                                              Footer="{CustomResource ChannelAntiSpamInfo}"
+                                              Margin="0,0,0,16">
+                        <controls:BadgeButton x:Name="EventLog"
+                                              Content="{CustomResource EventLog}"
+                                              Command="{x:Bind ViewModel.EventLogCommand}"
+                                              Style="{StaticResource GlyphBadgeButtonStyle}"
+                                              Glyph="&#xE81C;" />
 
-                    <controls:BadgeButton x:Name="AddNew"
-                                          Visibility="Collapsed"
-                                          Content="{CustomResource ChannelAddAdmin}"
-                                          Command="{x:Bind ViewModel.AddCommand}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xE734;" />
+                        <controls:BadgeButton x:Name="AddNew"
+                                              Visibility="Collapsed"
+                                              Content="{CustomResource ChannelAddAdmin}"
+                                              Command="{x:Bind ViewModel.AddCommand}"
+                                              Style="{StaticResource GlyphBadgeButtonStyle}"
+                                              Glyph="&#xE734;" />
 
-                    <controls:FauxCheckBox x:Name="AntiSpam"
-                                           Content="{CustomResource ChannelAntiSpam}"
-                                           IsChecked="{x:Bind ViewModel.IsAggressiveAntiSpamEnabled, Mode=TwoWay}"
-                                           Style="{StaticResource SettingsCheckBoxStyle}" />
-                </controls:HeaderedControl>
+                        <controls:FauxCheckBox x:Name="AntiSpam"
+                                               Content="{CustomResource ChannelAntiSpam}"
+                                               IsChecked="{x:Bind ViewModel.IsAggressiveAntiSpamEnabled, Mode=TwoWay}"
+                                               Style="{StaticResource SettingsCheckBoxStyle}" />
+                    </controls:HeaderedControl>
+                </controls:SettingsPanel>
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate>

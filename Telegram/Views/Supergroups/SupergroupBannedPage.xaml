@@ -32,14 +32,14 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.Header>
-                <StackPanel Margin="0,0,0,16">
+                <controls:SettingsPanel IsHeader="True">
                     <TextBox x:Name="SearchField"
                              Text="{x:Bind ViewModel.Members.Query, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              PlaceholderText="{CustomResource Search}"
                              PreventKeyboardDisplayOnProgrammaticFocus="True"
                              HorizontalAlignment="Left"
                              Width="280"
-                             Margin="24,0" />
+                             Margin="24,16,24,0" />
 
                     <controls:HeaderedControl x:Name="AddNewPanel"
                                               Visibility="Collapsed">
@@ -48,7 +48,7 @@
                                               Style="{StaticResource GlyphBadgeButtonStyle}"
                                               Glyph="&#xF140;" />
                     </controls:HeaderedControl>
-                </StackPanel>
+                </controls:SettingsPanel>
             </ListView.Header>
             <ListView.Footer>
                 <TextBlock x:Name="Footer"

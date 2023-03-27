@@ -24,7 +24,7 @@
                    Margin="0,0,0,8"
                    Style="{StaticResource BodyTextBlockStyle}" />
 
-        <ListView x:Name="List"
+        <ListView x:Name="ScrollingHost"
                   SelectionMode="Single"
                   SelectionChanged="OnSelectionChanged"
                   ChoosingItemContainer="OnChoosingItemContainer"

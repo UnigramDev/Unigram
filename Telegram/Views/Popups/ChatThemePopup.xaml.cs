@@ -31,11 +31,11 @@ namespace Telegram.Views.Popups
             var items = new List<ChatTheme>(clientService.GetChatThemes());
             items.Insert(0, new ChatTheme("\u274C", null, null));
 
-            List.ItemsSource = items;
-            List.SelectedItem = string.IsNullOrEmpty(selectedTheme) ? items[0] : items.FirstOrDefault(x => x.Name == selectedTheme);
+            ScrollingHost.ItemsSource = items;
+            ScrollingHost.SelectedItem = string.IsNullOrEmpty(selectedTheme) ? items[0] : items.FirstOrDefault(x => x.Name == selectedTheme);
         }
 
-        public string ThemeName => List.SelectedItem is ChatTheme theme && theme.LightSettings != null ? theme.Name : string.Empty;
+        public string ThemeName => ScrollingHost.SelectedItem is ChatTheme theme && theme.LightSettings != null ? theme.Name : string.Empty;
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
@@ -63,7 +63,7 @@ namespace Telegram.Views.Popups
 
         private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (List.SelectedItem is ChatTheme theme && theme.LightSettings == null)
+            if (ScrollingHost.SelectedItem is ChatTheme theme && theme.LightSettings == null)
             {
                 PrimaryButtonText = Strings.ChatResetTheme;
             }

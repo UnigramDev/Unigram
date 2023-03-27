@@ -35,7 +35,7 @@ namespace Telegram.Views.Settings
             InitializeComponent();
 
             // TODO: this might need to change depending on context
-            _handler = new AnimatedListHandler(List, AnimatedListType.Stickers);
+            _handler = new AnimatedListHandler(ScrollingHost, AnimatedListType.Stickers);
 
             _typeToItemHashSetMapping.Add("AnimatedItemTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("VideoItemTemplate", new HashSet<SelectorItem>());
@@ -243,7 +243,7 @@ namespace Telegram.Views.Settings
             var flyout = new MenuFlyout();
 
             var element = sender as FrameworkElement;
-            var stickerSet = List.ItemFromContainer(element) as StickerSetInfo;
+            var stickerSet = ScrollingHost.ItemFromContainer(element) as StickerSetInfo;
 
             if (stickerSet == null || stickerSet.Id == 0)
             {

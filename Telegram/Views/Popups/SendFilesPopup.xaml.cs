@@ -539,10 +539,10 @@ namespace Telegram.Views.Popups
             }
 
             var mediaState = IsMediaSelected ? 1 : 0;
-            if (mediaState != _itemsState && List != null)
+            if (mediaState != _itemsState && ScrollingHost != null)
             {
                 _itemsState = mediaState;
-                List.ItemTemplate = Resources[mediaState == 1 ? "MediaItemTemplate" : "FileItemTemplate"] as DataTemplate;
+                ScrollingHost.ItemTemplate = Resources[mediaState == 1 ? "MediaItemTemplate" : "FileItemTemplate"] as DataTemplate;
             }
         }
 

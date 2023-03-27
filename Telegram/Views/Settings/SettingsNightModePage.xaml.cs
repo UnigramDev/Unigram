@@ -89,7 +89,7 @@ namespace Telegram.Views.Settings
         private void Theme_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
             var element = sender as FrameworkElement;
-            var theme = List.ItemFromContainer(element) as ThemeInfoBase;
+            var theme = ScrollingHost.ItemFromContainer(element) as ThemeInfoBase;
 
             var flyout = new MenuFlyout();
             flyout.CreateFlyoutItem(ViewModel.CreateTheme, theme, Strings.CreateNewThemeMenu, new FontIcon { Glyph = Icons.Color });

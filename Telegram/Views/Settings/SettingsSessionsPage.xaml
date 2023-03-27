@@ -16,7 +16,8 @@
     </Page.Resources>
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
-        <controls:TableListView ItemsSource="{x:Bind ItemsSource.View}"
+        <controls:TableListView x:Name="ScrollingHost"
+                                ItemsSource="{x:Bind ItemsSource.View}"
                                 IsItemClickEnabled="True"
                                 SelectionMode="None"
                                 ContainerContentChanging="OnContainerContentChanging"
@@ -65,7 +66,7 @@
                 </GroupStyle>
             </ListView.GroupStyle>
             <ListView.Header>
-                <Grid Margin="0,0,0,16">
+                <Grid Margin="0,64,0,16">
                     <controls:HeaderedControl Header="{CustomResource CurrentSession}"
                                               Footer="{CustomResource ClearOtherSessionsHelp}">
                         <Button Click="{x:Bind ViewModel.TerminateCurrent}"

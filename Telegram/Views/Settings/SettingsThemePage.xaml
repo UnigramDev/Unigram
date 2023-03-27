@@ -59,7 +59,7 @@
                  Margin="12,8"
                  Grid.Row="1" />
 
-        <ListView x:Name="List"
+        <ListView x:Name="ScrollingHost"
                   ItemsSource="{x:Bind ViewModel.Items}"
                   SelectionMode="None"
                   IsItemClickEnabled="True"

@@ -27,8 +27,7 @@
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
-            <StackPanel Spacing="16"
-                        Margin="0,0,0,32">
+            <controls:SettingsPanel>
                 <controls:HeaderedControl>
                     <cells:UserCell x:Name="Cell"
                                     Background="{ThemeResource SettingsItemBackground}"
@@ -114,7 +113,7 @@
                                           Foreground="{ThemeResource DangerButtonBackground}"
                                           Visibility="Collapsed" />
                 </controls:HeaderedControl>
-            </StackPanel>
+            </controls:SettingsPanel>
         </ScrollViewer>
 
     </Grid>

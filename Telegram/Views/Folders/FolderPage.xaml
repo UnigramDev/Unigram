@@ -27,7 +27,8 @@
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <muxc:ItemsRepeaterScrollHost>
-            <ScrollViewer VerticalScrollBarVisibility="Auto"
+            <ScrollViewer x:Name="ScrollingHost"
+                          VerticalScrollBarVisibility="Auto"
                           VerticalScrollMode="Auto">
                 <controls:SettingsPanel>
                     <Grid Margin="24,0">

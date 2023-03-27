@@ -59,18 +59,18 @@ namespace Telegram.Views.Popups
                 {
                     this.BeginOnUIThread(() =>
                     {
-                        List.Items.Clear();
+                        ScrollingHost.Items.Clear();
 
                         if (clientService.Options.AntiSpamBotUserId != 0)
                         {
                             var antiSpamSender = new MessageSenderUser(clientService.Options.AntiSpamBotUserId);
                             var antiSpam = new ChatMember(antiSpamSender, 0, 0, new ChatMemberStatusAdministrator());
 
-                            List.Items.Add(antiSpam);
+                            ScrollingHost.Items.Add(antiSpam);
 
                             if (userIds.Contains(antiSpamSender.UserId))
                             {
-                                List.SelectedItems.Add(antiSpam);
+                                ScrollingHost.SelectedItems.Add(antiSpam);
                             }
                         }
 
@@ -78,29 +78,29 @@ namespace Telegram.Views.Popups
                         {
                             if (item.MemberId is MessageSenderUser senderUser)
                             {
-                                List.Items.Add(item);
+                                ScrollingHost.Items.Add(item);
 
                                 if (userIds.Contains(senderUser.UserId))
                                 {
-                                    List.SelectedItems.Add(item);
+                                    ScrollingHost.SelectedItems.Add(item);
                                 }
                             }
                         }
 
-                        if (List.SelectedItems.Count > 0)
+                        if (ScrollingHost.SelectedItems.Count > 0)
                         {
                             FieldAllAdmins.IsChecked = null;
                         }
                         else
                         {
                             FieldAllAdmins.IsChecked = true;
-                            List.SelectAll();
+                            ScrollingHost.SelectAll();
                         }
                     });
                 }
             });
 
-            //List.ItemsSource = new ChatMemberCollection(clientService, supergroupId, new SupergroupMembersFilterAdministrators());
+            //ScrollingHost.ItemsSource = new ChatMemberCollection(clientService, supergroupId, new SupergroupMembersFilterAdministrators());
             return this.ShowQueuedAsync();
         }
 
@@ -140,8 +140,8 @@ namespace Telegram.Views.Popups
                 return;
             }
 
-            var all = List.Items.All(x => List.SelectedItems.Contains(x));
-            var none = List.Items.All(x => !List.SelectedItems.Contains(x));
+            var all = ScrollingHost.Items.All(x => ScrollingHost.SelectedItems.Contains(x));
+            var none = ScrollingHost.Items.All(x => !ScrollingHost.SelectedItems.Contains(x));
 
             FieldAllAdmins.IsChecked = all ? true : none ? new bool?(false) : null;
         }
@@ -155,11 +155,11 @@ namespace Telegram.Views.Popups
 
             if (FieldAllAdmins.IsChecked == true)
             {
-                List.SelectAll();
+                ScrollingHost.SelectAll();
             }
             else
             {
-                List.SelectedItems.Clear();
+                ScrollingHost.SelectedItems.Clear();
             }
         }
 
@@ -182,8 +182,8 @@ namespace Telegram.Views.Popups
                 ForumChanges = ForumChanges.IsChecked == true
             };
 
-            var areAllAdministratorsSelected = List.Items.All(x => List.SelectedItems.Contains(x));
-            UserIds = areAllAdministratorsSelected ? new long[0] : List.SelectedItems.OfType<ChatMember>().Select(x => x.MemberId).OfType<MessageSenderUser>().Select(x => x.UserId).ToArray();
+            var areAllAdministratorsSelected = ScrollingHost.Items.All(x => ScrollingHost.SelectedItems.Contains(x));
+            UserIds = areAllAdministratorsSelected ? new long[0] : ScrollingHost.SelectedItems.OfType<ChatMember>().Select(x => x.MemberId).OfType<MessageSenderUser>().Select(x => x.UserId).ToArray();
         }
 
         private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
