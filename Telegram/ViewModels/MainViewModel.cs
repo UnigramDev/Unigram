@@ -98,21 +98,6 @@ namespace Telegram.ViewModels
             Children.Add(_voipService as TLViewModelBase);
 
             Subscribe();
-
-            ReturnToCallCommand = new RelayCommand(ReturnToCallExecute);
-
-            ToggleArchiveCommand = new RelayCommand(ToggleArchiveExecute);
-
-            CreateSecretChatCommand = new RelayCommand(CreateSecretChatExecute);
-
-            SetupFiltersCommand = new RelayCommand(SetupFiltersExecute);
-
-            UpdateAppCommand = new RelayCommand(UpdateAppExecute);
-
-            FilterEditCommand = new RelayCommand<ChatFilterViewModel>(FilterEditExecute);
-            FilterAddCommand = new RelayCommand<ChatFilterViewModel>(FilterAddExecute);
-            FilterMarkAsReadCommand = new RelayCommand<ChatFilterViewModel>(FilterMarkAsReadExecute);
-            FilterDeleteCommand = new RelayCommand<ChatFilterViewModel>(FilterDeleteExecute);
         }
 
         public void Dispose()
@@ -140,16 +125,9 @@ namespace Telegram.ViewModels
         public IVoipService VoipService => _voipService;
         public IGroupCallService GroupCallService => _groupCallService;
 
-        public RelayCommand ToggleArchiveCommand { get; }
-        private void ToggleArchiveExecute()
+        public void ToggleArchive()
         {
             base.Settings.HideArchivedChats = !base.Settings.HideArchivedChats;
-        }
-
-        public RelayCommand SetupFiltersCommand { get; }
-        private void SetupFiltersExecute()
-        {
-            NavigationService.Navigate(typeof(FoldersPage));
         }
 
         private int _unreadCount;
@@ -180,8 +158,7 @@ namespace Telegram.ViewModels
             set => Set(ref _isUpdateAvailable, value);
         }
 
-        public RelayCommand ReturnToCallCommand { get; }
-        private void ReturnToCallExecute()
+        public void ReturnToCall()
         {
             _voipService.Show();
         }
@@ -449,8 +426,7 @@ namespace Telegram.ViewModels
 
 
 
-        public RelayCommand UpdateAppCommand { get; }
-        private async void UpdateAppExecute()
+        public async void UpdateApp()
         {
             var file = _cloudUpdateService.NextUpdate?.File;
             if (file == null)
@@ -467,8 +443,7 @@ namespace Telegram.ViewModels
             Application.Current.Exit();
         }
 
-        public RelayCommand CreateSecretChatCommand { get; }
-        private async void CreateSecretChatExecute()
+        public async void CreateSecretChat()
         {
             var selected = await SharePopup.PickChatAsync(Strings.NewSecretChat);
             var user = ClientService.GetUser(selected);
@@ -491,8 +466,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public RelayCommand<ChatFilterViewModel> FilterAddCommand { get; }
-        private void FilterEditExecute(ChatFilterViewModel filter)
+        public void EditFilter(ChatFilterViewModel filter)
         {
             if (filter.ChatFilterId == Constants.ChatListMain)
             {
@@ -504,8 +478,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public RelayCommand<ChatFilterViewModel> FilterEditCommand { get; }
-        private async void FilterAddExecute(ChatFilterViewModel filter)
+        public async void AddToFilter(ChatFilterViewModel filter)
         {
             var viewModel = TLContainer.Current.Resolve<FolderViewModel>();
             await viewModel.NavigatedToAsync(filter.ChatFilterId, NavigationMode.New, null);
@@ -513,8 +486,7 @@ namespace Telegram.ViewModels
             await viewModel.SendAsync();
         }
 
-        public RelayCommand<ChatFilterViewModel> FilterMarkAsReadCommand { get; }
-        private async void FilterMarkAsReadExecute(ChatFilterViewModel filter)
+        public async void MarkFilterAsRead(ChatFilterViewModel filter)
         {
             var confirm = await ShowPopupAsync(Strings.AreYouSure, Strings.AppName, Strings.MarkAsRead, Strings.Cancel);
             if (confirm != ContentDialogResult.Primary)
@@ -540,8 +512,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public RelayCommand<ChatFilterViewModel> FilterDeleteCommand { get; }
-        private async void FilterDeleteExecute(ChatFilterViewModel filter)
+        public async void DeleteFilter(ChatFilterViewModel filter)
         {
             var confirm = await ShowPopupAsync(Strings.FilterDeleteAlert, Strings.FilterDelete, Strings.Delete, Strings.Cancel);
             if (confirm != ContentDialogResult.Primary)

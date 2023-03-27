@@ -44,7 +44,7 @@
                     <controls:HeaderedControl x:Name="AddNewPanel"
                                               Visibility="Collapsed">
                         <controls:BadgeButton Content="{CustomResource ChannelBlockUser}"
-                                              Command="{x:Bind ViewModel.AddCommand}"
+                                              Click="{x:Bind ViewModel.Add}"
                                               Style="{StaticResource GlyphBadgeButtonStyle}"
                                               Glyph="&#xF140;" />
                     </controls:HeaderedControl>

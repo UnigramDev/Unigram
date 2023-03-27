@@ -34,9 +34,17 @@ namespace Telegram.Views.Folders
 
             button.Glyph = Icons.FilterToGlyph(icon).Item1;
             button.Content = filter.Title;
-            button.Command = ViewModel.EditCommand;
+            button.Click += Edit_Click;
             button.CommandParameter = filter;
             button.ChevronGlyph = args.Index < ViewModel.ClientService.Options.ChatFilterCountMax ? Icons.ChevronRight : Icons.LockClosed;
+        }
+
+        private void Edit_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.CommandParameter is ChatFilterInfo filter)
+            {
+                ViewModel.Edit(filter);
+            }
         }
 
         private void Recommended_ElementPrepared(Microsoft.UI.Xaml.Controls.ItemsRepeater sender, Microsoft.UI.Xaml.Controls.ItemsRepeaterElementPreparedEventArgs args)
@@ -57,12 +65,20 @@ namespace Telegram.Views.Folders
             button.Content = filter.Filter.Title;
             button.Badge = filter.Description;
 
-            add.Command = ViewModel.RecommendCommand;
+            add.Click += AddRecommended_Click;
             add.CommandParameter = filter;
 
             separator.Visibility = args.Index < sender.ItemsSourceView.Count - 1
                 ? Visibility.Visible
                 : Visibility.Collapsed;
+        }
+
+        private void AddRecommended_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.CommandParameter is RecommendedChatFilter filter)
+            {
+                ViewModel.AddRecommended(filter);
+            }
         }
 
         private void Item_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
@@ -72,7 +88,7 @@ namespace Telegram.Views.Folders
             var element = sender as FrameworkElement;
             var chat = element.DataContext as ChatFilterInfo;
 
-            flyout.CreateFlyoutItem(ViewModel.DeleteCommand, chat, Strings.FilterDeleteItem, new FontIcon { Glyph = Icons.Delete });
+            flyout.CreateFlyoutItem(ViewModel.Delete, chat, Strings.FilterDeleteItem, new FontIcon { Glyph = Icons.Delete });
 
             args.ShowAt(flyout, element);
         }

@@ -36,14 +36,6 @@ namespace Telegram.ViewModels
             //Items = new ItemCollection(this, string.Empty);
             Items = new SearchCollection<FileDownloadViewModel, ItemCollection>(SetSearch, new FileDownloadDiffHandler());
             Items.UpdateQuery(string.Empty);
-
-            RemoveAllCommand = new RelayCommand(RemoveAll);
-            ToggleAllPausedCommand = new RelayCommand(ToggleAllPaused);
-            SettingsCommand = new RelayCommand(Settings);
-
-            RemoveFileDownloadCommand = new RelayCommand<FileDownloadViewModel>(RemoveFileDownload);
-            ViewFileDownloadCommand = new RelayCommand<FileDownloadViewModel>(ViewFileDownload);
-            ShowFileDownloadCommand = new RelayCommand<FileDownloadViewModel>(ShowFileDownload);
         }
 
         public Action Hide { get; set; }
@@ -148,40 +140,34 @@ namespace Telegram.ViewModels
                 .Subscribe<UpdateFileRemovedFromDownloads>(Handle);
         }
 
-        public RelayCommand RemoveAllCommand { get; }
-        private void RemoveAll()
+        public void RemoveAll()
         {
             ClientService.Send(new RemoveAllFilesFromDownloads(false, false, true));
         }
 
-        public RelayCommand ToggleAllPausedCommand { get; }
-        private void ToggleAllPaused()
+        public void ToggleAllPaused()
         {
             ClientService.Send(new ToggleAllDownloadsArePaused(_totalActiveCount > 0));
         }
 
-        public RelayCommand SettingsCommand { get; }
-        private void Settings()
+        public void OpenSettings()
         {
             Hide();
             NavigationService.Navigate(typeof(SettingsStoragePage));
         }
 
-        public RelayCommand<FileDownloadViewModel> RemoveFileDownloadCommand { get; }
-        private void RemoveFileDownload(FileDownloadViewModel fileDownload)
+        public void RemoveFileDownload(FileDownloadViewModel fileDownload)
         {
             ClientService.Send(new RemoveFileFromDownloads(fileDownload.FileId, true));
         }
 
-        public RelayCommand<FileDownloadViewModel> ViewFileDownloadCommand { get; }
-        private void ViewFileDownload(FileDownloadViewModel fileDownload)
+        public void ViewFileDownload(FileDownloadViewModel fileDownload)
         {
             Hide();
             NavigationService.NavigateToChat(fileDownload.Message.ChatId, message: fileDownload.Message.Id);
         }
 
-        public RelayCommand<FileDownloadViewModel> ShowFileDownloadCommand { get; }
-        private async void ShowFileDownload(FileDownloadViewModel fileDownload)
+        public async void ShowFileDownload(FileDownloadViewModel fileDownload)
         {
             var file = await ClientService.SendAsync(new GetFile(fileDownload.FileId)) as File;
             if (file != null)

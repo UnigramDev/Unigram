@@ -479,33 +479,25 @@
                     </Grid.ColumnDefinitions>
                     <controls:GlyphButton x:Name="VideoCall"
                                           Visibility="Collapsed"
-                                          Command="{x:Bind ViewModel.CallCommand}"
+                                          Click="{x:Bind ViewModel.VideoCall}"
                                           Style="{StaticResource HeaderGlyphButtonStyle}"
                                           Glyph="&#xE714;"
                                           FontSize="20"
                                           AutomationProperties.Name="{CustomResource VideoCall}"
                                           ToolTipService.ToolTip="{CustomResource VideoCall}"
-                                          Margin="0,0,-4,0">
-                        <Button.CommandParameter>
-                            <x:Boolean>True</x:Boolean>
-                        </Button.CommandParameter>
-                    </controls:GlyphButton>
+                                          Margin="0,0,-4,0" />
 
                     <controls:GlyphButton x:Name="Call"
                                           Visibility="Collapsed"
-                                          Command="{x:Bind ViewModel.CallCommand}"
+                                          Click="{x:Bind ViewModel.VoiceCall}"
                                           Style="{StaticResource HeaderGlyphButtonStyle}"
                                           Glyph="&#xE717;"
                                           AutomationProperties.Name="{CustomResource Call}"
                                           ToolTipService.ToolTip="{CustomResource Call}"
                                           Margin="0,0,-4,0"
-                                          Grid.Column="1">
-                        <Button.CommandParameter>
-                            <x:Boolean>False</x:Boolean>
-                        </Button.CommandParameter>
-                    </controls:GlyphButton>
+                                          Grid.Column="1" />
 
-                    <controls:GlyphButton Command="{x:Bind ViewModel.SearchCommand}"
+                    <controls:GlyphButton Click="{x:Bind ViewModel.SearchExecute}"
                                           Style="{StaticResource HeaderGlyphButtonStyle}"
                                           Glyph="&#xE721;"
                                           AutomationProperties.Name="{CustomResource Search}"
@@ -523,7 +515,7 @@
                     Canvas.ZIndex="2"
                     Grid.Row="2">
             <controls:GroupCallHeader x:Name="GroupCall"
-                                      JoinCommand="{x:Bind ViewModel.GroupCallJoinCommand}"
+                                      JoinClick="{x:Bind ViewModel.JoinGroupCall}"
                                       Visibility="Collapsed"
                                       Canvas.ZIndex="1" />
 
@@ -554,8 +546,8 @@
 
                         <messages:MessagePinned x:Name="PinnedMessage"
                                                 Click="Reply_Click"
-                                                HideCommand="{x:Bind ViewModel.PinnedHideCommand}"
-                                                ListCommand="{x:Bind ViewModel.PinnedListCommand}"
+                                                HideClick="{x:Bind ViewModel.HidePinnedMessage}"
+                                                ListClick="{x:Bind ViewModel.OpenPinnedMessages}"
                                                 Visibility="Collapsed" />
 
                         <Grid x:Name="CallbackQueryAnswerPanel"
@@ -1179,77 +1171,7 @@
                                           FontFamily="{StaticResource TelegramThemeFontFamily}"
                                           FontSize="{StaticResource GlyphLargeFontSize}"
                                           AutomationProperties.Name="{CustomResource AccDescrAttachButton}"
-                                          ToolTipService.ToolTip="{CustomResource AccDescrAttachButton}"
-                                          Grid.Row="1">
-                        <FlyoutBase.AttachedFlyout>
-                            <MenuFlyout Placement="Top">
-                                <MenuFlyoutItem x:Name="AttachMedia"
-                                                Text="{CustomResource ChatGallery}"
-                                                Command="{x:Bind ViewModel.SendMediaCommand}">
-                                    <MenuFlyoutItem.Icon>
-                                        <FontIcon Glyph="&#xEB9F;"
-                                                  Style="{StaticResource DefaultFontIconStyle}" />
-                                    </MenuFlyoutItem.Icon>
-                                </MenuFlyoutItem>
-                                <MenuFlyoutItem x:Name="AttachCamera"
-                                                Text="{CustomResource ChatCamera}"
-                                                Command="{x:Bind ViewModel.SendCameraCommand}">
-                                    <MenuFlyoutItem.Icon>
-                                        <FontIcon Glyph="&#xE722;"
-                                                  Style="{StaticResource DefaultFontIconStyle}" />
-                                    </MenuFlyoutItem.Icon>
-                                </MenuFlyoutItem>
-                                <MenuFlyoutItem x:Name="AttachDocument"
-                                                Text="{CustomResource ChatDocument}"
-                                                Command="{x:Bind ViewModel.SendDocumentCommand}">
-                                    <MenuFlyoutItem.Icon>
-                                        <FontIcon Glyph="&#xE7C3;"
-                                                  Style="{StaticResource DefaultFontIconStyle}" />
-                                    </MenuFlyoutItem.Icon>
-                                </MenuFlyoutItem>
-                                <MenuFlyoutItem x:Name="AttachLocation"
-                                                Text="{CustomResource ChatLocation}"
-                                                Command="{x:Bind ViewModel.SendLocationCommand}">
-                                    <MenuFlyoutItem.Icon>
-                                        <FontIcon Glyph="&#xE1C4;"
-                                                  Style="{StaticResource DefaultFontIconStyle}" />
-                                    </MenuFlyoutItem.Icon>
-                                </MenuFlyoutItem>
-                                <MenuFlyoutItem x:Name="AttachPoll"
-                                                Text="{CustomResource Poll}"
-                                                Command="{x:Bind ViewModel.SendPollCommand}">
-                                    <MenuFlyoutItem.Icon>
-                                        <FontIcon Glyph="&#xE91F;"
-                                                  Style="{StaticResource DefaultFontIconStyle}" />
-                                    </MenuFlyoutItem.Icon>
-                                </MenuFlyoutItem>
-                                <MenuFlyoutItem x:Name="AttachContact"
-                                                Text="{CustomResource AttachContact}"
-                                                Command="{x:Bind ViewModel.SendContactCommand}">
-                                    <MenuFlyoutItem.Icon>
-                                        <FontIcon Glyph="&#xE77B;"
-                                                  Style="{StaticResource DefaultFontIconStyle}" />
-                                    </MenuFlyoutItem.Icon>
-                                </MenuFlyoutItem>
-                                <MenuFlyoutItem x:Name="AttachCurrent"
-                                                Text="{CustomResource Edit}"
-                                                Command="{x:Bind ViewModel.EditCurrentCommand}">
-                                    <MenuFlyoutItem.Icon>
-                                        <FontIcon Glyph="&#xE7A8;"
-                                                  Style="{StaticResource DefaultFontIconStyle}" />
-                                    </MenuFlyoutItem.Icon>
-                                </MenuFlyoutItem>
-                                <MenuFlyoutItem x:Name="AttachGift"
-                                                Text="{CustomResource GiftPremium}"
-                                                Click="{x:Bind ViewModel.GiftPremium}">
-                                    <MenuFlyoutItem.Icon>
-                                        <FontIcon Glyph="&#xE9D4;"
-                                                  Style="{StaticResource DefaultFontIconStyle}" />
-                                    </MenuFlyoutItem.Icon>
-                                </MenuFlyoutItem>
-                            </MenuFlyout>
-                        </FlyoutBase.AttachedFlyout>
-                    </controls:GlyphButton>
+                                          ToolTipService.ToolTip="{CustomResource AccDescrAttachButton}" />
                 </Border>
 
                 <Grid x:Name="ButtonsPanel"
@@ -1563,7 +1485,7 @@
             </Grid.ColumnDefinitions>
             <controls:GlyphButton x:Name="ButtonManage"
                                   Glyph="&#xE711;"
-                                  Command="{x:Bind ViewModel.MessagesUnselectCommand}" />
+                                  Click="{x:Bind ViewModel.UnselectMessages}" />
 
             <controls:NumericTextBlock x:Name="ManageCount"
                                        Text="{x:Bind ConvertSelection(ViewModel.SelectedCount), Mode=OneWay}"
@@ -1575,7 +1497,8 @@
             <controls:GlyphButton x:Name="ButtonForward"
                                   Glyph="&#xE72D;"
                                   Content="{CustomResource Forward}"
-                                  Command="{x:Bind ViewModel.MessagesForwardCommand}"
+                                  Click="{x:Bind ViewModel.ForwardSelectedMessages}"
+                                  IsEnabled="{x:Bind ViewModel.CanForwardSelectedMessages, Mode=OneWay}"
                                   Style="{StaticResource GlyphButtonWithLabelStyle}"
                                   Grid.Column="3" />
 
@@ -1583,7 +1506,8 @@
                                   Glyph="&#xE74D;"
                                   Content="{CustomResource Delete}"
                                   Foreground="#df3f40"
-                                  Command="{x:Bind ViewModel.MessagesDeleteCommand}"
+                                  Click="{x:Bind ViewModel.DeleteSelectedMessages}"
+                                  IsEnabled="{x:Bind ViewModel.CanDeleteSelectedMessages, Mode=OneWay}"
                                   Style="{StaticResource GlyphButtonWithLabelStyle}"
                                   Grid.Column="4" />
         </Grid>

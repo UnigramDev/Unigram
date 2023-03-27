@@ -62,15 +62,6 @@ namespace Telegram.ViewModels.Chats
             Music = new SearchCollection<MessageWithOwner, MediaCollection>(SetSearch, new SearchMessagesFilterAudio(), new MessageDiffHandler());
             Voice = new SearchCollection<MessageWithOwner, MediaCollection>(SetSearch, new SearchMessagesFilterVoiceNote(), new MessageDiffHandler());
             Animations = new SearchCollection<MessageWithOwner, MediaCollection>(SetSearch, new SearchMessagesFilterAnimation(), new MessageDiffHandler());
-
-            MessagesForwardCommand = new RelayCommand(MessagesForwardExecute, MessagesForwardCanExecute);
-            MessagesDeleteCommand = new RelayCommand(MessagesDeleteExecute, MessagesDeleteCanExecute);
-            MessagesUnselectCommand = new RelayCommand(MessagesUnselectExecute);
-            MessageViewCommand = new RelayCommand<MessageWithOwner>(MessageViewExecute);
-            MessageSaveCommand = new RelayCommand<MessageWithOwner>(MessageSaveExecute);
-            MessageDeleteCommand = new RelayCommand<MessageWithOwner>(MessageDeleteExecute);
-            MessageForwardCommand = new RelayCommand<MessageWithOwner>(MessageForwardExecute);
-            MessageSelectCommand = new RelayCommand<MessageWithOwner>(MessageSelectExecute);
         }
 
         public ObservableCollection<ProfileItem> Items { get; }
@@ -321,15 +312,14 @@ namespace Telegram.ViewModels.Chats
             set
             {
                 Set(ref _selectedItems, value);
-                MessagesForwardCommand.RaiseCanExecuteChanged();
-                MessagesDeleteCommand.RaiseCanExecuteChanged();
+                RaisePropertyChanged(nameof(CanForwardSelectedMessages));
+                RaisePropertyChanged(nameof(CanDeleteSelectedMessages));
             }
         }
 
         #region View
 
-        public RelayCommand<MessageWithOwner> MessageViewCommand { get; }
-        private void MessageViewExecute(MessageWithOwner message)
+        public void ViewMessage(MessageWithOwner message)
         {
             var chat = _chat;
             if (chat == null)
@@ -344,8 +334,7 @@ namespace Telegram.ViewModels.Chats
 
         #region Save
 
-        public RelayCommand<MessageWithOwner> MessageSaveCommand { get; }
-        private async void MessageSaveExecute(MessageWithOwner message)
+        public async void SaveMessage(MessageWithOwner message)
         {
             var file = message.GetFile();
             if (file != null)
@@ -358,8 +347,7 @@ namespace Telegram.ViewModels.Chats
 
         #region Delete
 
-        public RelayCommand<MessageWithOwner> MessageDeleteCommand { get; }
-        private void MessageDeleteExecute(MessageWithOwner message)
+        public void DeleteMessage(MessageWithOwner message)
         {
             if (message == null)
             {
@@ -379,10 +367,10 @@ namespace Telegram.ViewModels.Chats
             //    return;
             //}
 
-            MessagesDelete(chat, new[] { message });
+            DeleteMessages(chat, new[] { message });
         }
 
-        private async void MessagesDelete(Chat chat, IList<MessageWithOwner> messages)
+        private async void DeleteMessages(Chat chat, IList<MessageWithOwner> messages)
         {
             var first = messages.FirstOrDefault();
             if (first == null)
@@ -446,8 +434,7 @@ namespace Telegram.ViewModels.Chats
 
         #region Forward
 
-        public RelayCommand<MessageWithOwner> MessageForwardCommand { get; }
-        private async void MessageForwardExecute(MessageWithOwner message)
+        public async void ForwardMessage(MessageWithOwner message)
         {
             SelectionMode = ListViewSelectionMode.None;
             await SharePopup.GetForCurrentView().ShowAsync(message.Get());
@@ -457,8 +444,7 @@ namespace Telegram.ViewModels.Chats
 
         #region Multiple Delete
 
-        public RelayCommand MessagesDeleteCommand { get; }
-        private void MessagesDeleteExecute()
+        public void DeleteSelectedMessages()
         {
             var messages = new List<MessageWithOwner>(SelectedItems);
 
@@ -474,20 +460,16 @@ namespace Telegram.ViewModels.Chats
                 return;
             }
 
-            MessagesDelete(chat, messages);
+            DeleteMessages(chat, messages);
         }
 
-        private bool MessagesDeleteCanExecute()
-        {
-            return SelectedItems.Count > 0 && SelectedItems.All(x => x.CanBeDeletedForAllUsers || x.CanBeDeletedOnlyForSelf);
-        }
+        public bool CanDeleteSelectedMessages => SelectedItems.Count > 0 && SelectedItems.All(x => x.CanBeDeletedForAllUsers || x.CanBeDeletedOnlyForSelf);
 
         #endregion
 
         #region Multiple Forward
 
-        public RelayCommand MessagesForwardCommand { get; }
-        private async void MessagesForwardExecute()
+        public async void ForwardSelectedMessages()
         {
             var messages = SelectedItems.Where(x => x.CanBeForwarded).OrderBy(x => x.Id).Select(x => x.Get()).ToList();
             if (messages.Count > 0)
@@ -497,17 +479,13 @@ namespace Telegram.ViewModels.Chats
             }
         }
 
-        private bool MessagesForwardCanExecute()
-        {
-            return SelectedItems.Count > 0 && SelectedItems.All(x => x.CanBeForwarded);
-        }
+        private bool CanForwardSelectedMessages => SelectedItems.Count > 0 && SelectedItems.All(x => x.CanBeForwarded);
 
         #endregion
 
         #region Select
 
-        public RelayCommand<MessageWithOwner> MessageSelectCommand { get; }
-        private void MessageSelectExecute(MessageWithOwner message)
+        public void SelectMessage(MessageWithOwner message)
         {
             SelectionMode = ListViewSelectionMode.Multiple;
 
@@ -519,13 +497,11 @@ namespace Telegram.ViewModels.Chats
 
         #region Unselect
 
-        public RelayCommand MessagesUnselectCommand { get; }
-
         IDictionary<long, MessageViewModel> IMessageDelegate.SelectedItems => throw new NotImplementedException();
 
         public bool IsSelectionEnabled => false;
 
-        private void MessagesUnselectExecute()
+        public void UnselectMessages()
         {
             SelectionMode = ListViewSelectionMode.None;
         }
@@ -543,7 +519,7 @@ namespace Telegram.ViewModels.Chats
         {
         }
 
-        public void ReplyToMessage(MessageViewModel message)
+        public void DoubleClick(MessageViewModel message)
         {
         }
 

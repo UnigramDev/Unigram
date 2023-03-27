@@ -113,11 +113,11 @@ namespace Telegram.ViewModels
             Delegate?.ViewVisibleMessages(intermediate);
         }
 
-        public void ReplyToMessage(MessageViewModel message)
+        public void DoubleClick(MessageViewModel message)
         {
             if (Settings.Appearance.IsQuickReplySelected)
             {
-                MessageReplyCommand.Execute(message);
+                ReplyToMessage(message);
             }
             else if (message.InteractionInfo != null && message.InteractionInfo.Reactions.IsChosen(ClientService.DefaultReaction))
             {
@@ -127,11 +127,6 @@ namespace Telegram.ViewModels
             {
                 ClientService.SendAsync(new AddMessageReaction(message.ChatId, message.Id, ClientService.DefaultReaction, false, false));
             }
-        }
-
-        public void ForwardMessage(MessageViewModel message)
-        {
-            MessageForwardCommand.Execute(message);
         }
 
         public async void OpenReply(MessageViewModel message)
@@ -263,7 +258,7 @@ namespace Telegram.ViewModels
 
         public void Call(MessageViewModel message, bool video)
         {
-            CallCommand.Execute(video);
+            Call(video);
         }
 
         public async void VotePoll(MessageViewModel message, IList<PollOption> options)
@@ -609,10 +604,10 @@ namespace Telegram.ViewModels
                 message.SelectionChanged();
             }
 
-            MessagesForwardCommand.RaiseCanExecuteChanged();
-            MessagesDeleteCommand.RaiseCanExecuteChanged();
-            MessagesCopyCommand.RaiseCanExecuteChanged();
-            MessagesReportCommand.RaiseCanExecuteChanged();
+            RaisePropertyChanged(nameof(CanForwardSelectedMessages));
+            RaisePropertyChanged(nameof(CanDeleteSelectedMessages));
+            RaisePropertyChanged(nameof(CanCopySelectedMessage));
+            RaisePropertyChanged(nameof(CanReportSelectedMessages));
 
             RaisePropertyChanged(nameof(SelectedCount));
         }
@@ -644,10 +639,10 @@ namespace Telegram.ViewModels
                 message.SelectionChanged();
             }
 
-            MessagesForwardCommand.RaiseCanExecuteChanged();
-            MessagesDeleteCommand.RaiseCanExecuteChanged();
-            MessagesCopyCommand.RaiseCanExecuteChanged();
-            MessagesReportCommand.RaiseCanExecuteChanged();
+            RaisePropertyChanged(nameof(CanForwardSelectedMessages));
+            RaisePropertyChanged(nameof(CanDeleteSelectedMessages));
+            RaisePropertyChanged(nameof(CanCopySelectedMessage));
+            RaisePropertyChanged(nameof(CanReportSelectedMessages));
 
             RaisePropertyChanged(nameof(SelectedCount));
         }

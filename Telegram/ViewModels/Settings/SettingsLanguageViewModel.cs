@@ -35,8 +35,6 @@ namespace Telegram.ViewModels.Settings
             _localeService = localeService;
 
             Items = new MvxObservableCollection<List<LanguagePackInfo>>();
-
-            DeleteCommand = new RelayCommand<LanguagePackInfo>(DeleteExecute);
         }
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -177,8 +175,7 @@ namespace Telegram.ViewModels.Settings
             IsLoading = false;
         }
 
-        public RelayCommand<LanguagePackInfo> DeleteCommand { get; }
-        private async void DeleteExecute(LanguagePackInfo info)
+        public async void Delete(LanguagePackInfo info)
         {
             var confirm = await ShowPopupAsync(Strings.DeleteLocalization, Strings.AppName, Strings.Delete, Strings.Cancel);
             if (confirm != ContentDialogResult.Primary)

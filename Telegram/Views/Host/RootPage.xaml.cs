@@ -473,8 +473,8 @@ namespace Telegram.Views.Host
                 {
                     var flyout = new MenuFlyout();
 
-                    flyout.CreateFlyoutItem(new RelayCommand(() => Switch(_lifetime.Create(test: false))), "Production Server", new FontIcon { Glyph = Icons.Globe });
-                    flyout.CreateFlyoutItem(new RelayCommand(() => Switch(_lifetime.Create(test: true))), "Test Server", new FontIcon { Glyph = Icons.Bug });
+                    flyout.CreateFlyoutItem(() => Switch(_lifetime.Create(test: false)), "Production Server", new FontIcon { Glyph = Icons.Globe });
+                    flyout.CreateFlyoutItem(() => Switch(_lifetime.Create(test: true)), "Test Server", new FontIcon { Glyph = Icons.Bug });
 
                     args.ShowAt(flyout, container);
                 }
@@ -485,11 +485,21 @@ namespace Telegram.Views.Host
                 {
                     var flyout = new MenuFlyout();
 
-                    flyout.CreateFlyoutItem(new RelayCommand(() => { Navigation.IsPaneOpen = false; page.ToggleArchive(); }), Strings.ArchiveMoveToChatList, new FontIcon { Glyph = Icons.Expand });
-                    flyout.CreateFlyoutItem(page.ViewModel.FilterMarkAsReadCommand, ChatFilterViewModel.Archive, Strings.MarkAllAsRead, new FontIcon { Glyph = Icons.MarkAsRead });
+                    flyout.CreateFlyoutItem(ToggleArchive, Strings.ArchiveMoveToChatList, new FontIcon { Glyph = Icons.Expand });
+                    flyout.CreateFlyoutItem(page.ViewModel.MarkFilterAsRead, ChatFilterViewModel.Archive, Strings.MarkAllAsRead, new FontIcon { Glyph = Icons.MarkAsRead });
 
                     args.ShowAt(flyout, container);
                 }
+            }
+        }
+
+        private void ToggleArchive()
+        {
+            Navigation.IsPaneOpen = false;
+
+            if (_navigationService.Content is MainPage page)
+            {
+                page.ToggleArchive();
             }
         }
 
@@ -584,7 +594,7 @@ namespace Telegram.Views.Host
                         content.Glyph = Icons.QuestionCircle;
                         break;
                     case RootDestination.News:
-                        content.Text = "News";
+                        content.Text = Strings.News;
                         content.Glyph = Icons.Megaphone;
                         break;
                 }

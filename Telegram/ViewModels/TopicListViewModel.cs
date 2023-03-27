@@ -37,15 +37,6 @@ namespace Telegram.ViewModels
 
             SearchFilters = new MvxObservableCollection<ISearchChatsFilter>();
 
-            ChatOpenCommand = new RelayCommand<ForumTopic>(ChatOpenExecute);
-            TopicHideCommand = new RelayCommand<ForumTopic>(TopicHideExecute);
-            TopicPinCommand = new RelayCommand<ForumTopic>(TopicPinExecute);
-            TopicMarkCommand = new RelayCommand<ForumTopic>(TopicMarkExecute);
-            TopicNotifyCommand = new RelayCommand<ForumTopic>(TopicNotifyExecute);
-            TopicCloseCommand = new RelayCommand<ForumTopic>(TopicCloseExecute);
-            TopicDeleteCommand = new RelayCommand<ForumTopic>(TopicDeleteExecute);
-            TopicSelectCommand = new RelayCommand<ForumTopic>(TopicSelectExecute);
-
             ChatsMarkCommand = new RelayCommand(ChatsMarkExecute);
             ChatsNotifyCommand = new RelayCommand(ChatsNotifyExecute);
             ChatsDeleteCommand = new RelayCommand(ChatsDeleteExecute);
@@ -98,8 +89,7 @@ namespace Telegram.ViewModels
 
         #region Open
 
-        public RelayCommand<ForumTopic> ChatOpenCommand { get; }
-        private void ChatOpenExecute(ForumTopic chat)
+        public void OpenTopic(ForumTopic chat)
         {
             //NavigationService.NavigateToChat(chat, createNewWindow: true);
         }
@@ -108,8 +98,7 @@ namespace Telegram.ViewModels
 
         #region Pin
 
-        public RelayCommand<ForumTopic> TopicHideCommand { get; }
-        private void TopicHideExecute(ForumTopic topic)
+        public void HideTopic(ForumTopic topic)
         {
             if (Chat is Chat chat)
             {
@@ -121,8 +110,7 @@ namespace Telegram.ViewModels
 
         #region Pin
 
-        public RelayCommand<ForumTopic> TopicPinCommand { get; }
-        private async void TopicPinExecute(ForumTopic chat)
+        public async void PinTopic(ForumTopic chat)
         {
             //var position = chat.GetPosition(Items.ChatList);
             //if (position == null)
@@ -142,8 +130,7 @@ namespace Telegram.ViewModels
 
         #region Mark
 
-        public RelayCommand<ForumTopic> TopicMarkCommand { get; }
-        private void TopicMarkExecute(ForumTopic topic)
+        public void MarkTopicAsRead(ForumTopic topic)
         {
             if (Chat is Chat chat && topic.UnreadCount > 0)
             {
@@ -205,8 +192,7 @@ namespace Telegram.ViewModels
 
         #region Notify
 
-        public RelayCommand<ForumTopic> TopicNotifyCommand { get; }
-        private void TopicNotifyExecute(ForumTopic topic)
+        public void NotifyTopic(ForumTopic topic)
         {
             if (Chat is Chat chat)
             {
@@ -218,8 +204,7 @@ namespace Telegram.ViewModels
 
         #region Notify
 
-        public RelayCommand<ForumTopic> TopicCloseCommand { get; }
-        private void TopicCloseExecute(ForumTopic topic)
+        public void CloseTopic(ForumTopic topic)
         {
             if (Chat is Chat chat)
             {
@@ -255,8 +240,7 @@ namespace Telegram.ViewModels
 
         #region Delete
 
-        public RelayCommand<ForumTopic> TopicDeleteCommand { get; }
-        private async void TopicDeleteExecute(ForumTopic chat)
+        public async void DeleteTopic(ForumTopic chat)
         {
             //var updated = await ClientService.SendAsync(new GetChat(chat.Id)) as Chat ?? chat;
             //var dialog = new DeleteChatPopup(ClientService, updated, Items.ChatList, false);
@@ -433,8 +417,7 @@ namespace Telegram.ViewModels
 
         #region Select
 
-        public RelayCommand<ForumTopic> TopicSelectCommand { get; }
-        private void TopicSelectExecute(ForumTopic chat)
+        public void SelectTopic(ForumTopic chat)
         {
             //SelectedItems.ReplaceWith(new[] { chat });
             //SelectionMode = ListViewSelectionMode.Multiple;

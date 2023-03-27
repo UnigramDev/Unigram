@@ -452,7 +452,7 @@
                                 BorderThickness="1"
                                 CornerRadius="8" />
 
-                        <Button Command="{x:Bind ViewModel.ReturnToCallCommand}"
+                        <Button Click="{x:Bind ViewModel.ReturnToCall}"
                                 HorizontalContentAlignment="Center"
                                 VerticalContentAlignment="Center"
                                 Background="Transparent"
@@ -589,7 +589,7 @@
                                                               Style="{StaticResource DefaultFontIconStyle}" />
                                                 </MenuFlyoutItem.Icon>
                                             </MenuFlyoutItem>
-                                            <MenuFlyoutItem Command="{x:Bind ViewModel.CreateSecretChatCommand}"
+                                            <MenuFlyoutItem Click="{x:Bind ViewModel.CreateSecretChat}"
                                                             Text="{CustomResource NewSecretChat}">
                                                 <MenuFlyoutItem.Icon>
                                                     <FontIcon Glyph="&#xE916;"
@@ -642,13 +642,13 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <controls:GlyphButton x:Name="ManageMute"
-                                                  Command="{x:Bind ViewModel.Chats.ChatsNotifyCommand}"
+                                                  Click="{x:Bind ViewModel.Chats.NotifySelectedChats}"
                                                   Style="{StaticResource HeaderGlyphButtonStyle}"
                                                   VerticalAlignment="Center"
                                                   Width="40"
                                                   Height="40" />
                             <controls:GlyphButton x:Name="ManageMark"
-                                                  Command="{x:Bind ViewModel.Chats.ChatsMarkCommand}"
+                                                  Click="{x:Bind ViewModel.Chats.MarkSelectedChatsAsRead}"
                                                   FontFamily="{StaticResource TelegramThemeFontFamily}"
                                                   Style="{StaticResource HeaderGlyphButtonStyle}"
                                                   VerticalAlignment="Center"
@@ -656,7 +656,7 @@
                                                   Height="40"
                                                   Grid.Column="1" />
                             <controls:GlyphButton Glyph="&#xE7B8;"
-                                                  Command="{x:Bind ViewModel.Chats.ChatsArchiveCommand}"
+                                                  Click="{x:Bind ViewModel.Chats.ArchiveSelectedChats}"
                                                   AutomationProperties.Name="{CustomResource Archive}"
                                                   ToolTipService.ToolTip="{CustomResource Archive}"
                                                   Style="{StaticResource HeaderGlyphButtonStyle}"
@@ -665,7 +665,7 @@
                                                   Height="40"
                                                   Grid.Column="2" />
                             <controls:GlyphButton Glyph="&#xE74D;"
-                                                  Command="{x:Bind ViewModel.Chats.ChatsDeleteCommand}"
+                                                  Click="{x:Bind ViewModel.Chats.DeleteSelectedChats}"
                                                   AutomationProperties.Name="{CustomResource Delete}"
                                                   ToolTipService.ToolTip="{CustomResource Delete}"
                                                   Style="{StaticResource HeaderGlyphButtonStyle}"
@@ -675,7 +675,7 @@
                                                   Grid.Column="3" />
                             <controls:GlyphButton x:Name="ManageClear"
                                                   Glyph="&#xEA99;"
-                                                  Command="{x:Bind ViewModel.Chats.ChatsClearCommand}"
+                                                  Click="{x:Bind ViewModel.Chats.ClearSelectedChats}"
                                                   AutomationProperties.Name="{CustomResource ClearHistory}"
                                                   ToolTipService.ToolTip="{CustomResource ClearHistory}"
                                                   Style="{StaticResource HeaderGlyphButtonStyle}"
@@ -834,7 +834,7 @@
                                                 <TextBlock Text="{CustomResource Recent}"
                                                            Style="{StaticResource BaseTextBlockStyle}"
                                                            Margin="12,16,12,0" />
-                                                <controls:GlyphButton Command="{x:Bind ViewModel.Chats.ClearRecentChatsCommand}"
+                                                <controls:GlyphButton Click="{x:Bind ViewModel.Chats.ClearRecentChats}"
                                                                       AllowFocusOnInteraction="False"
                                                                       VerticalAlignment="Bottom"
                                                                       Margin="0,0,0,-8"
@@ -1061,7 +1061,7 @@
                                                RadiusX="18"
                                                RadiusY="18" />
                                     <controls:BadgeButton x:Name="UpdateCloud"
-                                                          Command="{x:Bind ViewModel.UpdateAppCommand}"
+                                                          Click="{x:Bind ViewModel.UpdateApp}"
                                                           Visibility="{x:Bind ViewModel.IsUpdateAvailable, Mode=OneWay}"
                                                           Content="{CustomResource UpdateTelegram}"
                                                           Style="{StaticResource StartButtonStyle}"

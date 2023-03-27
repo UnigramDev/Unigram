@@ -30,12 +30,6 @@ namespace Telegram.ViewModels.Folders
             Include.CollectionChanged += OnCollectionChanged;
             Exclude.CollectionChanged += OnCollectionChanged;
 
-            RemoveIncludeCommand = new RelayCommand<ChatFilterElement>(RemoveIncludeExecute);
-            RemoveExcludeCommand = new RelayCommand<ChatFilterElement>(RemoveExcludeExecute);
-
-            AddIncludeCommand = new RelayCommand(AddIncludeExecute);
-            AddExcludeCommand = new RelayCommand(AddExcludeExecute);
-
             SendCommand = new RelayCommand(SendExecute, SendCanExecute);
         }
 
@@ -179,8 +173,7 @@ namespace Telegram.ViewModels.Folders
 
 
 
-        public RelayCommand AddIncludeCommand { get; }
-        private async void AddIncludeExecute()
+        public async void AddIncluded()
         {
             await AddIncludeAsync();
             UpdateIcon();
@@ -216,8 +209,7 @@ namespace Telegram.ViewModels.Folders
             }
         }
 
-        public RelayCommand AddExcludeCommand { get; }
-        private async void AddExcludeExecute()
+        public async void AddExcluded()
         {
             await AddExcludeAsync();
             UpdateIcon();
@@ -241,15 +233,13 @@ namespace Telegram.ViewModels.Folders
             }
         }
 
-        public RelayCommand<ChatFilterElement> RemoveIncludeCommand { get; }
-        private void RemoveIncludeExecute(ChatFilterElement chat)
+        public void RemoveIncluded(ChatFilterElement chat)
         {
             Include.Remove(chat);
             UpdateIcon();
         }
 
-        public RelayCommand<ChatFilterElement> RemoveExcludeCommand { get; }
-        private void RemoveExcludeExecute(ChatFilterElement chat)
+        public void RemoveExcluded(ChatFilterElement chat)
         {
             Exclude.Remove(chat);
             UpdateIcon();

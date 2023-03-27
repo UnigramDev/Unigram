@@ -6,7 +6,6 @@
 //
 using System;
 using System.Numerics;
-using System.Windows.Input;
 using Telegram.Navigation;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -57,16 +56,16 @@ namespace Telegram.Controls.Chats
                 var user = ViewModel.ClientService.GetUser(chat);
                 if (user != null)
                 {
-                    CreateButton(string.Format(Strings.AddContactFullChat, user.FirstName.ToUpper()), ViewModel.AddContactCommand);
+                    CreateButton(string.Format(Strings.AddContactFullChat, user.FirstName.ToUpper()), ViewModel.AddToContacts);
                 }
                 else
                 {
-                    CreateButton(Strings.AddContactChat, ViewModel.AddContactCommand);
+                    CreateButton(Strings.AddContactChat, ViewModel.AddToContacts);
                 }
             }
             else if (chat.ActionBar is ChatActionBarInviteMembers)
             {
-                CreateButton(Strings.GroupAddMembers.ToUpper(), ViewModel.InviteCommand);
+                CreateButton(Strings.GroupAddMembers.ToUpper(), ViewModel.Invite);
             }
             else if (chat.ActionBar is ChatActionBarJoinRequest joinRequest)
             {
@@ -76,13 +75,13 @@ namespace Telegram.Controls.Chats
             {
                 if (reportAddBlock.CanUnarchive)
                 {
-                    CreateButton(Strings.Unarchive.ToUpper(), ViewModel.UnarchiveCommand);
-                    CreateButton(Strings.ReportSpamUser, ViewModel.ReportSpamCommand, column: 1, danger: true);
+                    CreateButton(Strings.Unarchive.ToUpper(), ViewModel.Unarchive);
+                    CreateButton(Strings.ReportSpamUser, ViewModel.ReportSpam, new ChatReportReasonSpam(), column: 1, danger: true);
                 }
                 else
                 {
-                    CreateButton(Strings.ReportSpamUser, ViewModel.ReportSpamCommand, danger: true);
-                    CreateButton(Strings.AddContactChat, ViewModel.AddContactCommand, column: 1);
+                    CreateButton(Strings.ReportSpamUser, ViewModel.ReportSpam, new ChatReportReasonSpam(), danger: true);
+                    CreateButton(Strings.AddContactChat, ViewModel.AddToContacts, column: 1);
                 }
             }
             else if (chat.ActionBar is ChatActionBarReportSpam reportSpam)
@@ -90,26 +89,54 @@ namespace Telegram.Controls.Chats
                 var user = ViewModel.ClientService.GetUser(chat);
                 if (user != null)
                 {
-                    CreateButton(Strings.ReportSpamUser, ViewModel.ReportSpamCommand, danger: true);
+                    CreateButton(Strings.ReportSpamUser, ViewModel.ReportSpam, new ChatReportReasonSpam(), danger: true);
                 }
                 else
                 {
-                    CreateButton(Strings.ReportSpamAndLeave, ViewModel.ReportSpamCommand, new ChatReportReasonSpam(), danger: true);
+                    CreateButton(Strings.ReportSpamAndLeave, ViewModel.ReportSpam, new ChatReportReasonSpam(), danger: true);
                 }
             }
             else if (chat.ActionBar is ChatActionBarReportUnrelatedLocation)
             {
-                CreateButton(Strings.ReportSpamLocation, ViewModel.ReportSpamCommand, new ChatReportReasonUnrelatedLocation(), danger: true);
+                CreateButton(Strings.ReportSpamLocation, ViewModel.ReportSpam, new ChatReportReasonUnrelatedLocation(), danger: true);
             }
             else if (chat.ActionBar is ChatActionBarSharePhoneNumber)
             {
-                CreateButton(Strings.ShareMyPhone, ViewModel.ShareContactCommand);
+                CreateButton(Strings.ShareMyPhone, ViewModel.ShareMyContact);
             }
 
             ShowHide(chat.ActionBar != null);
         }
 
-        private Button CreateButton(string text, ICommand command, object commandParameter = null, int column = 0, bool danger = false)
+        private Button CreateButton<T>(string text, Action<T> command, T commandParameter = null, int column = 0, bool danger = false) where T : class
+        {
+            var button = CreateButton(text, column, danger);
+
+            void handler(object sender, RoutedEventArgs e)
+            {
+                button.Click -= handler;
+                command(commandParameter);
+            };
+
+            button.Click += handler;
+            return button;
+        }
+
+        private Button CreateButton(string text, Action command, int column = 0, bool danger = false)
+        {
+            var button = CreateButton(text, column, danger);
+
+            void handler(object sender, RoutedEventArgs e)
+            {
+                button.Click -= handler;
+                command();
+            };
+
+            button.Click += handler;
+            return button;
+        }
+
+        private Button CreateButton(string text, int column = 0, bool danger = false)
         {
             var label = new TextBlock();
             label.Style = BootStrapper.Current.Resources["CaptionTextBlockStyle"] as Style;
@@ -122,8 +149,6 @@ namespace Telegram.Controls.Chats
             button.HorizontalContentAlignment = HorizontalAlignment.Center;
             button.VerticalContentAlignment = VerticalAlignment.Center;
             button.Content = label;
-            button.Command = command;
-            button.CommandParameter = commandParameter;
 
             LayoutRoot.ColumnDefinitions.Add(new ColumnDefinition());
             Grid.SetColumn(button, column);

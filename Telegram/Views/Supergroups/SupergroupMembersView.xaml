@@ -95,7 +95,7 @@
                                               Visibility="Collapsed">
                         <controls:BadgeButton x:Name="AddNew"
                                               Content="{CustomResource AddSubscriber}"
-                                              Command="{x:Bind ViewModel.AddCommand}"
+                                              Click="{x:Bind ViewModel.Add}"
                                               Style="{StaticResource GlyphBadgeButtonStyle}"
                                               Glyph="&#xE8FA;" />
                     </controls:HeaderedControl>

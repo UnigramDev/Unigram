@@ -119,14 +119,13 @@
                 <common:FluidGridView.Triggers>
                     <common:LengthGridViewTrigger ItemLength="96" />
                 </common:FluidGridView.Triggers>
-                <!--<ListView.Header>
+                <ListView.Header>
                     <controls:BadgeButton x:Name="SwitchPm"
-                                          Command="{x:Bind ViewModel.SwitchCommand}"
-                                          CommandParameter="{x:Bind ViewModel.InlineBotResults.SwitchPmParameter, Mode=OneWay}"
-                                          Content="{x:Bind ViewModel.InlineBotResults.SwitchPmText, Mode=OneWay}"
-                                          Visibility="{x:Bind ViewModel.InlineBotResults.SwitchPmText, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                                          Click="{x:Bind ViewModel.ActivateInlineBot}"
+                                          Content="{x:Bind ViewModel.InlineBotResults.ButtonText, Mode=OneWay}"
+                                          Visibility="{x:Bind ViewModel.InlineBotResults.ButtonText, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                                           Style="{StaticResource SwitchPmButtonStyle}" />
-                </ListView.Header>-->
+                </ListView.Header>
             </ListView>
         </Grid>
 

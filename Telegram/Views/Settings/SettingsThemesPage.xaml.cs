@@ -58,14 +58,14 @@ namespace Telegram.Views.Settings
             var theme = element.Tag as ThemeInfoBase;
 
             var flyout = new MenuFlyout();
-            flyout.CreateFlyoutItem(ViewModel.ThemeCreateCommand, theme, Strings.CreateNewThemeMenu, new FontIcon { Glyph = Icons.Color });
+            flyout.CreateFlyoutItem(ViewModel.CreateTheme, theme, Strings.CreateNewThemeMenu, new FontIcon { Glyph = Icons.Color });
 
-            if (!theme.IsOfficial)
+            if (theme is ThemeCustomInfo custom)
             {
                 flyout.CreateFlyoutSeparator();
-                flyout.CreateFlyoutItem(ViewModel.ThemeShareCommand, theme, Strings.ShareFile, new FontIcon { Glyph = Icons.Share });
-                flyout.CreateFlyoutItem(ViewModel.ThemeEditCommand, theme, Strings.Edit, new FontIcon { Glyph = Icons.Edit });
-                flyout.CreateFlyoutItem(ViewModel.ThemeDeleteCommand, theme, Strings.Delete, new FontIcon { Glyph = Icons.Delete });
+                flyout.CreateFlyoutItem(ViewModel.ShareTheme, custom, Strings.ShareFile, new FontIcon { Glyph = Icons.Share });
+                flyout.CreateFlyoutItem(ViewModel.EditTheme, custom, Strings.Edit, new FontIcon { Glyph = Icons.Edit });
+                flyout.CreateFlyoutItem(ViewModel.DeleteTheme, custom, Strings.Delete, new FontIcon { Glyph = Icons.Delete });
             }
 
             args.ShowAt(flyout, element);

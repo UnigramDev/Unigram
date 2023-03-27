@@ -44,30 +44,6 @@ namespace Telegram.ViewModels
             Search = new SearchCollection<object, SearchChatsCollection>(UpdateSearch, new SearchDiffHandler());
             SearchFilters = new MvxObservableCollection<ISearchChatsFilter>();
 
-            ChatOpenCommand = new RelayCommand<Chat>(ChatOpenExecute);
-            ChatPinCommand = new RelayCommand<Chat>(ChatPinExecute);
-            ChatArchiveCommand = new RelayCommand<Chat>(ChatArchiveExecute);
-            ChatMarkCommand = new RelayCommand<Chat>(ChatMarkExecute);
-            ChatNotifyCommand = new RelayCommand<Chat>(ChatNotifyExecute);
-            ChatMuteForCommand = new RelayCommand<Tuple<Chat, int?>>(ChatMuteForExecute);
-            ChatDeleteCommand = new RelayCommand<Chat>(ChatDeleteExecute);
-            ChatClearCommand = new RelayCommand<Chat>(ChatClearExecute);
-            ChatSelectCommand = new RelayCommand<Chat>(ChatSelectExecute);
-
-            ChatsMarkCommand = new RelayCommand(ChatsMarkExecute);
-            ChatsNotifyCommand = new RelayCommand(ChatsNotifyExecute);
-            ChatsArchiveCommand = new RelayCommand(ChatsArchiveExecute);
-            ChatsDeleteCommand = new RelayCommand(ChatsDeleteExecute);
-            ChatsClearCommand = new RelayCommand(ChatsClearExecute);
-
-            FolderAddCommand = new RelayCommand<(int, Chat)>(FolderAddExecute);
-            FolderRemoveCommand = new RelayCommand<(int, Chat)>(FolderRemoveExecute);
-            FolderCreateCommand = new RelayCommand<Chat>(FolderCreateExecute);
-
-            ClearRecentChatsCommand = new RelayCommand(ClearRecentChatsExecute);
-
-            TopChatDeleteCommand = new RelayCommand<Chat>(TopChatDeleteExecute);
-
 #if MOCKUP
             Items.AddRange(clientService.GetChats(null));
 #endif
@@ -122,8 +98,7 @@ namespace Telegram.ViewModels
 
         #region Open
 
-        public RelayCommand<Chat> ChatOpenCommand { get; }
-        private void ChatOpenExecute(Chat chat)
+        public void OpenChat(Chat chat)
         {
             NavigationService.NavigateToChat(chat, createNewWindow: true);
         }
@@ -132,8 +107,7 @@ namespace Telegram.ViewModels
 
         #region Pin
 
-        public RelayCommand<Chat> ChatPinCommand { get; }
-        private async void ChatPinExecute(Chat chat)
+        public async void PinChat(Chat chat)
         {
             var position = chat.GetPosition(Items.ChatList);
             if (position == null)
@@ -153,8 +127,7 @@ namespace Telegram.ViewModels
 
         #region Archive
 
-        public RelayCommand<Chat> ChatArchiveCommand { get; }
-        private void ChatArchiveExecute(Chat chat)
+        public void ArchiveChat(Chat chat)
         {
             var archived = chat.Positions.Any(x => x.List is ChatListArchive);
             if (archived)
@@ -183,8 +156,7 @@ namespace Telegram.ViewModels
 
         #region Multiple Archive
 
-        public RelayCommand ChatsArchiveCommand { get; }
-        private void ChatsArchiveExecute()
+        public void ArchiveSelectedChats()
         {
             var chats = SelectedItems.ToList();
 
@@ -209,8 +181,7 @@ namespace Telegram.ViewModels
 
         #region Mark
 
-        public RelayCommand<Chat> ChatMarkCommand { get; }
-        private void ChatMarkExecute(Chat chat)
+        public void MarkChatAsRead(Chat chat)
         {
             if (chat.UnreadCount > 0)
             {
@@ -239,8 +210,7 @@ namespace Telegram.ViewModels
 
         #region Multiple Mark
 
-        public RelayCommand ChatsMarkCommand { get; }
-        private void ChatsMarkExecute()
+        public void MarkSelectedChatsAsRead()
         {
             var chats = SelectedItems.ToList();
             var unread = chats.Any(x => x.IsUnread());
@@ -281,8 +251,7 @@ namespace Telegram.ViewModels
 
         #region Notify
 
-        public RelayCommand<Chat> ChatNotifyCommand { get; }
-        private void ChatNotifyExecute(Chat chat)
+        public void NotifyChat(Chat chat)
         {
             _notificationsService.SetMuteFor(chat, ClientService.Notifications.GetMutedFor(chat) > 0 ? 0 : 632053052);
         }
@@ -291,8 +260,7 @@ namespace Telegram.ViewModels
 
         #region Mute for
 
-        public RelayCommand<Tuple<Chat, int?>> ChatMuteForCommand { get; }
-        private async void ChatMuteForExecute(Tuple<Chat, int?> value)
+        public async void MuteChatFor(Tuple<Chat, int?> value)
         {
             var chat = value.Item1;
             if (chat == null)
@@ -327,8 +295,7 @@ namespace Telegram.ViewModels
 
         #region Multiple Notify
 
-        public RelayCommand ChatsNotifyCommand { get; }
-        private void ChatsNotifyExecute()
+        public void NotifySelectedChats()
         {
             var chats = SelectedItems.ToList();
             var muted = chats.Any(x => ClientService.Notifications.GetMutedFor(x) > 0);
@@ -351,8 +318,7 @@ namespace Telegram.ViewModels
 
         #region Delete
 
-        public RelayCommand<Chat> ChatDeleteCommand { get; }
-        private async void ChatDeleteExecute(Chat chat)
+        public async void DeleteChat(Chat chat)
         {
             var updated = await ClientService.SendAsync(new GetChat(chat.Id)) as Chat ?? chat;
             var dialog = new DeleteChatPopup(ClientService, updated, Items.ChatList, false);
@@ -414,8 +380,7 @@ namespace Telegram.ViewModels
 
         #region Multiple Delete
 
-        public RelayCommand ChatsDeleteCommand { get; }
-        private async void ChatsDeleteExecute()
+        public async void DeleteSelectedChats()
         {
             var chats = SelectedItems.ToList();
 
@@ -461,8 +426,7 @@ namespace Telegram.ViewModels
 
         #region Clear
 
-        public RelayCommand<Chat> ChatClearCommand { get; }
-        private async void ChatClearExecute(Chat chat)
+        public async void ClearChat(Chat chat)
         {
             var updated = await ClientService.SendAsync(new GetChat(chat.Id)) as Chat ?? chat;
             var dialog = new DeleteChatPopup(ClientService, updated, Items.ChatList, true);
@@ -494,8 +458,7 @@ namespace Telegram.ViewModels
 
         #region Multiple Clear
 
-        public RelayCommand ChatsClearCommand { get; }
-        private async void ChatsClearExecute()
+        public async void ClearSelectedChats()
         {
             var chats = SelectedItems.ToList();
 
@@ -529,8 +492,7 @@ namespace Telegram.ViewModels
 
         #region Select
 
-        public RelayCommand<Chat> ChatSelectCommand { get; }
-        private void ChatSelectExecute(Chat chat)
+        public void SelectChat(Chat chat)
         {
             SelectedItems.ReplaceWith(new[] { chat });
             SelectionMode = ListViewSelectionMode.Multiple;
@@ -542,8 +504,7 @@ namespace Telegram.ViewModels
 
         #region Commands
 
-        public RelayCommand ClearRecentChatsCommand { get; }
-        private async void ClearRecentChatsExecute()
+        public async void ClearRecentChats()
         {
             var confirm = await ShowPopupAsync(Strings.ClearSearch, Strings.AppName, Strings.OK, Strings.Cancel);
             if (confirm != ContentDialogResult.Primary)
@@ -560,8 +521,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public RelayCommand<Chat> TopChatDeleteCommand { get; }
-        private async void TopChatDeleteExecute(Chat chat)
+        public async void DeleteTopChat(Chat chat)
         {
             if (chat == null)
             {
@@ -582,8 +542,7 @@ namespace Telegram.ViewModels
 
         #region Folder add
 
-        public RelayCommand<(int, Chat)> FolderAddCommand { get; }
-        private async void FolderAddExecute((int ChatFilterId, Chat Chat) data)
+        public async void AddToFolder((int ChatFilterId, Chat Chat) data)
         {
             var filter = await ClientService.SendAsync(new GetChatFilter(data.ChatFilterId)) as ChatFilter;
             if (filter == null)
@@ -614,8 +573,7 @@ namespace Telegram.ViewModels
 
         #region Folder remove
 
-        public RelayCommand<(int, Chat)> FolderRemoveCommand { get; }
-        private async void FolderRemoveExecute((int ChatFilterId, Chat Chat) data)
+        public async void RemoveFromFolder((int ChatFilterId, Chat Chat) data)
         {
             var filter = await ClientService.SendAsync(new GetChatFilter(data.ChatFilterId)) as ChatFilter;
             if (filter == null)
@@ -646,8 +604,7 @@ namespace Telegram.ViewModels
 
         #region Folder create
 
-        public RelayCommand<Chat> FolderCreateCommand { get; }
-        private void FolderCreateExecute(Chat chat)
+        public void CreateFolder(Chat chat)
         {
             NavigationService.Navigate(typeof(FolderPage), state: new NavigationState { { "included_chat_id", chat.Id } });
         }

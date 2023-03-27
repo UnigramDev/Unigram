@@ -190,7 +190,7 @@ namespace Telegram.ViewModels.Chats
             }
         }
 
-        protected override async void DeleteExecute()
+        public override async void Delete()
         {
             var confirm = await ShowPopupAsync(Strings.AreYouSureDeletePhoto, Strings.AppName, Strings.OK, Strings.Cancel);
             if (confirm == ContentDialogResult.Primary && _selectedItem is GalleryChatPhoto chatPhoto)

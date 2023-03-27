@@ -8,7 +8,6 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Collections;
-using Telegram.Common;
 using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
@@ -34,12 +33,6 @@ namespace Telegram.ViewModels.Settings
             _networkService = networkService;
 
             Items = new MvxObservableCollection<ConnectionViewModel>();
-
-            AddCommand = new RelayCommand(AddExecute);
-            EnableCommand = new RelayCommand<ConnectionViewModel>(EnableExecute);
-            EditCommand = new RelayCommand<ConnectionViewModel>(EditExecute);
-            RemoveCommand = new RelayCommand<ProxyViewModel>(RemoveExecute);
-            ShareCommand = new RelayCommand<ProxyViewModel>(ShareExecute);
         }
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -220,8 +213,7 @@ namespace Telegram.ViewModels.Settings
             set => Set(ref _selectedItem, value);
         }
 
-        public RelayCommand AddCommand { get; }
-        private async void AddExecute()
+        public async void Add()
         {
             var dialog = new ProxyPopup();
             var confirm = await ShowPopupAsync(dialog);
@@ -239,8 +231,7 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        public RelayCommand<ConnectionViewModel> EnableCommand { get; }
-        private async void EnableExecute(ConnectionViewModel connection)
+        public async void Enable(ConnectionViewModel connection)
         {
             MarkAsEnabled(connection);
 
@@ -263,8 +254,7 @@ namespace Telegram.ViewModels.Settings
             Handle(ClientService.GetConnectionState(), ClientService.Options.EnabledProxyId);
         }
 
-        public RelayCommand<ConnectionViewModel> EditCommand { get; }
-        private async void EditExecute(ConnectionViewModel connection)
+        public async void Edit(ConnectionViewModel connection)
         {
             var dialog = new ProxyPopup(connection as ProxyViewModel);
             var confirm = await ShowPopupAsync(dialog);
@@ -287,8 +277,7 @@ namespace Telegram.ViewModels.Settings
             Handle(ClientService.GetConnectionState(), ClientService.Options.EnabledProxyId);
         }
 
-        public RelayCommand<ProxyViewModel> RemoveCommand { get; }
-        private async void RemoveExecute(ProxyViewModel proxy)
+        public async void Remove(ProxyViewModel proxy)
         {
             var confirm = await ShowPopupAsync(Strings.DeleteProxy, Strings.AppName, Strings.OK, Strings.Cancel);
             if (confirm != ContentDialogResult.Primary)
@@ -305,8 +294,7 @@ namespace Telegram.ViewModels.Settings
             Handle(ClientService.GetConnectionState(), ClientService.Options.EnabledProxyId);
         }
 
-        public RelayCommand<ProxyViewModel> ShareCommand { get; }
-        private async void ShareExecute(ProxyViewModel proxy)
+        public async void Share(ProxyViewModel proxy)
         {
             var response = await ClientService.SendAsync(new GetProxyLink(proxy.Id));
             if (response is HttpUrl httpUrl && Uri.TryCreate(httpUrl.Url, UriKind.Absolute, out Uri uri))

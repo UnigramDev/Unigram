@@ -103,31 +103,31 @@ namespace Telegram.Views.Chats
             {
                 if (selected.Contains(message))
                 {
-                    flyout.CreateFlyoutItem(ViewModel.MessagesForwardCommand, "Forward Selected", new FontIcon { Glyph = Icons.Share });
+                    flyout.CreateFlyoutItem(ViewModel.ForwardSelectedMessages, Strings.ForwardSelected, new FontIcon { Glyph = Icons.Share });
 
                     //if (chat.CanBeReported)
                     //{
                     //    flyout.CreateFlyoutItem(ViewModel.MessagesReportCommand, "Report Selected", new FontIcon { Glyph = Icons.ShieldError });
                     //}
 
-                    flyout.CreateFlyoutItem(ViewModel.MessagesDeleteCommand, "Delete Selected", new FontIcon { Glyph = Icons.Delete });
-                    flyout.CreateFlyoutItem(ViewModel.MessagesUnselectCommand, "Clear Selection");
+                    flyout.CreateFlyoutItem(ViewModel.DeleteSelectedMessages, Strings.DeleteSelected, new FontIcon { Glyph = Icons.Delete });
+                    flyout.CreateFlyoutItem(ViewModel.UnselectMessages, Strings.ClearSelection);
                     //flyout.CreateFlyoutSeparator();
                     //flyout.CreateFlyoutItem(ViewModel.MessagesCopyCommand, "Copy Selected as Text", new FontIcon { Glyph = Icons.DocumentCopy });
                 }
                 else
                 {
-                    flyout.CreateFlyoutItem(MessageSelect_Loaded, ViewModel.MessageSelectCommand, message, Strings.Select, new FontIcon { Glyph = Icons.CheckmarkCircle });
+                    flyout.CreateFlyoutItem(MessageSelect_Loaded, ViewModel.SelectMessage, message, Strings.Select, new FontIcon { Glyph = Icons.CheckmarkCircle });
                 }
             }
             else
             {
 
-                flyout.CreateFlyoutItem(MessageView_Loaded, ViewModel.MessageViewCommand, message, Strings.ShowInChat, new FontIcon { Glyph = Icons.Comment });
-                flyout.CreateFlyoutItem(MessageDelete_Loaded, ViewModel.MessageDeleteCommand, message, Strings.Delete, new FontIcon { Glyph = Icons.Delete });
-                flyout.CreateFlyoutItem(MessageForward_Loaded, ViewModel.MessageForwardCommand, message, Strings.Forward, new FontIcon { Glyph = Icons.Share });
-                flyout.CreateFlyoutItem(MessageSelect_Loaded, ViewModel.MessageSelectCommand, message, Strings.Select, new FontIcon { Glyph = Icons.CheckmarkCircle });
-                flyout.CreateFlyoutItem(MessageSave_Loaded, ViewModel.MessageSaveCommand, message, Strings.SaveAs, new FontIcon { Glyph = Icons.SaveAs });
+                flyout.CreateFlyoutItem(MessageView_Loaded, ViewModel.ViewMessage, message, Strings.ShowInChat, new FontIcon { Glyph = Icons.Comment });
+                flyout.CreateFlyoutItem(MessageDelete_Loaded, ViewModel.DeleteMessage, message, Strings.Delete, new FontIcon { Glyph = Icons.Delete });
+                flyout.CreateFlyoutItem(MessageForward_Loaded, ViewModel.ForwardMessage, message, Strings.Forward, new FontIcon { Glyph = Icons.Share });
+                flyout.CreateFlyoutItem(MessageSelect_Loaded, ViewModel.SelectMessage, message, Strings.Select, new FontIcon { Glyph = Icons.CheckmarkCircle });
+                flyout.CreateFlyoutItem(MessageSave_Loaded, ViewModel.SaveMessage, message, Strings.SaveAs, new FontIcon { Glyph = Icons.SaveAs });
             }
 
             args.ShowAt(flyout, element);

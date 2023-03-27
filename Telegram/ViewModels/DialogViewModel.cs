@@ -59,7 +59,7 @@ namespace Telegram.ViewModels
         protected readonly DialogUnreadMessagesViewModel<SearchMessagesFilterUnreadReaction> _reactions;
 
         protected readonly ILocationService _locationService;
-        protected readonly INotificationsService _pushService;
+        protected readonly INotificationsService _notificationsService;
         protected readonly IPlaybackService _playbackService;
         protected readonly IVoipService _voipService;
         protected readonly IGroupCallService _groupCallService;
@@ -84,7 +84,7 @@ namespace Telegram.ViewModels
             : base(clientService, settingsService, aggregator)
         {
             _locationService = locationService;
-            _pushService = pushService;
+            _notificationsService = pushService;
             _playbackService = playbackService;
             _voipService = voipService;
             _groupCallService = groupCallService;
@@ -100,89 +100,6 @@ namespace Telegram.ViewModels
 
             _mentions = new DialogUnreadMessagesViewModel<SearchMessagesFilterUnreadMention>(this, true);
             _reactions = new DialogUnreadMessagesViewModel<SearchMessagesFilterUnreadReaction>(this, false);
-
-            ToggleMuteCommand = new RelayCommand<bool>(ToggleMuteExecute);
-            MuteCommand = new RelayCommand(() => ToggleMuteExecute(false));
-            UnmuteCommand = new RelayCommand(() => ToggleMuteExecute(true));
-            ReportSpamCommand = new RelayCommand<ChatReportReason>(ReportSpamExecute);
-            ReportCommand = new RelayCommand(ReportExecute);
-            ChatDeleteCommand = new RelayCommand(ChatDeleteExecute);
-            ChatClearCommand = new RelayCommand(ChatClearExecute);
-            CallCommand = new RelayCommand<bool>(CallExecute);
-            PinnedHideCommand = new RelayCommand(PinnedHideExecute);
-            PinnedShowCommand = new RelayCommand(PinnedShowExecute);
-            PinnedListCommand = new RelayCommand(PinnedListExecute);
-            UnarchiveCommand = new RelayCommand(UnarchiveExecute);
-            InviteCommand = new RelayCommand(InviteExecute);
-            ShareContactCommand = new RelayCommand(ShareContactExecute);
-            AddContactCommand = new RelayCommand(AddContactExecute);
-            SearchCommand = new RelayCommand(SearchExecute);
-            GroupStickersCommand = new RelayCommand(GroupStickersExecute);
-            SwitchCommand = new RelayCommand<string>(SwitchExecute);
-            MuteForCommand = new RelayCommand<int?>(MuteForExecute);
-            SetTimerCommand = new RelayCommand<int?>(SetTimerExecute);
-            SetThemeCommand = new RelayCommand(SetThemeExecute);
-            OpenUserCommand = new RelayCommand<long>(OpenUser);
-            SetSenderCommand = new RelayCommand<ChatMessageSender>(SetSenderExecute);
-
-            MessagesForwardCommand = new RelayCommand(MessagesForwardExecute, MessagesForwardCanExecute);
-            MessagesDeleteCommand = new RelayCommand(MessagesDeleteExecute, MessagesDeleteCanExecute);
-            MessagesCopyCommand = new RelayCommand(MessagesCopyExecute, MessagesCopyCanExecute);
-            MessagesReportCommand = new RelayCommand(MessagesReportExecute, MessagesReportCanExecute);
-            MessagesUnselectCommand = new RelayCommand(MessagesUnselectExecute);
-
-            MessageReplyCommand = new RelayCommand<MessageViewModel>(MessageReplyExecute);
-            MessageRetryCommand = new RelayCommand<MessageViewModel>(MessageRetryExecute);
-            MessageDeleteCommand = new RelayCommand<MessageViewModel>(MessageDeleteExecute);
-            MessageForwardCommand = new RelayCommand<MessageViewModel>(MessageForwardExecute);
-            MessageSelectCommand = new RelayCommand<MessageViewModel>(MessageSelectExecute);
-            MessageStatisticsCommand = new RelayCommand<MessageViewModel>(MessageStatisticsExecute);
-            MessageCopyCommand = new RelayCommand<MessageViewModel>(MessageCopyExecute);
-            MessageCopyMediaCommand = new RelayCommand<MessageViewModel>(MessageCopyMediaExecute);
-            MessageCopyLinkCommand = new RelayCommand<MessageViewModel>(MessageCopyLinkExecute);
-            MessageEditCommand = new RelayCommand<MessageViewModel>(MessageEditExecute);
-            MessageThreadCommand = new RelayCommand<MessageViewModel>(MessageThreadExecute);
-            MessagePinCommand = new RelayCommand<MessageViewModel>(MessagePinExecute);
-            MessageReportCommand = new RelayCommand<MessageViewModel>(MessageReportExecute);
-            MessageReportFalsePositiveCommand = new RelayCommand<MessageViewModel>(MessageReportFalsePositiveExecute);
-            MessageAddStickerCommand = new RelayCommand<MessageViewModel>(MessageAddStickerExecute);
-            MessageFaveStickerCommand = new RelayCommand<MessageViewModel>(MessageFaveStickerExecute);
-            MessageUnfaveStickerCommand = new RelayCommand<MessageViewModel>(MessageUnfaveStickerExecute);
-            MessageSaveMediaCommand = new RelayCommand<MessageViewModel>(MessageSaveMediaExecute);
-            MessageSaveAnimationCommand = new RelayCommand<MessageViewModel>(MessageSaveAnimationExecute);
-            MessageSaveSoundCommand = new RelayCommand<MessageViewModel>(MessageSaveSoundExecute);
-            MessageOpenWithCommand = new RelayCommand<MessageViewModel>(MessageOpenWithExecute);
-            MessageOpenFolderCommand = new RelayCommand<MessageViewModel>(MessageOpenFolderExecute);
-            MessageAddContactCommand = new RelayCommand<MessageViewModel>(MessageAddContactExecute);
-            MessageServiceCommand = new RelayCommand<MessageViewModel>(MessageServiceExecute);
-            MessageUnvotePollCommand = new RelayCommand<MessageViewModel>(MessageUnvotePollExecute);
-            MessageStopPollCommand = new RelayCommand<MessageViewModel>(MessageStopPollExecute);
-            MessageSendNowCommand = new RelayCommand<MessageViewModel>(MessageSendNowExecute);
-            MessageRescheduleCommand = new RelayCommand<MessageViewModel>(MessageRescheduleExecute);
-            MessageTranslateCommand = new RelayCommand<MessageViewModel>(MessageTranslateExecute);
-            MessageShowEmojiCommand = new RelayCommand<MessageViewModel>(MessageShowEmojiExecute);
-
-            SendDocumentCommand = new RelayCommand(SendDocumentExecute);
-            SendCameraCommand = new RelayCommand(SendCameraExecute);
-            SendMediaCommand = new RelayCommand(SendMediaExecute);
-            SendContactCommand = new RelayCommand(SendContactExecute);
-            SendLocationCommand = new RelayCommand(SendLocationExecute);
-            SendPollCommand = new RelayCommand(SendPollExecute);
-
-            StickerViewCommand = new RelayCommand<Sticker>(StickerViewExecute);
-            StickerFaveCommand = new RelayCommand<Sticker>(StickerFaveExecute);
-            StickerUnfaveCommand = new RelayCommand<Sticker>(StickerUnfaveExecute);
-            StickerDeleteCommand = new RelayCommand<Sticker>(StickerDeleteExecute);
-
-            AnimationSendCommand = new RelayCommand<Animation>(AnimationSendExecute);
-            AnimationDeleteCommand = new RelayCommand<Animation>(AnimationDeleteExecute);
-            AnimationSaveCommand = new RelayCommand<Animation>(AnimationSaveExecute);
-
-            EditDocumentCommand = new RelayCommand(EditDocumentExecute);
-            EditMediaCommand = new RelayCommand(EditMediaExecute);
-            EditCurrentCommand = new RelayCommand(EditCurrentExecute);
-
-            GroupCallJoinCommand = new RelayCommand(GroupCallJoinExecute);
 
             //Items = new LegacyMessageCollection();
             //Items.CollectionChanged += (s, args) => IsEmpty = Items.Count == 0;
@@ -2508,12 +2425,9 @@ namespace Telegram.ViewModels
             //ClientService.Send(new SendMessage())
         }
 
-        public RelayCommand<long> OpenUserCommand { get; }
-
         #region Set default message sender
 
-        public RelayCommand<ChatMessageSender> SetSenderCommand;
-        public async void SetSenderExecute(ChatMessageSender messageSender)
+        public async void SetSender(ChatMessageSender messageSender)
         {
             var chat = _chat;
             if (chat == null)
@@ -2572,11 +2486,22 @@ namespace Telegram.ViewModels
 
         #region Toggle mute
 
-        public RelayCommand MuteCommand { get; }
-        public RelayCommand UnmuteCommand { get; }
+        public void Mute()
+        {
+            ToggleMute(false);
+        }
 
-        public RelayCommand<bool> ToggleMuteCommand { get; }
-        private void ToggleMuteExecute(bool unmute)
+        public void Unmute()
+        {
+            ToggleMute(true);
+        }
+
+        public void ToggleMute()
+        {
+            ToggleMute(ClientService.Notifications.GetMutedFor(_chat) > 0);
+        }
+
+        private void ToggleMute(bool unmute)
         {
             var chat = _chat;
             if (chat == null)
@@ -2584,7 +2509,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            _pushService.SetMuteFor(chat, unmute ? 0 : 632053052);
+            _notificationsService.SetMuteFor(chat, unmute ? 0 : 632053052);
         }
 
         #endregion
@@ -2617,8 +2542,7 @@ namespace Telegram.ViewModels
             ClientService.Send(new RemoveChatActionBar(chat.Id));
         }
 
-        public RelayCommand<ChatReportReason> ReportSpamCommand { get; }
-        private async void ReportSpamExecute(ChatReportReason reason)
+        public async void ReportSpam(ChatReportReason reason)
         {
             var chat = _chat;
             if (chat == null)
@@ -2658,6 +2582,7 @@ namespace Telegram.ViewModels
             var confirm = await ShowPopupAsync(message, title, Strings.OK, Strings.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
+
                 return;
             }
 
@@ -2683,8 +2608,7 @@ namespace Telegram.ViewModels
 
         #region Delete and Exit
 
-        public RelayCommand ChatDeleteCommand { get; }
-        private async void ChatDeleteExecute()
+        public async void DeleteChat()
         {
             var chat = _chat;
             if (chat == null)
@@ -2730,8 +2654,7 @@ namespace Telegram.ViewModels
 
         #region Clear history
 
-        public RelayCommand ChatClearCommand { get; }
-        private async void ChatClearExecute()
+        public async void ClearHistory()
         {
             var chat = _chat;
             if (chat == null)
@@ -2753,8 +2676,17 @@ namespace Telegram.ViewModels
 
         #region Call
 
-        public RelayCommand<bool> CallCommand { get; }
-        private async void CallExecute(bool video)
+        public void VoiceCall()
+        {
+            Call(false);
+        }
+
+        public void VideoCall()
+        {
+            Call(true);
+        }
+
+        public async void Call(bool video)
         {
             var chat = _chat;
             if (chat == null)
@@ -2776,8 +2708,7 @@ namespace Telegram.ViewModels
 
         #region Unpin message
 
-        public RelayCommand PinnedHideCommand { get; }
-        private async void PinnedHideExecute()
+        public async void HidePinnedMessage()
         {
             var chat = _chat;
             if (chat == null)
@@ -2815,8 +2746,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public RelayCommand PinnedShowCommand { get; }
-        private void PinnedShowExecute()
+        public void ShowPinnedMessage()
         {
             var chat = _chat;
             if (chat == null)
@@ -2828,8 +2758,7 @@ namespace Telegram.ViewModels
             LoadPinnedMessagesSliceAsync(0, VerticalAlignment.Center);
         }
 
-        public RelayCommand PinnedListCommand { get; }
-        private void PinnedListExecute()
+        public void OpenPinnedMessages()
         {
             var chat = _chat;
             if (chat == null)
@@ -2880,21 +2809,23 @@ namespace Telegram.ViewModels
 
         #region Switch
 
-        public RelayCommand<string> SwitchCommand { get; }
-        private async void SwitchExecute(string start)
+        public async void ActivateInlineBot()
         {
-            if (_currentInlineBot == null)
+            if (InlineBotResults?.Button == null || _currentInlineBot == null)
             {
                 return;
             }
 
-            var response = await ClientService.SendAsync(new CreatePrivateChat(_currentInlineBot.Id, false));
-            if (response is Chat chat)
+            if (InlineBotResults.Button.Type is InlineQueryResultsButtonTypeStartBot startBot)
             {
-                SetText(null, false);
+                var response = await ClientService.SendAsync(new CreatePrivateChat(_currentInlineBot.Id, false));
+                if (response is Chat chat)
+                {
+                    SetText(null, false);
 
-                ClientService.Send(new SendBotStartMessage(_currentInlineBot.Id, chat.Id, start ?? string.Empty));
-                NavigationService.NavigateToChat(chat);
+                    ClientService.Send(new SendBotStartMessage(_currentInlineBot.Id, chat.Id, startBot.Parameter));
+                    NavigationService.NavigateToChat(chat);
+                }
             }
         }
 
@@ -2902,8 +2833,7 @@ namespace Telegram.ViewModels
 
         #region Share my contact
 
-        public RelayCommand ShareContactCommand { get; }
-        private void ShareContactExecute()
+        public void ShareMyContact()
         {
             var chat = _chat;
             if (chat == null)
@@ -2924,8 +2854,7 @@ namespace Telegram.ViewModels
 
         #region Unarchive
 
-        public RelayCommand UnarchiveCommand { get; }
-        private void UnarchiveExecute()
+        public void Unarchive()
         {
             var chat = _chat;
             if (chat == null)
@@ -2948,8 +2877,7 @@ namespace Telegram.ViewModels
 
         #region Invite
 
-        public RelayCommand InviteCommand { get; }
-        private async void InviteExecute()
+        public async void Invite()
         {
             var chat = _chat;
             if (chat == null)
@@ -2989,8 +2917,7 @@ namespace Telegram.ViewModels
 
         #region Add contact
 
-        public RelayCommand AddContactCommand { get; }
-        private void AddContactExecute()
+        public void AddToContacts()
         {
             var chat = _chat;
             if (chat == null)
@@ -3064,8 +2991,7 @@ namespace Telegram.ViewModels
 
         #region Search
 
-        public RelayCommand SearchCommand { get; }
-        private void SearchExecute()
+        public void SearchExecute()
         {
             if (Search == null)
             {
@@ -3101,7 +3027,6 @@ namespace Telegram.ViewModels
 
         #region Group stickers
 
-        public RelayCommand GroupStickersCommand { get; }
         private void GroupStickersExecute()
         {
             //var channel = With as TLChannel;
@@ -3152,8 +3077,7 @@ namespace Telegram.ViewModels
 
         #region Mute for
 
-        public RelayCommand<int?> MuteForCommand { get; }
-        private async void MuteForExecute(int? value)
+        public async void MuteFor(int? value)
         {
             var chat = _chat;
             if (chat == null)
@@ -3163,7 +3087,7 @@ namespace Telegram.ViewModels
 
             if (value is int update)
             {
-                _pushService.SetMuteFor(chat, update);
+                _notificationsService.SetMuteFor(chat, update);
             }
             else
             {
@@ -3178,7 +3102,7 @@ namespace Telegram.ViewModels
 
                 if (mutedFor != popup.Value)
                 {
-                    _pushService.SetMuteFor(chat, popup.Value);
+                    _notificationsService.SetMuteFor(chat, popup.Value);
                 }
             }
         }
@@ -3187,8 +3111,7 @@ namespace Telegram.ViewModels
 
         #region Report Chat
 
-        public RelayCommand ReportCommand { get; }
-        private async void ReportExecute()
+        public async void Report()
         {
             await ReportAsync(new long[0]);
         }
@@ -3256,8 +3179,7 @@ namespace Telegram.ViewModels
 
         #region Set timer
 
-        public RelayCommand<int?> SetTimerCommand { get; }
-        private async void SetTimerExecute(int? ttl)
+        public async void SetTimer()
         {
             var chat = _chat;
             if (chat == null)
@@ -3265,31 +3187,23 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            if (ttl is int value)
-            {
-                ClientService.Send(new SetChatMessageAutoDeleteTime(chat.Id, value));
-            }
-            else
-            {
-                var dialog = new ChatTtlPopup(chat.Type is ChatTypeSecret ? ChatTtlType.Secret : ChatTtlType.Normal);
-                dialog.Value = chat.MessageAutoDeleteTime;
+            var dialog = new ChatTtlPopup(chat.Type is ChatTypeSecret ? ChatTtlType.Secret : ChatTtlType.Normal);
+            dialog.Value = chat.MessageAutoDeleteTime;
 
-                var confirm = await ShowPopupAsync(dialog);
-                if (confirm != ContentDialogResult.Primary)
-                {
-                    return;
-                }
-
-                ClientService.Send(new SetChatMessageAutoDeleteTime(chat.Id, dialog.Value));
+            var confirm = await ShowPopupAsync(dialog);
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
             }
+
+            ClientService.Send(new SetChatMessageAutoDeleteTime(chat.Id, dialog.Value));
         }
 
         #endregion
 
         #region Set theme
 
-        public RelayCommand SetThemeCommand { get; }
-        private async void SetThemeExecute()
+        public async void ChangeTheme()
         {
             var chat = _chat;
             if (chat == null)
@@ -3377,7 +3291,7 @@ namespace Telegram.ViewModels
 
                 if (ClientService.IsRepliesChat(chat))
                 {
-                    ToggleMuteExecute(ClientService.Notifications.GetMutedFor(chat) > 0);
+                    ToggleMute();
                 }
                 else if (chat.IsBlocked)
                 {
@@ -3399,7 +3313,7 @@ namespace Telegram.ViewModels
                 if (group.Status is ChatMemberStatusLeft or ChatMemberStatusBanned)
                 {
                     // Delete and exit
-                    ChatDeleteExecute();
+                    DeleteChat();
                 }
                 else if (group.Status is ChatMemberStatusCreator creator && !creator.IsMember)
                 {
@@ -3422,7 +3336,7 @@ namespace Telegram.ViewModels
                     }
                     else
                     {
-                        ToggleMuteExecute(ClientService.Notifications.GetMutedFor(chat) > 0);
+                        ToggleMute();
                     }
                 }
                 else
@@ -3433,7 +3347,7 @@ namespace Telegram.ViewModels
                     }
                     else if (group.Status is ChatMemberStatusBanned)
                     {
-                        ChatDeleteExecute();
+                        DeleteChat();
                     }
                 }
             }
@@ -3453,8 +3367,7 @@ namespace Telegram.ViewModels
 
         #region Group calls
 
-        public RelayCommand GroupCallJoinCommand { get; }
-        private async void GroupCallJoinExecute()
+        public async void JoinGroupCall()
         {
             var chat = _chat;
             if (chat == null)

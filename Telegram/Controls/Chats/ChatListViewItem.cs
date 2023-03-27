@@ -341,11 +341,11 @@ namespace Telegram.Controls.Chats
             {
                 if (_tracker.Position.X >= 72 && _reply)
                 {
-                    _parent.ViewModel.MessageReplyCommand.Execute(message);
+                    _parent.ViewModel.ReplyToMessage(message);
                 }
                 else if (_tracker.Position.X <= -72 && _forward)
                 {
-                    _parent.ViewModel.MessageForwardCommand.Execute(message);
+                    _parent.ViewModel.ForwardMessage(message);
                 }
             }
         }

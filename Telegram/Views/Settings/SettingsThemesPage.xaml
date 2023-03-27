@@ -154,7 +154,7 @@
                             </ItemsPanelTemplate>
                         </ListView.ItemsPanel>
                         <ListView.Footer>
-                            <HyperlinkButton Command="{x:Bind ViewModel.AccentThemeCommand}"
+                            <HyperlinkButton Click="{x:Bind ViewModel.AccentTheme}"
                                              Width="24"
                                              Height="24"
                                              Margin="12,12,12,12"

@@ -26,15 +26,6 @@ namespace Telegram.ViewModels.Gallery
             : base(clientService, null, aggregator)
         {
             _storageService = storageService;
-
-            StickersCommand = new RelayCommand(StickersExecute);
-            ViewCommand = new RelayCommand(ViewExecute);
-            ForwardCommand = new RelayCommand(ForwardExecute);
-            DeleteCommand = new RelayCommand(DeleteExecute);
-            CopyCommand = new RelayCommand(CopyExecute);
-            SaveCommand = new RelayCommand(SaveExecute);
-            OpenWithCommand = new RelayCommand(OpenWithExecute);
-
             //Aggregator.Subscribe(this);
         }
 
@@ -175,23 +166,39 @@ namespace Telegram.ViewModels.Gallery
             }
         }
 
-        public RelayCommand StickersCommand { get; }
-        private async void StickersExecute()
+        public async void OpenStickers()
         {
             if (_selectedItem != null && _selectedItem.HasStickers)
             {
-                var file = _selectedItem.GetFile();
-                if (file == null)
+                if (_selectedItem is GalleryChatPhoto chatPhoto)
                 {
-                    return;
+                    if (chatPhoto.Sticker?.Type is ChatPhotoStickerTypeRegularOrMask regularOrMask)
+                    {
+                        await StickersPopup.ShowAsync(regularOrMask.StickerSetId);
+                    }
+                    else if (chatPhoto.Sticker?.Type is ChatPhotoStickerTypeCustomEmoji customEmoji)
+                    {
+                        var response = await ClientService.SendAsync(new GetCustomEmojiStickers(new[] { customEmoji.CustomEmojiId }));
+                        if (response is Stickers stickers && stickers.StickersValue.Count == 1)
+                        {
+                            await StickersPopup.ShowAsync(stickers.StickersValue[0].SetId);
+                        }
+                    }
                 }
+                else
+                {
+                    var file = _selectedItem.GetFile();
+                    if (file == null)
+                    {
+                        return;
+                    }
 
-                await StickersPopup.ShowAsync(new InputFileId(file.Id));
+                    await StickersPopup.ShowAsync(new InputFileId(file.Id));
+                }
             }
         }
 
-        public RelayCommand ViewCommand { get; }
-        protected virtual void ViewExecute()
+        public virtual void View()
         {
             FirstItem = null;
             NavigationService.GoBack();
@@ -209,8 +216,7 @@ namespace Telegram.ViewModels.Gallery
             }
         }
 
-        public RelayCommand ForwardCommand { get; }
-        protected virtual async void ForwardExecute()
+        public virtual async void Forward()
         {
             if (_selectedItem is GalleryMessage message)
             {
@@ -228,13 +234,11 @@ namespace Telegram.ViewModels.Gallery
             }
         }
 
-        public RelayCommand DeleteCommand { get; }
-        protected virtual void DeleteExecute()
+        public virtual void Delete()
         {
         }
 
-        public RelayCommand CopyCommand { get; }
-        protected async void CopyExecute()
+        public async void Copy()
         {
             var item = _selectedItem;
             if (item == null || !item.CanCopy)
@@ -257,8 +261,7 @@ namespace Telegram.ViewModels.Gallery
             }
         }
 
-        public RelayCommand SaveCommand { get; }
-        protected virtual async void SaveExecute()
+        public virtual async void Save()
         {
             var item = _selectedItem;
             if (item == null || !item.CanSave)
@@ -273,8 +276,7 @@ namespace Telegram.ViewModels.Gallery
             }
         }
 
-        public RelayCommand OpenWithCommand { get; }
-        protected virtual async void OpenWithExecute()
+        public virtual async void OpenWith()
         {
             var item = _selectedItem;
             if (item == null || !CanOpenWith)

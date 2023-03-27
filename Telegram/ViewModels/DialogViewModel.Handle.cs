@@ -529,7 +529,7 @@ namespace Telegram.ViewModels
                     {
                         if (TLWindowContext.Current.ActivationMode == CoreWindowActivationMode.ActivatedInForeground)
                         {
-                            _pushService.PlaySound();
+                            _notificationsService.PlaySound();
                         }
                     }
                 });
@@ -808,7 +808,7 @@ namespace Telegram.ViewModels
 
                 if (Settings.Notifications.InAppSounds)
                 {
-                    _pushService.PlaySound();
+                    _notificationsService.PlaySound();
                 }
             }
         }

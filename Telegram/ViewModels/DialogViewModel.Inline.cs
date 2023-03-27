@@ -37,7 +37,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public bool IsInlineBotResultsVisible => _inlineBotResults != null && _inlineBotResults.Count > 0;
+        public bool IsInlineBotResultsVisible => _inlineBotResults != null && (_inlineBotResults.Button != null || _inlineBotResults.Count > 0);
 
         public async Task<bool> ResolveInlineBotAsync(string text, CancellationToken token)
         {
@@ -244,6 +244,9 @@ namespace Telegram.ViewModels
 
         public long InlineQueryId => _results.InlineQueryId;
         public string NextOffset => _results.NextOffset;
+
+        public InlineQueryResultsButton Button => _results.Button;
+        public string ButtonText => _results.Button?.Text;
 
         public override async Task<IList<InlineQueryResult>> LoadDataAsync()
         {

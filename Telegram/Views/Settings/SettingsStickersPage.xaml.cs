@@ -48,7 +48,7 @@ namespace Telegram.Views.Settings
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            ViewModel.StickerSetOpenCommand.Execute(e.ClickedItem);
+            ViewModel.Open(e.ClickedItem as StickerSetInfo);
         }
 
         private void ListView_DragItemsCompleted(ListViewBase sender, DragItemsCompletedEventArgs args)
@@ -252,12 +252,12 @@ namespace Telegram.Views.Settings
 
             if (stickerSet.IsOfficial)
             {
-                flyout.CreateFlyoutItem(ViewModel.StickerSetHideCommand, stickerSet, Strings.StickersHide, new FontIcon { Glyph = Icons.Archive });
+                flyout.CreateFlyoutItem(ViewModel.Archive, stickerSet, Strings.StickersHide, new FontIcon { Glyph = Icons.Archive });
             }
             else
             {
-                flyout.CreateFlyoutItem(ViewModel.StickerSetHideCommand, stickerSet, Strings.StickersHide, new FontIcon { Glyph = Icons.Archive });
-                flyout.CreateFlyoutItem(ViewModel.StickerSetRemoveCommand, stickerSet, Strings.StickersRemove, new FontIcon { Glyph = Icons.Delete });
+                flyout.CreateFlyoutItem(ViewModel.Archive, stickerSet, Strings.StickersHide, new FontIcon { Glyph = Icons.Archive });
+                flyout.CreateFlyoutItem(ViewModel.Remove, stickerSet, Strings.StickersRemove, new FontIcon { Glyph = Icons.Delete });
                 //CreateFlyoutItem(ref flyout, ViewModel.StickerSetShareCommand, stickerSet, Strings.StickersShare);
                 //CreateFlyoutItem(ref flyout, ViewModel.StickerSetCopyCommand, stickerSet, Strings.StickersCopy);
             }

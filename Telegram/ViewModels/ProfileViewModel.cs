@@ -69,15 +69,7 @@ namespace Telegram.ViewModels
             _supergroupMembersVieModel = supergroupMembersViewModel;
             _supergroupMembersVieModel.IsEmbedded = true;
 
-            SystemCallCommand = new RelayCommand(SystemCallExecute);
-            ReportCommand = new RelayCommand(ReportExecute);
-            MuteForCommand = new RelayCommand<int?>(MuteForExecute);
-            SetTimerCommand = new RelayCommand<int?>(SetTimerExecute);
-            ToggleMuteCommand = new RelayCommand(ToggleMuteExecute);
-
-            MemberPromoteCommand = new RelayCommand<ChatMember>(MemberPromoteExecute);
-            MemberRestrictCommand = new RelayCommand<ChatMember>(MemberRestrictExecute);
-            MemberRemoveCommand = new RelayCommand<ChatMember>(MemberRemoveExecute);
+            SetTimerCommand = new RelayCommand<int?>(SetTimer);
 
             Children.Add(userCommonChatsViewModel);
             Children.Add(supergroupMembersViewModel);
@@ -400,23 +392,6 @@ namespace Telegram.ViewModels
             //}
         }
 
-        public RelayCommand SystemCallCommand { get; }
-        private void SystemCallExecute()
-        {
-            //var user = Item as TLUser;
-            //if (user != null)
-            //{
-            //    if (ApiInformation.IsTypePresent("Windows.ApplicationModel.Calls.PhoneCallManager"))
-            //    {
-            //        PhoneCallManager.ShowPhoneCallUI($"+{user.Phone}", user.FullName);
-            //    }
-            //    else
-            //    {
-            //        // TODO
-            //    }
-            //}
-        }
-
         public async void Block()
         {
             var chat = _chat;
@@ -479,72 +454,6 @@ namespace Telegram.ViewModels
                     await SharePopup.GetForCurrentView().ShowAsync(new InputMessageContact(new Contact(user.PhoneNumber, user.FirstName, user.LastName, string.Empty, user.Id)));
                 }
             }
-        }
-
-        public RelayCommand ReportCommand { get; }
-        private async void ReportExecute()
-        {
-            //var user = Item as TLUser;
-            //if (user != null)
-            //{
-            //    var opt1 = new RadioButton { Content = Strings.ReportChatSpam, Margin = new Thickness(0, 8, 0, 8), HorizontalAlignment = HorizontalAlignment.Stretch };
-            //    var opt2 = new RadioButton { Content = Strings.ReportChatViolence, Margin = new Thickness(0, 8, 0, 8), HorizontalAlignment = HorizontalAlignment.Stretch };
-            //    var opt3 = new RadioButton { Content = Strings.ReportChatPornography, Margin = new Thickness(0, 8, 0, 8), HorizontalAlignment = HorizontalAlignment.Stretch };
-            //    var opt4 = new RadioButton { Content = Strings.ReportChatOther, Margin = new Thickness(0, 8, 0, 8), HorizontalAlignment = HorizontalAlignment.Stretch, IsChecked = true };
-            //    var stack = new StackPanel();
-            //    stack.Children.Add(opt1);
-            //    stack.Children.Add(opt2);
-            //    stack.Children.Add(opt3);
-            //    stack.Children.Add(opt4);
-            //    stack.Margin = new Thickness(12, 16, 12, 0);
-
-            //    var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
-            //    dialog.Content = stack;
-            //    dialog.Title = Strings.ReportChat;
-            //    dialog.IsPrimaryButtonEnabled = true;
-            //    dialog.IsSecondaryButtonEnabled = true;
-            //    dialog.PrimaryButtonText = Strings.OK;
-            //    dialog.SecondaryButtonText = Strings.Cancel;
-
-            //    var dialogResult = await ShowPopupAsync(dialog);
-            //    if (dialogResult == ContentDialogResult.Primary)
-            //    {
-            //        var reason = opt1.IsChecked == true
-            //            ? new TLInputReportReasonSpam()
-            //            : (opt2.IsChecked == true
-            //                ? new TLInputReportReasonViolence()
-            //                : (opt3.IsChecked == true
-            //                    ? new TLInputReportReasonPornography()
-            //                    : (TLReportReasonBase)new TLInputReportReasonOther()));
-
-            //        if (reason is TLInputReportReasonOther other)
-            //        {
-            //            var input = new InputDialog();
-            //            input.Title = Strings.ReportChat;
-            //            input.PlaceholderText = Strings.ReportChatDescription;
-            //            input.IsPrimaryButtonEnabled = true;
-            //            input.IsSecondaryButtonEnabled = true;
-            //            input.PrimaryButtonText = Strings.OK;
-            //            input.SecondaryButtonText = Strings.Cancel;
-
-            //            var inputResult = await ShowPopupAsync(input);
-            //            if (inputResult == ContentDialogResult.Primary)
-            //            {
-            //                other.Text = input.Text;
-            //            }
-            //            else
-            //            {
-            //                return;
-            //            }
-            //        }
-
-            //        var result = await LegacyService.ReportPeerAsync(user.ToInputPeer(), reason);
-            //        if (result.IsSucceeded && result.Result)
-            //        {
-            //            await ShowPopupAsync(new MessagePopup("Resources.ReportSpamNotification", "Unigram"));
-            //        }
-            //    }
-            //}
         }
 
         public void CopyPhone()
@@ -760,8 +669,22 @@ namespace Telegram.ViewModels
             }
         }
 
-        public RelayCommand ToggleMuteCommand { get; }
-        private void ToggleMuteExecute()
+        public void Mute()
+        {
+            ToggleMute(false);
+        }
+
+        public void Unmute()
+        {
+            ToggleMute(true);
+        }
+
+        public void ToggleMute()
+        {
+            ToggleMute(ClientService.Notifications.GetMutedFor(_chat) > 0);
+        }
+
+        private void ToggleMute(bool unmute)
         {
             var chat = _chat;
             if (chat == null)
@@ -997,8 +920,7 @@ namespace Telegram.ViewModels
 
         #region Mute for
 
-        public RelayCommand<int?> MuteForCommand { get; }
-        private async void MuteForExecute(int? value)
+        public async void MuteFor(int? value)
         {
             var chat = _chat;
             if (chat == null)
@@ -1033,7 +955,7 @@ namespace Telegram.ViewModels
         #region Set timer
 
         public RelayCommand<int?> SetTimerCommand { get; }
-        private async void SetTimerExecute(int? ttl)
+        private async void SetTimer(int? ttl)
         {
             var chat = _chat;
             if (chat == null)
@@ -1117,8 +1039,7 @@ namespace Telegram.ViewModels
 
         #region Context menu
 
-        public RelayCommand<ChatMember> MemberPromoteCommand { get; }
-        private void MemberPromoteExecute(ChatMember member)
+        public void PromoteMember(ChatMember member)
         {
             var chat = _chat;
             if (chat == null)
@@ -1129,8 +1050,7 @@ namespace Telegram.ViewModels
             NavigationService.Navigate(typeof(SupergroupEditAdministratorPage), state: NavigationState.GetChatMember(chat.Id, member.MemberId));
         }
 
-        public RelayCommand<ChatMember> MemberRestrictCommand { get; }
-        private void MemberRestrictExecute(ChatMember member)
+        public void RestrictMember(ChatMember member)
         {
             var chat = _chat;
             if (chat == null)
@@ -1141,8 +1061,7 @@ namespace Telegram.ViewModels
             NavigationService.Navigate(typeof(SupergroupEditRestrictedPage), state: NavigationState.GetChatMember(chat.Id, member.MemberId));
         }
 
-        public RelayCommand<ChatMember> MemberRemoveCommand { get; }
-        private async void MemberRemoveExecute(ChatMember member)
+        public async void RemoveMember(ChatMember member)
         {
             var chat = _chat;
             if (chat == null || _members == null)

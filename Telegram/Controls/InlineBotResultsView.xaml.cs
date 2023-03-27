@@ -42,7 +42,7 @@ namespace Telegram.Controls
             var min = Math.Max(4, radius - 2);
 
             Root.Padding = new Thickness(0, 0, 0, radius);
-            //SwitchPm.CornerRadius = new CornerRadius(min, min, 4, 4);
+            SwitchPm.CornerRadius = new CornerRadius(min, min, 4, 4);
 
             CornerRadius = new CornerRadius(radius, radius, 0, 0);
         }

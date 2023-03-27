@@ -110,7 +110,7 @@
 
                     <controls:HeaderedControl Header="{CustomResource FilterInclude}"
                                               Footer="{CustomResource FilterIncludeInfo}">
-                        <controls:BadgeButton Command="{x:Bind ViewModel.AddIncludeCommand}"
+                        <controls:BadgeButton Click="{x:Bind ViewModel.AddIncluded}"
                                               Content="{CustomResource FilterAddChats}"
                                               Foreground="{ThemeResource SystemControlForegroundAccentBrush}" />
                         <muxc:ItemsRepeater Layout="{StaticResource ThreadStackLayout}"
@@ -128,7 +128,7 @@
 
                     <controls:HeaderedControl Header="{CustomResource FilterExclude}"
                                               Footer="{CustomResource FilterExcludeInfo}">
-                        <controls:BadgeButton Command="{x:Bind ViewModel.AddExcludeCommand}"
+                        <controls:BadgeButton Click="{x:Bind ViewModel.AddExcluded}"
                                               Content="{CustomResource FilterAddChats}"
                                               Foreground="{ThemeResource SystemControlForegroundAccentBrush}" />
                         <muxc:ItemsRepeater Layout="{StaticResource ThreadStackLayout}"

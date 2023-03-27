@@ -33,8 +33,6 @@ namespace Telegram.ViewModels.Settings
             _themeService = themeService;
 
             ChatThemes = new ObservableCollection<ChatTheme>();
-
-            ThemeCreateCommand = new RelayCommand<ChatTheme>(ThemeCreateExecute);
         }
 
         public ObservableCollection<ChatTheme> ChatThemes { get; }
@@ -256,8 +254,7 @@ namespace Telegram.ViewModels.Settings
             new SettingsOptionItem<DistanceUnits>(DistanceUnits.Miles, Strings.DistanceUnitsMiles),
         };
 
-        public RelayCommand<ChatTheme> ThemeCreateCommand { get; }
-        private async void ThemeCreateExecute(ChatTheme theme)
+        public async void CreateTheme(ChatTheme theme)
         {
             var dark = Settings.Appearance.IsDarkTheme();
             var settings = dark ? theme.DarkSettings : theme.LightSettings;

@@ -28,9 +28,6 @@ namespace Telegram.ViewModels.Settings
             : base(clientService, settingsService, aggregator)
         {
             Items = new DiffObservableCollection<Background>(new BackgroundDiffHandler(), Constants.DiffOptions);
-
-            ShareCommand = new RelayCommand<Background>(ShareExecute);
-            DeleteCommand = new RelayCommand<Background>(DeleteExecute);
         }
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -141,8 +138,7 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        public RelayCommand<Background> ShareCommand { get; }
-        private async void ShareExecute(Background background)
+        public async void Share(Background background)
         {
             if (background == null)
             {
@@ -156,8 +152,7 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        public RelayCommand<Background> DeleteCommand { get; }
-        private async void DeleteExecute(Background background)
+        public async void Delete(Background background)
         {
             if (background == null)
             {

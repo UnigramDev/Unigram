@@ -56,7 +56,7 @@ namespace Telegram.ViewModels
 
             if (last != null)
             {
-                MessageReplyCommand.Execute(last);
+                ReplyToMessage(last);
                 await ListField?.ScrollToItem(last, VerticalAlignment.Center, true);
             }
         }
@@ -73,7 +73,7 @@ namespace Telegram.ViewModels
 
             if (last != null)
             {
-                MessageReplyCommand.Execute(last);
+                ReplyToMessage(last);
                 await ListField?.ScrollToItem(last, VerticalAlignment.Center, true);
             }
             else
@@ -82,8 +82,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public RelayCommand<MessageViewModel> MessageReplyCommand { get; }
-        private void MessageReplyExecute(MessageViewModel message)
+        public void ReplyToMessage(MessageViewModel message)
         {
             DisposeSearch();
 
@@ -105,8 +104,7 @@ namespace Telegram.ViewModels
 
         #region Delete
 
-        public RelayCommand<MessageViewModel> MessageDeleteCommand { get; }
-        private void MessageDeleteExecute(MessageViewModel message)
+        public void DeleteMessage(MessageViewModel message)
         {
             if (message == null)
             {
@@ -126,12 +124,12 @@ namespace Telegram.ViewModels
             //    return;
             //}
 
-            MessagesDelete(chat, new[] { message });
+            DeleteMessages(chat, new[] { message });
 
             TextField?.Focus(FocusState.Programmatic);
         }
 
-        private async void MessagesDelete(Chat chat, IList<MessageViewModel> messages)
+        private async void DeleteMessages(Chat chat, IList<MessageViewModel> messages)
         {
             var first = messages.FirstOrDefault();
             if (first == null)
@@ -185,8 +183,7 @@ namespace Telegram.ViewModels
 
         #region Forward
 
-        public RelayCommand<MessageViewModel> MessageForwardCommand { get; }
-        private async void MessageForwardExecute(MessageViewModel message)
+        public async void ForwardMessage(MessageViewModel message)
         {
             IsSelectionEnabled = false;
 
@@ -206,8 +203,7 @@ namespace Telegram.ViewModels
 
         #region Multiple Delete
 
-        public RelayCommand MessagesDeleteCommand { get; }
-        private void MessagesDeleteExecute()
+        public void DeleteSelectedMessages()
         {
             var messages = new List<MessageViewModel>(SelectedItems.Values);
 
@@ -223,20 +219,16 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            MessagesDelete(chat, messages);
+            DeleteMessages(chat, messages);
         }
 
-        private bool MessagesDeleteCanExecute()
-        {
-            return SelectedItems.Count > 0 && SelectedItems.Values.All(x => x.CanBeDeletedForAllUsers || x.CanBeDeletedOnlyForSelf);
-        }
+        public bool CanDeleteSelectedMessages =>  SelectedItems.Count > 0 && SelectedItems.Values.All(x => x.CanBeDeletedForAllUsers || x.CanBeDeletedOnlyForSelf);
 
         #endregion
 
         #region Multiple Forward
 
-        public RelayCommand MessagesForwardCommand { get; }
-        private async void MessagesForwardExecute()
+        public async void ForwardSelectedMessages()
         {
             var messages = SelectedItems.Values.Where(x => x.CanBeForwarded).OrderBy(x => x.Id).Select(x => x.Get()).ToList();
             if (messages.Count > 0)
@@ -248,17 +240,13 @@ namespace Telegram.ViewModels
             }
         }
 
-        private bool MessagesForwardCanExecute()
-        {
-            return SelectedItems.Count > 0 && SelectedItems.Values.All(x => x.CanBeForwarded);
-        }
+        public bool CanForwardSelectedMessages => SelectedItems.Count > 0 && SelectedItems.Values.All(x => x.CanBeForwarded);
 
         #endregion
 
         #region Multiple Copy
 
-        public RelayCommand MessagesCopyCommand { get; }
-        private void MessagesCopyExecute()
+        public void CopySelectedMessages()
         {
             var messages = SelectedItems.Values.OrderBy(x => x.Id).ToList();
             if (messages.Count > 0)
@@ -433,17 +421,13 @@ namespace Telegram.ViewModels
             }
         }
 
-        private bool MessagesCopyCanExecute()
-        {
-            return SelectedItems.Count > 0;
-        }
+        public bool CanCopySelectedMessage => SelectedItems.Count > 0;
 
         #endregion
 
         #region Multiple Report
 
-        public RelayCommand MessagesReportCommand { get; }
-        private async void MessagesReportExecute()
+        public async void ReportSelectedMessages()
         {
             var chat = _chat;
             if (chat == null)
@@ -463,25 +447,27 @@ namespace Telegram.ViewModels
             await ReportAsync(messages);
         }
 
-        private bool MessagesReportCanExecute()
+        public bool CanReportSelectedMessages
         {
-            var chat = _chat;
-            if (chat == null)
+            get
             {
-                return false;
-            }
+                var chat = _chat;
+                if (chat == null)
+                {
+                    return false;
+                }
 
-            var myId = ClientService.Options.MyId;
-            return chat.CanBeReported && SelectedItems.Count > 0
-                && SelectedItems.Values.All(x => x.SenderId is MessageSenderChat || (x.SenderId is MessageSenderUser senderUser && senderUser.UserId != myId));
+                var myId = ClientService.Options.MyId;
+                return chat.CanBeReported && SelectedItems.Count > 0
+                    && SelectedItems.Values.All(x => x.SenderId is MessageSenderChat || (x.SenderId is MessageSenderUser senderUser && senderUser.UserId != myId));
+            }
         }
 
         #endregion
 
         #region Select
 
-        public RelayCommand<MessageViewModel> MessageSelectCommand { get; }
-        private void MessageSelectExecute(MessageViewModel message)
+        public void SelectMessage(MessageViewModel message)
         {
             DisposeSearch();
 
@@ -501,8 +487,7 @@ namespace Telegram.ViewModels
 
         #region Unselect
 
-        public RelayCommand MessagesUnselectCommand { get; }
-        private void MessagesUnselectExecute()
+        public void UnselectMessages()
         {
             IsSelectionEnabled = false;
         }
@@ -511,18 +496,16 @@ namespace Telegram.ViewModels
 
         #region Statistics
 
-        public RelayCommand<MessageViewModel> MessageStatisticsCommand { get; }
-        private void MessageStatisticsExecute(MessageViewModel message)
+        public void OpenMessageStatistics(MessageViewModel message)
         {
             NavigationService.Navigate(typeof(MessageStatisticsPage), $"{message.ChatId};{message.Id}");
         }
 
         #endregion
 
-        #region Retry
+        #region Resend
 
-        public RelayCommand<MessageViewModel> MessageRetryCommand { get; }
-        private void MessageRetryExecute(MessageViewModel message)
+        public void ResendMessage(MessageViewModel message)
         {
             ClientService.Send(new ResendMessages(message.ChatId, new[] { message.Id }));
         }
@@ -531,8 +514,7 @@ namespace Telegram.ViewModels
 
         #region Copy
 
-        public RelayCommand<MessageViewModel> MessageCopyCommand { get; }
-        private async void MessageCopyExecute(MessageViewModel message)
+        public async void CopyMessage(MessageViewModel message)
         {
             if (message == null)
             {
@@ -607,8 +589,7 @@ namespace Telegram.ViewModels
 
         #region Copy media
 
-        public RelayCommand<MessageViewModel> MessageCopyMediaCommand { get; }
-        private async void MessageCopyMediaExecute(MessageViewModel message)
+        public async void CopyMessageMedia(MessageViewModel message)
         {
             var photo = message.GetPhoto();
             if (photo == null)
@@ -635,8 +616,7 @@ namespace Telegram.ViewModels
 
         #region Copy link
 
-        public RelayCommand<MessageViewModel> MessageCopyLinkCommand { get; }
-        private async void MessageCopyLinkExecute(MessageViewModel message)
+        public async void CopyMessageLink(MessageViewModel message)
         {
             if (message == null)
             {
@@ -667,18 +647,17 @@ namespace Telegram.ViewModels
 
         #region Edit
 
-        public async void MessageEditLast()
+        public async void EditLastMessage()
         {
             var last = Items.LastOrDefault(x => x.CanBeEdited);
             if (last != null)
             {
-                MessageEditCommand.Execute(last);
+                EditMessage(last);
                 await ListField?.ScrollToItem(last, VerticalAlignment.Center, true);
             }
         }
 
-        public RelayCommand<MessageViewModel> MessageEditCommand { get; }
-        private void MessageEditExecute(MessageViewModel message)
+        public void EditMessage(MessageViewModel message)
         {
             if (message.Content is MessageAlbum album)
             {
@@ -737,8 +716,7 @@ namespace Telegram.ViewModels
 
         #region View thread
 
-        public RelayCommand<MessageViewModel> MessageThreadCommand { get; }
-        private async void MessageThreadExecute(MessageViewModel message)
+        public async void OpenMessageThread(MessageViewModel message)
         {
             var response = await ClientService.SendAsync(new GetMessageThread(message.ChatId, message.Id));
             if (response is MessageThreadInfo)
@@ -751,8 +729,7 @@ namespace Telegram.ViewModels
 
         #region Pin
 
-        public RelayCommand<MessageViewModel> MessagePinCommand { get; }
-        private async void MessagePinExecute(MessageViewModel message)
+        public async void PinMessage(MessageViewModel message)
         {
             var chat = message.GetChat();
             if (chat == null)
@@ -833,8 +810,7 @@ namespace Telegram.ViewModels
 
         #region Report
 
-        public RelayCommand<MessageViewModel> MessageReportCommand { get; }
-        private async void MessageReportExecute(MessageViewModel message)
+        public async void ReportMessage(MessageViewModel message)
         {
             await ReportAsync(new[] { message.Id });
         }
@@ -843,8 +819,7 @@ namespace Telegram.ViewModels
 
         #region Report false positive
 
-        public RelayCommand<MessageViewModel> MessageReportFalsePositiveCommand { get; }
-        private async void MessageReportFalsePositiveExecute(MessageViewModel message)
+        public async void ReportFalsePositive(MessageViewModel message)
         {
             if (_chat?.Type is ChatTypeSupergroup supergroup)
             {
@@ -857,8 +832,7 @@ namespace Telegram.ViewModels
 
         #region Send now
 
-        public RelayCommand<MessageViewModel> MessageSendNowCommand { get; }
-        private void MessageSendNowExecute(MessageViewModel message)
+        public void SendNowMessage(MessageViewModel message)
         {
             ClientService.Send(new EditMessageSchedulingState(message.ChatId, message.Id, null));
         }
@@ -867,8 +841,7 @@ namespace Telegram.ViewModels
 
         #region Reschedule
 
-        public RelayCommand<MessageViewModel> MessageRescheduleCommand { get; }
-        private async void MessageRescheduleExecute(MessageViewModel message)
+        public async void RescheduleMessage(MessageViewModel message)
         {
             var options = await PickMessageSendOptionsAsync(true);
             if (options?.SchedulingState == null)
@@ -883,8 +856,7 @@ namespace Telegram.ViewModels
 
         #region Translate
 
-        public RelayCommand<MessageViewModel> MessageTranslateCommand { get; }
-        private async void MessageTranslateExecute(MessageViewModel message)
+        public async void TranslateMessage(MessageViewModel message)
         {
             var caption = message.GetCaption();
             if (string.IsNullOrEmpty(caption?.Text))
@@ -1225,8 +1197,7 @@ namespace Telegram.ViewModels
 
         #region Sticker info
 
-        public RelayCommand<MessageViewModel> MessageAddStickerCommand { get; }
-        private void MessageAddStickerExecute(MessageViewModel message)
+        public void AddStickerFromMessage(MessageViewModel message)
         {
             if (message.Content is MessageSticker sticker && sticker.Sticker.SetId != 0)
             {
@@ -1242,8 +1213,7 @@ namespace Telegram.ViewModels
 
         #region Fave sticker
 
-        public RelayCommand<MessageViewModel> MessageFaveStickerCommand { get; }
-        private void MessageFaveStickerExecute(MessageViewModel message)
+        public void AddFavoriteSticker(MessageViewModel message)
         {
             var sticker = message.Content as MessageSticker;
             if (sticker == null)
@@ -1258,8 +1228,7 @@ namespace Telegram.ViewModels
 
         #region Unfave sticker
 
-        public RelayCommand<MessageViewModel> MessageUnfaveStickerCommand { get; }
-        private void MessageUnfaveStickerExecute(MessageViewModel message)
+        public void RemoveFavoriteSticker(MessageViewModel message)
         {
             var sticker = message.Content as MessageSticker;
             if (sticker == null)
@@ -1274,8 +1243,7 @@ namespace Telegram.ViewModels
 
         #region Save file as
 
-        public RelayCommand<MessageViewModel> MessageSaveMediaCommand { get; }
-        private async void MessageSaveMediaExecute(MessageViewModel message)
+        public async void SaveMessageMedia(MessageViewModel message)
         {
             var file = message.GetFile();
             if (file != null)
@@ -1288,8 +1256,7 @@ namespace Telegram.ViewModels
 
         #region Save to GIFs
 
-        public RelayCommand<MessageViewModel> MessageSaveAnimationCommand { get; }
-        private void MessageSaveAnimationExecute(MessageViewModel message)
+        public void SaveMessageAnimation(MessageViewModel message)
         {
             if (message.Content is MessageAnimation animation)
             {
@@ -1305,8 +1272,7 @@ namespace Telegram.ViewModels
 
         #region Save for Notifications
 
-        public RelayCommand<MessageViewModel> MessageSaveSoundCommand { get; }
-        private void MessageSaveSoundExecute(MessageViewModel message)
+        public void SaveMessageNotificationSound(MessageViewModel message)
         {
             if (message.Content is MessageAudio audio)
             {
@@ -1333,8 +1299,7 @@ namespace Telegram.ViewModels
 
         #region Open with
 
-        public RelayCommand<MessageViewModel> MessageOpenWithCommand { get; }
-        private async void MessageOpenWithExecute(MessageViewModel message)
+        public async void OpenMessageWith(MessageViewModel message)
         {
             var file = message.GetFile();
             if (file != null)
@@ -1347,8 +1312,7 @@ namespace Telegram.ViewModels
 
         #region Show in folder
 
-        public RelayCommand<MessageViewModel> MessageOpenFolderCommand { get; }
-        private async void MessageOpenFolderExecute(MessageViewModel message)
+        public async void OpenMessageFolder(MessageViewModel message)
         {
             var file = message.GetFile();
             if (file != null)
@@ -1361,8 +1325,7 @@ namespace Telegram.ViewModels
 
         #region Add contact
 
-        public RelayCommand<MessageViewModel> MessageAddContactCommand { get; }
-        private void MessageAddContactExecute(MessageViewModel message)
+        public void AddToContacts(MessageViewModel message)
         {
             var contact = message.Content as MessageContact;
             if (contact == null)
@@ -1383,7 +1346,6 @@ namespace Telegram.ViewModels
 
         #region Service message
 
-        public RelayCommand<MessageViewModel> MessageServiceCommand { get; }
         public async void MessageServiceExecute(MessageViewModel message)
         {
             if (message.Content is MessageHeaderDate)
@@ -1427,7 +1389,7 @@ namespace Telegram.ViewModels
             }
             else if (message.Content is MessageChatSetTheme)
             {
-                SetThemeExecute();
+                ChangeTheme();
             }
             else if (message.Content is MessageChatChangePhoto chatChangePhoto)
             {
@@ -1508,8 +1470,7 @@ namespace Telegram.ViewModels
 
         #region Unvote poll
 
-        public RelayCommand<MessageViewModel> MessageUnvotePollCommand { get; }
-        private void MessageUnvotePollExecute(MessageViewModel message)
+        public void UnvotePoll(MessageViewModel message)
         {
             var poll = message.Content as MessagePoll;
             if (poll == null)
@@ -1524,8 +1485,7 @@ namespace Telegram.ViewModels
 
         #region Stop poll
 
-        public RelayCommand<MessageViewModel> MessageStopPollCommand { get; }
-        private async void MessageStopPollExecute(MessageViewModel message)
+        public async void StopPoll(MessageViewModel message)
         {
             var poll = message.Content as MessagePoll;
             if (poll == null)
@@ -1546,8 +1506,7 @@ namespace Telegram.ViewModels
 
         #region Show emoji
 
-        public RelayCommand<MessageViewModel> MessageShowEmojiCommand { get; }
-        private async void MessageShowEmojiExecute(MessageViewModel message)
+        public async void ShowMessageEmoji(MessageViewModel message)
         {
             var caption = message.GetCaption();
             if (caption == null)

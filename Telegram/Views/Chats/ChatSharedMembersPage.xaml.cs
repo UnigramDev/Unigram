@@ -62,11 +62,11 @@ namespace Telegram.Views.Chats
 
             if (chat.Type is ChatTypeSupergroup)
             {
-                flyout.CreateFlyoutItem(MemberPromote_Loaded, ViewModel.MemberPromoteCommand, chat.Type, status, member, Strings.SetAsAdmin, new FontIcon { Glyph = Icons.Star });
-                flyout.CreateFlyoutItem(MemberRestrict_Loaded, ViewModel.MemberRestrictCommand, chat.Type, status, member, Strings.KickFromSupergroup, new FontIcon { Glyph = Icons.LockClosed });
+                flyout.CreateFlyoutItem(MemberPromote_Loaded, ViewModel.PromoteMember, chat.Type, status, member, Strings.SetAsAdmin, new FontIcon { Glyph = Icons.Star });
+                flyout.CreateFlyoutItem(MemberRestrict_Loaded, ViewModel.RestrictMember, chat.Type, status, member, Strings.KickFromSupergroup, new FontIcon { Glyph = Icons.LockClosed });
             }
 
-            flyout.CreateFlyoutItem(MemberRemove_Loaded, ViewModel.MemberRemoveCommand, chat.Type, status, member, Strings.KickFromGroup, new FontIcon { Glyph = Icons.Block });
+            flyout.CreateFlyoutItem(MemberRemove_Loaded, ViewModel.RemoveMember, chat.Type, status, member, Strings.KickFromGroup, new FontIcon { Glyph = Icons.Block });
 
             args.ShowAt(flyout, element);
         }

@@ -53,9 +53,6 @@ namespace Telegram.ViewModels.Settings
             Items = new DiffObservableCollection<StickerSetInfo>(new StickerSetInfoDiffHandler());
             ReorderCommand = new RelayCommand<StickerSetInfo>(ReorderExecute);
 
-            StickerSetOpenCommand = new RelayCommand<StickerSetInfo>(StickerSetOpenExecute);
-            StickerSetHideCommand = new RelayCommand<StickerSetInfo>(StickerSetHideExecute);
-            StickerSetRemoveCommand = new RelayCommand<StickerSetInfo>(StickerSetRemoveExecute);
             //StickerSetShareCommand = new RelayCommand<StickerSetInfo>(StickerSetShareExecute);
             //StickerSetCopyCommand = new RelayCommand<StickerSetInfo>(StickerSetCopyExecute);
 
@@ -359,8 +356,7 @@ namespace Telegram.ViewModels.Settings
 
         #region Context menu
 
-        public RelayCommand<StickerSetInfo> StickerSetOpenCommand { get; }
-        private async void StickerSetOpenExecute(StickerSetInfo stickerSet)
+        public async void Open(StickerSetInfo stickerSet)
         {
             if (stickerSet.Name.Equals("tg/recentlyUsed"))
             {
@@ -379,8 +375,7 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        public RelayCommand<StickerSetInfo> StickerSetHideCommand { get; }
-        private async void StickerSetHideExecute(StickerSetInfo stickerSet)
+        public async void Archive(StickerSetInfo stickerSet)
         {
             await ClientService.SendAsync(new ChangeStickerSet(stickerSet.Id, false, true));
             ClientService.Send(new GetArchivedStickerSets(StickerType, 0, 1), result =>
@@ -392,8 +387,7 @@ namespace Telegram.ViewModels.Settings
             });
         }
 
-        public RelayCommand<StickerSetInfo> StickerSetRemoveCommand { get; }
-        private void StickerSetRemoveExecute(StickerSetInfo stickerSet)
+        public void Remove(StickerSetInfo stickerSet)
         {
             ClientService.Send(new ChangeStickerSet(stickerSet.Id, false, false));
         }

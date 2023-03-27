@@ -84,7 +84,7 @@ namespace Telegram.Views.Settings
             var theme = List.ItemFromContainer(element) as ChatTheme;
 
             var flyout = new MenuFlyout();
-            flyout.CreateFlyoutItem(ViewModel.ThemeCreateCommand, theme, Strings.CreateNewThemeMenu, new FontIcon { Glyph = Icons.Color });
+            flyout.CreateFlyoutItem(ViewModel.CreateTheme, theme, Strings.CreateNewThemeMenu, new FontIcon { Glyph = Icons.Color });
 
             //if (!theme.IsOfficial)
             //{

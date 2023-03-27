@@ -60,7 +60,7 @@ namespace Telegram.Views.Supergroups
             var element = sender as FrameworkElement;
             var member = element.Tag as ChatMember;
 
-            flyout.CreateFlyoutItem(ViewModel.MemberUnbanCommand, member, Strings.Unban);
+            flyout.CreateFlyoutItem(ViewModel.UnbanMember, member, Strings.Unban);
 
             args.ShowAt(flyout, element);
         }

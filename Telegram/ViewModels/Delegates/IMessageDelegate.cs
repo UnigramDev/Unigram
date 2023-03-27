@@ -27,7 +27,7 @@ namespace Telegram.ViewModels.Delegates
         bool CanBeDownloaded(object content, File file);
         void DownloadFile(MessageViewModel message, File file);
 
-        void ReplyToMessage(MessageViewModel message);
+        void DoubleClick(MessageViewModel message);
         void ForwardMessage(MessageViewModel message);
 
         void OpenReply(MessageViewModel message);

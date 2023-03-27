@@ -1553,7 +1553,7 @@ namespace Telegram.Views
         {
         }
 
-        public void ReplyToMessage(MessageViewModel message)
+        public void DoubleClick(MessageViewModel message)
         {
         }
 

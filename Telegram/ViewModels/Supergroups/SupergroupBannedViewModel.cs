@@ -17,12 +17,9 @@ namespace Telegram.ViewModels.Supergroups
         public SupergroupBannedViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator, new SupergroupMembersFilterBanned(), query => new SupergroupMembersFilterBanned(query))
         {
-            AddCommand = new RelayCommand(AddExecute);
-            MemberUnbanCommand = new RelayCommand<ChatMember>(MemberUnbanExecute);
         }
 
-        public RelayCommand AddCommand { get; }
-        private void AddExecute()
+        public void Add()
         {
             var chat = _chat;
             if (chat == null)
@@ -35,8 +32,7 @@ namespace Telegram.ViewModels.Supergroups
 
         #region Context menu
 
-        public RelayCommand<ChatMember> MemberUnbanCommand { get; }
-        private async void MemberUnbanExecute(ChatMember member)
+        public async void UnbanMember(ChatMember member)
         {
             var chat = _chat;
             if (chat == null || Members == null)

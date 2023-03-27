@@ -26,7 +26,6 @@ namespace Telegram.ViewModels.Gallery
 
             IsPersonal = isPersonal;
             IsPublic = isPublic;
-
         }
 
         public long Id => _photo.Id;
@@ -48,8 +47,12 @@ namespace Telegram.ViewModels.Gallery
             return _photo?.GetSmall()?.Photo;
         }
 
+        public ChatPhotoSticker Sticker => _photo.Sticker;
+
         public override bool IsVideo => _photo.Animation != null;
         public override bool IsLoop => _photo.Animation != null;
+
+        public override bool HasStickers => _photo.Sticker != null;
 
         public override int Duration => 1;
 

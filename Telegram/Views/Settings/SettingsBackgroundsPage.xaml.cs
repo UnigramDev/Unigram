@@ -51,8 +51,8 @@ namespace Telegram.Views.Settings
 
             var flyout = new MenuFlyout();
 
-            flyout.CreateFlyoutItem(ViewModel.ShareCommand, background, Strings.ShareFile, new FontIcon { Glyph = Icons.Share });
-            flyout.CreateFlyoutItem(ViewModel.DeleteCommand, background, Strings.Delete, new FontIcon { Glyph = Icons.Delete });
+            flyout.CreateFlyoutItem(ViewModel.Share, background, Strings.ShareFile, new FontIcon { Glyph = Icons.Share });
+            flyout.CreateFlyoutItem(ViewModel.Delete, background, Strings.Delete, new FontIcon { Glyph = Icons.Delete });
 
             args.ShowAt(flyout, element);
         }
@@ -78,7 +78,7 @@ namespace Telegram.Views.Settings
         {
             if (e.ClickedItem is Background wallpaper)
             {
-                var confirm = await new BackgroundPopup(wallpaper).ShowQueuedAsync();
+                var confirm = await ViewModel.ShowPopupAsync(new BackgroundPopup(wallpaper));
                 if (confirm == ContentDialogResult.Primary)
                 {
                     await ViewModel.NavigatedToAsync(null, NavigationMode.Refresh, null);

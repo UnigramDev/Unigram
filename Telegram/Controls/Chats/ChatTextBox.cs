@@ -160,7 +160,7 @@ namespace Telegram.Controls.Chats
                 {
                     if (e.Key == VirtualKey.Up && IsEmpty)
                     {
-                        ViewModel.MessageEditLast();
+                        ViewModel.EditLastMessage();
                         e.Handled = true;
                     }
                     else

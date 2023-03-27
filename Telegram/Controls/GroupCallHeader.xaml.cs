@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Windows.Input;
 using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Services;
@@ -208,10 +207,18 @@ namespace Telegram.Controls
             batch.End();
         }
 
-        public ICommand JoinCommand
+        public event RoutedEventHandler JoinClick
         {
-            get => JoinButton.Command;
-            set => JoinButton.Command = Command = value;
+            add
+            {
+                Click += value;
+                JoinButton.Click += value;
+            }
+            remove
+            {
+                Click -= value;
+                JoinButton.Click -= value;
+            }
         }
     }
 }

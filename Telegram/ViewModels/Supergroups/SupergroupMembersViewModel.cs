@@ -21,11 +21,6 @@ namespace Telegram.ViewModels.Supergroups
         public SupergroupMembersViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator, new SupergroupMembersFilterRecent(), query => new SupergroupMembersFilterSearch(query))
         {
-            AddCommand = new RelayCommand(AddExecute);
-
-            MemberPromoteCommand = new RelayCommand<ChatMember>(MemberPromoteExecute);
-            MemberRestrictCommand = new RelayCommand<ChatMember>(MemberRestrictExecute);
-            MemberRemoveCommand = new RelayCommand<ChatMember>(MemberRemoveExecute);
         }
 
         public bool IsEmbedded { get; set; }
@@ -58,8 +53,7 @@ namespace Telegram.ViewModels.Supergroups
             }
         }
 
-        public RelayCommand AddCommand { get; }
-        private async void AddExecute()
+        public async void Add()
         {
             var chat = _chat;
             if (chat == null)
@@ -90,8 +84,7 @@ namespace Telegram.ViewModels.Supergroups
 
         #region Context menu
 
-        public RelayCommand<ChatMember> MemberPromoteCommand { get; }
-        private void MemberPromoteExecute(ChatMember member)
+        public void PromoteMember(ChatMember member)
         {
             var chat = _chat;
             if (chat == null)
@@ -102,8 +95,7 @@ namespace Telegram.ViewModels.Supergroups
             NavigationService.Navigate(typeof(SupergroupEditAdministratorPage), state: NavigationState.GetChatMember(chat.Id, member.MemberId));
         }
 
-        public RelayCommand<ChatMember> MemberRestrictCommand { get; }
-        private void MemberRestrictExecute(ChatMember member)
+        public void RestrictMemeber(ChatMember member)
         {
             var chat = _chat;
             if (chat == null)
@@ -114,8 +106,7 @@ namespace Telegram.ViewModels.Supergroups
             NavigationService.Navigate(typeof(SupergroupEditRestrictedPage), state: NavigationState.GetChatMember(chat.Id, member.MemberId));
         }
 
-        public RelayCommand<ChatMember> MemberRemoveCommand { get; }
-        private async void MemberRemoveExecute(ChatMember member)
+        public async void RemoveMember(ChatMember member)
         {
             var chat = _chat;
             if (chat == null)

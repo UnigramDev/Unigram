@@ -35,7 +35,7 @@ namespace Telegram.ViewModels
     {
         #region Stickers
 
-        public async void StickerSendExecute(Sticker sticker, bool? schedule, bool? silent, string emoji = null, bool reorder = false)
+        public async void SendSticker(Sticker sticker, bool? schedule, bool? silent, string emoji = null, bool reorder = false)
         {
             Delegate?.HideStickers();
 
@@ -69,28 +69,24 @@ namespace Telegram.ViewModels
             await SendMessageAsync(chat, reply, input, options);
         }
 
-        public RelayCommand<Sticker> StickerViewCommand { get; }
-        private void StickerViewExecute(Sticker sticker)
+        public void ViewSticker(Sticker sticker)
         {
             Delegate?.HideStickers();
 
             OpenSticker(sticker);
         }
 
-        public RelayCommand<Sticker> StickerFaveCommand { get; }
-        private void StickerFaveExecute(Sticker sticker)
+        public void AddFavoriteSticker(Sticker sticker)
         {
             ClientService.Send(new AddFavoriteSticker(new InputFileId(sticker.StickerValue.Id)));
         }
 
-        public RelayCommand<Sticker> StickerUnfaveCommand { get; }
-        private void StickerUnfaveExecute(Sticker sticker)
+        public void RemoveFavoriteSticker(Sticker sticker)
         {
             ClientService.Send(new RemoveFavoriteSticker(new InputFileId(sticker.StickerValue.Id)));
         }
 
-        public RelayCommand<Sticker> StickerDeleteCommand { get; }
-        private void StickerDeleteExecute(Sticker sticker)
+        public void RemoveRecentSticker(Sticker sticker)
         {
             ClientService.Send(new RemoveRecentSticker(false, new InputFileId(sticker.StickerValue.Id)));
         }
@@ -99,13 +95,12 @@ namespace Telegram.ViewModels
 
         #region Animations
 
-        public RelayCommand<Animation> AnimationSendCommand { get; }
-        public void AnimationSendExecute(Animation animation)
+        public void SendAnimation(Animation animation)
         {
-            AnimationSendExecute(animation, null, null);
+            SendAnimation(animation, null, null);
         }
 
-        public async void AnimationSendExecute(Animation animation, bool? schedule, bool? silent)
+        public async void SendAnimation(Animation animation, bool? schedule, bool? silent)
         {
             Delegate?.HideStickers();
 
@@ -133,14 +128,12 @@ namespace Telegram.ViewModels
             await SendMessageAsync(chat, reply, input, options);
         }
 
-        public RelayCommand<Animation> AnimationDeleteCommand { get; }
-        private void AnimationDeleteExecute(Animation animation)
+        public void DeleteAnimation(Animation animation)
         {
             ClientService.Send(new RemoveSavedAnimation(new InputFileId(animation.AnimationValue.Id)));
         }
 
-        public RelayCommand<Animation> AnimationSaveCommand { get; }
-        private void AnimationSaveExecute(Animation animation)
+        public void SaveAnimation(Animation animation)
         {
             ClientService.Send(new AddSavedAnimation(new InputFileId(animation.AnimationValue.Id)));
         }
@@ -337,8 +330,7 @@ namespace Telegram.ViewModels
             return chat.Permissions;
         }
 
-        public RelayCommand SendDocumentCommand { get; }
-        private async void SendDocumentExecute()
+        public async void SendDocument()
         {
             var chat = _chat;
             if (chat == null)
@@ -582,8 +574,7 @@ namespace Telegram.ViewModels
             await SendMessageAsync(chat, reply, input, options);
         }
 
-        public RelayCommand SendCameraCommand { get; }
-        private async void SendCameraExecute()
+        public async void SendCamera()
         {
             var capture = new CameraCaptureUI();
             capture.PhotoSettings.AllowCropping = false;
@@ -599,8 +590,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public RelayCommand SendMediaCommand { get; }
-        private async void SendMediaExecute()
+        public async void SendMedia()
         {
             try
             {
@@ -618,8 +608,7 @@ namespace Telegram.ViewModels
             catch { }
         }
 
-        public RelayCommand SendContactCommand { get; }
-        private async void SendContactExecute()
+        public async void SendContact()
         {
             var chat = _chat;
             if (chat == null)
@@ -742,8 +731,7 @@ namespace Telegram.ViewModels
             return response;
         }
 
-        public RelayCommand SendLocationCommand { get; }
-        private async void SendLocationExecute()
+        public async void SendLocation()
         {
             var chat = _chat;
             if (chat == null)
@@ -772,8 +760,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public RelayCommand SendPollCommand { get; }
-        private async void SendPollExecute()
+        public async void SendPoll()
         {
             await SendPollAsync(false, false, _chat?.Type is ChatTypeSupergroup super && super.IsChannel);
         }
@@ -1018,8 +1005,7 @@ namespace Telegram.ViewModels
 
 
 
-        public RelayCommand EditDocumentCommand { get; }
-        private async void EditDocumentExecute()
+        public async void EditDocument()
         {
             var header = _composerHeader;
             if (header?.EditingMessage == null)
@@ -1049,8 +1035,7 @@ namespace Telegram.ViewModels
             catch { }
         }
 
-        public RelayCommand EditMediaCommand { get; }
-        private async void EditMediaExecute()
+        public async void EditMedia()
         {
             var header = _composerHeader;
             if (header?.EditingMessage == null)
@@ -1076,8 +1061,7 @@ namespace Telegram.ViewModels
             catch { }
         }
 
-        public RelayCommand EditCurrentCommand { get; }
-        private async void EditCurrentExecute()
+        public async void EditCurrent()
         {
             var header = _composerHeader;
             if (header?.EditingMessage == null)

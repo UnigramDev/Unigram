@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
-using System.Windows.Input;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI;
@@ -257,16 +256,16 @@ namespace Telegram.Controls.Messages
             batch.End();
         }
 
-        public ICommand HideCommand
+        public event RoutedEventHandler HideClick
         {
-            get => HideButton.Command;
-            set => HideButton.Command = value;
+            add => HideButton.Click += value;
+            remove => HideButton.Click -= value;
         }
 
-        public ICommand ListCommand
+        public event RoutedEventHandler ListClick
         {
-            get => ListButton.Command;
-            set => ListButton.Command = value;
+            add => ListButton.Click += value;
+            remove => ListButton.Click -= value;
         }
 
         #region Overrides

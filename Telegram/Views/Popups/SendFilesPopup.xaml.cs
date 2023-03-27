@@ -663,12 +663,12 @@ namespace Telegram.Views.Popups
             var media = Items.All(x => x is StoragePhoto or StorageVideo);
             if (media && !IsFilesSelected)
             {
-                flyout.CreateFlyoutItem(new RelayCommand(() => Spoiler = !Spoiler), Spoiler ? Strings.DisablePhotoSpoiler : Strings.EnablePhotoSpoiler, new FontIcon { Glyph = Icons.TabInPrivate });
+                flyout.CreateFlyoutItem(() => Spoiler = !Spoiler, Spoiler ? Strings.DisablePhotoSpoiler : Strings.EnablePhotoSpoiler, new FontIcon { Glyph = Icons.TabInPrivate });
                 flyout.CreateFlyoutSeparator();
             }
 
-            flyout.CreateFlyoutItem(new RelayCommand(() => { Silent = true; Hide(ContentDialogResult.Primary); }), Strings.SendWithoutSound, new FontIcon { Glyph = Icons.AlertOff });
-            flyout.CreateFlyoutItem(new RelayCommand(() => { Schedule = true; Hide(ContentDialogResult.Primary); }), self ? Strings.SetReminder : Strings.ScheduleMessage, new FontIcon { Glyph = Icons.CalendarClock });
+            flyout.CreateFlyoutItem(() => { Silent = true; Hide(ContentDialogResult.Primary); }, Strings.SendWithoutSound, new FontIcon { Glyph = Icons.AlertOff });
+            flyout.CreateFlyoutItem(() => { Schedule = true; Hide(ContentDialogResult.Primary); }, self ? Strings.SetReminder : Strings.ScheduleMessage, new FontIcon { Glyph = Icons.CalendarClock });
 
             flyout.ShowAt(sender as FrameworkElement, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedRight });
         }

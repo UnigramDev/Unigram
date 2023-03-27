@@ -27,6 +27,11 @@ namespace Telegram.Converters
         public const string AttachArrowRight = "\uE918";
         public const string AttachArrowRight24 = "\uE9DD";
 
+        // TODO: wrong name
+        public const string Location = "\uE1C4";
+        public const string Poll = "\uE91F";
+        public const string Crop = "\uE7A8";
+
         public const string Expand = "\uF164";
         public const string Collapse = "\uF166";
 

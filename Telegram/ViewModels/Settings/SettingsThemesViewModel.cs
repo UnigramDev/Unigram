@@ -39,14 +39,6 @@ namespace Telegram.ViewModels.Settings
             Items = new MvxObservableCollection<ThemeInfoBase>();
             Custom = new MvxObservableCollection<ThemeInfoBase>();
             Accents = new MvxObservableCollection<ThemeAccentInfo>();
-
-            NewThemeCommand = new RelayCommand(NewThemeExecute);
-            AccentThemeCommand = new RelayCommand(AccentThemeExecute);
-
-            ThemeCreateCommand = new RelayCommand<ThemeInfoBase>(ThemeCreateExecute);
-            ThemeShareCommand = new RelayCommand<ThemeCustomInfo>(ThemeShareExecute);
-            ThemeEditCommand = new RelayCommand<ThemeCustomInfo>(ThemeEditExecute);
-            ThemeDeleteCommand = new RelayCommand<ThemeCustomInfo>(ThemeDeleteExecute);
         }
 
         public MvxObservableCollection<ThemeInfoBase> Items { get; private set; }
@@ -159,8 +151,7 @@ namespace Telegram.ViewModels.Settings
 
 
 
-        public RelayCommand NewThemeCommand { get; }
-        private void NewThemeExecute()
+        public void NewTheme()
         {
             var existing = Items.FirstOrDefault(x =>
             {
@@ -176,12 +167,11 @@ namespace Telegram.ViewModels.Settings
 
             if (existing != null)
             {
-                ThemeCreateExecute(existing);
+                CreateTheme(existing);
             }
         }
 
-        public RelayCommand AccentThemeCommand { get; }
-        private async void AccentThemeExecute()
+        public async void AccentTheme()
         {
             var type = Settings.Appearance[Settings.Appearance.RequestedTheme].Type;
             if (ThemeAccentInfo.IsAccent(type))
@@ -205,8 +195,7 @@ namespace Telegram.ViewModels.Settings
 
         #region Themes
 
-        public RelayCommand<ThemeInfoBase> ThemeCreateCommand { get; }
-        private async void ThemeCreateExecute(ThemeInfoBase theme)
+        public async void CreateTheme(ThemeInfoBase theme)
         {
             if (theme != null)
             {
@@ -215,14 +204,12 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        public RelayCommand<ThemeCustomInfo> ThemeShareCommand { get; }
-        private async void ThemeShareExecute(ThemeCustomInfo theme)
+        public async void ShareTheme(ThemeCustomInfo theme)
         {
             await SharePopup.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(theme.Path), null, false, null));
         }
 
-        public RelayCommand<ThemeCustomInfo> ThemeEditCommand { get; }
-        private async void ThemeEditExecute(ThemeCustomInfo theme)
+        public async void EditTheme(ThemeCustomInfo theme)
         {
             await SetThemeAsync(theme);
 
@@ -233,8 +220,7 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        public RelayCommand<ThemeCustomInfo> ThemeDeleteCommand { get; }
-        private async void ThemeDeleteExecute(ThemeCustomInfo theme)
+        public async void DeleteTheme(ThemeCustomInfo theme)
         {
             var confirm = await ShowPopupAsync(Strings.DeleteThemeAlert, Strings.AppName, Strings.Delete, Strings.Cancel);
             if (confirm != ContentDialogResult.Primary)

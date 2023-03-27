@@ -29,7 +29,7 @@
                 <controls:SettingsPanel IsHeader="True">
                     <controls:HeaderedControl>
                         <controls:BadgeButton Content="{CustomResource AddProxy}"
-                                              Command="{x:Bind ViewModel.AddCommand}" />
+                                              Click="{x:Bind ViewModel.Add}" />
                     </controls:HeaderedControl>
 
                     <TextBlock Text="{CustomResource ProxyConnections}"

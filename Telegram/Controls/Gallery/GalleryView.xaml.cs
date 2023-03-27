@@ -877,12 +877,12 @@ namespace Telegram.Controls.Gallery
             }
             else if (args.VirtualKey is VirtualKey.C && args.OnlyControl)
             {
-                ViewModel?.CopyCommand.Execute();
+                ViewModel?.Copy();
                 args.Handled = true;
             }
             else if (args.VirtualKey is VirtualKey.S && args.OnlyControl)
             {
-                ViewModel?.SaveCommand.Execute();
+                ViewModel?.Save();
                 args.Handled = true;
             }
             else if (args.VirtualKey is VirtualKey.F11 || (args.VirtualKey is VirtualKey.F && args.OnlyControl))
@@ -1132,12 +1132,12 @@ namespace Telegram.Controls.Gallery
                 flyout.CreateFlyoutSeparator();
             }
 
-            flyout.CreateFlyoutItem(x => item.CanView, viewModel.ViewCommand, item, Strings.ShowInChat, new FontIcon { Glyph = Icons.Comment });
-            flyout.CreateFlyoutItem(x => item.CanShare, viewModel.ForwardCommand, item, Strings.Forward, new FontIcon { Glyph = Icons.Share });
-            flyout.CreateFlyoutItem(x => item.CanCopy, viewModel.CopyCommand, item, Strings.Copy, new FontIcon { Glyph = Icons.DocumentCopy }, Windows.System.VirtualKey.C);
-            flyout.CreateFlyoutItem(x => item.CanSave, viewModel.SaveCommand, item, Strings.SaveAs, new FontIcon { Glyph = Icons.SaveAs }, Windows.System.VirtualKey.S);
-            flyout.CreateFlyoutItem(x => viewModel.CanOpenWith, viewModel.OpenWithCommand, item, Strings.OpenInExternalApp, new FontIcon { Glyph = Icons.OpenIn });
-            flyout.CreateFlyoutItem(x => viewModel.CanDelete, viewModel.DeleteCommand, item, Strings.Delete, new FontIcon { Glyph = Icons.Delete });
+            flyout.CreateFlyoutItem(() => item.CanView, viewModel.View, Strings.ShowInChat, new FontIcon { Glyph = Icons.Comment });
+            flyout.CreateFlyoutItem(() => item.CanShare, viewModel.Forward, Strings.Forward, new FontIcon { Glyph = Icons.Share });
+            flyout.CreateFlyoutItem(() => item.CanCopy, viewModel.Copy, Strings.Copy, new FontIcon { Glyph = Icons.DocumentCopy }, VirtualKey.C);
+            flyout.CreateFlyoutItem(() => item.CanSave, viewModel.Save, Strings.SaveAs, new FontIcon { Glyph = Icons.SaveAs }, VirtualKey.S);
+            flyout.CreateFlyoutItem(() => viewModel.CanOpenWith, viewModel.OpenWith, Strings.OpenInExternalApp, new FontIcon { Glyph = Icons.OpenIn });
+            flyout.CreateFlyoutItem(() => viewModel.CanDelete, viewModel.Delete, Strings.Delete, new FontIcon { Glyph = Icons.Delete });
         }
 
         #endregion

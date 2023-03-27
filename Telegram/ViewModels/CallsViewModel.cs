@@ -25,8 +25,6 @@ namespace Telegram.ViewModels
             : base(clientService, settingsService, aggregator)
         {
             Items = new ItemsCollection(clientService);
-
-            CallDeleteCommand = new RelayCommand<TLCallGroup>(CallDeleteExecute);
         }
 
         public ItemsCollection Items { get; private set; }
@@ -122,8 +120,7 @@ namespace Telegram.ViewModels
 
         #region Context menu
 
-        public RelayCommand<TLCallGroup> CallDeleteCommand { get; }
-        private async void CallDeleteExecute(TLCallGroup group)
+        public async void DeleteCall(TLCallGroup group)
         {
             var popup = new MessagePopup
             {

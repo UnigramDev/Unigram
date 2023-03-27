@@ -7,7 +7,6 @@
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Telegram.Collections;
-using Telegram.Common;
 using Telegram.Converters;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -25,7 +24,6 @@ namespace Telegram.ViewModels.Settings
         public SettingsNotificationsExceptionsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            RemoveCommand = new RelayCommand<Chat>(RemoveExecute);
         }
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -120,8 +118,7 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        public RelayCommand<Chat> RemoveCommand { get; }
-        private void RemoveExecute(Chat chat)
+        public void Remove(Chat chat)
         {
             Items.Remove(chat);
 

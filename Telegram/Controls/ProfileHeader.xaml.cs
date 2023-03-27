@@ -583,7 +583,7 @@ namespace Telegram.Controls
                 {
                     var item = new ToggleMenuFlyoutItem();
                     item.Text = text;
-                    item.IsChecked = parameter == null ? false : value == parameter;
+                    item.IsChecked = parameter != null && value == parameter;
                     item.CommandParameter = parameter;
                     item.Command = ViewModel.SetTimerCommand;
                     item.Icon = new FontIcon { Glyph = icon, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
@@ -895,7 +895,7 @@ namespace Telegram.Controls
             var muted = ViewModel.ClientService.Notifications.GetMutedFor(chat) > 0;
             if (muted)
             {
-                ViewModel.ToggleMuteCommand.Execute();
+                ViewModel.Unmute();
             }
             else
             {
@@ -910,11 +910,11 @@ namespace Telegram.Controls
                         new FontIcon { Glyph = silent ? Icons.MusicNote2 : Icons.MusicNoteOff2 });
                 }
 
-                flyout.CreateFlyoutItem(ViewModel.MuteForCommand, 60 * 60, Strings.MuteFor1h, new FontIcon { Glyph = Icons.ClockAlarmHour });
-                flyout.CreateFlyoutItem(ViewModel.MuteForCommand, null, Strings.MuteForPopup, new FontIcon { Glyph = Icons.AlertSnooze });
+                flyout.CreateFlyoutItem<int?>(ViewModel.MuteFor, 60 * 60, Strings.MuteFor1h, new FontIcon { Glyph = Icons.ClockAlarmHour });
+                flyout.CreateFlyoutItem<int?>(ViewModel.MuteFor, null, Strings.MuteForPopup, new FontIcon { Glyph = Icons.AlertSnooze });
 
                 var toggle = flyout.CreateFlyoutItem(
-                    ViewModel.ToggleMuteCommand,
+                    muted ? ViewModel.Unmute : ViewModel.Mute,
                     muted ? Strings.UnmuteNotifications : Strings.MuteNotifications,
                     new FontIcon { Glyph = muted ? Icons.Speaker : Icons.SpeakerOff });
 

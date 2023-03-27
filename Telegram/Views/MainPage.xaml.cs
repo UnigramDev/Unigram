@@ -1801,7 +1801,7 @@ namespace Telegram.Views
             var element = sender as FrameworkElement;
             var chat = element.Tag as Chat;
 
-            flyout.CreateFlyoutItem(_ => true, ViewModel.Chats.TopChatDeleteCommand, chat, Strings.Delete, new FontIcon { Glyph = Icons.Delete });
+            flyout.CreateFlyoutItem(_ => true, ViewModel.Chats.DeleteTopChat, chat, Strings.Delete, new FontIcon { Glyph = Icons.Delete });
 
             args.ShowAt(flyout, element);
         }
@@ -1813,17 +1813,9 @@ namespace Telegram.Views
             var element = sender as FrameworkElement;
             var call = element.Tag as TLCallGroup;
 
-            flyout.CreateFlyoutItem(_ => true, ViewModel.Calls.CallDeleteCommand, call, Strings.Delete, new FontIcon { Glyph = Icons.Delete });
+            flyout.CreateFlyoutItem(ViewModel.Calls.DeleteCall, call, Strings.Delete, new FontIcon { Glyph = Icons.Delete });
 
             args.ShowAt(flyout, element);
-        }
-
-
-
-
-        private Visibility CallDelete_Loaded(TLCallGroup group)
-        {
-            return Visibility.Visible;
         }
 
         #endregion
@@ -2488,16 +2480,16 @@ namespace Telegram.Views
 
             if (filter.ChatFilterId == Constants.ChatListMain)
             {
-                flyout.CreateFlyoutItem(ViewModel.FilterEditCommand, filter, Strings.FilterEditAll, new FontIcon { Glyph = Icons.Edit });
-                flyout.CreateFlyoutItem(ViewModel.FilterMarkAsReadCommand, filter, Strings.MarkAsRead, new FontIcon { Glyph = Icons.MarkAsRead });
+                flyout.CreateFlyoutItem(ViewModel.EditFilter, filter, Strings.FilterEditAll, new FontIcon { Glyph = Icons.Edit });
+                flyout.CreateFlyoutItem(ViewModel.MarkFilterAsRead, filter, Strings.MarkAsRead, new FontIcon { Glyph = Icons.MarkAsRead });
             }
             else
             {
-                flyout.CreateFlyoutItem(ViewModel.FilterEditCommand, filter, Strings.FilterEdit, new FontIcon { Glyph = Icons.Edit });
-                flyout.CreateFlyoutItem(ViewModel.FilterMarkAsReadCommand, filter, Strings.MarkAsRead, new FontIcon { Glyph = Icons.MarkAsRead });
-                flyout.CreateFlyoutItem(ViewModel.FilterAddCommand, filter, Strings.FilterAddChats, new FontIcon { Glyph = Icons.Add });
+                flyout.CreateFlyoutItem(ViewModel.EditFilter, filter, Strings.FilterEdit, new FontIcon { Glyph = Icons.Edit });
+                flyout.CreateFlyoutItem(ViewModel.MarkFilterAsRead, filter, Strings.MarkAsRead, new FontIcon { Glyph = Icons.MarkAsRead });
+                flyout.CreateFlyoutItem(ViewModel.AddToFilter, filter, Strings.FilterAddChats, new FontIcon { Glyph = Icons.Add });
                 flyout.CreateFlyoutSeparator();
-                flyout.CreateFlyoutItem(ViewModel.FilterDeleteCommand, filter, Strings.Delete, new FontIcon { Glyph = Icons.Delete });
+                flyout.CreateFlyoutItem(ViewModel.DeleteFilter, filter, Strings.Delete, new FontIcon { Glyph = Icons.Delete });
             }
 
             flyout.ShowAt(element, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft });
@@ -2525,15 +2517,15 @@ namespace Telegram.Views
             //    flyout.CreateFlyoutItem(new RelayCommand(ToggleArchive), Strings.AccDescrCollapsePanel, new FontIcon { Glyph = Icons.Collapse });
             //}
 
-            flyout.CreateFlyoutItem(new RelayCommand(ToggleArchive), Strings.ArchiveMoveToMainMenu, new FontIcon { Glyph = Icons.Collapse });
-            flyout.CreateFlyoutItem(ViewModel.FilterMarkAsReadCommand, ChatFilterViewModel.Archive, Strings.MarkAllAsRead, new FontIcon { Glyph = Icons.MarkAsRead });
+            flyout.CreateFlyoutItem(ToggleArchive, Strings.ArchiveMoveToMainMenu, new FontIcon { Glyph = Icons.Collapse });
+            flyout.CreateFlyoutItem(ViewModel.MarkFilterAsRead, ChatFilterViewModel.Archive, Strings.MarkAllAsRead, new FontIcon { Glyph = Icons.MarkAsRead });
 
             args.ShowAt(flyout, element);
         }
 
         public async void ToggleArchive()
         {
-            ViewModel.ToggleArchiveCommand.Execute();
+            ViewModel.ToggleArchive();
 
             ArchivedChatsPanel.Visibility = Visibility.Visible;
             //ArchivedChatsCompactPanel.Visibility = Visibility.Visible;
@@ -3173,12 +3165,12 @@ namespace Telegram.Views
             }
 
             var muted = ViewModel.ClientService.Notifications.GetMutedFor(chat) > 0;
-            flyout.CreateFlyoutItem(DialogArchive_Loaded, viewModel.ChatArchiveCommand, chat, chat.Positions.Any(x => x.List is ChatListArchive) ? Strings.Unarchive : Strings.Archive, new FontIcon { Glyph = Icons.Archive });
-            flyout.CreateFlyoutItem(DialogPin_Loaded, viewModel.ChatPinCommand, chat, position.IsPinned ? Strings.UnpinFromTop : Strings.PinToTop, new FontIcon { Glyph = position.IsPinned ? Icons.PinOff : Icons.Pin });
+            flyout.CreateFlyoutItem(DialogArchive_Loaded, viewModel.ArchiveChat, chat, chat.Positions.Any(x => x.List is ChatListArchive) ? Strings.Unarchive : Strings.Archive, new FontIcon { Glyph = Icons.Archive });
+            flyout.CreateFlyoutItem(DialogPin_Loaded, viewModel.PinChat, chat, position.IsPinned ? Strings.UnpinFromTop : Strings.PinToTop, new FontIcon { Glyph = position.IsPinned ? Icons.PinOff : Icons.Pin });
 
             if (viewModel.Items.ChatList is ChatListFilter chatListFilter)
             {
-                flyout.CreateFlyoutItem(viewModel.FolderRemoveCommand, (chatListFilter.ChatFilterId, chat), Strings.FilterRemoveFrom, new FontIcon { Glyph = Icons.FolderMove });
+                flyout.CreateFlyoutItem(viewModel.RemoveFromFolder, (chatListFilter.ChatFilterId, chat), Strings.FilterRemoveFrom, new FontIcon { Glyph = Icons.FolderMove });
             }
             else
             {
@@ -3199,14 +3191,14 @@ namespace Telegram.Views
                             var icon = Icons.ParseFilter(filter.IconName);
                             var glyph = Icons.FilterToGlyph(icon);
 
-                            item.CreateFlyoutItem(viewModel.FolderAddCommand, (filter.Id, chat), filter.Title, new FontIcon { Glyph = glyph.Item1 });
+                            item.CreateFlyoutItem(viewModel.AddToFolder, (filter.Id, chat), filter.Title, new FontIcon { Glyph = glyph.Item1 });
                         }
                     }
 
                     if (filters.Count < 10 && item.Items.Count > 0)
                     {
                         item.CreateFlyoutSeparator();
-                        item.CreateFlyoutItem(viewModel.FolderCreateCommand, chat, Strings.CreateNewFilter, new FontIcon { Glyph = Icons.Add });
+                        item.CreateFlyoutItem(viewModel.CreateFolder, chat, Strings.CreateNewFilter, new FontIcon { Glyph = Icons.Add });
                     }
 
                     if (item.Items.Count > 0)
@@ -3231,11 +3223,11 @@ namespace Telegram.Views
                         new FontIcon { Glyph = silent ? Icons.MusicNote2 : Icons.MusicNoteOff2 });
                 }
 
-                mute.CreateFlyoutItem(ViewModel.Chats.ChatMuteForCommand, Tuple.Create<Chat, int?>(chat, 60 * 60), Strings.MuteFor1h, new FontIcon { Glyph = Icons.ClockAlarmHour });
-                mute.CreateFlyoutItem(ViewModel.Chats.ChatMuteForCommand, Tuple.Create<Chat, int?>(chat, null), Strings.MuteForPopup, new FontIcon { Glyph = Icons.AlertSnooze });
+                mute.CreateFlyoutItem(ViewModel.Chats.MuteChatFor, Tuple.Create<Chat, int?>(chat, 60 * 60), Strings.MuteFor1h, new FontIcon { Glyph = Icons.ClockAlarmHour });
+                mute.CreateFlyoutItem(ViewModel.Chats.MuteChatFor, Tuple.Create<Chat, int?>(chat, null), Strings.MuteForPopup, new FontIcon { Glyph = Icons.AlertSnooze });
 
                 var toggle = mute.CreateFlyoutItem(
-                    ViewModel.Chats.ChatNotifyCommand,
+                    ViewModel.Chats.NotifyChat,
                     chat,
                     muted ? Strings.UnmuteNotifications : Strings.MuteNotifications,
                     new FontIcon { Glyph = muted ? Icons.Speaker : Icons.SpeakerOff });
@@ -3249,16 +3241,16 @@ namespace Telegram.Views
 
             }
 
-            flyout.CreateFlyoutItem(DialogMark_Loaded, viewModel.ChatMarkCommand, chat, chat.IsUnread() ? Strings.MarkAsRead : Strings.MarkAsUnread, new FontIcon { Glyph = chat.IsUnread() ? Icons.MarkAsRead : Icons.MarkAsUnread, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily });
-            flyout.CreateFlyoutItem(DialogClear_Loaded, viewModel.ChatClearCommand, chat, Strings.ClearHistory, new FontIcon { Glyph = Icons.Broom });
-            flyout.CreateFlyoutItem(DialogDelete_Loaded, viewModel.ChatDeleteCommand, chat, DialogDelete_Text(chat), new FontIcon { Glyph = Icons.Delete });
+            flyout.CreateFlyoutItem(DialogMark_Loaded, viewModel.MarkChatAsRead, chat, chat.IsUnread() ? Strings.MarkAsRead : Strings.MarkAsUnread, new FontIcon { Glyph = chat.IsUnread() ? Icons.MarkAsRead : Icons.MarkAsUnread, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily });
+            flyout.CreateFlyoutItem(DialogClear_Loaded, viewModel.ClearChat, chat, Strings.ClearHistory, new FontIcon { Glyph = Icons.Broom });
+            flyout.CreateFlyoutItem(DialogDelete_Loaded, viewModel.DeleteChat, chat, DialogDelete_Text(chat), new FontIcon { Glyph = Icons.Delete });
 
             if (viewModel.SelectionMode != ListViewSelectionMode.Multiple)
             {
                 flyout.CreateFlyoutSeparator();
-                flyout.CreateFlyoutItem(viewModel.ChatOpenCommand, chat, "Open in new window", new FontIcon { Glyph = Icons.WindowNew });
+                flyout.CreateFlyoutItem(viewModel.OpenChat, chat, Strings.OpenInNewWindow, new FontIcon { Glyph = Icons.WindowNew });
                 flyout.CreateFlyoutSeparator();
-                flyout.CreateFlyoutItem(viewModel.ChatSelectCommand, chat, Strings.Select, new FontIcon { Glyph = Icons.CheckmarkCircle });
+                flyout.CreateFlyoutItem(viewModel.SelectChat, chat, Strings.Select, new FontIcon { Glyph = Icons.CheckmarkCircle });
             }
 
             args.ShowAt(flyout, element);
@@ -3418,38 +3410,38 @@ namespace Telegram.Views
 
             if (canManage && topic.Info.IsGeneral)
             {
-                flyout.CreateFlyoutItem(viewModel.TopicHideCommand, topic, topic.Info.IsHidden ? Strings.UnhideFromTop : Strings.HideOnTop, new FontIcon { Glyph = topic.IsPinned ? Icons.PinOff : Icons.Pin });
+                flyout.CreateFlyoutItem(viewModel.HideTopic, topic, topic.Info.IsHidden ? Strings.UnhideFromTop : Strings.HideOnTop, new FontIcon { Glyph = topic.IsPinned ? Icons.PinOff : Icons.Pin });
             }
 
             if (canManage)
             {
-                flyout.CreateFlyoutItem(viewModel.TopicPinCommand, topic, topic.IsPinned ? Strings.UnpinFromTop : Strings.PinToTop, new FontIcon { Glyph = topic.IsPinned ? Icons.PinOff : Icons.Pin });
+                flyout.CreateFlyoutItem(viewModel.PinTopic, topic, topic.IsPinned ? Strings.UnpinFromTop : Strings.PinToTop, new FontIcon { Glyph = topic.IsPinned ? Icons.PinOff : Icons.Pin });
             }
 
             var muted = ViewModel.ClientService.Notifications.GetMutedFor(chat, topic) > 0;
-            flyout.CreateFlyoutItem(viewModel.TopicNotifyCommand, topic, muted ? Strings.Unmute : Strings.Mute, new FontIcon { Glyph = topic.IsPinned ? Icons.Alert : Icons.AlertOff });
+            flyout.CreateFlyoutItem(viewModel.NotifyTopic, topic, muted ? Strings.Unmute : Strings.Mute, new FontIcon { Glyph = topic.IsPinned ? Icons.Alert : Icons.AlertOff });
 
             if (canManage)
             {
-                flyout.CreateFlyoutItem(viewModel.TopicCloseCommand, topic, topic.Info.IsClosed ? Strings.RestartTopic : Strings.CloseTopic, new FontIcon { Glyph = topic.Info.IsClosed ? Icons.PlayCircle : Icons.HandRight });
+                flyout.CreateFlyoutItem(viewModel.CloseTopic, topic, topic.Info.IsClosed ? Strings.RestartTopic : Strings.CloseTopic, new FontIcon { Glyph = topic.Info.IsClosed ? Icons.PlayCircle : Icons.HandRight });
             }
 
             if (topic.UnreadCount > 0)
             {
-                flyout.CreateFlyoutItem(viewModel.TopicMarkCommand, topic, Strings.MarkAsRead, new FontIcon { Glyph = Icons.MarkAsRead });
+                flyout.CreateFlyoutItem(viewModel.MarkTopicAsRead, topic, Strings.MarkAsRead, new FontIcon { Glyph = Icons.MarkAsRead });
             }
 
             if (canManage)
             {
-                flyout.CreateFlyoutItem(viewModel.TopicDeleteCommand, topic, Strings.Delete, new FontIcon { Glyph = Icons.Delete });
+                flyout.CreateFlyoutItem(viewModel.DeleteTopic, topic, Strings.Delete, new FontIcon { Glyph = Icons.Delete });
             }
 
             if (viewModel.SelectionMode != ListViewSelectionMode.Multiple)
             {
                 flyout.CreateFlyoutSeparator();
-                flyout.CreateFlyoutItem(viewModel.ChatOpenCommand, topic, "Open in new window", new FontIcon { Glyph = Icons.WindowNew });
+                flyout.CreateFlyoutItem(viewModel.OpenTopic, topic, Strings.OpenInNewWindow, new FontIcon { Glyph = Icons.WindowNew });
                 flyout.CreateFlyoutSeparator();
-                flyout.CreateFlyoutItem(viewModel.TopicSelectCommand, topic, Strings.Select, new FontIcon { Glyph = Icons.CheckmarkCircle });
+                flyout.CreateFlyoutItem(viewModel.SelectTopic, topic, Strings.Select, new FontIcon { Glyph = Icons.CheckmarkCircle });
             }
 
             args.ShowAt(flyout, element);

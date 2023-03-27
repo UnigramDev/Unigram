@@ -29,12 +29,6 @@ namespace Telegram.ViewModels.Folders
 
             Items = new MvxObservableCollection<ChatFilterInfo>();
             Recommended = new MvxObservableCollection<RecommendedChatFilter>();
-
-            RecommendCommand = new RelayCommand<RecommendedChatFilter>(RecommendExecute);
-            EditCommand = new RelayCommand<ChatFilterInfo>(EditExecute);
-            DeleteCommand = new RelayCommand<ChatFilterInfo>(DeleteExecute);
-
-            CreateCommand = new RelayCommand(CreateExecute);
         }
 
         public MvxObservableCollection<ChatFilterInfo> Items { get; private set; }
@@ -123,15 +117,13 @@ namespace Telegram.ViewModels.Folders
             });
         }
 
-        public RelayCommand<RecommendedChatFilter> RecommendCommand { get; }
-        private void RecommendExecute(RecommendedChatFilter filter)
+        public void AddRecommended(RecommendedChatFilter filter)
         {
             Recommended.Remove(filter);
             ClientService.Send(new CreateChatFilter(filter.Filter));
         }
 
-        public RelayCommand<ChatFilterInfo> EditCommand { get; }
-        private void EditExecute(ChatFilterInfo filter)
+        public void Edit(ChatFilterInfo filter)
         {
             var index = Items.IndexOf(filter);
             if (index < ClientService.Options.ChatFilterCountMax)
@@ -144,8 +136,7 @@ namespace Telegram.ViewModels.Folders
             }
         }
 
-        public RelayCommand<ChatFilterInfo> DeleteCommand { get; }
-        private async void DeleteExecute(ChatFilterInfo filter)
+        public async void Delete(ChatFilterInfo filter)
         {
             var confirm = await ShowPopupAsync(Strings.FilterDeleteAlert, Strings.FilterDelete, Strings.Delete, Strings.Cancel);
             if (confirm != ContentDialogResult.Primary)
@@ -156,8 +147,7 @@ namespace Telegram.ViewModels.Folders
             ClientService.Send(new DeleteChatFilter(filter.Id));
         }
 
-        public RelayCommand CreateCommand { get; }
-        private void CreateExecute()
+        public void Create()
         {
             if (Items.Count < ClientService.Options.ChatFilterCountMax)
             {
