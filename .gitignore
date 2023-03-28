@@ -273,3 +273,5 @@ _Pvt_Extensions
 /Unigram/Telegram.Native.Calls/Generated Files
 /Telegram.Native/Generated Files
 /Telegram.Native.Calls/Generated Files
+/Telegram/Constants.Secret.cs
+/Libraries/rlottie/ARM64
