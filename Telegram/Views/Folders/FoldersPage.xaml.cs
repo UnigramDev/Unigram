@@ -49,15 +49,11 @@ namespace Telegram.Views.Folders
 
         private void Recommended_ElementPrepared(Microsoft.UI.Xaml.Controls.ItemsRepeater sender, Microsoft.UI.Xaml.Controls.ItemsRepeaterElementPreparedEventArgs args)
         {
-            var content = args.Element as StackPanel;
+            var content = args.Element as Grid;
             var filter = content.DataContext as RecommendedChatFilter;
 
-            var grid = content.Children[0] as Grid;
-
-            var button = grid.Children[0] as BadgeButton;
-            var add = grid.Children[1] as Button;
-
-            var separator = content.Children[1];
+            var button = content.Children[0] as BadgeButton;
+            var add = content.Children[1] as Button;
 
             var icon = Icons.ParseFilter(filter.Filter);
 
@@ -67,10 +63,6 @@ namespace Telegram.Views.Folders
 
             add.Click += AddRecommended_Click;
             add.CommandParameter = filter;
-
-            separator.Visibility = args.Index < sender.ItemsSourceView.Count - 1
-                ? Visibility.Visible
-                : Visibility.Collapsed;
         }
 
         private void AddRecommended_Click(object sender, RoutedEventArgs e)
