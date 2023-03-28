@@ -3,6 +3,7 @@
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:local="using:Telegram.Views"
                   xmlns:controls="using:Telegram.Controls"
+                  xmlns:cells="using:Telegram.Controls.Cells"
                   xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -24,11 +25,12 @@
     </local:HostedPage.Footer>
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
-        <controls:TableListView ItemsSource="{x:Bind ViewModel.Items}"
+        <controls:TableListView x:Name="ScrollingHost"
+                                ItemsSource="{x:Bind ViewModel.Items}"
                                 ContainerContentChanging="OnContainerContentChanging"
                                 SelectionMode="None">
             <ListView.Header>
-                <StackPanel>
+                <controls:SettingsPanel>
                     <controls:HeaderedControl>
                         <Grid Background="{ThemeResource SettingsItemBackground}"
                               Padding="12,8">
@@ -79,28 +81,12 @@
                                               Style="{StaticResource GlyphBadgeButtonStyle}"
                                               Glyph="&#xE8FA;" />
                     </controls:HeaderedControl>
-                </StackPanel>
+                </controls:SettingsPanel>
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Grid Background="{ThemeResource SettingsItemBackground}"
-                          BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                          Padding="12,6">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <controls:ProfilePicture IsHitTestVisible="False"
-                                                 Width="36"
-                                                 Height="36"
-                                                 Margin="0,0,12,0" />
-                        <TextBlock VerticalAlignment="Center"
-                                   TextWrapping="NoWrap"
-                                   TextTrimming="CharacterEllipsis"
-                                   FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                   Style="{StaticResource BodyTextBlockStyle}"
-                                   Grid.Column="1" />
-                    </Grid>
+                    <cells:UserCell BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                    Background="{ThemeResource SettingsItemBackground}" />
                 </DataTemplate>
             </ListView.ItemTemplate>
         </controls:TableListView>

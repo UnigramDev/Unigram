@@ -167,23 +167,26 @@
     </Page.Resources>
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
-        <ListView ItemsSource="{x:Bind ViewModel.Items}"
-                  ContainerContentChanging="OnContainerContentChanging"
-                  SelectionMode="None">
+        <ListView  x:Name="ScrollingHost"
+                   ItemsSource="{x:Bind ViewModel.Items}"
+                   ContainerContentChanging="OnContainerContentChanging"
+                   SelectionMode="None">
             <ListView.Header>
-                <controls:HeaderedControl Header="{CustomResource StatisticOverview}"
-                                          Footer="{x:Bind ConvertPeriod(ViewModel.Period.StartDate, ViewModel.Period.EndDate), Mode=OneWay}"
-                                          Style="{StaticResource FooteredControlStyle}"
-                                          Background="{ThemeResource SettingsItemBackground}">
-                    <ContentControl Content="{x:Bind ViewModel.Statistics, Mode=OneWay, FallbackValue=''}"
-                                    HorizontalContentAlignment="Stretch"
-                                    VerticalContentAlignment="Stretch">
-                        <ContentControl.ContentTemplateSelector>
-                            <selectors:ChatStatisticsOverviewTemplateSelector ChannelTemplate="{StaticResource ChannelOverviewTemplate}"
-                                                                              SupergroupTemplate="{StaticResource SupergroupOverviewTemplate}" />
-                        </ContentControl.ContentTemplateSelector>
-                    </ContentControl>
-                </controls:HeaderedControl>
+                <controls:SettingsPanel IsHeader="True">
+                    <controls:HeaderedControl Header="{CustomResource StatisticOverview}"
+                                              Footer="{x:Bind ConvertPeriod(ViewModel.Period.StartDate, ViewModel.Period.EndDate), Mode=OneWay}"
+                                              Style="{StaticResource FooteredControlStyle}"
+                                              Background="{ThemeResource SettingsItemBackground}">
+                        <ContentControl Content="{x:Bind ViewModel.Statistics, Mode=OneWay, FallbackValue=''}"
+                                        HorizontalContentAlignment="Stretch"
+                                        VerticalContentAlignment="Stretch">
+                            <ContentControl.ContentTemplateSelector>
+                                <selectors:ChatStatisticsOverviewTemplateSelector ChannelTemplate="{StaticResource ChannelOverviewTemplate}"
+                                                                                  SupergroupTemplate="{StaticResource SupergroupOverviewTemplate}" />
+                            </ContentControl.ContentTemplateSelector>
+                        </ContentControl>
+                    </controls:HeaderedControl>
+                </controls:SettingsPanel>
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate>
@@ -192,7 +195,7 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.Footer>
-                <StackPanel Margin="0,0,0,24">
+                <controls:SettingsPanel IsFooter="True">
                     <controls:HeaderedControl Header="{CustomResource RecentPosts}"
                                               Footer="{x:Bind ConvertPeriod(ViewModel.Period.StartDate, ViewModel.Period.EndDate), Mode=OneWay}"
                                               Visibility="{x:Bind ViewModel.Interactions.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
@@ -237,7 +240,7 @@
                                             ItemTemplate="{StaticResource UserTemplate}"
                                             ElementPrepared="OnElementPrepared" />
                     </controls:HeaderedControl>
-                </StackPanel>
+                </controls:SettingsPanel>
             </ListView.Footer>
         </ListView>
 

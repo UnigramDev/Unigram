@@ -10,10 +10,10 @@
                   mc:Ignorable="d">
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
-        <ScrollViewer VerticalScrollBarVisibility="Auto"
+        <ScrollViewer x:Name="ScrollingHost"
+                      VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
-            <StackPanel Spacing="16"
-                        Margin="0,0,0,32">
+            <controls:SettingsPanel>
                 <controls:HeaderedControl Header="Experimental">
                     <CheckBox IsChecked="{x:Bind ViewModel.UseTestDC, Mode=TwoWay}"
                               Visibility="{x:Bind ViewModel.CanUseTestDC}"
@@ -104,7 +104,7 @@
                     <controls:BadgeButton Content="Crash the app &#x2620;"
                                           Click="Crash_Click" />
                 </controls:HeaderedControl>
-            </StackPanel>
+            </controls:SettingsPanel>
         </ScrollViewer>
     </Grid>
 </local:HostedPage>

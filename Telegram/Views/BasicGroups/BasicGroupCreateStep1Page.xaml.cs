@@ -6,6 +6,7 @@
 //
 using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Controls.Cells;
 using Telegram.Td.Api;
 using Telegram.ViewModels.BasicGroups;
 using Telegram.Views.Popups;
@@ -81,15 +82,10 @@ namespace Telegram.Views.BasicGroups
             {
                 return;
             }
-
-            var content = args.ItemContainer.ContentTemplateRoot as Grid;
-            var chat = args.Item as Chat;
-
-            var title = content.Children[1] as TextBlock;
-            title.Text = ViewModel.ClientService.GetTitle(chat);
-
-            var photo = content.Children[0] as ProfilePicture;
-            photo.SetChat(ViewModel.ClientService, chat, 36);
+            else if (args.ItemContainer.ContentTemplateRoot is UserCell content)
+            {
+                content.UpdateChat(ViewModel.ClientService, args, OnContainerContentChanging);
+            }
         }
     }
 }

@@ -7,6 +7,7 @@
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Navigation;
@@ -302,6 +303,12 @@ namespace Telegram.Controls
             var detailVisual = ElementCompositionPreview.GetElementVisual(DetailPresenter);
             detailVisual.Clip = Window.Current.Compositor.CreateInsetClip();
 
+            var visual1 = ElementCompositionPreview.GetElementVisual(DetailHeaderBackground);
+            var visual2 = ElementCompositionPreview.GetElementVisual(DetailHeaderPresenter);
+
+            visual2.CenterPoint = new Vector3(0, -16, 0);
+            visual1.Opacity = 0;
+
             if (DetailFrame != null)
             {
                 var parent = VisualTreeHelper.GetParent(DetailFrame) as UIElement;
@@ -392,14 +399,7 @@ namespace Telegram.Controls
                         _backStack.ReplaceWith(BuildBackStack(hosted.IsNavigationRoot));
                         _backStack.Add(_currentPage);
                     }
-                }
-                else
-                {
-                    _backStack.Clear();
-                }
 
-                if (_backStack.Count > 0)
-                {
                     var scrollingHost = hosted.FindName("ScrollingHost");
                     if (scrollingHost is ListViewBase list)
                     {
@@ -414,6 +414,7 @@ namespace Telegram.Controls
                 }
                 else
                 {
+                    _backStack.Clear();
                     DetailHeaderBackground.Visibility = Visibility.Collapsed;
                 }
             }

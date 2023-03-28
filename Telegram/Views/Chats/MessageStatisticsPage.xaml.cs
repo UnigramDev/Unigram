@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Telegram.Charts;
-using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
 using Telegram.Td.Api;
@@ -54,36 +53,21 @@ namespace Telegram.Views.Chats
 
         #endregion
 
+        private void OnItemClick(object sender, ItemClickEventArgs e)
+        {
+            ViewModel.OpenPost(e.ClickedItem as Message);
+        }
+
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             if (args.InRecycleQueue)
             {
                 return;
             }
-
-            var button = args.ItemContainer.ContentTemplateRoot as Button;
-            var message = args.Item as Message;
-
-            var content = button.Content as Grid;
-
-            var title = content.Children[1] as TextBlock;
-            var subtitle = content.Children[2] as TextBlock;
-
-            var photo = content.Children[0] as ProfilePicture;
-
-            var chat = ViewModel.ClientService.GetChat(message.ChatId);
-            if (chat == null)
+            else if (args.ItemContainer.ContentTemplateRoot is UserCell content)
             {
-                return;
+                content.UpdateMessageStatisticsSharer(ViewModel.ClientService, args, OnContainerContentChanging);
             }
-
-            title.Text = chat.Title;
-            subtitle.Text = Locale.Declension(Strings.R.Views, message.InteractionInfo?.ViewCount ?? 0);
-
-            photo.SetChat(ViewModel.ClientService, chat, 36);
-
-            button.CommandParameter = message;
-            button.Command = ViewModel.OpenPostCommand;
         }
 
         private void OnElementPrepared(FrameworkElement sender, DataContextChangedEventArgs args)

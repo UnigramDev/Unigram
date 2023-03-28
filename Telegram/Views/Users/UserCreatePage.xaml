@@ -15,62 +15,66 @@
     </local:HostedPage.Footer>
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
-        <StackPanel>
-            <controls:HeaderedControl>
-                <Grid Background="{ThemeResource PageSubHeaderBackgroundBrush}">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    <controls:ProfilePicture x:Name="Photo"
-                                             Source="{x:Bind ConvertPhoto(ViewModel.FirstName, ViewModel.LastName), Mode=OneWay}"
-                                             Height="64"
-                                             Width="64"
-                                             Margin="12,8"
-                                             Grid.RowSpan="2" />
+        <ScrollViewer x:Name="ScrollingHost"
+                      VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto">
+            <controls:SettingsPanel>
+                <controls:HeaderedControl>
+                    <Grid Background="{ThemeResource PageSubHeaderBackgroundBrush}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <controls:ProfilePicture x:Name="Photo"
+                                                 Source="{x:Bind ConvertPhoto(ViewModel.FirstName, ViewModel.LastName), Mode=OneWay}"
+                                                 Height="64"
+                                                 Width="64"
+                                                 Margin="12,8"
+                                                 Grid.RowSpan="2" />
 
-                    <StackPanel VerticalAlignment="Center"
-                                Grid.Column="1"
-                                Grid.RowSpan="2">
-                    </StackPanel>
-                </Grid>
+                        <StackPanel VerticalAlignment="Center"
+                                    Grid.Column="1"
+                                    Grid.RowSpan="2">
+                        </StackPanel>
+                    </Grid>
 
-                <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}"
-                           Height="1"
-                           Margin="12,0,0,0" />
+                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}"
+                               Height="1"
+                               Margin="12,0,0,0" />
 
-                <TextBox x:Name="FirstName"
-                         Text="{x:Bind ViewModel.FirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                         MaxLength="{StaticResource UserFirstNameMaxLength}"
-                         PlaceholderText="{CustomResource FirstName}"
-                         Loaded="FirstName_Loaded"
-                         Margin="12,8,12,0"
-                         Grid.Row="1" />
-                <TextBox Text="{x:Bind ViewModel.LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                         MaxLength="{StaticResource UserLastNameMaxLength}"
-                         PlaceholderText="{CustomResource LastName}"
-                         Margin="12,12,12,8"
-                         Grid.Row="2" />
-            </controls:HeaderedControl>
+                    <TextBox x:Name="FirstName"
+                             Text="{x:Bind ViewModel.FirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             MaxLength="{StaticResource UserFirstNameMaxLength}"
+                             PlaceholderText="{CustomResource FirstName}"
+                             Loaded="FirstName_Loaded"
+                             Margin="12,8,12,0"
+                             Grid.Row="1" />
+                    <TextBox Text="{x:Bind ViewModel.LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             MaxLength="{StaticResource UserLastNameMaxLength}"
+                             PlaceholderText="{CustomResource LastName}"
+                             Margin="12,12,12,8"
+                             Grid.Row="2" />
+                </controls:HeaderedControl>
 
-            <controls:HeaderedControl>
-                <controls:CountryBox Country="{x:Bind ViewModel.SelectedCountry, Mode=TwoWay}"
-                                     MinWidth="280"
-                                     HorizontalAlignment="Stretch"
-                                     Margin="12,8,12,4" />
+                <controls:HeaderedControl>
+                    <controls:CountryBox Country="{x:Bind ViewModel.SelectedCountry, Mode=TwoWay}"
+                                         MinWidth="280"
+                                         HorizontalAlignment="Stretch"
+                                         Margin="12,8,12,4" />
 
-                <controls:PhoneTextBox x:Name="PrimaryInput"
-                                       Text="{x:Bind ViewModel.PhoneNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                       Country="{x:Bind ViewModel.SelectedCountry, Mode=TwoWay}"
-                                       MinWidth="200"
-                                       InputScope="TelephoneNumber"
-                                       IsTextPredictionEnabled="False"
-                                       Margin="12,8" />
-            </controls:HeaderedControl>
-        </StackPanel>
+                    <controls:PhoneTextBox x:Name="PrimaryInput"
+                                           Text="{x:Bind ViewModel.PhoneNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                           Country="{x:Bind ViewModel.SelectedCountry, Mode=TwoWay}"
+                                           MinWidth="200"
+                                           InputScope="TelephoneNumber"
+                                           IsTextPredictionEnabled="False"
+                                           Margin="12,8" />
+                </controls:HeaderedControl>
+            </controls:SettingsPanel>
+        </ScrollViewer>
     </Grid>
 </local:HostedPage>

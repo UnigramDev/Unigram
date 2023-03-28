@@ -495,6 +495,70 @@ namespace Telegram.Controls.Cells
             args.Handled = true;
         }
 
+        public void UpdateMessageStatisticsSharer(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        {
+            var message = args.Item as Message;
+
+            var chat = clientService.GetChat(message.ChatId);
+            if (chat == null)
+            {
+                return;
+            }
+
+            Tag = message;
+
+            if (args.Phase == 0)
+            {
+                TitleLabel.Text = chat.Title;
+            }
+            else if (args.Phase == 1)
+            {
+                SubtitleLabel.Text = Locale.Declension(Strings.R.Views, message.InteractionInfo?.ViewCount ?? 0);
+            }
+            else if (args.Phase == 2)
+            {
+                Photo.SetChat(clientService, chat, 36);
+                Identity.SetStatus(clientService, chat);
+            }
+
+            if (args.Phase < 2)
+            {
+                args.RegisterUpdateCallback(callback);
+            }
+
+            args.Handled = true;
+        }
+
+        public void UpdateChat(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        {
+            UpdateStyleNoSubtitle();
+
+            var chat = args.Item as Chat;
+
+            Tag = chat;
+
+            if (args.Phase == 0)
+            {
+                TitleLabel.Text = chat.Title;
+            }
+            else if (args.Phase == 1)
+            {
+
+            }
+            else if (args.Phase == 2)
+            {
+                Photo.SetChat(clientService, chat, 36);
+                Identity.SetStatus(clientService, chat);
+            }
+
+            if (args.Phase < 2)
+            {
+                args.RegisterUpdateCallback(callback);
+            }
+
+            args.Handled = true;
+        }
+
         public void UpdateStatisticsByChat(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
         {
             if (args.InRecycleQueue)

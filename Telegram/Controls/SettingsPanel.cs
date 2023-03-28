@@ -22,10 +22,11 @@ namespace Telegram.Controls
         }
 
         public bool IsHeader { get; set; }
+        public bool IsFooter { get; set; }
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            var accumulated = 64d;
+            var accumulated = IsFooter ? 0 : 64d;
 
             foreach (UIElement child in Children)
             {
@@ -50,7 +51,7 @@ namespace Telegram.Controls
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            var accumulated = 64d;
+            var accumulated = IsFooter ? 0 : 64d;
 
             foreach (var child in Children)
             {

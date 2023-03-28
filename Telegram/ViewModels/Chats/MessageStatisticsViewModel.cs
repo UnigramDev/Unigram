@@ -23,8 +23,6 @@ namespace Telegram.ViewModels.Chats
         public MessageStatisticsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            OpenChannelCommand = new RelayCommand(OpenChannelExecute);
-            OpenPostCommand = new RelayCommand<Message>(OpenPostExecute);
         }
 
         private Chat _chat;
@@ -55,8 +53,7 @@ namespace Telegram.ViewModels.Chats
             set => Set(ref _items, value);
         }
 
-        public RelayCommand OpenChannelCommand { get; }
-        private void OpenChannelExecute()
+        public void OpenChannel()
         {
             var chat = _chat;
             if (chat == null)
@@ -67,8 +64,7 @@ namespace Telegram.ViewModels.Chats
             NavigationService.Navigate(typeof(ChatStatisticsPage), chat.Id);
         }
 
-        public RelayCommand<Message> OpenPostCommand { get; }
-        private void OpenPostExecute(Message message)
+        public void OpenPost(Message message)
         {
             NavigationService.NavigateToChat(message.ChatId, message.Id);
         }

@@ -67,11 +67,14 @@
     </local:HostedPage.Header>-->
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
-        <controls:TableListView ItemsSource="{x:Bind ViewModel.Items}"
+        <controls:TableListView x:Name="ScrollingHost"
+                                ItemsSource="{x:Bind ViewModel.Items}"
                                 ContainerContentChanging="OnContainerContentChanging"
+                                IsItemClickEnabled="True"
+                                ItemClick="OnItemClick"
                                 SelectionMode="None">
             <ListView.Header>
-                <StackPanel>
+                <controls:SettingsPanel IsHeader="True">
                     <controls:HeaderedControl Header="{CustomResource StatisticOverview}"
                                               Style="{StaticResource FooteredControlStyle}">
                         <Grid>
@@ -118,60 +121,20 @@
                         </ContentControl.ContentTemplate>
                     </ContentControl>
 
-                    <Border MaxWidth="640">
-                        <TextBlock Text="{CustomResource PublicShares}"
-                                   Margin="12,16,12,6"
-                                   Style="{StaticResource SettingsGroupTextBlockStyle}" />
-                    </Border>
+                    <TextBlock Text="{CustomResource PublicShares}"
+                               Style="{StaticResource BaseTextBlockStyle}"
+                               Margin="24,16,24,8" />
 
-                </StackPanel>
+                </controls:SettingsPanel>
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Button Style="{StaticResource EmptyButtonStyle}">
-                        <Grid Margin="12,6">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <controls:ProfilePicture IsEnabled="False"
-                                                     Width="36"
-                                                     Height="36"
-                                                     Margin="0,0,12,0"
-                                                     Grid.RowSpan="2" />
-
-                            <TextBlock FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                       TextWrapping="NoWrap"
-                                       TextTrimming="CharacterEllipsis"
-                                       VerticalAlignment="Bottom"
-                                       Grid.Column="1" />
-                            <TextBlock VerticalAlignment="Top"
-                                       Style="{StaticResource CaptionTextBlockStyle}"
-                                       Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                       TextTrimming="CharacterEllipsis"
-                                       TextWrapping="NoWrap"
-                                       Grid.Column="1"
-                                       Grid.Row="1"
-                                       MaxLines="1" />
-                        </Grid>
-                    </Button>
+                    <cells:UserCell BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                    Background="{ThemeResource SettingsItemBackground}" />
                 </DataTemplate>
             </ListView.ItemTemplate>
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="HorizontalContentAlignment"
-                            Value="Stretch" />
-                    <Setter Property="Padding"
-                            Value="0" />
-                </Style>
-            </ListView.ItemContainerStyle>
             <ListView.Footer>
-                <StackPanel Margin="0,0,0,24">
-                </StackPanel>
+                <Border Height="32" />
             </ListView.Footer>
         </controls:TableListView>
 

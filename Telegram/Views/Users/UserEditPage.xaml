@@ -17,8 +17,7 @@
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
-            <StackPanel Spacing="16"
-                        Padding="0,0,0,32">
+            <controls:SettingsPanel>
                 <controls:HeaderedControl Footer="{CustomResource RegisterText2}">
                     <Grid Background="{ThemeResource SettingsItemBackground}"
                           Padding="12,8">
@@ -115,7 +114,7 @@
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Glyph="&#xF3B1;" />
                 </controls:HeaderedControl>
-            </StackPanel>
+            </controls:SettingsPanel>
         </ScrollViewer>
     </Grid>
 </local:HostedPage>
