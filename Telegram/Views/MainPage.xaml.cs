@@ -1591,7 +1591,7 @@ namespace Telegram.Views
 
             if (ViewModel.Chats.SelectionMode != ListViewSelectionMode.Multiple)
             {
-                if (ViewModel.ClientService.TryGetChat(chatId, out Chat chat))
+                if (ViewModel.ClientService.TryGetChat(chatId, out Chat chat) && ViewModel.Chats.Items.Contains(chat))
                 {
                     ChatsList.SelectedItem = chat;
                 }
