@@ -193,17 +193,9 @@
 
         </StackPanel>
 
-        <Grid VerticalAlignment="Bottom"
-              HorizontalAlignment="Center"
-              Grid.Row="2">
-            <TextBlock x:Name="Diagnostics"
-                       Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                       Style="{StaticResource CaptionTextBlockStyle}"
-                       Margin="12,8,12,12" />
-            <Button Click="Diagnostics_Click"
-                    Opacity="0"
-                    Style="{StaticResource EmptyButtonStyle}" />
-        </Grid>
+        <controls:VersionLabel VerticalAlignment="Bottom"
+                               HorizontalAlignment="Center"
+                               Grid.Row="2" />
 
         <HyperlinkButton Command="{x:Bind ViewModel.ProxyCommand}"
                          Content="{x:Bind ViewModel.S.ProxySettings, Mode=OneWay}"

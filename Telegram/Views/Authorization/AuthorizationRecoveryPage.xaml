@@ -84,6 +84,10 @@
             </StackPanel>
         </Grid>
 
+        <controls:VersionLabel VerticalAlignment="Bottom"
+                               HorizontalAlignment="Center"
+                               Grid.Row="1" />
+
         <Border x:Name="TitleBar"
                 Background="Transparent" />
     </Grid>

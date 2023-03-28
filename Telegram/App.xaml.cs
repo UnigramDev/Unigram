@@ -9,6 +9,7 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -127,7 +128,7 @@ namespace Telegram
                 SettingsService.Current.Diagnostics.LastErrorVersion = Package.Current.Id.Version.Build;
                 SettingsService.Current.Diagnostics.LastErrorProperties = string.Join(';', new[]
                 {
-                    $"CurrentVersion={SettingsPage.GetVersion()}",
+                    $"CurrentVersion={VersionLabel.GetVersion()}",
                     $"LastUpdate={next - prev}s",
                     $"UpdateCount={SettingsService.Current.Diagnostics.UpdateCount}"
                 });

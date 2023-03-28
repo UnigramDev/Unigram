@@ -14,7 +14,6 @@ using Telegram.ViewModels;
 using Telegram.ViewModels.Delegates;
 using Telegram.Views.Folders;
 using Telegram.Views.Settings;
-using Windows.ApplicationModel;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -31,8 +30,6 @@ namespace Telegram.Views
             DataContext = TLContainer.Current.Resolve<SettingsViewModel, ISettingsDelegate>(this);
 
             NavigationCacheMode = NavigationCacheMode.Required;
-
-            Diagnostics.Text = $"Unigram " + GetVersion();
 
             _settings = new Dictionary<Type, object>
             {
@@ -54,27 +51,6 @@ namespace Telegram.Views
         public void Dispose()
         {
             Bindings?.StopTracking();
-        }
-
-        public static string GetVersion()
-        {
-            Package package = Package.Current;
-            PackageId packageId = package.Id;
-            PackageVersion version = packageId.Version;
-
-            var type = Package.Current.SignatureKind switch
-            {
-                PackageSignatureKind.Store => "",
-                PackageSignatureKind.Enterprise => " Direct",
-                _ => " Direct"
-            };
-
-            if (version.Revision > 0)
-            {
-                return string.Format("{0}.{1}.{3} ({2}) {4}{5}", version.Major, version.Minor, version.Build, version.Revision, packageId.Architecture, type);
-            }
-
-            return string.Format("{0}.{1} ({2}) {3}{4}", version.Major, version.Minor, version.Build, packageId.Architecture, type);
         }
 
         private MasterDetailView _masterDetail;
@@ -229,18 +205,9 @@ namespace Telegram.Views
 
         #endregion
 
-        private int _advanced;
-
-        private void Diagnostics_Click(object sender, RoutedEventArgs e)
+        private void VersionLabel_Navigate(object sender, RoutedEventArgs e)
         {
-            _advanced++;
-
-            if (_advanced >= 10)
-            {
-                _advanced = 0;
-
-                MasterDetail.NavigationService.Navigate(typeof(DiagnosticsPage));
-            }
+            MasterDetail.NavigationService.Navigate(typeof(DiagnosticsPage));
         }
     }
 }

@@ -6330,4 +6330,24 @@
         </Setter>
     </Style>
 
+    <Style TargetType="local:VersionLabel">
+        <Setter Property="Foreground"
+                Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
+        <Setter Property="FontSize"
+                Value="12" />
+        <Setter Property="Padding"
+                Value="12" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:VersionLabel">
+                    <ContentPresenter Content="{TemplateBinding Content}"
+                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                      HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                      VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                      Padding="{TemplateBinding Padding}" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 </ResourceDictionary>

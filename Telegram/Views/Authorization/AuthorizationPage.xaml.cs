@@ -35,8 +35,6 @@ namespace Telegram.Views.Authorization
             {
                 { 0xffffff, 0x000000 }
             };
-
-            Diagnostics.Text = $"Unigram " + SettingsPage.GetVersion();
         }
 
         private bool _waiting = true;
@@ -77,20 +75,6 @@ namespace Telegram.Views.Authorization
             {
                 ViewModel.SendCommand.Execute(null);
                 e.Handled = true;
-            }
-        }
-
-        private int _advanced;
-
-        private void Diagnostics_Click(object sender, RoutedEventArgs e)
-        {
-            _advanced++;
-
-            if (_advanced >= 10)
-            {
-                _advanced = 0;
-
-                Frame.Navigate(typeof(DiagnosticsPage));
             }
         }
 

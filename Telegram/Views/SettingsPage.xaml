@@ -267,15 +267,9 @@
                     </controls:BadgeButton>
                 </StackPanel>
 
-                <Grid>
-                    <TextBlock x:Name="Diagnostics"
-                               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                               Style="{StaticResource CaptionTextBlockStyle}"
-                               Margin="12,8,12,0" />
-                    <Button Click="Diagnostics_Click"
-                            Opacity="0"
-                            Style="{StaticResource EmptyButtonStyle}" />
-                </Grid>
+                <controls:VersionLabel Navigate="VersionLabel_Navigate"
+                                       HorizontalContentAlignment="Left"
+                                       Padding="12,8" />
             </StackPanel>
         </ScrollViewer>
     </Grid>
